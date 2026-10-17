@@ -1,5 +1,4 @@
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import {
   Box,
   FormControl,
@@ -10,6 +9,7 @@ import {
   Select,
   useTheme,
   WorkspaceContentMoveModal,
+  useHasPermission,
 } from '@sistent/sistent';
 import React, { useCallback, useRef, useState } from 'react';
 import { StyledSearchBar } from '@sistent/sistent';
@@ -38,7 +38,13 @@ import { useSelector } from 'react-redux';
 import { useNotification } from '@/utils/hooks/useNotification';
 
 const WorkspaceContent = ({ workspace }) => {
-  const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
+  const isViewVisible = useHasPermission(Keys.KanvasViewViews);
+  const isAssignDesignsAllowed = useHasPermission(
+    Keys.WorkspaceManagementAssignDesignsToWorkspaces,
+  );
+  const isCreateWorkspaceAllowed = useHasPermission(Keys.WorkspaceManagementCreateWorkspace);
+  const isMoveViewAllowed = useHasPermission(Keys.KanvasAssignViewsToWorkspace);
+
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 
   const [filters, setFilters] = useState({
@@ -245,12 +251,7 @@ const WorkspaceContent = ({ workspace }) => {
               <ImportButton
                 refetch={refetch}
                 workspaceId={workspace?.id}
-                disabled={
-                  !CAN(
-                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
-                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
-                  )
-                }
+                permissionKey={Keys.WorkspaceManagementAssignDesignsToWorkspaces}
               />
             )}
           </Grid2>
@@ -275,18 +276,9 @@ const WorkspaceContent = ({ workspace }) => {
             WorkspaceModalContext={WorkspaceModalContext}
             assignDesignToWorkspace={assignDesignToWorkspace}
             assignViewToWorkspace={assignViewToWorkspace}
-            isCreateWorkspaceAllowed={CAN(
-              keys.CREATE_WORKSPACE.action,
-              keys.CREATE_WORKSPACE.subject,
-            )}
-            isMoveDesignAllowed={CAN(
-              keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
-              keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
-            )}
-            isMoveViewAllowed={CAN(
-              keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
-              keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
-            )}
+            isCreateWorkspaceAllowed={isCreateWorkspaceAllowed}
+            isMoveDesignAllowed={isAssignDesignsAllowed}
+            isMoveViewAllowed={isMoveViewAllowed}
             currentOrgId={currentOrganization?.id}
             notify={notify}
             router={router}

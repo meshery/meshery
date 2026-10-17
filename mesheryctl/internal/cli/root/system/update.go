@@ -28,7 +28,7 @@ import (
 )
 
 var linkDocUpdate = map[string]string{
-	"link":    "![update-usage](/reference/images/update.png)",
+	"link":    "![update-usage](../../../images/update.png)",
 	"caption": "Usage of mesheryctl system update",
 }
 
@@ -36,7 +36,8 @@ var linkDocUpdate = map[string]string{
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Pull new Meshery images/manifest files.",
-	Long:  `Pull new Meshery container images and manifests from artifact repository.`,
+	Long: `Pull new Meshery container images and manifests from artifact repository.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/update`,
 	Example: `
 // Pull new Meshery images from Docker Hub. This does not update mesheryctl. This command may be executed while Meshery is running.
 mesheryctl system update

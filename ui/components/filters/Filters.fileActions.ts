@@ -1,6 +1,5 @@
 import type React from 'react';
 import _ from 'lodash';
-import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import { FILE_OPS } from '../../utils/Enum';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { getUnit8ArrayDecodedFile } from '../../utils/utils';
@@ -25,7 +24,7 @@ type SubmitArgs = {
 type CreateSubmitHandlerArgs = {
   notify: Notify;
   handleError: ErrorHandler;
-  showmodal: (_count: number) => Promise<string | undefined>;
+  showmodal: (_count: number, _name?: string) => Promise<string | undefined>;
   resetSelectedRowData: () => () => void;
   deleteFilterFile: (_args: { id: string }) => { unwrap: () => Promise<any> };
   uploadFilterFile: (_args: { uploadBody: any }) => { unwrap: () => Promise<any> };
@@ -42,10 +41,9 @@ export function createHandleSubmit({
   updateFilterFile,
 }: CreateSubmitHandlerArgs) {
   return async function handleSubmit({ data, name, id, type, metadata, catalogData }: SubmitArgs) {
-    // TODO: use filter name
     updateProgress({ showProgress: true });
     if (type === FILE_OPS.DELETE) {
-      const response = await showmodal(1);
+      const response = await showmodal(1, name);
       if (response !== 'Delete') {
         updateProgress({ showProgress: false });
         return;
@@ -370,65 +368,5 @@ export function createDeleteFilter({
         updateProgress({ showProgress: false });
         handleError(ACTION_TYPES.DELETE_FILTERS);
       });
-  };
-}
-
-type CreateInitFiltersSubscriptionArgs = {
-  page: number;
-  pageSize: number;
-  search: string;
-  sortOrder: string;
-  disposeConfSubscriptionRef: React.MutableRefObject<{ dispose: () => void } | null>;
-};
-
-export function createInitFiltersSubscription({
-  page,
-  pageSize,
-  search,
-  sortOrder,
-  disposeConfSubscriptionRef,
-}: CreateInitFiltersSubscriptionArgs) {
-  return (
-    pageNo: string = page.toString(),
-    pagesize: string = pageSize.toString(),
-    searchText: string = search,
-    order: string = sortOrder,
-  ) => {
-    if (disposeConfSubscriptionRef.current) {
-      disposeConfSubscriptionRef.current.dispose();
-    }
-    const configurationSubscription = ConfigurationSubscription(
-      () => {
-        /**
-         * We are not using filter subscription and this code is commented to prevent
-         * unnecessary state updates
-         */
-        // setPage(result.configuration?.filters?.page || 0);
-        // setPageSize(result.configuration?.filters?.page_size || 10);
-        // setCount(result.configuration?.filters?.total_count || 0);
-        // handleSetFilters(result.configuration?.filters?.filters);
-      },
-      {
-        applicationSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-        patternSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-        filterSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-      },
-    );
-    disposeConfSubscriptionRef.current = configurationSubscription;
   };
 }

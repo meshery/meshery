@@ -6,7 +6,9 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/spf13/viper"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -49,6 +51,63 @@ func TestSaveUserCredentialReturnsPopulatedCredential(t *testing.T) {
 	if got.Type != cred.Type {
 		t.Errorf("got Type=%q, want %q", got.Type, cred.Type)
 	}
+}
+
+// TestGetUserCredentialsRejectsUnsanitizedOrderInput verifies that GetUserCredentials
+// no longer passes the caller-supplied "order" query parameter straight into gorm's
+// Order(), which treats a plain string as raw, unescaped SQL. Without sanitization,
+// arbitrary attacker-controlled text (e.g. "foobar asc", or a crafted SQL injection
+// payload) reaches the database driver directly -- an unpatched sibling of the
+// SQL injection vulnerabilities already fixed elsewhere (CVE-2024-35181, CVE-2024-35182)
+// via models.SanitizeOrderInput, which this endpoint had been missed by.
+func TestGetUserCredentialsRejectsUnsanitizedOrderInput(t *testing.T) {
+	provider := newTestProviderWithCredentialDB(t)
+
+	userID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate user id: %v", err)
+	}
+
+	for _, name := range []string{"b-cred", "a-cred"} {
+		cred := &Credential{Name: name, Type: "token", UserId: userID}
+		if _, err := provider.SaveUserCredential("tok", cred); err != nil {
+			t.Fatalf("failed to seed credential %q: %v", name, err)
+		}
+	}
+
+	t.Run("rejects unsanitized order input", func(t *testing.T) {
+		// "foobar" is not a real column. Pre-fix, this string was handed straight to
+		// gorm's Order(), which built `ORDER BY foobar asc` and the query failed with
+		// a driver-level "no such column" error -- proof the raw input reached SQL
+		// construction unsanitized. Post-fix, SanitizeOrderInput rejects it outright
+		// and Order() becomes a no-op, so the query must still succeed.
+		page, err := provider.GetUserCredentials(nil, userID.String(), 0, 10, "", "foobar asc")
+		if err != nil {
+			t.Fatalf("unsanitized order value reached the query and caused an error: %v", err)
+		}
+		if page.TotalCount != 2 {
+			t.Errorf("got TotalCount=%d, want 2", page.TotalCount)
+		}
+	})
+
+	t.Run("accepts legitimate order input", func(t *testing.T) {
+		// A legitimate, allowlisted order value must still work after sanitization.
+		page, err := provider.GetUserCredentials(nil, userID.String(), 0, 10, "", "name asc")
+		if err != nil {
+			t.Fatalf("unexpected error with legitimate order value: %v", err)
+		}
+		if len(page.Credentials) != 2 || page.Credentials[0].Name != "a-cred" || page.Credentials[1].Name != "b-cred" {
+			t.Fatalf("got order %v, want [a-cred b-cred]", credentialNames(page.Credentials))
+		}
+	})
+}
+
+func credentialNames(creds []Credential) []string {
+	names := make([]string, len(creds))
+	for i, c := range creds {
+		names[i] = c.Name
+	}
+	return names
 }
 
 // TestEventsPersisterPersistEventAcceptsStructValue verifies that PersistEvent
@@ -207,5 +266,113 @@ func TestRemotePatternFileShortGitHubURLReturnsError(t *testing.T) {
 				t.Errorf("error %q does not contain %q", err.Error(), tc.wantErrSnip)
 			}
 		})
+	}
+}
+
+func TestDefaultLocalProviderRemoveExtension_RemovesMatchingNavigatorExtension(t *testing.T) {
+	provider := &DefaultLocalProvider{}
+	provider.Initialize()
+	provider.Extensions.Navigator = NavigatorExtensions{
+		{Title: "Kanvas"},
+		{Title: "MeshMap Snapshot"},
+	}
+
+	if err := provider.RemoveExtension("navigator", "Kanvas"); err != nil {
+		t.Fatalf("RemoveExtension returned error: %v", err)
+	}
+
+	if len(provider.Extensions.Navigator) != 1 {
+		t.Fatalf("expected 1 navigator extension after removal, got %d", len(provider.Extensions.Navigator))
+	}
+	if provider.Extensions.Navigator[0].Title != "MeshMap Snapshot" {
+		t.Fatalf("unexpected extension retained: %+v", provider.Extensions.Navigator[0])
+	}
+}
+
+func TestDefaultLocalProviderRemoveExtension_ReturnsErrorForMissingExtension(t *testing.T) {
+	provider := &DefaultLocalProvider{}
+	provider.Initialize()
+	provider.Extensions.Navigator = NavigatorExtensions{{Title: "MeshMap Snapshot"}}
+
+	err := provider.RemoveExtension("navigator", "Kanvas")
+	if err == nil {
+		t.Fatal("expected error removing missing navigator extension, got nil")
+	}
+	if !strings.Contains(err.Error(), "not found") {
+		t.Fatalf("expected not found error, got %v", err)
+	}
+}
+
+func TestDefaultLocalProviderInstallExtension_RequiresPackageWhenAssetsMissing(t *testing.T) {
+	t.Setenv("HOME", t.TempDir())
+	// Exercise the real download path (not skipped) so the missing package URL
+	// is surfaced as an error. viper is the source of truth for this flag;
+	// capture and restore its original value to avoid leaking state to other tests.
+	origSkip := viper.Get(SKIP_DOWNLOAD_EXTENSIONS_ENV)
+	defer viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, origSkip)
+	viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, false)
+
+	provider := &DefaultLocalProvider{}
+	provider.Initialize()
+	log, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatalf("failed to create logger: %v", err)
+	}
+	provider.Log = log
+
+	err = provider.InstallExtension("navigator", "", map[string]interface{}{
+		"title":     "Kanvas",
+		"component": "/provider/navigator/meshmap/index.js",
+		"href": map[string]interface{}{
+			"uri": "/meshmap",
+		},
+	})
+	if err == nil {
+		t.Fatal("expected install to fail when extension assets are missing and no package URL is provided")
+	}
+	if !strings.Contains(err.Error(), "package URL is required") {
+		t.Fatalf("expected missing package URL error, got %v", err)
+	}
+	if len(provider.Extensions.Navigator) != 0 {
+		t.Fatalf("install should not mutate navigator extensions on failure, got %+v", provider.Extensions.Navigator)
+	}
+}
+
+func TestDefaultLocalProviderInstallExtension_ReplacesMatchingNavigatorExtension(t *testing.T) {
+	// viper, not the OS environment, is the source of truth for this flag, and
+	// the test binary never calls viper.AutomaticEnv(); set it via viper so the
+	// package download is deterministically skipped without network access.
+	// Capture and restore the original value to avoid leaking state to other tests.
+	origSkip := viper.Get(SKIP_DOWNLOAD_EXTENSIONS_ENV)
+	defer viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, origSkip)
+	viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, true)
+
+	provider := &DefaultLocalProvider{}
+	provider.Initialize()
+	log, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatalf("failed to create logger: %v", err)
+	}
+	provider.Log = log
+	provider.Extensions.Navigator = NavigatorExtensions{
+		{Title: "Kanvas", Component: "/provider/navigator/meshmap/index.js?packageVersion=old"},
+	}
+
+	err = provider.InstallExtension("navigator", "", map[string]interface{}{
+		"title":     "Kanvas",
+		"component": "/provider/navigator/meshmap/index.js?packageVersion=new",
+		"href": map[string]interface{}{
+			"uri": "/meshmap",
+		},
+	})
+	if err != nil {
+		t.Fatalf("InstallExtension returned error: %v", err)
+	}
+
+	if len(provider.Extensions.Navigator) != 1 {
+		t.Fatalf("expected navigator extension to be replaced in place, got %d entries", len(provider.Extensions.Navigator))
+	}
+	if provider.Extensions.Navigator[0].Component != "/provider/navigator/meshmap/index.js?packageVersion=new" {
+		t.Fatalf("expected replacement component to be stored, got %q", provider.Extensions.Navigator[0].Component)
 	}
 }

@@ -11,7 +11,7 @@ import type {
   CollaboratorSchema,
   FullPageExtensionSchema,
 } from '../utils/ExtensionPointSchemaValidator';
-import type { RootState } from '@/store/store';
+import type { RootState } from '../store';
 
 /**
  * getPath returns the current pathname

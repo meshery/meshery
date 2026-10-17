@@ -1,6 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
   ctxUrl,
+  loadSelectedK8sContexts,
+  persistSelectedK8sContexts,
   getK8sClusterIdsFromCtxId,
   getFirstCtxIdFromSelectedCtxIds,
   getK8sConfigIdsFromK8sConfig,
@@ -11,6 +13,7 @@ import {
   getConnectionIdFromClusterId,
   getClusterNameFromCtxId,
   getConnectionIDsFromContextIds,
+  getControllerPollConnectionIDsFromContextIds,
 } from '../multi-ctx';
 
 const sampleConfig = [
@@ -52,6 +55,18 @@ describe('getK8sClusterIdsFromCtxId', () => {
 
   it('skips contexts not found in the config', () => {
     expect(getK8sClusterIdsFromCtxId(['ctx-1', 'missing'], sampleConfig)).toEqual(['srv-1']);
+  });
+
+  it('omits configs without a resolved kubernetesServerId under "all"', () => {
+    // A connection registered while its cluster was unreachable has no server id
+    // yet; it must not contribute a junk cluster id to the query.
+    const configWithUnresolved = [
+      { id: 'ctx-1', name: 'minikube', kubernetesServerId: 'srv-1', connectionId: 'conn-1' },
+      { id: 'ctx-2', name: 'pending', kubernetesServerId: undefined, connectionId: 'conn-2' },
+      { id: 'ctx-3', name: 'empty', kubernetesServerId: '', connectionId: 'conn-3' },
+      { id: 'ctx-4', name: 'gke-prod', kubernetesServerId: 'srv-4', connectionId: 'conn-4' },
+    ];
+    expect(getK8sClusterIdsFromCtxId(['all'], configWithUnresolved)).toEqual(['srv-1', 'srv-4']);
   });
 });
 
@@ -167,5 +182,98 @@ describe('getConnectionIDsFromContextIds', () => {
 
   it('returns an empty array when contexts list is empty', () => {
     expect(getConnectionIDsFromContextIds([], sampleConfig)).toEqual([]);
+  });
+});
+
+describe('getControllerPollConnectionIDsFromContextIds', () => {
+  const pollConfig = [
+    // operator + connected → eligible
+    {
+      id: 'ctx-1',
+      connectionId: 'conn-1',
+      meshsync_deployment_mode: 'operator',
+      connectionStatus: 'connected',
+    },
+    // operator + connected (camelCase mode) → eligible
+    {
+      id: 'ctx-2',
+      connectionId: 'conn-2',
+      meshsyncDeploymentMode: 'operator',
+      connectionStatus: 'connected',
+    },
+    // operator but not connected → excluded
+    {
+      id: 'ctx-3',
+      connectionId: 'conn-3',
+      meshsync_deployment_mode: 'operator',
+      connectionStatus: 'registered',
+    },
+    // embedded but connected → excluded
+    {
+      id: 'ctx-4',
+      connectionId: 'conn-4',
+      meshsync_deployment_mode: 'embedded',
+      connectionStatus: 'connected',
+    },
+    // operator + connected, but no status field → excluded (missing = not connected)
+    { id: 'ctx-5', connectionId: 'conn-5', meshsync_deployment_mode: 'operator' },
+  ];
+
+  it('returns only connections that are operator-mode AND connected', () => {
+    expect(
+      getControllerPollConnectionIDsFromContextIds(
+        ['ctx-1', 'ctx-2', 'ctx-3', 'ctx-4', 'ctx-5'],
+        pollConfig,
+      ),
+    ).toEqual(['conn-1', 'conn-2']);
+  });
+
+  it('excludes not-connected, embedded, and status-less connections', () => {
+    expect(
+      getControllerPollConnectionIDsFromContextIds(['ctx-3', 'ctx-4', 'ctx-5'], pollConfig),
+    ).toEqual([]);
+  });
+
+  it('respects the context filter', () => {
+    expect(getControllerPollConnectionIDsFromContextIds(['ctx-1'], pollConfig)).toEqual(['conn-1']);
+  });
+});
+
+describe('selected k8s contexts session persistence', () => {
+  beforeEach(() => {
+    window.sessionStorage.clear();
+  });
+
+  it('round-trips a selection through sessionStorage', () => {
+    persistSelectedK8sContexts(['ctx-1', 'ctx-2']);
+    expect(loadSelectedK8sContexts()).toEqual(['ctx-1', 'ctx-2']);
+  });
+
+  it('round-trips the sentinel and empty selections', () => {
+    persistSelectedK8sContexts(['all']);
+    expect(loadSelectedK8sContexts()).toEqual(['all']);
+
+    persistSelectedK8sContexts([]);
+    expect(loadSelectedK8sContexts()).toEqual([]);
+  });
+
+  it('returns null when nothing is persisted', () => {
+    expect(loadSelectedK8sContexts()).toBeNull();
+  });
+
+  it('returns null for corrupt or non-array persisted values', () => {
+    window.sessionStorage.setItem('selectedK8sContexts', 'not-json');
+    expect(loadSelectedK8sContexts()).toBeNull();
+
+    window.sessionStorage.setItem('selectedK8sContexts', JSON.stringify({ ctx: true }));
+    expect(loadSelectedK8sContexts()).toBeNull();
+
+    window.sessionStorage.setItem('selectedK8sContexts', JSON.stringify([1, 2]));
+    expect(loadSelectedK8sContexts()).toBeNull();
+  });
+
+  it('ignores non-array input on persist', () => {
+    persistSelectedK8sContexts('all' as unknown as string[]);
+    expect(loadSelectedK8sContexts()).toBeNull();
   });
 });

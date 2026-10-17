@@ -9,25 +9,14 @@ vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => can(...args),
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    CLONE_WASM_FILTER: { action: 'clone', subject: 'wasm-filter' },
-    EDIT_WASM_FILTER: { action: 'edit', subject: 'wasm-filter' },
-    DOWNLOAD_A_WASM_FILTER: { action: 'download', subject: 'wasm-filter' },
-    DETAILS_OF_WASM_FILTER: { action: 'details', subject: 'wasm-filter' },
-    PUBLISH_WASM_FILTER: { action: 'publish', subject: 'wasm-filter' },
-    UNPUBLISH_WASM_FILTER: { action: 'unpublish', subject: 'wasm-filter' },
-  },
-}));
-
 vi.mock('@/assets/icons', () => ({
-  Edit: ({ ...props }: any) => <svg data-testid="edit-icon" {...props} />,
   GetApp: ({ ...props }: any) => <svg data-testid="download-icon" {...props} />,
   Public: ({ ...props }: any) => <svg data-testid="public-icon" {...props} />,
 }));
 
 vi.mock('@sistent/sistent', () => ({
   InfoOutlinedIcon: ({ ...props }: any) => <svg data-testid="info-icon" {...props} />,
+  EditIcon: ({ ...props }: any) => <svg data-testid="edit-icon" {...props} />,
 }));
 
 vi.mock('react-moment', () => ({

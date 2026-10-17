@@ -38,7 +38,7 @@ func (e *EventsPersister) getCountBySeverity(userID core.Uuid, eventStatus event
 	eventsBySeverity := []*CountBySeverityLevel{}
 	err := e.DB.Model(&events.Event{}).
 		Select("severity, count(severity) as count").
-		Where("status = ? AND (user_id = ? OR user_id = ?)", eventStatus, userID, sysID).
+		Where("status = ? AND (owner = ? OR owner = ?)", eventStatus, userID, sysID).
 		Group("severity").
 		Find(&eventsBySeverity).Error
 

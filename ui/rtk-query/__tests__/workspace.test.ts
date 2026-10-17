@@ -1,6 +1,10 @@
 import { describe, expect, it, vi, beforeAll, beforeEach, afterEach } from 'vitest';
 
 // Mock @/utils/utils to avoid pulling the navigator/UI component tree.
+// `../utils` (appendInvalidatesTags) imports the app store at module scope, so
+// the store has to be stubbed before workspace.ts is loaded.
+vi.mock('../../store', () => ({ store: { dispatch: vi.fn() } }));
+
 vi.mock('@/utils/utils', () => ({
   urlEncodeParams: (params: Record<string, unknown>) => {
     const usp = new URLSearchParams();
@@ -21,15 +25,19 @@ beforeAll(() => {
 });
 
 // ---------------------------------------------------------------------------
-// workspace.ts re-`injectEndpoints` into the shared `api` defined by
-// @meshery/schemas. Because the file does NOT pass `overrideExisting: true`,
-// any endpoint with a name already defined in the schemas package is ignored
-// (with a console warning). The endpoint definitions in workspace.ts that
-// share names with the schemas — e.g. getWorkspaces, getDesignsOfWorkspace —
-// never take effect at runtime; the schemas' simpler `query` definitions
-// run instead. The tests below assert the URLs/methods that REALLY run.
-// `getEventsOfWorkspace` is unique to workspace.ts, so its definition does
-// take effect — that one is asserted in full.
+// workspace.ts injects into the shared `api` defined by @meshery/schemas.
+// Because it does NOT pass `overrideExisting: true`, any endpoint whose name
+// already exists in the schemas package is ignored (with a console warning) -
+// so a local re-declaration of a schemas endpoint never runs, and the schemas
+// definition is what serves every call. The endpoints below are therefore the
+// schemas ones, and the tests assert the URLs, methods and bodies that REALLY
+// go over the wire. `getEventsOfWorkspace` is unique to workspace.ts, so its
+// definition does take effect - that one is asserted in full.
+//
+// The exported `useCreate/Update/DeleteWorkspaceMutation` wrappers adapt the
+// callers' argument shape to those schemas endpoints. They used to feed the
+// dead local definitions' flat shape instead, which the schemas endpoints read
+// as `undefined` - see the wrapper tests at the end of this file.
 // ---------------------------------------------------------------------------
 
 const okResponse = (body: unknown = {}) => ({
@@ -289,6 +297,8 @@ describe('workspace endpoints', () => {
     const req = fetchMock.mock.calls[0][0] as Request;
     expect(req.method).toBe('POST');
     expect(req.url).toContain('/api/workspaces');
+    const body = await req.json();
+    expect(body).toEqual({ name: 'w-name', description: 'desc', organizationId: 'org-1' });
   });
 
   it('updateWorkspace PUTs against /api/workspaces/:workspaceId', async () => {
@@ -303,6 +313,8 @@ describe('workspace endpoints', () => {
     const req = fetchMock.mock.calls[0][0] as Request;
     expect(req.method).toBe('PUT');
     expect(req.url).toContain('/api/workspaces/w-1');
+    const body = await req.json();
+    expect(body).toEqual({ name: 'updated' });
   });
 
   it('deleteWorkspace DELETEs /api/workspaces/:workspaceId', async () => {

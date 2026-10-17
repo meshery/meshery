@@ -1,7 +1,7 @@
 ---
 title: Cubefs
 subtitle: Collaborative and visual infrastructure as design for Cubefs
-image: /extensions/models/cubefs/icons/color/cubefs-color.svg
+image: extensions/models/cubefs/icons/color/cubefs-color.svg
 aliases: /extensibility/integrations/cubefs
 docURL: https://docs.meshery.io/extensibility/integrations/cubefs
 description: 

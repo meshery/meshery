@@ -1,5 +1,5 @@
 import { SEVERITY_TO_NOTIFICATION_TYPE_MAPPING } from '@/components/layout/NotificationCenter/constants';
-import subscribeEvents from '@/graphql/subscriptions/EventsSubscription';
+import { subscribeToEvents } from 'lib/eventsSubscription';
 import { emit, fromCallback, setup, spawnChild, stopChild } from 'xstate';
 import { store } from '../store';
 import { pushEvent } from '@/store/slices/events';
@@ -25,18 +25,18 @@ const events = {
 };
 
 const subscriptionActor = fromCallback(({ sendBack }) => {
-  const subscription = subscribeEvents(
-    (result) => {
+  const subscription = subscribeToEvents(
+    (event) => {
       try {
-        if (!result.event) {
-          console.error('Invalid event received', result);
+        if (!event) {
+          console.error('Invalid event received', event);
           return;
         }
 
-        // GraphQL Event payload (canonical camelCase) is consumed as-is by
-        // downstream UI; meshkit Event JSON tags also flipped to camelCase in
-        // v1.0.7 so the REST /api/system/events list endpoint matches.
-        sendBack(events.eventReceivedFromServer(result.event));
+        // The SSE stream delivers the raw meshkit Event JSON (camelCase), the
+        // same shape the REST /api/system/events list endpoint returns, so it
+        // is consumed as-is by the downstream UI.
+        sendBack(events.eventReceivedFromServer(event));
       } catch (error) {
         console.error('[operationsCenter] An error occurred in processing event', error);
       }
@@ -47,7 +47,7 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
     },
   );
 
-  () => {
+  return () => {
     subscription.dispose();
   };
 });

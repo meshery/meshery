@@ -18,8 +18,9 @@ export const CardBackGrid = styled(Grid)(() => ({
 
 export const YamlDialogTitleGrid = styled(Grid)(() => ({
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'flex-end',
   justifyContent: 'space-between',
+  width: '100%',
 }));
 
 export const CardHeaderRight = styled('div')(() => ({

@@ -24,15 +24,26 @@ vi.mock('@sistent/sistent', () => ({
     </div>
   ),
   DeleteIcon: () => <svg data-testid="delete-icon" />,
-  IconButton: ({ children, onClick, disabled, 'aria-label': ariaLabel, ref }: any) => (
-    <button
-      data-testid={ariaLabel ? `icon-button-${ariaLabel}` : 'icon-button'}
-      onClick={onClick}
-      disabled={disabled}
-    >
-      {children}
-    </button>
-  ),
+  IconButton: ({
+    children,
+    onClick,
+    disabled,
+    'aria-label': ariaLabel,
+    permissionKey,
+    ref,
+  }: any) => {
+    const isDisabled =
+      disabled || (permissionKey && !CAN_mock(permissionKey.id, permissionKey.function));
+    return (
+      <button
+        data-testid={ariaLabel ? `icon-button-${ariaLabel}` : 'icon-button'}
+        onClick={onClick}
+        disabled={isDisabled}
+      >
+        {children}
+      </button>
+    );
+  },
   Menu: ({ children, open, onClose }: any) =>
     open ? (
       <div data-testid="menu">
@@ -52,15 +63,6 @@ vi.mock('@sistent/sistent', () => ({
 
 vi.mock('../css/icons.styles', () => ({
   iconMedium: { width: 24 },
-}));
-
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE: { action: 'a1', subject: 's1' },
-    APPLY_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION: { action: 'a2', subject: 's2' },
-    VALIDATE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION: { action: 'a3', subject: 's3' },
-    APPLY_CUSTOM_CLOUD_NATIVE_CONFIGURATION: { action: 'a4', subject: 's4' },
-  },
 }));
 
 vi.mock('@/utils/can', () => ({

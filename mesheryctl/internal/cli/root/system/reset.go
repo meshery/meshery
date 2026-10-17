@@ -24,7 +24,7 @@ import (
 )
 
 var linkDocReset = map[string]string{
-	"link":    "![reset-usage](/reference/images/reset.png)",
+	"link":    "![reset-usage](../../../images/reset.png)",
 	"caption": "Usage of mesheryctl system reset",
 }
 
@@ -33,7 +33,7 @@ var resetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "Reset Meshery's configuration",
 	Long: `Reset Meshery to it's default configuration.
-	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/reset`,
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/reset`,
 	Example: `
 // Resets meshery.yaml file with a copy from Meshery repo
 mesheryctl system reset

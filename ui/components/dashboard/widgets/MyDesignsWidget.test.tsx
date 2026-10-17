@@ -7,17 +7,29 @@ let loggedInReturn: { data?: { id?: string } } = { data: { id: 'user-1' } };
 let patternsReturn: {
   data?: { patterns?: Array<{ name: string; id: string; updatedAt?: string }> };
   isFetching?: boolean;
-} = { data: { patterns: [] }, isFetching: false };
+  isError?: boolean;
+} = { data: { patterns: [] }, isFetching: false, isError: false };
+let providerCapabilitiesReturn: { data?: { providerType?: string }; isLoading?: boolean } = {
+  data: { providerType: 'remote' },
+  isLoading: false,
+};
 
 const designCardSpy = vi.fn();
+const useGetUserDesignsQuerySpy = vi.fn();
 
 vi.mock('@/rtk-query/user', () => ({
   useGetLoggedInUserQuery: () => loggedInReturn,
+  useGetProviderCapabilitiesQuery: () => providerCapabilitiesReturn,
 }));
 
+vi.mock('@/utils/provider', async () => {
+  const actual = await vi.importActual<typeof import('@/utils/provider')>('@/utils/provider');
+  return actual;
+});
+
 vi.mock('@/rtk-query/design', () => ({
-  useGetUserDesignsQuery: (args: unknown) => {
-    (useGetUserDesignsQuery as { lastArgs?: unknown }).lastArgs = args;
+  useGetUserDesignsQuery: (...args: unknown[]) => {
+    useGetUserDesignsQuerySpy(...args);
     return patternsReturn;
   },
 }));
@@ -27,6 +39,13 @@ vi.mock('@/constants/endpoints', () => ({
 }));
 
 vi.mock('@sistent/sistent', () => ({
+  Box: ({
+    children,
+    sx: _sx,
+    ...rest
+  }: { children: React.ReactNode; sx?: unknown } & React.HTMLAttributes<HTMLDivElement>) => (
+    <div {...rest}>{children}</div>
+  ),
   CatalogIcon: () => <svg data-testid="catalog-icon" />,
   DesignIcon: () => <svg data-testid="design-icon" />,
   EditIcon: () => <svg data-testid="edit-icon" />,
@@ -77,15 +96,29 @@ vi.mock('@sistent/sistent', () => ({
   },
 }));
 
-const useGetUserDesignsQuery = () => patternsReturn;
+const widgetErrorFallbackSpy = vi.fn();
+
+vi.mock('./WidgetErrorFallback', () => ({
+  default: (props: { widgetTitle: string; message?: string }) => {
+    widgetErrorFallbackSpy(props);
+    return (
+      <div data-testid="widget-error-fallback" data-title={props.widgetTitle}>
+        {props.message}
+      </div>
+    );
+  },
+}));
 
 import MyDesignsWidget from './MyDesignsWidget';
 
 describe('MyDesignsWidget', () => {
   beforeEach(() => {
     designCardSpy.mockReset();
+    useGetUserDesignsQuerySpy.mockReset();
+    widgetErrorFallbackSpy.mockReset();
     loggedInReturn = { data: { id: 'user-1' } };
-    patternsReturn = { data: { patterns: [] }, isFetching: false };
+    patternsReturn = { data: { patterns: [] }, isFetching: false, isError: false };
+    providerCapabilitiesReturn = { data: { providerType: 'remote' }, isLoading: false };
   });
 
   it('renders the DesignCard with default props', () => {
@@ -138,5 +171,70 @@ describe('MyDesignsWidget', () => {
     expect(screen.getByTestId('design-card')).toHaveAttribute('data-sort', 'updated_at desc');
     await userEvent.click(screen.getByRole('button', { name: 'changeOrder' }));
     expect(screen.getByTestId('design-card')).toHaveAttribute('data-sort', 'created_at desc');
+  });
+
+  it('skips fetching designs until the logged-in user id is available', () => {
+    loggedInReturn = {};
+    render(<MyDesignsWidget />);
+    const [, options] = useGetUserDesignsQuerySpy.mock.calls[0];
+    expect(options).toEqual({ skip: true });
+  });
+
+  it('does not skip fetching designs once the logged-in user id is available', () => {
+    render(<MyDesignsWidget />);
+    const [, options] = useGetUserDesignsQuerySpy.mock.calls[0];
+    expect(options).toEqual({ skip: false });
+  });
+
+  it('shows the error fallback when the designs query fails', () => {
+    patternsReturn = { isError: true };
+    render(<MyDesignsWidget />);
+    expect(screen.getByTestId('widget-error-fallback')).toHaveAttribute(
+      'data-title',
+      'My Recent Designs',
+    );
+    expect(screen.queryByTestId('design-card')).not.toBeInTheDocument();
+  });
+
+  it('skips fetching designs on the built-in local provider', () => {
+    providerCapabilitiesReturn = { data: { providerType: 'local' } };
+    render(<MyDesignsWidget />);
+    const [, options] = useGetUserDesignsQuerySpy.mock.calls[0];
+    expect(options).toEqual({ skip: true });
+  });
+
+  it('renders the DesignCard (not the error fallback) on the local provider', () => {
+    providerCapabilitiesReturn = { data: { providerType: 'local' } };
+    render(<MyDesignsWidget />);
+    expect(screen.getByTestId('design-card')).toBeInTheDocument();
+    expect(screen.queryByTestId('widget-error-fallback')).not.toBeInTheDocument();
+  });
+
+  it('does not skip fetching designs on a remote provider with a valid user id', () => {
+    providerCapabilitiesReturn = { data: { providerType: 'remote' } };
+    render(<MyDesignsWidget />);
+    const [, options] = useGetUserDesignsQuerySpy.mock.calls[0];
+    expect(options).toEqual({ skip: false });
+  });
+
+  it('skips fetching designs while provider capabilities are still loading, even if user id is available', () => {
+    providerCapabilitiesReturn = { data: undefined, isLoading: true };
+    render(<MyDesignsWidget />);
+    const [, options] = useGetUserDesignsQuerySpy.mock.calls[0];
+    expect(options).toEqual({ skip: true });
+  });
+
+  it('renders the DesignCard (not the error fallback) while provider capabilities are loading', () => {
+    providerCapabilitiesReturn = { data: undefined, isLoading: true };
+    render(<MyDesignsWidget />);
+    expect(screen.getByTestId('design-card')).toBeInTheDocument();
+    expect(screen.queryByTestId('widget-error-fallback')).not.toBeInTheDocument();
+  });
+
+  it('skips fetching designs when provider capabilities resolve as undefined', () => {
+    providerCapabilitiesReturn = { data: undefined, isLoading: false };
+    render(<MyDesignsWidget />);
+    const [, options] = useGetUserDesignsQuerySpy.mock.calls[0];
+    expect(options).toEqual({ skip: true });
   });
 });

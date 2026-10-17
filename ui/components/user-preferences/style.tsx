@@ -42,18 +42,24 @@ export const OrgIconContainer = styled('div')({
   position: 'relative',
 });
 
-export const FormGroupWrapper = styled(FormControl)(() => ({
+export const FormGroupWrapper = styled(FormControl)(({ theme }) => ({
   padding: 20,
   border: '1.5px solid #969696',
   display: 'flex',
   width: '70%',
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+  },
 }));
 
-export const FormContainerWrapper = styled('div')(() => ({
+export const FormContainerWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   flexWrap: 'wrap',
   justifyContent: 'space-evenly',
   padding: 50,
+  [theme.breakpoints.down('md')]: {
+    padding: 20,
+  },
 }));
 
 export const StatsWrapper = styled(Paper)({
@@ -79,6 +85,10 @@ export const RootContainer = styled('div')(({ theme }) => ({
   paddingRight: theme.spacing(15),
   paddingBottom: theme.spacing(10),
   paddingTop: theme.spacing(5),
+  [theme.breakpoints.down('md')]: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+  },
 }));
 
 export const ProviderCard = styled(Card)(({ theme }) => ({

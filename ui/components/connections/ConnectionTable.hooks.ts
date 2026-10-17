@@ -86,7 +86,7 @@ export const useConnectionActions = ({ organizationId }: UseConnectionActionsArg
         await addConnectionToEnvironment(response.id, response.name, connectionId, connectionName);
       } catch (error) {
         notify({
-          message: `${ACTION_TYPES.CREATE_ENVIRONMENT.error_msg}: ${getErrorMessage(error)}`,
+          message: `${ACTION_TYPES.WorkspaceManagementCreateEnvironment.error_msg}: ${getErrorMessage(error)}`,
           event_type: EVENT_TYPES.ERROR,
           details: String(error),
         });

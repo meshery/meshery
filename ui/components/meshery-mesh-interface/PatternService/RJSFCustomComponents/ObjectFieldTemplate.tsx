@@ -4,7 +4,7 @@ import AddIcon from '../../../../assets/icons/AddIcon';
 import { Grid2, Box, IconButton, Typography, useTheme, CssBaseline } from '@sistent/sistent';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
-import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
+import { ExpandMoreIcon } from '@sistent/sistent';
 import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';

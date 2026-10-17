@@ -36,7 +36,7 @@ const HELP_CENTER_RESOURCES = [
   },
   {
     name: 'Discussion Forum',
-    link: 'https://meshery.io/community/#discussion-forums',
+    link: 'https://discuss.meshery.io/',
     external: true,
   },
   {

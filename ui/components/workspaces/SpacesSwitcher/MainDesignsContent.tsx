@@ -16,6 +16,7 @@ import {
   useModal,
   useRoomActivity,
   useTheme,
+  useHasPermission,
 } from '@sistent/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
@@ -38,8 +39,7 @@ import {
   useIsDesignerEnabled,
 } from '@/utils/utils';
 import Router, { useRouter } from 'next/router';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
@@ -157,6 +157,17 @@ const MainDesignsContent = ({
   const [updatePatterns] = useUpdatePatternFileMutation();
   const isDesignerAvailable = useIsDesignerEnabled();
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
+  const isEditAllowed = useHasPermission(Keys.CatalogManagementEditDesign);
+  const isExportAllowed = useHasPermission(Keys.CatalogManagementDownloadADesign);
+  const isRemoveAllowed = useHasPermission(Keys.WorkspaceManagementRemoveDesignsFromWorkspaces);
+  const isShareAllowed = useHasPermission(Keys.CatalogManagementShareDesign);
+  const isDeleteAllowed = useHasPermission(Keys.CatalogManagementDeleteADesign);
+  const isCreateWorkspaceAllowed = useHasPermission(Keys.WorkspaceManagementCreateWorkspace);
+  const isAssignDesignsAllowed = useHasPermission(
+    Keys.WorkspaceManagementAssignDesignsToWorkspaces,
+  );
+  const isMoveViewAllowed = useHasPermission(Keys.KanvasAssignViewsToWorkspace);
+
   const handleOpenDesignInExtension = (designId, designName) => {
     if (workspaceSwitcherContext?.closeModal) {
       workspaceSwitcherContext.closeModal();
@@ -174,30 +185,26 @@ const MainDesignsContent = ({
       id: 'merge_design',
       title: 'Merge Into Current Design',
       icon: <MergeOutlinedIcon fill={theme.palette.icon.default} />,
-      enabled: () =>
-        isDesignOpenInExtension() && CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),
+      enabled: () => isDesignOpenInExtension() && isEditAllowed,
     },
     EXPORT_DESIGN: {
       id: 'export_design',
       title: 'Export Design',
       icon: <ExportIcon fill={theme.palette.icon.default} />,
-      enabled: () => CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject),
+      enabled: () => isExportAllowed,
     },
 
     REMOVE_DESIGN: {
       id: 'move',
       title: 'Move Design',
       icon: <MoveFileIcon fill={theme.palette.icon.default} />,
-      enabled: () =>
-        CAN(keys.REMOVE_DESIGNS_FROM_WORKSPACE.action, keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject),
+      enabled: () => isRemoveAllowed,
     },
     SHARE_DESIGN: {
       id: 'share',
       title: 'Share Design',
       icon: <ShareIcon fill={theme.palette.icon.default} />,
-      enabled: ({ design }) =>
-        design?.visibility !== 'published' &&
-        CAN(keys.SHARE_DESIGN.action, keys.SHARE_DESIGN.subject),
+      enabled: ({ design }) => design?.visibility !== 'published' && isShareAllowed,
     },
     INFO_DESIGN: {
       id: 'info',
@@ -209,7 +216,7 @@ const MainDesignsContent = ({
       id: 'delete',
       title: 'Delete Design',
       icon: <DeleteIcon fill={theme.palette.icon.default} />,
-      enabled: () => CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject),
+      enabled: () => isDeleteAllowed,
     },
   };
 
@@ -390,18 +397,9 @@ const MainDesignsContent = ({
           WorkspaceModalContext={WorkspaceModalContext}
           assignDesignToWorkspace={assignDesignToWorkspace}
           assignViewToWorkspace={assignViewToWorkspace}
-          isCreateWorkspaceAllowed={CAN(
-            keys.CREATE_WORKSPACE.action,
-            keys.CREATE_WORKSPACE.subject,
-          )}
-          isMoveDesignAllowed={CAN(
-            keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
-            keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
-          )}
-          isMoveViewAllowed={CAN(
-            keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
-            keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
-          )}
+          isCreateWorkspaceAllowed={isCreateWorkspaceAllowed}
+          isMoveDesignAllowed={isAssignDesignsAllowed}
+          isMoveViewAllowed={isMoveViewAllowed}
           currentOrgId={currentOrganization?.id}
           notify={notify}
           router={router}

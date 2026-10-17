@@ -53,6 +53,17 @@ func TestUndeployCmd(t *testing.T) {
 			ExpectedError:    utils.ErrFileRead(fmt.Errorf("open %s: no such file or directory", invalidFilePath)),
 		},
 		{
+			Name:             "given no args when design undeploy then usage error is returned",
+			Args:             []string{"undeploy"},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError: ErrUndeployDesign(
+				fmt.Errorf("provide either a design ID or -f [filepath]"),
+			),
+		},
+		{
 			Name:             "given nonexistent design provided when design undeploy then error is thrown",
 			Args:             []string{"undeploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "",

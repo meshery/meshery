@@ -19,13 +19,6 @@ vi.mock('@sistent/sistent', () => {
   };
 });
 
-vi.mock('@/themes/index', () => ({
-  NOTIFICATIONCOLORS: {
-    WARNING: '#ff0',
-    ERROR_DARK: '#a00',
-  },
-}));
-
 import {
   ComponentValidationListItem,
   DryRunComponentLabel,

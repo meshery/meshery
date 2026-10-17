@@ -549,3 +549,76 @@ func TestEncodeIntoResponseWriter_DemonstratesLatentBug(t *testing.T) {
 	}
 	t.Errorf("expected truncation or concatenation as proof of corruption; got a single clean object %+v with body=%q. The standard library may have changed — re-validate buffer-encode regression tests.", first, string(bodyBytes))
 }
+
+// TestWriteMeshkitError_EmitsCauseAndRemediationAsArrays pins the wire contract
+// documented in docs/content/en/project/contributing/error-contract.md:
+// probableCause and suggestedRemediation are arrays, one entry per distinct
+// cause or step.
+//
+// They used to be built from MeshKit's Get* accessors, which join every entry
+// with "." - so a three-cause error arrived as one run-on string
+// ("...view this user..No user exists..The provider...") and the UI rendered it
+// as a single bullet.
+func TestWriteMeshkitError_EmitsCauseAndRemediationAsArrays(t *testing.T) {
+	err := meshkiterrors.New(
+		"meshery-test-0002",
+		meshkiterrors.Alert,
+		[]string{"Unable to create the environment"},
+		[]string{"Status Code: 403 ", "failed to save the environment"},
+		[]string{"You do not have permission.", "The organization does not exist."},
+		[]string{"Confirm your role.", "Retry once the provider is reachable."},
+	)
+
+	rec := httptest.NewRecorder()
+	WriteMeshkitError(rec, err, http.StatusForbidden)
+
+	var decoded struct {
+		ProbableCause        []string `json:"probableCause"`
+		SuggestedRemediation []string `json:"suggestedRemediation"`
+		LongDescription      []string `json:"longDescription"`
+	}
+	if decodeErr := json.NewDecoder(rec.Body).Decode(&decoded); decodeErr != nil {
+		t.Fatalf("body did not parse as JSON: %v", decodeErr)
+	}
+
+	if len(decoded.ProbableCause) != 2 {
+		t.Errorf("probableCause = %#v, want 2 separate entries", decoded.ProbableCause)
+	}
+	if len(decoded.SuggestedRemediation) != 2 {
+		t.Errorf("suggestedRemediation = %#v, want 2 separate entries", decoded.SuggestedRemediation)
+	}
+	if len(decoded.LongDescription) != 2 {
+		t.Errorf("longDescription = %#v, want 2 separate entries", decoded.LongDescription)
+	}
+	for _, entry := range decoded.ProbableCause {
+		if strings.Contains(entry, "..") {
+			t.Errorf("entry %q still carries the joined-with-dot artifact", entry)
+		}
+	}
+}
+
+// TestWriteMeshkitError_OmitsNoneSentinel confirms MeshKit's "None" placeholder
+// never reaches a user. An error constructed with empty detail slices carries
+// the sentinel through some accessors; omitempty plus the compaction step must
+// keep those fields off the wire entirely.
+func TestWriteMeshkitError_OmitsNoneSentinel(t *testing.T) {
+	err := meshkiterrors.New(
+		"meshery-test-0003",
+		meshkiterrors.Alert,
+		[]string{"Something failed"},
+		[]string{"detail"},
+		[]string{},
+		[]string{"None"},
+	)
+
+	rec := httptest.NewRecorder()
+	WriteMeshkitError(rec, err, http.StatusBadGateway)
+
+	body := rec.Body.String()
+	if strings.Contains(body, `"None"`) {
+		t.Errorf("body leaked the MeshKit None sentinel: %s", body)
+	}
+	if strings.Contains(body, "probableCause") {
+		t.Errorf("empty probableCause should be omitted entirely: %s", body)
+	}
+}

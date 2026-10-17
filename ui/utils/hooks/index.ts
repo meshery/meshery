@@ -1,4 +1,6 @@
 export { useNotification, withNotify, useNotificationHandlers } from './useNotification';
+export { useTableUrlState } from './useTableUrlState';
+export { useColumnVisibilityPreference } from './useColumnVisibilityPreference';
 export { default as useDebounce } from './useDebounce';
 export { useMeshModelComponents } from './useMeshModelComponents';
 export { default as usePreventUserFromLeavingPage } from './usePreventUserFromLeavingPage';

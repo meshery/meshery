@@ -10,7 +10,7 @@ import {
   TableCell,
   TableBody,
 } from '@sistent/sistent';
-import MesheryChartDialog from './MesheryChartDialog';
+import MesheryChartDialog from './general/MesheryChartDialog';
 
 const StyledTableRow = styled(TableRow)(() => ({
   borderBottom: 'none',

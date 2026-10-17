@@ -4,7 +4,22 @@ description: Meshery Broker
 icon: https://meshery.io/images/logos/meshery-logo.png
 type: application
 version: 0.5.0
-appVersion: stable-latest
+# This chart ships only the Broker custom resource; the Meshery Operator that
+# reconciles it is what chooses the NATS image. appVersion therefore names a
+# real, published Meshery Operator release - the one this subchart is published
+# alongside - and is kept equal to the parent chart's in-repo appVersion, which
+# install/scripts/check-operator-chart-appversions.sh enforces.
+#
+# That agreement holds in this repository only. helm-chart-releaser packages the
+# chart with app_version set to the Meshery Server tag, and that rewrites just
+# the top-level Chart.yaml, so the published parent advertises a Meshery Server
+# release while this file advertises a Meshery Operator release. The two are
+# separate numbering lines and are not expected to match in the shipped archive.
+#
+# It must never be a moving tag such as stable-latest: the published archive is
+# immutable, so a moving appVersion here would advertise a different application
+# from one publish to the next.
+appVersion: "1.0.5"
 
 maintainers:
   - name: Meshery Authors

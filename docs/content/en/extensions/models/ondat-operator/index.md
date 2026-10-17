@@ -1,7 +1,7 @@
 ---
 title: ondat-operator
 subtitle: Collaborative and visual infrastructure as design for ondat-operator
-image: /extensions/models/ondat-operator/icons/color/ondat-operator-color.svg
+image: extensions/models/ondat-operator/icons/color/ondat-operator-color.svg
 aliases: /extensibility/integrations/ondat-operator
 docURL: https://docs.meshery.io/extensibility/integrations/ondat-operator
 description: 
@@ -10,12 +10,12 @@ integrations-subcategory: Security & Compliance
 registrant: Github
 components: 
 - name: storage-os-cluster
-  colorIcon: content/en/extensions/models/ondat-operator/components/storage-os-cluster/icons/color/storage-os-cluster-color.svg
-  whiteIcon: content/en/extensions/models/ondat-operator/components/storage-os-cluster/icons/white/storage-os-cluster-white.svg
+  colorIcon: extensions/models/ondat-operator/components/storage-os-cluster/icons/color/storage-os-cluster-color.svg
+  whiteIcon: extensions/models/ondat-operator/components/storage-os-cluster/icons/white/storage-os-cluster-white.svg
   description: 
 - name: storage-os-cluster
-  colorIcon: content/en/extensions/models/ondat-operator/components/storage-os-cluster/icons/color/storage-os-cluster-color.svg
-  whiteIcon: content/en/extensions/models/ondat-operator/components/storage-os-cluster/icons/white/storage-os-cluster-white.svg
+  colorIcon: extensions/models/ondat-operator/components/storage-os-cluster/icons/color/storage-os-cluster-color.svg
+  whiteIcon: extensions/models/ondat-operator/components/storage-os-cluster/icons/white/storage-os-cluster-white.svg
   description: 
 components-count: 2
 relationships: 

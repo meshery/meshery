@@ -31,7 +31,8 @@ import (
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete Meshery containers",
-	Long:  `Delete Meshery containers. This command removes all Meshery containers created by docker-compose.`,
+	Long: `Delete Meshery containers. This command removes all Meshery containers created by docker-compose.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/delete`,
 	Example: `
 // Delete Meshery containers
 mesheryctl system delete

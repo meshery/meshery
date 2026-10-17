@@ -1,7 +1,7 @@
 import { test as base, expect } from '@playwright/test';
 import fs from 'fs';
 import os from 'os';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 
 /* eslint-disable react-hooks/rules-of-hooks */
 

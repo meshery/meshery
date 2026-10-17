@@ -68,7 +68,7 @@ To load fish shell completions for each session, execute once:
 
 For an exhaustive list of `mesheryctl` commands and syntax:
 
-- See [`mesheryctl` Command Reference](/reference/mesheryctl).
+- See [`mesheryctl` Command Reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
 
 Guides to using Meshery's various features and components.
 

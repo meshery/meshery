@@ -17,7 +17,7 @@ export default function fetchCatalogPattern(variables: CatalogPatternVariables) 
       catalogPatterns: fetchPatternCatalogContent(selector: $selector) {
         id
         name
-        user_id
+        owner
         pattern_file
         visibility
         catalog_data

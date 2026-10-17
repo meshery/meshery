@@ -11,6 +11,8 @@ import {
 import MUIDataTable from '@sistent/mui-datatables';
 import Moment from 'react-moment';
 import { AdapterTableHeader, SecondaryTable } from './adapter-play-styled';
+import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { isLocalProvider } from '@/utils/provider';
 
 interface SmiResultRow {
   id?: string;
@@ -44,7 +46,6 @@ interface AdapterSmiResultsDialogProps {
   pageSize: number;
   search: string;
   sortOrder: string;
-  user?: { userId?: string };
   fetchSMIResults: (
     adapterName: string,
     page: number,
@@ -72,13 +73,13 @@ const AdapterSmiResultsDialog: React.FC<AdapterSmiResultsDialogProps> = ({
   pageSize,
   search,
   sortOrder,
-  user,
   fetchSMIResults,
   onPageChange,
   onPageSizeChange,
   onSearchChange,
   onSortOrderChange,
 }) => {
+  const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
   const smi_columns = [
     {
       name: 'ID',
@@ -185,8 +186,8 @@ const AdapterSmiResultsDialog: React.FC<AdapterSmiResultsDialogProps> = ({
   ];
 
   const smi_options = {
-    sort: !(user && user.userId === 'meshery'),
-    search: !(user && user.userId === 'meshery'),
+    sort: !isLocalProvider(capabilitiesData),
+    search: !isLocalProvider(capabilitiesData),
     filterType: 'textField',
     expandableRows: true,
     selectableRows: 'none',

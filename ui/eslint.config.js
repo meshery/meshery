@@ -69,7 +69,7 @@ const legacyRestrictedImportOffenders = [
   'components/Performance/PerformanceResults.tsx',
   'components/Performance/index.tsx',
   'components/Performance/style.tsx',
-  'components/ReactSelectWrapper.tsx',
+  'components/general/ReactSelectWrapper.tsx',
   'components/Registry/RegistryModal.tsx',
   'components/RelationshipBuilder/RelationshipFormStepper.tsx',
   'components/Settings/Registry/ComponentTree.tsx',
@@ -84,9 +84,8 @@ const legacyRestrictedImportOffenders = [
   'components/Settings/Registry/Stepper/UrlStepper.tsx',
   'components/SpacesSwitcher/MainDesignsContent.tsx',
   'components/SpacesSwitcher/components.tsx',
-  'components/UserPreferences/index.tsx',
-  'components/ViewSwitch.tsx',
-  'components/YamlDialog.tsx',
+  'components/general/ViewSwitch.tsx',
+  'components/general/YamlDialog.tsx',
   'components/configuratorComponents/MeshModel/index.tsx',
   'components/configuratorComponents/NameToIcon.tsx',
   'components/connections/ConnectionChip.tsx',
@@ -137,7 +136,8 @@ const legacyLiteralColorOffenders = [
   'components/designs/patterns/MesheryPatterns.columns.tsx',
   'components/designs/patterns/MesheryPatterns.tsx',
   'components/designs/patterns/design-lifecycle-handlers.tsx',
-  'components/designs/patterns/style.tsx',
+  'components/general/FlipCard.styles.tsx',
+  'components/general/YamlDialog.styles.tsx',
   'components/layout/Navigator/NavigatorExtension.tsx',
   'components/layout/NotificationCenter/constants.tsx',
   'components/layout/NotificationCenter/formatters/relationship_evaluation.tsx',
@@ -206,8 +206,8 @@ const legacyMaxLineSoftOffenders = [
 // stay allowlisted until they are migrated.
 const legacyInlineStyleOffenders = [
   'assets/icons/shapes/Octagon.tsx',
-  'components/AppComponents.tsx',
-  'components/BBChart.tsx',
+  'components/layout/AppShell/AppComponents.tsx',
+  'components/general/BBChart.tsx',
   'components/connections/ConnectionTable.columns.tsx',
   'components/dashboard/charts/ConnectionCharts.tsx',
   'components/dashboard/charts/DashboardMeshModelGraph.tsx',
@@ -240,8 +240,7 @@ const legacyInlineStyleOffenders = [
   'components/designs/lifecycle/ValidateDesign.tsx',
   'components/designs/lifecycle/common.tsx',
   'components/designs/lifecycle/finalizeDeployment.tsx',
-  'components/DuplicatesDataTable.tsx',
-  'components/FlipCard.tsx',
+  'components/general/FlipCard.tsx',
   'components/general/ConnectClustersBtn.tsx',
   'components/general/CreateDesignBtn.tsx',
   'components/shared/ErrorBoundary/ErrorBoundary.tsx',
@@ -282,7 +281,7 @@ const legacyInlineStyleOffenders = [
   'components/designs/patterns/MesheryPatterns.tsx',
   'components/designs/patterns/MesheryPatternsToolbar.tsx',
   'components/MesheryPlayComponent.tsx',
-  'components/MesheryProgressBar.tsx',
+  'components/general/MesheryProgressBar.tsx',
   'components/MesherySettingsEnvButtons.tsx',
   'components/layout/Navigator/Navigator.tsx',
   'components/layout/Navigator/NavigatorExtension.tsx',
@@ -309,7 +308,7 @@ const legacyInlineStyleOffenders = [
   'components/performance/assets/twitterIcon.tsx',
   'components/performance/index.tsx',
   'components/performance/performance-helpers.tsx',
-  'components/ReactSelectWrapper.tsx',
+  'components/general/ReactSelectWrapper.tsx',
   'components/relationship-builder/CreateRelationshipModal.tsx',
   'components/relationship-builder/RelationshipFormStepper.tsx',
   'components/settings/MesherySettings.tsx',
@@ -345,7 +344,7 @@ const legacyInlineStyleOffenders = [
   'components/TroubleshootingComponent.tsx',
   'components/shared/FormFields/typing-filter/index.tsx',
   'components/user-preferences/index.tsx',
-  'components/ViewSwitch.tsx',
+  'components/general/ViewSwitch.tsx',
   'components/designs/configurator/MeshModel/LazyComponentForm.tsx',
   'components/designs/configurator/MeshModel/index.tsx',
   'components/designs/configurator/NameToIcon.tsx',
@@ -368,7 +367,7 @@ const legacyInlineStyleOffenders = [
   'components/filters/PublishModal.tsx',
   'components/filters/YAMLEditor.tsx',
   'components/layout/AppShell/layout.tsx',
-  'components/multi-select-wrapper.tsx',
+  'components/general/multi-select-wrapper.tsx',
   'components/layout/Navigator/navigatorComponents.tsx',
   'components/telemetry/grafana/GrafanaComponent.tsx',
   'components/telemetry/prometheus/PrometheusSelectionComponent.tsx',
@@ -499,8 +498,9 @@ module.exports = [
       // the rules to errors.
       // ---------------------------------------------------------------------
 
-      // Ban Material UI and legacy theme imports. @sistent/sistent is the
-      // only UI kit; @/theme is the approved Phase 1 theme entry point.
+      // Ban Material UI imports and deep imports of the local theme entry
+      // point. @sistent/sistent is the only UI kit; @/theme is the approved
+      // Phase 1 theme entry point.
       'no-restricted-imports': [
         'warn',
         {
@@ -530,18 +530,6 @@ module.exports = [
             {
               name: '@rjsf/mui',
               message: 'Use the shared RJSF wrapper; do not import @rjsf/mui directly.',
-            },
-            {
-              name: '@/themes',
-              message: 'Use @/theme, the approved Phase 1 theme entry point.',
-            },
-            {
-              name: '@/themes/app',
-              message: 'Use @/theme and theme.palette.* instead of the legacy Colors object.',
-            },
-            {
-              name: '@/themes/index',
-              message: 'Use @/theme and theme.palette.* instead of NOTIFICATIONCOLORS.',
             },
           ],
           patterns: [
@@ -575,9 +563,7 @@ module.exports = [
   // to contain a literal color are:
   //
   //   - ui/theme/**       (the theme module itself)
-  //   - ui/themes/**      (legacy theme module, scheduled for deletion)
   //   - ui/assets/**      (SVG icons encoded as React components)
-  //   - ui/constants/**   (legacy color constants, scheduled for deletion)
   //   - ui/lib/**         (third-party integration helpers)
   //   - ui/public/**      (static assets)
   // ---------------------------------------------------------------------
@@ -585,9 +571,7 @@ module.exports = [
     files: ['**/*.{ts,tsx,js,jsx}'],
     ignores: [
       'theme/**',
-      'themes/**',
       'assets/**',
-      'constants/**',
       'lib/**',
       'public/**',
       'tests/**',
@@ -621,16 +605,14 @@ module.exports = [
   // colors, typography, or spacing tokens.
   //
   // Scoped to .tsx/.jsx component sources. The same dirs the hex-literal
-  // guardrail ignores are ignored here (theme/themes/assets/lib/public are
+  // guardrail ignores are ignored here (theme/assets/lib/public are
   // not component code, and tests/scripts/the config itself are tooling).
   // ---------------------------------------------------------------------
   {
     files: ['**/*.{tsx,jsx}'],
     ignores: [
       'theme/**',
-      'themes/**',
       'assets/**',
-      'constants/**',
       'lib/**',
       'public/**',
       'tests/**',

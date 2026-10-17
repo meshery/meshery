@@ -97,11 +97,11 @@ export const PropertyLinkFormatters = {
 const linkOrder = ['doclink'];
 
 const EventTypeFormatters = {
-  [eventDetailFormatterKey(EVENT_TYPE.DEPLOY_DESIGN)]: DeploymentSummaryFormatter,
-  [eventDetailFormatterKey(EVENT_TYPE.UNDEPLOY_DESIGN)]: DeploymentSummaryFormatter,
+  [eventDetailFormatterKey(EVENT_TYPE.CatalogManagementDeployDesign)]: DeploymentSummaryFormatter,
+  [eventDetailFormatterKey(EVENT_TYPE.CatalogManagementUndeployDesign)]: DeploymentSummaryFormatter,
   [eventDetailFormatterKey(EVENT_TYPE.EVALUATE_DESIGN)]: RelationshipEvaluationEventFormatter,
   [eventDetailFormatterKey(EVENT_TYPE.ACADEMY_QUIZ_EVALUATION)]: AcademyEventsFormatter,
-  [eventDetailFormatterKey(EVENT_TYPE.VALIDATE_DESIGN)]: SchemaValidationFormatter,
+  [eventDetailFormatterKey(EVENT_TYPE.CatalogManagementValidateDesign)]: SchemaValidationFormatter,
   // [eventDetailFormatterKey(EVENT_TYPE.REGISTRANT_SUMMARY)]: RegistrantSummaryFormatter,
 };
 

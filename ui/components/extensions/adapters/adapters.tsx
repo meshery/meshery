@@ -137,7 +137,13 @@ const Adapters: React.FC = () => {
             </Typography>
 
             <FrontSideDescription variant="body">
-              <ImageWrapper src={adapter.imageSrc} />
+              <ImageWrapper
+                src={
+                  theme.palette.mode === 'dark' && adapter.darkImageSrc
+                    ? adapter.darkImageSrc
+                    : adapter.imageSrc
+                }
+              />
               <div
                 style={{
                   display: 'inline',

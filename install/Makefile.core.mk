@@ -26,7 +26,7 @@ GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-coun
 REMOTE_PROVIDER=""
 
 LOCAL_PROVIDER="Local"
-GOVERSION = 1.25
+GOVERSION = 1.26
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
 KEYS_PATH="../../server/permissions/keys.csv"
@@ -59,12 +59,15 @@ PROVIDER_CAPABILITIES_FILEPATH="" # Path to capabilities file for remote provide
 
 # REMOTE_PROVIDER_URLS is the comma-joined list of Meshery's production remote
 # providers, derived from the single canonical source install/providers.env. Edit
-# providers.env (not this line) and run `make generate-install` to propagate the change
+# providers.env (not this line) and run `make providers-propagate` to propagate the change
 # to every install artifact.
 # The `\#` is escaped so Make passes a literal `#` to awk instead of treating the rest
 # of the line as a Make comment. awk skips comment/blank lines, requires an `=`, and
 # prints everything after the first `=` (the URL), so quoted names like "TCS Labs" work.
-REMOTE_PROVIDER_URLS := $(shell awk '!/^[[:space:]]*\#/ && /=/ { sub(/^[^=]*=/, ""); print }' install/providers.env | paste -sd, -)
+# Support invoking make from subdirectories (e.g., mesheryctl); prefer local install/
+# and fall back to parent dirs' install/ if needed.
+PROVIDERS_ENV := $(firstword $(wildcard install/providers.env ../install/providers.env ../../install/providers.env))
+REMOTE_PROVIDER_URLS := $(shell [ -n "$(PROVIDERS_ENV)" ] && awk '!/^[[:space:]]*\#/ && /=/ { sub(/^[^=]*=/, ""); print }' $(PROVIDERS_ENV) | paste -sd, - || echo "")
 
 #-----------------------------------------------------------------------------
 # Server

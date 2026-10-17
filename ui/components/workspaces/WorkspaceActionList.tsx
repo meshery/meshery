@@ -16,8 +16,7 @@ import { useState } from 'react';
 import { TableIconsContainer, IconWrapper } from './styles';
 import { iconMedium } from 'css/icons.styles';
 import { WORKSPACE_ACTION_TYPES } from '.';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 
 const WorkspaceActionList = ({
   handleTeamsModalOpen,
@@ -65,14 +64,14 @@ const WorkspaceActionList = ({
       label: 'Edit Workspace',
       icon: <EditIcon style={{ fill: theme.palette.icon.default, ...iconMedium }} />,
       onClick: (e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.EDIT, selectedWorkspace),
-      disabled: !CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject),
+      permissionKey: Keys.WorkspaceManagementEditWorkspace,
     },
     {
       key: 'delete-workspace',
       label: 'Delete Workspace',
       icon: <DeleteIcon style={{ fill: theme.palette.icon.default, ...iconMedium }} />,
       onClick: (e) => handleDeleteWorkspaceConfirm(e, selectedWorkspace),
-      disabled: !CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject),
+      permissionKey: Keys.WorkspaceManagementDeleteWorkspace,
     },
   ];
 
@@ -85,14 +84,14 @@ const WorkspaceActionList = ({
               <MoreVertIcon />
             </IconButton>
             <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-              {actionItems.map(({ key, label, icon, onClick, disabled }) => (
+              {actionItems.map(({ key, label, icon, onClick, permissionKey }) => (
                 <MenuItem
                   key={key}
                   onClick={(e) => {
                     onClick(e);
                     handleClose(e);
                   }}
-                  disabled={disabled}
+                  permissionKey={permissionKey}
                 >
                   <ListItemIcon>{icon}</ListItemIcon>
                   {label}
@@ -102,9 +101,13 @@ const WorkspaceActionList = ({
           </>
         ) : (
           <>
-            {actionItems.map(({ key, label, icon, onClick, disabled }) => (
+            {actionItems.map(({ key, label, icon, onClick, permissionKey }) => (
               <CustomTooltip title={label} key={key}>
-                <IconButton aria-label={key} onClick={(e) => onClick(e)} disabled={disabled}>
+                <IconButton
+                  aria-label={key}
+                  onClick={(e) => onClick(e)}
+                  permissionKey={permissionKey}
+                >
                   {icon}
                 </IconButton>
               </CustomTooltip>

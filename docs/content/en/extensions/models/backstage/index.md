@@ -1,7 +1,7 @@
 ---
 title: Backstage
 subtitle: Collaborative and visual infrastructure as design for Backstage
-image: /extensions/models/backstage/icons/color/backstage-color.svg
+image: extensions/models/backstage/icons/color/backstage-color.svg
 aliases: /extensibility/integrations/backstage
 docURL: https://docs.meshery.io/extensibility/integrations/backstage
 description: 

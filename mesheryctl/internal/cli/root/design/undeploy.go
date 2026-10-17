@@ -35,20 +35,27 @@ import (
 var designUndeployCmd = &cobra.Command{
 	Use:   "undeploy",
 	Short: "Undeploy design",
-	Long:  `Undeploy design will trigger undeploy of design`,
+	Long: `Undeploy design will trigger undeploy of design.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/design/undeploy`,
 	Example: `
 // Undeploy design by providing file path
 mesheryctl design undeploy -f [filepath]
 	`,
 
 	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 && file == "" {
+			return ErrUndeployDesign(
+				fmt.Errorf("provide either a design ID or -f [filepath]"),
+			)
+		}
+
 		if cmd.Flags().Changed("file") && file == "" {
 			errMsg := `Usage: mesheryctl design undeploy -f [filepath]`
 			return ErrUndeployDesign(fmt.Errorf("%s", errMsg))
 		}
+
 		return nil
 	},
-
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error

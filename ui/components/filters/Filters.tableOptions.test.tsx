@@ -20,7 +20,6 @@ describe('buildFiltersTableOptions', () => {
   let setSearch: ReturnType<typeof vi.fn>;
   let setSortOrder: ReturnType<typeof vi.fn>;
   let setSelectedRowData: ReturnType<typeof vi.fn>;
-  let initFiltersSubscription: ReturnType<typeof vi.fn>;
   let showmodal: ReturnType<typeof vi.fn>;
   let deleteFilter: ReturnType<typeof vi.fn>;
   let searchTimeout: { current: ReturnType<typeof setTimeout> | null };
@@ -31,7 +30,6 @@ describe('buildFiltersTableOptions', () => {
     setSearch = vi.fn();
     setSortOrder = vi.fn();
     setSelectedRowData = vi.fn();
-    initFiltersSubscription = vi.fn();
     showmodal = vi.fn();
     deleteFilter = vi.fn();
     searchTimeout = { current: null };
@@ -39,7 +37,7 @@ describe('buildFiltersTableOptions', () => {
 
   const build = (overrides: any = {}) =>
     buildFiltersTableOptions({
-      user: { userId: 'u-1' },
+      isLocalProvider: false,
       count: 10,
       page: 0,
       pageSize: 25,
@@ -53,14 +51,13 @@ describe('buildFiltersTableOptions', () => {
       setSearch,
       setSortOrder,
       setSelectedRowData,
-      initFiltersSubscription,
       showmodal,
       deleteFilter,
       ...overrides,
     });
 
-  it('disables sort for the meshery user', () => {
-    expect(build({ user: { userId: 'meshery' } }).sort).toBe(false);
+  it('disables sort on the local provider and enables it on a remote provider', () => {
+    expect(build({ isLocalProvider: true }).sort).toBe(false);
     expect(build().sort).toBe(true);
   });
 
@@ -109,17 +106,15 @@ describe('buildFiltersTableOptions', () => {
     expect(deleteFilter).not.toHaveBeenCalled();
   });
 
-  it('onTableChange "changePage" reinitialises subscription and updates page', () => {
+  it('onTableChange "changePage" updates page', () => {
     const options = build();
     options.onTableChange('changePage', { page: 3 });
-    expect(initFiltersSubscription).toHaveBeenCalledWith('3', '25', '', 'updated_at desc');
     expect(setPage).toHaveBeenCalledWith(3);
   });
 
-  it('onTableChange "changeRowsPerPage" reinitialises subscription and updates page size', () => {
+  it('onTableChange "changeRowsPerPage" updates page size', () => {
     const options = build();
     options.onTableChange('changeRowsPerPage', { rowsPerPage: 50 });
-    expect(initFiltersSubscription).toHaveBeenCalledWith('0', '50', '', 'updated_at desc');
     expect(setPageSize).toHaveBeenCalledWith(50);
   });
 
@@ -137,15 +132,13 @@ describe('buildFiltersTableOptions', () => {
     const options = build({ sortOrder: 'updated_at desc' });
     options.onTableChange('sort', { activeColumn: 0, announceText: 'col : ascending' });
     expect(setSortOrder).toHaveBeenCalledWith('name asc');
-    expect(initFiltersSubscription).toHaveBeenCalled();
   });
 
   it('onTableChange "sort" is a no-op when the computed order matches current sortOrder', () => {
     const options = build({ sortOrder: 'updated_at desc' });
     options.onTableChange('sort', { activeColumn: 2, announceText: 'col : descending' });
-    // updated_at desc was already the sortOrder, so neither setter is called.
+    // updated_at desc was already the sortOrder, so the setter is not called.
     expect(setSortOrder).not.toHaveBeenCalled();
-    expect(initFiltersSubscription).not.toHaveBeenCalled();
   });
 
   it('setRowProps and setTableProps expose data-cy attributes', () => {

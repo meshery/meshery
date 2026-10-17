@@ -10,15 +10,13 @@ aliases:
 
 ## A collection of design templates
 
-Meshery Catalog functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes.
-
-It also supports a collaborative environment, where DevOps engineers can share their experiences, feedback, and best practices with others in the community. Import cloud native patterns published by others into your Meshery Server. Benefit from and build upon each pattern by incorporating your own tips and tricks, then publish and share with the community at-large. This facilitates knowledge-sharing and helps to build a strong ecosystem of cloud native infrastructure experts.
+Meshery Catalog supports a collaborative environment, where DevOps engineers can share their experiences, feedback, and best practices with others in the community. Import cloud native patterns published by others into your Meshery Server. Benefit from and build upon each pattern by incorporating your own tips and tricks, then publish and share with the community at-large. This facilitates knowledge-sharing and helps to build a strong ecosystem of cloud native infrastructure experts.
 
 ### To publish a design to catalog using Meshery UI
 
 1. In your web browser, navigate to the designs page (e.g. https://playground.meshery.io/configuration/designs).
 2. Find your design, and click Edit to update your design's details.
-3. Verify that your design has the appropriate technologies, description, and any cavaets or other considerations of its purpose of use listed.
+3. Verify that your design has the appropriate technologies, description, and any caveats or other considerations of its purpose of use listed.
 4. Click "Publish to Catalog", and your design is queued for review and approval by Workspace administrators.
 
 <a href="./images/publish-to-catalog-screenshot.png" class="lightbox-image">
@@ -33,12 +31,12 @@ It also supports a collaborative environment, where DevOps engineers can share t
 2. Open a terminal or command prompt.
 3. Use the Meshery CLI commands to interact with the catalog. `mesheryctl design`
 4. Follow the prompts or instructions provided by the Meshery CLI help.
-    - Apply [design file](/guides/configuration-management):  `mesheryctl design apply --file [path to design file | URL of the file]`
+    - Apply [design file]({{< ref "guides/configuration-management/_index.md" >}}):  `mesheryctl design apply --file [path to design file | URL of the file]`
     - Delete design file:  `mesheryctl design delete --file [path to design file]`
     - View design file:  `mesheryctl design view [design name | ID]`
     - List all designs: `mesheryctl design list`
-5. [Importing](/reference/mesheryctl#cloud-native-pattern-configuration-and-management) a design. `mesheryctl design import -f [file-path] -s [manifest | compose | helm]`
-6. Applying [WASM Filter](/guides/configuration-management#wasm-filters). `mesheryctl filter import [file | URL] --wasm-config [filepath|string]`
+5. [Importing]({{< ref "reference/references/mesheryctl/_index.md#infrastructure-design-configuration-and-management" >}}) a design. `mesheryctl design import -f [file-path] -s [manifest | compose | helm]`
+6. Applying [WASM Filter]({{< ref "guides/configuration-management/_index.md#wasm-filters" >}}). `mesheryctl filter import [file | URL] --wasm-config [filepath|string]`
 
 
 ### Publishing a Design to Meshery Catalog
@@ -68,5 +66,5 @@ It also supports a collaborative environment, where DevOps engineers can share t
 </details>
 
 {{% alert color="info" title="Help with Meshery Catalog" %}}
-If you have any questions or need assistance, reach out on the [discussion forum](https://meshery.io/community#discussion-forums).
+If you have any questions or need assistance, reach out on the [discussion forum](https://discuss.meshery.io/).
 {{% /alert %}}

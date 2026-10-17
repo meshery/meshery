@@ -1,4 +1,4 @@
-FROM golang:1.25.5 AS meshery-server
+FROM golang:1.26.4 AS meshery-server
 ARG GIT_VERSION
 
 RUN adduser --disabled-login appuser
@@ -95,7 +95,7 @@ RUN update-ca-certificates
 #     apk add --no-cache libstdc++
 
 COPY ./server/cmd/server-config.env /app/server/cmd/server-config.env
-COPY ./server/meshmodel /app/server/meshmodel
+COPY ./models /app/models
 COPY ./server/permissions /app/server/permissions/
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd

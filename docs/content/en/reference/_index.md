@@ -1,5 +1,5 @@
 ---
-title: Reference
+title: Reference and Extensibility
 linkTitle: "📖 Extensibility & Reference"
 description: References for using Meshery's various features and components.
 weight: 20
@@ -8,4 +8,3 @@ weight: 20
 References for using Meshery's various features and components.
 
 {{< related-discussions tag="meshery" >}}
-

@@ -1,4 +1,4 @@
-FROM golang:1.25.5 AS meshery-server
+FROM golang:1.26.4 AS meshery-server
 ARG TOKEN
 ARG GIT_VERSION
 ARG GIT_COMMITSHA
@@ -8,6 +8,25 @@ RUN adduser --disabled-login appuser
 WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
+
+# Compile the Go relationship/policy engine to WebAssembly and stage Go's
+# wasm_exec.js runtime glue. ui/pages/_document.tsx loads
+# /static/wasm/wasm_exec.js on every page, and the engine fetches
+# /static/wasm/policy_engine.wasm at runtime. Both are .gitignore'd artifacts
+# emitted by the `wasm-engine` Makefile target, which this container build never
+# ran -- so the request fell through to the SPA HTML shell and the browser
+# refused to execute it (MIME 'text/plain'). Full source is copied because
+# server/policies/wasm/go.mod sets `replace github.com/meshery/meshery => ../../../`.
+FROM golang:1.26.4 AS meshery-wasm
+WORKDIR /github.com/meshery/meshery
+ADD . .
+RUN mkdir -p /wasm-dist && cd server/policies/wasm && \
+    GOOS=js GOARCH=wasm GOPROXY=https://proxy.golang.org GOSUMDB=off \
+        go build -trimpath -ldflags="-w -s" -o /wasm-dist/policy_engine.wasm . && \
+    cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" /wasm-dist/wasm_exec.js && \
+    awk '{ print; if (index($0, "chdir() { throw enosys(); },") > 0) { print "\t\t\tenv: {},"; found=1 } } END { exit(found ? 0 : 1) }' \
+        /wasm-dist/wasm_exec.js > /wasm-dist/wasm_exec.js.tmp && \
+    mv /wasm-dist/wasm_exec.js.tmp /wasm-dist/wasm_exec.js
 
 FROM node:22-alpine AS base-node
 
@@ -30,6 +49,11 @@ FROM base-node AS meshery-ui-builder
 WORKDIR /app
 COPY --from=meshery-ui-deps /app/node_modules ./node_modules
 COPY ui .
+# Stage the relationship/policy engine wasm + Go wasm runtime glue into the UI's
+# public assets *before* the build so `next build` (output: 'export') emits them
+# to out/static/wasm -- the path Meshery serves the UI from
+# (server/router/server.go: ServeUI "../../ui/out/").
+COPY --from=meshery-wasm /wasm-dist/ ./public/static/wasm/
 # Disable NextJS Telemetry data collect
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
@@ -85,7 +109,7 @@ RUN apt-get update && apt-get install -y ca-certificates && apt-get clean && rm 
 RUN update-ca-certificates
 
 COPY ./server/cmd/server-config.env /app/server/cmd/server-config.env
-COPY ./server/meshmodel /app/server/meshmodel
+COPY ./models /app/models
 COPY ./server/permissions /app/server/permissions/
 COPY ./docs/data/catalog /app/docs/data/catalog/
 COPY --from=meshery-server /meshery /app/server/cmd/

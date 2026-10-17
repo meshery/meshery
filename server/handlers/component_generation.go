@@ -10,6 +10,7 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/generators/artifacthub"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
 
 	meshkitmodels "github.com/meshery/meshkit/generators/models"
 	"github.com/meshery/schemas/models/v1beta3/component"
@@ -31,7 +32,7 @@ type componentGenerationResponseDataItem struct {
 	Errors     []string                        `json:"errors"`
 }
 
-// request body should be json
+// MeshModelGenerationHandler expects the request body to be JSON.
 // request body should be of format - {data: [{name: string, register: boolean}]}
 // response format - {data: [{name: string, components: [component], errors: [string] }]}
 func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request) {
@@ -70,12 +71,12 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 				var isRegistranError bool
 				utils.WriteSVGsOnFileSystem(&comp)
 				host := fmt.Sprintf("%s.artifacthub.meshery", gpi.Name)
-				isRegistranError, isModelError, err = h.registryManager.RegisterEntity(connection.Connection{
+				isRegistranError, isModelError, err = h.registryManager.RegisterEntity(registry.RegistrantHostToV1beta3(connection.Connection{
 					Kind: artifacthub.ArtifactHub,
 					Metadata: map[string]interface{}{
 						"name": host,
 					},
-				}, &comp)
+				}), &comp)
 				helpers.HandleError(connection.Connection{
 					Kind: artifacthub.ArtifactHub,
 				}, &comp, err, isModelError, isRegistranError)

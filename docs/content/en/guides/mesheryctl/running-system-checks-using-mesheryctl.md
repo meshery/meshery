@@ -17,17 +17,19 @@ Usage:
 mesheryctl system check [flags]
 
 Flags:
---adapter Check status of Meshery adapters
--h, --help help for check
---operator Check status of Meshery operators
---pre Verify environment readiness to deploy Meshery
---preflight Verify environment readiness to deploy Meshery
+      --adapter string   Check status of specified meshery adapter
+      --adapters         Check status of meshery adapters
+      --components       Check status of Meshery components
+  -h, --help             help for check
+      --operator         Verify the health of Meshery Operator's deployment with MeshSync and Broker
+      --pre              Verify environment readiness to deploy Meshery
+      --preflight        Verify environment readiness to deploy Meshery
 
 Global Flags:
---config string path to config file (default "/Users/navendu/.meshery/config.yaml")
--c, --context string (optional) temporarily change the current context.
--v, --verbose verbose output
--y, --yes (optional) assume yes for user interactive prompts.</div></div>
+      --config string    path to config file (default "~/.meshery/config.yaml")
+  -c, --context string   (optional) temporarily change the current context.
+  -v, --verbose          verbose output
+  -y, --yes              (optional) assume yes for user interactive prompts.</div></div>
 </pre>
 
 ## Deployment checks
@@ -67,10 +69,16 @@ Post-deployment checks are run as shown below:
 
 ## Additional checks
 
-To check the status of the deployed adapters only, users can leverage the `--adapter` flag as shown below:
+To check the status of all deployed adapters, users can leverage the `--adapters` flag as shown below:
 
 <pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl system check --adapter</div></div>
+<div class="codeblock"><div class="clipboardjs">mesheryctl system check --adapters</div></div>
+</pre>
+
+To check the status of a specific adapter, specify the adapter name using the `--adapter` flag:
+
+<pre class="codeblock-pre">
+<div class="codeblock"><div class="clipboardjs">mesheryctl system check --adapter &lt;adapter-name&gt;</div></div>
 </pre>
 
 Users can also narrow down the tests to just check the status of the Meshery operator deployed on their Kubernetes cluster:
@@ -87,11 +95,11 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 ##### Question: I ran a preflight check to see if I satisfy all requirements for Meshery in my system. It returned positive results but I couldn't start Meshery. What to do?
 
-**Answer**: _Make sure if you've configured your system to run Meshery in smooth manner. For configuration, do check out the docs site and [this page](/installation) to see instructions related to the platform you use._
+**Answer**: _Make sure if you've configured your system to run Meshery in smooth manner. For configuration, do check out the docs site and [this page]({{< ref "installation/_index.md" >}}) to see instructions related to the platform you use._
 
 ##### Question: Do I need a Kubernetes cluster or will a Docker host suffice for Meshery deployments?
 
-**Answer**: _Meshery's [performance management](/guides/performance-management/managing-performance) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
+**Answer**: _Meshery's [performance management]({{< ref "guides/performance-management/managing-performance/index.md" >}}) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
 
 ##### Question: What are Meshery's production deployment requirements?
 
@@ -128,14 +136,6 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 ##### Question: I started Meshery fresh, didn't change any of the details in the context I have. But I see that all adapter checks are failing. What to do?
 
 **Answer**: _Configure Meshery to use on your Kubernetes cluster, then upload the kubeconfig file via Meshery UI to notify Meshery to use that cluster. If that didn't work, feel free to [open up an issue](https://github.com/meshery/meshery/issues) in GitHub._
-
-### Suggested Reading
-
-For an exhaustive list of `mesheryctl` commands and syntax:
-
-- See [`mesheryctl` Command Reference](/reference/mesheryctl).
-
-Guides to using Meshery's various features and components.
 
 {{< related-discussions tag="mesheryctl" >}}
 

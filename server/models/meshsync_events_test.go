@@ -43,8 +43,18 @@ func (b *testMeshsyncBroker) SubscribeWithChannel(_ string, _ string, subscripti
 	return nil
 }
 
+func (b *testMeshsyncBroker) Unsubscribe(_ string) error {
+	return nil
+}
+
 func (b *testMeshsyncBroker) Info() string {
 	return "test-broker"
+}
+
+func (b *testMeshsyncBroker) IsConnected() bool {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return !b.closed
 }
 
 func (b *testMeshsyncBroker) DeepCopyObject() meshkitBroker.Handler {

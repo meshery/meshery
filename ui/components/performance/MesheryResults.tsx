@@ -4,7 +4,6 @@ import Moment from 'react-moment';
 import { MoreHoriz as MoreHorizIcon } from '@/assets/icons';
 import CustomToolbarSelect from '../CustomToolbarSelect';
 import MesheryChart from '../MesheryChart';
-import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import MesheryResultDialog from '../MesheryResultDialog';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -13,6 +12,7 @@ import { useLazyGetResultsQuery } from '@/rtk-query/meshResult';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateResultsSelection } from '@/store/slices/prefTest';
+import { isLocalProvider } from '@/utils/provider';
 
 const DEFAULT_PAGE_SIZE = 10;
 const ROWS_PER_PAGE_OPTIONS = [10, 20, 25];
@@ -27,7 +27,7 @@ const MesheryResults = () => {
   const [results, setResults] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [searchTimeout, setSearchTimeout] = useState(null);
-  const { user } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const { results_selection } = useSelector((state) => state.prefTest);
   // RTK Query hook for fetching results
@@ -315,8 +315,8 @@ const MesheryResults = () => {
   const options = useMemo(
     () => ({
       filter: false,
-      sort: !(user && user.userId === 'meshery'),
-      search: !(user && user.userId === 'meshery'),
+      sort: !isLocalProvider(providerCapabilities),
+      search: !isLocalProvider(providerCapabilities),
       filterType: 'textField',
       responsive: 'standard',
       resizableColumns: true,
@@ -344,10 +344,6 @@ const MesheryResults = () => {
       expandableRows: true,
       renderExpandableRow: (rowData, rowMeta) => {
         const row = results[rowMeta.dataIndex].runner_results;
-        const boardConfig = results[rowMeta.dataIndex].server_board_config;
-        const serverMetrics = results[rowMeta.dataIndex].server_metrics;
-        const startTime = new Date(row.StartTime);
-        const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
         const colSpan = rowData.length + 1;
 
         return (
@@ -356,26 +352,13 @@ const MesheryResults = () => {
               <div>
                 <MesheryChart rawdata={[results[rowMeta.dataIndex]]} data={[row]} hideTitle />
               </div>
-              {boardConfig && Object.keys(boardConfig).length > 0 && (
-                <div>
-                  <GrafanaCustomCharts
-                    boardPanelConfigs={[boardConfig]}
-                    boardPanelData={[serverMetrics]}
-                    startDate={startTime}
-                    from={startTime.getTime().toString()}
-                    endDate={endTime}
-                    to={endTime.getTime().toString()}
-                    liveTail={false}
-                  />
-                </div>
-              )}
             </TableCell>
           </TableRow>
         );
       },
     }),
     [
-      user,
+      providerCapabilities,
       count,
       pageSize,
       page,

@@ -76,11 +76,11 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 		if models.K8sMeshModelMetadata.Capabilities != nil {
 			c.Capabilities = models.K8sMeshModelMetadata.Capabilities
 		}
-		isRegistranError, isModelError, err = reg.RegisterEntity(connection.Connection{
+		isRegistranError, isModelError, err = reg.RegisterEntity(registry.RegistrantHostToV1beta3(connection.Connection{
 			Kind:     "kubernetes",
 			Type:     "registry",
 			Metadata: k8sContext,
-		}, &c)
+		}), &c)
 		helpers.HandleError(connection.Connection{
 			Kind: "kubernetes"}, &c, err, isModelError, isRegistranError)
 		count++
@@ -89,7 +89,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	if err != nil {
 		return err
 	}
-	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromUser(userUUID).WithSeverity(events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)).WithMetadata(map[string]interface{}{
+	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromOwner(userUUID).WithSeverity(events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)).WithMetadata(map[string]interface{}{
 		"doc": "https://docs.meshery.io/tasks/lifecycle-management",
 	}).Build()
 	_, err = helpers.FailedEventCompute("Kubernetes", mesheryInstanceID, provider, userID, ec)
@@ -151,7 +151,9 @@ func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
 	return m
 }
 
-// move to meshmodel
+// GetK8sMeshModelComponents fetches Kubernetes CRDs and OpenAPI definitions using the given kubeconfig and converts them into MeshModel component definitions.
+//
+// TODO: move to meshmodel
 func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {
