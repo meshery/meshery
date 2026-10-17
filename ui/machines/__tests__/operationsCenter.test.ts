@@ -18,6 +18,14 @@ const hoisted = vi.hoisted(() => ({
   },
   dispatch: vi.fn(),
   pushEvent: vi.fn((p: unknown) => ({ type: 'events/pushEvent', payload: p })),
+  loadEvents: vi.fn((fetch: unknown, page: number, filters: unknown) => ({
+    type: 'events/loadEvents',
+    fetch,
+    page,
+    filters,
+  })),
+  initiate: vi.fn(),
+  currentFilters: { status: 'unread' } as Record<string, unknown>,
 }));
 const subscriptionState = hoisted.subscriptionState;
 const dispatch = hoisted.dispatch;
@@ -32,11 +40,16 @@ vi.mock('lib/eventsSubscription', () => ({
 }));
 
 vi.mock('../../store', () => ({
-  store: { dispatch: hoisted.dispatch },
+  store: {
+    dispatch: hoisted.dispatch,
+    getState: () => ({ events: { current_view: { filters: hoisted.currentFilters } } }),
+  },
 }));
 
 vi.mock('@/store/slices/events', () => ({
   pushEvent: (p: unknown) => hoisted.pushEvent(p),
+  loadEvents: (fetch: unknown, page: number, filters: unknown) =>
+    hoisted.loadEvents(fetch, page, filters),
 }));
 
 vi.mock('../../rtk-query', () => ({
@@ -44,7 +57,10 @@ vi.mock('../../rtk-query', () => ({
 }));
 
 vi.mock('@/rtk-query/notificationCenter', () => ({
-  PROVIDER_TAGS: { EVENT: 'Event' },
+  PROVIDER_TAGS: { EVENT: 'event' }, // matches rtk-query/notificationCenter
+  notificationCenterApi: {
+    endpoints: { getEvents: { initiate: (...args: unknown[]) => hoisted.initiate(...args) } },
+  },
 }));
 
 vi.mock('@/components/layout/NotificationCenter/constants', () => ({
@@ -66,7 +82,9 @@ const startActor = (notify = vi.fn()) => {
 
 describe('operationsCenter machine', () => {
   beforeEach(() => {
-    dispatch.mockClear();
+    dispatch.mockReset();
+    hoisted.loadEvents.mockClear();
+    hoisted.initiate.mockReset();
     pushEvent.mockClear();
     subscriptionState.dispose.mockClear();
     subscriptionState.onEvent = undefined;
@@ -170,6 +188,133 @@ describe('operationsCenter machine', () => {
     expect(subscriptionState.onEvent).toBeDefined();
     expect(subscriptionState.onError).toBeDefined();
 
+    actor.stop();
+  });
+
+  it('refetches persisted events after re-subscribing, so events missed while down appear', () => {
+    const { actor } = startActor();
+    dispatch.mockClear();
+
+    actor.send({
+      type: OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION,
+      data: { error: new Error('stream closed') },
+    });
+
+    expect(subscriptionState.dispose).toHaveBeenCalled();
+    expect(dispatch).toHaveBeenCalledWith({ type: 'api/invalidate', tags: ['event'] });
+
+    actor.stop();
+  });
+
+  it('reloads the first page of the current notification view after re-subscribing', () => {
+    const { actor } = startActor();
+    hoisted.loadEvents.mockClear();
+
+    actor.send({
+      type: OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION,
+      data: { error: new Error('stream closed') },
+    });
+
+    expect(hoisted.loadEvents).toHaveBeenCalledWith(expect.any(Function), 0, {
+      status: 'unread',
+    });
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'events/loadEvents', page: 0 }),
+    );
+    actor.stop();
+  });
+
+  it('fetches the reloaded page fresh and releases the query subscription', async () => {
+    const { actor } = startActor();
+    hoisted.loadEvents.mockClear();
+    actor.send({
+      type: OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION,
+      data: { error: new Error('stream closed') },
+    });
+    const fetchEvents = hoisted.loadEvents.mock.calls[0][0] as (args: unknown) => Promise<unknown>;
+
+    const unsubscribe = vi.fn();
+    const request = Object.assign(Promise.resolve({ data: { events: [] } }), { unsubscribe });
+    hoisted.initiate.mockReturnValue({ type: 'api/initiate' });
+    dispatch.mockReturnValueOnce(request);
+
+    await expect(fetchEvents({ page: 0, filters: {} })).resolves.toEqual({ data: { events: [] } });
+    expect(hoisted.initiate).toHaveBeenCalledWith({ page: 0, filters: {} }, { forceRefetch: true });
+    expect(unsubscribe).toHaveBeenCalled();
+    actor.stop();
+  });
+
+  const failSubscription = (actor) =>
+    actor.send({
+      type: OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION,
+      data: { error: new Error('stream closed') },
+    });
+
+  it('rejects a failed reload so loadEvents keeps the current list', async () => {
+    const { actor } = startActor();
+    failSubscription(actor);
+    const fetchEvents = hoisted.loadEvents.mock.calls[0][0] as (args: unknown) => Promise<unknown>;
+
+    const unsubscribe = vi.fn();
+    const failure = { status: 500, data: 'boom' };
+    dispatch.mockReturnValueOnce(
+      Object.assign(Promise.resolve({ error: failure }), { unsubscribe }),
+    );
+
+    await expect(fetchEvents({ page: 0, filters: {} })).rejects.toBe(failure);
+    expect(unsubscribe).toHaveBeenCalled();
+    actor.stop();
+  });
+
+  it('re-adds events that arrive while the reload is in flight', async () => {
+    let finishReload: () => void = () => {};
+    dispatch.mockImplementation((action) =>
+      action?.type === 'events/loadEvents'
+        ? new Promise<void>((resolve) => {
+            finishReload = resolve;
+          })
+        : action,
+    );
+    const { actor } = startActor();
+    failSubscription(actor);
+
+    const live = { id: 'during-reload', description: 'd', severity: 'informational' };
+    actor.send({ type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER, data: { event: live } });
+    expect(pushEvent).toHaveBeenCalledTimes(1);
+
+    finishReload();
+    await vi.waitFor(() => expect(pushEvent).toHaveBeenCalledTimes(2));
+    expect(pushEvent).toHaveBeenLastCalledWith(live);
+    actor.stop();
+  });
+
+  it('does not re-add events that arrive after the reload finished', async () => {
+    const { actor } = startActor();
+    failSubscription(actor);
+    await Promise.resolve();
+
+    const later = { id: 'after-reload', description: 'd', severity: 'informational' };
+    actor.send({
+      type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+      data: { event: later },
+    });
+    await Promise.resolve();
+
+    expect(pushEvent).toHaveBeenCalledTimes(1);
+    actor.stop();
+  });
+
+  it('does not refetch events for ordinary received events', () => {
+    const { actor } = startActor();
+    dispatch.mockClear();
+
+    actor.send({
+      type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+      data: { event: { id: 'e', description: 'd', severity: 'informational' } },
+    });
+
+    expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'api/invalidate' }));
+    expect(hoisted.loadEvents).not.toHaveBeenCalled();
     actor.stop();
   });
 });

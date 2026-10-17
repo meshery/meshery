@@ -2,9 +2,9 @@ import { SEVERITY_TO_NOTIFICATION_TYPE_MAPPING } from '@/components/layout/Notif
 import { subscribeToEvents } from 'lib/eventsSubscription';
 import { emit, fromCallback, setup, spawnChild, stopChild } from 'xstate';
 import { store } from '../store';
-import { pushEvent } from '@/store/slices/events';
+import { loadEvents, pushEvent } from '@/store/slices/events';
 import { api as mesheryApi } from '../rtk-query';
-import { PROVIDER_TAGS } from '@/rtk-query/notificationCenter';
+import { notificationCenterApi, PROVIDER_TAGS } from '@/rtk-query/notificationCenter';
 export const OPERATION_CENTER_EVENTS = {
   EVENT_RECEIVED_FROM_SERVER: 'EVENT_RECEIVED_FROM_SERVER',
   ERROR_OCCURRED_IN_SUBSCRIPTION: 'ERROR_OCCURRED_IN_SUBSCRIPTION',
@@ -52,6 +52,10 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
   };
 });
 
+// Events received from the stream while a list reload is in flight, one buffer
+// per reload. The reloaded page replaces the list, so these are re-added after.
+const reloadBuffers = new Set<unknown[]>();
+
 export const operationsCenterActor = setup({
   actions: {
     spawnSubscriptionActor: spawnChild(subscriptionActor, {
@@ -59,9 +63,39 @@ export const operationsCenterActor = setup({
     }),
     storeInRedux: ({ event }) => {
       store.dispatch(pushEvent(event.data.event));
+      reloadBuffers.forEach((buffer) => buffer.push(event.data.event));
     },
     invalidateRtk: () => {
       store.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]));
+    },
+    // The notification list renders the events slice, which only loadEvents
+    // fills (RTK cache invalidation doesn't reach it). Reload the first page of
+    // the current view, the same way the notification center does.
+    reloadEvents: () => {
+      const fetchEvents = async (args) => {
+        const request = store.dispatch(
+          notificationCenterApi.endpoints.getEvents.initiate(args, { forceRefetch: true }),
+        );
+        try {
+          const result = await request;
+          // A failed request resolves with `error` instead of throwing. Throw so
+          // loadEvents keeps the current list rather than treating it as empty.
+          if (result.error) throw result.error;
+          return result;
+        } finally {
+          request.unsubscribe();
+        }
+      };
+      const received: unknown[] = [];
+      reloadBuffers.add(received);
+      Promise.resolve(
+        store.dispatch(loadEvents(fetchEvents, 0, store.getState().events.current_view.filters)),
+      ).finally(() => {
+        reloadBuffers.delete(received);
+        // Re-add events the stream delivered while the page was loading; the
+        // slice is keyed by id, so ones already in the page are skipped.
+        received.forEach((event) => store.dispatch(pushEvent(event)));
+      });
     },
     notifyUI: ({ context, event }) => {
       const validatedEvent = event.data.event;
@@ -92,7 +126,15 @@ export const operationsCenterActor = setup({
           actions: ['storeInRedux', 'notifyUI', 'emitBack'],
         },
         [OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION]: {
-          actions: [stopChild('subscriptionActor'), 'spawnSubscriptionActor'],
+          // Events raised while the stream was down are never replayed by the
+          // new stream; reload the persisted list (and the unread summary) so
+          // they aren't lost.
+          actions: [
+            stopChild('subscriptionActor'),
+            'spawnSubscriptionActor',
+            'invalidateRtk',
+            'reloadEvents',
+          ],
         },
       },
     },
