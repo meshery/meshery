@@ -250,6 +250,21 @@ vi.mock('./navigatorComponents', () => ({
         },
       ],
     },
+    {
+      id: 'HIDDEN_LEAF',
+      title: 'Hidden Leaf',
+      icon: <span data-testid="hidden-leaf-icon">H</span>,
+      href: '/hidden-leaf',
+      show: false,
+      link: true,
+    },
+    {
+      id: 'UNDEFINED_SHOW_LEAF',
+      title: 'Undefined Show Leaf',
+      icon: <span data-testid="undef-leaf-icon">U</span>,
+      href: '/undefined-show-leaf',
+      link: true,
+    },
   ],
 }));
 
@@ -431,5 +446,39 @@ describe('Navigator Favorites and Pinned Navigation', () => {
     const favoriteElements = screen.getAllByTestId(/^favorite-/);
     expect(favoriteElements[0]).toHaveAttribute('data-testid', 'favorite-CATALOG');
     expect(favoriteElements[1]).toHaveAttribute('data-testid', 'favorite-DASHBOARD');
+  });
+
+  it('does not render a pin button for a top-level leaf row with show: false', async () => {
+    render(<Navigator />);
+    await screen.findByTestId('config-icon');
+
+    expect(screen.queryByTestId('pin-button-HIDDEN_LEAF')).not.toBeInTheDocument();
+  });
+
+  it('renders a pin button for a top-level row when show is undefined', async () => {
+    render(<Navigator />);
+    await screen.findByTestId('config-icon');
+
+    const pinButton = screen.getByTestId('pin-button-UNDEFINED_SHOW_LEAF');
+    expect(pinButton).toBeInTheDocument();
+    expect(pinButton).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('renders the pin button inside the shared wrapper for a top-level row and a nested row', async () => {
+    render(<Navigator />);
+    await screen.findByTestId('config-icon');
+
+    const topPinButton = screen.getByTestId('pin-button-DASHBOARD');
+    const topWrapper = topPinButton.closest('[data-nav-row-wrapper]');
+    expect(topWrapper).toBeInTheDocument();
+    expect(topWrapper).toHaveAttribute('data-testid', 'nav-row-DASHBOARD');
+
+    const configCategory = screen.getByTestId('CONFIGURATION');
+    fireEvent.click(configCategory);
+
+    const nestedPinButton = await screen.findByTestId('pin-button-Designs');
+    const nestedWrapper = nestedPinButton.closest('[data-nav-row-wrapper]');
+    expect(nestedWrapper).toBeInTheDocument();
+    expect(nestedWrapper).toHaveAttribute('data-testid', 'nav-row-Designs');
   });
 });

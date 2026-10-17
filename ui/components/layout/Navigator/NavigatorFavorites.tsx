@@ -4,13 +4,12 @@ import { CustomTooltip, ListItemIcon, styled, useTheme, Zoom } from '@sistent/si
 import {
   MainListIcon,
   NavigatorLink,
-  RootDiv,
   SecondaryDivider,
   SideBarListItem,
   SideBarText,
 } from '../../general/style';
 import PinIcon from '@/assets/icons/PinIcon';
-import PinToggleButton from './PinToggleButton';
+import PinToggleButton, { NavRowWrapper } from './PinToggleButton';
 
 const FavoritesHeader = styled('div')(({ theme }) => ({
   padding: '8px 24px 4px 24px',
@@ -38,13 +37,6 @@ const FavoritesEmptyExpanded = styled('div')(({ theme }) => ({
   color: theme.palette.background.constant.white,
   opacity: 0.5,
   fontStyle: 'italic',
-}));
-
-const FavoriteItemWrapper = styled(RootDiv)(() => ({
-  position: 'relative',
-  '&:hover button, &:focus-within button': {
-    opacity: 1,
-  },
 }));
 
 const CollapsedFavListItemIcon = styled(ListItemIcon)(() => ({
@@ -116,7 +108,11 @@ export const NavigatorFavorites: React.FC<NavigatorFavoritesProps> = ({
               : item.icon;
 
           return (
-            <FavoriteItemWrapper key={`favorite-${item.id}`}>
+            <NavRowWrapper
+              key={`favorite-${item.id}`}
+              data-nav-row-wrapper
+              data-testid={`nav-row-${item.id}`}
+            >
               <SideBarListItem
                 dense
                 link={true}
@@ -164,7 +160,7 @@ export const NavigatorFavorites: React.FC<NavigatorFavoritesProps> = ({
                   testId={`unpin-button-${item.id}`}
                 />
               )}
-            </FavoriteItemWrapper>
+            </NavRowWrapper>
           );
         })
       )}

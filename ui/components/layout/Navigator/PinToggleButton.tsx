@@ -1,6 +1,7 @@
 import React from 'react';
 import { styled } from '@sistent/sistent';
 import PinIcon from '@/assets/icons/PinIcon';
+import { RootDiv } from '../../general/style';
 
 export interface PinToggleButtonProps {
   id: string;
@@ -14,7 +15,23 @@ interface StyledPinButtonProps {
   pinned?: boolean;
 }
 
-export const StyledPinButton = styled('button', {
+interface BasePinButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  pinned?: boolean;
+}
+
+const BasePinButton = React.forwardRef<HTMLButtonElement, BasePinButtonProps>(
+  ({ pinned: _pinned, ...props }, ref) => <button ref={ref} {...props} />,
+);
+BasePinButton.displayName = 'BasePinButton';
+
+export const NavRowWrapper = styled(RootDiv)(() => ({
+  position: 'relative',
+  '&:hover [data-pin-toggle], &:focus-within [data-pin-toggle]': {
+    opacity: 1,
+  },
+}));
+
+export const StyledPinButton = styled(BasePinButton, {
   shouldForwardProp: (prop) => prop !== 'pinned',
 })<StyledPinButtonProps>(({ theme, pinned }) => ({
   position: 'absolute',
@@ -34,6 +51,10 @@ export const StyledPinButton = styled('button', {
   outline: 'none',
   transition: 'opacity 150ms ease-in-out',
   color: pinned ? theme.palette.icon.brand : theme.palette.background.constant.white,
+  '& svg': {
+    width: '16px',
+    height: '16px',
+  },
   '&:hover': {
     opacity: 1,
     color: pinned ? theme.palette.icon.brand : theme.palette.common.white,
@@ -61,6 +82,7 @@ export const PinToggleButton: React.FC<PinToggleButtonProps> = ({
 }) => {
   return (
     <StyledPinButton
+      data-pin-toggle="true"
       type="button"
       data-testid={testId || `pin-button-${id}`}
       aria-pressed={pinned}

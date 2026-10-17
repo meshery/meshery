@@ -77,7 +77,7 @@ import { setAdapter } from '@/store/slices/adapter';
 import { getNavigatorComponents } from './navigatorComponents';
 import usePinnedNavItems from '@/utils/hooks/usePinnedNavItems';
 import NavigatorFavorites from './NavigatorFavorites';
-import PinToggleButton from './PinToggleButton';
+import PinToggleButton, { NavRowWrapper } from './PinToggleButton';
 
 const externalLinkIconStyle = { width: '17.76px', fontSize: '1.11rem' };
 
@@ -625,10 +625,13 @@ const NavigatorContent = () => {
 
             const isActive = currentPath === hrefc;
             const isPinnableChild =
-              Boolean(linkc) && Boolean(hrefc) && (!childrenc || childrenc.length === 0);
+              Boolean(linkc) &&
+              Boolean(hrefc) &&
+              (!childrenc || childrenc.length === 0) &&
+              showc !== false;
 
             return (
-              <div key={idc} style={{ position: 'relative' }}>
+              <NavRowWrapper key={idc} data-nav-row-wrapper data-testid={`nav-row-${idc}`}>
                 <ListItemComponent
                   {...(isLifecycleGroup
                     ? {
@@ -664,7 +667,7 @@ const NavigatorContent = () => {
                   />
                 )}
                 {renderChildren(idname, childrenc, depth + 1)}
-              </div>
+              </NavRowWrapper>
             );
           },
         )}
@@ -769,9 +772,9 @@ const NavigatorContent = () => {
             permissionKey,
           }) => {
             const hasChildren = Array.isArray(children) && children.length > 0;
-            const isPinnable = !hasChildren && Boolean(link) && Boolean(href);
+            const isPinnable = !hasChildren && Boolean(link) && Boolean(href) && show !== false;
             return (
-              <RootDiv key={childId} style={{ position: 'relative' }}>
+              <NavRowWrapper key={childId} data-nav-row-wrapper data-testid={`nav-row-${childId}`}>
                 <SideBarListItem
                   dense
                   key={childId}
@@ -850,7 +853,7 @@ const NavigatorContent = () => {
                 >
                   {renderChildren(childId, children, 1)}
                 </Collapse>
-              </RootDiv>
+              </NavRowWrapper>
             );
           },
         )}
