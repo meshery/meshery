@@ -5,7 +5,7 @@ description: >-
   CLI, Server, Operator, MeshSync, and Broker — on Docker and Kubernetes
   deployments.
 categories: [installation]
-weight: 10
+weight: 22
 aliases:
 - /guides/upgrade
 ---
