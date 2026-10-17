@@ -1,5 +1,20 @@
 export const PROVIDER_URL = "https://cloud.meshery.io"; // AUTO-GENERATED from install/providers.env - run `make providers-propagate`
 
+// Exact-match hosts the post-auth `/auth/redirect` bounce may forward the
+// browser (and the provider token) to. Propagated from the active provider
+// roster in install/providers.env; enforced by lib/safe-redirect.mjs.
+export const ALLOWED_RETURN_TO_HOSTS = [
+  // BEGIN AUTO-GENERATED from install/providers.env - run `make providers-propagate`
+  "cloud.meshery.io",
+  "perf.smp-spec.io",
+  "cloud.layer5.io",
+  "platform.tata-consulting.co.uk",
+  "collab.eti.cisco.com",
+  "kickstart.metabit.com",
+  "provider.od10.in",
+  // END AUTO-GENERATED
+];
+
 // This can be migrated as a custom hook in React
 const dataFetch = (url, options = {}, successFn, errorFn) => {
   // const controller = new AbortController();
