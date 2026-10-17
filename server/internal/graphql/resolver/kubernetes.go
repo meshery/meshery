@@ -6,7 +6,6 @@ import (
 
 	"github.com/meshery/meshery/server/internal/graphql/model"
 	"github.com/meshery/meshery/server/models"
-	meshkitKube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/meshkit/utils/kubernetes/describe"
 )
 
@@ -35,7 +34,7 @@ func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.P
 	return modelnamespaces, nil
 }
 
-func (r *Resolver) getKubectlDescribe(_ context.Context, name, kind, namespace string) (*model.KctlDescribeDetails, error) {
+func (r *Resolver) getKubectlDescribe(ctx context.Context, name, kind, namespace, k8scontextID string) (*model.KctlDescribeDetails, error) {
 	var ResourceMap = map[string]describe.DescribeType{
 		"pod":                       describe.Pod,
 		"deployment":                describe.Deployment,
@@ -73,7 +72,23 @@ func (r *Resolver) getKubectlDescribe(_ context.Context, name, kind, namespace s
 		Type:      ResourceMap[strings.ToLower(kind)],
 	}
 
-	client, err := meshkitKube.New([]byte(""))
+	// An empty kubeconfig makes meshkit fall back to the in-cluster config, which
+	// would describe resources in the cluster Meshery runs in rather than the one
+	// the user selected.
+	var k8sCtx *models.K8sContext
+	k8sCtxs, _ := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
+	for _, c := range k8sCtxs {
+		if c != nil && c.ID == k8scontextID {
+			k8sCtx = c
+			break
+		}
+	}
+	if k8sCtx == nil {
+		r.Log.Error(ErrEmptyCurrentK8sContext)
+		return nil, ErrEmptyCurrentK8sContext
+	}
+
+	client, err := k8sCtx.GenerateKubeHandler()
 	if err != nil {
 		r.Log.Error(model.ErrMesheryClient(err))
 		return nil, err

@@ -292,7 +292,7 @@ type ComplexityRoot struct {
 		GetAvailableNamespaces     func(childComplexity int, k8sClusterIDs []string) int
 		GetControlPlanes           func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetDataPlanes              func(childComplexity int, filter *model.ServiceMeshFilter) int
-		GetKubectlDescribe         func(childComplexity int, name string, kind string, namespace string) int
+		GetKubectlDescribe         func(childComplexity int, name string, kind string, namespace string, k8scontextID string) int
 		GetMeshModelSummary        func(childComplexity int, selector model.MeshModelSummarySelector) int
 		GetPerfResult              func(childComplexity int, id string) int
 		GetPerformanceProfiles     func(childComplexity int, selector model.PageFilter) int
@@ -321,7 +321,7 @@ type QueryResolver interface {
 	GetPerformanceProfiles(ctx context.Context, selector model.PageFilter) (*model.PerfPageProfiles, error)
 	FetchAllResults(ctx context.Context, selector model.PageFilter) (*model.PerfPageResult, error)
 	FetchPatterns(ctx context.Context, selector model.PageFilter) (*model.PatternPageResult, error)
-	GetKubectlDescribe(ctx context.Context, name string, kind string, namespace string) (*model.KctlDescribeDetails, error)
+	GetKubectlDescribe(ctx context.Context, name string, kind string, namespace string, k8scontextID string) (*model.KctlDescribeDetails, error)
 	FetchPatternCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogPattern, error)
 	FetchFilterCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogFilter, error)
 	GetMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error)
@@ -1388,7 +1388,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.GetKubectlDescribe(childComplexity, args["name"].(string), args["kind"].(string), args["namespace"].(string)), true
+		return e.complexity.Query.GetKubectlDescribe(childComplexity, args["name"].(string), args["kind"].(string), args["namespace"].(string), args["k8scontextID"].(string)), true
 	case "Query.getMeshModelSummary":
 		if e.complexity.Query.GetMeshModelSummary == nil {
 			break
@@ -2095,7 +2095,12 @@ type Query {
   fetchPatterns(selector: PageFilter!): PatternPageResult!
 
   # Query for getting kubectl describe details with meshkit
-  getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
+  getKubectlDescribe(
+    name: String!
+    kind: String!
+    namespace: String!
+    k8scontextID: String!
+  ): KctlDescribeDetails! @KubernetesMiddleware
 
   # Query for getting Pattern Catalog from remote provider
   fetchPatternCatalogContent(selector: CatalogSelector): [CatalogPattern!]!
@@ -2329,6 +2334,11 @@ func (ec *executionContext) field_Query_getKubectlDescribe_args(ctx context.Cont
 		return nil, err
 	}
 	args["namespace"] = arg2
+	arg3, err := graphql.ProcessArgField(ctx, rawArgs, "k8scontextID", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
+	}
+	args["k8scontextID"] = arg3
 	return args, nil
 }
 
@@ -7503,9 +7513,22 @@ func (ec *executionContext) _Query_getKubectlDescribe(ctx context.Context, field
 		ec.fieldContext_Query_getKubectlDescribe,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().GetKubectlDescribe(ctx, fc.Args["name"].(string), fc.Args["kind"].(string), fc.Args["namespace"].(string))
+			return ec.resolvers.Query().GetKubectlDescribe(ctx, fc.Args["name"].(string), fc.Args["kind"].(string), fc.Args["namespace"].(string), fc.Args["k8scontextID"].(string))
 		},
-		nil,
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				if ec.directives.KubernetesMiddleware == nil {
+					var zeroVal *model.KctlDescribeDetails
+					return zeroVal, errors.New("directive KubernetesMiddleware is not implemented")
+				}
+				return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
+			}
+
+			next = directive1
+			return next
+		},
 		ec.marshalNKctlDescribeDetails2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐKctlDescribeDetails,
 		true,
 		true,
