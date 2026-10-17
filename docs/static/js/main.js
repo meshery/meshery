@@ -123,6 +123,7 @@ $(document).ready(function () {
         const icon = button.querySelector('i');
         if (!icon) return;
 
+        const originalLabel = button.getAttribute('aria-label') || 'Copy code to clipboard';
         button.dataset.isCopying = "true";
         button.setAttribute('aria-label', 'Copied to clipboard');
 
@@ -139,7 +140,7 @@ $(document).ready(function () {
         button.replaceChild(text, icon);
 
         setTimeout(() => {
-            button.setAttribute('aria-label', 'Copy code to clipboard');
+            button.setAttribute('aria-label', originalLabel);
             button.removeAttribute("data-is-copying");
             if (button.isConnected === false) {
                 return;
