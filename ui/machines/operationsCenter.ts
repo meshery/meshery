@@ -52,6 +52,10 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
   };
 });
 
+// Events received from the stream while a list reload is in flight, one buffer
+// per reload. The reloaded page replaces the list, so these are re-added after.
+const reloadBuffers = new Set<unknown[]>();
+
 export const operationsCenterActor = setup({
   actions: {
     spawnSubscriptionActor: spawnChild(subscriptionActor, {
@@ -59,6 +63,7 @@ export const operationsCenterActor = setup({
     }),
     storeInRedux: ({ event }) => {
       store.dispatch(pushEvent(event.data.event));
+      reloadBuffers.forEach((buffer) => buffer.push(event.data.event));
     },
     invalidateRtk: () => {
       store.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]));
@@ -72,12 +77,25 @@ export const operationsCenterActor = setup({
           notificationCenterApi.endpoints.getEvents.initiate(args, { forceRefetch: true }),
         );
         try {
-          return await request;
+          const result = await request;
+          // A failed request resolves with `error` instead of throwing. Throw so
+          // loadEvents keeps the current list rather than treating it as empty.
+          if (result.error) throw result.error;
+          return result;
         } finally {
           request.unsubscribe();
         }
       };
-      store.dispatch(loadEvents(fetchEvents, 0, store.getState().events.current_view.filters));
+      const received: unknown[] = [];
+      reloadBuffers.add(received);
+      Promise.resolve(
+        store.dispatch(loadEvents(fetchEvents, 0, store.getState().events.current_view.filters)),
+      ).finally(() => {
+        reloadBuffers.delete(received);
+        // Re-add events the stream delivered while the page was loading; the
+        // slice is keyed by id, so ones already in the page are skipped.
+        received.forEach((event) => store.dispatch(pushEvent(event)));
+      });
     },
     notifyUI: ({ context, event }) => {
       const validatedEvent = event.data.event;
