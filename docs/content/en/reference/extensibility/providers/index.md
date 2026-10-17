@@ -43,14 +43,18 @@ Some examples include:
 
   <figcaption>Figure: Selecting a provider in Meshery</figcaption>
 
-## Types of providers
+## Understanding Providers {#understanding-providers}
+
+How providers work, the kinds of providers, and how login flows through them.
+
+### Types of providers {#types-of-providers}
 
 There are two types of providers defined in Meshery, `local` and `remote`.
 
 - The **Local** provider is built-into Meshery.
 - **Remote providers** can be implemented by anyone or an organization that wishes to integrate with Meshery. Any number of Remote providers may be available in your Meshery deployment.
 
-### Identity and Multi-Tenancy
+#### Identity and Multi-Tenancy {#identity-and-multi-tenancy}
 
 The provider you choose determines whether Meshery is single-user or multi-tenant:
 
@@ -59,7 +63,7 @@ The provider you choose determines whether Meshery is single-user or multi-tenan
 
 This is the central reason to use a Remote Provider for any shared, ongoing, or public-facing Meshery deployment — see [Recommended Production Deployment Settings](#recommended-production-deployment-settings) below. For the tenancy model itself, see [Organizations]({{< ref "concepts/logical/organizations.md" >}}).
 
-### Default Installation Configuration
+#### Default Installation Configuration {#default-installation-configuration}
 
 By default, Meshery installations **do not have a provider preselected**. This is an intentional design choice: upon first launch, users are presented with the provider selection UI, allowing them to make an informed choice among all available providers.
 
@@ -67,7 +71,7 @@ By default, Meshery installations **do not have a provider preselected**. This i
 It might be tempting to preselect the Local provider (\"Local\") as the default; however, doing so would preclude selection of any other provider by new users who are unaware of other options being available. By leaving the provider unset, all users (whether individual or team-based) are presented with the full range of available providers on first use. 
 {{% /alert %}}
 
-### Recommended Production Deployment Settings
+#### Recommended Production Deployment Settings {#recommended-production-deployment-settings}
 
 For production deployments, consider the following security best practices regarding provider selection:
 
@@ -87,7 +91,7 @@ and
 [Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}}).
 {{% /alert %}}
 
-#### AI Provider Usage in Production
+##### AI Provider Usage in Production {#ai-provider-usage-in-production}
 
 When integrating AI providers with Meshery, apply the following additional controls:
 
@@ -97,7 +101,7 @@ When integrating AI providers with Meshery, apply the following additional contr
 - **Avoid logging prompts or model responses unless required** — treat model inputs and outputs as potentially sensitive; disable verbose logging by default and apply retention limits if logging is necessary.
 - **Define an incident response plan for leaked API keys** — document revocation steps, affected-system audit procedures, and communication channels before an incident occurs.
 
-### Remote Providers
+#### Remote Providers {#remote-providers}
 
 The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
 
@@ -116,7 +120,7 @@ Name: **"Digital Ocean"**, URL: `https://meshery.digitalocean.com`
 - Alternate remote provider, also shipped in the default `PROVIDER_BASE_URLS` list.
 - Same capability surface as the Meshery remote provider; choose based on your organization's account.
 
-#### Example remote provider
+##### Example remote provider {#example-remote-provider}
 
 Name: **"Acme"**
 
@@ -127,7 +131,7 @@ Name: **"Acme"**
 - Events are stored locally and can be published to remote provider. [Read more about server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})
 - Free to use.
 
-### Local Provider
+#### Local Provider {#local-provider}
 
 The use of the Local Provider, **"Local"**, puts Meshery into a single-user mode and does not require authentication. Use the Local provider when your use of Meshery is intended to be shortlived.
 
@@ -141,7 +145,7 @@ Name: **"Local"** (legacy alias: **"None"**)
 - Server events are stored locally in database. [Read more about server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})
 - Free to use.
 
-#### Login Behavior
+##### Login Behavior {#login-behavior}
 
 When the Local Provider is selected, users are immediately redirected to the Meshery dashboard without any authentication challenges. The login flow for the **"Local"** provider:
 
@@ -152,11 +156,11 @@ When the Local Provider is selected, users are immediately redirected to the Mes
 
 This streamlined flow makes the Local Provider ideal for quick evaluations, demos, and single-user scenarios where authentication overhead is unnecessary.
 
-## Provider Login Flow
+### Provider Login Flow {#provider-login-flow}
 
 Understanding how provider selection leads to authentication and dashboard access is important for both users and integrators.
 
-### Interactive (Browser) Flow
+#### Interactive (Browser) Flow {#interactive-browser-flow}
 
 1. **Provider Selection**: User visits Meshery and is presented with the provider selection UI at `/provider` (unless a provider is enforced via the `PROVIDER` environment variable)
 2. **Provider Activation**: User selects a provider → Meshery sets a `meshery-provider` cookie and redirects to `/user/login?provider=<name>`
@@ -165,7 +169,7 @@ Understanding how provider selection leads to authentication and dashboard acces
    - **For Remote Providers**: Redirects to the remote provider's OAuth login page (e.g., GitHub, Google)
 4. **Post-Authentication**: After successful authentication, user is redirected to the dashboard or originally requested page
 
-### Enforced Provider Flow
+#### Enforced Provider Flow {#enforced-provider-flow}
 
 When the `PROVIDER` environment variable is set (e.g., `PROVIDER=Local` or `PROVIDER=Meshery`):
 
@@ -216,7 +220,7 @@ reach a child goroutine. Both halves are pinned by tests in `server/models`:
 `TestSeedKeysChildGoroutinePanicIsContained`.
 {{% /alert %}}
 
-### Deep-Link Preservation
+#### Deep-Link Preservation {#deep-link-preservation}
 
 Meshery preserves the originally requested in-app destination - its path and query, plus its fragment where the browser captured one - on the entry paths that capture it: an unauthenticated first visit, which is routed through provider selection (`/provider`) with the page attached, and the **Sign In** control offered during an anonymous session, which sends the page the user is standing on. A session that expires mid-use takes neither path - it is sent to `/auth/login` carrying that page's own query but not the page itself - so re-authentication lands on the default page rather than the original destination.
 
@@ -236,13 +240,141 @@ Deep-link targets are validated to prevent open redirect vulnerabilities and pos
 - Routes whose job is to *start* authentication are rejected as destinations, otherwise the browser immediately re-enters the OAuth dance and the original target is lost: `/user/login`, `/auth/login`, `/api/user/token`, `/provider`, and `/login` (the Remote Provider's own login page, which a custom-domain bounce can synthesize into the `ref` it echoes back). The check runs on the normalized target as well as the decoded one, so encoded or fragment-hidden traversal onto one of those routes is caught too
 {{% /alert %}}
 
-## Runtime Configuration Options
+### Design Principles: Meshery Remote Provider Framework {#design-principles-meshery-remote-provider-framework}
+
+Meshery's Remote Provider extensibility framework is designed to enable the following functionalities:
+
+1. **Pluggable UI Functionality**
+   - Out-of-tree custom UI components with seamless user experience.
+   - A system of remote retrieval of extension packages (ReactJS components and Golang binaries).
+
+1. **Pluggable Backend Functionality**
+   - Remote Providers have any number of capabilities unbeknownst to Meshery.
+
+1. **Pluggable AuthZ**
+   - Design an extensible role based access control system such that Remote Providers can determine their own set of controls. Remote Providers to return JWTs with custom roles, permission keys and permission keychains.
+
+## How to Build and Configure a Provider {#how-to-build-and-configure-a-provider}
+
+Tasks for provider authors and operators.
+
+### Building a Provider {#building-a-provider}
+
+Meshery interfaces with providers through a Go interface. The Provider implementations have to be placed in the code and compiled together today. A Provider instance will have to be injected into Meshery when the program starts.
+
+Meshery keeps the implementation of Remote Providers separate so that they are brought in through a separate process and injected into Meshery at runtime (OR) change the way the code works to make the Providers invoke Meshery.
+
+#### Verifying Compatibility With Golang Version Update {#verifying-compatibility-with-golang-version-update}
+
+When Meshery is updated to a newer version of Golang, extension providers need to ensure their integrations remain compatible with the updated version. Changes in the Golang version can lead to compatibility issues, so it’s important to update your extension to align with Meshery’s new environment. For a detailed guide on how to verify and address any compatibility issues, refer to this [guide on verifying compatibility](./verify-compatibility).
+
+#### Remote Provider Extension Points {#remote-provider-extension-points}
+
+Interwoven into Meshery’s web-based user interface are a variety of extension points. Each extension point is carefully carved out to afford a seamless user experience. Each extension point is identified by a name and type. The following Meshery UI extension points are available:
+
+|**Name**   |**Type**   | **Description**  |
+|---|---|---|
+|navigator |Menu Items   |This is supposed to be a full page extension which will get a dedicated endpoint in the meshery UI. And will be listed in the meshery UI’s navigator/sidebar. Menu items may refer to full page extensions.   |
+|user_prefs   |Single Component   |This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.   |
+|account   |Full Page   |Remote Reactjs components (or other) are placed in a pre-existing page and will have dedicated endpoint: `/extension/account`.   |
+|collaborator |Single Component|This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Mehery UI. Its work is to show active Meshery users under the same remote provider.|
+  |/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `/app/provider-pkg/<package-name>`.|
+
+Remote Providers must fulfill the following endpoints:
+
+1. `/login` - return valid token
+1. `/logout` - invalidating token
+1. `/capabilities` - return capabilities.json
+
+### Provider-Defined Redirects {#provider-defined-redirects}
+
+Remote Providers can define custom URL redirects through the `redirects` field in the capabilities response. This allows providers to dynamically control how certain URL paths are handled by the Meshery server, enabling seamless navigation experiences for users.
+
+#### How Redirects Work {#how-redirects-work}
+
+When Meshery server receives a request for a specific URL path, it checks if the connected Remote Provider has defined a redirect for that path in its capabilities. If a matching redirect is found, the server issues an HTTP permanent redirect (308) to the target URL.
+
+#### Configuring Redirects {#configuring-redirects}
+
+Redirects are defined as a key-value map in the provider's capabilities response, where:
+- **Key**: The source URL path to intercept (e.g., `/`)
+- **Value**: The destination URL to redirect to (e.g., `/extension/meshmap`)
+
+Example configuration in the capabilities response:
+
+{{< code code=`"redirects": {
+  "/": "/extension/meshmap",
+  "/dashboard": "/extension/meshmap/dashboard"
+}` >}}
+
+#### Use Cases {#use-cases}
+
+1. **Default Landing Page**: Redirect users from the root path (`/`) to a custom extension page.
+2. **Custom Navigation**: Guide users to specific extension pages based on their workflow.
+3. **URL Aliasing**: Create shorter or more memorable URLs that redirect to extension endpoints.
+
+{{% alert color="info" title="Note" %}}
+Redirects are evaluated before serving UI content. Only exact path matches are redirected.
+{{% /alert %}}
+
+### Configurable OAuth Callback URL {#configurable-oauth-callback-url}
+
+As of the release `v0.5.39`, Meshery Server has extended its capability to configure the callback URL for connected _Remote Providers_. This is helpful when you are deploying Meshery behind an ingress gateway or reverse proxy. You can specify a custom, redirect endpoint for the connected Remote Provider.
+Let's understand this through an example deployment scenario below.
+
+#### Example Deployment Scenario: Meshery Cloud, Istio, and Azure Kubernetes Service {#example-deployment-scenario-meshery-cloud-istio-and-azure-kubernetes-service}
+
+User has deployed the Meshery behind a Istio Ingress Gateway and the Istio is also behind an Application Gateway (e.g. AKS Application Gateway). Generally, when you use a GitHub Remote Provider for authentication, it redirect the request to the Istio Ingress Gateway FQDN. In this setup, redirection won't be successful because the Ingress Gateway is behind an additional Application Gateway. In this case, you have to define where the request should be redirected once it is authenticated from GitHub.
+
+**_SOLUTION_**
+
+You can define a custom callback URL by setting up the `MESHERY_SERVER_CALLBACK_URL` environment variable while installing Meshery.
+
+**Example using Helm**
+
+First, construct the URL in the format
+```https://[CUSTOM_URL]/api/user/token```
+
+- Where `[CUSTOM_URL]` is the URL where **Meshery server** will be or is installed. For example, `https://k8s-staging.test.io/`.
+- And `api/user/token` is the **Auth Endpoint** and is append at the end of your custom URL.
+
+So, the final URL would look similar to
+```https://k8s-staging.test.io/api/user/token```
+
+{{% alert color="info" title="Note" %}}
+Callback URL is not the same as Provider URL. In scenarios where Meshery server and Provider is installed on same server, pay attention to paths or subdomains.
+{{% /alert %}}
+
+Next, set the `MESHERY_SERVER_CALLBACK_URL` variable when running the `helm install`. Below is an example:
+
+{{< code code="helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://k8s-staging.test.io/api/user/token" >}}
+
+**NOTE**
+
+If Meshery server is accessible in a path of the URL such as `https://k8s-staging.test.io/meshery`, then the callback URL will be `https://k8s-staging.test.io/meshery/api/user/token`.
+
+### Managing your Remote Provider Extension Code {#managing-your-remote-provider-extension-code}
+
+Remote Provider extensions are kept out-of-tree from Meshery (server and UI). You might need to build your extensions under the same environment and set of dependencies as Meshery. The Meshery framework of extensibility has been designed such that in-tree extensions can be safely avoided while still providing a robust platform from which to extend Meshery’s functionality. Often, herein lies the delineation of open vs. closed functionality within Meshery. Remote Providers can bring (plugin) what functionality that they want behind this extensible interface (more about Meshery extensibility), at least that is up to the point that Meshery has provided a way to plug that feature in.
+
+Offering out-of-tree support for Meshery extensions means that:
+
+1. source code to your Meshery extensions are not required to be open source,
+1. liability to Meshery’s stability is significantly reduced, avoiding potential bugs in extended components.
+
+Through clearly defined extension points, Meshery extensions may be offered as closed source capabilities that plug into open source Meshery code. To facilitate integration of your Meshery extensions, you might automate the building and releasing of your separate, but interdependent code repositories. You will be responsible for sustaining both your ReactJS and Golang-based extensions.
+
+## Provider Reference {#provider-reference}
+
+Settings, extension points, and payloads to look up while building or running a provider.
+
+### Runtime Configuration Options {#runtime-configuration-options}
 
 Meshery provides runtime configuration options to control provider behavior:
 
 For the full server-wide reference, including provider-independent settings such as tracing, policy evaluation, and storage paths, see [Meshery Server Environment Variables]({{< ref "installation/advanced/environment-variables.md" >}}).
 
-### PROVIDER
+#### PROVIDER {#provider}
 
 This environment variable hard-enforces a specific provider at server boot: only that provider is registered, the chooser is skipped, and client hints cannot override it. This is useful for:
 - Dedicated deployments where only one provider should be available
@@ -258,7 +390,7 @@ Example: `PROVIDER=Local`
 
 When set, users are automatically directed to the specified provider's login flow upon accessing Meshery.
 
-### PROVIDER_CAPABILITIES_FILEPATH
+#### PROVIDER_CAPABILITIES_FILEPATH {#provider_capabilities_filepath}
 
 This environment variable allows you to specify a local file path to load provider capabilities from a static JSON file instead of fetching them from the remote provider's `/capabilities` endpoint. This is useful for:
 - Offline development and testing
@@ -267,7 +399,7 @@ This environment variable allows you to specify a local file path to load provid
 
 Example: `PROVIDER_CAPABILITIES_FILEPATH=/path/to/capabilities.json`
 
-### SKIP_DOWNLOAD_EXTENSIONS
+#### SKIP_DOWNLOAD_EXTENSIONS {#skip_download_extensions}
 
 This boolean environment variable controls whether Meshery downloads and refreshes provider extension packages. When set to `true`, Meshery will skip downloading extension packages even when new versions are available. This is particularly useful for:
 - Development environments where you want to use locally modified extensions
@@ -293,92 +425,19 @@ already reviewed instead of accepting whatever the provider publishes next. Pair
 itself should not drift, and see
 [Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}).
 
-## Design Principles: Meshery Remote Provider Framework
-
-Meshery's Remote Provider extensibility framework is designed to enable the following functionalities:
-
-1. **Pluggable UI Functionality**
-   - Out-of-tree custom UI components with seamless user experience.
-   - A system of remote retrieval of extension packages (ReactJS components and Golang binaries).
-
-1. **Pluggable Backend Functionality**
-   - Remote Providers have any number of capabilities unbeknownst to Meshery.
-
-1. **Pluggable AuthZ**
-   - Design an extensible role based access control system such that Remote Providers can determine their own set of controls. Remote Providers to return JWTs with custom roles, permission keys and permission keychains.
-
-## Building a Provider
-
-Meshery interfaces with providers through a Go interface. The Provider implementations have to be placed in the code and compiled together today. A Provider instance will have to be injected into Meshery when the program starts.
-
-Meshery keeps the implementation of Remote Providers separate so that they are brought in through a separate process and injected into Meshery at runtime (OR) change the way the code works to make the Providers invoke Meshery.
-
-### Verifying Compatibility With Golang Version Update
-
-When Meshery is updated to a newer version of Golang, extension providers need to ensure their integrations remain compatible with the updated version. Changes in the Golang version can lead to compatibility issues, so it’s important to update your extension to align with Meshery’s new environment. For a detailed guide on how to verify and address any compatibility issues, refer to this [guide on verifying compatibility](./verify-compatibility).
-
-### Remote Provider Extension Points
-
-Interwoven into Meshery’s web-based user interface are a variety of extension points. Each extension point is carefully carved out to afford a seamless user experience. Each extension point is identified by a name and type. The following Meshery UI extension points are available:
-
-|**Name**   |**Type**   | **Description**  |
-|---|---|---|
-|navigator |Menu Items   |This is supposed to be a full page extension which will get a dedicated endpoint in the meshery UI. And will be listed in the meshery UI’s navigator/sidebar. Menu items may refer to full page extensions.   |
-|user_prefs   |Single Component   |This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.   |
-|account   |Full Page   |Remote Reactjs components (or other) are placed in a pre-existing page and will have dedicated endpoint: `/extension/account`.   |
-|collaborator |Single Component|This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Mehery UI. Its work is to show active Meshery users under the same remote provider.|
-  |/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `/app/provider-pkg/<package-name>`.|
-
-Remote Providers must fulfill the following endpoints:
-
-1. `/login` - return valid token
-1. `/logout` - invalidating token
-1. `/capabilities` - return capabilities.json
-
-## UI Extension Points
+### UI Extension Points {#ui-extension-points}
 
 All UI extensions will be hosted under the endpoint `<mesheryserver:port/provider>`.
 
-### UserPrefs
+#### UserPrefs {#userprefs}
 
 The UserPrefs extension point expects and loads a component to be displayed into `/userpreferences` page.
 
-### Navigator
+#### Navigator {#navigator}
 
 The Navigator extension point loads a set of menu items to be displayed in the menu bar on the left hand side of the Meshery UI.
 
-## Provider-Defined Redirects
-
-Remote Providers can define custom URL redirects through the `redirects` field in the capabilities response. This allows providers to dynamically control how certain URL paths are handled by the Meshery server, enabling seamless navigation experiences for users.
-
-### How Redirects Work
-
-When Meshery server receives a request for a specific URL path, it checks if the connected Remote Provider has defined a redirect for that path in its capabilities. If a matching redirect is found, the server issues an HTTP permanent redirect (308) to the target URL.
-
-### Configuring Redirects
-
-Redirects are defined as a key-value map in the provider's capabilities response, where:
-- **Key**: The source URL path to intercept (e.g., `/`)
-- **Value**: The destination URL to redirect to (e.g., `/extension/meshmap`)
-
-Example configuration in the capabilities response:
-
-{{< code code=`"redirects": {
-  "/": "/extension/meshmap",
-  "/dashboard": "/extension/meshmap/dashboard"
-}` >}}
-
-### Use Cases
-
-1. **Default Landing Page**: Redirect users from the root path (`/`) to a custom extension page.
-2. **Custom Navigation**: Guide users to specific extension pages based on their workflow.
-3. **URL Aliasing**: Create shorter or more memorable URLs that redirect to extension endpoints.
-
-{{% alert color="info" title="Note" %}}
-Redirects are evaluated before serving UI content. Only exact path matches are redirected.
-{{% /alert %}}
-
-## Capabilities Endpoint Example
+### Capabilities Endpoint Example {#capabilities-endpoint-example}
 
 Meshery Server will proxy all requests to remote provider endpoints. Endpoints are dynamically determined and identified in the _**capabilities**_ section of the `/capabilities` endpoint. Providers as an object have the following attributes (this must be returned as a response to `/capabilities` endpoint):
 <details>
@@ -546,7 +605,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
 }` >}}
 </details>
 
-#### Meshery Server Registration
+##### Meshery Server Registration {#meshery-server-registration}
 
 Every Meshery server is capable of registering itself with the remote provider, considering that remote provider supports this feature as a capability.
 On successful authentication with the remote provider, Meshery server registers itself by sending a POST request to the remote provider through the `persist-connection` capability. The body of the request should include information so as to uniquely indentify Meshery server and its status.
@@ -559,50 +618,3 @@ Example of the request body:
   "server_build-sha": "xxxx-xxxxx",
   "server_location": "<protocol>://<hostname>:<port>"
 }` >}}
-
-## Configurable OAuth Callback URL
-
-As of the release `v0.5.39`, Meshery Server has extended its capability to configure the callback URL for connected _Remote Providers_. This is helpful when you are deploying Meshery behind an ingress gateway or reverse proxy. You can specify a custom, redirect endpoint for the connected Remote Provider.
-Let's understand this through an example deployment scenario below.
-
-### Example Deployment Scenario: Meshery Cloud, Istio, and Azure Kubernetes Service
-
-User has deployed the Meshery behind a Istio Ingress Gateway and the Istio is also behind an Application Gateway (e.g. AKS Application Gateway). Generally, when you use a GitHub Remote Provider for authentication, it redirect the request to the Istio Ingress Gateway FQDN. In this setup, redirection won't be successful because the Ingress Gateway is behind an additional Application Gateway. In this case, you have to define where the request should be redirected once it is authenticated from GitHub.
-
-**_SOLUTION_**
-
-You can define a custom callback URL by setting up the `MESHERY_SERVER_CALLBACK_URL` environment variable while installing Meshery.
-
-**Example using Helm**
-
-First, construct the URL in the format
-```https://[CUSTOM_URL]/api/user/token```
-
-- Where `[CUSTOM_URL]` is the URL where **Meshery server** will be or is installed. For example, `https://k8s-staging.test.io/`.
-- And `api/user/token` is the **Auth Endpoint** and is append at the end of your custom URL.
-
-So, the final URL would look similar to
-```https://k8s-staging.test.io/api/user/token```
-
-{{% alert color="info" title="Note" %}}
-Callback URL is not the same as Provider URL. In scenarios where Meshery server and Provider is installed on same server, pay attention to paths or subdomains.
-{{% /alert %}}
-
-Next, set the `MESHERY_SERVER_CALLBACK_URL` variable when running the `helm install`. Below is an example:
-
-{{< code code="helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://k8s-staging.test.io/api/user/token" >}}
-
-**NOTE**
-
-If Meshery server is accessible in a path of the URL such as `https://k8s-staging.test.io/meshery`, then the callback URL will be `https://k8s-staging.test.io/meshery/api/user/token`.
-
-## Managing your Remote Provider Extension Code
-
-Remote Provider extensions are kept out-of-tree from Meshery (server and UI). You might need to build your extensions under the same environment and set of dependencies as Meshery. The Meshery framework of extensibility has been designed such that in-tree extensions can be safely avoided while still providing a robust platform from which to extend Meshery’s functionality. Often, herein lies the delineation of open vs. closed functionality within Meshery. Remote Providers can bring (plugin) what functionality that they want behind this extensible interface (more about Meshery extensibility), at least that is up to the point that Meshery has provided a way to plug that feature in.
-
-Offering out-of-tree support for Meshery extensions means that:
-
-1. source code to your Meshery extensions are not required to be open source,
-1. liability to Meshery’s stability is significantly reduced, avoiding potential bugs in extended components.
-
-Through clearly defined extension points, Meshery extensions may be offered as closed source capabilities that plug into open source Meshery code. To facilitate integration of your Meshery extensions, you might automate the building and releasing of your separate, but interdependent code repositories. You will be responsible for sustaining both your ReactJS and Golang-based extensions.
