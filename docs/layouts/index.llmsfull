@@ -1,0 +1,158 @@
+{{- /*
+  llms-full.txt — Hugo Module by GetHugoThemes
+  https://github.com/gethugothemes/hugo-modules/llms-txt
+
+  Generates /llms-full.txt — the full-content companion to llms.txt.
+  Respects params.llms.generate_llms_full_txt, include, and exclude settings.
+*/ -}}
+
+{{- define "partials/llms_full_is_valid_page.html" -}}
+{{- $url := .url -}}
+{{- $includeList := .includeList -}}
+{{- $excludeList := .excludeList -}}
+{{- $isIncluded := false -}}
+{{- if eq (len $includeList) 0 }}{{ $isIncluded = true }}{{ else -}}
+{{- range $includeList -}}
+  {{- if strings.HasSuffix . "/**" }}{{ if strings.HasPrefix $url (strings.TrimSuffix "/**" .) }}{{ $isIncluded = true }}{{ end -}}
+  {{- else if strings.HasSuffix . "/*" }}{{ $dir := strings.TrimSuffix "*" . }}{{ if and (strings.HasPrefix $url $dir) (ne $url $dir) (not (strings.Contains (strings.TrimSuffix "/" (strings.TrimPrefix $dir $url)) "/")) }}{{ $isIncluded = true }}{{ end -}}
+  {{- else }}{{ if eq $url . }}{{ $isIncluded = true }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+{{- $isExcluded := false -}}
+{{- range $excludeList -}}
+  {{- if strings.HasSuffix . "/**" }}{{ if strings.HasPrefix $url (strings.TrimSuffix "/**" .) }}{{ $isExcluded = true }}{{ end -}}
+  {{- else if strings.HasSuffix . "/*" }}{{ $dir := strings.TrimSuffix "*" . }}{{ if and (strings.HasPrefix $url $dir) (ne $url $dir) (not (strings.Contains (strings.TrimSuffix "/" (strings.TrimPrefix $dir $url)) "/")) }}{{ $isExcluded = true }}{{ end -}}
+  {{- else }}{{ if eq $url . }}{{ $isExcluded = true }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- return (and $isIncluded (not $isExcluded)) -}}
+{{- end -}}
+
+{{- $llms := site.Params.llms | default dict -}}
+{{- if ne ($llms.generate_llms_full_txt | default true) false -}}
+{{- $rawExcludeList := $llms.exclude | default slice -}}
+{{- $includeList := $llms.include | default slice -}}
+
+{{- /* Clean Exclude List (Include takes precedence for exact matches) */ -}}
+{{- $excludeList := slice -}}
+{{- range $rawExcludeList -}}
+  {{- if not (in $includeList .) -}}
+    {{- $excludeList = $excludeList | append . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Keep only the newest N dated pages (by date) under each params.llms.limit_sections prefix */ -}}
+{{- $dropped := dict -}}
+{{- range $prefix, $max := ($llms.limit_sections | default dict) -}}
+  {{- with site.GetPage (strings.TrimSuffix "/" $prefix) -}}
+    {{- $dated := where .RegularPagesRecursive "Date.IsZero" false -}}
+    {{- range after (int $max) $dated.ByDate.Reverse -}}
+      {{- $dropped = merge $dropped (dict .RelPermalink true) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+# {{ site.Title }}
+
+> {{ site.Params.metadata.description | default site.Params.description | default site.Title }}
+
+{{- /* Home Page */ -}}
+{{- $home := site.Home }}
+{{- $showHome := partial "llms_full_is_valid_page.html" (dict "url" $home.RelPermalink "includeList" $includeList "excludeList" $excludeList) }}
+{{- if $showHome }}
+{{- $homeUrl := $home.Permalink -}}
+{{- with $home.OutputFormats.Get "md" }}{{- $homeUrl = .Permalink -}}{{- end }}
+
+--------------------------------------------------------------------------------
+title: "{{ $home.Title | default "Home" }}"
+url: {{ $homeUrl }}
+{{ with $home.Params.description }}description: {{ . }}
+{{ end -}}
+--------------------------------------------------------------------------------
+{{ if $home.RawContent }}{{ $home.RawContent }}{{ else }}{{ $home.Params.description }}{{ end }}
+{{- end }}
+
+{{- /* Standalone section pages (top-level sections with no pages at any depth) */ -}}
+{{- range site.Home.Sections }}
+{{- if not .RegularPagesRecursive }}
+{{- if and .Title .Permalink }}
+{{- $show := partial "llms_full_is_valid_page.html" (dict "url" .RelPermalink "includeList" $includeList "excludeList" $excludeList) }}
+{{- if $show }}
+{{- $url := .Permalink -}}
+{{- with .OutputFormats.Get "md" }}{{- $url = .Permalink -}}{{- end }}
+
+--------------------------------------------------------------------------------
+title: "{{ .Title }}"
+url: {{ $url }}
+{{ with .Params.description }}description: {{ . }}
+{{ end -}}
+--------------------------------------------------------------------------------
+{{ if .RawContent }}{{ .RawContent }}{{ else }}{{ .Params.description }}{{ end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- /* Root-level regular pages: About, Contact, etc. */ -}}
+{{- range site.Home.RegularPages }}
+{{- $show := partial "llms_full_is_valid_page.html" (dict "url" .RelPermalink "includeList" $includeList "excludeList" $excludeList) }}
+{{- if $show }}
+{{- $url := .Permalink -}}
+{{- with .OutputFormats.Get "md" }}{{- $url = .Permalink -}}{{- end }}
+
+--------------------------------------------------------------------------------
+title: "{{ .Title }}"
+url: {{ $url }}
+{{ with .Date }}date: "{{ .Format "2006-01-02" }}"
+{{ end -}}
+{{ with .Params.description }}description: {{ . }}
+{{ end -}}
+--------------------------------------------------------------------------------
+{{ if .RawContent }}{{ .RenderShortcodes }}{{ else }}{{ .Summary | plainify }}{{ end }}
+{{- end }}
+{{- end }}
+
+{{- /* Content sections: Blog, Docs, etc. — top-level only, all nested pages included */ -}}
+{{- range site.Home.Sections }}
+{{- if .RegularPagesRecursive }}
+
+{{- /* Section index page content block */ -}}
+{{- $showSection := partial "llms_full_is_valid_page.html" (dict "url" .RelPermalink "includeList" $includeList "excludeList" $excludeList) }}
+{{- if $showSection }}
+{{- $sectionUrl := .Permalink -}}
+{{- with .OutputFormats.Get "md" }}{{- $sectionUrl = .Permalink -}}{{- end }}
+
+--------------------------------------------------------------------------------
+title: "{{ .Title }}"
+url: {{ $sectionUrl }}
+{{ with .Params.description }}description: {{ . }}
+{{ end -}}
+--------------------------------------------------------------------------------
+{{ if .RawContent }}{{ .RawContent }}{{ else }}{{ .Params.description }}{{ end }}
+{{- end }}
+
+{{- /* All nested pages recursively */ -}}
+{{- range where .RegularPagesRecursive ".Permalink" "ne" "" }}
+{{- if .Title }}
+{{- $show := partial "llms_full_is_valid_page.html" (dict "url" .RelPermalink "includeList" $includeList "excludeList" $excludeList) }}
+{{- if and $show (not (index $dropped .RelPermalink)) }}
+{{- $url := .Permalink -}}
+{{- with .OutputFormats.Get "md" }}{{- $url = .Permalink -}}{{- end }}
+
+--------------------------------------------------------------------------------
+title: "{{ .Title }}"
+url: {{ $url }}
+{{ with .Date }}date: "{{ .Format "2006-01-02" }}"
+{{ end -}}
+{{ with .Params.description }}description: {{ . }}
+{{ end -}}
+--------------------------------------------------------------------------------
+{{ if .RawContent }}{{ .RenderShortcodes }}{{ else }}{{ .Summary | plainify }}{{ end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- end -}}
