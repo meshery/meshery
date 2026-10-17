@@ -240,7 +240,7 @@ Deep-link targets are validated to prevent open redirect vulnerabilities and pos
 
 Meshery provides runtime configuration options to control provider behavior:
 
-For the full server-wide reference, including provider-independent settings such as tracing, policy evaluation, and storage paths, see [Meshery Server Environment Variables]({{< ref "installation/advanced/environment-variables.md" >}}).
+For the full server-wide reference, including provider-independent settings such as tracing, policy evaluation, and storage paths, see [Meshery Server Environment Variables]({{< ref "reference/environment-variables.md" >}}).
 
 ### PROVIDER
 

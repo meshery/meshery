@@ -238,7 +238,7 @@ Work through these before going live. Each group links to its source page.
 - For component internals, see the
   [Meshery Architecture]({{< ref "concepts/architecture/_index.md" >}}) reference.
 - For runtime configuration, see the
-  [Server Environment Variables]({{< ref "installation/advanced/environment-variables.md" >}})
+  [Server Environment Variables]({{< ref "reference/environment-variables.md" >}})
   reference.
 
 {{< related-discussions tag="meshery" >}}

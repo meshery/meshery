@@ -87,7 +87,7 @@ The default setting for the `LOG_LEVEL` is `4` (Info). However, if the `DEBUG` e
 
 Meshery Server supports a broader set of runtime, provider, tracing, policy, and metadata environment variables than the contributor-specific subset that used to be documented here.
 
-Use the canonical reference instead: [Meshery Server Environment Variables]({{< ref "installation/advanced/environment-variables.md" >}}).
+Use the canonical reference instead: [Meshery Server Environment Variables]({{< ref "reference/environment-variables.md" >}}).
 
 ### Using custom Meshkit code for Meshery server development
 

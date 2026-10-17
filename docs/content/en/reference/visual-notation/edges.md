@@ -3,6 +3,7 @@ title: Edge Styles Guide
 description: Learn about the different edge styles and how to interpret their visual meaning in Meshery's component relationships.
 categories: [configuration]
 aliases:
+- /guides/configuration-management/edges-guide/
 - /extensions/edges-shape-guide
 - /extensions/edges-shape-guide/
 ---

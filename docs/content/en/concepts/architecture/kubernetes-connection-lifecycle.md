@@ -7,6 +7,8 @@ description: >-
   connection states, the in-cluster components (Operator, Broker/NATS, MeshSync),
   MeshSync deployment modes, how Meshery reaches and authenticates to the Broker,
   the built-in Diagnostics, and how to operate and troubleshoot it all.
+aliases:
+- /guides/infrastructure-management/kubernetes-connection-lifecycle/
 ---
 
 This guide explains what actually happens when Meshery manages a **Kubernetes**
