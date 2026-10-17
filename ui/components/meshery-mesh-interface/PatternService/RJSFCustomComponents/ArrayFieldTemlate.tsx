@@ -4,7 +4,7 @@ import AddIcon from '../../../../assets/icons/AddIcon';
 import SimpleAccordion from './Accordion';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
-import { isMultiSelect, getDefaultFormState } from '@rjsf/utils';
+import type { ArrayFieldTemplateProps } from '@rjsf/utils';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { iconSmall } from '../../../../css/icons.styles';
 import pluralize from 'pluralize';
@@ -20,15 +20,12 @@ function getTitle(props) {
   return safeStringTitle(props.uiSchema['ui:title'] ?? props.title) || 'Unknown';
 }
 
-const ArrayFieldTemplate = (props) => {
-  const { schema, registry = getDefaultFormState(), classes } = props;
-  const safeId = props.idSchema?.$id ?? 'array-field';
-  const safeProps = { ...props, idSchema: props.idSchema ?? { $id: safeId } };
-  // TODO: update types so we don't have to cast registry as any
-  if (isMultiSelect(schema, registry.rootSchema)) {
-    return <DefaultFixedArrayFieldTemplate {...safeProps} />;
+const ArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
+  const { schema, registry } = props;
+  if (registry.schemaUtils.isMultiSelect(schema)) {
+    return <DefaultFixedArrayFieldTemplate {...props} />;
   } else {
-    return <DefaultNormalArrayFieldTemplate {...safeProps} />;
+    return <DefaultNormalArrayFieldTemplate {...props} />;
   }
 };
 
@@ -99,7 +96,7 @@ const DefaultArrayItem = (props) => {
 
 const DefaultFixedArrayFieldTemplate = (props) => {
   const { classes } = props;
-  const safeId = props.idSchema?.$id ?? 'array-field';
+  const safeId = props.fieldPathId?.$id ?? 'array-field';
 
   return (
     <fieldset className={props.className}>
@@ -116,7 +113,6 @@ const DefaultFixedArrayFieldTemplate = (props) => {
       <ArrayFieldTitle
         key={`array-field-title-${safeId}`}
         TitleField={props.TitleField}
-        idSchema={props.idSchema}
         title={getTitle(props)}
         required={props.required}
         classes={classes}
@@ -147,7 +143,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 const DefaultNormalArrayFieldTemplate = (props) => {
   const theme = useTheme();
   const { classes } = props;
-  const safeId = props.idSchema?.$id ?? 'array-field';
+  const safeId = props.fieldPathId?.$id ?? 'array-field';
 
   return (
     <Paper elevation={0}>
@@ -162,7 +158,6 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             <ArrayFieldTitle
               key={`array-field-title-${safeId}`}
               TitleField={props.TitleField}
-              idSchema={props.idSchema}
               title={getTitle(props)}
               required={props.required}
               classes={classes}
