@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -136,22 +137,25 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	// A machine that never initialized has no FSM state to unwind and no
 	// cluster-side resources to clean up: DeleteAction's work (undeploying
 	// operators, flushing MeshSync data) all runs off a MachineCtx that was
-	// never assigned, so SendEvent would only fail with ErrAssertMachineCtx.
-	// Crucially it would also fail *before* reaching the Remove below, leaking
-	// the tracker entry for a connection the user just deleted - so drop the
-	// entry directly instead. See mhelpers.HasMachineContext.
+	// never assigned, so SendEvent would only fail with ErrAssertMachineCtx -
+	// so skip it and drop the tracker entry for the deleted connection
+	// directly. See mhelpers.HasMachineContext.
 	if !mhelpers.HasMachineContext(inst) {
 		smInstanceTracker.Remove(connectionUUID)
 	} else {
+		// detach from the http request lifecycle so that the delete isn't cancelled when
+		// the handler returns, while preserving context values (e.g. TokenCtxKey) that downstream calls depend on.
+		detachedCtx := context.WithoutCancel(req.Context())
 		go func(inst *machines.StateMachine) {
-			event, err := inst.SendEvent(req.Context(), machines.Delete, nil)
+			// The connection is gone either way, so drop the tracker entry even
+			// when the delete fails part-way.
+			defer smInstanceTracker.Remove(connectionUUID)
+
+			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
 			if err != nil {
 				h.log.Error(err)
 				h.log.Debug(event)
-				return
 			}
-
-			smInstanceTracker.Remove(connectionUUID)
 		}(inst)
 	}
 
