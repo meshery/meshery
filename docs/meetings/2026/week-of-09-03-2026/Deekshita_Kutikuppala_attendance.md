@@ -1,0 +1,1 @@
+Hi everyone! I am Deekshita a 4th year CSE student interested in open source and want to learn new things by doing them . I am excited to learn, contribute and grow through Meshery and collaborate with the community!

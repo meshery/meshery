@@ -320,7 +320,7 @@ var Services = map[string]Service{
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Environment: []string{
 			"PROVIDER_BASE_URLS=" + DefaultProviderBaseURLs,
-			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012",
+			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-kuma:10007 meshery-traefik-mesh:10006 meshery-cilium:10012",
 			"EVENT=mesheryLocal",
 			"PORT=9081",
 		},
@@ -347,11 +347,6 @@ var Services = map[string]Service{
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10004:10004"},
 	},
-	"meshery-app-mesh": {
-		Image:  "meshery/meshery-app-mesh:stable-latest",
-		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
-		Ports:  []string{"10005:10005"},
-	},
 	"meshery-traefik-mesh": {
 		Image:  "meshery/meshery-traefik-mesh:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
@@ -361,16 +356,6 @@ var Services = map[string]Service{
 		Image:  "meshery/meshery-kuma:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10007:10007"},
-	},
-	"meshery-osm": {
-		Image:  "meshery/meshery-osm:stable-latest",
-		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
-		Ports:  []string{"10009:10009"},
-	},
-	"meshery-nginx-sm": {
-		Image:  "meshery/meshery-nginx-sm:stable-latest",
-		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
-		Ports:  []string{"10010:10010"},
 	},
 	"meshery-cilium": {
 		Image:  "meshery/meshery-cilium:stable-latest",
@@ -459,7 +444,7 @@ func SetFileLocation() error {
 	return nil
 }
 
-// NavigateToBroswer naviagtes to the endpoint displaying Meshery UI in the broswer.
+// NavigateToBrowser navigates to the endpoint displaying the Meshery UI in the browser.
 func NavigateToBrowser(endpoint string) error {
 	err := browser.OpenURL(endpoint)
 	return err
@@ -732,7 +717,7 @@ func GetName(mesheryServerUrl, configuration string) (map[string]string, error) 
 	return nameIdMap, nil
 }
 
-// Delete configuration from meshery server endpoint /api/{configurations}/{id}
+// DeleteConfiguration deletes configuration from meshery server endpoint /api/{configurations}/{id}
 func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
 	url := mesheryServerUrl + "/api/" + configuration + "/" + id
 	req, err := NewRequest("DELETE", url, nil)
@@ -767,7 +752,7 @@ func ValidId(mesheryServerUrl, args string, configuration string) (string, bool,
 	return args, isID, nil
 }
 
-// ValidId - Check if args is a valid name or a valid name prefix and returns the full name and ID
+// ValidName - Check if args is a valid name or a valid name prefix and returns the full name and ID
 func ValidName(mesheryServerUrl, args string, configuration string) (string, string, bool, error) {
 	isName := false
 	nameIdMap, err := GetName(mesheryServerUrl, configuration)
@@ -853,7 +838,7 @@ func ParseURLGithub(URL string) (string, string, error) {
 	return URL, "", ErrParsingUrl(errors.New("only github urls are supported"))
 }
 
-// Indicate an ongoing Process at a given time on CLI
+// CreateDefaultSpinner creates a spinner that indicates an ongoing process on the CLI
 func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
 
@@ -862,7 +847,7 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	return s
 }
 
-// Get Meshery Session Data/Details (Adapters)
+// GetSessionData gets Meshery session data/details (adapters)
 func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
@@ -1148,13 +1133,7 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 		"meshery-nsm": map[string]interface{}{
 			"enabled": false,
 		},
-		"meshery-nginx-sm": map[string]interface{}{
-			"enabled": false,
-		},
 		"meshery-traefik-mesh": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-app-mesh": map[string]interface{}{
 			"enabled": false,
 		},
 	}
@@ -1373,7 +1352,7 @@ func IsValidUrl(path string) bool {
 	return u.Scheme != "" && u.Host != ""
 }
 
-// get current k8s context
+// GetCurrentK8sContext gets current k8s context
 func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 	if client == nil {
 		return "", fmt.Errorf("kubernetes client is nil")

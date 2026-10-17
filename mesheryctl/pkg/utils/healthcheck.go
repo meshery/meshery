@@ -231,9 +231,6 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 				return false, err
 			}
 			containers = convertToComposeSummaries(containersSummary)
-			if err != nil {
-				return false, err
-			}
 			return ContainsMesheryContainer(containers), nil
 		}
 	case "kubernetes":
@@ -328,8 +325,8 @@ func pollForPodRunning(c *meshkitkube.Client, namespace, podName string, timeout
 	})
 }
 
-// Wait up to timeout seconds for pod in 'namespace' to enter running state.
-// Returns an error if no pods are found or not all discovered pods enter running state.
+// WaitForPodRunning waits up to timeout seconds for the pod matching desiredPod in namespace to enter running state.
+// It returns an error if namespace has no pods, if desiredPod is not found among them, or if it does not reach running state in time.
 func WaitForPodRunning(c *meshkitkube.Client, desiredPod, namespace string, timeout int) error {
 	podList, err := GetPodList(c, namespace)
 	if err != nil {
@@ -381,7 +378,7 @@ func pollForNamespaceDeleted(c *meshkitkube.Client, namespace string, timeout ti
 	})
 }
 
-// Wait up to timeout seconds for `namespace` to be deleted.
+// WaitForNamespaceDeleted waits up to timeout seconds for `namespace` to be deleted.
 func WaitForNamespaceDeleted(c *meshkitkube.Client, namespace string, timeout int) error {
 	return pollForNamespaceDeleted(c, namespace, time.Duration(timeout)*time.Second)
 }

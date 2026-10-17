@@ -33,7 +33,7 @@ Now to publish your model to catalog:
 - Once your pull request is merged, your model will be available in the next Meshery release.
 
 ---
-- 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)
+- 🙋🏾🙋🏼 Questions: [Discussion Forum](https://discuss.meshery.io) and [Community Slack](https://slack.meshery.io)
 
 ### Additional resources
 

@@ -30,7 +30,7 @@ For developers, this extension is valuable as it enables them to manage their in
 
 <h5>Designer Walkthrough:</h5>
 
-<iframe class="container" width="560" height="460" src="https://www.youtube.com/embed/qaoYRP3oLok?rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+{{< youtube id="qaoYRP3oLok" class="yt-embed-container" >}}
 
 See on YouTube: [Designer Walkthrough](https://www.youtube.com/watch?v=qaoYRP3oLok)
 

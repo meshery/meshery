@@ -49,7 +49,7 @@ jobs:
           echo "Actor       : ${{ github.actor }}"
           echo "Event Name  : ${{ github.event_name }}"
           echo "Repository  : ${{ github.repository }}"
-          echo "Ref         : ${{ github.ref }}"
+          echo "Ref         : $GITHUB_REF"
           echo "::endgroup::"
 
       # -----------------------------------------------------------------------
@@ -100,7 +100,7 @@ jobs:
       # requirement and the PR review process).
       # -----------------------------------------------------------------------
       - name: 🎉 Welcome First-Time PR Author
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request_target'
         uses: actions/first-interaction@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -142,9 +142,8 @@ jobs:
       # is alerted to any automation breakage promptly.
       # -----------------------------------------------------------------------
       - name: 🚨 Alert on Failure
-        if: failure() && secrets.SLACK_BOT_TOKEN != ''
+        if: failure()
         uses: slackapi/slack-github-action@v2.1.1
-        # Only run if the Slack bot token secret is configured; skip gracefully otherwise.
         continue-on-error: true
         with:
           method: chat.postMessage

@@ -3,6 +3,7 @@ title: mesheryctl-component-search
 display_title: false
 command: component
 subcommand: search
+categories: [mesheryctl-component]
 ---
 
 # mesheryctl component search
@@ -15,8 +16,10 @@ Search components registered in Meshery Server based on kind
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl component search [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,24 +28,30 @@ mesheryctl component search [flags]
 Search for components using a query
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl component search [query-text]
 
+</div>
 </div>
 </pre> 
 
 Search for multi-word component names (must be quoted)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl component search "Component name"
 
+</div>
 </div>
 </pre> 
 
 Search list of components of specified page [int]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl component search [query-text] [--page 1]
 
+</div>
 </div>
 </pre> 
 
