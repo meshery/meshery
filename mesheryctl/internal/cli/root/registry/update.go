@@ -27,16 +27,18 @@ import (
 	"github.com/meshery/meshkit/utils/store"
 	comp "github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/sirupsen/logrus"
-
 	"github.com/spf13/cobra"
+	"google.golang.org/api/sheets/v4"
 )
 
 var (
-	modelLocation            string
-	logFile                  *os.File
-	sheetGID                 int64
-	totalAggregateComponents int
-	logDirPath               = filepath.Join(mutils.GetHome(), ".meshery", "logs", "registry")
+	modelLocation              string
+	logFile                    *os.File
+	sheetGID                   int64
+	totalAggregateComponents   int
+	logDirPath                 = filepath.Join(mutils.GetHome(), ".meshery", "logs", "registry")
+	syncRelationshipsFlag      bool
+	exportRelationshipsCSVFlag string
 )
 
 // This command is used for retreving the information of components based on the sheet. It updates the components with the actual values of the fetched for sheet.
@@ -47,7 +49,7 @@ var updateCmd = &cobra.Command{
 	Long: `Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.
 Find more information at: https://docs.meshery.io/reference/references/mesheryctl/registry/update`,
 	Example: `
-// Update models from Meshery Integration Spreadsheet
+// Update models from Meshery Integration Spreadsheet (syncs components and committed relationships)
 mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred "$CRED" -i [path to the directory containing models].
 
 // Updating models in the meshery/meshery repository based on the spreadsheet
@@ -55,6 +57,9 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 // Updating models in the meshery/meshery repository based on flag
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED" --model "[model-name]"
+
+// Export relationship definitions to a local CSV file without spreadsheet credentials
+mesheryctl registry update -i ./models --export-relationships-csv ./Relationships.csv
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
@@ -80,23 +85,39 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 			modelLocation = defaultModelsLocation()
 		}
 
-		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
-		if err != nil {
-			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
-			return err
-		}
-		resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
-		if err != nil || resp.HTTPStatusCode != 200 {
-			utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
-			return err
+		var srv *sheets.Service
+		var err error
+
+		if spreadsheeetCred != "" {
+			srv, err = mutils.NewSheetSRV(spreadsheeetCred)
+			if err != nil {
+				utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
+				return err
+			}
+			resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
+			if err != nil {
+				utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
+				return err
+			}
+			if resp.HTTPStatusCode != 200 {
+				statusErr := fmt.Errorf("failed to fetch spreadsheet: status code %d", resp.HTTPStatusCode)
+				utils.Log.Error(ErrUpdateRegistry(statusErr, outputLocation))
+				return statusErr
+			}
+
+			sheetGID = GetSheetIDFromTitle(resp, "Components")
+
+			err = InvokeCompUpdate()
+			if err != nil {
+				utils.Log.Error(err)
+			}
 		}
 
-		sheetGID = GetSheetIDFromTitle(resp, "Components")
-
-		err = InvokeCompUpdate()
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
+		if (syncRelationshipsFlag && srv != nil) || exportRelationshipsCSVFlag != "" {
+			err = InvokeRelationshipSync(srv, spreadsheeetID, modelLocation, modelName, exportRelationshipsCSVFlag)
+			if err != nil {
+				utils.Log.Error(err)
+			}
 		}
 
 		return nil
@@ -261,6 +282,8 @@ func init() {
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 	updateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
+	updateCmd.PersistentFlags().BoolVar(&syncRelationshipsFlag, "sync-relationships", true, "whether to sync committed relationship definitions to the integration spreadsheet")
+	updateCmd.PersistentFlags().StringVar(&exportRelationshipsCSVFlag, "export-relationships-csv", "", "path to export scanned relationship definitions to a local CSV file")
 
 	updateCmd.MarkFlagsRequiredTogether("spreadsheet-id", "spreadsheet-cred")
 
