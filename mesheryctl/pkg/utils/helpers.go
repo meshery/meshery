@@ -676,7 +676,15 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 		return idList, ErrNotFound(errors.New("no results found"))
 	}
 	for _, config := range dat[configType].([]interface{}) {
-		idList = append(idList, config.(map[string]interface{})["id"].(string))
+		configMap, ok := config.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		id, ok := configMap["id"].(string)
+		if !ok {
+			continue
+		}
+		idList = append(idList, id)
 	}
 	return idList, nil
 }
@@ -712,7 +720,19 @@ func GetName(mesheryServerUrl, configuration string) (map[string]string, error) 
 		return nameIdMap, ErrNotFound(errors.New("no results found"))
 	}
 	for _, config := range dat[configType].([]interface{}) {
-		nameIdMap[config.(map[string]interface{})["name"].(string)] = config.(map[string]interface{})["id"].(string)
+		configMap, ok := config.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		name, ok := configMap["name"].(string)
+		if !ok {
+			continue
+		}
+		id, ok := configMap["id"].(string)
+		if !ok {
+			continue
+		}
+		nameIdMap[name] = id
 	}
 	return nameIdMap, nil
 }
