@@ -11,7 +11,32 @@ import (
 	"github.com/meshery/meshkit/errors"
 )
 
-const pageSize = 10
+// DefaultPageSize is the number of items fetched per page when the caller
+// does not specify --pagesize. Exported so other call sites that build their
+// own single-page request (e.g. a structured --output-format path that
+// bypasses HandlePaginationAsync, see organizations/list.go) share this
+// default instead of hard-coding the same magic number a second time.
+const DefaultPageSize = 10
+
+// NormalizePagination converts a 1-based --page value and an optional
+// --pagesize value into the zero-based page index and effective page size
+// used to build a request. This is the exact conversion HandlePaginationAsync
+// applies below, extracted so other call sites don't have to reimplement (and
+// risk drifting from) the same logic.
+func NormalizePagination(page, pagesize int) (currentPage, effectivePageSize int) {
+	effectivePageSize = DefaultPageSize
+	if pagesize > 0 {
+		effectivePageSize = pagesize
+	}
+
+	// Adjust the page number to be zero-based
+	currentPage = page - 1
+	if currentPage < 0 {
+		currentPage = 0
+	}
+
+	return currentPage, effectivePageSize
+}
 
 var serverAndNetworkErrors = []string{
 	utils.ErrUnauthenticatedCode,
@@ -24,17 +49,7 @@ func HandlePaginationAsync[T any](
 	displayData DisplayDataAsync,
 	pageHandlerFunc pageHandler[T],
 ) error {
-	effectivePageSize := pageSize
-	if displayData.PageSize > 0 {
-		effectivePageSize = displayData.PageSize
-	}
-
-	// Adjust the page number to be zero-based
-	currentPage := displayData.Page - 1
-
-	if currentPage < 0 {
-		currentPage = 0
-	}
+	currentPage, effectivePageSize := NormalizePagination(displayData.Page, displayData.PageSize)
 
 	for {
 		// Clear the terminal screen
