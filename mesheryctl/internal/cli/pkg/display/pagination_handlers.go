@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
 	"slices"
 	"strings"
 
@@ -128,6 +129,27 @@ func promptPageHandler[T any, R any](displayData DisplayDataAsync, processData p
 			return false, nil
 		}
 
+		// When a search term was provided and all matching candidates are available
+		// on this page, auto-select if exactly one candidate has an exact name match
+		// (case-insensitively). This allows commands like `model view <name>` to succeed
+		// without failing as ambiguous in non-interactive environments when a query
+		// returns multiple substring/related matches but only one exact name match.
+		if searchTerm := strings.TrimSpace(displayData.SearchTerm); searchTerm != "" && currentPage == 0 && int64(len(rows)) == totalCount {
+			var exactMatches []R
+			for _, row := range rows {
+				for _, name := range getCandidateNames(displayData, row) {
+					if strings.EqualFold(strings.TrimSpace(name), searchTerm) {
+						exactMatches = append(exactMatches, row)
+						break
+					}
+				}
+			}
+			if len(exactMatches) == 1 {
+				*selectedItem = exactMatches[0]
+				return false, nil
+			}
+		}
+
 		// More than one match needs a choice, and a choice needs somebody to
 		// make it. Unlike paging there is no sensible non-interactive fallback -
 		// picking for the user would act on a resource they did not name - so
@@ -148,4 +170,113 @@ func promptPageHandler[T any, R any](displayData DisplayDataAsync, processData p
 		}
 		return true, nil
 	}
+}
+
+// getCandidateNames retrieves candidate resource names from item R,
+// preferring a caller-supplied ExtractNames function when provided.
+func getCandidateNames(displayData DisplayDataAsync, item any) []string {
+	if displayData.ExtractNames != nil {
+		if names := displayData.ExtractNames(item); len(names) > 0 {
+			return names
+		}
+	}
+	return extractCandidateNames(item)
+}
+
+// extractCandidateNames extracts potential names from an item via common interfaces
+// or reflection across known name fields (Name, DisplayName, Kind, Component.Kind).
+func extractCandidateNames(item any) []string {
+	if item == nil {
+		return nil
+	}
+
+	type itemNamer interface {
+		ItemNames() []string
+	}
+	if in, ok := item.(itemNamer); ok {
+		return in.ItemNames()
+	}
+
+	type singleNamer interface {
+		ItemName() string
+	}
+	if sn, ok := item.(singleNamer); ok {
+		return []string{sn.ItemName()}
+	}
+
+	type getNameInterface interface {
+		GetName() string
+	}
+	if gn, ok := item.(getNameInterface); ok {
+		return []string{gn.GetName()}
+	}
+
+	type nameInterface interface {
+		Name() string
+	}
+	if n, ok := item.(nameInterface); ok {
+		return []string{n.Name()}
+	}
+
+	val := reflect.ValueOf(item)
+	for val.Kind() == reflect.Pointer || val.Kind() == reflect.Interface {
+		if val.IsNil() {
+			return nil
+		}
+		val = val.Elem()
+	}
+
+	if val.Kind() != reflect.Struct {
+		return nil
+	}
+
+	var names []string
+
+	// Check field "Name"
+	if f := val.FieldByName("Name"); f.IsValid() && f.Kind() == reflect.String {
+		if s := f.String(); s != "" {
+			names = append(names, s)
+		}
+	}
+
+	// Check field "DisplayName"
+	if f := val.FieldByName("DisplayName"); f.IsValid() {
+		if f.Kind() == reflect.String {
+			if s := f.String(); s != "" {
+				names = append(names, s)
+			}
+		} else if f.CanInterface() {
+			if stringer, ok := f.Interface().(fmt.Stringer); ok {
+				if s := stringer.String(); s != "" {
+					names = append(names, s)
+				}
+			}
+		}
+	}
+
+	// Check field "Kind"
+	if f := val.FieldByName("Kind"); f.IsValid() && f.Kind() == reflect.String {
+		if s := f.String(); s != "" {
+			names = append(names, s)
+		}
+	}
+
+	// Check nested "Component.Kind"
+	if comp := val.FieldByName("Component"); comp.IsValid() {
+		for comp.Kind() == reflect.Pointer || comp.Kind() == reflect.Interface {
+			if comp.IsNil() {
+				break
+			}
+			comp = comp.Elem()
+		}
+		if comp.Kind() == reflect.Struct {
+			if kind := comp.FieldByName("Kind"); kind.IsValid() && kind.Kind() == reflect.String {
+				if s := kind.String(); s != "" {
+					names = append(names, s)
+				}
+			}
+		}
+	}
+
+	return names
 }
