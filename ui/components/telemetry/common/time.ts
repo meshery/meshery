@@ -99,6 +99,13 @@ const TIME_UNITS: Array<[number, string]> = [
   [1, 's'],
 ];
 
+// fixed is toFixed without the minus sign on values that round to zero, so a
+// tiny negative value prints 0.00 rather than -0.00.
+function fixed(value: number, digits: number): string {
+  const text = value.toFixed(digits);
+  return Number(text) === 0 ? (0).toFixed(digits) : text;
+}
+
 // scale divides value by base until it fits below base, choosing the matching
 // entry of suffixes. It compares the rounded value so 999.999 becomes 1.00K
 // rather than 1000.00.
@@ -109,12 +116,12 @@ function scale(value: number, base: number, suffixes: string[]): [string, string
     scaled /= base;
     i++;
   }
-  return [scaled.toFixed(2), suffixes[i]];
+  return [fixed(scaled, 2), suffixes[i]];
 }
 
 function formatShort(value: number): string {
   const abs = Math.abs(value);
-  if (abs < 1 && abs > 0) return value.toFixed(4);
+  if (abs < 1 && abs > 0) return fixed(value, 4);
   const [num, suffix] = scale(value, 1000, SHORT_SUFFIXES);
   return `${num}${suffix}`;
 }
@@ -126,11 +133,11 @@ function formatPrefixed(value: number, base: number, prefixes: string[], unit: s
 
 function formatSeconds(seconds: number): string {
   const abs = Math.abs(seconds);
-  if (abs > 0 && abs < 1) return `${(seconds * 1000).toFixed(2)} ms`;
+  if (abs > 0 && abs < 1) return `${fixed(seconds * 1000, 2)} ms`;
   for (const [size, label] of TIME_UNITS) {
-    if (Number((abs / size).toFixed(2)) >= 1) return `${(seconds / size).toFixed(2)} ${label}`;
+    if (Number((abs / size).toFixed(2)) >= 1) return `${fixed(seconds / size, 2)} ${label}`;
   }
-  return `${seconds.toFixed(2)} s`;
+  return `${fixed(seconds, 2)} s`;
 }
 
 // formatValue renders a numeric metric value for chart axes, tooltips and stat
@@ -150,7 +157,7 @@ export function formatValue(value: number, unit?: string): string {
     case 'percent':
       return `${formatShort(value)}%`;
     case 'percentunit':
-      return `${(value * 100).toFixed(2)}%`;
+      return `${fixed(value * 100, 2)}%`;
     case 'bytes':
       return formatPrefixed(value, 1024, IEC_PREFIXES, 'B');
     case 'decbytes':

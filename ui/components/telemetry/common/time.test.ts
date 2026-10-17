@@ -65,6 +65,14 @@ describe('formatValue', () => {
     expect(formatValue(3, 'widgets')).toBe('3.00 widgets');
   });
 
+  it('does not print negative zero for tiny negative values', () => {
+    expect(formatValue(-0.001, 'bytes')).toBe('0.00 B');
+    expect(formatValue(-0.00001)).toBe('0.0000');
+    expect(formatValue(-0.000001, 's')).toBe('0.00 ms');
+    expect(formatValue(-0.00001, 'percentunit')).toBe('0.00%');
+    expect(formatValue(-1.5, 'bytes')).toBe('-1.50 B');
+  });
+
   it('formats non-finite values as a dash', () => {
     expect(formatValue(Number.NaN, 'bytes')).toBe('—');
     expect(formatValue(Number.POSITIVE_INFINITY, 's')).toBe('—');
