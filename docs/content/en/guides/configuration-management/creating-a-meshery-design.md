@@ -3,6 +3,7 @@ title: Creating a Meshery Design
 description: Learn how to create a Meshery Design using the built-in Design Configurator in Meshery UI or the mesheryctl CLI.
 categories: [configuration]
 aliases:
+- /guides/configuration-management/working-with-designs/
 - /guides/configuration-management/working-with-designs
 - /tasks/patterns
 ---
@@ -108,3 +109,51 @@ mesheryctl design list
 
 See the [`mesheryctl design` reference]({{< ref "reference/references/mesheryctl/design/_index.md" >}}) for the full subcommand reference.
 {{< /tabs >}}
+
+## Importing and Configuring Sample Designs {#importing-and-configuring-sample-designs}
+
+Users can also import sample designs to their remote provider from this [sample repository](https://github.com/service-mesh-patterns/service-mesh-patterns/tree/master/samples).
+
+<img src=".../images/pattern-import.png" width="50%" />
+
+Once sample designs are imported, you can then edit sample designs or use the pattern configurator to configure them according to your requirements.
+
+<img src="../images/pattern-configure-button.png" width="50%" />
+
+<img src="../images/pattern-configure.png" width="50%" />
+
+## WASM Filters
+
+Meshery can be used for managing WebAssembly Filters through the UI or the CLI.
+
+### Filter Management Through Meshery UI
+
+Like patterns, Meshery also comes with some sample WebAssembly Filters for you to experiment.
+
+<img src="../images/meshery-filters.png" width="50%" />
+
+You can also import these filters manually to your provider from the [wasm-filters](https://github.com/meshery-extensions/wasm-filters) repo.
+
+Meshery's sample application ImageHub will let you test out configuring these filters out-of-the-box.
+
+You can onboard ImageHub to an installed service mesh as shown below.
+
+<img src="../images/image-hub.png" width="50%" />
+
+### Filter Management Through Meshery CLI
+
+You can also manage WASM filters through Meshery's CLI, mesheryctl.
+
+The `mesheryctl filter` command lets you import and configure WebAssembly filters.
+
+For example,
+
+```
+mesheryctl exp filter apply -f metrics_collector_bg.wasm
+```
+
+If you already have a filter imported into Meshery, you can configure the filter by name.
+
+```
+mesheryctl exp filter apply metrics_collector_bg
+```

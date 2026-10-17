@@ -2,6 +2,7 @@
 title: Command Line Reference
 description: "A guide to Meshery's CLI: mesheryctl"
 aliases:
+- /guides/mesheryctl/system-commands/
 - /reference/mesheryctl/commands/
 - /reference/mesheryctl/commands
 - /reference/mesheryctl/
