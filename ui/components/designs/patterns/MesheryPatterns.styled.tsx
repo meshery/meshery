@@ -16,13 +16,22 @@ export const AddIconStyled = styled(AddIcon)(() => ({
   paddingRight: '.35rem',
 }));
 
-export const SearchWrapper = styled(Box)(() => ({
+export const SearchWrapper = styled(Box)(({ theme }) => ({
   justifySelf: 'flex-end',
   marginLeft: 'auto',
   paddingLeft: '1rem',
   display: 'flex',
+  alignItems: 'center',
   '@media (max-width: 965px)': {
     width: 'max-content',
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    minWidth: 0,
+    marginLeft: 0,
+    paddingLeft: 0,
+    flexWrap: 'wrap',
+    gap: '0.5rem',
   },
 }));
 
