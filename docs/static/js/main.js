@@ -53,62 +53,102 @@ function HideToggleFunction() {
 
 /*clipboard*/
 
-var getcodeelement = $('.clipboardjs');
+$(document).ready(function () {
+    // 1. All codeblock-pre blocks (shortcodes, mesheryctl reference, raw HTML)
+    $('.codeblock-pre').each(function () {
+        if (!$(this).find('.clipbtn').length) {
+            var cb = $(this).find('.codeblock');
+            if (cb.length && !cb.find('.clipboardjs').length) {
+                cb.contents().wrapAll('<div class="clipboardjs"></div>');
+            }
+            var clipButton = '<div class="btn-copy-wrap"><button type="button" class="clipbtn" aria-label="Copy code to clipboard"><i class="far fa-copy" aria-hidden="true"></i></button></div>';
+            $(this).append(clipButton);
+        }
+    });
 
-getcodeelement.each(function () {
-    
-    /*trigger*/
-    
-    var clipButton = '<div class="btn-copy-wrap"><button type="button" class="clipbtn" aria-label="Copy code to clipboard"><i class="far fa-copy" aria-hidden="true"></i></button></div>';
-    $(this).after(clipButton);
-});
+    // Fallback for standalone .clipboardjs not inside .codeblock-pre
+    $('.clipboardjs').each(function () {
+        if (!$(this).closest('.codeblock-pre').length && !$(this).parent().find('.clipbtn').length) {
+            var clipButton = '<div class="btn-copy-wrap"><button type="button" class="clipbtn" aria-label="Copy code to clipboard"><i class="far fa-copy" aria-hidden="true"></i></button></div>';
+            $(this).after(clipButton);
+        }
+    });
 
-var clipboard = new Clipboard('.clipbtn', {
-    text: function (trigger) {
-        var container = trigger.closest('pre') || trigger.closest('.highlight');
-        var content = container ? container.querySelector('.clipboardjs') : null;
-        var text = content ? content.textContent : '';
-        return text.trim().replace(/^\s*\$\s+/gm, '');
-    }
-});
+    // 2. Standard Markdown fenced blocks (.highlight)
+    $('.highlight').each(function () {
+        if (!$(this).find('.clipbtn').length) {
+            var clipButton = '<div class="btn-copy-wrap highlight-copy-wrap"><button type="button" class="clipbtn" aria-label="Copy code to clipboard"><i class="far fa-copy" aria-hidden="true"></i></button></div>';
+            $(this).append(clipButton);
+        }
+    });
 
-/* Change copy icon to check icon when successfully copied*/
-clipboard.on("success", (e) => {
-    const button = e.trigger;
-    if (button.dataset.isCopying === "true") {
-        return;
-    }
+    // 3. Standalone pre blocks (e.g. untagged markdown code blocks, REST API explorer, bare HTML pre)
+    $('pre:not(.codeblock-pre)').each(function () {
+        if ($(this).closest('.highlight').length) return;
+        if ($(this).closest('.codeblock-pre').length) return;
+        if ($(this).find('.clipbtn').length) return;
+        var clipButton = '<div class="btn-copy-wrap highlight-copy-wrap"><button type="button" class="clipbtn" aria-label="Copy code to clipboard"><i class="far fa-copy" aria-hidden="true"></i></button></div>';
+        $(this).css('position', 'relative').append(clipButton);
+    });
 
-    const icon = button.querySelector('i');
-    if (!icon) return;
+    // 4. REST API Try-it endpoint URLs
+    $('.rest-api-try-item__url').each(function () {
+        if (!$(this).parent().find('.clipbtn').length) {
+            $(this).wrap('<div class="rest-api-try-item__box"></div>');
+            var clipButton = '<div class="btn-copy-wrap"><button type="button" class="clipbtn" aria-label="Copy URL to clipboard"><i class="far fa-copy" aria-hidden="true"></i></button></div>';
+            $(this).after(clipButton);
+        }
+    });
 
-    button.dataset.isCopying = "true";
-    button.setAttribute('aria-label', 'Copied to clipboard');
+    var clipboard = new Clipboard('.clipbtn', {
+        text: function (trigger) {
+            var container = trigger.closest('pre') || trigger.closest('.highlight') || trigger.closest('.codeblock-pre') || trigger.closest('.rest-api-example') || trigger.closest('.rest-api-try-item__box') || trigger.closest('.rest-api-try-item');
+            if (!container) return '';
+            var content = container.querySelector('.clipboardjs') || container.querySelector('code') || container.querySelector('.codeblock') || container;
+            var clone = content.cloneNode(true);
+            var btn = clone.querySelector('.btn-copy-wrap');
+            if (btn) btn.remove();
+            var text = clone.textContent || '';
+            return text.trim().replace(/^\s*\$\s+/gm, '');
+        }
+    });
 
-    const originalIcon = icon.cloneNode(true);
-    const text = document.createElement('span');
-    const checkIcon = document.createElement('i');
-    checkIcon.className = 'fas fa-check';
-    checkIcon.style.color = "var(--brand-color-secondary)";
-    checkIcon.setAttribute('aria-hidden', 'true');
-    text.appendChild(checkIcon);
-    text.appendChild(document.createTextNode(' Copied!'));
-    text.style.color = "var(--brand-color-secondary)";
-
-    button.replaceChild(text, icon);
-
-    setTimeout(() => {
-        // 1. Always reset accessible name/state first (safe even if detached)
-        button.setAttribute('aria-label', 'Copy code to clipboard');
-        button.removeAttribute("data-is-copying");
-        // 2. Guard only the physical DOM manipulation
-        if (button.isConnected === false) {
+    /* Change copy icon to check icon when successfully copied*/
+    clipboard.on("success", (e) => {
+        const button = e.trigger;
+        if (button.dataset.isCopying === "true") {
             return;
         }
-        if (text.parentNode === button) {
-            button.replaceChild(originalIcon, text);
-        }
-    }, 2000);
+
+        const icon = button.querySelector('i');
+        if (!icon) return;
+
+        button.dataset.isCopying = "true";
+        button.setAttribute('aria-label', 'Copied to clipboard');
+
+        const originalIcon = icon.cloneNode(true);
+        const text = document.createElement('span');
+        const checkIcon = document.createElement('i');
+        checkIcon.className = 'fas fa-check';
+        checkIcon.style.color = "var(--brand-color-secondary)";
+        checkIcon.setAttribute('aria-hidden', 'true');
+        text.appendChild(checkIcon);
+        text.appendChild(document.createTextNode(' Copied!'));
+        text.style.color = "var(--brand-color-secondary)";
+
+        button.replaceChild(text, icon);
+
+        setTimeout(() => {
+            button.setAttribute('aria-label', 'Copy code to clipboard');
+            button.removeAttribute("data-is-copying");
+            if (button.isConnected === false) {
+                return;
+            }
+            if (text.parentNode === button) {
+                button.replaceChild(originalIcon, text);
+            }
+        }, 2000);
+    });
 });
 const toggleBtnSidebarNav = document.querySelector(".nav-toggle-btn--document");
 

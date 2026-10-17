@@ -77,7 +77,8 @@ pre::-webkit-scrollbar {
   pre:not(.codeblock-pre) {
     word-wrap: normal;
     background-color: var(--color-primary-medium);
-    padding: 0.75rem;
+    padding: 0.75rem 2.75rem 0.75rem 0.75rem;
+    position: relative;
     overflow: hidden;
     &::-webkit-scrollbar {
       display: none;
@@ -85,7 +86,7 @@ pre::-webkit-scrollbar {
   }
   .highlight pre {
     margin: 0;
-    padding: 0;
+    padding: 0 2.75rem 0 0 !important;
   }
 }
 

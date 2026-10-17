@@ -648,10 +648,23 @@ $method-head: #7d8790;
     text-transform: uppercase;
   }
 
+  .rest-api-try-item__box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    .btn-copy-wrap {
+      top: 50%;
+      transform: translateY(-50%);
+      right: 0.5rem;
+    }
+  }
+
   .rest-api-try-item__url {
     display: block;
     width: 100%;
-    padding: 0.8rem 0.95rem;
+    padding: 0.8rem 5.5rem 0.8rem 0.95rem;
     border-radius: 0.9rem;
     border: 1px solid var(--color-grey-light);
     background: var(--color-primary-medium);
