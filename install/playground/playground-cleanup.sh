@@ -22,9 +22,9 @@ do
     fi
 done
 
-for ns in $valid_namespaces;
+for ns in "${valid_namespaces[@]}";
 do
-    kubectl delete pods -n $ns \
+    kubectl delete pods -n "$ns" \
     --field-selector="status.phase!=Running,status.phase!=ContainerCreating"
 done
 

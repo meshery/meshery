@@ -18,6 +18,7 @@ jobs:
           host: ${{ secrets.OCI_BASTION_HOST }}
           username: ${{ secrets.OCI_BASTION_USERNAME }}
           key: ${{ secrets.OCI_BASTION_KEY }}
+          fingerprint: ${{ secrets.OCI_BASTION_FINGERPRINT }}
           envs: MANIFEST_REF
           script: |
             set -euo pipefail
