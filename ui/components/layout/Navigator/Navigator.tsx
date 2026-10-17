@@ -75,6 +75,9 @@ import {
 import { useRouter } from 'next/router';
 import { setAdapter } from '@/store/slices/adapter';
 import { getNavigatorComponents } from './navigatorComponents';
+import usePinnedNavItems from '@/utils/hooks/usePinnedNavItems';
+import NavigatorFavorites from './NavigatorFavorites';
+import PinToggleButton from './PinToggleButton';
 
 const externalLinkIconStyle = { width: '17.76px', fontSize: '1.11rem' };
 
@@ -103,6 +106,24 @@ const findNavigatorItemByPath = (items, path) => {
   }
 
   return null;
+};
+
+const getLeafNavigatorItems = (items) => {
+  const leaves = [];
+  const traverse = (list) => {
+    for (const item of list) {
+      if (item.show === false) continue;
+      const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+      if (!hasChildren && item.href && item.link) {
+        leaves.push(item);
+      }
+      if (hasChildren && item.children) {
+        traverse(item.children);
+      }
+    }
+  };
+  traverse(items);
+  return leaves;
 };
 
 const buildAdapterChildren = (meshAdapters, category) => {
@@ -220,6 +241,7 @@ const NavigatorContent = () => {
   const [providerUiAccessControl, setProviderUiAccessControl] =
     useState<ProviderUiAccessControl | null>(null);
   const [versionDetail, setVersionDetail] = useState(defaultVersionDetail);
+  const { pinnedItemIds, togglePin, isPinned } = usePinnedNavItems();
   const navigatorComponents = useMemo(() => {
     if (!providerUiAccessControl) {
       return [];
@@ -233,6 +255,30 @@ const NavigatorContent = () => {
       currentPath,
     });
   }, [providerUiAccessControl, catalogVisibility, currentPath, meshAdapters, theme]);
+
+  const leafItems = useMemo(
+    () => getLeafNavigatorItems(navigatorComponents),
+    [navigatorComponents],
+  );
+
+  const leafItemsById = useMemo(() => {
+    const map = new Map();
+    for (const item of leafItems) {
+      map.set(item.id, item);
+    }
+    return map;
+  }, [leafItems]);
+
+  const resolvedPinnedItems = useMemo(() => {
+    const resolved = [];
+    for (const id of pinnedItemIds) {
+      const item = leafItemsById.get(id);
+      if (item) {
+        resolved.push(item);
+      }
+    }
+    return resolved;
+  }, [pinnedItemIds, leafItemsById]);
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -578,9 +624,11 @@ const NavigatorContent = () => {
             }
 
             const isActive = currentPath === hrefc;
+            const isPinnableChild =
+              Boolean(linkc) && Boolean(hrefc) && (!childrenc || childrenc.length === 0);
 
             return (
-              <div key={idc}>
+              <div key={idc} style={{ position: 'relative' }}>
                 <ListItemComponent
                   {...(isLifecycleGroup
                     ? {
@@ -607,6 +655,14 @@ const NavigatorContent = () => {
                 >
                   {linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}
                 </ListItemComponent>
+                {!isDrawerCollapsed && isPinnableChild && (
+                  <PinToggleButton
+                    id={idc}
+                    title={titlec}
+                    pinned={isPinned(idc)}
+                    onToggle={togglePin}
+                  />
+                )}
                 {renderChildren(idname, childrenc, depth + 1)}
               </div>
             );
@@ -689,6 +745,16 @@ const NavigatorContent = () => {
   const Menu = (
     <>
       <HideScrollbar disablePadding>
+        {providerUiAccessControl && (
+          <NavigatorFavorites
+            resolvedPinnedItems={resolvedPinnedItems}
+            isDrawerCollapsed={isDrawerCollapsed}
+            hoveredId={hoveredId}
+            setHoveredId={setHoveredId}
+            currentPath={currentPath}
+            onTogglePin={togglePin}
+          />
+        )}
         {navigatorComponents.map(
           ({
             id: childId,
@@ -703,8 +769,9 @@ const NavigatorContent = () => {
             permissionKey,
           }) => {
             const hasChildren = Array.isArray(children) && children.length > 0;
+            const isPinnable = !hasChildren && Boolean(link) && Boolean(href);
             return (
-              <RootDiv key={childId}>
+              <RootDiv key={childId} style={{ position: 'relative' }}>
                 <SideBarListItem
                   dense
                   key={childId}
@@ -766,6 +833,14 @@ const NavigatorContent = () => {
                     />
                   )}
                 </SideBarListItem>
+                {!isDrawerCollapsed && isPinnable && (
+                  <PinToggleButton
+                    id={childId}
+                    title={title}
+                    pinned={isPinned(childId)}
+                    onToggle={togglePin}
+                  />
+                )}
                 <Collapse
                   in={openItems.includes(childId)}
                   style={{
