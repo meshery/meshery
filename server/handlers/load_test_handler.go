@@ -175,7 +175,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	 if query param is unset/not present presence of body
 	 if values have been passed as body we run test using SMP Handler
 	*/
-	if !isSSLCertificateProvided && string(body) != "" {
+	if !isSSLCertificateProvided && strings.TrimSpace(string(body)) != "" {
 		h.log.Info("Running test with SMP config")
 		req.Body = io.NopCloser(strings.NewReader(string(body)))
 		h.LoadTestUsingSMPHandler(w, req, prefObj, user, provider)
