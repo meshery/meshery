@@ -67,24 +67,26 @@ tags:
     description: Operations related to Blowhorn bindings.
   - name: BlowhornContent_blowhornContent
     description: Operations related to Blowhorn content.
-  - name: BlowhornDestination_blowhornDestinations
-    description: Operations related to Blowhorn destinations.
   - name: BlowhornHealth_blowhornHealth
     description: Operations related to Blowhorn health.
   - name: BlowhornLedger_blowhornLedger
     description: Operations related to Blowhorn ledger entries, contacts and mentees.
   - name: BlowhornProfile_blowhornProfiles
     description: Operations related to Blowhorn profiles.
-  - name: BlowhornRun_blowhornRuns
-    description: Operations related to Blowhorn run records and analytics.
   - name: Design_designs
     description: Operations related to designs and infrastructure patterns
+  - name: Design_github
+    description: GitHub repository reads that back design import and remap
   - name: Environment_environments
     description: APIs for environments
   - name: Events_events
     description: APIs for Meshery Cloud events.
   - name: Filter_filters
     description: Operations related to Meshery filters.
+  - name: GitHub_github
+    description: >-
+      GitHub App connection status and authorization, installation repositories, repository trees and the Kanvas
+      workflow.
   - name: Invitation_Invitation
     description: Operations related to invitation
   - name: JobLease_jobLeases
@@ -71146,7 +71148,10 @@ paths:
         - Connection_API_Connections
       operationId: registerConnection
       summary: Register a new connection
-      description: Register a new connection with credentials
+      description: >
+        Register a new connection with credentials. Meshery Cloud reserves the GitHub App connection's identity (name
+        `GitHub App`, sub_type `git`): only its GitHub authorization flow creates that connection, so a request naming
+        it is refused with `409` (code `meshery_cloud-3397`).
       requestBody:
         required: true
         content:
@@ -72578,6 +72583,47 @@ paths:
             text/plain:
               schema:
                 type: string
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+                  `MeshkitError409`, `MeshkitError500` and `MeshkitError502` responses for an operation whose server
+                  answers its refusals this way.
+                required:
+                  - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: MeshKit error code, e.g. `meshery_cloud-3420`. Omitted for an error that is not a MeshKit error.
+                  severity:
+                    type: string
+                    description: MeshKit severity name. Omitted when MeshKit reports none.
+                    enum:
+                      - emergency
+                      - alert
+                      - critical
+                      - fatal
+                  probableCause:
+                    type: array
+                    description: MeshKit's probable causes of the error.
+                    items:
+                      type: string
+                  suggestedRemediation:
+                    type: array
+                    description: MeshKit's suggested remediations for the error.
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
@@ -73798,7 +73844,13 @@ paths:
         - Connection_API_Connections
       operationId: updateConnection
       summary: Update a connection
-      description: Update an existing connection
+      description: >
+        Update an existing connection. Meshery Cloud refuses (`409`, code `meshery_cloud-3397`) an edit that would give
+        a connection the GitHub App connection's identity (name `GitHub App`, sub_type `git`). On the GitHub App
+        connection itself, the server-written metadata keys `installations`, `installationId` and
+        `installationsVerifiedAt` are carried forward from the stored row: a client edit can neither set nor erase them
+        (other metadata keys are written as sent). Their shape is `GithubConnectionMetadata` in the v1beta3 `github`
+        construct.
       parameters:
         - name: connectionId
           in: path
@@ -75244,6 +75296,47 @@ paths:
             text/plain:
               schema:
                 type: string
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+                  `MeshkitError409`, `MeshkitError500` and `MeshkitError502` responses for an operation whose server
+                  answers its refusals this way.
+                required:
+                  - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: MeshKit error code, e.g. `meshery_cloud-3420`. Omitted for an error that is not a MeshKit error.
+                  severity:
+                    type: string
+                    description: MeshKit severity name. Omitted when MeshKit reports none.
+                    enum:
+                      - emergency
+                      - alert
+                      - critical
+                      - fatal
+                  probableCause:
+                    type: array
+                    description: MeshKit's probable causes of the error.
+                    items:
+                      type: string
+                  suggestedRemediation:
+                    type: array
+                    description: MeshKit's suggested remediations for the error.
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
@@ -79058,7 +79151,9 @@ paths:
                                 json: totalCount
                       additionalProperties: false
                     location:
-                      description: Optional structured location metadata (branch, host, path, ...).
+                      description: >
+                        Optional structured location metadata (branch, host, path, ...). For a design bound to a GitHub
+                        source the keys are those of DesignSourceLocation, including commitSha.
                       type: object
                       additionalProperties:
                         type: string
