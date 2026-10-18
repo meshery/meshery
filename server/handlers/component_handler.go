@@ -1388,13 +1388,29 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	components := []component.ComponentDefinition{}
 	// Components can be nil if hasComponents is false
 	if model.Components != nil {
-		components = model.Components.([]component.ComponentDefinition)
+		if comps, ok := model.Components.([]component.ComponentDefinition); ok {
+			components = comps
+		} else if compsPtr, ok := model.Components.([]*component.ComponentDefinition); ok {
+			for _, c := range compsPtr {
+				if c != nil {
+					components = append(components, *c)
+				}
+			}
+		}
 	}
 
 	relationships := []relationship.RelationshipDefinition{}
 	// Relationships can be nil if hasRelationships is false
 	if model.Relationships != nil {
-		relationships = model.Relationships.([]relationship.RelationshipDefinition)
+		if rels, ok := model.Relationships.([]relationship.RelationshipDefinition); ok {
+			relationships = rels
+		} else if relsPtr, ok := model.Relationships.([]*relationship.RelationshipDefinition); ok {
+			for _, r := range relsPtr {
+				if r != nil {
+					relationships = append(relationships, *r)
+				}
+			}
+		}
 	}
 
 	model.Relationships = nil
@@ -1455,7 +1471,12 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		}
 
 		// 3. Send response
-		byt, _ = os.ReadFile(tarfileName)
+		byt, err = os.ReadFile(tarfileName)
+		if err != nil {
+			h.log.Error(err)
+			writeMeshkitError(rw, ErrExportModel(err, "OCI tar file read"), http.StatusInternalServerError)
+			return
+		}
 		rw.Header().Add("Content-Type", "application/x-tar")
 		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.tar\"", model.Name))
 		rw.Header().Set("Content-Length", fmt.Sprintf("%d", len(byt)))
@@ -1474,10 +1495,14 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 			writeMeshkitError(rw, ErrExportModel(err, "tar.gz write"), http.StatusInternalServerError)
 			return
 		}
-		byt, _ = os.ReadFile(tarfileName)
+		byt, err = os.ReadFile(tarfileName)
+		if err != nil {
+			h.log.Error(err)
+			writeMeshkitError(rw, ErrExportModel(err, "tar.gz file read"), http.StatusInternalServerError)
+			return
+		}
 		rw.Header().Add("Content-Type", "application/gzip")
 		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.tar.gz\"", model.Name))
-
 	}
 
 	// 3. Send response
