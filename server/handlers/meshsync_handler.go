@@ -78,6 +78,20 @@ func KubernetesResourceToComponentDef(resource model.KubernetesResource, stripSc
 	componentDef.ID = uuid.FromStringOrNil(resource.KubernetesResourceMeta.UID)
 	componentDef.DisplayName = resource.KubernetesResourceMeta.Name
 
+	if componentDef.Component.Kind == "" {
+		componentDef.Component.Kind = resource.Kind
+	}
+	if componentDef.Component.Version == "" {
+		componentDef.Component.Version = resource.APIVersion
+	}
+	if componentDef.ModelReference.Name == "" {
+		if resource.Model != "" {
+			componentDef.ModelReference.Name = resource.Model
+		} else {
+			componentDef.ModelReference.Name = "kubernetes"
+		}
+	}
+
 	var spec interface{}
 	if resource.Spec != nil {
 		spec = JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{})

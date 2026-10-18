@@ -353,6 +353,10 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 		// Provide a default or fallback component definition
 		componentDef = component.ComponentDefinition{
 			Styles: &K8sMeshModelMetadata.Styles,
+			Component: component.Component{
+				Kind:    kind,
+				Version: apiVersion,
+			},
 		}
 		return
 	}
