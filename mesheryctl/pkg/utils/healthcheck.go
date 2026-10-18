@@ -231,9 +231,6 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 				return false, err
 			}
 			containers = convertToComposeSummaries(containersSummary)
-			if err != nil {
-				return false, err
-			}
 			return ContainsMesheryContainer(containers), nil
 		}
 	case "kubernetes":

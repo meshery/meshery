@@ -1,0 +1,1 @@
+Hey everyone! I'm Rajpreet Singh Khurana, a cybersecurity and software engineering student from Mumbai. I'm exploring Meshery to contribute to cloud-native tooling, Kubernetes infrastructure, and developer ergonomics. Excited to learn and collaborate with the community!
