@@ -7,7 +7,10 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -487,4 +490,89 @@ func TestTokenCreateUsesActiveConfigPath(t *testing.T) {
 
 	assert.Contains(t, string(activeUpdated), "name: regression-token", "expected active config %s to be updated with the new token", activeConfigPath)
 	assert.NotContains(t, string(defaultUpdated), "name: regression-token", "expected default config %s to remain unchanged", defaultConfigPath)
+}
+
+func TestTokenListAndViewReturnErrors(t *testing.T) {
+	missingTokenConfig := `contexts:
+  local:
+    endpoint: http://localhost:9081
+    token: missing-token
+    platform: docker
+    provider: Meshery
+current-context: local
+tokens:
+  - location: auth.json
+    name: default
+`
+	malformedConfig := "contexts: [\n  bad yaml"
+	invalidMeshConfig := "contexts: invalid\n"
+
+	tests := []struct {
+		name         string
+		config       string
+		args         []string
+		expectedCode string
+	}{
+		{
+			name:         "view fails when the current context has no matching token",
+			config:       missingTokenConfig,
+			args:         []string{"token", "view"},
+			expectedCode: ErrTokenContextCode,
+		},
+		{
+			name:         "view fails when the meshconfig cannot be parsed",
+			config:       malformedConfig,
+			args:         []string{"token", "view"},
+			expectedCode: utils.ErrReadConfigFileCode,
+		},
+		{
+			name:         "list fails when the meshconfig cannot be parsed",
+			config:       malformedConfig,
+			args:         []string{"token", "list"},
+			expectedCode: utils.ErrReadConfigFileCode,
+		},
+		{
+			name:         "view fails when the meshconfig cannot be unmarshaled",
+			config:       invalidMeshConfig,
+			args:         []string{"token", "view"},
+			expectedCode: config.ErrInvalidMeshConfigCode,
+		},
+		{
+			name:         "list fails when the meshconfig cannot be unmarshaled",
+			config:       invalidMeshConfig,
+			args:         []string{"token", "list"},
+			expectedCode: config.ErrInvalidMeshConfigCode,
+		},
+	}
+
+	originalCfgFile := utils.CfgFile
+	originalDefaultConfigPath := utils.DefaultConfigPath
+	t.Cleanup(func() {
+		utils.CfgFile = originalCfgFile
+		utils.DefaultConfigPath = originalDefaultConfigPath
+		viper.Reset()
+	})
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			configPath := filepath.Join(t.TempDir(), "config.yaml")
+			if err := os.WriteFile(configPath, []byte(tt.config), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			viper.Reset()
+			utils.CfgFile = configPath
+			utils.DefaultConfigPath = configPath
+
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+			SystemCmd.SetOut(b)
+			SystemCmd.SetArgs(tt.args)
+			err := SystemCmd.Execute()
+
+			if err == nil {
+				t.Fatalf("expected an error so the command exits non-zero, got nil")
+			}
+			assert.Equal(t, tt.expectedCode, meshkiterrors.GetCode(err))
+			BreakupFunc()
+		})
+	}
 }
