@@ -372,8 +372,11 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			continue
 		}
 		inst.ResetState()
+		// detach from the http request lifecycle so that the discovery isn't cancelled when
+		// the handler returns, while preserving context values (e.g. TokenCtxKey) that downstream calls depend on.
+		detachedCtx := context.WithoutCancel(ctx)
 		go func(inst *machines.StateMachine) {
-			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
+			event, err := inst.SendEvent(detachedCtx, machines.Discovery, nil)
 			if err != nil {
 				_ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userUUID, event)
