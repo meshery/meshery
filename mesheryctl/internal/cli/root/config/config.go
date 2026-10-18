@@ -241,6 +241,8 @@ func (ctx *Context) SetVersion(version string) {
 	ctx.Version = version
 }
 
+var validateVersionClient = &http.Client{Timeout: 10 * time.Second}
+
 // ValidateVersion checks if the version is valid, if empty sets it to default value latest. Returns an error if the version is invalid.
 func (ctx *Context) ValidateVersion() error {
 	if ctx.Version == "" {
@@ -257,8 +259,7 @@ func (ctx *Context) ValidateVersion() error {
 	if err != nil {
 		return err
 	}
-	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Do(req)
+	resp, err := validateVersionClient.Do(req)
 	if err != nil {
 		return errors.Wrapf(err, "failed to make GET request to %s", url)
 	}
@@ -270,11 +271,11 @@ func (ctx *Context) ValidateVersion() error {
 	}()
 
 	if resp.StatusCode == 404 {
-		mesheryctllogger.Log.Fatal(fmt.Errorf("version '%s' is not a valid Meshery release", ctx.Version))
+		return ErrInvalidVersion(fmt.Errorf("version '%s' is not a valid Meshery release", ctx.Version))
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		mesheryctllogger.Log.Fatal(fmt.Errorf("failed to validate Meshery release version %s", ctx.Version))
+		return ErrInvalidVersion(fmt.Errorf("failed to validate Meshery release version %s (server returned HTTP %d)", ctx.Version, resp.StatusCode))
 	}
 
 	return nil
