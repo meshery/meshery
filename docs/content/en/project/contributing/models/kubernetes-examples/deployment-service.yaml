@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery-example-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meshery-example-web
+  template:
+    metadata:
+      labels:
+        app: meshery-example-web
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.28.0
+          ports:
+            - name: http
+              containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: meshery-example-web
+spec:
+  type: ClusterIP
+  selector:
+    app: meshery-example-web
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
