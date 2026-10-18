@@ -414,22 +414,30 @@ check-go:
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
 .PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-operator-appversion-check helm-lint
-## Generate all Meshery Helm Chart documentation in markdown format.
-helm-docs: helm-operator-docs helm-meshery-docs
+## Generate the Meshery Operator Helm Chart documentation in markdown format.
+helm-docs: helm-operator-docs
 
-# WARNING: this overwrites install/kubernetes/helm/meshery-operator/README.md, which is
-# hand-maintained. values.yaml has no `# --` comments and there is no README.md.gotmpl,
-# so helm-docs would delete that README's "CRD lifecycle" section and every per-value
-# description. Read the note at the top of that file before running this.
-## Generate Meshery Operator Helm Chart docs. WARNING: overwrites the hand-maintained meshery-operator README - read the note at its top first.
+# Regenerates install/kubernetes/helm/meshery-operator/README.md from
+# README.md.gotmpl and the `# --` comments in values.yaml. Version badges are
+# rendered from Chart.yaml. The chart-search-root also covers the meshery-broker
+# and meshery-meshsync subcharts, so their READMEs are regenerated too - from
+# helm-docs' default template, since neither carries a README.md.gotmpl.
+# helm-docs v1.14.2 is installed with go install so this target does not rewrite
+# go.mod; a second run leaves the tree clean.
+## Generate Meshery Operator Helm Chart docs from README.md.gotmpl and values.yaml comments.
 helm-operator-docs: dep-check
-	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs
+	GOBIN=$(GOPATH)/bin GO111MODULE=on go install github.com/norwoodj/helm-docs/cmd/helm-docs@v1.14.2
 	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery-operator
 
-## Generate Meshery Server and Adapters Helm Chart documentation in markdown format.
-helm-meshery-docs: dep-check
-	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs
-	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery
+# install/kubernetes/helm/meshery/README.md and the nine adapter subchart READMEs
+# are hand-maintained: that chart has no README.md.gotmpl and no `# --` comments
+# in values.yaml, so helm-docs would delete every curated value description.
+## Refuse to regenerate the Meshery Server and Adapter Helm Chart docs; they are hand-maintained.
+helm-meshery-docs:
+	@echo "make helm-meshery-docs is disabled: install/kubernetes/helm/meshery and its adapter subcharts have hand-maintained READMEs."
+	@echo "Running helm-docs against them would delete every curated value description."
+	@echo "Edit those READMEs by hand, or migrate the chart to README.md.gotmpl plus '# --' comments in values.yaml (as meshery-operator was) before re-enabling this target."
+	@exit 1
 
 ## Lint all of Meshery's Helm Charts
 helm-lint: helm-operator-lint helm-meshery-lint
