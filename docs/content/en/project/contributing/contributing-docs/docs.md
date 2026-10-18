@@ -273,7 +273,7 @@ The following is a concise summary of the steps to contribute to Meshery documen
 5. Add redirect link on the old page (only when a new page is created that replaces the old page). In Hugo, use the `aliases` frontmatter field.
 6. Run site locally to preview changes.
    `make site`
-7. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
+7. Commit, [sign-off]({{< ref "project/contributing/_index.md" >}}), and push changes to your remote branch.
    `git push origin <my-changes>`
 8. Open a pull request (in your web browser) against the repo: https://github.com/meshery/meshery.
 

@@ -16,7 +16,7 @@ Rego policies are the declarative logic behind the policy engine. These policies
 
 Currently the Rego policies are invoked from the Go code in Meshery Server. This requires configuring the OPA context as seen [here](https://github.com/meshery/meshkit/blob/master/models/meshmodel/core/policies/rego_policy_relationship.go).
 
-The Meshery Policy Engine is invoked by calling the [evaluation endpoint](https://docs.meshery.io/reference/rest-apis#api-meshmodels-relationships-evaluate). This endpoint is passed a Meshery Design in JSON which it passes to the Meshery Policy Engine for validation.
+The Meshery Policy Engine is invoked by calling the [evaluation endpoint]({{< ref "reference/references/rest-apis/_index.md" >}}). This endpoint is passed a Meshery Design in JSON which it passes to the Meshery Policy Engine for validation.
 
 ## Working with Meshery Policy Engine
 

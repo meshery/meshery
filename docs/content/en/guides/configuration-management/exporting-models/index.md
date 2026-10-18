@@ -10,7 +10,7 @@ Export existing Meshery [Models]({{< ref "concepts/logical/models/index.md" >}})
 
 **Step 1: Install Meshery CLI**
 
-Before you can use the Meshery CLI to export a [Model]({{< ref "concepts/logical/models/index.md" >}}), you must first install it. You can install Meshery CLI by [following the instructions]({{< ref "installation/_index.md#install-mesheryctl" >}}).
+Before you can use the Meshery CLI to export a [Model]({{< ref "concepts/logical/models/index.md" >}}), you must first install it. You can install Meshery CLI by [following the instructions]({{< ref "installation/mesheryctl/_index.md" >}}).
 
 **Step 2: Export the Model**
 

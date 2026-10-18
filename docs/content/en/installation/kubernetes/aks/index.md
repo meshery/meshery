@@ -10,7 +10,7 @@ description: Manage your AKS clusters with Meshery. Deploy Meshery in AKS in-clu
 
 <h1>Quick Start with AKS <img src="images/aks.svg" style="width:35px;height:35px;" /></h1>
 
-Manage your AKS clusters with Meshery. Deploy Meshery in AKS [in-cluster](#in-cluster-installation) or outside of AKS [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your AKS clusters_**
+Manage your AKS clusters with Meshery. Deploy Meshery in AKS [in-cluster](#in-cluster-installation) or outside of AKS [out-of-cluster]({{< ref "installation/kubernetes/_index.md#out-of-cluster-installation" >}}). **_Note: It is advisable to install Meshery in your AKS clusters_**
 
 <div class="prereqs"><h4>Prerequisites</h4>
 <ol>

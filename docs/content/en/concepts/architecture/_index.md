@@ -55,7 +55,7 @@ Meshery's REST API may be consumed by any number of clients. Clients need to pre
 <a href="images/Meshery-client-architecture.webp" class="lightbox-image">
 <img src="images/Meshery-client-architecture.webp" width="50%" /></a>
 
-_Figure: Clients use Meshery's [REST API]({{< ref "reference/extensibility/api.md#rest" >}}), [GraphQL API]({{< ref "reference/extensibility/api.md#graphql" >}}), or a combination of both._
+_Figure: Clients use Meshery's [REST API]({{< ref "reference/references/rest-apis/_index.md" >}}), [GraphQL API]({{< ref "reference/references/graphql-apis.md" >}}), or a combination of both._
 
 ### Providers
 

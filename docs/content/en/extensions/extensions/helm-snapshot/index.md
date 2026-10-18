@@ -49,7 +49,7 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
 
    You should see the snapshot listed as `helm-snapshot`.
 
-4. Set up the required environment variables (see the [Environment Variables](#environment-variables) section).
+4. Set up the required environment variables.
 
 ### Usage
 

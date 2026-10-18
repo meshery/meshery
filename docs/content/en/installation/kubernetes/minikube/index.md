@@ -43,7 +43,6 @@ Also see: [Install Meshery on Kubernetes]({{< ref "installation/kubernetes/_inde
   - [Installation: Install Meshery on Docker](#installation-install-meshery-on-docker)
     - [Minikube Docker Driver Users](#minikube-docker-driver-users)
       - [Next Step: Update the Kubernetes API Server Address for Meshery Access](#next-step-update-the-kubernetes-api-server-address-for-meshery-access)
-  - [Change the server address](#change-the-server-address)
 - [Uploading Configuration File in the Meshery Web UI](#uploading-configuration-file-in-the-meshery-web-ui)
       - [Troubleshooting Meshery Installation](#troubleshooting-meshery-installation)
 - [Post-Installation Steps](#post-installation-steps)
@@ -172,7 +171,7 @@ Next, run the following command to configure Meshery to access your cluster.
 3. Click on **Add Cluster** and search for your kubeconfig file.
 4. Click **Import**.
 
-**Note**:  If you encounter a connections refused error while uploading your kubeconfig, try changing your cluster server URL to the external API address of minikube. To do this follow the steps listed in the [Minikube Docker Driver Users Section](#docker-driver-update-the-kubernetes-api-server-address-for-meshery-access).
+**Note**:  If you encounter a connections refused error while uploading your kubeconfig, try changing your cluster server URL to the external API address of minikube. To do this follow the steps listed in the [Minikube Docker Driver Users Section](#next-step-update-the-kubernetes-api-server-address-for-meshery-access).
 
 #### Troubleshooting Meshery Installation
 

@@ -16,7 +16,7 @@ The `mesheryctl model import` command currently supports importing Models contai
 
 **Step 1: Install Meshery CLI**
 
-Before you can use the Meshery CLI to import a [Model]({{< ref "concepts/logical/models/index.md" >}}), you must first install it. You can install Meshery CLI by [following the instructions]({{< ref "installation/_index.md#install-mesheryctl" >}}).
+Before you can use the Meshery CLI to import a [Model]({{< ref "concepts/logical/models/index.md" >}}), you must first install it. You can install Meshery CLI by [following the instructions]({{< ref "installation/mesheryctl/_index.md" >}}).
 
 
 **Step 2: Import the Model**

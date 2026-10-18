@@ -11,7 +11,7 @@ Meshery offers powerful features that simplify the management of Envoy WASM filt
 
 ### Meshery UI and CLI Integration
 
-- **Import WASM Envoy Filters**: Easily import your WebAssembly Envoy filters into Meshery using the intuitive UI or the command-line interface ([CLI](https://docs.meshery.io/reference/mesheryctl#data-plane-intelligence)).
+- **Import WASM Envoy Filters**: Easily import your WebAssembly Envoy filters into Meshery using the intuitive UI or the command-line interface ([CLI]({{< ref "reference/references/mesheryctl/_index.md#data-plane-intelligence" >}})).
 - **Publish and Clone Filters**: Share your filters with the community by publishing them in the [Meshery Catalog](https://meshery.io/catalog) and make it effortless for others to clone them.
 - **Download WASM Binaries**: Access and download WebAssembly binaries directly from your Remote Provider like [Meshery Cloud](https://cloud.meshery.io/).
 - **Efficient Data Plane Design**: Seamlessly design and deploy Istio and Envoy data planes using Meshery.
