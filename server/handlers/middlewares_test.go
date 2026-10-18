@@ -1,12 +1,24 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
+
+	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/machines/kubernetes"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshsync/pkg/model"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 // TestResolveProviderName covers the precedence rules for picking the
@@ -272,5 +284,88 @@ func TestIsTransientProviderError(t *testing.T) {
 				t.Errorf("isTransientProviderError(%v) = %v, want %v", tc.err, got, tc.want)
 			}
 		})
+	}
+}
+
+// blockingDiscoverAction stands in for the kubernetes DiscoverAction. It waits
+// until the test releases it, so the request context can be cancelled first,
+// then reports the context error it observed.
+type blockingDiscoverAction struct {
+	release <-chan struct{}
+	ctxErr  chan error
+}
+
+func (a *blockingDiscoverAction) ExecuteOnEntry(ctx context.Context, _ interface{}, _ interface{}) (machines.EventType, *events.Event, error) {
+	<-a.release
+	a.ctxErr <- ctx.Err()
+	return machines.NoOp, nil, nil
+}
+
+func (a *blockingDiscoverAction) Execute(context.Context, interface{}, interface{}) (machines.EventType, *events.Event, error) {
+	return machines.NoOp, nil, nil
+}
+
+func (a *blockingDiscoverAction) ExecuteOnExit(context.Context, interface{}, interface{}) (machines.EventType, *events.Event, error) {
+	return machines.NoOp, nil, nil
+}
+
+// The discovery K8sFSMMiddleware starts runs in a goroutine that outlives the
+// request, so it must not inherit the request's cancellation.
+func TestK8sFSMMiddleware_DetachesDiscoveryFromRequestContext(t *testing.T) {
+	release := make(chan struct{})
+	action := &blockingDiscoverAction{release: release, ctxErr: make(chan error, 1)}
+
+	systemID := uuid.Must(uuid.NewV4())
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	connectionID := uuid.Must(uuid.NewV4())
+
+	inst := &machines.StateMachine{
+		ID:           connectionID,
+		Name:         "kubernetes",
+		InitialState: machines.InitialState,
+		CurrentState: machines.InitialState,
+		States: machines.States{
+			machines.InitialState: {Events: machines.Events{machines.Discovery: machines.DISCOVERED}},
+			machines.DISCOVERED:   {Action: action},
+		},
+		Context: &kubernetes.MachineCtx{MesheryCtrlsHelper: &models.MesheryControllersHelper{}},
+		Log:     newTestLogger(t),
+	}
+
+	h := &Handler{
+		config:                                  &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:                                     newTestLogger(t),
+		SystemID:                                &systemID,
+		ConnectionToStateMachineInstanceTracker: trackerWith(connectionID, inst),
+	}
+
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to create in-memory database: %v", err)
+	}
+	if err := db.AutoMigrate(&model.KubernetesResource{}, &model.KubernetesResourceObjectMeta{}); err != nil {
+		t.Fatalf("failed to migrate kubernetes resource tables: %v", err)
+	}
+	provider := &models.DefaultLocalProvider{}
+	provider.Initialize()
+	provider.GenericPersister = &database.Handler{DB: db}
+
+	reqCtx, cancel := context.WithCancel(context.Background())
+	reqCtx = context.WithValue(reqCtx, models.TokenCtxKey, "test-token")
+	reqCtx = context.WithValue(reqCtx, models.UserCtxKey, user)
+	reqCtx = context.WithValue(reqCtx, models.SystemIDKey, &systemID)
+	reqCtx = context.WithValue(reqCtx, models.AllKubeClusterKey, []*models.K8sContext{{ConnectionID: connectionID.String()}})
+
+	K8sFSMMiddleware(reqCtx, h, provider, user)
+	cancel()
+	close(release)
+
+	select {
+	case err := <-action.ctxErr:
+		if err != nil {
+			t.Fatalf("discover action saw a cancelled context: %v", err)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for the discover action to run")
 	}
 }

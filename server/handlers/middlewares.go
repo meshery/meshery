@@ -336,6 +336,9 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 
 	ctx = context.WithValue(ctx, models.KubeClustersKey, k8sContextPassedByUser)
 	ctx = context.WithValue(ctx, models.AllKubeClusterKey, connectedK8sContexts)
+	// detach from the http request lifecycle so that discovery isn't cancelled when
+	// the request returns, while preserving context values (e.g. TokenCtxKey) that downstream calls depend on.
+	detachedCtx := context.WithoutCancel(ctx)
 
 	for _, k8sContext := range k8sContextsFromKubeConfig {
 		machineCtx := &kubernetes.MachineCtx{
@@ -373,7 +376,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		}
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
-			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
+			event, err := inst.SendEvent(detachedCtx, machines.Discovery, nil)
 			if err != nil {
 				_ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userUUID, event)
@@ -402,6 +405,9 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 	userUUID := user.ID
 	dataHandlers := []*dataHandlerToClusterID{}
 	clusterIDs := []string{}
+	// detach from the http request lifecycle so that discovery isn't cancelled when
+	// the request returns, while preserving context values (e.g. TokenCtxKey) that downstream calls depend on.
+	detachedCtx := context.WithoutCancel(ctx)
 	for _, k8sContext := range connectedK8sContexts {
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         *k8sContext,
@@ -438,7 +444,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		}
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
-			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
+			event, err := inst.SendEvent(detachedCtx, machines.Discovery, nil)
 			if err != nil {
 				_ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userUUID, event)
