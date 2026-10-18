@@ -17,6 +17,7 @@ package adapter
 import (
 	"errors"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -26,6 +27,7 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -50,6 +52,12 @@ var (
 				return cmd.Help()
 			}
 
+			// cobra validates required flags only after this hook, which would
+			// otherwise prompt for a mesh before reporting a missing --adapter
+			if err = cmd.ValidateRequiredFlags(); err != nil {
+				return err
+			}
+
 			// get the meshery config
 			mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
@@ -66,6 +74,20 @@ var (
 				meshName = r.ReplaceAllString(strings.ToUpper(strings.Join(args, "_")), "_")
 			}
 
+			// a subcommand that names an adapter explicitly resolves from that
+			// name: --adapter carries the location Meshery Server dials to run
+			// the operation, so it has to select the mesh rather than be
+			// overwritten by whichever adapter happens to be connected
+			if cmd.Flags().Changed("adapter") {
+				utils.Log.Info("Verifying prerequisites...")
+				if err = resolveAdapterFlag(mctlCfg, meshName); err != nil {
+					return err
+				}
+				utils.Log.Info("verified prerequisites")
+				return nil
+			}
+
+			// only deploy and remove reach here; validate requires --adapter
 			// verify the specified mesh is valid
 			// if no mesh was specified, the user will be prompted to select one
 			meshName, err = validateMesh(mctlCfg, meshName)
@@ -108,6 +130,76 @@ func validateAdapter(mctlCfg *config.MesheryCtlConfig, meshName string) error {
 
 	// return an error if the mesh's adapter was not found
 	return ErrNoAdapters
+}
+
+// resolveAdapterFlag resolves the adapter named by --adapter and derives the mesh
+// to operate on from it. Meshery Server matches the location verbatim against a
+// registered adapter before dialling it over gRPC, so a value matching nothing
+// has to fail here instead of reaching the server as some other adapter.
+func resolveAdapterFlag(mctlCfg *config.MesheryCtlConfig, requestedMesh string) error {
+	prefs, err := utils.GetSessionData(mctlCfg)
+	if err != nil {
+		return ErrGettingSessionData(err)
+	}
+
+	matches := findAdapters(prefs.MeshAdapters, adapterURL)
+	switch {
+	case len(matches) == 0:
+		return ErrAdapterNotFound(adapterURL, adapterLocations(prefs.MeshAdapters))
+	case len(matches) > 1:
+		return ErrAmbiguousAdapter(adapterURL, adapterLocations(matches))
+	}
+	adapter := matches[0]
+
+	if requestedMesh != "" && requestedMesh != adapter.Name {
+		return ErrAdapterMeshMismatch(adapterURL, adapter.Name, requestedMesh)
+	}
+
+	adapterURL = adapter.Location
+	meshName = adapter.Name
+	return nil
+}
+
+// findAdapters returns the registered adapters addressed by adapterURL. An exact
+// Location match wins outright; otherwise, when adapterURL carries no port, every
+// adapter sharing its host is returned so the caller can reject an ambiguous
+// reference rather than silently picking one.
+func findAdapters(adapters []*models.Adapter, adapterURL string) []*models.Adapter {
+	for _, adapter := range adapters {
+		if adapter.Location == adapterURL {
+			return []*models.Adapter{adapter}
+		}
+	}
+
+	if _, _, err := net.SplitHostPort(adapterURL); err == nil {
+		return nil
+	}
+
+	host := adapterHost(adapterURL)
+	var matches []*models.Adapter
+	for _, adapter := range adapters {
+		if adapterHost(adapter.Location) == host {
+			matches = append(matches, adapter)
+		}
+	}
+	return matches
+}
+
+// adapterHost returns the host portion of an adapter location, keeping IPv6
+// addresses intact whether or not they carry a port or square brackets.
+func adapterHost(location string) string {
+	if host, _, err := net.SplitHostPort(location); err == nil {
+		return host
+	}
+	return strings.Trim(location, "[]")
+}
+
+func adapterLocations(adapters []*models.Adapter) []string {
+	locations := make([]string, 0, len(adapters))
+	for _, adapter := range adapters {
+		locations = append(locations, adapter.Location)
+	}
+	return locations
 }
 
 func validateMesh(mctlCfg *config.MesheryCtlConfig, meshName string) (string, error) {

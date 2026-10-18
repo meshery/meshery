@@ -1,0 +1,12 @@
+{
+    "meshAdapters": [
+        {
+            "adapterLocation": "localhost:10000",
+            "name": "ISTIO"
+        },
+        {
+            "adapterLocation": "localhost:10001",
+            "name": "LINKERD"
+        }
+    ]
+}

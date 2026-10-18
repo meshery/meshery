@@ -28,7 +28,7 @@ Validate conformance to predefined standards
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+mesheryctl adapter validate [mesh name] --adapter [adapter host or host:port location] --token [path to token for authentication] --spec [specification to be used for conformance test]
 
 </div>
 </div>
@@ -48,7 +48,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -a, --adapter string   (Required) Adapter to use for validation (default "meshery-nsm")
+  -a, --adapter string   (Required) Adapter to use for validation, as its host (meshery-istio) or host:port location (meshery-istio:10000)
   -h, --help             help for validate
   -s, --spec string      (Required) specification to be used for conformance test (smi/istio-vet) (default "smi")
   -t, --token string     Path to token for authenticating to Meshery API
