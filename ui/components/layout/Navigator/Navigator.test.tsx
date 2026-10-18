@@ -37,6 +37,7 @@ vi.mock('next/link', () => ({
 }));
 
 vi.mock('@sistent/sistent', () => ({
+  styled: (Base: any) => () => Base,
   CustomTooltip: ({ children }: any) => <>{children}</>,
   ListItemIcon: ({ children }: any) => <div>{children}</div>,
   Grow: ({ children, in: open }: any) => (open ? <div>{children}</div> : null),
