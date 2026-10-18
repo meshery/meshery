@@ -97,6 +97,24 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedError:    display.ErrInvalidOutputFormat("invalid"),
 		},
 		{
+			Name:             "given zero page number when profile then throw error",
+			Args:             []string{"profile", "--page", "0"},
+			URLs:             []utils.MockURL{},
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
+		},
+		{
+			Name:             "given negative page number when profile then throw error",
+			Args:             []string{"profile", "--page", "-1"},
+			URLs:             []utils.MockURL{},
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '-1'")),
+		},
+		{
 			Name: "given invalid API response when profile then throw error",
 			Args: []string{"profile"},
 			URLs: []utils.MockURL{
