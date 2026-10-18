@@ -35,6 +35,9 @@ const FavoritesEmptyCollapsed = styled('div')(({ theme }) => ({
   height: 36,
   color: theme.palette.background.constant.white,
   opacity: 0.35,
+  '& svg path[fill="none"]': {
+    stroke: 'none',
+  },
 }));
 
 const FavoritesEmptyExpanded = styled('div')(({ theme }) => ({

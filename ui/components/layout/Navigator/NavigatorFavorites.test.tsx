@@ -503,4 +503,22 @@ describe('Navigator Favorites and Pinned Navigation', () => {
     expect(pinButton).toHaveAttribute('aria-pressed', 'true');
     expect(pinButton).toHaveAttribute('aria-label', 'Unpin Dashboard from Favorites');
   });
+
+  it('renders the pin button as a direct child of its row [data-nav-row-wrapper] for a top-level leaf row and a nested child row', async () => {
+    render(<Navigator />);
+    await screen.findByTestId('config-icon');
+
+    const topPinButton = screen.getByTestId('pin-button-DASHBOARD');
+    const topWrapper = screen.getByTestId('nav-row-DASHBOARD');
+    expect(topWrapper).toHaveAttribute('data-nav-row-wrapper');
+    expect(topPinButton.parentElement).toBe(topWrapper);
+
+    const configCategory = screen.getByTestId('CONFIGURATION');
+    fireEvent.click(configCategory);
+
+    const nestedPinButton = await screen.findByTestId('pin-button-Designs');
+    const nestedWrapper = await screen.findByTestId('nav-row-Designs');
+    expect(nestedWrapper).toHaveAttribute('data-nav-row-wrapper');
+    expect(nestedPinButton.parentElement).toBe(nestedWrapper);
+  });
 });

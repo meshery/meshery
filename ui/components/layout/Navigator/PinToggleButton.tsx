@@ -16,7 +16,7 @@ interface StyledPinButtonProps {
 
 export const NavRowWrapper = styled(RootDiv)(() => ({
   position: 'relative',
-  '&:hover [data-pin-toggle], &:focus-within [data-pin-toggle]': {
+  '&:hover > [data-pin-toggle], &:focus-within > [data-pin-toggle]': {
     opacity: 1,
   },
 }));
@@ -44,6 +44,9 @@ export const StyledPinButton = styled(IconButton, {
   '& svg': {
     width: '16px',
     height: '16px',
+  },
+  '& svg path[fill="none"]': {
+    stroke: 'none',
   },
   '&:hover': {
     opacity: 1,
