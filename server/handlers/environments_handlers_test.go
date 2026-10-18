@@ -252,6 +252,68 @@ func TestSaveEnvironmentHandler_PropagatesProviderStatus(t *testing.T) {
 	}
 }
 
+// environmentAllowThenDenyProvider serves one successful SaveEnvironment call
+// and refuses every later one, so the test below can drive the same request
+// twice and observe both outcomes from a single stub.
+type environmentAllowThenDenyProvider struct {
+	*models.DefaultLocalProvider
+	calls   int
+	denyErr error
+}
+
+func newEnvironmentAllowThenDenyProvider(denyErr error) *environmentAllowThenDenyProvider {
+	base := &models.DefaultLocalProvider{}
+	base.Initialize()
+	return &environmentAllowThenDenyProvider{DefaultLocalProvider: base, denyErr: denyErr}
+}
+
+func (m *environmentAllowThenDenyProvider) SaveEnvironment(_ *http.Request, _ *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
+	m.calls++
+	if m.calls == 1 {
+		return []byte(`{"id":"env-1","name":"prod"}`), nil
+	}
+	return nil, m.denyErr
+}
+
+// TestSaveEnvironmentHandler_AllowsThenRefusesSameRequest closes the
+// "same request, one refused" gap: one SaveEnvironment request body driven
+// twice against a stub provider must succeed with 201 while the provider
+// allows it and be refused with exactly 403 once the provider says no.
+//
+// The refusal is built with the exact expression RemoteProvider.SaveEnvironment
+// evaluates when the upstream provider answers 403 (server/models/remote_provider.go,
+// non-2xx branch): models.ErrPost with the provider's own message, object and
+// status. No distinct ErrPermissionDenied value exists in this repository or
+// its Meshery-module dependencies, so this - the error the provider really
+// returns on this path - is the genuine refusal body. The status assertion is
+// deliberately exact: provider statuses are lost on most provider-error paths,
+// so accepting any non-2xx would pass while the reason is being remapped.
+func TestSaveEnvironmentHandler_AllowsThenRefusesSameRequest(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := newEnvironmentAllowThenDenyProvider(
+		models.ErrPost(errors.New("failed to save the environment"), "Environment", http.StatusForbidden),
+	)
+
+	const body = `{"name":"prod","description":"","organizationId":"11111111-1111-1111-1111-111111111111"}`
+	// One request, driven twice: request bodies are single-use streams, so
+	// each drive gets a fresh request carrying the identical bytes.
+	newReq := func() *http.Request {
+		return httptest.NewRequest(http.MethodPost, "/api/environments", strings.NewReader(body))
+	}
+
+	allowed := httptest.NewRecorder()
+	h.SaveEnvironment(allowed, newReq(), nil, nil, provider)
+	if allowed.Code != http.StatusCreated {
+		t.Fatalf("allowed request: status = %d, want %d (body=%q)", allowed.Code, http.StatusCreated, allowed.Body.String())
+	}
+
+	refused := httptest.NewRecorder()
+	h.SaveEnvironment(refused, newReq(), nil, nil, provider)
+	if refused.Code != http.StatusForbidden {
+		t.Fatalf("refused request: status = %d, want %d (body=%q)", refused.Code, http.StatusForbidden, refused.Body.String())
+	}
+}
+
 // TestGetEnvironmentsHandler_PropagatesProviderStatus covers the read path with
 // the same contract: a provider 403 must not be reported as a 404.
 func TestGetEnvironmentsHandler_PropagatesProviderStatus(t *testing.T) {

@@ -541,7 +541,103 @@ components:
   colorIcon: extensions/models/kubedb-crds/components/weaviate/icons/color/weaviate-color.svg
   whiteIcon: extensions/models/kubedb-crds/components/weaviate/icons/white/weaviate-white.svg
   description: 
-components-count: 133
+- name: click-house-archiver
+  colorIcon: extensions/models/kubedb-crds/components/click-house-archiver/icons/color/click-house-archiver-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/click-house-archiver/icons/white/click-house-archiver-white.svg
+  description: 
+- name: etcd-archiver
+  colorIcon: extensions/models/kubedb-crds/components/etcd-archiver/icons/color/etcd-archiver-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/etcd-archiver/icons/white/etcd-archiver-white.svg
+  description: 
+- name: aerospike-autoscaler
+  colorIcon: extensions/models/kubedb-crds/components/aerospike-autoscaler/icons/color/aerospike-autoscaler-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/aerospike-autoscaler/icons/white/aerospike-autoscaler-white.svg
+  description: 
+- name: db2autoscaler
+  colorIcon: extensions/models/kubedb-crds/components/db2autoscaler/icons/color/db2autoscaler-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/db2autoscaler/icons/white/db2autoscaler-white.svg
+  description: 
+- name: document-db-autoscaler
+  colorIcon: extensions/models/kubedb-crds/components/document-db-autoscaler/icons/color/document-db-autoscaler-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/document-db-autoscaler/icons/white/document-db-autoscaler-white.svg
+  description: 
+- name: hana-db-autoscaler
+  colorIcon: extensions/models/kubedb-crds/components/hana-db-autoscaler/icons/color/hana-db-autoscaler-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/hana-db-autoscaler/icons/white/hana-db-autoscaler-white.svg
+  description: 
+- name: milvus-autoscaler
+  colorIcon: extensions/models/kubedb-crds/components/milvus-autoscaler/icons/color/milvus-autoscaler-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/milvus-autoscaler/icons/white/milvus-autoscaler-white.svg
+  description: 
+- name: neo4j-autoscaler
+  colorIcon: extensions/models/kubedb-crds/components/neo4j-autoscaler/icons/color/neo4j-autoscaler-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/neo4j-autoscaler/icons/white/neo4j-autoscaler-white.svg
+  description: 
+- name: oracle-autoscaler
+  colorIcon: extensions/models/kubedb-crds/components/oracle-autoscaler/icons/color/oracle-autoscaler-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/oracle-autoscaler/icons/white/oracle-autoscaler-white.svg
+  description: 
+- name: qdrant-autoscaler
+  colorIcon: extensions/models/kubedb-crds/components/qdrant-autoscaler/icons/color/qdrant-autoscaler-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/qdrant-autoscaler/icons/white/qdrant-autoscaler-white.svg
+  description: 
+- name: weaviate-autoscaler
+  colorIcon: extensions/models/kubedb-crds/components/weaviate-autoscaler/icons/color/weaviate-autoscaler-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/weaviate-autoscaler/icons/white/weaviate-autoscaler-white.svg
+  description: 
+- name: aerospike-version
+  colorIcon: extensions/models/kubedb-crds/components/aerospike-version/icons/color/aerospike-version-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/aerospike-version/icons/white/aerospike-version-white.svg
+  description: 
+- name: document-db-version
+  colorIcon: extensions/models/kubedb-crds/components/document-db-version/icons/color/document-db-version-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/document-db-version/icons/white/document-db-version-white.svg
+  description: 
+- name: aerospike
+  colorIcon: extensions/models/kubedb-crds/components/aerospike/icons/color/aerospike-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/aerospike/icons/white/aerospike-white.svg
+  description: 
+- name: document-db
+  colorIcon: extensions/models/kubedb-crds/components/document-db/icons/color/document-db-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/document-db/icons/white/document-db-white.svg
+  description: 
+- name: aerospike-ops-request
+  colorIcon: extensions/models/kubedb-crds/components/aerospike-ops-request/icons/color/aerospike-ops-request-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/aerospike-ops-request/icons/white/aerospike-ops-request-white.svg
+  description: 
+- name: db2ops-request
+  colorIcon: extensions/models/kubedb-crds/components/db2ops-request/icons/color/db2ops-request-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/db2ops-request/icons/white/db2ops-request-white.svg
+  description: 
+- name: document-db-ops-request
+  colorIcon: extensions/models/kubedb-crds/components/document-db-ops-request/icons/color/document-db-ops-request-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/document-db-ops-request/icons/white/document-db-ops-request-white.svg
+  description: 
+- name: hana-db-ops-request
+  colorIcon: extensions/models/kubedb-crds/components/hana-db-ops-request/icons/color/hana-db-ops-request-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/hana-db-ops-request/icons/white/hana-db-ops-request-white.svg
+  description: 
+- name: milvus-ops-request
+  colorIcon: extensions/models/kubedb-crds/components/milvus-ops-request/icons/color/milvus-ops-request-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/milvus-ops-request/icons/white/milvus-ops-request-white.svg
+  description: 
+- name: neo4j-ops-request
+  colorIcon: extensions/models/kubedb-crds/components/neo4j-ops-request/icons/color/neo4j-ops-request-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/neo4j-ops-request/icons/white/neo4j-ops-request-white.svg
+  description: 
+- name: oracle-ops-request
+  colorIcon: extensions/models/kubedb-crds/components/oracle-ops-request/icons/color/oracle-ops-request-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/oracle-ops-request/icons/white/oracle-ops-request-white.svg
+  description: 
+- name: qdrant-ops-request
+  colorIcon: extensions/models/kubedb-crds/components/qdrant-ops-request/icons/color/qdrant-ops-request-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/qdrant-ops-request/icons/white/qdrant-ops-request-white.svg
+  description: 
+- name: weaviate-ops-request
+  colorIcon: extensions/models/kubedb-crds/components/weaviate-ops-request/icons/color/weaviate-ops-request-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/weaviate-ops-request/icons/white/weaviate-ops-request-white.svg
+  description: 
+components-count: 157
 relationships: 
 relationship-count: 0
 featureList: [
