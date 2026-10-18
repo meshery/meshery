@@ -8,7 +8,6 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/core"
-	connectionv1beta1 "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta3/environment"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -25,23 +24,28 @@ func newEnvironmentConnectionsTestDB(t *testing.T) *database.Handler {
 	}
 
 	handler := &database.Handler{DB: db}
-	// The real `connections` table carries two column sets for the same
-	// fields: meshkit's registry manager AutoMigrates the v1beta1 Connection
-	// (`type`, `user_id`) while the server AutoMigrates the canonical v1beta3
-	// Connection (`connection_type`, `owner`) - see legacyRegistrantColumnsByID
-	// in seed_connections.go. GetEnvironmentConnections' SELECT list names the
-	// v1beta1 spellings, so a harness that migrates only v1beta3 fails with
-	// "no such column: connections.type" and tests nothing.
-	// Migrated one model per call on purpose: both Connection structs map to
-	// the `connections` table, and gorm collapses same-table models passed in a
-	// single AutoMigrate call, so only one column set would survive.
 	for _, model := range []interface{}{
-		&connectionv1beta1.Connection{},
 		&connections.Connection{},
 		&environment.EnvironmentConnectionMapping{},
 	} {
 		if err := handler.AutoMigrate(model); err != nil {
 			t.Fatalf("failed to auto-migrate %T: %v", model, err)
+		}
+	}
+
+	// The real `connections` table also carries the legacy column set that
+	// meshkit's registry manager migrates (`type`, `user_id`) alongside the
+	// canonical v1beta3 one (`connection_type`, `owner`) - see
+	// legacyRegistrantColumnsByID in seed_connections.go. GetEnvironmentConnections'
+	// SELECT list names the legacy spellings, so a harness without them fails
+	// with "no such column: connections.type" and tests nothing. Add only the
+	// columns that SELECT needs and the v1beta3 model does not already create.
+	for _, column := range []string{"type", "sub_type", "user_id"} {
+		if handler.Migrator().HasColumn("connections", column) {
+			continue
+		}
+		if err := handler.Exec("ALTER TABLE connections ADD COLUMN " + column + " text").Error; err != nil {
+			t.Fatalf("failed to add legacy column %q: %v", column, err)
 		}
 	}
 
