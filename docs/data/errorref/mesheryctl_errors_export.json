@@ -2117,6 +2117,15 @@
         "short_description": "Unexpected response from GitHub API",
         "probable_cause": "GitHub API may be rate-limiting requests or the requested resource may not exist",
         "suggested_remediation": "Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"
+      },
+      "1256": {
+        "name": "ErrOrganizationMismatchCode",
+        "code": "1256",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Provided --orgId does not match the workspace's organization",
+        "probable_cause": "--orgId is used to verify you are updating a workspace you have access to, not to move it to a different organization",
+        "suggested_remediation": "Pass the workspace's actual organization ID, or run `mesheryctl workspace view` to look it up"
       }
     }
   }
