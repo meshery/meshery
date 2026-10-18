@@ -46,6 +46,14 @@ vi.mock('next/link', () => ({
 vi.mock('@sistent/sistent', () => ({
   styled: (Base: any) => () => Base,
   CustomTooltip: ({ children }: any) => <>{children}</>,
+  IconButton: React.forwardRef<HTMLButtonElement, any>(
+    ({ children, pinned: _pinned, ...props }, ref) => (
+      <button ref={ref} type="button" {...props}>
+        {children}
+      </button>
+    ),
+  ),
+  FavoriteIcon: ({ ...props }: any) => <svg {...props} />,
   ListItemIcon: ({ children }: any) => <div>{children}</div>,
   Grow: ({ children, in: open }: any) => (open ? <div>{children}</div> : null),
   ListItem: ({ children, button, ...props }: any) => (
@@ -480,5 +488,19 @@ describe('Navigator Favorites and Pinned Navigation', () => {
     const nestedWrapper = nestedPinButton.closest('[data-nav-row-wrapper]');
     expect(nestedWrapper).toBeInTheDocument();
     expect(nestedWrapper).toHaveAttribute('data-testid', 'nav-row-Designs');
+  });
+
+  it('renders the pin control as a Sistent IconButton-based button whose accessible name is "Pin <item> to Favorites" and flips aria-pressed on click', async () => {
+    render(<Navigator />);
+    await screen.findByTestId('config-icon');
+
+    const pinButton = screen.getByRole('button', { name: 'Pin Dashboard to Favorites' });
+    expect(pinButton).toBeInTheDocument();
+    expect(pinButton).toHaveAttribute('aria-pressed', 'false');
+
+    fireEvent.click(pinButton);
+
+    expect(pinButton).toHaveAttribute('aria-pressed', 'true');
+    expect(pinButton).toHaveAttribute('aria-label', 'Unpin Dashboard from Favorites');
   });
 });

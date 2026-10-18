@@ -1,6 +1,5 @@
 import React from 'react';
-import { styled } from '@sistent/sistent';
-import PinIcon from '@/assets/icons/PinIcon';
+import { CustomTooltip, FavoriteIcon, IconButton, styled } from '@sistent/sistent';
 import { RootDiv } from '../../general/style';
 
 export interface PinToggleButtonProps {
@@ -15,15 +14,6 @@ interface StyledPinButtonProps {
   pinned?: boolean;
 }
 
-interface BasePinButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  pinned?: boolean;
-}
-
-const BasePinButton = React.forwardRef<HTMLButtonElement, BasePinButtonProps>(
-  ({ pinned: _pinned, ...props }, ref) => <button ref={ref} {...props} />,
-);
-BasePinButton.displayName = 'BasePinButton';
-
 export const NavRowWrapper = styled(RootDiv)(() => ({
   position: 'relative',
   '&:hover [data-pin-toggle], &:focus-within [data-pin-toggle]': {
@@ -31,7 +21,7 @@ export const NavRowWrapper = styled(RootDiv)(() => ({
   },
 }));
 
-export const StyledPinButton = styled(BasePinButton, {
+export const StyledPinButton = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'pinned',
 })<StyledPinButtonProps>(({ theme, pinned }) => ({
   position: 'absolute',
@@ -80,22 +70,36 @@ export const PinToggleButton: React.FC<PinToggleButtonProps> = ({
   onToggle,
   testId,
 }) => {
+  const label = pinned ? `Unpin ${title} from Favorites` : `Pin ${title} to Favorites`;
+
   return (
-    <StyledPinButton
-      data-pin-toggle="true"
-      type="button"
-      data-testid={testId || `pin-button-${id}`}
-      aria-pressed={pinned}
-      aria-label={pinned ? `Unpin ${title} from Favorites` : `Pin ${title} to Favorites`}
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onToggle(id);
-      }}
-      pinned={pinned}
-    >
-      <PinIcon pinned={pinned} width="16px" height="16px" fill="currentColor" />
-    </StyledPinButton>
+    <CustomTooltip title={label}>
+      <StyledPinButton
+        data-pin-toggle="true"
+        type="button"
+        data-testid={testId || `pin-button-${id}`}
+        aria-pressed={pinned}
+        aria-label={label}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onToggle(id);
+        }}
+        pinned={pinned}
+      >
+        {pinned ? (
+          <FavoriteIcon width="16px" height="16px" fill="currentColor" />
+        ) : (
+          <FavoriteIcon
+            width="16px"
+            height="16px"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+          />
+        )}
+      </StyledPinButton>
+    </CustomTooltip>
   );
 };
 
