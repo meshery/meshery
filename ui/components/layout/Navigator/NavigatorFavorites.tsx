@@ -1,6 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
-import { CustomTooltip, ListItemIcon, styled, useTheme, Zoom } from '@sistent/sistent';
+import {
+  CustomTooltip,
+  FavoriteIcon,
+  ListItemIcon,
+  styled,
+  useTheme,
+  Zoom,
+} from '@sistent/sistent';
 import {
   MainListIcon,
   NavigatorLink,
@@ -8,7 +15,6 @@ import {
   SideBarListItem,
   SideBarText,
 } from '../../general/style';
-import PinIcon from '@/assets/icons/PinIcon';
 import PinToggleButton, { NavRowWrapper } from './PinToggleButton';
 
 const FavoritesHeader = styled('div')(({ theme }) => ({
@@ -84,11 +90,14 @@ export const NavigatorFavorites: React.FC<NavigatorFavoritesProps> = ({
         isDrawerCollapsed ? (
           <CustomTooltip title="No pinned favorites" placement="right" TransitionComponent={Zoom}>
             <FavoritesEmptyCollapsed data-testid="favorites-empty-state-collapsed">
-              <PinIcon
-                pinned={false}
+              <FavoriteIcon
                 width="16px"
                 height="16px"
-                fill={theme.palette.background.constant.white}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                aria-hidden="true"
+                focusable="false"
               />
             </FavoritesEmptyCollapsed>
           </CustomTooltip>
