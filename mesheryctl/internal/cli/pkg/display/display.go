@@ -77,6 +77,13 @@ func PromptAsyncPagination[T any, R any](displayData DisplayDataAsync, processDa
 	)
 }
 
+// RunSelectPrompt executes a promptui.Select prompt. It is a package variable so
+// tests can simulate user selections (e.g. choosing "Load More....." or picking
+// an item on a later page).
+var RunSelectPrompt = func(p promptui.Select) (int, string, error) {
+	return p.Run()
+}
+
 func SelectFromPagedResults[T any](rows []T, formatLabel promptLabelBuilder[T], pgSize int, currentPage int, totalCount int64) (selected T,
 	itemSelected bool,
 	err error,
@@ -105,7 +112,7 @@ func SelectFromPagedResults[T any](rows []T, formatLabel promptLabelBuilder[T], 
 	maxRetries := 3
 	retries := 0
 	for {
-		i, _, err := prompt.Run()
+		i, _, err := RunSelectPrompt(prompt)
 		if err != nil {
 			// Handle ctrl+c
 			if err == promptui.ErrInterrupt {

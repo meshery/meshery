@@ -19,7 +19,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -47,7 +46,7 @@ mesheryctl environment delete environment-id
 mesheryctl environment list --orgId [orgId]
 
 // View a particular environment
-mesheryctl environment view --orgId [orgId]
+mesheryctl environment view [environment-name|environment-id] --orgId [orgId]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
@@ -76,20 +75,4 @@ mesheryctl environment view --orgId [orgId]
 
 func init() {
 	EnvironmentCmd.AddCommand(availableSubcommands...)
-}
-
-// selectEnvironmentPrompt lets user to select an environment if environments are more than one
-func selectEnvironmentPrompt(environments []environment.Environment) (environment.Environment, error) {
-	environmentNames := make([]string, len(environments))
-
-	for i, environment := range environments {
-		environmentNames[i] = fmt.Sprintf("ID: %s, Name: %s, Owner: %s, Organization: %s", environment.ID, environment.Name, environment.Owner, environment.OrganizationID)
-	}
-
-	i, err := utils.RunSelectPrompt("Select environment", environmentNames)
-	if err != nil {
-		return environment.Environment{}, err
-	}
-
-	return environments[i], nil
 }

@@ -16,6 +16,7 @@ package environments
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,7 +24,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -36,18 +37,39 @@ type environmentViewFlags struct {
 
 var environmentViewFlagsProvided environmentViewFlags
 
+func formatEnvironmentLabel(rows []environment.Environment) []string {
+	labels := []string{}
+	for _, e := range rows {
+		labels = append(labels, fmt.Sprintf("%s (ID: %s)", e.Name, e.ID.String()))
+	}
+	return labels
+}
+
 var viewEnvironmentCmd = &cobra.Command{
-	Use:   "view",
-	Short: "View registered environmnents",
+	Use:   "view [environment-name|environment-id]",
+	Short: "View registered environments",
 	Long: `View details of an environment registered in Meshery Server for a specific organization
 Find more information at: https://docs.meshery.io/reference/references/mesheryctl/environment/view`,
 	Example: `
-// View details of a specific environment
+// View details of a specific environment by ID
+mesheryctl environment view [environment-id] --orgId [orgId]
+
+// View details of an environment by name (prompts if several match)
+mesheryctl environment view [environment-name] --orgId [orgId]
+
+// Select from all environments of an organization
 mesheryctl environment view --orgId [orgId]
 	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 1 {
+			const errMsg = "please provide at most one environment name or ID\n\nUsage: mesheryctl environment view [environment-name|environment-id] --orgId [orgId]\nRun 'mesheryctl environment view --help' to see detailed help message"
+			return utils.ErrInvalidArgument(errors.New(errMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if environmentViewFlagsProvided.orgId == "" {
-			const errMsg = "[ orgId ] isn't specified\n\nUsage: mesheryctl environment view --orgId [orgId]\nRun 'mesheryctl environment view --help' to see detailed help message"
+			const errMsg = "[ orgId ] isn't specified\n\nUsage: mesheryctl environment view [environment-name|environment-id] --orgId [orgId]\nRun 'mesheryctl environment view --help' to see detailed help message"
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 
@@ -59,21 +81,42 @@ mesheryctl environment view --orgId [orgId]
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		environmentResponse, err := api.Fetch[environment.EnvironmentPage](fmt.Sprintf("%s?orgId=%s", environmentApiPath, environmentViewFlagsProvided.orgId))
-		if err != nil {
-			return err
-		}
+		orgQuery := url.Values{}
+		orgQuery.Set("orgId", environmentViewFlagsProvided.orgId)
 
 		var selectedEnvironment environment.Environment
 
-		switch environmentResponse.TotalCount {
-		case 0:
-			utils.Log.Info("No environment(s) found for the given ID: ", environmentViewFlagsProvided.orgId)
-			return nil
-		case 1:
-			selectedEnvironment = environmentResponse.Environments[0] // Update the type of selectedModel
-		default:
-			selectedEnvironment, err = selectEnvironmentPrompt(environmentResponse.Environments)
+		if len(args) == 1 && utils.IsUUID(args[0]) {
+			urlPath := fmt.Sprintf("%s/%s?%s", environmentApiPath, url.PathEscape(args[0]), orgQuery.Encode())
+			fetchedEnvironment, err := api.Fetch[environment.Environment](urlPath)
+			if err != nil {
+				return err
+			}
+			// Not every provider scopes the lookup by orgId, so check it here.
+			if !strings.EqualFold(fetchedEnvironment.OrganizationID.String(), environmentViewFlagsProvided.orgId) {
+				return utils.ErrNotFound(fmt.Errorf("No environment found with ID %s in organization: %s", args[0], environmentViewFlagsProvided.orgId))
+			}
+			selectedEnvironment = *fetchedEnvironment
+		} else {
+			searchTerm := ""
+			notFoundMsg := fmt.Sprintf("No environment(s) found in organization: %s", environmentViewFlagsProvided.orgId)
+			if len(args) == 1 {
+				searchTerm = args[0]
+				notFoundMsg = fmt.Sprintf("No environment(s) found with name: %s", searchTerm)
+			}
+
+			err := display.PromptAsyncPagination(
+				display.DisplayDataAsync{
+					UrlPath:        fmt.Sprintf("%s?%s", environmentApiPath, orgQuery.Encode()),
+					SearchTerm:     searchTerm,
+					ErrNotFoundMsg: notFoundMsg,
+				},
+				formatEnvironmentLabel,
+				func(data *environment.EnvironmentPage) ([]environment.Environment, int64) {
+					return data.Environments, int64(data.TotalCount)
+				},
+				&selectedEnvironment,
+			)
 			if err != nil {
 				return err
 			}
@@ -86,6 +129,7 @@ mesheryctl environment view --orgId [orgId]
 		if err != nil {
 			return err
 		}
+		outputFormatter = outputFormatter.WithOutput(cmd.OutOrStdout())
 
 		err = outputFormatter.Display()
 		if err != nil {

@@ -8,7 +8,7 @@ categories: [mesheryctl-environment]
 
 # mesheryctl environment view
 
-View registered environmnents
+View registered environments
 
 ## Synopsis
 
@@ -17,7 +17,7 @@ View details of an environment registered in Meshery Server for a specific organ
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl environment view [flags]
+mesheryctl environment view [environment-name|environment-id] [flags]
 
 </div>
 </div>
@@ -25,7 +25,27 @@ mesheryctl environment view [flags]
 
 ## Examples
 
-View details of a specific environment
+View details of a specific environment by ID
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl environment view [environment-id] --orgId [orgId]
+
+</div>
+</div>
+</pre> 
+
+View details of an environment by name (prompts if several match)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl environment view [environment-name] --orgId [orgId]
+
+</div>
+</div>
+</pre> 
+
+Select from all environments of an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
