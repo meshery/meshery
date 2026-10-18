@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 )
@@ -164,5 +166,95 @@ func assertJSONErrorEnvelope(t *testing.T, resp *http.Response) {
 	msg, ok := decoded["error"].(string)
 	if !ok || msg == "" {
 		t.Errorf("expected non-empty error field, got %+v", decoded)
+	}
+}
+
+// TestUserPrefsHandler_RejectedUpdateDoesNotMutateStoredPreferences verifies that
+// when an invalid preference update is rejected with HTTP 400, the stored in-memory
+// preferences remain unchanged, and subsequent valid updates succeed.
+func TestUserPrefsHandler_RejectedUpdateDoesNotMutateStoredPreferences(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	persister, err := models.NewMapPreferencePersister()
+	if err != nil {
+		t.Fatalf("failed to create persister: %v", err)
+	}
+
+	provider := &models.DefaultLocalProvider{
+		MapPreferencePersister: persister,
+	}
+	provider.Initialize()
+
+	userID := "00000000-0000-0000-0000-000000000001"
+	user := &models.User{
+		ID: uuid.FromStringOrNil(userID),
+	}
+
+	// 1. Establish initial valid preferences
+	initialPref := models.NewDefaultPreference()
+	initialPref.LoadTestPreferences = &models.LoadTestPreferences{
+		QueriesPerSecond:   5,
+		Duration:           "30s",
+		ConcurrentRequests: 1,
+		LoadGenerator:      "fortio",
+	}
+	initialPref.AnonymousUsageStats = true
+
+	if err := provider.RecordPreferences(nil, userID, initialPref); err != nil {
+		t.Fatalf("failed to record initial preferences: %v", err)
+	}
+
+	// Read initial preference as SessionInjectorMiddleware does
+	prefObj, err := provider.ReadFromPersister(userID)
+	if err != nil {
+		t.Fatalf("failed to read preferences: %v", err)
+	}
+
+	// 2. Send an invalid update with QPS = -1 (must reject with HTTP 400)
+	invalidBody := `{"loadTestPrefs": {"qps": -1}}`
+	req := httptest.NewRequest(http.MethodPost, "/api/user/prefs", strings.NewReader(invalidBody))
+	rec := httptest.NewRecorder()
+
+	h.UserPrefsHandler(rec, req, prefObj, user, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected HTTP 400 for invalid QPS, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+
+	// Verify persisted preferences were NOT mutated by the rejected request
+	persistedAfterRejection, err := provider.ReadFromPersister(userID)
+	if err != nil {
+		t.Fatalf("failed to read persisted preferences after rejection: %v", err)
+	}
+	if persistedAfterRejection.LoadTestPreferences == nil || persistedAfterRejection.LoadTestPreferences.QueriesPerSecond != 5 {
+		t.Errorf("rejected update modified stored QPS: got %v, want 5", persistedAfterRejection.LoadTestPreferences)
+	}
+
+	// 3. Send a subsequent unrelated valid update (must succeed with HTTP 200)
+	validBody := `{"anonymousUsageStats": false}`
+	req2 := httptest.NewRequest(http.MethodPost, "/api/user/prefs", strings.NewReader(validBody))
+	rec2 := httptest.NewRecorder()
+
+	prefObj2, err := provider.ReadFromPersister(userID)
+	if err != nil {
+		t.Fatalf("failed to read preferences for second request: %v", err)
+	}
+
+	h.UserPrefsHandler(rec2, req2, prefObj2, user, provider)
+
+	if rec2.Code != http.StatusOK {
+		t.Fatalf("subsequent valid update failed: got HTTP %d, want 200 (body=%q)", rec2.Code, rec2.Body.String())
+	}
+
+	// Verify updated preference was persisted and QPS remains intact
+	persistedFinal, err := provider.ReadFromPersister(userID)
+	if err != nil {
+		t.Fatalf("failed to read final persisted preferences: %v", err)
+	}
+	if persistedFinal.AnonymousUsageStats != false {
+		t.Errorf("expected AnonymousUsageStats to be false, got true")
+	}
+	if persistedFinal.LoadTestPreferences == nil || persistedFinal.LoadTestPreferences.QueriesPerSecond != 5 {
+		t.Errorf("expected LoadTestPreferences.QueriesPerSecond to remain 5, got %v", persistedFinal.LoadTestPreferences)
 	}
 }

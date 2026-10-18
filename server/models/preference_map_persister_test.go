@@ -76,3 +76,42 @@ func TestMapPreferencePersisterReadFromPersisterReturnsPersistedPreference(t *te
 		t.Errorf("ReadFromPersister() got = %+v, want %+v", got, want)
 	}
 }
+
+func TestMapPreferencePersisterReadReturnsDefensiveCopy(t *testing.T) {
+	persister := newTestMapPreferencePersister(t)
+	defer persister.db.Clear()
+
+	initial := &Preference{
+		AnonymousUsageStats:  false,
+		AnonymousPerfResults: false,
+		LoadTestPreferences: &LoadTestPreferences{
+			QueriesPerSecond: 10,
+		},
+	}
+
+	if err := persister.WriteToPersister("user-1", initial); err != nil {
+		t.Fatalf("failed to write preference: %v", err)
+	}
+
+	firstRead, err := persister.ReadFromPersister("user-1")
+	if err != nil {
+		t.Fatalf("failed to read preference: %v", err)
+	}
+
+	// Mutate the returned preference object
+	firstRead.AnonymousUsageStats = true
+	firstRead.LoadTestPreferences.QueriesPerSecond = 999
+
+	// Read again and ensure the store was not affected
+	secondRead, err := persister.ReadFromPersister("user-1")
+	if err != nil {
+		t.Fatalf("failed to read preference again: %v", err)
+	}
+
+	if secondRead.AnonymousUsageStats != false {
+		t.Errorf("stored AnonymousUsageStats was mutated: got true, want false")
+	}
+	if secondRead.LoadTestPreferences == nil || secondRead.LoadTestPreferences.QueriesPerSecond != 10 {
+		t.Errorf("stored QueriesPerSecond was mutated: got %v, want 10", secondRead.LoadTestPreferences)
+	}
+}
