@@ -1,8 +1,8 @@
 pre.codeblock-pre {
-  display: inline-flex;
-  justify-content: flex-start;
+  display: flex;
+  justify-content: space-between;
   text-align: left;
-  align-items: center;
+  align-items: flex-start;
   align-content: flex-start;
   flex-wrap: nowrap;
   flex-direction: row;
@@ -14,29 +14,21 @@ pre.codeblock-pre {
   box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
   background-color: #212529 !important;
   max-width: 100%;
+  position: relative;
+}
+pre:not(.codeblock-pre) {
+  position: relative;
 }
 .codeblock {
-  width: 100%;
-  display: inline-flex;
-  overflow: auto;
-  justify-content: flex-start;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
   color: #f8f9fa;
   margin: 0px;
-  padding: 0px;
-}
-.codeblock:not(:has(.clipboardjs)) {
   padding: 0.5rem 0.75rem;
-}
-.clipboardjs {
-  width: 100%;
-  overflow: auto;
-  font-size: .9rem;
-  margin: 0px;
-  padding: 0.5rem 0.75rem;
-  color: #f8f9fa;
-  align-items: center;
-  white-space: pre;
-  word-wrap: normal;
+
   &::-webkit-scrollbar {
     width: 0.5rem !important;
     height: 0.5rem !important;
@@ -57,20 +49,50 @@ pre.codeblock-pre {
     margin: 5px;
   }
 }
+.codeblock:not(:has(.clipboardjs)) {
+  padding: 0.5rem 0.75rem;
+}
+.clipboardjs {
+  display: block;
+  font-size: .9rem;
+  margin: 0px;
+  padding: 0px;
+  color: #f8f9fa;
+  white-space: pre;
+  word-wrap: normal;
+}
 .btn-copy-wrap {
-  align-content: center;
-  z-index: auto;
-  position: relative;
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  z-index: 5;
   text-align: right;
   display: flex;
   align-items: center;
 }
-.clipbtn {
+.codeblock-pre .btn-copy-wrap {
+  position: relative;
+  top: 0;
   right: 0;
-  margin: 5px;
-  border: 0px;
-  background-color: transparent;
-  font-size: 1.05rem;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  margin: 0.35rem 0.35rem 0 0.5rem;
+}
+.clipbtn {
+  background-color: #212529;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  padding: 4px 7px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  color: #f1f3f5;
+  font-size: 0.95rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
   & i.fa-copy::before {
     color: #f1f3f5;
   }
@@ -79,10 +101,12 @@ pre.codeblock-pre {
   }
 }
 .clipbtn:hover {
+  background-color: #343a40;
+  border-color: rgba(255, 255, 255, 0.35);
   color: #fff;
   cursor: pointer;
 }
 .clipbtn:active {
   background-color: #495057;
-  transform: scale(0.75);
+  transform: scale(0.92);
 }
