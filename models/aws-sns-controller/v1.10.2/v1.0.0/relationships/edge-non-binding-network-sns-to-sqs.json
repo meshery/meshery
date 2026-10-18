@@ -1,0 +1,93 @@
+{
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "Fan-out relationship between an AWS SNS Subscription and an AWS SQS Queue for event-driven messaging.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "",
+    "model": {
+      "version": "v1.10.2"
+    },
+    "name": "aws-sns-controller",
+    "registrant": {
+      "kind": ""
+    },
+    "version": ""
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Subscription",
+            "model": {
+              "displayName": "",
+              "model": {
+                "version": "v1.10.2"
+              },
+              "name": "aws-sns-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "endpoint"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Queue",
+            "model": {
+              "displayName": "",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-sqs-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "network",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}
