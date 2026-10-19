@@ -2,11 +2,13 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
 
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/schemas/models/core"
+	"gorm.io/gorm"
 )
 
 type MesheryResultsPersister struct {
@@ -80,9 +82,15 @@ func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, log log
 func (mrp *MesheryResultsPersister) GetResult(key core.Uuid, log logger.Handler) (*MesheryResult, error) {
 	var lres localMesheryResultDBRepresentation
 
-	err := mrp.DB.Table("meshery_results").Find(&lres).Where("id = ?", key).Error
-	res := convertLocalRepresentationToMesheryResult(&lres, log)
-	return res, err
+	err := mrp.DB.Table("meshery_results").Where("id = ?", key).First(&lres).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
+		return nil, err
+	}
+
+	return convertLocalRepresentationToMesheryResult(&lres, log), nil
 }
 
 func (mrp *MesheryResultsPersister) WriteResult(key core.Uuid, result []byte) error {
