@@ -56,7 +56,7 @@ Read through the following considerations prior to deploying Meshery on AKS.
 
 Use Meshery's CLI to streamline your connection to your AKS cluster. Configure Meshery to connect to your AKS cluster by executing:
 
-{{< code code="mesheryctl system config aks" >}}
+{{< code code="mesheryctl connection create --type aks" >}}
 
 Once configured, execute the following command to start Meshery.
 

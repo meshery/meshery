@@ -62,7 +62,7 @@ Verify your kubeconfig's current context.
 
 Use Meshery's CLI to streamline your connection to your Minikube cluster. Configure Meshery to connect to your Minikube cluster by executing:
 
-{{< code code="mesheryctl system config minikube" >}}
+{{< code code="mesheryctl connection create --type minikube" >}}
 
 Once configured, execute the following command to start Meshery.
 
