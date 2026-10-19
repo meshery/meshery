@@ -8,7 +8,7 @@ vi.mock('@rjsf/utils', () => ({
 
 vi.mock('@sistent/sistent', () => ({
   useTheme: () => ({ palette: { icon: { default: '#000000' } } }),
-  DeleteIcon: () => <svg data-testid="delete-icon" />,
+  DeleteIcon: ({ fill }: any) => <svg data-testid="delete-icon" fill={fill} />,
   FormControl: ({ children }: any) => <div data-testid="form-control">{children}</div>,
   Grid2: ({ children }: any) => <div>{children}</div>,
   IconButton: ({ children, onClick, disabled }: any) => (
@@ -65,6 +65,21 @@ describe('WrapIfAdditionalTemplate', () => {
     expect(screen.getByTestId('key-input')).toBeInTheDocument();
     fireEvent.click(screen.getByTestId('delete-btn'));
     expect(onDrop).toHaveBeenCalledWith('key1');
+  });
+
+  it('paints the delete icon with the theme icon colour', () => {
+    render(
+      <WrapIfAdditionalTemplate
+        children={<div>child</div>}
+        classNames="cls"
+        id="id1"
+        label="key1"
+        onDropPropertyClick={() => vi.fn()}
+        onKeyChange={vi.fn()}
+        schema={{ __ADDITIONAL_PROPERTY__: true }}
+      />,
+    );
+    expect(screen.getByTestId('delete-icon')).toHaveAttribute('fill', '#000000');
   });
 
   it('strips the default newKey placeholder', () => {

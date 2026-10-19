@@ -12,14 +12,12 @@ import (
 func TestViewCmd(t *testing.T) {
 	mesheryctlflags.InitValidators(FilterCmd)
 
-	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
 
-	// test scenarios for fetching filter data
 	ListTests := []utils.MesheryListCommandTest{
 		{
 			Name:             "Fetch Filter View",
@@ -52,9 +50,36 @@ func TestViewCmd(t *testing.T) {
 		},
 	}
 
-	// Run tests that capture stdout output
 	utils.InvokeMesheryctlTestListCommand(t, update, FilterCmd, ListTests, currDir, "filter")
-
-	// Run tests that capture logger output
 	utils.InvokeMesheryctlTestCommand(t, update, FilterCmd, loggerTests, currDir, "filter")
+}
+
+
+func TestFilterViewSaveCreatesFileWithExtension(t *testing.T) {
+	mesheryctlflags.InitValidators(FilterCmd)
+
+	const filterID = "957fbc9b-a655-4892-823d-375102a9587c"
+
+	mesheryDir := utils.IsolateMesheryHome(t)
+
+	run := utils.MesheryCommandRun{
+		Cmd:        FilterCmd,
+		Args:       []string{"view", filterID, "--output-format", "json", "--save"},
+		CommandDir: utils.CallerDir(t),
+		Mocks: []utils.MockURL{
+			{
+				URL:      "/api/filter",
+				Response: "view.filter.api.response.golden",
+			},
+			{
+				URL:      "/api/filter/" + filterID,
+				Response: "view.id.filter.api.response.golden",
+			},
+		},
+	}
+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "filter_KumaTest_957fbc9b.json"))
 }
