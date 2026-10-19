@@ -334,7 +334,7 @@ mesh:
       flags:
         adapter:
           name: --adapter, -a
-          description: (obligatorio) adaptador que se utilizará para la validación. El valor predeterminado es "meshery-osm:10010"
+          description: (obligatorio) adaptador que se utilizará para la validación. El valor predeterminado es "meshery-nsm"
           usage: mesheryctl mesh validate --adapter [name of the adapter]
         namespace:
           name: --namespace, -n
@@ -356,7 +356,7 @@ mesh:
       flags:
         adapter:
           name: --adapter, -a
-          description: (obligatorio) adaptador que se utilizará para la validación. El valor predeterminado es "meshery-osm:10010".
+          description: (obligatorio) adaptador que se utilizará para la validación.
           usage: mesheryctl mesh deploy --adapter [name of the adapter]
         namespace:
           name: --namespace, -n

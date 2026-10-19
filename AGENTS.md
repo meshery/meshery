@@ -222,7 +222,9 @@ make helm-docs      # Generate Helm chart docs
   event raised outside a user request through `HandlerConfig.SystemEventPersister`; index
   `Providers` only with the comma-ok form, and only on the request path. Boot-time work
   that can fault belongs inside `models.RunSeedStage` so it degrades the server rather
-  than terminating it. Detail:
+  than terminating it - but its `recover` reaches only the stage's own goroutine, so a
+  stage that spawns one must defer its own recover at the spawn site (as `SeedKeys` does)
+  instead of widening the wrapper. Detail:
   [Extensibility: Providers](./docs/content/en/reference/extensibility/providers/index.md).
 - Only `utils.Log.Error(err)` renders a MeshKit error's code, cause and remediation; cobra's
   default print shows just the message. In `mesheryctl` commands, log the structured error
@@ -233,7 +235,10 @@ make helm-docs      # Generate Helm chart docs
 
 - ESLint + Prettier (config: `ui/.eslintrc.js`).
 - Functional components with hooks; no class components.
-- Use `@sistent/sistent` design system; fall back to MUI.
+- Use `@sistent/sistent` design system; fall back to MUI. Consult
+  `node_modules/@sistent/sistent/DESIGN.md` when available (relative to whichever UI
+  package you are working in: `ui/`, `provider-ui/`, or `install/docker-extension/ui/`),
+  or the Sistent release matching the version resolved by that package, rather than `master`.
 - Redux Toolkit for global state; GraphQL via Relay; REST via Axios.
 - Playwright for E2E tests.
 - **Every content-bearing page needs an *access* gate, not just gated controls.**
