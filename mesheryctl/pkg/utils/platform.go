@@ -742,14 +742,12 @@ func Startdockerdaemon(subcommand string) error {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 	} else {
-		// Assuming we are on macOS, try to start Docker from default path
-		cmd := exec.Command("/Applications/Docker.app/Contents/MacOS/Docker")
-		err := cmd.Start()
-		if err != nil {
+		// Assuming we are on macOS, try to start Docker
+		if err := exec.Command("open", "-a", "Docker").Run(); err != nil {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 		// wait for few seconds for docker to start
-		err = exec.Command("sleep", "30").Run()
+		err := exec.Command("sleep", "30").Run()
 		if err != nil {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}

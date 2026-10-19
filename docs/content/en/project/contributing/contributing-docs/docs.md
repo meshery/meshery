@@ -54,7 +54,7 @@ In case of any installation issues, use the [discussion forum](https://discuss.m
 - Change to the docs directory
 
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">cd docs
+  <code class="clipboardjs">cd meshery/docs
   </code>
   </div></pre>
 
