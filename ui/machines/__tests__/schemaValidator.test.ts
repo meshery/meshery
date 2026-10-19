@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { createActor } from 'xstate';
+import { assign, createActor, createMachine, waitFor } from 'xstate';
+import { DATA_VALIDATOR_EVENTS, dataValidatorCommands } from '@sistent/sistent';
 import { componentKey, schemaValidatorMachine } from '../validator/schemaValidator';
 
 describe('componentKey', () => {
@@ -39,5 +40,50 @@ describe('schemaValidatorMachine', () => {
     expect(ctx).toHaveProperty('validationPayload');
     expect(ctx).toHaveProperty('returnAddress');
     actor.stop();
+  });
+
+  it('includes an unsupported payload type in the validation failure', async () => {
+    const receiver = createActor(
+      createMachine({
+        initial: 'waiting',
+        context: { error: null },
+        states: {
+          waiting: {
+            on: {
+              [DATA_VALIDATOR_EVENTS.DESIGN_VALIDATION_FAILED]: {
+                target: 'received',
+                actions: assign({
+                  error: ({ event }) => event.data.systemErrors,
+                }),
+              },
+            },
+          },
+          received: {},
+        },
+      }),
+    );
+    const validator = createActor(schemaValidatorMachine);
+
+    receiver.start();
+    validator.start();
+
+    try {
+      validator.send(
+        dataValidatorCommands.validateData({
+          validationPayload: {
+            validationPayloadType: 'unsupported',
+          },
+          returnAddress: receiver,
+        }),
+      );
+
+      const snapshot = await waitFor(receiver, (state) => state.matches('received'));
+
+      expect(snapshot.context.error).toBeInstanceOf(Error);
+      expect(snapshot.context.error.message).toBe('Invalid validation payload type: unsupported');
+    } finally {
+      validator.stop();
+      receiver.stop();
+    }
   });
 });

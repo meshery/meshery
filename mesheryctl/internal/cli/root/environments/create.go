@@ -59,7 +59,7 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 		}
 		payloadBytes, err := json.Marshal(&createEnvironmentPayload)
 		if err != nil {
-			return utils.ErrUnmarshal(err)
+			return utils.ErrMarshal(err)
 		}
 
 		_, err = api.Add(environmentApiPath, bytes.NewBuffer(payloadBytes), nil)
