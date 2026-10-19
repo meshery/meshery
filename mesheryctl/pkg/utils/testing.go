@@ -914,20 +914,17 @@ func ResetCommandFlags(c *cobra.Command, t *testing.T) {
 	}
 }
 
-
 type MesheryCommandRun struct {
-	
 	Cmd *cobra.Command
-	
+
 	Args []string
-	
+
 	CommandDir string
-	
+
 	Mocks []MockURL
 
 	Token string
 }
-
 
 func RunMesheryctlCommand(t *testing.T, run MesheryCommandRun) (string, error) {
 	t.Helper()
@@ -977,7 +974,6 @@ func RunMesheryctlCommand(t *testing.T, run MesheryCommandRun) (string, error) {
 	return buf.String(), err
 }
 
-
 func IsolateMesheryHome(t *testing.T) string {
 	t.Helper()
 
@@ -996,7 +992,6 @@ func IsolateMesheryHome(t *testing.T) string {
 
 	return mesheryDir
 }
-
 
 func AssertFileExists(t *testing.T, path string) {
 	t.Helper()
@@ -1021,7 +1016,6 @@ func AssertFileExists(t *testing.T, path string) {
 	}
 	t.Fatalf("expected %s to exist; %s contains %v", path, dir, names)
 }
-
 
 func CallerDir(t *testing.T) string {
 	t.Helper()

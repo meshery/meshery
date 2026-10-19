@@ -54,7 +54,6 @@ func TestView(t *testing.T) {
 	utils.InvokeMesheryctlTestListCommand(t, update, RelationshipCmd, tests, currDir, "relationships")
 }
 
-
 func TestRelationshipViewSaveCreatesFileWithExtension(t *testing.T) {
 	mesheryctlflags.InitValidators(RelationshipCmd)
 

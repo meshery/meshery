@@ -54,7 +54,6 @@ func TestViewCmd(t *testing.T) {
 	utils.InvokeMesheryctlTestCommand(t, update, FilterCmd, loggerTests, currDir, "filter")
 }
 
-
 func TestFilterViewSaveCreatesFileWithExtension(t *testing.T) {
 	mesheryctlflags.InitValidators(FilterCmd)
 

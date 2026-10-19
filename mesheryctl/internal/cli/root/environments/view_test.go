@@ -7,7 +7,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
-
 func environmentViewRun(commandDir string, args []string) utils.MesheryCommandRun {
 	return utils.MesheryCommandRun{
 		Cmd:        EnvironmentCmd,
@@ -22,7 +21,6 @@ func environmentViewRun(commandDir string, args []string) utils.MesheryCommandRu
 	}
 }
 
-
 func TestEnvironmentViewNoSaveWithBrokenHome(t *testing.T) {
 	t.Setenv("HOME", "")
 	t.Setenv("USERPROFILE", "")
@@ -32,7 +30,6 @@ func TestEnvironmentViewNoSaveWithBrokenHome(t *testing.T) {
 		t.Fatalf("view without --save should succeed even with no HOME: %v", err)
 	}
 }
-
 
 func TestEnvironmentViewSaveCreatesFile(t *testing.T) {
 	mesheryDir := utils.IsolateMesheryHome(t)
