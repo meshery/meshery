@@ -729,6 +729,15 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, resolveErr
 		}
 
+		generationCtx := machine.GetLifecycleCtx()
+
+		machineCtx.ActionMutex.Lock()
+		defer machineCtx.ActionMutex.Unlock()
+
+		if generationCtx != nil && generationCtx.Err() != nil {
+			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("mode change aborted: superseded by a newer lifecycle transition")
+		}
+
 		// disconnect
 		{
 			contextID := machineCtx.K8sContext.ID

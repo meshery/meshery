@@ -1,0 +1,304 @@
+package machines
+
+// Tests in this file verify the lifecycle-context generation semantics of
+// StateMachine.SendEvent.
+//
+// Lifecycle-context generation model
+// -----------------------------------
+// A transition that is about to execute derives a fresh "generation" context
+// and hands it to ExecuteOnEntry and Execute. The generation is committed —
+// and the previous one cancelled — only once the machine actually advances.
+//
+// When a transition halts early, because the entry or execute action returns
+// NoOp with a non-nil error, the attempted generation is cancelled and the
+// previous one is put back. The state the machine is still in therefore keeps
+// the live context its own workers were started with.
+//
+// Invariants under test:
+//   - a halted transition leaves CurrentState and the generation untouched,
+//     and the previous generation is NOT cancelled;
+//   - a committed transition installs a new generation and cancels the one it
+//     replaces;
+//   - after SendEvent returns, GetLifecycleCtx() yields a non-nil,
+//     non-cancelled context in both cases.
+
+import (
+	"context"
+	"errors"
+	"testing"
+
+	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
+)
+
+// haltingEntryAction returns NoOp + a non-nil error from ExecuteOnEntry.
+// This simulates any action whose guard/prerequisite check fails before
+// the state is accepted as active (e.g. a missing machine context).
+type haltingEntryAction struct{ err error }
+
+func (a *haltingEntryAction) ExecuteOnEntry(_ context.Context, _ interface{}, _ interface{}) (EventType, *events.Event, error) {
+	ev := events.NewEvent().WithSeverity(events.Error).WithDescription("entry action failed").Build()
+	return NoOp, ev, a.err
+}
+func (a *haltingEntryAction) Execute(_ context.Context, _ interface{}, _ interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+func (a *haltingEntryAction) ExecuteOnExit(_ context.Context, _ interface{}, _ interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+
+// haltingExecAction returns NoOp + a non-nil error from Execute.
+// This simulates an action whose main body fails with no recovery transition
+// (e.g. a connection that cannot be reached and has no fallback state).
+type haltingExecAction struct{ err error }
+
+func (a *haltingExecAction) ExecuteOnEntry(_ context.Context, _ interface{}, _ interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+func (a *haltingExecAction) Execute(_ context.Context, _ interface{}, _ interface{}) (EventType, *events.Event, error) {
+	ev := events.NewEvent().WithSeverity(events.Error).WithDescription("execute action failed").Build()
+	return NoOp, ev, a.err
+}
+func (a *haltingExecAction) ExecuteOnExit(_ context.Context, _ interface{}, _ interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+
+// succeedingAction completes all three lifecycle methods without error.
+type succeedingAction struct{}
+
+func (a *succeedingAction) ExecuteOnEntry(_ context.Context, _ interface{}, _ interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+func (a *succeedingAction) Execute(_ context.Context, _ interface{}, _ interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+func (a *succeedingAction) ExecuteOnExit(_ context.Context, _ interface{}, _ interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+
+// lcSendCtx builds the minimum context values SendEvent reads.
+func lcSendCtx(t *testing.T) context.Context {
+	t.Helper()
+	uid, _ := uuid.NewV4()
+	sysID := core.Uuid(uuid.Nil)
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, models.UserCtxKey, &models.User{ID: core.Uuid(uid)})
+	ctx = context.WithValue(ctx, models.SystemIDKey, &sysID)
+	ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
+	return ctx
+}
+
+// lcNewMachine builds a two-state machine (CONNECTED ↔ DISCONNECTED) with
+// Provider nil so the status-persistence block is skipped entirely. Both
+// CurrentState and the installed lifecycle context must be supplied by the
+// test before calling SendEvent.
+func lcNewMachine(t *testing.T, connectedAction, disconnectedAction Action) *StateMachine {
+	t.Helper()
+	log, _ := logger.New("test", logger.Options{})
+	id, _ := uuid.NewV4()
+	return &StateMachine{
+		ID:            core.Uuid(id),
+		Name:          "kubernetes",
+		InitialState:  InitialState,
+		CurrentState:  CONNECTED,
+		PreviousState: REGISTERED,
+		Log:           log,
+		Provider:      nil,
+		States: States{
+			CONNECTED: State{
+				Events: Events{Disconnect: DISCONNECTED},
+				Action: connectedAction,
+			},
+			DISCONNECTED: State{
+				Events: Events{Connect: CONNECTED},
+				Action: disconnectedAction,
+			},
+		},
+	}
+}
+
+// installGeneration attaches a fresh, independent lifecycle context to sm and
+// returns it so the test can observe its cancellation state afterward.
+func installGeneration(sm *StateMachine) context.Context {
+	ctx, cancel := context.WithCancel(context.Background())
+	sm.LifecycleCtx = ctx
+	sm.CancelLifecycle = cancel
+	return ctx
+}
+
+// TestLifecycleCtxRemainsValidAfterHaltedTransition verifies that when a
+// transition halts without advancing CurrentState — because the entry action
+// or the execute action returns NoOp with a non-nil error — SendEvent still
+// leaves a valid (non-cancelled) lifecycle context in the machine.
+//
+// The attempted generation is cancelled and the previous one restored, so the
+// still-active state keeps the context its workers hold. Cancellation belongs
+// to a transition that commits, not to one that is merely attempted.
+func TestLifecycleCtxRemainsValidAfterHaltedTransition(t *testing.T) {
+	haltErr := errors.New("action failed")
+
+	tests := []struct {
+		name               string
+		disconnectedAction Action
+	}{
+		{
+			name:               "entry action halts",
+			disconnectedAction: &haltingEntryAction{err: haltErr},
+		},
+		{
+			name:               "execute action halts",
+			disconnectedAction: &haltingExecAction{err: haltErr},
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			ctx := lcSendCtx(t)
+			sm := lcNewMachine(t, &succeedingAction{}, tc.disconnectedAction)
+			prev := installGeneration(sm)
+
+			_, _ = sm.SendEvent(ctx, Disconnect, nil)
+
+			// CurrentState must not have advanced: a halted transition must
+			// leave the state machine where it found it.
+			if sm.CurrentState != CONNECTED {
+				t.Errorf("CurrentState = %q; want CONNECTED: a halted transition must not advance state", sm.CurrentState)
+			}
+
+			// The previous generation must NOT be cancelled (it is restored).
+			if prev.Err() != nil {
+				t.Errorf("previous lifecycle generation was unexpectedly cancelled: %v", prev.Err())
+			}
+
+			curr := sm.LifecycleCtx
+			if curr == nil {
+				t.Fatal("LifecycleCtx is nil after SendEvent")
+			}
+			if curr != prev {
+				t.Fatal("LifecycleCtx was rotated despite halted transition: attempted generation was left active")
+			}
+			if curr.Err() != nil {
+				t.Errorf("current lifecycle generation is cancelled after a halted transition: %v", curr.Err())
+			}
+		})
+	}
+}
+
+// TestMachineUsableAfterHaltedTransition verifies that the machine can accept
+// and complete a legitimate transition after a previous one halted without
+// advancing CurrentState.
+//
+// This guards against a scenario where a halted transition leaves the machine
+// in a state from which no further progress is possible (e.g. a cancelled
+// lifecycle context that blocks subsequent background workers).
+func TestMachineUsableAfterHaltedTransition(t *testing.T) {
+	ctx := lcSendCtx(t)
+	haltErr := errors.New("transient entry failure")
+
+	sm := lcNewMachine(t, &succeedingAction{}, &haltingEntryAction{err: haltErr})
+	installGeneration(sm)
+
+	// First send: halts, CurrentState stays CONNECTED.
+	_, _ = sm.SendEvent(ctx, Disconnect, nil)
+	if sm.CurrentState != CONNECTED {
+		t.Fatalf("precondition: expected CONNECTED after halted transition, got %q", sm.CurrentState)
+	}
+	afterHalt := sm.LifecycleCtx
+
+	// Swap in a succeeding action and retry the same transition.
+	sm.States[DISCONNECTED] = State{
+		Events: Events{Connect: CONNECTED},
+		Action: &succeedingAction{},
+	}
+
+	_, err := sm.SendEvent(ctx, Disconnect, nil)
+	if err != nil {
+		t.Fatalf("SendEvent failed after recovering from a halted transition: %v", err)
+	}
+	if sm.CurrentState != DISCONNECTED {
+		t.Errorf("CurrentState = %q; want DISCONNECTED after a successful transition", sm.CurrentState)
+	}
+
+	// The generation that was current after the halted transition must now
+	// be cancelled — the successful transition rotated it out.
+	if afterHalt.Err() == nil {
+		t.Error("generation left by the halted transition was not cancelled by the subsequent successful transition")
+	}
+
+	// The newly-installed generation must be distinct from the previous one
+	// and must itself be valid — two independent assertions.
+	curr := sm.LifecycleCtx
+	if curr == nil {
+		t.Fatal("LifecycleCtx is nil after the successful transition")
+	}
+	if curr == afterHalt {
+		t.Error("LifecycleCtx was not rotated by the successful transition")
+	}
+	if curr.Err() != nil {
+		t.Errorf("current lifecycle generation is cancelled after a successful transition: %v", curr.Err())
+	}
+}
+
+// TestCommittedTransitionCancelsPreviousGeneration verifies that a successful
+// transition advances CurrentState, cancels the previous generation, and
+// leaves a valid (non-cancelled) generation in its place.
+func TestCommittedTransitionCancelsPreviousGeneration(t *testing.T) {
+	ctx := lcSendCtx(t)
+	sm := lcNewMachine(t, &succeedingAction{}, &succeedingAction{})
+	prev := installGeneration(sm)
+
+	_, err := sm.SendEvent(ctx, Disconnect, nil)
+	if err != nil {
+		t.Fatalf("SendEvent failed: %v", err)
+	}
+
+	if sm.CurrentState != DISCONNECTED {
+		t.Errorf("CurrentState = %q; want DISCONNECTED after a successful transition", sm.CurrentState)
+	}
+
+	if prev.Err() == nil {
+		t.Error("previous lifecycle generation was not cancelled after a successful transition")
+	}
+
+	curr := sm.LifecycleCtx
+	if curr == nil {
+		t.Fatal("LifecycleCtx is nil after a successful transition")
+	}
+	if curr == prev {
+		t.Error("LifecycleCtx was not rotated by the successful transition")
+	}
+	if curr.Err() != nil {
+		t.Errorf("current lifecycle generation is cancelled after a successful transition: %v", curr.Err())
+	}
+}
+
+// TestLifecycleCtxAbsentBeforeFirstTransition verifies that a StateMachine
+// can have a nil LifecycleCtx before its first transition, and that an accepted
+// transition successfully installs a live generation.
+func TestLifecycleCtxAbsentBeforeFirstTransition(t *testing.T) {
+	ctx := lcSendCtx(t)
+	sm := lcNewMachine(t, &succeedingAction{}, &succeedingAction{})
+	sm.LifecycleCtx = nil
+	sm.CancelLifecycle = nil
+
+	_, err := sm.SendEvent(ctx, Disconnect, nil)
+	if err != nil {
+		t.Fatalf("SendEvent failed: %v", err)
+	}
+
+	if sm.CurrentState != DISCONNECTED {
+		t.Errorf("CurrentState = %q; want DISCONNECTED after a successful transition", sm.CurrentState)
+	}
+
+	curr := sm.LifecycleCtx
+	if curr == nil {
+		t.Fatal("LifecycleCtx is nil after a successful transition")
+	}
+	if curr.Err() != nil {
+		t.Errorf("current lifecycle generation is cancelled after a successful transition: %v", curr.Err())
+	}
+}
