@@ -1,14 +1,88 @@
 package machines
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/meshery/schemas/models/core"
 )
 
+type inFlightState struct {
+	ch   chan struct{}
+	inst *StateMachine
+	err  error
+}
+
 type ConnectionToStateMachineInstanceTracker struct {
 	ConnectToInstanceMap map[core.Uuid]*StateMachine
+	inFlight             map[core.Uuid]*inFlightState
 	mx                   sync.RWMutex
+}
+
+func (smt *ConnectionToStateMachineInstanceTracker) GetOrInitialize(id core.Uuid, initFn func() (*StateMachine, error)) (*StateMachine, error) {
+	smt.mx.Lock()
+	if inst, ok := smt.ConnectToInstanceMap[id]; ok {
+		smt.mx.Unlock()
+		return inst, nil
+	}
+
+	if smt.inFlight == nil {
+		smt.inFlight = make(map[core.Uuid]*inFlightState)
+	}
+
+	state, inFlight := smt.inFlight[id]
+	if !inFlight {
+		state = &inFlightState{ch: make(chan struct{})}
+		smt.inFlight[id] = state
+	}
+	smt.mx.Unlock()
+
+	if inFlight {
+		<-state.ch
+		// The other goroutine finished initialization. Return its exact result.
+		if state.err != nil {
+			return nil, state.err
+		}
+		// If there is no error, it must be in the map (or state.inst is populated).
+		// We can return the cached instance safely.
+		return state.inst, nil
+	}
+
+	// We are the one initializing
+	defer func() {
+		smt.mx.Lock()
+		delete(smt.inFlight, id)
+		close(state.ch) // wake up waiters
+		smt.mx.Unlock()
+	}()
+
+	inst, err := func() (i *StateMachine, e error) {
+		defer func() {
+			if r := recover(); r != nil {
+				i = nil
+				e = fmt.Errorf(
+					"panic while initializing state machine for connection %s: %v",
+					id, r,
+				)
+			}
+		}()
+		return initFn()
+	}()
+
+	smt.mx.Lock()
+	defer smt.mx.Unlock()
+
+	state.inst = inst
+	state.err = err
+
+	if err == nil && inst != nil {
+		if smt.ConnectToInstanceMap == nil {
+			smt.ConnectToInstanceMap = make(map[core.Uuid]*StateMachine)
+		}
+		smt.ConnectToInstanceMap[id] = inst
+	}
+
+	return inst, err
 }
 
 func (smt *ConnectionToStateMachineInstanceTracker) Get(id core.Uuid) (*StateMachine, bool) {
