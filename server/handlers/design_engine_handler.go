@@ -34,7 +34,9 @@ import (
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/pkg/errors"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
+	meta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/restmapper"
 
 	patternHelpers "github.com/meshery/meshkit/models/patterns"
 )
@@ -408,17 +410,41 @@ func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
 	}
 }
 
-// v1.StatusApplyConfiguration has deprecated, needed to find a different option to do this
-// NOTE: Currently tied to kubernetes
-// Returns ComponentName->ContextID->Response
+// DryRun executes server-side dry-run validation of the specified components across all target Kubernetes contexts.
+// It pre-scans declared namespaces in the design to handle dependencies and initializes discovery RESTMappers per cluster.
+// Returns ComponentName -> ContextID -> Response.
 func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition) (resp map[string]map[string]patterncore.DryRunResponseWrapper, err error) {
-	for _, cmp := range comps {
-		for ctxID, kc := range sap.ctxTokubeconfig {
-			cl, err := meshkube.New([]byte(kc))
-			if err != nil {
-				return resp, err
+	// 1. Scan all components in the design/pattern and collect declared namespaces
+	declaredNamespaces := collectDeclaredNamespaces(comps)
+
+	// 2. Initialize meshkube.Client and DiscoveryRESTMapper ONCE per target cluster before looping over components
+	type clusterContext struct {
+		client *meshkube.Client
+		mapper meta.RESTMapper
+	}
+	clusters := make(map[string]clusterContext, len(sap.ctxTokubeconfig))
+	for ctxID, kc := range sap.ctxTokubeconfig {
+		cl, err := meshkube.New([]byte(kc))
+		if err != nil {
+			return resp, err
+		}
+		var mapper meta.RESTMapper
+		if cl.KubeClient != nil {
+			gr, err := restmapper.GetAPIGroupResources(cl.KubeClient.Discovery())
+			if len(gr) > 0 {
+				mapper = restmapper.NewDiscoveryRESTMapper(gr)
 			}
-			dResp, err := dryRunComponent(cl, cmp, sap.opIsDelete)
+			if err != nil && sap.log != nil {
+				sap.log.Warn(errors.New(fmt.Sprintf("Failed to get API group resources for discovery RESTMapper on context %s: %v, falling back to default mapping", ctxID, err)))
+			}
+		}
+		clusters[ctxID] = clusterContext{client: cl, mapper: mapper}
+	}
+
+	// 3. Loop over components and dry-run them across initialized clusters
+	for _, cmp := range comps {
+		for ctxID, cluster := range clusters {
+			dResp, err := dryRunComponent(cluster.client, cmp, sap.opIsDelete, cluster.mapper, declaredNamespaces)
 			if err != nil {
 				return resp, err
 			}
@@ -434,17 +460,82 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
 	return
 }
 
-func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition, isDelete bool) (patterncore.DryRunResponseWrapper, error) {
-	st, ok, err := k8s.DryRunHelper(cl, *cmd, isDelete)
-	dResp := patterncore.DryRunResponseWrapper{Success: ok, Component: cmd}
+// collectDeclaredNamespaces returns the names of the Namespace components declared in the design.
+func collectDeclaredNamespaces(comps []*component.ComponentDefinition) map[string]bool {
+	declaredNamespaces := make(map[string]bool)
+	for _, cmp := range comps {
+		if cmp == nil || !strings.EqualFold(cmp.Component.Kind, "Namespace") {
+			continue
+		}
+		if nsName := getNamespaceNameFromComponent(cmp); nsName != "" {
+			declaredNamespaces[nsName] = true
+		}
+	}
+	return declaredNamespaces
+}
+
+// getNamespaceNameFromComponent extracts the declared namespace name from a Namespace component definition.
+// metadata.name is authoritative: when the configuration carries it, DisplayName is never used, and a
+// metadata.name that is not a non-empty string registers no namespace. DisplayName is used only when the
+// configuration declares no metadata.name at all.
+func getNamespaceNameFromComponent(cmp *component.ComponentDefinition) string {
+	if cmp == nil {
+		return ""
+	}
+	if _metadata, ok := cmp.Configuration["metadata"]; ok {
+		metadata, err := utils.Cast[map[string]interface{}](_metadata)
+		if err != nil {
+			return ""
+		}
+		if _name, ok := metadata["name"]; ok {
+			name, _ := utils.Cast[string](_name)
+			return name
+		}
+	}
+	return cmp.DisplayName
+}
+
+// dryRunComponent executes dry-run validation for a single component against a Kubernetes cluster client,
+// applying discovery REST mapping and in-design declared namespace suppression options.
+func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition, isDelete bool, mapper meta.RESTMapper, declaredNamespaces map[string]bool) (patterncore.DryRunResponseWrapper, error) {
+	st, ok, err := k8s.DryRunHelperWithOptions(cl, *cmd, isDelete, k8s.DryRunOptions{
+		RESTMapper:         mapper,
+		DeclaredNamespaces: declaredNamespaces,
+	})
+	cmpCopy := *cmd
+	dResp := patterncore.DryRunResponseWrapper{Success: ok, Component: &cmpCopy}
 	if ok {
-		dResp.Component.Configuration = filterConfiguration(st)
-	} else if err != nil {
+		if !isDelete {
+			dResp.Component.Configuration = filterConfiguration(st)
+		}
+	} else if isDelete && isDryRunNotFoundError(err, st) {
+		dResp.Success = true
+		dResp.Error = nil
+	} else if err != nil && (len(st) == 0 || st["status"] != "Failure") {
 		dResp.Error = &patterncore.DryRunResponse{Status: err.Error()}
 	} else {
 		dResp.Error = parseDryRunFailure(st, cmd.DisplayName)
 	}
 	return dResp, nil
+}
+
+// isDryRunNotFoundError determines whether an error or status map from a dry-run represents a Kubernetes 404/NotFound error.
+func isDryRunNotFoundError(err error, st map[string]interface{}) bool {
+	if err != nil && kubeerror.IsNotFound(err) {
+		return true
+	}
+	if st != nil {
+		if reason, ok := st["reason"].(string); ok && reason == string(metav1.StatusReasonNotFound) {
+			return true
+		}
+		if code, ok := st["code"].(float64); ok && int(code) == 404 {
+			return true
+		}
+		if code, ok := st["code"].(int); ok && code == 404 {
+			return true
+		}
+	}
+	return false
 }
 
 func filterConfiguration(configuration map[string]interface{}) map[string]interface{} {
