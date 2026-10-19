@@ -49,7 +49,7 @@ jobs:
           echo "Actor       : ${{ github.actor }}"
           echo "Event Name  : ${{ github.event_name }}"
           echo "Repository  : ${{ github.repository }}"
-          echo "Ref         : ${{ github.ref }}"
+          echo "Ref         : $GITHUB_REF"
           echo "::endgroup::"
 
       # -----------------------------------------------------------------------
@@ -100,7 +100,7 @@ jobs:
       # requirement and the PR review process).
       # -----------------------------------------------------------------------
       - name: 🎉 Welcome First-Time PR Author
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request_target'
         uses: actions/first-interaction@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
