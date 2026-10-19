@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"runtime/debug"
 	"strings"
 	"sync"
 
@@ -15,6 +16,7 @@ import (
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
+	mutils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
@@ -71,6 +73,25 @@ func resolveProviderName(req *http.Request, cookieName, enforcedProvider string)
 	}
 	usedLegacyAlias := strings.EqualFold(name, models.LocalProviderLegacyAlias)
 	return models.NormalizeProviderName(name), usedLegacyAlias
+}
+
+// RecoveryMiddleware recovers from panics in HTTP handlers, logs the error and stack trace,
+// and returns a structured 500 Internal Server Error response.
+func (h *Handler) RecoveryMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		defer func() {
+			if r := recover(); r != nil {
+				stack := debug.Stack()
+				if h.log != nil {
+					h.log.Error(fmt.Errorf("recovered HTTP panic on %s %s: %v\n%s", req.Method, req.URL.Path, r, stack))
+				}
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusInternalServerError)
+				_, _ = w.Write([]byte(`{"error":"Internal Server Error","message":"An unexpected error occurred while processing your request."}`))
+			}
+		}()
+		next.ServeHTTP(w, req)
+	})
 }
 
 // ProviderMiddleware is a middleware to validate if a provider is set
@@ -437,13 +458,15 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			continue
 		}
 		inst.ResetState()
-		go func(inst *machines.StateMachine) {
+		mutils.SafeGo(h.log, "k8s-state-machine-discovery", func() {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
-			if err != nil {
+			if err != nil && event != nil {
 				_ = provider.PersistEvent(*event, token)
-				go h.config.EventBroadcaster.Publish(userUUID, event)
+				mutils.SafeGo(h.log, "event-broadcaster-publish", func() {
+					h.config.EventBroadcaster.Publish(userUUID, event)
+				})
 			}
-		}(inst)
+		})
 		kubernesMachineCtx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
 		if err != nil {
 			h.log.Error(err)
@@ -478,7 +501,10 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 	for _, resource := range resources {
 		for _, dh := range dataHandlers {
 			if dh.clusterID == resource.ClusterID {
-				go regQueue.Send(models.MeshSyncRegistrationData{MeshsyncDataHandler: dh.mdh, Obj: resource})
+				data := models.MeshSyncRegistrationData{MeshsyncDataHandler: dh.mdh, Obj: resource}
+				mutils.SafeGo(h.log, "meshsync-reg-queue-send", func() {
+					regQueue.Send(data)
+				})
 			}
 		}
 	}

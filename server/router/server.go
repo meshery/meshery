@@ -29,6 +29,7 @@ func registerRegistryRoute(gMux *mux.Router, subpath string, handler http.Handle
 // NewRouter returns a new ServeMux with app routes.
 func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Handler, gp http.Handler) *Router {
 	gMux := mux.NewRouter()
+	gMux.Use(h.RecoveryMiddleware)
 	gMux.Use(otelmux.Middleware("meshery-server"))
 
 	gMux.Handle("/api/system/graphql/query", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(g)), models.ProviderAuth))).Methods("GET", "POST")

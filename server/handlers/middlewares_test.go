@@ -274,3 +274,56 @@ func TestIsTransientProviderError(t *testing.T) {
 		})
 	}
 }
+
+func TestRecoveryMiddleware_PassThrough(t *testing.T) {
+	h := &Handler{}
+	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
+	})
+
+	mw := h.RecoveryMiddleware(next)
+	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	rec := httptest.NewRecorder()
+
+	mw.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("expected 200 OK, got %d", rec.Code)
+	}
+	if rec.Body.String() != "ok" {
+		t.Errorf("expected body 'ok', got %q", rec.Body.String())
+	}
+}
+
+func TestRecoveryMiddleware_RecoversPanic(t *testing.T) {
+	h := &Handler{}
+	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		panic("nil pointer dereference inside route handler")
+	})
+
+	mw := h.RecoveryMiddleware(next)
+	req := httptest.NewRequest(http.MethodGet, "/api/panicking/endpoint", nil)
+	rec := httptest.NewRecorder()
+
+	// Must not crash the process; must catch panic and return 500 JSON
+	mw.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Errorf("expected 500 Internal Server Error, got %d", rec.Code)
+	}
+
+	contentType := rec.Header().Get("Content-Type")
+	if contentType != "application/json" {
+		t.Errorf("expected Content-Type application/json, got %q", contentType)
+	}
+
+	var body map[string]string
+	if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
+		t.Fatalf("failed to decode JSON response: %v", err)
+	}
+
+	if body["error"] != "Internal Server Error" {
+		t.Errorf("expected error 'Internal Server Error', got %q", body["error"])
+	}
+}
