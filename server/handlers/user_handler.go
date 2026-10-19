@@ -103,7 +103,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 	// do not corrupt in-memory or persisted state on rejected updates
 	stagedPref := models.NewDefaultPreference()
 	if prefObj != nil {
-		if err := copier.Copy(stagedPref, prefObj); err != nil {
+		if err := copier.CopyWithOption(stagedPref, prefObj, copier.Option{DeepCopy: true}); err != nil {
 			h.log.Error(ErrDecoding(err, "user preferences"))
 			writeMeshkitError(w, ErrDecoding(err, "user preferences"), http.StatusInternalServerError)
 			return
@@ -111,7 +111,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 	}
 
 	// read user preferences from JSON request body into the staged copy
-	if err := json.NewDecoder(req.Body).Decode(&stagedPref); err != nil {
+	if err := json.NewDecoder(req.Body).Decode(stagedPref); err != nil {
 		h.log.Error(ErrDecoding(err, "user preferences"))
 		writeMeshkitError(w, ErrDecoding(err, "user preferences"), http.StatusInternalServerError)
 		return

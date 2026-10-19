@@ -199,6 +199,9 @@ func TestUserPrefsHandler_RejectedUpdateDoesNotMutateStoredPreferences(t *testin
 		LoadGenerator:      "fortio",
 	}
 	initialPref.AnonymousUsageStats = true
+	initialPref.DashboardPreferences = map[string]interface{}{
+		"theme": "dark",
+	}
 
 	if err := provider.RecordPreferences(nil, userID, initialPref); err != nil {
 		t.Fatalf("failed to record initial preferences: %v", err)
@@ -210,8 +213,8 @@ func TestUserPrefsHandler_RejectedUpdateDoesNotMutateStoredPreferences(t *testin
 		t.Fatalf("failed to read preferences: %v", err)
 	}
 
-	// 2. Send an invalid update with QPS = -1 (must reject with HTTP 400)
-	invalidBody := `{"loadTestPrefs": {"qps": -1}}`
+	// 2. Send an invalid update with QPS = -1 and modified dashboard prefs (must reject with HTTP 400)
+	invalidBody := `{"dashboardPreferences": {"theme": "light", "leakedKey": "corrupt"}, "loadTestPrefs": {"qps": -1}}`
 	req := httptest.NewRequest(http.MethodPost, "/api/user/prefs", strings.NewReader(invalidBody))
 	rec := httptest.NewRecorder()
 
@@ -228,6 +231,9 @@ func TestUserPrefsHandler_RejectedUpdateDoesNotMutateStoredPreferences(t *testin
 	}
 	if persistedAfterRejection.LoadTestPreferences == nil || persistedAfterRejection.LoadTestPreferences.QueriesPerSecond != 5 {
 		t.Errorf("rejected update modified stored QPS: got %v, want 5", persistedAfterRejection.LoadTestPreferences)
+	}
+	if persistedAfterRejection.DashboardPreferences["theme"] != "dark" || persistedAfterRejection.DashboardPreferences["leakedKey"] != nil {
+		t.Errorf("rejected update leaked map modifications into stored preferences: got %+v, want theme=dark only", persistedAfterRejection.DashboardPreferences)
 	}
 
 	// 3. Send a subsequent unrelated valid update (must succeed with HTTP 200)
@@ -256,5 +262,40 @@ func TestUserPrefsHandler_RejectedUpdateDoesNotMutateStoredPreferences(t *testin
 	}
 	if persistedFinal.LoadTestPreferences == nil || persistedFinal.LoadTestPreferences.QueriesPerSecond != 5 {
 		t.Errorf("expected LoadTestPreferences.QueriesPerSecond to remain 5, got %v", persistedFinal.LoadTestPreferences)
+	}
+	if persistedFinal.DashboardPreferences["theme"] != "dark" || persistedFinal.DashboardPreferences["leakedKey"] != nil {
+		t.Errorf("expected DashboardPreferences to remain untouched, got %+v", persistedFinal.DashboardPreferences)
+	}
+}
+
+// TestUserPrefsHandler_NullBodyDoesNotPanic verifies that sending a JSON null body
+// decodes safely into the staged struct without setting the pointer to nil or panicking.
+func TestUserPrefsHandler_NullBodyDoesNotPanic(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	persister, err := models.NewMapPreferencePersister()
+	if err != nil {
+		t.Fatalf("failed to create persister: %v", err)
+	}
+
+	provider := &models.DefaultLocalProvider{
+		MapPreferencePersister: persister,
+	}
+	provider.Initialize()
+
+	userID := "00000000-0000-0000-0000-000000000001"
+	user := &models.User{
+		ID: uuid.FromStringOrNil(userID),
+	}
+
+	prefObj := models.NewDefaultPreference()
+	req := httptest.NewRequest(http.MethodPost, "/api/user/prefs", strings.NewReader("null"))
+	rec := httptest.NewRecorder()
+
+	// Must not panic on null JSON body
+	h.UserPrefsHandler(rec, req, prefObj, user, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected HTTP 200 for null body, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
 }

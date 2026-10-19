@@ -55,11 +55,12 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 		if ok1 {
 			log.Debug(fmt.Sprintf("session for user with id: %s was read in tact.", userID))
 			copiedData := NewDefaultPreference()
-			if err := copier.Copy(copiedData, newData); err == nil {
+			if err := copier.CopyWithOption(copiedData, newData, copier.Option{DeepCopy: true}); err == nil {
 				data = copiedData
 			} else {
-				log.Warn(ErrSessionCopy(err))
-				data = newData
+				copyErr := ErrSessionCopy(err)
+				log.Warn(copyErr)
+				return copiedData, copyErr
 			}
 		} else {
 			log.Warn(ErrSessionNotReadIntact(userID))
@@ -87,7 +88,7 @@ func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preferenc
 	}
 	data.UpdatedAt = time.Now()
 	newSess := NewDefaultPreference()
-	if err := copier.Copy(newSess, data); err != nil {
+	if err := copier.CopyWithOption(newSess, data, copier.Option{DeepCopy: true}); err != nil {
 		return ErrSessionCopy(err)
 	}
 
