@@ -199,6 +199,13 @@ describe('UrlStepper', () => {
     expect(screen.getByTestId('back')).toBeDisabled();
   });
 
+  it('renders step 0 model name and display name inputs with responsive labels', () => {
+    stepperState.activeStep = 0;
+    render(<UrlStepper handleClose={vi.fn()} />);
+    expect(screen.getByTestId('textfield-model-name')).toBeInTheDocument();
+    expect(screen.getByTestId('textfield-model-display-name')).toBeInTheDocument();
+  });
+
   it('Generate button on step 5 calls handleNext on click', () => {
     stepperState.activeStep = 5;
     render(<UrlStepper handleClose={vi.fn()} />);
