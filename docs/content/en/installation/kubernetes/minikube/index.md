@@ -121,6 +121,8 @@ Configure Meshery to connect with your minikube cluster by running the command:
 
 {{< code code="mesheryctl connection create --type minikube" >}}
 
+If your minikube cluster uses the Docker driver, skip this command for now and follow the [Minikube Docker Driver Users](#minikube-docker-driver-users) steps first. They end with this command.
+
 ### Minikube Docker Driver Users
 
 For users running minikube with the Docker driver, specific steps are needed to ensure that Meshery can connect properly to your minikube cluster.
