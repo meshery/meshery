@@ -47,7 +47,7 @@ var (
 // Example publishing to mesheryio docs
 // mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
 
-// Example publishing to remove provider docs
+// Example publishing to remote provider docs
 // mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw /src/collections/integrations /src/collections/integrations -o mdx
 
 // publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
@@ -60,14 +60,11 @@ Find more information at: https://docs.meshery.io/reference/references/mesheryct
 // Publish To System
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
 
-// Publish To Meshery
-mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/models
-
 // Publish To Remote Provider
-mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels
+mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/models [repo]/ui/public/static/img/meshmodels
 
 // Publish To Website
-mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels
+mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/static/img/meshmodels -o [output-format]
 
 // Publishing to meshery docs
 cd docs;
