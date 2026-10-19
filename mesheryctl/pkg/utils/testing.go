@@ -913,3 +913,122 @@ func ResetCommandFlags(c *cobra.Command, t *testing.T) {
 		ResetCommandFlags(sub, t)
 	}
 }
+
+
+type MesheryCommandRun struct {
+	
+	Cmd *cobra.Command
+	
+	Args []string
+	
+	CommandDir string
+	
+	Mocks []MockURL
+
+	Token string
+}
+
+
+func RunMesheryctlCommand(t *testing.T, run MesheryCommandRun) (string, error) {
+	t.Helper()
+
+	if run.Cmd == nil {
+		t.Fatal("RunMesheryctlCommand: Cmd is required")
+	}
+
+	testContext := InitTestEnvironment(t)
+	t.Cleanup(func() { StopMockery(t) })
+	t.Cleanup(func() { ResetCommandFlags(run.Cmd, t) })
+
+	if run.Token != "" {
+		TokenFlag = run.Token
+	} else {
+		TokenFlag = GetToken(t)
+	}
+
+	fixturesDir := filepath.Join(run.CommandDir, "fixtures")
+	for _, mock := range run.Mocks {
+		url := mock.URL
+		if strings.HasPrefix(url, "/") {
+			url = testContext.BaseURL + url
+		}
+
+		method := mock.Method
+		if method == "" {
+			method = http.MethodGet
+		}
+
+		code := mock.ResponseCode
+		if code == 0 {
+			code = http.StatusOK
+		}
+
+		apiResponse := NewGoldenFile(t, mock.Response, fixturesDir).Load()
+		httpmock.RegisterResponder(method, url, httpmock.NewStringResponder(code, apiResponse))
+	}
+
+	buf := &bytes.Buffer{}
+	_ = SetupMeshkitLoggerTesting(t, false)
+	run.Cmd.SetOut(buf)
+	run.Cmd.SetErr(buf)
+	run.Cmd.SetArgs(run.Args)
+
+	err := run.Cmd.Execute()
+	return buf.String(), err
+}
+
+
+func IsolateMesheryHome(t *testing.T) string {
+	t.Helper()
+
+	tmpHome := t.TempDir()
+	t.Setenv("HOME", tmpHome)
+	t.Setenv("USERPROFILE", tmpHome)
+
+	mesheryDir := filepath.Join(tmpHome, ".meshery")
+	if err := os.MkdirAll(mesheryDir, 0755); err != nil {
+		t.Fatalf("unable to create %s: %v", mesheryDir, err)
+	}
+
+	original := MesheryFolder
+	MesheryFolder = mesheryDir
+	t.Cleanup(func() { MesheryFolder = original })
+
+	return mesheryDir
+}
+
+
+func AssertFileExists(t *testing.T, path string) {
+	t.Helper()
+
+	_, err := os.Stat(path)
+	if err == nil {
+		return
+	}
+	if !os.IsNotExist(err) {
+		t.Fatalf("unable to stat %s: %v", path, err)
+	}
+
+	dir := filepath.Dir(path)
+	entries, readErr := os.ReadDir(dir)
+	if readErr != nil {
+		t.Fatalf("expected %s to exist; %s could not be read: %v", path, dir, readErr)
+	}
+
+	names := make([]string, 0, len(entries))
+	for _, entry := range entries {
+		names = append(names, entry.Name())
+	}
+	t.Fatalf("expected %s to exist; %s contains %v", path, dir, names)
+}
+
+
+func CallerDir(t *testing.T) string {
+	t.Helper()
+
+	_, filename, _, ok := runtime.Caller(1)
+	if !ok {
+		t.Fatal("unable to determine the calling file's directory")
+	}
+	return filepath.Dir(filename)
+}
