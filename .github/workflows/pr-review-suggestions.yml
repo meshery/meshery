@@ -11,7 +11,7 @@ on:
     types: [completed]
 
 concurrency:
-  group: pr-review-suggestions-${{ github.event.pull_request.number || (github.event.workflow_run && github.event.workflow_run.pull_requests[0] && github.event.workflow_run.pull_requests[0].number) || github.run_id }}
+  group: pr-review-suggestions-${{ github.event.pull_request.head.label || (github.event.workflow_run && format('{0}:{1}', github.event.workflow_run.head_repository.owner.login, github.event.workflow_run.head_branch)) || github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 permissions:
@@ -67,6 +67,7 @@ jobs:
             }
 
             // Helper: Escape candidate PR titles for safe Markdown rendering
+            // Neutralizes Markdown link syntax, formatting, mentions (@), and bare URLs
             function escapeMarkdown(text) {
               if (!text || typeof text !== 'string') return '';
               const sanitized = text
@@ -75,7 +76,9 @@ jobs:
                 .trim();
               return sanitized
                 .replace(/\\/g, '\\\\')
-                .replace(/([`*_\[\]()<>|~#])/g, '\\$1');
+                .replace(/([`*_\[\]()<>|~#])/g, '\\$1')
+                .replace(/@/g, '@\u200d')
+                .replace(/:\/\//g, ':\u200b//');
             }
 
             // Helper: Calculate deterministic relevance score between current PR and a candidate
@@ -149,9 +152,35 @@ jobs:
                   }
 
                   let candidatePR = null;
+                  // 1. Direct pull_requests payload check
                   if (runPayload.pull_requests && runPayload.pull_requests.length > 0) {
                     candidatePR = runPayload.pull_requests[0];
-                  } else if (runPayload.head_sha) {
+                  } else if (runPayload.head_repository && runPayload.head_repository.owner && runPayload.head_branch) {
+                    // 2. Fork PRs often have empty pull_requests; resolve via head filter 'owner:branch'
+                    const headFilter = `${runPayload.head_repository.owner.login}:${runPayload.head_branch}`;
+                    try {
+                      const { data: prs } = await github.rest.pulls.list({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        state: 'open',
+                        base: 'master',
+                        head: headFilter
+                      });
+                      const matchingPrs = (prs || []).filter(p => p.head && p.head.sha === runPayload.head_sha);
+                      if (matchingPrs.length === 1) {
+                        candidatePR = matchingPrs[0];
+                      } else if (matchingPrs.length > 1) {
+                        core.warning(`Multiple open PRs found for head ${headFilter}; unable to disambiguate target PR.`);
+                        return;
+                      }
+                    } catch (err) {
+                      core.warning(`Failed to query PRs for head ${headFilter}: ${err.message}`);
+                      return;
+                    }
+                  }
+
+                  // 3. Fallback: commit SHA lookup if still not found
+                  if (!candidatePR && runPayload.head_sha) {
                     try {
                       const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
                         owner: context.repo.owner,
@@ -225,13 +254,14 @@ jobs:
                   bodyTokens: tokenizeText(currentPRData.body || prBody)
                 };
 
-                // Fetch candidate open PRs (up to 100 recently updated)
+                // Fetch candidate open PRs (up to 100 recently updated, restricted to master)
                 let openPRs = [];
                 try {
                   const response = await github.rest.pulls.list({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     state: 'open',
+                    base: 'master',
                     per_page: 100,
                     sort: 'updated',
                     direction: 'desc'
@@ -242,7 +272,7 @@ jobs:
                   return;
                 }
 
-                core.info(`Found ${openPRs.length} open PR candidates in repository.`);
+                core.info(`Found ${openPRs.length} open PR candidates in repository targeting master.`);
 
                 // Filter candidate PRs
                 const candidatePRs = [];
@@ -252,6 +282,7 @@ jobs:
                   if (candidate.number === prNumber) continue;
                   if (candidate.draft) continue;
                   if (candidate.state !== 'open') continue;
+                  if (candidate.base && candidate.base.ref !== 'master') continue;
                   if (seenNumbers.has(candidate.number)) continue;
                   seenNumbers.add(candidate.number);
 

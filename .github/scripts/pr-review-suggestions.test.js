@@ -78,8 +78,25 @@ function createMockGitHub({ prDetails = {}, openPRs = [], comments = [] } = {}) 
           }
           throw new Error(`PR #${pull_number} not found`);
         },
-        list: async () => {
-          return { data: openPRs };
+        list: async ({ state, base, head } = {}) => {
+          let filtered = [...openPRs];
+          if (state) {
+            filtered = filtered.filter(p => p.state === state);
+          }
+          if (base) {
+            filtered = filtered.filter(p => !p.base || p.base.ref === base);
+          }
+          if (head) {
+            filtered = filtered.filter(p => {
+              if (!p.head) return false;
+              const owner = p.head.user
+                ? p.head.user.login
+                : p.head.repo && p.head.repo.owner && p.head.repo.owner.login;
+              const branch = p.head.ref;
+              return `${owner}:${branch}` === head;
+            });
+          }
+          return { data: filtered };
         }
       },
       repos: {
@@ -204,13 +221,23 @@ test('normalizeLabels: ignores unrelated label families', async () => {
 // ---------------------------------------------------------------------------
 // 3. Markdown Escaping & Security Tests
 // ---------------------------------------------------------------------------
-test('escapeMarkdown: escapes markdown link syntax without breaking text', async () => {
+test('escapeMarkdown: escapes markdown link syntax without breaking text and neutralizes bare URLs', async () => {
   const { escapeMarkdown } = await loadWorkflowModule();
 
   const title = 'Fix [review checklist](https://evil.invalid) bug';
   const escaped = escapeMarkdown(title);
   assert.ok(!escaped.includes('[review checklist](https://evil.invalid)'), 'link should not be unescaped');
-  assert.equal(escaped, 'Fix \\[review checklist\\]\\(https://evil.invalid\\) bug');
+  assert.ok(escaped.includes(':\u200b//'), 'URL protocol should have zero-width space inserted');
+  assert.equal(escaped, 'Fix \\[review checklist\\]\\(https:\u200b//evil.invalid\\) bug');
+});
+
+test('escapeMarkdown: neutralizes @ mentions with zero-width joiner', async () => {
+  const { escapeMarkdown } = await loadWorkflowModule();
+
+  const title = 'Bug report for @meshery/maintainers and @leecalcote';
+  const escaped = escapeMarkdown(title);
+  assert.ok(escaped.includes('@\u200dmeshery/maintainers'));
+  assert.ok(escaped.includes('@\u200dleecalcote'));
 });
 
 test('escapeMarkdown: escapes backticks, asterisks, underscores, pipes, and tags', async () => {
@@ -358,6 +385,7 @@ test('workflow run: creates new sticky comment for eligible candidates', async (
       title: '[Server] Database migration runner',
       body: 'Runs database migrations during startup',
       state: 'open',
+      base: { ref: 'master' },
       draft: false,
       html_url: 'https://github.com/meshery/meshery/pull/101',
       labels: [{ name: 'language/go' }, { name: 'component/server' }]
@@ -367,6 +395,7 @@ test('workflow run: creates new sticky comment for eligible candidates', async (
       title: '[Docs] Update server docs',
       body: 'Documentation for server configuration',
       state: 'open',
+      base: { ref: 'master' },
       draft: false,
       html_url: 'https://github.com/meshery/meshery/pull/102',
       labels: [{ name: 'area/docs' }] // Ineligible: zero label overlap
@@ -376,6 +405,7 @@ test('workflow run: creates new sticky comment for eligible candidates', async (
       title: '[Draft] Draft server work',
       body: 'Unfinished draft PR',
       state: 'open',
+      base: { ref: 'master' },
       draft: true, // Ineligible: draft
       html_url: 'https://github.com/meshery/meshery/pull/103',
       labels: [{ name: 'language/go' }]
@@ -435,6 +465,7 @@ test('workflow run: updates existing bot sticky comment and ignores human commen
       title: '[mesheryctl] Go CLI improvement',
       body: 'CLI change',
       state: 'open',
+      base: { ref: 'master' },
       draft: false,
       html_url: 'https://github.com/meshery/meshery/pull/105',
       labels: [{ name: 'language/go' }]
@@ -487,6 +518,7 @@ test('workflow run: replaces stale recommendations with "no closely related open
       title: '[Server] Some candidate',
       body: 'Some candidate',
       state: 'open',
+      base: { ref: 'master' },
       draft: false,
       html_url: 'https://github.com/meshery/meshery/pull/101',
       labels: [{ name: 'language/go' }]
@@ -535,6 +567,7 @@ test('workflow run: handles workflow_run handoff after automated labeling comple
       title: '[UI] Fix theme switcher',
       body: 'Theme switcher bug fix',
       state: 'open',
+      base: { ref: 'master' },
       draft: false,
       html_url: 'https://github.com/meshery/meshery/pull/301',
       labels: [{ name: 'component/ui' }]
@@ -565,6 +598,68 @@ test('workflow run: handles workflow_run handoff after automated labeling comple
 
   assert.equal(createdComments.length, 1);
   assert.ok(createdComments[0].body.includes('[#301](https://github.com/meshery/meshery/pull/301)'));
+});
+
+test('workflow run: handles fork workflow_run handoff with empty pull_requests array via headFilter', async () => {
+  const { run } = await loadWorkflowModule();
+
+  const forkPR = {
+    number: 350,
+    title: '[UI] Community fork feature',
+    body: 'Fork contribution',
+    state: 'open',
+    base: { ref: 'master' },
+    head: {
+      sha: 'forksha123456789',
+      ref: 'feature-branch',
+      user: { login: 'contributor-user' }
+    },
+    labels: [{ name: 'component/ui' }]
+  };
+
+  const openPRs = [
+    forkPR,
+    {
+      number: 351,
+      title: '[UI] Component suggestions',
+      body: 'Related suggestion',
+      state: 'open',
+      draft: false,
+      base: { ref: 'master' },
+      html_url: 'https://github.com/meshery/meshery/pull/351',
+      labels: [{ name: 'component/ui' }]
+    }
+  ];
+
+  const { github, createdComments } = createMockGitHub({
+    prDetails: { 350: forkPR },
+    openPRs,
+    comments: []
+  });
+  const { core } = createMockCore();
+
+  // Emulate GitHub Actions payload for fork PR: pull_requests is empty!
+  const context = {
+    eventName: 'workflow_run',
+    repo: { owner: 'meshery', repo: 'meshery' },
+    payload: {
+      workflow_run: {
+        id: 998877,
+        conclusion: 'success',
+        pull_requests: [], // Empty on fork PRs!
+        head_sha: 'forksha123456789',
+        head_branch: 'feature-branch',
+        head_repository: {
+          owner: { login: 'contributor-user' }
+        }
+      }
+    }
+  };
+
+  await run({ github, context, core });
+
+  assert.equal(createdComments.length, 1, 'should locate fork PR and create sticky comment');
+  assert.ok(createdComments[0].body.includes('[#351](https://github.com/meshery/meshery/pull/351)'));
 });
 
 test('workflow run: ignores non-master and closed PRs safely', async () => {
@@ -618,6 +713,63 @@ test('workflow run: ignores non-master and closed PRs safely', async () => {
   assert.equal(createdComments.length, 0, 'non-master PR should not be commented on');
 });
 
+test('workflow run: excludes candidate PRs targeting non-master branches', async () => {
+  const { run } = await loadWorkflowModule();
+
+  const pr700 = {
+    number: 700,
+    title: '[Server] Core feature',
+    body: 'Core feature',
+    state: 'open',
+    base: { ref: 'master' },
+    labels: [{ name: 'component/server' }]
+  };
+
+  const candidateMaster = {
+    number: 701,
+    title: '[Server] Master candidate',
+    body: 'Master candidate',
+    state: 'open',
+    draft: false,
+    base: { ref: 'master' },
+    html_url: 'https://github.com/meshery/meshery/pull/701',
+    labels: [{ name: 'component/server' }]
+  };
+
+  const candidateRelease = {
+    number: 702,
+    title: '[Server] Release branch candidate',
+    body: 'Release candidate',
+    state: 'open',
+    draft: false,
+    base: { ref: 'release-0.8' }, // Non-master candidate
+    html_url: 'https://github.com/meshery/meshery/pull/702',
+    labels: [{ name: 'component/server' }]
+  };
+
+  const { github, createdComments } = createMockGitHub({
+    prDetails: { 700: pr700 },
+    openPRs: [pr700, candidateMaster, candidateRelease],
+    comments: []
+  });
+  const { core } = createMockCore();
+
+  await run({
+    github,
+    context: {
+      eventName: 'pull_request_target',
+      repo: { owner: 'meshery', repo: 'meshery' },
+      payload: { pull_request: { number: 700 } }
+    },
+    core
+  });
+
+  assert.equal(createdComments.length, 1);
+  const comment = createdComments[0].body;
+  assert.ok(comment.includes('#701'), 'master-targeting candidate must appear');
+  assert.ok(!comment.includes('#702'), 'release-targeting candidate must be excluded');
+});
+
 test('workflow run: deterministic tie-breaking and max-3 candidate selection', async () => {
   const { run } = await loadWorkflowModule();
 
@@ -638,6 +790,7 @@ test('workflow run: deterministic tie-breaking and max-3 candidate selection', a
       title: '[Server] Candidate 501',
       body: 'Candidate body',
       state: 'open',
+      base: { ref: 'master' },
       draft: false,
       html_url: 'https://github.com/meshery/meshery/pull/501',
       labels: [{ name: 'component/server' }] // score: 40
@@ -647,6 +800,7 @@ test('workflow run: deterministic tie-breaking and max-3 candidate selection', a
       title: '[Server] Candidate 502',
       body: 'Candidate body',
       state: 'open',
+      base: { ref: 'master' },
       draft: false,
       html_url: 'https://github.com/meshery/meshery/pull/502',
       labels: [{ name: 'component/server' }] // score: 40 (newer than 501)
@@ -656,6 +810,7 @@ test('workflow run: deterministic tie-breaking and max-3 candidate selection', a
       title: '[Server] Server handler Candidate 503', // shared title: 'server', 'handler' (+20) -> score: 60
       body: 'Candidate body',
       state: 'open',
+      base: { ref: 'master' },
       draft: false,
       html_url: 'https://github.com/meshery/meshery/pull/503',
       labels: [{ name: 'component/server' }]
@@ -665,6 +820,7 @@ test('workflow run: deterministic tie-breaking and max-3 candidate selection', a
       title: '[Server] Candidate 504',
       body: 'Candidate body',
       state: 'open',
+      base: { ref: 'master' },
       draft: false,
       html_url: 'https://github.com/meshery/meshery/pull/504',
       labels: [{ name: 'component/server' }] // score: 40 (newer than 502)
@@ -674,6 +830,7 @@ test('workflow run: deterministic tie-breaking and max-3 candidate selection', a
       title: '[Server] Candidate 505',
       body: 'Candidate body',
       state: 'open',
+      base: { ref: 'master' },
       draft: false,
       html_url: 'https://github.com/meshery/meshery/pull/505',
       labels: [{ name: 'component/server' }] // score: 40 (newer than 504)
