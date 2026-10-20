@@ -558,15 +558,19 @@ func TestGetNamespaceForComponent(t *testing.T) {
 		}
 	})
 
-	t.Run("extracts namespace from top-level Configuration namespace", func(t *testing.T) {
+	t.Run("ignores a top-level Configuration namespace", func(t *testing.T) {
+		// The converter drops a top-level namespace key from the manifest, so it must not steer apply or dry-run.
 		comp := &component.ComponentDefinition{
 			Configuration: map[string]interface{}{
 				"namespace": "top-ns",
 			},
 		}
+		comp.Metadata.AdditionalProperties = map[string]interface{}{
+			"isNamespaced": true,
+		}
 		ns := getNamespaceForComponent(comp)
-		if ns != "top-ns" {
-			t.Errorf("got %q, want %q", ns, "top-ns")
+		if ns != "default" {
+			t.Errorf("got %q, want %q", ns, "default")
 		}
 	})
 
@@ -724,50 +728,105 @@ func TestDryRun_InDesignNamespaces_KeepsUnrelatedNotFound(t *testing.T) {
 	}
 }
 
-// TestIsNotFoundError tests classification and detection of various Kubernetes 404/NotFound error formats.
-func TestIsNotFoundError(t *testing.T) {
-	t.Run("detects kubeerror NotFound", func(t *testing.T) {
+// TestIsDeleteTargetNotFound pins that a delete dry-run 404 counts as "not deployed" only when the
+// NotFound Status names the object being deleted, or the namespace holding it.
+func TestIsDeleteTargetNotFound(t *testing.T) {
+	deployment := map[string]interface{}{
+		"apiVersion": "apps/v1",
+		"kind":       "Deployment",
+		"metadata":   map[string]interface{}{"name": "web", "namespace": "team"},
+	}
+
+	t.Run("object being deleted is not found", func(t *testing.T) {
 		err := kubeerror.NewNotFound(schema.GroupResource{Group: "apps", Resource: "deployments"}, "web")
-		if !isNotFoundError(err, nil) {
-			t.Errorf("expected isNotFoundError to be true for kubeerror NotFound")
+		if !isDeleteTargetNotFound(err, nil, deployment, "team", newTestRESTMapper()) {
+			t.Errorf("expected true for a NotFound naming the deleted object")
 		}
 	})
 
-	t.Run("detects status map with reason NotFound", func(t *testing.T) {
-		st := map[string]interface{}{
-			"status": "Failure",
-			"reason": "NotFound",
-			"code":   float64(404),
-		}
-		if !isNotFoundError(nil, st) {
-			t.Errorf("expected isNotFoundError to be true for status map reason NotFound")
+	t.Run("namespace holding the object is not found", func(t *testing.T) {
+		err := kubeerror.NewNotFound(schema.GroupResource{Resource: "namespaces"}, "team")
+		if !isDeleteTargetNotFound(err, nil, deployment, "team", newTestRESTMapper()) {
+			t.Errorf("expected true for a NotFound naming the object's namespace")
 		}
 	})
 
-	t.Run("detects status map with integer code 404", func(t *testing.T) {
-		st := map[string]interface{}{
-			"status": "Failure",
-			"code":   404,
+	notMatching := []struct {
+		name string
+		err  error
+		st   map[string]interface{}
+	}{
+		{
+			name: "missing CRD or unknown resource path",
+			st: map[string]interface{}{
+				"status":  "Failure",
+				"reason":  "NotFound",
+				"code":    float64(http.StatusNotFound),
+				"message": "the server could not find the requested resource",
+				"details": map[string]interface{}{},
+			},
+		},
+		{
+			name: "bare 404 without reason or details",
+			st:   map[string]interface{}{"status": "Failure", "code": float64(http.StatusNotFound)},
+		},
+		{
+			name: "NotFound for another object of the same resource",
+			err:  kubeerror.NewNotFound(schema.GroupResource{Group: "apps", Resource: "deployments"}, "api"),
+		},
+		{
+			name: "NotFound for a different resource",
+			err:  kubeerror.NewNotFound(schema.GroupResource{Resource: "configmaps"}, "web"),
+		},
+		{
+			name: "NotFound for a different namespace",
+			err:  kubeerror.NewNotFound(schema.GroupResource{Resource: "namespaces"}, "other"),
+		},
+		{
+			name: "non-NotFound failure",
+			err:  kubeerror.NewForbidden(schema.GroupResource{Group: "apps", Resource: "deployments"}, "web", nil),
+		},
+	}
+	for _, tc := range notMatching {
+		t.Run(tc.name, func(t *testing.T) {
+			if isDeleteTargetNotFound(tc.err, tc.st, deployment, "team", newTestRESTMapper()) {
+				t.Errorf("expected false")
+			}
+		})
+	}
+}
+
+// TestDryRun_UndeployMissingCRD pins that deleting a custom resource whose CRD is not installed is reported
+// as a failure, not as an already-undeployed object.
+func TestDryRun_UndeployMissingCRD(t *testing.T) {
+	var requested string
+	rClient := newFakeRESTClient(func(req *http.Request) (*http.Response, error) {
+		requested = req.URL.Path
+		status := metav1.Status{
+			TypeMeta: metav1.TypeMeta{Kind: "Status", APIVersion: "v1"},
+			Status:   metav1.StatusFailure,
+			Message:  "the server could not find the requested resource",
+			Reason:   metav1.StatusReasonNotFound,
+			Code:     http.StatusNotFound,
+			Details:  &metav1.StatusDetails{},
 		}
-		if !isNotFoundError(nil, st) {
-			t.Errorf("expected isNotFoundError to be true for status map code 404")
-		}
+		return jsonResponse(http.StatusNotFound, status)
 	})
 
-	t.Run("does not treat plain message substring as not found", func(t *testing.T) {
-		st := map[string]interface{}{
-			"status":  "Failure",
-			"message": "Resource was not found on server",
-		}
-		if isNotFoundError(nil, st) {
-			t.Errorf("expected isNotFoundError to be false for plain message without 404/NotFound reason")
-		}
-	})
+	widget := map[string]interface{}{
+		"apiVersion": "example.com/v1",
+		"kind":       "Widget",
+		"metadata":   map[string]interface{}{"name": "my-widget", "namespace": "default"},
+	}
 
-	t.Run("returns false for non-404 error", func(t *testing.T) {
-		err := kubeerror.NewForbidden(schema.GroupResource{Group: "apps", Resource: "deployments"}, "web", nil)
-		if isNotFoundError(err, nil) {
-			t.Errorf("expected isNotFoundError to be false for forbidden error")
-		}
-	})
+	st, success, _ := DryRunResource(rClient, widget, "default", true, DryRunOptions{RESTMapper: newTestRESTMapper()})
+	if success {
+		t.Fatalf("expected a missing CRD to fail the undeploy dry-run, got success")
+	}
+	if st == nil || st["status"] != "Failure" {
+		t.Errorf("expected the original Failure Status, got: %v", st)
+	}
+	if requested != "/apis/example.com/v1/namespaces/default/widgets/my-widget" {
+		t.Errorf("unexpected request path %q", requested)
+	}
 }

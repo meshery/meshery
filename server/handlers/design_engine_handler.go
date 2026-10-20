@@ -435,7 +435,7 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
 				mapper = restmapper.NewDiscoveryRESTMapper(gr)
 			}
 			if err != nil && sap.log != nil {
-				sap.log.Warn(errors.New(fmt.Sprintf("Failed to get API group resources for discovery RESTMapper on context %s: %v, falling back to default mapping", ctxID, err)))
+				sap.log.Warn(fmt.Errorf("discovery RESTMapper failed on context %s, falling back to default mapping: %w", ctxID, err))
 			}
 		}
 		clusters[ctxID] = clusterContext{client: cl, mapper: mapper}
@@ -474,23 +474,12 @@ func collectDeclaredNamespaces(comps []*component.ComponentDefinition) map[strin
 	return declaredNamespaces
 }
 
-// getNamespaceNameFromComponent extracts the declared namespace name from a Namespace component definition.
-// metadata.name is authoritative: when the configuration carries it, DisplayName is never used, and a
-// metadata.name that is not a non-empty string registers no namespace. DisplayName is used only when the
-// configuration declares no metadata.name at all.
+// getNamespaceNameFromComponent returns the name a Namespace component is created with on deploy.
+// meshkit's converter.CreateK8sResourceStructure sets metadata.name to the component's DisplayName and
+// ignores metadata.name in the configuration, so DisplayName is the only name dry-run may register.
 func getNamespaceNameFromComponent(cmp *component.ComponentDefinition) string {
 	if cmp == nil {
 		return ""
-	}
-	if _metadata, ok := cmp.Configuration["metadata"]; ok {
-		metadata, err := utils.Cast[map[string]interface{}](_metadata)
-		if err != nil {
-			return ""
-		}
-		if _name, ok := metadata["name"]; ok {
-			name, _ := utils.Cast[string](_name)
-			return name
-		}
 	}
 	return cmp.DisplayName
 }
@@ -508,34 +497,12 @@ func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition, is
 		if !isDelete {
 			dResp.Component.Configuration = filterConfiguration(st)
 		}
-	} else if isDelete && isDryRunNotFoundError(err, st) {
-		dResp.Success = true
-		dResp.Error = nil
 	} else if err != nil && (len(st) == 0 || st["status"] != "Failure") {
 		dResp.Error = &patterncore.DryRunResponse{Status: err.Error()}
 	} else {
 		dResp.Error = parseDryRunFailure(st, cmd.DisplayName)
 	}
 	return dResp, nil
-}
-
-// isDryRunNotFoundError determines whether an error or status map from a dry-run represents a Kubernetes 404/NotFound error.
-func isDryRunNotFoundError(err error, st map[string]interface{}) bool {
-	if err != nil && kubeerror.IsNotFound(err) {
-		return true
-	}
-	if st != nil {
-		if reason, ok := st["reason"].(string); ok && reason == string(metav1.StatusReasonNotFound) {
-			return true
-		}
-		if code, ok := st["code"].(float64); ok && int(code) == 404 {
-			return true
-		}
-		if code, ok := st["code"].(int); ok && code == 404 {
-			return true
-		}
-	}
-	return false
 }
 
 func filterConfiguration(configuration map[string]interface{}) map[string]interface{} {

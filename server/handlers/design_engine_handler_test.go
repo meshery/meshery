@@ -3,8 +3,11 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+	"net/http/httptest"
+	"sync"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -129,153 +132,258 @@ func TestMutateDoesNotRepeatADependencyTheDesignAlreadyDeclares(t *testing.T) {
 
 // TestGetNamespaceNameFromComponent tests extracting namespace names from component metadata, configuration, or display name fallback.
 func TestGetNamespaceNameFromComponent(t *testing.T) {
-	t.Run("returns name from metadata configuration", func(t *testing.T) {
+	t.Run("returns DisplayName even when metadata.name differs", func(t *testing.T) {
 		cmp := &component.ComponentDefinition{
-			DisplayName: "my-display-name",
+			DisplayName: "staging",
 			Configuration: map[string]interface{}{
 				"metadata": map[string]interface{}{
-					"name": "custom-ns-name",
+					"name": "production",
 				},
 			},
 		}
-		name := getNamespaceNameFromComponent(cmp)
-		if name != "custom-ns-name" {
-			t.Errorf("got %q, want %q", name, "custom-ns-name")
+		if name := getNamespaceNameFromComponent(cmp); name != "staging" {
+			t.Errorf("got %q, want %q", name, "staging")
 		}
 	})
 
-	t.Run("does not fall back to DisplayName when metadata name is empty", func(t *testing.T) {
-		cmp := &component.ComponentDefinition{
-			DisplayName: "my-display-name",
-			Configuration: map[string]interface{}{
-				"metadata": map[string]interface{}{"name": ""},
-			},
-		}
-		if name := getNamespaceNameFromComponent(cmp); name != "" {
-			t.Errorf("got %q, want empty string", name)
-		}
-	})
-
-	t.Run("does not fall back to DisplayName when metadata name is not a string", func(t *testing.T) {
-		cmp := &component.ComponentDefinition{
-			DisplayName: "my-display-name",
-			Configuration: map[string]interface{}{
-				"metadata": map[string]interface{}{"name": 42},
-			},
-		}
-		if name := getNamespaceNameFromComponent(cmp); name != "" {
-			t.Errorf("got %q, want empty string", name)
-		}
-	})
-
-	t.Run("does not fall back to DisplayName when metadata is malformed", func(t *testing.T) {
-		cmp := &component.ComponentDefinition{
-			DisplayName: "my-display-name",
-			Configuration: map[string]interface{}{
-				"metadata": "not-a-map",
-			},
-		}
-		if name := getNamespaceNameFromComponent(cmp); name != "" {
-			t.Errorf("got %q, want empty string", name)
-		}
-	})
-
-	t.Run("ignores a top-level Configuration name", func(t *testing.T) {
-		cmp := &component.ComponentDefinition{
-			DisplayName: "my-display-name",
-			Configuration: map[string]interface{}{
-				"metadata": map[string]interface{}{"name": "real-ns"},
-				"name":     "top-level-ns-name",
-			},
-		}
-		if name := getNamespaceNameFromComponent(cmp); name != "real-ns" {
-			t.Errorf("got %q, want %q", name, "real-ns")
-		}
-	})
-
-	t.Run("falls back to DisplayName when metadata name missing", func(t *testing.T) {
+	t.Run("returns DisplayName without configuration", func(t *testing.T) {
 		cmp := &component.ComponentDefinition{
 			DisplayName: "fallback-display-name",
 		}
-		name := getNamespaceNameFromComponent(cmp)
-		if name != "fallback-display-name" {
+		if name := getNamespaceNameFromComponent(cmp); name != "fallback-display-name" {
 			t.Errorf("got %q, want %q", name, "fallback-display-name")
 		}
 	})
 
 	t.Run("returns empty string for nil component", func(t *testing.T) {
-		name := getNamespaceNameFromComponent(nil)
-		if name != "" {
+		if name := getNamespaceNameFromComponent(nil); name != "" {
 			t.Errorf("got %q, want empty string", name)
 		}
 	})
 }
 
-// TestCollectDeclaredNamespaces pins that a Namespace whose metadata.name is set is registered under that
-// name only, so a workload targeting the component's DisplayName is not treated as in-design.
+// TestCollectDeclaredNamespaces pins that a Namespace is registered under the name deploy creates it with,
+// its DisplayName, and never under a differing metadata.name.
 func TestCollectDeclaredNamespaces(t *testing.T) {
-	ns := mutateTestComponent("display-ns", "Namespace")
+	ns := mutateTestComponent("staging", "Namespace")
 	ns.Configuration = map[string]interface{}{
-		"metadata": map[string]interface{}{"name": "real-ns"},
+		"metadata": map[string]interface{}{"name": "production"},
 	}
-	unnamed := mutateTestComponent("unnamed-ns", "Namespace")
 	workload := mutateTestComponent("web", "Deployment")
-	workload.Configuration = map[string]interface{}{
-		"metadata": map[string]interface{}{"name": "other-name"},
-	}
 
-	got := collectDeclaredNamespaces([]*component.ComponentDefinition{ns, unnamed, workload, nil})
+	got := collectDeclaredNamespaces([]*component.ComponentDefinition{ns, workload, nil})
 
-	want := map[string]bool{"real-ns": true, "unnamed-ns": true}
-	if len(got) != len(want) {
-		t.Fatalf("got %v, want %v", got, want)
+	if len(got) != 1 || !got["staging"] {
+		t.Fatalf("got %v, want only %q declared", got, "staging")
 	}
-	for name := range want {
-		if !got[name] {
-			t.Errorf("expected %q to be declared, got %v", name, got)
-		}
-	}
-	if got["display-ns"] {
-		t.Errorf("DisplayName %q must not be registered when metadata.name is set", "display-ns")
+	if got["production"] {
+		t.Errorf("metadata.name %q must not be registered; deploy creates the Namespace as %q", "production", "staging")
 	}
 }
 
-// TestIsDryRunNotFoundError tests detection of Kubernetes 404/NotFound status errors and responses during dry run operations.
-func TestIsDryRunNotFoundError(t *testing.T) {
-	t.Run("detects kubeerror.StatusError NotFound", func(t *testing.T) {
-		err := kubeerror.NewNotFound(schema.GroupResource{Group: "apps", Resource: "deployments"}, "web")
-		if !isDryRunNotFoundError(err, nil) {
-			t.Errorf("expected isDryRunNotFoundError to be true for kubeerror NotFound")
+// fakeCluster is a stand-in API server for DryRun tests. It serves discovery for core/v1 and
+// networking.k8s.io/v1 unless discovery is broken, records the path of every dry-run request, and
+// answers dry-runs with the response chosen by respond.
+type fakeCluster struct {
+	server *httptest.Server
+	mu     sync.Mutex
+	paths  []string
+}
+
+func newFakeCluster(t *testing.T, brokenDiscovery bool, respond func(path string, body []byte) (int, interface{})) *fakeCluster {
+	t.Helper()
+
+	discovery := map[string]interface{}{
+		"/api": metav1.APIVersions{
+			TypeMeta: metav1.TypeMeta{Kind: "APIVersions"},
+			Versions: []string{"v1"},
+		},
+		"/apis": metav1.APIGroupList{
+			TypeMeta: metav1.TypeMeta{Kind: "APIGroupList", APIVersion: "v1"},
+			Groups: []metav1.APIGroup{{
+				Name:             "networking.k8s.io",
+				Versions:         []metav1.GroupVersionForDiscovery{{GroupVersion: "networking.k8s.io/v1", Version: "v1"}},
+				PreferredVersion: metav1.GroupVersionForDiscovery{GroupVersion: "networking.k8s.io/v1", Version: "v1"},
+			}},
+		},
+		"/api/v1": metav1.APIResourceList{
+			TypeMeta:     metav1.TypeMeta{Kind: "APIResourceList", APIVersion: "v1"},
+			GroupVersion: "v1",
+			APIResources: []metav1.APIResource{{Name: "namespaces", Kind: "Namespace", Verbs: []string{"create", "delete", "get"}}},
+		},
+		"/apis/networking.k8s.io/v1": metav1.APIResourceList{
+			TypeMeta:     metav1.TypeMeta{Kind: "APIResourceList", APIVersion: "v1"},
+			GroupVersion: "networking.k8s.io/v1",
+			APIResources: []metav1.APIResource{{Name: "ingresses", Namespaced: true, Kind: "Ingress", Verbs: []string{"create", "delete", "get"}}},
+		},
+	}
+
+	fc := &fakeCluster{}
+	fc.server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		if r.URL.Query().Get("dryRun") != "All" {
+			obj, ok := discovery[r.URL.Path]
+			if brokenDiscovery || !ok {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			_ = json.NewEncoder(w).Encode(obj)
+			return
 		}
+
+		body, _ := io.ReadAll(r.Body)
+		fc.mu.Lock()
+		fc.paths = append(fc.paths, r.URL.Path)
+		fc.mu.Unlock()
+
+		code, obj := respond(r.URL.Path, body)
+		w.WriteHeader(code)
+		_ = json.NewEncoder(w).Encode(obj)
+	}))
+	t.Cleanup(fc.server.Close)
+	return fc
+}
+
+func (fc *fakeCluster) kubeconfig() string {
+	return fmt.Sprintf(`apiVersion: v1
+kind: Config
+clusters:
+- name: fake
+  cluster:
+    server: %s
+contexts:
+- name: fake
+  context:
+    cluster: fake
+    user: fake
+current-context: fake
+users:
+- name: fake
+  user:
+    token: fake
+`, fc.server.URL)
+}
+
+func (fc *fakeCluster) requestedPaths() []string {
+	fc.mu.Lock()
+	defer fc.mu.Unlock()
+	return append([]string(nil), fc.paths...)
+}
+
+// echoDryRun answers a dry-run create the way the API server does on success: with the object itself.
+func echoDryRun(_ string, body []byte) (int, interface{}) {
+	return http.StatusCreated, json.RawMessage(body)
+}
+
+// namespaceNotFoundStatus is the Status the API server returns when creating into a missing namespace.
+func namespaceNotFoundStatus(ns string) metav1.Status {
+	status := kubeerror.NewNotFound(schema.GroupResource{Resource: "namespaces"}, ns).ErrStatus
+	status.TypeMeta = metav1.TypeMeta{Kind: "Status", APIVersion: "v1"}
+	return status
+}
+
+func dryRunTestComponent(displayName, kind, version string, configuration map[string]interface{}) *component.ComponentDefinition {
+	cmp := mutateTestComponent(displayName, kind)
+	cmp.Component.Version = version
+	cmp.Configuration = configuration
+	return cmp
+}
+
+// TestDryRunCreateFallsBackOnlyForDeclaredNamespaces runs DryRun end to end on the create path: a workload
+// in a Namespace the design declares is validated against default, while a workload in a namespace the
+// design does not create fails with the original NotFound.
+func TestDryRunCreateFallsBackOnlyForDeclaredNamespaces(t *testing.T) {
+	const (
+		stagingPath    = "/apis/networking.k8s.io/v1/namespaces/staging/ingresses"
+		productionPath = "/apis/networking.k8s.io/v1/namespaces/production/ingresses"
+		defaultPath    = "/apis/networking.k8s.io/v1/namespaces/default/ingresses"
+	)
+	cluster := newFakeCluster(t, false, func(path string, body []byte) (int, interface{}) {
+		switch path {
+		case stagingPath:
+			return http.StatusNotFound, namespaceNotFoundStatus("staging")
+		case productionPath:
+			return http.StatusNotFound, namespaceNotFoundStatus("production")
+		}
+		return echoDryRun(path, body)
 	})
 
-	t.Run("detects status map with reason NotFound", func(t *testing.T) {
-		st := map[string]interface{}{
-			"status": "Failure",
-			"reason": "NotFound",
-			"code":   float64(404),
-		}
-		if !isDryRunNotFoundError(nil, st) {
-			t.Errorf("expected isDryRunNotFoundError to be true for status map reason NotFound")
-		}
+	// Deploy creates this Namespace as "staging", its DisplayName, not as its metadata.name.
+	namespace := dryRunTestComponent("staging", "Namespace", "v1", map[string]interface{}{
+		"metadata": map[string]interface{}{"name": "production"},
+	})
+	inDeclared := dryRunTestComponent("web", "Ingress", "networking.k8s.io/v1", map[string]interface{}{
+		"metadata": map[string]interface{}{"namespace": "staging"},
+	})
+	inUndeclared := dryRunTestComponent("api", "Ingress", "networking.k8s.io/v1", map[string]interface{}{
+		"metadata": map[string]interface{}{"namespace": "production"},
 	})
 
-	t.Run("does not treat plain message substring as not found", func(t *testing.T) {
-		st := map[string]interface{}{
-			"status":  "Failure",
-			"message": "Resource was not found on server",
+	sap := newMutateActionProvider(t)
+	sap.ctxTokubeconfig = map[string]string{"ctx-a": cluster.kubeconfig()}
+
+	resp, err := sap.DryRun([]*component.ComponentDefinition{namespace, inDeclared, inUndeclared})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if !resp["staging"]["ctx-a"].Success {
+		t.Errorf("expected the Namespace to pass, got %+v", resp["staging"]["ctx-a"].Error)
+	}
+	if !resp["web"]["ctx-a"].Success {
+		t.Errorf("expected the workload in the declared namespace to pass against default, got %+v", resp["web"]["ctx-a"].Error)
+	}
+	if resp["api"]["ctx-a"].Success {
+		t.Errorf("expected the workload in the undeclared namespace to fail")
+	}
+
+	defaultRetries := 0
+	for _, path := range cluster.requestedPaths() {
+		if path == defaultPath {
+			defaultRetries++
 		}
-		if isDryRunNotFoundError(nil, st) {
-			t.Errorf("expected isDryRunNotFoundError to be false for plain message without 404 or NotFound reason")
-		}
+	}
+	if defaultRetries != 1 {
+		t.Errorf("expected exactly one retry against default (for web only), got %d in %v", defaultRetries, cluster.requestedPaths())
+	}
+}
+
+// TestDryRunMultiClusterWithFailingDiscovery pins that a context whose discovery fails falls back to the
+// default resource mapping without affecting another context, and that both contexts get a result.
+func TestDryRunMultiClusterWithFailingDiscovery(t *testing.T) {
+	healthy := newFakeCluster(t, false, echoDryRun)
+	broken := newFakeCluster(t, true, echoDryRun)
+
+	web := dryRunTestComponent("web", "Ingress", "networking.k8s.io/v1", map[string]interface{}{
+		"metadata": map[string]interface{}{"namespace": "team"},
 	})
 
-	t.Run("returns false for non-404 error", func(t *testing.T) {
-		err := kubeerror.NewForbidden(schema.GroupResource{Group: "apps", Resource: "deployments"}, "web", nil)
-		if isDryRunNotFoundError(err, nil) {
-			t.Errorf("expected isDryRunNotFoundError to be false for forbidden error")
+	sap := newMutateActionProvider(t)
+	sap.ctxTokubeconfig = map[string]string{
+		"healthy": healthy.kubeconfig(),
+		"broken":  broken.kubeconfig(),
+	}
+
+	resp, err := sap.DryRun([]*component.ComponentDefinition{web})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(resp["web"]) != 2 {
+		t.Fatalf("expected a result for both contexts, got %v", resp["web"])
+	}
+	for ctxID, r := range resp["web"] {
+		if !r.Success {
+			t.Errorf("context %s: expected success, got %+v", ctxID, r.Error)
 		}
-	})
+	}
+
+	if got := healthy.requestedPaths(); len(got) != 1 || got[0] != "/apis/networking.k8s.io/v1/namespaces/team/ingresses" {
+		t.Errorf("healthy context should use the discovered path, got %v", got)
+	}
+	if got := broken.requestedPaths(); len(got) != 1 || got[0] != "/apis/networking.k8s.io/v1/namespaces/team/ingresss" {
+		t.Errorf("broken context should use the default mapping, got %v", got)
+	}
 }
 
 // TestDryRunComponent_PreservesComponentOnDelete verifies that dry-run delete operations do not strip component configuration and preserve original spec.

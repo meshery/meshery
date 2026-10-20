@@ -90,9 +90,9 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 
 	st, success, reqErr := executeDryRunRequest(rClient, k8sResource, namespace, isDelete, opts.RESTMapper)
 
-	// Suppress 404 NotFound on undeploy dry-runs
+	// Suppress 404 NotFound on undeploy dry-runs only when the object being deleted is what is missing
 	if isDelete {
-		if isNotFoundError(reqErr, st) {
+		if isDeleteTargetNotFound(reqErr, st, k8sResource, namespace, opts.RESTMapper) {
 			return map[string]interface{}{"status": "Success"}, true, nil
 		}
 		if !success && st != nil && st["status"] == "Failure" {
@@ -247,23 +247,42 @@ func kindToResource(kind string) string {
 	return strings.ToLower(kind) + "s"
 }
 
-// isNotFoundError checks whether an error or status response represents a Kubernetes 404/NotFound error.
-func isNotFoundError(err error, st map[string]interface{}) bool {
-	if err != nil && kubeerror.IsNotFound(err) {
+// notFoundDetails returns details.kind and details.name of a NotFound Status. The decoded response body is
+// read first: client-go can return a generic StatusError with empty details while the body carries the
+// Status the API server sent. The structured error is the fallback. Messages are never matched.
+func notFoundDetails(err error, st map[string]interface{}) (kind, name string, ok bool) {
+	if reason, _ := st["reason"].(string); reason == string(metav1.StatusReasonNotFound) {
+		if details, isMap := st["details"].(map[string]interface{}); isMap {
+			kind, _ = details["kind"].(string)
+			name, _ = details["name"].(string)
+			return kind, name, true
+		}
+	}
+	var statusErr *kubeerror.StatusError
+	if errors.As(err, &statusErr) && kubeerror.IsNotFound(statusErr) && statusErr.ErrStatus.Details != nil {
+		return statusErr.ErrStatus.Details.Kind, statusErr.ErrStatus.Details.Name, true
+	}
+	return "", "", false
+}
+
+// isDeleteTargetNotFound reports whether a delete dry-run failed only because the object being deleted, or
+// the namespace holding it, does not exist. The NotFound Status must name that resource and object, so a 404
+// for a missing CRD or an unresolvable resource path is not mistaken for "not deployed".
+func isDeleteTargetNotFound(err error, st map[string]interface{}, k8sResource map[string]interface{}, namespace string, mapper meta.RESTMapper) bool {
+	kind, detailName, ok := notFoundDetails(err, st)
+	if !ok || detailName == "" {
+		return false
+	}
+	if isMissingNamespaceError(err, st, namespace) {
 		return true
 	}
-	if st != nil {
-		if reason, ok := st["reason"].(string); ok && reason == string(metav1.StatusReasonNotFound) {
-			return true
-		}
-		if code, ok := st["code"].(float64); ok && int(code) == 404 {
-			return true
-		}
-		if code, ok := st["code"].(int); ok && code == 404 {
-			return true
-		}
+	_, resource, resolveErr := ResolveResourcePath(k8sResource, namespace, mapper)
+	if resolveErr != nil {
+		return false
 	}
-	return false
+	metadata, _ := k8sResource["metadata"].(map[string]interface{})
+	name, _ := metadata["name"].(string)
+	return strings.EqualFold(kind, resource) && detailName == name
 }
 
 // isMissingNamespaceError reports whether the failure is a NotFound response for the target namespace itself.
@@ -273,27 +292,8 @@ func isMissingNamespaceError(err error, st map[string]interface{}, targetNamespa
 	if targetNamespace == "" {
 		return false
 	}
-	var statusErr *kubeerror.StatusError
-	if errors.As(err, &statusErr) && kubeerror.IsNotFound(statusErr) {
-		if details := statusErr.ErrStatus.Details; details != nil &&
-			isNamespaceKind(details.Kind) && details.Name == targetNamespace {
-			return true
-		}
-	}
-	if st != nil {
-		reason, _ := st["reason"].(string)
-		if reason != string(metav1.StatusReasonNotFound) {
-			return false
-		}
-		details, ok := st["details"].(map[string]interface{})
-		if !ok {
-			return false
-		}
-		kind, _ := details["kind"].(string)
-		name, _ := details["name"].(string)
-		return isNamespaceKind(kind) && name == targetNamespace
-	}
-	return false
+	kind, name, ok := notFoundDetails(err, st)
+	return ok && isNamespaceKind(kind) && name == targetNamespace
 }
 
 // isNamespaceKind reports whether a Status details.kind names the Namespace resource.
@@ -374,13 +374,6 @@ func getNamespaceForComponent(comp *component.ComponentDefinition) string {
 				}
 			}
 
-		}
-	}
-	if namespace == "" || namespace == "default" {
-		if _namespace, ok := comp.Configuration["namespace"]; ok {
-			if ns, _ := utils.Cast[string](_namespace); ns != "" {
-				namespace = ns
-			}
 		}
 	}
 	return namespace
