@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -169,6 +170,9 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	}
 
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
+	// detach from the http request lifecycle so that the state machine goroutines below aren't cancelled when
+	// the handler returns, while preserving context values (e.g. TokenCtxKey) that downstream calls depend on.
+	detachedCtx := context.WithoutCancel(req.Context())
 	// TODO:
 	// when new api with param "contexts" will be addopted,
 	// only take into account contexts from that param
@@ -328,7 +332,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			// event. See mhelpers.HasMachineContext.
 			if mhelpers.HasMachineContext(inst) {
 				go func(inst *machines.StateMachine) {
-					event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
+					event, err := inst.SendEvent(detachedCtx, machines.EventType(mhelpers.StatusToEvent(status)), nil)
 					if err != nil {
 						_ = provider.PersistEvent(*event, token)
 						go h.config.EventBroadcaster.Publish(userID, event)
