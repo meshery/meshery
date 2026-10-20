@@ -20,11 +20,9 @@ var (
 		MeshTypeConsul:             {"consul-system"},
 		MeshTypeTraefikMesh:        {"traefik-system"},
 		MeshTypeKuma:               {"kuma-system"},
-		MeshTypeNginxServiceMesh:   {"nginx-system"},
 		MeshTypeNetworkServiceMesh: {"nsm-system"},
-		MeshTypeAppMesh:            {"appmesh-system"},
 		//Any namespace added or appended above should also be appended on the AllMesh array
-		MeshTypeAllMesh: {"istio-system", "linkerd-system", "consul-system", "traefik-system", "kuma-system", "nginx-system", "nsm-system", "appmesh-system"},
+		MeshTypeAllMesh: {"istio-system", "linkerd-system", "consul-system", "traefik-system", "kuma-system", "nsm-system"},
 	}
 
 	addonPortSelector = map[string]string{
@@ -80,13 +78,7 @@ func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterfa
 		"meshery-nsm": map[string]interface{}{
 			"enabled": false,
 		},
-		"meshery-nginx-sm": map[string]interface{}{
-			"enabled": false,
-		},
 		"meshery-traefik-mesh": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-app-mesh": map[string]interface{}{
 			"enabled": false,
 		},
 		"meshery-operator": map[string]interface{}{

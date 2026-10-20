@@ -222,7 +222,9 @@ make helm-docs      # Generate Helm chart docs
   event raised outside a user request through `HandlerConfig.SystemEventPersister`; index
   `Providers` only with the comma-ok form, and only on the request path. Boot-time work
   that can fault belongs inside `models.RunSeedStage` so it degrades the server rather
-  than terminating it. Detail:
+  than terminating it - but its `recover` reaches only the stage's own goroutine, so a
+  stage that spawns one must defer its own recover at the spawn site (as `SeedKeys` does)
+  instead of widening the wrapper. Detail:
   [Extensibility: Providers](./docs/content/en/reference/extensibility/providers/index.md).
 - Only `utils.Log.Error(err)` renders a MeshKit error's code, cause and remediation; cobra's
   default print shows just the message. In `mesheryctl` commands, log the structured error
@@ -233,7 +235,10 @@ make helm-docs      # Generate Helm chart docs
 
 - ESLint + Prettier (config: `ui/.eslintrc.js`).
 - Functional components with hooks; no class components.
-- Use `@sistent/sistent` design system; fall back to MUI.
+- Use `@sistent/sistent` design system; fall back to MUI. Consult
+  `node_modules/@sistent/sistent/DESIGN.md` when available (relative to whichever UI
+  package you are working in: `ui/`, `provider-ui/`, or `install/docker-extension/ui/`),
+  or the Sistent release matching the version resolved by that package, rather than `master`.
 - Redux Toolkit for global state; GraphQL via Relay; REST via Axios.
 - Playwright for E2E tests.
 - **Every content-bearing page needs an *access* gate, not just gated controls.**
@@ -365,7 +370,7 @@ the sheet↔code map `ui/tests/e2e/connections.testmap.ts`). Contract docs:
 
 ## Security & Compliance
 
-- Report vulnerabilities: [security@meshery.dev](mailto:security@meshery.dev) — acknowledged in 10 business days.
+- Report vulnerabilities: [security@meshery.io](mailto:security@meshery.io) — acknowledged in 10 business days.
 - Never commit secrets; use env vars (`PROVIDER_BASE_URLS`, `KEYS_PATH`) and GitHub Secrets.
 - CodeQL runs on every PR; OpenSSF Scorecard tracks security posture.
 - Apache 2.0 license — verify dependency compatibility.
