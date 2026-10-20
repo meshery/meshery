@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PR Review Loop on Documentation</title><link>/pr-preview/pr-22257/project/contributing/pr-review-loop/</link><description>Recent content in PR Review Loop on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/pr-preview/pr-22257/project/contributing/pr-review-loop/index.xml" rel="self" type="application/rss+xml"/><item><title>PR Review Loop — Implementation &amp; Operations</title><link>/pr-preview/pr-22257/project/contributing/pr-review-loop/implementation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22257/project/contributing/pr-review-loop/implementation/</guid><description>&lt;h1 id="meshery-pr-review-loop--implementation--operations"&gt;
+	Meshery PR Review Loop — Implementation &amp;amp; Operations
+&lt;/h1&gt;
+&lt;h2 id="1-overview"&gt;
+	1. Overview
+&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;&amp;ldquo;When you open a PR, show you a PR you can help review.&amp;rdquo;&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The Meshery PR Review Loop is an automated community collaboration mechanism designed to encourage reciprocal peer review among contributors. When an author opens a pull request (PR) in &lt;code&gt;meshery/meshery&lt;/code&gt;, the system surfaces up to three currently open PRs that share technical context, programming language, or architectural components with their change.&lt;/p&gt;</description></item><item><title>PR Review Loop — Matching Design</title><link>/pr-preview/pr-22257/project/contributing/pr-review-loop/matching-design/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22257/project/contributing/pr-review-loop/matching-design/</guid><description>&lt;h1 id="meshery-pr-review-loop--matching-design"&gt;
+	Meshery PR Review Loop — Matching Design
+&lt;/h1&gt;
+&lt;h2 id="1-goal"&gt;
+	1. Goal
+&lt;/h2&gt;
+&lt;p&gt;When a contributor opens a pull request (PR) in the &lt;code&gt;meshery/meshery&lt;/code&gt; repository, which existing open PRs are most relevant for them to review?&lt;/p&gt;
+&lt;p&gt;The purpose of the Meshery PR Review Loop is to encourage reciprocal peer review among contributors working on similar areas of the codebase. By suggesting relevant open PRs to an author at the moment they submit code, contributors can share domain knowledge, review each other&amp;rsquo;s work, and help maintainers move changes forward faster.&lt;/p&gt;</description></item><item><title>PR Review Loop — Pilot Evaluation &amp; Results</title><link>/pr-preview/pr-22257/project/contributing/pr-review-loop/pilot-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22257/project/contributing/pr-review-loop/pilot-results/</guid><description>&lt;h1 id="meshery-pr-review-loop--pilot-results"&gt;
+	Meshery PR Review Loop — Pilot Results
+&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;Status: Not yet run&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: No live production pilot has been conducted yet. This document establishes the tracking framework, target evaluation metrics, and validation template for a future live pilot. No metrics or review conversion numbers are fabricated or assumed.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="1-status-overview"&gt;
+	1. Status Overview
+&lt;/h2&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Stage&lt;/th&gt;
+ &lt;th&gt;Status&lt;/th&gt;
+ &lt;th&gt;Notes&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Implementation Validation&lt;/td&gt;
+ &lt;td&gt;&lt;strong&gt;Completed&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Algorithmic logic, edge-case tests, YAML validation, Markdown escaping, and security reviews verified locally.&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Community Buy-in&lt;/td&gt;
+ &lt;td&gt;&lt;strong&gt;In Progress&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Proposal discussion open in repository Discussions seeking maintainer and contributor feedback.&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Production Pilot Run&lt;/td&gt;
+ &lt;td&gt;&lt;strong&gt;Not yet run&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Live data collection will commence once enabled on &lt;code&gt;master&lt;/code&gt;.&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="2-metrics-to-measure"&gt;
+	2. Metrics to Measure
+&lt;/h2&gt;
+&lt;p&gt;When an approved pilot is launched, the following metrics will be tracked:&lt;/p&gt;</description></item><item><title>PR Review Loop — Problem Statement</title><link>/pr-preview/pr-22257/project/contributing/pr-review-loop/problem-statement/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22257/project/contributing/pr-review-loop/problem-statement/</guid><description>&lt;h1 id="meshery-pr-review-loop--problem-statement"&gt;
+	Meshery PR Review Loop — Problem Statement
+&lt;/h1&gt;
+&lt;h2 id="1-problem"&gt;
+	1. Problem
+&lt;/h2&gt;
+&lt;p&gt;Contributors submitting pull requests (PRs) to &lt;code&gt;meshery/meshery&lt;/code&gt; often face difficulty discovering other open pull requests that are relevant to their domain or technical focus. While many contributors are willing to participate in peer review, finding appropriate PRs among hundreds of open issues and pull requests requires manual filtering across disparate subsystems, languages, and components.&lt;/p&gt;
+&lt;h2 id="2-why-this-matters"&gt;
+	2. Why This Matters
+&lt;/h2&gt;
+&lt;p&gt;Reciprocal review participation and effective review discovery are foundational to a healthy open source contributor experience. Maintainers frequently bear the primary burden of code reviews, leading to review queues and longer feedback cycles. When authors who are already engaged in the codebase can easily discover related work, peer review capacity increases naturally. Reviewing related contributions also helps authors familiarize themselves with adjacent subsystems and conventions across the project.&lt;/p&gt;</description></item></channel></rss>
