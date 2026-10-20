@@ -70,3 +70,64 @@ func TestDefaultModelsLocation(t *testing.T) {
 		})
 	}
 }
+
+func TestVerifyPrerequisiteRepo(t *testing.T) {
+	root := t.TempDir()
+	root, err := filepath.EvalSymlinks(root)
+	if err != nil {
+		t.Fatalf("evalsymlinks: %v", err)
+	}
+	if err := os.MkdirAll(filepath.Join(root, "models"), 0o755); err != nil {
+		t.Fatalf("mkdir models: %v", err)
+	}
+	if err := os.MkdirAll(filepath.Join(root, "server"), 0o755); err != nil {
+		t.Fatalf("mkdir server: %v", err)
+	}
+	subDir := filepath.Join(root, "mesheryctl")
+	if err := os.MkdirAll(subDir, 0o755); err != nil {
+		t.Fatalf("mkdir mesheryctl: %v", err)
+	}
+	nestedSubDir := filepath.Join(subDir, "internal", "cli")
+	if err := os.MkdirAll(nestedSubDir, 0o755); err != nil {
+		t.Fatalf("mkdir nested: %v", err)
+	}
+	emptyDir := t.TempDir()
+
+	tests := []struct {
+		name    string
+		cwd     string
+		wantErr bool
+	}{
+		{
+			name:    "repo root succeeds",
+			cwd:     root,
+			wantErr: false,
+		},
+		{
+			name:    "immediate subdirectory succeeds",
+			cwd:     subDir,
+			wantErr: false,
+		},
+		{
+			name:    "nested subdirectory within repo succeeds",
+			cwd:     nestedSubDir,
+			wantErr: false,
+		},
+		{
+			name:    "empty directory outside repo fails",
+			cwd:     emptyDir,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			chdir(t, tt.cwd)
+			err := verifyPrerequisiteRepo()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("verifyPrerequisiteRepo() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
