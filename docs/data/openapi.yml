@@ -48185,10 +48185,11 @@ paths:
                               What the environment exists for. `user` is an ordinary environment that people create to
                               logically group Connections and their Credentials. `administrative` designates an
                               environment the platform itself provisions to hold organization-level configuration, and
-                              which resolvers of that configuration therefore trust. `blowhorn` designates an
-                              environment the platform itself provisions to hold an organization's Blowhorn
-                              configuration and secrets, resolved by the purpose-typed credential chain; it is
-                              privileged in the same sense as `administrative`.
+                              which resolvers of that configuration therefore trust. `profile` is an ordinary,
+                              non-privileged environment that holds one profile, by convention one per profile: `name`
+                              is the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
+                              settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
+                              authority and a client may choose it.
 
 
                               Absent means `user`. Nothing may read an unset or unrecognised value as administrative:
@@ -48205,15 +48206,16 @@ paths:
                               the database happened to return first.
 
 
-                              Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
-                              environment POST and PUT requestBody references, and from the create-or-edit form, so the
-                              environment create and update endpoints have no field for it. That exclusion is a codegen
-                              guarantee, never access control: the registrant connection inlines the full environment
-                              entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry
-                              `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
-                              surface a value arrives on, every consumer MUST assign this property only from server-side
-                              provisioning or a data migration. Permission to create an environment does not confer the
-                              ability to make one administrative.
+                              Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
+                              every environment POST and PUT requestBody references, accepts only the non-privileged
+                              values (`user` and `profile`), and the create-or-edit form has no field for it, so the
+                              environment create and update endpoints cannot designate an environment administrative.
+                              That restriction is a codegen guarantee, never access control: the registrant connection
+                              inlines the full environment entity, so `registerRegistryComponent` and
+                              `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
+                              refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
+                              assign this property only from server-side provisioning or a data migration. Permission to
+                              create an environment does not confer the ability to make one administrative.
 
 
                               The database index that enforces the uniqueness invariant, the migration path for
@@ -48223,11 +48225,11 @@ paths:
                             enum:
                               - user
                               - administrative
-                              - blowhorn
+                              - profile
                             x-enum-varnames:
                               - EnvironmentPurposeUser
                               - EnvironmentPurposeAdministrative
-                              - EnvironmentPurposeBlowhorn
+                              - EnvironmentPurposeProfile
                             x-go-type-skip-optional-pointer: true
                             x-oapi-codegen-extra-tags:
                               db: purpose
@@ -58357,10 +58359,11 @@ paths:
                               What the environment exists for. `user` is an ordinary environment that people create to
                               logically group Connections and their Credentials. `administrative` designates an
                               environment the platform itself provisions to hold organization-level configuration, and
-                              which resolvers of that configuration therefore trust. `blowhorn` designates an
-                              environment the platform itself provisions to hold an organization's Blowhorn
-                              configuration and secrets, resolved by the purpose-typed credential chain; it is
-                              privileged in the same sense as `administrative`.
+                              which resolvers of that configuration therefore trust. `profile` is an ordinary,
+                              non-privileged environment that holds one profile, by convention one per profile: `name`
+                              is the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
+                              settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
+                              authority and a client may choose it.
 
 
                               Absent means `user`. Nothing may read an unset or unrecognised value as administrative:
@@ -58377,15 +58380,16 @@ paths:
                               the database happened to return first.
 
 
-                              Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
-                              environment POST and PUT requestBody references, and from the create-or-edit form, so the
-                              environment create and update endpoints have no field for it. That exclusion is a codegen
-                              guarantee, never access control: the registrant connection inlines the full environment
-                              entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry
-                              `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
-                              surface a value arrives on, every consumer MUST assign this property only from server-side
-                              provisioning or a data migration. Permission to create an environment does not confer the
-                              ability to make one administrative.
+                              Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
+                              every environment POST and PUT requestBody references, accepts only the non-privileged
+                              values (`user` and `profile`), and the create-or-edit form has no field for it, so the
+                              environment create and update endpoints cannot designate an environment administrative.
+                              That restriction is a codegen guarantee, never access control: the registrant connection
+                              inlines the full environment entity, so `registerRegistryComponent` and
+                              `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
+                              refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
+                              assign this property only from server-side provisioning or a data migration. Permission to
+                              create an environment does not confer the ability to make one administrative.
 
 
                               The database index that enforces the uniqueness invariant, the migration path for
@@ -58395,11 +58399,11 @@ paths:
                             enum:
                               - user
                               - administrative
-                              - blowhorn
+                              - profile
                             x-enum-varnames:
                               - EnvironmentPurposeUser
                               - EnvironmentPurposeAdministrative
-                              - EnvironmentPurposeBlowhorn
+                              - EnvironmentPurposeProfile
                             x-go-type-skip-optional-pointer: true
                             x-oapi-codegen-extra-tags:
                               db: purpose
@@ -64325,6 +64329,35 @@ paths:
                                   description: >-
                                     Whether the feature carousel renders on the organization's auth pages. Unset is
                                     treated as true (shown); set false to hide it.
+                                schedulePause:
+                                  x-go-type: SchedulePause
+                                  description: >-
+                                    Organization-wide schedule pause. Only organization admins may set or lift it; a
+                                    write from anyone else that changes it is refused with 403. Omitting schedulePause
+                                    from a preferences write keeps the current pause unchanged; it does not lift the
+                                    pause.
+                                  type: object
+                                  additionalProperties: false
+                                  properties:
+                                    paused:
+                                      type: boolean
+                                      description: Whether every schedule in the organization is paused.
+                                    reason:
+                                      type: string
+                                      maxLength: 1000
+                                      description: Reason given for the pause. Cleared when the pause is lifted.
+                                    pausedAt:
+                                      type: string
+                                      format: date-time
+                                      description: >-
+                                        Time the pause was set. Server-managed; recorded when `paused` turns true and
+                                        cleared when it is lifted.
+                                    pausedBy:
+                                      type: string
+                                      maxLength: 255
+                                      description: >-
+                                        Identity that set the pause. Server-managed; recorded when `paused` turns true
+                                        and cleared when it is lifted.
                         createdAt:
                           description: Timestamp when the organization was created.
                           x-oapi-codegen-extra-tags:
@@ -64629,6 +64662,24 @@ paths:
                       description: >-
                         Whether the feature carousel renders on the organization's auth pages. Unset is treated as true
                         (shown); set false to hide it.
+                    schedulePause:
+                      x-go-type: SchedulePausePayload
+                      description: >-
+                        Organization-wide schedule pause. Only organization admins may set or lift it; a write from
+                        anyone else that changes it is refused with 403. Omitting schedulePause from a preferences write
+                        keeps the current pause unchanged; it does not lift the pause.
+                      type: object
+                      additionalProperties: false
+                      required:
+                        - paused
+                      properties:
+                        paused:
+                          type: boolean
+                          description: Whether every schedule in the organization is paused.
+                        reason:
+                          type: string
+                          maxLength: 1000
+                          description: Reason given for the pause. Cleared when the pause is lifted.
       responses:
         '201':
           description: Single-organization page response
@@ -64932,6 +64983,35 @@ paths:
                                   description: >-
                                     Whether the feature carousel renders on the organization's auth pages. Unset is
                                     treated as true (shown); set false to hide it.
+                                schedulePause:
+                                  x-go-type: SchedulePause
+                                  description: >-
+                                    Organization-wide schedule pause. Only organization admins may set or lift it; a
+                                    write from anyone else that changes it is refused with 403. Omitting schedulePause
+                                    from a preferences write keeps the current pause unchanged; it does not lift the
+                                    pause.
+                                  type: object
+                                  additionalProperties: false
+                                  properties:
+                                    paused:
+                                      type: boolean
+                                      description: Whether every schedule in the organization is paused.
+                                    reason:
+                                      type: string
+                                      maxLength: 1000
+                                      description: Reason given for the pause. Cleared when the pause is lifted.
+                                    pausedAt:
+                                      type: string
+                                      format: date-time
+                                      description: >-
+                                        Time the pause was set. Server-managed; recorded when `paused` turns true and
+                                        cleared when it is lifted.
+                                    pausedBy:
+                                      type: string
+                                      maxLength: 255
+                                      description: >-
+                                        Identity that set the pause. Server-managed; recorded when `paused` turns true
+                                        and cleared when it is lifted.
                         createdAt:
                           description: Timestamp when the organization was created.
                           x-oapi-codegen-extra-tags:
@@ -64988,6 +65068,9 @@ paths:
       tags:
         - Organization_Organizations
       summary: Get organization by domain
+      description: >-
+        Unauthenticated lookup. Servers MUST omit `preferences.schedulePause` from this response; the organization-wide
+        pause is read through getOrgPreferences.
       operationId: getOrgByDomain
       parameters:
         - name: domain
@@ -65457,6 +65540,35 @@ paths:
                                   description: >-
                                     Whether the feature carousel renders on the organization's auth pages. Unset is
                                     treated as true (shown); set false to hide it.
+                                schedulePause:
+                                  x-go-type: SchedulePause
+                                  description: >-
+                                    Organization-wide schedule pause. Only organization admins may set or lift it; a
+                                    write from anyone else that changes it is refused with 403. Omitting schedulePause
+                                    from a preferences write keeps the current pause unchanged; it does not lift the
+                                    pause.
+                                  type: object
+                                  additionalProperties: false
+                                  properties:
+                                    paused:
+                                      type: boolean
+                                      description: Whether every schedule in the organization is paused.
+                                    reason:
+                                      type: string
+                                      maxLength: 1000
+                                      description: Reason given for the pause. Cleared when the pause is lifted.
+                                    pausedAt:
+                                      type: string
+                                      format: date-time
+                                      description: >-
+                                        Time the pause was set. Server-managed; recorded when `paused` turns true and
+                                        cleared when it is lifted.
+                                    pausedBy:
+                                      type: string
+                                      maxLength: 255
+                                      description: >-
+                                        Identity that set the pause. Server-managed; recorded when `paused` turns true
+                                        and cleared when it is lifted.
                         createdAt:
                           description: Timestamp when the organization was created.
                           x-oapi-codegen-extra-tags:
@@ -65579,7 +65691,9 @@ paths:
       security:
         - Organization_jwt: []
       summary: Update an organization
-      description: Updates the organization.
+      description: >-
+        Updates the organization. Changing `preferences.schedulePause` is restricted to organization admins (otherwise
+        403); omitting `schedulePause` keeps the current pause unchanged.
       operationId: updateOrg
       parameters:
         - name: orgId
@@ -65852,6 +65966,24 @@ paths:
                       description: >-
                         Whether the feature carousel renders on the organization's auth pages. Unset is treated as true
                         (shown); set false to hide it.
+                    schedulePause:
+                      x-go-type: SchedulePausePayload
+                      description: >-
+                        Organization-wide schedule pause. Only organization admins may set or lift it; a write from
+                        anyone else that changes it is refused with 403. Omitting schedulePause from a preferences write
+                        keeps the current pause unchanged; it does not lift the pause.
+                      type: object
+                      additionalProperties: false
+                      required:
+                        - paused
+                      properties:
+                        paused:
+                          type: boolean
+                          description: Whether every schedule in the organization is paused.
+                        reason:
+                          type: string
+                          maxLength: 1000
+                          description: Reason given for the pause. Cleared when the pause is lifted.
       responses:
         '200':
           description: Single-organization page response for the updated organization
@@ -66155,6 +66287,35 @@ paths:
                                   description: >-
                                     Whether the feature carousel renders on the organization's auth pages. Unset is
                                     treated as true (shown); set false to hide it.
+                                schedulePause:
+                                  x-go-type: SchedulePause
+                                  description: >-
+                                    Organization-wide schedule pause. Only organization admins may set or lift it; a
+                                    write from anyone else that changes it is refused with 403. Omitting schedulePause
+                                    from a preferences write keeps the current pause unchanged; it does not lift the
+                                    pause.
+                                  type: object
+                                  additionalProperties: false
+                                  properties:
+                                    paused:
+                                      type: boolean
+                                      description: Whether every schedule in the organization is paused.
+                                    reason:
+                                      type: string
+                                      maxLength: 1000
+                                      description: Reason given for the pause. Cleared when the pause is lifted.
+                                    pausedAt:
+                                      type: string
+                                      format: date-time
+                                      description: >-
+                                        Time the pause was set. Server-managed; recorded when `paused` turns true and
+                                        cleared when it is lifted.
+                                    pausedBy:
+                                      type: string
+                                      maxLength: 255
+                                      description: >-
+                                        Identity that set the pause. Server-managed; recorded when `paused` turns true
+                                        and cleared when it is lifted.
                         createdAt:
                           description: Timestamp when the organization was created.
                           x-oapi-codegen-extra-tags:
@@ -66663,6 +66824,24 @@ paths:
                       description: >-
                         Whether the feature carousel renders on the organization's auth pages. Unset is treated as true
                         (shown); set false to hide it.
+                    schedulePause:
+                      x-go-type: SchedulePausePayload
+                      description: >-
+                        Organization-wide schedule pause. Only organization admins may set or lift it; a write from
+                        anyone else that changes it is refused with 403. Omitting schedulePause from a preferences write
+                        keeps the current pause unchanged; it does not lift the pause.
+                      type: object
+                      additionalProperties: false
+                      required:
+                        - paused
+                      properties:
+                        paused:
+                          type: boolean
+                          description: Whether every schedule in the organization is paused.
+                        reason:
+                          type: string
+                          maxLength: 1000
+                          description: Reason given for the pause. Cleared when the pause is lifted.
       responses:
         '201':
           description: Single-organization page response for the created child organization
@@ -66966,6 +67145,35 @@ paths:
                                   description: >-
                                     Whether the feature carousel renders on the organization's auth pages. Unset is
                                     treated as true (shown); set false to hide it.
+                                schedulePause:
+                                  x-go-type: SchedulePause
+                                  description: >-
+                                    Organization-wide schedule pause. Only organization admins may set or lift it; a
+                                    write from anyone else that changes it is refused with 403. Omitting schedulePause
+                                    from a preferences write keeps the current pause unchanged; it does not lift the
+                                    pause.
+                                  type: object
+                                  additionalProperties: false
+                                  properties:
+                                    paused:
+                                      type: boolean
+                                      description: Whether every schedule in the organization is paused.
+                                    reason:
+                                      type: string
+                                      maxLength: 1000
+                                      description: Reason given for the pause. Cleared when the pause is lifted.
+                                    pausedAt:
+                                      type: string
+                                      format: date-time
+                                      description: >-
+                                        Time the pause was set. Server-managed; recorded when `paused` turns true and
+                                        cleared when it is lifted.
+                                    pausedBy:
+                                      type: string
+                                      maxLength: 255
+                                      description: >-
+                                        Identity that set the pause. Server-managed; recorded when `paused` turns true
+                                        and cleared when it is lifted.
                         createdAt:
                           description: Timestamp when the organization was created.
                           x-oapi-codegen-extra-tags:
@@ -67287,6 +67495,34 @@ paths:
                         description: >-
                           Whether the feature carousel renders on the organization's auth pages. Unset is treated as
                           true (shown); set false to hide it.
+                      schedulePause:
+                        x-go-type: SchedulePause
+                        description: >-
+                          Organization-wide schedule pause. Only organization admins may set or lift it; a write from
+                          anyone else that changes it is refused with 403. Omitting schedulePause from a preferences
+                          write keeps the current pause unchanged; it does not lift the pause.
+                        type: object
+                        additionalProperties: false
+                        properties:
+                          paused:
+                            type: boolean
+                            description: Whether every schedule in the organization is paused.
+                          reason:
+                            type: string
+                            maxLength: 1000
+                            description: Reason given for the pause. Cleared when the pause is lifted.
+                          pausedAt:
+                            type: string
+                            format: date-time
+                            description: >-
+                              Time the pause was set. Server-managed; recorded when `paused` turns true and cleared when
+                              it is lifted.
+                          pausedBy:
+                            type: string
+                            maxLength: 255
+                            description: >-
+                              Identity that set the pause. Server-managed; recorded when `paused` turns true and cleared
+                              when it is lifted.
         '401':
           description: Expired JWT token used or insufficient privilege
           content:
@@ -71027,10 +71263,11 @@ paths:
                                   What the environment exists for. `user` is an ordinary environment that people create
                                   to logically group Connections and their Credentials. `administrative` designates an
                                   environment the platform itself provisions to hold organization-level configuration,
-                                  and which resolvers of that configuration therefore trust. `blowhorn` designates an
-                                  environment the platform itself provisions to hold an organization's Blowhorn
-                                  configuration and secrets, resolved by the purpose-typed credential chain; it is
-                                  privileged in the same sense as `administrative`.
+                                  and which resolvers of that configuration therefore trust. `profile` is an ordinary,
+                                  non-privileged environment that holds one profile, by convention one per profile:
+                                  `name` is the profile's short name, `owner` is the profile's user, `metadata` holds
+                                  the profile's settings, and the profile's accounts are linked as Connections. Like
+                                  `user`, it carries no authority and a client may choose it.
 
 
                                   Absent means `user`. Nothing may read an unset or unrecognised value as
@@ -71047,16 +71284,17 @@ paths:
                                   than whichever row the database happened to return first.
 
 
-                                  Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which
-                                  every environment POST and PUT requestBody references, and from the create-or-edit
-                                  form, so the environment create and update endpoints have no field for it. That
-                                  exclusion is a codegen guarantee, never access control: the registrant connection
-                                  inlines the full environment entity, so `registerRegistryComponent` and
-                                  `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                                  refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                                  assign this property only from server-side provisioning or a data migration.
-                                  Permission to create an environment does not confer the ability to make one
-                                  administrative.
+                                  Privileged values are server-owned and never client-settable. `EnvironmentPayload`,
+                                  which every environment POST and PUT requestBody references, accepts only the
+                                  non-privileged values (`user` and `profile`), and the create-or-edit form has no field
+                                  for it, so the environment create and update endpoints cannot designate an environment
+                                  administrative. That restriction is a codegen guarantee, never access control: the
+                                  registrant connection inlines the full environment entity, so
+                                  `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose` in a
+                                  request type and consumers MUST refuse it on input there too. Whatever surface a value
+                                  arrives on, every consumer MUST assign this property only from server-side
+                                  provisioning or a data migration. Permission to create an environment does not confer
+                                  the ability to make one administrative.
 
 
                                   The database index that enforces the uniqueness invariant, the migration path for
@@ -71066,11 +71304,11 @@ paths:
                                 enum:
                                   - user
                                   - administrative
-                                  - blowhorn
+                                  - profile
                                 x-enum-varnames:
                                   - EnvironmentPurposeUser
                                   - EnvironmentPurposeAdministrative
-                                  - EnvironmentPurposeBlowhorn
+                                  - EnvironmentPurposeProfile
                                 x-go-type-skip-optional-pointer: true
                                 x-oapi-codegen-extra-tags:
                                   db: purpose
@@ -72501,10 +72739,11 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
-                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
-                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
-                            `administrative`.
+                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
+                            non-privileged environment that holds one profile, by convention one per profile: `name` is
+                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
+                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
+                            authority and a client may choose it.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -72521,15 +72760,16 @@ paths:
                             database happened to return first.
 
 
-                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
-                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
-                            environment create and update endpoints have no field for it. That exclusion is a codegen
-                            guarantee, never access control: the registrant connection inlines the full environment
-                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
-                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
-                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
-                            data migration. Permission to create an environment does not confer the ability to make one
-                            administrative.
+                            Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
+                            every environment POST and PUT requestBody references, accepts only the non-privileged
+                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
+                            environment create and update endpoints cannot designate an environment administrative. That
+                            restriction is a codegen guarantee, never access control: the registrant connection inlines
+                            the full environment entity, so `registerRegistryComponent` and
+                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
+                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
+                            assign this property only from server-side provisioning or a data migration. Permission to
+                            create an environment does not confer the ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -72539,11 +72779,11 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - blowhorn
+                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeBlowhorn
+                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -73751,10 +73991,11 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
-                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
-                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
-                            `administrative`.
+                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
+                            non-privileged environment that holds one profile, by convention one per profile: `name` is
+                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
+                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
+                            authority and a client may choose it.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -73771,15 +74012,16 @@ paths:
                             database happened to return first.
 
 
-                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
-                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
-                            environment create and update endpoints have no field for it. That exclusion is a codegen
-                            guarantee, never access control: the registrant connection inlines the full environment
-                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
-                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
-                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
-                            data migration. Permission to create an environment does not confer the ability to make one
-                            administrative.
+                            Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
+                            every environment POST and PUT requestBody references, accepts only the non-privileged
+                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
+                            environment create and update endpoints cannot designate an environment administrative. That
+                            restriction is a codegen guarantee, never access control: the registrant connection inlines
+                            the full environment entity, so `registerRegistryComponent` and
+                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
+                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
+                            assign this property only from server-side provisioning or a data migration. Permission to
+                            create an environment does not confer the ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -73789,11 +74031,11 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - blowhorn
+                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeBlowhorn
+                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -75211,10 +75453,11 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
-                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
-                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
-                            `administrative`.
+                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
+                            non-privileged environment that holds one profile, by convention one per profile: `name` is
+                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
+                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
+                            authority and a client may choose it.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -75231,15 +75474,16 @@ paths:
                             database happened to return first.
 
 
-                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
-                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
-                            environment create and update endpoints have no field for it. That exclusion is a codegen
-                            guarantee, never access control: the registrant connection inlines the full environment
-                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
-                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
-                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
-                            data migration. Permission to create an environment does not confer the ability to make one
-                            administrative.
+                            Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
+                            every environment POST and PUT requestBody references, accepts only the non-privileged
+                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
+                            environment create and update endpoints cannot designate an environment administrative. That
+                            restriction is a codegen guarantee, never access control: the registrant connection inlines
+                            the full environment entity, so `registerRegistryComponent` and
+                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
+                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
+                            assign this property only from server-side provisioning or a data migration. Permission to
+                            create an environment does not confer the ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -75249,11 +75493,11 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - blowhorn
+                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeBlowhorn
+                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -76318,10 +76562,11 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
-                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
-                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
-                            `administrative`.
+                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
+                            non-privileged environment that holds one profile, by convention one per profile: `name` is
+                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
+                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
+                            authority and a client may choose it.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -76338,15 +76583,16 @@ paths:
                             database happened to return first.
 
 
-                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
-                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
-                            environment create and update endpoints have no field for it. That exclusion is a codegen
-                            guarantee, never access control: the registrant connection inlines the full environment
-                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
-                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
-                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
-                            data migration. Permission to create an environment does not confer the ability to make one
-                            administrative.
+                            Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
+                            every environment POST and PUT requestBody references, accepts only the non-privileged
+                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
+                            environment create and update endpoints cannot designate an environment administrative. That
+                            restriction is a codegen guarantee, never access control: the registrant connection inlines
+                            the full environment entity, so `registerRegistryComponent` and
+                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
+                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
+                            assign this property only from server-side provisioning or a data migration. Permission to
+                            create an environment does not confer the ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -76356,11 +76602,11 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - blowhorn
+                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeBlowhorn
+                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -79316,11 +79562,12 @@ paths:
               description: >-
                 Payload for creating or updating an environment. Carries only the client-settable fields. Server-owned
                 fields are deliberately absent: `id`, `owner`, `createdAt`, `updatedAt` and `deletedAt` because the
-                server assigns them, and `purpose` because permission to create an environment must not confer the
-                ability to designate it administrative. Excluding it here is a codegen guarantee rather than access
-                control: the registrant connection inlines the full environment entity, so `purpose` still reaches the
-                `registerRegistryComponent` and `registerRegistryRelationship` request types, and every consumer must
-                refuse it on input whatever surface it arrives on. Do not add `purpose` here - see
+                server assigns them. `purpose` is present but limited to the non-privileged values, because permission
+                to create an environment must not confer the ability to designate it administrative. Limiting it here is
+                a codegen guarantee rather than access control: the registrant connection inlines the full environment
+                entity, so `purpose` still reaches the `registerRegistryComponent` and `registerRegistryRelationship`
+                request types, and every consumer must refuse a privileged value on input whatever surface it arrives
+                on. Do not widen `EnvironmentPayloadPurpose` to a privileged value - see
                 https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
               required:
                 - name
@@ -79351,6 +79598,28 @@ paths:
                     json: organizationId
                   maxLength: 500
                   format: uuid
+                metadata:
+                  type: object
+                  description: Free-form settings stored with the environment, for example a profile's settings.
+                  additionalProperties: true
+                  x-go-type: core.Map
+                  x-go-type-import:
+                    path: github.com/meshery/schemas/models/core
+                    name: core
+                  x-go-type-skip-optional-pointer: true
+                purpose:
+                  type: string
+                  description: >-
+                    The purposes a client may give an environment on create or update: `user` (an ordinary environment)
+                    or `profile` (an ordinary environment holding one profile's settings and accounts). Omitted means
+                    `user` on create and unchanged on update. A server refuses any other value with 400, and never lets
+                    this field change an environment that already carries a privileged purpose.
+                  enum:
+                    - user
+                    - profile
+                  x-enum-varnames:
+                    - EnvironmentPayloadPurposeUser
+                    - EnvironmentPayloadPurposeProfile
       responses:
         '201':
           description: Created environment
@@ -79505,9 +79774,10 @@ paths:
                       What the environment exists for. `user` is an ordinary environment that people create to logically
                       group Connections and their Credentials. `administrative` designates an environment the platform
                       itself provisions to hold organization-level configuration, and which resolvers of that
-                      configuration therefore trust. `blowhorn` designates an environment the platform itself provisions
-                      to hold an organization's Blowhorn configuration and secrets, resolved by the purpose-typed
-                      credential chain; it is privileged in the same sense as `administrative`.
+                      configuration therefore trust. `profile` is an ordinary, non-privileged environment that holds one
+                      profile, by convention one per profile: `name` is the profile's short name, `owner` is the
+                      profile's user, `metadata` holds the profile's settings, and the profile's accounts are linked as
+                      Connections. Like `user`, it carries no authority and a client may choose it.
 
 
                       Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test for
@@ -79522,9 +79792,10 @@ paths:
                       live row matches: return an error rather than whichever row the database happened to return first.
 
 
-                      Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
-                      environment POST and PUT requestBody references, and from the create-or-edit form, so the
-                      environment create and update endpoints have no field for it. That exclusion is a codegen
+                      Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which every
+                      environment POST and PUT requestBody references, accepts only the non-privileged values (`user`
+                      and `profile`), and the create-or-edit form has no field for it, so the environment create and
+                      update endpoints cannot designate an environment administrative. That restriction is a codegen
                       guarantee, never access control: the registrant connection inlines the full environment entity, so
                       `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose` in a request
                       type and consumers MUST refuse it on input there too. Whatever surface a value arrives on, every
@@ -79538,11 +79809,11 @@ paths:
                     enum:
                       - user
                       - administrative
-                      - blowhorn
+                      - profile
                     x-enum-varnames:
                       - EnvironmentPurposeUser
                       - EnvironmentPurposeAdministrative
-                      - EnvironmentPurposeBlowhorn
+                      - EnvironmentPurposeProfile
                     x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: purpose
@@ -79615,6 +79886,65 @@ paths:
             format: uuid
             maxLength: 36
           required: true
+        - name: purpose
+          in: query
+          required: false
+          description: >-
+            Return only environments with this purpose; absent returns every purpose the caller may see. The filter only
+            narrows the environments the caller can already list and grants no visibility - a caller who cannot see
+            administrative environments receives an empty page for purpose=administrative.
+          schema:
+            type: string
+            description: >-
+              What the environment exists for. `user` is an ordinary environment that people create to logically group
+              Connections and their Credentials. `administrative` designates an environment the platform itself
+              provisions to hold organization-level configuration, and which resolvers of that configuration therefore
+              trust. `profile` is an ordinary, non-privileged environment that holds one profile, by convention one per
+              profile: `name` is the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
+              settings, and the profile's accounts are linked as Connections. Like `user`, it carries no authority and a
+              client may choose it.
+
+
+              Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test for the
+              administrative value explicitly rather than for "not user", so the property fails closed.
+
+
+              At most one live environment per organization may carry any single privileged purpose - `administrative`,
+              and each privileged value a later version adds. Name those values explicitly wherever the rule is
+              enforced, including the database index predicate: a "not `user`" test also matches the empty value that
+              unmigrated rows and un-normalised writes read back as, which means ordinary. A resolver that selects an
+              environment by purpose MUST fail closed when more than one live row matches: return an error rather than
+              whichever row the database happened to return first.
+
+
+              Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which every
+              environment POST and PUT requestBody references, accepts only the non-privileged values (`user` and
+              `profile`), and the create-or-edit form has no field for it, so the environment create and update
+              endpoints cannot designate an environment administrative. That restriction is a codegen guarantee, never
+              access control: the registrant connection inlines the full environment entity, so
+              `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose` in a request type and
+              consumers MUST refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
+              assign this property only from server-side provisioning or a data migration. Permission to create an
+              environment does not confer the ability to make one administrative.
+
+
+              The database index that enforces the uniqueness invariant, the migration path for environments that are
+              administrative by naming convention today, and each consumer's obligations are specified in
+              https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
+            enum:
+              - user
+              - administrative
+              - profile
+            x-enum-varnames:
+              - EnvironmentPurposeUser
+              - EnvironmentPurposeAdministrative
+              - EnvironmentPurposeProfile
+            x-go-type-skip-optional-pointer: true
+            x-oapi-codegen-extra-tags:
+              db: purpose
+              gorm: not null;default:user
+              json: purpose,omitempty
+            x-order: 11
       responses:
         '200':
           description: Environments
@@ -79797,10 +80127,11 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
-                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
-                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
-                            `administrative`.
+                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
+                            non-privileged environment that holds one profile, by convention one per profile: `name` is
+                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
+                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
+                            authority and a client may choose it.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -79817,15 +80148,16 @@ paths:
                             database happened to return first.
 
 
-                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
-                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
-                            environment create and update endpoints have no field for it. That exclusion is a codegen
-                            guarantee, never access control: the registrant connection inlines the full environment
-                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
-                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
-                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
-                            data migration. Permission to create an environment does not confer the ability to make one
-                            administrative.
+                            Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
+                            every environment POST and PUT requestBody references, accepts only the non-privileged
+                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
+                            environment create and update endpoints cannot designate an environment administrative. That
+                            restriction is a codegen guarantee, never access control: the registrant connection inlines
+                            the full environment entity, so `registerRegistryComponent` and
+                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
+                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
+                            assign this property only from server-side provisioning or a data migration. Permission to
+                            create an environment does not confer the ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -79835,11 +80167,11 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - blowhorn
+                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeBlowhorn
+                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -80070,10 +80402,11 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
-                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
-                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
-                            `administrative`.
+                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
+                            non-privileged environment that holds one profile, by convention one per profile: `name` is
+                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
+                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
+                            authority and a client may choose it.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -80090,15 +80423,16 @@ paths:
                             database happened to return first.
 
 
-                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
-                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
-                            environment create and update endpoints have no field for it. That exclusion is a codegen
-                            guarantee, never access control: the registrant connection inlines the full environment
-                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
-                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
-                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
-                            data migration. Permission to create an environment does not confer the ability to make one
-                            administrative.
+                            Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
+                            every environment POST and PUT requestBody references, accepts only the non-privileged
+                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
+                            environment create and update endpoints cannot designate an environment administrative. That
+                            restriction is a codegen guarantee, never access control: the registrant connection inlines
+                            the full environment entity, so `registerRegistryComponent` and
+                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
+                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
+                            assign this property only from server-side provisioning or a data migration. Permission to
+                            create an environment does not confer the ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -80108,11 +80442,11 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - blowhorn
+                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeBlowhorn
+                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -80174,11 +80508,12 @@ paths:
               description: >-
                 Payload for creating or updating an environment. Carries only the client-settable fields. Server-owned
                 fields are deliberately absent: `id`, `owner`, `createdAt`, `updatedAt` and `deletedAt` because the
-                server assigns them, and `purpose` because permission to create an environment must not confer the
-                ability to designate it administrative. Excluding it here is a codegen guarantee rather than access
-                control: the registrant connection inlines the full environment entity, so `purpose` still reaches the
-                `registerRegistryComponent` and `registerRegistryRelationship` request types, and every consumer must
-                refuse it on input whatever surface it arrives on. Do not add `purpose` here - see
+                server assigns them. `purpose` is present but limited to the non-privileged values, because permission
+                to create an environment must not confer the ability to designate it administrative. Limiting it here is
+                a codegen guarantee rather than access control: the registrant connection inlines the full environment
+                entity, so `purpose` still reaches the `registerRegistryComponent` and `registerRegistryRelationship`
+                request types, and every consumer must refuse a privileged value on input whatever surface it arrives
+                on. Do not widen `EnvironmentPayloadPurpose` to a privileged value - see
                 https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
               required:
                 - name
@@ -80209,6 +80544,28 @@ paths:
                     json: organizationId
                   maxLength: 500
                   format: uuid
+                metadata:
+                  type: object
+                  description: Free-form settings stored with the environment, for example a profile's settings.
+                  additionalProperties: true
+                  x-go-type: core.Map
+                  x-go-type-import:
+                    path: github.com/meshery/schemas/models/core
+                    name: core
+                  x-go-type-skip-optional-pointer: true
+                purpose:
+                  type: string
+                  description: >-
+                    The purposes a client may give an environment on create or update: `user` (an ordinary environment)
+                    or `profile` (an ordinary environment holding one profile's settings and accounts). Omitted means
+                    `user` on create and unchanged on update. A server refuses any other value with 400, and never lets
+                    this field change an environment that already carries a privileged purpose.
+                  enum:
+                    - user
+                    - profile
+                  x-enum-varnames:
+                    - EnvironmentPayloadPurposeUser
+                    - EnvironmentPayloadPurposeProfile
       responses:
         '200':
           description: Environment page
@@ -80391,10 +80748,11 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
-                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
-                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
-                            `administrative`.
+                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
+                            non-privileged environment that holds one profile, by convention one per profile: `name` is
+                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
+                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
+                            authority and a client may choose it.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -80411,15 +80769,16 @@ paths:
                             database happened to return first.
 
 
-                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
-                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
-                            environment create and update endpoints have no field for it. That exclusion is a codegen
-                            guarantee, never access control: the registrant connection inlines the full environment
-                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
-                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
-                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
-                            data migration. Permission to create an environment does not confer the ability to make one
-                            administrative.
+                            Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
+                            every environment POST and PUT requestBody references, accepts only the non-privileged
+                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
+                            environment create and update endpoints cannot designate an environment administrative. That
+                            restriction is a codegen guarantee, never access control: the registrant connection inlines
+                            the full environment entity, so `registerRegistryComponent` and
+                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
+                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
+                            assign this property only from server-side provisioning or a data migration. Permission to
+                            create an environment does not confer the ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -80429,11 +80788,11 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - blowhorn
+                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeBlowhorn
+                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -84828,10 +85187,11 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
-                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
-                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
-                            `administrative`.
+                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
+                            non-privileged environment that holds one profile, by convention one per profile: `name` is
+                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
+                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
+                            authority and a client may choose it.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -84848,15 +85208,16 @@ paths:
                             database happened to return first.
 
 
-                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
-                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
-                            environment create and update endpoints have no field for it. That exclusion is a codegen
-                            guarantee, never access control: the registrant connection inlines the full environment
-                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
-                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
-                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
-                            data migration. Permission to create an environment does not confer the ability to make one
-                            administrative.
+                            Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
+                            every environment POST and PUT requestBody references, accepts only the non-privileged
+                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
+                            environment create and update endpoints cannot designate an environment administrative. That
+                            restriction is a codegen guarantee, never access control: the registrant connection inlines
+                            the full environment entity, so `registerRegistryComponent` and
+                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
+                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
+                            assign this property only from server-side provisioning or a data migration. Permission to
+                            create an environment does not confer the ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -84866,11 +85227,11 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - blowhorn
+                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeBlowhorn
+                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
