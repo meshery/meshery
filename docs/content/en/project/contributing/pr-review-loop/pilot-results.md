@@ -1,3 +1,9 @@
+---
+title: PR Review Loop — Pilot Evaluation & Results
+description: Evaluation framework, metric definitions, and tracking template for the PR Review Loop pilot.
+categories: [contributing]
+---
+
 # Meshery PR Review Loop — Pilot Results
 
 **Status: Not yet run**
@@ -10,8 +16,8 @@
 
 | Stage | Status | Notes |
 |---|---|---|
-| Implementation Validation | **Completed** | Algorithmic logic, edge-case tests, YAML validation, and security reviews verified locally. |
-| Staging / Dry-run Evaluation | **Pending** | Awaiting maintainer review and pilot deployment schedule. |
+| Implementation Validation | **Completed** | Algorithmic logic, edge-case tests, YAML validation, Markdown escaping, and security reviews verified locally. |
+| Community Buy-in | **In Progress** | Proposal discussion open in repository Discussions seeking maintainer and contributor feedback. |
 | Production Pilot Run | **Not yet run** | Live data collection will commence once enabled on `master`. |
 
 ---
@@ -50,9 +56,13 @@ The following template will be populated during the pilot evaluation period:
 
 While real-world pilot metrics are pending live deployment, the underlying implementation has passed the following static and synthetic verifications:
 
-- **Syntax & Schema**: Verified valid YAML schema and node/javascript execution.
+- **Syntax & Schema**: Verified valid YAML schema (`actionlint`), valid Node/JavaScript execution.
 - **Label Eligibility Enforcement**: Verified that candidates lacking `language/*`, `area/*`, or `component/*` overlap are strictly excluded regardless of text overlap.
+- **Automated Labeling Handoff**: Verified `workflow_run` handoff accurately identifies and evaluates the target PR after automated triage.
+- **Label Removal Refresh**: Verified that removing qualifying labels triggers suggestion recalculation and replaces stale recommendations with "no closely related open PRs".
+- **Markdown Escaping**: Verified candidate PR titles containing Markdown links, formatting, backticks, or HTML tags are rendered as plain text.
+- **Sticky Comment Ownership**: Verified that only comments authored by `github-actions[bot]` containing the marker are updated, preventing participant comment modification.
 - **Candidate Filtering**: Verified exclusion of self-PRs, closed PRs, and draft PRs.
 - **Deduplication & Tie-breaking**: Verified ranking order (score descending, PR number descending) and slicing to top 3.
-- **Concurrency & Idempotency**: Concurrency group protection and sticky HTML comment marker (`<!-- meshery-review-suggestions -->`) logic validated to prevent duplicate comments.
-- **Security Scoping**: Verified no repository code execution, no checkout of untrusted PR branches, and strict least-privilege token permissions (`issues: write`, `pull-requests: read`).
+- **Security Scoping**: Verified no repository code execution, zero checkout of untrusted PR branches, and strict least-privilege token permissions (`pull-requests: write`).
+- **Automated Regression Suite**: 19 unit and regression tests passing via `node --test .github/scripts/pr-review-suggestions.test.js`.
