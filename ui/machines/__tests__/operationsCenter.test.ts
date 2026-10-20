@@ -14,6 +14,7 @@ const hoisted = vi.hoisted(() => ({
   subscriptionState: {
     onEvent: undefined as EventCallback | undefined,
     onError: undefined as ErrorCallback | undefined,
+    onOpen: undefined as (() => void) | undefined,
     dispose: vi.fn(),
   },
   dispatch: vi.fn(),
@@ -32,9 +33,10 @@ const dispatch = hoisted.dispatch;
 const pushEvent = hoisted.pushEvent;
 
 vi.mock('lib/eventsSubscription', () => ({
-  subscribeToEvents: (next: EventCallback, error: ErrorCallback) => {
+  subscribeToEvents: (next: EventCallback, error: ErrorCallback, open: () => void) => {
     hoisted.subscriptionState.onEvent = next;
     hoisted.subscriptionState.onError = error;
+    hoisted.subscriptionState.onOpen = open;
     return { dispose: hoisted.subscriptionState.dispose };
   },
 }));
@@ -89,6 +91,7 @@ describe('operationsCenter machine', () => {
     subscriptionState.dispose.mockClear();
     subscriptionState.onEvent = undefined;
     subscriptionState.onError = undefined;
+    subscriptionState.onOpen = undefined;
   });
 
   it('boots into idle after init and spawns the subscription actor', () => {
@@ -104,6 +107,7 @@ describe('operationsCenter machine', () => {
     expect(OPERATION_CENTER_EVENTS).toEqual({
       EVENT_RECEIVED_FROM_SERVER: 'EVENT_RECEIVED_FROM_SERVER',
       ERROR_OCCURRED_IN_SUBSCRIPTION: 'ERROR_OCCURRED_IN_SUBSCRIPTION',
+      SUBSCRIPTION_OPENED: 'SUBSCRIPTION_OPENED',
     });
   });
 
@@ -191,14 +195,21 @@ describe('operationsCenter machine', () => {
     actor.stop();
   });
 
-  it('refetches persisted events after re-subscribing, so events missed while down appear', () => {
-    const { actor } = startActor();
-    dispatch.mockClear();
-
+  // The stream connects, is closed for good, and the respawned stream opens.
+  const reconnect = (actor) => {
+    subscriptionState.onOpen?.();
     actor.send({
       type: OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION,
       data: { error: new Error('stream closed') },
     });
+    subscriptionState.onOpen?.();
+  };
+
+  it('refetches the unread summary once the respawned stream opens', () => {
+    const { actor } = startActor();
+    dispatch.mockClear();
+
+    reconnect(actor);
 
     expect(subscriptionState.dispose).toHaveBeenCalled();
     expect(dispatch).toHaveBeenCalledWith({ type: 'api/invalidate', tags: ['event'] });
@@ -206,14 +217,11 @@ describe('operationsCenter machine', () => {
     actor.stop();
   });
 
-  it('reloads the first page of the current notification view after re-subscribing', () => {
+  it('reloads the first page of the current notification view once the respawned stream opens', () => {
     const { actor } = startActor();
     hoisted.loadEvents.mockClear();
 
-    actor.send({
-      type: OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION,
-      data: { error: new Error('stream closed') },
-    });
+    reconnect(actor);
 
     expect(hoisted.loadEvents).toHaveBeenCalledWith(expect.any(Function), 0, {
       status: 'unread',
@@ -227,10 +235,7 @@ describe('operationsCenter machine', () => {
   it('fetches the reloaded page fresh and releases the query subscription', async () => {
     const { actor } = startActor();
     hoisted.loadEvents.mockClear();
-    actor.send({
-      type: OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION,
-      data: { error: new Error('stream closed') },
-    });
+    reconnect(actor);
     const fetchEvents = hoisted.loadEvents.mock.calls[0][0] as (args: unknown) => Promise<unknown>;
 
     const unsubscribe = vi.fn();
@@ -244,15 +249,43 @@ describe('operationsCenter machine', () => {
     actor.stop();
   });
 
-  const failSubscription = (actor) =>
+  it('does not reload before the respawned stream has opened', () => {
+    const { actor } = startActor();
+    subscriptionState.onOpen?.();
+    dispatch.mockClear();
+
     actor.send({
       type: OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION,
       data: { error: new Error('stream closed') },
     });
 
+    expect(hoisted.loadEvents).not.toHaveBeenCalled();
+    expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'api/invalidate' }));
+    actor.stop();
+  });
+
+  it('does not reload on the first connection', () => {
+    const { actor } = startActor();
+
+    subscriptionState.onOpen?.();
+
+    expect(hoisted.loadEvents).not.toHaveBeenCalled();
+    actor.stop();
+  });
+
+  it('reloads after the browser reconnects a transient drop on its own', () => {
+    const { actor } = startActor();
+
+    subscriptionState.onOpen?.();
+    subscriptionState.onOpen?.();
+
+    expect(hoisted.loadEvents).toHaveBeenCalledTimes(1);
+    actor.stop();
+  });
+
   it('rejects a failed reload so loadEvents keeps the current list', async () => {
     const { actor } = startActor();
-    failSubscription(actor);
+    reconnect(actor);
     const fetchEvents = hoisted.loadEvents.mock.calls[0][0] as (args: unknown) => Promise<unknown>;
 
     const unsubscribe = vi.fn();
@@ -276,7 +309,7 @@ describe('operationsCenter machine', () => {
         : action,
     );
     const { actor } = startActor();
-    failSubscription(actor);
+    reconnect(actor);
 
     const live = { id: 'during-reload', description: 'd', severity: 'informational' };
     actor.send({ type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER, data: { event: live } });
@@ -290,7 +323,7 @@ describe('operationsCenter machine', () => {
 
   it('does not re-add events that arrive after the reload finished', async () => {
     const { actor } = startActor();
-    failSubscription(actor);
+    reconnect(actor);
     await Promise.resolve();
 
     const later = { id: 'after-reload', description: 'd', severity: 'informational' };

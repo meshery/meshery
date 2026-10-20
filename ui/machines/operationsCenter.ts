@@ -1,6 +1,6 @@
 import { SEVERITY_TO_NOTIFICATION_TYPE_MAPPING } from '@/components/layout/NotificationCenter/constants';
 import { subscribeToEvents } from 'lib/eventsSubscription';
-import { emit, fromCallback, setup, spawnChild, stopChild } from 'xstate';
+import { assign, emit, fromCallback, setup, spawnChild, stopChild } from 'xstate';
 import { store } from '../store';
 import { loadEvents, pushEvent } from '@/store/slices/events';
 import { api as mesheryApi } from '../rtk-query';
@@ -8,6 +8,7 @@ import { notificationCenterApi, PROVIDER_TAGS } from '@/rtk-query/notificationCe
 export const OPERATION_CENTER_EVENTS = {
   EVENT_RECEIVED_FROM_SERVER: 'EVENT_RECEIVED_FROM_SERVER',
   ERROR_OCCURRED_IN_SUBSCRIPTION: 'ERROR_OCCURRED_IN_SUBSCRIPTION',
+  SUBSCRIPTION_OPENED: 'SUBSCRIPTION_OPENED',
 };
 const events = {
   eventReceivedFromServer: (event) => ({
@@ -22,6 +23,7 @@ const events = {
       error,
     },
   }),
+  subscriptionOpened: () => ({ type: OPERATION_CENTER_EVENTS.SUBSCRIPTION_OPENED }),
 };
 
 const subscriptionActor = fromCallback(({ sendBack }) => {
@@ -45,6 +47,7 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
       console.error('[operationsCenter] An error occurred in subscription to events', error);
       sendBack(events.errorOccurredInSubscription(error));
     },
+    () => sendBack(events.subscriptionOpened()),
   );
 
   return () => {
@@ -113,6 +116,9 @@ export const operationsCenterActor = setup({
   initial: 'init',
   context: ({ input }) => ({
     notify: input.notify,
+    // Whether the stream has connected before. The first connection needs no
+    // reload: the notification center loads the list itself on mount.
+    hasConnected: false,
   }),
 
   states: {
@@ -126,16 +132,18 @@ export const operationsCenterActor = setup({
           actions: ['storeInRedux', 'notifyUI', 'emitBack'],
         },
         [OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION]: {
-          // Events raised while the stream was down are never replayed by the
-          // new stream; reload the persisted list (and the unread summary) so
-          // they aren't lost.
-          actions: [
-            stopChild('subscriptionActor'),
-            'spawnSubscriptionActor',
-            'invalidateRtk',
-            'reloadEvents',
-          ],
+          actions: [stopChild('subscriptionActor'), 'spawnSubscriptionActor'],
         },
+        // Events raised while the stream was down are never replayed. On every
+        // reconnection, reload the persisted list (and the unread summary) once
+        // the server is listening again, so nothing raised in between is lost.
+        [OPERATION_CENTER_EVENTS.SUBSCRIPTION_OPENED]: [
+          {
+            guard: ({ context }) => context.hasConnected,
+            actions: ['invalidateRtk', 'reloadEvents'],
+          },
+          { actions: assign({ hasConnected: true }) },
+        ],
       },
     },
   },
