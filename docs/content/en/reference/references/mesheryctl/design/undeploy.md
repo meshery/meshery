@@ -3,6 +3,7 @@ title: mesheryctl-design-undeploy
 display_title: false
 command: design
 subcommand: undeploy
+categories: [mesheryctl-design]
 ---
 
 # mesheryctl design undeploy
@@ -15,8 +16,10 @@ Undeploy design will trigger undeploy of design.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design undeploy [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +28,10 @@ mesheryctl design undeploy [flags]
 Undeploy design by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design undeploy -f [filepath]
 
+</div>
 </div>
 </pre> 
 

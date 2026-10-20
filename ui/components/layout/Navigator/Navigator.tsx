@@ -20,6 +20,7 @@ import {
   FileIcon,
   GithubIcon,
   DiscussForumIcon,
+  ClickAwayListener,
 } from '@sistent/sistent';
 import ExtensionPointSchemaValidator from '../../../utils/ExtensionPointSchemaValidator';
 import { cursorNotAllowed, disabledStyle } from '../../../css/disableComponent.styles';
@@ -202,21 +203,8 @@ const resolveNavigatorComponents = ({
   });
 };
 
-const NavigatorWrapper = () => {
-  const isMobile = useMediaQuery('(max-width:599px)');
-  const dispatch = useDispatch();
-  const { isDrawerCollapsed } = useSelector((state) => state.ui);
-
-  useEffect(() => {
-    if (isMobile && !isDrawerCollapsed) {
-      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
-    }
-  }, [dispatch, isDrawerCollapsed, isMobile]);
-
-  return <NavigatorContent />;
-};
-
 const NavigatorContent = () => {
+  const { isDrawerCollapsed } = useSelector((state) => state.ui);
   const { meshAdapters } = useSelector((state) => state.adapter);
   const dispatch = useDispatch();
   const { catalogVisibility } = useSelector((state) => state.ui);
@@ -245,6 +233,8 @@ const NavigatorContent = () => {
       currentPath,
     });
   }, [providerUiAccessControl, catalogVisibility, currentPath, meshAdapters, theme]);
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const ExternalLinkIcon = (
     <IconExternalLink
@@ -348,6 +338,28 @@ const NavigatorContent = () => {
     dispatch(updateBetaBadge({ isBeta: activeNavigatorItem.isBeta }));
   }, [currentPath, dispatch, navigatorComponents]);
 
+  useEffect(() => {
+    if (isMobile && !isDrawerCollapsed) {
+      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
+    }
+    // This effect depends explicitely at the state of isMobile,
+    // it closes the sidebar on mount when isMobile too
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (!isMobile || isDrawerCollapsed) return;
+
+    const handleRouteChange = () => {
+      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
+    };
+
+    router.events?.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events?.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router.events, dispatch, isMobile, isDrawerCollapsed]);
+
   const handleTitleClick = () => {
     router.push('/');
   };
@@ -383,6 +395,11 @@ const NavigatorContent = () => {
     if (release_channel === 'stable') return `${release_channel}-${build}`;
 
     return `${build}`;
+  };
+  const handleClickOutside = () => {
+    if (isMobile && !isDrawerCollapsed) {
+      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
+    }
   };
 
   const versionUpdateMsg = () => {
@@ -628,7 +645,7 @@ const NavigatorContent = () => {
     }
     return linkContent;
   };
-  const { isDrawerCollapsed } = useSelector((state) => state.ui);
+
   const Title = (
     <div
       style={
@@ -899,19 +916,25 @@ const NavigatorContent = () => {
 
   return (
     <NoSsr>
-      <SidebarDrawer isCollapsed={isDrawerCollapsed} variant="permanent">
-        {Title}
-        {Menu}
-        <FixedSidebarFooter>
-          {Chevron}
-          {HelpIcons}
-          {Version}
-        </FixedSidebarFooter>
-      </SidebarDrawer>
+      <ClickAwayListener
+        onClickAway={handleClickOutside}
+        mouseEvent={isMobile ? 'onMouseDown' : false}
+        touchEvent={isMobile ? 'onTouchStart' : false}
+      >
+        <SidebarDrawer isCollapsed={isDrawerCollapsed} variant="permanent">
+          {Title}
+          {Menu}
+          <FixedSidebarFooter>
+            {Chevron}
+            {HelpIcons}
+            {Version}
+          </FixedSidebarFooter>
+        </SidebarDrawer>
+      </ClickAwayListener>
     </NoSsr>
   );
 };
 
-export const Navigator = NavigatorWrapper;
+export const Navigator = NavigatorContent;
 
 export default Navigator;

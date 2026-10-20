@@ -9,6 +9,7 @@ import { CONNECTION_STATES } from '../../utils/Enum';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import useGrafanaPingHook from '@/utils/hooks/useGrafanaPingHook';
 import usePrometheusPingHook from '@/utils/hooks/usePrometheusPingHook';
+import useMesheryPingHook from '@/utils/hooks/useMesheryPingHook';
 import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
@@ -87,6 +88,7 @@ const ConnectionTable = ({
   const ping = useKubernetesHook();
   const pingGrafana = useGrafanaPingHook();
   const pingPrometheus = usePrometheusPingHook();
+  const pingMeshery = useMesheryPingHook();
   const { width } = useWindowDimensions();
 
   const { tableState, updateTableState, copyRowDeepLink } = useTableUrlState({
@@ -382,16 +384,37 @@ const ConnectionTable = ({
       });
 
       if (confirmed) {
-        await Promise.all(
+        // Use the raw mutator here so Promise.allSettled can handle
+        // success and failure for each deletion. Keep updateConnectionStatus
+        // unchanged for single-connection actions.
+        const results = await Promise.allSettled(
           selectedConnections.map(({ id }) =>
-            updateConnectionStatus(id, CONNECTION_STATES.DELETED),
+            updateConnectionByIdMutator({
+              connectionId: id,
+              body: { status: CONNECTION_STATES.DELETED },
+            }).unwrap(),
           ),
         );
+
+        const successCount = results.filter((r) => r.status === 'fulfilled').length;
+        const failureCount = results.filter((r) => r.status === 'rejected').length;
+
+        if (successCount > 0) {
+          notify({
+            message: `${successCount} Connection${successCount > 1 ? 's' : ''} deleted`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+        }
+        if (failureCount > 0) {
+          notify({
+            message: `Failed to delete ${failureCount} Connection${failureCount > 1 ? 's' : ''}`,
+            event_type: EVENT_TYPES.ERROR,
+          });
+        }
       }
     },
-    [filteredConnections, updateConnectionStatus],
+    [filteredConnections, updateConnectionByIdMutator, notify],
   );
-
   const handleActionMenuClose = useCallback(() => {
     setAnchorEl(null);
     setRowData(null);
@@ -594,6 +617,7 @@ const ConnectionTable = ({
     ping,
     pingGrafana,
     pingPrometheus,
+    pingMeshery,
     transitionMapByKind,
   });
   const columnNames = useMemo(

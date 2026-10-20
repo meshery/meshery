@@ -3,6 +3,7 @@ title: mesheryctl-design-export
 display_title: false
 command: design
 subcommand: export
+categories: [mesheryctl-design]
 ---
 
 # mesheryctl design export
@@ -18,8 +19,10 @@ By default, the exported design will be saved in the current directory. The diff
 type allowed are oci, original, and current. The default design type is current.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design export [pattern-name | ID] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -28,32 +31,40 @@ mesheryctl design export [pattern-name | ID] [flags]
 Export a design with a specific ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design export [pattern-name | ID]
 
+</div>
 </div>
 </pre> 
 
 Export a design with a specific ID and type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design export [pattern-name | ID] --type [design-type]
 
+</div>
 </div>
 </pre> 
 
 Export a design and save it to a specific directory
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design export [pattern-name | ID] --output ./designs
 
+</div>
 </div>
 </pre> 
 
 Export a design with a specific type and save it to a directory
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exports
 
+</div>
 </div>
 </pre> 
 

@@ -117,7 +117,11 @@ components:
   colorIcon: extensions/models/kube-arangodb/components/arango-permission-role-user-binding/icons/color/arango-permission-role-user-binding-color.svg
   whiteIcon: extensions/models/kube-arangodb/components/arango-permission-role-user-binding/icons/white/arango-permission-role-user-binding-white.svg
   description: 
-components-count: 27
+- name: arango-platform-link
+  colorIcon: extensions/models/kube-arangodb/components/arango-platform-link/icons/color/arango-platform-link-color.svg
+  whiteIcon: extensions/models/kube-arangodb/components/arango-platform-link/icons/white/arango-platform-link-white.svg
+  description: 
+components-count: 28
 relationships: 
 relationship-count: 0
 featureList: [

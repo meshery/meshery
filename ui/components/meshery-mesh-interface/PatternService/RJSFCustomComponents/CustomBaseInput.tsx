@@ -73,7 +73,7 @@ const BaseInput = (props) => {
           size="small"
           focused={focused}
           overrideFlag={overrideFlag}
-          type={props.options?.inputType}
+          type={props.options?.inputType || props.type}
           key={props.id}
           disabled={props?.disabled || props?.readonly}
           value={
