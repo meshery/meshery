@@ -97,6 +97,8 @@ tags:
     description: APIs for managing Meshery performance profiles.
   - name: Plan_Plans
     description: Operations related to plans
+  - name: ProviderCapability_capabilities
+    description: Operations related to the provider's capabilities document.
   - name: Schedule_schedules
     description: Operations related to organization schedules and their claims.
   - name: Subscription_Subscriptions
