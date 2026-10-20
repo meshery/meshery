@@ -3,6 +3,8 @@ package connections
 import (
 	"testing"
 
+	"github.com/gofrs/uuid"
+	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
@@ -56,7 +58,7 @@ func TestMergePayloadOntoExisting(t *testing.T) {
 	})
 
 	t.Run("preserves existing fields when omitted in payload", func(t *testing.T) {
-		credID := uuid.New()
+		credID := core.Uuid(uuid.Must(uuid.NewV4()))
 		existingMeta := map[string]interface{}{"env": "production"}
 
 		existing := &Connection{
@@ -66,7 +68,7 @@ func TestMergePayloadOntoExisting(t *testing.T) {
 			SubType:        "k8s",
 			Status:         CONNECTED,
 			CredentialID:   &credID,
-			MetaData:       existingMeta,
+			Metadata:       existingMeta,
 		}
 
 		// Issue #8716: Partial PUT update sending only status must not wipe name or kind
@@ -86,8 +88,8 @@ func TestMergePayloadOntoExisting(t *testing.T) {
 	})
 
 	t.Run("does not overwrite explicitly supplied fields", func(t *testing.T) {
-		credID1 := uuid.New()
-		credID2 := uuid.New()
+		credID1 := core.Uuid(uuid.Must(uuid.NewV4()))
+		credID2 := core.Uuid(uuid.Must(uuid.NewV4()))
 		meta1 := map[string]interface{}{"env": "production"}
 		meta2 := map[string]interface{}{"env": "staging"}
 
@@ -98,7 +100,7 @@ func TestMergePayloadOntoExisting(t *testing.T) {
 			SubType:        "k8s",
 			Status:         CONNECTED,
 			CredentialID:   &credID1,
-			MetaData:       meta1,
+			Metadata:       meta1,
 		}
 
 		payload := &ConnectionPayload{
