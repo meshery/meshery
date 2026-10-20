@@ -175,12 +175,12 @@ func saveToFile(
 	var fileName string
 
 	if isAll {
-		fileName = "filters_all"
+		fileName = fmt.Sprintf("filters_all.%s", strings.ToLower(outputFormat))
 	} else {
 		shortID := selectedFilter.ID.String()[:8]
 		sanitizer := strings.NewReplacer("/", "_", " ", "_")
 		sanitizedName := sanitizer.Replace(selectedFilter.Name)
-		fileName = fmt.Sprintf("filter_%s_%s", sanitizedName, shortID)
+		fileName = fmt.Sprintf("filter_%s_%s.%s", sanitizedName, shortID, strings.ToLower(outputFormat))
 	}
 
 	file := filepath.Join(utils.MesheryFolder, fileName)

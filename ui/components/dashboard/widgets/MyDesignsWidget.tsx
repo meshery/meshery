@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { useGetLoggedInUserQuery } from '@/rtk-query/user';
+import { useGetLoggedInUserQuery, useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { isLocalProvider } from '@/utils/provider';
 import {
   Box,
   CatalogIcon,
@@ -51,6 +52,8 @@ const cardData = [
 const MyDesignsWidget = ({ iconsProps }: MyDesignsWidgetProps) => {
   const [sortOrder, setSortOrder] = useState(DEFAULT_SORT_ORDER);
   const { data: userData } = useGetLoggedInUserQuery();
+  const { data: providerCapabilities } = useGetProviderCapabilitiesQuery();
+  const isLocal = isLocalProvider(providerCapabilities);
   const {
     data: patternsData,
     isFetching: isPatternsFetching,
@@ -64,7 +67,7 @@ const MyDesignsWidget = ({ iconsProps }: MyDesignsWidgetProps) => {
       userId: userData?.id,
       metrics: true,
     },
-    { skip: !userData?.id },
+    { skip: !userData?.id || !providerCapabilities || isLocal },
   );
   const theme = useTheme();
 
