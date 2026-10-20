@@ -63,12 +63,8 @@ tags:
     description: APIs for managing Meshery views.
   - name: Academy_API_Academy
     description: Operations related to Meshery Academy content and curriculum
-  - name: BlowhornBinding_blowhornBindings
-    description: Operations related to Blowhorn bindings.
   - name: BlowhornHealth_blowhornHealth
     description: Operations related to Blowhorn health.
-  - name: BlowhornLedger_blowhornLedger
-    description: Operations related to Blowhorn ledger entries, contacts and mentees.
   - name: BlowhornProfile_blowhornProfiles
     description: Operations related to Blowhorn profiles.
   - name: Claim_claims
@@ -91,6 +87,8 @@ tags:
       workflow.
   - name: Invitation_Invitation
     description: Operations related to invitation
+  - name: Ledger_ledgers
+    description: Operations related to organization ledgers and their entries.
   - name: PatternResource_patternResources
     description: Operations related to Meshery pattern resources.
   - name: Performance_Profile_performance
