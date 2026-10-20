@@ -182,6 +182,79 @@ func Test_importPattern_EmptyResponseCollection(t *testing.T) {
 	t.Logf("structured error returned instead of panicking: %v", err)
 }
 
+func Test_designImport_SourceTypeFlag_Deprecated(t *testing.T) {
+	flag := importCmd.Flags().Lookup("source-type")
+	assert.NotNil(t, flag, "source-type flag should exist")
+	assert.NotEmpty(t, flag.Deprecated, "source-type flag must be marked deprecated")
+	assert.True(t, flag.Hidden, "source-type flag must be hidden from help output")
+}
+
+func Test_designImport_WithSourceTypeFlag_PassesValidationAndImports(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer resetVariables()
+	defer utils.ResetCommandFlags(DesignCmd, t)
+
+	utils.TokenFlag = utils.GetToken(t)
+
+	httpmock.RegisterResponder(
+		"GET",
+		testContext.BaseURL+"/api/pattern/types",
+		httpmock.NewStringResponder(
+			200,
+			`[{"designType":"Kubernetes Manifest"},{"designType":"Helm Chart"},{"designType":"Docker Compose"},{"designType":"Meshery Design"}]`,
+		),
+	)
+
+	var capturedBody map[string]interface{}
+	httpmock.RegisterResponder(
+		"POST",
+		testContext.BaseURL+"/api/pattern/import",
+		func(req *http.Request) (*http.Response, error) {
+			raw, err := io.ReadAll(req.Body)
+			assert.NoError(t, err)
+			assert.NoError(t, json.Unmarshal(raw, &capturedBody))
+			return httpmock.NewStringResponse(
+				200,
+				`[{"id":"3817ec9a-1d83-4f6f-9154-0fd4408ba9f0","name":"SampleApp"}]`,
+			), nil
+		},
+	)
+
+	DesignCmd.SetArgs([]string{"import", "-f", "fixtures/sampleDesign.golden", "-n", "SampleApp", "-s", "Kubernetes Manifest"})
+	assert.NoError(t, DesignCmd.Execute())
+
+	assert.Equal(t, "sampleDesign.golden", capturedBody["fileName"])
+	assert.Equal(t, "SampleApp", capturedBody["name"])
+	assert.NotContains(t, capturedBody, "sourceType")
+	assert.NotContains(t, capturedBody, "source_type")
+}
+
+func Test_designImport_WithInvalidSourceTypeFlag_ReturnsError(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer resetVariables()
+	defer utils.ResetCommandFlags(DesignCmd, t)
+
+	utils.TokenFlag = utils.GetToken(t)
+
+	httpmock.RegisterResponder(
+		"GET",
+		testContext.BaseURL+"/api/pattern/types",
+		httpmock.NewStringResponder(
+			200,
+			`[{"designType":"Kubernetes Manifest"},{"designType":"Helm Chart"}]`,
+		),
+	)
+
+	DesignCmd.SetArgs([]string{"import", "-f", "fixtures/sampleDesign.golden", "-s", "InvalidType"})
+	err := DesignCmd.Execute()
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "Invalid design source type")
+}
+
 func mapKeys(m map[string]interface{}) []string {
 	keys := make([]string, 0, len(m))
 	for k := range m {
