@@ -296,15 +296,12 @@ func buildAllowedDockerServices(currCtx *config.Context, mesheryImageVersion, ca
 	requiredServices := []string{"meshery", "watchtower"}
 	allowedServices := map[string]utils.Service{}
 
-	for _, component := range currCtx.GetComponents() {
-		if utils.Services[component].Image == "" {
-			return nil, ErrInvalidComponent(component)
-		}
+	if err := validateComponents(currCtx.GetComponents()); err != nil {
+		return nil, err
+	}
 
-		service, ok := utils.Services[component]
-		if !ok {
-			return nil, errors.Errorf("No Docker Compose service exists for Meshery component `%s`.", component)
-		}
+	for _, component := range currCtx.GetComponents() {
+		service := utils.Services[component]
 
 		spliter := strings.Split(service.Image, ":")
 		service.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
@@ -517,6 +514,13 @@ func init() {
 
 // Apply Meshery helm charts
 func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction, callbackURL, providerURL string) error {
+	// Validate component references before starting
+	if act != meshkitkube.UNINSTALL {
+		if err := validateComponents(currCtx.GetComponents()); err != nil {
+			return err
+		}
+	}
+
 	// get value overrides to install the helm chart
 	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion, callbackURL, providerURL)
 
