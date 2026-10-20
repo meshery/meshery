@@ -38,16 +38,11 @@ func defaultModelsLocation() string {
 	if err != nil {
 		return "models"
 	}
-	// Run from the repository root (the documented prerequisite).
-	if isDirectory(filepath.Join(cwd, "models")) {
-		return "models"
+	if repoRoot, ok := findMesheryRepoRoot(cwd); ok {
+		if rel, err := filepath.Rel(cwd, filepath.Join(repoRoot, "models")); err == nil {
+			return rel
+		}
 	}
-	// Run from an immediate subdirectory such as mesheryctl/.
-	if isDirectory(filepath.Join(cwd, "..", "models")) {
-		return filepath.Join("..", "models")
-	}
-	// Fall back to the repo-root assumption; generate will create the
-	// directory if it does not yet exist.
 	return "models"
 }
 

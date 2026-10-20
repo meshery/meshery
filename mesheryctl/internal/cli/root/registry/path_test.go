@@ -37,6 +37,10 @@ func TestDefaultModelsLocation(t *testing.T) {
 	if err := os.MkdirAll(subDir, 0o755); err != nil {
 		t.Fatalf("mkdir mesheryctl: %v", err)
 	}
+	nestedSubDir := filepath.Join(subDir, "internal", "cli")
+	if err := os.MkdirAll(nestedSubDir, 0o755); err != nil {
+		t.Fatalf("mkdir nested: %v", err)
+	}
 	emptyDir := t.TempDir() // no models directory anywhere
 
 	tests := []struct {
@@ -53,6 +57,11 @@ func TestDefaultModelsLocation(t *testing.T) {
 			name: "from subdirectory",
 			cwd:  subDir,
 			want: filepath.Join("..", "models"),
+		},
+		{
+			name: "from nested subdirectory",
+			cwd:  nestedSubDir,
+			want: filepath.Join("..", "..", "..", "models"),
 		},
 		{
 			name: "no models directory falls back to repo-root assumption",
