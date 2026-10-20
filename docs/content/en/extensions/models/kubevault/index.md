@@ -213,7 +213,11 @@ components:
   colorIcon: extensions/models/kubevault/components/zoo-keeper-role/icons/color/zoo-keeper-role-color.svg
   whiteIcon: extensions/models/kubevault/components/zoo-keeper-role/icons/white/zoo-keeper-role-white.svg
   description: 
-components-count: 51
+- name: zoo-keeper-role
+  colorIcon: extensions/models/kubevault/components/zoo-keeper-role/icons/color/zoo-keeper-role-color.svg
+  whiteIcon: extensions/models/kubevault/components/zoo-keeper-role/icons/white/zoo-keeper-role-white.svg
+  description: 
+components-count: 52
 relationships: 
 relationship-count: 0
 featureList: [
