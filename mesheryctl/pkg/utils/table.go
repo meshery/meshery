@@ -42,8 +42,10 @@ func generateTableOptions() []tablewriter.Option {
 				},
 				Formatting: tw.CellFormatting{
 					AutoWrap:   tw.WrapNone,
-					MergeMode:  tw.MergeNone,
 					AutoFormat: tw.Off, // switch off AutoFormat
+				},
+				Merging: tw.CellMerging{
+					Mode: tw.MergeNone,
 				},
 				Padding: tw.CellPadding{
 					Global: tw.Padding{
@@ -58,8 +60,10 @@ func generateTableOptions() []tablewriter.Option {
 			Row: tw.CellConfig{
 				Formatting: tw.CellFormatting{
 					AutoWrap:   tw.WrapNone,
-					MergeMode:  tw.MergeNone,
 					AutoFormat: tw.Off,
+				},
+				Merging: tw.CellMerging{
+					Mode: tw.MergeNone,
 				},
 				Alignment: tw.CellAlignment{
 					Global: tw.AlignLeft,
