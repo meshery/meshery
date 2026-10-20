@@ -1,0 +1,210 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta2",
+  "version": "v1.0.0",
+  "displayName": "Backend TLSPolicy",
+  "description": "Gateway API BackendTLSPolicy (gateway.networking.k8s.io/v1). Generated from the official Gateway API standard channel CRDs.",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta2",
+    "version": "v1.0.0",
+    "name": "gateway-api",
+    "displayName": "Gateway API",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "type": "registry",
+      "subType": "",
+      "kind": "github",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "API Gateway",
+    "metadata": {
+      "capabilities": null,
+      "isAnnotation": false,
+      "primaryColor": "#5f49d9",
+      "secondaryColor": "#b7a9f9",
+      "shape": "circle",
+      "styleOverrides": "",
+      "svgColor": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#b7a9f9\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+      "svgComplete": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#b7a9f9\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+      "svgWhite": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+      "source_uri": "git://github.com/kubernetes-sigs/gateway-api/main/config/crd/standard"
+    },
+    "model": {
+      "version": "v1.6.3"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "modelReference": {
+    "displayName": "Gateway API",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.6.3"
+    },
+    "name": "gateway-api",
+    "registrant": {
+      "kind": ""
+    },
+    "version": ""
+  },
+  "styles": {
+    "primaryColor": "#5f49d9",
+    "secondaryColor": "#b7a9f9",
+    "shape": "circle",
+    "svgColor": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#b7a9f9\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+    "svgComplete": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#b7a9f9\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+    "svgWhite": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/kubernetes-sigs/gateway-api/main/config/crd/standard"
+  },
+  "configuration": null,
+  "component": {
+    "version": "gateway.networking.k8s.io/v1",
+    "kind": "BackendTLSPolicy",
+    "schema": "{\"description\": \"BackendTLSPolicy provides a way to configure how a Gateway\\nconnects to a Backend via TLS.\", \"properties\": {\"apiVersion\": {\"description\": \"APIVersion defines the versioned schema of this representation of an object.\\nServers should convert recognized schemas to the latest internal value, and\\nmay reject unrecognized values.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\", \"type\": \"string\"}, \"kind\": {\"description\": \"Kind is a string value representing the REST resource this object represents.\\nServers may infer this from the endpoint the client submits requests to.\\nCannot be updated.\\nIn CamelCase.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\", \"type\": \"string\"}, \"metadata\": {\"type\": \"object\"}, \"spec\": {\"description\": \"Spec defines the desired state of BackendTLSPolicy.\", \"properties\": {\"options\": {\"additionalProperties\": {\"description\": \"AnnotationValue is the value of an annotation in Gateway API. This is used\\nfor validation of maps such as TLS options. This roughly matches Kubernetes\\nannotation validation, although the length validation in that case is based\\non the entire size of the annotations struct.\", \"maxLength\": 4096, \"minLength\": 0, \"type\": \"string\"}, \"description\": \"Options are a list of key/value pairs to enable extended TLS\\nconfiguration for each implementation. For example, configuring the\\nminimum TLS version or supported cipher suites.\\n\\nA set of common keys MAY be defined by the API in the future. To avoid\\nany ambiguity, implementation-specific definitions MUST use\\ndomain-prefixed names, such as `example.com/my-custom-option`.\\nUn-prefixed names are reserved for key names defined by Gateway API.\\n\\nSupport: Implementation-specific\", \"maxProperties\": 16, \"type\": \"object\"}, \"targetRefs\": {\"description\": \"TargetRefs identifies an API object to apply the policy to.\\nNote that this config applies to the entire referenced resource\\nby default, but this default may change in the future to provide\\na more granular application of the policy.\\n\\nTargetRefs must be _distinct_. This means either that:\\n\\n* They select different targets. If this is the case, then targetRef\\n  entries are distinct. In terms of fields, this means that the\\n  multi-part key defined by `group`, `kind`, and `name` must\\n  be unique across all targetRef entries in the BackendTLSPolicy.\\n* They select different sectionNames in the same target.\\n\\nWhen more than one BackendTLSPolicy selects the same target and\\nsectionName, implementations MUST determine precedence using the\\nfollowing criteria, continuing on ties:\\n\\n* The older policy by creation timestamp takes precedence. For\\n  example, a policy with a creation timestamp of \\\"2021-07-15\\n  01:02:03\\\" MUST be given precedence over a policy with a\\n  creation timestamp of \\\"2021-07-15 01:02:04\\\".\\n* The policy appearing first in alphabetical order by {namespace}/{name}.\\n  For example, a policy named `foo/bar` is given precedence over a\\n  policy named `foo/baz`.\\n\\nFor any BackendTLSPolicy that does not take precedence, the\\nimplementation MUST ensure the `Accepted` Condition is set to\\n`status: False`, with Reason `Conflicted`.\\n\\nImplementations SHOULD NOT support more than one targetRef at this\\ntime. Although the API technically allows for this, the current guidance\\nfor conflict resolution and status handling is lacking. Until that can be\\nclarified in a future release, the safest approach is to support a single\\ntargetRef.\\n\\nSupport Levels:\\n\\n* Extended: Kubernetes Service referenced by backendRefs used on a Route.\\n  - HTTPRoute, GRPCRoute, TLSRoute with termination\\n  - Filters that needs a backend of type Service, like Mirror and External Authorization\\n\\n* Implementation-Specific: Implementations MAY use BackendTLSPolicy for:\\n  - Services not referenced by any Route (e.g., infrastructure services)\\n  - Service mesh workload-to-service communication\\n  - Other resource types beyond Service\\n\\nImplementations SHOULD aim to ensure that BackendTLSPolicy behavior is consistent,\\neven outside of the extended HTTPRoute -(backendRef) -> Service path.\\nThey SHOULD clearly document how BackendTLSPolicy is interpreted in these\\nscenarios, including:\\n  - Which resources beyond Service are supported\\n  - How the policy is discovered and applied\\n  - Any implementation-specific semantics or restrictions\\n\\nNote that this config applies to the entire referenced resource\\nby default, but this default may change in the future to provide\\na more granular application of the policy.\", \"items\": {\"description\": \"LocalPolicyTargetReferenceWithSectionName identifies an API object to apply a\\ndirect policy to. This should be used as part of Policy resources that can\\ntarget single resources. For more information on how this policy attachment\\nmode works, and a sample Policy resource, refer to the policy attachment\\ndocumentation for Gateway API.\\n\\nNote: This should only be used for direct policy attachment when references\\nto SectionName are actually needed. In all other cases,\\nLocalPolicyTargetReference should be used.\", \"properties\": {\"group\": {\"description\": \"Group is the group of the target resource.\", \"maxLength\": 253, \"pattern\": \"^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\", \"type\": \"string\"}, \"kind\": {\"description\": \"Kind is kind of the target resource.\", \"maxLength\": 63, \"minLength\": 1, \"pattern\": \"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$\", \"type\": \"string\"}, \"name\": {\"description\": \"Name is the name of the target resource.\", \"maxLength\": 253, \"minLength\": 1, \"type\": \"string\"}, \"sectionName\": {\"description\": \"SectionName is the name of a section within the target resource. When\\nunspecified, this targetRef targets the entire resource. In the following\\nresources, SectionName is interpreted as the following:\\n\\n* Gateway: Listener name\\n* HTTPRoute: HTTPRouteRule name\\n* Service: Port name\\n\\nIf a SectionName is specified, but does not exist on the targeted object,\\nthe Policy must fail to attach, and the policy implementation should record\\na `ResolvedRefs` or similar Condition in the Policy's status.\", \"maxLength\": 253, \"minLength\": 1, \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\", \"type\": \"string\"}}, \"required\": [\"group\", \"kind\", \"name\"], \"type\": \"object\"}, \"maxItems\": 16, \"minItems\": 1, \"type\": \"array\", \"x-kubernetes-list-type\": \"atomic\", \"x-kubernetes-validations\": [{\"message\": \"sectionName must be specified when targetRefs includes 2 or more references to the same target\", \"rule\": \"self.all(p1, self.all(p2, p1.group == p2.group && p1.kind == p2.kind && p1.name == p2.name ? ((!has(p1.sectionName) || p1.sectionName == '') == (!has(p2.sectionName) || p2.sectionName == '')) : true))\"}, {\"message\": \"sectionName must be unique when targetRefs includes 2 or more references to the same target\", \"rule\": \"self.all(p1, self.exists_one(p2, p1.group == p2.group && p1.kind == p2.kind && p1.name == p2.name && (((!has(p1.sectionName) || p1.sectionName == '') && (!has(p2.sectionName) || p2.sectionName == '')) || (has(p1.sectionName) && has(p2.sectionName) && p1.sectionName == p2.sectionName))))\"}]}, \"validation\": {\"description\": \"Validation contains backend TLS validation configuration.\", \"properties\": {\"caCertificateRefs\": {\"description\": \"CACertificateRefs contains one or more references to Kubernetes objects that\\ncontain a PEM-encoded TLS CA certificate bundle, which is used to\\nvalidate a TLS handshake between the Gateway and backend Pod.\\n\\nIf CACertificateRefs is empty or unspecified, then WellKnownCACertificates must be\\nspecified. Only one of CACertificateRefs or WellKnownCACertificates may be specified,\\nnot both. If CACertificateRefs is empty or unspecified, the configuration for\\nWellKnownCACertificates MUST be honored instead if supported by the implementation.\\n\\nA CACertificateRef is invalid if:\\n\\n* It refers to a resource that cannot be resolved (e.g., the referenced resource\\n  does not exist) or is misconfigured (e.g., a ConfigMap does not contain a key\\n  named `ca.crt`). In this case, the Reason must be set to `InvalidCACertificateRef`\\n  and the Message of the Condition must indicate which reference is invalid and why.\\n\\n* It refers to an unknown or unsupported kind of resource. In this case, the Reason\\n  must be set to `InvalidKind` and the Message of the Condition must explain which\\n  kind of resource is unknown or unsupported.\\n\\n* It refers to a resource in another namespace. This may change in future\\n  spec updates.\\n\\nImplementations MAY choose to perform further validation of the certificate\\ncontent (e.g., checking expiry or enforcing specific formats). In such cases,\\nan implementation-specific Reason and Message must be set for the invalid reference.\\n\\nIn all cases, the implementation MUST ensure the `ResolvedRefs` Condition on\\nthe BackendTLSPolicy is set to `status: False`, with a Reason and Message\\nthat indicate the cause of the error. Connections using an invalid\\nCACertificateRef MUST fail, and the client MUST receive an HTTP 5xx error\\nresponse. If ALL CACertificateRefs are invalid, the implementation MUST also\\nensure the `Accepted` Condition on the BackendTLSPolicy is set to\\n`status: False`, with a Reason `NoValidCACertificate`.\\n\\nA single CACertificateRef to a Kubernetes ConfigMap kind has \\\"Core\\\" support.\\nImplementations MAY choose to support attaching multiple certificates to\\na backend, but this behavior is implementation-specific.\\n\\nSupport: Core - An optional single reference to a Kubernetes ConfigMap,\\nwith the CA certificate in a key named `ca.crt`.\\n\\nSupport: Implementation-specific - More than one reference, other kinds\\nof resources, or a single reference that includes multiple certificates.\", \"items\": {\"description\": \"LocalObjectReference identifies an API object within the namespace of the\\nreferrer.\\nThe API object must be valid in the cluster; the Group and Kind must\\nbe registered in the cluster for this reference to be valid.\\n\\nReferences to objects with invalid Group and Kind are not valid, and must\\nbe rejected by the implementation, with appropriate Conditions set\\non the containing object.\", \"properties\": {\"group\": {\"description\": \"Group is the group of the referent. For example, \\\"gateway.networking.k8s.io\\\".\\nWhen unspecified or empty string, core API group is inferred.\", \"maxLength\": 253, \"pattern\": \"^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\", \"type\": \"string\"}, \"kind\": {\"description\": \"Kind is kind of the referent. For example \\\"HTTPRoute\\\" or \\\"Service\\\".\", \"maxLength\": 63, \"minLength\": 1, \"pattern\": \"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$\", \"type\": \"string\"}, \"name\": {\"description\": \"Name is the name of the referent.\", \"maxLength\": 253, \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"group\", \"kind\", \"name\"], \"type\": \"object\"}, \"maxItems\": 8, \"type\": \"array\", \"x-kubernetes-list-type\": \"atomic\"}, \"hostname\": {\"description\": \"Hostname is used for two purposes in the connection between Gateways and\\nbackends:\\n\\n1. Hostname MUST be used as the SNI to connect to the backend (RFC 6066).\\n2. Hostname MUST be used for authentication and MUST match the certificate\\n   served by the matching backend, unless SubjectAltNames is specified.\\n3. If SubjectAltNames are specified, Hostname can be used for certificate selection\\n   but MUST NOT be used for authentication. If you want to use the value\\n   of the Hostname field for authentication, you MUST add it to the SubjectAltNames list.\\n\\nSupport: Core\", \"maxLength\": 253, \"minLength\": 1, \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\", \"type\": \"string\"}, \"subjectAltNames\": {\"description\": \"SubjectAltNames contains one or more Subject Alternative Names.\\nWhen specified the certificate served from the backend MUST\\nhave at least one Subject Alternate Name matching one of the specified SubjectAltNames.\\n\\nSupport: Extended\", \"items\": {\"description\": \"SubjectAltName represents Subject Alternative Name.\", \"properties\": {\"hostname\": {\"description\": \"Hostname contains Subject Alternative Name specified in DNS name format.\\nRequired when Type is set to Hostname, ignored otherwise.\\n\\nSupport: Core\", \"maxLength\": 253, \"minLength\": 1, \"pattern\": \"^(\\\\*\\\\.)?[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\", \"type\": \"string\"}, \"type\": {\"description\": \"Type determines the format of the Subject Alternative Name. Always required.\\n\\nSupport: Core\", \"enum\": [\"Hostname\", \"URI\"], \"type\": \"string\"}, \"uri\": {\"description\": \"URI contains Subject Alternative Name specified in a full URI format.\\nIt MUST include both a scheme (e.g., \\\"http\\\" or \\\"ftp\\\") and a scheme-specific-part.\\nCommon values include SPIFFE IDs like \\\"spiffe://mycluster.example.com/ns/myns/sa/svc1sa\\\".\\nRequired when Type is set to URI, ignored otherwise.\\n\\nSupport: Core\", \"maxLength\": 253, \"minLength\": 1, \"pattern\": \"^(([^:/?#]+):)(//([^/?#]*))([^?#]*)(\\\\?([^#]*))?(#(.*))?\", \"type\": \"string\"}}, \"required\": [\"type\"], \"type\": \"object\", \"x-kubernetes-validations\": [{\"message\": \"SubjectAltName element must contain Hostname, if Type is set to Hostname\", \"rule\": \"!(self.type == \\\"Hostname\\\" && (!has(self.hostname) || self.hostname == \\\"\\\"))\"}, {\"message\": \"SubjectAltName element must not contain Hostname, if Type is not set to Hostname\", \"rule\": \"!(self.type != \\\"Hostname\\\" && has(self.hostname) && self.hostname != \\\"\\\")\"}, {\"message\": \"SubjectAltName element must contain URI, if Type is set to URI\", \"rule\": \"!(self.type == \\\"URI\\\" && (!has(self.uri) || self.uri == \\\"\\\"))\"}, {\"message\": \"SubjectAltName element must not contain URI, if Type is not set to URI\", \"rule\": \"!(self.type != \\\"URI\\\" && has(self.uri) && self.uri != \\\"\\\")\"}]}, \"maxItems\": 5, \"type\": \"array\", \"x-kubernetes-list-type\": \"atomic\"}, \"wellKnownCACertificates\": {\"description\": \"WellKnownCACertificates specifies whether a well-known set of CA certificates\\nmay be used in the TLS handshake between the gateway and backend pod.\\n\\nIf WellKnownCACertificates is unspecified or empty (\\\"\\\"), then CACertificateRefs\\nmust be specified with at least one entry for a valid configuration. Only one of\\nCACertificateRefs or WellKnownCACertificates may be specified, not both.\\nIf an implementation does not support the WellKnownCACertificates field, or\\nthe supplied value is not recognized, the implementation MUST ensure the\\n`Accepted` Condition on the BackendTLSPolicy is set to `status: False`, with\\na Reason `Invalid`.\\n\\nValid values include:\\n* \\\"System\\\" - indicates that well-known system CA certificates should be used.\\n\\nImplementations MAY define their own sets of CA certificates. Such definitions\\nMUST use an implementation-specific, prefixed name, such as\\n`mycompany.com/my-custom-ca-certificates`.\\n\\nSupport: Implementation-specific\", \"maxLength\": 253, \"minLength\": 1, \"pattern\": \"^(System|([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/([A-Za-z0-9][-A-Za-z0-9_.]{0,61})?[A-Za-z0-9]))$\", \"type\": \"string\"}}, \"required\": [\"hostname\"], \"type\": \"object\", \"x-kubernetes-validations\": [{\"message\": \"must not contain both CACertificateRefs and WellKnownCACertificates\", \"rule\": \"!(has(self.caCertificateRefs) && size(self.caCertificateRefs) > 0 && has(self.wellKnownCACertificates) && self.wellKnownCACertificates != \\\"\\\")\"}, {\"message\": \"must specify either CACertificateRefs or WellKnownCACertificates\", \"rule\": \"(has(self.caCertificateRefs) && size(self.caCertificateRefs) > 0 || has(self.wellKnownCACertificates) && self.wellKnownCACertificates != \\\"\\\")\"}]}}, \"required\": [\"targetRefs\", \"validation\"], \"type\": \"object\"}, \"status\": {\"description\": \"Status defines the current state of BackendTLSPolicy.\", \"properties\": {\"ancestors\": {\"description\": \"Ancestors is a list of ancestor resources (usually Gateways) that are\\nassociated with the policy, and the status of the policy with respect to\\neach ancestor. When this policy attaches to a parent, the controller that\\nmanages the parent and the ancestors MUST add an entry to this list when\\nthe controller first sees the policy and SHOULD update the entry as\\nappropriate when the relevant ancestor is modified.\\n\\nNote that choosing the relevant ancestor is left to the Policy designers;\\nan important part of Policy design is designing the right object level at\\nwhich to namespace this status.\\n\\nNote also that implementations MUST ONLY populate ancestor status for\\nthe Ancestor resources they are responsible for. Implementations MUST\\nuse the ControllerName field to uniquely identify the entries in this list\\nthat they are responsible for.\\n\\nNote that to achieve this, the list of PolicyAncestorStatus structs\\nMUST be treated as a map with a composite key, made up of the AncestorRef\\nand ControllerName fields combined.\\n\\nA maximum of 16 ancestors will be represented in this list. An empty list\\nmeans the Policy is not relevant for any ancestors.\\n\\nIf this slice is full, implementations MUST NOT add further entries.\\nInstead they MUST consider the policy unimplementable and signal that\\non any related resources such as the ancestor that would be referenced\\nhere. For example, if this list was full on BackendTLSPolicy, no\\nadditional Gateways would be able to reference the Service targeted by\\nthe BackendTLSPolicy.\", \"items\": {\"description\": \"PolicyAncestorStatus describes the status of a route with respect to an\\nassociated Ancestor.\\n\\nAncestors refer to objects that are either the Target of a policy or above it\\nin terms of object hierarchy. For example, if a policy targets a Service, the\\nPolicy's Ancestors are, in order, the Service, the HTTPRoute, the Gateway, and\\nthe GatewayClass. Almost always, in this hierarchy, the Gateway will be the most\\nuseful object to place Policy status on, so we recommend that implementations\\nSHOULD use Gateway as the PolicyAncestorStatus object unless the designers\\nhave a _very_ good reason otherwise.\\n\\nIn the context of policy attachment, the Ancestor is used to distinguish which\\nresource results in a distinct application of this policy. For example, if a policy\\ntargets a Service, it may have a distinct result per attached Gateway.\\n\\nPolicies targeting the same resource may have different effects depending on the\\nancestors of those resources. For example, different Gateways targeting the same\\nService may have different capabilities, especially if they have different underlying\\nimplementations.\\n\\nFor example, in BackendTLSPolicy, the Policy attaches to a Service that is\\nused as a backend in a HTTPRoute that is itself attached to a Gateway.\\nIn this case, the relevant object for status is the Gateway, and that is the\\nancestor object referred to in this status.\\n\\nNote that a parent is also an ancestor, so for objects where the parent is the\\nrelevant object for status, this struct SHOULD still be used.\\n\\nThis struct is intended to be used in a slice that's effectively a map,\\nwith a composite key made up of the AncestorRef and the ControllerName.\", \"properties\": {\"ancestorRef\": {\"description\": \"AncestorRef corresponds with a ParentRef in the spec that this\\nPolicyAncestorStatus struct describes the status of.\", \"properties\": {\"group\": {\"default\": \"gateway.networking.k8s.io\", \"description\": \"Group is the group of the referent.\\nWhen unspecified, \\\"gateway.networking.k8s.io\\\" is inferred.\\nTo set the core API group (such as for a \\\"Service\\\" kind referent),\\nGroup must be explicitly set to \\\"\\\" (empty string).\\n\\nSupport: Core\", \"maxLength\": 253, \"pattern\": \"^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\", \"type\": \"string\"}, \"kind\": {\"default\": \"Gateway\", \"description\": \"Kind is kind of the referent.\\n\\nThere are two kinds of parent resources with \\\"Core\\\" support:\\n\\n* Gateway (Gateway conformance profile)\\n* Service (Mesh conformance profile, ClusterIP Services only)\\n\\nSupport for other resources is Implementation-Specific.\", \"maxLength\": 63, \"minLength\": 1, \"pattern\": \"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$\", \"type\": \"string\"}, \"name\": {\"description\": \"Name is the name of the referent.\\n\\nSupport: Core\", \"maxLength\": 253, \"minLength\": 1, \"type\": \"string\"}, \"namespace\": {\"description\": \"Namespace is the namespace of the referent. When unspecified, this refers\\nto the local namespace of the Route.\\n\\nNote that there are specific rules for ParentRefs which cross namespace\\nboundaries. Cross-namespace references are only valid if they are explicitly\\nallowed by something in the namespace they are referring to. For example:\\nGateway has the AllowedRoutes field, and ReferenceGrant provides a\\ngeneric way to enable any other kind of cross-namespace reference.\\n\\nSupport: Core\", \"maxLength\": 63, \"minLength\": 1, \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?$\", \"type\": \"string\"}, \"port\": {\"description\": \"Port is the network port this Route targets. It can be interpreted\\ndifferently based on the type of parent resource.\\n\\nWhen the parent resource is a Gateway, this targets all listeners\\nlistening on the specified port that also support this kind of Route(and\\nselect this Route). It's not recommended to set `Port` unless the\\nnetworking behaviors specified in a Route must apply to a specific port\\nas opposed to a listener(s) whose port(s) may be changed. When both Port\\nand SectionName are specified, the name and port of the selected listener\\nmust match both specified values.\\n\\nImplementations MAY choose to support other parent resources.\\nImplementations supporting other types of parent resources MUST clearly\\ndocument how/if Port is interpreted.\\n\\nFor the purpose of status, an attachment is considered successful as\\nlong as the parent resource accepts it partially. For example, Gateway\\nlisteners can restrict which Routes can attach to them by Route kind,\\nnamespace, or hostname. If 1 of 2 Gateway listeners accept attachment\\nfrom the referencing Route, the Route MUST be considered successfully\\nattached. If no Gateway listeners accept attachment from this Route,\\nthe Route MUST be considered detached from the Gateway.\\n\\nSupport: Extended\", \"format\": \"int32\", \"maximum\": 65535, \"minimum\": 1, \"type\": \"integer\"}, \"sectionName\": {\"description\": \"SectionName is the name of a section within the target resource. In the\\nfollowing resources, SectionName is interpreted as the following:\\n\\n* Gateway: Listener name. When both Port (experimental) and SectionName\\nare specified, the name and port of the selected listener must match\\nboth specified values.\\n* Service: Port name. When both Port (experimental) and SectionName\\nare specified, the name and port of the selected listener must match\\nboth specified values.\\n\\nImplementations MAY choose to support attaching Routes to other resources.\\nIf that is the case, they MUST clearly document how SectionName is\\ninterpreted.\\n\\nWhen unspecified (empty string), this will reference the entire resource.\\nFor the purpose of status, an attachment is considered successful if at\\nleast one section in the parent resource accepts it. For example, Gateway\\nlisteners can restrict which Routes can attach to them by Route kind,\\nnamespace, or hostname. If 1 of 2 Gateway listeners accept attachment from\\nthe referencing Route, the Route MUST be considered successfully\\nattached. If no Gateway listeners accept attachment from this Route, the\\nRoute MUST be considered detached from the Gateway.\\n\\nSupport: Core\", \"maxLength\": 253, \"minLength\": 1, \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\", \"type\": \"string\"}}, \"required\": [\"name\"], \"type\": \"object\"}, \"conditions\": {\"description\": \"Conditions describes the status of the Policy with respect to the given Ancestor.\", \"items\": {\"description\": \"Condition contains details for one aspect of the current state of this API Resource.\", \"properties\": {\"lastTransitionTime\": {\"description\": \"lastTransitionTime is the last time the condition transitioned from one status to another.\\nThis should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.\", \"format\": \"date-time\", \"type\": \"string\"}, \"message\": {\"description\": \"message is a human readable message indicating details about the transition.\\nThis may be an empty string.\", \"maxLength\": 32768, \"type\": \"string\"}, \"observedGeneration\": {\"description\": \"observedGeneration represents the .metadata.generation that the condition was set based upon.\\nFor instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date\\nwith respect to the current state of the instance.\", \"format\": \"int64\", \"minimum\": 0, \"type\": \"integer\"}, \"reason\": {\"description\": \"reason contains a programmatic identifier indicating the reason for the condition's last transition.\\nProducers of specific condition types may define expected values and meanings for this field,\\nand whether the values are considered a guaranteed API.\\nThe value should be a CamelCase string.\\nThis field may not be empty.\", \"maxLength\": 1024, \"minLength\": 1, \"pattern\": \"^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$\", \"type\": \"string\"}, \"status\": {\"description\": \"status of the condition, one of True, False, Unknown.\", \"enum\": [\"True\", \"False\", \"Unknown\"], \"type\": \"string\"}, \"type\": {\"description\": \"type of condition in CamelCase or in foo.example.com/CamelCase.\", \"maxLength\": 316, \"pattern\": \"^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$\", \"type\": \"string\"}}, \"required\": [\"lastTransitionTime\", \"message\", \"reason\", \"status\", \"type\"], \"type\": \"object\"}, \"maxItems\": 8, \"minItems\": 1, \"type\": \"array\", \"x-kubernetes-list-map-keys\": [\"type\"], \"x-kubernetes-list-type\": \"map\"}, \"controllerName\": {\"description\": \"ControllerName is a domain/path string that indicates the name of the\\ncontroller that wrote this status. This corresponds with the\\ncontrollerName field on GatewayClass.\\n\\nExample: \\\"example.net/gateway-controller\\\".\\n\\nThe format of this field is DOMAIN \\\"/\\\" PATH, where DOMAIN and PATH are\\nvalid Kubernetes names\\n(https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names).\\n\\nControllers MUST populate this field when writing status. Controllers should ensure that\\nentries to status populated with their ControllerName are cleaned up when they are no\\nlonger necessary.\", \"maxLength\": 253, \"minLength\": 1, \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*\\\\/[A-Za-z0-9\\\\/\\\\-._~%!$&'()*+,;=:]+$\", \"type\": \"string\"}}, \"required\": [\"ancestorRef\", \"conditions\", \"controllerName\"], \"type\": \"object\"}, \"maxItems\": 16, \"type\": \"array\", \"x-kubernetes-list-type\": \"atomic\"}}, \"required\": [\"ancestors\"], \"type\": \"object\"}}, \"required\": [\"spec\"], \"type\": \"object\"}"
+  },
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
+}
