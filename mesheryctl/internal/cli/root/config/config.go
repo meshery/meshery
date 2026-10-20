@@ -134,20 +134,20 @@ func (mc *MesheryCtlConfig) GetCurrentContextName() string {
 func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		mesheryctllogger.Log.Fatal(err)
+		return nil, err
 	}
 
-	return currentContext, err
+	return currentContext, nil
 }
 
 // GetContext validates and returns a pointer to the named context.
 func (mc *MesheryCtlConfig) GetContext(name string) (*Context, error) {
 	context, err := mc.CheckIfGivenContextIsValid(name)
 	if err != nil {
-		mesheryctllogger.Log.Fatal(err)
+		return nil, err
 	}
 
-	return context, err
+	return context, nil
 }
 
 // SetCurrentContext sets current context and returns contents of the current context
