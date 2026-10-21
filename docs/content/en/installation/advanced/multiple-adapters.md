@@ -26,7 +26,9 @@ Each `mesheryctl` context in your meshconfig (`~/.meshery/config.yaml`) lists th
 
 You can run more than one instance of the same Meshery Adapter, for example two instances of the Meshery Adapter for Istio. A `mesheryctl` context deploys at most one instance of each adapter, so run the additional instance yourself, then register its host and port with Meshery Server in one of these ways:
 - In Meshery UI, go to **Lifecycle** > **Adapters** and enter the host and port of the additional adapter.
-- Add its `host:port` to Meshery Server's `ADAPTER_URLS` environment variable. See [Server Environment Variables]({{< ref "installation/advanced/environment-variables.md" >}}).
+- Add its `host:port` to Meshery Server's `ADAPTER_URLS` environment variable.
+
+Use a `host:port` that Meshery Server itself can resolve and reach. An address such as `localhost:10000` on your workstation does not work when Meshery Server runs in a container or a cluster. See [Server Environment Variables]({{< ref "installation/advanced/environment-variables.md" >}}).
 
 #### Configuration: Choosing an adapter while installing Mesheryctl
 

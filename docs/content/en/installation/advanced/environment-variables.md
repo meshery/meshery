@@ -51,8 +51,9 @@ https://cloud.meshery.io,https://perf.smp-spec.io,https://cloud.layer5.io,https:
 ```
 
 The Helm chart and the Docker Compose file ship this same list. If you pin
-`PROVIDER`, include that provider's base URL in this list, or the server cannot
-resolve the provider at startup and refuses to start.
+`PROVIDER` to a Remote Provider, include that provider's base URL in this list,
+or the server cannot resolve the provider at startup and refuses to start. The
+built-in `Local` provider (legacy alias `None`) needs no base URL.
 
 ## Feature flags and runtime behavior
 
@@ -79,7 +80,7 @@ The build or deployment pipeline usually injects these variables; end users rare
 
 ## Platform-provided environment variables
 
-Meshery Server reads these values from the hosting environment when they are present. Kubernetes injects them automatically, so you rarely need to set them yourself.
+Meshery Server reads these values from the hosting environment when they are present. Kubernetes injects `KUBERNETES_SERVICE_HOST` and `KUBERNETES_SERVICE_PORT` into every pod, and `HOME` comes from the process environment, so you rarely need to set any of them yourself.
 
 | Variable | Default | Description | Example |
 | --- | --- | --- | --- |

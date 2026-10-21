@@ -114,8 +114,8 @@ Docker Deployment: Watchtower updates this component in accordance with the user
         <ul> 
             <li><code>system start</code> on Docker downloads <code>meshery.yaml</code> again for your context's version, rewrites its services from your context, and pulls newer container images. Pass <code>--skip-update</code> to skip the image pull.</li>
             <li><code>system restart</code> also pulls newer container images, unless you pass <code>--skip-update</code>.</li>
-            <li><code>system update</code> pulls new Meshery container images and manifests for both Docker and Kubernetes deployments. It does not update <code>mesheryctl</code> itself.</li>
-            <li><code>system reset</code> resets <code>meshery.yaml</code> (Docker) or the operator manifests (Kubernetes) to the defaults for your context's version.</li>
+            <li><code>system update</code> pulls new Meshery container images on Docker. On Kubernetes, it applies the latest Meshery Helm chart, unless you pass <code>--skip-reset</code>. It does not update <code>mesheryctl</code> itself.</li>
+            <li><code>system reset</code> replaces the current context with the default context, keeping only its platform (the version becomes <code>latest</code>). It then downloads a fresh <code>meshery.yaml</code> and the Meshery Operator manifests on Docker, or the Meshery Server and Operator manifests on Kubernetes.</li>
             <li><code>system context</code> manages <code>config.yaml</code>, which determines the contents of <code>meshery.yaml</code>.</li>
             <li><code>mesheryctl</code> should generally check for the latest release and inform the user.</li>
         </ul>

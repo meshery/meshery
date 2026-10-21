@@ -72,9 +72,9 @@ To install Meshery with Helm 3, see the [Helm Installation]({{< ref "installatio
 
 ## Installation: Manual Steps
 
-You can also generate a self-contained kubeconfig for your Minikube cluster and upload it to Meshery yourself. Export the current context, with its certificates embedded:
+You can also generate a self-contained kubeconfig for your Minikube cluster and upload it to Meshery yourself. Export the `minikube` context, with its certificates embedded:
 
-{{< code code="kubectl config view --minify --flatten > config_minikube.yaml" >}}
+{{< code code="kubectl config view --minify --flatten --context minikube > config_minikube.yaml" >}}
 
 The file looks like this, with your own server address and certificate data:
 
@@ -100,7 +100,7 @@ users:
 
 _Note_: Make sure that `current-context` is `minikube`.
 
-Then upload `config_minikube.yaml` in Meshery UI under **Lifecycle** > **Connections** > **Add Cluster**. Meshery connects to the cluster. Take a look at the [Meshery guides]({{< ref "guides/_index.md" >}}) for advanced usage tips.
+Then upload `config_minikube.yaml` in Meshery UI: go to **Lifecycle** > **Connections**, click **Create Connection**, choose **Kubernetes**, and upload the file in the **Import Kubeconfig** step. See [Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}). Take a look at the [Meshery guides]({{< ref "guides/_index.md" >}}) for advanced usage tips.
 
 # Post-Installation Steps
 
