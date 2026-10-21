@@ -643,7 +643,7 @@ func StringInSlice(str string, slice []string) bool {
 
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
 func GetID(mesheryServerUrl, configuration string) ([]string, error) {
-	url := mesheryServerUrl + "/api/" + configuration + "?"
+	url := mesheryServerUrl + configurationAPIPath(configuration) + "?"
 	if configuration == "pattern" {
 		url += "populate=pattern_file&"
 	}
@@ -683,7 +683,7 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 
 // GetName returns a of name:id from meshery server endpoint /api/{configurations}
 func GetName(mesheryServerUrl, configuration string) (map[string]string, error) {
-	url := mesheryServerUrl + "/api/" + configuration + "?page_size=10000"
+	url := mesheryServerUrl + configurationAPIPath(configuration) + "?page_size=10000"
 	configType := configuration + "s"
 	nameIdMap := make(map[string]string)
 	req, err := NewRequest("GET", url, nil)
@@ -719,7 +719,7 @@ func GetName(mesheryServerUrl, configuration string) (map[string]string, error) 
 
 // DeleteConfiguration deletes configuration from meshery server endpoint /api/{configurations}/{id}
 func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
-	url := mesheryServerUrl + "/api/" + configuration + "/" + id
+	url := mesheryServerUrl + configurationAPIPath(configuration) + "/" + id
 	req, err := NewRequest("DELETE", url, nil)
 	if err != nil {
 		return err
@@ -730,6 +730,13 @@ func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
 		return err
 	}
 	return nil
+}
+
+func configurationAPIPath(configuration string) string {
+	if configuration == "filter" {
+		return "/api/content/filters"
+	}
+	return "/api/" + configuration
 }
 
 // ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID

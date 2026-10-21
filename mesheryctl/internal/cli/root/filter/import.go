@@ -62,7 +62,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 			return err
 		}
 
-		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"
+		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/content/filters"
 
 		if len(args) == 0 {
 			return ErrFilterURIRequired(subCmdUsed)

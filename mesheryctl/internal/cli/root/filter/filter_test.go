@@ -50,7 +50,7 @@ func TestFilterCmdCount(t *testing.T) {
 			Args:             []string{"--count"},
 			ExpectedResponse: "list.filter.count.output.golden",
 			Fixture:          "filter.list.api.response.golden",
-			URL:              "/api/filter",
+			URL:              "/api/content/filters",
 			ExpectError:      false,
 		},
 	}
