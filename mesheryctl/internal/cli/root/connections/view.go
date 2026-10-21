@@ -113,7 +113,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 				if c.Name == "" {
 					return c.ID.String()
 				}
-				return strings.NewReplacer(" ", "_", "/", "_").Replace(fmt.Sprintf("%v", c.Name))
+				return strings.NewReplacer(" ", "_", "/", "_", "\\", "_").Replace(fmt.Sprintf("%v", c.Name))
 			}(*selectedConnection)
 
 			fileName := fmt.Sprintf("connection_%s.%s", connectionString, strings.ToLower(connectionViewFlagsProvided.outputFormat))

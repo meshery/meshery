@@ -122,3 +122,17 @@ func TestConnectionViewSaveReplacesSlashInName(t *testing.T) {
 
 	utils.AssertFileExists(t, filepath.Join(mesheryDir, "connection_mini_kube.yaml"))
 }
+
+// TestConnectionViewSaveReplacesBackslashInName verifies that a backslash in
+// the connection name does not turn the file name into a path on Windows.
+func TestConnectionViewSaveReplacesBackslashInName(t *testing.T) {
+	mesheryDir := utils.IsolateMesheryHome(t)
+
+	run := connectionViewRun(utils.CallerDir(t), []string{"view", connectionId, "--save"})
+	run.Mocks[0].Response = "view.connection.backslash.api.response.golden"
+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "connection_mini_kube.yaml"))
+}
