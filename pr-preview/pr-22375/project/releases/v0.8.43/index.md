@@ -1,0 +1,15 @@
+# v0.8.43
+
+date: 2025-02-28
+
+
+
+## What's New
+## 🔤 General
+- fix gomod @aabidsofi19 (#13811)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@aabidsofi19
+

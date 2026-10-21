@@ -1,0 +1,18 @@
+# v0.7.34
+
+date: 2024-03-19
+
+
+
+## What's New
+## 🔤 General
+- fix model registration getting blocked due to error @MUzairS15 (#10584)
+
+## ⌨️ Meshery CLI
+
+- Feat: Update model generator @Yashsharma1911 (#10576)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@MUzairS15, @Yashsharma1911 and @leecalcote

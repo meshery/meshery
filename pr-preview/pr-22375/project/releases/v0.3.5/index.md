@@ -1,0 +1,11 @@
+# v0.3.5
+
+date: 2020-01-13
+
+
+
+### What's new?
+
+- Mesheryctl
+  - Removal of `init` as a command exposed to users. This command's functionality is used internal to `mesheryctl start`. A new `start --check` command will provide preflight check functionality in `init`'s place.
+

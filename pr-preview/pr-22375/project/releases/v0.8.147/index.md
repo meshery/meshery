@@ -1,0 +1,15 @@
+# v0.8.147
+
+date: 2025-10-29
+
+
+
+## What's New
+## 🔤 General
+* CI: propagate docker tag with release version to Playground deployment
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@aabidsofi19
+

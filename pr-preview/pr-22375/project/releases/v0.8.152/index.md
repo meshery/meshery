@@ -1,0 +1,15 @@
+# v0.8.152
+
+date: 2025-11-05
+
+
+
+## What's New
+## 🔤 General
+- publish design download event to provider @aabidsofi19 (#16368)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@aabidsofi19 and @leecalcote
+

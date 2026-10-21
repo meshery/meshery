@@ -1,0 +1,13 @@
+# v0.5.31
+
+date: 2021-07-05
+
+
+
+## What's new
+## 🔤 General
+- Image pull policy updated (#3389)
+
+## 👨🏽‍💻 Contributors
+Thank you to our contributors for making this release possible:
+@kumarabd and @leecalcote

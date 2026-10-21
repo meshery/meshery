@@ -1,0 +1,12 @@
+# v0.0.3
+
+date: 2019-03-30
+
+
+
+**What's new?**
+
+- Initial version with support of Meshery adapters.
+
+* Release of a pre-alpha version of Istio adapter.
+
