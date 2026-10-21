@@ -194,7 +194,7 @@ func withheldMessage(comp component.ComponentDefinition, failedDependency, desig
 			Summary: []patterns.DeploymentMessagePerComp{
 				{
 					Kind:       comp.Component.Kind,
-					Model:      modelName(comp),
+					Model:      patternutils.ModelName(&comp),
 					CompName:   comp.DisplayName,
 					DesignName: designName,
 					Success:    false,
@@ -215,7 +215,7 @@ func dispatchFailureMessage(comp component.ComponentDefinition, err error, desig
 			Summary: []patterns.DeploymentMessagePerComp{
 				{
 					Kind:       comp.Component.Kind,
-					Model:      modelName(comp),
+					Model:      patternutils.ModelName(&comp),
 					CompName:   comp.DisplayName,
 					DesignName: designName,
 					Success:    false,
@@ -241,7 +241,7 @@ func noOutcomeMessage(comp component.ComponentDefinition, designName string, isD
 			Summary: []patterns.DeploymentMessagePerComp{
 				{
 					Kind:       comp.Component.Kind,
-					Model:      modelName(comp),
+					Model:      patternutils.ModelName(&comp),
 					CompName:   comp.DisplayName,
 					DesignName: designName,
 					Success:    false,
@@ -250,14 +250,6 @@ func noOutcomeMessage(comp component.ComponentDefinition, designName string, isD
 			},
 		},
 	}
-}
-
-func modelName(comp component.ComponentDefinition) string {
-	if comp.Model == nil {
-		return ""
-	}
-
-	return comp.Model.Name
 }
 
 // processAnnotations sets the non-semantic components of a design aside so that
