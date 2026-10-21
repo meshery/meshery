@@ -38,11 +38,12 @@ On macOS or Linux, run the following command to download and install `mesheryctl
 
 To run Meshery on your local Docker host instead, replace `PLATFORM=kubernetes` with `PLATFORM=docker`. If you omit `PLATFORM`, the script prompts you to choose a platform.
 
-On Windows, install `mesheryctl` with <a href="https://scoop.sh">Scoop</a> and start Meshery:
+On Windows, add the Meshery bucket to <a href="https://scoop.sh">Scoop</a>, install `mesheryctl`, and start Meshery:
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-  <div class="clipboardjs">scoop install mesheryctl
+  <div class="clipboardjs">scoop bucket add mesheryctl https://github.com/meshery/scoop-bucket.git
+scoop install mesheryctl
 mesheryctl system start</div>
   </div>
 </pre>
