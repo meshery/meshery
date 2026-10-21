@@ -38,7 +38,7 @@ Before you begin, ensure you have the following:
    
    * 3.1 [Deploy ASO Operator](#31-deploy-aso-operator)
    * 3.2 [Create Azure Credentials Secret](#32-create-azure-credentials-secret)
-4. [Deploy ASO Operator](#4-deploy-azure-service-operator)
+4. [Deploy Azure Service Operator](#4-deploy-azure-service-operator)
 5. [Start deploying azure resources](#5-start-deployment-of-azure-resources)
 6. [Conclusion](#6-conclusion)
 

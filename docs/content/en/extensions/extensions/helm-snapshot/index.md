@@ -38,7 +38,7 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
    </div>
 </pre>
 
-3. Verify the installation by running:
+2. Verify the installation by running:
 
 
 <pre class="codeblock-pre">
@@ -48,8 +48,6 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
 </pre>
 
    You should see the snapshot listed as `helm-snapshot`.
-
-4. Set up the required environment variables.
 
 ### Usage
 

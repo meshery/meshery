@@ -11,7 +11,7 @@ The Meshery ecosystem is designed for extensibility, with the core platform (`me
 This guide outlines the key areas of compatibility and provides a general process for extension developers to follow when Meshery's underlying frameworks are updated.
 
 {{% alert color="info" title="Meshery's Bill of Materials" %}}
-Meshery's version is defined by its [Bill of Materials (BOM)]({{< ref "project/contributing/_index.md#general-contribution-flow" >}}), which specifies versions for Go, Node.js, and other key dependencies. Extension developers should reference the BOM to ensure alignment.
+Meshery's version is defined by its Bill of Materials (BOM), which specifies versions for Go, Node.js, and other key dependencies. Extension developers should reference the BOM to ensure alignment.
 {{% /alert %}}
 
 ## Key Areas for Compatibility
