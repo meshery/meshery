@@ -11,7 +11,7 @@ import {
   CustomTooltip,
   styled,
 } from '@sistent/sistent';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppBarComponent from './styledComponents/AppBar';
 import {
   Delete as DeleteIcon,
@@ -53,7 +53,6 @@ export default function DesignConfigurator() {
     loadDesign,
     updateDesignData,
   } = useDesignLifecycle();
-  const formReference = useRef();
 
   const router = useRouter();
   const { design_id } = router.query;
@@ -247,8 +246,9 @@ export default function DesignConfigurator() {
                     <LazyComponentForm
                       key={`${trimmedComponent.component.kind}-${idx}`}
                       component={trimmedComponent}
-                      onSettingsChange={onSettingsChange(trimmedComponent, formReference)}
-                      reference={formReference}
+                      createSettingsChangeHandler={(formReference) =>
+                        onSettingsChange(trimmedComponent, formReference)
+                      }
                       disabled={hasInvalidSchema}
                     />
                   );

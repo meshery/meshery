@@ -29,12 +29,23 @@ export const Heading = styled(Typography)(({ theme }) => ({
  *
  * @param {{
  * component: Types.ComponentDefinition
+ * createSettingsChangeHandler: (reference: React.MutableRefObject<any>) => Function
  * }} param0
  * @returns
  */
-export default function LazyComponentForm({ component, disabled, ...otherprops }) {
+export default function LazyComponentForm({
+  component,
+  disabled,
+  createSettingsChangeHandler,
+  ...otherprops
+}) {
   const [expanded, setExpanded] = React.useState(false);
+  // Once opened, the form stays mounted so its reference key (the component id in
+  // the design) and its form state survive collapsing and re-expanding the accordion.
+  const [hasBeenExpanded, setHasBeenExpanded] = React.useState(false);
   const [schemaSet, setSchemaSet] = React.useState({});
+  // Each form gets its own reference so edits are written to the matching component.
+  const formReference = React.useRef();
   const { notify } = useNotification();
 
   async function expand(state) {
@@ -44,8 +55,9 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
     }
 
     setExpanded(true);
+    setHasBeenExpanded(true);
     const {
-      component: { vesion: apiVersion, kind },
+      component: { version: apiVersion, kind },
       model,
     } = component;
     const {
@@ -80,7 +92,7 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
             {disabled && <em style={{ opacity: 0.5 }}>(contains invalid schema)</em>}
           </Heading>
         </AccordionSummary>
-        <LazyAccordionDetails expanded={expanded}>
+        <LazyAccordionDetails mounted={hasBeenExpanded}>
           {isEmpty(schemaSet) ? (
             <CircularProgress />
           ) : (
@@ -88,6 +100,8 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
               formData={{}}
               color={component?.styles?.primaryColor}
               {...otherprops}
+              onSettingsChange={createSettingsChangeHandler?.(formReference)}
+              reference={formReference}
               schemaSet={schemaSet}
             />
           )}
@@ -98,7 +112,7 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
 }
 
 function LazyAccordionDetails(props) {
-  if (!props.expanded) return <AccordionDetails />;
+  if (!props.mounted) return <AccordionDetails />;
 
   // @ts-ignore // LEE: This behavior is more like what we need - https://codesandbox.io/s/upbeat-tesla-uchsb?file=/src/MyAccordion.js
   return <AccordionDetails>{props.children}</AccordionDetails>;
