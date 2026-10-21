@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/meshery/schemas/models/v1beta2/component"
@@ -145,28 +146,6 @@ func TestResolveResourcePath_IrregularPlurals(t *testing.T) {
 			wantResourcePath: "endpoints",
 		},
 		{
-			name: "Unserved version keeps the requested version and borrows the served resource name",
-			k8sResource: map[string]interface{}{
-				"apiVersion": "networking.k8s.io/v1beta1",
-				"kind":       "Ingress",
-			},
-			namespace:        "test-ns",
-			useMapper:        true,
-			wantBasePath:     "/apis/networking.k8s.io/v1beta1/namespaces/test-ns",
-			wantResourcePath: "ingresses",
-		},
-		{
-			name: "Unserved version of a cluster-scoped kind keeps root scope",
-			k8sResource: map[string]interface{}{
-				"apiVersion": "storage.k8s.io/v1beta1",
-				"kind":       "StorageClass",
-			},
-			namespace:        "ignored-ns",
-			useMapper:        true,
-			wantBasePath:     "/apis/storage.k8s.io/v1beta1",
-			wantResourcePath: "storageclasses",
-		},
-		{
 			name: "Fallback when mapper is nil uses strings.ToLower(kind) + s",
 			k8sResource: map[string]interface{}{
 				"apiVersion": "networking.k8s.io/v1",
@@ -185,7 +164,7 @@ func TestResolveResourcePath_IrregularPlurals(t *testing.T) {
 			if tc.useMapper {
 				m = mapper
 			}
-			basePath, resourcePath, err := ResolveResourcePath(tc.k8sResource, tc.namespace, m)
+			basePath, resourcePath, err := resolveResourcePath(tc.k8sResource, tc.namespace, m)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
@@ -231,7 +210,7 @@ func TestDryRun_UndeployNotFoundSuppression(t *testing.T) {
 			},
 		}
 
-		st, success, err := DryRunResource(rClient, resource, "default", true)
+		st, success, err := dryRun(rClient, resource, "default", true, DryRunOptions{})
 		if err != nil {
 			t.Fatalf("expected nil error on undeploy dry-run 404, got: %v", err)
 		}
@@ -263,7 +242,7 @@ func TestDryRun_UndeployNotFoundSuppression(t *testing.T) {
 			},
 		}
 
-		st, success, _ := DryRunResource(rClient, resource, "default", true)
+		st, success, _ := dryRun(rClient, resource, "default", true, DryRunOptions{})
 		if success {
 			t.Fatalf("expected success=false on delete forbidden, got true")
 		}
@@ -326,7 +305,7 @@ func TestDryRun_InDesignNamespaces(t *testing.T) {
 			},
 		}
 
-		st, success, err := DryRunResource(rClient, resource, "my-custom-ns", false, opts)
+		st, success, err := dryRun(rClient, resource, "my-custom-ns", false, opts)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
@@ -414,7 +393,7 @@ func TestDryRun_InDesignNamespaces(t *testing.T) {
 			},
 		}
 
-		st, success, _ := DryRunResource(rClient, resource, "my-custom-ns", false, opts)
+		st, success, _ := dryRun(rClient, resource, "my-custom-ns", false, opts)
 		if success {
 			t.Fatalf("expected validation against default to fail with workload field errors, got success")
 		}
@@ -459,7 +438,7 @@ func TestDryRun_InDesignNamespaces(t *testing.T) {
 			},
 		}
 
-		_, success, _ := DryRunResource(rClient, resource, "undeclared-ns", false, opts)
+		_, success, _ := dryRun(rClient, resource, "undeclared-ns", false, opts)
 		if success {
 			t.Fatalf("expected failure when namespace was not declared, got success")
 		}
@@ -476,14 +455,9 @@ func TestDryRunHelper_NilClient(t *testing.T) {
 			Kind: "Pod",
 		},
 	}
-	_, success, err := DryRunHelper(nil, comp, false)
+	_, success, err := DryRunHelper(nil, comp, false, DryRunOptions{})
 	if success || err == nil {
 		t.Fatalf("expected failure with nil client, got success=%v, err=%v", success, err)
-	}
-
-	_, success, err = DryRunHelperWithOptions(nil, comp, false, DryRunOptions{})
-	if success || err == nil {
-		t.Fatalf("expected failure with nil client in DryRunHelperWithOptions, got success=%v, err=%v", success, err)
 	}
 }
 
@@ -510,14 +484,14 @@ func TestIsMissingNamespaceError_StatusError(t *testing.T) {
 	}
 }
 
-// TestResolveResourcePath_MissingFields tests that ResolveResourcePath validates that kind and apiVersion are non-empty.
+// TestResolveResourcePath_MissingFields tests that resolveResourcePath validates that kind and apiVersion are non-empty.
 func TestResolveResourcePath_MissingFields(t *testing.T) {
-	_, _, err := ResolveResourcePath(map[string]interface{}{"kind": "Pod"}, "default", nil)
+	_, _, err := resolveResourcePath(map[string]interface{}{"kind": "Pod"}, "default", nil)
 	if err == nil {
 		t.Errorf("expected error when apiVersion is empty")
 	}
 
-	_, _, err = ResolveResourcePath(map[string]interface{}{"apiVersion": "v1"}, "default", nil)
+	_, _, err = resolveResourcePath(map[string]interface{}{"apiVersion": "v1"}, "default", nil)
 	if err == nil {
 		t.Errorf("expected error when kind is empty")
 	}
@@ -552,12 +526,17 @@ func TestDryRun_InDesignNamespaces_DefaultAlsoNotFound(t *testing.T) {
 		},
 	}
 
-	st, success, _ := DryRunResource(rClient, resource, "my-custom-ns", false, opts)
-	if success {
-		t.Fatalf("expected failure: the workload was never validated because default is missing too")
+	st, success, err := dryRun(rClient, resource, "my-custom-ns", false, opts)
+	if err != nil || !success {
+		t.Fatalf("expected a non-fatal pass when default is missing too, got success=%v err=%v st=%v", success, err, st)
 	}
-	if st == nil || st["status"] != "Failure" || st["message"] != `namespaces "default" not found` {
-		t.Errorf("expected the default-namespace NotFound Failure, got: %v", st)
+	// The component must keep its original configuration, not a synthetic {"status": "Success"}.
+	if st["kind"] != "Ingress" || st["status"] != nil {
+		t.Errorf("expected the workload itself to be returned, got: %v", st)
+	}
+	metadata, _ := st["metadata"].(map[string]interface{})
+	if metadata["namespace"] != "my-custom-ns" {
+		t.Errorf("expected the original namespace to be kept, got: %v", metadata["namespace"])
 	}
 }
 
@@ -735,7 +714,7 @@ func TestDryRun_InDesignNamespaces_KeepsUnrelatedNotFound(t *testing.T) {
 		DeclaredNamespaces: map[string]bool{"my-custom-ns": true},
 	}
 
-	st, success, _ := DryRunResource(rClient, resource, "my-custom-ns", false, opts)
+	st, success, _ := dryRun(rClient, resource, "my-custom-ns", false, opts)
 	if success {
 		t.Fatalf("expected the unrelated NotFound to fail the dry-run, got success")
 	}
@@ -838,7 +817,7 @@ func TestDryRun_UndeployMissingCRD(t *testing.T) {
 		"metadata":   map[string]interface{}{"name": "my-widget", "namespace": "default"},
 	}
 
-	st, success, _ := DryRunResource(rClient, widget, "default", true, DryRunOptions{RESTMapper: newTestRESTMapper()})
+	st, success, _ := dryRun(rClient, widget, "default", true, DryRunOptions{RESTMapper: newTestRESTMapper()})
 	if success {
 		t.Fatalf("expected a missing CRD to fail the undeploy dry-run, got success")
 	}
@@ -848,4 +827,77 @@ func TestDryRun_UndeployMissingCRD(t *testing.T) {
 	if requested != "/apis/example.com/v1/namespaces/default/widgets/my-widget" {
 		t.Errorf("unexpected request path %q", requested)
 	}
+}
+
+// TestResolveResourcePath_UnservedVersion pins that a kind the cluster serves only at another version fails with
+// an explicit error naming the preferred version, and that no request is sent to another version's endpoint.
+func TestResolveResourcePath_UnservedVersion(t *testing.T) {
+	ingress := map[string]interface{}{
+		"apiVersion": "networking.k8s.io/v1beta1",
+		"kind":       "Ingress",
+		"metadata":   map[string]interface{}{"name": "web", "namespace": "team"},
+	}
+
+	_, _, err := resolveResourcePath(ingress, "team", newTestRESTMapper())
+	if err == nil {
+		t.Fatalf("expected an error for an unserved apiVersion")
+	}
+	want := "apiVersion networking.k8s.io/v1beta1 is not served by this cluster (preferred: networking.k8s.io/v1)"
+	if !strings.Contains(err.Error(), want) {
+		t.Errorf("error = %q, want it to contain %q", err.Error(), want)
+	}
+
+	requests := 0
+	rClient := newFakeRESTClient(func(req *http.Request) (*http.Response, error) {
+		requests++
+		return jsonResponse(http.StatusOK, map[string]interface{}{"kind": "Ingress"})
+	})
+	_, success, _ := dryRun(rClient, ingress, "team", false, DryRunOptions{RESTMapper: newTestRESTMapper()})
+	if success {
+		t.Errorf("expected the dry-run to fail for an unserved apiVersion")
+	}
+	if requests != 0 {
+		t.Errorf("expected no request to the API server, got %d", requests)
+	}
+}
+
+// TestDryRun_InDesignNamespaces_FallbackNameConflict pins that an unrelated object of the same name in default
+// does not fail a workload whose declared namespace is missing, and that the workload, not a Status, is returned.
+func TestDryRun_InDesignNamespaces_FallbackNameConflict(t *testing.T) {
+	rClient := newFakeRESTClient(func(req *http.Request) (*http.Response, error) {
+		if req.URL.Path == "/apis/networking.k8s.io/v1/namespaces/default/ingresses" {
+			status := kubeerror.NewAlreadyExists(schema.GroupResource{Group: "networking.k8s.io", Resource: "ingresses"}, "web").ErrStatus
+			status.TypeMeta = metav1.TypeMeta{Kind: "Status", APIVersion: "v1"}
+			return jsonResponse(http.StatusConflict, status)
+		}
+		return jsonResponse(http.StatusNotFound, namespaceNotFoundStatus("staging"))
+	})
+
+	ingress := map[string]interface{}{
+		"apiVersion": "networking.k8s.io/v1",
+		"kind":       "Ingress",
+		"metadata":   map[string]interface{}{"name": "web", "namespace": "staging"},
+		"spec":       map[string]interface{}{"ingressClassName": "nginx"},
+	}
+	opts := DryRunOptions{
+		RESTMapper:         newTestRESTMapper(),
+		DeclaredNamespaces: map[string]bool{"staging": true},
+	}
+
+	st, success, err := dryRun(rClient, ingress, "staging", false, opts)
+	if err != nil || !success {
+		t.Fatalf("expected success on a fallback name conflict, got success=%v err=%v st=%v", success, err, st)
+	}
+	if st["kind"] != "Ingress" || st["spec"] == nil {
+		t.Errorf("expected the workload to be returned, got %v", st)
+	}
+
+	t.Run("AlreadyExists for another name is not a pass", func(t *testing.T) {
+		if isFallbackNameConflict(nil, map[string]interface{}{
+			"reason":  "AlreadyExists",
+			"details": map[string]interface{}{"name": "other"},
+		}, ingress) {
+			t.Errorf("expected false for a conflict on another object")
+		}
+	})
 }

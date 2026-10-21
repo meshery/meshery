@@ -487,7 +487,7 @@ func getNamespaceNameFromComponent(cmp *component.ComponentDefinition) string {
 // dryRunComponent executes dry-run validation for a single component against a Kubernetes cluster client,
 // applying discovery REST mapping and in-design declared namespace suppression options.
 func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition, isDelete bool, mapper meta.RESTMapper, declaredNamespaces map[string]bool) (patterncore.DryRunResponseWrapper, error) {
-	st, ok, err := k8s.DryRunHelperWithOptions(cl, *cmd, isDelete, k8s.DryRunOptions{
+	st, ok, err := k8s.DryRunHelper(cl, *cmd, isDelete, k8s.DryRunOptions{
 		RESTMapper:         mapper,
 		DeclaredNamespaces: declaredNamespaces,
 	})

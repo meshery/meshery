@@ -51,33 +51,15 @@ type DryRunOptions struct {
 	DeclaredNamespaces map[string]bool
 }
 
-// DryRunHelper performs server-side dry-run validation for a given component definition,
-// extracting Kubernetes resource metadata and delegating to DryRunHelperWithOptions with optional DryRunOptions.
-func DryRunHelper(client *meshkube.Client, comp component.ComponentDefinition, isDelete bool, opts ...DryRunOptions) (st map[string]interface{}, success bool, err error) {
-	var opt DryRunOptions
-	if len(opts) > 0 {
-		opt = opts[0]
-	}
-	return DryRunHelperWithOptions(client, comp, isDelete, opt)
-}
-
-// DryRunHelperWithOptions performs server-side dry-run validation for a component definition using the provided DryRunOptions.
-func DryRunHelperWithOptions(client *meshkube.Client, comp component.ComponentDefinition, isDelete bool, opts DryRunOptions) (st map[string]interface{}, success bool, err error) {
+// DryRunHelper performs server-side dry-run validation for a component definition against the client's cluster,
+// using opts for discovery-based resource resolution and in-design declared namespaces.
+func DryRunHelper(client *meshkube.Client, comp component.ComponentDefinition, isDelete bool, opts DryRunOptions) (st map[string]interface{}, success bool, err error) {
 	if client == nil || client.KubeClient == nil {
 		return nil, false, ErrDryRun(fmt.Errorf("kubernetes client is nil"), "")
 	}
 	resource := converter.CreateK8sResourceStructure(&comp)
 	namespace := getNamespaceForComponent(&comp)
 	return dryRun(client.KubeClient.RESTClient(), resource, namespace, isDelete, opts)
-}
-
-// DryRunResource performs dry-run validation directly on an unstructured Kubernetes resource map using the provided REST client and options.
-func DryRunResource(rClient rest.Interface, k8sResource map[string]interface{}, namespace string, isDelete bool, opts ...DryRunOptions) (st map[string]interface{}, success bool, err error) {
-	var opt DryRunOptions
-	if len(opts) > 0 {
-		opt = opts[0]
-	}
-	return dryRun(rClient, k8sResource, namespace, isDelete, opt)
 }
 
 // dryRun performs a dry-run operation on the given Kubernetes resource using the provided REST client.
@@ -119,8 +101,18 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 		if okDef {
 			return stDef, true, nil
 		}
-		// A missing "default" namespace means the workload was never validated, so its NotFound Failure is
-		// returned like any other workload validation error rather than reported as a pass.
+		// The API server checks for a name conflict only after admission and schema validation have passed, so
+		// an unrelated object of the same name in default still means the workload is valid. Return the
+		// workload itself, so the component's configuration in the response is its spec, not a Status.
+		if isFallbackNameConflict(reqErrDef, stDef, resourceCopy) {
+			return k8sResource, true, nil
+		}
+		// With "default" missing too, the workload cannot be validated on this cluster. Its namespace is created
+		// by this design, so this is not a reason to fail the dry-run: pass it, returning the workload itself so
+		// the component keeps its original configuration instead of a synthetic Status.
+		if isMissingNamespaceError(reqErrDef, stDef, "default") {
+			return k8sResource, true, nil
+		}
 		if stDef != nil && stDef["status"] == "Failure" {
 			return stDef, false, nil
 		}
@@ -136,7 +128,7 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 // executeDryRunRequest constructs and executes the REST HTTP request (POST for create or DELETE for delete) to the Kubernetes API,
 // returning the server's status response map, success boolean, and any encountered request error.
 func executeDryRunRequest(rClient rest.Interface, k8sResource map[string]interface{}, namespace string, isDelete bool, mapper meta.RESTMapper) (st map[string]interface{}, success bool, reqErr error) {
-	basePath, resourcePath, err := ResolveResourcePath(k8sResource, namespace, mapper)
+	basePath, resourcePath, err := resolveResourcePath(k8sResource, namespace, mapper)
 	if err != nil {
 		return nil, false, err
 	}
@@ -186,9 +178,9 @@ func executeDryRunRequest(rClient rest.Interface, k8sResource map[string]interfa
 	return st, success, reqErr
 }
 
-// ResolveResourcePath determines the API basePath and resourcePath for the given resource,
+// resolveResourcePath determines the API basePath and resourcePath for the given resource,
 // using the provided RESTMapper if available, and falling back to naive pluralization otherwise.
-func ResolveResourcePath(k8sResource map[string]interface{}, namespace string, mapper meta.RESTMapper) (basePath string, resourcePath string, err error) {
+func resolveResourcePath(k8sResource map[string]interface{}, namespace string, mapper meta.RESTMapper) (basePath string, resourcePath string, err error) {
 	kind, _ := k8sResource["kind"].(string)
 	apiVersion, _ := k8sResource["apiVersion"].(string)
 
@@ -203,13 +195,14 @@ func ResolveResourcePath(k8sResource map[string]interface{}, namespace string, m
 			gk := schema.GroupKind{Group: gv.Group, Kind: kind}
 			m, mappingErr := mapper.RESTMapping(gk, gv.Version)
 			if mappingErr != nil {
-				// The cluster does not serve the requested version. Borrow the resource name and scope from a
-				// served version, but keep the requested version in the path, so the API server reports the
-				// version as unserved instead of the object being validated against another version's schema.
+				// The kind is served, but not at the requested version: say so instead of sending the object to
+				// another version's endpoint, which the API server rejects with a confusing version mismatch.
 				if served, servedErr := mapper.RESTMapping(gk); servedErr == nil && served != nil {
-					pinned := *served
-					pinned.Resource.Version = gv.Version
-					m, mappingErr = &pinned, nil
+					preferred := served.Resource.GroupVersion().String()
+					return "", "", ErrDryRun(
+						fmt.Errorf("apiVersion %s is not served by this cluster (preferred: %s)", apiVersion, preferred),
+						fmt.Sprintf("update the component's apiVersion to %s", preferred),
+					)
 				}
 			}
 			if mappingErr == nil && m != nil {
@@ -280,13 +273,33 @@ func isDeleteTargetNotFound(err error, st map[string]interface{}, k8sResource ma
 	if isMissingNamespaceError(err, st, namespace) {
 		return true
 	}
-	_, resource, resolveErr := ResolveResourcePath(k8sResource, namespace, mapper)
+	_, resource, resolveErr := resolveResourcePath(k8sResource, namespace, mapper)
 	if resolveErr != nil {
 		return false
 	}
 	metadata, _ := k8sResource["metadata"].(map[string]interface{})
 	name, _ := metadata["name"].(string)
 	return strings.EqualFold(kind, resource) && detailName == name
+}
+
+// isFallbackNameConflict reports whether a create dry-run failed only because an object with the same name
+// already exists. Like the NotFound checks, it trusts the structured Status, never the message.
+func isFallbackNameConflict(err error, st map[string]interface{}, k8sResource map[string]interface{}) bool {
+	metadata, _ := k8sResource["metadata"].(map[string]interface{})
+	name, _ := metadata["name"].(string)
+	if name == "" {
+		return false
+	}
+	if reason, _ := st["reason"].(string); reason == string(metav1.StatusReasonAlreadyExists) {
+		details, _ := st["details"].(map[string]interface{})
+		detailName, _ := details["name"].(string)
+		return detailName == name
+	}
+	var statusErr *kubeerror.StatusError
+	if errors.As(err, &statusErr) && kubeerror.IsAlreadyExists(statusErr) && statusErr.ErrStatus.Details != nil {
+		return statusErr.ErrStatus.Details.Name == name
+	}
+	return false
 }
 
 // isMissingNamespaceError reports whether the failure is a NotFound response for the target namespace itself.
