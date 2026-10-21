@@ -69,8 +69,8 @@ tags:
     description: Operations related to Blowhorn profiles.
   - name: Claim_claims
     description: Operations related to claims on resources.
-  - name: ContentPiece_contentPieces
-    description: Operations related to content pieces.
+  - name: ContentItem_contentItems
+    description: Operations related to content items.
   - name: Design_designs
     description: Operations related to designs and infrastructure patterns
   - name: Design_github
