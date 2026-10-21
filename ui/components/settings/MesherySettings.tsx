@@ -30,7 +30,15 @@ import {
 } from '../../api/meshmodel';
 
 import { Keys } from '@meshery/schemas/permissions';
-import { ADAPTERS, RESET, OVERVIEW, REGISTRY, CONTROLLERS } from '@/constants/navigator';
+import {
+  ADAPTERS,
+  RESET,
+  OVERVIEW,
+  REGISTRY,
+  CONTROLLERS,
+  GRAFANA,
+  PROMETHEUS,
+} from '@/constants/navigator';
 import MesheryControllersConfig from './MesheryControllersConfig';
 import { removeDuplicateVersions } from '../registry/helper';
 import MeshModelComponent from '../registry/MeshModelComponent';
@@ -39,6 +47,19 @@ import MesheryConfigurationChart from '../dashboard/charts/MesheryConfigurationC
 import ConnectionStatsChart from '../dashboard/charts/ConnectionCharts';
 import { useSelector } from 'react-redux';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+
+export const VALID_SETTINGS_CATEGORIES = [
+  OVERVIEW,
+  ADAPTERS,
+  REGISTRY,
+  CONTROLLERS,
+  RESET,
+] as const;
+
+export type SettingsCategory = (typeof VALID_SETTINGS_CATEGORIES)[number];
+
+export const isValidSettingsCategory = (category?: string): category is SettingsCategory =>
+  Boolean(category && (VALID_SETTINGS_CATEGORIES as readonly string[]).includes(category));
 
 const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
@@ -72,15 +93,20 @@ type SettingsRouter = {
 const settingsRouter = (router: ReturnType<typeof useRouter>): SettingsRouter => {
   const { query, push: pushRoute, route } = router;
 
-  const selectedSettingsCategory = query.settingsCategory;
-  const selectedTab = query.tab;
+  const rawCategory = Array.isArray(query.settingsCategory)
+    ? query.settingsCategory[0]
+    : query.settingsCategory;
+  const rawTab = Array.isArray(query.tab) ? query.tab[0] : query.tab;
+
+  const selectedSettingsCategory = isValidSettingsCategory(rawCategory) ? rawCategory : OVERVIEW;
+  const selectedTab = rawTab;
 
   const handleChangeSettingsCategory = (_settingsCategory) => {
     if (query.settingsCategory === _settingsCategory) {
       return;
     }
     pushRoute(
-      `${route}?settingsCategory=${_settingsCategory || query.settingsCategory}`,
+      `${route}?settingsCategory=${_settingsCategory || selectedSettingsCategory}`,
       undefined,
       { shallow: true },
     );
@@ -164,6 +190,35 @@ const MesherySettings = () => {
   }, []);
 
   useEffect(() => {
+    if (!canViewSettings) {
+      return;
+    }
+
+    const rawCategory = Array.isArray(router.query?.settingsCategory)
+      ? router.query.settingsCategory[0]
+      : router.query?.settingsCategory;
+    const rawTab = Array.isArray(router.query?.tab) ? router.query.tab[0] : router.query?.tab;
+
+    const isGrafanaTab =
+      typeof rawTab === 'string' && rawTab.toLowerCase() === GRAFANA.toLowerCase();
+    const isPrometheusTab =
+      typeof rawTab === 'string' && rawTab.toLowerCase() === PROMETHEUS.toLowerCase();
+
+    // Legacy redirection: Metrics category or Prometheus/Grafana tabs previously under Settings
+    // have been migrated to dedicated Telemetry routes (/telemetry/metrics and /telemetry/charts).
+    if (
+      rawCategory?.toLowerCase() === 'metrics' ||
+      (!rawCategory && (isPrometheusTab || isGrafanaTab))
+    ) {
+      const target = isGrafanaTab ? '/telemetry/charts' : '/telemetry/metrics';
+      if (typeof router.replace === 'function') {
+        router.replace(target);
+      } else {
+        router.push(target);
+      }
+      return;
+    }
+
     const { selectedSettingsCategory } = settingsRouter(router);
     if (selectedSettingsCategory && selectedSettingsCategory !== state.tabVal) {
       setState((prevState) => ({
@@ -171,7 +226,7 @@ const MesherySettings = () => {
         tabVal: selectedSettingsCategory,
       }));
     }
-  }, [router]);
+  }, [router, canViewSettings]);
 
   const handleChange = (val) => {
     const { handleChangeSettingsCategory } = settingsRouter(router);
