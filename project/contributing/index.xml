@@ -145,20 +145,11 @@ downloads and HTTP redirects, which use &lt;code&gt;w.Write&lt;/code&gt; or &lt;
 rather than &lt;code&gt;http.Error&lt;/code&gt; and so are not governed by the lint rule.
 This rule and the other repo-specific Go lint gates are listed in
 &lt;a href="/project/contributing/contributing-lint/"&gt;Go Lint Rules&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Meshery Documentation Structure and Organization</title><link>/project/contributing/contributing-docs-structure/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-docs-structure/</guid><description>&lt;p&gt;Providing well-structured, easy-to-navigate documentation tailored for a diverse audience—from beginners to experts.&lt;/p&gt;
+&lt;p&gt;Each page in Meshery Docs is exactly one content type: a tutorial, a how-to (task) guide, a concept, or reference. See &lt;a href="/project/contributing/contributing-docs/content-types/"&gt;Choosing a Content Type&lt;/a&gt; to decide which type a page is.&lt;/p&gt;
 &lt;h2 id="target-audience"&gt;
 	Target Audience
 &lt;/h2&gt;
-&lt;p&gt;We first identify &lt;strong&gt;who&lt;/strong&gt; this documentation serves before diving into how it’s organized. By clarifying different user personas, we can better direct them to relevant sections:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Users&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;New Users&lt;/strong&gt;: Individuals just getting started with Meshery, needing a straightforward, guided setup.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Advanced Users&lt;/strong&gt;: Those who already have some experience and want deeper insights or specialized use cases.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Contributors &amp;amp; System Integrators&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>Setting up Meshery Development Environment on Windows</title><link>/project/contributing/meshery-windows/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/meshery-windows/</guid><description>&lt;p&gt;You can use one of the following three approaches to setup a Meshery development environment in Windows:&lt;/p&gt;
+&lt;p&gt;We first identify &lt;strong&gt;who&lt;/strong&gt; this documentation serves before diving into how it’s organized. By clarifying different user personas, we can better direct them to relevant sections:&lt;/p&gt;</description></item><item><title>Setting up Meshery Development Environment on Windows</title><link>/project/contributing/meshery-windows/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/meshery-windows/</guid><description>&lt;p&gt;You can use one of the following three approaches to setup a Meshery development environment in Windows:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Using WSL or WSL2 (Recommended)&lt;/li&gt;
 &lt;li&gt;Natively (directly) on Windows&lt;/li&gt;
