@@ -20,7 +20,7 @@ linkTitle: Documentation
         <div class="btn-primary">Overview & Installation</div>
     </a>
     <ul>
-        <li>🚀 <a href="{{< ref "installation/quick-start/index.md" >}}">Quick Start</a> , <a href="{{< ref "project/_index.md" >}}">Overview</a>, and <a href="{{< ref "project/FAQ.md" >}}">FAQs</a></li>
+        <li>🚀 <a href="{{< ref "installation/quick-start/index.md" >}}">Quick Start</a> , <a href="{{< ref "installation/overview.md" >}}">Overview</a>, and <a href="{{< ref "project/FAQ.md" >}}">FAQs</a></li>
     </ul>
     <details>
       <summary>Installation</summary>
