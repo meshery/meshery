@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
@@ -32,12 +33,14 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 	if err != nil {
 		return machines.NoOp, nil, models.ErrInitLogger(err)
 	}
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	userUUID := user.ID
+	userUUID, sysID := machines.ExtractActorIDs(ctx)
+	provider, _ := machines.ExtractProvider(ctx)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().WithCategory("connection").WithAction("update").WithDescription("Failed to interact with the connection.")
+	if userUUID != core.Uuid(uuid.Nil) {
+		eventBuilder.ActedUpon(userUUID)
+	}
+	machines.ApplyEventAttribution(eventBuilder, userUUID, sysID)
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
@@ -47,14 +50,15 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 
 	contextID := machinectx.K8sContext.ID
 
-	go func() {
+	if machinectx.MesheryCtrlsHelper != nil {
+		go func() {
+			machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker).
+				UndeployDeployedOperators(machinectx.OperatorTracker, contextID).
+				RemoveCtxControllerHandler(ctx, contextID)
 
-		machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-			UndeployDeployedOperators(machinectx.OperatorTracker, contextID).
-			RemoveCtxControllerHandler(ctx, contextID)
-
-		machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)
-	}()
+			machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)
+		}()
+	}
 
 	_ctx, cancel := context.WithTimeout(ctx, 100*time.Millisecond)
 	defer cancel()
@@ -62,7 +66,13 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		// machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker)
 	})
 
-	go models.FlushMeshSyncData(ctx, machinectx.K8sContext, provider, machinectx.EventBroadcaster, user.ID.String(), sysID, log)
+	var userIDStr string
+	if userUUID != core.Uuid(uuid.Nil) {
+		userIDStr = userUUID.String()
+	}
+	if provider != nil {
+		go models.FlushMeshSyncData(ctx, machinectx.K8sContext, provider, machinectx.EventBroadcaster, userIDStr, sysID, log)
+	}
 
 	return machines.NoOp, nil, nil
 }

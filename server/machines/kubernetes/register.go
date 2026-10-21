@@ -23,17 +23,23 @@ func (ra *RegisterAction) ExecuteOnEntry(ctx context.Context, machineCtx interfa
 }
 
 func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	userUUID := user.ID
-	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
+	userUUID, sysID := machines.ExtractActorIDs(ctx)
+	provider, ok := machines.ExtractProvider(ctx)
+	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").WithDescription("Failed to interact with the connection.")
+	machines.ApplyEventAttribution(eventBuilder, userUUID, sysID)
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
+
+	if !ok {
+		errProvider := machines.ErrNilProvider(fmt.Errorf("provider is missing or invalid"))
+		eventBuilder.WithMetadata(map[string]interface{}{"error": errProvider})
+		return machines.NoOp, eventBuilder.Build(), errProvider
+	}
+
 
 	machinectx.log.Debug("executing ping test for connection", machinectx.K8sContext.ConnectionID)
 	err = machinectx.K8sContext.PingTest()
@@ -48,9 +54,15 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		return machines.NotFound, eventBuilder.Build(), err
 	}
 
-	context := []*models.K8sContext{&machinectx.K8sContext}
+	if machinectx.K8sCompRegHelper != nil {
+		context := []*models.K8sContext{&machinectx.K8sContext}
+		var userIDStr string
+		if userUUID != core.Uuid(uuid.Nil) {
+			userIDStr = userUUID.String()
+		}
 
-	machinectx.K8sCompRegHelper.UpdateContexts(context).RegisterComponents(context, []models.K8sRegistrationFunction{meshmodelcore.RegisterK8sMeshModelComponents}, machinectx.RegistryManager, machinectx.EventBroadcaster, provider, user.ID.String(), true)
+		machinectx.K8sCompRegHelper.UpdateContexts(context).RegisterComponents(context, []models.K8sRegistrationFunction{meshmodelcore.RegisterK8sMeshModelComponents}, machinectx.RegistryManager, machinectx.EventBroadcaster, provider, userIDStr, true)
+	}
 
 	return machines.Connect, nil, nil
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
+	controllersconfig "github.com/meshery/schemas/models/v1alpha1/controllers_config"
 	"github.com/spf13/viper"
 )
 
@@ -25,17 +26,25 @@ func (ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interfac
 }
 
 func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	userUUID := user.ID
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	userUUID, sysID := machines.ExtractActorIDs(ctx)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	eventBuilder := events.NewEvent().WithCategory("connection").WithAction("update").WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	if userUUID != core.Uuid(uuid.Nil) {
+		eventBuilder.ActedUpon(userUUID)
+	}
+	machines.ApplyEventAttribution(eventBuilder, userUUID, sysID)
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
+	}
+
+	provider, ok := machines.ExtractProvider(ctx)
+	if !ok {
+		errProvider := ErrConnectAction(fmt.Errorf("provider is missing or invalid"))
+		eventBuilder.WithMetadata(map[string]interface{}{"error": errProvider})
+		return machines.NoOp, eventBuilder.Build(), errProvider
 	}
 
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
@@ -70,15 +79,20 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	// defaults. The merged document is stashed on the controllers helper so
 	// the embedded meshsync run picks up its knobs, and is applied to the
 	// cluster after the operator machinery attaches (operator mode).
-	mergedControllersConfig, _, errResolve := machinectx.MesheryCtrlsHelper.ResolveControllersConfigForConnection(connection.Metadata)
-	controllersConfigResolved := errResolve == nil
-	if errResolve != nil {
-		// The defaults store failed (a malformed override alone degrades
-		// inside the resolver and still yields the Settings defaults):
-		// connect with layer-free defaults and skip the cluster apply
-		// below, since the intended configuration is unknown.
-		machinectx.log.Error(errResolve)
-		mergedControllersConfig = nil
+	var mergedControllersConfig *controllersconfig.MesheryControllersConfig
+	var controllersConfigResolved bool
+	if machinectx.MesheryCtrlsHelper != nil {
+		var errResolve error
+		mergedControllersConfig, _, errResolve = machinectx.MesheryCtrlsHelper.ResolveControllersConfigForConnection(connection.Metadata)
+		controllersConfigResolved = errResolve == nil
+		if errResolve != nil {
+			// The defaults store failed (a malformed override alone degrades
+			// inside the resolver and still yields the Settings defaults):
+			// connect with layer-free defaults and skip the cluster apply
+			// below, since the intended configuration is unknown.
+			machinectx.log.Error(errResolve)
+			mergedControllersConfig = nil
+		}
 	}
 
 	// The layered document (per-connection override over the server-wide
@@ -95,41 +109,47 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		connections.MeshsyncDeploymentModeFromString(viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE")),
 	).Mode
 
-	go func() {
-		// SetControllersConfig first: AddCtxControllerHandlers constructs the
-		// operator controller handler with the Helm chart version this document
-		// resolves to (operator.version), and captures it there.
-		ctrlHelper := machinectx.MesheryCtrlsHelper.
-			SetControllersConfig(mergedControllersConfig).
-			SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
-			AddCtxControllerHandlers(machinectx.K8sContext).
-			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-			DeployUndeployedOperators(machinectx.OperatorTracker, machinectx.K8sContext.ID)
-		ctrlHelper.AddMeshsyncDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)
+	if machinectx.MesheryCtrlsHelper != nil {
+		go func() {
+			// SetControllersConfig first: AddCtxControllerHandlers constructs the
+			// operator controller handler with the Helm chart version this document
+			// resolves to (operator.version), and captures it there.
+			ctrlHelper := machinectx.MesheryCtrlsHelper.
+				SetControllersConfig(mergedControllersConfig).
+				SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
+				AddCtxControllerHandlers(machinectx.K8sContext).
+				UpdateOperatorsStatusMap(machinectx.OperatorTracker).
+				DeployUndeployedOperators(machinectx.OperatorTracker, machinectx.K8sContext.ID)
+			var sysIDVal core.Uuid
+			if sysID != nil {
+				sysIDVal = *sysID
+			}
+			ctrlHelper.AddMeshsyncDataHandlers(ctx, machinectx.K8sContext, userUUID, sysIDVal, provider)
 
-		// Operator mode: best-effort apply of the explicitly-set
-		// configuration onto the cluster's MeshSync/Broker custom resources
-		// and the MeshSync deployment. An empty resolved configuration is
-		// applied too: it withdraws previously-applied fields (cleared
-		// while the connection was down) and heals drift. Targets that do
-		// not exist yet (the operator is still coming up) are skipped and
-		// re-applied on the next connect or configuration change.
-		if meshsyncDeploymentMode == connections.MeshsyncDeploymentModeOperator && controllersConfigResolved {
-			kubeClient, errClient := machinectx.K8sContext.GenerateKubeHandler()
-			if errClient != nil {
-				machinectx.log.Error(ErrConnectAction(errClient))
-				return
+			// Operator mode: best-effort apply of the explicitly-set
+			// configuration onto the cluster's MeshSync/Broker custom resources
+			// and the MeshSync deployment. An empty resolved configuration is
+			// applied too: it withdraws previously-applied fields (cleared
+			// while the connection was down) and heals drift. Targets that do
+			// not exist yet (the operator is still coming up) are skipped and
+			// re-applied on the next connect or configuration change.
+			if meshsyncDeploymentMode == connections.MeshsyncDeploymentModeOperator && controllersConfigResolved {
+				kubeClient, errClient := machinectx.K8sContext.GenerateKubeHandler()
+				if errClient != nil {
+					machinectx.log.Error(ErrConnectAction(errClient))
+					return
+				}
+				// Detached context: the connect request's context ends with the
+				// HTTP request, while this apply runs alongside the async
+				// operator deployment.
+				applyCtx, cancelApply := context.WithTimeout(context.Background(), 2*time.Minute)
+				defer cancelApply()
+				if _, errApply := models.ApplyControllersConfigToCluster(applyCtx, machinectx.log, kubeClient, mergedControllersConfig); errApply != nil {
+					machinectx.log.Error(errApply)
+				}
 			}
-			// Detached context: the connect request's context ends with the
-			// HTTP request, while this apply runs alongside the async
-			// operator deployment.
-			applyCtx, cancelApply := context.WithTimeout(context.Background(), 2*time.Minute)
-			defer cancelApply()
-			if _, errApply := models.ApplyControllersConfigToCluster(applyCtx, machinectx.log, kubeClient, mergedControllersConfig); errApply != nil {
-				machinectx.log.Error(errApply)
-			}
-		}
-	}()
+		}()
+	}
 	return machines.NoOp, nil, nil
 }
 

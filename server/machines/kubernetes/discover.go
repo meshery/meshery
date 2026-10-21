@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
@@ -21,12 +22,14 @@ func (da *DiscoverAction) ExecuteOnEntry(ctx context.Context, machineCtx interfa
 }
 
 func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	userUUID := user.ID
-	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	userUUID, sysID := machines.ExtractActorIDs(ctx)
+	provider, ok := machines.ExtractProvider(ctx)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	eventBuilder := events.NewEvent().WithCategory("connection").WithAction("update").WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	if userUUID != core.Uuid(uuid.Nil) {
+		eventBuilder.ActedUpon(userUUID)
+	}
+	machines.ApplyEventAttribution(eventBuilder, userUUID, sysID)
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
@@ -34,8 +37,20 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
+	if !ok {
+		errProvider := machines.ErrNilProvider(fmt.Errorf("provider is missing or invalid"))
+		eventBuilder.WithMetadata(map[string]interface{}{"error": errProvider})
+		return machines.NoOp, eventBuilder.Build(), errProvider
+	}
+
 	k8sContext := machinectx.K8sContext
 	handler := machinectx.clientset
+	if handler == nil {
+		errHandler := fmt.Errorf("kubernetes clientset is nil")
+		return machines.NotFound, eventBuilder.WithDescription(fmt.Sprintf("Could not assign server id, clientset is nil for context %s", k8sContext.Name)).WithMetadata(map[string]interface{}{
+			"error": errHandler,
+		}).Build(), errHandler
+	}
 
 	err = k8sContext.AssignServerID(handler)
 	if err != nil {
@@ -48,6 +63,7 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 	if err != nil {
 		machinectx.log.Info("unable to set kubernes server version, continuing without assigning version")
 	}
+
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
 	// Persist the freshly-resolved context (k8sContext, which now carries the
