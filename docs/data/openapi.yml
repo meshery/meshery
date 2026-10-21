@@ -48208,13 +48208,9 @@ paths:
                               What the environment exists for. `user` is an ordinary environment that people create to
                               logically group Connections and their Credentials. `administrative` designates an
                               environment the platform itself provisions to hold organization-level configuration, and
-                              which resolvers of that configuration therefore trust. `profile` is deprecated: profiles
+                              which resolvers of that configuration therefore trust. Profiles are not environments: they
                               are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles`
-                              and assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`), so new
-                              profiles must not be stored as environments. The value stays in the enum only so
-                              environments written with it before the profile construct existed still read back; it is
-                              an ordinary, non-privileged environment, carries no authority, and will be removed once no
-                              consumer stores it. Consumers should move those environments to profiles.
+                              and assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                               Absent means `user`. Nothing may read an unset or unrecognised value as administrative:
@@ -48233,14 +48229,14 @@ paths:
 
                               Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
                               every environment POST and PUT requestBody references, accepts only the non-privileged
-                              values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                              environment create and update endpoints cannot designate an environment administrative.
-                              That restriction is a codegen guarantee, never access control: the registrant connection
-                              inlines the full environment entity, so `registerRegistryComponent` and
-                              `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                              refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                              assign this property only from server-side provisioning or a data migration. Permission to
-                              create an environment does not confer the ability to make one administrative.
+                              value `user`, and the create-or-edit form has no field for it, so the environment create
+                              and update endpoints cannot designate an environment administrative. That restriction is a
+                              codegen guarantee, never access control: the registrant connection inlines the full
+                              environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                              carry `purpose` in a request type and consumers MUST refuse it on input there too.
+                              Whatever surface a value arrives on, every consumer MUST assign this property only from
+                              server-side provisioning or a data migration. Permission to create an environment does not
+                              confer the ability to make one administrative.
 
 
                               The database index that enforces the uniqueness invariant, the migration path for
@@ -48250,11 +48246,9 @@ paths:
                             enum:
                               - user
                               - administrative
-                              - profile
                             x-enum-varnames:
                               - EnvironmentPurposeUser
                               - EnvironmentPurposeAdministrative
-                              - EnvironmentPurposeProfile
                             x-go-type-skip-optional-pointer: true
                             x-oapi-codegen-extra-tags:
                               db: purpose
@@ -58403,13 +58397,9 @@ paths:
                               What the environment exists for. `user` is an ordinary environment that people create to
                               logically group Connections and their Credentials. `administrative` designates an
                               environment the platform itself provisions to hold organization-level configuration, and
-                              which resolvers of that configuration therefore trust. `profile` is deprecated: profiles
+                              which resolvers of that configuration therefore trust. Profiles are not environments: they
                               are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles`
-                              and assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`), so new
-                              profiles must not be stored as environments. The value stays in the enum only so
-                              environments written with it before the profile construct existed still read back; it is
-                              an ordinary, non-privileged environment, carries no authority, and will be removed once no
-                              consumer stores it. Consumers should move those environments to profiles.
+                              and assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                               Absent means `user`. Nothing may read an unset or unrecognised value as administrative:
@@ -58428,14 +58418,14 @@ paths:
 
                               Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
                               every environment POST and PUT requestBody references, accepts only the non-privileged
-                              values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                              environment create and update endpoints cannot designate an environment administrative.
-                              That restriction is a codegen guarantee, never access control: the registrant connection
-                              inlines the full environment entity, so `registerRegistryComponent` and
-                              `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                              refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                              assign this property only from server-side provisioning or a data migration. Permission to
-                              create an environment does not confer the ability to make one administrative.
+                              value `user`, and the create-or-edit form has no field for it, so the environment create
+                              and update endpoints cannot designate an environment administrative. That restriction is a
+                              codegen guarantee, never access control: the registrant connection inlines the full
+                              environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                              carry `purpose` in a request type and consumers MUST refuse it on input there too.
+                              Whatever surface a value arrives on, every consumer MUST assign this property only from
+                              server-side provisioning or a data migration. Permission to create an environment does not
+                              confer the ability to make one administrative.
 
 
                               The database index that enforces the uniqueness invariant, the migration path for
@@ -58445,11 +58435,9 @@ paths:
                             enum:
                               - user
                               - administrative
-                              - profile
                             x-enum-varnames:
                               - EnvironmentPurposeUser
                               - EnvironmentPurposeAdministrative
-                              - EnvironmentPurposeProfile
                             x-go-type-skip-optional-pointer: true
                             x-oapi-codegen-extra-tags:
                               db: purpose
@@ -71936,14 +71924,10 @@ paths:
                                   What the environment exists for. `user` is an ordinary environment that people create
                                   to logically group Connections and their Credentials. `administrative` designates an
                                   environment the platform itself provisions to hold organization-level configuration,
-                                  and which resolvers of that configuration therefore trust. `profile` is deprecated:
-                                  profiles are their own construct (`schemas/constructs/v1beta3/profile`, served at
-                                  `/api/profiles` and assigned to workspaces under
-                                  `/api/workspaces/{workspaceId}/profiles`), so new profiles must not be stored as
-                                  environments. The value stays in the enum only so environments written with it before
-                                  the profile construct existed still read back; it is an ordinary, non-privileged
-                                  environment, carries no authority, and will be removed once no consumer stores it.
-                                  Consumers should move those environments to profiles.
+                                  and which resolvers of that configuration therefore trust. Profiles are not
+                                  environments: they are their own construct (`schemas/constructs/v1beta3/profile`,
+                                  served at `/api/profiles` and assigned to workspaces under
+                                  `/api/workspaces/{workspaceId}/profiles`).
 
 
                                   Absent means `user`. Nothing may read an unset or unrecognised value as
@@ -71962,8 +71946,8 @@ paths:
 
                                   Privileged values are server-owned and never client-settable. `EnvironmentPayload`,
                                   which every environment POST and PUT requestBody references, accepts only the
-                                  non-privileged values (`user` and `profile`), and the create-or-edit form has no field
-                                  for it, so the environment create and update endpoints cannot designate an environment
+                                  non-privileged value `user`, and the create-or-edit form has no field for it, so the
+                                  environment create and update endpoints cannot designate an environment
                                   administrative. That restriction is a codegen guarantee, never access control: the
                                   registrant connection inlines the full environment entity, so
                                   `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose` in a
@@ -71980,11 +71964,9 @@ paths:
                                 enum:
                                   - user
                                   - administrative
-                                  - profile
                                 x-enum-varnames:
                                   - EnvironmentPurposeUser
                                   - EnvironmentPurposeAdministrative
-                                  - EnvironmentPurposeProfile
                                 x-go-type-skip-optional-pointer: true
                                 x-oapi-codegen-extra-tags:
                                   db: purpose
@@ -73464,13 +73446,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is deprecated: profiles are
-                            their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
-                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`), so new profiles must
-                            not be stored as environments. The value stays in the enum only so environments written with
-                            it before the profile construct existed still read back; it is an ordinary, non-privileged
-                            environment, carries no authority, and will be removed once no consumer stores it. Consumers
-                            should move those environments to profiles.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -73488,15 +73466,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -73506,11 +73484,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -74434,13 +74410,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is deprecated: profiles are
-                            their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
-                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`), so new profiles must
-                            not be stored as environments. The value stays in the enum only so environments written with
-                            it before the profile construct existed still read back; it is an ordinary, non-privileged
-                            environment, carries no authority, and will be removed once no consumer stores it. Consumers
-                            should move those environments to profiles.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -74458,15 +74430,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -74476,11 +74448,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -75778,13 +75748,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is deprecated: profiles are
-                            their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
-                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`), so new profiles must
-                            not be stored as environments. The value stays in the enum only so environments written with
-                            it before the profile construct existed still read back; it is an ordinary, non-privileged
-                            environment, carries no authority, and will be removed once no consumer stores it. Consumers
-                            should move those environments to profiles.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -75802,15 +75768,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -75820,11 +75786,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -77261,13 +77225,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is deprecated: profiles are
-                            their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
-                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`), so new profiles must
-                            not be stored as environments. The value stays in the enum only so environments written with
-                            it before the profile construct existed still read back; it is an ordinary, non-privileged
-                            environment, carries no authority, and will be removed once no consumer stores it. Consumers
-                            should move those environments to profiles.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -77285,15 +77245,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -77303,11 +77263,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -78391,13 +78349,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is deprecated: profiles are
-                            their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
-                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`), so new profiles must
-                            not be stored as environments. The value stays in the enum only so environments written with
-                            it before the profile construct existed still read back; it is an ordinary, non-privileged
-                            environment, carries no authority, and will be removed once no consumer stores it. Consumers
-                            should move those environments to profiles.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -78415,15 +78369,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -78433,11 +78387,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -81441,18 +81393,14 @@ paths:
                 purpose:
                   type: string
                   description: >-
-                    The purposes a client may give an environment on create or update: `user` (an ordinary environment)
-                    or the deprecated `profile`. Profiles are their own construct at `/api/profiles`, assigned to
-                    workspaces; `profile` remains accepted only for environments created with it before that construct
-                    existed, and new clients must not send it. Omitted means `user` on create and unchanged on update. A
-                    server refuses any other value with 400, and never lets this field change an environment that
-                    already carries a privileged purpose.
+                    The purpose a client may give an environment on create or update: `user` (an ordinary environment).
+                    Profiles are not environments; they are their own construct at `/api/profiles`, assigned to
+                    workspaces. Omitted means `user` on create and unchanged on update. A server refuses any other value
+                    with 400, and never lets this field change an environment that already carries a privileged purpose.
                   enum:
                     - user
-                    - profile
                   x-enum-varnames:
                     - EnvironmentPayloadPurposeUser
-                    - EnvironmentPayloadPurposeProfile
       responses:
         '201':
           description: Created environment
@@ -81607,12 +81555,9 @@ paths:
                       What the environment exists for. `user` is an ordinary environment that people create to logically
                       group Connections and their Credentials. `administrative` designates an environment the platform
                       itself provisions to hold organization-level configuration, and which resolvers of that
-                      configuration therefore trust. `profile` is deprecated: profiles are their own construct
+                      configuration therefore trust. Profiles are not environments: they are their own construct
                       (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and assigned to workspaces under
-                      `/api/workspaces/{workspaceId}/profiles`), so new profiles must not be stored as environments. The
-                      value stays in the enum only so environments written with it before the profile construct existed
-                      still read back; it is an ordinary, non-privileged environment, carries no authority, and will be
-                      removed once no consumer stores it. Consumers should move those environments to profiles.
+                      `/api/workspaces/{workspaceId}/profiles`).
 
 
                       Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test for
@@ -81628,10 +81573,10 @@ paths:
 
 
                       Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which every
-                      environment POST and PUT requestBody references, accepts only the non-privileged values (`user`
-                      and `profile`), and the create-or-edit form has no field for it, so the environment create and
-                      update endpoints cannot designate an environment administrative. That restriction is a codegen
-                      guarantee, never access control: the registrant connection inlines the full environment entity, so
+                      environment POST and PUT requestBody references, accepts only the non-privileged value `user`, and
+                      the create-or-edit form has no field for it, so the environment create and update endpoints cannot
+                      designate an environment administrative. That restriction is a codegen guarantee, never access
+                      control: the registrant connection inlines the full environment entity, so
                       `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose` in a request
                       type and consumers MUST refuse it on input there too. Whatever surface a value arrives on, every
                       consumer MUST assign this property only from server-side provisioning or a data migration.
@@ -81644,11 +81589,9 @@ paths:
                     enum:
                       - user
                       - administrative
-                      - profile
                     x-enum-varnames:
                       - EnvironmentPurposeUser
                       - EnvironmentPurposeAdministrative
-                      - EnvironmentPurposeProfile
                     x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: purpose
@@ -81734,12 +81677,8 @@ paths:
               What the environment exists for. `user` is an ordinary environment that people create to logically group
               Connections and their Credentials. `administrative` designates an environment the platform itself
               provisions to hold organization-level configuration, and which resolvers of that configuration therefore
-              trust. `profile` is deprecated: profiles are their own construct (`schemas/constructs/v1beta3/profile`,
-              served at `/api/profiles` and assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`), so
-              new profiles must not be stored as environments. The value stays in the enum only so environments written
-              with it before the profile construct existed still read back; it is an ordinary, non-privileged
-              environment, carries no authority, and will be removed once no consumer stores it. Consumers should move
-              those environments to profiles.
+              trust. Profiles are not environments: they are their own construct (`schemas/constructs/v1beta3/profile`,
+              served at `/api/profiles` and assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
               Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test for the
@@ -81755,14 +81694,14 @@ paths:
 
 
               Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which every
-              environment POST and PUT requestBody references, accepts only the non-privileged values (`user` and
-              `profile`), and the create-or-edit form has no field for it, so the environment create and update
-              endpoints cannot designate an environment administrative. That restriction is a codegen guarantee, never
-              access control: the registrant connection inlines the full environment entity, so
-              `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose` in a request type and
-              consumers MUST refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-              assign this property only from server-side provisioning or a data migration. Permission to create an
-              environment does not confer the ability to make one administrative.
+              environment POST and PUT requestBody references, accepts only the non-privileged value `user`, and the
+              create-or-edit form has no field for it, so the environment create and update endpoints cannot designate
+              an environment administrative. That restriction is a codegen guarantee, never access control: the
+              registrant connection inlines the full environment entity, so `registerRegistryComponent` and
+              `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST refuse it on input
+              there too. Whatever surface a value arrives on, every consumer MUST assign this property only from
+              server-side provisioning or a data migration. Permission to create an environment does not confer the
+              ability to make one administrative.
 
 
               The database index that enforces the uniqueness invariant, the migration path for environments that are
@@ -81771,11 +81710,9 @@ paths:
             enum:
               - user
               - administrative
-              - profile
             x-enum-varnames:
               - EnvironmentPurposeUser
               - EnvironmentPurposeAdministrative
-              - EnvironmentPurposeProfile
             x-go-type-skip-optional-pointer: true
             x-oapi-codegen-extra-tags:
               db: purpose
@@ -81964,13 +81901,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is deprecated: profiles are
-                            their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
-                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`), so new profiles must
-                            not be stored as environments. The value stays in the enum only so environments written with
-                            it before the profile construct existed still read back; it is an ordinary, non-privileged
-                            environment, carries no authority, and will be removed once no consumer stores it. Consumers
-                            should move those environments to profiles.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -81988,15 +81921,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -82006,11 +81939,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -82241,13 +82172,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is deprecated: profiles are
-                            their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
-                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`), so new profiles must
-                            not be stored as environments. The value stays in the enum only so environments written with
-                            it before the profile construct existed still read back; it is an ordinary, non-privileged
-                            environment, carries no authority, and will be removed once no consumer stores it. Consumers
-                            should move those environments to profiles.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -82265,15 +82192,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -82283,11 +82210,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -82397,18 +82322,14 @@ paths:
                 purpose:
                   type: string
                   description: >-
-                    The purposes a client may give an environment on create or update: `user` (an ordinary environment)
-                    or the deprecated `profile`. Profiles are their own construct at `/api/profiles`, assigned to
-                    workspaces; `profile` remains accepted only for environments created with it before that construct
-                    existed, and new clients must not send it. Omitted means `user` on create and unchanged on update. A
-                    server refuses any other value with 400, and never lets this field change an environment that
-                    already carries a privileged purpose.
+                    The purpose a client may give an environment on create or update: `user` (an ordinary environment).
+                    Profiles are not environments; they are their own construct at `/api/profiles`, assigned to
+                    workspaces. Omitted means `user` on create and unchanged on update. A server refuses any other value
+                    with 400, and never lets this field change an environment that already carries a privileged purpose.
                   enum:
                     - user
-                    - profile
                   x-enum-varnames:
                     - EnvironmentPayloadPurposeUser
-                    - EnvironmentPayloadPurposeProfile
       responses:
         '200':
           description: Environment page
@@ -82591,13 +82512,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is deprecated: profiles are
-                            their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
-                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`), so new profiles must
-                            not be stored as environments. The value stays in the enum only so environments written with
-                            it before the profile construct existed still read back; it is an ordinary, non-privileged
-                            environment, carries no authority, and will be removed once no consumer stores it. Consumers
-                            should move those environments to profiles.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -82615,15 +82532,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -82633,11 +82550,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -87355,13 +87270,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is deprecated: profiles are
-                            their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
-                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`), so new profiles must
-                            not be stored as environments. The value stays in the enum only so environments written with
-                            it before the profile construct existed still read back; it is an ordinary, non-privileged
-                            environment, carries no authority, and will be removed once no consumer stores it. Consumers
-                            should move those environments to profiles.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -87379,15 +87290,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -87397,11 +87308,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
