@@ -267,7 +267,7 @@ First-time contributors are encouraged to start with issues labeled
 
 A current list of contributors is published at
 [the project's contributor list](https://github.com/meshery/meshery/graphs/contributors)
-and celebrated through [layer5.io/community/members](https://layer5.io/community/members).
+and celebrated through [meshery.io/community](https://meshery.io/community).
 
 **Reviewing work in progress.** Everyone is welcome to review and comment on open
 pull requests and issues. The project does not maintain a separate, gated "Reviewer"
