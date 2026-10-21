@@ -1,4 +1,0 @@
-# Azure Data Factory
-
-
-

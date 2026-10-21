@@ -1,4 +1,0 @@
-# Mesheryctl-Registry
-
-
-<no value>

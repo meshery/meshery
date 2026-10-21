@@ -1,4 +1,0 @@
-# HAProxy Kubernetes Ingress
-
-
-

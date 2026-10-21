@@ -1,4 +1,0 @@
-# OpenStack (Cluster API Provider)
-
-
-

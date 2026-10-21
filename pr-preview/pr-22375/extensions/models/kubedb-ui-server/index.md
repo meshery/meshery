@@ -1,4 +1,0 @@
-# Kubedb UI Server
-
-
-

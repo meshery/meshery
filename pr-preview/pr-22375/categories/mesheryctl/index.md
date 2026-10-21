@@ -1,4 +1,0 @@
-# Mesheryctl
-
-
-<no value>

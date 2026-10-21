@@ -1,4 +1,0 @@
-# Mesheryctl-Connection
-
-
-<no value>

@@ -1,4 +1,0 @@
-# Mesheryctl-Environment
-
-
-<no value>

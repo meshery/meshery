@@ -1,4 +1,0 @@
-# Mesheryctl-Filter
-
-
-<no value>

@@ -1,4 +1,0 @@
-# Google Cloud Platform
-
-
-

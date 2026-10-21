@@ -1,4 +1,0 @@
-# AWS Node Termination Handler
-
-
-

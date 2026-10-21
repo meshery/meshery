@@ -1,4 +1,0 @@
-# Open Service Mesh
-
-
-

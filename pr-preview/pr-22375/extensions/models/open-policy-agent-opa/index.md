@@ -1,4 +1,0 @@
-# Open Policy Agent (OPA)
-
-
-

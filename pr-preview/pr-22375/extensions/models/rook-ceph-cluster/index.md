@@ -1,4 +1,0 @@
-# Rook Ceph Cluster
-
-
-

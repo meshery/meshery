@@ -1,4 +1,0 @@
-# Kong API Gateway
-
-
-

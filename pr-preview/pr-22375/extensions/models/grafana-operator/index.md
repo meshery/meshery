@@ -1,4 +1,0 @@
-# Grafana Operator
-
-
-

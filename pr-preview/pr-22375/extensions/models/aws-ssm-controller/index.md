@@ -1,4 +1,0 @@
-# AWS Systems Manager
-
-
-

@@ -1,4 +1,0 @@
-# Jenkins Operator
-
-
-

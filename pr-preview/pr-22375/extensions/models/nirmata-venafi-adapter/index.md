@@ -1,4 +1,0 @@
-# Nirmata Venafi Adapter
-
-
-

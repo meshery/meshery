@@ -1,4 +1,0 @@
-# DigitalOcean Icons
-
-
-

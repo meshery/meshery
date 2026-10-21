@@ -1,4 +1,0 @@
-# Percona Server for MongoDB
-
-
-

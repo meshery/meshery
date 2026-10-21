@@ -1,4 +1,0 @@
-# Argo CD Applications
-
-
-

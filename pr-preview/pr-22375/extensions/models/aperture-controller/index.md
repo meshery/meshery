@@ -1,4 +1,0 @@
-# Aperture Controller
-
-
-

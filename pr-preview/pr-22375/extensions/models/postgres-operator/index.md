@@ -1,4 +1,0 @@
-# Postgres Operator
-
-
-

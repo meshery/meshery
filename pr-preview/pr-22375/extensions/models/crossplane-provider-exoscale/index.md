@@ -1,4 +1,0 @@
-# Exoscale (Crossplane)
-
-
-

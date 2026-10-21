@@ -1,4 +1,0 @@
-# Azure Event Grid
-
-
-

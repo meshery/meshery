@@ -1,4 +1,0 @@
-# AWS API Gateway
-
-
-

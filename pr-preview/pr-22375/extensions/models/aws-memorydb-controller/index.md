@@ -1,4 +1,0 @@
-# AWS MemoryDB for Redis
-
-
-

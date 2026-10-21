@@ -1,4 +1,0 @@
-# Categories
-
-
-<no value>

@@ -1,4 +1,0 @@
-# APISIX Ingress Controller
-
-
-

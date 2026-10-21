@@ -1,4 +1,0 @@
-# Kubedb Grafana Dashboards
-
-
-

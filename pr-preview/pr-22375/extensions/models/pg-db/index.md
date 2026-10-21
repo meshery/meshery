@@ -1,4 +1,0 @@
-# Postgres Database (CrunchyData)
-
-
-

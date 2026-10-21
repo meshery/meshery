@@ -1,4 +1,0 @@
-# Istio Rate Limit Operator
-
-
-

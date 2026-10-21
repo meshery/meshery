@@ -1,4 +1,0 @@
-# RabbitMQ Cluster Operator
-
-
-

@@ -1,4 +1,0 @@
-# Mesheryctl-Organization
-
-
-<no value>

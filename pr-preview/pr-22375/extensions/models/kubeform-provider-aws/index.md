@@ -1,4 +1,0 @@
-# Kubeform Provider AWS
-
-
-

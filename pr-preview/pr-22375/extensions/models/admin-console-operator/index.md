@@ -1,4 +1,0 @@
-# EPAM Delivery Platform
-
-
-
