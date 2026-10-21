@@ -48036,9 +48036,9 @@ paths:
                       description: >
                         Organization the connection is registered in, taken from the `X-Current-Orgid` header on
                         registration. Servers implementing this contract use it, with the owner and
-                        `metadata.machineId`, as the deduplication key for `desktop` connections. Lets an organization
-                        list and count its connections (for example its registered desktop installs) without going
-                        through each owner. Absent on connections that predate it.
+                        `metadata.installationId`, as the deduplication key for `desktop` connections. Lets an
+                        organization list and count its connections (for example its registered desktop installs)
+                        without going through each owner. Absent on connections that predate it.
                       x-oapi-codegen-extra-tags:
                         db: organization_id
                         json: organizationId,omitempty
@@ -58225,9 +58225,9 @@ paths:
                       description: >
                         Organization the connection is registered in, taken from the `X-Current-Orgid` header on
                         registration. Servers implementing this contract use it, with the owner and
-                        `metadata.machineId`, as the deduplication key for `desktop` connections. Lets an organization
-                        list and count its connections (for example its registered desktop installs) without going
-                        through each owner. Absent on connections that predate it.
+                        `metadata.installationId`, as the deduplication key for `desktop` connections. Lets an
+                        organization list and count its connections (for example its registered desktop installs)
+                        without going through each owner. Absent on connections that predate it.
                       x-oapi-codegen-extra-tags:
                         db: organization_id
                         json: organizationId,omitempty
@@ -71752,7 +71752,7 @@ paths:
                           description: >
                             Organization the connection is registered in, taken from the `X-Current-Orgid` header on
                             registration. Servers implementing this contract use it, with the owner and
-                            `metadata.machineId`, as the deduplication key for `desktop` connections. Lets an
+                            `metadata.installationId`, as the deduplication key for `desktop` connections. Lets an
                             organization list and count its connections (for example its registered desktop installs)
                             without going through each owner. Absent on connections that predate it.
                           x-oapi-codegen-extra-tags:
@@ -72058,10 +72058,11 @@ paths:
         type `platform`, sub_type `management`, status `connected`, and `metadata` matching `DesktopConnectionMetadata`.
         Servers implementing this contract must take the organization from the `X-Current-Orgid` header, refuse a
         `desktop` registration without it with `400`, and refuse a caller who is not a live member of that organization
-        with `403`. They must deduplicate on (organization, owner, `metadata.machineId`): registering the same machine
-        again updates that connection and returns `200`, while a new connection returns `201`. A `desktop` body whose
-        metadata lacks `machineId` is refused with `400`. The kind names the connection type, never the product that
-        runs on the machine.
+        with `403`. They must deduplicate on (organization, owner, `metadata.installationId`): registering the same
+        install again updates that connection and returns `200`, while a new connection returns `201`. A `desktop` body
+        whose metadata lacks `installationId` is refused with `400`. Installs on one computer share
+        `metadata.computerId`, so a server can group them by computer. The kind names the connection type, never the
+        product that runs on the machine.
 
 
         A `desktop` registration whose `metadata.clientName` and `metadata.appVersion` fall below the server's minimum
@@ -73275,10 +73276,10 @@ paths:
                   organizationId:
                     description: >
                       Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      registration. Servers implementing this contract use it, with the owner and
+                      `metadata.installationId`, as the deduplication key for `desktop` connections. Lets an
+                      organization list and count its connections (for example its registered desktop installs) without
+                      going through each owner. Absent on connections that predate it.
                     x-oapi-codegen-extra-tags:
                       db: organization_id
                       json: organizationId,omitempty
@@ -74239,10 +74240,10 @@ paths:
                   organizationId:
                     description: >
                       Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      registration. Servers implementing this contract use it, with the owner and
+                      `metadata.installationId`, as the deduplication key for `desktop` connections. Lets an
+                      organization list and count its connections (for example its registered desktop installs) without
+                      going through each owner. Absent on connections that predate it.
                     x-oapi-codegen-extra-tags:
                       db: organization_id
                       json: organizationId,omitempty
@@ -75577,10 +75578,10 @@ paths:
                   organizationId:
                     description: >
                       Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      registration. Servers implementing this contract use it, with the owner and
+                      `metadata.installationId`, as the deduplication key for `desktop` connections. Lets an
+                      organization list and count its connections (for example its registered desktop installs) without
+                      going through each owner. Absent on connections that predate it.
                     x-oapi-codegen-extra-tags:
                       db: organization_id
                       json: organizationId,omitempty
@@ -77054,10 +77055,10 @@ paths:
                   organizationId:
                     description: >
                       Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      registration. Servers implementing this contract use it, with the owner and
+                      `metadata.installationId`, as the deduplication key for `desktop` connections. Lets an
+                      organization list and count its connections (for example its registered desktop installs) without
+                      going through each owner. Absent on connections that predate it.
                     x-oapi-codegen-extra-tags:
                       db: organization_id
                       json: organizationId,omitempty
@@ -78178,10 +78179,10 @@ paths:
                   organizationId:
                     description: >
                       Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      registration. Servers implementing this contract use it, with the owner and
+                      `metadata.installationId`, as the deduplication key for `desktop` connections. Lets an
+                      organization list and count its connections (for example its registered desktop installs) without
+                      going through each owner. Absent on connections that predate it.
                     x-oapi-codegen-extra-tags:
                       db: organization_id
                       json: organizationId,omitempty
