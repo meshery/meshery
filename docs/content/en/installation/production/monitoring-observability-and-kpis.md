@@ -31,8 +31,13 @@ foundation of both self-healing and external monitoring:
 Query readiness with a verbose breakdown for detail:
 
 ```bash
-kubectl exec --namespace meshery deployment/meshery -- \
-  curl -s 'http://localhost:8080/healthz/ready?verbose=1'
+kubectl port-forward --namespace meshery deployment/meshery 8080:8080
+```
+
+Then, in another terminal (the Meshery Server image does not include `curl`, so query the endpoint from your workstation):
+
+```bash
+curl -s 'http://localhost:8080/healthz/ready?verbose=1'
 ```
 
 ```
@@ -165,10 +170,8 @@ links (troubleshooting, sizing, networking) in the alert.
 
 When a KPI trips, these guides are the fastest path to resolution:
 
-- [Operator & MeshSync troubleshooting]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}})
-  — Broker, MeshSync, and Operator issues.
-- [Meshery Server troubleshooting]({{< ref "guides/troubleshooting/meshery-server.md" >}})
-  — Server startup, provider, and API issues.
+- [Operator & MeshSync troubleshooting]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}) - Broker, MeshSync, and Operator issues.
+- [Meshery Server troubleshooting]({{< ref "guides/troubleshooting/meshery-server.md" >}}) - Server startup, provider, and API issues.
 
 ## Monitoring checklist
 
