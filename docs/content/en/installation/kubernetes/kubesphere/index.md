@@ -40,7 +40,7 @@ Follow these steps in order.
 
     ![meshery-info](images/Meshery-info.png)
 
-5. Edit the **values.yaml** file as needed, or click **Install** to use the default configuration.
+5. Edit the **values.yaml** file as needed, or click **Install** to use the default configuration. The chart creates the Meshery service as a `LoadBalancer` by default. If your cluster has no load balancer, set `service.type` to `NodePort` here.
 
     ![meshery-yaml](images/Meshery-yaml.png)
 
@@ -54,11 +54,11 @@ Follow these steps in order.
 
 
 1. Go to **Services** and click the Meshery service.
-2. In the **Resource Status** page, copy the **NodePort** of Meshery.
+2. In the **Resource Status** page, copy the external IP address of the Meshery service or, if you set the service type to `NodePort`, its **NodePort**.
 
     ![meshery-service](images/Meshery-service.png)
 
-3. Open Meshery UI by entering **${NodeIP}:${NODEPORT}** in your browser.
+3. Open Meshery UI in your browser at **${EXTERNAL_IP}:9081**, or at **${NodeIP}:${NODEPORT}** for a `NodePort` service.
 
     ![meshery-dashboard](images/meshery-dashboard.png)
 

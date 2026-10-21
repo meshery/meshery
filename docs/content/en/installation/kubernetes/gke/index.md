@@ -62,7 +62,7 @@ Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) c
 2. To reach it through a load balancer, see [Exposing Meshery Service (LoadBalancer)]({{< ref "installation/kubernetes/_index.md#exposing-meshery-serviceloadbalancer" >}}).
 3. If users reach Meshery through a custom host name, set the callback URL that your Provider redirects to after sign-in when you start Meshery:
 
-{{< code code="MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start" >}}
+{{< code code="MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start -p kubernetes" >}}
 
 With a load balancer, Meshery UI is then available at the `EXTERNAL-IP` of the `meshery` service.
 

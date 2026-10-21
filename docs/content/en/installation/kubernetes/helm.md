@@ -10,7 +10,7 @@ description: Install Meshery on Kubernetes using Helm. Deploy Meshery in Kuberne
 
 <div class="prereqs"><h4>Prerequisites</h4>
 <ol>
-<li>Install <a href="https://helm.sh/docs/intro/install/" class="meshery-light">Helm</a> on your local machine.</li>
+<li>Install <a href="https://helm.sh/docs/intro/install/" class="meshery-light">Helm</a> and <a href="https://kubernetes.io/docs/tasks/tools/" class="meshery-light">kubectl</a> on your local machine.</li>
 <li>Access to the cluster where you want to deploy Meshery.</li>
 <li>A kubeconfig whose current context points at that cluster.</li>
 </ol>
@@ -44,7 +44,7 @@ To upgrade an existing Meshery deployment:
 {{< code code=`helm repo update
 helm upgrade meshery meshery/meshery --namespace meshery` >}}
 
-For upgrades, use the upgrade-specific values file, which tunes the health checks for a rolling upgrade:
+Alternatively, run this command instead to use the upgrade-specific values file, which tunes the health checks for a rolling upgrade:
 
 {{< code code=`helm upgrade meshery meshery/meshery --namespace meshery -f https://raw.githubusercontent.com/meshery/meshery/master/install/kubernetes/helm/meshery/values-upgrade.yaml --wait --timeout 10m` >}}
 
