@@ -4268,6 +4268,15 @@
         "short_description": "Meshery Server could not determine which keys to register with the Local Provider",
         "probable_cause": "The header row of the keys file was renamed or dropped, so no row could be selected for registration and nothing is seeded from this file; on a fresh or reset database the Key table stays empty, while previously seeded keys are left untouched",
         "suggested_remediation": "Restore the missing header in server/permissions/keys.csv (or the file KEYS_PATH points at) and restart Meshery Server so keys seed again"
+      },
+      "1488": {
+        "name": "ErrInvalidWorkspaceFilterCode",
+        "code": "1488",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid \\\"filter\\\" query parameter for a workspace listing",
+        "probable_cause": "The filter parameter is not a JSON object, or one of its fields carries the wrong type",
+        "suggested_remediation": "Pass a JSON object, for example filter={\\\"assigned\\\":false} or filter={\\\"owner\\\":\\\"<uuid>\\\"}"
       }
     }
   }
