@@ -145,6 +145,28 @@ func TestResolveResourcePath_IrregularPlurals(t *testing.T) {
 			wantResourcePath: "endpoints",
 		},
 		{
+			name: "Unserved version keeps the requested version and borrows the served resource name",
+			k8sResource: map[string]interface{}{
+				"apiVersion": "networking.k8s.io/v1beta1",
+				"kind":       "Ingress",
+			},
+			namespace:        "test-ns",
+			useMapper:        true,
+			wantBasePath:     "/apis/networking.k8s.io/v1beta1/namespaces/test-ns",
+			wantResourcePath: "ingresses",
+		},
+		{
+			name: "Unserved version of a cluster-scoped kind keeps root scope",
+			k8sResource: map[string]interface{}{
+				"apiVersion": "storage.k8s.io/v1beta1",
+				"kind":       "StorageClass",
+			},
+			namespace:        "ignored-ns",
+			useMapper:        true,
+			wantBasePath:     "/apis/storage.k8s.io/v1beta1",
+			wantResourcePath: "storageclasses",
+		},
+		{
 			name: "Fallback when mapper is nil uses strings.ToLower(kind) + s",
 			k8sResource: map[string]interface{}{
 				"apiVersion": "networking.k8s.io/v1",
@@ -530,15 +552,12 @@ func TestDryRun_InDesignNamespaces_DefaultAlsoNotFound(t *testing.T) {
 		},
 	}
 
-	st, success, err := DryRunResource(rClient, resource, "my-custom-ns", false, opts)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
+	st, success, _ := DryRunResource(rClient, resource, "my-custom-ns", false, opts)
+	if success {
+		t.Fatalf("expected failure: the workload was never validated because default is missing too")
 	}
-	if !success {
-		t.Fatalf("expected missing-namespace error to be suppressed when default also not found, got false")
-	}
-	if st == nil || st["status"] != "Success" {
-		t.Errorf("expected status=Success, got: %v", st)
+	if st == nil || st["status"] != "Failure" || st["message"] != `namespaces "default" not found` {
+		t.Errorf("expected the default-namespace NotFound Failure, got: %v", st)
 	}
 }
 

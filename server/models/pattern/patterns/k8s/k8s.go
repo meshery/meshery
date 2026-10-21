@@ -119,11 +119,8 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 		if okDef {
 			return stDef, true, nil
 		}
-		// If validation against "default" also failed solely due to missing namespace, suppress it
-		if isMissingNamespaceError(reqErrDef, stDef, "default") {
-			return map[string]interface{}{"status": "Success"}, true, nil
-		}
-		// Otherwise return workload validation errors found when testing against default
+		// A missing "default" namespace means the workload was never validated, so its NotFound Failure is
+		// returned like any other workload validation error rather than reported as a pass.
 		if stDef != nil && stDef["status"] == "Failure" {
 			return stDef, false, nil
 		}
@@ -205,8 +202,15 @@ func ResolveResourcePath(k8sResource map[string]interface{}, namespace string, m
 		if parseErr == nil {
 			gk := schema.GroupKind{Group: gv.Group, Kind: kind}
 			m, mappingErr := mapper.RESTMapping(gk, gv.Version)
-			if mappingErr != nil && gv.Version != "" {
-				m, mappingErr = mapper.RESTMapping(gk)
+			if mappingErr != nil {
+				// The cluster does not serve the requested version. Borrow the resource name and scope from a
+				// served version, but keep the requested version in the path, so the API server reports the
+				// version as unserved instead of the object being validated against another version's schema.
+				if served, servedErr := mapper.RESTMapping(gk); servedErr == nil && served != nil {
+					pinned := *served
+					pinned.Resource.Version = gv.Version
+					m, mappingErr = &pinned, nil
+				}
 			}
 			if mappingErr == nil && m != nil {
 				mapping = m
