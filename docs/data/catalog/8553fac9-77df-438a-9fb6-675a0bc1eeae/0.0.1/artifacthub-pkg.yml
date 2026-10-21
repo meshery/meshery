@@ -1,0 +1,20 @@
+version: 0.0.1
+name: 3-tier-resilient-microservices-architecture
+displayName: 3-Tier Resilient Microservices Architecture
+createdAt: "2026-09-08T18:27:03Z"
+description: A production-grade, 3-tier cloud-native microservices architecture. It includes an Ingress gateway for path-based traffic routing, a horizontally autoscaled backend API tier, a Redis in-memory cache, and a persistent PostgreSQL database with dedicated storage claims and secret management.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/8553fac9-77df-438a-9fb6-675a0bc1eeae/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Requires an active Ingress Controller (e.g., ingress-nginx) in the cluster to handle external routing, and a default StorageClass/CSI provisioner to bind the PostgreSQL PersistentVolumeClaim. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 664ac230-d101-457a-b6a0-af0ff445b7a8
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
