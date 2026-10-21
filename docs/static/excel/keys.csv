@@ -27,6 +27,10 @@ Filters,Details of WASM Filter,Check information or details of a WASM filter,X,X
 Filters,Edit WASM filter,Edit WASM filter,X*,X*,,,X,,X,X,Catalog Management,88cd144e-806e-472a-a31a-ef6d64643291,X,TRUE
 Filters,Clone WASM Filter,"Clone WASM filter from catalog, which allows customizing filter and use it in design",X,X,,,X,,X,X,Catalog Management,c84718ca-7479-4ad9-a2b7-a5784baa51fb,X,TRUE
 Filters,Delete WASM Filter,Delete WASM filter permanently from catalog.,X*,X*,,,X,,X,X,Catalog Management,9225d5a7-7255-49be-9233-daeabefae306,X,TRUE
+Content Pieces,View Content Pieces,View the content pieces of the organization,X,X,,,X,,X,X,Catalog Management,5cd87dc9-02c6-44a0-a019-281f7295ad08,,FALSE
+Content Pieces,Create Content Piece,Create a content piece in the organization,X,X,,,X,,X,X,Catalog Management,5fb97ae1-49ed-490c-b17a-377bf5558585,,FALSE
+Content Pieces,Edit Content Piece,Edit a content piece of the organization,X,X,,,X,,X,X,Catalog Management,06858261-c7eb-464a-a4b7-e29792a7ae54,,FALSE
+Content Pieces,Delete Content Piece,Delete a content piece of the organization,X,X,,,X,,X,X,Catalog Management,129d0297-1091-40e4-8d4a-5262b3378305,,FALSE
 Extensions,Install extension,Install or enable or disabble extensions in Meshery,,,,,,,X,X,Extension Point Management,24f41e98-7ce1-40c4-a82d-4ae0294d237d,X,TRUE
 Extensions,View Meshery User Preferences,View all user preferences in Meshery UI ,X,X,,,X,,X,X,Extension Point Management,cdec6212-bbbf-4cab-b10d-76d12bee7e56,X,TRUE
 Extensions,View Extensions,View all extensions on the extension page,X,X,,,X,,X,X,Extension Point Management,c1330df4-1bbe-4d5d-8828-f4bd9ee989e5,X,TRUE
