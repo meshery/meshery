@@ -99,7 +99,8 @@ mesheryctl environment view --orgId [orgId]
 				return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
 			}
 
-			environmentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedEnvironment.Name), " ", "_")
+			sanitizer := strings.NewReplacer(" ", "_", "/", "_")
+			environmentString := sanitizer.Replace(fmt.Sprintf("%v", selectedEnvironment.Name))
 			fileName := fmt.Sprintf("environment_%s.%s", environmentString, strings.ToLower(environmentViewFlagsProvided.outputFormat))
 			file := filepath.Join(homeDir, ".meshery", fileName)
 			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[environment.Environment]{}

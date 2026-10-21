@@ -41,3 +41,15 @@ func TestEnvironmentViewSaveCreatesFile(t *testing.T) {
 
 	utils.AssertFileExists(t, filepath.Join(mesheryDir, "environment_test-environment.yaml"))
 }
+
+func TestEnvironmentViewSaveReplacesSlashInName(t *testing.T) {
+	mesheryDir := utils.IsolateMesheryHome(t)
+
+	run := environmentViewRun(utils.CallerDir(t), []string{"view", "--orgId", testConstants["orgId"], "--save"})
+	run.Mocks[0].Response = "view.environment.slash.api.response.golden"
+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "environment_test_environment.yaml"))
+}
