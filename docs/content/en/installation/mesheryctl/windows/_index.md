@@ -16,11 +16,11 @@ On Windows, install `mesheryctl` with Scoop or [download it directly](https://gi
 
 Download the `mesheryctl_<version>_Windows_x86_64.zip` archive from a [Meshery release](https://github.com/meshery/meshery/releases) and extract `mesheryctl.exe`. Patch releases do not always include `mesheryctl` archives, so if the latest release has none, use the most recent release that does. Then, from the folder that contains it, start Meshery on Kubernetes:
 
-{{< code code="./mesheryctl system start" >}}
+{{< code code=".\mesheryctl.exe system start" >}}
 
 To run Meshery on Docker instead, run:
 
-{{< code code="./mesheryctl system start -p docker" >}}
+{{< code code=".\mesheryctl.exe system start -p docker" >}}
 
 Optionally, move `mesheryctl.exe` to a folder in your `PATH` so you can run it from anywhere.
 
