@@ -112,11 +112,11 @@ Docker Deployment: Watchtower updates this component in accordance with the user
         <td></td>
         <td><code>mesheryctl</code> manages the lifecycle of Meshery Server. <br /><br />
         <ul> 
-            <li><code>system start</code> calls system update by default, which updates the server and existing adapters, but doesn’t update <code>meshery.yaml</code>. Unless the <code>skipUpdate</code> flag is used, operators are also updated here.</li>
-            <li><code>system reset</code> retrieves <code>docker-compose.yaml</code> from GitHub (use a Git tag to reset to the right Meshery version).</li>
-            <li><code>system restart</code> also updates operators, unless the <code>skipUpdate</code> flag is used.</li>
-            <li><code>system update</code> updates operators in case of both Docker and Kubernetes deployments.</li>
-            <li><code>system context</code> manages <code>config.yaml</code>, which manages <code>meshery.yaml</code>.</li>
+            <li><code>system start</code> on Docker downloads <code>meshery.yaml</code> again for your context's version, rewrites its services from your context, and pulls newer container images. Pass <code>--skip-update</code> to skip the image pull.</li>
+            <li><code>system restart</code> also pulls newer container images, unless you pass <code>--skip-update</code>.</li>
+            <li><code>system update</code> pulls new Meshery container images and manifests for both Docker and Kubernetes deployments. It does not update <code>mesheryctl</code> itself.</li>
+            <li><code>system reset</code> resets <code>meshery.yaml</code> (Docker) or the operator manifests (Kubernetes) to the defaults for your context's version.</li>
+            <li><code>system context</code> manages <code>config.yaml</code>, which determines the contents of <code>meshery.yaml</code>.</li>
             <li><code>mesheryctl</code> should generally check for the latest release and inform the user.</li>
         </ul>
         </td>

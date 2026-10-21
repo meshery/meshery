@@ -51,12 +51,12 @@ The `9081/tcp` (API) and `80/tcp` (WebSocket) values are Meshery Server's
 component ports as listed in the [port table above](#network-ports). In a
 production deployment you do not expose these directly: front them with a single
 external HTTPS endpoint at the ingress, which serves both the APIs (`https://`)
-and the WebSocket (`wss://`) over `443`—see [below](#exposing-meshery-securely-ingress-tls-websocket).
+and the WebSocket (`wss://`) over `443` - see [below](#exposing-meshery-securely-ingress-tls-websocket).
 
 {{% alert title="Direction matters for out-of-cluster" color="info" %}}
 When Meshery Server is out-of-cluster, the Server initiates connections **to**
 each managed cluster's API server and Broker. Those endpoints must be reachable
-from wherever Meshery Server runs—through cloud load balancers, VPN/peering, or
+from wherever Meshery Server runs - through cloud load balancers, VPN/peering, or
 NodePort exposure. See [Broker exposure](#exposing-the-broker) below.
 {{% /alert %}}
 
@@ -112,8 +112,8 @@ time. Validate WebSocket upgrade support explicitly during rollout.
 
 ## Caching the UI at the edge (CDN or caching reverse proxy)
 
-Meshery Server serves its web UI—a static [Next.js](https://nextjs.org/)
-export—directly. To make that UI safely cacheable by a CDN or caching reverse
+Meshery Server serves its web UI - a static [Next.js](https://nextjs.org/)
+export - directly. To make that UI safely cacheable by a CDN or caching reverse
 proxy placed in front of Meshery, the Server emits **release-scoped cache
 headers**: the edge can serve UI content for the lifetime of a release and pick
 up new content automatically after an upgrade, **without any cache purge**. The
@@ -123,25 +123,25 @@ Two tiers of response are handled differently:
 
 | Response | `Cache-Control` | Validator | Why |
 | :--- | :--- | :--- | :--- |
-| **Immutable versioned assets** under `/_next/static/{chunks,css,media}/...` | `public, max-age=31536000, immutable` | — | The build content hash is in the URL, so the bytes at a given URL never change. A new release ships new hashes (new URLs); old entries simply fall out of use—no purge. |
+| **Immutable versioned assets** under `/_next/static/{chunks,css,media}/...` | `public, max-age=31536000, immutable` | - | The build content hash is in the URL, so the bytes at a given URL never change. A new release ships new hashes (new URLs); old entries simply fall out of use - no purge. |
 | **HTML documents** (`/` → `index.html`, `<route>.html`) | `public, no-cache` | `ETag: "<build version>"` | HTML lives at stable URLs, so it must always be revalidated. While the release is unchanged the origin answers `If-None-Match` with `304`; a new release changes the build version → changes the `ETag` → the next revalidation returns fresh HTML. |
 
 Because browser caches cannot be purged, HTML is never given a positive
 `max-age`; it is always revalidated against the build-version `ETag`. And only
-existing files receive these headers—a transient `404` (for example, a
+existing files receive these headers - a transient `404` (for example, a
 content-hashed asset requested mid-deploy against a pod that does not have it
 yet) is returned **without** cache headers, so it is never pinned as `immutable`
 and cached for a year.
 
 ### Configuring the CDN or proxy
 
-Whatever you place in front of Meshery—a cloud CDN (CloudFront, Cloudflare,
+Whatever you place in front of Meshery - a cloud CDN (CloudFront, Cloudflare,
 Fastly), an NGINX or Varnish caching proxy, or your ingress controller's
-cache—configure it to **respect the origin's caching semantics** rather than
+cache - configure it to **respect the origin's caching semantics** rather than
 impose its own:
 
 - **Honor the origin `Cache-Control` and `ETag`.** Do not strip or rewrite them,
-  and do not apply a blanket TTL that overrides `no-cache` on HTML—doing so risks
+  and do not apply a blanket TTL that overrides `no-cache` on HTML - doing so risks
   serving a stale HTML shell across an upgrade.
 - **Forward conditional requests.** Pass `If-None-Match` through to the origin so
   HTML can revalidate and the Server can answer `304 Not Modified`.
@@ -160,7 +160,7 @@ apply correctly when Meshery is served under a sub-path as well.
 Because immutable asset URLs change on every build and the HTML `ETag` is the
 build/release version, a Meshery upgrade is reflected at the edge
 **automatically**. You do not need to wire a CDN purge into your upgrade
-pipeline—see the
+pipeline - see the
 [upgrade strategy]({{< ref "installation/production/operational-readiness-checklist.md" >}}).
 {{% /alert %}}
 
@@ -213,7 +213,7 @@ status:
 
 Confirm the cluster supports the Service type you rely on (`LoadBalancer` or
 `NodePort`) and that the resulting `external` endpoint is reachable from Meshery
-Server. This is the most common multi-cloud connectivity pitfall—see
+Server. This is the most common multi-cloud connectivity pitfall - see
 [Multi-Cluster & Multi-Cloud]({{< ref "installation/production/multi-cluster-and-multi-cloud.md" >}}).
 
 ## Egress requirements
@@ -222,7 +222,7 @@ Meshery Server typically needs outbound connectivity to:
 
 - **Each managed cluster's Kubernetes API server** (out-of-cluster topologies).
 - **The Remote Provider** (e.g. `https://cloud.meshery.io`) for authentication,
-  capabilities, and durable state—over `443/tcp`.
+  capabilities, and durable state - over `443/tcp`.
 - **Container registries and content sources** for images and bundled content
   during install/upgrade. You can reduce or disable some content downloads with
   `SKIP_DOWNLOAD_CONTENT` and `SKIP_DOWNLOAD_EXTENSIONS` in tightly egress-
