@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { gauge } from 'billboard.js';
 import { Box, Typography, Stack, KEPPEL, SAFFRON, CircularProgress } from '@sistent/sistent';
-import BBChart from '@/components/BBChart';
+import BBChart from '@/components/general/BBChart';
 import ConnectCluster from './ConnectCluster';
 import { LoadingContainer, ChartSectionWithColumn } from '../style';
 

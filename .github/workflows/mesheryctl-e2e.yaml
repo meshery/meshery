@@ -79,22 +79,141 @@ jobs:
         run: make build
         shell: bash
         working-directory: ./mesheryctl
+      - name: Test TAP-to-Allure converter
+        run: node --test bats-to-allure.test.js
+        shell: bash
+        working-directory: ./mesheryctl
       - name: Start Meshery
         run: |
           # Start Meshery with with verbose logging for detailed output in case of failures
           ./mesheryctl system start --platform ${{ matrix.platform }} --skip-browser --skip-update --verbose
         shell: bash
         working-directory: ./mesheryctl
+      - name: Configure Meshery server env for the e2e suite
+        # Two server-side settings the BATS suite depends on, injected into the
+        # in-cluster deployment in one rollout:
+        #
+        # 1. PROVIDER_BASE_URLS - pin the "Meshery" remote provider to the single
+        #    https://cloud.meshery.io backend that REMOTE_PROVIDER_TEST_USER_TOKEN
+        #    authenticates against (see install/providers.env: "Meshery" maps to
+        #    cloud.meshery.io). The released image ships the full default provider
+        #    list, where a second URL can win the "Meshery" providerName by
+        #    collision re-keying and the connection tests then authenticate the
+        #    token against the wrong backend - a 401 ("user must be logged in").
+        #    Pinning a single URL makes the "Meshery" context resolve
+        #    unambiguously to the provider the token is valid for.
+        #
+        # 2. Operator-mode MeshSync + unmanaged broker port-forward - the
+        #    controllers-diagnostics suite (009-diagnostics) needs a real
+        #    in-cluster broker for its broker_unreachable baseline; without this
+        #    it self-skips (embedded MeshSync has no broker). Other suites are
+        #    unaffected by the MeshSync deployment mode.
+        run: |
+          kubectl -n meshery rollout status deployment/meshery --timeout=180s
+          kubectl -n meshery set env deployment/meshery \
+            PROVIDER_BASE_URLS=https://cloud.meshery.io \
+            MESHSYNC_DEFAULT_DEPLOYMENT_MODE=operator \
+            MESHERY_MANAGED_BROKER_PORTFORWARD=false
+          kubectl -n meshery rollout status deployment/meshery --timeout=180s
+        shell: bash
+      - name: Wait for the Meshery Broker to be ready
+        # 000-prerequisites/00-servert.bats and 001-system/03-system-checks.bats:49
+        # both assert the broker is up, and nothing else in the job waits for it:
+        # the previous step waits only on the meshery deployment. The broker is
+        # deployed indirectly - Meshery installs the Meshery Operator, the
+        # operator reconciles the Broker custom resource into a statefulset, and
+        # only then does a pod appear - so it can trail the meshery rollout by a
+        # long way.
+        #
+        # Both workload names are accepted: Meshery Operator >= 1.0.0 renders the
+        # broker from the official NATS chart as meshery-nats, earlier operators
+        # used meshery-broker (see the same note in
+        # server/integration-tests/meshsync/infrastructure/setup.sh). Only the
+        # workload was renamed - the Broker custom resource is still called
+        # meshery-broker.
+        #
+        # `kubectl rollout status` cannot express this wait on its own: against a
+        # statefulset that does not exist *yet* it fails immediately with
+        # NotFound instead of waiting, so a bare `rollout status ... || true`
+        # returns at once and waits for nothing. Poll for the object to appear
+        # first, then hand over to rollout status for readiness.
+        #
+        # Never fails the job: a broker that never arrives is a finding for the
+        # handful of tests that assert on it, not a reason to skip the other 190.
+        # The diagnostics below exist so that finding is explainable from this
+        # log instead of only visible as "Meshery Broker is not running".
+        run: |
+          set +e
+          find_broker() {
+            for sts in meshery-nats meshery-broker; do
+              if kubectl -n meshery get "statefulset/$sts" >/dev/null 2>&1; then
+                echo "$sts"
+                return 0
+              fi
+            done
+            return 1
+          }
+
+          deadline=$(( SECONDS + 300 ))
+          until broker=$(find_broker); do
+            if [ "$SECONDS" -ge "$deadline" ]; then
+              echo "::warning::no broker statefulset (meshery-nats or meshery-broker) appeared within 300s"
+              break
+            fi
+            sleep 5
+          done
+
+          if [ -n "$broker" ]; then
+            echo "Broker statefulset: $broker"
+            kubectl -n meshery rollout status "statefulset/$broker" --timeout=180s
+          fi
+
+          echo "### broker / operator state ###"
+          kubectl -n meshery get pods -o wide
+          kubectl -n meshery get statefulsets,deployments
+          echo "### operator custom resources ###"
+          kubectl -n meshery get brokers.meshery.io,meshsyncs.meshery.io -o wide 2>&1 \
+            || echo "(operator CRDs not registered)"
+          echo "### meshery-operator log tail ###"
+          kubectl -n meshery logs deployment/meshery-operator --tail=100 2>&1 \
+            || echo "(no meshery-operator deployment)"
+        shell: bash
       - name: Run mesheryctl end2end tests
         run: |
           bash run_tests.bash | tee bats.tap
         shell: bash
         working-directory: ./mesheryctl/tests/e2e
         env:
-          MESHERY_PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+          # Authenticate the BATS suite as the dedicated remote-provider CI test
+          # user. The connection (and perf) tests round-trip through the remote
+          # provider (setup_suite.bash sets context to "Meshery"), so they need a
+          # valid session token. The previous PROVIDER_TOKEN secret was a static
+          # token last refreshed 2024-03-08 and had expired, so the remote
+          # provider answered every call with a 401 ("user must be logged in") -
+          # surfacing as meshery-server-1032 on reads and meshery-server-1051 on
+          # delete. REMOTE_PROVIDER_TEST_USER_TOKEN is the maintained token for a
+          # purpose-built CI test user.
+          MESHERY_PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
           MESHERY_PLATFORM: ${{ matrix.platform }}
           BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
           E2E_HELPERS_PATH: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers"
+
+      - name: Remote-provider auth diagnostics
+        # Surface the actual provider wiring behind any connection-test auth
+        # failure: which remote provider the server registered as "Meshery", the
+        # auth.json shape (token length only, never the value), and any provider
+        # request / 401 lines from the server log. Runs even on failure.
+        if: ${{ !cancelled() }}
+        run: |
+          echo "### auth.json shape (token redacted) ###"
+          jq '.token = (if .token == null then null else "REDACTED len=\(.token | length)" end)' \
+            "$HOME/.meshery/auth.json" || true
+          echo "### registered providers + provider auth exchange (server log) ###"
+          kubectl -n meshery logs deployment/meshery --tail=1500 2>/dev/null \
+            | grep -iE "provider name|register|capabilit|cloud\.meshery|cloud\.layer5|RemoteProviderURL|401|unauthor|logged in|de-register" \
+            | grep -viE "token|authorization|bearer" \
+            || echo "(no matching provider log lines)"
+        shell: bash
 
       - name: Convert TAP to Allure results
         if: ${{ !cancelled() && github.event_name == 'push' }}
@@ -108,7 +227,7 @@ jobs:
         shell: bash
         
       - name: Checkout QA
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}
         with:
           repository: meshery/qa
@@ -119,13 +238,13 @@ jobs:
         if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}
         working-directory: qa
         run: |
-          make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl/allure-results
+          make mesheryctl-bats-results-sync MESHERYCTL_BATS_RESULTS_PATH=../mesheryctl/allure-results
 
       - name: Commit & push to qa
         if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[mesheryctl] Sync mesheryctl E2E Test Results - ${GITHUB_SHA}"
+          commit_message: "[mesheryctl] Sync mesheryctl E2E Test Results - ${{ github.sha }}"
           commit_options: "--signoff"
           repository: qa
           commit_user_name: meshery-ci
@@ -218,19 +337,7 @@ jobs:
         shell: bash
         working-directory: ${{ github.workspace }}/mesheryctl
 
-      - name: Deploy Service Mesh
-        run: |
-          echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t "$RUNNER_TEMP/auth.json" ISTIO
-          sleep 50
-        shell: '/bin/bash {0}'
 
-      - name: Apply Pattern
-        uses: layer5io/meshery-service-mesh-patterns-action@master
-        with:
-          provider_token: ${{ secrets.PROVIDER_TOKEN }}
-          platform: ${{ matrix.platform }}
-          pattern_url: ${{ github.event.inputs.pattern_url }}
-          pattern_file: ${{ github.event.inputs.pattern_file }}
 
   scheduled-test:
     name: Scheduled e2e Test
@@ -313,24 +420,3 @@ jobs:
           echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t "$RUNNER_TEMP/auth.json" ISTIO
           sleep 50
         shell: '/bin/bash {0}'
-
-      # - name: Apply BookInfo Pattern
-      #   uses: meshery-extensions/mesheryctl-service-mesh-patterns-action@master
-      #   with:
-      #     provider_token: ${{ secrets.PROVIDER_TOKEN }}
-      #     platform: ${{ matrix.platform }}
-      #     pattern_url: https://raw.githubusercontent.com/service-mesh-patterns/service-mesh-patterns/master/samples/bookInfoPattern.yaml
-
-      - name: Apply Kubernetes Metrics Service Pattern
-        uses: meshery-extensions/mesheryctl-service-mesh-patterns-action@master
-        with:
-          provider_token: ${{ secrets.PROVIDER_TOKEN }}
-          platform: ${{ matrix.platform }}
-          pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/57f7230d-015b-4892-9042-cd1ea97fcb30.yaml
-
-      - name: Load "Serve An LLM With Multiple GPUs In GKE" design
-        uses: meshery-extensions/mesheryctl-service-mesh-patterns-action@master
-        with:
-          provider_token: ${{ secrets.PROVIDER_TOKEN }}
-          platform: ${{ matrix.platform }}
-          pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/9d3b33bf-eaf6-4d06-9dd6-64aa725ab383.yaml

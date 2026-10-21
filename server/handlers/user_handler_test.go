@@ -46,9 +46,14 @@ func TestGetUserByIDHandler_InvalidUUIDReturnsJSON(t *testing.T) {
 }
 
 // TestGetUserByIDHandler_ProviderErrorReturnsJSON covers the upstream-fetch
-// failure path. The handler must still emit a structured JSON error body on
-// 404 so the client does not choke on the meshkit "Unable to fetch data..."
-// string that starts with the letter 'U'.
+// failure path. The handler must emit a structured JSON error body so the
+// client does not choke on the meshkit "Unable to fetch data..." string that
+// starts with the letter 'U'.
+//
+// The status is 502, not the 404 this asserted previously: a provider error
+// that carries no HTTP status of its own is an upstream failure, and claiming
+// "not found" invents a fact about the user record we have no evidence for.
+// See providerStatus in handlers/utils.go.
 func TestGetUserByIDHandler_ProviderErrorReturnsJSON(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 	provider := &userSpyProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}, err: fmt.Errorf("remote blew up")}
@@ -60,8 +65,31 @@ func TestGetUserByIDHandler_ProviderErrorReturnsJSON(t *testing.T) {
 
 	h.GetUserByIDHandler(rec, req, nil, nil, provider)
 
-	if rec.Code != http.StatusNotFound {
-		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
+	if rec.Code != http.StatusBadGateway {
+		t.Fatalf("expected 502, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	assertJSONErrorEnvelope(t, rec.Result())
+}
+
+// TestGetUserByIDHandler_PropagatesProviderStatus is the counterpart: when the
+// provider DID report a status, that status must reach the client verbatim
+// rather than being flattened to a fabricated 404.
+func TestGetUserByIDHandler_PropagatesProviderStatus(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := &userSpyProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		err:                  models.ErrFetch(fmt.Errorf("forbidden"), "User", http.StatusForbidden),
+	}
+	provider.Initialize()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/user/profile/00000000-0000-0000-0000-000000000001", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": "00000000-0000-0000-0000-000000000001"})
+	rec := httptest.NewRecorder()
+
+	h.GetUserByIDHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusForbidden {
+		t.Fatalf("expected 403, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
 	assertJSONErrorEnvelope(t, rec.Result())
 }

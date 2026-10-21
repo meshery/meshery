@@ -26,25 +26,6 @@ type AddonStatusInput struct {
 	TargetStatus Status    `json:"targetStatus"`
 }
 
-type ApplicationPage struct {
-	Page         int                  `json:"page"`
-	PageSize     int                  `json:"page_size"`
-	TotalCount   int                  `json:"total_count"`
-	Applications []*ApplicationResult `json:"applications,omitempty"`
-}
-
-type ApplicationResult struct {
-	ID              string      `json:"id"`
-	Name            string      `json:"name"`
-	ApplicationFile string      `json:"application_file"`
-	Type            *NullString `json:"type"`
-	Owner           string      `json:"owner"`
-	Location        *Location   `json:"location"`
-	Visibility      string      `json:"visibility"`
-	CreatedAt       *string     `json:"created_at,omitempty"`
-	UpdatedAt       *string     `json:"updated_at,omitempty"`
-}
-
 type CatalogFilter struct {
 	ID             string         `json:"id"`
 	Name           string         `json:"name"`
@@ -83,16 +64,6 @@ type CatalogSelector struct {
 	Userid      []*string `json:"userid,omitempty"`
 	OrgID       []*string `json:"orgID,omitempty"`
 	WorkspaceID []*string `json:"workspaceID,omitempty"`
-}
-
-type ClusterResources struct {
-	Resources []*Resource `json:"resources"`
-}
-
-type ConfigurationPage struct {
-	Applications *ApplicationPage   `json:"applications,omitempty"`
-	Patterns     *PatternPageResult `json:"patterns,omitempty"`
-	Filters      *FilterPage        `json:"filters,omitempty"`
 }
 
 type Container struct {
@@ -143,26 +114,6 @@ type DataPlane struct {
 type Error struct {
 	Code        string `json:"code"`
 	Description string `json:"description"`
-}
-
-type FilterPage struct {
-	Page       int             `json:"page"`
-	PageSize   int             `json:"page_size"`
-	TotalCount int             `json:"total_count"`
-	Filters    []*FilterResult `json:"filters,omitempty"`
-}
-
-type FilterResult struct {
-	ID             string         `json:"id"`
-	Name           string         `json:"name"`
-	FilterFile     string         `json:"filter_file"`
-	FilterResource string         `json:"filter_resource"`
-	Owner          string         `json:"owner"`
-	Location       *Location      `json:"location"`
-	Visibility     string         `json:"visibility"`
-	CatalogData    map[string]any `json:"catalog_data,omitempty"`
-	CreatedAt      *string        `json:"created_at,omitempty"`
-	UpdatedAt      *string        `json:"updated_at,omitempty"`
 }
 
 type K8sContext struct {
@@ -348,17 +299,9 @@ type ReSyncActions struct {
 	HardReset string `json:"hardReset"`
 }
 
-type Resource struct {
-	Kind  string `json:"kind"`
-	Count int    `json:"count"`
-}
-
 type ServiceMeshFilter struct {
 	Type          *MeshType `json:"type,omitempty"`
 	K8sClusterIDs []string  `json:"k8sClusterIDs,omitempty"`
-}
-
-type Subscription struct {
 }
 
 type TelemetryComp struct {

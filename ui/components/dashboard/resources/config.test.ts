@@ -65,15 +65,15 @@ describe('generateDynamicURL', () => {
 describe('getAllCustomResourceDefinitionsKinds', () => {
   it('filters out kinds that are in the known resource menu', () => {
     const kinds = [
-      { Kind: 'Pod' },
-      { Kind: 'Service' },
-      { Kind: 'NotebookSpec' },
-      { Kind: 'Node' },
-      { Kind: 'Namespace' },
-      { Kind: 'AcmeRandom' },
+      { kind: 'Pod' },
+      { kind: 'Service' },
+      { kind: 'NotebookSpec' },
+      { kind: 'Node' },
+      { kind: 'Namespace' },
+      { kind: 'AcmeRandom' },
     ];
     const crds = getAllCustomResourceDefinitionsKinds(kinds);
-    expect(crds.map((k) => k.Kind)).toEqual(['NotebookSpec', 'AcmeRandom']);
+    expect(crds.map((k) => k.kind)).toEqual(['NotebookSpec', 'AcmeRandom']);
   });
 
   it('returns [] when the input is null/undefined', () => {
@@ -82,7 +82,7 @@ describe('getAllCustomResourceDefinitionsKinds', () => {
   });
 
   it('returns [] when no kinds qualify as custom resources', () => {
-    const kinds = [{ Kind: 'Pod' }, { Kind: 'Node' }];
+    const kinds = [{ kind: 'Pod' }, { kind: 'Node' }];
     expect(getAllCustomResourceDefinitionsKinds(kinds)).toEqual([]);
   });
 });

@@ -81,11 +81,32 @@ The `isAnnotation` attribute of a Relationship or Component determines whether t
 
 The combination of `kind`, `type`, and `subType` uniquely determines the visual paradigm for a given relationship; i.e., relationships with the same `kind`, `type`, and `subType` will share an identical visual representation regardless of the specific components involved in the relationship.
 
+`kind` is a schema enum (`hierarchical`, `edge`, `sibling`). `type` and `subType` are open strings. Established combinations:
+
+| kind | type | subType | Meaning |
+|---|---|---|---|
+| `edge` | `non-binding` | `network` | Documented network selection (Service → Deployment) |
+| `edge` | `binding` | `network` | Connecting provisions or rewrites network identity (rare) |
+| `edge` | `binding` | `mount` | Storage or device attachment (PVC → Pod) |
+| `edge` | `binding` | `permission` | Assigns identities (Role → ServiceAccount) |
+| `edge` | `non-binding` | `permission` | Mentions a role or identity without binding it |
+| `edge` | `non-binding` | `firewall` | Policy that allows or denies traffic (NetworkPolicy → Pod) |
+| `edge` | `non-binding` | `reference` | Logical name/id pointer (Deployment → ConfigMap) |
+| `edge` | `non-binding` | `annotation` | Designer-only connection (`metadata.isAnnotation: true`) |
+| `edge` | `non-binding` | `alias` | Named stand-in, not nested ownership |
+| `edge` | `non-binding` | `inventory` | Rare peer index; prefer hierarchical parent inventory for containment |
+| `hierarchical` | `parent` | `inventory` | Parent contains/scopes children; the parent's identity is patched onto each child (Namespace onto namespaced resources) |
+| `hierarchical` | `parent` | `wallet` | Child configuration is patched into the parent (WASMFilter → EnvoyFilter) |
+| `hierarchical` | `parent` | `alias` | Child is a nested object inside the parent (Container → Pod) |
+| `hierarchical` | `sibling` | `matchlabels` | In-tree tagsets encoding (shared labels). Schema also allows `kind: sibling`. |
+
+The schema lives in [meshery/schemas](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta3/relationship) (`relationships.meshery.io/v1beta3`). In-tree definitions under `models/**/relationships/` are still mostly `v1beta2`; the version shapes are compatible, and Meshery Server bridges registered definitions to the `v1beta2` shape for its policy engine. Registration on current releases accepts `v1beta2`/`v1alpha3` documents, with `v1beta3` acceptance arriving via [meshkit#1096](https://github.com/meshery/meshkit/pull/1096). See [Contributing to Relationships]({{< ref "project/contributing/models/relationships" >}}) for how to author definitions, including `mutatorRef` and `mutatedRef`.
+
 ### 1. Edge - Network
 
 This Relationship type configures the networking between one or more components.
 
-**Examples**: An edge-network relationship between a Service and a Deployment or an edge-binding relationship between an Ingress and a Service.
+**Examples**: An `edge` / `non-binding` / `network` relationship between a Service and a Deployment, or between an Ingress and a Service.
 
 - Example 1) Service --> Deployment
 - Example 2) IngressController --> Ingress --> Service
@@ -198,7 +219,7 @@ Logical or declarative links between components where one component refers to an
 
 ### 8. Match - Labels (Tagsets)
 
-This relationship type defines the associations between components based on shared Labels or Annotations.
+This relationship type defines the associations between components based on shared Labels or Annotations. In-tree Kubernetes models encode it as `kind: hierarchical`, `type: sibling`, `subType: matchlabels`. The schema `kind` enum also includes `sibling`; do not mix the two encodings in the same model.
 
 **Example**: A label-based tag-set relationship between a NodePort service and an application. 
 
@@ -222,89 +243,87 @@ This relationship depicts connections between components without conveying speci
 <script src="./images/embedded-design-edge-annotation-relationship.js" type="module" ></script>
 </details>
 
+## Actions: mutatorRef and mutatedRef
+
+When a relationship is semantic, matching components can copy values from one to the other.
+
+- `mutatorRef` is the **source**: a nested array of path segments from which the value is read.
+- `mutatedRef` is the **sink**: a nested array of path segments to patch.
+- The two sequences must be the same length. Index `i` of `mutatorRef` is copied onto index `i` of `mutatedRef`.
+- `patchStrategy` controls how the copy is applied (`merge`, `strategic`, `add`, `remove`, `replace`, `copy`, `move`, `test`). The in-tree corpus uses `replace` exclusively.
+
+For hierarchical relationships, `from` is the child and `to` is the parent. Inventory patches parent identity onto the child. Alias and wallet patch child configuration into the parent.
+
+See [Contributing to Relationships]({{< ref "project/contributing/models/relationships" >}}) for path rules and examples.
+
 ## Selectors in Relationships
 
-In Meshery, a selector is a way to specify which set of components a certain other component should affect or interact with. Selectors provide a flexible and powerful way to manage and orchestrate resources under Meshery's management.
+In Meshery, a selector specifies which components participate in a relationship. The field name is `selectors` (an array of selector-set items). Items in the array are OR; inside one item, every `from` entry relates to every `to` entry - a cross-product.
 
-Selectors can be applied to various components, enabling a wide range of relationship definitions. Here are some examples:
+Here are examples of pairs that share a visual paradigm. The ConfigMap pairs are **edge / non-binding / reference**. The WASMFilter pair is **hierarchical / parent / wallet**, not inventory.
 
 <table class="table table-dark table-active">
     <tr>
         <th>Model Component</th>
-        <th>Relationship Kind</th>
-        <th>Relationship SubType</th>
+        <th>Kind / Type / SubType</th>
         <th>Model Component</th>
     </tr>
     <tr>
         <td>Kubernetes ConfigMap</td>
-        <td>Hierarchical</td>
-        <td>Inventory</td>
+        <td>edge / non-binding / reference</td>
         <td>Kubernetes Pod</td>
     </tr>
     <tr>
         <td>Kubernetes ConfigMap</td>
-        <td>Hierarchical</td>
-        <td>Inventory</td>
+        <td>edge / non-binding / reference</td>
         <td>Kubernetes Deployment</td>
     </tr>
     <tr>
         <td>Meshery WASMFilter</td>
-        <td>Hierarchical</td>
-        <td>Inventory</td>
+        <td>hierarchical / parent / wallet</td>
         <td>Istio EnvoyFilter</td>
     </tr>
 </table>
 
-The above relationships pairs have hierarchical inventory relationships, and visual paradigm remain consistent across different components. A snippet of the selector backing this relationship is listed below.
+A snippet of the selector backing the ConfigMap → Pod reference is listed below.
 <details>
 <summary>Example Relationship Selector</summary>
 <code><pre>
-"selector": {
+"selectors": [
+  {
     "allow": {
-        "from": [
-          {
-            "kind": "ConfigMap",
-            "model": "kubernetes",
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "name"
-                ]
-              ],
-              "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
-            }
+      "from": [
+        {
+          "kind": "ConfigMap",
+          "model": { "name": "kubernetes" },
+          "patch": {
+            "patchStrategy": "replace",
+            "mutatorRef": [
+              ["configuration", "metadata", "name"]
+            ]
           }
-        ],
-        "to": [
-          {
-            "kind": "Pod",
-            "model": "kubernetes",
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "settings",
-                  "spec",
-                  "containers",
-                  "_",
-                  "envFrom",
-                  "0",
-                  "configMapRef",
-                  "name"
-                ]
-              ],
-              "description": "ConfigMaps can be referenced in the Pod specification to inject configuration data into the Pod's environment.\n\nThe keys from the ConfigMap will be exposed as environment variables to the container within the Pod."
-            }
+        }
+      ],
+      "to": [
+        {
+          "kind": "Pod",
+          "model": { "name": "kubernetes" },
+          "patch": {
+            "patchStrategy": "replace",
+            "mutatedRef": [
+              ["configuration", "spec", "containers", "_", "envFrom", "0", "configMapRef", "name"]
+            ]
           }
-        ]
+        }
+      ]
     }
-}
+  }
+]
 </pre></code>
 
 </details>
 
-The above snippet defines a selector configuration for allowing relationships between `Kubernetes ConfigMap` and `Kubernetes Pod`.
+The snippet allows an edge-reference relationship from a Kubernetes ConfigMap to a Kubernetes Pod: the ConfigMap name (mutator) is written into the Pod's `envFrom.configMapRef.name` (mutated).
 
  <!-- add images -->
 
@@ -346,7 +365,7 @@ Designs are evaluated by the [Policy Engine]({{< ref "concepts/logical/policies/
 <!-- Explain how and what configs get patched when relationships are created -->
 <!-- Explain real time evaluation of relationships on -->
 <!-- 1. Import -->
-<!-- 2. When compoennt config is update and it satisfied the condition for the relationship -->
+<!-- 2. When component config is update and it satisfied the condition for the relationship -->
 
 ### Patch Strategies
 

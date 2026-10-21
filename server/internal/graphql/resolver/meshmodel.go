@@ -13,38 +13,6 @@ import (
 	"github.com/meshery/schemas/models/v1beta3/component"
 )
 
-func (r *Resolver) subscribeMeshModelSummary(ctx context.Context, provider models.Provider, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error) {
-	ch := make(chan struct{}, 1)
-	ch <- struct{}{}
-	respChan := make(chan *model.MeshModelSummary)
-
-	r.Config.MeshModelSummaryChannel.Subscribe(ch)
-	go func() {
-		r.Log.Info("Initializing MeshModelSummary subscription")
-		for {
-			select {
-			case <-ch:
-				meshModelSummary, err := r.getMeshModelSummary(ctx, provider, selector)
-				if err != nil {
-					r.Log.Error(ErrMeshModelSummarySubscription(err))
-					break
-				}
-				respChan <- meshModelSummary
-			case <-ctx.Done():
-				close(respChan)
-				// Detach the listener instead of closing ch: SummaryChannel keeps
-				// no way to remove a closed channel, so a closed ch left in its
-				// slice would make the next Publish panic on a send to it.
-				r.Config.MeshModelSummaryChannel.Unsubscribe(ch)
-				r.Log.Info("Closing MeshModelSummary subscription")
-				return
-			}
-		}
-	}()
-
-	return respChan, nil
-}
-
 func (r *Resolver) getMeshModelSummary(ctx context.Context, _ models.Provider, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error) {
 	regManager, ok := ctx.Value(models.RegistryManagerKey).(*registry.RegistryManager)
 	summary := &model.MeshModelSummary{}

@@ -1,6 +1,14 @@
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
-import { Box, FormControl, Grid2, InputLabel, MenuItem, Select, useTheme } from '@sistent/sistent';
+import {
+  Box,
+  FormControl,
+  Grid2,
+  InputLabel,
+  MenuItem,
+  Select,
+  useTheme,
+  useHasPermission,
+} from '@sistent/sistent';
 import React, { useCallback, useState } from 'react';
 import { StyledSearchBar } from '@sistent/sistent';
 import MainDesignsContent from './MainDesignsContent';
@@ -17,7 +25,7 @@ import {
 import { getDefaultFilterType } from './hooks';
 
 const SharedContent = () => {
-  const isViewVisible = CAN(Keys.KanvasViewViews.id, Keys.KanvasViewViews.function);
+  const isViewVisible = useHasPermission(Keys.KanvasViewViews);
 
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 

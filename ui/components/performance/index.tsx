@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { ModalBody, ModalFooter, NoSsr } from '@sistent/sistent';
+import { ModalBody, ModalFooter, NoSsr, useHasPermission } from '@sistent/sistent';
 import { URLValidator } from '../../utils/URLValidator';
 import { isValidJSON } from '../../utils/validators';
 import LoadTestTimerDialog from '../load-test-timer-dialog';
 import fetchControlPlanes from '@/graphql/queries/ControlPlanesQuery';
-import { ctxUrl, getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
+import { getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { generateTestName, generateUUID } from './helper';
-import CAN from '@/utils/can';
+import { buildPerformanceRunUrl, generateTestName, generateUUID } from './helper';
+
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '@/components/general/error-404/index';
 import { api } from '../../rtk-query';
@@ -35,6 +35,7 @@ let eventStream = null;
 const PERFORMANCE_RTK_TAG = 'Performance_Profile_performance';
 
 const MesheryPerformanceComponent_ = (props) => {
+  const hasPermission = useHasPermission(Keys.PerformanceManagementViewPerformanceProfiles);
   const {
     testName = '',
     meshName = '',
@@ -272,9 +273,8 @@ const MesheryPerformanceComponent_ = (props) => {
       .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
       .join('&');
 
-    const runURL =
-      ctxUrl(`/api/user/performance/profiles/${id}/run`, selectedK8sContexts) + '&cert=true';
-    startEventStream(`${runURL}${selectedK8sContexts?.length > 0 ? '&' : '?'}${params}`);
+    const runURL = buildPerformanceRunUrl(id, selectedK8sContexts, params);
+    startEventStream(runURL);
     setBlockRunTest(true); // to block the button
   };
 
@@ -487,10 +487,7 @@ const MesheryPerformanceComponent_ = (props) => {
 
   return (
     <NoSsr>
-      {CAN(
-        Keys.PerformanceManagementViewPerformanceProfiles.id,
-        Keys.PerformanceManagementViewPerformanceProfiles.function,
-      ) ? (
+      {hasPermission ? (
         <>
           <React.Fragment>
             <ModalBody>
@@ -548,7 +545,7 @@ const MesheryPerformanceComponent_ = (props) => {
           </React.Fragment>
         </>
       ) : (
-        <DefaultError />
+        <DefaultError permissionKey={Keys.PerformanceManagementViewPerformanceProfiles} />
       )}
     </NoSsr>
   );

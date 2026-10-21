@@ -187,7 +187,6 @@ func (h *Handler) handleFilterPOST(
 				return
 			}
 
-			go h.config.FilterChannel.Publish(userID, struct{}{})
 			h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
 
 			eventBuilder.WithSeverity(events.Informational).Build()
@@ -299,7 +298,6 @@ func (h *Handler) DeleteMesheryFilterHandler(
 		return
 	}
 
-	go h.config.FilterChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
 		h.log.Error(err)
@@ -328,7 +326,6 @@ func (h *Handler) CloneMesheryFilterHandler(
 		return
 	}
 
-	go h.config.FilterChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
 		h.log.Error(err)
@@ -405,7 +402,6 @@ func (h *Handler) PublishCatalogFilterHandler(
 	_ = provider.PersistEvent(*e, token)
 	go h.config.EventBroadcaster.Publish(userID, e)
 
-	go h.config.FilterChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusAccepted)
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
@@ -482,7 +478,6 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 	_ = provider.PersistEvent(*e, token)
 	go h.config.EventBroadcaster.Publish(userID, e)
 
-	go h.config.FilterChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
 		h.log.Error(err)

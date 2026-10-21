@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "VPC",
+            "kind": "Subnet",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -48,7 +48,11 @@
             "patch": {
               "mutatedRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "spec",
+                  "vpcRef",
+                  "from",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"
@@ -58,7 +62,7 @@
         "to": [
           {
             "id": null,
-            "kind": "Subnet",
+            "kind": "VPC",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -76,9 +80,7 @@
             "patch": {
               "mutatorRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "vpcID"
+                  "displayName"
                 ]
               ],
               "patchStrategy": "replace"

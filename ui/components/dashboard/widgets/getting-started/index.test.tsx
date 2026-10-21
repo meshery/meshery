@@ -49,6 +49,7 @@ vi.mock('@sistent/sistent', () => ({
   ),
   useTheme: () => ({ palette: { icon: { default: '#000' } } }),
   GetStartedIcon: () => <svg data-testid="get-started-icon" />,
+  useHasPermission: () => true,
   ActionButtonCard: (props: {
     title: string;
     description: string;

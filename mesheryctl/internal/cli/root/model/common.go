@@ -10,7 +10,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
-var modelsApiPath = "api/meshmodels/models"
+var modelsApiPath = "api/registry/models"
 
 func promptModelSelection(modelSearchTerm string, apiPath string) (*model.ModelDefinition, error) {
 	selectedModel := new(model.ModelDefinition)

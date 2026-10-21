@@ -32,7 +32,7 @@ Meshery learns about Connections two ways. **Managed** Connections (for example,
 1. Open the **Connections** page in Meshery (**Lifecycle → Connections**).
 2. Click **Create Connection**.
 
-The wizard opens as a modal. The set of Connection kinds you can create is driven by the [connection definitions]({{< ref "project/contributing/models/connections" >}}) registered in your Meshery Server's [Registry]({{< ref "concepts/logical/registry.md" >}}). Out of the box this includes **Kubernetes**, **Grafana**, and **Prometheus**; your deployment may offer more. If a kind you need is missing, a contributor can add it - see [Contributing a Connection]({{< ref "project/contributing/models/connections" >}}).
+The wizard opens as a modal. The set of Connection kinds you can create is driven by the [connection definitions]({{< ref "project/contributing/models/connections" >}}) registered in your Meshery Server's [Registry]({{< ref "concepts/logical/registry.md" >}}). Out of the box this includes **Kubernetes**, **Grafana**, **Prometheus**, **Artifact Hub**, and **GitHub**; your deployment may offer more. Because the list is registry-driven, the wizard surfaces each kind - its name, description, icon, and its Configure and Credential fields - straight from the definition, so no kind is hard-coded into the UI. If a kind you need is missing, a contributor can add it - see [Contributing a Connection]({{< ref "project/contributing/models/connections" >}}).
 
 ## Creating a Connection
 
@@ -79,6 +79,26 @@ When you import or reconfigure a Kubernetes cluster, you choose how [MeshSync]({
 - **Embedded** - runs MeshSync from within Meshery Server. Nothing is installed into the cluster; discovery happens out-of-cluster. This is the default.
 
 Switching the mode later makes Meshery redeploy MeshSync accordingly (see [Updating a Connection](#updating-a-connection)). For the behavioral trade-offs between the two modes - cluster footprint, permissions, network requirements, and what each mode gives up - and for every other setting of these components, see [Configuring Meshery Operator, MeshSync, and Broker]({{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md" >}}).
+
+## Connecting a source (Artifact Hub, GitHub)
+
+Some Connections are **sources** - external registries and repositories that Meshery reads from to generate [Models]({{< ref "concepts/logical/models/index.md" >}}) and components, and (for repositories) to import designs kept under version control. They follow the same generic flow described above; only their fields differ.
+
+### Artifact Hub
+
+Register an [Artifact Hub](https://artifacthub.io) instance to source Helm charts and other CNCF artifacts, then generate Meshery models and components from the CRDs they carry.
+
+- **Configure Connection.** Supply the **Artifact Hub Endpoint** - the base URL of the instance (for example `https://artifacthub.io`). Point this at your own deployment to source from a self-hosted Artifact Hub. An optional friendly **Connection Name** is also accepted.
+- **Associate Credential.** Artifact Hub's public API needs no authentication - leave both credential fields empty to use it. To raise your rate limit or reach private content, provide an **API Key ID** _and_ its **API Key Secret**. The two are paired: supply both or neither.
+
+### GitHub
+
+Register a [GitHub](https://github.com) repository to generate models and components from the Kubernetes manifests and CRDs it holds, and to import designs stored alongside the code they describe.
+
+- **Configure Connection.** Supply the **Repository URL** Meshery reads from (for example `https://github.com/meshery/meshery`); GitHub Enterprise Server URLs are accepted. Optionally set a **Branch** or tag (leave empty for the repository's default branch) and a friendly **Connection Name**.
+- **Associate Credential.** Provide an **Access Token** (a personal access token or GitHub App installation token). It is required for private repositories; for public repositories it is optional and raises the API rate limit.
+
+For both kinds you can **skip credential verification** to register the source without first probing it - useful when it is not reachable yet but you still want it on record. Once connected, a source's packages or manifests become available for [model and component generation]({{< ref "guides/configuration-management/importing-models/index.md" >}}).
 
 ## Updating a Connection
 

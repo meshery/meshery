@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const can = vi.fn(() => true);
 const handleSuccess = vi.fn();
 const handleError = vi.fn();
+const notifyApiError = vi.fn();
 const deleteWorkspaceMutator = vi.fn();
 
 vi.mock('@/rtk-query/workspace', () => ({
@@ -17,7 +18,7 @@ vi.mock('@/utils/can', () => ({
 }));
 
 vi.mock('@/utils/hooks/useNotification', () => ({
-  useNotificationHandlers: () => ({ handleSuccess, handleError }),
+  useNotificationHandlers: () => ({ handleSuccess, handleError, notifyApiError }),
 }));
 
 vi.mock('@sistent/sistent', () => ({
@@ -67,6 +68,7 @@ vi.mock('@sistent/sistent', () => ({
     },
   }),
   ErrorBoundary: ({ children }: any) => <>{children}</>,
+  useHasPermission: (key: any) => can(key?.id, key?.function),
 }));
 
 vi.mock('./styles', () => ({
@@ -104,6 +106,7 @@ describe('WorkspaceGridView', () => {
     deleteWorkspaceMutator.mockReset();
     handleSuccess.mockReset();
     handleError.mockReset();
+    notifyApiError.mockReset();
     can.mockReset();
     can.mockReturnValue(true);
     deleteWorkspaceMutator.mockReturnValue({ unwrap: () => Promise.resolve() });

@@ -1,6 +1,6 @@
 import React from 'react';
 import MesheryCredentialComponent from '../../components/MesheryCredentialComponent';
-import { MesheryPage, PageContainer } from '../../components/MesheryPage';
+import { MesheryPage, PageContainer } from '../../components/general/MesheryPage';
 
 const Credentials = () => (
   <MesheryPage title="Credentials">

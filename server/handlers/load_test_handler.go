@@ -570,14 +570,6 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 		Status: models.LoadTestSuccess,
 		Result: result,
 	}
-
-	if h.config.PerformanceChannel != nil {
-		h.config.PerformanceChannel <- struct{}{}
-	}
-
-	if h.config.PerformanceResultChannel != nil {
-		h.config.PerformanceResultChannel <- struct{}{}
-	}
 }
 
 func assignCertificatePath(key, path string, loadTestOptions *models.LoadTestOptions) {

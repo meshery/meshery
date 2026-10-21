@@ -11,7 +11,7 @@ import {
 import fetchAvailableAddons from '@/graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from '@/graphql/queries/NamespaceQuery';
 import MesheryResultDialog from './MesheryResultDialog';
-import ReactSelectWrapper from './ReactSelectWrapper';
+import ReactSelectWrapper from './general/ReactSelectWrapper';
 import ConfirmationMsg from '@/components/designs/lifecycle/DeployConfirmationModal';
 import { ACTIONS } from '../utils/Enum';
 import { getModelByName } from '../api/meshmodel';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, CircularProgress } from '@sistent/sistent';
 import { SaveOutlined as SaveOutlinedIcon } from '@/assets/icons';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 
 interface PerformanceFormActionsProps {
@@ -76,11 +76,8 @@ const PerformanceFormActions: React.FC<PerformanceFormActionsProps> = ({
         size="large"
         onClick={onRunTest}
         sx={{ marginLeft: '1rem' }}
-        disabled={
-          blockRunTest ||
-          disableTest ||
-          !CAN(Keys.PerformanceManagementRunTest.id, Keys.PerformanceManagementRunTest.function)
-        }
+        disabled={blockRunTest || disableTest}
+        permissionKey={Keys.PerformanceManagementRunTest}
       >
         {blockRunTest ? <CircularProgress size={30} /> : 'Run Test'}
       </Button>

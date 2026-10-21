@@ -12,7 +12,7 @@ Meshery and its components are written using the following languages and technol
 | Components                                                           | Languages and Technologies                                                        |
 | :------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | Meshery Server                                                       | Golang, gRPC, GraphQL, [SMP](https://smp-spec.io)                                 |
-|   [Meshery Database]({{< ref "concepts/architecture/database/index.md" >}})                | Golang, SQLlite                                                                   |
+|   [Meshery Database]({{< ref "concepts/architecture/database/index.md" >}})                | Golang, SQLite                                                                   |
 | Meshery UI                                                           | ReactJS, NextJS, BillboardJS                                                      |
 | Meshery Provider UI                                                  | ReactJS, NextJS                                                                   |
 | [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}})                  | Golang                                                                            |
@@ -22,11 +22,13 @@ Meshery and its components are written using the following languages and technol
 | --- [Extensions]({{< ref "extensions/_index.md" >}}) ---                                    |                                                                                   |
 | [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}})                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/)                              |
 | [Meshery Remote Providers]({{< ref "reference/extensibility/providers/index.md" >}})                 | _any_ - must adhere to Meshery [Extension Points]({{< ref "reference/extensibility/_index.md" >}}) |
-| [Envoy WASM Filters](https://github.com/meshery-extensions/wasm-filters)     | Rust and C++                                                                      |
+| [Envoy WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust and C++                                                                      |
 
 ## Deployments
 
 Meshery deploys as a set of containers. Meshery's containers can be deployed to either Docker or Kubernetes. Meshery components connect to one another via gRPC requests. Meshery Server stores the location of the other components and connects with those components as needed. Typically, a connection from Meshery Server to Meshery Adapters is initiated from a client request (usually either `mesheryctl` or Meshery UI) to gather information from the Adapter or invoke an Adapter's operation.
+
+Deploying a [Design]({{< ref "concepts/logical/designs.md" >}}) is one such request. Meshery Server resolves each component of the Design to the registrant of its model and, on that basis, either applies the component itself or delegates it to an Adapter - so a single deployment can involve both. See [**Deployment Engine**]({{< ref "concepts/architecture/deployment-engine/index.md" >}}).
 
 ### Adapters
 

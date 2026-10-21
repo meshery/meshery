@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
 import { Delete as DeleteIcon } from '@/assets/icons';
 import {
@@ -15,13 +15,13 @@ import {
   TableRow,
   EditIcon,
 } from '@sistent/sistent';
-import FlipCard from '../FlipCard';
+import FlipCard from '../general/FlipCard';
 import PerformanceResults from './PerformanceResults';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { iconMedium } from '../../css/icons.styles';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
-import { useGetUserByIdQuery } from '@/rtk-query/user';
+import { useResourceOwner } from '@/utils/hooks/useResourceOwner';
 import useTestIDsGenerator from '@/utils/hooks/useTestIDs';
 import { BottomPart, CardButton, ResultContainer } from './style';
 
@@ -35,21 +35,8 @@ function PerformanceCard({
   requestSizeRestore,
 }) {
   const theme = useTheme();
-  const [userAvatar, setUserAvatar] = useState(null);
-  const {
-    data: userData,
-    isSuccess: isUserDataFetched,
-    isError: userError,
-  } = useGetUserByIdQuery(profile.userId);
+  const { owner, hasCloudProfile } = useResourceOwner(profile.owner);
   const dataTestIDs = useTestIDsGenerator('performanceProfileCard');
-
-  useEffect(() => {
-    if (isUserDataFetched && userData && userData.avatarUrl) {
-      setUserAvatar(userData.avatarUrl);
-    } else if (userError) {
-      console.error('Failed to fetch user profile with ID');
-    }
-  }, [isUserDataFetched, userError, userData]);
 
   const {
     id,
@@ -192,9 +179,17 @@ function PerformanceCard({
         </ResultContainer>
         <div style={{}}>
           <BottomPart>
-            <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.userId}`} target="_blank">
-              <Avatar alt="profile-avatar" src={userAvatar} />
-            </Link>
+            {hasCloudProfile ? (
+              <Link
+                href={`${MESHERY_CLOUD_PROD}/user/${profile.owner}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
+              </Link>
+            ) : (
+              <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
+            )}
             <div
               style={{
                 marginRight: '0.5rem',
@@ -232,12 +227,7 @@ function PerformanceCard({
                   });
                 })
               }
-              disabled={
-                !CAN(
-                  Keys.PerformanceManagementViewResults.id,
-                  Keys.PerformanceManagementViewResults.function,
-                )
-              }
+              permissionKey={Keys.PerformanceManagementViewResults}
               sx={{ marginRight: '0.5rem' }}
             >
               {renderTable ? 'Hide' : 'View'} Results
@@ -246,12 +236,7 @@ function PerformanceCard({
               color="primary"
               variant="contained"
               onClick={(ev) => genericClickHandler(ev, handleProfile)}
-              disabled={
-                !CAN(
-                  Keys.PerformanceManagementEditPerformanceTest.id,
-                  Keys.PerformanceManagementEditPerformanceTest.function,
-                )
-              }
+              permissionKey={Keys.PerformanceManagementEditPerformanceTest}
               sx={{ marginRight: '0.5rem' }}
             >
               Edit Profile
@@ -260,12 +245,7 @@ function PerformanceCard({
               color="primary"
               variant="contained"
               onClick={(ev) => genericClickHandler(ev, handleRunTest)}
-              disabled={
-                !CAN(
-                  Keys.PerformanceManagementRunTest.id,
-                  Keys.PerformanceManagementRunTest.function,
-                )
-              }
+              permissionKey={Keys.PerformanceManagementRunTest}
             >
               Run Test
             </Button>
@@ -314,28 +294,18 @@ function PerformanceCard({
                 <IconButton
                   onClick={(ev) => genericClickHandler(ev, handleEdit)}
                   data-testid={dataTestIDs('edit')}
-                  disabled={
-                    !CAN(
-                      Keys.PerformanceManagementEditPerformanceTest.id,
-                      Keys.PerformanceManagementEditPerformanceTest.function,
-                    )
-                  }
+                  permissionKey={Keys.PerformanceManagementEditPerformanceTest}
                 >
-                  <EditIcon style={iconMedium} />
+                  <EditIcon style={iconMedium} fill={theme?.palette?.icon?.default} />
                 </IconButton>
               </CustomTooltip>
               <CustomTooltip title="Delete">
                 <IconButton
                   onClick={(ev) => genericClickHandler(ev, handleDelete)}
                   data-testid={dataTestIDs('delete')}
-                  disabled={
-                    !CAN(
-                      Keys.PerformanceManagementDeletePerformanceTest.id,
-                      Keys.PerformanceManagementDeletePerformanceTest.function,
-                    )
-                  }
+                  permissionKey={Keys.PerformanceManagementDeletePerformanceTest}
                 >
-                  <DeleteIcon style={iconMedium} />
+                  <DeleteIcon style={iconMedium} fill={theme?.palette?.icon?.default} />
                 </IconButton>
               </CustomTooltip>
             </div>

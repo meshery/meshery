@@ -109,6 +109,20 @@ const setWindowLocation = (href: string) => {
         return '';
       }
     },
+    get search() {
+      try {
+        return new URL(current).search;
+      } catch {
+        return '';
+      }
+    },
+    get hash() {
+      try {
+        return new URL(current).hash;
+      } catch {
+        return '';
+      }
+    },
     toString() {
       return current;
     },
@@ -155,6 +169,49 @@ describe('User component', () => {
 
     expect(screen.getByTestId('profile-button')).toBeInTheDocument();
     expect(screen.getByTestId('avatar')).toHaveAttribute('src', 'https://cdn.test/me.png');
+  });
+
+  it('sends a relative Sign In ref that keeps mode=design', () => {
+    setWindowLocation('https://kanvas.new/extension/meshmap?mode=design#canvas');
+    mockGetUserQuery = {
+      data: { status: 'anonymous', id: 'anon-1' },
+      isSuccess: true,
+      isError: false,
+      error: undefined,
+    };
+
+    render(<UserProvider />);
+
+    const link = screen.getByTestId('next-link') as HTMLAnchorElement;
+    const href = link.getAttribute('href') || '';
+    const ref = new URL(href).searchParams.get('ref');
+    expect(ref).toBeTruthy();
+    expect(atob(ref as string)).toBe('/extension/meshmap?mode=design#canvas');
+  });
+
+  // btoa emits standard base64. An unencoded '+' in a query value decodes back
+  // to a space, so the server's ref no longer parses as base64 and the user
+  // silently lands on '/'. A tilde in the page URL is enough to produce one.
+  it('encodes Sign In query values so a base64 plus survives the round trip', () => {
+    const pageUrl = '/extension/meshmap?mode=design&n=xx~';
+    setWindowLocation(`https://kanvas.new${pageUrl}`);
+    mockGetUserQuery = {
+      data: { status: 'anonymous', id: 'anon-1' },
+      isSuccess: true,
+      isError: false,
+      error: undefined,
+    };
+
+    render(<UserProvider />);
+
+    const href = screen.getByTestId('next-link').getAttribute('href') || '';
+    // Pre-condition: this page really does produce a '+' in the base64.
+    expect(btoa(pageUrl)).toContain('+');
+
+    const params = new URL(href).searchParams;
+    expect(atob(params.get('ref') as string)).toBe(pageUrl);
+    expect(atob(params.get('source') as string)).toBe('https://kanvas.new/api/user/token');
+    expect(params.get('anonymousUserID')).toBe('anon-1');
   });
 
   it('renders a Sign In button when the user is anonymous', () => {
@@ -207,8 +264,11 @@ describe('User component', () => {
     expect(payload.details).toBe('oops');
   });
 
-  it('navigates to the profile URL when the avatar is clicked', async () => {
+  it('opens profile URL in a new tab when avatar is clicked', async () => {
     const user = userEvent.setup();
+    const mockOpen = vi.fn();
+    window.open = mockOpen;
+
     mockGetUserQuery = {
       data: { status: 'authenticated' },
       isSuccess: true,
@@ -228,10 +288,14 @@ describe('User component', () => {
     await waitFor(() => expect(ExtensionPointSchemaValidator).toHaveBeenCalledWith('account'));
 
     await user.click(screen.getByTestId('icon-button-avatar'));
-    expect(window.location.href).toContain('https://cloud.test/profile');
+    expect(mockOpen).toHaveBeenCalledWith(
+      'https://cloud.test/profile',
+      '_blank',
+      'noopener,noreferrer',
+    );
   });
 
-  it('does not redirect when no profile URL is present', async () => {
+  it('shows a warning when no profile URL is present', async () => {
     const user = userEvent.setup();
     mockGetUserQuery = {
       data: { status: 'authenticated' },
@@ -239,12 +303,16 @@ describe('User component', () => {
       isError: false,
       error: undefined,
     };
+    // no extensions.account → profileUrl will be undefined
+    mockProviderCapabilities = {
+      providerUrl: 'https://provider.test',
+    };
 
-    const startingHref = window.location.href;
     render(<UserProvider />);
 
     await user.click(screen.getByTestId('icon-button-avatar'));
-    // window.location.href should still be the same since profileUrl is undefined
-    expect(window.location.href).toBe(startingHref);
+    await waitFor(() => expect(notify).toHaveBeenCalled());
+    const [payload] = notify.mock.calls[0];
+    expect(payload.message).toBe('Please log in to access this profile');
   });
 });

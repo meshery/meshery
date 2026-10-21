@@ -20,5 +20,5 @@ aliases:
 
 The following sample applications are available in this adapter.
 
-- [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md#bookinfo" >}})
+- Bookinfo
   - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.

@@ -44,7 +44,7 @@ const ActionPopover = ({ actions = [] }) => {
 
       <ClickAwayListener mouseEvent="onMouseDown" onClickAway={handleClose}>
         <Popper
-          sx={{ zIndex: 1 }}
+          sx={{ zIndex: (theme) => theme.zIndex.modal }}
           open={open}
           anchorEl={anchorRef.current}
           placement="bottom-start"
@@ -54,6 +54,7 @@ const ActionPopover = ({ actions = [] }) => {
               {actions.map((action, index) => (
                 <MenuItem
                   disabled={action.disabled}
+                  permissionKey={action.permissionKey}
                   key={index}
                   onClick={(event) => {
                     event.stopPropagation();

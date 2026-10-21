@@ -58,16 +58,42 @@ export class DashboardPage {
     this.headerMenu = this.page.getByTestId('header-menu');
   }
 
-  async navigateToMenu(navItem) {
+  async navigateToMenu(navItem, options = {}) {
     const menuItem = this.page.getByTestId(navItem);
-    await expect(menuItem).toBeVisible();
+    await expect(menuItem).toBeVisible(options.timeout ? { timeout: options.timeout } : undefined);
     await menuItem.click();
   }
 
+  // Expanding a left-nav section and clicking one of its children is not a
+  // single settled interaction: the parent is a link that both navigates and
+  // toggles the section, and a click that lands before the navigator has
+  // hydrated is swallowed with no error. The submenu then never opens, so
+  // waiting on the child is waiting on an element that will never appear -
+  // which is why this timed out after resolving the child ~90 times as
+  // "hidden" rather than failing fast (5 of the 20 CI runs to 2026-08-05).
+  //
+  // Retrying the parent click until the child is actually visible fixes the
+  // race at its cause. A longer timeout cannot, because no amount of waiting
+  // re-sends the swallowed click.
   async navigateToSubMenuItem(parentItem, childItem) {
-    await this.navigateToMenu(parentItem);
     const submenuItem = this.page.getByTestId(childItem);
-    await expect(submenuItem).toBeVisible();
+    // Bound BOTH waits inside the retry. With the parent check left on the
+    // default 60s expect timeout, a single attempt could consume most of the
+    // test budget and the case died on the 180s test timeout instead of its own
+    // assertion - and a test-level timeout reports no locator, no snippet and no
+    // file location, so the failure said nothing at all. Short per-attempt
+    // timeouts make each retry cheap and let this fail legibly at ~60s.
+    await expect(async () => {
+      // Only click the parent when the submenu is not already open. The parent
+      // both navigates and toggles, so an unconditional click on a retry can
+      // CLOSE a submenu a previous attempt had just opened - the retry would
+      // then fight itself, which is a plausible mechanism for this staying
+      // flaky after the click was made retryable at all.
+      if (!(await submenuItem.isVisible())) {
+        await this.navigateToMenu(parentItem, { timeout: 5_000 });
+      }
+      await expect(submenuItem).toBeVisible({ timeout: 5_000 });
+    }).toPass({ timeout: 60_000 });
     await submenuItem.click();
   }
 

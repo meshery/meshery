@@ -10,8 +10,8 @@ import {
   IconButton,
   PlayArrowIcon as PlayIcon,
 } from '@sistent/sistent';
-import { Controlled as CodeMirror } from './CodeMirror';
-import ReactSelectWrapper from './ReactSelectWrapper';
+import { Controlled as CodeMirror } from './general/CodeMirror';
+import ReactSelectWrapper from './general/ReactSelectWrapper';
 import { iconMedium } from '../css/icons.styles';
 
 interface AdapterYamlDialogProps {

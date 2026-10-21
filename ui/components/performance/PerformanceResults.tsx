@@ -211,7 +211,8 @@ function generateColumnsForDisplay(
               color="inherit"
               onClick={() => setSelectedProfileIdxForChart(tableMeta.rowIndex)}
             >
-              <BarChartIcon style={iconMedium} /> {/* can change it to large */}
+              <BarChartIcon style={iconMedium} fill={theme?.palette?.icon?.default} />{' '}
+              {/* can change it to large */}
             </IconButton>
           );
         },
@@ -251,11 +252,7 @@ function generateColumnsForDisplay(
         customBodyRender: function CustomBody(_, tableMeta) {
           return (
             <>
-              <IconButton
-                style={iconMedium}
-                aria-label="Share"
-                onClick={(e) => handleSocialExpandClick(e, tableMeta)}
-              >
+              <IconButton aria-label="Share" onClick={(e) => handleSocialExpandClick(e, tableMeta)}>
                 <ReplyIcon
                   style={{
                     transform: 'scaleX(-1)',

@@ -35,6 +35,9 @@ export const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => pro
       height: '100%',
       zIndex: theme.zIndex.drawer,
     },
+    [theme.breakpoints.down('md')]: {
+      zIndex: theme.zIndex.drawer,
+    },
     ...(open && {
       width: DRAWER_WIDTH,
       transition: theme.transitions.create('width', {
@@ -83,12 +86,20 @@ export const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => pro
 export const StyledMainContent = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
+  flex: 1,
+  minWidth: 0,
+  minHeight: 0,
   width: '100%',
   height: '100%',
   padding: '1rem 2rem',
   overflowY: 'auto',
+  overflowX: 'auto',
   [theme.breakpoints.down('xl')]: {
-    paddingLeft: '5rem',
+    paddingLeft: `calc(${theme.spacing(8)} + 1px + ${theme.spacing(1)})`,
+  },
+  [theme.breakpoints.down('md')]: {
+    padding: theme.spacing(1),
+    paddingLeft: `calc(${theme.spacing(7)} + 1px + ${theme.spacing(0.5)})`,
   },
 }));
 
@@ -169,10 +180,13 @@ export const StyledListItemText = styled(ListItemText, {
   },
 }));
 
-export const StyledListIcon = styled(ListItemIcon)({
+export const StyledListIcon = styled(ListItemIcon, {
+  shouldForwardProp: (prop) => prop !== 'withCheckbox',
+})<{ withCheckbox?: boolean }>(({ theme, withCheckbox }) => ({
   minWidth: '0px',
   paddingRight: '1rem',
-});
+  paddingLeft: withCheckbox ? theme.spacing(1) : undefined,
+}));
 
 export const StyledUpdatedText = styled('p')({
   margin: '0',

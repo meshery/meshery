@@ -5,6 +5,7 @@
 *.dll
 *.so
 *.dylib
+*.pyc
 
 # Test binary, build with `go test -c`
 *.test
@@ -17,14 +18,18 @@
 .vscode/
 .cusorignore
 *.config
-.claude
+**/__pycache__/
 
 Chart.min.js
 
 fortio_chart.js
 
 # UI
-**/node_modules/
+# No trailing slash: a git worktree has no ui/node_modules of its own and the
+# documented workaround (AGENTS.md) is to symlink it from the primary checkout.
+# A "node_modules/" pattern matches only directories, so the symlink shows up as
+# untracked and lands in the next `git add -A`.
+**/node_modules
 **/out/
 
 **/ui/playground/
@@ -101,3 +106,13 @@ docs/hugo_stats.json
 LLMs
 .copilot-tmp/*
 .claude/worktrees/*
+# Per-machine Claude Code overrides. Tracking it lets an agent spawn in a fresh
+# worktree truncate/rewrite it, clobbering everyone's local settings and leaving
+# validation worktrees dirty. Machine-local; must never be tracked.
+.claude/settings.local.json
+
+# Machine-local agent session state, rewritten continuously by the `remember`
+# plugin inside whatever checkout an agent runs in. Tracking it leaves every
+# worktree permanently dirty, which breaks `git rebase` and validation runs.
+.remember/
+

@@ -12,7 +12,7 @@ import {
 } from '@sistent/sistent';
 import { iconMedium } from '../css/icons.styles';
 import { Keys } from '@meshery/schemas/permissions';
-import CAN from '@/utils/can';
+
 import { AdapterCard } from './adapter-play-styled';
 
 interface AdapterOperation {
@@ -150,7 +150,7 @@ const AdapterCategoryCard: React.FC<AdapterCategoryCardProps> = ({
           aria-label="install"
           ref={(ch) => (addIconEles.current[cat] = ch)}
           onClick={() => onMenuToggle(cat, false)}
-          disabled={!CAN(permission.action, permission.subject)}
+          permissionKey={{ id: permission.action, function: permission.subject }}
         >
           {cat !== 4 ? <AddIcon style={iconMedium} /> : <PlayIcon style={iconMedium} />}
         </IconButton>
@@ -172,7 +172,7 @@ const AdapterCategoryCard: React.FC<AdapterCategoryCardProps> = ({
               ref={(ch) => (delIconEles.current[cat] = ch)}
               style={{ float: 'right' }}
               onClick={() => onMenuToggle(cat, true)}
-              disabled={!CAN(permission.action, permission.subject)}
+              permissionKey={{ id: permission.action, function: permission.subject }}
             >
               <DeleteIcon style={iconMedium} />
             </IconButton>

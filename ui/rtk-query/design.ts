@@ -1,16 +1,24 @@
 import { urlEncodeParams } from '@/utils/utils';
 import { api, mesheryApiPath } from './index';
 import { ctxUrl } from '@/utils/multi-ctx';
-import { initiateQuery } from './utils';
+import { appendInvalidatesTags, initiateQuery } from './utils';
 import _ from 'lodash';
 
 const TAGS = {
   DESIGNS: 'designs',
-};
+} as const;
 
 export const designsApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.DESIGNS],
+    endpoints: {
+      // `importDesign` (POST /api/pattern/import) is the schemas-generated
+      // endpoint - the request is NOT re-declared here. `appendInvalidatesTags`
+      // adds the local `designs` tag the design lists provide on top of the tags
+      // schemas already declares. This is the cache-tag ergonomics wrapper
+      // AGENTS.md permits, not a second declaration of the request.
+      importDesign: appendInvalidatesTags('importDesign', { type: TAGS.DESIGNS }),
+    },
   })
   .injectEndpoints({
     endpoints: (builder) => ({
@@ -148,14 +156,6 @@ export const designsApi = api
         }),
         invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
-      importPattern: builder.mutation({
-        query: (queryArg) => ({
-          url: mesheryApiPath(`pattern/import`),
-          method: 'POST',
-          body: queryArg.importBody,
-        }),
-        invalidatesTags: [{ type: TAGS.DESIGNS }],
-      }),
       deletePatternFile: builder.mutation({
         query: (queryArg) => ({
           url: mesheryApiPath(`pattern/${queryArg.id}`),
@@ -207,7 +207,10 @@ export const {
   usePublishPatternMutation,
   useUnpublishPatternMutation,
   useDeletePatternMutation,
-  useImportPatternMutation,
+  // Re-exported from the schemas-generated client (see the `importDesign`
+  // enhancement above) so design-import callers stay on the canonical
+  // `@meshery/schemas` mutation instead of a locally declared one.
+  useImportDesignMutation,
   useUpdatePatternFileMutation,
   useUploadPatternFileMutation,
   useDeletePatternFileMutation,

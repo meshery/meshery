@@ -28,7 +28,7 @@ var deleteEnvironmentCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete an environment",
 	Long: `Delete an environment by providing the environment ID
-Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/delete`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/environment/delete`,
 	Example: `
 // delete a new environment
 mesheryctl environment delete [environmentId]

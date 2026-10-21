@@ -5,17 +5,17 @@
 // on models).
 //
 // Reach for:
-//   - WriteMeshkitError     — ANY error path. If err wraps a *meshkiterrors.Error
-//                             or *ErrorV2, the code/severity/cause/remediation
-//                             survive onto the wire. If it doesn't, the .Error()
-//                             string is still emitted as JSON.
-//   - WriteJSONError        — error paths where the message is a bare string with
-//                             no MeshKit wrapper. Prefer promoting the string to
-//                             a MeshKit error and using WriteMeshkitError instead.
-//   - WriteJSONMessage      — success paths that return a small status or result
-//                             payload (e.g. {"message": "deleted"}).
-//   - WriteJSONEmptyObject  — success paths that need to return an empty JSON
-//                             object ({}) with the Content-Type header set.
+//
+//   - WriteMeshkitError: ANY error path. If err wraps a *meshkiterrors.Error or
+//     *ErrorV2, the code, severity, probable cause and remediation survive onto
+//     the wire. If it doesn't, the .Error() string is still emitted as JSON.
+//   - WriteJSONError: error paths where the message is a bare string with no
+//     MeshKit wrapper. Prefer promoting the string to a MeshKit error and using
+//     WriteMeshkitError instead.
+//   - WriteJSONMessage: success paths that return a small status or result
+//     payload (e.g. {"message": "deleted"}).
+//   - WriteJSONEmptyObject: success paths that need to return an empty JSON
+//     object ({}) with the Content-Type header set.
 //
 // Never use http.Error from handlers or the provider layer — it emits
 // Content-Type: text/plain which crashes RTK Query's default baseQuery on the
@@ -24,7 +24,9 @@ package httputil
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
+	"strings"
 
 	meshkiterrors "github.com/meshery/meshkit/errors"
 )
@@ -86,18 +88,56 @@ func WriteMeshkitError(w http.ResponseWriter, err error, status int) {
 			// err.Error() on a MeshKit error concatenates every field with pipes.
 			resp.Error = short
 		}
-		if long := meshkiterrors.GetLDescription(err); long != "" && long != "None" {
-			resp.LongDescription = []string{long}
-		}
-		if cause := meshkiterrors.GetCause(err); cause != "" && cause != "None" {
-			resp.ProbableCause = []string{cause}
-		}
-		if remedy := meshkiterrors.GetRemedy(err); remedy != "" && remedy != "None" {
-			resp.SuggestedRemediation = []string{remedy}
-		}
+
+		// Prefer the underlying string slices over MeshKit's Get* accessors.
+		// The accessors join every entry with "." into one string, so an error
+		// listing three distinct probable causes arrived on the wire as a single
+		// run-on line ("...permission..No user exists..The provider..") and the
+		// UI rendered it as one bullet. The wire contract has always declared
+		// these as arrays; this makes them arrays in fact.
+		causes, remedies, longs := meshkitDetailSlices(err)
+		resp.ProbableCause = causes
+		resp.SuggestedRemediation = remedies
+		resp.LongDescription = longs
 	}
 
 	_ = json.NewEncoder(w).Encode(resp)
+}
+
+// meshkitDetailSlices returns the probable-cause, suggested-remediation and
+// long-description slices carried by err, with MeshKit's "None" sentinel and
+// blank entries removed. Each result is nil when the error carries nothing for
+// that field, so `omitempty` keeps it off the wire entirely.
+func meshkitDetailSlices(err error) (causes, remedies, longs []string) {
+	var errV2 *meshkiterrors.ErrorV2
+	if errors.As(err, &errV2) && errV2 != nil {
+		return compactDetails(errV2.ProbableCause), compactDetails(errV2.SuggestedRemediation), compactDetails(errV2.LongDescription)
+	}
+
+	var errV1 *meshkiterrors.Error
+	if errors.As(err, &errV1) && errV1 != nil {
+		return compactDetails(errV1.ProbableCause), compactDetails(errV1.SuggestedRemediation), compactDetails(errV1.LongDescription)
+	}
+
+	return nil, nil, nil
+}
+
+// compactDetails drops blank entries and MeshKit's "None" placeholder, and
+// returns nil rather than an empty slice so `omitempty` keeps the field off the
+// wire entirely.
+func compactDetails(in []string) []string {
+	out := make([]string, 0, len(in))
+	for _, entry := range in {
+		trimmed := strings.TrimSpace(entry)
+		if trimmed == "" || trimmed == "None" {
+			continue
+		}
+		out = append(out, trimmed)
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
 }
 
 // severityString converts a MeshKit Severity enum to the string label used on

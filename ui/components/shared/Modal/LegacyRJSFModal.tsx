@@ -200,6 +200,7 @@ function RJSFModalWrapper({
   submitBtnText,
   helpText,
   widgets = {},
+  isSubmitting = false,
 }) {
   const formRef = useRef();
   const formStateRef = useRef();
@@ -269,7 +270,8 @@ function RJSFModalWrapper({
           secondaryText="Cancel"
           primaryButtonProps={{
             onClick: handleFormSubmit,
-            disabled: canNotSubmit,
+            disabled: canNotSubmit || isSubmitting,
+            startIcon: isSubmitting ? <CircularProgress size={16} /> : undefined,
           }}
           secondaryButtonProps={{
             onClick: handleClose,

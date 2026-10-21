@@ -2,7 +2,7 @@ import React from 'react';
 import UserPreferences from '@/components/user-preferences';
 import { useSelector } from 'react-redux';
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
-import { MesheryPage } from '../../components/MesheryPage';
+import { MesheryPage } from '../../components/general/MesheryPage';
 
 const UserPref = () => {
   const { selectedK8sContext } = useSelector((state) => state.ui);

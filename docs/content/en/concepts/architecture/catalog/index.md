@@ -10,15 +10,13 @@ aliases:
 
 ## A collection of design templates
 
-Meshery Catalog functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes.
-
-It also supports a collaborative environment, where DevOps engineers can share their experiences, feedback, and best practices with others in the community. Import cloud native patterns published by others into your Meshery Server. Benefit from and build upon each pattern by incorporating your own tips and tricks, then publish and share with the community at-large. This facilitates knowledge-sharing and helps to build a strong ecosystem of cloud native infrastructure experts.
+Meshery Catalog supports a collaborative environment, where DevOps engineers can share their experiences, feedback, and best practices with others in the community. Import cloud native patterns published by others into your Meshery Server. Benefit from and build upon each pattern by incorporating your own tips and tricks, then publish and share with the community at-large. This facilitates knowledge-sharing and helps to build a strong ecosystem of cloud native infrastructure experts.
 
 ### To publish a design to catalog using Meshery UI
 
 1. In your web browser, navigate to the designs page (e.g. https://playground.meshery.io/configuration/designs).
 2. Find your design, and click Edit to update your design's details.
-3. Verify that your design has the appropriate technologies, description, and any cavaets or other considerations of its purpose of use listed.
+3. Verify that your design has the appropriate technologies, description, and any caveats or other considerations of its purpose of use listed.
 4. Click "Publish to Catalog", and your design is queued for review and approval by Workspace administrators.
 
 <a href="./images/publish-to-catalog-screenshot.png" class="lightbox-image">

@@ -106,6 +106,45 @@ export const normalizeKubernetesContextsResponse = (response?: KubernetesContext
   };
 };
 
+type KubernetesConnection = {
+  id?: string;
+  status?: string;
+  created_at?: string;
+  createdAt?: string;
+  updated_at?: string;
+  updatedAt?: string;
+  metadata?: Record<string, unknown> | null;
+  [key: string]: unknown;
+};
+
+/**
+ * Maps kubernetes connections (from the connections REST API, kind=kubernetes)
+ * into the K8sContext-list shape the app consumes. This mirrors the backend
+ * `K8sContextFromConnection`: the connection's metadata carries the context
+ * fields (id, name, server, kubernetesServerId, ...), and the connection id
+ * becomes `connectionId`.
+ *
+ * Everything is connection-driven now — this replaces the deprecated
+ * subscribeK8sContext GraphQL subscription and the k8s-contexts API as the
+ * source of the k8sConfig list.
+ */
+export const connectionsToK8sContexts = (connections?: KubernetesConnection[]) => {
+  const contexts = (Array.isArray(connections) ? connections : [])
+    .filter((connection) => connection && connection.metadata)
+    .map((connection) => ({
+      ...(connection.metadata as Record<string, unknown>),
+      connectionId: connection.id,
+      // The connection's lifecycle status (connected/registered/discovered/...),
+      // surfaced so consumers can gate on it (e.g. only poll controller status
+      // for connected connections).
+      connectionStatus: connection.status,
+      createdAt: connection.created_at ?? connection.createdAt,
+      updatedAt: connection.updated_at ?? connection.updatedAt,
+    }));
+
+  return normalizeKubernetesContextsResponse({ contexts, totalCount: contexts.length });
+};
+
 type LoggedInUserResponse = {
   id?: string;
   userId?: string;

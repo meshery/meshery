@@ -7,16 +7,10 @@ package resolver
 
 import (
 	"context"
-	"fmt"
-	"time"
 
-	"github.com/gofrs/uuid"
-	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/internal/graphql/generated"
 	"github.com/meshery/meshery/server/internal/graphql/model"
-	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshkit/utils"
 )
 
 // ChangeOperatorStatus is the resolver for the changeOperatorStatus field.
@@ -61,28 +55,10 @@ func (r *queryResolver) GetDataPlanes(ctx context.Context, filter *model.Service
 	return nil, ErrInvalidRequest
 }
 
-// GetOperatorStatus is the resolver for the getOperatorStatus field.
-func (r *queryResolver) GetOperatorStatus(ctx context.Context, connectionID string) (*model.MesheryControllersStatusListItem, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getOperatorStatus(ctx, provider, connectionID)
-}
-
 // ResyncCluster is the resolver for the resyncCluster field.
 func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyncActions, k8scontextID string) (model.Status, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.resyncCluster(ctx, provider, selector, k8scontextID)
-}
-
-// GetMeshsyncStatus is the resolver for the getMeshsyncStatus field.
-func (r *queryResolver) GetMeshsyncStatus(ctx context.Context, connectionID string) (*model.OperatorControllerStatus, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getMeshsyncStatus(ctx, provider, connectionID)
-}
-
-// GetNatsStatus is the resolver for the getNatsStatus field.
-func (r *queryResolver) GetNatsStatus(ctx context.Context, connectionID string) (*model.OperatorControllerStatus, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getNatsStatus(ctx, provider, connectionID)
 }
 
 // GetAvailableNamespaces is the resolver for the getAvailableNamespaces field.
@@ -151,176 +127,11 @@ func (r *queryResolver) FetchTelemetryComponents(ctx context.Context, contexts [
 	return r.getTelemetryComps(ctx, provider, contexts)
 }
 
-// SubscribePerfProfiles is the resolver for the subscribePerfProfiles field.
-func (r *subscriptionResolver) SubscribePerfProfiles(ctx context.Context, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribePerfProfiles(ctx, provider, selector)
-}
-
-// SubscribePerfResults is the resolver for the subscribePerfResults field.
-func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribePerfResults(ctx, provider, selector, profileID)
-}
-
-// SubscribeMesheryControllersStatus is the resolver for the subscribeMesheryControllersStatus field.
-func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Context, connectionIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error) {
-	resChan := make(chan []*model.MesheryControllersStatusListItem)
-	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
-
-	if !ok {
-		er := model.ErrMesheryControllersStatusSubscription(fmt.Errorf("controller handlers are not configured for any of the contexts"))
-		r.Log.Error(er)
-		return nil, er
-	}
-
-	statusMapPerConnection := make(map[string]map[models.MesheryController]models.MesheryControllerStatusAndVersion)
-	// initialize the map
-
-	for _, connectionID := range connectionIDs {
-		inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
-		if ok && inst != nil {
-			machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
-			if err != nil {
-				r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
-				continue
-			}
-			ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
-			for controller, handler := range ctrlHandlers {
-				if _, ok := statusMapPerConnection[connectionID]; !ok {
-					statusMapPerConnection[connectionID] = make(map[models.MesheryController]models.MesheryControllerStatusAndVersion)
-				}
-				version, err := handler.GetVersion()
-				if err != nil {
-					er := model.ErrMesheryControllersStatusSubscription(err)
-					r.Log.Error(er)
-				}
-
-				statusMapPerConnection[connectionID][controller] = models.MesheryControllerStatusAndVersion{
-					Status:  handler.GetStatus(),
-					Version: version,
-				}
-			}
-
-		}
-	}
-	go func() {
-		defer close(resChan)
-
-		ctrlsStatusList := make([]*model.MesheryControllersStatusListItem, 0)
-		// first send the initial status of the controllers
-		for connectionID, controllerMap := range statusMapPerConnection {
-			for controller, statusAndVersion := range controllerMap {
-				ctrlsStatusList = append(ctrlsStatusList, &model.MesheryControllersStatusListItem{
-					ConnectionID: connectionID,
-					Controller:   model.GetInternalController(controller),
-					Status:       model.GetInternalControllerStatus(statusAndVersion.Status),
-					Version:      statusAndVersion.Version,
-				})
-			}
-		}
-		select {
-		case resChan <- ctrlsStatusList:
-		case <-ctx.Done():
-			return
-		}
-
-		ticker := time.NewTicker(5 * time.Second)
-		defer ticker.Stop()
-
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-ticker.C:
-			}
-
-			for _, connectionID := range connectionIDs {
-				inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
-				if !ok || inst == nil {
-					continue
-				}
-
-				machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
-				if err != nil {
-					r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
-					continue
-				}
-
-				ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
-				for controller, controllerHandler := range ctrlHandlers {
-					newStatus := controllerHandler.GetStatus()
-
-					version, err := controllerHandler.GetVersion()
-					if err != nil {
-						er := model.ErrMesheryControllersStatusSubscription(err)
-						r.Log.Error(er)
-					}
-
-					if _, ok := statusMapPerConnection[connectionID]; !ok {
-						statusMapPerConnection[connectionID] = make(map[models.MesheryController]models.MesheryControllerStatusAndVersion)
-					}
-
-					previous, hasPrevious := statusMapPerConnection[connectionID][controller]
-					if !hasPrevious || newStatus != previous.Status || version != previous.Version {
-						update := []*model.MesheryControllersStatusListItem{{
-							ConnectionID: connectionID,
-							Controller:   model.GetInternalController(controller),
-							Status:       model.GetInternalControllerStatus(newStatus),
-							Version:      version,
-						}}
-						select {
-						case resChan <- update:
-						case <-ctx.Done():
-							return
-						}
-					}
-
-					statusMapPerConnection[connectionID][controller] = models.MesheryControllerStatusAndVersion{
-						Status:  newStatus,
-						Version: version,
-					}
-				}
-			}
-		}
-	}()
-	return resChan, nil
-}
-
-// SubscribeConfiguration is the resolver for the subscribeConfiguration field.
-func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	user := ctx.Value(models.UserCtxKey).(*models.User)
-	return r.subscribeConfiguration(ctx, provider, *user, patternSelector, filterSelector)
-}
-
-// SubscribeClusterResources is the resolver for the subscribeClusterResources field.
-func (r *subscriptionResolver) SubscribeClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribeClusterResources(ctx, provider, k8scontextIDs, namespace)
-}
-
-// SubscribeK8sContext is the resolver for the subscribeK8sContext field.
-func (r *subscriptionResolver) SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribeK8sContexts(ctx, provider, selector)
-}
-
-// SubscribeMeshModelSummary is the resolver for the subscribeMeshModelSummary field.
-func (r *subscriptionResolver) SubscribeMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribeMeshModelSummary(ctx, provider, selector)
-}
-
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
-// Subscription returns generated.SubscriptionResolver implementation.
-func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subscriptionResolver{r} }
-
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-type subscriptionResolver struct{ *Resolver }

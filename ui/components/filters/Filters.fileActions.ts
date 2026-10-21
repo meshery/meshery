@@ -1,6 +1,5 @@
 import type React from 'react';
 import _ from 'lodash';
-import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import { FILE_OPS } from '../../utils/Enum';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { getUnit8ArrayDecodedFile } from '../../utils/utils';
@@ -369,65 +368,5 @@ export function createDeleteFilter({
         updateProgress({ showProgress: false });
         handleError(ACTION_TYPES.DELETE_FILTERS);
       });
-  };
-}
-
-type CreateInitFiltersSubscriptionArgs = {
-  page: number;
-  pageSize: number;
-  search: string;
-  sortOrder: string;
-  disposeConfSubscriptionRef: React.MutableRefObject<{ dispose: () => void } | null>;
-};
-
-export function createInitFiltersSubscription({
-  page,
-  pageSize,
-  search,
-  sortOrder,
-  disposeConfSubscriptionRef,
-}: CreateInitFiltersSubscriptionArgs) {
-  return (
-    pageNo: string = page.toString(),
-    pagesize: string = pageSize.toString(),
-    searchText: string = search,
-    order: string = sortOrder,
-  ) => {
-    if (disposeConfSubscriptionRef.current) {
-      disposeConfSubscriptionRef.current.dispose();
-    }
-    const configurationSubscription = ConfigurationSubscription(
-      () => {
-        /**
-         * We are not using filter subscription and this code is commented to prevent
-         * unnecessary state updates
-         */
-        // setPage(result.configuration?.filters?.page || 0);
-        // setPageSize(result.configuration?.filters?.page_size || 10);
-        // setCount(result.configuration?.filters?.total_count || 0);
-        // handleSetFilters(result.configuration?.filters?.filters);
-      },
-      {
-        applicationSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-        patternSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-        filterSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-      },
-    );
-    disposeConfSubscriptionRef.current = configurationSubscription;
   };
 }

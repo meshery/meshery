@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
-  "kind": "edge",
+  "kind": "hierarchical",
   "metadata": {
     "description": "",
     "isAnnotation": false,
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "VPC",
+            "kind": "NetworkACL",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -48,7 +48,11 @@
             "patch": {
               "mutatedRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "spec",
+                  "vpcRef",
+                  "from",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"
@@ -58,7 +62,7 @@
         "to": [
           {
             "id": null,
-            "kind": "NetworkACL",
+            "kind": "VPC",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -76,9 +80,7 @@
             "patch": {
               "mutatorRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "vpcID"
+                  "displayName"
                 ]
               ],
               "patchStrategy": "replace"
@@ -92,8 +94,8 @@
       }
     }
   ],
-  "subType": "reference",
+  "subType": "inventory",
   "status": "enabled",
-  "type": "non-binding",
+  "type": "parent",
   "version": "v1.0.0"
 }

@@ -36,7 +36,7 @@ var searchComponentsCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search registered components",
 	Long: `Search components registered in Meshery Server based on kind
-Find more information at: https://docs.meshery.io/reference/mesheryctl/component/search`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/component/search`,
 	Example: `
 // Search for components using a query
 mesheryctl component search [query-text]

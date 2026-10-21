@@ -85,7 +85,7 @@ func TestMeshsyncDeploymentModeFromMetadata(t *testing.T) {
 func TestAddMeshsyncDeploymentModeToMetadata(t *testing.T) {
 	t.Run("adds mode to empty metadata map", func(t *testing.T) {
 		metadata := make(map[string]any)
-		SetMeshsyncDeploymentModeToMetadata(metadata, MeshsyncDeploymentModeEmbedded)
+		MaterializeMeshsyncDeploymentMode(metadata, MeshsyncDeploymentModeEmbedded)
 
 		assert.Contains(t, metadata, MeshsyncDeploymentModeMetadataKey)
 		assert.Equal(t, MeshsyncDeploymentModeEmbedded, metadata[MeshsyncDeploymentModeMetadataKey])
@@ -95,7 +95,7 @@ func TestAddMeshsyncDeploymentModeToMetadata(t *testing.T) {
 		metadata := map[string]any{
 			MeshsyncDeploymentModeMetadataKey: MeshsyncDeploymentModeOperator,
 		}
-		SetMeshsyncDeploymentModeToMetadata(metadata, MeshsyncDeploymentModeEmbedded)
+		MaterializeMeshsyncDeploymentMode(metadata, MeshsyncDeploymentModeEmbedded)
 
 		assert.Equal(t, MeshsyncDeploymentModeEmbedded, metadata[MeshsyncDeploymentModeMetadataKey])
 	})
@@ -103,7 +103,7 @@ func TestAddMeshsyncDeploymentModeToMetadata(t *testing.T) {
 	t.Run("nil metadata is a no-op, not a panic", func(t *testing.T) {
 		var metadata map[string]any // nil map
 		assert.NotPanics(t, func() {
-			SetMeshsyncDeploymentModeToMetadata(metadata, MeshsyncDeploymentModeEmbedded)
+			MaterializeMeshsyncDeploymentMode(metadata, MeshsyncDeploymentModeEmbedded)
 		})
 	})
 }

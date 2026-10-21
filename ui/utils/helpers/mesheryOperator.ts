@@ -1,40 +1,4 @@
-import { CONTROLLER_STATES } from '../Enum';
-import fetchMesheryOperatorStatus from '@/graphql/queries/OperatorStatusQuery';
-
 export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorInstalled;
-
-/**
- * Pings meshery operator
- * @param {() => Function} fetchMesheryOperatorStatus - function with which
- * we can query using graphql
- * @param  {(res: object) => void} successHandler - called when operator is reachable,
- *         receives the GraphQL result (e.g. { operator: { status, controller, connectionID } }).
- * @param  {(err: any) => void} errorHandler - called when operator is unreachable or status is UNKNOWN,
- *         receives the error object or response for context.
- */
-export const pingMesheryOperator = (id, successcb, errorcb) => {
-  const subscription = fetchMesheryOperatorStatus({
-    connectionID: id,
-  }).subscribe({
-    next: (data) => {
-      if (
-        data === null ||
-        data?.operator === null ||
-        data?.operator?.status === CONTROLLER_STATES.UNKOWN
-      ) {
-        errorcb && errorcb(data);
-        subscription.unsubscribe();
-        return;
-      }
-      successcb && successcb(data);
-      subscription.unsubscribe();
-    },
-    error: (err) => {
-      errorcb && errorcb(err ?? new Error('Unknown error from pingMesheryOperator'));
-      subscription.unsubscribe();
-    },
-  });
-};
 
 /**
  * Returns the connection status of Operator, Meshsync, and Broker (NATS)

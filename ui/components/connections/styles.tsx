@@ -36,7 +36,7 @@ export const ActionListItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   gridGap: '0.5rem',
   alignItems: 'center',
-  justifyContent: 'space-around',
+  justifyContent: 'flex-start',
   width: '100%',
   backgroundColor: theme.palette.background.card,
   padding: '10px',
@@ -63,22 +63,32 @@ export const ConnectionTabs = styled(Tabs)(({ theme }) => ({
   },
 }));
 
-export const ConnectionStyledSelect = styled(Select)({
+export const ConnectionStyledSelect = styled(Select)(({ theme }) => ({
   '& .MuiSelect-select': {
     padding: '0 !important',
   },
-  '& .MuiMenuItem-root': {
-    padding: '0 !important',
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.border.normal,
   },
-});
+  '&:hover .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.border.brand,
+  },
+}));
 
 export const ConnectionStyledMenuItem = styled(MenuItem)({
   padding: 0,
-  '&.MuiMenuItem-root': {
-    padding: 0,
+  // Override MUI's 48px minHeight; lock to pill height.
+  height: '32px',
+  minHeight: 0,
+  borderRadius: '3px',
+  '& + &': {
+    marginTop: '4px',
   },
-  '& .MuiButtonBase-root': {
-    padding: 0,
+  '& .MuiChip-root': {
+    minWidth: 'unset !important',
+    maxWidth: 'none !important',
+    width: '100%',
+    height: '100%',
   },
 });
 
@@ -98,7 +108,7 @@ export const ChipWrapper = styled(Chip)(({ theme }) => ({
   overflow: 'hidden',
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
-  border: `1px solid ${alpha(theme.palette.common.white, 0.23)}`,
+  border: `1px solid ${theme.palette.border.normal}`,
   textTransform: 'lowercase',
   color: theme.palette.text.primary,
 }));
@@ -191,12 +201,16 @@ export const DisconnectedChip = styled(Chip)(({ theme }) => ({
 
 export const NotFoundChip = styled(Chip)(({ theme }) => ({
   ...baseChipStyles(theme),
+  // Keep not-found readable on both light and dark surfaces — disabled-only
+  // tokens made the chip (and custom SVG avatars that use currentColor) hard to
+  // see on the wizard receipt step.
   '& .MuiChip-label': {
-    color: theme.palette.text.disabled,
+    color: theme.palette.text.secondary,
   },
-  background: `${theme.palette.background.disabled}30 !important`,
-  '& .MuiSvgIcon-root': {
-    color: `${theme.palette.icon.default} !important`,
+  background: `${alpha(theme.palette.text.secondary, 0.13)} !important`,
+  '& .MuiSvgIcon-root, & svg': {
+    color: `${theme.palette.text.secondary} !important`,
+    fill: `${theme.palette.text.secondary} !important`,
   },
 }));
 

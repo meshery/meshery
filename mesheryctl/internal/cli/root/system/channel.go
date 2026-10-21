@@ -44,9 +44,9 @@ func IsBetaOrStable(str string) bool {
 
 var viewCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view release channel and version",
+	Short: "View release channel and version",
 	Long: `View release channel and version of context in focus
-Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/view`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel/view`,
 	Example: `
 // View current release channel
 mesheryctl system channel view edge
@@ -98,9 +98,9 @@ mesheryctl system channel view --all
 
 var setCmd = &cobra.Command{
 	Use:   "set [stable|stable-version|edge|edge-version]",
-	Short: "set release channel and version",
+	Short: "Set release channel and version",
 	Long: `Set release channel and version of context in focus
-Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/set`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel/set`,
 	Example: `
 // Subscribe to release channel or version
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
@@ -171,9 +171,9 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 var switchCmd = &cobra.Command{
 	Use:   "switch [stable|stable-version|edge|edge-version]",
-	Short: "switch release channel and version",
+	Short: "Switch release channel and version",
 	Long: `Switch release channel and version of context in focus
-Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/switch`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel/switch`,
 	Example: `
 // Switch between release channels
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
@@ -238,7 +238,7 @@ var channelCmd = &cobra.Command{
 	Use:   "channel",
 	Short: "Switch between release channels",
 	Long: `Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel`,
 	Example: `
 // Subscribe to release channel or version
 mesheryctl system channel

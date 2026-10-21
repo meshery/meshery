@@ -43,6 +43,8 @@ Components have several key properties that define their behavior:
 
 Understanding the distinction between semantic and non-semantic components helps you effectively use them to both manage real infrastructure and document your designs clearly.
 
+Because a component belongs to a model, and every model records the registrant that registered it, the model a component belongs to also decides who provisions that component when you deploy - see [Deployment Engine]({{< ref "concepts/architecture/deployment-engine/index.md" >}}).
+
 Once registered with Meshery Server (in the [Registry]({{< ref "registry.md" >}})), components are available for inclusion in [Designs]({{< ref "designs.md" >}}) that you create. Components can be created and published by anyone, allowing you to share you custom extensions with the community. This fosters a collaborative ecosystem where you can leverage and contribute to the growing collection of Meshery components.
 
 Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.

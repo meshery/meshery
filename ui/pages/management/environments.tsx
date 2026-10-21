@@ -1,6 +1,6 @@
 import React from 'react';
 import { EnvironmentComponent } from '@/components/lifecycle';
-import { MesheryPage, PageContainer } from '../../components/MesheryPage';
+import { MesheryPage, PageContainer } from '../../components/general/MesheryPage';
 
 const Environments = () => (
   <MesheryPage title="Environments">
