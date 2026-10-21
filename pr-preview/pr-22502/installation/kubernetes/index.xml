@@ -64,7 +64,7 @@
 &lt;/h1&gt;
 &lt;div class="prereqs"&gt;&lt;h4&gt;Prerequisites&lt;/h4&gt;
 &lt;ol&gt;
-&lt;li&gt;Install &lt;a href="https://helm.sh/docs/intro/install/" class="meshery-light"&gt;Helm&lt;/a&gt; on your local machine.&lt;/li&gt;
+&lt;li&gt;Install &lt;a href="https://helm.sh/docs/intro/install/" class="meshery-light"&gt;Helm&lt;/a&gt; and &lt;a href="https://kubernetes.io/docs/tasks/tools/" class="meshery-light"&gt;kubectl&lt;/a&gt; on your local machine.&lt;/li&gt;
 &lt;li&gt;Access to the cluster where you want to deploy Meshery.&lt;/li&gt;
 &lt;li&gt;A kubeconfig whose current context points at that cluster.&lt;/li&gt;
 &lt;/ol&gt;
