@@ -31,4 +31,16 @@ Mesheryctl is configured for Kubernetes by default. To specify a different suppo
 
 Continue deploying Meshery onto one of the [Supported Platforms]({{< ref "installation/_index.md" >}}).
 
+# Uninstalling `mesheryctl`
+
+To uninstall `mesheryctl`, use the uninstall method corresponding to your package manager (e.g., `brew uninstall mesheryctl` or `scoop uninstall mesheryctl`).
+
+If you installed `mesheryctl` via direct download, remove `mesheryctl` by deleting the binary file from wherever it is located on your `PATH`.
+
+{{% alert color="info" title="NOTE" %}}
+Running `mesheryctl system stop` removes a Meshery deployment (containers and platform resources) from your system. This is distinct from removing the `mesheryctl` CLI binary itself.
+{{% /alert %}}
+
+
 {{< related-discussions tag="mesheryctl" >}}
+

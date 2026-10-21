@@ -1,0 +1,132 @@
+name: Scoop Uninstall Test
+on:
+  workflow_call:
+    inputs:
+      expected-version:
+        description: "Expected mesheryctl version"
+        required: false
+        type: string
+        default: ""
+  workflow_dispatch:
+    inputs:
+      expected-version:
+        description: "Expected mesheryctl version"
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  test-scoop:
+    name: Verify Scoop Package Lifecycle
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: powershell
+    steps:
+      - name: Install Scoop
+        run: |
+          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+          Invoke-RestMethod -Uri https://get.scoop.sh -OutFile install.ps1
+          .\install.ps1 -RunAsAdmin
+          $scoopRoot = if ($env:SCOOP) { $env:SCOOP } else { Join-Path $env:USERPROFILE "scoop" }
+          $shimDir = Join-Path $scoopRoot "shims"
+          if (-not (Test-Path $shimDir)) {
+            Write-Error "Scoop shims directory not found at $shimDir"
+            exit 1
+          }
+          echo "$shimDir" >> $env:GITHUB_PATH
+
+      - name: Add Meshery Scoop Bucket
+        run: |
+          scoop bucket add mesheryctl https://github.com/meshery/scoop-bucket.git
+          Write-Host "Current Scoop buckets:"
+          scoop bucket list
+
+      - name: Install mesheryctl (with retry)
+        env:
+          EXPECTED_VERSION: ${{ inputs.expected-version }}
+        run: |
+          $scoopRoot = if ($env:SCOOP) { $env:SCOOP } else { Join-Path $env:USERPROFILE "scoop" }
+          $appDir = Join-Path $scoopRoot "apps\mesheryctl"
+          $expected = if ($env:EXPECTED_VERSION) { $env:EXPECTED_VERSION.Trim() } else { "" }
+          $strippedExpected = $expected -replace '^v', ''
+          $expectedWithV = if ($expected -and -not $expected.StartsWith('v')) { "v$expected" } else { $expected }
+
+          $maxAttempts = 5
+          $attempt = 0
+          $success = $false
+          while ($attempt -lt $maxAttempts -and -not $success) {
+            $attempt++
+            Write-Host "Attempt $attempt of $maxAttempts: Updating Scoop and installing mesheryctl..."
+            scoop update 2>&1 | Out-Null
+            scoop install mesheryctl
+
+            $cmdFound = Get-Command mesheryctl -ErrorAction SilentlyContinue
+            $appDirExists = Test-Path $appDir
+            $scoopListOut = scoop list 2>&1 | Out-String
+            $inScoopList = ($scoopListOut -split "`r?\n") | Where-Object { $_ -match "^\s*mesheryctl\s+" }
+            $installed = $cmdFound -or $appDirExists -or $inScoopList
+
+            $versionMatches = $true
+            if ($expected) {
+              $verDirMatch = (Test-Path (Join-Path $appDir $expected)) -or (Test-Path (Join-Path $appDir $strippedExpected)) -or (Test-Path (Join-Path $appDir $expectedWithV))
+              $listMatch = ($scoopListOut -split "`r?\n") | Where-Object { $_ -match "^\s*mesheryctl\s+($([regex]::Escape($expected))|$([regex]::Escape($strippedExpected))|$([regex]::Escape($expectedWithV)))\b" }
+              $versionMatches = $verDirMatch -or $listMatch
+            }
+
+            if ($installed -and $versionMatches) {
+              $success = $true
+              Write-Host "Successfully installed mesheryctl $(if ($expected) { "(version: $expected)" }) on attempt $attempt."
+            } else {
+              if ($attempt -lt $maxAttempts) {
+                if ($installed -and -not $versionMatches) {
+                  Write-Host "Installed mesheryctl does not match expected version ($expected) yet. Uninstalling before next attempt..."
+                  scoop uninstall mesheryctl 2>&1 | Out-Null
+                } else {
+                  Write-Host "Install did not yield mesheryctl binary. Waiting 30 seconds before retrying..."
+                }
+                Start-Sleep -Seconds 30
+              }
+            }
+          }
+          if (-not $success) {
+            Write-Error "Failed to install mesheryctl $(if ($expected) { "with expected version $expected" }) after $maxAttempts attempts."
+            exit 1
+          }
+
+      - name: Verify mesheryctl installation on PATH and in scoop list
+        run: |
+          $scoopRoot = if ($env:SCOOP) { $env:SCOOP } else { Join-Path $env:USERPROFILE "scoop" }
+          $appDir = Join-Path $scoopRoot "apps\mesheryctl"
+          $cmd = Get-Command mesheryctl -ErrorAction SilentlyContinue
+          $appDirExists = Test-Path $appDir
+          $scoopListOut = scoop list 2>&1 | Out-String
+          $inScoopList = ($scoopListOut -split "`r?\n") | Where-Object { $_ -match "^\s*mesheryctl\s+" }
+          if (-not $cmd -or (-not $appDirExists -and -not $inScoopList)) {
+            Write-Error "Pre-uninstall check failed: mesheryctl on PATH or in scoop list missing."
+            exit 1
+          }
+          Write-Host "Found mesheryctl at $($cmd.Source) and in scoop list."
+          mesheryctl --help
+
+      - name: Uninstall mesheryctl and verify removal
+        run: |
+          scoop uninstall mesheryctl
+          $cmd = Get-Command mesheryctl -ErrorAction SilentlyContinue
+          $scoopRoot = if ($env:SCOOP) { $env:SCOOP } else { Join-Path $env:USERPROFILE "scoop" }
+          $shimExe = Join-Path $scoopRoot "shims\mesheryctl.exe"
+          $shimPs1 = Join-Path $scoopRoot "shims\mesheryctl.ps1"
+          $shimCmd = Join-Path $scoopRoot "shims\mesheryctl.cmd"
+          $shimExists = (Test-Path $shimExe) -or (Test-Path $shimPs1) -or (Test-Path $shimCmd)
+          $appDirExists = Test-Path (Join-Path $scoopRoot "apps\mesheryctl")
+          $scoopListOut = scoop list 2>&1 | Out-String
+          $stillInScoopList = ($scoopListOut -split "`r?\n") | Where-Object { $_ -match "^\s*mesheryctl\s+" }
+          if ($cmd -or $shimExists -or $appDirExists -or $stillInScoopList) {
+            Write-Error "mesheryctl was still found after uninstall (Command on PATH: $($cmd.Source), Shim exists: $shimExists, App dir exists: $appDirExists, Scoop list contains: $stillInScoopList)"
+            exit 1
+          } else {
+            Write-Host "Verified: mesheryctl uninstalled successfully and removed from PATH, shims, app dir, and scoop list."
+          }

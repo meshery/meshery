@@ -129,6 +129,12 @@ jobs:
     with:
       image: "meshery/meshery:playground-${{ github.ref_name }}"
     secrets: inherit
+  call-scoop-uninstall-test:
+    needs: ctlrelease
+    name: Verify Scoop Package Lifecycle
+    uses: ./.github/workflows/scoop-uninstall-test.yml
+    with:
+      expected-version: ${{ github.ref_name }}
   email-on-failure:
     needs: [build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
     if: ${{ failure() }}
