@@ -10,18 +10,18 @@ description: Install Meshery on Minikube. Deploy Meshery in Minikube in-cluster 
 
 <h1>Quick Start with Minikube <img src="images/minikube.png" style="width:35px;height:35px;" /></h1>
 
-Meshery can manage your minikube clusters and is particularly useful for multi-cluster management and deployments.
+Meshery can manage your Minikube clusters, and it is especially useful for multi-cluster management and deployments.
 
-For Meshery to manage your Minikube cluster, it has to be discovered and added as a Kubernetes connection in the Meshery server.
+To manage your Minikube cluster, Meshery Server must discover it and add it as a Kubernetes connection.
 
-After your cluster has been added as a connection, you can use Meshery to make infrastructure deployments of your [Meshery Designs](https://cloud.meshery.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=creating-designs) to your cluster. To learn more about this, See [Deploying Meshery Designs](https://cloud.meshery.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs).
+Once your cluster is a connection, you can use Meshery to deploy your [Meshery Designs](https://cloud.meshery.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=creating-designs) to it. To learn more, see [Deploying Meshery Designs](https://cloud.meshery.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs).
 
 **There are two ways to create this connection:**
 
-1. Deploying Meshery in minikube [(in-cluster)](#in-cluster-installation).
-2. Deploying Meshery using Docker and connect it to minikube [(out-of-cluster)](#out-of-cluster-installation).
+1. Deploy Meshery in Minikube [(in-cluster)](#in-cluster-installation).
+2. Deploy Meshery with Docker and connect it to Minikube [(out-of-cluster)](#out-of-cluster-installation).
 
-**_Note: It is advisable to install Meshery in your Minikube clusters_**
+**_Note: We recommend installing Meshery in your Minikube clusters._**
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
   <ol>
@@ -43,32 +43,31 @@ Also see: [Install Meshery on Kubernetes]({{< ref "installation/kubernetes/_inde
   - [Installation: Install Meshery on Docker](#installation-install-meshery-on-docker)
     - [Minikube Docker Driver Users](#minikube-docker-driver-users)
       - [Next Step: Update the Kubernetes API Server Address for Meshery Access](#next-step-update-the-kubernetes-api-server-address-for-meshery-access)
-  - [Change the server address](#change-the-server-address)
 - [Uploading Configuration File in the Meshery Web UI](#uploading-configuration-file-in-the-meshery-web-ui)
       - [Troubleshooting Meshery Installation](#troubleshooting-meshery-installation)
 - [Post-Installation Steps](#post-installation-steps)
   
 ## Preflight Checks
 
-Before deploying Meshery on minikube, complete the following initial setup tasks to prepare your environment.
+Before you deploy Meshery on Minikube, prepare your environment.
 
 ### 1. Preflight: Cluster Connectivity
 
-Start minikube using the following command if it is not already running:
+Start Minikube if it is not already running:
 
 {{< code code="minikube start" >}}
 
-Check the status of your minikube cluster by running:
+Check the status of your Minikube cluster:
 
 {{< code code="minikube status" >}}
 
-Verify that the current context is set to minikube by running:
+Verify that your current context is `minikube`:
 
 {{< code code="kubectl config current-context" >}}
 
 ### 2. Preflight: Meshery Authentication
 
-Ensure you are logged in and [authenticated with Meshery](https://docs.meshery.io/guides/mesheryctl/authenticate-with-meshery-via-cli) by running the following command:
+Commands such as `mesheryctl connection create` call Meshery Server's API, so they need a running Meshery Server and a signed-in session. Once Meshery is running (see the installation steps below), [authenticate with Meshery]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}):
 
 {{< code code="mesheryctl system login" >}}
 
@@ -76,58 +75,53 @@ Ensure you are logged in and [authenticated with Meshery](https://docs.meshery.i
 
 ## Installation: Install Meshery on Kubernetes Using `mesheryctl`
 
-To install Meshery inside your minikube cluster, run the command:
+To install Meshery inside your Minikube cluster, run:
 
 {{< code code="mesheryctl system start -p kubernetes" >}}
-This command deploys the Meshery Helm chart in the Meshery namespace.
+This command deploys the Meshery Helm chart into the `meshery` namespace.
 
-To verify your deployment, run:
+To verify the deployment, run:
 
 {{< code code="helm list -A -n meshery" >}}
-After deployment, access the Meshery UI using port forwarding, with the command:
+After deployment, reach Meshery UI through port forwarding:
 
 {{< code code="mesheryctl system dashboard --port-forward" >}}
-For detailed instructions on port forwarding, refer to the [port-forwarding]({{< ref "reference/references/mesheryctl/system/dashboard.md" >}}) guide.
+For details, see the [port-forwarding]({{< ref "reference/references/mesheryctl/system/dashboard.md" >}}) guide.
 
-By default, Meshery auto-detects your Minikube cluster and establishes a connection. However, if this doesn’t happen, you can connect by running the following command:
+Meshery Server running in the cluster connects to it automatically. If the connection does not appear, sign in and create it yourself:
 
-{{< code code="mesheryctl system config minikube" >}}
+{{< code code="mesheryctl connection create --type minikube" >}}
 
-The `mesheryctl system config minikube` command properly configures and uploads your kubeconfig file to the Meshery UI.
+`mesheryctl connection create --type minikube` flattens your kubeconfig (`~/.kube/config`), writes it to `~/.meshery/kubeconfig.yaml`, and uploads it to Meshery Server. It replaces the deprecated `mesheryctl system config minikube`.
 
 <a href="images/minikube-upload.png"><img alt="Minikube KubeConfig Upload" style="width:500px;height:auto;" src="images/minikube-upload.png" /></a>
 
 ## Installation: Using Helm
 
-You can deploy Meshery directly using the Helm CLI.
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
+You can also deploy Meshery directly with the Helm CLI. See the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
 
 # Out-of-cluster Installation
 
-To install Meshery on Docker(out-of-cluster) and connect it to your Minikube cluster, follow these steps:
+To install Meshery on Docker (out-of-cluster) and connect it to your Minikube cluster, follow these steps.
 
 ## Installation: Install Meshery on Docker
 
-Run the following command to start Meshery in a Docker environment:
+Start Meshery on Docker:
 
 {{< code code="mesheryctl system start -p docker" >}}
-This will start Meshery in Docker containers. To verify that Meshery is running, use
+This command starts Meshery in Docker containers. To verify that Meshery is running, run:
 
 {{< code code="docker ps" >}}
 
-Meshery UI will be accessible on your local machine on port 9081. Open your browser and access Meshery at http://localhost:9081.
+Meshery UI is available on your local machine at `http://localhost:9081`.
 
-Configure Meshery to connect with your minikube cluster by running the command:
+Sign in with `mesheryctl system login`, then connect Meshery to your Minikube cluster:
 
-{{< code code="mesheryctl system config minikube" >}}
+{{< code code="mesheryctl connection create --type minikube" >}}
 
 ### Minikube Docker Driver Users
 
-For users running minikube with the Docker driver, specific steps are needed to ensure that Meshery can connect properly to your minikube cluster.
-
-If you set up your minikube cluster using the [Docker driver](https://minikube.sigs.k8s.io/docs/drivers/docker/), both minikube and Meshery will be running in Docker containers. So, you need to ensure that the Meshery and minikube containers can communicate with each other by placing them in the same Docker network.
-
-To configure this, run the following commands:
+If you run Minikube with the [Docker driver](https://minikube.sigs.k8s.io/docs/drivers/docker/), both Minikube and Meshery run in Docker containers, and you need a few extra steps so that Meshery can reach your cluster. First, put the Meshery and Minikube containers on the same Docker networks:
 
 <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">docker network connect bridge meshery-meshery-1</div></div>
@@ -137,50 +131,44 @@ To configure this, run the following commands:
  <div class="clipboardjs">docker network connect minikube meshery-meshery-1</div></div>
 </pre>
 
-Next, update the Kubernetes API server address in your kubeconfig file before running the `mesheryctl system config minikube` command. The steps to do this are outlined below.
+Next, update the Kubernetes API server address in your kubeconfig before you run `mesheryctl connection create --type minikube`, as described below.
 
 #### Next Step: Update the Kubernetes API Server Address for Meshery Access
 
-To allow the Meshery container to access your Minikube cluster (since both are running in containers), you need to update the Kubernetes API server address in your `kubeconfig file` to the `external minikube IP address`. This is necessary because Docker typically forwards ports to a localhost address, which isn’t accessible between containers.
+Because both Meshery and Minikube run in containers, the Meshery container cannot use the `localhost` address that Docker forwards the API server port to. Change the API server address in your kubeconfig to Minikube's own IP address instead.
 
-To retrieve the Minikube IP, run the command `minikube ip`. To check which port minikube is using, run `docker ps` to view the container's port, which is typically `8443`.
+To get the Minikube IP, run `minikube ip`. The API server listens on port `8443` inside the Minikube container by default.
 
-Open the kubeconfig file and update the server address.
+Open your kubeconfig (`~/.kube/config`) in an editor and change the `server` field of the `minikube` cluster entry:
 
-{{< code code=`nano ~/.kube/config.yaml
+{{< code code=`server: https://{minikubeIP}:8443` >}}
 
-## Change the server address
+Then connect Meshery to your cluster:
 
-server: https://{minikubeIP}:{port}` >}}
+{{< code code="mesheryctl connection create --type minikube" >}}
 
-`Ctrl + X` then enter `Y` to save and close the file.
-
-Next, run the following command to configure Meshery to access your cluster.
-
-{{< code code="mesheryctl system config minikube" >}}
-
-**Note**: An alternative to running the mesheryctl system config minikube command for Meshery to discover your cluster is manually uploading your config file to the UI.
+**Note**: Instead of running `mesheryctl connection create`, you can upload your kubeconfig in Meshery UI, as described next.
 
 # Uploading Configuration File in the Meshery Web UI
 
-**Note**: Meshery can only connect to your cluster if it is running locally (Kubernetes or Docker). Direct connections are not possible when using the hosted [Meshery Playground](https://playground.meshery.io/).
+**Note**: Meshery can connect to your Minikube cluster only when Meshery itself runs locally, on Kubernetes or Docker. The hosted [Meshery Playground](https://playground.meshery.io/) cannot reach a cluster on your machine.
 
-**To manually upload your kubeconfig file after running Meshery locally**:
+**To upload your kubeconfig after you start Meshery locally**:
 
 1. In the Meshery UI, navigate to **Lifecycle** from the menu on the left.
-2. Click on **Connections**.
-3. Click on **Add Cluster** and search for your kubeconfig file.
+2. Select **Connections**.
+3. Click **Add Cluster** and select your kubeconfig file.
 4. Click **Import**.
 
-**Note**:  If you encounter a connections refused error while uploading your kubeconfig, try changing your cluster server URL to the external API address of minikube. To do this follow the steps listed in the [Minikube Docker Driver Users Section](#docker-driver-update-the-kubernetes-api-server-address-for-meshery-access).
+**Note**: If you get a connection refused error when you upload your kubeconfig, change your cluster's server URL to Minikube's external API address, as described in [Minikube Docker Driver Users](#minikube-docker-driver-users).
 
 #### Troubleshooting Meshery Installation
 
-If you experience any issues during installation, refer to the [Troubleshooting Meshery Installations](https://docs.meshery.io/guides/troubleshooting/installation#setting-up-meshery-using-kind-or-minikube) guide for help.
+If you run into problems during installation, see [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation/index.md#setting-up-meshery-using-kind-or-minikube" >}}).
 
 # Post-Installation Steps
 
-Verify the health of your Meshery deployment, using <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Verify the health of your Meshery deployment with <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
 {{< installation/accessing-meshery-ui >}}
 
