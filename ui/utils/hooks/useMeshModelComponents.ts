@@ -47,7 +47,7 @@ function removeDuplicateMeshModelComponents(componentDefs) {
   const componentKindUniqueSet = new Set();
   return componentClone
     .filter((componentDef) => {
-      const kind = componentDef.component;
+      const kind = componentDef.component.kind;
       // filter unique components
       // already found in the unique set, means that it is already filtered
       if (componentKindUniqueSet.has(kind)) {
