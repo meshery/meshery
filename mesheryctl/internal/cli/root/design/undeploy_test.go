@@ -50,7 +50,7 @@ func TestUndeployCmd(t *testing.T) {
 			URLs:             []utils.MockURL{},
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrFileRead(fmt.Errorf("open %s: no such file or directory", invalidFilePath)),
+			ExpectedError:    utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, invalidFilePath)),
 		},
 		{
 			Name:             "given no args when design undeploy then usage error is returned",
