@@ -36,7 +36,7 @@ To install or upgrade `mesheryctl` with Bash, run one of the following commands.
 
 #### Option 4: Install `mesheryctl` binary and Meshery adapter(s)
 
-Install the `mesheryctl` binary and deploy Meshery together with one or more [adapters]({{ relref . "concepts/architecture/adapters.md" }}). Separate multiple adapters with spaces, for example `ADAPTERS="istio linkerd"`. The script accepts `consul`, `istio`, `linkerd`, `nsm`, `kuma`, `osm`, `cilium`, `nighthawk`, `nginx`, `tanzu`, `traefik`, and `app`, and ignores any other value.
+Install the `mesheryctl` binary and deploy Meshery together with one or more [adapters]({{ relref . "concepts/architecture/adapters.md" }}). Separate multiple adapters with spaces, for example `ADAPTERS="istio linkerd"`. `mesheryctl` can deploy the `consul`, `istio`, `linkerd`, `nsm`, `kuma`, `traefik`, and `cilium` adapters. The script also accepts `osm`, `nighthawk`, `nginx`, `tanzu`, and `app`, but `mesheryctl` has no deployment definition for those adapters, so `mesheryctl system start` rejects them. The script ignores any other value.
 
  <pre class="codeblock-pre">
  <div class="codeblock">
