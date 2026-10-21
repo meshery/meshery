@@ -55,7 +55,12 @@ function parseIntSafe(value: string | string[] | undefined, fallback: number): n
 }
 
 function decodeParam(value: string | string[] | undefined): string {
-  return typeof value === 'string' ? decodeURIComponent(value) : '';
+  // Next.js has already URL-decoded `router.query` values, so decoding again
+  // here would double-decode them. A literal "%" (e.g. from a search term
+  // like "100%") is not a valid percent-escape on its own and makes a second
+  // decodeURIComponent() call throw "URIError: URI malformed", crashing the
+  // page. Simply return the already-decoded value.
+  return typeof value === 'string' ? value : '';
 }
 
 export function useTableUrlState<F extends Record<string, string> = Record<string, string>>(
