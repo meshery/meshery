@@ -67,9 +67,7 @@ Verify that your current context is `minikube`:
 
 ### 2. Preflight: Meshery Authentication
 
-Commands such as `mesheryctl connection create` call Meshery Server's API, so they need a running Meshery Server and a signed-in session. Once Meshery is running (see the installation steps below), [authenticate with Meshery]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}):
-
-{{< code code="mesheryctl system login" >}}
+Commands such as `mesheryctl connection create` call Meshery Server's API, so they need a running Meshery Server and a signed-in session. Do not sign in yet. The out-of-cluster steps below tell you to run `mesheryctl system login` after Meshery starts. See [Authenticate with Meshery via CLI]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}).
 
 # In-cluster Installation
 

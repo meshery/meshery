@@ -43,7 +43,7 @@ Before you deploy Meshery on GKE, check the following.
 
 ### Preflight: Cluster Connectivity
 
-Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) cluster.
+Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) cluster. GKE kubeconfigs authenticate through `gke-gcloud-auth-plugin`, so [install the plugin](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_plugin) first.
 
 1. Sign in to your Google Cloud account with [gcloud auth login](https://cloud.google.com/sdk/gcloud/reference/auth/login).
 2. Set the project that contains your cluster:
@@ -51,7 +51,7 @@ Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) c
 {{< code code="gcloud config set project [PROJECT_ID]" >}}
 3. Download the cluster's credentials and make it your current context:
 
-{{< code code="gcloud container clusters get-credentials [CLUSTER_NAME] --zone [CLUSTER_ZONE]" >}}
+{{< code code="gcloud container clusters get-credentials [CLUSTER_NAME] --location [CLUSTER_LOCATION]" >}}
 4. Verify your kubeconfig's current context:
 
 {{< code code="kubectl config current-context" >}}
@@ -64,7 +64,7 @@ Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) c
 
 {{< code code="MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start -p kubernetes" >}}
 
-With a load balancer, Meshery UI is then available at the `EXTERNAL-IP` of the `meshery` service.
+With a load balancer, Meshery UI is then available at `http://[EXTERNAL-IP]:9081`, where `EXTERNAL-IP` is the external address of the `meshery` service.
 
 ## Installation: Using `mesheryctl`
 
