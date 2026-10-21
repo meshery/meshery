@@ -7,22 +7,22 @@ image: installation/mesheryctl/windows/images/wsl2.png
 description: Install Meshery CLI on Windows
 ---
 
-On Windows systems, `mesheryctl` can be installed via Scoop or [downloaded directly](https://github.com/meshery/meshery/releases/latest).
+On Windows, install `mesheryctl` with Scoop or [download it directly](https://github.com/meshery/meshery/releases/latest) from the latest release.
 
 {{% mesheryctl/installation-scoop %}}
 
 
 ## Install `mesheryctl` as a direct download
 
-Follow the installation steps to install the `mesheryctl` CLI. Then, execute:
+Download the `mesheryctl_<version>_Windows_x86_64.zip` archive from a [Meshery release](https://github.com/meshery/meshery/releases) and extract `mesheryctl.exe`. Patch releases do not always include `mesheryctl` archives, so if the latest release has none, use the most recent release that does. Then, from the folder that contains it, start Meshery on Kubernetes:
 
 {{< code code="./mesheryctl system start" >}}
 
-If you are installing Meshery on Docker, execute the following command:
+To run Meshery on Docker instead, run:
 
 {{< code code="./mesheryctl system start -p docker" >}}
 
-Optionally, move the `mesheryctl` binary to a directory in your `PATH`.
+Optionally, move `mesheryctl.exe` to a folder in your `PATH` so you can run it from anywhere.
 
 
 <!-- Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
