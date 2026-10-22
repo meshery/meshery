@@ -9,12 +9,12 @@ import (
 
 func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.AddonList, error) {
 	var cids []string
-	if len(filter.K8sClusterIDs) != 0 {
+	if filter != nil && len(filter.K8sClusterIDs) != 0 {
 		cids = filter.K8sClusterIDs
 	}
 
 	selectors := make([]model.MeshType, 0)
-	if filter == nil || *filter.Type == model.MeshTypeAllMesh {
+	if filter == nil || filter.Type == nil || *filter.Type == model.MeshTypeAllMesh {
 		selectors = append(selectors, model.AllMeshType...)
 	} else {
 		selectors = append(selectors, *filter.Type)
@@ -37,7 +37,11 @@ func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provi
 
 	go func() {
 		r.Log.Info("Addons subscription started")
-		for _, ctxID := range filter.K8sClusterIDs {
+		var clusterIDs []string
+		if filter != nil {
+			clusterIDs = filter.K8sClusterIDs
+		}
+		for _, ctxID := range clusterIDs {
 			go func(ctxID string) {
 				for {
 					select {
