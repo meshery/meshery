@@ -48,7 +48,7 @@ Ensure you are in the right organization and click **Create**.
 
 Then run `mesheryctl system check` to ensure you do not see an authentication error.   
 
-For an exhaustive list of `mesheryctl` commands and syntax, visit [`mesheryctl` Command Reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
+For an exhaustive list of `mesheryctl` commands and syntax, visit [`mesheryctl` Command Reference]({{< ref "reference/mesheryctl/_index.md" >}}).
 
 {{< related-discussions tag="mesheryctl" >}}
 

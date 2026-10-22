@@ -42,7 +42,7 @@ Then start it with `docker compose up -d`. A custom location is useful when you 
 
 ## Post-Installation Steps
 
-Optionally, verify the health of your Meshery deployment with [mesheryctl system check]({{< ref "reference/references/mesheryctl/system/check.md" >}}).
+Optionally, verify the health of your Meshery deployment with [mesheryctl system check]({{< ref "reference/mesheryctl/system/check.md" >}}).
 
 You're ready to use Meshery. Open Meshery UI in your browser.
 

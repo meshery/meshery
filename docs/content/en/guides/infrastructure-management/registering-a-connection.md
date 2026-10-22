@@ -123,7 +123,7 @@ Grafana and Prometheus Connections you register with the wizard power Meshery's 
 
 ## Registering Connections from the CLI
 
-Prefer the terminal? `mesheryctl` can create, list, view, and delete Connections too. See [`mesheryctl connection`]({{< ref "reference/references/mesheryctl/connection/_index.md" >}}).
+Prefer the terminal? `mesheryctl` can create, list, view, and delete Connections too. See [`mesheryctl connection`]({{< ref "reference/mesheryctl/connection/_index.md" >}}).
 
 ## Related
 

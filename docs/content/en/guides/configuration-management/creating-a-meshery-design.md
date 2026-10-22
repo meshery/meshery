@@ -106,5 +106,5 @@ mesheryctl design apply MyDesignName
 mesheryctl design list
 ```
 
-See the [`mesheryctl design` reference]({{< ref "reference/references/mesheryctl/design/_index.md" >}}) for the full subcommand reference.
+See the [`mesheryctl design` reference]({{< ref "reference/mesheryctl/design/_index.md" >}}) for the full subcommand reference.
 {{< /tabs >}}

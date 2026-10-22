@@ -162,7 +162,7 @@ linkTitle: Documentation
       <summary>Reference</summary>
       <ul class="section-title">
         <li><a href="{{< ref "reference/_index.md" >}}">Getting Started</a></li>
-        {{< section-pages section="reference/references" >}}
+        {{< section-pages section="reference" exclude="extensibility" >}}
       </ul>
     </details>
     <!-- Extensibility -->

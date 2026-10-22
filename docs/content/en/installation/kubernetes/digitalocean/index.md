@@ -90,7 +90,7 @@ Follow the steps below to install Meshery into your DigitalOcean Kubernetes (DOK
 
 ## Installation: Using `mesheryctl`
 
-Run <a href='{{< ref "reference/references/mesheryctl/system/start.md" >}}'>mesheryctl system start</a> to deploy Meshery to your DOKS cluster. The `-p kubernetes` flag deploys to Kubernetes regardless of your `mesheryctl` context's platform.
+Run <a href='{{< ref "reference/mesheryctl/system/start.md" >}}'>mesheryctl system start</a> to deploy Meshery to your DOKS cluster. The `-p kubernetes` flag deploys to Kubernetes regardless of your `mesheryctl` context's platform.
 
 {{< code code="mesheryctl system start -p kubernetes" >}}
 
@@ -102,9 +102,9 @@ To install Meshery with Helm 3, see the [Helm Installation]({{< ref "installatio
 
 ## Post-Installation Steps
 
-Optionally, verify the health of your Meshery deployment with <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Optionally, verify the health of your Meshery deployment with <a href='{{< ref "reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
-Meshery creates the `meshery` service as type `LoadBalancer` by default, so DigitalOcean provisions a [DigitalOcean Load Balancer](https://docs.digitalocean.com/products/kubernetes/how-to/add-load-balancers/) and assigns it an external IP. Alternatively, use port-forwarding by following the [mesheryctl system dashboard]({{< ref "reference/references/mesheryctl/system/dashboard.md" >}}) guide.
+Meshery creates the `meshery` service as type `LoadBalancer` by default, so DigitalOcean provisions a [DigitalOcean Load Balancer](https://docs.digitalocean.com/products/kubernetes/how-to/add-load-balancers/) and assigns it an external IP. Alternatively, use port-forwarding by following the [mesheryctl system dashboard]({{< ref "reference/mesheryctl/system/dashboard.md" >}}) guide.
 
 You're ready to use Meshery. Open Meshery UI in your browser.
 

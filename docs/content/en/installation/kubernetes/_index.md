@@ -62,7 +62,7 @@ To install Meshery with Helm 3, see the [Helm Installation]({{< ref "installatio
 
 ## Post-Installation Steps
 
-Optionally, verify the health of your Meshery deployment with <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Optionally, verify the health of your Meshery deployment with <a href='{{< ref "reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
 You're ready to use Meshery. Open Meshery UI in your browser.
 
@@ -83,7 +83,7 @@ If the `Service` was previously set to another type (for example, `ClusterIP`), 
 {{< code code=`kubectl patch service meshery --namespace meshery --type merge -p '{"spec":{"type":"LoadBalancer"}}'` >}}
 
 {{% alert title="EXTERNAL-IP not assigned?" color="warning" %}}
-A `LoadBalancer` `Service` gets an external address only when the cluster runs a load balancer controller. Managed clouds provide one out of the box, but bare-metal and local clusters (for example, Minikube or kind) do not. On those clusters, install a load balancer implementation such as [MetalLB](https://metallb.universe.tf/), expose Meshery through a `NodePort` `Service` instead, or reach the UI with port-forwarding by following the [mesheryctl system dashboard]({{< ref "reference/references/mesheryctl/system/dashboard.md" >}}) guide.
+A `LoadBalancer` `Service` gets an external address only when the cluster runs a load balancer controller. Managed clouds provide one out of the box, but bare-metal and local clusters (for example, Minikube or kind) do not. On those clusters, install a load balancer implementation such as [MetalLB](https://metallb.universe.tf/), expose Meshery through a `NodePort` `Service` instead, or reach the UI with port-forwarding by following the [mesheryctl system dashboard]({{< ref "reference/mesheryctl/system/dashboard.md" >}}) guide.
 {{% /alert %}}
 
 # Out-of-cluster Installation

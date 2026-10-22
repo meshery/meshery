@@ -36,7 +36,7 @@ When **exporting** a design, Meshery:
 
 ## Import Methods
 
-You can import designs into Meshery through either **[Meshery CLI]({{< ref "reference/references/mesheryctl/_index.md" >}})** or **Meshery UI**.
+You can import designs into Meshery through either **[Meshery CLI]({{< ref "reference/mesheryctl/_index.md" >}})** or **Meshery UI**.
 
 ### 1. Using Meshery CLI
 

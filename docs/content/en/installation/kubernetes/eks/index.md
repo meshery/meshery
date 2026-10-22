@@ -51,7 +51,7 @@ Use the AWS CLI to connect `kubectl` to your Elastic Kubernetes Service (EKS) cl
 
 ## Installation: Using `mesheryctl`
 
-Run <a href='{{< ref "reference/references/mesheryctl/system/start.md" >}}'>mesheryctl system start</a> to deploy Meshery to your EKS cluster:
+Run <a href='{{< ref "reference/mesheryctl/system/start.md" >}}'>mesheryctl system start</a> to deploy Meshery to your EKS cluster:
 
 {{< code code="mesheryctl system start -p kubernetes" >}}
 
@@ -61,7 +61,7 @@ To install Meshery with Helm 3, see the [Helm Installation]({{< ref "installatio
 
 ## Post-Installation Steps
 
-Optionally, verify the health of your Meshery deployment with <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Optionally, verify the health of your Meshery deployment with <a href='{{< ref "reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
 You're ready to use Meshery. Open Meshery UI in your browser.
 
