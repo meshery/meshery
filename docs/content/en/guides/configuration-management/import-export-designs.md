@@ -11,52 +11,55 @@ display_title: false
 
 # Importing and Exporting Designs
 
-Meshery supports two primary operations for working with designs: **Import** and **Export**.
-A **[design]({{< ref "concepts/logical/designs.md" >}})** in Meshery is a structured model describing how various components (e.g., Kubernetes manifests, Helm charts, or Docker Compose objects) should be managed and deployed. This document details the core concepts, the import/export processes, and the available methods to perform them.
+Import a design to bring infrastructure configuration you already have into Meshery. Export a design to back it up, move it to another Meshery Server, or use it outside Meshery.
 
-As a refresher, [designs]({{< ref "concepts/logical/designs.md" >}}) consist of:
+A [design]({{< ref "concepts/logical/designs.md" >}}) holds **components**, such as Deployments and Services, and the **relationships** between them.
 
-- **Components**: Defined resources or services (e.g., Deployments, Services).
-- **Relationships**: Possible connections or dependencies among components (e.g., hierarchical, sibling, edge).
+## What happens when you import
 
-When **importing** a design, Meshery performs the following steps:
+You can import any of these formats:
 
-1. **Parses** and **validates** the design file, processing design structure, applying transformations as needed.
+- Meshery Design (YAML, or an OCI image exported from Meshery)
+- Kubernetes manifest (YAML)
+- Helm chart (`.tgz` archive)
+- Docker Compose file
+- Kustomize package (archive)
 
-<!-- 
-Meshery does this when deploying, not when importing.
-1. **Routes** validated components to the appropriate Meshery Adapters for further deployment or processing. -->
+Meshery Server identifies the format from the file itself. It converts Helm charts, Docker Compose files, and Kustomize packages to a Kubernetes manifest, matches each resource's `apiVersion` and `kind` to a component in the registry, builds a design from the matched components, and saves the design. Importing does not deploy anything. Deploy the design afterward from Meshery UI or with `mesheryctl design deploy`.
 
-When **exporting** a design, Meshery:
+## Import a design
 
-1. **Fetches** the design data from the Meshery database using `/api/pattern/download/{id}`.
-2. **Converts** the design format if necessary (e.g., from V1alpha2 to V1beta1).
-3. **Applies** requested export format (e.g., `current`, `original`, `oci`, `helm-chart`).
-4. **Sends** the exported design file for download as a YAML file or OCI artifact or Helm chart(.tgz).
+{{< tabs id="import-design-tabs" >}}
+Meshery UI | fa fa-desktop
 
-## Import Methods
+1. Go to **Configuration** > **Designs** and click **Import Design**.
+2. Enter a **Design Name**.
+3. Choose an **Upload method**:
+    - **File Upload**, then pick the file from your computer.
+    - **URL Import**, then enter a direct URL to the file, for example `https://raw.githubusercontent.com/<org>/<repo>/main/app.yaml`. The URL must return the file itself, not a web page.
+4. Click **Import**.
 
-You can import designs into Meshery through either **[Meshery CLI]({{< ref "reference/mesheryctl/_index.md" >}})** or **Meshery UI**.
-
-### 1. Using Meshery CLI
-
-```bash
-mesheryctl design import --file <PATH/URL> --source-type <TYPE>
-```
+<!-- tab -->
+mesheryctl | fa fa-terminal
 
 ```bash
-# Example: Import Kubernetes manifest
-mesheryctl design import -f ./app-deployment.yaml -s manifest
+mesheryctl design import -f <path-or-URL> [-n <design-name>] [-s <source-type>]
 ```
 
-#### 2. Using Meshery UI
+- `-f` is a local path or a direct URL to the file.
+- `-n` names the design. Without it, `mesheryctl` uses the file name.
+- `-s` is optional because Meshery Server detects the format. If you pass it, use one of `"Kubernetes Manifest"`, `"Helm Chart"`, `"Docker Compose"`, or `"Design"` (case-insensitive).
 
-1. Go to **Designs > Import Design**.
-2. Choose your input method.
-3. Select the source type from the dropdown (e.g., Kubernetes manifest, Helm chart).
-4. Submit the design for processing.
+For example, to import a Kubernetes manifest:
 
-### Importing a Kustomize Package
+```bash
+mesheryctl design import -f ./app-deployment.yaml -n my-app
+```
+
+`mesheryctl` prints the new design's name and ID.
+{{< /tabs >}}
+
+### Import a Kustomize package
 
 To import a Kustomize package, upload a `.zip`, `.tar`, `.tar.gz`, or `.tgz` archive with a file named `kustomization.yaml` at the root of the archive. Include the files it references in the same archive. For example:
 
@@ -68,46 +71,45 @@ service.yaml
 
 You can also import the archive from a direct URL. Meshery downloads the file and takes its name from the response's `Content-Disposition` header or the last segment of the URL, so make sure that name ends in `.zip`, `.tar`, `.tar.gz`, or `.tgz`.
 
-### Import Processing Details
+## Export a design
 
-After you initiate an import, Meshery executes a **dataflow sequence** to properly handle the design:
+{{< tabs id="export-design-tabs" >}}
+Meshery UI | fa fa-desktop
 
-1. **Client submits a design**
-   A POST request is sent to `/api/pattern/import`, containing a design file. If the design is sourced from Kubernetes Manifests, Docker Compose, or Helm Charts, it is first converted into a standard Kubernetes Manifest.
+1. Go to **Configuration** > **Designs**.
+2. Click **Download** on the design you want to export.
+3. Click the download icon next to the format you want:
 
-2. **Pattern Engine queries registry**
-   Meshery queries the component registry to match the design’s `kind`, `apiVersion`, and other identifiers. If the design originates from non-Meshery formats, Meshery attempts to transform it accordingly.
+| Format | What you get |
+| --- | --- |
+| **Meshery Design (yaml)** | A complete Meshery design, including embedded images. Use it for backups or to move a design to another Meshery Server without losing anything. |
+| **Meshery Design (OCI image)** | The design as an OCI image that you can push to and pull from a container registry. |
+| **Kubernetes Manifest (yaml)** | The design's Kubernetes resources as a plain manifest, for use with `kubectl` or other tools. |
+| **Helm Chart (tar.gz)** | The design packaged as a Helm chart. |
 
-3. **System converts design format**
-   - Converts Helm Charts, Docker Compose, and Kubernetes Manifests into Meshery Design.
-   - Removes unnecessary fields and ensures compatibility.
-
-4. **Validated components are stored in Meshery**
-   Once validated, the design is stored in Meshery. Users can later deploy it to a supported platform (e.g., Kubernetes, Consul, Istio) using Meshery UI or CLI.
-
-## Export Methods
-
-Designs can also be exported either via **Meshery CLI** or **Meshery UI**. During export, Meshery gathers the design’s components, relationships, and metadata into a specified format.
-
-#### 1. Using Meshery CLI
+<!-- tab -->
+mesheryctl | fa fa-terminal
 
 ```bash
-mesheryctl design export --type <FORMAT> --output <DIRECTORY>
+mesheryctl design export <design-name-or-ID> [--type <type>] [-o <directory>]
 ```
+
+- `--type` is one of:
+    - `current` (default): the design as Meshery stores it now.
+    - `original`: the file you originally imported, such as the Helm chart or manifest.
+    - `oci`: the design as an OCI image.
+- `-o` is the directory to save the file in. The default is the current directory.
+
+For example, to export a design as an OCI image into `./exports`:
 
 ```bash
-# Example: Export to OCI format
-mesheryctl design export --type oci -o ./exports
+mesheryctl design export my-app --type oci -o ./exports
 ```
 
-### 2. Using Meshery UI
+To export a design as a Helm chart or a Kubernetes manifest, use Meshery UI.
+{{< /tabs >}}
 
-1. Go to **Designs > My Designs** and select the design you want to export.
-2. Click the **Export** action button.
-3. Choose an export format (e.g., `current`, `original`, `oci`).
-4. Specify the download location for your exported file.
+## See also
 
-## Summary
-
-- **Import**: Meshery parses and validates your design, converts non-Meshery formats (e.g., Kubernetes Manifests, Helm Charts, Docker Compose) into Meshery Designs, and stores the design in Meshery. Users can later deploy it to the correct adapters as needed.
-- **Export**: Meshery **retrieves** the design from storage, **converts** its format if needed, **packages** it in the selected format (`current`, `original`, `oci`), and **delivers** it as a YAML file or OCI artifact via CLI or UI download.
+- [Creating a Meshery Design]({{< ref "guides/configuration-management/creating-a-meshery-design.md" >}})
+- [`mesheryctl design` reference]({{< ref "reference/mesheryctl/design/_index.md" >}})
