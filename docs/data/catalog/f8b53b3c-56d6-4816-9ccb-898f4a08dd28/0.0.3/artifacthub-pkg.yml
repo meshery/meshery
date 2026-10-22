@@ -1,0 +1,20 @@
+version: 0.0.3
+name: meshary-design-copy
+displayName: Meshary-design-copy
+createdAt: "2026-10-21T19:25:44Z"
+description: A simple two-replica NGINX web app on Kubernetes. It has a dedicated Namespace, a ConfigMap passed to the container as environment variables, and a ClusterIP Service. It works as a starter example of how Meshery shows relationships between Kubernetes components
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/f8b53b3c-56d6-4816-9ccb-898f4a08dd28/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Demo only, not production-ready. It has no resource limits or health probes. The Service is ClusterIP, so it isn’t reachable from outside the cluster. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 3ead9502-fcd4-4eab-ab86-0f4d1a00e0c2
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
