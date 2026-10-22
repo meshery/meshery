@@ -1,92 +1,64 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Using Meshery CLI on Documentation</title><link>/guides/mesheryctl/</link><description>Recent content in Using Meshery CLI on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/guides/mesheryctl/index.xml" rel="self" type="application/rss+xml"/><item><title>Authenticating Meshery via CLI</title><link>/guides/mesheryctl/authenticate-with-meshery-via-cli/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/authenticate-with-meshery-via-cli/</guid><description>&lt;p&gt;To authenticate Meshery through &lt;code&gt;mesheryctl&lt;/code&gt;, the Meshery CLI, you will use the &lt;code&gt;mesheryctl system login&lt;/code&gt; command. On executing this command, you will be provided with a list of providers to choose from. You can then select a Provider of your choice to complete the authentication and authorization process.&lt;/p&gt;
-&lt;p&gt;As of this writing, you will be presented with two providers, &lt;em&gt;Meshery&lt;/em&gt; and &lt;em&gt;None&lt;/em&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Use the arrow keys to navigate: ↓ ↑ → ← 
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;? Select a Provider: 
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ▸ Meshery
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; None
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Using Meshery CLI on Documentation</title><link>/guides/mesheryctl/</link><description>Recent content in Using Meshery CLI on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/guides/mesheryctl/index.xml" rel="self" type="application/rss+xml"/><item><title>Authenticating Meshery via CLI</title><link>/guides/mesheryctl/authenticate-with-meshery-via-cli/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/authenticate-with-meshery-via-cli/</guid><description>&lt;p&gt;&lt;code&gt;mesheryctl&lt;/code&gt; needs a token to call Meshery Server on your behalf. Run &lt;code&gt;mesheryctl system login&lt;/code&gt; to get one. Meshery Server must be running first, so start it with &lt;code&gt;mesheryctl system start&lt;/code&gt; if it is not.&lt;/p&gt;
+&lt;h2 id="log-in-from-a-machine-with-a-browser"&gt;
+	Log in from a machine with a browser
+&lt;/h2&gt;
+&lt;ol&gt;
 &lt;li&gt;
-&lt;p&gt;Selecting &lt;em&gt;Meshery&lt;/em&gt; will open a browser to complete the login and authentication process with Meshery Cloud. On successful authentication, you can close the window and return to the command prompt.&lt;/p&gt;</description></item><item><title>Configuring Autocompletion for `mesheryctl`</title><link>/guides/mesheryctl/configuring-autocompletion-for-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/configuring-autocompletion-for-mesheryctl/</guid><description>&lt;p&gt;If you would like to have &lt;code&gt;mesheryctl&lt;/code&gt; commands automatically completed for use as you use &lt;code&gt;mesheryctl&lt;/code&gt;, then use the following instructions to configure automatic completion within your environment.&lt;/p&gt;
-&lt;h2 id="autocompletion-for-bash"&gt;
-	Autocompletion for Bash
+&lt;p&gt;Run the login command:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mesheryctl system login
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;mesheryctl&lt;/code&gt; asks Meshery Server which &lt;a href="/reference/extensibility/providers/"&gt;providers&lt;/a&gt; it offers and prompts you to pick one:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Use the arrow keys to navigate: ↓ ↑ → ←
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;? Select a Provider:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ▸ Meshery
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Local
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The list comes from your server, so it shows any additional remote providers your server is configured with. To skip the prompt, name the provider with &lt;code&gt;-p&lt;/code&gt;, for example &lt;code&gt;mesheryctl system login -p Meshery&lt;/code&gt;. Run &lt;code&gt;mesheryctl system provider list&lt;/code&gt; to see the names.&lt;/p&gt;</description></item><item><title>Configuring Autocompletion for `mesheryctl`</title><link>/guides/mesheryctl/configuring-autocompletion-for-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/configuring-autocompletion-for-mesheryctl/</guid><description>&lt;p&gt;&lt;code&gt;mesheryctl completion&lt;/code&gt; prints a completion script for bash, zsh, or fish. Load that script in your shell so that pressing &lt;kbd&gt;Tab&lt;/kbd&gt; completes &lt;code&gt;mesheryctl&lt;/code&gt; commands and flags.&lt;/p&gt;
+&lt;h2 id="bash"&gt;
+	Bash
 &lt;/h2&gt;
-&lt;h3 id="bash--32"&gt;
-	bash &amp;lt;= 3.2
+&lt;p&gt;Check your bash version with &lt;code&gt;bash --version&lt;/code&gt;, then use the matching commands.&lt;/p&gt;
+&lt;h3 id="linux-bash-40-or-later"&gt;
+	Linux, bash 4.0 or later
 &lt;/h3&gt;
- &lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
- &lt;div class="clipboardjs"&gt;source /dev/stdin &lt;&lt;&lt; "$(mesheryctl completion bash)"&lt;/div&gt;&lt;/div&gt;
- &lt;/pre&gt;
-&lt;h3 id="bash--40"&gt;
-	bash &amp;gt;= 4.0
-&lt;/h3&gt;
- &lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
- &lt;div class="clipboardjs"&gt;source &lt;(mesheryctl completion bash)&lt;/div&gt;&lt;/div&gt;
- &lt;/pre&gt;
-&lt;h3 id="bash--32-on-macos"&gt;
-	bash &amp;lt;= 3.2 on MacOS
-&lt;/h3&gt;
- &lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
- &lt;div class="clipboardjs"&gt;brew install bash-completion # ensure you have bash-completion 1.3+
-mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryctl&lt;/div&gt;&lt;/div&gt;
- &lt;/pre&gt;
-&lt;h3 id="bash--40-on-macos"&gt;
-	bash &amp;gt;= 4.0 on MacOS
-&lt;/h3&gt;
- &lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
- &lt;div class="clipboardjs"&gt;brew install bash-completion@2
-mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryctl&lt;/div&gt;&lt;/div&gt;
- &lt;/pre&gt;
-&lt;h2 id="autocompletion-for-zsh"&gt;
-	Autocompletion for zsh
-&lt;/h2&gt;
- &lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
- &lt;div class="clipboardjs"&gt;source &lt;(mesheryctl completion zsh)&lt;/div&gt;&lt;/div&gt;
- &lt;/pre&gt;&lt;br&gt;
-&lt;p&gt;If shell completion is not already enabled in your environment you will need to enable it. You can execute the following once:&lt;/p&gt;</description></item><item><title>Mesheryctl system commands</title><link>/guides/mesheryctl/system-commands/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/system-commands/</guid><description>&lt;p&gt;Let&amp;rsquo;s get familiar with mesheryctl system commands. The syntax of the mesheryctl commands goes as follows : &lt;code&gt;mesheryctl &amp;lt;Main_command&amp;gt; &amp;lt;Argument&amp;gt; &amp;lt;Flags&amp;gt;&lt;/code&gt;&lt;/p&gt;
-&lt;h2 id="main_command--system"&gt;
-	Main_command : system
+&lt;p&gt;Load completion in the current shell:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;source&lt;/span&gt; &amp;lt;&lt;span class="o"&gt;(&lt;/span&gt;mesheryctl completion bash&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To load it in every new shell, add that line to &lt;code&gt;~/.bashrc&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>Mesheryctl system commands</title><link>/guides/mesheryctl/system-commands/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/system-commands/</guid><description>&lt;p&gt;&lt;code&gt;mesheryctl system&lt;/code&gt; commands manage the Meshery deployment described by your current &lt;a href="/guides/mesheryctl/working-with-mesheryctl/"&gt;context&lt;/a&gt;. The commands follow the pattern &lt;code&gt;mesheryctl system &amp;lt;command&amp;gt; [subcommand] [flags]&lt;/code&gt;. Every &lt;code&gt;system&lt;/code&gt; command also accepts:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;-c, --context &amp;lt;name&amp;gt;&lt;/code&gt; to act on a different context for this one command.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;-y, --yes&lt;/code&gt; to answer yes to every confirmation prompt, which is useful in scripts.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This page shows the commands you use most. For every flag, see the &lt;a href="/reference/references/mesheryctl/"&gt;&lt;code&gt;mesheryctl system&lt;/code&gt; reference&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="start-stop-and-restart-meshery"&gt;
+	Start, stop, and restart Meshery
 &lt;/h2&gt;
 &lt;h3 id="start"&gt;
 	start
 &lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;mesheryctl system start&lt;/code&gt; : This will initiate Meshery &amp;amp; automatically open it in your default web browser.&lt;/p&gt;
-&lt;p&gt;&lt;a href="images/start.png"&gt;&lt;img class="content-image" alt="skip-browser" src="images/start.png" /&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;mesheryctl system start --skip-browser&lt;/code&gt; : It skips opening Meshery in your browser with the provided URL.&lt;/p&gt;
-&lt;p&gt;&lt;a href="images/skipbrowser.png"&gt;&lt;img class="content-image" alt="skip-browser" src="images/skipbrowser.png" /&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;mesheryctl system start --skip-update&lt;/code&gt; : It is used when you want to skip updating Meshery if an update is available.&lt;/p&gt;</description></item><item><title>Running system checks using Meshery CLI</title><link>/guides/mesheryctl/running-system-checks-using-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/running-system-checks-using-mesheryctl/</guid><description>&lt;p&gt;Meshery&amp;rsquo;s CLI, &lt;code&gt;mesheryctl&lt;/code&gt;, includes commands for verifying system readiness for a Meshery deployment and health checks to confirm the health of an existing Meshery deployment. Whether you have yet to deploy Meshery or have already deployed Meshery, &lt;code&gt;mesheryctl system check&lt;/code&gt; is a useful utility to ensure that your Meshery deployments are healthy.&lt;/p&gt;
-&lt;pre class="codeblock-pre"&gt;
-&lt;div class="codeblock"&gt;&lt;div class="clipboardjs"&gt;mesheryctl system check&lt;/div&gt;&lt;/div&gt;
-&lt;/pre&gt;
-&lt;p&gt;&lt;br/&gt;&lt;p&gt;
-&lt;pre class="codeblock-pre"&gt;
-&lt;div class="codeblock"&gt;&lt;div class="clipboardjs"&gt;Verify environment pre/post-deployment of Meshery.
-&lt;p&gt;Usage:
-mesheryctl system check [flags]&lt;/p&gt;
-&lt;p&gt;Flags:
-&amp;ndash;adapter string Check status of specified meshery adapter
-&amp;ndash;adapters Check status of meshery adapters
-&amp;ndash;components Check status of Meshery components
--h, &amp;ndash;help help for check
-&amp;ndash;operator Verify the health of Meshery Operator&amp;rsquo;s deployment with MeshSync and Broker
-&amp;ndash;pre Verify environment readiness to deploy Meshery
-&amp;ndash;preflight Verify environment readiness to deploy Meshery&lt;/p&gt;</description></item><item><title>Using Meshery CLI</title><link>/guides/mesheryctl/working-with-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/working-with-mesheryctl/</guid><description>&lt;p&gt;Meshery&amp;rsquo;s command line interface is &lt;code&gt;mesheryctl&lt;/code&gt;. Use &lt;code&gt;mesheryctl&lt;/code&gt; to both manage the lifecycle of Meshery itself and to access and invoke any of Meshery&amp;rsquo;s application and cloud native management functions. &lt;code&gt;mesheryctl&lt;/code&gt; commands can be categorized as follows:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl&lt;/code&gt; - Global overrides and flags&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl system&lt;/code&gt; - Meshery Lifecycle and Troubleshooting&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl design&lt;/code&gt; - Cloud Native Pattern Configuration &amp;amp; Management&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl model&lt;/code&gt; - Model Management and Registry Operations&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl component&lt;/code&gt; - Meshery Component Management&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl relationship&lt;/code&gt; - Component Relationship Management&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl registry&lt;/code&gt; - Capability Registry Publishing and Management&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl connection&lt;/code&gt; - Connection and Credential Management&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl environment&lt;/code&gt; - Environment Management&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl workspace&lt;/code&gt; - Workspace Management&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl organization&lt;/code&gt; - Organization Management&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl filter&lt;/code&gt; - Cloud Native Filter Management&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl perf&lt;/code&gt; - Cloud Native Performance Management&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl adapter&lt;/code&gt; - Meshery Adapter Management&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id="configuring-meshery-deployments-with-meshconfig"&gt;
-	Configuring Meshery Deployments with meshconfig
+&lt;p&gt;&lt;code&gt;mesheryctl system start&lt;/code&gt; deploys Meshery to the platform in your current context and opens Meshery UI in your default browser.&lt;/p&gt;</description></item><item><title>Running system checks using Meshery CLI</title><link>/guides/mesheryctl/running-system-checks-using-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/running-system-checks-using-mesheryctl/</guid><description>&lt;p&gt;&lt;code&gt;mesheryctl system check&lt;/code&gt; verifies that your machine is ready to deploy Meshery and that an existing Meshery deployment is healthy. Run it before you deploy Meshery, and again whenever Meshery misbehaves.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;mesheryctl system check --help&lt;/code&gt; to see every flag, or see the &lt;a href="/reference/references/mesheryctl/"&gt;&lt;code&gt;mesheryctl system check&lt;/code&gt; reference&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="check-your-machine-before-you-deploy"&gt;
+	Check your machine before you deploy
 &lt;/h2&gt;
-&lt;p&gt;&lt;em&gt;Meshconfig&lt;/em&gt; refers to a configuration file found at &lt;code&gt;~/.meshery/config.yaml&lt;/code&gt;. Your meshconfig file must contain one or more &lt;code&gt;contexts&lt;/code&gt; in order for any &lt;code&gt;mesheryctl system&lt;/code&gt; command to work. Each context represents a Meshery deployment.&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;Run the pre-deployment checks with &lt;code&gt;--preflight&lt;/code&gt; (or its alias &lt;code&gt;--pre&lt;/code&gt;):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mesheryctl system check --preflight
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;mesheryctl&lt;/code&gt; runs these checks:&lt;/p&gt;</description></item><item><title>Using Meshery CLI</title><link>/guides/mesheryctl/working-with-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/working-with-mesheryctl/</guid><description>&lt;p&gt;&lt;code&gt;mesheryctl&lt;/code&gt; is Meshery&amp;rsquo;s command line interface. Use it to manage the lifecycle of Meshery itself and to call Meshery&amp;rsquo;s infrastructure management features from your terminal. Its commands fall into these groups:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl&lt;/code&gt; - global flags (&lt;code&gt;--config&lt;/code&gt;, &lt;code&gt;--verbose&lt;/code&gt;), &lt;code&gt;version&lt;/code&gt;, and &lt;code&gt;completion&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl system&lt;/code&gt; - Meshery lifecycle, contexts, providers, tokens, and troubleshooting&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl design&lt;/code&gt; - design import, export, deployment, and evaluation&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl model&lt;/code&gt; - model management and registry operations&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl component&lt;/code&gt; - component lookup&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl relationship&lt;/code&gt; - relationship management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl registry&lt;/code&gt; - capability registry generation and publishing&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl connection&lt;/code&gt; - connection management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl environment&lt;/code&gt; - environment management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl workspace&lt;/code&gt; - workspace management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl organization&lt;/code&gt; - organization management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl filter&lt;/code&gt; - WebAssembly filter management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl perf&lt;/code&gt; - performance management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl adapter&lt;/code&gt; - Meshery Adapter operations&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl exp&lt;/code&gt; - experimental commands&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="configure-meshery-deployments-with-meshconfig"&gt;
+	Configure Meshery deployments with meshconfig
+&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;Meshconfig&lt;/em&gt; is the &lt;code&gt;mesheryctl&lt;/code&gt; configuration file at &lt;code&gt;~/.meshery/config.yaml&lt;/code&gt;. It holds one or more &lt;em&gt;contexts&lt;/em&gt;, and each context describes one Meshery deployment. &lt;code&gt;mesheryctl system&lt;/code&gt; commands such as &lt;code&gt;start&lt;/code&gt;, &lt;code&gt;stop&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, and &lt;code&gt;reset&lt;/code&gt; act on the current context.&lt;/p&gt;</description></item></channel></rss>
