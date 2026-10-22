@@ -31,7 +31,7 @@
           <a href="/pr-preview/pr-22375/installation/kubernetes/">Install on Kubernetes</a><span> - Install Meshery on Kubernetes. Deploy Meshery in Kubernetes in-cluster or outside of Kubernetes out-of-cluster.</span></li><li>
           <a href="/pr-preview/pr-22375/installation/mesheryctl/">Install using mesheryctl</a><span> - Use Meshery CLI to install Meshery on supported platforms.</span></li><li>
           <a href="/pr-preview/pr-22375/installation/">Installation</a><span> - Choose where to run Meshery, on Kubernetes or a Docker host, and find the installation guide for your platform.</span></li><li>
-          <a href="">Installation</a></li><li>
+          <a href="/pr-preview/pr-22375/categories/installation/">Installation</a></li><li>
           <a href="/pr-preview/pr-22375/installation/overview/">Overview</a><span> - Meshery is the self-service engineering platform, enabling collaborative design and operation of cloud and cloud native infrastructure.</span></li><li>
           <a href="/pr-preview/pr-22375/installation/production/">Production Deployment</a><span> - Considerations, best practices, security hardening, performance bounds, and operational readiness guidance for deploying Meshery in production.</span></li><li>
           <a href="/pr-preview/pr-22375/installation/upgrades/">Upgrading Meshery</a><span> - How Meshery&#39;s components version together, and the step-by-step procedure for upgrading the CLI, Server, Operator, MeshSync, and Broker on Docker and Kubernetes deployments.</span></li><li>
@@ -222,7 +222,7 @@
           <a href="/pr-preview/pr-22375/project/compatibility-matrix/">Compatibility Matrix</a></li><li>
           <a href="/pr-preview/pr-22375/project/contributing/">Contributing</a><span> - How to contribute to the Meshery project and any of its components.</span></li><li>
           <a href="/pr-preview/pr-22375/project/">Contributing and Community</a><span> - Information about contributing to the Meshery project and participating the Meshery community.</span></li><li>
-          <a href="">Project</a></li><li>
+          <a href="/pr-preview/pr-22375/categories/project/">Project</a></li><li>
           <a href="/pr-preview/pr-22375/project/releases/">Releases</a><span> - List of released Meshery versions and their release notes.</span></li><li>
           <a href="/pr-preview/pr-22375/project/security-vulnerabilities/">Security Vulnerabilities</a><span> - How the Meshery team handles security vulnerabilities.</span></li>
       </ul>
