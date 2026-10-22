@@ -1,0 +1,823 @@
+# Documentation
+
+> As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
+
+
+## Pages
+- [Meshery Documentation](/pr-preview/pr-22375/index.md)
+- [Search Results](/pr-preview/pr-22375/search/)
+
+## Installation
+- [Installation](/pr-preview/pr-22375/installation/index.md): Choose where to run Meshery, on Kubernetes or a Docker host, and find the installation guide for your platform.
+
+- [Overview](/pr-preview/pr-22375/installation/overview/): Meshery is the self-service engineering platform, enabling collaborative design and operation of cloud and cloud native infrastructure.
+- [Quick Start Guide](/pr-preview/pr-22375/installation/quick-start/): Install mesheryctl and start Meshery on a Kubernetes cluster or a Docker host with a single command, then connect your clusters and start designing.
+- [Using Meshery Playground](/pr-preview/pr-22375/installation/playground/): Try Meshery in your browser, connected to live Kubernetes clusters, without installing anything.
+- [Deployment Models & Reference Architecture](/pr-preview/pr-22375/installation/production/deployment-models/): In-cluster vs. out-of-cluster, Docker vs. Kubernetes, the Meshery component inventory and its statefulness, and the topology patterns for single-cluster, multi-cluster, and multi-cloud production deployments.
+- [Infrastructure, Sizing & Performance](/pr-preview/pr-22375/installation/production/infrastructure-sizing-and-performance/): Resource requirements per Meshery component, capacity planning, MeshSync tiered discovery, Broker throughput, scalability levers, and the known performance bounds to plan around in production.
+- [High Availability & Resiliency](/pr-preview/pr-22375/installation/production/high-availability-and-resiliency/): Replication, health probes, failure modes and recovery, the ephemeral database, Remote Provider persistence, and backup & disaster-recovery posture for resilient Meshery operation.
+- [Upgrading Meshery](/pr-preview/pr-22375/installation/upgrades/): How Meshery's components version together, and the step-by-step procedure for upgrading the CLI, Server, Operator, MeshSync, and Broker on Docker and Kubernetes deployments.
+- [Networking & Connectivity](/pr-preview/pr-22375/installation/production/networking-and-connectivity/): Network ports and directional flows, ingress and Emissary configuration, secure WebSocket support, CDN and edge caching of the UI, Broker exposure, egress to Remote Providers, the OAuth callback URL, and network policies for production Meshery.
+- [Security Hardening](/pr-preview/pr-22375/installation/production/security-hardening/): RBAC and least privilege, pod and container security contexts, secret and kubeconfig handling, TLS, supply-chain integrity, Broker exposure risk, namespace isolation, and extension trust for hardening Meshery in production.
+- [Authentication, Authorization & Identity](/pr-preview/pr-22375/installation/production/authentication-and-identity/): Why to preselect a Remote Provider over the Local Provider, OAuth callback configuration, identity providers, capabilities, and keys/permissions for production Meshery.
+- [Multi-Cluster & Multi-Cloud Operations](/pr-preview/pr-22375/installation/production/multi-cluster-and-multi-cloud/): Managed vs. unmanaged cluster connections, one Operator per cluster, kubeconfig and context management, MeshSync deployment modes, and cloud-specific guidance for operating Meshery across many clusters and clouds.
+- [Monitoring, Observability & Health KPIs](/pr-preview/pr-22375/installation/production/monitoring-observability-and-kpis/): Health endpoints, the key performance indicators of Meshery's health, metrics, distributed tracing, centralized logging, alerting, and synthetic checks for observing Meshery in production.
+- [Operational Readiness Checklist & Known Caveats](/pr-preview/pr-22375/installation/production/operational-readiness-checklist/): A consolidated, actionable production-readiness checklist across every dimension, the upgrade strategy for Meshery, and the known caveats and limitations to plan around.
+- [Accessing Meshery UI](/pr-preview/pr-22375/installation/accessing-meshery-ui/): Accessing Meshery's web-based user interface
+- [AKS](/pr-preview/pr-22375/installation/kubernetes/aks/): Manage your AKS clusters with Meshery. Deploy Meshery in AKS in-cluster or out-of-cluster.
+- [Bash](/pr-preview/pr-22375/installation/mesheryctl/linux-mac/bash/): Install Meshery CLI on Linux or MacOS with Bash
+- [Brew](/pr-preview/pr-22375/installation/mesheryctl/linux-mac/brew/): Install Meshery CLI on Linux or macOS with Homebrew
+- [Codespaces](/pr-preview/pr-22375/installation/advanced/codespaces/): Build and contribute to Meshery using GitHub Codespaces
+- [DigitalOcean](/pr-preview/pr-22375/installation/kubernetes/digitalocean/): Install Meshery on DigitalOcean. Deploy Meshery out-of-cluster with Docker on a Droplet, or in-cluster on DigitalOcean Kubernetes (DOKS).
+- [Docker Extension](/pr-preview/pr-22375/installation/docker/docker-extension/): Install Docker Extension for Meshery
+- [EKS](/pr-preview/pr-22375/installation/kubernetes/eks/): Install Meshery on Elastic Kubernetes Service. Deploy Meshery in EKS in-cluster or outside of EKS out-of-cluster.
+- [GKE](/pr-preview/pr-22375/installation/kubernetes/gke/): Install Meshery on Google Kubernetes Engine. Deploy Meshery in GKE in-cluster or outside of GKE out-of-cluster.
+- [Helm](/pr-preview/pr-22375/installation/kubernetes/helm/): Install Meshery on Kubernetes using Helm. Deploy Meshery in Kubernetes in-cluster.
+- [KinD](/pr-preview/pr-22375/installation/kubernetes/kind/): Install Meshery on KinD. Deploy Meshery in KinD in-cluster or outside of KinD out-of-cluster.
+- [KubeSphere](/pr-preview/pr-22375/installation/kubernetes/kubesphere/): Install Meshery on KubeSphere
+- [Minikube](/pr-preview/pr-22375/installation/kubernetes/minikube/): Install Meshery on Minikube. Deploy Meshery in Minikube in-cluster or outside of Minikube out-of-cluster.
+- [Scoop](/pr-preview/pr-22375/installation/mesheryctl/windows/scoop/): Install Meshery CLI on Windows with Scoop
+- [Server Environment Variables](/pr-preview/pr-22375/installation/advanced/environment-variables/): Installation and runtime configuration reference for the environment variables consumed by Meshery Server.
+- [Using Multiple Adapters](/pr-preview/pr-22375/installation/advanced/multiple-adapters/): Choose which Meshery Adapters to run, run more than one instance of an adapter, or run none at all.
+
+## Concepts
+- [Concepts](/pr-preview/pr-22375/concepts/index.md): Concepts for understanding Meshery's various features and components.
+
+- [Adapters](/pr-preview/pr-22375/concepts/architecture/adapters/): Adapters extend Meshery's management capabilities in any number of ways, including lifecycle, configuration, performance, governance, identity...
+- [Broker](/pr-preview/pr-22375/concepts/architecture/broker/): Meshery broker component facilitates data streaming between kubernetes cluster components and outside world.
+- [Catalog](/pr-preview/pr-22375/concepts/architecture/catalog/): Browsing and using cloud native patterns
+- [Components](/pr-preview/pr-22375/concepts/logical/components/): Meshery Components identify and characterize infrastructure under management.
+- [Connections](/pr-preview/pr-22375/concepts/logical/connections/): Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are managed by a state machine and used within one or more Environments.
+- [Credentials](/pr-preview/pr-22375/concepts/logical/credentials/): Meshery uses one or more Credentials when authenticating to a managed or unmanaged Connection.
+- [Database](/pr-preview/pr-22375/concepts/architecture/database/): Meshery offers support for internal caching with the help of file databases. This has been implemented with several libraries that supports different kinds of data formats.
+- [Deployment Engine](/pr-preview/pr-22375/concepts/architecture/deployment-engine/): How Meshery fulfills a design - resolving the registrant behind each component and routing that component either to Meshery Server itself or to a Meshery Adapter.
+- [Designs](/pr-preview/pr-22375/concepts/logical/designs/): Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured.
+- [Environments](/pr-preview/pr-22375/concepts/logical/environments/): Environments are how you organize your deployment targets (whether on-premises servers or cloud services) into resource groups.
+- [MeshSync](/pr-preview/pr-22375/concepts/architecture/meshsync/): MeshSync ensures Meshery Server is continuously in-sync with the state of infrastructure under management.
+- [Models](/pr-preview/pr-22375/concepts/logical/models/): Meshery uses a set of resource models to define concrete boundaries to ensure extensible and sustainable management.
+- [Operator](/pr-preview/pr-22375/concepts/architecture/operator/): Meshery Operator controls and manages the lifecycle of components deployed inside a kubernetes cluster
+- [Organizations](/pr-preview/pr-22375/concepts/logical/organizations/): Organizations are the unit of tenancy in Meshery — they group users together and own all of the resources those users create.
+- [Patterns](/pr-preview/pr-22375/concepts/logical/patterns/): Meshery Patterns are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured.
+- [Policies](/pr-preview/pr-22375/concepts/logical/policies/): Meshery Policies enable you with a broad set of controls and governance of the behavior of systems under Meshery's management.
+- [Registry](/pr-preview/pr-22375/concepts/logical/registry/): Meshery Registry is a database acting as the central repository for all capabilities known to Meshery. These capabilities encompass various entities, including models, components, relationships, and policies.
+- [Relationships](/pr-preview/pr-22375/concepts/logical/relationships/): Meshery Relationships identify and facilitate genealogy between Components.
+- [Workspaces](/pr-preview/pr-22375/concepts/logical/workspaces/): Meshery Workspaces act as central collaboration point for teams.
+
+## Guides
+- [Guides](/pr-preview/pr-22375/guides/index.md): Using, operating, and troubleshooting Meshery.
+
+- [Overview](/pr-preview/pr-22375/guides/infrastructure-management/overview/): Meshery provides the ability to manage infrastructure for agility, maintainability, diversity, reliability and isolation, security, and speed.
+- [Registering a Connection](/pr-preview/pr-22375/guides/infrastructure-management/registering-a-connection/): Use the Connection Wizard to create and update Connections - Kubernetes clusters, Grafana, Prometheus, and more - in your Meshery deployment.
+- [Configuring Meshery Operator, MeshSync, and Broker](/pr-preview/pr-22375/guides/infrastructure-management/configuring-operator-meshsync-broker/): Tune how Meshery deploys and operates Meshery Operator, MeshSync, and Meshery Broker on your clusters - deployment modes, discovery scope, secret handling, service networking, and the behavioral impact of every setting.
+- [Bringing Existing Infrastructure Under Meshery Management](/pr-preview/pr-22375/guides/infrastructure-management/managing-existing-infrastructure/): What happens when you point Meshery at a cluster that is already running workloads - how brownfield discovery works, what to evaluate before you connect, the end-to-end process, and the caveats.
+- [Deploying a Design](/pr-preview/pr-22375/guides/infrastructure-management/deploying-a-design/): Validate, dry-run, deploy, and undeploy a Meshery Design on the Kubernetes clusters in your Environments, and read the deployment results.
+- [Sharing a Cluster with Your Team](/pr-preview/pr-22375/guides/infrastructure-management/sharing-a-cluster-with-your-team/): Give your teammates access to a Kubernetes cluster you manage in Meshery by grouping it into an Environment, attaching the Environment to a Workspace, and assigning teams to the Workspace.
+- [Kubernetes Connection Lifecycle](/pr-preview/pr-22375/guides/infrastructure-management/kubernetes-connection-lifecycle/): What happens end-to-end when Meshery manages a Kubernetes cluster - the connection states, the in-cluster components (Operator, Broker/NATS, MeshSync), MeshSync deployment modes, how Meshery reaches and authenticates to the Broker, the built-in Diagnostics, and how to operate and troubleshoot it all.
+- [Grafana Dashboards](/pr-preview/pr-22375/guides/telemetry/grafana-dashboards/): Browse, pin, and render your existing Grafana dashboards inside Meshery using a registered Grafana connection.
+- [Prometheus Metrics](/pr-preview/pr-22375/guides/telemetry/prometheus-metrics/): Explore Prometheus metrics, compose PromQL queries with live preview, and save your own panels - all from a registered Prometheus connection.
+- [Authenticating Meshery via CLI](/pr-preview/pr-22375/guides/mesheryctl/authenticate-with-meshery-via-cli/): Log in to Meshery Server from mesheryctl and get an authentication token.
+- [Configuring Autocompletion for `mesheryctl`](/pr-preview/pr-22375/guides/mesheryctl/configuring-autocompletion-for-mesheryctl/): Bash, Zsh, Oh My Zsh, and fish autocompletion for `mesheryctl` commands.
+- [Create Models](/pr-preview/pr-22375/guides/configuration-management/creating-models/): A comprehensive guide on creating models in Meshery, covering both CLI and UI methods.
+- [Creating a Meshery Design](/pr-preview/pr-22375/guides/configuration-management/creating-a-meshery-design/): Learn how to create a Meshery Design using the built-in Design Configurator in Meshery UI or the mesheryctl CLI.
+- [Deploy AWS EC2 Instances with Meshery](/pr-preview/pr-22375/guides/tutorials/aws/deploy-aws-ec2-instances-with-meshery/): Deploy an EC2 instance and its VPC from Meshery, using AWS Controllers for Kubernetes (ACK) and designs from the Meshery Catalog.
+- [Deploy Azure resources with Meshery](/pr-preview/pr-22375/guides/tutorials/azure/deploy-azure-resources-with-meshery/): Install Azure Service Operator in your cluster and deploy Azure resources, such as Storage Accounts and Key Vaults, from a Meshery Design.
+- [Deploy Azure Storage Account with Meshery](/pr-preview/pr-22375/guides/tutorials/azure/deploy-azure-storage-account-with-meshery/): Install Azure Service Operator in your cluster and deploy an Azure Storage Account from a Meshery Design.
+- [Edge Styles Guide](/pr-preview/pr-22375/guides/configuration-management/edges-guide/): Learn about the different edge styles and how to interpret their visual meaning in Meshery's component relationships.
+- [Embedding a Meshery Design in a WordPress Post](/pr-preview/pr-22375/guides/tutorials/wordpress/embedding-meshery-design-in-wordpress/): Embed an interactive Meshery Design in a WordPress post, using the embed export from Kanvas.
+- [Envoy WASM Filter Management](/pr-preview/pr-22375/guides/infrastructure-management/filter-management/): Import, inspect, publish, and remove Envoy WebAssembly (WASM) filters with Meshery UI and mesheryctl.
+- [Exporting Models](/pr-preview/pr-22375/guides/configuration-management/exporting-models/): Export a Meshery Model as an OCI image or a compressed archive.
+- [GitOps with Meshery](/pr-preview/pr-22375/guides/infrastructure-management/gitops-with-meshery/): Add Meshery's GitHub Actions to your pipelines to render a visual snapshot of your infrastructure on each pull request and to catch performance regressions before you merge.
+- [Identifying Meshery Components](/pr-preview/pr-22375/guides/configuration-management/identifying-components/): A guide to help you identify and understand the various component icons, shapes, and visual styles used across the Meshery UI.
+- [Importing and Exporting Designs](/pr-preview/pr-22375/guides/configuration-management/import-export-designs/): Manage and transfer Meshery designs seamlessly through import and export using CLI and UI.
+- [Importing Models](/pr-preview/pr-22375/guides/configuration-management/importing-models/): Import an existing Meshery Model into Meshery's registry from a file, a directory, a URL, or CSV files.
+- [Interpreting Performance Test Results](/pr-preview/pr-22375/guides/performance-management/interpreting-performance-test-results/): Read the latency and throughput results of a Meshery performance test, and compare runs in a way that produces useful conclusions.
+- [Managing Connections](/pr-preview/pr-22375/guides/infrastructure-management/lifecycle-management/): Find, inspect, transition, reconfigure, and remove the Connections Meshery manages, from Meshery UI or mesheryctl.
+- [Managing Events with Notification Center](/pr-preview/pr-22375/guides/infrastructure-management/notification-management/): Meshery tracks operations performed on your infrastructure and workloads, and provides notification of environment issues, application conflicts with infrastructure configuration, policy violations, and so on.
+- [Managing Performance](/pr-preview/pr-22375/guides/performance-management/managing-performance/): Organize load tests into performance profiles, choose and configure the load generator, and read infrastructure metrics alongside your results.
+- [Meshery Operator, MeshSync, Broker Troubleshooting Guide](/pr-preview/pr-22375/guides/troubleshooting/meshery-operator-meshsync/): Comprehensive guidance for troubleshooting Meshery Operator, MeshSync and Broker deployments under various scenarios.
+- [Mesheryctl system commands](/pr-preview/pr-22375/guides/mesheryctl/system-commands/): Use mesheryctl system commands to start, stop, update, and inspect your Meshery deployments.
+- [Performance Management with Meshery](/pr-preview/pr-22375/guides/performance-management/performance-management/): Run a load test against a service endpoint from Meshery UI, mesheryctl, or a CI pipeline, save it as a reusable performance profile, and compare results over time.
+- [Publishing Meshery Designs to Artifact Hub](/pr-preview/pr-22375/guides/tutorials/artifacthub/publish-to-artifacthub/): Export a Meshery Design as an OCI image and publish it to an Artifact Hub repository.
+- [Push or Pull a Model Image](/pr-preview/pr-22375/guides/configuration-management/push-pull-model-image/): Push or pull a model image to or from an OCI-compatible image repository.
+- [Running mesheryctl in a CI Pipeline](/pr-preview/pr-22375/guides/mesheryctl/running-mesheryctl-in-ci/): Install mesheryctl on a CI runner, authenticate it without a browser, point it at a Meshery Server, and run commands non-interactively.
+- [Running system checks using Meshery CLI](/pr-preview/pr-22375/guides/mesheryctl/running-system-checks-using-mesheryctl/): Run pre-flight and post-deployment system health checks using Meshery's CLI, mesheryctl.
+- [Troubleshooting Errors while running Meshery](/pr-preview/pr-22375/guides/troubleshooting/meshery-server/): Troubleshoot errors from mesheryctl system start and from running Meshery Server locally with make server.
+- [Troubleshooting Extensions for Local Development](/pr-preview/pr-22375/guides/troubleshooting/enabling-extensions-locally/): Find out why a Meshery extension doesn't load in your local development environment, and what you can fix yourself.
+- [Troubleshooting Meshery Installations](/pr-preview/pr-22375/guides/troubleshooting/installation/): Troubleshoot Meshery installation and deployment
+- [Using Meshery CLI](/pr-preview/pr-22375/guides/mesheryctl/working-with-mesheryctl/): Guides for common tasks while using Meshery's CLI, mesheryctl.
+- [Using Metrics in Meshery](/pr-preview/pr-22375/guides/performance-management/meshery-metrics/): How to view Prometheus and Grafana metrics in Meshery
+
+## Extensions
+- [Extensions](/pr-preview/pr-22375/extensions/index.md): Extensions are additional plugins or add-ons that provide extra functionalities beyond the core features of the Meshery.
+
+- [Accurate](/pr-preview/pr-22375/extensions/models/accurate/)
+- [Actions Runner Controller (ARC)](/pr-preview/pr-22375/extensions/models/actions-runner-controller/)
+- [Aerokube](/pr-preview/pr-22375/extensions/models/aerokube/)
+- [Aerospike Kubernetes Operator](/pr-preview/pr-22375/extensions/models/aerospike-kubernetes-operator/): Aerospike Kubernetes Operator automates the configuration, provisioning, scaling, and recovery of Aerospike clusters. It reduces the complexity of manual deployment and lifecycle management, and enables the use of declarative configuration for Aerospike clusters.
+- [AIGIS UK](/pr-preview/pr-22375/extensions/models/aigisuk/)
+- [Akri](/pr-preview/pr-22375/extensions/models/akri/)
+- [Altinity ClickHouse](/pr-preview/pr-22375/extensions/models/altinity-clickhouse-operator/)
+- [Amazon Web Services](/pr-preview/pr-22375/extensions/models/aws/)
+- [Ambassador](/pr-preview/pr-22375/extensions/models/ambassador/)
+- [AMD GPU](/pr-preview/pr-22375/extensions/models/amd-gpu/)
+- [Antrea](/pr-preview/pr-22375/extensions/models/antrea/)
+- [Apache Cassandra](/pr-preview/pr-22375/extensions/models/cass-operator/)
+- [Apache ShardingSphere](/pr-preview/pr-22375/extensions/models/apache-shardingsphere-operator-charts/)
+- [Aperture Agent](/pr-preview/pr-22375/extensions/models/aperture-agent/)
+- [Aperture Controller](/pr-preview/pr-22375/extensions/models/aperture-controller/)
+- [APISIX](/pr-preview/pr-22375/extensions/models/apisix/)
+- [APISIX Ingress Controller](/pr-preview/pr-22375/extensions/models/apisix-ingress-controller/)
+- [AppsCode Application](/pr-preview/pr-22375/extensions/models/application-crds/)
+- [AppsCode Container Engine](/pr-preview/pr-22375/extensions/models/ace/)
+- [ArangoDB Kubernetes Operator](/pr-preview/pr-22375/extensions/models/kube-arangodb/)
+- [Argo CD Applications](/pr-preview/pr-22375/extensions/models/argo-cd/)
+- [Argo CD Operator](/pr-preview/pr-22375/extensions/models/argocd-operator/)
+- [Argo Workflows](/pr-preview/pr-22375/extensions/models/argo-workflows/)
+- [Armory Spinnaker Operator](/pr-preview/pr-22375/extensions/models/armory-spinnaker-operator/)
+- [Artifact Hub](/pr-preview/pr-22375/extensions/models/artifact-hub/)
+- [Athenz](/pr-preview/pr-22375/extensions/models/athenz/)
+- [AWS API Gateway](/pr-preview/pr-22375/extensions/models/aws-api-gateway-operator/)
+- [AWS API Gateway v2](/pr-preview/pr-22375/extensions/models/aws-apigatewayv2-controller/)
+- [AWS App Mesh](/pr-preview/pr-22375/extensions/models/appmesh-controller/)
+- [AWS Applilcation Autoscaling](/pr-preview/pr-22375/extensions/models/aws-applicationautoscaling-controller/)
+- [AWS CloudFront](/pr-preview/pr-22375/extensions/models/aws-cloudfront-controller/)
+- [AWS CloudTrail](/pr-preview/pr-22375/extensions/models/aws-cloudtrail-controller/)
+- [AWS CloudWatch](/pr-preview/pr-22375/extensions/models/aws-cloudwatch-controller/)
+- [AWS CloudWatch Logs](/pr-preview/pr-22375/extensions/models/aws-cloudwatchlogs-controller/)
+- [AWS DocumentDB](/pr-preview/pr-22375/extensions/models/aws-documentdb-controller/)
+- [AWS DynamoDB](/pr-preview/pr-22375/extensions/models/aws-dynamodb-controller/)
+- [AWS EC2](/pr-preview/pr-22375/extensions/models/aws-ec2-controller/)
+- [AWS Elastic Container Registry](/pr-preview/pr-22375/extensions/models/aws-ecr-controller/)
+- [AWS Elastic Container Service](/pr-preview/pr-22375/extensions/models/aws-ecs-controller/)
+- [AWS Elastic File System](/pr-preview/pr-22375/extensions/models/aws-efs-controller/)
+- [AWS Elastic Kubernetes Service](/pr-preview/pr-22375/extensions/models/aws-eks-controller/)
+- [AWS Elastic Kubernetes Service](/pr-preview/pr-22375/extensions/models/eks/)
+- [AWS ElastiCache](/pr-preview/pr-22375/extensions/models/aws-elasticache-controller/)
+- [AWS ElasticSearch Service](/pr-preview/pr-22375/extensions/models/aws-elasticsearchservice-controller/)
+- [AWS EMR Containers](/pr-preview/pr-22375/extensions/models/aws-emrcontainers-controller/)
+- [AWS EventBridge](/pr-preview/pr-22375/extensions/models/aws-eventbridge-controller/)
+- [AWS Identity and Access Management](/pr-preview/pr-22375/extensions/models/aws-iam-controller/)
+- [AWS Kinesis](/pr-preview/pr-22375/extensions/models/aws-kinesis-controller/)
+- [AWS KMS](/pr-preview/pr-22375/extensions/models/aws-kms-controller/)
+- [AWS Lambda](/pr-preview/pr-22375/extensions/models/aws-lambda-controller/)
+- [AWS Load Balancer](/pr-preview/pr-22375/extensions/models/aws-load-balancer-controller/)
+- [AWS Managed Service for Prometheus](/pr-preview/pr-22375/extensions/models/aws-prometheusservice-controller/)
+- [AWS MemoryDB for Redis](/pr-preview/pr-22375/extensions/models/aws-memorydb-controller/)
+- [AWS MQ](/pr-preview/pr-22375/extensions/models/aws-mq-controller/)
+- [AWS Node Termination Handler](/pr-preview/pr-22375/extensions/models/aws-node-termination-handler-2/)
+- [AWS OpenSearch Service](/pr-preview/pr-22375/extensions/models/aws-opensearchservice-controller/)
+- [AWS Relational Database Service](/pr-preview/pr-22375/extensions/models/aws-rds-controller/)
+- [AWS Route 53](/pr-preview/pr-22375/extensions/models/aws-route53-controller/)
+- [AWS Route 53 Resolver](/pr-preview/pr-22375/extensions/models/aws-route53resolver-controller/)
+- [AWS SageMaker](/pr-preview/pr-22375/extensions/models/aws-sagemaker-controller/)
+- [AWS Secrets Manager](/pr-preview/pr-22375/extensions/models/aws-secretsmanager-controller/)
+- [AWS Simple Notification Service](/pr-preview/pr-22375/extensions/models/aws-sns-controller/)
+- [AWS Simple Queuing Service](/pr-preview/pr-22375/extensions/models/aws-sqs-controller/)
+- [AWS Simple Storage Service (S3)](/pr-preview/pr-22375/extensions/models/aws-s3-controller/)
+- [AWS Step Functions](/pr-preview/pr-22375/extensions/models/aws-sfn-controller/)
+- [AWS Systems Manager](/pr-preview/pr-22375/extensions/models/aws-ssm-controller/)
+- [AWS Target Group Binding](/pr-preview/pr-22375/extensions/models/aws-target-group-binding/)
+- [AWS VPC CNI](/pr-preview/pr-22375/extensions/models/aws-vpc-cni/)
+- [AWX Operator](/pr-preview/pr-22375/extensions/models/awx-operator/)
+- [Azure Active Directory (AAD)](/pr-preview/pr-22375/extensions/models/aad-pod-identity/)
+- [Azure Alerts Management](/pr-preview/pr-22375/extensions/models/azure-alerts-management/)
+- [Azure API Management](/pr-preview/pr-22375/extensions/models/azure-api-management/)
+- [Azure App Configuration](/pr-preview/pr-22375/extensions/models/azure-app-configuration/)
+- [Azure App Service](/pr-preview/pr-22375/extensions/models/azure-app-service/)
+- [Azure Application Gateway](/pr-preview/pr-22375/extensions/models/aks-appgw-fe/)
+- [Azure Architecture](/pr-preview/pr-22375/extensions/models/azure-architecture/)
+- [Azure Authorization](/pr-preview/pr-22375/extensions/models/azure-authorization/)
+- [Azure Batch](/pr-preview/pr-22375/extensions/models/azure-batch/)
+- [Azure Cache](/pr-preview/pr-22375/extensions/models/azure-cache/)
+- [Azure CDN](/pr-preview/pr-22375/extensions/models/azure-cdn/)
+- [Azure Compute](/pr-preview/pr-22375/extensions/models/azure-compute/)
+- [Azure Container Instance](/pr-preview/pr-22375/extensions/models/azure-container-instance/)
+- [Azure Container Registry](/pr-preview/pr-22375/extensions/models/azure-container-registry/)
+- [Azure Container Service](/pr-preview/pr-22375/extensions/models/azure-container-service/)
+- [Azure Data Factory](/pr-preview/pr-22375/extensions/models/azure-data-factory/)
+- [Azure Data Protection](/pr-preview/pr-22375/extensions/models/azure-data-protection/)
+- [Azure DB for MariaDB](/pr-preview/pr-22375/extensions/models/azure-db-for-mariadb/)
+- [Azure DB for MySQL](/pr-preview/pr-22375/extensions/models/azure-db-for-mysql/)
+- [Azure DB for PostgreSQL](/pr-preview/pr-22375/extensions/models/azure-db-for-postgresql/)
+- [Azure Devices](/pr-preview/pr-22375/extensions/models/azure-devices/)
+- [Azure DocumentDB](/pr-preview/pr-22375/extensions/models/azure-documentdb/)
+- [Azure Entra](/pr-preview/pr-22375/extensions/models/azure-entra/)
+- [Azure Event Grid](/pr-preview/pr-22375/extensions/models/azure-event-grid/)
+- [Azure Event Hub](/pr-preview/pr-22375/extensions/models/azure-event-hub/)
+- [Azure Insights](/pr-preview/pr-22375/extensions/models/azure-insights/)
+- [Azure Key Vault](/pr-preview/pr-22375/extensions/models/azure-key-vault/)
+- [Azure Kubernetes Configuration](/pr-preview/pr-22375/extensions/models/azure-kubernetes-configuration/)
+- [Azure Kubernetes Service](/pr-preview/pr-22375/extensions/models/azure-kubernetes-service/)
+- [Azure Kusto](/pr-preview/pr-22375/extensions/models/azure-kusto/)
+- [Azure Machine Learning Services](/pr-preview/pr-22375/extensions/models/azure-machine-learning-services/)
+- [Azure Managed Identity](/pr-preview/pr-22375/extensions/models/azure-managed-identity/)
+- [Azure Monitor](/pr-preview/pr-22375/extensions/models/azure-monitor/)
+- [Azure Network](/pr-preview/pr-22375/extensions/models/azure-network/)
+- [Azure Network Front Door](/pr-preview/pr-22375/extensions/models/azure-network-frontdoor/)
+- [Azure Notification Hubs](/pr-preview/pr-22375/extensions/models/azure-notification-hubs/)
+- [Azure Operational Insights](/pr-preview/pr-22375/extensions/models/azure-operational-insights/)
+- [Azure Operator](/pr-preview/pr-22375/extensions/models/azure-operator/)
+- [Azure Orkestra](/pr-preview/pr-22375/extensions/models/azureorkestra/)
+- [Azure Red Hat OpenShift](/pr-preview/pr-22375/extensions/models/azure-red-hat-openshift/)
+- [Azure Resources](/pr-preview/pr-22375/extensions/models/azure-resources/)
+- [Azure Search](/pr-preview/pr-22375/extensions/models/azure-search/)
+- [Azure Service Bus](/pr-preview/pr-22375/extensions/models/azure-service-bus/)
+- [Azure SignalR Service](/pr-preview/pr-22375/extensions/models/azure-signalr-service/)
+- [Azure SQL](/pr-preview/pr-22375/extensions/models/azure-sql/)
+- [Azure Storage](/pr-preview/pr-22375/extensions/models/azure-storage/)
+- [Azure Subscription](/pr-preview/pr-22375/extensions/models/azure-subscription/)
+- [Azure Synapse](/pr-preview/pr-22375/extensions/models/azure-synapse/)
+- [Azure Web](/pr-preview/pr-22375/extensions/models/azure-web/)
+- [Backend](/pr-preview/pr-22375/extensions/models/backend/)
+- [Backstage](/pr-preview/pr-22375/extensions/models/backstage/)
+- [BFE](/pr-preview/pr-22375/extensions/models/bfe/)
+- [Bitwarden](/pr-preview/pr-22375/extensions/models/sm-kubernetes/)
+- [Bitwarden by Lerentis](/pr-preview/pr-22375/extensions/models/bitwarden-crd-operator/)
+- [Brigade](/pr-preview/pr-22375/extensions/models/brigade/)
+- [Buildpacks](/pr-preview/pr-22375/extensions/models/buildpacks/)
+- [Camel K](/pr-preview/pr-22375/extensions/models/camel-k/)
+- [Capsule Proxy](/pr-preview/pr-22375/extensions/models/capsule-proxy/)
+- [cdk8s For Kubernetes](/pr-preview/pr-22375/extensions/models/cdk8s/)
+- [cert-manager](/pr-preview/pr-22375/extensions/models/cert-manager/)
+- [cert-manager ca-certificates CSI Driver](/pr-preview/pr-22375/extensions/models/cert-manager-csi-driver-cacerts/)
+- [cert-manager CRDs](/pr-preview/pr-22375/extensions/models/cert-manager-crds/)
+- [Chaos](/pr-preview/pr-22375/extensions/models/chaos/)
+- [Chaos Mesh](/pr-preview/pr-22375/extensions/models/chaos-mesh/)
+- [ChaosBlade](/pr-preview/pr-22375/extensions/models/chaosblade-operator/)
+- [Cilium](/pr-preview/pr-22375/extensions/models/cilium/)
+- [Citrix Service Mesh](/pr-preview/pr-22375/extensions/models/cpx/)
+- [ClickHouse](/pr-preview/pr-22375/extensions/models/clickhouse/)
+- [Cloud Custodian](/pr-preview/pr-22375/extensions/models/cloud-custodian/)
+- [Cloudbees Previews](/pr-preview/pr-22375/extensions/models/cloudbees-previews/)
+- [Cloudcore](/pr-preview/pr-22375/extensions/models/cloudcore/)
+- [Cloudevents](/pr-preview/pr-22375/extensions/models/cloudevents/)
+- [CloudNativePG](/pr-preview/pr-22375/extensions/models/cloudnative-pg/): CloudNativePG is the Kubernetes operator that covers the full lifecycle of a highly available PostgreSQL database cluster with a primary/standby architecture, using native streaming replication.
+- [Clusterpedia](/pr-preview/pr-22375/extensions/models/clusterpedia/)
+- [CNI Host NIC](/pr-preview/pr-22375/extensions/models/cni-hostnic/)
+- [Cockroachdb Operator](/pr-preview/pr-22375/extensions/models/cockroachdb-operator/)
+- [Confidential Containers](/pr-preview/pr-22375/extensions/models/confidential-containers/)
+- [Consul](/pr-preview/pr-22375/extensions/models/consul/)
+- [Containerd](/pr-preview/pr-22375/extensions/models/containerd/)
+- [Containerssh](/pr-preview/pr-22375/extensions/models/containerssh/)
+- [Contour](/pr-preview/pr-22375/extensions/models/contour-operator/)
+- [Contrail Analytics](/pr-preview/pr-22375/extensions/models/contrail-analytics/)
+- [Coredns](/pr-preview/pr-22375/extensions/models/coredns/)
+- [Cortex](/pr-preview/pr-22375/extensions/models/cortex/)
+- [Couchbase Monitor Stack](/pr-preview/pr-22375/extensions/models/couchbase-monitor-stack/)
+- [Couchbase Operator](/pr-preview/pr-22375/extensions/models/couchbase-operator/)
+- [CRI-O](/pr-preview/pr-22375/extensions/models/cri-o/)
+- [Crossplane](/pr-preview/pr-22375/extensions/models/crossplane/)
+- [Cubefs](/pr-preview/pr-22375/extensions/models/cubefs/)
+- [Curiefense](/pr-preview/pr-22375/extensions/models/curiefense/)
+- [Dapr](/pr-preview/pr-22375/extensions/models/dapr/)
+- [Datadog Operator](/pr-preview/pr-22375/extensions/models/datadog-operator/)
+- [Devfile](/pr-preview/pr-22375/extensions/models/devfile/)
+- [Devstream](/pr-preview/pr-22375/extensions/models/devstream/)
+- [Dex](/pr-preview/pr-22375/extensions/models/dex/)
+- [DigitalOcean Icons](/pr-preview/pr-22375/extensions/models/digitalocean-icons/)
+- [Docker](/pr-preview/pr-22375/extensions/models/docker/)
+- [Dragonfly](/pr-preview/pr-22375/extensions/models/dragonfly/)
+- [EDP Argocd Operator](/pr-preview/pr-22375/extensions/models/edp-argocd-operator/)
+- [EDP Component Operator](/pr-preview/pr-22375/extensions/models/edp-component-operator/)
+- [EDP Install](/pr-preview/pr-22375/extensions/models/edp-install/)
+- [Elastic Search](/pr-preview/pr-22375/extensions/models/elasticsearch-operator/)
+- [Emissary Ingress](/pr-preview/pr-22375/extensions/models/emissary-ingress/)
+- [Envoy](/pr-preview/pr-22375/extensions/models/envoy/)
+- [EPAM Delivery Platform](/pr-preview/pr-22375/extensions/models/admin-console-operator/)
+- [Etcd Cluster Operator](/pr-preview/pr-22375/extensions/models/etcd-cluster-operator/)
+- [Exoscale (Crossplane)](/pr-preview/pr-22375/extensions/models/crossplane-provider-exoscale/)
+- [External Secrets Operator](/pr-preview/pr-22375/extensions/models/external-secrets-operator/)
+- [F5 Networks](/pr-preview/pr-22375/extensions/models/f5-networks/)
+- [Fabedge](/pr-preview/pr-22375/extensions/models/fabedge/)
+- [Falco](/pr-preview/pr-22375/extensions/models/falco/)
+- [Flagger](/pr-preview/pr-22375/extensions/models/flagger/)
+- [Fluent Operator](/pr-preview/pr-22375/extensions/models/fluent-operator/)
+- [Fluentbit Operator](/pr-preview/pr-22375/extensions/models/fluentbit-operator/)
+- [Fluentbit Skt](/pr-preview/pr-22375/extensions/models/fluentbit-skt/)
+- [Fluentd Operator](/pr-preview/pr-22375/extensions/models/fluentd-operator/)
+- [Fluentd Operator](/pr-preview/pr-22375/extensions/models/fluentd/)
+- [Fluid](/pr-preview/pr-22375/extensions/models/fluid/)
+- [Flux](/pr-preview/pr-22375/extensions/models/flux/)
+- [Flyte Sandbox](/pr-preview/pr-22375/extensions/models/flyte-sandbox/)
+- [Fonio](/pr-preview/pr-22375/extensions/models/fonio/)
+- [Gerrit Operator](/pr-preview/pr-22375/extensions/models/gerrit-operator/)
+- [Github Actions Runner Operator](/pr-preview/pr-22375/extensions/models/github-actions-runner-operator/)
+- [Github Actions Runners](/pr-preview/pr-22375/extensions/models/github-actions-runners/)
+- [GitLab](/pr-preview/pr-22375/extensions/models/gitlab/)
+- [Gitlab Controller](/pr-preview/pr-22375/extensions/models/gitlab-controller/)
+- [Gitlab Runner Operator](/pr-preview/pr-22375/extensions/models/gitlab-runner-operator/)
+- [Google Cloud Platform](/pr-preview/pr-22375/extensions/models/gcp/)
+- [Google Cloud Platform](/pr-preview/pr-22375/extensions/models/k8s-config-connector/)
+- [Grafana Agent](/pr-preview/pr-22375/extensions/models/grafana-agent/)
+- [Grafana Agent Operator](/pr-preview/pr-22375/extensions/models/grafana-agent-operator/)
+- [Grafana Operator](/pr-preview/pr-22375/extensions/models/grafana-operator/)
+- [Grafana UI Server](/pr-preview/pr-22375/extensions/models/grafana-ui-server/)
+- [HAProxy Kubernetes Ingress](/pr-preview/pr-22375/extensions/models/kubernetes-ingress/)
+- [Harbor Operator](/pr-preview/pr-22375/extensions/models/harbor-operator/)
+- [Helm Controller](/pr-preview/pr-22375/extensions/models/helm-controller/)
+- [Helm Snapshot](/pr-preview/pr-22375/extensions/extensions/helm-snapshot/): Helm CLI plugin to visually render a snapshot of your Helm charts.
+- [Hexa](/pr-preview/pr-22375/extensions/models/hexa/)
+- [Hybridnet](/pr-preview/pr-22375/extensions/models/hybridnet/)
+- [Identity Manager](/pr-preview/pr-22375/extensions/models/identity-manager/)
+- [in-toto](/pr-preview/pr-22375/extensions/models/in-toto/)
+- [Inclavare Containers](/pr-preview/pr-22375/extensions/models/inclavare-containers/)
+- [Ingress Azure](/pr-preview/pr-22375/extensions/models/ingress-azure/)
+- [Inlets Operator](/pr-preview/pr-22375/extensions/models/inlets-operator/)
+- [Intel Device Plugins Operator](/pr-preview/pr-22375/extensions/models/intel-device-plugins-operator/)
+- [Istio](/pr-preview/pr-22375/extensions/models/istio-base/)
+- [Istio Operator](/pr-preview/pr-22375/extensions/models/istio-operator/)
+- [Istio Rate Limit Operator](/pr-preview/pr-22375/extensions/models/istio-ratelimit-operator/)
+- [Jaeger](/pr-preview/pr-22375/extensions/models/jaeger/)
+- [Jaeger Operator](/pr-preview/pr-22375/extensions/models/jaeger-operator/)
+- [Jenkins Operator](/pr-preview/pr-22375/extensions/models/jenkins-operator/)
+- [Jfrog Distribution](/pr-preview/pr-22375/extensions/models/distribution/)
+- [Jira Service Desk Operator](/pr-preview/pr-22375/extensions/models/jira-service-desk-operator/)
+- [Jitsi](/pr-preview/pr-22375/extensions/models/jitsi/)
+- [K3s](/pr-preview/pr-22375/extensions/models/k3s/)
+- [k6](/pr-preview/pr-22375/extensions/models/k6-operator/)
+- [K8GB](/pr-preview/pr-22375/extensions/models/k8gb/)
+- [K8s Vault Controller](/pr-preview/pr-22375/extensions/models/k8svault-controller/)
+- [Kanister Operator](/pr-preview/pr-22375/extensions/models/kanister-operator/)
+- [Kanvas](/pr-preview/pr-22375/extensions/extensions/kanvas/): Collaborative cloud native visual designer to design and manage infrastructure and applications.
+- [Karmada](/pr-preview/pr-22375/extensions/models/karmada/)
+- [Karpenter](/pr-preview/pr-22375/extensions/models/karpenter/)
+- [KEDA](/pr-preview/pr-22375/extensions/models/keda/)
+- [KEDA HTTP Scaler](/pr-preview/pr-22375/extensions/models/keda-http-scaler/)
+- [Keycloak Operator](/pr-preview/pr-22375/extensions/models/keycloak-operator/)
+- [Keylime](/pr-preview/pr-22375/extensions/models/keylime/)
+- [Kiali Operator](/pr-preview/pr-22375/extensions/models/kiali-operator/)
+- [Knative](/pr-preview/pr-22375/extensions/models/knative/)
+- [Knative Eventing](/pr-preview/pr-22375/extensions/models/knative-eventing/)
+- [Knative Serving](/pr-preview/pr-22375/extensions/models/knative-serving/)
+- [Kommander](/pr-preview/pr-22375/extensions/models/kommander/)
+- [Kong API Gateway](/pr-preview/pr-22375/extensions/models/kong/)
+- [Kong Mesh](/pr-preview/pr-22375/extensions/models/kong-mesh/)
+- [Kube Prometheus](/pr-preview/pr-22375/extensions/models/kube-prometheus/)
+- [Kube Prometheus Stack](/pr-preview/pr-22375/extensions/models/kube-prometheus-stack/)
+- [kube-rs](/pr-preview/pr-22375/extensions/models/kube-rs/)
+- [kubectl MeshSync Snapshot](/pr-preview/pr-22375/extensions/extensions/kubectl-meshsync-snapshot/): A native kubectl plugin for conveniently synchronizing the state of your cluster with Meshery Server.
+- [Kubedb](/pr-preview/pr-22375/extensions/models/kubedb/)
+- [Kubedb Catalog](/pr-preview/pr-22375/extensions/models/kubedb-catalog/)
+- [Kubedb CRDs](/pr-preview/pr-22375/extensions/models/kubedb-crds/)
+- [Kubedb Grafana Dashboards](/pr-preview/pr-22375/extensions/models/kubedb-grafana-dashboards/)
+- [Kubedb Metrics](/pr-preview/pr-22375/extensions/models/kubedb-metrics/)
+- [Kubedb Ops Manager](/pr-preview/pr-22375/extensions/models/kubedb-ops-manager/)
+- [Kubedb Opscenter](/pr-preview/pr-22375/extensions/models/kubedb-opscenter/)
+- [Kubedb UI Server](/pr-preview/pr-22375/extensions/models/kubedb-ui-server/)
+- [Kubedl](/pr-preview/pr-22375/extensions/models/kubedl/)
+- [Kubeflow](/pr-preview/pr-22375/extensions/models/kubeflow/)
+- [Kubeflow Katib](/pr-preview/pr-22375/extensions/models/katib/)
+- [Kubeflow MPI Operator](/pr-preview/pr-22375/extensions/models/mpi-operator/)
+- [Kubeform Provider AWS](/pr-preview/pr-22375/extensions/models/kubeform-provider-aws/)
+- [Kubegems](/pr-preview/pr-22375/extensions/models/kubegems/)
+- [Kubegems Edge](/pr-preview/pr-22375/extensions/models/kubegems-edge/)
+- [Kubegems Installer](/pr-preview/pr-22375/extensions/models/kubegems-installer/)
+- [Kubegems Local](/pr-preview/pr-22375/extensions/models/kubegems-local/)
+- [Kubegems Models](/pr-preview/pr-22375/extensions/models/kubegems-models/)
+- [Kuberhealthy](/pr-preview/pr-22375/extensions/models/kuberhealthy/)
+- [Kubernetes](/pr-preview/pr-22375/extensions/models/kubernetes/)
+- [Kubernetes Metrics Server](/pr-preview/pr-22375/extensions/models/metrics-server/): Metrics Server is a scalable, efficient source of container resource metrics for Kubernetes built-in autoscaling pipelines.
+- [Kubernetes Secret Generator](/pr-preview/pr-22375/extensions/models/kubernetes-secret-generator/)
+- [Kubernetes UI Server](/pr-preview/pr-22375/extensions/models/kube-ui-server/)
+- [KubeRocketCI Pipeline Operator](/pr-preview/pr-22375/extensions/models/cd-pipeline-operator/)
+- [Kubeslice Worker](/pr-preview/pr-22375/extensions/models/kubeslice-worker/)
+- [Kubesphere](/pr-preview/pr-22375/extensions/models/kubesphere/)
+- [Kubevault](/pr-preview/pr-22375/extensions/models/kubevault/)
+- [Kubevault Catalog](/pr-preview/pr-22375/extensions/models/kubevault-catalog/)
+- [Kubevault Crds](/pr-preview/pr-22375/extensions/models/kubevault-crds/)
+- [Kubevault Metrics](/pr-preview/pr-22375/extensions/models/kubevault-metrics/)
+- [Kubevault Operator](/pr-preview/pr-22375/extensions/models/kubevault-operator/)
+- [Kubevela](/pr-preview/pr-22375/extensions/models/kubevela/)
+- [Kubevirt](/pr-preview/pr-22375/extensions/models/kubevirt/)
+- [Kuma](/pr-preview/pr-22375/extensions/models/kuma/)
+- [Kured](/pr-preview/pr-22375/extensions/models/kured/)
+- [Kusk Gateway](/pr-preview/pr-22375/extensions/models/kusk-gateway/)
+- [Kyverno](/pr-preview/pr-22375/extensions/models/kyverno/)
+- [Kyverno Monitor](/pr-preview/pr-22375/extensions/models/kyverno-monitor/)
+- [Kyverno Operator](/pr-preview/pr-22375/extensions/models/kyverno-operator/)
+- [Linkerd](/pr-preview/pr-22375/extensions/models/linkerd/): git://github.com/meshery/meshery-linkerd/master/templates/meshmodel/components/stable-2.9.5
+- [Linux](/pr-preview/pr-22375/extensions/models/linux/)
+- [Litmus Chaos](/pr-preview/pr-22375/extensions/models/litmus-core/)
+- [Loki](/pr-preview/pr-22375/extensions/models/loki/): Loki is a horizontally scalable, highly available, multi-tenant log aggregation system inspired by Prometheus. It is designed to be very cost effective and easy to operate. It does not index the contents of the logs, but rather a set of labels for each log stream.
+- [Loki Simple Scalable](/pr-preview/pr-22375/extensions/models/loki-simple-scalable/): Loki is a horizontally scalable, highly available, multi-tenant log aggregation system inspired by Prometheus. It is designed to be very cost effective and easy to operate. It does not index the contents of the logs, but rather a set of labels for each log stream.
+- [Longhorn](/pr-preview/pr-22375/extensions/models/longhorn/)
+- [LoxiLB](/pr-preview/pr-22375/extensions/models/loxilb/)
+- [Mattermost Operator](/pr-preview/pr-22375/extensions/models/mattermost-operator/)
+- [Meshery Adapter for Cilium Service Mesh](/pr-preview/pr-22375/extensions/adapters/cilium/): The Meshery Adapter for Cilium Service Mesh is currently under construction (stable state), which means that the adapter …
+- [Meshery Adapter for Consul](/pr-preview/pr-22375/extensions/adapters/consul/): How adapters install and configure infrastructure Adapters share a common Day 1 / Day 2 model: they install …
+- [Meshery Adapter for Istio](/pr-preview/pr-22375/extensions/adapters/istio/): How adapters install and configure infrastructure Adapters share a common Day 1 / Day 2 model: they install …
+- [Meshery Adapter for Kuma](/pr-preview/pr-22375/extensions/adapters/kuma/):  Workload Management The following sample applications are available in this adapter.
+Bookinfo The sample BookInfo …
+- [Meshery Adapter for Linkerd](/pr-preview/pr-22375/extensions/adapters/linkerd/):  Features Lifecycle management of Linkerd Lifecycle management of sample applications Performance testing Sample …
+- [Meshery Adapter for Network Service Mesh](/pr-preview/pr-22375/extensions/adapters/nsm/):  Sample Applications The Meshery Adapter for Network Service Mesh includes a handful of sample applications. These …
+- [Meshery Adapter for Traefik Mesh](/pr-preview/pr-22375/extensions/adapters/traefik-mesh/):  Sample Applications The Meshery Adapter for Traefik Mesh includes some sample applications operations. Meshery can be …
+- [Meshery Core](/pr-preview/pr-22375/extensions/models/meshery-core/)
+- [mesheryctl-axi](/pr-preview/pr-22375/extensions/extensions/mesheryctl-axi/): An agent-ergonomic AXI wrapper around mesheryctl - token-efficient TOON output, always non-interactive, with help[] next-step suggestions.
+- [Metallb](/pr-preview/pr-22375/extensions/models/metallb/)
+- [Mimir](/pr-preview/pr-22375/extensions/models/mimir-distributed/)
+- [MinIO Operator](/pr-preview/pr-22375/extensions/models/minio-operator/)
+- [MySQL Operator](/pr-preview/pr-22375/extensions/models/mysql-operator/)
+- [NATS Operator](/pr-preview/pr-22375/extensions/models/nats-operator/)
+- [New Relic Operator](/pr-preview/pr-22375/extensions/models/newrelic-operator/)
+- [NGINX](/pr-preview/pr-22375/extensions/models/nginx/)
+- [NGINX Ingress Controller](/pr-preview/pr-22375/extensions/models/nginx-ingress/)
+- [NGINX Service Mesh](/pr-preview/pr-22375/extensions/models/nginx-service-mesh/)
+- [Ngrok Operator](/pr-preview/pr-22375/extensions/models/ngrok-operator/)
+- [Nirmata AWS Adapter](/pr-preview/pr-22375/extensions/models/nirmata-aws-adapter/)
+- [Nirmata Venafi Adapter](/pr-preview/pr-22375/extensions/models/nirmata-venafi-adapter/)
+- [Nocalhost](/pr-preview/pr-22375/extensions/models/nocalhost/)
+- [Notary](/pr-preview/pr-22375/extensions/models/notary/)
+- [ondat-operator](/pr-preview/pr-22375/extensions/models/ondat-operator/)
+- [Open Cluster Management](/pr-preview/pr-22375/extensions/models/open-cluster-management/)
+- [Open Policy Agent (OPA)](/pr-preview/pr-22375/extensions/models/open-policy-agent-opa/)
+- [Open Policy Agent Gatekeeper](/pr-preview/pr-22375/extensions/models/gatekeeper/)
+- [Open Service Mesh](/pr-preview/pr-22375/extensions/models/open-service-mesh/)
+- [OpenEBS](/pr-preview/pr-22375/extensions/models/openebs/)
+- [OpenELB](/pr-preview/pr-22375/extensions/models/openelb/)
+- [OpenFeature](/pr-preview/pr-22375/extensions/models/openfeature/)
+- [OpenGitOps](/pr-preview/pr-22375/extensions/models/opengitops/)
+- [Openkruise](/pr-preview/pr-22375/extensions/models/openkruise/)
+- [OpenMetrics](/pr-preview/pr-22375/extensions/models/openmetrics/)
+- [OpenStack (Cluster API Provider)](/pr-preview/pr-22375/extensions/models/cluster-api-provider-openstack/)
+- [OpenStack (Crossplane)](/pr-preview/pr-22375/extensions/models/crossplane-provider-openstack/)
+- [OpenTelemetry Operator](/pr-preview/pr-22375/extensions/models/opentelemetry-operator/)
+- [Operator Framework](/pr-preview/pr-22375/extensions/models/operator-framework/)
+- [Oras](/pr-preview/pr-22375/extensions/models/oras/)
+- [Parsec](/pr-preview/pr-22375/extensions/models/parsec/)
+- [Percona Operator for MongoDB](/pr-preview/pr-22375/extensions/models/psmdb-operator/)
+- [Percona Operator for MySQL](/pr-preview/pr-22375/extensions/models/ps-operator/)
+- [Percona Postgres Operator](/pr-preview/pr-22375/extensions/models/pg-operator/)
+- [Percona Server for MongoDB](/pr-preview/pr-22375/extensions/models/psmdb-db/)
+- [Percona Server for MySQL](/pr-preview/pr-22375/extensions/models/ps-db/)
+- [PGO (CrunchyData)](/pr-preview/pr-22375/extensions/models/pgo/)
+- [Piraeus Datastore](/pr-preview/pr-22375/extensions/models/piraeus-datastore/)
+- [Pixie](/pr-preview/pr-22375/extensions/models/pixie/)
+- [Porter](/pr-preview/pr-22375/extensions/models/porter/)
+- [Postgres Controller](/pr-preview/pr-22375/extensions/models/postgres-controller/)
+- [Postgres Database (CrunchyData)](/pr-preview/pr-22375/extensions/models/pg-db/)
+- [Postgres Operator](/pr-preview/pr-22375/extensions/models/postgres-operator/)
+- [Postgres With Operator](/pr-preview/pr-22375/extensions/models/postgres-with-operator/)
+- [Posthog](/pr-preview/pr-22375/extensions/models/posthog/)
+- [Pravega](/pr-preview/pr-22375/extensions/models/pravega/)
+- [Prometheus](/pr-preview/pr-22375/extensions/models/prometheus/)
+- [Prometheus Operator](/pr-preview/pr-22375/extensions/models/prometheus-operator-crds/)
+- [Pulsar Operator](/pr-preview/pr-22375/extensions/models/pulsar-operator/)
+- [Pulsar Resources Operator](/pr-preview/pr-22375/extensions/models/pulsar-resources-operator/)
+- [RabbitMQ Cluster Operator](/pr-preview/pr-22375/extensions/models/rabbitmq-cluster-operator/)
+- [RabbitMQ Operator](/pr-preview/pr-22375/extensions/models/rabbitmq-operator/)
+- [Redis Operator](/pr-preview/pr-22375/extensions/models/redis-operator/)
+- [Rook](/pr-preview/pr-22375/extensions/models/rook/)
+- [Rook Ceph Cluster](/pr-preview/pr-22375/extensions/models/rook-ceph-cluster/)
+- [Rustrial Aws Eks Iam Auth Controller](/pr-preview/pr-22375/extensions/models/rustrial-aws-eks-iam-auth-controller/)
+- [Saferwall](/pr-preview/pr-22375/extensions/models/saferwall/)
+- [Scheduler Plugins](/pr-preview/pr-22375/extensions/models/scheduler-plugins/)
+- [Schemahero](/pr-preview/pr-22375/extensions/models/schemahero/)
+- [Security Role Perm Operator Svc](/pr-preview/pr-22375/extensions/models/security-role-perm-operator-svc/)
+- [Serverless Workflow](/pr-preview/pr-22375/extensions/models/serverless-workflow/)
+- [Sidekick](/pr-preview/pr-22375/extensions/models/sidekick/)
+- [Skooner](/pr-preview/pr-22375/extensions/models/skooner/)
+- [Slack Operator](/pr-preview/pr-22375/extensions/models/slack-operator/)
+- [Solr Operator](/pr-preview/pr-22375/extensions/models/solr-operator/)
+- [SPIFFE](/pr-preview/pr-22375/extensions/models/spiffe/)
+- [SPIRE](/pr-preview/pr-22375/extensions/models/spire/)
+- [Stackgres Operator](/pr-preview/pr-22375/extensions/models/stackgres-operator/)
+- [Strimzi Kafka Operator](/pr-preview/pr-22375/extensions/models/strimzi-kafka-operator/)
+- [Strimzi Registry Operator](/pr-preview/pr-22375/extensions/models/strimzi-registry-operator/)
+- [Submariner](/pr-preview/pr-22375/extensions/models/submariner/)
+- [supabase](/pr-preview/pr-22375/extensions/models/supabase/)
+- [Superedge](/pr-preview/pr-22375/extensions/models/superedge/)
+- [Telepresence](/pr-preview/pr-22375/extensions/models/telepresence/)
+- [Teller](/pr-preview/pr-22375/extensions/models/teller/)
+- [Tenant Operator](/pr-preview/pr-22375/extensions/models/tenant-operator/)
+- [Terraform](/pr-preview/pr-22375/extensions/models/terraform/)
+- [Thanos](/pr-preview/pr-22375/extensions/models/thanos/)
+- [Thanos Operator](/pr-preview/pr-22375/extensions/models/thanos-operator/)
+- [Tikv Operator](/pr-preview/pr-22375/extensions/models/tikv-operator/)
+- [Tinkerbell](/pr-preview/pr-22375/extensions/models/tinkerbell/)
+- [Tremor](/pr-preview/pr-22375/extensions/models/tremor/)
+- [Trickster](/pr-preview/pr-22375/extensions/models/trickster/)
+- [Tuf](/pr-preview/pr-22375/extensions/models/tuf/)
+- [Vald](/pr-preview/pr-22375/extensions/models/vald/)
+- [Vald Helm Operator](/pr-preview/pr-22375/extensions/models/vald-helm-operator/)
+- [Vault Config Operator](/pr-preview/pr-22375/extensions/models/vault-config-operator/)
+- [Vault Operator](/pr-preview/pr-22375/extensions/models/vault-operator/)
+- [Vault Secrets](/pr-preview/pr-22375/extensions/models/vault-secrets/)
+- [Vela Workflow](/pr-preview/pr-22375/extensions/models/vela-workflow/)
+- [Velero](/pr-preview/pr-22375/extensions/models/velero/)
+- [Velero S3 Deployment](/pr-preview/pr-22375/extensions/models/velero-s3-deployment/)
+- [Victoria Metrics K8S Stack](/pr-preview/pr-22375/extensions/models/victoria-metrics-k8s-stack/)
+- [Vineyard](/pr-preview/pr-22375/extensions/models/vineyard/)
+- [Virtual Kubelet](/pr-preview/pr-22375/extensions/models/virtual-kubelet/)
+- [Vitess](/pr-preview/pr-22375/extensions/models/vitess/)
+- [Volcano](/pr-preview/pr-22375/extensions/models/volcano/)
+- [Wasmcloud](/pr-preview/pr-22375/extensions/models/wasmcloud/)
+- [Wasmedge Runtime](/pr-preview/pr-22375/extensions/models/wasmedgeruntime/)
+- [Whereabouts](/pr-preview/pr-22375/extensions/models/whereabouts/): Whereabouts is a CNI IPAM plugin for Kubernetes clusters. It dynamically assigns IP addresses cluster-wide. Features both IPv4 and IPv6 addressing.
+- [Windows](/pr-preview/pr-22375/extensions/models/windows/)
+- [Wordpress Operator](/pr-preview/pr-22375/extensions/models/wordpress-operator/)
+
+## Contributing and Community
+- [Contributing and Community](/pr-preview/pr-22375/project/index.md): Information about contributing to the Meshery project and participating the Meshery community.
+
+- [Contributing to Models Quick Start](/pr-preview/pr-22375/project/contributing/models/contributing-models-quick-start/): A no-fluff guide to creating your own Meshery Models quickly.
+- [Contributing to Models](/pr-preview/pr-22375/project/contributing/models/models/): How to contribute to Meshery Models, Components, Relationships, Policies...
+- [Contributing to Components](/pr-preview/pr-22375/project/contributing/models/components/): How to contribute to Meshery Model Components
+- [Contributing to Connections](/pr-preview/pr-22375/project/contributing/models/connections/): How to define a new Connection and register it so Meshery understands it and includes it in the Connection Wizard.
+- [Contributing to Relationships](/pr-preview/pr-22375/project/contributing/models/relationships/): How to contribute to Meshery Models Relationships, Policies...
+- [Contributing to Operator, MeshSync & Broker Settings](/pr-preview/pr-22375/project/contributing/contributing-controllers-config/): The complete surface of settings that govern Meshery Operator, MeshSync and Meshery Broker behavior: where each one lives, what it writes, what reads it, and what happens when it changes.
+
+- [Frequently Asked Questions](/pr-preview/pr-22375/project/faq/): General commonly asked questions and answers about Meshery.
+- [v1.0.73](/pr-preview/pr-22375/project/releases/v1.0.73/):  What&rsquo;s New 🔤 General fix(server): accept both remote provider connection response shapes @leecalcote (#22520) …
+- [v1.0.74](/pr-preview/pr-22375/project/releases/v1.0.74/):  What&rsquo;s New fix(server): accept both remote provider connection response shapes (#22520). Shipped in v1.0.73, …
+- [v1.0.72](/pr-preview/pr-22375/project/releases/v1.0.72/):  What&rsquo;s New 🔤 General feat(models): add Infisical Kubernetes Operator model (secrets-operator v0.11.12) @yi-nuo426 …
+- [v1.0.71](/pr-preview/pr-22375/project/releases/v1.0.71/):  What&rsquo;s New 🔤 General [Docs] Reference Sistent DESIGN.md in AGENTS.md UI guidelines @PARTH-TUSSLE (#21987) …
+- [v1.0.70](/pr-preview/pr-22375/project/releases/v1.0.70/):  What&rsquo;s New 🔤 General Bump colord from 2.9.3 to 2.10.0 in /install/docker-extension/ui …
+- [Build & Release (CI)](/pr-preview/pr-22375/project/contributing/build-and-release/): Details of Meshery's build and release strategy.
+- [Build Environment Gotchas](/pr-preview/pr-22375/project/contributing/contributing-build-environment/): Local build and dependency failures in Meshery that report a cause other than their own.
+- [Choosing a Content Type](/pr-preview/pr-22375/project/contributing/contributing-docs/content-types/): How to decide whether a page is a tutorial, a how-to guide, an explanation, or reference, with tests and Meshery examples.
+- [Community](/pr-preview/pr-22375/project/community/): Meshery's open source, cloud native community
+- [Contributing Relationships - Testing and Best Practices](/pr-preview/pr-22375/project/contributing/contributing-relationships-best-practices/): How to test, validate, and debug relationship definitions before contribution
+- [Contributing to Meshery Adapters](/pr-preview/pr-22375/project/contributing/contributing-adapters/): How to contribute to Meshery Adapters
+- [Contributing to Meshery CLI](/pr-preview/pr-22375/project/contributing/cli/cli/): How to contribute to Meshery Command Line Interface.
+- [Contributing to Meshery CLI End-to-End Tests](/pr-preview/pr-22375/project/contributing/cli/tests/): How to contribute to Meshery Command Line Interface end-to-end testing with BATS.
+- [Contributing to Meshery Docker Extension](/pr-preview/pr-22375/project/contributing/contributing-docker-extension/): How to contribute to Meshery Docker Extension
+- [Contributing to Meshery Docs](/pr-preview/pr-22375/project/contributing/contributing-docs/docs/): How to contribute to Meshery Docs.
+- [Contributing to Meshery Operator](/pr-preview/pr-22375/project/contributing/contributing-operator/): How to build, test, and deploy Meshery Operator from source
+- [Contributing to Meshery Policies](/pr-preview/pr-22375/project/contributing/contributing-policies/): How to contribute to Meshery Policies
+- [Contributing to Meshery Schemas](/pr-preview/pr-22375/project/contributing/contributing-schemas/): How to contribute to Meshery Schemas
+- [Contributing to Meshery Server](/pr-preview/pr-22375/project/contributing/contributing-server/): How to contribute to Meshery Server
+- [Contributing to Meshery Server Events](/pr-preview/pr-22375/project/contributing/contributing-server-events/): Guide is to help backend contributors send server events using Golang.
+- [Contributing to Meshery UI](/pr-preview/pr-22375/project/contributing/ui/ui/): How to contribute to Meshery UI (web-based user interface).
+- [Contributing to Meshery UI - Dashboard Widgets](/pr-preview/pr-22375/project/contributing/ui/widgets/): Guide to extending Meshery dashboards with custom widgets.
+- [Contributing to Meshery UI - Extension Contract and Event Bus](/pr-preview/pr-22375/project/contributing/ui/extension-contract/): How the Meshery UI core and remotely-loaded Meshery extensions communicate - the load pipeline, the shared runtime, the injected capability bag, the Meshery event bus, and the rules for changing any of them.
+- [Contributing to Meshery UI - Notification Center](/pr-preview/pr-22375/project/contributing/ui/notification-center/): How to contribute to the Notification Center in Meshery's web-based UI.
+- [Contributing to Meshery UI - Sistent](/pr-preview/pr-22375/project/contributing/ui/sistent/): How to contribute to the Meshery's web-based UI using sistent design system.
+- [Contributing to Meshery UI End-to-End Tests](/pr-preview/pr-22375/project/contributing/ui/tests/): How to contribute to end-to-end testing in Meshery UI using Playwright.
+- [Contributing to Meshery using git](/pr-preview/pr-22375/project/contributing/contributing-gitflow/): How to contribute to Meshery using git
+- [Contributing to MeshSync](/pr-preview/pr-22375/project/contributing/contributing-meshsync/): How to build, run, test, and contribute to MeshSync from source
+- [Go Lint Rules](/pr-preview/pr-22375/project/contributing/contributing-lint/): The repo-specific Go lint gates Meshery enforces in CI, what each one is protecting, and what to do when one fires.
+- [How to write MeshKit compatible errors](/pr-preview/pr-22375/project/contributing/contributing-error/): How to declare errors in Meshery components.
+- [HTTP Error Response Contract](/pr-preview/pr-22375/project/contributing/error-contract/): How Meshery Server responds to error conditions over HTTP, and how clients should parse those responses.
+- [Meshery CLI Style Guide](/pr-preview/pr-22375/project/contributing/cli/ux-guide/): Design principles and code conventions.
+- [Meshery Documentation Structure and Organization](/pr-preview/pr-22375/project/contributing/contributing-docs-structure/): Audience, high-Level outline & information architecture for Meshery Documentation
+- [Meshery-Cilium Past Results](/pr-preview/pr-22375/project/compatibility-matrix/meshery-cilium-past-results/): a complete compatibility matrix and project test status dashboard.
+- [Meshery-Consul Past Results](/pr-preview/pr-22375/project/compatibility-matrix/meshery-consul-past-results/): a complete compatibility matrix and project test status dashboard.
+- [Meshery-Istio Past Results](/pr-preview/pr-22375/project/compatibility-matrix/meshery-istio-past-results/): a complete compatibility matrix and project test status dashboard.
+- [Meshery-Kuma Past Results](/pr-preview/pr-22375/project/compatibility-matrix/meshery-kuma-past-results/): a complete compatibility matrix and project test status dashboard.
+- [Meshery-Linkerd Past Results](/pr-preview/pr-22375/project/compatibility-matrix/meshery-linkerd-past-results/): a complete compatibility matrix and project test status dashboard.
+- [Meshery-Nginx-SM Past Results](/pr-preview/pr-22375/project/compatibility-matrix/meshery-nginx-past-results/): a complete compatibility matrix and project test status dashboard.
+- [Meshery-OSM Past Results](/pr-preview/pr-22375/project/compatibility-matrix/meshery-osm-past-results/): a complete compatibility matrix and project test status dashboard.
+- [Meshery-Traefik-Mesh Past Results](/pr-preview/pr-22375/project/compatibility-matrix/meshery-traefik-mesh-past-results/): a complete compatibility matrix and project test status dashboard.
+- [Old Compatibility Matrix](/pr-preview/pr-22375/project/compatibility-matrix/compatibility-matrix/): An installation compatibility matrix and project test status dashboard.
+- [Schema-Driven UI Development in Meshery](/pr-preview/pr-22375/project/contributing/ui/schemas/): How to contribute to Meshery Schemas for UI
+- [Security Vulnerabilities](/pr-preview/pr-22375/project/security-vulnerabilities/): How the Meshery team handles security vulnerabilities.
+- [Setting up Meshery Development Environment on Windows](/pr-preview/pr-22375/project/contributing/meshery-windows/): How to set up Meshery Development Environment on Windows
+- [Shortcode Formatting Examples](/pr-preview/pr-22375/project/contributing/contributing-docs/shortcode-examples/): A visual reference guide for shortcodes available in the Meshery documentation theme.
+
+## Reference and Extensibility
+- [Reference and Extensibility](/pr-preview/pr-22375/reference/index.md): References for using Meshery's various features and components.
+
+- [Ensuring Extension Compatibility](/pr-preview/pr-22375/reference/extensibility/verify-compatibility/): A guide for Meshery extension developers on maintaining compatibility with the Meshery platform, covering shared frameworks, dependencies, and build tooling.
+- [Error Codes](/pr-preview/pr-22375/reference/error-codes/): Meshery Error Code Reference for all Meshery components so that you can troubleshoot issues.
+- [Extensibility: APIs](/pr-preview/pr-22375/reference/extensibility/api/): Meshery architecture is extensible, offering an array of extension points and REST and GraphQL APIs.
+- [Extensibility: Authorization](/pr-preview/pr-22375/reference/extensibility/authorization/): Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native projects via authorization, adapters, load generators and providers.
+- [Extensibility: Build-time](/pr-preview/pr-22375/reference/extensibility/build-time/): System integrators can supply build-time configuration, data, packages, and other extensions to Meshery's container image.
+- [Extensibility: Load Generators](/pr-preview/pr-22375/reference/extensibility/load-generators/): Meshery offers support for more types of Kubernetes and cloud native infrastructure than any other project or product in the world. Meshery uses adapters for more deeply managing specific types of infrastructure.
+- [Extensibility: Providers](/pr-preview/pr-22375/reference/extensibility/providers/): Meshery uses providers to enrich the level of depth by which it manages cloud native infrastructure.
+- [Extensibility: Schemas](/pr-preview/pr-22375/reference/extensibility/schemas/): Meshery schemas support x-* vendor extensions as an intentional extensibility mechanism for remote providers to attach provider-specific metadata.
+- [Extensibility: UI](/pr-preview/pr-22375/reference/extensibility/ui/): Meshery offers support for more adapters than any other project or product in the world. Meshery UI has a number of extension points that allow users to customize their experience with third-party plugins.
+- [GraphQL API Reference](/pr-preview/pr-22375/reference/graphql-apis/): Meshery GraphQL API Documentation and Reference
+- [Meshery Operator CRDs](/pr-preview/pr-22375/reference/meshery-operator-crds/): Details of the Custom Resource Definitions included in Meshery Operator and used by its custom controllers.
+- [mesheryctl-adapter-deploy](/pr-preview/pr-22375/reference/mesheryctl/adapter/deploy/):  mesheryctl adapter deploy Deploy infrastructure to the Kubernetes cluster
+Synopsis Deploy infrastructure to the …
+- [mesheryctl-adapter-remove](/pr-preview/pr-22375/reference/mesheryctl/adapter/remove/):  mesheryctl adapter remove Remove cloud and cloud native infrastructure
+Synopsis Remove cloud and cloud native …
+- [mesheryctl-adapter-validate](/pr-preview/pr-22375/reference/mesheryctl/adapter/validate/):  mesheryctl adapter validate Validate conformance to predefined standards
+Synopsis Validate predefined conformance to …
+- [mesheryctl-completion](/pr-preview/pr-22375/reference/mesheryctl/completion/):  mesheryctl completion Generate shell completion scripts
+Synopsis Output shell completion code
+mesheryctl completion …
+- [mesheryctl-component-list](/pr-preview/pr-22375/reference/mesheryctl/component/list/):  mesheryctl component list List registered components
+Synopsis List all components registered in Meshery Server …
+- [mesheryctl-component-search](/pr-preview/pr-22375/reference/mesheryctl/component/search/):  mesheryctl component search Search registered components
+Synopsis Search components registered in Meshery Server based …
+- [mesheryctl-component-view](/pr-preview/pr-22375/reference/mesheryctl/component/view/):  mesheryctl component view View registered components
+Synopsis View a component registered in Meshery Server
+mesheryctl …
+- [mesheryctl-connection-create](/pr-preview/pr-22375/reference/mesheryctl/connection/create/):  mesheryctl connection create Create a new connection
+Synopsis Create a new connection to a Kubernetes cluster or other …
+- [mesheryctl-connection-delete](/pr-preview/pr-22375/reference/mesheryctl/connection/delete/):  mesheryctl connection delete Delete a connection
+Synopsis Delete a connection.
+mesheryctl connection delete [flags] …
+- [mesheryctl-connection-list](/pr-preview/pr-22375/reference/mesheryctl/connection/list/):  mesheryctl connection list List all the connections
+Synopsis List all available connections.
+mesheryctl connection list …
+- [mesheryctl-connection-view](/pr-preview/pr-22375/reference/mesheryctl/connection/view/):  mesheryctl connection view View a connection
+Synopsis View a connection by its ID or name.
+mesheryctl connection view …
+- [mesheryctl-design-apply](/pr-preview/pr-22375/reference/mesheryctl/design/apply/):  mesheryctl design apply Apply design file
+Synopsis Apply design will trigger deploy of the design file.
+mesheryctl …
+- [mesheryctl-design-delete](/pr-preview/pr-22375/reference/mesheryctl/design/delete/):  mesheryctl design delete Delete design file
+Synopsis delete design file will trigger deletion of the design file. …
+- [mesheryctl-design-deploy](/pr-preview/pr-22375/reference/mesheryctl/design/deploy/):  mesheryctl design deploy Deploy design
+Synopsis Command will trigger deploy of design.
+mesheryctl design deploy [flags] …
+- [mesheryctl-design-evaluate](/pr-preview/pr-22375/reference/mesheryctl/design/evaluate/):  mesheryctl design evaluate Evaluate a design
+Synopsis Evaluate a design by running relationship evaluation policies. …
+- [mesheryctl-design-export](/pr-preview/pr-22375/reference/mesheryctl/design/export/):  mesheryctl design export Export a design from Meshery
+Synopsis The &rsquo;export&rsquo; command allows you to export a …
+- [mesheryctl-design-import](/pr-preview/pr-22375/reference/mesheryctl/design/import/):  mesheryctl design import Import a Meshery design
+Synopsis Import Helm Charts, Kubernetes Manifest, Docker Compose or …
+- [mesheryctl-design-list](/pr-preview/pr-22375/reference/mesheryctl/design/list/):  mesheryctl design list List designs
+Synopsis Display list of all available designs.
+mesheryctl design list [flags] …
+- [mesheryctl-design-undeploy](/pr-preview/pr-22375/reference/mesheryctl/design/undeploy/):  mesheryctl design undeploy Undeploy design
+Synopsis Undeploy design will trigger undeploy of design.
+mesheryctl design …
+- [mesheryctl-design-view](/pr-preview/pr-22375/reference/mesheryctl/design/view/):  mesheryctl design view Display a design content
+Synopsis Display the content of a specific design based on name or id. …
+- [mesheryctl-environment-create](/pr-preview/pr-22375/reference/mesheryctl/environment/create/):  mesheryctl environment create Create a new environment
+Synopsis Create a new environment by providing the name and …
+- [mesheryctl-environment-delete](/pr-preview/pr-22375/reference/mesheryctl/environment/delete/):  mesheryctl environment delete Delete an environment
+Synopsis Delete an environment by providing the environment ID …
+- [mesheryctl-environment-list](/pr-preview/pr-22375/reference/mesheryctl/environment/list/):  mesheryctl environment list List registered environments
+Synopsis List detailed information of all registered …
+- [mesheryctl-environment-view](/pr-preview/pr-22375/reference/mesheryctl/environment/view/):  mesheryctl environment view View registered environmnents
+Synopsis View details of an environment registered in Meshery …
+- [mesheryctl-exp](/pr-preview/pr-22375/reference/mesheryctl/exp/):  mesheryctl exp Preview experimental commands
+Synopsis Commands under the Experimental group are for testing and …
+- [mesheryctl-filter-delete](/pr-preview/pr-22375/reference/mesheryctl/filter/delete/):  mesheryctl filter delete Delete a filter file
+Synopsis Delete a filter file using the name or ID of a filter. …
+- [mesheryctl-filter-import](/pr-preview/pr-22375/reference/mesheryctl/filter/import/):  mesheryctl filter import Import a WASM filter
+Synopsis Import a WASM filter from a URI (http/s) or local filesystem …
+- [mesheryctl-filter-list](/pr-preview/pr-22375/reference/mesheryctl/filter/list/):  mesheryctl filter list List filters
+Synopsis Display list of all available filter files.
+mesheryctl filter list [flags] …
+- [mesheryctl-filter-view](/pr-preview/pr-22375/reference/mesheryctl/filter/view/):  mesheryctl filter view View filter(s)
+Synopsis Displays the contents of a specific filter based on name or id. …
+- [mesheryctl-model-build](/pr-preview/pr-22375/reference/mesheryctl/model/build/):  mesheryctl model build Create an OCI-compliant package from the model files
+Synopsis Create an OCI-compliant package …
+- [mesheryctl-model-delete](/pr-preview/pr-22375/reference/mesheryctl/model/delete/):  mesheryctl model delete Delete a model
+Synopsis Delete a model by ID or Name
+mesheryctl model delete [model-id | …
+- [mesheryctl-model-export](/pr-preview/pr-22375/reference/mesheryctl/model/export/):  mesheryctl model export Export registered models
+Synopsis Export the registered model to the specified output type …
+- [mesheryctl-model-generate](/pr-preview/pr-22375/reference/mesheryctl/model/generate/):  mesheryctl model generate Generate models from a file
+Synopsis Generate models by specifying the directory, file, or …
+- [mesheryctl-model-import](/pr-preview/pr-22375/reference/mesheryctl/model/import/):  mesheryctl model import Import models
+Synopsis Import models by specifying the directory, file, or URL. You can also …
+- [mesheryctl-model-init](/pr-preview/pr-22375/reference/mesheryctl/model/init/):  mesheryctl model init Generates scaffolding for convenient model creation
+Synopsis Generates a folder structure and …
+- [mesheryctl-model-list](/pr-preview/pr-22375/reference/mesheryctl/model/list/):  mesheryctl model list List registered models
+Synopsis List all registered models by pagination (10 models per page) …
+- [mesheryctl-model-search](/pr-preview/pr-22375/reference/mesheryctl/model/search/):  mesheryctl model search Search model(s)
+Synopsis Search model(s) by search string
+mesheryctl model search [flags] …
+- [mesheryctl-model-view](/pr-preview/pr-22375/reference/mesheryctl/model/view/):  mesheryctl model view View model
+Synopsis View a model queried by its name or ID
+mesheryctl model view [flags] Examples …
+- [mesheryctl-organization-list](/pr-preview/pr-22375/reference/mesheryctl/organization/list/):  mesheryctl organization list List registered organizations
+Synopsis List all registered organizations with their id, …
+- [mesheryctl-perf-apply](/pr-preview/pr-22375/reference/mesheryctl/perf/apply/):  mesheryctl perf apply Run a Performance test
+Synopsis Run Performance test using existing profiles or using flags. …
+- [mesheryctl-perf-profile](/pr-preview/pr-22375/reference/mesheryctl/perf/profile/):  mesheryctl perf profile List performance profiles
+Synopsis List all the available performance profiles.
+mesheryctl perf …
+- [mesheryctl-perf-result](/pr-preview/pr-22375/reference/mesheryctl/perf/result/):  mesheryctl perf result List performance test results
+Synopsis List all the available test results of a performance …
+- [mesheryctl-registry-generate](/pr-preview/pr-22375/reference/mesheryctl/registry/generate/):  mesheryctl registry generate Generate Models
+Synopsis Prerequisite: Execute this command from the root of a …
+- [mesheryctl-registry-publish](/pr-preview/pr-22375/reference/mesheryctl/registry/publish/):  mesheryctl registry publish Publish Meshery Models to Websites, Remote Provider, Meshery Server
+Synopsis Publishes …
+- [mesheryctl-registry-purge](/pr-preview/pr-22375/reference/mesheryctl/registry/purge/):  mesheryctl registry purge Prune old model version directories
+Synopsis Prune older versions of Meshery Models under …
+- [mesheryctl-registry-update](/pr-preview/pr-22375/reference/mesheryctl/registry/update/):  mesheryctl registry update Update the registry with latest data.
+Synopsis Updates the component metadata (SVGs, shapes, …
+- [mesheryctl-relationship-generate](/pr-preview/pr-22375/reference/mesheryctl/relationship/generate/):  mesheryctl relationship generate Generate relationships documents
+Synopsis Generate relationships documents from a CSV …
+- [mesheryctl-relationship-list](/pr-preview/pr-22375/reference/mesheryctl/relationship/list/):  mesheryctl relationship list List registered relationships
+Synopsis List all relationships registered in Meshery …
+- [mesheryctl-relationship-search](/pr-preview/pr-22375/reference/mesheryctl/relationship/search/):  mesheryctl relationship search Search registered relationship(s)
+Synopsis Search registered relationship(s) used by …
+- [mesheryctl-relationship-view](/pr-preview/pr-22375/reference/mesheryctl/relationship/view/):  mesheryctl relationship view View relationships of a model by its name
+Synopsis View a relationship queried by the …
+- [mesheryctl-system-channel-set](/pr-preview/pr-22375/reference/mesheryctl/system/channel/set/):  mesheryctl system channel set Set release channel and version
+Synopsis Set release channel and version of context in …
+- [mesheryctl-system-channel-switch](/pr-preview/pr-22375/reference/mesheryctl/system/channel/switch/):  mesheryctl system channel switch Switch release channel and version
+Synopsis Switch release channel and version of …
+- [mesheryctl-system-channel-view](/pr-preview/pr-22375/reference/mesheryctl/system/channel/view/):  mesheryctl system channel view View release channel and version
+Synopsis View release channel and version of context in …
+- [mesheryctl-system-check](/pr-preview/pr-22375/reference/mesheryctl/system/check/):  mesheryctl system check Pre-deployment and post-deployment healthchecks for Meshery
+Synopsis Verify environment …
+- [mesheryctl-system-context-create](/pr-preview/pr-22375/reference/mesheryctl/system/context/create/):  mesheryctl system context create Create a new context (a named Meshery deployment)
+Synopsis Add a new context to …
+- [mesheryctl-system-context-delete](/pr-preview/pr-22375/reference/mesheryctl/system/context/delete/):  mesheryctl system context delete Delete context
+Synopsis Delete an existing context (a named Meshery deployment) from …
+- [mesheryctl-system-context-list](/pr-preview/pr-22375/reference/mesheryctl/system/context/list/):  mesheryctl system context list List contexts
+Synopsis List current context and available contexts.
+mesheryctl system …
+- [mesheryctl-system-context-switch](/pr-preview/pr-22375/reference/mesheryctl/system/context/switch/):  mesheryctl system context switch Switch context
+Synopsis Configure mesheryctl to actively use one one context vs. …
+- [mesheryctl-system-context-view](/pr-preview/pr-22375/reference/mesheryctl/system/context/view/):  mesheryctl system context view Display the current Meshery CLI configuration context
+Synopsis Display the current …
+- [mesheryctl-system-dashboard](/pr-preview/pr-22375/reference/mesheryctl/system/dashboard/):  mesheryctl system dashboard Open Meshery UI in browser.
+Synopsis Open Meshery UI in browser.
+mesheryctl system …
+- [mesheryctl-system-delete](/pr-preview/pr-22375/reference/mesheryctl/system/delete/):  mesheryctl system delete Delete Meshery containers
+Synopsis Delete Meshery containers. This command removes all Meshery …
+- [mesheryctl-system-login](/pr-preview/pr-22375/reference/mesheryctl/system/login/):  mesheryctl system login Authenticate to a Meshery Server
+Synopsis Authenticate to the Local or a Remote Provider of a …
+- [mesheryctl-system-logout](/pr-preview/pr-22375/reference/mesheryctl/system/logout/):  mesheryctl system logout Remove authentication for Meshery Server
+Synopsis Remove authentication for Meshery Server …
+- [mesheryctl-system-logs](/pr-preview/pr-22375/reference/mesheryctl/system/logs/):  mesheryctl system logs Print logs
+Synopsis Print history of Meshery&rsquo;s logs and begin tailing them.
+It also shows …
+- [mesheryctl-system-provider-list](/pr-preview/pr-22375/reference/mesheryctl/system/provider/list/):  mesheryctl system provider list List available providers
+Synopsis List current provider and available providers …
+- [mesheryctl-system-provider-reset](/pr-preview/pr-22375/reference/mesheryctl/system/provider/reset/):  mesheryctl system provider reset Clear the configured provider
+Synopsis Clear the configured provider for the current …
+- [mesheryctl-system-provider-set](/pr-preview/pr-22375/reference/mesheryctl/system/provider/set/):  mesheryctl system provider set Set provider
+Synopsis Set provider of context in focus. Run mesheryctl system provider …
+- [mesheryctl-system-provider-switch](/pr-preview/pr-22375/reference/mesheryctl/system/provider/switch/):  mesheryctl system provider switch Switch provider and redeploy
+Synopsis Switch provider of context in focus and …
+- [mesheryctl-system-provider-view](/pr-preview/pr-22375/reference/mesheryctl/system/provider/view/):  mesheryctl system provider view View provider
+Synopsis View provider of context in focus.
+mesheryctl system provider …
+- [mesheryctl-system-reset](/pr-preview/pr-22375/reference/mesheryctl/system/reset/):  mesheryctl system reset Reset Meshery&rsquo;s configuration
+Synopsis Reset Meshery to it&rsquo;s default configuration. …
+- [mesheryctl-system-restart](/pr-preview/pr-22375/reference/mesheryctl/system/restart/):  mesheryctl system restart Stop, then start Meshery
+Synopsis Restart all Meshery containers / pods.
+mesheryctl system …
+- [mesheryctl-system-start](/pr-preview/pr-22375/reference/mesheryctl/system/start/):  mesheryctl system start Start Meshery
+Synopsis Start Meshery and each of its cloud native components.
+mesheryctl system …
+- [mesheryctl-system-status](/pr-preview/pr-22375/reference/mesheryctl/system/status/):  mesheryctl system status Check Meshery status
+Synopsis Check status of Meshery and Meshery components.
+mesheryctl …
+- [mesheryctl-system-stop](/pr-preview/pr-22375/reference/mesheryctl/system/stop/):  mesheryctl system stop Stop Meshery
+Synopsis Stop all Meshery containers / remove all Meshery resources.
+mesheryctl …
+- [mesheryctl-system-token-create](/pr-preview/pr-22375/reference/mesheryctl/system/token/create/):  mesheryctl system token create Create a token in your meshconfig
+Synopsis Create the token with provided token name …
+- [mesheryctl-system-token-delete](/pr-preview/pr-22375/reference/mesheryctl/system/token/delete/):  mesheryctl system token delete Delete a token from your meshconfig
+Synopsis Delete the token with provided token name …
+- [mesheryctl-system-token-list](/pr-preview/pr-22375/reference/mesheryctl/system/token/list/):  mesheryctl system token list List tokens
+Synopsis List all the tokens in your meshconfig
+mesheryctl system token list …
+- [mesheryctl-system-token-set](/pr-preview/pr-22375/reference/mesheryctl/system/token/set/):  mesheryctl system token set Set token for context
+Synopsis Set token for current context or context specified with …
+- [mesheryctl-system-token-view](/pr-preview/pr-22375/reference/mesheryctl/system/token/view/):  mesheryctl system token view View token
+Synopsis View a specific token in meshery config
+mesheryctl system token view …
+- [mesheryctl-system-update](/pr-preview/pr-22375/reference/mesheryctl/system/update/):  mesheryctl system update Pull new Meshery images/manifest files.
+Synopsis Pull new Meshery container images and …
+- [mesheryctl-version](/pr-preview/pr-22375/reference/mesheryctl/version/):  mesheryctl version Show Meshery CLI and Server versions
+Synopsis Version of Meshery command line client - mesheryctl. …
+- [mesheryctl-workspace-create](/pr-preview/pr-22375/reference/mesheryctl/workspace/create/):  mesheryctl workspace create Create a new workspace under an organization
+Synopsis Create a new workspace by providing …
+- [mesheryctl-workspace-list](/pr-preview/pr-22375/reference/mesheryctl/workspace/list/):  mesheryctl workspace list List registered workspaces
+Synopsis List name of all registered workspaces
+mesheryctl …
+- [mesheryctl-workspace-view](/pr-preview/pr-22375/reference/mesheryctl/workspace/view/):  mesheryctl workspace view View a workspace
+Synopsis View a workspace by its ID or name.
+mesheryctl workspace view …
+- [Permission Keys](/pr-preview/pr-22375/reference/permissions/): List of default permissions.
+- [REST API Reference](/pr-preview/pr-22375/reference/rest-apis/endpoints/): Meshery REST API Reference
+
+## Categories
+- [Categories]()
+- [Community]()
+- [Configuration]()
+- [Contributing]()
+- [Docker]()
+- [Extensibility]()
+- [Infrastructure]()
+- [Installation]()
+- [Integrations]()
+- [Kubernetes]()
+- [Mesheryctl]()
+- [Mesheryctl-Adapter]()
+- [Mesheryctl-Completion]()
+- [Mesheryctl-Component]()
+- [Mesheryctl-Connection]()
+- [Mesheryctl-Design]()
+- [Mesheryctl-Environment]()
+- [Mesheryctl-Exp]()
+- [Mesheryctl-Filter]()
+- [Mesheryctl-Model]()
+- [Mesheryctl-Organization]()
+- [Mesheryctl-Perf]()
+- [Mesheryctl-Registry]()
+- [Mesheryctl-Relationship]()
+- [Mesheryctl-System]()
+- [Mesheryctl-Version]()
+- [Mesheryctl-Workspace]()
+- [None]()
+- [Performance]()
+- [Project]()
+- [Troubleshooting]()
+- [Tutorials]()
+
+## Tags
+- [Tags]()
