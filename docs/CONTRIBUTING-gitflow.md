@@ -147,19 +147,12 @@ the existing [Layer5 docs Hugo module](https://github.com/layer5io/docs), pinned
 in `go.mod`. Since `hugo.toml` sets `ignoreConfig = true` for that module and
 selects explicit mounts, it mounts `layouts/index.llms`, `layouts/index.llmsfull`,
 and `layouts/index.md` from the module and declares their output formats locally.
-`layouts/_default/single.md` and `list.md` provide page and section Markdown
-output, expanding shortcodes (including `ref` links).
-
-If you add a new page layout, render the link only through
-`{{ partial "page-meta-links.html" . }}` in the right-hand meta column. Don't call
-`view-as-markdown.html` directly, or the link appears outside the meta column.
 
 To leave a path out of `llms.txt` and `llms-full.txt`, add it to `exclude` under
 `[params.llms]` in `hugo.toml`. To keep only the newest N pages of a section in `llms.txt`, add it to
 `[params.llms.limit_sections]`; Meshery releases under `/project/releases/` are
 capped at 5 this way. The limit is implemented by the Layer5 module's
-`layouts/index.llms` template. `llms-full.txt` includes all pages that pass the
-include/exclude filters.
+`layouts/index.llms` template.
 
 <li><h3>References</h3></li>
 <a href="https://git-scm.com/docs">Git Reference Docs</a>
