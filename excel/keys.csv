@@ -27,10 +27,10 @@ Filters,Details of WASM Filter,Check information or details of a WASM filter,X,X
 Filters,Edit WASM filter,Edit WASM filter,X*,X*,,,X,,X,X,Catalog Management,88cd144e-806e-472a-a31a-ef6d64643291,X,TRUE
 Filters,Clone WASM Filter,"Clone WASM filter from catalog, which allows customizing filter and use it in design",X,X,,,X,,X,X,Catalog Management,c84718ca-7479-4ad9-a2b7-a5784baa51fb,X,TRUE
 Filters,Delete WASM Filter,Delete WASM filter permanently from catalog.,X*,X*,,,X,,X,X,Catalog Management,9225d5a7-7255-49be-9233-daeabefae306,X,TRUE
-Content Pieces,View Content Pieces,View the content pieces of the organization,X,X,,,X,,X,X,Catalog Management,5cd87dc9-02c6-44a0-a019-281f7295ad08,,FALSE
-Content Pieces,Create Content Piece,Create a content piece in the organization,X,X,,,X,,X,X,Catalog Management,5fb97ae1-49ed-490c-b17a-377bf5558585,,FALSE
-Content Pieces,Edit Content Piece,Edit a content piece of the organization,X,X,,,X,,X,X,Catalog Management,06858261-c7eb-464a-a4b7-e29792a7ae54,,FALSE
-Content Pieces,Delete Content Piece,Delete a content piece of the organization,X,X,,,X,,X,X,Catalog Management,129d0297-1091-40e4-8d4a-5262b3378305,,FALSE
+Content Items,View Content Items,View the content items of the organization,X,X,,,X,,X,X,Catalog Management,5cd87dc9-02c6-44a0-a019-281f7295ad08,,FALSE
+Content Items,Create Content Item,Create a content item in the organization,X,X,,,X,,X,X,Catalog Management,5fb97ae1-49ed-490c-b17a-377bf5558585,,FALSE
+Content Items,Edit Content Item,Edit a content item of the organization,X,X,,,X,,X,X,Catalog Management,06858261-c7eb-464a-a4b7-e29792a7ae54,,FALSE
+Content Items,Delete Content Item,Delete a content item of the organization,X,X,,,X,,X,X,Catalog Management,129d0297-1091-40e4-8d4a-5262b3378305,,FALSE
 Extensions,Install extension,Install or enable or disabble extensions in Meshery,,,,,,,X,X,Extension Point Management,24f41e98-7ce1-40c4-a82d-4ae0294d237d,X,TRUE
 Extensions,View Meshery User Preferences,View all user preferences in Meshery UI ,X,X,,,X,,X,X,Extension Point Management,cdec6212-bbbf-4cab-b10d-76d12bee7e56,X,TRUE
 Extensions,View Extensions,View all extensions on the extension page,X,X,,,X,,X,X,Extension Point Management,c1330df4-1bbe-4d5d-8828-f4bd9ee989e5,X,TRUE
@@ -110,3 +110,12 @@ Operator,Unassign Views from Workspace,Remove views from workspace ,,,,,X,,X,X,W
 Credentials,View Credentials,,,,,,,,X,X,,96759f76-4add-45f8-b4ef-d4ace5ab1bc4,X,TRUE
 Tokens,Download Token,,X,X,,,X,,X,X,,ee5fc23e-d629-4c7b-8169-27e526394e8b,X,FALSE
 Roles,Assign User Roles,,,,,,,,X,X,User Management,9a84a76a-0a16-11ee-be56-0242ac120002,X,FALSE
+Claims,View Claims,"See the claims in your organization, active and past, and which connection and member holds each.",X,X,,,X,,X,X,Organization Management,93696d4c-48db-415e-aac9-778390896093,,FALSE
+Claims,Take and renew claims,"Take a claim on a resource of your organization with one of your own connections, and renew it.",X,X,,,X,,X,X,Organization Management,1450f30c-6664-4107-9818-eca7508182d5,,FALSE
+Claims,Release claim,Release a claim you hold and record its outcome.,X,X,,,X,,X,X,Organization Management,6789de53-1b28-407f-90dc-bf290eb28cf6,,FALSE
+Claims,Release claims of other members,"Release a claim another member of your organization holds, for example a hold left by a computer that went offline.",,,,,,,X,X,Organization Management,2ae5e1c0-8f91-4777-a3b4-bc5cf662ecb7,,FALSE
+Schedules,View Schedules,"View the schedules of the organization, when each runs next and which connection holds each one",X,X,,,X,,X,X,Organization Management,9eba0b6a-08d1-42a2-a2fa-dd5fc5aeb542,,FALSE
+Schedules,Create schedule,Create a schedule in the organization,X,X,,,X,,X,X,Organization Management,135c39f9-0a98-4db6-a7cd-42e903ab9d32,,FALSE
+Schedules,Edit schedule,"Change a schedule of the organization, including pausing and resuming it",X,X,,,X,,X,X,Organization Management,6767b9a0-d138-4672-a8ba-26ce6e217c48,,FALSE
+Schedules,Delete schedule,Delete a schedule of the organization,X,X,,,X,,X,X,Organization Management,d2ab90ab-7abb-4aa3-a38a-24ed4b6b1665,,FALSE
+Schedules,Assign schedules to workspaces,"Link a schedule of the organization to a workspace, or remove the link",X,X,,,X,,X,X,Organization Management,264bda82-2676-41a2-bfff-2d90c7bf52f0,,FALSE
