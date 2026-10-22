@@ -414,6 +414,21 @@ func TestIsValidBinding(t *testing.T) {
 	if isValidBindingTyped(role, badBinding, selector, design2) {
 		t.Error("Expected invalid binding")
 	}
+
+	cache := make(componentMapCache)
+	if !isValidBindingTypedCached(role, roleBinding, selector, design, cache) {
+		t.Error("Expected valid binding with cached component maps")
+	}
+	if !isValidBindingTypedCached(role, roleBinding, selector, design, cache) {
+		t.Error("Expected valid binding on a warm cache")
+	}
+	warmLen := len(cache)
+	if isValidBindingTypedCached(role, badBinding, selector, design2, cache) {
+		t.Error("Expected invalid binding with cached component maps")
+	}
+	if len(cache) != warmLen+1 {
+		t.Errorf("Expected cache size %d after caching the third component, got %d", warmLen+1, len(cache))
+	}
 }
 
 func TestHierarchicalIdentifyRelationship(t *testing.T) {
