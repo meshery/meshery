@@ -6,7 +6,7 @@ description: Run pre-flight and post-deployment system health checks using Meshe
 
 `mesheryctl system check` verifies that your machine is ready to deploy Meshery and that an existing Meshery deployment is healthy. Run it before you deploy Meshery, and again whenever Meshery misbehaves.
 
-Run `mesheryctl system check --help` to see every flag, or see the [`mesheryctl system check` reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
+Run `mesheryctl system check --help` to see every flag, or see the [`mesheryctl system check` reference]({{< ref "reference/mesheryctl/_index.md" >}}).
 
 ## Check your machine before you deploy
 

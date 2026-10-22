@@ -9,7 +9,7 @@ description: Use mesheryctl system commands to start, stop, update, and inspect 
 - `-c, --context <name>` to act on a different context for this one command.
 - `-y, --yes` to answer yes to every confirmation prompt, which is useful in scripts.
 
-This page shows the commands you use most. For every flag, see the [`mesheryctl system` reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
+This page shows the commands you use most. For every flag, see the [`mesheryctl system` reference]({{< ref "reference/mesheryctl/_index.md" >}}).
 
 ## Start, stop, and restart Meshery
 

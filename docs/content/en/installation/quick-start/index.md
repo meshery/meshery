@@ -117,5 +117,5 @@ You can now design and manage any infrastructure that Meshery supports. For the 
 ## Additional Resources
 
 - [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation.md" >}})
-- [Meshery Error Code Reference]({{< ref "reference/references/error-codes.md" >}})
-- [mesheryctl system check]({{< ref "reference/references/mesheryctl/system/check.md" >}})
+- [Meshery Error Code Reference]({{< ref "reference/error-codes.md" >}})
+- [mesheryctl system check]({{< ref "reference/mesheryctl/system/check.md" >}})

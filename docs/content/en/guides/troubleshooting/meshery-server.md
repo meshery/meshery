@@ -70,4 +70,4 @@ make: *** [Makefile: server] Error 1
 
 ## Additional resources
 
-- [Error Code Reference]({{< ref "reference/references/error-codes.md" >}})
+- [Error Code Reference]({{< ref "reference/error-codes.md" >}})

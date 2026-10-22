@@ -61,7 +61,7 @@ taken straight into the chosen Remote Provider's authentication flow. The Local 
 
 `mesheryctl` users can also view and set the provider for CLI-driven workflows
 via `mesheryctl system provider` (see the
-[reference]({{< ref "reference/references/mesheryctl/system/provider/set.md" >}})), but the server-side
+[reference]({{< ref "reference/mesheryctl/system/provider/set.md" >}})), but the server-side
 `PROVIDER` setting is what governs the deployment as a whole.
 
 `mesheryctl system provider switch` sets the provider on the CLI's current

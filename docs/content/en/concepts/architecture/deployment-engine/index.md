@@ -19,7 +19,7 @@ Registrants come in two flavors, and the difference is the whole story:
 - **Registrants that are also a management endpoint.** A deployed Meshery Adapter registers its own models with Meshery Server and, in doing so, tells the server where to reach it on the network. The adapter is both the source of the definitions and a service that can act on them.
 
 {{% alert title="Seeing the registrant of a model" color="info" %}}
-In Meshery UI, open **Settings → Registry** and choose the **Registrants** view to browse each registrant and the models it registered. From the command line, [`mesheryctl model view`]({{< ref "reference/references/mesheryctl/model/view.md" >}}) prints a model's `registrant` block.
+In Meshery UI, open **Settings → Registry** and choose the **Registrants** view to browse each registrant and the models it registered. From the command line, [`mesheryctl model view`]({{< ref "reference/mesheryctl/model/view.md" >}}) prints a model's `registrant` block.
 {{% /alert %}}
 
 ## Fulfillment is resolved per component, not per design

@@ -266,7 +266,7 @@ After deployment, validate connectivity end-to-end:
 
 - `mesheryctl system check` runs pre- and post-deployment health checks,
   including connectivity. See the
-  [reference]({{< ref "reference/references/mesheryctl/system/check.md" >}}).
+  [reference]({{< ref "reference/mesheryctl/system/check.md" >}}).
 - In the UI, the connection chip for each cluster reflects live connectivity;
   the Broker and Operator/MeshSync follow the connection's lifecycle.
 - For Broker/Operator/MeshSync connectivity problems, use the

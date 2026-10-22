@@ -58,7 +58,7 @@ Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) c
 
 ### Preflight: Plan your access to Meshery UI
 
-1. To reach Meshery UI through port-forwarding, see the [port-forwarding]({{< ref "reference/references/mesheryctl/system/dashboard.md" >}}) guide.
+1. To reach Meshery UI through port-forwarding, see the [port-forwarding]({{< ref "reference/mesheryctl/system/dashboard.md" >}}) guide.
 2. To reach it through a load balancer, see [Exposing Meshery Service (LoadBalancer)]({{< ref "installation/kubernetes/_index.md#exposing-meshery-serviceloadbalancer" >}}).
 3. If users reach Meshery through a custom host name, set the callback URL that your Provider redirects to after sign-in when you start Meshery:
 
@@ -82,7 +82,7 @@ To install Meshery with Helm 3, see the [Helm Installation]({{< ref "installatio
 
 ## Post-Installation Steps
 
-Optionally, verify the health of your Meshery deployment with <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Optionally, verify the health of your Meshery deployment with <a href='{{< ref "reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
 You're ready to use Meshery. Open Meshery UI in your browser.
 

@@ -85,7 +85,7 @@ Meshery creates its service as type `LoadBalancer` by default, and KinD does not
 
 {{% mesheryctl/system-dashboard %}}
 
-Optionally, verify the health of your Meshery deployment with <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Optionally, verify the health of your Meshery deployment with <a href='{{< ref "reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
 You're ready to use Meshery. Open Meshery UI in your browser.
 

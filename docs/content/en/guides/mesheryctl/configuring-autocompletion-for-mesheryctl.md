@@ -84,6 +84,6 @@ To load it in every session, write it to fish's completions directory once:
 mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish
 ```
 
-For every `mesheryctl` command and flag, see the [`mesheryctl` command reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
+For every `mesheryctl` command and flag, see the [`mesheryctl` command reference]({{< ref "reference/mesheryctl/_index.md" >}}).
 
 {{< related-discussions tag="mesheryctl" >}}

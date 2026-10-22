@@ -72,6 +72,6 @@ If `mesheryctl` runs on a machine with no browser, such as a remote server or a 
 
 `mesheryctl system logout` empties the token file for the current context. Run `mesheryctl system login` again to get a new token.
 
-For every `mesheryctl` command and flag, see the [`mesheryctl` command reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
+For every `mesheryctl` command and flag, see the [`mesheryctl` command reference]({{< ref "reference/mesheryctl/_index.md" >}}).
 
 {{< related-discussions tag="mesheryctl" >}}

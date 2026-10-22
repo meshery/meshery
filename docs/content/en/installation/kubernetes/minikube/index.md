@@ -84,7 +84,7 @@ To verify the deployment, run:
 After deployment, reach Meshery UI through port forwarding:
 
 {{< code code="mesheryctl system dashboard --port-forward" >}}
-For details, see the [port-forwarding]({{< ref "reference/references/mesheryctl/system/dashboard.md" >}}) guide.
+For details, see the [port-forwarding]({{< ref "reference/mesheryctl/system/dashboard.md" >}}) guide.
 
 Meshery Server running in the cluster connects to it automatically. If the connection does not appear, sign in and create it yourself:
 
@@ -169,7 +169,7 @@ If you run into problems during installation, see [Troubleshooting Meshery Insta
 
 # Post-Installation Steps
 
-Verify the health of your Meshery deployment with <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Verify the health of your Meshery deployment with <a href='{{< ref "reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
 {{< installation/accessing-meshery-ui >}}
 

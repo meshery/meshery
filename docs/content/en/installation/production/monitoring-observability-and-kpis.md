@@ -160,7 +160,7 @@ links (troubleshooting, sizing, networking) in the alert.
 
 - **`mesheryctl system check`** runs pre- and post-deployment health checks,
   including connectivity, and is well suited to scheduled synthetic validation.
-  See the [reference]({{< ref "reference/references/mesheryctl/system/check.md" >}}).
+  See the [reference]({{< ref "reference/mesheryctl/system/check.md" >}}).
 - **External uptime checks** against `/healthz/ready` validate the full ingress
   → Server path (TLS, routing, readiness) from a user's perspective.
 - **Per-connection checks** in the UI provide on-demand validation of each

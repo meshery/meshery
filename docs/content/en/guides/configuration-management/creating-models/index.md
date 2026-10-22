@@ -178,7 +178,7 @@ For the widest server compatibility, set each component's <code>schemaVersion</c
 <p>This writes an OCI artifact named <code>&lt;model&gt;-&lt;version&gt;.tar</code> (e.g. <code>digitalocean-icons-v0-1-0.tar</code>) to your current directory.</p>
 
 <h4>5. Register the model into a Meshery Server</h4>
-<p>Import the packaged artifact (or the model directory) into your connected Meshery Server. This step requires a running server and an authenticated <code>mesheryctl</code> context (see <a href="{{< ref "reference/references/mesheryctl/system/login.md" >}}"><code>mesheryctl system login</code></a>):</p>
+<p>Import the packaged artifact (or the model directory) into your connected Meshery Server. This step requires a running server and an authenticated <code>mesheryctl</code> context (see <a href="{{< ref "reference/mesheryctl/system/login.md" >}}"><code>mesheryctl system login</code></a>):</p>
 <code>mesheryctl model import -f digitalocean-icons-v0-1-0.tar</code>
 <p>Verify the result:</p>
 <code>mesheryctl model view digitalocean-icons</code>

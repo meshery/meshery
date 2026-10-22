@@ -107,7 +107,7 @@ To go back to the newest stable release, run `mesheryctl system channel set stab
 
 ## Suggested reading
 
-For every `mesheryctl` command and flag, see the [`mesheryctl` command reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
+For every `mesheryctl` command and flag, see the [`mesheryctl` command reference]({{< ref "reference/mesheryctl/_index.md" >}}).
 
 {{< related-discussions tag="mesheryctl" >}}
 
