@@ -9,9 +9,9 @@ categories: [configuration]
 Meshery offers two primary ways to bring models into your system: **Create** and **[Import]({{< ref "guides/configuration-management/importing-models/index.md" >}})**.
 
 - **Import** is ideal when you already have a model definition file (e.g., JSON, CSV) and simply want to bring it into Meshery.
-- **Create** is the recommended approach if you’re starting fresh — it guides you through building a model step by step using an intuitive UI wizard.
+- **Create** is the recommended approach if you are starting fresh. A wizard in Meshery UI walks you through building a model step by step.
 
-This section walks you through the **Create** workflow — perfect for users who want full control over naming, styling, and categorizing their models while sourcing CRDs from GitHub or ArtifactHub.
+This page walks you through the **Create** workflow, which gives you full control over naming, styling, and categorizing your model while sourcing its CRDs from GitHub or ArtifactHub.
 
 > Tip: If you don’t have any files yet, start with **Create**. You can always [export]({{< ref "guides/configuration-management/exporting-models/index.md" >}}) or re-import your model later.
 
@@ -21,7 +21,7 @@ Meshery UI | fa fa-desktop
 <p>The URL Create feature allows you to create models in Meshery by providing URLs to source repositories or package registries. Here's how to use it:</p>
 
 <h4>Step 1: Open the Model Generation Interface</h4>
-<p>Go to the <a href="https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models">Registry</a> section in the Meshery UI. Click the <strong>create</strong> button to start creating a new model.</p>
+<p>Open the Registry: click your avatar in the top right and choose <strong>Registry</strong>, or go to <strong>Settings</strong> &gt; <strong>Registry</strong>. On the <strong>Models</strong> tab, click <strong>Create Model</strong>. To try it without installing Meshery, use the <a href="https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models">Registry in the Meshery Playground</a>.</p>
 
 <a href="./images/create-ui-where.gif">
     <img src="./images/create-ui-where.gif" alt="registry generate model" style="width: 50%; max-width: 400px;">
@@ -31,7 +31,7 @@ Meshery UI | fa fa-desktop
 <p>Enter the following names for your model:</p>
 <ul>
   <li><strong>Model Name:</strong> This is the unique, system identifier. Use lowercase letters and hyphens only (no spaces). <br>Example: <code>cert-manager</code></li>
-  <li><strong>Display Name:</strong> This is the friendly name displayed in the UI. It can include spaces and uppercase letters. <br>Example: <code>Cert Manager</code></li>
+  <li><strong>Model Display Name:</strong> This is the friendly name displayed in the UI. It can include spaces and uppercase letters. <br>Example: <code>Cert Manager</code></li>
 </ul>
 
 <a href="./images/create-ui-name.png">
@@ -112,7 +112,7 @@ When a model is marked for visual annotation only, it means the model will be us
 <p>A notification will also appear in the <a href="{{< ref "guides/infrastructure-management/notification-management/index.md" >}}">Notification Center</a> to confirm whether the operation succeeded or failed, providing additional context if needed.</p>
 
 {{% alert color="warning" title="Note on Deletion" %}}
-Once a model is generated, it cannot be deleted from the Meshery UI. If you no longer wish to use it, you may mark it as ignored instead.
+You cannot delete a generated model from Meshery UI. To stop using it, mark it as ignored, or delete it with <code>mesheryctl model delete &lt;model-name&gt;</code>.
 {{% /alert %}}
 
 <!-- tab -->
@@ -209,7 +209,7 @@ Using CSV | fa fa-list
 <p>The <code>--directory</code> flag takes the path to the folder that contains <code>Models.csv</code> and <code>Components.csv</code> (<code>Relationships.csv</code> is optional). This path is CSV-driven and does <strong>not</strong> require a Google Spreadsheet credential.</p>
 
 <h4>4. Locating Generated Files</h4>
-<p>After successful generation, your model's files will be created in the repository's <code>models/</code> directory. You can find these files at <code>meshery/models/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
+<p>After successful generation, <code>mesheryctl</code> writes your model's files to the repository's <code>models/</code> directory, or to the directory you pass with <code>-o</code>. You can find these files at <code>meshery/models/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
 
 <h4>5. Troubleshooting</h4>
 <p>If you encounter issues during the generation process, you can use these diagnostic approaches to identify and resolve problems:</p>
@@ -296,7 +296,7 @@ If <code>$SHEET_CRED</code> is empty or is not valid base64, <code>mesheryctl</c
   <li>Read your spreadsheet data</li>
   <li>Validate the model definition</li>
   <li>Generate the model files</li>
-  <li>For error logs your can checkout <code>~/.meshery/logs/registry/</code></li>
+  <li>For error logs, check <code>~/.meshery/logs/registry/</code></li>
 </ul>
 
 <h4>3. Verification</h4>
@@ -305,10 +305,10 @@ If <code>$SHEET_CRED</code> is empty or is not valid base64, <code>mesheryctl</c
 {{% alert color="info" title="Using Meshery CLI with the Meshery Registry and Meshery Models" %}}
 Meshery CLI has a set of commands that pertain to the lifecycle management of models:
 
-- `mesheryctl registry` - interact with and update spreadsheets
-- `mesheryctl models` - interact with and update Meshery Server
-- `mesheryctl component` - interact with and update Meshery Server
-- `mesheryctl relationships` - interact with and update Meshery Server
+- `mesheryctl registry` generates models from CSV files or the integration spreadsheet.
+- `mesheryctl model` lists, views, imports, exports, builds, and deletes models in Meshery Server.
+- `mesheryctl component` lists, searches, and views components in Meshery Server.
+- `mesheryctl relationship` manages relationships in Meshery Server.
 {{% /alert %}}
 
 {{< /tabs >}}
