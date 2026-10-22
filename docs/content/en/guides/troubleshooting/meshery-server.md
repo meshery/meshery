@@ -51,6 +51,14 @@ When starting Meshery using the Meshery CLI, run:
 mesheryctl system start
 ```
 
+```bash
+mesheryctl system check --preflight
+```
+
+```bash
+mesheryctl system logs
+```
+
 If the command fails, inspect the CLI output to determine whether the failure is related to the configured deployment platform, existing resources, configuration, or another startup dependency.
 
 See the [`mesheryctl system start`](#mesheryctl-system-start) troubleshooting example below for a known Kubernetes resource ownership issue.
@@ -60,7 +68,7 @@ See the [`mesheryctl system start`](#mesheryctl-system-start) troubleshooting ex
 If Meshery Server is running in Docker, first verify that Docker is running and list the active containers:
 
 ```bash
-docker ps
+docker ps -a --filter "name=meshery"
 ```
 
 Identify the Meshery Server container from the output, then inspect its logs:
@@ -80,7 +88,7 @@ Look for errors related to:
 If the Meshery container is not listed among the running containers, also check stopped containers:
 
 ```bash
-docker ps -a
+docker ps -a --filter "name=meshery"
 ```
 
 #### Kubernetes
@@ -95,6 +103,10 @@ Identify the affected Meshery Server pod from the output, then inspect its logs:
 
 ```bash
 kubectl logs -n meshery <pod-name>
+```
+
+```bash
+kubectl describe pod <pod-name> -n meshery
 ```
 
 If the pod contains multiple containers, list their names:
