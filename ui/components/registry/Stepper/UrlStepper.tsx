@@ -35,6 +35,7 @@ import SourceIcon from '@/assets/icons/SourceIcon';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
 import { capitalize } from 'lodash';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
+import { alpha } from '@/theme';
 import {
   CategoryDefinitionV1Beta1OpenApiSchema,
   ModelDefinitionV1Beta1OpenApiSchema,
@@ -806,7 +807,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
         }}
       >
         <Box
-          sx={{
+          sx={(theme) => ({
             width: '100%',
             maxWidth: '100%',
             overflowX: 'hidden',
@@ -820,11 +821,11 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                 height: '6px',
               },
               '&::-webkit-scrollbar-thumb': {
-                backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                backgroundColor: alpha(theme.palette.common.black, 0.2),
                 borderRadius: '4px',
               },
             },
-          }}
+          })}
         >
           <CustomizedStepper {...urlStepper}>
             <Box sx={{ width: '100%', maxWidth: '100%', overflowX: 'hidden', mt: 1 }}>

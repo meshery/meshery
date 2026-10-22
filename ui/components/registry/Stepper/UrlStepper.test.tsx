@@ -71,7 +71,15 @@ vi.mock('@sistent/sistent', () => {
     RadioGroup: ({ children }: any) => <div>{children}</div>,
     MenuItem: ({ children, value }: any) => <option value={value}>{children}</option>,
     Radio: () => <input type="radio" />,
-    Grid2: ({ children }: any) => <div>{children}</div>,
+    Grid2: ({ children, container, size }: any) => (
+      <div
+        data-testid={container ? 'grid2-container' : 'grid2-item'}
+        data-grid-xs={size?.xs}
+        data-grid-sm={size?.sm}
+      >
+        {children}
+      </div>
+    ),
     AppRegistrationIcon: () => <svg />,
     BrushIcon: () => <svg />,
     CategoryIcon: () => <svg />,
@@ -204,6 +212,12 @@ describe('UrlStepper', () => {
     render(<UrlStepper handleClose={vi.fn()} />);
     expect(screen.getByTestId('textfield-model-name')).toBeInTheDocument();
     expect(screen.getByTestId('textfield-model-display-name')).toBeInTheDocument();
+    const items = screen.getAllByTestId('grid2-item');
+    expect(items.length).toBeGreaterThanOrEqual(2);
+    expect(items[0]).toHaveAttribute('data-grid-xs', '12');
+    expect(items[0]).toHaveAttribute('data-grid-sm', '6');
+    expect(items[1]).toHaveAttribute('data-grid-xs', '12');
+    expect(items[1]).toHaveAttribute('data-grid-sm', '6');
   });
 
   it('Generate button on step 5 calls handleNext on click', () => {
