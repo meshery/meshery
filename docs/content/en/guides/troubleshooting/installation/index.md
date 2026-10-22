@@ -14,7 +14,11 @@ Before `mesheryctl system start` and other `mesheryctl system` commands deploy a
 
 - **Situation:** Meshery Server fails to start with the error `key/value size is invalid`.
 
-  **Fix:** Remove `~/.meshery` so that `mesheryctl` and Meshery Server recreate their configuration, then start Meshery again.
+  **Fix:** Meshery Server's local database is corrupt. Remove the database folder so that Meshery Server recreates it, then start Meshery again. This deletes the data Meshery stores locally, but keeps your `mesheryctl` contexts in `~/.meshery/config.yaml`:
+
+  ```bash
+  rm -rf "${USER_DATA_FOLDER:-$HOME/.meshery/config}"
+  ```
 
 ## Access Meshery UI on kind or Minikube
 

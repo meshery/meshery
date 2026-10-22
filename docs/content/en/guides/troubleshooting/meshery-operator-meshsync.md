@@ -50,7 +50,7 @@ Because Meshery is versatile in its deployment models, there are different scena
 
 ### In-Cluster Deployment
 
-In this scenario, Meshery Server runs in the same Kubernetes cluster as Meshery Operator, MeshSync, and Broker. This is what you get when you deploy Meshery to Kubernetes with [`mesheryctl system start`]({{< ref "installation/_index.md" >}}) or [`helm install`]({{< ref "installation/kubernetes/helm.md" >}}). When Meshery Server connects to a cluster, it deploys Meshery Operator there, and the Operator deploys Broker (NATS) and MeshSync.
+In this scenario, Meshery Server runs in the same Kubernetes cluster as Meshery Operator, MeshSync, and Broker. This is what you get when you deploy Meshery to Kubernetes with [`mesheryctl system start`]({{< ref "installation/_index.md" >}}) or [`helm install`]({{< ref "installation/kubernetes/helm.md" >}}). When Meshery Server connects to a cluster in operator mode, it deploys Meshery Operator there, unless the server runs with `DISABLE_OPERATOR=true`. The Operator then deploys Broker (NATS) and MeshSync.
 
 When everything is healthy, the cluster's connection in Meshery UI shows MeshSync as **CONNECTED**. If it does not, check the Operator's logs:
 

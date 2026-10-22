@@ -33,7 +33,7 @@ macOS ships bash 3.2. Install the `bash-completion` package that matches your ba
 ```bash
 # bash 3.2: needs bash-completion 1.3 or later
 brew install bash-completion
-# bash 4.0 or later: use bash-completion@2 instead
+# bash 4.2 or later: use bash-completion@2 instead
 # brew install bash-completion@2
 
 mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
@@ -43,9 +43,10 @@ Follow the "Caveats" that `brew install` prints to source `bash_completion` from
 
 ## Zsh
 
-1. If completion is not already turned on in zsh, turn it on once:
+1. If completion is not already turned on in zsh, turn it on in the current shell and in every new one:
 
     ```bash
+    autoload -U compinit; compinit
     echo "autoload -U compinit; compinit" >> ~/.zshrc
     ```
 
@@ -59,11 +60,15 @@ Follow the "Caveats" that `brew install` prints to source `bash_completion` from
 
 ### Zsh on macOS and Oh My Zsh
 
-Write the script into a directory on your `fpath` so that zsh loads it in every session:
+Write the script into a completion directory of your own and add that directory to your `fpath`, so that zsh loads it in every session:
 
 ```bash
-COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v cache) && mkdir -p $COMPLETION_DIR && mesheryctl completion zsh > "${COMPLETION_DIR}/_mesheryctl"
+mkdir -p ~/.zsh/completions
+mesheryctl completion zsh > ~/.zsh/completions/_mesheryctl
+echo 'fpath=(~/.zsh/completions $fpath)' >> ~/.zshrc
 ```
+
+The `fpath` line must come before `compinit` in `~/.zshrc`. If you use Oh My Zsh, add it before the line that sources `oh-my-zsh.sh`. Then start a new shell.
 
 ## Fish
 

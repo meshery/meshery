@@ -31,7 +31,7 @@ be imported into the current release: invalid ownership metadata; label validati
     mesheryctl system stop --force
     ```
 
-2. If the error persists, find and delete the leftovers yourself:
+2. If the error persists, find and delete the leftovers yourself. Check what the `meshery` namespace contains first (`kubectl get all -n meshery`), and delete it only if it holds nothing but Meshery. `mesheryctl system stop` deletes this namespace too unless you pass `--keep-namespace`.
 
     ```bash
     kubectl delete namespace meshery
@@ -62,7 +62,7 @@ make: *** [Makefile: server] Error 1
 1. Delete the local database. This removes your locally stored Meshery data:
 
     ```bash
-    rm -rf ~/.meshery/config
+    rm -rf "${USER_DATA_FOLDER:-$HOME/.meshery/config}"
     ```
 
 2. Run `make server` again.

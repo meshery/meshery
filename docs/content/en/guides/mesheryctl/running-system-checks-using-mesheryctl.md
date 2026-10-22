@@ -54,51 +54,51 @@ The adapter checks ask Meshery Server for your session, so log in with `mesheryc
 
 ## FAQ
 
-##### `mesheryctl system check --preflight` says Kubernetes is missing, but it also says "Meshery prerequisites met". Is that all right?
+### `mesheryctl system check --preflight` says Kubernetes is missing, but it also says "Meshery prerequisites met". Is that all right?
 
 Yes, if your context's platform is `docker`. Meshery runs on Docker alone. You need a Kubernetes cluster only to manage Kubernetes infrastructure with Meshery.
 
-##### The preflight passed, but Meshery doesn't start. What should I do?
+### The preflight passed, but Meshery doesn't start. What should I do?
 
 Check the installation steps for your platform in [Installation]({{< ref "installation/_index.md" >}}), then see [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation/index.md" >}}).
 
-##### Do I need a Kubernetes cluster, or is a Docker host enough?
+### Do I need a Kubernetes cluster, or is a Docker host enough?
 
 [Performance management]({{< ref "guides/performance-management/managing-performance/index.md" >}}) works without a Kubernetes cluster. Managing cloud native infrastructure needs at least one Kubernetes cluster connected to Meshery.
 
-##### What does Meshery need in production?
+### What does Meshery need in production?
 
 See [Production Deployments]({{< ref "installation/production/_index.md" >}}).
 
-##### Do I need any add-ons to pass the checks?
+### Do I need any add-ons to pass the checks?
 
 No. The checks only need Docker or Kubernetes, depending on your platform.
 
-##### The adapter check fails with "Auth token not found". What should I do?
+### The adapter check fails with "Auth token not found". What should I do?
 
 Run `mesheryctl system login` to get a token, then run the check again. See [Authenticating Meshery via CLI]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}).
 
-##### My Kubernetes cluster is running, but Meshery can't reach it and the checks fail. What should I do?
+### My Kubernetes cluster is running, but Meshery can't reach it and the checks fail. What should I do?
 
 Connect the cluster to Meshery. In Meshery UI, click **Add Cluster** in the context switcher, or go to **Lifecycle** > **Connections** and create a Kubernetes connection, then import your kubeconfig. From the CLI, run `mesheryctl connection create --type <aks|eks|gke|minikube>`. See [Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}).
 
-##### The Meshery version check says "CLI is not up-to-date". Should I update mesheryctl often?
+### The Meshery version check says "CLI is not up-to-date". Should I update mesheryctl often?
 
 Yes. Keep `mesheryctl` on the same release as Meshery Server, and update both together. See [Upgrading Meshery]({{< ref "installation/upgrades/index.md" >}}).
 
-##### Should Meshery be running when I run the checks?
+### Should Meshery be running when I run the checks?
 
 Yes, for every check except `--preflight`. The version, adapter, and operator checks all talk to a running Meshery deployment.
 
-##### What versions of Kubernetes and kubectl does Meshery need?
+### What versions of Kubernetes and kubectl does Meshery need?
 
 Use a Kubernetes minor release that upstream still supports, and keep `kubectl` within the [version skew policy](https://kubernetes.io/releases/version-skew-policy/) of your cluster. See the [Kubernetes release history](https://kubernetes.io/releases/) for the supported releases.
 
-##### Only some Meshery Adapters show up in the check. Is that a problem?
+### Only some Meshery Adapters show up in the check. Is that a problem?
 
 No. The check covers only the adapters that are registered with Meshery Server, and the default context deploys none. To deploy more, see [Multiple Adapters]({{< ref "installation/advanced/multiple-adapters.md" >}}).
 
-##### I started Meshery fresh, and every adapter check fails. What should I do?
+### I started Meshery fresh, and every adapter check fails. What should I do?
 
 Connect a Kubernetes cluster to Meshery as described above, then run the check again. If it still fails, [open an issue](https://github.com/meshery/meshery/issues).
 

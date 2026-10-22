@@ -28,23 +28,23 @@ _Meshconfig_ is the `mesheryctl` configuration file at `~/.meshery/config.yaml`.
 
 ## Meshery CLI FAQ
 
-#### What is the meshconfig?
+### What is the meshconfig?
 
 Meshconfig is to `mesheryctl` what kubeconfig is to `kubectl`. `mesheryctl` reads it from `~/.meshery/config.yaml` by default. Pass the global `--config <path>` flag to any `mesheryctl` command to use a different file.
 
-#### What is a context?
+### What is a context?
 
 A context describes a single Meshery deployment: where Meshery Server runs, which platform it runs on, which release channel and version it uses, which provider it enforces, and which Meshery Adapters it deploys. Contexts let you keep several Meshery deployments, for example a local Docker one and a shared Kubernetes one, and switch between them.
 
-#### What is `current-context`?
+### What is `current-context`?
 
 `current-context` names the context that `mesheryctl` commands use. Only one context is current at a time. Change it with `mesheryctl system context switch <name>`, or override it for a single `mesheryctl system` command with `-c <name>`.
 
-#### What's the difference between contexts and environments?
+### What's the difference between contexts and environments?
 
 A context configures a Meshery deployment (Meshery Server, its adapters, and its operator settings) and lives in your local meshconfig. An [environment]({{< ref "concepts/logical/environments.md" >}}) is a group of connections, such as Kubernetes clusters, that Meshery manages, and it lives in Meshery Server.
 
-#### What does a meshconfig look like?
+### What does a meshconfig look like?
 
 `mesheryctl` creates `~/.meshery/config.yaml` the first time you run it. The file has this shape. Most fields are optional.
 
@@ -79,18 +79,18 @@ mesheryctl system context create test
 mesheryctl system context view test
 ```
 
-#### What does the `--config` flag do?
+### What does the `--config` flag do?
 
 `--config` is a global flag that every `mesheryctl` command accepts. It points `mesheryctl` at a meshconfig other than `~/.meshery/config.yaml`, which is useful when you keep a separate meshconfig per project or per CI job.
 
-#### How do endpoints work in meshconfig?
+### How do endpoints work in meshconfig?
 
 The `endpoint` is the URL where `mesheryctl` reaches Meshery Server and where it opens Meshery UI.
 
 - **Docker:** `mesheryctl system start` publishes Meshery on the port in the context's endpoint, for example `http://localhost:9081`.
 - **Kubernetes:** `mesheryctl system dashboard` looks up the Meshery service through the Kubernetes API and writes the address it finds back to the context's endpoint.
 
-#### Can I get an API token using mesheryctl?
+### Can I get an API token using mesheryctl?
 
 Yes. Run `mesheryctl system login`. See [Authenticating Meshery via CLI]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}).
 
