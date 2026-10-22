@@ -142,26 +142,24 @@ published and listed in `llms.txt`. Hugo also generates
 [`/llms.txt`](https://llmstxt.org/) (an index of pages) and `/llms-full.txt`
 (full content of every page) at the site root for AI agents.
 
-This comes from the [llms-txt Hugo module](https://github.com/gethugothemes/hugo-modules/tree/master/llms-txt),
-imported in `hugo.toml`, whose templates `hugo.toml` wires up through the `llmstxt`,
-`llmsfull`, and `md` output formats (named `llmstxt`, not `llms`, so the
-module's template is not shadowed by Docsy's own `index.llms.txt`). Hugo core defines a `markdown` output format but ships no templates for
-it, and Docsy v0.15.0 (the version pinned in `go.mod`) only ships a site-level
-`llms.txt` that lists the home page and menu, with no per-page Markdown link; see the
-[module announcement](https://discourse.gohugo.io/t/hugo-module-for-llms-txt-and-llms-full-txt/56990).
-`layouts/_default/single.md` and `list.md` override the module's templates so
-shortcodes (including `ref` links) are expanded in each page's Markdown.
+The `llms.txt`, `llms-full.txt`, and home-page Markdown layouts are provided by
+the existing [Layer5 docs Hugo module](https://github.com/layer5io/docs), pinned
+in `go.mod`. Since `hugo.toml` sets `ignoreConfig = true` for that module and
+selects explicit mounts, it mounts `layouts/index.llms`, `layouts/index.llmsfull`,
+and `layouts/index.md` from the module and declares their output formats locally.
+`layouts/_default/single.md` and `list.md` provide page and section Markdown
+output, expanding shortcodes (including `ref` links).
 
 If you add a new page layout, render the link only through
 `{{ partial "page-meta-links.html" . }}` in the right-hand meta column. Don't call
 `view-as-markdown.html` directly, or the link appears outside the meta column.
 
 To leave a path out of `llms.txt` and `llms-full.txt`, add it to `exclude` under
-`[params.llms]` in `hugo.toml`. To keep only the newest N pages of a section
-(by front matter `date`), add it to `[params.llms.limit_sections]`; Meshery
-releases under `/project/releases/` are capped at 5 this way. That cap lives in `layouts/index.llmstxt` (for `llms.txt`) and
-`layouts/index.llmsfull` (for `llms-full.txt`), which are copies of the module's templates with one
-added block, so re-check them against the module when you update it.
+`[params.llms]` in `hugo.toml`. To keep only the newest N pages of a section in `llms.txt`, add it to
+`[params.llms.limit_sections]`; Meshery releases under `/project/releases/` are
+capped at 5 this way. The limit is implemented by the Layer5 module's
+`layouts/index.llms` template. `llms-full.txt` includes all pages that pass the
+include/exclude filters.
 
 <li><h3>References</h3></li>
 <a href="https://git-scm.com/docs">Git Reference Docs</a>
