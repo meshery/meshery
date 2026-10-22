@@ -18,7 +18,7 @@
 &lt;p&gt;&lt;a href="https://meshery.io/extensions"&gt;Meshery Extensions&lt;/a&gt; are plugins or add-ons that enhance the functionality of the Meshery platform beyond its core capabilities. Meshery supports different types of extensions (&lt;a href="/extensions/"&gt;docs&lt;/a&gt;):&lt;/p&gt;</description></item><item><title>mesheryctl-axi</title><link>/extensions/extensions/mesheryctl-axi/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/extensions/mesheryctl-axi/</guid><description>&lt;h1 id="-mesheryctl-axi"&gt;
 	🤖 mesheryctl-axi
 &lt;/h1&gt;
-&lt;p&gt;&lt;code&gt;mesheryctl-axi&lt;/code&gt; is an &lt;a href="https://axi.md/"&gt;AXI&lt;/a&gt;-compliant wrapper around &lt;a href="/reference/references/mesheryctl/"&gt;&lt;code&gt;mesheryctl&lt;/code&gt;&lt;/a&gt;, built for AI coding agents. Where &lt;code&gt;mesheryctl&lt;/code&gt; is optimized for a human at a terminal, &lt;code&gt;mesheryctl-axi&lt;/code&gt; is optimized for an agent consuming the output as context: it wraps the human CLI rather than replacing it, so the two stay in step.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mesheryctl-axi&lt;/code&gt; is an &lt;a href="https://axi.md/"&gt;AXI&lt;/a&gt;-compliant wrapper around &lt;a href="/reference/mesheryctl/"&gt;&lt;code&gt;mesheryctl&lt;/code&gt;&lt;/a&gt;, built for AI coding agents. Where &lt;code&gt;mesheryctl&lt;/code&gt; is optimized for a human at a terminal, &lt;code&gt;mesheryctl-axi&lt;/code&gt; is optimized for an agent consuming the output as context: it wraps the human CLI rather than replacing it, so the two stay in step.&lt;/p&gt;
 &lt;h2 id="features"&gt;
 	Features
 &lt;/h2&gt;

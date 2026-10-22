@@ -26,7 +26,7 @@
 &lt;li&gt;&lt;code&gt;-c, --context &amp;lt;name&amp;gt;&lt;/code&gt; to act on a different context for this one command.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;-y, --yes&lt;/code&gt; to answer yes to every confirmation prompt, which is useful in scripts.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;This page shows the commands you use most. For every flag, see the &lt;a href="/reference/references/mesheryctl/"&gt;&lt;code&gt;mesheryctl system&lt;/code&gt; reference&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This page shows the commands you use most. For every flag, see the &lt;a href="/reference/mesheryctl/"&gt;&lt;code&gt;mesheryctl system&lt;/code&gt; reference&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="start-stop-and-restart-meshery"&gt;
 	Start, stop, and restart Meshery
 &lt;/h2&gt;
@@ -50,7 +50,7 @@
 	Install a pinned mesheryctl
 &lt;/h2&gt;
 &lt;p&gt;Pin the version so that a new release doesn&amp;rsquo;t change your pipeline&amp;rsquo;s behavior. Pick a version from the &lt;a href="https://github.com/meshery/meshery/releases"&gt;Meshery releases&lt;/a&gt;, then install only the CLI with &lt;code&gt;-n&lt;/code&gt;:&lt;/p&gt;</description></item><item><title>Running system checks using Meshery CLI</title><link>/guides/mesheryctl/running-system-checks-using-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/running-system-checks-using-mesheryctl/</guid><description>&lt;p&gt;&lt;code&gt;mesheryctl system check&lt;/code&gt; verifies that your machine is ready to deploy Meshery and that an existing Meshery deployment is healthy. Run it before you deploy Meshery, and again whenever Meshery misbehaves.&lt;/p&gt;
-&lt;p&gt;Run &lt;code&gt;mesheryctl system check --help&lt;/code&gt; to see every flag, or see the &lt;a href="/reference/references/mesheryctl/"&gt;&lt;code&gt;mesheryctl system check&lt;/code&gt; reference&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;mesheryctl system check --help&lt;/code&gt; to see every flag, or see the &lt;a href="/reference/mesheryctl/"&gt;&lt;code&gt;mesheryctl system check&lt;/code&gt; reference&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="check-your-machine-before-you-deploy"&gt;
 	Check your machine before you deploy
 &lt;/h2&gt;
