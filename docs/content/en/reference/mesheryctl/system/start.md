@@ -3,6 +3,9 @@ title: mesheryctl-system-start
 display_title: false
 command: system
 subcommand: start
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/start/
 ---
 
 # mesheryctl system start
@@ -12,10 +15,13 @@ Start Meshery
 ## Synopsis
 
 Start Meshery and each of its cloud native components.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system start [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,48 +30,60 @@ mesheryctl system start [flags]
 Start meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system start
 
+</div>
 </div>
 </pre> 
 
 (optional) skip opening of MesheryUI in browser.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system start --skip-browser
 
+</div>
 </div>
 </pre> 
 
 (optional) skip checking for new updates available in Meshery.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system start --skip-update
 
+</div>
 </div>
 </pre> 
 
 Reset Meshery's configuration file to default settings.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system start --reset
 
+</div>
 </div>
 </pre> 
 
 Specify Platform to deploy Meshery to.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system start -p docker
 
+</div>
 </div>
 </pre> 
 
 Specify Provider to use.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system start --provider Meshery
 
+</div>
 </div>
 </pre> 
 
@@ -97,4 +115,4 @@ mesheryctl system start --provider Meshery
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

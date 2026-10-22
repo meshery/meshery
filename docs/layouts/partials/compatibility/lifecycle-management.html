@@ -23,13 +23,15 @@
 {{ if and (os.FileExists $adapterImagePath) (os.FileExists $installImagePath) }}
     <h3>Install {{ $component }}</h3>
     <p>In Meshery's UI, choose the Meshery Adapter for {{ $component }}.</p>
-  <a href="/extensions/adapters/{{ $adapterPath }}/images/{{ $adapterPath }}-adapter.png">
-    <img style="width:500px;" src="/extensions/adapters/{{ $adapterPath }}/images/{{ $adapterPath }}-adapter.png" />
+  {{ $adapterImageURL := printf "extensions/adapters/%s/images/%s-adapter.png" $adapterPath $adapterPath | relURL }}
+  <a href="{{ $adapterImageURL }}">
+    <img style="width:500px;" src="{{ $adapterImageURL }}" />
   </a>
 
   <p>Click on (+) and choose the <strong>{{ $earliest_version }}</strong> of the {{ $component }}.</p>
 
-  <a href="/extensions/adapters/{{ $adapterPath }}/images/{{ $adapterPath }}-install.png">
-    <img style="width:500px;" src="/extensions/adapters/{{ $adapterPath }}/images/{{ $adapterPath }}-install.png" />
+  {{ $installImageURL := printf "extensions/adapters/%s/images/%s-install.png" $adapterPath $adapterPath | relURL }}
+  <a href="{{ $installImageURL }}">
+    <img style="width:500px;" src="{{ $installImageURL }}" />
   </a>
 {{ end }}

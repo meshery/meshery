@@ -1,7 +1,7 @@
 ---
 title: Cloudevents
 subtitle: Collaborative and visual infrastructure as design for Cloudevents
-image: /extensions/models/cloudevents/icons/color/cloudevents-color.svg
+image: extensions/models/cloudevents/icons/color/cloudevents-color.svg
 aliases: /extensibility/integrations/cloudevents
 docURL: https://docs.meshery.io/extensibility/integrations/cloudevents
 description: 

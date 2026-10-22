@@ -3,6 +3,9 @@ title: mesheryctl-system-token
 display_title: false
 command: system
 subcommand: token
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/token/
 ---
 
 # mesheryctl system token
@@ -15,8 +18,10 @@ Manage Meshery user tokens
 	Manipulate user tokens and their context assignments in your meshconfig
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system token [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -43,4 +48,4 @@ mesheryctl system token [flags]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

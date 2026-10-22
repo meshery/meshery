@@ -1,6 +1,5 @@
 /* eslint-disable react/display-name */
-import { IconButton } from '@sistent/sistent';
-import CloseIcon from '@mui/icons-material/Close';
+import { CloseIcon, IconButton } from '@sistent/sistent';
 import { EVENT_TYPES } from '../../lib/event-types';
 
 /**

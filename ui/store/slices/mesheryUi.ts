@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
+import { MESHERY_EXTENSION_EVENT } from '@sistent/sistent';
+import { getK8sClusterIdsFromCtxId, persistSelectedK8sContexts } from '@/utils/multi-ctx';
 import { mesheryEventBus } from '@/utils/eventBus';
 import { store } from '..';
 
@@ -16,7 +17,7 @@ const initialState = {
   isDrawerCollapsed: false,
   catalogVisibility: true,
   extensionType: '',
-  capabilitiesRegistry: null,
+  providerCapabilities: null,
   controllerState: null,
   connectionMetadataState: null, // store connection definition metadata for state and connection kind management
   organization: null,
@@ -51,7 +52,8 @@ const coreSlice = createSlice({
     },
     setK8sContexts: (state, action) => {
       state.selectedK8sContexts = action.payload.selectedK8sContexts;
-      // Note: Event bus publication would be handled in the thunk action
+      // Note: Side effects (session persistence, event bus publication) are
+      // handled in the setK8sContexts thunk below; this reducer is side-effect free.
     },
     updateProgress: (state, action) => {
       state.showProgress = action.payload.showProgress;
@@ -68,8 +70,8 @@ const coreSlice = createSlice({
     updateExtensionType: (state, action) => {
       state.extensionType = action.payload.extensionType;
     },
-    updateCapabilities: (state, action) => {
-      state.capabilitiesRegistry = action.payload.capabilitiesRegistry;
+    updateProviderCapabilities: (state, action) => {
+      state.providerCapabilities = action.payload.providerCapabilities;
     },
     setConnectionMetadata: (state, action) => {
       state.connectionMetadataState = action.payload.connectionMetadataState;
@@ -104,7 +106,7 @@ export const {
   setControllerState,
   setMeshsyncSubscription,
   updateExtensionType,
-  updateCapabilities,
+  updateProviderCapabilities,
   setConnectionMetadata,
   setOrganization,
   setWorkspace,
@@ -115,8 +117,14 @@ export const {
 export const setK8sContexts = (payload) => (dispatch) => {
   dispatch(setK8sContextsAction(payload));
 
+  // Session-persist the selection so it survives navigation and reloads.
+  // Every selection change in the app flows through this thunk (header
+  // checkboxes, deploy modal, context search), making it the single
+  // persistence funnel while keeping the reducer pure.
+  persistSelectedK8sContexts(payload.selectedK8sContexts);
+
   mesheryEventBus.publish({
-    type: 'K8S_CONTEXTS_UPDATED',
+    type: MESHERY_EXTENSION_EVENT.K8sContextsUpdated,
     data: {
       selectedK8sContexts: payload.selectedK8sContexts,
     },
@@ -130,17 +138,8 @@ export const updateProgress = (progressData) => {
 export const coreMiddleware = (getDefaultMiddleware) =>
   getDefaultMiddleware({
     serializableCheck: {
-      // Ignore these action types
-      ignoredActions: ['core/updateGrafanaConfig', 'core/updatePrometheusConfig'],
-      // Ignore these field paths in all actions
-      ignoredActionPaths: ['payload.grafana.ts', 'payload.prometheus.ts'],
       // Ignore these paths in the state
-      ignoredPaths: [
-        'core.grafana.ts',
-        'core.prometheus.ts',
-        'core.loadTestPref.ts',
-        'core.meshAdaptersts',
-      ],
+      ignoredPaths: ['core.loadTestPref.ts', 'core.meshAdaptersts'],
     },
   });
 

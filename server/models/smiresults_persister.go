@@ -3,29 +3,29 @@ package models
 import (
 	"encoding/json"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/schemas/models/core"
 )
 
-// SmiResultsPersister assists with persisting session in store
+// SMIResultsPersister assists with persisting SMI results in store
 type SMIResultsPersister struct {
 	DB *database.Handler
 }
 
 type SmiResultWithID struct {
-	ID        uuid.UUID
+	ID        core.Uuid
 	SmiResult `gorm:"embedded"`
 }
 
 // SmiResultPage - represents a page of meshery results
 type SmiResultPage struct {
 	Page       uint64             `json:"page"`
-	PageSize   uint64             `json:"page_size"`
-	TotalCount int                `json:"total_count"`
+	PageSize   uint64             `json:"pageSize"`
+	TotalCount int                `json:"totalCount"`
 	Results    []*SmiResultWithID `json:"results"`
 }
 
-// GetSmiResults - gets result for the page and pageSize
+// GetResults - gets result for the page and pageSize
 func (s *SMIResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) {
 	if s.DB == nil {
 		return nil, ErrDBConnection
@@ -52,8 +52,8 @@ func (s *SMIResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) 
 	return bd, nil
 }
 
-// WriteSmiResult persists the result
-func (s *SMIResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
+// WriteResult persists the result
+func (s *SMIResultsPersister) WriteResult(key core.Uuid, result []byte) error {
 	if s.DB == nil {
 		return ErrDBConnection
 	}
@@ -73,14 +73,14 @@ func (s *SMIResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
 	return s.DB.Model(&SmiResultWithID{}).Create(&r).Error
 }
 
-func (s *SMIResultsPersister) DeleteResult(key uuid.UUID) error {
+func (s *SMIResultsPersister) DeleteResult(key core.Uuid) error {
 	if s.DB == nil {
 		return ErrDBConnection
 	}
 	return s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).Delete(&SmiResultWithID{}).Error
 }
 
-func (s *SMIResultsPersister) GetResult(key uuid.UUID) ([]byte, error) {
+func (s *SMIResultsPersister) GetResult(key core.Uuid) ([]byte, error) {
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
@@ -94,6 +94,6 @@ func (s *SMIResultsPersister) GetResult(key uuid.UUID) ([]byte, error) {
 	return bd, nil
 }
 
-func (s *SMIResultsPersister) UpdateResult(key uuid.UUID, res SmiResultWithID) error {
+func (s *SMIResultsPersister) UpdateResult(key core.Uuid, res SmiResultWithID) error {
 	return s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).UpdateColumns(res).Error
 }

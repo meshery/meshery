@@ -3,6 +3,9 @@ title: mesheryctl-perf
 display_title: false
 command: perf
 subcommand: nil
+categories: [mesheryctl-perf]
+aliases:
+- /reference/references/mesheryctl/perf/
 ---
 
 # mesheryctl perf
@@ -15,8 +18,10 @@ Load generation and performance characterization
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl perf [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,39 +30,49 @@ mesheryctl perf [flags]
 Run performance test:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
 
+</div>
 </div>
 </pre> 
 
 List performance profiles:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl perf profile sam-test
 
+</div>
 </div>
 </pre> 
 
 List performance results:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl perf result sam-test
 
+</div>
 </div>
 </pre> 
 
 Display Perf profile in JSON or YAML:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl perf result -o json
 
+</div>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl perf result -o yaml
 
+</div>
 </div>
 </pre> 
 
@@ -85,4 +100,4 @@ mesheryctl perf result -o yaml
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

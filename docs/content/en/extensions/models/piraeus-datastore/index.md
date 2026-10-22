@@ -1,7 +1,7 @@
 ---
 title: Piraeus Datastore
 subtitle: Collaborative and visual infrastructure as design for Piraeus Datastore
-image: /extensions/models/piraeus-datastore/icons/color/piraeus-datastore-color.svg
+image: extensions/models/piraeus-datastore/icons/color/piraeus-datastore-color.svg
 aliases: /extensibility/integrations/piraeus-datastore
 docURL: https://docs.meshery.io/extensibility/integrations/piraeus datastore
 description: 
@@ -10,52 +10,52 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: volume-group-snapshot-class
-  colorIcon: content/en/extensions/models/piraeus-datastore/components/volume-group-snapshot-class/icons/color/volume-group-snapshot-class-color.svg
-  whiteIcon: content/en/extensions/models/piraeus-datastore/components/volume-group-snapshot-class/icons/white/volume-group-snapshot-class-white.svg
+  colorIcon: extensions/models/piraeus-datastore/components/volume-group-snapshot-class/icons/color/volume-group-snapshot-class-color.svg
+  whiteIcon: extensions/models/piraeus-datastore/components/volume-group-snapshot-class/icons/white/volume-group-snapshot-class-white.svg
   description: 
 - name: volume-group-snapshot-content
-  colorIcon: content/en/extensions/models/piraeus-datastore/components/volume-group-snapshot-content/icons/color/volume-group-snapshot-content-color.svg
-  whiteIcon: content/en/extensions/models/piraeus-datastore/components/volume-group-snapshot-content/icons/white/volume-group-snapshot-content-white.svg
+  colorIcon: extensions/models/piraeus-datastore/components/volume-group-snapshot-content/icons/color/volume-group-snapshot-content-color.svg
+  whiteIcon: extensions/models/piraeus-datastore/components/volume-group-snapshot-content/icons/white/volume-group-snapshot-content-white.svg
   description: 
 - name: volume-group-snapshot
-  colorIcon: content/en/extensions/models/piraeus-datastore/components/volume-group-snapshot/icons/color/volume-group-snapshot-color.svg
-  whiteIcon: content/en/extensions/models/piraeus-datastore/components/volume-group-snapshot/icons/white/volume-group-snapshot-white.svg
+  colorIcon: extensions/models/piraeus-datastore/components/volume-group-snapshot/icons/color/volume-group-snapshot-color.svg
+  whiteIcon: extensions/models/piraeus-datastore/components/volume-group-snapshot/icons/white/volume-group-snapshot-white.svg
   description: 
 - name: volume-snapshot-class
-  colorIcon: content/en/extensions/models/piraeus-datastore/components/volume-snapshot-class/icons/color/volume-snapshot-class-color.svg
-  whiteIcon: content/en/extensions/models/piraeus-datastore/components/volume-snapshot-class/icons/white/volume-snapshot-class-white.svg
+  colorIcon: extensions/models/piraeus-datastore/components/volume-snapshot-class/icons/color/volume-snapshot-class-color.svg
+  whiteIcon: extensions/models/piraeus-datastore/components/volume-snapshot-class/icons/white/volume-snapshot-class-white.svg
   description: 
 - name: volume-snapshot-content
-  colorIcon: content/en/extensions/models/piraeus-datastore/components/volume-snapshot-content/icons/color/volume-snapshot-content-color.svg
-  whiteIcon: content/en/extensions/models/piraeus-datastore/components/volume-snapshot-content/icons/white/volume-snapshot-content-white.svg
+  colorIcon: extensions/models/piraeus-datastore/components/volume-snapshot-content/icons/color/volume-snapshot-content-color.svg
+  whiteIcon: extensions/models/piraeus-datastore/components/volume-snapshot-content/icons/white/volume-snapshot-content-white.svg
   description: 
 - name: volume-snapshot
-  colorIcon: content/en/extensions/models/piraeus-datastore/components/volume-snapshot/icons/color/volume-snapshot-color.svg
-  whiteIcon: content/en/extensions/models/piraeus-datastore/components/volume-snapshot/icons/white/volume-snapshot-white.svg
+  colorIcon: extensions/models/piraeus-datastore/components/volume-snapshot/icons/color/volume-snapshot-color.svg
+  whiteIcon: extensions/models/piraeus-datastore/components/volume-snapshot/icons/white/volume-snapshot-white.svg
   description: 
 - name: volume-group-snapshot-class
-  colorIcon: content/en/extensions/models/piraeus-datastore/components/volume-group-snapshot-class/icons/color/volume-group-snapshot-class-color.svg
-  whiteIcon: content/en/extensions/models/piraeus-datastore/components/volume-group-snapshot-class/icons/white/volume-group-snapshot-class-white.svg
+  colorIcon: extensions/models/piraeus-datastore/components/volume-group-snapshot-class/icons/color/volume-group-snapshot-class-color.svg
+  whiteIcon: extensions/models/piraeus-datastore/components/volume-group-snapshot-class/icons/white/volume-group-snapshot-class-white.svg
   description: 
 - name: volume-group-snapshot-content
-  colorIcon: content/en/extensions/models/piraeus-datastore/components/volume-group-snapshot-content/icons/color/volume-group-snapshot-content-color.svg
-  whiteIcon: content/en/extensions/models/piraeus-datastore/components/volume-group-snapshot-content/icons/white/volume-group-snapshot-content-white.svg
+  colorIcon: extensions/models/piraeus-datastore/components/volume-group-snapshot-content/icons/color/volume-group-snapshot-content-color.svg
+  whiteIcon: extensions/models/piraeus-datastore/components/volume-group-snapshot-content/icons/white/volume-group-snapshot-content-white.svg
   description: 
 - name: volume-group-snapshot
-  colorIcon: content/en/extensions/models/piraeus-datastore/components/volume-group-snapshot/icons/color/volume-group-snapshot-color.svg
-  whiteIcon: content/en/extensions/models/piraeus-datastore/components/volume-group-snapshot/icons/white/volume-group-snapshot-white.svg
+  colorIcon: extensions/models/piraeus-datastore/components/volume-group-snapshot/icons/color/volume-group-snapshot-color.svg
+  whiteIcon: extensions/models/piraeus-datastore/components/volume-group-snapshot/icons/white/volume-group-snapshot-white.svg
   description: 
 - name: volume-snapshot-class
-  colorIcon: content/en/extensions/models/piraeus-datastore/components/volume-snapshot-class/icons/color/volume-snapshot-class-color.svg
-  whiteIcon: content/en/extensions/models/piraeus-datastore/components/volume-snapshot-class/icons/white/volume-snapshot-class-white.svg
+  colorIcon: extensions/models/piraeus-datastore/components/volume-snapshot-class/icons/color/volume-snapshot-class-color.svg
+  whiteIcon: extensions/models/piraeus-datastore/components/volume-snapshot-class/icons/white/volume-snapshot-class-white.svg
   description: 
 - name: volume-snapshot-content
-  colorIcon: content/en/extensions/models/piraeus-datastore/components/volume-snapshot-content/icons/color/volume-snapshot-content-color.svg
-  whiteIcon: content/en/extensions/models/piraeus-datastore/components/volume-snapshot-content/icons/white/volume-snapshot-content-white.svg
+  colorIcon: extensions/models/piraeus-datastore/components/volume-snapshot-content/icons/color/volume-snapshot-content-color.svg
+  whiteIcon: extensions/models/piraeus-datastore/components/volume-snapshot-content/icons/white/volume-snapshot-content-white.svg
   description: 
 - name: volume-snapshot
-  colorIcon: content/en/extensions/models/piraeus-datastore/components/volume-snapshot/icons/color/volume-snapshot-color.svg
-  whiteIcon: content/en/extensions/models/piraeus-datastore/components/volume-snapshot/icons/white/volume-snapshot-white.svg
+  colorIcon: extensions/models/piraeus-datastore/components/volume-snapshot/icons/color/volume-snapshot-color.svg
+  whiteIcon: extensions/models/piraeus-datastore/components/volume-snapshot/icons/white/volume-snapshot-white.svg
   description: 
 components-count: 12
 relationships: 

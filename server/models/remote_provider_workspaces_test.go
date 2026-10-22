@@ -73,3 +73,35 @@ func TestRemoteProviderGetWorkspaces_PreservesJSONBodyForOK(t *testing.T) {
 		t.Fatalf("expected response body %s, got %s", expected, string(data))
 	}
 }
+
+func TestRemoteProviderGetViewsOfWorkspace_ReturnsErrorWhenProviderUnreachable(t *testing.T) {
+	provider := newTestRemoteProvider(t, "http://127.0.0.1:1")
+	provider.Capabilities = Capabilities{{Feature: PersistWorkspaces, Endpoint: "/workspaces"}}
+
+	req := httptest.NewRequest(http.MethodGet, "http://meshery.local/workspaces/workspace-id/views", nil)
+	req.AddCookie(&http.Cookie{Name: TokenCookieName, Value: "token"})
+
+	data, err := provider.GetViewsOfWorkspace(req, "workspace-id", "", "", "", "", "")
+	if err == nil {
+		t.Fatal("expected error when remote provider is unreachable")
+	}
+	if data != nil {
+		t.Fatalf("expected nil data on unreachable provider, got %q", string(data))
+	}
+}
+
+func TestRemoteProviderGetTeamsOfWorkspace_ReturnsErrorWhenProviderUnreachable(t *testing.T) {
+	provider := newTestRemoteProvider(t, "http://127.0.0.1:1")
+	provider.Capabilities = Capabilities{{Feature: PersistWorkspaces, Endpoint: "/workspaces"}}
+
+	req := httptest.NewRequest(http.MethodGet, "http://meshery.local/workspaces/workspace-id/teams", nil)
+	req.AddCookie(&http.Cookie{Name: TokenCookieName, Value: "token"})
+
+	data, err := provider.GetTeamsOfWorkspace(req, "workspace-id", "", "", "", "", "")
+	if err == nil {
+		t.Fatal("expected error when remote provider is unreachable")
+	}
+	if data != nil {
+		t.Fatalf("expected nil data on unreachable provider, got %q", string(data))
+	}
+}

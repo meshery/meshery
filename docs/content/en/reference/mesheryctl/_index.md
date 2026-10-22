@@ -2,9 +2,8 @@
 title: Command Line Reference
 description: "A guide to Meshery's CLI: mesheryctl"
 aliases:
+- /reference/references/mesheryctl/
 - /reference/mesheryctl/commands/
-- /reference/mesheryctl/commands
-- /reference/mesheryctl/
 cascade:
   body_class: mesheryctl-reference-page
 ---
@@ -93,6 +92,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Frequently Asked Questions for Meshery CLI
 
-Refer to the following [frequently asked questions](/guides/mesheryctl/working-with-mesheryctl) related to Meshery CLI.
+Refer to the following [frequently asked questions]({{< ref "guides/mesheryctl/working-with-mesheryctl.md" >}}) related to Meshery CLI.
 
 ## See Also

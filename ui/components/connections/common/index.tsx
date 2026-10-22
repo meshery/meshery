@@ -1,52 +1,46 @@
-import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import React, { memo } from 'react';
+import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { Grid2, Typography, TableCell, TableSortLabel } from '@sistent/sistent';
 
-export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon, tooltip }) => {
+const HeaderLabel = ({ label, icon, tooltip }) => (
+  <Grid2 style={{ display: 'flex', alignItems: 'center' }}>
+    <Typography>
+      <b>{label}</b>
+    </Typography>
+    {icon && (
+      <CustomTextTooltip interactive={true} title={tooltip || ''} placement="top">
+        <Typography style={{ display: 'flex', marginLeft: '5px' }} variant="span">
+          {icon}
+        </Typography>
+      </CustomTextTooltip>
+    )}
+  </Grid2>
+);
+
+const SortableTableCell_ = ({ index, columnData, columnMeta, onSort, icon, tooltip }) => {
   return (
     <TableCell key={index} onClick={onSort}>
       <Grid2 style={{ display: 'flex' }}>
-        <Grid2 style={{ display: 'flex', alignItems: 'center' }}>
-          <Typography>
-            <b>{columnData.label}</b>
-          </Typography>
-          {icon ? (
-            <CustomTextTooltip interactive={true} title={tooltip ? tooltip : ''} placement="top">
-              <Typography style={{ display: 'flex', marginLeft: '5px' }} variant="span">
-                {icon}
-              </Typography>
-            </CustomTextTooltip>
-          ) : (
-            ''
-          )}
-        </Grid2>
+        <HeaderLabel label={columnData.label} icon={icon} tooltip={tooltip} />
         <TableSortLabel
           active={columnMeta.name === columnData.name}
           direction={columnMeta.direction || 'asc'}
-        ></TableSortLabel>
+        />
       </Grid2>
     </TableCell>
   );
 };
 
-export const DefaultTableCell = ({ columnData, icon, tooltip }) => {
+export const SortableTableCell = memo(SortableTableCell_);
+
+const DefaultTableCell_ = ({ columnData, icon, tooltip }) => {
   return (
     <TableCell>
       <Grid2 style={{ display: 'flex' }}>
-        <Grid2 style={{ display: 'flex', alignItems: 'center' }}>
-          <Typography>
-            <b>{columnData.label}</b>
-          </Typography>
-          {icon ? (
-            <CustomTextTooltip interactive={true} title={tooltip ? tooltip : ''} placement="top">
-              <Typography style={{ display: 'flex', marginLeft: '5px' }} variant="span">
-                {icon}
-              </Typography>
-            </CustomTextTooltip>
-          ) : (
-            ''
-          )}
-        </Grid2>
+        <HeaderLabel label={columnData.label} icon={icon} tooltip={tooltip} />
       </Grid2>
     </TableCell>
   );
 };
+
+export const DefaultTableCell = memo(DefaultTableCell_);

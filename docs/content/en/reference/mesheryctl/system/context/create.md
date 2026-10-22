@@ -3,6 +3,9 @@ title: mesheryctl-system-context-create
 display_title: false
 command: system
 subcommand: context
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/context/create/
 ---
 
 # mesheryctl system context create
@@ -15,8 +18,10 @@ Add a new context to Meshery config.yaml file.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context create context-name [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,16 +30,20 @@ mesheryctl system context create context-name [flags]
 Create new context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context create [context-name]
 
 </div>
+</div>
 </pre> 
 
-Create new context and provide list of components, platform & URL
+Create new context and provide list of components, platform & URL and set it as current context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system context create context-name --components meshery-nsm --platform docker --url http://localhost:9081 --set --yes
+<div class='clipboardjs'>
+mesheryctl system context create [context-name] --components [meshery-nsm] --platform [docker|kubernetes] --url [server-url] --set --yes
 
+</div>
 </div>
 </pre> 
 
@@ -44,10 +53,10 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 <div class='codeblock'>
   -a, --components stringArray   List of components
   -h, --help                     help for create
-  -p, --platform string          Platform to deploy Meshery
-      --provider string          Provider to use with the Meshery server
+  -p, --platform string          Platform to deploy Meshery (docker or kubernetes)
+      --provider string          Provider to use with the Meshery server (run 'mesheryctl system provider list' to see options)
   -s, --set                      Set as current context
-  -u, --url string               Meshery Server URL with Port
+  -u, --url string               Meshery Server URL with Port (default: http://localhost:9081)
 
 </div>
 </pre>
@@ -67,8 +76,8 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 ## Screenshots
 
 Usage of mesheryctl context create
-![context-create-usage](/reference/images/newcontext.png)
+![context-create-usage](../../../../images/newcontext.png)
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

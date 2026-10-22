@@ -3,11 +3,14 @@ title: mesheryctl-system-channel-set
 display_title: false
 command: system
 subcommand: channel
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/channel/set/
 ---
 
 # mesheryctl system channel set
 
-set release channel and version
+Set release channel and version
 
 ## Synopsis
 
@@ -15,8 +18,10 @@ Set release channel and version of context in focus
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel set [stable|stable-version|edge|edge-version] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +30,10 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version] [flags]
 Subscribe to release channel or version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
+</div>
 </div>
 </pre> 
 
@@ -53,4 +60,4 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

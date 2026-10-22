@@ -48,3 +48,9 @@ export const updateVisibleColumns = (colViews, width) => {
 
   return showCols;
 };
+
+export const getResponsiveColumnVisibility = (columnNames, colViews, width) => {
+  const showCols = updateVisibleColumns(colViews, width);
+
+  return Object.fromEntries(columnNames.map((columnName) => [columnName, showCols[columnName]]));
+};

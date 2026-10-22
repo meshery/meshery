@@ -3,6 +3,9 @@ title: mesheryctl-registry-generate
 display_title: false
 command: registry
 subcommand: generate
+categories: [mesheryctl-registry]
+aliases:
+- /reference/references/mesheryctl/registry/generate/
 ---
 
 # mesheryctl registry generate
@@ -11,12 +14,14 @@ Generate Models
 
 ## Synopsis
 
-Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under "/server/models/<model-name>".
+Prerequisite: Execute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components from any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under "models/<model-name>" at the repo root.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry generate [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,56 +30,70 @@ mesheryctl registry generate [flags]
 Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED"
 
+</div>
 </div>
 </pre> 
 
 Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 
+</div>
 </div>
 </pre> 
 
 Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
 
+</div>
 </div>
 </pre> 
 
 Generate Meshery Models and Component from csv files in a local directory.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry generate --directory [DIRECTORY_PATH]
 
+</div>
 </div>
 </pre> 
 
 Generate Meshery Models from individual CSV files.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry generate --model-csv [path/to/models.csv] --component-csv [path/to/components.csv] --relationship-csv [path/to/relationships.csv]
 
+</div>
 </div>
 </pre> 
 
 Generate models with a custom per-model timeout (e.g., 10 minutes per model).
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --timeout 10m
 
+</div>
 </div>
 </pre> 
 
 Generate only the latest version of each model.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --latest-only
 
+</div>
 </div>
 </pre> 
 
@@ -88,7 +107,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
       --latest-only               generate only the latest version of each model
   -m, --model string              specific model name to be generated
       --model-csv string          path to the model CSV file
-  -o, --output string             location to output generated models, defaults to ../server/meshmodels (default "../server/meshmodel")
+  -o, --output string             location to output generated models; when unset, the repo-root models directory is auto-detected (models from the repo root, ../models from a subdirectory) (default "./models")
       --registrant-cred string    path pointing to the registrant credential definition
       --registrant-def string     path pointing to the registrant connection definition
       --relationship-csv string   path to the relationship CSV file (optional)
@@ -111,4 +130,4 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

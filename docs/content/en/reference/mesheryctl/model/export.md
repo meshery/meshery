@@ -3,6 +3,9 @@ title: mesheryctl-model-export
 display_title: false
 command: model
 subcommand: export
+categories: [mesheryctl-model]
+aliases:
+- /reference/references/mesheryctl/model/export/
 ---
 
 # mesheryctl model export
@@ -15,8 +18,10 @@ Export the registered model to the specified output type
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model export [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,40 +30,50 @@ mesheryctl model export [flags]
 Export a model by name 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
 
+</div>
 </div>
 </pre> 
 
 Export a model by name in JSON type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model export [model-name] -t [yaml|json] (default is YAML)
 
+</div>
 </div>
 </pre> 
 
 Export a model by name in YAML type in a specific location
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model export [model-name] -l [path-to-location]
 
+</div>
 </div>
 </pre> 
 
 Export a model by name in YAML type discarding components and relationships
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model export [model-name] --discard-components --discard-relationships
 
+</div>
 </div>
 </pre> 
 
 Export a model version by name in YAML type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 
+</div>
 </div>
 </pre> 
 
@@ -90,4 +105,4 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

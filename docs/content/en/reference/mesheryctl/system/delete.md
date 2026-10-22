@@ -3,6 +3,9 @@ title: mesheryctl-system-delete
 display_title: false
 command: system
 subcommand: delete
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/delete/
 ---
 
 # mesheryctl system delete
@@ -12,10 +15,13 @@ Delete Meshery containers
 ## Synopsis
 
 Delete Meshery containers. This command removes all Meshery containers created by docker-compose.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system delete [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,16 +30,20 @@ mesheryctl system delete [flags]
 Delete Meshery containers
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system delete
 
+</div>
 </div>
 </pre> 
 
 Delete Meshery containers without confirmation
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system delete -y
 
+</div>
 </div>
 </pre> 
 
@@ -60,4 +70,4 @@ mesheryctl system delete -y
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

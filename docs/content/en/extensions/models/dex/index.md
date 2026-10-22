@@ -1,7 +1,7 @@
 ---
 title: Dex
 subtitle: Collaborative and visual infrastructure as design for Dex
-image: /extensions/models/dex/icons/color/dex-color.svg
+image: extensions/models/dex/icons/color/dex-color.svg
 aliases: /extensibility/integrations/dex
 docURL: https://docs.meshery.io/extensibility/integrations/dex
 description: 

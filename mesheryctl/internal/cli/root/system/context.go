@@ -35,7 +35,7 @@ type contextWithLocation struct {
 }
 
 var linkDocContextCreate = map[string]string{
-	"link":    "![context-create-usage](/reference/images/newcontext.png)",
+	"link":    "![context-create-usage](../../../../images/newcontext.png)",
 	"caption": "Usage of mesheryctl context create",
 }
 
@@ -43,7 +43,7 @@ type cmdContextCreateFlags struct {
 	URL        string   `json:"url" validate:"omitempty,url"`
 	Components []string `json:"components" validate:"omitempty"`
 	Platform   string   `json:"platform" validate:"omitempty,oneof=docker kubernetes"`
-	Provider   string   `json:"provider" validate:"omitempty,oneof=Layer5 None"`
+	Provider   string   `json:"provider" validate:"omitempty"`
 	Set        bool     `json:"set" validate:"boolean"`
 }
 
@@ -64,8 +64,8 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/system/co
 // Create new context
 mesheryctl system context create [context-name]
 
-// Create new context and provide list of components, platform & URL
-mesheryctl system context create context-name --components meshery-nsm --platform docker --url http://localhost:9081 --set --yes
+// Create new context and provide list of components, platform & URL and set it as current context
+mesheryctl system context create [context-name] --components [meshery-nsm] --platform [docker|kubernetes] --url [server-url] --set --yes
 	`,
 	Annotations: linkDocContextCreate,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -101,6 +101,9 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 		}
 
 		if len(contextCreateFlags.Components) >= 1 {
+			if err := validateComponents(contextCreateFlags.Components); err != nil {
+				return err
+			}
 			tempCntxt.Components = contextCreateFlags.Components
 		}
 
@@ -207,7 +210,7 @@ mesheryctl system context delete [context name]
 // listContextCmd represents the list command
 var listContextCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list contexts",
+	Short: "List contexts",
 	Long: `List current context and available contexts.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/list`,
 	Example: `
@@ -259,7 +262,7 @@ mesheryctl system context list
 }
 
 var linkDocContextView = map[string]string{
-	"link":    "![context-view-usage](/reference/images/context-view.png)",
+	"link":    "![context-view-usage](../../../../images/context-view.png)",
 	"caption": "Usage of mesheryctl context view",
 }
 
@@ -367,14 +370,14 @@ mesheryctl system context view --all
 }
 
 var linkDocContextSwitch = map[string]string{
-	"link":    "![context-switch-usage](/reference/images/contextswitch.png)",
+	"link":    "![context-switch-usage](../../../../images/contextswitch.png)",
 	"caption": "Usage of mesheryctl context switch",
 }
 
 // switchContextCmd represents the switch command
 var switchContextCmd = &cobra.Command{
 	Use:   "switch context-name",
-	Short: "switch context",
+	Short: "Switch context",
 	Long: `Configure mesheryctl to actively use one one context vs. another context.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/switch`,
 	Example: `
@@ -467,11 +470,11 @@ func init() {
 		viewContextCmd,
 		listContextCmd,
 	}
-	createContextCmd.Flags().StringVarP(&contextCreateFlags.URL, "url", "u", "", "Meshery Server URL with Port")
+	createContextCmd.Flags().StringVarP(&contextCreateFlags.URL, "url", "u", "", "Meshery Server URL with Port (default: http://localhost:9081)")
 	createContextCmd.Flags().BoolVarP(&contextCreateFlags.Set, "set", "s", false, "Set as current context")
 	createContextCmd.Flags().StringArrayVarP(&contextCreateFlags.Components, "components", "a", nil, "List of components")
-	createContextCmd.Flags().StringVarP(&contextCreateFlags.Platform, "platform", "p", "", "Platform to deploy Meshery")
-	createContextCmd.Flags().StringVar(&contextCreateFlags.Provider, "provider", "", "Provider to use with the Meshery server")
+	createContextCmd.Flags().StringVarP(&contextCreateFlags.Platform, "platform", "p", "", "Platform to deploy Meshery (docker or kubernetes)")
+	createContextCmd.Flags().StringVar(&contextCreateFlags.Provider, "provider", "", "Provider to use with the Meshery server (run 'mesheryctl system provider list' to see options)")
 	deleteContextCmd.Flags().StringVarP(&contextDeleteFlags.Set, "set", "s", "", "New context to deploy Meshery")
 	viewContextCmd.Flags().StringVarP(&contextViewFlags.Context, "context", "c", "", "Show config for the context")
 	viewContextCmd.Flags().BoolVar(&contextViewFlags.All, "all", false, "Show configs for all of the context")

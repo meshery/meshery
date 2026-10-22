@@ -3,6 +3,9 @@ title: mesheryctl-filter-import
 display_title: false
 command: filter
 subcommand: import
+categories: [mesheryctl-filter]
+aliases:
+- /reference/references/mesheryctl/filter/import/
 ---
 
 # mesheryctl filter import
@@ -11,11 +14,14 @@ Import a WASM filter
 
 ## Synopsis
 
-Import a WASM filter from a URI (http/s) or local filesystem path
+Import a WASM filter from a URI (http/s) or local filesystem path.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter import [URI] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,16 +30,20 @@ mesheryctl filter import [URI] [flags]
 Import a filter file from local filesystem
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter import /path/to/filter.wasm
 
+</div>
 </div>
 </pre> 
 
 Import a filter file from a remote URI
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter import https://example.com/myfilter.wasm
 
+</div>
 </div>
 </pre> 
 
@@ -42,16 +52,20 @@ If the string is a valid file in the filesystem, the file is read and passed as 
 Use quotes if the string contains spaces
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter import /path/to/filter.wasm --wasm-config [filepath|string]
 
+</div>
 </div>
 </pre> 
 
 Specify the name of the filter to be imported. Use quotes if the name contains spaces
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter import /path/to/filter.wasm --name [string]
 
+</div>
 </div>
 </pre> 
 
@@ -79,4 +93,4 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

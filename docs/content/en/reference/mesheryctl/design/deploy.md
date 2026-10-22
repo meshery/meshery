@@ -3,6 +3,9 @@ title: mesheryctl-design-deploy
 display_title: false
 command: design
 subcommand: deploy
+categories: [mesheryctl-design]
+aliases:
+- /reference/references/mesheryctl/design/deploy/
 ---
 
 # mesheryctl design deploy
@@ -11,11 +14,14 @@ Deploy design
 
 ## Synopsis
 
-Command will trigger deploy of design
+Command will trigger deploy of design.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design deploy [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,8 +30,10 @@ mesheryctl design deploy [flags]
 Deploy design by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design deploy -f [filepath] -s [source type]
 
+</div>
 </div>
 </pre> 
 
@@ -55,8 +63,8 @@ mesheryctl design deploy -f [filepath] -s [source type]
 ## Screenshots
 
 Usage of mesheryctl design deploy
-![pattern-onboard-usage](/reference/images/pattern-onboard.png)
+![pattern-onboard-usage](../../../images/app-onboard.png)
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

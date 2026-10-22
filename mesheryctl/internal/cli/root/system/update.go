@@ -23,13 +23,12 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var linkDocUpdate = map[string]string{
-	"link":    "![update-usage](/reference/images/update.png)",
+	"link":    "![update-usage](../../../images/update.png)",
 	"caption": "Usage of mesheryctl system update",
 }
 
@@ -37,7 +36,8 @@ var linkDocUpdate = map[string]string{
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Pull new Meshery images/manifest files.",
-	Long:  `Pull new Meshery container images and manifests from artifact repository.`,
+	Long: `Pull new Meshery container images and manifests from artifact repository.
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/update`,
 	Example: `
 // Pull new Meshery images from Docker Hub. This does not update mesheryctl. This command may be executed while Meshery is running.
 mesheryctl system update
@@ -55,8 +55,7 @@ mesheryctl system update --skip-reset
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		return hc.RunPreflightHealthChecks()
 	},
@@ -68,22 +67,19 @@ mesheryctl system update --skip-reset
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		// get the platform, channel and the version of the current context
 		// if a temp context is set using the -c flag, use it as the current context
 		if tempContext != "" {
 			err = mctlCfg.SetCurrentContext(tempContext)
 			if err != nil {
-				utils.Log.Error(ErrSetCurrentContext(err))
-				return nil
+				return ErrSetCurrentContext(err)
 			}
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		err = currCtx.ValidateVersion()
 		if err != nil {
@@ -91,7 +87,7 @@ mesheryctl system update --skip-reset
 		}
 		if currCtx.GetVersion() != "latest" {
 			// ask confirmation if user has pinned the version in config
-			log.Infof("You have pinned version: %s in your current context", currCtx.GetVersion())
+			utils.Log.Infof("You have pinned version: %s in your current context", currCtx.GetVersion())
 			userResponse := false
 			if utils.SilentFlag {
 				userResponse = true
@@ -100,17 +96,17 @@ mesheryctl system update --skip-reset
 			}
 
 			if !userResponse {
-				log.Info("Update aborted.")
+				utils.Log.Info("Update aborted.")
 				return nil
 			}
 			currCtx.SetVersion("latest")
 		}
 
-		log.Info("Updating Meshery...")
+		utils.Log.Info("Updating Meshery...")
 
 		switch currCtx.GetPlatform() {
 		case platformDocker:
-			log.Info("Updating Meshery containers")
+			utils.Log.Info("Updating Meshery containers")
 			err = utils.UpdateMesheryContainers()
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
@@ -148,8 +144,7 @@ mesheryctl system update --skip-reset
 			}
 			hc, err := NewHealthChecker(hcOptions)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			// If k8s is available in case of platform docker than we deploy operator
 			if err = hc.Run(); err != nil {
@@ -158,8 +153,7 @@ mesheryctl system update --skip-reset
 
 			running, err := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			if !running {
 				// Meshery is not running, run the start command
@@ -174,10 +168,10 @@ mesheryctl system update --skip-reset
 				return err
 			}
 
-			log.Info("... updated Meshery in the Kubernetes Cluster.")
+			utils.Log.Info("... updated Meshery in the Kubernetes Cluster.")
 		}
 
-		log.Info("Meshery is now up-to-date")
+		utils.Log.Info("Meshery is now up-to-date")
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {

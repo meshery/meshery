@@ -3,6 +3,9 @@ title: mesheryctl-system-logout
 display_title: false
 command: system
 subcommand: logout
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/logout/
 ---
 
 # mesheryctl system logout
@@ -17,8 +20,10 @@ Remove authentication for Meshery Server
 This command removes the authentication token from the user's filesystem
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system logout [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -27,8 +32,10 @@ mesheryctl system logout [flags]
 Logout current session with your Meshery Provider.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system logout
 
+</div>
 </div>
 </pre> 
 
@@ -55,4 +62,4 @@ mesheryctl system logout
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

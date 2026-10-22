@@ -3,6 +3,9 @@ title: mesheryctl-connection-view
 display_title: false
 command: connection
 subcommand: view
+categories: [mesheryctl-connection]
+aliases:
+- /reference/references/mesheryctl/connection/view/
 ---
 
 # mesheryctl connection view
@@ -15,8 +18,10 @@ View a connection by its ID or name.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection view [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,24 +30,30 @@ mesheryctl connection view [flags]
 View details of a specific connection in default format (yaml)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection view [connection-name|connection-id]
 
+</div>
 </div>
 </pre> 
 
 View details of a specific connection in JSON format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection view [connection-name|connection-id] --output-format json
 
+</div>
 </div>
 </pre> 
 
 View details of a specific connection in json format and save it to a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection view [connection-name|connection-id] --output-format json --save
 
+</div>
 </div>
 </pre> 
 
@@ -69,4 +80,4 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

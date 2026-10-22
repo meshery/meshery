@@ -1,7 +1,7 @@
 ---
 title: Keylime
 subtitle: Collaborative and visual infrastructure as design for Keylime
-image: /extensions/models/keylime/icons/color/keylime-color.svg
+image: extensions/models/keylime/icons/color/keylime-color.svg
 aliases: /extensibility/integrations/keylime
 docURL: https://docs.meshery.io/extensibility/integrations/keylime
 description: 

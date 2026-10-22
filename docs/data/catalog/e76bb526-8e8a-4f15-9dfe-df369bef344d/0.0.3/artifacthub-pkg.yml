@@ -19,11 +19,7 @@ links:
 readme: "Understand that the child component (e.g., the filter) is dependent on the parent component (e.g., the plugin). If the parent (wallet) is not correctly configured or functional, the child component will not work as expected. Ensure the parent component is properly configured. \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
-    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+    name: cf6aabe7-a397-444a-a087-eebad74c58cc
 screenshots:
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e76bb526-8e8a-4f15-9dfe-df369bef344d-light.png
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e76bb526-8e8a-4f15-9dfe-df369bef344d-dark.png
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 )
@@ -16,11 +18,28 @@ type MesheryFilterPersister struct {
 	DB *database.Handler
 }
 
+// stampLocalProviderFilterOwner sets the built-in provider's single user as the
+// filter owner. MesheryFilter.Owner is gorm:"-" (never a DB column) and the
+// local provider is single-user, so every filter it persists is owned by the
+// local "meshery" user. Previously the persister wrote an empty-string owner on
+// save, which is unresolvable: the UI had no id to look a profile up with and
+// the owner never rendered.
+//
+// Published filters are left untouched for the same reason published designs
+// are - see stampLocalProviderOwner.
+func stampLocalProviderFilterOwner(f *MesheryFilter) {
+	if f == nil || !LocalProviderOwnsContent(f.Visibility) {
+		return
+	}
+	owner := LocalProviderUserID.String()
+	f.Owner = &owner
+}
+
 // MesheryFilterPage represents a page of filters
 type MesheryFilterPage struct {
 	Page       uint64           `json:"page"`
-	PageSize   uint64           `json:"page_size"`
-	TotalCount int              `json:"total_count"`
+	PageSize   uint64           `json:"pageSize"`
+	TotalCount int              `json:"totalCount"`
 	Filters    []*MesheryFilter `json:"filters"`
 }
 
@@ -51,6 +70,10 @@ func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page,
 
 	query.Count(&count)
 	Paginate(uint(page), uint(pageSize))(query).Find(&filters)
+
+	for _, f := range filters {
+		stampLocalProviderFilterOwner(f)
+	}
 
 	mesheryFilterPage := &MesheryFilterPage{
 		Page:       page,
@@ -130,8 +153,11 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, sear
 // CloneMesheryFilter clones meshery filter to private
 func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error) {
 	var mesheryFilter MesheryFilter
-	filterUUID, _ := uuid.FromString(filterID)
-	err := mfp.DB.First(&mesheryFilter, filterUUID).Error
+	filterUUID, err := uuid.FromString(filterID)
+	if err != nil {
+		return nil, ErrInvalidUUID(err)
+	}
+	err = mfp.DB.First(&mesheryFilter, filterUUID).Error
 	if err != nil || *mesheryFilter.ID == uuid.Nil {
 		return nil, fmt.Errorf("unable to get filter: %w", err)
 	}
@@ -149,7 +175,7 @@ func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilt
 }
 
 // DeleteMesheryFilter takes in a profile id and delete it if it already exists
-func (mfp *MesheryFilterPersister) DeleteMesheryFilter(id uuid.UUID) ([]byte, error) {
+func (mfp *MesheryFilterPersister) DeleteMesheryFilter(id core.Uuid) ([]byte, error) {
 	filter := MesheryFilter{ID: &id}
 	mfp.DB.Delete(&filter)
 
@@ -169,18 +195,21 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]b
 		filter.ID = &id
 	}
 
+	// Stamp before marshalling so the save/clone response carries the same
+	// owner contract as the GET paths. Owner is gorm:"-", so this is response
+	// shaping only - nothing extra is persisted.
+	stampLocalProviderFilterOwner(filter)
+
 	return marshalMesheryFilters([]MesheryFilter{*filter}), mfp.DB.Save(filter).Error
 }
 
 // SaveMesheryFilters batch inserts the given filters
 func (mfp *MesheryFilterPersister) SaveMesheryFilters(filters []MesheryFilter) ([]byte, error) {
 	finalFilters := []MesheryFilter{}
-	nilUserID := ""
 	for _, filter := range filters {
 		if filter.Visibility == "" {
 			filter.Visibility = Private
 		}
-		filter.UserID = &nilUserID
 		if filter.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {
@@ -190,20 +219,23 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilters(filters []MesheryFilter) (
 			filter.ID = &id
 		}
 
+		stampLocalProviderFilterOwner(&filter)
+
 		finalFilters = append(finalFilters, filter)
 	}
 
 	return marshalMesheryFilters(finalFilters), mfp.DB.Create(finalFilters).Error
 }
 
-func (mfp *MesheryFilterPersister) GetMesheryFilter(id uuid.UUID) ([]byte, error) {
+func (mfp *MesheryFilterPersister) GetMesheryFilter(id core.Uuid) ([]byte, error) {
 	var mesheryFilter MesheryFilter
 
 	err := mfp.DB.First(&mesheryFilter, id).Error
+	stampLocalProviderFilterOwner(&mesheryFilter)
 	return marshalMesheryFilter(&mesheryFilter), err
 }
 
-func (mfp *MesheryFilterPersister) GetMesheryFilterFile(id uuid.UUID) ([]byte, error) {
+func (mfp *MesheryFilterPersister) GetMesheryFilterFile(id core.Uuid) ([]byte, error) {
 	var mesheryFilter MesheryFilter
 
 	err := mfp.DB.First(&mesheryFilter, id).Error

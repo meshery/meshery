@@ -10,37 +10,8 @@ import (
 	regv1alpha3 "github.com/meshery/meshkit/models/meshmodel/registry/v1alpha3"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta3/component"
 )
-
-func (r *Resolver) subscribeMeshModelSummary(ctx context.Context, provider models.Provider, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error) {
-	ch := make(chan struct{}, 1)
-	ch <- struct{}{}
-	respChan := make(chan *model.MeshModelSummary)
-
-	r.Config.MeshModelSummaryChannel.Subscribe(ch)
-	go func() {
-		r.Log.Info("Initializing MeshModelSummary subscription")
-		for {
-			select {
-			case <-ch:
-				meshModelSummary, err := r.getMeshModelSummary(ctx, provider, selector)
-				if err != nil {
-					r.Log.Error(ErrMeshModelSummarySubscription(err))
-					break
-				}
-				respChan <- meshModelSummary
-			case <-ctx.Done():
-				close(respChan)
-				close(ch)
-				r.Log.Info("Closing MeshModelSummary subscription")
-				return
-			}
-		}
-	}()
-
-	return respChan, nil
-}
 
 func (r *Resolver) getMeshModelSummary(ctx context.Context, _ models.Provider, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error) {
 	regManager, ok := ctx.Value(models.RegistryManagerKey).(*registry.RegistryManager)

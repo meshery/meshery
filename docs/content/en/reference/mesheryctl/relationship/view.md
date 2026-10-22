@@ -3,19 +3,25 @@ title: mesheryctl-relationship-view
 display_title: false
 command: relationship
 subcommand: view
+categories: [mesheryctl-relationship]
+aliases:
+- /reference/references/mesheryctl/relationship/view/
 ---
 
 # mesheryctl relationship view
 
-view relationships of a model by its name
+View relationships of a model by its name
 
 ## Synopsis
 
-view a relationship queried by the model name
+View a relationship queried by the model name.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl relationship view [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,24 +30,30 @@ mesheryctl relationship view [flags]
 View relationships of a model in default format yaml
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl relationship view [model-name]
 
+</div>
 </div>
 </pre> 
 
 View relationships of a model in JSON format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl relationship view [model-name] --output-format json
 
+</div>
 </div>
 </pre> 
 
 View relationships of a model in json format and save it to a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl relationship view [model-name] --output-format json --save
 
+</div>
 </div>
 </pre> 
 
@@ -68,4 +80,4 @@ mesheryctl relationship view [model-name] --output-format json --save
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -3,6 +3,9 @@ title: mesheryctl-system-context-view
 display_title: false
 command: system
 subcommand: context
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/context/view/
 ---
 
 # mesheryctl system context view
@@ -17,8 +20,10 @@ Use this to verify or debug your current CLI settings.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context view [context-name | --context context-name | --all] --flags [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -27,39 +32,40 @@ mesheryctl system context view [context-name | --context context-name | --all] -
 View the default context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context view
 
+</div>
 </div>
 </pre> 
 
 View a specified context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context view context-name
 
+</div>
 </div>
 </pre> 
 
 View a specified context using the --context flag
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context view --context context-name
 
+</div>
 </div>
 </pre> 
 
 View configuration of all contexts
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context view --all
 
 </div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-    
-
 </div>
 </pre> 
 
@@ -88,8 +94,8 @@ mesheryctl system context view --all
 ## Screenshots
 
 Usage of mesheryctl context view
-![context-view-usage](/reference/images/context-view.png)
+![context-view-usage](../../../../images/context-view.png)
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

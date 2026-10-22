@@ -3,6 +3,9 @@ title: mesheryctl-system-reset
 display_title: false
 command: system
 subcommand: reset
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/reset/
 ---
 
 # mesheryctl system reset
@@ -15,8 +18,10 @@ Reset Meshery to it's default configuration.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system reset [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +30,10 @@ mesheryctl system reset [flags]
 Resets meshery.yaml file with a copy from Meshery repo
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system reset
 
+</div>
 </div>
 </pre> 
 
@@ -54,8 +61,8 @@ mesheryctl system reset
 ## Screenshots
 
 Usage of mesheryctl system reset
-![reset-usage](/reference/images/reset.png)
+![reset-usage](../../../images/reset.png)
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

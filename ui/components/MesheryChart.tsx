@@ -8,6 +8,7 @@ import {
   Fade,
   Popper,
   styled,
+  ReplyIcon,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import {
@@ -25,7 +26,6 @@ import {
   LinkedinIcon,
   FacebookIcon,
 } from 'react-share';
-import ReplyIcon from '@mui/icons-material/Reply';
 
 const ChartTitle = styled(Typography)(({ theme }) => ({
   textAlign: 'center',

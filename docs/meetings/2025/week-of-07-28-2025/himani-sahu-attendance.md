@@ -1,1 +1,0 @@
-I am a student at Vellore Institute of technology. I basically work with Typescript Nextjs and nodejs and ai integrations. I’m particularly interested  in contributing to meshery ci and backend and have already have some pr merged.

@@ -3,6 +3,9 @@ title: mesheryctl-relationship-search
 display_title: false
 command: relationship
 subcommand: search
+categories: [mesheryctl-relationship]
+aliases:
+- /reference/references/mesheryctl/relationship/search/
 ---
 
 # mesheryctl relationship search
@@ -11,11 +14,14 @@ Search registered relationship(s)
 
 ## Synopsis
 
-Search registered relationship(s) used by different models
+Search registered relationship(s) used by different models.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl relationship search [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,16 +30,20 @@ mesheryctl relationship search [flags]
 Search for a specific relationship
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
+<div class='clipboardjs'>
+mesheryctl relationship search [--kind &lt;kind&gt;] [--type &lt;type&gt;] [--subtype &lt;subtype&gt;] [--model &lt;model&gt;]
 
+</div>
 </div>
 </pre> 
 
 Search a relationship for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship search [--kind <kind>] [--page <int>]
+<div class='clipboardjs'>
+mesheryctl relationship search [--kind &lt;kind&gt;] [--page &lt;int&gt;]
 
+</div>
 </div>
 </pre> 
 
@@ -63,4 +73,4 @@ mesheryctl relationship search [--kind <kind>] [--page <int>]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

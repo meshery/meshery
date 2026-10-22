@@ -2,15 +2,15 @@ package prometheus
 
 import (
 	"context"
-	"os"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
+	prometheustelemetry "github.com/meshery/meshery/server/models/telemetry/prometheus"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils"
+	"github.com/meshery/schemas/models/core"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -31,15 +31,14 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		LogLevel: logLevel,
 	})
 	if err != nil {
-		logrus.Error(err)
-		os.Exit(1)
+		return machines.NoOp, nil, models.ErrInitLogger(err)
 	}
 
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	userUUID := user.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 
 	connPayload, err := utils.Cast[connections.ConnectionPayload](data)
 	if err != nil {
@@ -64,9 +63,9 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
-	promClient := models.NewPrometheusClient(&log)
+	promClient := prometheustelemetry.New(promConn.URL, promCred.APIKeyOrBasicAuth, log)
 
-	err = promClient.Validate(ctx, promConn.URL, promCred.APIKeyOrBasicAuth)
+	_, err = promClient.Health(ctx)
 
 	if err != nil && !connPayload.SkipCredentialVerification {
 		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrPrometheusScan(err)}).Build(), models.ErrPrometheusScan(err)

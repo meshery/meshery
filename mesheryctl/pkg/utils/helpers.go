@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -51,16 +52,18 @@ const (
 	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 
 	// Documentation URLs
-	docsBaseURL                    = "https://docs.meshery.io/"
-	rootUsageURL                   = docsBaseURL + "reference/mesheryctl"
-	perfUsageURL                   = docsBaseURL + "reference/mesheryctl/perf"
-	systemUsageURL                 = docsBaseURL + "reference/mesheryctl/system"
-	systemStopURL                  = docsBaseURL + "reference/mesheryctl/system/stop"
-	systemUpdateURL                = docsBaseURL + "reference/mesheryctl/system/update"
-	systemResetURL                 = docsBaseURL + "reference/mesheryctl/system/reset"
-	systemStatusURL                = docsBaseURL + "reference/mesheryctl/system/status"
-	systemRestartURL               = docsBaseURL + "reference/mesheryctl/system/restart"
-	meshUsageURL                   = docsBaseURL + "reference/mesheryctl/mesh"
+	docsBaseURL      = "https://docs.meshery.io/"
+	rootUsageURL     = docsBaseURL + "reference/mesheryctl"
+	perfUsageURL     = docsBaseURL + "reference/mesheryctl/perf"
+	systemUsageURL   = docsBaseURL + "reference/mesheryctl/system"
+	systemStopURL    = docsBaseURL + "reference/mesheryctl/system/stop"
+	systemUpdateURL  = docsBaseURL + "reference/mesheryctl/system/update"
+	systemResetURL   = docsBaseURL + "reference/mesheryctl/system/reset"
+	systemStatusURL  = docsBaseURL + "reference/mesheryctl/system/status"
+	systemRestartURL = docsBaseURL + "reference/mesheryctl/system/restart"
+	// No dedicated page exists for `mesheryctl mesh`; point at the command
+	// reference index rather than a 404.
+	meshUsageURL                   = docsBaseURL + "reference/mesheryctl"
 	expUsageURL                    = docsBaseURL + "reference/mesheryctl/exp"
 	filterUsageURL                 = docsBaseURL + "reference/mesheryctl/filter"
 	filterImportURL                = docsBaseURL + "reference/mesheryctl/filter/import"
@@ -85,36 +88,37 @@ const (
 	providerResetURL               = docsBaseURL + "reference/mesheryctl/system/provider/reset"
 	providerSwitchURL              = docsBaseURL + "reference/mesheryctl/system/provider/switch"
 	tokenUsageURL                  = docsBaseURL + "reference/mesheryctl/system/token"
-	modelUsageURL                  = docsBaseURL + "reference/mesheryctl/system/model"
-	modelListURL                   = docsBaseURL + "reference/mesheryctl/system/model/list"
-	modelImportURl                 = docsBaseURL + "reference/mesheryctl/system/model/import"
-	modelViewURL                   = docsBaseURL + "reference/mesheryctl/system/model/view"
+	modelUsageURL                  = docsBaseURL + "reference/mesheryctl/model"
+	modelListURL                   = docsBaseURL + "reference/mesheryctl/model/list"
+	modelImportURl                 = docsBaseURL + "reference/mesheryctl/model/import"
+	modelViewURL                   = docsBaseURL + "reference/mesheryctl/model/view"
 	registryUsageURL               = docsBaseURL + "reference/mesheryctl/registry"
 	registryPublishURL             = docsBaseURL + "reference/mesheryctl/registry/publish"
 	registryGenerateURL            = docsBaseURL + "reference/mesheryctl/registry/generate"
 	registryUpdateURL              = docsBaseURL + "reference/mesheryctl/registry/update"
-	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
-	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/mesheryctl/relationships/generate"
-	relationshipViewURL            = docsBaseURL + "reference/mesheryctl/relationships/view"
+	registryPurgeURL               = docsBaseURL + "reference/mesheryctl/registry/purge"
+	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationship"
+	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/mesheryctl/relationship/generate"
+	relationshipViewURL            = docsBaseURL + "reference/mesheryctl/relationship/view"
 	workspaceUsageURL              = docsBaseURL + "reference/mesheryctl/workspace"
 	workspaceCreateURL             = docsBaseURL + "reference/mesheryctl/workspace/create"
 	workspaceListURL               = docsBaseURL + "reference/mesheryctl/workspace/list"
-	environmentUsageURL            = docsBaseURL + "reference/mesheryctl/exp/environment"
-	environmentCreateURL           = docsBaseURL + "reference/mesheryctl/exp/environment/create"
-	environmentDeleteURL           = docsBaseURL + "reference/mesheryctl/exp/environment/delete"
-	environmentListURL             = docsBaseURL + "reference/mesheryctl/exp/environment/list"
-	environmentViewURL             = docsBaseURL + "reference/mesheryctl/exp/environment/view"
-	componentUsageURL              = docsBaseURL + "reference/mesheryctl/exp/components"
-	componentListURL               = docsBaseURL + "reference/mesheryctl/exp/components/list"
-	componentSearchURL             = docsBaseURL + "reference/mesheryctl/exp/components/search"
-	componentViewURL               = docsBaseURL + "reference/mesheryctl/exp/components/view"
-	connectionUsageURL             = docsBaseURL + "reference/mesheryctl/connections"
-	connectionDeleteURL            = docsBaseURL + "reference/mesheryctl/connections/delete"
-	connectionListURL              = docsBaseURL + "reference/mesheryctl/connections/list"
-	expRelationshipUsageURL        = docsBaseURL + "reference/mesheryctl/exp/relationship"
-	expRelationshipGenerateURL     = docsBaseURL + "reference/mesheryctl/exp/relationship/generate"
-	expRelationshipViewURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/view"
-	expRelationshipListURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/list"
+	environmentUsageURL            = docsBaseURL + "reference/mesheryctl/environment"
+	environmentCreateURL           = docsBaseURL + "reference/mesheryctl/environment/create"
+	environmentDeleteURL           = docsBaseURL + "reference/mesheryctl/environment/delete"
+	environmentListURL             = docsBaseURL + "reference/mesheryctl/environment/list"
+	environmentViewURL             = docsBaseURL + "reference/mesheryctl/environment/view"
+	componentUsageURL              = docsBaseURL + "reference/mesheryctl/component"
+	componentListURL               = docsBaseURL + "reference/mesheryctl/component/list"
+	componentSearchURL             = docsBaseURL + "reference/mesheryctl/component/search"
+	componentViewURL               = docsBaseURL + "reference/mesheryctl/component/view"
+	connectionUsageURL             = docsBaseURL + "reference/mesheryctl/connection"
+	connectionDeleteURL            = docsBaseURL + "reference/mesheryctl/connection/delete"
+	connectionListURL              = docsBaseURL + "reference/mesheryctl/connection/list"
+	expRelationshipUsageURL        = docsBaseURL + "reference/mesheryctl/relationship"
+	expRelationshipGenerateURL     = docsBaseURL + "reference/mesheryctl/relationship/generate"
+	expRelationshipViewURL         = docsBaseURL + "reference/mesheryctl/relationship/view"
+	expRelationshipListURL         = docsBaseURL + "reference/mesheryctl/relationship/list"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -164,6 +168,7 @@ const (
 	cmdRegistryPublish          cmdType = "registry publish"
 	cmdRegistryGenerate         cmdType = "registry generate"
 	cmdRegistryUpdate           cmdType = "registry update"
+	cmdRegistryPurge            cmdType = "registry purge"
 	cmdConnection               cmdType = "connection"
 	cmdConnectionList           cmdType = "connection list"
 	cmdConnectionDelete         cmdType = "connection delete"
@@ -264,6 +269,15 @@ var (
 
 var CfgFile string
 
+// IsLocalProvider reports whether the given provider name refers to the
+// built-in local provider. Accepts both the canonical name ("Local") and the
+// legacy alias ("None") so client commands keep working against older Meshery
+// servers and pre-rename ~/.meshery/config.yaml entries.
+func IsLocalProvider(name string) bool {
+	return strings.EqualFold(name, models.LocalProviderName) ||
+		strings.EqualFold(name, models.LocalProviderLegacyAlias)
+}
+
 // GetActiveConfigPath returns the meshconfig path selected for the current command.
 // Prefer the explicit CLI flag value, then the config file Viper has already loaded,
 // and finally fall back to the default meshconfig path.
@@ -294,13 +308,19 @@ var TemplateContext = config.Context{
 	Version:    "latest",
 }
 
+// Services is the built-in fallback docker-compose definition used when the install
+// docker-compose file cannot be downloaded. The provider list is sourced from the
+// canonical install/providers.env via DefaultProviderBaseURLs (see providers_gen.go);
+// edit providers.env and run `make providers-propagate` rather than hardcoding URLs here.
+//
+//go:generate python3 ../../../install/scripts/sync-provider-urls.py
 var Services = map[string]Service{
 	"meshery": {
 		Image:  "meshery/meshery:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Environment: []string{
-			"PROVIDER_BASE_URLS=https://cloud.layer5.io",
-			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012 meshery-nighthawk:10013",
+			"PROVIDER_BASE_URLS=" + DefaultProviderBaseURLs,
+			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-kuma:10007 meshery-traefik-mesh:10006 meshery-cilium:10012 meshery-nighthawk:10013",
 			"EVENT=mesheryLocal",
 			"PORT=9081",
 		},
@@ -327,11 +347,6 @@ var Services = map[string]Service{
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10004:10004"},
 	},
-	"meshery-app-mesh": {
-		Image:  "meshery/meshery-app-mesh:stable-latest",
-		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
-		Ports:  []string{"10005:10005"},
-	},
 	"meshery-traefik-mesh": {
 		Image:  "meshery/meshery-traefik-mesh:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
@@ -341,16 +356,6 @@ var Services = map[string]Service{
 		Image:  "meshery/meshery-kuma:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10007:10007"},
-	},
-	"meshery-osm": {
-		Image:  "meshery/meshery-osm:stable-latest",
-		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
-		Ports:  []string{"10009:10009"},
-	},
-	"meshery-nginx-sm": {
-		Image:  "meshery/meshery-nginx-sm:stable-latest",
-		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
-		Ports:  []string{"10010:10010"},
 	},
 	"meshery-cilium": {
 		Image:  "meshery/meshery-cilium:stable-latest",
@@ -444,7 +449,7 @@ func SetFileLocation() error {
 	return nil
 }
 
-// NavigateToBroswer naviagtes to the endpoint displaying Meshery UI in the broswer.
+// NavigateToBrowser navigates to the endpoint displaying the Meshery UI in the browser.
 func NavigateToBrowser(endpoint string) error {
 	err := browser.OpenURL(endpoint)
 	return err
@@ -503,6 +508,24 @@ func IsValidSubcommand(available []*cobra.Command, sub string) bool {
 		}
 	}
 	return false
+}
+
+// SubcommandNames renders the names of available subcommands for use in an
+// "invalid subcommand" message, e.g. "generate, list, search, view".
+//
+// Callers pass the same slice they hand IsValidSubcommand, so the set a command
+// advertises cannot drift from the set it accepts. Hand-listing the names in the
+// message string is how `mesheryctl relationship` came to offer only "[view]"
+// while accepting four subcommands.
+func SubcommandNames(available []*cobra.Command) string {
+	names := make([]string, 0, len(available))
+	for _, s := range available {
+		if name := s.Name(); name != "" {
+			names = append(names, name)
+		}
+	}
+	sort.Strings(names)
+	return strings.Join(names, ", ")
 }
 
 // ContentTypeIsHTML Checks if the response is an HTML resposnse
@@ -699,7 +722,7 @@ func GetName(mesheryServerUrl, configuration string) (map[string]string, error) 
 	return nameIdMap, nil
 }
 
-// Delete configuration from meshery server endpoint /api/{configurations}/{id}
+// DeleteConfiguration deletes configuration from meshery server endpoint /api/{configurations}/{id}
 func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
 	url := mesheryServerUrl + "/api/" + configuration + "/" + id
 	req, err := NewRequest("DELETE", url, nil)
@@ -734,7 +757,7 @@ func ValidId(mesheryServerUrl, args string, configuration string) (string, bool,
 	return args, isID, nil
 }
 
-// ValidId - Check if args is a valid name or a valid name prefix and returns the full name and ID
+// ValidName - Check if args is a valid name or a valid name prefix and returns the full name and ID
 func ValidName(mesheryServerUrl, args string, configuration string) (string, string, bool, error) {
 	isName := false
 	nameIdMap, err := GetName(mesheryServerUrl, configuration)
@@ -795,7 +818,6 @@ func RunSelectPrompt(label string, items []string) (int, error) {
 func ParseURLGithub(URL string) (string, string, error) {
 	// GitHub URL:
 	// - https://github.com/meshery/meshery/blob/master/.goreleaser.yml
-	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
 	parsedURL, err := url.Parse(URL)
 	if err != nil {
 		return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
@@ -821,7 +843,7 @@ func ParseURLGithub(URL string) (string, string, error) {
 	return URL, "", ErrParsingUrl(errors.New("only github urls are supported"))
 }
 
-// Indicate an ongoing Process at a given time on CLI
+// CreateDefaultSpinner creates a spinner that indicates an ongoing process on the CLI
 func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
 
@@ -830,7 +852,7 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	return s
 }
 
-// Get Meshery Session Data/Details (Adapters)
+// GetSessionData gets Meshery session data/details (adapters)
 func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
@@ -1116,13 +1138,7 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 		"meshery-nsm": map[string]interface{}{
 			"enabled": false,
 		},
-		"meshery-nginx-sm": map[string]interface{}{
-			"enabled": false,
-		},
 		"meshery-traefik-mesh": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-app-mesh": map[string]interface{}{
 			"enabled": false,
 		},
 		"meshery-nighthawk": map[string]interface{}{
@@ -1259,6 +1275,18 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 			break
 		}
 
+		// Same reasoning as display.listPageHandler: without a terminal there is
+		// nobody to press the key, and keyboard.GetKeys fails on /dev/tty rather
+		// than blocking. Stop after this page instead of turning a successful
+		// listing into a non-zero exit.
+		if !IsInteractiveTerminal() {
+			Log.Infof(
+				"Showing page %d only: paging through results needs an interactive terminal. Use --page to select a page.",
+				startIndex/pageSize+1,
+			)
+			break
+		}
+
 		keysEvents, err := keyboard.GetKeys(10)
 		if err != nil {
 			return err
@@ -1332,7 +1360,7 @@ func IsValidUrl(path string) bool {
 	return u.Scheme != "" && u.Host != ""
 }
 
-// get current k8s context
+// GetCurrentK8sContext gets current k8s context
 func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 	if client == nil {
 		return "", fmt.Errorf("kubernetes client is nil")

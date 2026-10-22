@@ -8,46 +8,36 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/utils"
+	system "github.com/meshery/schemas/models/v1beta1/system"
 	"github.com/spf13/viper"
 )
 
-// Version defines the Json payload structure for version api\
-type Version struct {
-	Build          string `json:"build,omitempty"`
-	Latest         string `json:"latest,omitempty"`
-	Outdated       *bool  `json:"outdated,omitempty"`
-	CommitSHA      string `json:"commitsha,omitempty"`
-	ReleaseChannel string `json:"release_channel,omitempty"`
-}
-
-// swagger:route GET /api/system/version SystemAPI idGetSystemVersion
-// Handle GET request for system/server version
-//
-// Returns the running Meshery version
-// responses:
-// 	200: mesheryVersionRespWrapper
-
 // ServerVersionHandler handles the version api request for the server
 func (h *Handler) ServerVersionHandler(w http.ResponseWriter, _ *http.Request) {
-	// Default values incase any errors
-	version := &Version{
-		Build:          viper.GetString("BUILD"),
-		CommitSHA:      viper.GetString("COMMITSHA"),
-		ReleaseChannel: viper.GetString("RELEASE_CHANNEL"),
+	build := viper.GetString("BUILD")
+	commitSHA := viper.GetString("COMMITSHA")
+	releaseChannel := viper.GetString("RELEASE_CHANNEL")
+
+	version := &system.SystemVersion{}
+	if build != "" {
+		version.Build = &build
+	}
+	if commitSHA != "" {
+		version.Commitsha = &commitSHA
+	}
+	if releaseChannel != "" {
+		version.ReleaseChannel = &releaseChannel
 	}
 
-	// if r.Method != http.MethodGet {
-	//      w.WriteHeader(http.StatusNotFound)
-	//      return
-	// }
-
 	// compare the server build with the target build
-	isOutdated, latestVersion, err := CheckLatestVersion(version.Build)
+	isOutdated, latestVersion, err := CheckLatestVersion(build)
 	if err != nil {
 		h.log.Error(err)
 	} else {
 		// Add "Latest" and "Outdated" fields to the response
-		version.Latest = latestVersion
+		if latestVersion != "" {
+			version.Latest = &latestVersion
+		}
 		version.Outdated = isOutdated
 	}
 
@@ -56,7 +46,7 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, _ *http.Request) {
 	err = json.NewEncoder(w).Encode(version)
 	if err != nil {
 		h.log.Error(models.ErrEncoding(err, "server-version"))
-		http.Error(w, models.ErrEncoding(err, "server-version").Error(), http.StatusNotFound)
+		writeMeshkitError(w, models.ErrEncoding(err, "server-version"), http.StatusNotFound)
 	}
 }
 

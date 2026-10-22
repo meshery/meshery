@@ -3,6 +3,9 @@ title: mesheryctl-workspace-view
 display_title: false
 command: workspace
 subcommand: view
+categories: [mesheryctl-workspace]
+aliases:
+- /reference/references/mesheryctl/workspace/view/
 ---
 
 # mesheryctl workspace view
@@ -15,8 +18,10 @@ View a workspace by its ID or name.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace view [workspace-name|workspace-id] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,32 +30,40 @@ mesheryctl workspace view [workspace-name|workspace-id] [flags]
 View details of a specific workspace by ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace view [workspace-id]
+<div class='clipboardjs'>
+mesheryctl workspace view [workspace-id] --orgId [orgId]
 
+</div>
 </div>
 </pre> 
 
-View details of a specific workspace by name (requires --orgId)
+View details of a specific workspace by name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace view [workspace-name] --orgId [orgId]
 
+</div>
 </div>
 </pre> 
 
 View details of a specific workspace in JSON format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace view [workspace-id] --output-format json
+<div class='clipboardjs'>
+mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json
 
+</div>
 </div>
 </pre> 
 
 View details of a specific workspace and save it to a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace view [workspace-id] --output-format json --save
+<div class='clipboardjs'>
+mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --save
 
+</div>
 </div>
 </pre> 
 
@@ -59,7 +72,7 @@ mesheryctl workspace view [workspace-id] --output-format json --save
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help                   help for view
-      --orgId string           (optional) organization ID to search workspace by name
+      --orgId string           (required) organization ID
   -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
   -s, --save                   (optional) save output as a JSON/YAML file
 
@@ -78,4 +91,4 @@ mesheryctl workspace view [workspace-id] --output-format json --save
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

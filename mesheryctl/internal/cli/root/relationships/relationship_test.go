@@ -45,7 +45,7 @@ func TestRelationship(t *testing.T) {
 		{
 			Name:             "Display count of registered relationships empty",
 			Args:             []string{"--count"},
-			URL:              "/api/meshmodels/relationships",
+			URL:              "/api/registry/relationships",
 			Fixture:          "list.relationship.api.empty.response.golden",
 			ExpectedResponse: "list.count.relationship.empty.output.golden",
 			ExpectError:      false,
@@ -54,7 +54,7 @@ func TestRelationship(t *testing.T) {
 		{
 			Name:             "Display count of registered relationships",
 			Args:             []string{"--count"},
-			URL:              "/api/meshmodels/relationships",
+			URL:              "/api/registry/relationships",
 			Fixture:          "list.relationship.api.response.golden",
 			ExpectedResponse: "list.count.relationship.output.golden",
 			ExpectError:      false,

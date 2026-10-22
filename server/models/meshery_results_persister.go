@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/core"
 )
 
 type MesheryResultsPersister struct {
@@ -16,22 +16,22 @@ type MesheryResultsPersister struct {
 // MesheryResultPage - represents a page of meshery results
 type MesheryResultPage struct {
 	Page       uint64           `json:"page"`
-	PageSize   uint64           `json:"page_size"`
-	TotalCount int              `json:"total_count"`
+	PageSize   uint64           `json:"pageSize"`
+	TotalCount int              `json:"totalCount"`
 	Results    []*MesheryResult `json:"results"`
 }
 
 type localMesheryResultDBRepresentation struct {
-	ID                 uuid.UUID  `json:"meshery_id,omitempty"`
+	ID                 core.Uuid  `json:"mesheryId,omitempty"`
 	Name               string     `json:"name,omitempty"`
 	Mesh               string     `json:"mesh,omitempty"`
-	PerformanceProfile *uuid.UUID `json:"performance_profile,omitempty"`
-	Result             []byte     `json:"runner_results,omitempty" gorm:"type:JSONB"`
+	PerformanceProfile *core.Uuid `json:"performanceProfile,omitempty"`
+	Result             []byte     `json:"runnerResults,omitempty" gorm:"type:JSONB"`
 
-	ServerMetrics     interface{} `json:"server_metrics,omitempty" gorm:"type:JSONB"`
-	ServerBoardConfig interface{} `json:"server_board_config,omitempty" gorm:"type:JSONB"`
+	ServerMetrics     interface{} `json:"serverMetrics,omitempty" gorm:"type:JSONB"`
+	ServerBoardConfig interface{} `json:"serverBoardConfig,omitempty" gorm:"type:JSONB"`
 
-	TestStartTime          *time.Time         `json:"test_start_time,omitempty"`
+	TestStartTime          *time.Time         `json:"testStartTime,omitempty"`
 	PerformanceProfileInfo PerformanceProfile `json:"-" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
 }
 
@@ -77,7 +77,7 @@ func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, log log
 	return marshalMesheryResultsPage(resultPage), err
 }
 
-func (mrp *MesheryResultsPersister) GetResult(key uuid.UUID, log logger.Handler) (*MesheryResult, error) {
+func (mrp *MesheryResultsPersister) GetResult(key core.Uuid, log logger.Handler) (*MesheryResult, error) {
 	var lres localMesheryResultDBRepresentation
 
 	err := mrp.DB.Table("meshery_results").Find(&lres).Where("id = ?", key).Error
@@ -85,7 +85,7 @@ func (mrp *MesheryResultsPersister) GetResult(key uuid.UUID, log logger.Handler)
 	return res, err
 }
 
-func (mrp *MesheryResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
+func (mrp *MesheryResultsPersister) WriteResult(key core.Uuid, result []byte) error {
 	var data MesheryResult
 	if err := json.Unmarshal(result, &data); err != nil {
 		return err

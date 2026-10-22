@@ -3,6 +3,9 @@ title: mesheryctl-design-list
 display_title: false
 command: design
 subcommand: list
+categories: [mesheryctl-design]
+aliases:
+- /reference/references/mesheryctl/design/list/
 ---
 
 # mesheryctl design list
@@ -15,8 +18,10 @@ Display list of all available designs.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design list [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,40 +30,50 @@ mesheryctl design list [flags]
 Display a list of all available designs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design list
 
+</div>
 </div>
 </pre> 
 
 Display a list of all available designs with verbose output
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design list --verbose
 
+</div>
 </div>
 </pre> 
 
 Display a list of all available designs with specified page number (10 designs per page by default)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design list --page [pange-number]
 
+</div>
 </div>
 </pre> 
 
 Display a list of all available designs with custom page size (10 designs per page by default)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design list --pagesize [page-size]
 
+</div>
 </div>
 </pre> 
 
 Display only the count of all available designs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design list --count
 
+</div>
 </div>
 </pre> 
 
@@ -70,7 +85,7 @@ mesheryctl design list --count
   -h, --help           help for list
   -p, --page int       (optional) List next set of designs with --page (default 1)
       --pagesize int   (optional) Number of designs to be displayed per page (default 10)
-  -v, --verbose        (optional) Display full length user identifiers and detailed timestamps
+  -v, --verbose        (optional) Display full length owner identifiers and detailed timestamps
 
 </div>
 </pre>
@@ -88,8 +103,8 @@ mesheryctl design list --count
 ## Screenshots
 
 Usage of mesheryctl design list
-![pattern-list-usage](/reference/images/patternList.png)
+![pattern-list-usage](../../../images/patternList.png)
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

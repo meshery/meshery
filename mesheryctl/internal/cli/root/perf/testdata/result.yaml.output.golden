@@ -2,7 +2,7 @@
   name: istio_1630091576784
   mesh: istio
   performanceprofile: 303c3586-fd65-4846-91de-0c67b9b152a5
-  userid: 4ea5c578-1cd4-4078-a08d-fbe1ca553663
+  owner: 4ea5c578-1cd4-4078-a08d-fbe1ca553663
   runnerresults:
     url: https://github.com
     loadgenerator: fortio
@@ -32,7 +32,7 @@
   name: istio_1630011460550
   mesh: istio
   performanceprofile: a947dff3-1415-4ca6-8922-e35b3232bd78
-  userid: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
+  owner: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
   runnerresults:
     url: https://localhost:10000
     loadgenerator: fortio
@@ -62,7 +62,7 @@
   name: istio_1630008597557
   mesh: istio
   performanceprofile: f331c784-aba0-4944-8d7d-ae264221bcbf
-  userid: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
+  owner: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
   runnerresults:
     url: https://localhost:10001
     loadgenerator: fortio
@@ -92,7 +92,7 @@
   name: istio_1629986124516
   mesh: istio
   performanceprofile: null
-  userid: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
+  owner: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
   runnerresults:
     url: https://localhost:10000
     loadgenerator: fortio
@@ -122,7 +122,7 @@
   name: istio_1629986124516
   mesh: istio
   performanceprofile: null
-  userid: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
+  owner: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
   runnerresults:
     url: https://localhost:10000
     loadgenerator: fortio
@@ -152,7 +152,7 @@
   name: octarine_1629905150548
   mesh: octarine
   performanceprofile: null
-  userid: 145496f6-f5d2-40b9-841e-1b5471b60411
+  owner: 145496f6-f5d2-40b9-841e-1b5471b60411
   runnerresults:
     url: https://www.youtube.com/watch?v=-f16Qlg8v6Q&ab_channel=StudyMD
     loadgenerator: fortio
@@ -182,7 +182,7 @@
   name: kuma_1629905088843
   mesh: kuma
   performanceprofile: null
-  userid: 145496f6-f5d2-40b9-841e-1b5471b60411
+  owner: 145496f6-f5d2-40b9-841e-1b5471b60411
   runnerresults:
     url: https://www.youtube.com:443/watch?v=-f16Qlg8v6Q&ab_channel=StudyMD
     loadgenerator: wrk2
@@ -214,7 +214,7 @@
   name: istio_1629903571922
   mesh: istio
   performanceprofile: 0bc8f57c-38a5-415d-a994-87a3791a931e
-  userid: 145496f6-f5d2-40b9-841e-1b5471b60411
+  owner: 145496f6-f5d2-40b9-841e-1b5471b60411
   runnerresults:
     url: https://www.youtube.com/watch?v=-f16Qlg8v6Q&ab_channel=StudyMD
     loadgenerator: fortio
@@ -244,7 +244,7 @@
   name: linkerd_1629903535068
   mesh: linkerd
   performanceprofile: null
-  userid: 145496f6-f5d2-40b9-841e-1b5471b60411
+  owner: 145496f6-f5d2-40b9-841e-1b5471b60411
   runnerresults:
     url: https://www.youtube.com/watch?v=-f16Qlg8v6Q&ab_channel=StudyMD
     loadgenerator: fortio
@@ -274,7 +274,7 @@
   name: consul_1629903480840
   mesh: consul
   performanceprofile: null
-  userid: 145496f6-f5d2-40b9-841e-1b5471b60411
+  owner: 145496f6-f5d2-40b9-841e-1b5471b60411
   runnerresults:
     url: https://guides.github.com/features/mastering-markdown/
     loadgenerator: fortio
@@ -304,7 +304,7 @@
   name: consul_1629903024533
   mesh: consul
   performanceprofile: null
-  userid: 145496f6-f5d2-40b9-841e-1b5471b60411
+  owner: 145496f6-f5d2-40b9-841e-1b5471b60411
   runnerresults:
     url: https://guides.github.com/features/mastering-markdown/
     loadgenerator: fortio
@@ -334,7 +334,7 @@
   name: istio_1629902923911
   mesh: istio
   performanceprofile: null
-  userid: 145496f6-f5d2-40b9-841e-1b5471b60411
+  owner: 145496f6-f5d2-40b9-841e-1b5471b60411
   runnerresults:
     url: https://github.com/meshery/meshery/issues/3972
     loadgenerator: fortio
@@ -364,7 +364,7 @@
   name: No mesh_1629812585899
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -394,7 +394,7 @@
   name: No mesh_1629812560411
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -424,7 +424,7 @@
   name: No mesh_1629785430145
   mesh: ""
   performanceprofile: null
-  userid: 24187768-ce8a-41f0-be74-c537c8e41adc
+  owner: 24187768-ce8a-41f0-be74-c537c8e41adc
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -454,7 +454,7 @@
   name: No mesh_1629699211991
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -484,7 +484,7 @@
   name: No mesh_1629699211991
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -514,7 +514,7 @@
   name: No mesh_1629699211991
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -544,7 +544,7 @@
   name: No mesh_1629699211991
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -574,7 +574,7 @@
   name: No mesh_1629699211991
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -604,7 +604,7 @@
   name: No mesh_1629698942959
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -634,7 +634,7 @@
   name: No mesh_1629698942959
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -664,7 +664,7 @@
   name: No mesh_1629698942959
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -694,7 +694,7 @@
   name: No mesh_1629698942959
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -724,7 +724,7 @@
   name: No mesh_1629698569178
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio

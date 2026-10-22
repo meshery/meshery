@@ -3,6 +3,9 @@ title: mesheryctl-system-channel
 display_title: false
 command: system
 subcommand: channel
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/channel/
 ---
 
 # mesheryctl system channel
@@ -15,8 +18,10 @@ Subscribe to a release channel. Choose between either 'stable' or 'edge' channel
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,40 +30,50 @@ mesheryctl system channel [flags]
 Subscribe to release channel or version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel
 
+</div>
 </div>
 </pre> 
 
 To set the channel
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
+</div>
 </div>
 </pre> 
 
 To pin/set the channel to a specific version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel set stable-v0.6.0
 
+</div>
 </div>
 </pre> 
 
 To view release channel and version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel view
 
+</div>
 </div>
 </pre> 
 
 To switch release channel and version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
+</div>
 </div>
 </pre> 
 
@@ -85,4 +100,4 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

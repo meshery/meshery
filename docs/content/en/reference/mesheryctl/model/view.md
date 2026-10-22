@@ -3,6 +3,9 @@ title: mesheryctl-model-view
 display_title: false
 command: model
 subcommand: view
+categories: [mesheryctl-model]
+aliases:
+- /reference/references/mesheryctl/model/view/
 ---
 
 # mesheryctl model view
@@ -15,8 +18,10 @@ View a model queried by its name or ID
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model view [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,24 +30,30 @@ mesheryctl model view [flags]
 View a specific model from current provider by using [model-name] or [model-id] in default format yaml
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model view [model-name]
 
 </div>
+</div>
 </pre> 
 
-View a specific model in specifed format
+View a specific model in specified format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model view [model-name] --output-format [json|yaml]
 
+</div>
 </div>
 </pre> 
 
 View a specific model in specified format and save it as a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model view [model-name] --output-format [json|yaml] --save
 
+</div>
 </div>
 </pre> 
 
@@ -69,4 +80,4 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

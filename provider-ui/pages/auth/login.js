@@ -19,7 +19,7 @@ const IconContainer = styled("div")(() => ({
 }));
 
 function AlertUnauthenticatedSession() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [countDown, setCountDown] = useState(3);
 
   useEffect(() => {
@@ -34,10 +34,6 @@ function AlertUnauthenticatedSession() {
     }, 1000);
     return () => clearTimeout(timer);
   });
-
-  useEffect(() => {
-    setOpen(true);
-  }, []);
 
   const handleClose = () => {
     setOpen(false);

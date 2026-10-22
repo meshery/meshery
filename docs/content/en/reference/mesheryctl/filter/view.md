@@ -3,6 +3,9 @@ title: mesheryctl-filter-view
 display_title: false
 command: filter
 subcommand: view
+categories: [mesheryctl-filter]
+aliases:
+- /reference/references/mesheryctl/filter/view/
 ---
 
 # mesheryctl filter view
@@ -11,11 +14,14 @@ View filter(s)
 
 ## Synopsis
 
-Displays the contents of a specific filter based on name or id
+Displays the contents of a specific filter based on name or id.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter view [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,47 +31,50 @@ View the specified WASM filter
 A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter view "[filter-name | ID]"
 
+</div>
 </div>
 </pre> 
 
 View all filter files
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter view --all
 
+</div>
 </div>
 </pre> 
 
 View all filter files in json
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter view --all --output-format json
 
+</div>
 </div>
 </pre> 
 
 View all filter files in json and save it to a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter view --all --output-format json -s
 
+</div>
 </div>
 </pre> 
 
 //View multi-word named filter files. Multi-word filter names should be enclosed in quotes
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter view "filter name"
 
 </div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-        
-
 </div>
 </pre> 
 
@@ -94,4 +103,4 @@ mesheryctl filter view "filter name"
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

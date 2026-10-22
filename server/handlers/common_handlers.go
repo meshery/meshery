@@ -3,23 +3,16 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 	"path/filepath"
 
 	"github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models"
 )
-
-// swagger:route GET /user/login UserAPI idGetUserLogin
-// Handlers GET request for User login
-//
-// Redirects user for auth or issues session
-// responses:
-// 	200:
 
 // LoginHandler redirects user for auth or issues session
 func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request, p models.Provider, fromMiddleWare bool) {
@@ -29,13 +22,6 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request, p models.
 	}
 	p.InitiateLogin(w, r, fromMiddleWare)
 }
-
-// swagger:route GET /api/user/logout UserAPI idGetUserLogout
-// Handlers GET request for User logout
-//
-// Redirects user for auth or issues session
-// responses:
-// 	200:
 
 // LogoutHandler destroys the session and redirects to home.
 func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *models.User, p models.Provider) {
@@ -68,20 +54,6 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
-// swagger:route GET /api/user/token UserAPI idGetTokenProvider
-// Handle GET request for tokens
-//
-// Returns token from the actual provider in a file
-// response:
-// 	200:
-
-// swagger:route POST /api/user/token UserAPI idPostTokenProvider
-// Handle POST request for tokens
-//
-// Receives token from the actual provider
-// response:
-// 	200:
-
 // TokenHandler Receives token from the actual provider
 func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request, p models.Provider, fromMiddleWare bool) {
 	// if r.Method != http.MethodGet {
@@ -91,65 +63,36 @@ func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request, p models.
 	p.TokenHandler(w, r, fromMiddleWare)
 }
 
-// swagger:route GET /api/system/viewFile system viewFile idFileViewer
-// Handles GET request to view a file.
-//
-// Retrieves and displays the content of the specified file as plain text.
-//
-// responses:
-//   200:
-//   500:
-
 // ViewHandler handles viewing the file content.
 func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.Request) {
-	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
-
-	if err != nil {
-		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
-		return
-	}
-	file, err := os.Open(filePath)
-	if err != nil {
-		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	defer func() {
-		if err := file.Close(); err != nil {
-			h.log.Error(err)
-		}
-	}()
-
-	// Set the content type to plain text
-	responseWriter.Header().Set("Content-Type", "text/plain")
-
-	// Copy the file content to the response writer
-	_, err = io.Copy(responseWriter, file)
-	if err != nil {
-		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	h.serveFile(responseWriter, request, false)
 }
-
-// swagger:route GET /api/system/downloadFile system downloadFile idDownloadFile
-// Handles GET request to download a file.
-//
-// Retrieves and initiates a download for the specified file.
-//
-// responses:
-//   200:
-//   500:
 
 // DownloadHandler handles downloading the file.
 func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *http.Request) {
+	h.serveFile(responseWriter, request, true)
+}
+
+// serveFile streams the file named by the "file" query parameter, confined by
+// SafeOpenFile to the directories these endpoints are permitted to serve. When
+// asAttachment is true it sets a Content-Disposition header so browsers download
+// the file instead of rendering it inline.
+func (h *Handler) serveFile(responseWriter http.ResponseWriter, request *http.Request, asAttachment bool) {
 	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
 	if err != nil {
-		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
+		writeMeshkitError(responseWriter, ErrInvalidFileRequest(err), http.StatusBadRequest)
 		return
 	}
 
-	file, err := os.Open(filePath)
+	// SafeOpenFile validates and opens in one step, so there is no window in
+	// which a validated path could be swapped for a symlink before opening.
+	file, err := SafeOpenFile(filePath)
 	if err != nil {
-		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		if errors.Is(err, errFileOutsideAllowedDirs) {
+			writeMeshkitError(responseWriter, ErrUnsafeFilePath(err), http.StatusBadRequest)
+		} else {
+			writeMeshkitError(responseWriter, ErrReadFileContent(err, filePath), http.StatusInternalServerError)
+		}
 		return
 	}
 	defer func() {
@@ -158,18 +101,24 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 		}
 	}()
 
-	fileName := filepath.Base(filePath)
 	responseWriter.Header().Set("Content-Type", "text/plain")
-	responseWriter.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
+	if asAttachment {
+		// Derive the download name from the requested path, not the opened file,
+		// so a symlinked or rotated log keeps the name the client asked for.
+		fileName := filepath.Base(filepath.Clean(filePath))
+		responseWriter.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%q", fileName))
+	}
 
-	_, err = io.Copy(responseWriter, file)
-	if err != nil {
-		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+	// If io.Copy fails mid-stream the response status and headers are already
+	// committed, so log the error for diagnostics and return rather than
+	// attempting a second write.
+	if _, err := io.Copy(responseWriter, file); err != nil {
+		h.log.Error(models.ErrCopy(err, filePath))
 		return
 	}
 }
 
-// Deep-link and redirect support to land user on their originally requested page post authentication instead of dropping user on the root (home) page.
+// GetRefURL provides deep-link and redirect support to land the user on their originally requested page post-authentication instead of dropping them on the root (home) page.
 func GetRefURL(req *http.Request) string {
 	return core.EncodeRefUrl(*req.URL)
 }

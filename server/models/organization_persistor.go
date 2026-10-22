@@ -4,18 +4,20 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
-	"github.com/meshery/schemas/models/v1beta1/organization"
+	"github.com/meshery/schemas/models/v1beta2/organization"
 )
 
-// MesheryApplicationPersister is the persister for persisting
-// applications on the database
+// OrganizationPersister is the persister for persisting
+// organizations on the database
 type OrganizationPersister struct {
 	DB *database.Handler
 }
 
-// GetMesheryApplications returns all of the applications
+// GetOrganizations returns all of the organizations
 func (op *OrganizationPersister) GetOrganizations(search, order string, page, pageSize uint64, updatedAfter string) ([]byte, error) {
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
@@ -60,7 +62,7 @@ func (op *OrganizationPersister) SaveOrganization(org *organization.Organization
 	return marshalOrganizations([]organization.Organization{*org}), op.DB.Save(org).Error
 }
 
-func (op *OrganizationPersister) GetOrganzation(id uuid.UUID) ([]byte, error) {
+func (op *OrganizationPersister) GetOrganzation(id core.Uuid) ([]byte, error) {
 	var organization organization.Organization
 	err := op.DB.First(&organization, id).Error
 	return marshalOrganization(&organization), err

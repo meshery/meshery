@@ -3,6 +3,9 @@ title: mesheryctl-connection-create
 display_title: false
 command: connection
 subcommand: create
+categories: [mesheryctl-connection]
+aliases:
+- /reference/references/mesheryctl/connection/create/
 ---
 
 # mesheryctl connection create
@@ -11,11 +14,14 @@ Create a new connection
 
 ## Synopsis
 
-Create a new connection to a Kubernetes cluster or other supported platform
+Create a new connection to a Kubernetes cluster or other supported platform.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection create [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,37 +30,47 @@ mesheryctl connection create [flags]
 Create a new Kubernetes connection using a specific type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection create --type aks
 
 </div>
+</div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection create --type eks
 
 </div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl connection create --type gke
-
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl connection create --type gke
+
+</div>
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection create --type minikube
 
+</div>
 </div>
 </pre> 
 
 Create a connection with a token
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection create --type gke --token auth.json
 
+</div>
 </div>
 </pre> 
 
@@ -81,4 +97,4 @@ mesheryctl connection create --type gke --token auth.json
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

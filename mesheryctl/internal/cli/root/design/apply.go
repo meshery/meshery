@@ -30,7 +30,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/core"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -41,14 +40,15 @@ var (
 )
 
 var linkDocPatternApply = map[string]string{
-	"link":    "![pattern-apply-usage](/reference/images/patternApply.png)",
+	"link":    "![pattern-apply-usage](../../../images/patternApply.png)",
 	"caption": "Usage of mesheryctl design apply",
 }
 
 var applyCmd = &cobra.Command{
 	Use:   "apply",
 	Short: "Apply design file",
-	Long:  `Apply design will trigger deploy of the design file`,
+	Long: `Apply design will trigger deploy of the design file.
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/design/apply`,
 	Example: `
 // apply a design file
 mesheryctl design apply -f [file | URL]
@@ -99,8 +99,7 @@ mesheryctl design apply [design-name]
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				utils.Log.Error(ErrDesignNotFound(patternName))
-				return nil
+				return ErrDesignNotFound(patternName)
 			} else if len(response.Patterns) == 1 {
 				designFile = response.Patterns[0].PatternFile
 			} else {
@@ -211,7 +210,11 @@ mesheryctl design apply [design-name]
 				}
 				err = json.Unmarshal(body, &response)
 				if err != nil {
-					return utils.ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
+					return utils.ErrUnmarshal(err)
+				}
+
+				if len(response) == 0 || response[0] == nil {
+					return ErrDesignNotFound(file)
 				}
 
 				// setup pattern file here

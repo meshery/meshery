@@ -3,19 +3,24 @@ title: mesheryctl-system-provider-switch
 display_title: false
 command: system
 subcommand: provider
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/provider/switch/
 ---
 
 # mesheryctl system provider switch
 
-switch provider and redeploy
+Switch provider and redeploy
 
 ## Synopsis
 
 Switch provider of context in focus and redeploy Meshery. Run `mesheryctl system provider list` to see the available providers.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system provider switch [provider] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,8 +29,10 @@ mesheryctl system provider switch [provider] [flags]
 Switch provider and redeploy Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system provider switch [provider]
 
+</div>
 </div>
 </pre> 
 
@@ -52,4 +59,4 @@ mesheryctl system provider switch [provider]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

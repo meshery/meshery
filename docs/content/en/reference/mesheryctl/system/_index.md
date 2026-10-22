@@ -3,6 +3,9 @@ title: mesheryctl-system
 display_title: false
 command: system
 subcommand: nil
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/
 ---
 
 # mesheryctl system
@@ -12,10 +15,13 @@ Configure, deploy, and operate Meshery deployments
 ## Synopsis
 
 Manage the state and configuration of Meshery server, components, and client.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -42,4 +48,4 @@ mesheryctl system [flags]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
@@ -33,12 +35,12 @@ func (da *DefaultConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx i
 func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
 
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	userUUID := user.ID
 
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
@@ -53,7 +55,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 		credName, _ := payload.CredentialSecret["name"].(string)
 		credential, err = provider.SaveUserCredential(token, &models.Credential{
 			Name:   credName,
-			UserId: &userUUID,
+			UserId: userUUID,
 			Type:   payload.Kind,
 			Secret: payload.CredentialSecret,
 		})
@@ -65,7 +67,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 			WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), _err
 	}
 
-	var credentialID *uuid.UUID
+	var credentialID *core.Uuid
 	if ok {
 		idStr, isStr := existingCredID.(string)
 		if !isStr {
@@ -86,7 +88,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 		}
 		credentialID = &parsed
 	} else {
-		credentialID = credential.ID
+		credentialID = &credential.ID
 	}
 
 	connection, err := provider.SaveConnection(&connections.ConnectionPayload{

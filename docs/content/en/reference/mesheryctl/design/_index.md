@@ -3,6 +3,9 @@ title: mesheryctl-design
 display_title: false
 command: design
 subcommand: nil
+categories: [mesheryctl-design]
+aliases:
+- /reference/references/mesheryctl/design/
 ---
 
 # mesheryctl design
@@ -15,8 +18,10 @@ Manage cloud and cloud native infrastructure using predefined designs.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,32 +30,40 @@ mesheryctl design [flags]
 Apply design file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design apply --file [path to design file | URL of the file]
 
+</div>
 </div>
 </pre> 
 
 Delete design file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design delete --file [path to design file]
 
+</div>
 </div>
 </pre> 
 
 View design file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design view [design name | ID]
 
+</div>
 </div>
 </pre> 
 
 List all designs:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design list
 
+</div>
 </div>
 </pre> 
 
@@ -76,4 +89,4 @@ mesheryctl design list
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

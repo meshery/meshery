@@ -3,6 +3,9 @@ title: mesheryctl-version
 display_title: false
 command: version
 subcommand: nil
+categories: [mesheryctl-version]
+aliases:
+- /reference/references/mesheryctl/version/
 ---
 
 # mesheryctl version
@@ -14,8 +17,10 @@ Show Meshery CLI and Server versions
 Version of Meshery command line client - mesheryctl.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl version [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,8 +29,10 @@ mesheryctl version [flags]
 To view the current version and SHA of release binary of mesheryctl client 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl version
 
+</div>
 </div>
 </pre> 
 
@@ -51,8 +58,8 @@ mesheryctl version
 ## Screenshots
 
 Usage of mesheryctl version
-![version-usage](/reference/images/version.png)
+![version-usage](../../images/version.png)
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

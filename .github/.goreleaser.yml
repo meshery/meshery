@@ -53,7 +53,11 @@ builds:
       - arm64
 archives:
   - id: stable
-    format: tar.gz
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
     name_template: >-
       {{ .ProjectName }}_{{.Version}}_
       {{- title .Os }}_
@@ -61,9 +65,6 @@ archives:
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
-    format_overrides:
-      - goos: windows
-        format: zip
 checksum:
   name_template: "checksums.txt"
 snapshot:

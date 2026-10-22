@@ -1,16 +1,24 @@
 import { urlEncodeParams } from '@/utils/utils';
 import { api, mesheryApiPath } from './index';
 import { ctxUrl } from '@/utils/multi-ctx';
-import { initiateQuery } from './utils';
+import { appendInvalidatesTags, initiateQuery } from './utils';
 import _ from 'lodash';
 
 const TAGS = {
   DESIGNS: 'designs',
-};
+} as const;
 
 export const designsApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.DESIGNS],
+    endpoints: {
+      // `importDesign` (POST /api/pattern/import) is the schemas-generated
+      // endpoint - the request is NOT re-declared here. `appendInvalidatesTags`
+      // adds the local `designs` tag the design lists provide on top of the tags
+      // schemas already declares. This is the cache-tag ergonomics wrapper
+      // AGENTS.md permits, not a second declaration of the request.
+      importDesign: appendInvalidatesTags('importDesign', { type: TAGS.DESIGNS }),
+    },
   })
   .injectEndpoints({
     endpoints: (builder) => ({
@@ -41,12 +49,12 @@ export const designsApi = api
             page: queryArg.page,
             pagesize: queryArg.pagesize,
             order: queryArg.order,
-            user_id: queryArg.user_id,
+            userId: queryArg.userId,
             expandUser: queryArg.expandUser,
             metrics: queryArg.metrics,
             search: queryArg.search,
             visibility: queryArg.visibility,
-            orgID: queryArg.orgID,
+            orgId: queryArg.orgId,
             shared: queryArg.shared || false,
           });
           return mesheryApiPath(`extensions/api/content/patterns?${params}`);
@@ -75,8 +83,8 @@ export const designsApi = api
       }),
       deployPattern: builder.mutation({
         query: ({
-          pattern_file,
-          pattern_id,
+          patternFile,
+          patternId,
           selectedK8sContexts,
           verify = false,
           dryRun = false,
@@ -89,16 +97,16 @@ export const designsApi = api
           ),
           method: 'POST',
           body: {
-            pattern_file,
-            pattern_id,
+            patternFile,
+            patternId,
           },
         }),
         invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
       undeployPattern: builder.mutation({
         query: ({
-          pattern_file,
-          pattern_id,
+          patternFile,
+          patternId,
           selectedK8sContexts,
           verify = false,
           dryRun = false,
@@ -110,8 +118,8 @@ export const designsApi = api
           ),
           method: 'DELETE',
           body: {
-            pattern_file,
-            pattern_id,
+            patternFile,
+            patternId,
           },
         }),
         invalidatesTags: [{ type: TAGS.DESIGNS }],
@@ -145,14 +153,6 @@ export const designsApi = api
           url: mesheryApiPath(`patterns/delete`),
           method: 'POST',
           body: queryArg.deleteBody,
-        }),
-        invalidatesTags: [{ type: TAGS.DESIGNS }],
-      }),
-      importPattern: builder.mutation({
-        query: (queryArg) => ({
-          url: mesheryApiPath(`pattern/import`),
-          method: 'POST',
-          body: queryArg.importBody,
         }),
         invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
@@ -207,9 +207,13 @@ export const {
   usePublishPatternMutation,
   useUnpublishPatternMutation,
   useDeletePatternMutation,
-  useImportPatternMutation,
+  // Re-exported from the schemas-generated client (see the `importDesign`
+  // enhancement above) so design-import callers stay on the canonical
+  // `@meshery/schemas` mutation instead of a locally declared one.
+  useImportDesignMutation,
   useUpdatePatternFileMutation,
   useUploadPatternFileMutation,
   useDeletePatternFileMutation,
   useDownloadPatternFileQuery,
+  useEvaluateRelationshipsMutation,
 } = designsApi;

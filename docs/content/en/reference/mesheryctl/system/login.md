@@ -3,6 +3,9 @@ title: mesheryctl-system-login
 display_title: false
 command: system
 subcommand: login
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/login/
 ---
 
 # mesheryctl system login
@@ -17,8 +20,10 @@ Authenticate to the Local or a Remote Provider of a Meshery Server
 The authentication mode is web-based browser flow
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system login [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -27,16 +32,20 @@ mesheryctl system login [flags]
 Login with the Meshery Provider of your choice: the Local Provider or a Remote Provider.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system login
 
+</div>
 </div>
 </pre> 
 
 Login with the Meshery Provider by specifying it via -p or --provider flag.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system login -p Meshery
 
+</div>
 </div>
 </pre> 
 
@@ -45,7 +54,7 @@ mesheryctl system login -p Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help              help for login
-  -p, --provider string   login Meshery with specified provider (Layer5 or None)
+  -p, --provider string   login Meshery with specified provider (run 'mesheryctl system provider list' to see options)
 
 </div>
 </pre>
@@ -64,4 +73,4 @@ mesheryctl system login -p Meshery
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

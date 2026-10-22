@@ -3,6 +3,9 @@ title: mesheryctl-environment-delete
 display_title: false
 command: environment
 subcommand: delete
+categories: [mesheryctl-environment]
+aliases:
+- /reference/references/mesheryctl/environment/delete/
 ---
 
 # mesheryctl environment delete
@@ -15,8 +18,10 @@ Delete an environment by providing the environment ID
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment delete [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +30,10 @@ mesheryctl environment delete [flags]
 delete a new environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment delete [environmentId]
 
+</div>
 </div>
 </pre> 
 
@@ -51,4 +58,4 @@ mesheryctl environment delete [environmentId]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

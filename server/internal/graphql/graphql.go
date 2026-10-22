@@ -3,13 +3,11 @@ package graphql
 import (
 	"context"
 	"net/http"
-	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/gorilla/websocket"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/internal/graphql/generated"
 	"github.com/meshery/meshery/server/internal/graphql/resolver"
@@ -55,17 +53,11 @@ func New(opts Options) http.Handler {
 
 	srv := handler.New(generated.NewExecutableSchema(config))
 
+	// Only request/response transports. The schema has no `type Subscription`
+	// any more, so the graphql-ws WebSocket transport served nothing — and its
+	// upgrader accepted any Origin. Real-time surfaces use Server-Sent Events.
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})
-	srv.AddTransport(transport.Websocket{
-		KeepAlivePingInterval: 10 * time.Second,
-		Upgrader: websocket.Upgrader{
-			CheckOrigin: func(r *http.Request) bool {
-				// Allow any origin to establish websocket connection
-				return true
-			},
-		},
-	})
 
 	return srv
 }
