@@ -43,7 +43,7 @@ See [Importing Designs]({{< ref "guides/configuration-management/import-export-d
 <h4>3. Dependency Detection and Resolution</h4>
 <p>Deployment order comes from what the design declares. A component's <code>dependsOn</code> entries name other components of the same design, and each entry becomes an edge of the graph provisioning walks. Before anything is deployed, Meshery rejects a design whose dependencies name a component the design does not contain, name a component whose name is shared by more than one component, or form a cycle. The registrant plays no part in this: it decides who fulfills a component and what can be installed on the component's behalf, not what a component depends on.</p>
 
-<p>Installing what a component needs before applying it - its Operators and CRDs - is a separate, registrant-specific behavior. Meshery does it only when you leave <b>Include Dependencies</b> turned on for the deployment, and what it can install depends on the source of the model:</p>
+<p>Installing what a component needs before applying it - its Operators and CRDs - is a separate, registrant-specific behavior. Meshery Server does it unless the deploy request sets <code>skipCRD=true</code>, and what it can install depends on the source of the model. In Meshery UI, the <b>Include Dependencies</b> option in the deploy dialog currently applies only to the dry run; the deployment itself always installs dependencies:</p>
 
 <ul>
   <li><b>Artifact Hub:</b> Uses Helm Go client for Kubernetes Operator and CRD deployment via <code>ApplyHelmChart()</code>.</li>

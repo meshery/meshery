@@ -38,10 +38,11 @@ The **Status** column holds a selector for each Connection. Choose the state you
 | Goal | Choose | Result |
 |---|---|---|
 | Start managing a discovered or registered Connection | **Connected** | Meshery connects and, for a Kubernetes cluster, starts MeshSync. |
-| Pause management temporarily | **Maintenance** | Meshery stops acting on the Connection but keeps it on record. |
 | Stop managing it but keep it | **Disconnected** | Meshery disconnects. Reconnect it later from the same selector. |
 | Stop Meshery from rediscovering it | **Ignored** | Meshery keeps the Connection on record and leaves it alone. |
 | Remove it | **Deleted** | Meshery deletes the Connection. You cannot transition it again. |
+
+The **Status** filter also lists **Maintenance**, but no current Connection kind offers a transition into it.
 
 For what each state means, see [States and the Lifecycle of Connections]({{< ref "concepts/logical/connections/index.md#states-and-the-lifecycle-of-connections" >}}).
 

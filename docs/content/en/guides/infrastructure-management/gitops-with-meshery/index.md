@@ -6,12 +6,14 @@ categories: [infrastructure]
 
 Meshery publishes two GitHub Actions that you can add to any workflow:
 
-- **Kanvas Snapshot** renders your Kubernetes manifests, Helm chart, or Docker Compose file as a Meshery Design and comments the image on your pull request, so reviewers see the change before it merges.
+- **Kanvas Snapshot** renders your Kubernetes manifests, Helm chart, or Docker Compose file as a Meshery Design and comments the image on pull requests that change those files, so reviewers see the change before it merges.
 - **Performance Testing with Meshery** deploys Meshery in the runner, runs a performance test against your service, and records the results, so you catch latency and throughput regressions before they ship.
 
-## Render a snapshot on each pull request
+## Render a snapshot on pull requests
 
 The [Kanvas Snapshot action](https://github.com/layer5labs/kanvas-snapshot) needs a Layer5 Cloud API token and a GitHub token that can comment on pull requests. Store the Layer5 Cloud token as a repository secret, for example `MESHERY_TOKEN`.
+
+The action runs helper scripts from its own repository, so the workflow checks that repository out into an `action` folder next to yours. The workflow below runs on pull requests that change files under `deploy/`:
 
 ```yaml
 name: Kanvas Snapshot
@@ -23,10 +25,17 @@ on:
 jobs:
   snapshot:
     runs-on: ubuntu-latest
+    # Pull requests from forks get no repository secrets, so skip them.
+    if: github.event.pull_request.head.repo.full_name == github.repository
     permissions:
+      contents: read
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: layer5labs/kanvas-snapshot
+          path: action
       - name: Render snapshot
         uses: layer5labs/kanvas-snapshot@master
         with:
@@ -37,7 +46,9 @@ jobs:
           filePath: "deploy"
 ```
 
-Set `application_type` to `Kubernetes Manifest`, `Helm Chart`, or `Docker Compose` to match what `filePath` points at. To render a design that already exists in Meshery, pass its ID as `designID` instead. To snapshot a Helm chart from your terminal instead of a workflow, see the [Helm Snapshot plugin]({{< ref "extensions/extensions/helm-snapshot/index.md" >}}).
+Set `application_type` to `Kubernetes Manifest`, `Helm Chart`, or `Docker Compose` to match what `filePath` points at. When `filePath` is a folder, the action merges only the `.yaml` and `.yml` files directly inside it and skips subfolders, so point it at the folder that holds your manifests.
+
+GitHub does not pass repository secrets to workflows that pull requests from forks trigger, so the `if` condition skips those runs instead of letting them fail. To render a design that already exists in Meshery, pass its ID as `designID` instead. To snapshot a Helm chart from your terminal instead of a workflow, see the [Helm Snapshot plugin]({{< ref "extensions/extensions/helm-snapshot/index.md" >}}).
 
 ## Run a performance test in your pipeline
 

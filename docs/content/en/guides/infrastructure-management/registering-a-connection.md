@@ -119,7 +119,7 @@ Grafana and Prometheus Connections you register with the wizard power Meshery's 
 
 ## Registering Connections from the CLI
 
-Prefer the terminal? `mesheryctl connection create --type aks|eks|gke|minikube` builds a kubeconfig for that cluster and registers it with Meshery. It uses `az` for AKS and `aws` for EKS, creates a service account through your current `kubectl` context for GKE, and reads your local kubeconfig for minikube. It prompts for the cluster details it needs. `mesheryctl` can also list, view, and delete Connections. See [`mesheryctl connection`]({{< ref "reference/references/mesheryctl/connection/_index.md" >}}).
+Prefer the terminal? `mesheryctl connection create --type <type>` builds a kubeconfig for that cluster and registers it with Meshery. `<type>` is one of `aks`, `eks`, `gke`, or `minikube`, for example `mesheryctl connection create --type eks`. It uses `az` for AKS and `aws` for EKS, creates a service account through your current `kubectl` context for GKE, and reads your local kubeconfig for minikube. It prompts for the cluster details it needs. `mesheryctl` can also list, view, and delete Connections. See [`mesheryctl connection`]({{< ref "reference/references/mesheryctl/connection/_index.md" >}}).
 
 ## Related
 

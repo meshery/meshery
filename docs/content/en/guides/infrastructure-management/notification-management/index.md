@@ -53,8 +53,8 @@ Type in **Filter Notifications** to search, or filter by **severity**, **status*
 
 | Status | Filter value | Meaning |
 |---|---|---|
-| Unread | `unread` | Notifications you have not opened. |
-| Read | `read` | Notifications you have opened or marked as read. |
+| Unread | `unread` | Notifications that are not marked as read. |
+| Read | `read` | Notifications marked as read. Opening a notification does not mark it as read. |
 
 ## Act on notifications
 
@@ -80,7 +80,7 @@ The avatar on a notification shows who triggered it.
 | User avatar + Meshery logo      | User-triggered event - the user performed an action, and Meshery processed it (e.g., registering a Kubernetes context). |
 | User avatar only (rare)         | User-triggered event with no system action involved. |
 
-Meshery shows your avatar when the event carries a user ID, and the Meshery logo when it carries a system ID.
+Meshery shows the user's avatar when the event carries a user ID and Meshery can look that user up, and the Meshery logo when the event carries a system ID.
 
 <details close><summary>Visual Representation of System/User-triggered Notifications</summary>
   <br>

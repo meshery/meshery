@@ -103,12 +103,12 @@ Meshery manages WASM filters for data plane proxies for:
 - <strong>Maintainability</strong>: To extend the functionality you don't have to change the entire codebase.
 - <strong>Diversity</strong>: WASM filters can be easily compiled with many popular programming languages like C/C++ and Rust.
 - <strong>Reliability and isolation</strong>: WASM filters are deployed into VM and hence they are isolated from the Envoy process. For instance if the WASM filter crashes it will not impact the envoy process.
-- <strong>Security</strong>: The WASM filter uses a well defined API to connect with the host i.e. Envoy proxy which can be modified only a limited number of connections.
+- <strong>Security</strong>: The WASM filter uses a well-defined API to connect with the host i.e. Envoy proxy which can be modified only a limited number of connections.
 - <strong>Speed</strong>: WASM runs at near-native speed.
 
 ### Q: What is Envoy proxy?
 
-An <strong>Envoy</strong> is a high performance, programmable L3/L4 and L7 proxy that a number of service mesh use as their data plane. See the service mesh landscape for a complete list. Connection and request handling are at the core of Envoy's focus. Envoy has a pluggable filter module that allows the incorporation of WebAssembly filters that provide additional traffic filtering intelligence. Often this includes higher order functions such as access control, transformation, data enrichment, auditing and more.
+An <strong>Envoy</strong> is a high-performance, programmable L3/L4 and L7 proxy that a number of service mesh use as their data plane. See the service mesh landscape for a complete list. Connection and request handling are at the core of Envoy's focus. Envoy has a pluggable filter module that allows the incorporation of WebAssembly filters that provide additional traffic filtering intelligence. Often this includes higher-order functions such as access control, transformation, data enrichment, auditing and more.
 
 ### Q: What is WASM?
 
