@@ -113,9 +113,10 @@ As a self-service engineering platform, Meshery enables collaborative design and
 # Comment out if you don't want the "print entire section" link enabled.
 [outputs]
   home = ["HTML", "RSS", "SITEMAP", "llms", "llmsfull", "md"]
+  page = ["HTML", "md"]
   section = ["HTML", "RSS", "md"]
-  taxonomy = []
-  term = []
+  taxonomy = ["HTML", "md"]
+  term = ["HTML", "md"]
 
 [outputFormats.llms]
   baseName       = "llms"
