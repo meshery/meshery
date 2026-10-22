@@ -133,14 +133,18 @@ function MesheryPatterns({
     data: patternsData,
     isLoading: ispatternsLoading,
     refetch: getPatterns,
-  } = useGetPatternsQuery({
-    page: page,
-    pagesize: pageSize,
-    search: search,
-    order: sortOrder,
-    visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
-    populate: 'pattern_file',
-  });
+  } = useGetPatternsQuery(
+    {
+      page: page,
+      pagesize: pageSize,
+      search: search,
+      order: sortOrder,
+      visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
+      populate: 'pattern_file',
+    },
+    // A denied viewer sees DefaultError; don't fetch the designs it hides.
+    { skip: !canViewPage },
+  );
   const [clonePattern] = useClonePatternMutation();
   const [publishCatalog] = usePublishPatternMutation();
   const [unpublishCatalog] = useUnpublishPatternMutation();
