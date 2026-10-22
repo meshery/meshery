@@ -130,9 +130,10 @@ jobs:
 
       - name: Configure mesheryctl
         env:
+          MESHERY_URL: ${{ vars.MESHERY_URL }}
           MESHERY_TOKEN: ${{ secrets.MESHERY_TOKEN }}
         run: |
-          mesheryctl system context create ci --url ${{ vars.MESHERY_URL }} --platform kubernetes --set --yes
+          mesheryctl system context create ci --url "$MESHERY_URL" --platform kubernetes --set --yes
           jq -n --arg token "$MESHERY_TOKEN" '{"meshery-provider": "Meshery", "token": $token}' > "$RUNNER_TEMP/auth.json"
           chmod 600 "$RUNNER_TEMP/auth.json"
           mesheryctl system token create ci -f "$RUNNER_TEMP/auth.json" --set
@@ -141,7 +142,7 @@ jobs:
         run: mesheryctl design import -f deploy/app.yaml -n "my-app"
 ```
 
-Store the server URL as a repository variable named `MESHERY_URL`, and the token as a secret named `MESHERY_TOKEN`.
+Store the server URL as a repository variable named `MESHERY_URL`, and the token as a secret named `MESHERY_TOKEN`. The job passes both to the shell as environment variables, rather than expanding `${{ vars.MESHERY_URL }}` inside the script, so a crafted variable value can't inject commands into a step that holds your token.
 
 ## Related
 

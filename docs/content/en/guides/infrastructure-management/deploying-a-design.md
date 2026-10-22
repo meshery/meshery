@@ -33,7 +33,7 @@ Meshery also posts the result to the [Notification Center]({{< ref "guides/infra
 
 ## Understand partial results
 
-Meshery deploys components in the order their `dependsOn` entries describe, and deploys independent components in parallel. When a component fails, Meshery withholds every component that depends on it and reports each one as withheld, along with the failure that caused it. Components that don't depend on the failed one deploy normally. When you select several clusters, Meshery deploys to each cluster independently, so a failure on one cluster doesn't stop the others.
+Meshery deploys components in the order their `dependsOn` entries describe, and deploys independent components in parallel. When a component fails, Meshery withholds every component that depends on it and reports each one as withheld, along with the failure that caused it. Components that don't depend on the failed one deploy normally. When you select several clusters, Meshery applies each component to every selected cluster. If a component fails on any one cluster, Meshery treats it as failed and withholds its dependents on every cluster, including the clusters where it succeeded. Components outside that dependency chain still deploy on every cluster.
 
 To fix a partial deployment, correct the failed component and deploy the design again. Meshery applies the design declaratively, so components that already exist are updated in place.
 
@@ -49,7 +49,7 @@ From the design's actions, click **Validate Design** to run only the schema chec
 2. Open the design's actions and click **Undeploy**.
 3. Step through the same wizard. Select the clusters to remove the design from, review the dry run, and confirm.
 
-Undeploying deletes the resources that the design describes from the selected clusters. The design itself stays in Meshery, so you can deploy it again later.
+Undeploying deletes the resources that the design describes from the selected clusters, removing dependents before what they depend on. If a component can't be removed, Meshery leaves what it depends on in place, so part of the design can keep running. Check the summary on the last step for failed and withheld components before you assume the cluster is clean. The design itself stays in Meshery, so you can deploy it again later.
 
 {{% alert color="warning" title="Deploying from mesheryctl" %}}
 `mesheryctl design deploy`, `mesheryctl design apply`, and `mesheryctl design undeploy` do not currently tell Meshery Server which clusters to target, and Meshery Server rejects a deployment that names no cluster. Deploy and undeploy designs from Meshery UI.

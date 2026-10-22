@@ -87,6 +87,8 @@ Remove access at whichever level fits:
 - To stop sharing one cluster but keep the rest of the Environment shared, unassign the Connection from the Environment.
 - To stop sharing every cluster in an Environment, unassign the Environment from the Workspace.
 
+A cluster can belong to several Environments, and an Environment can be attached to several Workspaces. To revoke a team's access to a cluster completely, remove every path between them: check each Environment that holds the cluster and each Workspace those Environments are attached to.
+
 ## Related
 
 - [Environments]({{< ref "concepts/logical/environments.md" >}}) and [Workspaces]({{< ref "concepts/logical/workspaces.md" >}})
