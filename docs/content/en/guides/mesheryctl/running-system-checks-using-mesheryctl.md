@@ -4,138 +4,102 @@ categories: [mesheryctl]
 description: Run pre-flight and post-deployment system health checks using Meshery's CLI, mesheryctl.
 ---
 
-Meshery's CLI, `mesheryctl`, includes commands for verifying system readiness for a Meshery deployment and health checks to confirm the health of an existing Meshery deployment. Whether you have yet to deploy Meshery or have already deployed Meshery, `mesheryctl system check` is a useful utility to ensure that your Meshery deployments are healthy.
+`mesheryctl system check` verifies that your machine is ready to deploy Meshery and that an existing Meshery deployment is healthy. Run it before you deploy Meshery, and again whenever Meshery misbehaves.
 
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl system check</div></div>
-</pre>
-<p><br/><p>
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">Verify environment pre/post-deployment of Meshery.
+Run `mesheryctl system check --help` to see every flag, or see the [`mesheryctl system check` reference]({{< ref "reference/mesheryctl/_index.md" >}}).
 
-Usage:
-mesheryctl system check [flags]
+## Check your machine before you deploy
 
-Flags:
---adapter Check status of Meshery adapters
--h, --help help for check
---operator Check status of Meshery operators
---pre Verify environment readiness to deploy Meshery
---preflight Verify environment readiness to deploy Meshery
+Run the pre-deployment checks with `--preflight` (or its alias `--pre`):
 
-Global Flags:
---config string path to config file (default "/Users/navendu/.meshery/config.yaml")
--c, --context string (optional) temporarily change the current context.
--v, --verbose verbose output
--y, --yes (optional) assume yes for user interactive prompts.</div></div>
-</pre>
+```bash
+mesheryctl system check --preflight
+```
 
-## Deployment checks
+`mesheryctl` runs these checks:
 
-`mesheryctl system check` command can run two types of system checks. A pre-deployment check which verifies the environment to deploy Meshery and a post-deployment check which runs validation checks on a running Meshery deployment.
+- **Docker:** Docker is running and `docker-compose` is available.
+- **Kubernetes API:** `mesheryctl` can create a Kubernetes client from your kubeconfig and query the Kubernetes API.
+- **Kubernetes version:** your cluster and `kubectl` meet Meshery's minimum versions.
 
-### Pre-deployment checks
+It ends with `Meshery prerequisites met` or `Meshery prerequisites not met`. Only the checks for your context's platform count toward that result. For example, a failed Kubernetes check does not fail the preflight when your context's platform is `docker`.
 
-Pre-deployment checks runs checks on the environment and verifies whether it is ready for deploying Meshery.
+## Check a running deployment
 
-The following checks are done here:
+Run `mesheryctl system check` with no flags after you deploy Meshery:
 
-- Docker health checks: Checks for the availability of Docker and docker-compose in the user's machine
-- Kubernetes health checks: Checks for the availability of a Kubernetes cluster and checks if Meshery can initialize a Kubernetes client
-- Kubernetes version checks: Checks if kubectl and the Kubernetes version are higher than the minimum supported versions
+```bash
+mesheryctl system check
+```
 
-Pre-deployment checks are run with the `--preflight` flag as shown below:
+`mesheryctl` runs the checks that match your context's platform:
 
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl system check --preflight</div></div>
-</pre>
+- **Docker platform:** the Docker checks.
+- **Kubernetes platform:** the Kubernetes API and version checks, plus the Meshery Operator checks.
+- **Both platforms:**
+  - **Meshery version:** Meshery Server and `mesheryctl` are on the latest release.
+  - **Meshery components:** each Meshery Adapter that is registered with Meshery Server is running and reachable.
 
-### Post-deployment checks
+## Check one part of a deployment
 
-Post-deployment checks are run after deploying Meshery in the user's environment. These checks ensure that the running deployment of Meshery and Meshery adapters are working as expected.
+Each of these flags runs only its own check:
 
-In addition to the pre-flight checks, the following checks are also run in this check:
+| To check | Run |
+| --- | --- |
+| Every registered Meshery Adapter | `mesheryctl system check --adapters` (or `--components`) |
+| One Meshery Adapter | `mesheryctl system check --adapter meshery-istio`, or include the port: `--adapter meshery-istio:10000` |
+| Meshery Operator, MeshSync, and Meshery Broker (Kubernetes only) | `mesheryctl system check --operator` |
 
-- Meshery version checks: Checks the version of Meshery server and CLI and shows if a new version is available
-- Meshery Adapter health checks: Checks if all the specified adapters are deployed and reachable
-
-Post-deployment checks are run as shown below:
-
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl system check</div></div>
-</pre>
-
-## Additional checks
-
-To check the status of the deployed adapters only, users can leverage the `--adapter` flag as shown below:
-
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl system check --adapter</div></div>
-</pre>
-
-Users can also narrow down the tests to just check the status of the Meshery operator deployed on their Kubernetes cluster:
-
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl system check --operator</div></div>
-</pre>
+The adapter checks ask Meshery Server for your session, so log in with `mesheryctl system login` first.
 
 ## FAQ
 
-##### Question: While running `mesheryctl system check --preflight` it says I didn't install Kubernetes, but I have Docker installed and the test returned "Meshery prerequisites met". Is that all good?
+### `mesheryctl system check --preflight` says Kubernetes is missing, but it also says "Meshery prerequisites met". Is that all right?
 
-**Answer**: _Yes, as long as you've Docker installed, it's fine to run Meshery. But you will need a Kubernetes cluster to handle tasks such as deploying infrastructure and so on, if you want to do them via Meshery._
+Yes, if your context's platform is `docker`. Meshery runs on Docker alone. You need a Kubernetes cluster only to manage Kubernetes infrastructure with Meshery.
 
-##### Question: I ran a preflight check to see if I satisfy all requirements for Meshery in my system. It returned positive results but I couldn't start Meshery. What to do?
+### The preflight passed, but Meshery doesn't start. What should I do?
 
-**Answer**: _Make sure if you've configured your system to run Meshery in smooth manner. For configuration, do check out the docs site and [this page]({{< ref "installation/_index.md" >}}) to see instructions related to the platform you use._
+Check the installation steps for your platform in [Installation]({{< ref "installation/_index.md" >}}), then see [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation/index.md" >}}).
 
-##### Question: Do I need a Kubernetes cluster or will a Docker host suffice for Meshery deployments?
+### Do I need a Kubernetes cluster, or is a Docker host enough?
 
-**Answer**: _Meshery's [performance management]({{< ref "guides/performance-management/managing-performance/index.md" >}}) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
+[Performance management]({{< ref "guides/performance-management/managing-performance/index.md" >}}) works without a Kubernetes cluster. Managing cloud native infrastructure needs at least one Kubernetes cluster connected to Meshery.
 
-##### Question: What are Meshery's production deployment requirements?
+### What does Meshery need in production?
 
-**Answer**: _One or more Kubernetes clusters. A stateful set for Meshery Server in order to persist performance test results. See [#2451](https://github.com/meshery/meshery/issues/2451)._
+See [Production Deployments]({{< ref "installation/production/_index.md" >}}).
 
-##### Question: For system checks, do I need any add-ons to pass the check?
+### Do I need any add-ons to pass the checks?
 
-**Answer**: _Not necessary. Basic requirements are enough to pass the check._
+No. The checks only need Docker or Kubernetes, depending on your platform.
 
-##### Question: The Adapter check is failing, it returns "Auth token not found".
+### The adapter check fails with "Auth token not found". What should I do?
 
-**Answer**: _You can log in to Meshery using `mesheryctl system login` which would generate an OAuth token. Once the OAuth token is generated, the check will start to function_
+Run `mesheryctl system login` to get a token, then run the check again. See [Authenticating Meshery via CLI]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}).
 
-##### Question: I have a Kubernetes cluster enabled but Meshery couldn't reach the cluster and the checks are failing! What to do?
+### My Kubernetes cluster is running, but Meshery can't reach it and the checks fail. What should I do?
 
-**Answer**: _To resolve this error, you can upload your kubeconfig file in the Meshery UI under settings and Meshery will reconfigure to use your Kubernetes cluster._
+Connect the cluster to Meshery. In Meshery UI, click **Add Cluster** in the context switcher, or go to **Lifecycle** > **Connections** and create a Kubernetes connection, then import your kubeconfig. From the CLI, run `mesheryctl connection create --type <aks|eks|gke|minikube>`. See [Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}).
 
-##### Question: Under Meshery Version test, I'm getting an error like "CLI is not up-to-date". Should I update mesheryctl often?
+### The Meshery version check says "CLI is not up-to-date". Should I update mesheryctl often?
 
-**Answer**: _Yes! You should update the mesheryctl often in order to run Meshery smoothly. The reason behind it is because not only the CLI is updated, but also the Meshery app. So it is advisable to update Meshery often._
+Yes. Keep `mesheryctl` on the same release as Meshery Server, and update both together. See [Upgrading Meshery]({{< ref "installation/upgrades/index.md" >}}).
 
-##### Question: Is it advisable to keep Meshery in sleep mode while running system checks?
+### Should Meshery be running when I run the checks?
 
-**Answer**: _Not necessary. It is good to keep Meshery up and running, else the system checks will fail to detect the Meshery version._
+Yes, for every check except `--preflight`. The version, adapter, and operator checks all talk to a running Meshery deployment.
 
-##### Question: What is the minimum version of k8s cluster and kubectl required to run Meshery?
+### What versions of Kubernetes and kubectl does Meshery need?
 
-**Answer**: _For current Meshery deployments, prefer one of the Kubernetes upstream-supported minor releases and keep `kubectl` aligned with your cluster under the Kubernetes version skew policy. See the [Kubernetes release history](https://kubernetes.io/releases/) for actively maintained minors._
+Use a Kubernetes minor release that upstream still supports, and keep `kubectl` within the [version skew policy](https://kubernetes.io/releases/version-skew-policy/) of your cluster. See the [Kubernetes release history](https://kubernetes.io/releases/) for the supported releases.
 
-##### Question: In the "Meshery Adapter" section of check, I could see only some Meshery adapters up and running and not all. Is this fine?
+### Only some Meshery Adapters show up in the check. Is that a problem?
 
-**Answer**: _Not a problem, if you feel you need to have all mesh adapters to be up running, you can do so by creating a new context `mesheryctl system context create [context-name] --set` (if you voluntarily deleted mesh adapters in your current context)_
+No. The check covers only the adapters that are registered with Meshery Server, and the default context deploys none. To deploy more, see [Multiple Adapters]({{< ref "installation/advanced/multiple-adapters.md" >}}).
 
-##### Question: I started Meshery fresh, didn't change any of the details in the context I have. But I see that all adapter checks are failing. What to do?
+### I started Meshery fresh, and every adapter check fails. What should I do?
 
-**Answer**: _Configure Meshery to use on your Kubernetes cluster, then upload the kubeconfig file via Meshery UI to notify Meshery to use that cluster. If that didn't work, feel free to [open up an issue](https://github.com/meshery/meshery/issues) in GitHub._
-
-### Suggested Reading
-
-For an exhaustive list of `mesheryctl` commands and syntax:
-
-- See [`mesheryctl` Command Reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
-
-Guides to using Meshery's various features and components.
+Connect a Kubernetes cluster to Meshery as described above, then run the check again. If it still fails, [open an issue](https://github.com/meshery/meshery/issues).
 
 {{< related-discussions tag="mesheryctl" >}}
-

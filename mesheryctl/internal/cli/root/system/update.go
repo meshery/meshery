@@ -37,7 +37,7 @@ var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Pull new Meshery images/manifest files.",
 	Long: `Pull new Meshery container images and manifests from artifact repository.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/update`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/update`,
 	Example: `
 // Pull new Meshery images from Docker Hub. This does not update mesheryctl. This command may be executed while Meshery is running.
 mesheryctl system update

@@ -33,6 +33,7 @@ var (
 	// ManifestsFolder is where the Kubernetes manifests are stored
 	ManifestsFolder = "manifests"
 	ReleaseTag      string
+	githubBaseURL   = "https://api.github.com"
 )
 
 type K8sCompose struct {
@@ -107,7 +108,7 @@ type Manifest struct {
 
 // GetManifestTreeURL returns the manifest tree url based on version
 func GetManifestTreeURL(version string) (string, error) {
-	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + version + "?recursive=1"
+	url := githubBaseURL + "/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + version + "?recursive=1"
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
@@ -117,6 +118,10 @@ func GetManifestTreeURL(version string) (string, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", errors.Wrap(err, "failed to read response body")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return "", ErrGitHubAPIResponse(resp.StatusCode, url, string(body))
 	}
 
 	var manLis ManifestList
@@ -144,6 +149,10 @@ func ListManifests(url string) ([]Manifest, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to read response body")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, ErrGitHubAPIResponse(resp.StatusCode, url, string(body))
 	}
 
 	var manLis ManifestList
@@ -733,14 +742,12 @@ func Startdockerdaemon(subcommand string) error {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 	} else {
-		// Assuming we are on macOS, try to start Docker from default path
-		cmd := exec.Command("/Applications/Docker.app/Contents/MacOS/Docker")
-		err := cmd.Start()
-		if err != nil {
+		// Assuming we are on macOS, try to start Docker
+		if err := exec.Command("open", "-a", "Docker").Run(); err != nil {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 		// wait for few seconds for docker to start
-		err = exec.Command("sleep", "30").Run()
+		err := exec.Command("sleep", "30").Run()
 		if err != nil {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}

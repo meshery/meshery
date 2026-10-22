@@ -613,10 +613,18 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	// if the ref points to some page other than under /extension then skip ref
 	refUrl, err := servercore.GetRefURLFromRequest(req)
 	l.Log.Infof("Referrer URL: %s , %v", refUrl, err)
+	// safePostLoginTarget is the same gate TokenHandler and the local provider
+	// use. The "/extension" prefix alone passes a raw string that http.Redirect
+	// then normalizes: "/extension/../../api/user/token" cleans onto the token
+	// endpoint, which re-enters TokenHandler with no token and wipes the session
+	// just minted here.
 	if strings.HasPrefix(refUrl, "/extension") {
-		l.Log.Infof("Redirecting to referrer %s", refUrl)
-		http.Redirect(res, req, refUrl, http.StatusFound)
-		return
+		if target, ok := safePostLoginTarget(refUrl, postLoginHost(req)); ok {
+			l.Log.Infof("Redirecting to referrer %s", target)
+			http.Redirect(res, req, target, http.StatusFound)
+			return
+		}
+		l.Log.Infof("Referrer %s is not a safe post-login destination, falling back", refUrl)
 	}
 
 	if redirectURL == "/" {
@@ -625,6 +633,37 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	}
 	l.Log.Infof("No source refs resolved , Redirecting to base extension page  %s", redirectURL)
 	http.Redirect(res, req, redirectURL, http.StatusFound)
+}
+
+// clearRefCookie removes the post-login ref cookie, so that neither an
+// abandoned login attempt nor a redeemed one can supply the destination of the
+// next one.
+func (l *RemoteProvider) clearRefCookie(w http.ResponseWriter) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     l.RefCookieName,
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   -1,
+	})
+}
+
+// persistRefCookie records this login attempt's post-login destination, and
+// deletes whatever a previous attempt left behind when this one carries none.
+// An empty value is never written: it would still parse as a present cookie on
+// the way back in and outrank the ?ref= the provider echoes back.
+func (l *RemoteProvider) persistRefCookie(w http.ResponseWriter, ref string) {
+	if ref == "" {
+		l.clearRefCookie(w)
+		return
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     l.RefCookieName,
+		Value:    ref,
+		Expires:  time.Now().Add(l.LoginCookieDuration),
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode, // sent on top-level cross-site GET back from the provider
+	})
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
@@ -647,22 +686,6 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 
 	ck, err := r.Cookie(TokenCookieName)
 	if err != nil || ck.Value == "" {
-		// Capture the originally-requested in-app path as the post-login
-		// redirect target. Meshery owns this state in a cookie on its own
-		// domain rather than round-tripping it through the remote provider's
-		// auth chain, where intermediate hops (e.g. custom-domain bounces)
-		// could drop or rewrite the value and land the user on a non-existent
-		// route after authentication. TokenHandler reads the cookie back when
-		// the provider redirects to /api/user/token.
-		http.SetCookie(w, &http.Cookie{
-			Name:     l.RefCookieName,
-			Value:    refURLqueryParam,
-			Expires:  time.Now().Add(l.LoginCookieDuration),
-			Path:     "/",
-			HttpOnly: true,
-			SameSite: http.SameSiteLaxMode, // sent on top-level cross-site GET back from the provider
-		})
-
 		queryParams := url.Values{
 			"source": []string{base64.RawURLEncoding.EncodeToString([]byte(baseCallbackURL))},
 		}
@@ -673,10 +696,27 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			queryParams.Set("meshery_version", mesheryVersion)
 		}
 
+		// The anonymous exit resolves its destination from this request's own
+		// ref and never returns through TokenHandler, so a cookie here would
+		// only outlive the attempt that set it and outrank the ?ref= a later
+		// Sign In carries - which is how mode=design got dropped. Clear it.
 		if supportsAnonymousUserSessions {
+			l.clearRefCookie(w)
 			l.InterceptLoginAndInitiateAnonymousUserSession(r, w)
 			return
 		}
+
+		// Capture the originally-requested in-app path as the post-login
+		// redirect target. Meshery owns this state in a cookie on its own
+		// domain rather than round-tripping it through the remote provider's
+		// auth chain, where intermediate hops (e.g. custom-domain bounces)
+		// could drop or rewrite the value and land the user on a non-existent
+		// route after authentication. TokenHandler reads the cookie back when
+		// the provider redirects to /api/user/token, and clears it there. A
+		// login that carries no ref deletes the cookie rather than leaving one:
+		// an abandoned earlier attempt would otherwise outrank this login's own
+		// fallback for the whole LoginCookieDuration.
+		l.persistRefCookie(w, refURLqueryParam)
 
 		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
 		w.Header().Set("Pragma", "no-cache")
@@ -1141,10 +1181,9 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 		return connections.Connection{}, err
 	}
 	if connection == nil {
-		// SaveConnection can return (nil, nil) when the remote provider answers
-		// 2xx but the connection page is empty or carries a null element. Guard
-		// the dereference below so a malformed response is a structured error,
-		// not a panic.
+		// SaveConnection returns (nil, nil) when a 2xx page's first entry is
+		// null. An empty page is already an error. Guard the dereference
+		// below so a malformed response is a structured error, not a panic.
 		err := ErrPersistConnection(fmt.Errorf("remote provider returned a nil connection for kubernetes context %q", conn.Name))
 		l.Log.Error(err)
 		return connections.Connection{}, err
@@ -4147,19 +4186,14 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		redirectURL = GetRedirectURLForNavigatorExtension(&providerProperties, l.Log)
 	}
 
-	// Post-login redirect target: read from the cookie set by InitiateLogin.
-	// resolvePostLoginRedirect's "/" fallback handles the missing-cookie case
-	// without us needing to trust any provider-side state. See
-	// selectPostLoginRefValue for the rationale.
-	redirectURL = resolvePostLoginRedirect(selectPostLoginRefValue(r, l.RefCookieName), redirectURL)
+	// Post-login redirect target. A ref cookie set by InitiateLogin wins; when
+	// it is absent or empty, selectPostLoginRefValue falls back to ?ref=. An
+	// absolute ref on Meshery's own host is reduced to its path and query.
+	// Refs on any other host are rejected.
+	redirectURL = resolvePostLoginRedirect(selectPostLoginRefValue(r, l.RefCookieName), redirectURL, postLoginHost(r))
 	// One-shot cookie: clear it now that we've resolved the destination so a
 	// stale value can't override the next login flow.
-	http.SetCookie(w, &http.Cookie{
-		Name:     l.RefCookieName,
-		Path:     "/",
-		HttpOnly: true,
-		MaxAge:   -1,
-	})
+	l.clearRefCookie(w)
 
 	go func() {
 		credential := make(map[string]interface{}, 0)
@@ -4522,18 +4556,20 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
 	l.Log.Debugf("RemoteProvider::SaveConnection: bdr value is [%s]", string(bdr))
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-		connectionPage := &connections.ConnectionPage{}
-		err = json.Unmarshal(bdr, connectionPage)
-		if err != nil {
-			return nil, ErrUnmarshal(err, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
+		// 200 and 201 may be a ConnectionPage (current Cloud) or a bare
+		// Connection (v1beta3 registerConnection). Anything else on these
+		// statuses is still a failure to save.
+		decoded, decErr := decodeRemoteProviderConnection(bdr)
+		if decErr != nil {
+			if errors.Is(decErr, errRemoteProviderConnectionMissing) {
+				return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
+			}
+			return nil, ErrUnmarshal(decErr, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
 		}
-		l.Log.Debugf("RemoteProvider::SaveConnection: parsed %d connection(s) (page=%d, pageSize=%d, totalCount=%d)",
-			len(connectionPage.Connections), connectionPage.Page, connectionPage.PageSize, connectionPage.TotalCount)
-		// On POST request to Remote Provider API, the response always contains single entry/connection.
-		if len(connectionPage.Connections) > 0 {
-			return connectionPage.Connections[0], nil
+		if decoded != nil {
+			l.Log.Debugf("RemoteProvider::SaveConnection: parsed connection %s (%s)", decoded.Name, decoded.ID)
 		}
-		return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
+		return decoded, nil
 	}
 
 	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status \"%s\"", conn.Name, conn.Kind, conn.Status), string(bdr), resp.StatusCode)
@@ -4842,13 +4878,13 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID core.U
 		return nil, ErrDataRead(err, "Connection: "+connectionID.String())
 	}
 
-	if resp.StatusCode == http.StatusOK {
+	// deleteConnection is moving from 200 with a Connection body to 204 with
+	// an empty body. Any 2xx is success. A JSON body may be a bare Connection
+	// or a ConnectionPage (first entry). An empty body still has to return a
+	// connection, because callers dereference the result.
+	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
 		l.Log.Info("connection deleted from remote provider")
-		var conn connections.Connection
-		if err = json.Unmarshal(bdr, &conn); err != nil {
-			return nil, err
-		}
-		return &conn, nil
+		return connectionFromRemoteDelete(bdr, resp.StatusCode, connectionID)
 	}
 	err = ErrDelete(fmt.Errorf("error while deleting connection: %s", bdr), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
@@ -4885,7 +4921,10 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 		_ = resp.Body.Close()
 	}()
 
-	if resp.StatusCode == http.StatusOK {
+	// Same success range as DeleteConnection: 200 with a body and 204 No Content
+	// both mean the meshery connection is gone. This endpoint does not return
+	// the deleted row.
+	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
 		return nil
 	}
 

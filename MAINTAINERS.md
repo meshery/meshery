@@ -42,7 +42,7 @@ UI maintainers are responsible for the development and maintenance of Meshery's 
 | Nikhil Ladha       | @Nikhil-Ladha   | IBM           |
 | Antonette Caldwell | @acald-creator  | Acquia        |
 | Aabid Sofi         | @aabidsofi19    | Independent   |
-| Yash Sharma        | @Yashsharma1911 | Digital Ocean |
+| Yash Sharma        | @Yashsharma1911 | UiPath        |
 | Sudhanshu Dasgupta | @sudhanshutech  | SafeDep       |
 | Ian Whitney        | @ianrwhitney    | Intuit        |
 
@@ -105,7 +105,7 @@ Repositories:
 | Alex Quinn          | @alexquincy     | Netflix       |
 | Marcus Blom         | @marblom007     | AWS           |
 | Kate Suttons        | @suttonskate    | Layer5        |
-| Yash Sharma         | @Yashsharma1911 | Digital Ocean |
+| Yash Sharma         | @Yashsharma1911 | UiPath        |
 | Shivay Lamba        | @shivaylamba    | Qualcomm      |
 
 Repositories:
@@ -146,11 +146,12 @@ Repositories:
 | Ijeoma Eti             | @Aijeyomah        | Manufactured | meshery-extensions/helm-kanvas-snapshot        |
 | Pranav Singh           | @theBeginner86    | Intel        | meshery-extensions/helm-kanvas-snapshot        |
 | Mia Grenell            | @miacycle         | USyd         | meshery-extensions/meshery-academy             |
-| Yi Nuo                 | @yi-nuo426        | HKUDS        | meshery-extensions/kubectl-meshsync-snapshot   |
+| Yi Nuo                 | @yi-nuo426        | HKUDS        | meshery-extensions/kubectl-meshsync-snapshot, meshery-extensions/mesheryctl-axi |
 | Cooper Fitzgerald      | @cooperfitzgerald | Independent  | meshery-extensions/mcp-server                  |
 | Arjun Mehta            | @arjunmehta-git   | TCS          | meshery-extensions/meshery-extensions-packages, meshery-extensions/integrations-workflow |
 | Kate Suttons           | @suttonskate      | Layer5       | meshery-extensions/meshery-academy             |
 | Rian Cteulp            | @ritzorama        | Independent  | meshery-extensions/kanvas-site                 |
+| Shiekh Mohammad        | @winkletinkle     | TCS Labs     | meshery-extensions/mesheryctl-axi              |
 
 
 See also: [GOVERNANCE.md](./GOVERNANCE.md).

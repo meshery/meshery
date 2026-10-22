@@ -17,6 +17,7 @@ package main
 import (
 	"bytes"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -32,10 +33,13 @@ title: mesheryctl
 display_title: false
 command: mesheryctl
 subcommand: nil
+categories: [mesheryctl-ref]
+aliases:
+- /reference/references/mesheryctl/
 ---
 
 `
-		filename := "docs/content/en/reference/references/mesheryctl/_index.md"
+		filename := "docs/content/en/reference/mesheryctl/_index.md"
 		assert.Equal(t, expected, prepender(filename))
 	})
 
@@ -45,10 +49,13 @@ title: mesheryctl-adapter
 display_title: false
 command: adapter
 subcommand: nil
+categories: [mesheryctl-adapter]
+aliases:
+- /reference/references/mesheryctl/adapter/
 ---
 
 `
-		filename := "docs/content/en/reference/references/mesheryctl/adapter/_index.md"
+		filename := "docs/content/en/reference/mesheryctl/adapter/_index.md"
 		assert.Equal(t, expected, prepender(filename))
 	})
 
@@ -58,10 +65,13 @@ title: mesheryctl-adapter-deploy
 display_title: false
 command: adapter
 subcommand: deploy
+categories: [mesheryctl-adapter]
+aliases:
+- /reference/references/mesheryctl/adapter/deploy/
 ---
 
 `
-		filename := "docs/content/en/reference/references/mesheryctl/adapter/deploy.md"
+		filename := "docs/content/en/reference/mesheryctl/adapter/deploy.md"
 		assert.Equal(t, expected, prepender(filename))
 	})
 
@@ -71,12 +81,76 @@ title: mesheryctl-exp-relationship-generate
 display_title: false
 command: exp
 subcommand: relationship
+categories: [mesheryctl-exp]
+aliases:
+- /reference/references/mesheryctl/exp/relationship/generate/
 ---
 
 `
-		filename := "docs/content/en/reference/references/mesheryctl/exp/relationship/generate.md"
+		filename := "docs/content/en/reference/mesheryctl/exp/relationship/generate.md"
 		assert.Equal(t, expected, prepender(filename))
 	})
+
+	t.Run("Single command (completion.md)", func(t *testing.T) {
+		expected := `---
+title: mesheryctl-completion
+display_title: false
+command: completion
+subcommand: nil
+categories: [mesheryctl-completion]
+aliases:
+- /reference/references/mesheryctl/completion/
+---
+
+`
+		filename := "docs/content/en/reference/mesheryctl/completion.md"
+		assert.Equal(t, expected, prepender(filename))
+	})
+
+	t.Run("Single command (version.md)", func(t *testing.T) {
+		expected := `---
+title: mesheryctl-version
+display_title: false
+command: version
+subcommand: nil
+categories: [mesheryctl-version]
+aliases:
+- /reference/references/mesheryctl/version/
+---
+
+`
+		filename := "docs/content/en/reference/mesheryctl/version.md"
+		assert.Equal(t, expected, prepender(filename))
+	})
+
+	t.Run("Subcommand (system/start.md)", func(t *testing.T) {
+		expected := `---
+title: mesheryctl-system-start
+display_title: false
+command: system
+subcommand: start
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/start/
+---
+
+`
+		filename := "docs/content/en/reference/mesheryctl/system/start.md"
+		assert.Equal(t, expected, prepender(filename))
+	})
+}
+
+func TestPrependerWithoutMesheryctlPath(t *testing.T) {
+	expected := `---
+title: foo
+display_title: false
+command: foo
+subcommand: nil
+categories: [mesheryctl-ref]
+---
+
+`
+	assert.Equal(t, expected, prepender("foo.md"))
 }
 
 func TestDoc(t *testing.T) {
@@ -86,33 +160,41 @@ func TestDoc(t *testing.T) {
 
 	t.Run("Test linkHandler function (directory structure)", func(t *testing.T) {
 		assert.Equal(t,
-			"/reference/references/mesheryctl",
-			linkHandler("docs/content/en/reference/references/mesheryctl/_index.md"),
+			"/reference/mesheryctl",
+			linkHandler("docs/content/en/reference/mesheryctl/_index.md"),
 		)
 
 		assert.Equal(t,
-			"/reference/references/mesheryctl/adapter",
-			linkHandler("docs/content/en/reference/references/mesheryctl/adapter/_index.md"),
+			"/reference/mesheryctl/adapter",
+			linkHandler("docs/content/en/reference/mesheryctl/adapter/_index.md"),
 		)
 
 		assert.Equal(t,
-			"/reference/references/mesheryctl/adapter/deploy",
-			linkHandler("docs/content/en/reference/references/mesheryctl/adapter/deploy.md"),
+			"/reference/mesheryctl/adapter/deploy",
+			linkHandler("docs/content/en/reference/mesheryctl/adapter/deploy.md"),
 		)
 
 		assert.Equal(t,
-			"/reference/references/mesheryctl/exp/relationship/generate",
-			linkHandler("docs/content/en/reference/references/mesheryctl/exp/relationship/generate.md"),
+			"/reference/mesheryctl/exp/relationship/generate",
+			linkHandler("docs/content/en/reference/mesheryctl/exp/relationship/generate.md"),
 		)
 	})
 
-	t.Run("Test GenMarkdownTreeCustom function", func(t *testing.T) {
+	t.Run("Test GenMarkdownTreeCustom function skips root _index.md", func(t *testing.T) {
 		cmd.AddCommand(&cobra.Command{
 			Use: "sub",
 		})
 		markDownPath := t.TempDir()
-		err := GenMarkdownTreeCustom(cmd, markDownPath, prepender, linkHandler)
+		rootIndex := filepath.Join(markDownPath, "_index.md")
+		err := os.WriteFile(rootIndex, []byte("hand-authored"), 0644)
 		assert.NoError(t, err)
+
+		err = GenMarkdownTreeCustom(cmd, markDownPath, prepender, linkHandler)
+		assert.NoError(t, err)
+
+		content, err := os.ReadFile(rootIndex)
+		assert.NoError(t, err)
+		assert.Equal(t, "hand-authored", string(content))
 	})
 
 	t.Run("Test HasSeeAlso function", func(t *testing.T) {
