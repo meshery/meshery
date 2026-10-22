@@ -149,6 +149,6 @@ Store the server URL as a repository variable named `MESHERY_URL`, and the token
 - [Authenticating Meshery via CLI]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}})
 - [Working with mesheryctl]({{< ref "guides/mesheryctl/working-with-mesheryctl.md" >}})
 - [GitOps with Meshery]({{< ref "guides/infrastructure-management/gitops-with-meshery/index.md" >}}) for Meshery's own GitHub Actions
-- [`mesheryctl` command reference]({{< ref "reference/references/mesheryctl/_index.md" >}})
+- [`mesheryctl` command reference]({{< ref "reference/mesheryctl/_index.md" >}})
 
 {{< related-discussions tag="mesheryctl" >}}
