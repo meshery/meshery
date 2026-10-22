@@ -49,7 +49,16 @@ func SafeGo(log logger.Handler, name string, fn func(), opts ...SafeGoOption) {
 					log.Error(fmt.Errorf("panic recovered in background goroutine [%s]: %v\n%s", name, r, stack))
 				}
 				if cfg.onPanic != nil {
-					cfg.onPanic(r, stack)
+					func() {
+						defer func() {
+							if cbErr := recover(); cbErr != nil {
+								if log != nil {
+									log.Error(fmt.Errorf("panic recovered in onPanic callback for [%s]: %v\n%s", name, cbErr, debug.Stack()))
+								}
+							}
+						}()
+						cfg.onPanic(r, stack)
+					}()
 				}
 			}
 		}()

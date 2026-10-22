@@ -72,6 +72,25 @@ func TestSafeGo_RecoversPanicWithoutCrash(t *testing.T) {
 	}
 }
 
+func TestSafeGo_RecoversPanicInOnPanicCallback(t *testing.T) {
+	log := &mockLogger{}
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	SafeGo(log, "test-panic-in-callback", func() {
+		panic("initial worker panic")
+	}, WithOnPanic(func(r any, stack []byte) {
+		defer wg.Done()
+		panic("panic inside onPanic callback")
+	}))
+
+	wg.Wait()
+
+	if log.lastErr.Load() == nil {
+		t.Fatal("expected error to be logged when onPanic callback panics")
+	}
+}
+
 func TestSafeGo_RespectsCancelledContext(t *testing.T) {
 	log := &mockLogger{}
 	ctx, cancel := context.WithCancel(context.Background())
