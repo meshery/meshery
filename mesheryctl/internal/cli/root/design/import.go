@@ -115,6 +115,7 @@ func marshalDesignImportBody(variant func(*pattern.MesheryPatternImportRequestBo
 	return jsonValues, nil
 }
 
+// importPattern reads the design from a local file or remote URL and sends an import request to the server.
 func importPattern(file string, patternURL string) (*models.MesheryPattern, error) {
 	// If design name is not provided
 	// use file name as default
