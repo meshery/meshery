@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/core"
 	relationshipv1alpha3 "github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
@@ -428,6 +429,45 @@ func TestIsValidBinding(t *testing.T) {
 	}
 	if len(cache) != warmLen+1 {
 		t.Errorf("Expected cache size %d after caching the third component, got %d", warmLen+1, len(cache))
+	}
+}
+
+func TestGetComponentConfigurationUsesCacheForAliasParent(t *testing.T) {
+	parentID, _ := uuid.FromString("00000000-0000-0000-0000-000000000010")
+	aliasID, _ := uuid.FromString("00000000-0000-0000-0000-000000000011")
+
+	parent := &component.ComponentDefinition{
+		Component:     component.Component{Kind: "Deployment"},
+		Configuration: map[string]interface{}{"spec": map[string]interface{}{"replicas": float64(3)}},
+	}
+	parent.ID = parentID
+
+	aliasComp := &component.ComponentDefinition{
+		Component: component.Component{Kind: "Container"},
+	}
+	aliasComp.ID = aliasID
+
+	design := makePatternFile([]*component.ComponentDefinition{parent, aliasComp}, nil)
+	aliases := map[string]core.ResolvedAlias{
+		aliasID.String(): {
+			AliasComponentId:     aliasID,
+			ResolvedParentId:     parentID,
+			ResolvedRefFieldPath: []string{"configuration", "spec", "replicas"},
+		},
+	}
+	design.Metadata = &pattern.PatternFile_Metadata{ResolvedAliases: &aliases}
+
+	if got := getComponentConfiguration(aliasComp, design); got != float64(3) {
+		t.Fatalf("expected alias parent configuration value 3, got %#v", got)
+	}
+
+	cache := componentMapCache{
+		parent: map[string]interface{}{
+			"configuration": map[string]interface{}{"spec": map[string]interface{}{"replicas": float64(5)}},
+		},
+	}
+	if got := getComponentConfigurationWithCache(aliasComp, design, cache); got != float64(5) {
+		t.Fatalf("expected cached alias parent configuration value 5, got %#v", got)
 	}
 }
 
