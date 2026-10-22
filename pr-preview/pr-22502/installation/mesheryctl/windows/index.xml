@@ -4,24 +4,17 @@
 &lt;h2 id="prerequisites"&gt;
 	Prerequisites
 &lt;/h2&gt;
-&lt;p&gt;You need &lt;a href="https://scoop.sh"&gt;Scoop&lt;/a&gt; installed on your Windows system.&lt;/p&gt;
+&lt;p&gt;You need to have &lt;code&gt;scoop&lt;/code&gt; installed on your Windows system to perform these actions.&lt;/p&gt;
 &lt;h3 id="install-mesheryctl-with-scoop"&gt;
 	Install &lt;code&gt;mesheryctl&lt;/code&gt; with Scoop
 &lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;mesheryctl&lt;/code&gt; is not in Scoop&amp;rsquo;s default buckets. Add the Meshery bucket, then install &lt;code&gt;mesheryctl&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;To install &lt;code&gt;mesheryctl&lt;/code&gt; using Scoop, execute the following commands.&lt;/p&gt;
 &lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
 &lt;div class="clipboardjs"&gt;scoop bucket add mesheryctl https://github.com/meshery/scoop-bucket.git
 scoop install mesheryctl&lt;/div&gt;&lt;/div&gt;
 &lt;/pre&gt;
-&lt;p&gt;You&amp;rsquo;re ready to run Meshery. To start it on Kubernetes, run:&lt;/p&gt;
+&lt;p&gt;You&amp;rsquo;re ready to run Meshery. To do so, execute the following command.&lt;/p&gt;
 &lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
 &lt;div class="clipboardjs"&gt;mesheryctl system start&lt;/div&gt;&lt;/div&gt;
 &lt;/pre&gt;
-&lt;p&gt;To run Meshery on Docker instead, run:&lt;/p&gt;
-&lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
-&lt;div class="clipboardjs"&gt;mesheryctl system start -p docker&lt;/div&gt;&lt;/div&gt;
-&lt;/pre&gt;
-&lt;h3 id="upgrade-mesheryctl-with-scoop"&gt;
-	Upgrade &lt;code&gt;mesheryctl&lt;/code&gt; with Scoop
-&lt;/h3&gt;
-&lt;p&gt;To upgrade &lt;code&gt;mesheryctl&lt;/code&gt;, run:&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;If you are running Meshery on Docker, execute the following command.&lt;/p&gt;</description></item></channel></rss>
