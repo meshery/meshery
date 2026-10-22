@@ -35,7 +35,7 @@ Meshery Catalog supports a collaborative environment, where DevOps engineers can
     - Delete design file:  `mesheryctl design delete --file [path to design file]`
     - View design file:  `mesheryctl design view [design name | ID]`
     - List all designs: `mesheryctl design list`
-5. [Importing]({{< ref "reference/references/mesheryctl/_index.md#infrastructure-design-configuration-and-management" >}}) a design. `mesheryctl design import -f [file-path] -s [manifest | compose | helm]`
+5. [Importing]({{< ref "reference/mesheryctl/_index.md#infrastructure-design-configuration-and-management" >}}) a design. `mesheryctl design import -f [file-path] -s [manifest | compose | helm]`
 6. Applying [WASM Filter]({{< ref "guides/configuration-management/_index.md#wasm-filters" >}}). `mesheryctl filter import [file | URL] --wasm-config [filepath|string]`
 
 
