@@ -372,8 +372,8 @@ func isValidBindingTypedCached(comp1, comp2 *component.ComponentDefinition, sel 
 	for i := range count {
 		resolvedFrom := resolvePath(mutatorPaths[i], mutatorMap)
 		resolvedTo := resolvePath(mutatedPaths[i], mutatedMap)
-		val1 := configurationForComponentAtPath(resolvedFrom, mutatorComp, design)
-		val2 := configurationForComponentAtPath(resolvedTo, mutatedComp, design)
+		val1 := configurationForComponentAtPathWithMap(resolvedFrom, mutatorComp, design, mutatorMap)
+		val2 := configurationForComponentAtPathWithMap(resolvedTo, mutatedComp, design, mutatedMap)
 		if val1 != nil && val2 != nil && !deepEqual(val1, val2) {
 			return false
 		}

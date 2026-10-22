@@ -223,6 +223,12 @@ func selectorItemKind(sel relationship.SelectorItem) string {
 // configurationForComponentAtPath gets the value at a path in a component,
 // handling the "configuration" prefix and alias resolution.
 func configurationForComponentAtPath(path []string, comp *component.ComponentDefinition, design *pattern.PatternFile) interface{} {
+	return configurationForComponentAtPathWithMap(path, comp, design, nil)
+}
+
+// configurationForComponentAtPathWithMap is configurationForComponentAtPath
+// with an optional precomputed generic map for non-configuration paths.
+func configurationForComponentAtPathWithMap(path []string, comp *component.ComponentDefinition, design *pattern.PatternFile, compMap map[string]interface{}) interface{} {
 	if len(path) == 0 {
 		return nil
 	}
@@ -230,10 +236,12 @@ func configurationForComponentAtPath(path []string, comp *component.ComponentDef
 		config := getComponentConfiguration(comp, design)
 		return objectGetNested(config, popFirst(path), nil)
 	}
-	// For non-configuration paths, convert to map for nested access.
-	compMap, err := toGenericMap(comp)
-	if err != nil {
-		return nil
+	if compMap == nil {
+		var err error
+		compMap, err = toGenericMap(comp)
+		if err != nil {
+			return nil
+		}
 	}
 	return objectGetNested(compMap, path, nil)
 }
