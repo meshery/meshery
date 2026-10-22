@@ -54,7 +54,7 @@ Creating a Connection performs two transitions in sequence: it **registers** the
 
 ### Credentials
 
-Credentials entered in the wizard are persisted as first-class, named [Credentials]({{< ref "concepts/logical/credentials.md" >}}), encrypted at rest, and reusable across other Connections. Meshery never exposes them in logs or API responses. To learn how Meshery interprets a credential's secret (Basic auth vs. bearer token vs. anonymous), see [Credentials]({{< ref "concepts/logical/credentials.md" >}}) and the [Telemetry authentication note](https://docs.meshery.io/guides/telemetry/).
+Credentials entered in the wizard are persisted as first-class, named [Credentials]({{< ref "concepts/logical/credentials.md" >}}), encrypted at rest, and reusable across other Connections. Meshery never exposes them in logs or API responses. To learn how Meshery interprets a credential's secret (Basic auth vs. bearer token vs. anonymous), see [Credentials]({{< ref "concepts/logical/credentials.md" >}}) and the [Telemetry authentication note]({{< ref "guides/telemetry/_index.md" >}}).
 
 ## Importing a Kubernetes cluster
 
@@ -110,20 +110,16 @@ For a Kubernetes Connection, this is where you change the [MeshSync deployment m
 Configuring a Connection is distinct from transitioning its **state** (Connected, Ignored, Disconnected, and so on). State transitions - and the rules governing which are allowed - are driven by the connection definition and performed from the status control on the Connections table. See [States and the Lifecycle of Connections]({{< ref "concepts/logical/connections/index.md#states-and-the-lifecycle-of-connections" >}}).
 {{% /alert %}}
 
-<!-- The Telemetry pages (guides/telemetry/*) ship in meshery/meshery#20161. Until that
-     merges, these are absolute docs.meshery.io links so this page does not break the Hugo
-     build, since an unresolved ref shortcode fails the build. Convert them to ref-shortcode
-     links once the Telemetry pages exist on master. -->
 ## Using Connections for Telemetry
 
-Grafana and Prometheus Connections you register with the wizard power Meshery's [Telemetry](https://docs.meshery.io/guides/telemetry/) views. Once such a Connection reaches the **Connected** or **Registered** state, it becomes selectable in the Telemetry connection picker, where you can:
+Grafana and Prometheus Connections you register with the wizard power Meshery's [Telemetry]({{< ref "guides/telemetry/_index.md" >}}) views. Once such a Connection reaches the **Connected** or **Registered** state, it becomes selectable in the Telemetry connection picker, where you can:
 
-- Browse and render your existing dashboards - see [Grafana Dashboards](https://docs.meshery.io/guides/telemetry/grafana-dashboards).
-- Explore metrics and save PromQL panels - see [Prometheus Metrics](https://docs.meshery.io/guides/telemetry/prometheus-metrics).
+- Browse and render your existing dashboards - see [Grafana Dashboards]({{< ref "guides/telemetry/grafana-dashboards.md" >}}).
+- Explore metrics and save PromQL panels - see [Prometheus Metrics]({{< ref "guides/telemetry/prometheus-metrics.md" >}}).
 
 ## Registering Connections from the CLI
 
-Prefer the terminal? `mesheryctl` can create, list, view, and delete Connections too. See [`mesheryctl connection`]({{< ref "reference/mesheryctl/connection/_index.md" >}}).
+Prefer the terminal? `mesheryctl connection create --type <type>` builds a kubeconfig for that cluster and registers it with Meshery. `<type>` is one of `aks`, `eks`, `gke`, or `minikube`, for example `mesheryctl connection create --type eks`. It uses `az` for AKS and `aws` for EKS, creates a service account through your current `kubectl` context for GKE, and reads your local kubeconfig for minikube. It prompts for the cluster details it needs. `mesheryctl` can also list, view, and delete Connections. See [`mesheryctl connection`]({{< ref "reference/mesheryctl/connection/_index.md" >}}).
 
 ## Related
 
