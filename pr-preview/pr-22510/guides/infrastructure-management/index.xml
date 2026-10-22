@@ -71,11 +71,11 @@ register one in the first place, see
  id="tabs-01-01" role="tabpanel" aria-labelled-by="tabs-01-01-tab" tabindex="1"&gt;
  &lt;p&gt;Import from a local file or a URL:&lt;/p&gt;</description></item><item><title>GitOps with Meshery</title><link>/pr-preview/pr-22510/guides/infrastructure-management/gitops-with-meshery/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22510/guides/infrastructure-management/gitops-with-meshery/</guid><description>&lt;p&gt;Meshery publishes two GitHub Actions that you can add to any workflow:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Kanvas Snapshot&lt;/strong&gt; renders your Kubernetes manifests, Helm chart, or Docker Compose file as a Meshery Design and comments the image on your pull request, so reviewers see the change before it merges.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Kanvas Snapshot&lt;/strong&gt; renders your Kubernetes manifests, Helm chart, or Docker Compose file as a Meshery Design and comments the image on pull requests that change those files, so reviewers see the change before it merges.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Performance Testing with Meshery&lt;/strong&gt; deploys Meshery in the runner, runs a performance test against your service, and records the results, so you catch latency and throughput regressions before they ship.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id="render-a-snapshot-on-each-pull-request"&gt;
-	Render a snapshot on each pull request
+&lt;h2 id="render-a-snapshot-on-pull-requests"&gt;
+	Render a snapshot on pull requests
 &lt;/h2&gt;
 &lt;p&gt;The &lt;a href="https://github.com/layer5labs/kanvas-snapshot"&gt;Kanvas Snapshot action&lt;/a&gt; needs a Layer5 Cloud API token and a GitHub token that can comment on pull requests. Store the Layer5 Cloud token as a repository secret, for example &lt;code&gt;MESHERY_TOKEN&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>Managing Connections</title><link>/pr-preview/pr-22510/guides/infrastructure-management/lifecycle-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22510/guides/infrastructure-management/lifecycle-management/</guid><description>&lt;p&gt;&lt;a name="lifecycle-management"&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Every cluster, metrics server, and source that Meshery manages is a &lt;a href="/pr-preview/pr-22510/concepts/logical/connections/"&gt;Connection&lt;/a&gt;. After you &lt;a href="/pr-preview/pr-22510/guides/infrastructure-management/registering-a-connection/"&gt;register a Connection&lt;/a&gt;, use this guide to keep it in the state you want: find it, check its status, change its state, reconfigure it, and remove it when you are done.&lt;/p&gt;
