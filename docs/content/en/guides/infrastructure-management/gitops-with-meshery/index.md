@@ -50,6 +50,8 @@ Set `application_type` to `Kubernetes Manifest`, `Helm Chart`, or `Docker Compos
 
 GitHub does not pass repository secrets to workflows that pull requests from forks trigger, so the `if` condition skips those runs instead of letting them fail. To render a design that already exists in Meshery, pass its ID as `designID` instead. To snapshot a Helm chart from your terminal instead of a workflow, see the [Helm Snapshot plugin]({{< ref "extensions/extensions/helm-snapshot/index.md" >}}).
 
+Both examples reference the actions' `master` branch. To keep a later change to an action from changing your pipeline, pin each `uses:` line to a commit SHA you have tested.
+
 ## Run a performance test in your pipeline
 
 <img src="./images/smp-dark-text-side.svg" alt="Cloud Native Performance logo" style="width: 60%; max-width: 200px; vertical-align: middle" />
@@ -92,10 +94,12 @@ test:
       connections: 2
       rps: 10
       endpointUrls:
-        - http://localhost:2323/productpage
+        - https://staging.example.com/
   duration: 30m
 mesh: istio
 ```
+
+Replace `https://staging.example.com/` with the URL of the service to test. The runner must be able to reach it, so use a public or staging URL, or deploy the service in an earlier step of the same job. To set the URL per run instead, pass `endpoint_url`.
 
 The action accepts these inputs:
 
