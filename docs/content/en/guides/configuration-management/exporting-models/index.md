@@ -1,57 +1,57 @@
 ---
 title: Exporting Models
-description: Exporting Meshery Model as an OCI or Compress file
+description: Export a Meshery Model as an OCI image or a compressed archive.
 categories: [configuration]
 ---
 
-Export existing Meshery [Models]({{< ref "concepts/logical/models/index.md" >}}) or your custom infrastructure crd imported as [Models]({{< ref "concepts/logical/models/index.md" >}}) in Meshery. The platform supports a variety of application definition formats, and you can export designs using either the Meshery CLI or the Meshery UI.
+Export a registered [Model]({{< ref "concepts/logical/models/index.md" >}}) to back it up, inspect its definitions, or move it to another Meshery Server. The export contains the model definition and, unless you leave them out, its [components]({{< ref "concepts/logical/components.md" >}}) and [relationships]({{< ref "concepts/logical/relationships/index.md" >}}).
 
-## Export Models Using Meshery CLI
+## Export a model with Meshery CLI
 
-**Step 1: Install Meshery CLI**
+You need [`mesheryctl` installed]({{< ref "installation/mesheryctl/_index.md" >}}) and logged in to your Meshery Server.
 
-Before you can use the Meshery CLI to export a [Model]({{< ref "concepts/logical/models/index.md" >}}), you must first install it. You can install Meshery CLI by [following the instructions]({{< ref "installation/mesheryctl/_index.md" >}}).
+Run:
 
-**Step 2: Export the Model**
+```bash
+mesheryctl model export <model-name>
+```
 
-Model can be exported in 2 format and OCI or Compress file. These files contain different [components]({{< ref "concepts/logical/components.md" >}}), [relationships]({{< ref "concepts/logical/relationships/index.md" >}}) files and a model file. The files can be exported in either yaml or json by default it is exported as yaml.
+By default, `mesheryctl` writes an OCI image with YAML definitions to the current directory. Change that with these flags:
 
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl model export [model-name] </div></div>
-</pre>
+| Flag | What it does |
+| --- | --- |
+| `-o, --output-type <oci\|tar>` | Package as an OCI image (`oci`, the default) or a compressed archive (`tar`). |
+| `-t, --output-format <yaml\|json>` | Write the definitions as YAML (the default) or JSON. |
+| `-l, --output-location <dir>` | Write the file to this directory instead of the current one. |
+| `--version <vX.Y.Z>` | Export this version of the model instead of the latest. |
+| `-c, --discard-components` | Leave out the components. |
+| `-r, --discard-relationships` | Leave out the relationships. |
 
-Different file type and output type can be set using flags `-o` for oci and tar and `-t` for json or yaml. A location can also be specified using the -l flag where user needs to export the model
+For example:
 
-**Example :**
+```bash
+# OCI image with JSON definitions
+mesheryctl model export istio-base -t json
 
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl model export istio-base -o oci</div></div>
-</pre>
+# Compressed archive of version v1.20.0 in ./exports
+mesheryctl model export istio-base -o tar --version v1.20.0 -l ./exports
 
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl model export istio-base -o oci -t json</div></div>
-</pre>
+# Only the model definition
+mesheryctl model export istio-base --discard-components --discard-relationships
+```
 
-**Note:** A `--discard-components --discard-relationships` flag is present to skip [component]({{< ref "concepts/logical/components.md" >}}) and [relationships]({{< ref "concepts/logical/relationships/index.md" >}}) generation in the export only the model is exported without any components and relationships.
+## Export a model with Meshery UI
 
-## Export Models Using Meshery UI
+1. Open the Registry. Click your avatar in the top right and choose **Registry**, or go to **Settings** > **Registry**.
 
-**Step 1: Access the Meshery UI**
+    <a href="../images/Registry.png"><img alt="Registry-Navigator" style="max-width:500px;width:100%;height:auto;" src="../images/Registry.png" /></a>
 
-To Export a model into Meshery using the Meshery UI, you must first [install Meshery]({{< ref "installation/quick-start/index.md" >}})
-
-**Step 2: Navigate to Registry under Settings Page**
-
-Once you have accessed the Meshery UI, navigate to the Registry under Settings. This page can be accessed by clicking on the Settings on the top right on setting icon and then selecting "Registry" and then choose model.
-
-<a href="../images/Registry.png"><img alt="Registry-Navigator" style="max-width:500px;width:100%;height:auto;" src="../images/Registry.png" /></a>
-
-**Step 3: Upload the Models**
-
-On the Registry page, you can export your model by select Model in registry page. If no specific version the latest version is downloaded and if the specific version of model is selected then on clicking the `Export` button the model is exported as an OCI.
-
-This Meshery model will include components, relationships.
+2. On the **Models** tab, select the model. To export a specific version, select that version.
+3. Click **Export**. Meshery downloads the model as an OCI image.
 
 <a href="./images/ExportModel.gif"><img alt="Export-Model" style="max-width:500px;width:100%;height:auto;" src="./images/ExportModel.gif" /></a>
 
-Once the Meshery model has been exported, you can export your model anytime back using `Import` on UI and then visualize in Meshery, operate and observe your components that are generated from the crd. You can also use Meshery to deploy your Meshery Model in form of a design to any of your connected kubernetes clusters. For more information, see [connections]({{< ref "installation/kubernetes/_index.md" >}})
+## Next steps
+
+- Import the exported model into another Meshery Server. See [Importing Models]({{< ref "guides/configuration-management/importing-models/index.md" >}}).
+- Push the OCI image to a container registry. See [Push or Pull a Model Image]({{< ref "guides/configuration-management/push-pull-model-image.md" >}}).

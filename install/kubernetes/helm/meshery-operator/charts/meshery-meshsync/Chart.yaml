@@ -19,7 +19,7 @@ version: 0.5.0
 # It must never be a moving tag such as stable-latest: the published archive is
 # immutable, so a moving appVersion here would advertise a different application
 # from one publish to the next.
-appVersion: "1.0.5"
+appVersion: "1.0.6"
 
 maintainers:
   - name: Meshery Authors
