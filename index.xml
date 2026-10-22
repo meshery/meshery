@@ -17,7 +17,68 @@
 &lt;p&gt;This guide covers creating and updating Connections with the wizard. For what a Connection &lt;em&gt;is&lt;/em&gt;, the states it moves through, and how it is managed over time, see the canonical references:&lt;/p&gt;</description></item><item><title>Using Meshery Playground</title><link>/installation/playground/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/playground/</guid><description>&lt;p&gt;&lt;em&gt;Try out Meshery Playground at &lt;a href="https://playground.meshery.io/"&gt;https://playground.meshery.io/&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;Meshery Playground is a web-based, collaborative environment where you can explore Meshery and the infrastructure it manages, including multiple Kubernetes clusters, CNCF projects, applications, services, and operators that run on Kubernetes. The Playground gives you a sandbox for experimenting with infrastructure configurations and deployment options, and its multiplayer features let you design and operate infrastructure in real time with your teammates.&lt;/p&gt;
 &lt;p&gt;With Meshery Playground, you can:&lt;/p&gt;</description></item><item><title>Configuring Meshery Operator, MeshSync, and Broker</title><link>/guides/infrastructure-management/configuring-operator-meshsync-broker/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/configuring-operator-meshsync-broker/</guid><description>&lt;p&gt;Every Kubernetes cluster that Meshery manages is served by up to three components: &lt;a href="/concepts/architecture/operator/"&gt;Meshery Operator&lt;/a&gt;, &lt;a href="/concepts/architecture/meshsync/"&gt;MeshSync&lt;/a&gt;, and &lt;a href="/concepts/architecture/broker/"&gt;Meshery Broker&lt;/a&gt;. Their defaults work out of the box, but production clusters routinely need tuning: narrowing discovery scope, keeping Secret contents out of Meshery&amp;rsquo;s database, exposing the Broker across network boundaries, or skipping in-cluster components entirely.&lt;/p&gt;
-&lt;p&gt;This guide walks through the full configuration surface of all three components: what each setting does, how to change it, its default, and the behavioral impact of changing it. It is written for platform engineers operating real clusters with &lt;code&gt;kubectl&lt;/code&gt;, &lt;code&gt;mesheryctl&lt;/code&gt;, and the Meshery UI.&lt;/p&gt;</description></item><item><title>Bringing Existing Infrastructure Under Meshery Management</title><link>/guides/infrastructure-management/managing-existing-infrastructure/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/managing-existing-infrastructure/</guid><description>&lt;p&gt;Most clusters do not arrive empty. They carry months or years of accumulated Deployments, CRDs, operators, and Secrets, deployed by pipelines that predate Meshery and that will keep running after it. This guide is for the platform engineer bringing that kind of estate - a brownfield - under Meshery&amp;rsquo;s management: what connecting a live cluster actually does, what it deliberately does not do, and what to evaluate before you connect.&lt;/p&gt;</description></item><item><title>Contributing to Models</title><link>/project/contributing/models/models/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/models/models/</guid><description>&lt;p&gt;&lt;strong&gt;Meshery Models are schema-driven.&lt;/strong&gt; Model definitions, including their structure, metadata, and versioning, are defined by JSON Schemas in the &lt;a href="https://github.com/meshery/schemas"&gt;&lt;code&gt;meshery/schemas&lt;/code&gt;&lt;/a&gt; repository. Before contributing to models, familiarize yourself with the &lt;a href="https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model"&gt;Model schema&lt;/a&gt; and see &lt;a href="/project/contributing/contributing-schemas/"&gt;Contributing to Schemas&lt;/a&gt; for the development workflow.&lt;/p&gt;
+&lt;p&gt;This guide walks through the full configuration surface of all three components: what each setting does, how to change it, its default, and the behavioral impact of changing it. It is written for platform engineers operating real clusters with &lt;code&gt;kubectl&lt;/code&gt;, &lt;code&gt;mesheryctl&lt;/code&gt;, and the Meshery UI.&lt;/p&gt;</description></item><item><title>Bringing Existing Infrastructure Under Meshery Management</title><link>/guides/infrastructure-management/managing-existing-infrastructure/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/managing-existing-infrastructure/</guid><description>&lt;p&gt;Most clusters do not arrive empty. They carry months or years of accumulated Deployments, CRDs, operators, and Secrets, deployed by pipelines that predate Meshery and that will keep running after it. This guide is for the platform engineer bringing that kind of estate - a brownfield - under Meshery&amp;rsquo;s management: what connecting a live cluster actually does, what it deliberately does not do, and what to evaluate before you connect.&lt;/p&gt;</description></item><item><title>Deploying a Design</title><link>/guides/infrastructure-management/deploying-a-design/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/deploying-a-design/</guid><description>&lt;p&gt;Use this guide to put a &lt;a href="/concepts/logical/designs/"&gt;Design&lt;/a&gt; onto one or more of your Kubernetes clusters, check what happened, and remove it again. Meshery deploys a design to the clusters you pick from your &lt;a href="/concepts/logical/environments/"&gt;Environments&lt;/a&gt;, so you can deploy the same design to a staging cluster and a production cluster in one pass.&lt;/p&gt;
+&lt;h2 id="before-you-begin"&gt;
+	Before you begin
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A design in Meshery. Create one with the &lt;a href="/guides/configuration-management/creating-a-meshery-design/"&gt;Design Configurator&lt;/a&gt; or &lt;a href="/guides/configuration-management/import-export-designs/"&gt;import&lt;/a&gt; your Kubernetes manifests, Helm chart, Docker Compose file, or Kustomize package.&lt;/li&gt;
+&lt;li&gt;At least one Kubernetes &lt;a href="/guides/infrastructure-management/registering-a-connection/"&gt;Connection&lt;/a&gt; in the &lt;strong&gt;Connected&lt;/strong&gt; state.&lt;/li&gt;
+&lt;li&gt;That Connection assigned to an Environment. The deployment wizard only offers clusters that belong to an Environment. To assign one, see &lt;a href="/guides/infrastructure-management/sharing-a-cluster-with-your-team/#create-an-environment-and-add-the-cluster"&gt;Sharing a Cluster with Your Team&lt;/a&gt;, or use the &lt;strong&gt;Environments&lt;/strong&gt; column in &lt;strong&gt;Lifecycle → Connections&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Permission to deploy designs. If the &lt;strong&gt;Deploy&lt;/strong&gt; action is disabled, ask your organization admin.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="deploy-a-design"&gt;
+	Deploy a design
+&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Open &lt;strong&gt;Configuration → Designs&lt;/strong&gt;.&lt;/p&gt;</description></item><item><title>Sharing a Cluster with Your Team</title><link>/guides/infrastructure-management/sharing-a-cluster-with-your-team/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/sharing-a-cluster-with-your-team/</guid><description>&lt;p&gt;A Kubernetes cluster you connect to Meshery is private to you until you share it. Use this guide to let your teammates see the cluster, deploy designs to it, and work with its resources, without handing out your kubeconfig. You share a cluster in three steps:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Put the cluster&amp;rsquo;s &lt;a href="/concepts/logical/connections/"&gt;Connection&lt;/a&gt; in an &lt;a href="/concepts/logical/environments/"&gt;Environment&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Attach the Environment to a &lt;a href="/concepts/logical/workspaces/"&gt;Workspace&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Assign your teammates&amp;rsquo; teams to the Workspace.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="before-you-begin"&gt;
+	Before you begin
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A Meshery Server signed in with a Remote Provider, such as Meshery Cloud. Organizations, teams, and other users come from the Remote Provider. With the Local provider you are the only user, although you can still use Environments to group your own clusters.&lt;/li&gt;
+&lt;li&gt;The cluster registered as a Kubernetes Connection. See &lt;a href="/guides/infrastructure-management/registering-a-connection/"&gt;Registering a Connection&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Teammates who belong to a team in your organization. Your provider manages teams and invitations.&lt;/li&gt;
+&lt;li&gt;Permission to create Environments and Workspaces and to assign resources to them. If a button is disabled, ask your organization admin.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="create-an-environment-and-add-the-cluster"&gt;
+	Create an Environment and add the cluster
+&lt;/h2&gt;
+
+
+
+&lt;ul class="nav nav-tabs" id="tabs-4" role="tablist"&gt;
+ &lt;li class="nav-item"&gt;
+ &lt;button class="nav-link active"
+ id="tabs-04-00-tab" data-bs-toggle="tab" data-bs-target="#tabs-04-00" role="tab"
+ data-td-tp-persist="meshery ui" aria-controls="tabs-04-00" aria-selected="true"&gt;
+ Meshery UI
+ &lt;/button&gt;
+ &lt;/li&gt;&lt;li class="nav-item"&gt;
+ &lt;button class="nav-link"
+ id="tabs-04-01-tab" data-bs-toggle="tab" data-bs-target="#tabs-04-01" role="tab"
+ data-td-tp-persist="mesheryctl" aria-controls="tabs-04-01" aria-selected="false"&gt;
+ mesheryctl
+ &lt;/button&gt;
+ &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="tab-content" id="tabs-4-content"&gt;
+ &lt;div class="tab-body tab-pane fade show active"
+ id="tabs-04-00" role="tabpanel" aria-labelled-by="tabs-04-00-tab" tabindex="4"&gt;
+ &lt;ol&gt;
+&lt;li&gt;Open &lt;strong&gt;Lifecycle → Environments&lt;/strong&gt; and click &lt;strong&gt;Create&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Enter a name, such as &lt;code&gt;staging&lt;/code&gt;, and an optional description, then save.&lt;/li&gt;
+&lt;li&gt;On the new Environment&amp;rsquo;s card, click &lt;strong&gt;Assigned Connections&lt;/strong&gt;. The &lt;strong&gt;&lt;code&gt;&amp;lt;environment&amp;gt;&lt;/code&gt; Resources&lt;/strong&gt; dialog opens.&lt;/li&gt;
+&lt;li&gt;Move the cluster&amp;rsquo;s Connection from the available list to the assigned list, then click &lt;strong&gt;Save&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;You can also assign Environments from &lt;strong&gt;Lifecycle → Connections&lt;/strong&gt;: use the &lt;strong&gt;Environments&lt;/strong&gt; column on the cluster&amp;rsquo;s row.&lt;/p&gt;</description></item><item><title>Contributing to Models</title><link>/project/contributing/models/models/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/models/models/</guid><description>&lt;p&gt;&lt;strong&gt;Meshery Models are schema-driven.&lt;/strong&gt; Model definitions, including their structure, metadata, and versioning, are defined by JSON Schemas in the &lt;a href="https://github.com/meshery/schemas"&gt;&lt;code&gt;meshery/schemas&lt;/code&gt;&lt;/a&gt; repository. Before contributing to models, familiarize yourself with the &lt;a href="https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model"&gt;Model schema&lt;/a&gt; and see &lt;a href="/project/contributing/contributing-schemas/"&gt;Contributing to Schemas&lt;/a&gt; for the development workflow.&lt;/p&gt;
 &lt;h2 id="understanding-the-internals-of-mesherys-logical-object-model"&gt;
 	Understanding the internals of Meshery&amp;rsquo;s logical object model
 &lt;/h2&gt;
@@ -36268,22 +36329,56 @@ off; see the &lt;a href="/project/contributing/"&gt;Contributing Overview&lt;/a&
 &lt;h3 id="assigning-resources-to-an-environment"&gt;
 	Assigning Resources to an Environment
 &lt;/h3&gt;
-&lt;p&gt;Assign any number of Connections to an environment whether that Connection is managed or unmanaged (see &lt;a href="/concepts/architecture/meshsync/"&gt;MeshSync&lt;/a&gt; to learn more about managed and unmanaged Connections). In-turn, assign any number of Environments to one or more &lt;a href="/concepts/logical/workspaces/"&gt;Workspaces&lt;/a&gt;. Connections (and any associated Credentials) that are assigned to an Environment become immediately available for use in any associated Workspace.&lt;/p&gt;</description></item><item><title>Envoy</title><link>/extensions/models/envoy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/envoy/</guid><description/></item><item><title>Envoy WASM Filter Management</title><link>/guides/infrastructure-management/filter-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/filter-management/</guid><description>&lt;p&gt;Meshery offers powerful features that simplify the management of Envoy WASM filters in Istio.&lt;/p&gt;
-&lt;h3 id="meshery-ui-and-cli-integration"&gt;
-	Meshery UI and CLI Integration
-&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Import WASM Envoy Filters&lt;/strong&gt;: Easily import your WebAssembly Envoy filters into Meshery using the intuitive UI or the command-line interface (&lt;a href="https://docs.meshery.io/reference/mesheryctl#data-plane-intelligence"&gt;CLI&lt;/a&gt;).&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Publish and Clone Filters&lt;/strong&gt;: Share your filters with the community by publishing them in the &lt;a href="https://meshery.io/catalog"&gt;Meshery Catalog&lt;/a&gt; and make it effortless for others to clone them.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Download WASM Binaries&lt;/strong&gt;: Access and download WebAssembly binaries directly from your Remote Provider like &lt;a href="https://cloud.meshery.io/"&gt;Meshery Cloud&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Efficient Data Plane Design&lt;/strong&gt;: Seamlessly design and deploy Istio and Envoy data planes using Meshery.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Contribute to Open Source&lt;/strong&gt;: Get involved with the cloud native community by contributing to any of the open source &lt;a href="https://github.com/layer5io/wasm-filters"&gt;wasm-filters&lt;/a&gt; developed by the Meshery community.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;img src="https://mcusercontent.com/6b50be5aea3dfe1fd4c041d80/images/a07ef29a-4cf8-986e-9bd3-78db7dc00ce1.png" width="100px" style="float:left;position:relative;margin: 1rem 1rem 1rem 0rem" /&gt;
-&lt;h2 id="envoy-wasm-filter-management"&gt;
-	Envoy WASM Filter Management
+&lt;p&gt;Assign any number of Connections to an environment whether that Connection is managed or unmanaged (see &lt;a href="/concepts/architecture/meshsync/"&gt;MeshSync&lt;/a&gt; to learn more about managed and unmanaged Connections). In-turn, assign any number of Environments to one or more &lt;a href="/concepts/logical/workspaces/"&gt;Workspaces&lt;/a&gt;. Connections (and any associated Credentials) that are assigned to an Environment become immediately available for use in any associated Workspace.&lt;/p&gt;</description></item><item><title>Envoy</title><link>/extensions/models/envoy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/envoy/</guid><description/></item><item><title>Envoy WASM Filter Management</title><link>/guides/infrastructure-management/filter-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/filter-management/</guid><description>&lt;p&gt;Meshery stores Envoy WebAssembly (WASM) filters alongside your designs, so you can keep the filter binaries your data plane uses in one place, share them, and remove them when you are done. Use this guide to import a filter, inspect it, publish it to the Catalog, and delete it.&lt;/p&gt;
+&lt;h2 id="before-you-begin"&gt;
+	Before you begin
 &lt;/h2&gt;
-&lt;p&gt;As of Meshery v0.7, the management of Envoy WASM filters includes:&lt;/p&gt;</description></item><item><title>EPAM Delivery Platform</title><link>/extensions/models/admin-console-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/admin-console-operator/</guid><description/></item><item><title>Error Codes</title><link>/reference/references/error-codes/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/error-codes/</guid><description>&lt;style&gt;
+&lt;ul&gt;
+&lt;li&gt;A running Meshery Server, and &lt;code&gt;mesheryctl&lt;/code&gt; signed in to it if you want to use the CLI. See &lt;a href="/guides/mesheryctl/authenticate-with-meshery-via-cli/"&gt;Authenticate with Meshery via CLI&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;A compiled filter: a &lt;code&gt;.wasm&lt;/code&gt; file on your machine or a URL that serves one. The community maintains sample filters in &lt;a href="https://github.com/layer5io/wasm-filters"&gt;layer5io/wasm-filters&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="import-a-filter"&gt;
+	Import a filter
+&lt;/h2&gt;
+
+
+
+&lt;ul class="nav nav-tabs" id="tabs-1" role="tablist"&gt;
+ &lt;li class="nav-item"&gt;
+ &lt;button class="nav-link active"
+ id="tabs-01-00-tab" data-bs-toggle="tab" data-bs-target="#tabs-01-00" role="tab"
+ data-td-tp-persist="meshery ui" aria-controls="tabs-01-00" aria-selected="true"&gt;
+ Meshery UI
+ &lt;/button&gt;
+ &lt;/li&gt;&lt;li class="nav-item"&gt;
+ &lt;button class="nav-link"
+ id="tabs-01-01-tab" data-bs-toggle="tab" data-bs-target="#tabs-01-01" role="tab"
+ data-td-tp-persist="mesheryctl" aria-controls="tabs-01-01" aria-selected="false"&gt;
+ mesheryctl
+ &lt;/button&gt;
+ &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="tab-content" id="tabs-1-content"&gt;
+ &lt;div class="tab-body tab-pane fade show active"
+ id="tabs-01-00" role="tabpanel" aria-labelled-by="tabs-01-00-tab" tabindex="1"&gt;
+ &lt;ol&gt;
+&lt;li&gt;Open &lt;code&gt;/configuration/filters&lt;/code&gt; on your Meshery Server (for example &lt;code&gt;http://localhost:9081/configuration/filters&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Import Filters&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Enter a &lt;strong&gt;Name&lt;/strong&gt; for the filter.&lt;/li&gt;
+&lt;li&gt;Choose an &lt;strong&gt;Upload method&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;File Upload&lt;/strong&gt;: select the &lt;code&gt;.wasm&lt;/code&gt; file on your machine.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;URL Upload&lt;/strong&gt;: paste the URL that serves the file.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Import&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+ &lt;/div&gt;
+ &lt;div class="tab-body tab-pane fade"
+ id="tabs-01-01" role="tabpanel" aria-labelled-by="tabs-01-01-tab" tabindex="1"&gt;
+ &lt;p&gt;Import from a local file or a URL:&lt;/p&gt;</description></item><item><title>EPAM Delivery Platform</title><link>/extensions/models/admin-console-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/admin-console-operator/</guid><description/></item><item><title>Error Codes</title><link>/reference/references/error-codes/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/error-codes/</guid><description>&lt;style&gt;
 
 .title {
  text-transform: capitalize;
@@ -36392,17 +36487,15 @@ component and the rest of the UI, so an enabled UI extension is trusted code. Op
 should read
 &lt;a href="/installation/production/security-hardening/#trusting-an-extension"&gt;Trusting an extension&lt;/a&gt;;
 authors should read
-&lt;a href="/reference/extensibility/verify-compatibility/"&gt;Ensuring Extension Compatibility&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>External Secrets Operator</title><link>/extensions/models/external-secrets-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/external-secrets-operator/</guid><description/></item><item><title>F5 Networks</title><link>/extensions/models/f5-networks/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/f5-networks/</guid><description/></item><item><title>Fabedge</title><link>/extensions/models/fabedge/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fabedge/</guid><description/></item><item><title>Falco</title><link>/extensions/models/falco/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/falco/</guid><description/></item><item><title>Flagger</title><link>/extensions/models/flagger/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/flagger/</guid><description/></item><item><title>Fluent Operator</title><link>/extensions/models/fluent-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fluent-operator/</guid><description/></item><item><title>Fluentbit Operator</title><link>/extensions/models/fluentbit-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fluentbit-operator/</guid><description/></item><item><title>Fluentbit Skt</title><link>/extensions/models/fluentbit-skt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fluentbit-skt/</guid><description/></item><item><title>Fluentd Operator</title><link>/extensions/models/fluentd-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fluentd-operator/</guid><description/></item><item><title>Fluentd Operator</title><link>/extensions/models/fluentd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fluentd/</guid><description/></item><item><title>Fluid</title><link>/extensions/models/fluid/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fluid/</guid><description/></item><item><title>Flux</title><link>/extensions/models/flux/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/flux/</guid><description/></item><item><title>Flyte Sandbox</title><link>/extensions/models/flyte-sandbox/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/flyte-sandbox/</guid><description/></item><item><title>Fonio</title><link>/extensions/models/fonio/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fonio/</guid><description/></item><item><title>Gerrit Operator</title><link>/extensions/models/gerrit-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/gerrit-operator/</guid><description/></item><item><title>Github Actions Runner Operator</title><link>/extensions/models/github-actions-runner-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/github-actions-runner-operator/</guid><description/></item><item><title>Github Actions Runners</title><link>/extensions/models/github-actions-runners/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/github-actions-runners/</guid><description/></item><item><title>GitLab</title><link>/extensions/models/gitlab/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/gitlab/</guid><description/></item><item><title>Gitlab Controller</title><link>/extensions/models/gitlab-controller/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/gitlab-controller/</guid><description/></item><item><title>Gitlab Runner Operator</title><link>/extensions/models/gitlab-runner-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/gitlab-runner-operator/</guid><description/></item><item><title>GitOps with Meshery</title><link>/guides/infrastructure-management/gitops-with-meshery/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/gitops-with-meshery/</guid><description>&lt;h2 id="meshery-snapshot-github-action"&gt;
-	Meshery Snapshot GitHub Action
-&lt;/h2&gt;
+&lt;a href="/reference/extensibility/verify-compatibility/"&gt;Ensuring Extension Compatibility&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>External Secrets Operator</title><link>/extensions/models/external-secrets-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/external-secrets-operator/</guid><description/></item><item><title>F5 Networks</title><link>/extensions/models/f5-networks/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/f5-networks/</guid><description/></item><item><title>Fabedge</title><link>/extensions/models/fabedge/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fabedge/</guid><description/></item><item><title>Falco</title><link>/extensions/models/falco/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/falco/</guid><description/></item><item><title>Flagger</title><link>/extensions/models/flagger/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/flagger/</guid><description/></item><item><title>Fluent Operator</title><link>/extensions/models/fluent-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fluent-operator/</guid><description/></item><item><title>Fluentbit Operator</title><link>/extensions/models/fluentbit-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fluentbit-operator/</guid><description/></item><item><title>Fluentbit Skt</title><link>/extensions/models/fluentbit-skt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fluentbit-skt/</guid><description/></item><item><title>Fluentd Operator</title><link>/extensions/models/fluentd-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fluentd-operator/</guid><description/></item><item><title>Fluentd Operator</title><link>/extensions/models/fluentd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fluentd/</guid><description/></item><item><title>Fluid</title><link>/extensions/models/fluid/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fluid/</guid><description/></item><item><title>Flux</title><link>/extensions/models/flux/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/flux/</guid><description/></item><item><title>Flyte Sandbox</title><link>/extensions/models/flyte-sandbox/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/flyte-sandbox/</guid><description/></item><item><title>Fonio</title><link>/extensions/models/fonio/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/fonio/</guid><description/></item><item><title>Gerrit Operator</title><link>/extensions/models/gerrit-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/gerrit-operator/</guid><description/></item><item><title>Github Actions Runner Operator</title><link>/extensions/models/github-actions-runner-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/github-actions-runner-operator/</guid><description/></item><item><title>Github Actions Runners</title><link>/extensions/models/github-actions-runners/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/github-actions-runners/</guid><description/></item><item><title>GitLab</title><link>/extensions/models/gitlab/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/gitlab/</guid><description/></item><item><title>Gitlab Controller</title><link>/extensions/models/gitlab-controller/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/gitlab-controller/</guid><description/></item><item><title>Gitlab Runner Operator</title><link>/extensions/models/gitlab-runner-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/gitlab-runner-operator/</guid><description/></item><item><title>GitOps with Meshery</title><link>/guides/infrastructure-management/gitops-with-meshery/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/gitops-with-meshery/</guid><description>&lt;p&gt;Meshery publishes two GitHub Actions that you can add to any workflow:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;See your deployment before you merge&lt;/li&gt;
-&lt;li&gt;Connect Meshery to your GitHub repo and see changes pull request-to-pull request&lt;/li&gt;
-&lt;li&gt;Get snapshots of your infrastructure directly in your PRs&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Kanvas Snapshot&lt;/strong&gt; renders your Kubernetes manifests, Helm chart, or Docker Compose file as a Meshery Design and comments the image on pull requests that change those files, so reviewers see the change before it merges.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Performance Testing with Meshery&lt;/strong&gt; deploys Meshery in the runner, runs a performance test against your service, and records the results, so you catch latency and throughput regressions before they ship.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3&gt;Using Meshery's SnapShot GitHub Action&lt;/h3&gt;
-See your deployment before you merge. Connect Meshery to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.
-&lt;p&gt;See &lt;a href="/extensions/extensions/kubectl-meshsync-snapshot/"&gt;Extension: Meshery Snapshot&lt;/a&gt; for more details.&lt;/p&gt;</description></item><item><title>GKE</title><link>/installation/kubernetes/gke/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/kubernetes/gke/</guid><description>&lt;h1&gt;Quick Start with GKE &lt;img src="images/gke.png" style="width:35px;height:35px;" /&gt;&lt;/h1&gt;
+&lt;h2 id="render-a-snapshot-on-pull-requests"&gt;
+	Render a snapshot on pull requests
+&lt;/h2&gt;
+&lt;p&gt;The &lt;a href="https://github.com/layer5labs/kanvas-snapshot"&gt;Kanvas Snapshot action&lt;/a&gt; needs a Layer5 Cloud API token and a GitHub token that can comment on pull requests. Store the Layer5 Cloud token as a repository secret, for example &lt;code&gt;MESHERY_TOKEN&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>GKE</title><link>/installation/kubernetes/gke/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/kubernetes/gke/</guid><description>&lt;h1&gt;Quick Start with GKE &lt;img src="images/gke.png" style="width:35px;height:35px;" /&gt;&lt;/h1&gt;
 &lt;p&gt;Manage your GKE clusters with Meshery. Deploy Meshery inside your GKE cluster (&lt;a href="/installation/kubernetes/gke/#in-cluster-installation"&gt;in-cluster&lt;/a&gt;), or run it outside of GKE (&lt;a href="/installation/kubernetes/#out-of-cluster-installation"&gt;out-of-cluster&lt;/a&gt;) and connect it to your cluster. &lt;strong&gt;&lt;em&gt;Note: We recommend installing Meshery in your GKE clusters.&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;div class="prereqs"&gt;&lt;p&gt;&lt;strong style="font-size: 20px;"&gt;Prerequisites&lt;/strong&gt; &lt;/p&gt; 
  &lt;ol&gt;
@@ -36587,17 +36680,38 @@ This rule and the other repo-specific Go lint gates are listed in
 	Hands-on Lab
 &lt;/h2&gt;
 &lt;p&gt;Follow these steps in order.&lt;/p&gt;</description></item><item><title>Kubevault</title><link>/extensions/models/kubevault/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault/</guid><description/></item><item><title>Kubevault Catalog</title><link>/extensions/models/kubevault-catalog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-catalog/</guid><description/></item><item><title>Kubevault Crds</title><link>/extensions/models/kubevault-crds/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-crds/</guid><description/></item><item><title>Kubevault Metrics</title><link>/extensions/models/kubevault-metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-metrics/</guid><description/></item><item><title>Kubevault Operator</title><link>/extensions/models/kubevault-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-operator/</guid><description/></item><item><title>Kubevela</title><link>/extensions/models/kubevela/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevela/</guid><description/></item><item><title>Kubevirt</title><link>/extensions/models/kubevirt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevirt/</guid><description/></item><item><title>Kuma</title><link>/extensions/models/kuma/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kuma/</guid><description/></item><item><title>Kured</title><link>/extensions/models/kured/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kured/</guid><description/></item><item><title>Kusk Gateway</title><link>/extensions/models/kusk-gateway/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kusk-gateway/</guid><description/></item><item><title>Kyverno</title><link>/extensions/models/kyverno/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno/</guid><description/></item><item><title>Kyverno Monitor</title><link>/extensions/models/kyverno-monitor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-monitor/</guid><description/></item><item><title>Kyverno Operator</title><link>/extensions/models/kyverno-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-operator/</guid><description/></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.72&lt;/h2&gt;</description></item><item><title>Linkerd</title><link>/extensions/models/linkerd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linkerd/</guid><description/></item><item><title>Linux</title><link>/extensions/models/linux/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linux/</guid><description/></item><item><title>Litmus Chaos</title><link>/extensions/models/litmus-core/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/litmus-core/</guid><description/></item><item><title>Loki</title><link>/extensions/models/loki/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki/</guid><description/></item><item><title>Loki Simple Scalable</title><link>/extensions/models/loki-simple-scalable/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki-simple-scalable/</guid><description/></item><item><title>Longhorn</title><link>/extensions/models/longhorn/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/longhorn/</guid><description/></item><item><title>LoxiLB</title><link>/extensions/models/loxilb/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loxilb/</guid><description/></item><item><title>Managing Connections</title><link>/guides/infrastructure-management/lifecycle-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/lifecycle-management/</guid><description>&lt;p&gt;&lt;a name="lifecycle-management"&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Meshery manages hundreds of different types of cloud native infrastructure. See the &lt;a href="/extensions/models/"&gt;full set of integrations&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id="cloud-native-infrastructure-lifecycle-management"&gt;
-	Cloud Native Infrastructure Lifecycle Management
+&lt;p&gt;Every cluster, metrics server, and source that Meshery manages is a &lt;a href="/concepts/logical/connections/"&gt;Connection&lt;/a&gt;. After you &lt;a href="/guides/infrastructure-management/registering-a-connection/"&gt;register a Connection&lt;/a&gt;, use this guide to keep it in the state you want: find it, check its status, change its state, reconfigure it, and remove it when you are done.&lt;/p&gt;
+&lt;p&gt;&lt;a href="/guides/infrastructure-management/lifecycle-management/images/states-for-kubernetes-cluster-connections.svg"&gt;&lt;img class="content-image" src="./images/states-for-kubernetes-cluster-connections.svg" alt="States of a Kubernetes cluster connection" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="find-your-connections"&gt;
+	Find your Connections
 &lt;/h2&gt;
-&lt;p&gt;&lt;a href="/guides/infrastructure-management/lifecycle-management/images/states-for-kubernetes-cluster-connections.svg"&gt;&lt;img class="content-image" src="./images/states-for-kubernetes-cluster-connections.svg" alt="Lifecycle Management" /&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Meshery Adapters can optionally be deployed to provide deep support of different types of infrastructure, so that you can learn and compare different infrastructure functionality. Once you have selected to operate a given infrastructure, Meshery will assist you with ongoing operations.&lt;/p&gt;
-&lt;p&gt;Meshery automates the provisioning of various infrastructurees, allowing users to select different configuration profiles in order to support a variety of deployment models.&lt;/p&gt;</description></item><item><title>Managing Events with Notification Center</title><link>/guides/infrastructure-management/notification-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/notification-management/</guid><description>&lt;p&gt;Meshery continuously tracks activities affecting your infrastructure and workloads. Meshery generates a variety of events, reflecting activities affecting the design and operation of your infrastructure whether those activities are directly or indirectly performed through Meshery operations.&lt;/p&gt;
-&lt;h3 id="what-is-the-notification-center"&gt;
-	What is the Notification Center?
-&lt;/h3&gt;
-&lt;p&gt;The Notification Center is a dedicated panel in Meshery’s UI that helps you monitor, understand, and respond to events across your system. It acts as a central place where you can see important updates related to your infrastructure, workloads, and Meshery’s internal operations.&lt;/p&gt;</description></item><item><title>Managing Performance</title><link>/guides/performance-management/managing-performance/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/performance-management/managing-performance/</guid><description>&lt;p&gt;Measuring and managing performance is key to operating any infrastructure efficiently. Meshery organizes that work around performance profiles. For step-by-step instructions on running a test, see &lt;a href="/guides/performance-management/performance-management/"&gt;Performance Management with Meshery&lt;/a&gt;.&lt;/p&gt;
+
+
+
+&lt;ul class="nav nav-tabs" id="tabs-2" role="tablist"&gt;
+ &lt;li class="nav-item"&gt;
+ &lt;button class="nav-link active"
+ id="tabs-02-00-tab" data-bs-toggle="tab" data-bs-target="#tabs-02-00" role="tab"
+ data-td-tp-persist="meshery ui" aria-controls="tabs-02-00" aria-selected="true"&gt;
+ Meshery UI
+ &lt;/button&gt;
+ &lt;/li&gt;&lt;li class="nav-item"&gt;
+ &lt;button class="nav-link"
+ id="tabs-02-01-tab" data-bs-toggle="tab" data-bs-target="#tabs-02-01" role="tab"
+ data-td-tp-persist="mesheryctl" aria-controls="tabs-02-01" aria-selected="false"&gt;
+ mesheryctl
+ &lt;/button&gt;
+ &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="tab-content" id="tabs-2-content"&gt;
+ &lt;div class="tab-body tab-pane fade show active"
+ id="tabs-02-00" role="tabpanel" aria-labelled-by="tabs-02-00-tab" tabindex="2"&gt;
+ &lt;p&gt;Open &lt;strong&gt;Lifecycle → Connections&lt;/strong&gt;. The table lists each Connection with its &lt;strong&gt;Name&lt;/strong&gt;, &lt;strong&gt;Environments&lt;/strong&gt;, &lt;strong&gt;Kind&lt;/strong&gt;, &lt;strong&gt;Category&lt;/strong&gt;, &lt;strong&gt;Status&lt;/strong&gt;, and timestamps. Search by name, or filter the table by kind and status. Click a Kubernetes Connection&amp;rsquo;s row to expand it and see its server, its Operator, MeshSync, and Broker status, and its &lt;a href="/guides/infrastructure-management/kubernetes-connection-lifecycle/#diagnostics"&gt;Diagnostics&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Managing Events with Notification Center</title><link>/guides/infrastructure-management/notification-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/notification-management/</guid><description>&lt;p&gt;Meshery records an event for each activity that affects your designs and infrastructure, whether you started it or Meshery did on its own, such as a deployment, a validation, a relationship evaluation, or a MeshSync error. The Notification Center is where you review those events and act on them.&lt;/p&gt;
+&lt;h2 id="open-the-notification-center"&gt;
+	Open the Notification Center
+&lt;/h2&gt;
+&lt;p&gt;Click the bell icon in the header of Meshery UI. When you have unread errors, a red badge on the icon counts them. With no unread errors, a yellow badge counts unread warnings.&lt;/p&gt;</description></item><item><title>Managing Performance</title><link>/guides/performance-management/managing-performance/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/performance-management/managing-performance/</guid><description>&lt;p&gt;Measuring and managing performance is key to operating any infrastructure efficiently. Meshery organizes that work around performance profiles. For step-by-step instructions on running a test, see &lt;a href="/guides/performance-management/performance-management/"&gt;Performance Management with Meshery&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="performance-profiles"&gt;
 	Performance Profiles
 &lt;/h2&gt;
@@ -41744,7 +41858,23 @@ Container Registry, AWS ECR, and so on), exactly like a container image.&lt;/p&g
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;[details=&amp;ldquo;Roadmap v0.9.0 (stretch goal)&amp;rdquo;]&lt;/p&gt;</description></item><item><title>Rook</title><link>/extensions/models/rook/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/rook/</guid><description/></item><item><title>Rook Ceph Cluster</title><link>/extensions/models/rook-ceph-cluster/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/rook-ceph-cluster/</guid><description/></item><item><title>Running system checks using Meshery CLI</title><link>/guides/mesheryctl/running-system-checks-using-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/running-system-checks-using-mesheryctl/</guid><description>&lt;p&gt;&lt;code&gt;mesheryctl system check&lt;/code&gt; verifies that your machine is ready to deploy Meshery and that an existing Meshery deployment is healthy. Run it before you deploy Meshery, and again whenever Meshery misbehaves.&lt;/p&gt;
+&lt;p&gt;[details=&amp;ldquo;Roadmap v0.9.0 (stretch goal)&amp;rdquo;]&lt;/p&gt;</description></item><item><title>Rook</title><link>/extensions/models/rook/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/rook/</guid><description/></item><item><title>Rook Ceph Cluster</title><link>/extensions/models/rook-ceph-cluster/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/rook-ceph-cluster/</guid><description/></item><item><title>Running mesheryctl in a CI Pipeline</title><link>/guides/mesheryctl/running-mesheryctl-in-ci/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/running-mesheryctl-in-ci/</guid><description>&lt;p&gt;Use this guide to run &lt;code&gt;mesheryctl&lt;/code&gt; from a CI job, such as a GitHub Actions workflow, a GitLab pipeline, or a Jenkins agent. A CI runner has no browser and nobody to answer prompts, so you install a pinned &lt;code&gt;mesheryctl&lt;/code&gt;, give it a token, and pass flags that skip every prompt. The examples use GitHub Actions, but each step is a shell command that works on any runner.&lt;/p&gt;
+&lt;h2 id="before-you-begin"&gt;
+	Before you begin
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A runner with &lt;code&gt;bash&lt;/code&gt;, &lt;code&gt;curl&lt;/code&gt;, and &lt;code&gt;jq&lt;/code&gt;. To start Meshery on the runner itself, the runner also needs Docker, or access to a Kubernetes cluster.&lt;/li&gt;
+&lt;li&gt;A way to authenticate. Choose one:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;A Remote Provider token&lt;/strong&gt;, if your pipeline works with your organization&amp;rsquo;s designs, environments, or performance results. Download it from Meshery Cloud as described in &lt;a href="/guides/mesheryctl/authenticate-with-meshery-via-cli/#log-in-from-a-machine-without-a-browser"&gt;Log in from a machine without a browser&lt;/a&gt;, and store the value of its &lt;code&gt;token&lt;/code&gt; key as a CI secret. The examples use a secret named &lt;code&gt;MESHERY_TOKEN&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;The Local provider&lt;/strong&gt;, if the pipeline starts a throwaway Meshery Server and needs nothing from your organization. It needs no secret.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="install-a-pinned-mesheryctl"&gt;
+	Install a pinned mesheryctl
+&lt;/h2&gt;
+&lt;p&gt;Pin the version so that a new release doesn&amp;rsquo;t change your pipeline&amp;rsquo;s behavior. Pick a version from the &lt;a href="https://github.com/meshery/meshery/releases"&gt;Meshery releases&lt;/a&gt;, then install only the CLI with &lt;code&gt;-n&lt;/code&gt;:&lt;/p&gt;</description></item><item><title>Running system checks using Meshery CLI</title><link>/guides/mesheryctl/running-system-checks-using-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/running-system-checks-using-mesheryctl/</guid><description>&lt;p&gt;&lt;code&gt;mesheryctl system check&lt;/code&gt; verifies that your machine is ready to deploy Meshery and that an existing Meshery deployment is healthy. Run it before you deploy Meshery, and again whenever Meshery misbehaves.&lt;/p&gt;
 &lt;p&gt;Run &lt;code&gt;mesheryctl system check --help&lt;/code&gt; to see every flag, or see the &lt;a href="/reference/references/mesheryctl/"&gt;&lt;code&gt;mesheryctl system check&lt;/code&gt; reference&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="check-your-machine-before-you-deploy"&gt;
 	Check your machine before you deploy

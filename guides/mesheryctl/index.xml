@@ -33,7 +33,23 @@
 &lt;h3 id="start"&gt;
 	start
 &lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;mesheryctl system start&lt;/code&gt; deploys Meshery to the platform in your current context and opens Meshery UI in your default browser.&lt;/p&gt;</description></item><item><title>Running system checks using Meshery CLI</title><link>/guides/mesheryctl/running-system-checks-using-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/running-system-checks-using-mesheryctl/</guid><description>&lt;p&gt;&lt;code&gt;mesheryctl system check&lt;/code&gt; verifies that your machine is ready to deploy Meshery and that an existing Meshery deployment is healthy. Run it before you deploy Meshery, and again whenever Meshery misbehaves.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mesheryctl system start&lt;/code&gt; deploys Meshery to the platform in your current context and opens Meshery UI in your default browser.&lt;/p&gt;</description></item><item><title>Running mesheryctl in a CI Pipeline</title><link>/guides/mesheryctl/running-mesheryctl-in-ci/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/running-mesheryctl-in-ci/</guid><description>&lt;p&gt;Use this guide to run &lt;code&gt;mesheryctl&lt;/code&gt; from a CI job, such as a GitHub Actions workflow, a GitLab pipeline, or a Jenkins agent. A CI runner has no browser and nobody to answer prompts, so you install a pinned &lt;code&gt;mesheryctl&lt;/code&gt;, give it a token, and pass flags that skip every prompt. The examples use GitHub Actions, but each step is a shell command that works on any runner.&lt;/p&gt;
+&lt;h2 id="before-you-begin"&gt;
+	Before you begin
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A runner with &lt;code&gt;bash&lt;/code&gt;, &lt;code&gt;curl&lt;/code&gt;, and &lt;code&gt;jq&lt;/code&gt;. To start Meshery on the runner itself, the runner also needs Docker, or access to a Kubernetes cluster.&lt;/li&gt;
+&lt;li&gt;A way to authenticate. Choose one:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;A Remote Provider token&lt;/strong&gt;, if your pipeline works with your organization&amp;rsquo;s designs, environments, or performance results. Download it from Meshery Cloud as described in &lt;a href="/guides/mesheryctl/authenticate-with-meshery-via-cli/#log-in-from-a-machine-without-a-browser"&gt;Log in from a machine without a browser&lt;/a&gt;, and store the value of its &lt;code&gt;token&lt;/code&gt; key as a CI secret. The examples use a secret named &lt;code&gt;MESHERY_TOKEN&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;The Local provider&lt;/strong&gt;, if the pipeline starts a throwaway Meshery Server and needs nothing from your organization. It needs no secret.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="install-a-pinned-mesheryctl"&gt;
+	Install a pinned mesheryctl
+&lt;/h2&gt;
+&lt;p&gt;Pin the version so that a new release doesn&amp;rsquo;t change your pipeline&amp;rsquo;s behavior. Pick a version from the &lt;a href="https://github.com/meshery/meshery/releases"&gt;Meshery releases&lt;/a&gt;, then install only the CLI with &lt;code&gt;-n&lt;/code&gt;:&lt;/p&gt;</description></item><item><title>Running system checks using Meshery CLI</title><link>/guides/mesheryctl/running-system-checks-using-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/running-system-checks-using-mesheryctl/</guid><description>&lt;p&gt;&lt;code&gt;mesheryctl system check&lt;/code&gt; verifies that your machine is ready to deploy Meshery and that an existing Meshery deployment is healthy. Run it before you deploy Meshery, and again whenever Meshery misbehaves.&lt;/p&gt;
 &lt;p&gt;Run &lt;code&gt;mesheryctl system check --help&lt;/code&gt; to see every flag, or see the &lt;a href="/reference/references/mesheryctl/"&gt;&lt;code&gt;mesheryctl system check&lt;/code&gt; reference&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="check-your-machine-before-you-deploy"&gt;
 	Check your machine before you deploy
