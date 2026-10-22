@@ -333,6 +333,7 @@ func patchBindingSelectorIDsTyped(sel *relationship.SelectorItem, matchFromID, m
 // be converted once instead of once per pair.
 type componentMapCache map[*component.ComponentDefinition]map[string]interface{}
 
+// genericMap returns the cached generic map for comp, converting it on first use.
 func (c componentMapCache) genericMap(comp *component.ComponentDefinition) map[string]interface{} {
 	if c == nil {
 		m, _ := toGenericMap(comp)
