@@ -59,10 +59,11 @@ make: *** [Makefile: server] Error 1
 
 **Fix:**
 
-1. Delete the local database. This removes your locally stored Meshery data:
+1. Delete the local database file and its write-ahead log files. This removes your locally stored Meshery data but leaves the rest of the folder in place:
 
     ```bash
-    rm -rf "${USER_DATA_FOLDER:-$HOME/.meshery/config}"
+    DB_DIR="${USER_DATA_FOLDER:-$HOME/.meshery/config}"
+    rm -f "$DB_DIR/mesherydb.sql" "$DB_DIR/mesherydb.sql-wal" "$DB_DIR/mesherydb.sql-shm"
     ```
 
 2. Run `make server` again.
