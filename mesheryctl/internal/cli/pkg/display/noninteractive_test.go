@@ -306,3 +306,99 @@ func TestPromptPageHandlerExactNameMatch(t *testing.T) {
 		})
 	}
 }
+
+func TestPromptPageHandler_KindFieldExcludedFromDefaultMatching(t *testing.T) {
+	withTerminal(t, false)
+
+	type itemWithKind struct {
+		ID   string
+		Name string
+		Kind string
+	}
+
+	var selected itemWithKind
+	// Item 1 has Name="mesh-adapter", Kind="kubernetes".
+	// Item 2 has Name="kubernetes-operator", Kind="operator".
+	// Search term is "kubernetes". Neither has Name=="kubernetes".
+	// Because Kind is excluded from default matching, item 1's Kind does not trigger an exact match,
+	// and the handler correctly reports ErrAmbiguousSelection instead of improperly auto-selecting item 1.
+	handler := promptPageHandler(
+		DisplayDataAsync{
+			DataType:   "models",
+			SearchTerm: "kubernetes",
+		},
+		func(rows []itemWithKind) []string {
+			labels := make([]string, len(rows))
+			for i, r := range rows {
+				labels[i] = r.Name
+			}
+			return labels
+		},
+		func(_ *[]itemWithKind) ([]itemWithKind, int64) {
+			return []itemWithKind{
+				{ID: "1", Name: "mesh-adapter", Kind: "kubernetes"},
+				{ID: "2", Name: "kubernetes-operator", Kind: "operator"},
+			}, 2
+		},
+		&selected,
+	)
+
+	_, err := handler(&[]itemWithKind{}, 0, 10)
+	if err == nil {
+		t.Fatal("expected ErrAmbiguousSelection because Kind is not matched by default, got nil")
+	}
+	if got := errors.GetCode(err); got != ErrAmbiguousSelectionCode {
+		t.Errorf("error code = %q, want %q", got, ErrAmbiguousSelectionCode)
+	}
+	if selected.ID != "" {
+		t.Errorf("expected no auto-selection based on Kind, got %q", selected.ID)
+	}
+}
+
+func TestPromptPageHandler_KindMatchingViaExtractNames(t *testing.T) {
+	withTerminal(t, false)
+
+	type itemWithKind struct {
+		ID   string
+		Name string
+		Kind string
+	}
+
+	var selected itemWithKind
+	// With caller-supplied ExtractNames, Kind matching can be explicitly opted into.
+	handler := promptPageHandler(
+		DisplayDataAsync{
+			DataType:   "models",
+			SearchTerm: "kubernetes",
+			ExtractNames: func(item any) []string {
+				if ik, ok := item.(itemWithKind); ok {
+					return []string{ik.Name, ik.Kind}
+				}
+				return nil
+			},
+		},
+		func(rows []itemWithKind) []string {
+			labels := make([]string, len(rows))
+			for i, r := range rows {
+				labels[i] = r.Name
+			}
+			return labels
+		},
+		func(_ *[]itemWithKind) ([]itemWithKind, int64) {
+			return []itemWithKind{
+				{ID: "1", Name: "mesh-adapter", Kind: "kubernetes"},
+				{ID: "2", Name: "kubernetes-operator", Kind: "operator"},
+			}, 2
+		},
+		&selected,
+	)
+
+	_, err := handler(&[]itemWithKind{}, 0, 10)
+	if err != nil {
+		t.Fatalf("expected successful auto-selection with custom ExtractNames, got %v", err)
+	}
+	if selected.ID != "1" {
+		t.Errorf("expected item 1 selected, got %q", selected.ID)
+	}
+}
+

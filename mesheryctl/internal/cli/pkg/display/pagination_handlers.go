@@ -184,7 +184,10 @@ func getCandidateNames(displayData DisplayDataAsync, item any) []string {
 }
 
 // extractCandidateNames extracts potential names from an item via common interfaces
-// or reflection across known name fields (Name, DisplayName, Kind, Component.Kind).
+// or reflection across known primary name fields (Name, DisplayName).
+// Metadata fields like Kind and Component.Kind are excluded from default selection
+// matching to avoid false positives; callers needing kind-based matching should provide
+// DisplayDataAsync.ExtractNames.
 func extractCandidateNames(item any) []string {
 	if item == nil {
 		return nil
@@ -248,30 +251,6 @@ func extractCandidateNames(item any) []string {
 		} else if f.CanInterface() {
 			if stringer, ok := f.Interface().(fmt.Stringer); ok {
 				if s := stringer.String(); s != "" {
-					names = append(names, s)
-				}
-			}
-		}
-	}
-
-	// Check field "Kind"
-	if f := val.FieldByName("Kind"); f.IsValid() && f.Kind() == reflect.String {
-		if s := f.String(); s != "" {
-			names = append(names, s)
-		}
-	}
-
-	// Check nested "Component.Kind"
-	if comp := val.FieldByName("Component"); comp.IsValid() {
-		for comp.Kind() == reflect.Pointer || comp.Kind() == reflect.Interface {
-			if comp.IsNil() {
-				break
-			}
-			comp = comp.Elem()
-		}
-		if comp.Kind() == reflect.Struct {
-			if kind := comp.FieldByName("Kind"); kind.IsValid() && kind.Kind() == reflect.String {
-				if s := kind.String(); s != "" {
 					names = append(names, s)
 				}
 			}
