@@ -46,7 +46,7 @@ Set `application_type` to `Kubernetes Manifest`, `Helm Chart`, or `Docker Compos
 The [Performance Testing with Meshery action](https://github.com/marketplace/actions/performance-testing-with-meshery) starts Meshery in the runner, runs your test, and records the result in your Meshery account. Trigger it on releases, on every pull request, or on any other workflow event.
 
 1. Get a provider token. In Meshery UI, open the avatar menu and choose **Get Token**, then copy the value of the `token` key from the downloaded `auth.json`. Store it as a repository secret named `PROVIDER_TOKEN`.
-2. Choose what to run. Either create a [performance profile]({{< ref "guides/performance-management/managing-performance/index.md" >}}) in Meshery and pass its name as `profile_name`, or commit a test configuration file in [Cloud Native Performance](https://smp-spec.io) (SMP) format to your repository's `.github` folder and pass its file name as `profile_filename`.
+2. Commit a test configuration file in [Cloud Native Performance](https://smp-spec.io) (SMP) format to your repository's `.github` folder, as shown below, and pass its file name as `profile_filename`.
 3. Add the action to a workflow:
 
 ```yaml
@@ -66,29 +66,24 @@ jobs:
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: docker
-          profile_name: soak-test
+          profile_filename: perf-config.yaml
 ```
 
-A test configuration file in SMP format looks like this:
+The action passes a test configuration file to `mesheryctl perf apply --file`, so the file uses the same structure and camelCase keys as `mesheryctl`. See [Use a test configuration file]({{< ref "guides/performance-management/performance-management/index.md#use-a-test-configuration-file" >}}):
 
 ```yaml
-smp_version: v0.0.1
-id:
-name: Istio Performance Test
-labels: {}
-clients:
-- internal: false
-  load_generator: fortio
-  protocol: 1
-  connections: 2
-  rps: 10
-  headers: {}
-  cookies: {}
-  body: ""
-  content_type: ""
-  endpoint_urls:
-  - http://localhost:2323/productpage
-duration: "30m"
+test:
+  smpVersion: v0.0.1
+  name: Istio Performance Test
+  clients:
+    - loadGenerator: fortio
+      protocol: http
+      connections: 2
+      rps: 10
+      endpointUrls:
+        - http://localhost:2323/productpage
+  duration: 30m
+mesh: istio
 ```
 
 The action accepts these inputs:
@@ -97,12 +92,16 @@ The action accepts these inputs:
 |---|---|---|
 | `provider_token` | Yes | The `token` value from your `auth.json`. |
 | `platform` | No | Where to deploy Meshery in the runner: `docker` (default) or `kubernetes`. |
-| `profile_name` | One of these two | Name of a performance profile saved in Meshery. |
 | `profile_filename` | One of these two | Name of an SMP test configuration file in `.github`. |
+| `profile_name` | One of these two | Name of a performance profile saved in Meshery. See the note below. |
 | `endpoint_url` | No | Overrides the endpoint in the test configuration, for example the URL of the service your workflow just deployed. |
 | `service_mesh` | No | Overrides the service mesh named in the test configuration. |
 | `test_name` | No | Overrides the test name. |
-| `load_generator` | No | Overrides the load generator, for example `fortio` or `wrk2`. |
+| `load_generator` | No | Overrides the load generator. Meshery runs tests with `fortio`. |
+
+{{% alert color="warning" title="Prefer profile_filename" %}}
+When you pass `profile_name`, the action looks the profile up with `mesheryctl perf view`, a command that current releases of `mesheryctl` no longer have, so the step fails. Use `profile_filename` until the action is updated.
+{{% /alert %}}
 
 <a href="./images/service-mesh-performance-profile-test-results.png"><img src="./images/service-mesh-performance-profile-test-results.png" alt="Performance test results in Meshery" /></a>
 
