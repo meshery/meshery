@@ -209,7 +209,7 @@ Using CSV | fa fa-list
 <p>The <code>--directory</code> flag takes the path to the folder that contains <code>Models.csv</code> and <code>Components.csv</code> (<code>Relationships.csv</code> is optional). This path is CSV-driven and does <strong>not</strong> require a Google Spreadsheet credential.</p>
 
 <h4>4. Locating Generated Files</h4>
-<p>After successful generation, <code>mesheryctl</code> writes your model's files to the repository's <code>models/</code> directory, or to the directory you pass with <code>-o</code>. You can find these files at <code>meshery/models/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
+<p>After successful generation, <code>mesheryctl</code> writes your model's files to the repository's <code>models/</code> directory, or to the directory you pass with <code>-o</code>. With the default output, find them at <code>meshery/models/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
 
 <h4>5. Troubleshooting</h4>
 <p>If you encounter issues during the generation process, you can use these diagnostic approaches to identify and resolve problems:</p>
@@ -306,7 +306,7 @@ If <code>$SHEET_CRED</code> is empty or is not valid base64, <code>mesheryctl</c
 Meshery CLI has a set of commands that pertain to the lifecycle management of models:
 
 - `mesheryctl registry` generates models from CSV files or the integration spreadsheet.
-- `mesheryctl model` lists, views, imports, exports, builds, and deletes models in Meshery Server.
+- `mesheryctl model` lists, views, imports, exports, and deletes models in Meshery Server. `mesheryctl model build` packages a model into an OCI image locally, without Meshery Server.
 - `mesheryctl component` lists, searches, and views components in Meshery Server.
 - `mesheryctl relationship` manages relationships in Meshery Server.
 {{% /alert %}}
