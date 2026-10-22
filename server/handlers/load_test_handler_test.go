@@ -92,4 +92,7 @@ func TestLoadTestHandler_NonWhitespaceBodyDispatchesToSMP(t *testing.T) {
 	if provider.getProfileCalled {
 		t.Fatalf("expected GetPerformanceProfile NOT to be called when body has content, but it was called")
 	}
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected SMP handler to respond with HTTP 400 for invalid SMP payload, got %d", rec.Code)
+	}
 }
