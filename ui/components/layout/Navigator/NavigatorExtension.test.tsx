@@ -157,7 +157,7 @@ vi.mock('@/store/ProviderStoreWrapper', () => ({
   default: ({ children }: any) => <>{children}</>,
 }));
 
-vi.mock('@/utils/context/WorkspaceModalContextProvider', () => ({
+vi.mock('@/utils/context/workspaceModalContext', () => ({
   WorkspaceModalContext: React.createContext({
     openModalWithDefault: vi.fn(),
     onLoadResource: vi.fn(),

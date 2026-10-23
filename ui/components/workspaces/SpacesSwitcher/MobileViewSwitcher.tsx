@@ -1,5 +1,5 @@
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { WorkspaceModalContext } from '@/utils/context/workspaceModalContext';
 import { Keys } from '@meshery/schemas/permissions';
 import { BottomSheet, Box, Button, Typography, useTheme, WorkspaceIcon } from '@sistent/sistent';
 import { iconMedium, iconSmall } from 'css/icons.styles';

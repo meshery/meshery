@@ -30,7 +30,7 @@ import React, { useContext } from 'react';
 import { iconMedium } from 'css/icons.styles';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import UserAvatarComponent from './UserAvatarComponent';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { WorkspaceModalContext } from '@/utils/context/workspaceModalContext';
 import { Grid2 } from '@sistent/sistent';
 import { useGetIconBasedOnMode } from './hooks';
 

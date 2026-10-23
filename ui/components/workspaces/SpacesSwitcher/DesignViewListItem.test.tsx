@@ -19,7 +19,7 @@ vi.mock('@/utils/Enum', () => ({
   RESOURCE_TYPE: { DESIGN: 'design', VIEW: 'view' },
 }));
 
-vi.mock('@/utils/context/WorkspaceModalContextProvider', () => ({
+vi.mock('@/utils/context/workspaceModalContext', () => ({
   WorkspaceModalContext: React.createContext({
     multiSelectedContent: [],
     setMultiSelectedContent: vi.fn(),
