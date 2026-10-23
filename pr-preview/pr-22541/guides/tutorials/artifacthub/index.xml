@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Artifact Hub on Documentation</title><link>/pr-preview/pr-22541/guides/tutorials/artifacthub/</link><description>Recent content in Artifact Hub on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/pr-preview/pr-22541/guides/tutorials/artifacthub/index.xml" rel="self" type="application/rss+xml"/><item><title>Publishing Meshery Designs to Artifact Hub</title><link>/pr-preview/pr-22541/guides/tutorials/artifacthub/publish-to-artifacthub/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22541/guides/tutorials/artifacthub/publish-to-artifacthub/</guid><description>&lt;p&gt;In this tutorial, you export a design from Meshery and publish it to an Artifact Hub repository, so that others can find and import it.&lt;/p&gt;
+&lt;h2 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Access to Meshery. &lt;a href="/pr-preview/pr-22541/installation/"&gt;Install Meshery&lt;/a&gt; or access the &lt;a href="https://play.meshery.io"&gt;Meshery Playground&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;A Git repository registered in Artifact Hub with the kind &lt;strong&gt;Meshery designs&lt;/strong&gt;. Step 3 shows how to set one up.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="steps"&gt;
+	Steps
+&lt;/h2&gt;
+&lt;h3 id="1-open-the-designs-page"&gt;
+	1. Open the Designs page
+&lt;/h3&gt;
+&lt;p&gt;In Meshery UI, open &lt;strong&gt;Configuration → Designs&lt;/strong&gt;. The page is at:&lt;/p&gt;</description></item></channel></rss>
