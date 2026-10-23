@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Install Meshery CLI on Windows on Documentation</title><link>/pr-preview/pr-22534/installation/mesheryctl/windows/</link><description>Recent content in Install Meshery CLI on Windows on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/pr-preview/pr-22534/installation/mesheryctl/windows/index.xml" rel="self" type="application/rss+xml"/><item><title>Scoop</title><link>/pr-preview/pr-22534/installation/mesheryctl/windows/scoop/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22534/installation/mesheryctl/windows/scoop/</guid><description>&lt;h1 id="install-meshery-cli-with-scoop"&gt;
+	Install Meshery CLI with Scoop
+&lt;/h1&gt;
+&lt;h2 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h2&gt;
+&lt;p&gt;You need &lt;a href="https://scoop.sh"&gt;Scoop&lt;/a&gt; installed on your Windows system.&lt;/p&gt;
+&lt;h3 id="install-mesheryctl-with-scoop"&gt;
+	Install &lt;code&gt;mesheryctl&lt;/code&gt; with Scoop
+&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;mesheryctl&lt;/code&gt; is not in Scoop&amp;rsquo;s default buckets. Add the Meshery bucket, then install &lt;code&gt;mesheryctl&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
+&lt;div class="clipboardjs"&gt;scoop bucket add mesheryctl https://github.com/meshery/scoop-bucket.git
+scoop install mesheryctl&lt;/div&gt;&lt;/div&gt;
+&lt;/pre&gt;
+&lt;p&gt;You&amp;rsquo;re ready to run Meshery. To start it on Kubernetes, run:&lt;/p&gt;
+&lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
+&lt;div class="clipboardjs"&gt;mesheryctl system start&lt;/div&gt;&lt;/div&gt;
+&lt;/pre&gt;
+&lt;p&gt;To run Meshery on Docker instead, run:&lt;/p&gt;
+&lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
+&lt;div class="clipboardjs"&gt;mesheryctl system start -p docker&lt;/div&gt;&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h3 id="upgrade-mesheryctl-with-scoop"&gt;
+	Upgrade &lt;code&gt;mesheryctl&lt;/code&gt; with Scoop
+&lt;/h3&gt;
+&lt;p&gt;To upgrade &lt;code&gt;mesheryctl&lt;/code&gt;, run:&lt;/p&gt;</description></item></channel></rss>
