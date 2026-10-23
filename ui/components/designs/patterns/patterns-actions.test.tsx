@@ -45,6 +45,7 @@ vi.mock('../import-design-request', () => ({
 }));
 
 import { createPatternsActions } from './patterns-actions';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const baseDeps = () => {
   const setSelectedRowData = vi.fn();
@@ -66,8 +67,8 @@ const baseDeps = () => {
     importDesign: vi.fn(),
     updatePattern: vi.fn(),
     uploadPatternFile: vi.fn(),
-    deployPatternMutation: vi.fn().mockResolvedValue({}),
-    undeployPatternMutation: vi.fn().mockResolvedValue({}),
+    deployPatternMutation: vi.fn(() => ({ unwrap: () => Promise.resolve({}) })),
+    undeployPatternMutation: vi.fn(() => ({ unwrap: () => Promise.resolve({}) })),
     modalRef: { current: { show: vi.fn() } },
     meshModels: [],
     infoModal: { selectedResource: { id: 'res-1' } },
@@ -137,6 +138,15 @@ describe('createPatternsActions', () => {
       patternId: 'd2',
       selectedK8sContexts: ['ctx-2'],
     });
+  });
+
+  it('propagates a rejected unwrap and still calls updateProgress to hide progress', async () => {
+    const deps = baseDeps();
+    deps.deployPatternMutation = vi.fn(() => ({ unwrap: () => Promise.reject(new Error('fail')) }));
+    await expect(
+      createPatternsActions(deps).handleDeploy({ design: { id: 'd1' }, selectedK8sContexts: [] }),
+    ).rejects.toThrow('fail');
+    expect(updateProgress).toHaveBeenCalledWith({ showProgress: false });
   });
 
   it('handleUploadImport opens the import modal', () => {
