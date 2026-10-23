@@ -151,12 +151,19 @@ kubectl -n meshery logs deploy/meshery-operator -c manager
 
 **Remedy.** Get a chart at or above `v1.0.51` into the cluster.
 
-If Meshery Server deployed the operator for you (the usual case: you added a kubeconfig and Meshery installed the operator), simply **upgrade Meshery Server**. The version a Server derives from its own release is floored: the Server resolves it against what the repository actually publishes and raises anything older than `v1.0.51` to the oldest published chart at or above that boundary, telling you it did so in the events feed. Then reconnect the cluster.
+If Meshery Server deployed the operator for you (the usual case: you added a kubeconfig and Meshery installed the operator), **reconnect the cluster** - after upgrading Meshery Server, if it predates this check. On every connect, Meshery Server reads the chart version of the `meshery-operator` Helm release in the `meshery` namespace, and if it is older than `v1.0.51` it upgrades the release to the chart it resolves for its own release, which is never older than `v1.0.51`. It does this whether the Operator is crash-looping or happens to be running. The events feed reports the upgrade (`meshery-server-1487`), naming the chart it found and the chart it installed. A release at or above `v1.0.51` is never touched.
 
-The floor covers that derived version and nothing else, so two cases still leave an old chart in place:
+The upgrade is a Helm upgrade, and Helm never upgrades a chart's CRDs on its own. Every chart from `v1.0.51` on carries a pre-upgrade Job (`meshery-operator-crd-update`) that applies the current `brokers.meshery.io` and `meshsyncs.meshery.io` CRDs - including the `v1alpha2` version that old charts such as `v1.0.0` never installed - before the Operator is changed. If that Job fails, Helm stops the upgrade before touching the Operator Deployment, so you are never left with a new Operator on old CRDs.
 
-- **You pinned one.** An `operator.version` you set is honored as written and is never raised, so a connection pinned below `v1.0.51` keeps reinstalling that chart until you change or clear the pin. See [Choosing the chart version yourself](#choosing-the-chart-version-yourself).
-- **Nothing published reaches the floor.** If the repository carries no chart at or above `v1.0.51`, the newest published chart is deployed anyway, and the events feed says so and warns that the Operator may not become ready.
+Earlier Meshery Server releases floored only the chart they were about to install, so an Operator they found already installed was left on its old chart however many times the Server was upgraded. That is what the check above closes.
+
+Some cases still leave an old chart in place, and each is reported rather than silent:
+
+- **You pinned one.** An `operator.version` you set is honored as written and is never raised. If the pin is below `v1.0.51`, an installed release below it is left alone, and the events feed and the connection's diagnostics report it (`meshery-server-1488`) on every connect until you change or clear the pin. A pin at `v1.0.51` or newer is what an old release is upgraded to. See [Choosing the chart version yourself](#choosing-the-chart-version-yourself).
+- **Nothing published reaches the floor.** If the repository carries no chart at or above `v1.0.51`, a fresh install gets the newest published chart with a warning that the Operator may not become ready, and an installed release below `v1.0.51` is left alone and reported (`meshery-server-1489`) - upgrading it to another chart that cannot run would fix nothing.
+- **The upgrade failed.** The events feed carries Helm's reason (`meshery-server-1491`), and the next connect tries again. If the CRD update Job is the cause, read it with `kubectl -n meshery logs job/meshery-operator-crd-update`.
+- **Meshery cannot read the release** (`meshery-server-1490`), usually because the identity in the connection's kubeconfig may not list Secrets in the `meshery` namespace, where Helm keeps its release records.
+- **The Operator is not the `meshery-operator` release.** An Operator installed as part of the Meshery Helm chart belongs to the `meshery` release and is upgraded with it (`helm upgrade meshery ...`); one applied without Helm has no chart version for Meshery to read. Upgrade either yourself, as below.
 
 If you installed the operator chart yourself with Helm:
 
@@ -201,7 +208,7 @@ Meshery Server normally deploys the operator chart that matches its own release,
 
 The value must be a chart version that the repository publishes, for example `v1.0.64` (the leading `v` is optional - `1.0.64` names the same chart). A moving tag such as `stable-latest`, or a version that is not published, is rejected with a visible error rather than being silently replaced. Clear the field to go back to tracking the Meshery Server release.
 
-A pin is deliberate, so it also escapes the minimum-version floor that guards the derived version: `operator.version` below `v1.0.51` is installed as written rather than raised. Every published chart checked below that boundary leaves the Operator Pod unable to become ready (see [Meshery Operator will not start](#meshery-operator-will-not-start-imagepullbackoff-and-a-missing-webhook-certificate)), so choosing a chart that deploys is yours to get right.
+A pin is deliberate, so it also escapes the minimum-version floor that guards the derived version: `operator.version` below `v1.0.51` is installed as written rather than raised, and an Operator already installed below `v1.0.51` is not upgraded while the pin stands - Meshery reports that in the events feed instead (`meshery-server-1488`). Every published chart checked below that boundary leaves the Operator Pod unable to become ready (see [Meshery Operator will not start](#meshery-operator-will-not-start-imagepullbackoff-and-a-missing-webhook-certificate)), so choosing a chart that deploys is yours to get right.
 
 Release candidates are the one thing Meshery will never pick for you: when it falls back to the newest published chart, or raises an old one to the oldest chart known to deploy, it skips any version carrying a prerelease suffix such as `v1.0.66-rc.1`. Naming a prerelease in `operator.version` deploys it exactly as asked.
 

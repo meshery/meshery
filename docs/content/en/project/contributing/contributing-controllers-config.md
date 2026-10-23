@@ -152,6 +152,69 @@ that is the string handed to Helm and the string
 `attachedOperatorChartVersion` is compared against - and a spelling difference
 is not a substitution, so it produces no reason.
 
+### The floor also applies to a release that is already installed
+
+Everything above governs the chart a server is about to *install*. On its own
+that never reaches a cluster that already has an operator:
+`DeployUndeployedOperators` installs only when meshkit reports the operator
+`NotDeployed`, and nothing else re-applies the chart to a present one. A cluster
+that received a chart below the floor before the floor existed therefore stayed
+on it through every later server upgrade - the Meshery Playground ran chart
+`v1.0.0` on a v1.0.74 server, crash-looping 30,763 times
+([#22555](https://github.com/meshery/meshery/issues/22555)).
+
+`DeployUndeployedOperators` is the one place every connect path decides what the
+operator needs, so the fix lives there. When the operator is `Deployed` or
+`Deploying` - a crash loop reports `Deploying` forever, its rollout never
+completing - it calls `reconcileOperatorChartFloor`, which:
+
+1. Reads the chart version of the `meshery/meshery-operator` Helm release's
+   **deployed** revision from Helm's own release record (`operatorRelease`,
+   `server/models/operator_release.go`). A failed upgrade leaves the previous
+   revision deployed, so the newest revision is the wrong one to read. No
+   release is ordinary, not an error: an operator installed as a subchart of the
+   Meshery chart belongs to the `meshery` release and moves with it.
+2. Leaves anything at or above the floor exactly as it is. The floor is never a
+   reason to move a chart that can run, so this cannot downgrade a release or
+   make several servers of different releases flip one back and forth.
+3. Below the floor, takes the shared install guard (`operatorInstallTarget`),
+   then decides with `decideOperatorChartFloor` against
+   `attachedOperatorChartVersion` - the derived version already floored by
+   `ResolveOperatorChartVersion`, or the pin:
+   - target at or above the floor (derived, or a pin there) - upgrade;
+   - a pin below the floor - never overridden, reported as
+     `ErrOperatorChartPinnedBelowFloor`;
+   - derived but still below the floor (nothing published reaches it) -
+     reported as `ErrOperatorChartFloorUnreachable`.
+
+Every upgrade, refusal and failure is an event carrying its MeshKit error
+(`meshery-server-1487` through `-1491`) and naming the connection, so a
+background reconcile's event is persisted; failures are also recorded for the
+connection diagnostics. A failed upgrade is retried on the next connect, because
+the deployed revision is still below the floor.
+
+The upgrade does **not** go through meshkit's `Deploy`. That refuses whenever
+the Deployment's rollout is incomplete ("already a Meshery Operator is being
+deployed") - permanently true of a crash-looping operator, the case this exists
+for. `operatorRelease.Upgrade` calls `ApplyHelmChart` with an explicit `UPGRADE`
+and the same namespace, release name, chart and override set meshkit installs
+with. The overrides are never empty, which matters: Helm reuses a release's
+previous values on an upgrade that supplies none.
+
+**CRDs.** Helm never upgrades a chart's `crds/` directory, and chart `v1.0.0`
+(the one #22555 found) installed `brokers.meshery.io` and `meshsyncs.meshery.io`
+serving `v1alpha1` only, while current operator images also use `v1alpha2`. Every published chart
+at or above the floor (all 21, `v1.0.51` through `v1.0.74`, checked from their
+archives) carries `templates/crd-upgrade.yaml`: a `pre-install,pre-upgrade` hook
+Job, enabled by default (`crds.updateJob.enabled`), that server-side-applies
+`files/crds.yaml` (both versions served, `v1alpha2` stored, conversion `None`)
+and resets `spec.conversion` while the webhook is off. Helm runs that hook
+before it changes any release resource and aborts the upgrade if it fails, so
+the upgrade either lands new CRDs *and* a new operator, or leaves the old
+operator running against CRDs that still serve `v1alpha1`. There is no
+half-upgraded state, and the server needs no CRD handling of its own. Keep it
+that way: lowering the floor below a chart without that hook would break this.
+
 `PublishedChartVersions` reads `index.yaml` through a per-repository cache in
 `server/helpers/utils/helm_chart_repo.go`. That read happens inside the
 cluster-connect request handler and the Meshery index is several megabytes, so
@@ -490,7 +553,7 @@ Unit coverage that exists today:
   excluded from every automatic selection but honored when named, the
   pinned-against-pinned reconcile comparison, and the split between withholding
   installation and withholding observation (all three handlers still attach when
-  no chart version resolves; all three install paths - the FSM reconcile, the
+  no chart version resolves; the install paths - the FSM reconcile, the
   chart-version reconcile, and the user-initiated `SetOperatorDeployment` -
   refuse through the shared guard; a latched chart error is re-resolved on a
   user-initiated retry, survives a re-attach that never reached resolution, and
@@ -520,6 +583,23 @@ Unit coverage that exists today:
   seam lets `TestReconcileInstallGoesThroughTheSharedGuard` produce that state
   with a stub handler attached, so dropping the guard call fails the test by
   construction instead of silently.
+- `server/models/operator_chart_floor_test.go` - the floor applied to a release
+  that is already installed: a below-floor derived release is upgraded (from
+  both `Deployed` and the `Deploying` a crash loop reports, never through
+  `Deploy`) to the floored derived chart; a release at or above the floor is
+  untouched; a pin below the floor is never overridden and is reported, while a
+  pin at or above it is what the release is upgraded to; an unreachable floor,
+  an unreadable release and a failed upgrade are each reported with their
+  MeshKit code and recorded, and the failed upgrade is retried; nothing is read
+  while the operator is disabled, undeployed, embedded or of unknown status.
+  `helmOperatorRelease` is exercised against Helm's real Secret storage format
+  on a fake clientset (deployed revision only, forbidden list surfaced) and its
+  upgrade is pinned to an explicit `UPGRADE` with the install overrides. Drive
+  the reconcile through a `fakeOperatorRelease` on `operatorRelease`, never a
+  live one. The events these tests assert are received from a real `Broadcast`
+  and must carry the MeshKit error as a structured object - the shape the
+  notification center renders - which `eventErrorMetadata` guarantees for every
+  controller event.
 - `server/helpers/utils/helm_chart_repo_test.go` - the `index.yaml` read: chart
   version extraction, structured failures, TTL reuse, stale-while-revalidate on
   expiry (including through a failing refresh), that only a cold cache blocks,
