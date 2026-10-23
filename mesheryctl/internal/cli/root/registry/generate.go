@@ -200,9 +200,9 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			}
 			fmt.Println("✅ Connected to spreadsheet successfully")
 
-			sheetGID = GetSheetIDFromTitle(resp, "Models")
-			componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
-			relationshipSpredsheetGID = GetSheetIDFromTitle(resp, "Relationships")
+			sheetGID = utils.GetSheetIDFromTitle(resp, "Models")
+			componentSpredsheetGID = utils.GetSheetIDFromTitle(resp, "Components")
+			relationshipSpredsheetGID = utils.GetSheetIDFromTitle(resp, "Relationships")
 			fmt.Println()
 		} else {
 			// Using directory with CSV files
