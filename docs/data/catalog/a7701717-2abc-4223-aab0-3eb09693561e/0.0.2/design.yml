@@ -1,0 +1,959 @@
+{
+  "id": "a7701717-2abc-4223-aab0-3eb09693561e",
+  "name": "autoscaling-demo",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.2",
+  "components": [
+    {
+      "id": "30000000-0000-4000-8000-000000000001",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "autoscaling-demo",
+      "description": "Namespace for the auto-scaling web application",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-style": "dashed",
+        "border-width": 2,
+        "position": {
+          "x": 315.75,
+          "y": 367
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg",
+        "z-index": 1
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "autoscaling-demo"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Namespace",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "30000000-0000-4000-8000-000000000002",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "webapp-deployment",
+      "description": "Web application Deployment, horizontally scalable",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "position": {
+          "x": 220,
+          "y": 280
+        },
+        "primaryColor": "#326CE5",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg",
+        "z-index": 2
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false
+      },
+      "configuration": {
+        "apiVersion": "apps/v1",
+        "kind": "Deployment",
+        "metadata": {
+          "labels": {
+            "app": "webapp"
+          },
+          "name": "webapp",
+          "namespace": "autoscaling-demo"
+        },
+        "spec": {
+          "replicas": 2,
+          "selector": {
+            "matchLabels": {
+              "app": "webapp"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "webapp"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx:1.27-alpine",
+                  "name": "web",
+                  "ports": [
+                    {
+                      "containerPort": 80
+                    }
+                  ],
+                  "resources": {
+                    "limits": {
+                      "cpu": "500m",
+                      "memory": "256Mi"
+                    },
+                    "requests": {
+                      "cpu": "100m",
+                      "memory": "128Mi"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "30000000-0000-4000-8000-000000000003",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "webapp-service",
+      "description": "ClusterIP Service fronting the web application pods",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "position": {
+          "x": 420,
+          "y": 280
+        },
+        "primaryColor": "#326CE5",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/service-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "z-index": 4
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false
+      },
+      "configuration": {
+        "apiVersion": "v1",
+        "kind": "Service",
+        "metadata": {
+          "name": "webapp",
+          "namespace": "autoscaling-demo"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "port": 80,
+              "protocol": "TCP",
+              "targetPort": 80
+            }
+          ],
+          "selector": {
+            "app": "webapp"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "30000000-0000-4000-8000-000000000004",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "webapp-hpa",
+      "description": "HPA scaling the Deployment between 2 and 10 pods based on CPU",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "position": {
+          "x": 320,
+          "y": 420
+        },
+        "primaryColor": "#326CE5",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/horizontalpodautoscaler-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/horizontalpodautoscaler-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/horizontalpodautoscaler-white.svg",
+        "z-index": 3
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false
+      },
+      "configuration": {
+        "apiVersion": "autoscaling/v2",
+        "kind": "HorizontalPodAutoscaler",
+        "metadata": {
+          "name": "webapp-hpa",
+          "namespace": "autoscaling-demo"
+        },
+        "spec": {
+          "maxReplicas": 10,
+          "metrics": [
+            {
+              "resource": {
+                "name": "cpu",
+                "target": {
+                  "averageUtilization": 70,
+                  "type": "Utilization"
+                }
+              },
+              "type": "Resource"
+            }
+          ],
+          "minReplicas": 2,
+          "scaleTargetRef": {
+            "apiVersion": "apps/v1",
+            "kind": "Deployment",
+            "name": "webapp"
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "HorizontalPodAutoscaler",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "4a49589c-c2cb-56f3-b35e-6f53d17705f3",
+      "schemaVersion": "",
+      "version": "",
+      "displayName": "containers.0",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": ""
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
+      },
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": null,
+      "component": {
+        "version": "",
+        "kind": "Container",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "40000000-0000-4000-8000-000000000001",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Inventory relationship: namespace contains component.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "bba54c44-a440-773a-a524-0114ebde5397",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "30000000-0000-4000-8000-000000000002",
+                "kind": "*",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "30000000-0000-4000-8000-000000000001",
+                "kind": "Namespace",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000002",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Inventory relationship: namespace contains component.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "bba54c44-a440-773a-a524-0114ebde5397",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "30000000-0000-4000-8000-000000000003",
+                "kind": "*",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "30000000-0000-4000-8000-000000000001",
+                "kind": "Namespace",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000003",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Inventory relationship: namespace contains component.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "bba54c44-a440-773a-a524-0114ebde5397",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "30000000-0000-4000-8000-000000000004",
+                "kind": "*",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "30000000-0000-4000-8000-000000000001",
+                "kind": "Namespace",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000004",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A relationship between two objects that are siblings.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "bba54c44-a440-773a-a524-0114ebde5397",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "30000000-0000-4000-8000-000000000003",
+                "kind": "*",
+                "match": {
+                  "refs": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "labels"
+                    ]
+                  ]
+                },
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "30000000-0000-4000-8000-000000000002",
+                "kind": "*",
+                "match": {
+                  "refs": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "labels"
+                    ]
+                  ]
+                },
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "matchlabels",
+      "status": "approved",
+      "type": "sibling",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000005",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A relationship between two objects that are siblings.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "bba54c44-a440-773a-a524-0114ebde5397",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "30000000-0000-4000-8000-000000000004",
+                "kind": "*",
+                "match": {
+                  "refs": [
+                    [
+                      "configuration",
+                      "spec",
+                      "scaleTargetRef"
+                    ]
+                  ]
+                },
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "30000000-0000-4000-8000-000000000002",
+                "kind": "*",
+                "match": {
+                  "refs": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "name"
+                    ]
+                  ]
+                },
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "matchlabels",
+      "status": "approved",
+      "type": "sibling",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "1aca2ba2-51b1-5282-b886-2ea6c31f376c",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "relationships.meshery.io/v1beta2",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "4a49589c-c2cb-56f3-b35e-6f53d17705f3",
+                "kind": "Container",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "meshery-core",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ],
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "30000000-0000-4000-8000-000000000002",
+                "kind": "Deployment",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ],
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "alias",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    }
+  ]
+}
