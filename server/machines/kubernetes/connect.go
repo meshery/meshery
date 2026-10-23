@@ -51,6 +51,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		eventBuilder.WithMetadata(map[string]interface{}{"error": errConnection})
 		return machines.NoOp, eventBuilder.Build(), errConnection
 	}
+	eventBuilder.ActedUpon(connectionID)
 
 	connection, _, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {

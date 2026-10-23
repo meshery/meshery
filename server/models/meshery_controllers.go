@@ -134,6 +134,11 @@ type MesheryControllersHelper struct {
 	provider         Provider
 	systemID         *core.Uuid
 
+	// connectionID is the connection this helper was attached to. It attributes
+	// events whose metadata does not carry a connection id. The zero value means
+	// the helper is not bound to a connection.
+	connectionID core.Uuid
+
 	// lastOperatorError records the most recent failure to set up the operator for
 	// this context — an unreadable kubeconfig, a failed Kubernetes client, or a
 	// failed Deploy — so the connection-diagnostics API can surface *why* the
@@ -254,6 +259,16 @@ func (mch *MesheryControllersHelper) reattach(ctx K8sContext) {
 
 func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value connections.MeshsyncDeploymentMode) *MesheryControllersHelper {
 	mch.meshsyncDeploymentMode = value
+	return mch
+}
+
+// SetConnectionID records the connection this helper serves so later events
+// can set ActedUpon even when a call site omits the id from metadata.
+func (mch *MesheryControllersHelper) SetConnectionID(id core.Uuid) *MesheryControllersHelper {
+	if mch == nil {
+		return nil
+	}
+	mch.connectionID = id
 	return mch
 }
 
@@ -1437,71 +1452,113 @@ func SetOverrideValuesForMesheryDeploy(adapters []Adapter, adapter Adapter, inst
 
 // General helper method to emit events for system-level operations
 func (mch *MesheryControllersHelper) emitEvent(description string, severity events.EventSeverity, metadata map[string]any, userID core.Uuid) {
-	if mch.eventBroadcaster != nil && mch.systemID != nil {
-		actedUpon := controllerEventActedUpon(userID, metadata)
-
-		// Own the event by the initiating user when there is one; otherwise fall
-		// back to the system. Controller events are frequently emitted from
-		// background FSM reconciles (server-restart reconnect, MeshSync mode
-		// reconcile) with no user in scope. Owning those by the system keeps them
-		// both persisted and retrievable, since GetEvents matches
-		// owner IN (userID, systemID) — previously a userless event set no owner
-		// and was dropped by the persistence guard, so it was never saved.
-		owner := userID
-		if owner == uuid.Nil {
-			owner = *mch.systemID
-		}
-
-		eventBuilder := events.NewEvent().
-			FromSystem(*mch.systemID).
-			FromOwner(owner).
-			WithCategory("connection").
-			WithAction("update").
-			WithSeverity(severity).
-			WithDescription(description).
-			WithMetadata(metadata)
-
-		if actedUpon != uuid.Nil {
-			eventBuilder = eventBuilder.ActedUpon(actedUpon)
-		}
-
-		event := eventBuilder.Build()
-
-		if mch.provider != nil {
-			if shouldPersistControllerEvent(owner, actedUpon) {
-				if err := mch.provider.PersistSystemEvent(*event); err != nil {
-					mch.log.Error(fmt.Errorf("failed to persist event: %w", err))
-				}
-			} else {
-				mch.log.Debug("skipping persistence for controller event without a resource association")
-			}
-		}
-		go mch.eventBroadcaster.Publish(owner, event)
+	if mch.eventBroadcaster == nil || mch.systemID == nil {
+		return
 	}
+
+	connectionID := ConnectionIDFromMetadata(metadata)
+	if connectionID == uuid.Nil {
+		connectionID = mch.connectionID
+	}
+	if SuppressRepeatConnectionEvent(severity) {
+		if !DefaultRetryEventSuppressor.Admit(RetryEventScopeControllersHelper, connectionID.String(), "connection", "update", description) {
+			if mch.log != nil {
+				mch.log.Debugf("suppressed repeated controller event for connection %s: %s", connectionID, description)
+			}
+			return
+		}
+	} else if ClearsConnectionEventSuppression(severity) && connectionID != uuid.Nil {
+		DefaultRetryEventSuppressor.ClearConnection(RetryEventScopeControllersHelper, connectionID.String())
+	}
+
+	actedUpon := connectionID
+	if actedUpon == uuid.Nil {
+		actedUpon = userID
+	}
+	if connectionID != uuid.Nil && SuppressRepeatConnectionEvent(severity) && ConnectionIDFromMetadata(metadata) == uuid.Nil {
+		if metadata == nil {
+			metadata = map[string]any{}
+		}
+		metadata["connectionId"] = connectionID.String()
+	}
+
+	// Own the event by the initiating user when there is one; otherwise fall
+	// back to the system. Controller events are frequently emitted from
+	// background FSM reconciles (server-restart reconnect, MeshSync mode
+	// reconcile) with no user in scope. Owning those by the system keeps them
+	// both persisted and retrievable, since GetEvents matches
+	// owner IN (userID, systemID). Previously a userless event set no owner
+	// and was dropped by the persistence guard, so it was never saved.
+	owner := userID
+	if owner == uuid.Nil {
+		owner = *mch.systemID
+	}
+
+	eventBuilder := events.NewEvent().
+		FromSystem(*mch.systemID).
+		FromOwner(owner).
+		WithCategory("connection").
+		WithAction("update").
+		WithSeverity(severity).
+		WithDescription(description).
+		WithMetadata(metadata)
+
+	if actedUpon != uuid.Nil {
+		eventBuilder = eventBuilder.ActedUpon(actedUpon)
+	}
+
+	event := eventBuilder.Build()
+
+	if mch.provider != nil {
+		if shouldPersistControllerEvent(owner, actedUpon) {
+			if err := mch.provider.PersistSystemEvent(*event); err != nil {
+				mch.log.Error(fmt.Errorf("failed to persist event: %w", err))
+			}
+		} else {
+			mch.log.Debug("skipping persistence for controller event without a resource association")
+		}
+	}
+	go mch.eventBroadcaster.Publish(owner, event)
 }
 
 func controllerEventActedUpon(userID core.Uuid, metadata map[string]any) core.Uuid {
-	if metadata != nil {
-		switch connectionID := metadata["connectionID"].(type) {
-		case string:
-			if parsedID := uuid.FromStringOrNil(connectionID); parsedID != uuid.Nil {
-				return parsedID
-			}
-		case core.Uuid:
-			if connectionID != uuid.Nil {
-				return connectionID
-			}
-		case *core.Uuid:
-			if connectionID != nil && *connectionID != uuid.Nil {
-				return *connectionID
-			}
-		}
+	if connectionID := ConnectionIDFromMetadata(metadata); connectionID != uuid.Nil {
+		return connectionID
 	}
-
 	if userID != uuid.Nil {
 		return userID
 	}
+	return uuid.Nil
+}
 
+// ConnectionIDFromMetadata reads the connection a controller or reconcile event
+// is about. connectionId is the canonical metadata key. connectionID is the
+// spelling MesheryControllersHelper already stores.
+func ConnectionIDFromMetadata(metadata map[string]any) core.Uuid {
+	if len(metadata) == 0 {
+		return uuid.Nil
+	}
+	for _, key := range []string{"connectionId", "connectionID"} {
+		if id := connectionUUID(metadata[key]); id != uuid.Nil {
+			return id
+		}
+	}
+	return uuid.Nil
+}
+
+func connectionUUID(value any) core.Uuid {
+	switch connectionID := value.(type) {
+	case string:
+		return uuid.FromStringOrNil(connectionID)
+	case core.Uuid:
+		if connectionID != uuid.Nil {
+			return connectionID
+		}
+	case *core.Uuid:
+		if connectionID != nil && *connectionID != uuid.Nil {
+			return *connectionID
+		}
+	}
 	return uuid.Nil
 }
 

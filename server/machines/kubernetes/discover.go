@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
@@ -35,6 +36,10 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 	}
 
 	k8sContext := machinectx.K8sContext
+	connectionID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+	if connectionID != uuid.Nil {
+		eventBuilder.ActedUpon(connectionID)
+	}
 	handler := machinectx.clientset
 
 	err = k8sContext.AssignServerID(handler)
@@ -71,7 +76,11 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 			machinectx.log.Warn(rerr)
 		}
 	} else if err != nil {
-		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", k8sContext.Name, k8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+		metadata := map[string]interface{}{"error": err}
+		if connectionID != uuid.Nil {
+			metadata["connectionId"] = connectionID
+		}
+		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", k8sContext.Name, k8sContext.Server)).WithMetadata(metadata).Build(), err
 	}
 
 	// machinectx.log.Debug("exiting execute func from discovered state", connection)
