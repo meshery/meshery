@@ -173,6 +173,16 @@ const (
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
 )
 
+// Outcomes of enforcing MinimumOperatorChartVersion on an operator release that
+// is already installed (reconcileOperatorChartFloor).
+const (
+	ErrOperatorChartBelowFloorUpgradedCode = "meshery-server-1487"
+	ErrOperatorChartPinnedBelowFloorCode   = "meshery-server-1488"
+	ErrOperatorChartFloorUnreachableCode   = "meshery-server-1489"
+	ErrReadOperatorReleaseCode             = "meshery-server-1490"
+	ErrUpgradeOperatorReleaseCode          = "meshery-server-1491"
+)
+
 var (
 	ErrResultID                = errors.New(ErrResultIDCode, errors.Alert, []string{"Given resultID is not valid"}, []string{"Given resultID is nil"}, []string{}, []string{})
 	ErrLocalProviderSupport    = errors.New(ErrLocalProviderSupportCode, errors.Alert, []string{"Method not supported by local provider"}, []string{}, []string{}, []string{})
@@ -892,6 +902,74 @@ func ErrNoMesheryReleasesFound() error {
 // number that does not match the server's.
 func ErrOperatorChartSubstituted(reason string) error {
 	return errors.New(ErrOperatorChartSubstitutedCode, errors.Alert, []string{"Meshery Operator was deployed at a different chart version than this server's release"}, []string{reason}, []string{"The chart version matching this Meshery Server release is either not published yet or is too old to deploy successfully."}, []string{"No action is required. To choose the chart version yourself, set operator.version on the Kubernetes connection."})
+}
+
+// The five errors below report the outcome of reconcileOperatorChartFloor:
+// every time Meshery Server finds a meshery-operator Helm release older than
+// MinimumOperatorChartVersion it either upgrades it or says why it did not.
+// Their short descriptions, probable causes and remediations are literal so
+// errorutil can lift them into docs/data/errorref; the versions involved travel
+// in the long description.
+
+// ErrOperatorChartBelowFloorUpgraded reports a successful remedial upgrade. It
+// is a notice, not a failure - the operator was upgraded - and exists so a
+// change Meshery Server made to the cluster on its own initiative is visible in
+// the events feed rather than inferred from a chart version that moved.
+func ErrOperatorChartBelowFloorUpgraded(installed, upgradedTo string) error {
+	return errors.New(ErrOperatorChartBelowFloorUpgradedCode, errors.Alert,
+		[]string{"Meshery Operator was upgraded from a chart too old to run"},
+		[]string{"The meshery-operator Helm release in the meshery namespace was at chart " + installed + ", older than " + MinimumOperatorChartVersion + ", the oldest chart verified to deploy successfully. It was upgraded to chart " + upgradedTo + "."},
+		[]string{"The Meshery Operator was installed before the minimum deployable chart was published, by an earlier Meshery Server or by hand. Charts below the minimum set no ENABLE_WEBHOOKS, so current operator images crash-loop looking for a webhook serving certificate the chart never created."},
+		[]string{"No action is required. Confirm the operator becomes ready with: kubectl -n meshery rollout status deploy/meshery-operator", "To choose the chart version yourself, set operator.version on the Kubernetes connection."})
+}
+
+// ErrOperatorChartPinnedBelowFloor reports that a below-floor release was left
+// in place because operator.version deliberately pins a chart that is itself
+// below the floor. A pin is never overridden, so this is the whole of what
+// Meshery Server does about it: say so, every time it connects.
+func ErrOperatorChartPinnedBelowFloor(installed, pinned string) error {
+	return errors.New(ErrOperatorChartPinnedBelowFloorCode, errors.Alert,
+		[]string{"Meshery Operator chart is older than the minimum deployable chart, and operator.version pins it there"},
+		[]string{"The meshery-operator Helm release in the meshery namespace is at chart " + installed + ", and operator.version is set to " + pinned + ". Both are older than " + MinimumOperatorChartVersion + ", the oldest chart verified to deploy successfully. Meshery Server does not override a version you set, so the release was not upgraded."},
+		[]string{"operator.version on the Kubernetes connection, or in the server-wide controllers defaults, names a chart older than the minimum. Charts below the minimum set no ENABLE_WEBHOOKS, so current operator images crash-loop looking for a webhook serving certificate the chart never created."},
+		[]string{"Set operator.version to a chart at or above the minimum named in this error's details, or clear it to track the Meshery Server release, then reconnect the Kubernetes connection."})
+}
+
+// ErrOperatorChartFloorUnreachable reports that a below-floor release was left
+// in place because the version Meshery Server derived is itself below the
+// floor: the chart repository it read publishes nothing at or above it, so
+// there is no deployable chart to upgrade to.
+func ErrOperatorChartFloorUnreachable(installed, resolved, repo string) error {
+	return errors.New(ErrOperatorChartFloorUnreachableCode, errors.Alert,
+		[]string{"Meshery Operator chart is older than the minimum deployable chart, and no chart at or above the minimum is published"},
+		[]string{"The meshery-operator Helm release in the meshery namespace is at chart " + installed + ", older than " + MinimumOperatorChartVersion + ", the oldest chart verified to deploy successfully. The newest chart " + repo + " publishes is " + resolved + ", which is older too, so there is nothing to upgrade the release to."},
+		[]string{"The Meshery Operator chart repository is a mirror that has not synced recent charts, or its newer charts were removed."},
+		[]string{"Confirm the chart repository publishes a chart at or above the minimum named in this error's details, then reconnect the Kubernetes connection."})
+}
+
+// ErrReadOperatorRelease reports that Meshery Server could not read the
+// meshery-operator Helm release, so it cannot tell whether the installed chart
+// is too old to run. cause is the underlying failure, rendered as text because
+// one of the two causes (a release record with no chart version) is not an
+// error value of its own.
+func ErrReadOperatorRelease(cause string) error {
+	return errors.New(ErrReadOperatorReleaseCode, errors.Alert,
+		[]string{"Unable to read the Meshery Operator Helm release"},
+		[]string{cause},
+		[]string{"Meshery Server could not list the Helm release records (Secrets) in the meshery namespace, usually because the identity in the connection's kubeconfig may not get or list Secrets there, or because the cluster API was unreachable.", "The deployed revision of the release records no chart version, which Helm does not write itself."},
+		[]string{"Grant the identity in the connection's kubeconfig get and list on Secrets in the meshery namespace, then reconnect the Kubernetes connection.", "Inspect the release with: helm -n meshery history meshery-operator"})
+}
+
+// ErrUpgradeOperatorRelease reports that the remedial upgrade of a below-floor
+// release failed. Helm aborts an upgrade whose pre-upgrade hook fails before it
+// touches the release's resources, so the operator Deployment is left as it
+// was; the next connect retries.
+func ErrUpgradeOperatorRelease(installed, target string, err error) error {
+	return errors.New(ErrUpgradeOperatorReleaseCode, errors.Alert,
+		[]string{"Unable to upgrade the Meshery Operator from a chart too old to run"},
+		[]string{"Upgrading the meshery-operator Helm release from chart " + installed + " to chart " + target + " failed: " + err.Error()},
+		[]string{"The chart could not be downloaded from the chart repository, the chart's pre-upgrade CRD update Job did not complete (for example, its image could not be pulled), or another Helm operation on the release was in progress. A failed pre-upgrade hook leaves the operator Deployment unchanged."},
+		[]string{"Reconnect the Kubernetes connection to retry; Meshery Server retries the upgrade on every connect while the release stays below the minimum.", "Inspect the release with: helm -n meshery history meshery-operator", "If the CRD update Job failed, read its logs with: kubectl -n meshery logs job/meshery-operator-crd-update"})
 }
 
 // ErrOperatorHandlerNotAttached reports that no Meshery Operator controller
