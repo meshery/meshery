@@ -115,6 +115,7 @@ const (
 	ErrPersistConnectionCode              = "meshery-server-1309"
 	ErrPrometheusScanCode                 = "meshery-server-1310"
 	ErrInitLoggerCode                     = "meshery-server-1484"
+	ErrAnthropicConnectivityCode          = "meshery-server-1486"
 	ErrGrafanaScanCode                    = "meshery-server-1311"
 	ErrDBCreateCode                       = "meshery-server-1312"
 	ErrDoRequestCode                      = "meshery-server-1321"
@@ -619,6 +620,10 @@ func ErrPrometheusScan(err error) error {
 
 func ErrInitLogger(err error) error {
 	return errors.New(ErrInitLoggerCode, errors.Alert, []string{"Unable to initialize logger"}, []string{err.Error()}, []string{"LOG_LEVEL is set to an unsupported value", "Logger configuration options are malformed"}, []string{"Set LOG_LEVEL to a supported value", "Check your logger configuration settings"})
+}
+
+func ErrAnthropicConnectivity(err error) error {
+	return errors.New(ErrAnthropicConnectivityCode, errors.Alert, []string{"Unable to connect to Anthropic Claude"}, []string{err.Error()}, []string{"Anthropic API might not be reachable", "API key might be incorrect"}, []string{"Check if your API key is correct", "Verify your network allows egress to api.anthropic.com"})
 }
 
 func ErrDBCreate(err error) error {
