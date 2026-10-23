@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Infrastructure Management on Documentation</title><link>/pr-preview/pr-22538/guides/infrastructure-management/</link><description>Recent content in Infrastructure Management on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/pr-preview/pr-22538/guides/infrastructure-management/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>/pr-preview/pr-22538/guides/infrastructure-management/overview/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22538/guides/infrastructure-management/overview/</guid><description>&lt;h2 id="using-meshery-designs-to-manage-your-infrastructure"&gt;
+	Using Meshery Designs to Manage Your Infrastructure
+&lt;/h2&gt;
+&lt;p&gt;Meshery is a versatile platform designed to streamline the lifecycle, configuration, and performance management of infrastructure across Kubernetes clusters.&lt;/p&gt;
+&lt;h3 id="designs-in-meshery"&gt;
+	Designs in Meshery
+&lt;/h3&gt;
+&lt;p&gt;Meshery employs the concept of &lt;a href="/pr-preview/pr-22538/concepts/logical/designs/"&gt;Designs&lt;/a&gt; as a fundamental construct for managing infrastructure. Designs provide a structured way to organize and deploy various components of your infrastructure. To do so, Meshery utilizes a declarative approach to infrastructure management, similar to Kubernetes manifests. Meshery Designs are written in YAML and are validated against a schema.&lt;/p&gt;</description></item><item><title>Registering a Connection</title><link>/pr-preview/pr-22538/guides/infrastructure-management/registering-a-connection/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22538/guides/infrastructure-management/registering-a-connection/</guid><description>&lt;p&gt;A &lt;a href="/pr-preview/pr-22538/concepts/logical/connections/"&gt;Connection&lt;/a&gt; is how Meshery tracks and manages a resource - a Kubernetes cluster, a Grafana instance, a Prometheus server, and &lt;a href="/pr-preview/pr-22538/extensions/models/"&gt;many more&lt;/a&gt;. The &lt;strong&gt;Connection Wizard&lt;/strong&gt; is the guided, in-UI way to register a new Connection or reconfigure an existing one, without hand-editing YAML or memorizing API payloads.&lt;/p&gt;
+&lt;p&gt;This guide covers creating and updating Connections with the wizard. For what a Connection &lt;em&gt;is&lt;/em&gt;, the states it moves through, and how it is managed over time, see the canonical references:&lt;/p&gt;</description></item><item><title>Configuring Meshery Operator, MeshSync, and Broker</title><link>/pr-preview/pr-22538/guides/infrastructure-management/configuring-operator-meshsync-broker/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22538/guides/infrastructure-management/configuring-operator-meshsync-broker/</guid><description>&lt;p&gt;Every Kubernetes cluster that Meshery manages is served by up to three components: &lt;a href="/pr-preview/pr-22538/concepts/architecture/operator/"&gt;Meshery Operator&lt;/a&gt;, &lt;a href="/pr-preview/pr-22538/concepts/architecture/meshsync/"&gt;MeshSync&lt;/a&gt;, and &lt;a href="/pr-preview/pr-22538/concepts/architecture/broker/"&gt;Meshery Broker&lt;/a&gt;. Their defaults work out of the box, but production clusters routinely need tuning: narrowing discovery scope, keeping Secret contents out of Meshery&amp;rsquo;s database, exposing the Broker across network boundaries, or skipping in-cluster components entirely.&lt;/p&gt;
+&lt;p&gt;This guide walks through the full configuration surface of all three components: what each setting does, how to change it, its default, and the behavioral impact of changing it. It is written for platform engineers operating real clusters with &lt;code&gt;kubectl&lt;/code&gt;, &lt;code&gt;mesheryctl&lt;/code&gt;, and the Meshery UI.&lt;/p&gt;</description></item><item><title>Bringing Existing Infrastructure Under Meshery Management</title><link>/pr-preview/pr-22538/guides/infrastructure-management/managing-existing-infrastructure/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22538/guides/infrastructure-management/managing-existing-infrastructure/</guid><description>&lt;p&gt;Most clusters do not arrive empty. They carry months or years of accumulated Deployments, CRDs, operators, and Secrets, deployed by pipelines that predate Meshery and that will keep running after it. This guide is for the platform engineer bringing that kind of estate - a brownfield - under Meshery&amp;rsquo;s management: what connecting a live cluster actually does, what it deliberately does not do, and what to evaluate before you connect.&lt;/p&gt;</description></item><item><title>Deploying a Design</title><link>/pr-preview/pr-22538/guides/infrastructure-management/deploying-a-design/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22538/guides/infrastructure-management/deploying-a-design/</guid><description>&lt;p&gt;Use this guide to put a &lt;a href="/pr-preview/pr-22538/concepts/logical/designs/"&gt;Design&lt;/a&gt; onto one or more of your Kubernetes clusters, check what happened, and remove it again. Meshery deploys a design to the clusters you pick from your &lt;a href="/pr-preview/pr-22538/concepts/logical/environments/"&gt;Environments&lt;/a&gt;, so you can deploy the same design to a staging cluster and a production cluster in one pass.&lt;/p&gt;
+&lt;h2 id="before-you-begin"&gt;
+	Before you begin
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A design in Meshery. Create one with the &lt;a href="/pr-preview/pr-22538/guides/configuration-management/creating-a-meshery-design/"&gt;Design Configurator&lt;/a&gt; or &lt;a href="/pr-preview/pr-22538/guides/configuration-management/import-export-designs/"&gt;import&lt;/a&gt; your Kubernetes manifests, Helm chart, Docker Compose file, or Kustomize package.&lt;/li&gt;
+&lt;li&gt;At least one Kubernetes &lt;a href="/pr-preview/pr-22538/guides/infrastructure-management/registering-a-connection/"&gt;Connection&lt;/a&gt; in the &lt;strong&gt;Connected&lt;/strong&gt; state.&lt;/li&gt;
+&lt;li&gt;That Connection assigned to an Environment. The deployment wizard only offers clusters that belong to an Environment. To assign one, see &lt;a href="/pr-preview/pr-22538/guides/infrastructure-management/sharing-a-cluster-with-your-team/#create-an-environment-and-add-the-cluster"&gt;Sharing a Cluster with Your Team&lt;/a&gt;, or use the &lt;strong&gt;Environments&lt;/strong&gt; column in &lt;strong&gt;Lifecycle → Connections&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Permission to deploy designs. If the &lt;strong&gt;Deploy&lt;/strong&gt; action is disabled, ask your organization admin.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="deploy-a-design"&gt;
+	Deploy a design
+&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Open &lt;strong&gt;Configuration → Designs&lt;/strong&gt;.&lt;/p&gt;</description></item><item><title>Sharing a Cluster with Your Team</title><link>/pr-preview/pr-22538/guides/infrastructure-management/sharing-a-cluster-with-your-team/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22538/guides/infrastructure-management/sharing-a-cluster-with-your-team/</guid><description>&lt;p&gt;A Kubernetes cluster you connect to Meshery is private to you until you share it. Use this guide to let your teammates see the cluster, deploy designs to it, and work with its resources, without handing out your kubeconfig. You share a cluster in three steps:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Put the cluster&amp;rsquo;s &lt;a href="/pr-preview/pr-22538/concepts/logical/connections/"&gt;Connection&lt;/a&gt; in an &lt;a href="/pr-preview/pr-22538/concepts/logical/environments/"&gt;Environment&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Attach the Environment to a &lt;a href="/pr-preview/pr-22538/concepts/logical/workspaces/"&gt;Workspace&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Assign your teammates&amp;rsquo; teams to the Workspace.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="before-you-begin"&gt;
+	Before you begin
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A Meshery Server signed in with a Remote Provider, such as Meshery Cloud. Organizations, teams, and other users come from the Remote Provider. With the Local provider you are the only user, although you can still use Environments to group your own clusters.&lt;/li&gt;
+&lt;li&gt;The cluster registered as a Kubernetes Connection. See &lt;a href="/pr-preview/pr-22538/guides/infrastructure-management/registering-a-connection/"&gt;Registering a Connection&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Teammates who belong to a team in your organization. Your provider manages teams and invitations.&lt;/li&gt;
+&lt;li&gt;Permission to create Environments and Workspaces and to assign resources to them. If a button is disabled, ask your organization admin.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="create-an-environment-and-add-the-cluster"&gt;
+	Create an Environment and add the cluster
+&lt;/h2&gt;
+
+
+
+&lt;ul class="nav nav-tabs" id="tabs-4" role="tablist"&gt;
+ &lt;li class="nav-item"&gt;
+ &lt;button class="nav-link active"
+ id="tabs-04-00-tab" data-bs-toggle="tab" data-bs-target="#tabs-04-00" role="tab"
+ data-td-tp-persist="meshery ui" aria-controls="tabs-04-00" aria-selected="true"&gt;
+ Meshery UI
+ &lt;/button&gt;
+ &lt;/li&gt;&lt;li class="nav-item"&gt;
+ &lt;button class="nav-link"
+ id="tabs-04-01-tab" data-bs-toggle="tab" data-bs-target="#tabs-04-01" role="tab"
+ data-td-tp-persist="mesheryctl" aria-controls="tabs-04-01" aria-selected="false"&gt;
+ mesheryctl
+ &lt;/button&gt;
+ &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="tab-content" id="tabs-4-content"&gt;
+ &lt;div class="tab-body tab-pane fade show active"
+ id="tabs-04-00" role="tabpanel" aria-labelled-by="tabs-04-00-tab" tabindex="4"&gt;
+ &lt;ol&gt;
+&lt;li&gt;Open &lt;strong&gt;Lifecycle → Environments&lt;/strong&gt; and click &lt;strong&gt;Create&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Enter a name, such as &lt;code&gt;staging&lt;/code&gt;, and an optional description, then save.&lt;/li&gt;
+&lt;li&gt;On the new Environment&amp;rsquo;s card, click &lt;strong&gt;Assigned Connections&lt;/strong&gt;. The &lt;strong&gt;&lt;code&gt;&amp;lt;environment&amp;gt;&lt;/code&gt; Resources&lt;/strong&gt; dialog opens.&lt;/li&gt;
+&lt;li&gt;Move the cluster&amp;rsquo;s Connection from the available list to the assigned list, then click &lt;strong&gt;Save&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;You can also assign Environments from &lt;strong&gt;Lifecycle → Connections&lt;/strong&gt;: use the &lt;strong&gt;Environments&lt;/strong&gt; column on the cluster&amp;rsquo;s row.&lt;/p&gt;</description></item><item><title>Kubernetes Connection Lifecycle</title><link>/pr-preview/pr-22538/guides/infrastructure-management/kubernetes-connection-lifecycle/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22538/guides/infrastructure-management/kubernetes-connection-lifecycle/</guid><description>&lt;p&gt;This guide explains what actually happens when Meshery manages a &lt;strong&gt;Kubernetes&lt;/strong&gt;
+&lt;a href="/pr-preview/pr-22538/concepts/logical/connections/"&gt;Connection&lt;/a&gt;: the components
+Meshery deploys, how it stays in sync with your cluster, the connectivity it
+depends on, and the knobs and diagnostics you use to operate it. For the generic
+connection state machine that applies to every kind of connection, see
+&lt;a href="/pr-preview/pr-22538/concepts/logical/connections/"&gt;Connections&lt;/a&gt;; for how to
+register one in the first place, see
+&lt;a href="/pr-preview/pr-22538/guides/infrastructure-management/registering-a-connection/"&gt;Registering a Connection&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="what-happens-when-you-connect-a-cluster"&gt;
+	What happens when you connect a cluster
+&lt;/h2&gt;
+&lt;p&gt;Meshery automatically discovers the clusters in your kubeconfig
+(&lt;code&gt;$HOME/.kube/config&lt;/code&gt;) and, for each, tracks a Connection through its
+&lt;a href="/pr-preview/pr-22538/concepts/logical/connections/#states-and-the-lifecycle-of-connections"&gt;lifecycle states&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Envoy WASM Filter Management</title><link>/pr-preview/pr-22538/guides/infrastructure-management/filter-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22538/guides/infrastructure-management/filter-management/</guid><description>&lt;p&gt;Meshery stores Envoy WebAssembly (WASM) filters alongside your designs, so you can keep the filter binaries your data plane uses in one place, share them, and remove them when you are done. Use this guide to import a filter, inspect it, publish it to the Catalog, and delete it.&lt;/p&gt;
+&lt;h2 id="before-you-begin"&gt;
+	Before you begin
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A running Meshery Server, and &lt;code&gt;mesheryctl&lt;/code&gt; signed in to it if you want to use the CLI. See &lt;a href="/pr-preview/pr-22538/guides/mesheryctl/authenticate-with-meshery-via-cli/"&gt;Authenticate with Meshery via CLI&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;A compiled filter: a &lt;code&gt;.wasm&lt;/code&gt; file on your machine or a URL that serves one. The community maintains sample filters in &lt;a href="https://github.com/layer5io/wasm-filters"&gt;layer5io/wasm-filters&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="import-a-filter"&gt;
+	Import a filter
+&lt;/h2&gt;
+
+
+
+&lt;ul class="nav nav-tabs" id="tabs-1" role="tablist"&gt;
+ &lt;li class="nav-item"&gt;
+ &lt;button class="nav-link active"
+ id="tabs-01-00-tab" data-bs-toggle="tab" data-bs-target="#tabs-01-00" role="tab"
+ data-td-tp-persist="meshery ui" aria-controls="tabs-01-00" aria-selected="true"&gt;
+ Meshery UI
+ &lt;/button&gt;
+ &lt;/li&gt;&lt;li class="nav-item"&gt;
+ &lt;button class="nav-link"
+ id="tabs-01-01-tab" data-bs-toggle="tab" data-bs-target="#tabs-01-01" role="tab"
+ data-td-tp-persist="mesheryctl" aria-controls="tabs-01-01" aria-selected="false"&gt;
+ mesheryctl
+ &lt;/button&gt;
+ &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="tab-content" id="tabs-1-content"&gt;
+ &lt;div class="tab-body tab-pane fade show active"
+ id="tabs-01-00" role="tabpanel" aria-labelled-by="tabs-01-00-tab" tabindex="1"&gt;
+ &lt;ol&gt;
+&lt;li&gt;Open &lt;code&gt;/configuration/filters&lt;/code&gt; on your Meshery Server (for example &lt;code&gt;http://localhost:9081/configuration/filters&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Import Filters&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Enter a &lt;strong&gt;Name&lt;/strong&gt; for the filter.&lt;/li&gt;
+&lt;li&gt;Choose an &lt;strong&gt;Upload method&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;File Upload&lt;/strong&gt;: select the &lt;code&gt;.wasm&lt;/code&gt; file on your machine.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;URL Upload&lt;/strong&gt;: paste the URL that serves the file.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Import&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+ &lt;/div&gt;
+ &lt;div class="tab-body tab-pane fade"
+ id="tabs-01-01" role="tabpanel" aria-labelled-by="tabs-01-01-tab" tabindex="1"&gt;
+ &lt;p&gt;Import from a local file or a URL:&lt;/p&gt;</description></item><item><title>GitOps with Meshery</title><link>/pr-preview/pr-22538/guides/infrastructure-management/gitops-with-meshery/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22538/guides/infrastructure-management/gitops-with-meshery/</guid><description>&lt;p&gt;Meshery publishes two GitHub Actions that you can add to any workflow:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Kanvas Snapshot&lt;/strong&gt; renders your Kubernetes manifests, Helm chart, or Docker Compose file as a Meshery Design and comments the image on pull requests that change those files, so reviewers see the change before it merges.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Performance Testing with Meshery&lt;/strong&gt; deploys Meshery in the runner, runs a performance test against your service, and records the results, so you catch latency and throughput regressions before they ship.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="render-a-snapshot-on-pull-requests"&gt;
+	Render a snapshot on pull requests
+&lt;/h2&gt;
+&lt;p&gt;The &lt;a href="https://github.com/layer5labs/kanvas-snapshot"&gt;Kanvas Snapshot action&lt;/a&gt; needs a Layer5 Cloud API token and a GitHub token that can comment on pull requests. Store the Layer5 Cloud token as a repository secret, for example &lt;code&gt;MESHERY_TOKEN&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>Managing Connections</title><link>/pr-preview/pr-22538/guides/infrastructure-management/lifecycle-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22538/guides/infrastructure-management/lifecycle-management/</guid><description>&lt;p&gt;&lt;a name="lifecycle-management"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Every cluster, metrics server, and source that Meshery manages is a &lt;a href="/pr-preview/pr-22538/concepts/logical/connections/"&gt;Connection&lt;/a&gt;. After you &lt;a href="/pr-preview/pr-22538/guides/infrastructure-management/registering-a-connection/"&gt;register a Connection&lt;/a&gt;, use this guide to keep it in the state you want: find it, check its status, change its state, reconfigure it, and remove it when you are done.&lt;/p&gt;
+&lt;p&gt;&lt;a href="/pr-preview/pr-22538/guides/infrastructure-management/lifecycle-management/images/states-for-kubernetes-cluster-connections.svg"&gt;&lt;img class="content-image" src="./images/states-for-kubernetes-cluster-connections.svg" alt="States of a Kubernetes cluster connection" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="find-your-connections"&gt;
+	Find your Connections
+&lt;/h2&gt;
+
+
+
+&lt;ul class="nav nav-tabs" id="tabs-2" role="tablist"&gt;
+ &lt;li class="nav-item"&gt;
+ &lt;button class="nav-link active"
+ id="tabs-02-00-tab" data-bs-toggle="tab" data-bs-target="#tabs-02-00" role="tab"
+ data-td-tp-persist="meshery ui" aria-controls="tabs-02-00" aria-selected="true"&gt;
+ Meshery UI
+ &lt;/button&gt;
+ &lt;/li&gt;&lt;li class="nav-item"&gt;
+ &lt;button class="nav-link"
+ id="tabs-02-01-tab" data-bs-toggle="tab" data-bs-target="#tabs-02-01" role="tab"
+ data-td-tp-persist="mesheryctl" aria-controls="tabs-02-01" aria-selected="false"&gt;
+ mesheryctl
+ &lt;/button&gt;
+ &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="tab-content" id="tabs-2-content"&gt;
+ &lt;div class="tab-body tab-pane fade show active"
+ id="tabs-02-00" role="tabpanel" aria-labelled-by="tabs-02-00-tab" tabindex="2"&gt;
+ &lt;p&gt;Open &lt;strong&gt;Lifecycle → Connections&lt;/strong&gt;. The table lists each Connection with its &lt;strong&gt;Name&lt;/strong&gt;, &lt;strong&gt;Environments&lt;/strong&gt;, &lt;strong&gt;Kind&lt;/strong&gt;, &lt;strong&gt;Category&lt;/strong&gt;, &lt;strong&gt;Status&lt;/strong&gt;, and timestamps. Search by name, or filter the table by kind and status. Click a Kubernetes Connection&amp;rsquo;s row to expand it and see its server, its Operator, MeshSync, and Broker status, and its &lt;a href="/pr-preview/pr-22538/guides/infrastructure-management/kubernetes-connection-lifecycle/#diagnostics"&gt;Diagnostics&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Managing Events with Notification Center</title><link>/pr-preview/pr-22538/guides/infrastructure-management/notification-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22538/guides/infrastructure-management/notification-management/</guid><description>&lt;p&gt;Meshery records an event for each activity that affects your designs and infrastructure, whether you started it or Meshery did on its own, such as a deployment, a validation, a relationship evaluation, or a MeshSync error. The Notification Center is where you review those events and act on them.&lt;/p&gt;
+&lt;h2 id="open-the-notification-center"&gt;
+	Open the Notification Center
+&lt;/h2&gt;
+&lt;p&gt;Click the bell icon in the header of Meshery UI. When you have unread errors, a red badge on the icon counts them. With no unread errors, a yellow badge counts unread warnings.&lt;/p&gt;</description></item></channel></rss>
