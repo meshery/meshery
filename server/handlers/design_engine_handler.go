@@ -170,6 +170,15 @@ func (h *Handler) PatternFileHandler(
 	if err != nil {
 		err := ErrPatternDeploy(err, patternFile.Name)
 		metadata := patternErrorEventMetadata(r, patternID, patternFile.Name, string(patternFile.Version), err)
+		if action == "deploy" || action == "undeploy" {
+			tally := tallyDeploymentOutcome(response)
+			if tally.Total > 0 {
+				metadata["total"] = tally.Total
+				metadata["succeeded"] = tally.Succeeded
+				metadata["failed"] = tally.Failed
+				metadata["failedComponents"] = tally.FailedComponents
+			}
+		}
 
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to %s design '%s'.", action, patternFile.Name)).WithMetadata(metadata).Build()
 		h.persistAndPublish(provider, token, userID, event)
@@ -185,10 +194,16 @@ func (h *Handler) PatternFileHandler(
 	description = fmt.Sprintf("%s.", description)
 
 	var event *events.Event
-	if action == "deploy" || action == "dry-run" {
-		event = eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
+	if action == "deploy" || action == "undeploy" {
+		tally := tallyDeploymentOutcome(response)
+		severity, desc := deploymentOutcomeEvent(action, tally, patternFile.Name, description)
+		metadata["total"] = tally.Total
+		metadata["succeeded"] = tally.Succeeded
+		metadata["failed"] = tally.Failed
+		metadata["failedComponents"] = tally.FailedComponents
+		event = eventBuilder.WithSeverity(severity).WithDescription(desc).WithMetadata(metadata).Build()
 	} else {
-		event = eventBuilder.WithSeverity(events.Success).WithDescription(description).WithMetadata(metadata).Build()
+		event = eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
 	}
 
 	h.persistAndPublish(provider, token, userID, event)
