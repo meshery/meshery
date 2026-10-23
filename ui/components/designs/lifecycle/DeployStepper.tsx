@@ -213,6 +213,10 @@ export const UpdateDeploymentStepper = ({
     handlePerformDeployment({
       design,
       selectedK8sContexts: selectedDeployableK8scontextIds,
+      // The "Include Dependencies" checkbox already drives the dry run; pass the
+      // same choice to the real deploy/undeploy so dependency CRDs and operators
+      // are only installed or removed when it is checked.
+      skipCRD: !includeDependencies,
     });
   };
   const deployStepper = useStepper({

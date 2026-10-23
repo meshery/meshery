@@ -110,11 +110,12 @@ export const designsApi = api
           selectedK8sContexts,
           verify = false,
           dryRun = false,
+          skipCRD = false,
         }) => ({
           url: mesheryApiPath(
             `${ctxUrl('pattern/deploy', selectedK8sContexts)}${verify ? '&verify=true' : ''}${
               dryRun ? '&dryRun=true' : ''
-            }`,
+            }${skipCRD ? '&skipCRD=true' : ''}`,
           ),
           method: 'DELETE',
           body: {
