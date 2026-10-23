@@ -137,9 +137,13 @@ function MesheryResultDialog(props) {
         createTableRow('Connections', runnerResults.SocketCount),
         createTableRow('Requested Duration', runnerResults.RequestedDuration),
         createTableRow('Actual Duration', (runnerResults.ActualDuration / 1000000000).toFixed(1)),
-        createTableRow('Average Response Time', runnerResults.DurationHistogram.Avg),
+        ...(runnerResults.DurationHistogram
+          ? [createTableRow('Average Response Time', runnerResults.DurationHistogram.Avg)]
+          : []),
         ...percentiles,
-        createTableRow('Maximum Response Time', runnerResults.DurationHistogram.Max),
+        ...(runnerResults.DurationHistogram
+          ? [createTableRow('Maximum Response Time', runnerResults.DurationHistogram.Max)]
+          : []),
       ];
     }
     return (

@@ -43,4 +43,17 @@ describe('MesheryResultDialog', () => {
 
     expect(screen.getByText('http://productpage:9080')).toBeInTheDocument();
   });
+
+  it('renders the load profile when the result has no duration histogram', () => {
+    const { DurationHistogram, ...withoutHistogram } = runnerResults;
+    render(
+      <MesheryResultDialog
+        rowData={{ name: 'run-1', runnerResults: withoutHistogram }}
+        close={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('http://productpage:9080')).toBeInTheDocument();
+    expect(screen.queryByText('Average Response Time:')).not.toBeInTheDocument();
+  });
 });
