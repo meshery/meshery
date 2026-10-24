@@ -12,11 +12,11 @@ import (
 func getMockSSE(chunks []string) *http.Response {
 	r, w := io.Pipe()
 	go func() {
-		defer w.Close()
 		for _, chunk := range chunks {
 			time.Sleep(200 * time.Millisecond)
-			fmt.Fprint(w, chunk)
+			_, _ = fmt.Fprint(w, chunk)
 		}
+		_ = w.Close()
 	}()
 
 	return &http.Response{
