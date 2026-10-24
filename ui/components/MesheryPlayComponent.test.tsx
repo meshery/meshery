@@ -91,8 +91,10 @@ describe('MesheryPlayComponent', () => {
     expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Istio');
   });
 
-  it('dispatches setAdapter and updates state when selecting a different adapter', () => {
+  it('dispatches setAdapter and updates rendered UI when selecting a different adapter', () => {
     const { container } = render(<MesheryPlayComponent />);
+
+    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Istio');
 
     const input = container.querySelector('input[name="adapter_name"]') as HTMLInputElement;
     expect(input).toBeInTheDocument();
@@ -102,6 +104,7 @@ describe('MesheryPlayComponent', () => {
       type: 'adapter/setAdapter',
       payload: { selectedAdapter: 'Linkerd' },
     });
+    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Linkerd');
   });
 
   it('renders individual adapter when adapter query param is set', () => {
@@ -110,5 +113,13 @@ describe('MesheryPlayComponent', () => {
 
     expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Linkerd');
     expect(screen.queryByLabelText('Select Meshery Adapter')).not.toBeInTheDocument();
+  });
+
+  it('falls back to default adapter dropdown view when adapter query param is unknown', () => {
+    mockRouter.query = { adapter: 'unknown-adapter:9999' };
+    render(<MesheryPlayComponent />);
+
+    expect(screen.getByLabelText('Select Meshery Adapter')).toBeInTheDocument();
+    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Istio');
   });
 });
