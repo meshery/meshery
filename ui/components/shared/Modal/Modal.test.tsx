@@ -203,9 +203,10 @@ describe('Modal (RJSF version)', () => {
       />,
     );
 
-    expect(screen.getByTestId('arrow-drop-down')).toBeInTheDocument();
+    const schemaButton = screen.getByRole('button', { name: 'Change schema version' });
+    expect(schemaButton).toBeInTheDocument();
 
-    await user.click(screen.getByTestId('arrow-drop-down'));
+    await user.click(schemaButton);
     expect(screen.getByTestId('menu')).toBeInTheDocument();
 
     const menuItems = screen.getAllByTestId('menu-item');
@@ -230,7 +231,7 @@ describe('Modal (RJSF version)', () => {
       />,
     );
 
-    expect(screen.queryByTestId('arrow-drop-down')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Change schema version' })).not.toBeInTheDocument();
   });
 
   it('does not render the schema dropdown when schema_array is undefined', () => {
@@ -244,7 +245,7 @@ describe('Modal (RJSF version)', () => {
       />,
     );
 
-    expect(screen.queryByTestId('arrow-drop-down')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Change schema version' })).not.toBeInTheDocument();
   });
 
   it('uses custom submitBtnText if provided', () => {
