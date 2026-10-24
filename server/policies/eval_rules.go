@@ -223,19 +223,20 @@ func selectorItemKind(sel relationship.SelectorItem) string {
 // configurationForComponentAtPath gets the value at a path in a component,
 // handling the "configuration" prefix and alias resolution.
 func configurationForComponentAtPath(path []string, comp *component.ComponentDefinition, design *pattern.PatternFile) interface{} {
+	return configurationForComponentAtPathWithCache(path, comp, design, nil)
+}
+
+// configurationForComponentAtPathWithCache is configurationForComponentAtPath
+// with an optional pass-level component map cache.
+func configurationForComponentAtPathWithCache(path []string, comp *component.ComponentDefinition, design *pattern.PatternFile, cache componentMapCache) interface{} {
 	if len(path) == 0 {
 		return nil
 	}
 	if path[0] == "configuration" {
-		config := getComponentConfiguration(comp, design)
+		config := getComponentConfigurationWithCache(comp, design, cache)
 		return objectGetNested(config, popFirst(path), nil)
 	}
-	// For non-configuration paths, convert to map for nested access.
-	compMap, err := toGenericMap(comp)
-	if err != nil {
-		return nil
-	}
-	return objectGetNested(compMap, path, nil)
+	return objectGetNested(cache.genericMap(comp), path, nil)
 }
 
 // resolveComponentAlias checks if a component is an alias and returns the
@@ -258,10 +259,16 @@ func resolveComponentAlias(compID string, design *pattern.PatternFile) (*compone
 // getComponentConfiguration returns the configuration for a component,
 // resolving aliases if present.
 func getComponentConfiguration(comp *component.ComponentDefinition, design *pattern.PatternFile) interface{} {
+	return getComponentConfigurationWithCache(comp, design, nil)
+}
+
+// getComponentConfigurationWithCache is getComponentConfiguration with an
+// optional pass-level component map cache for resolved alias parents.
+func getComponentConfigurationWithCache(comp *component.ComponentDefinition, design *pattern.PatternFile, cache componentMapCache) interface{} {
 	parent, refPath := resolveComponentAlias(comp.ID.String(), design)
 	if parent != nil {
-		parentMap, err := toGenericMap(parent)
-		if err != nil {
+		parentMap := cache.genericMap(parent)
+		if parentMap == nil {
 			return nil
 		}
 		return objectGetNested(parentMap, refPath, nil)
