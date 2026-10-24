@@ -4268,6 +4268,24 @@
         "short_description": "Meshery Server could not determine which keys to register with the Local Provider",
         "probable_cause": "The header row of the keys file was renamed or dropped, so no row could be selected for registration and nothing is seeded from this file; on a fresh or reset database the Key table stays empty, while previously seeded keys are left untouched",
         "suggested_remediation": "Restore the missing header in server/permissions/keys.csv (or the file KEYS_PATH points at) and restart Meshery Server so keys seed again"
+      },
+      "1487": {
+        "name": "ErrReadInClusterTokenCode",
+        "code": "1487",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error reading in-cluster service account token",
+        "probable_cause": "Meshery may not be running in a Kubernetes cluster\nService account token file may be missing or inaccessible",
+        "suggested_remediation": "Ensure Meshery is running in-cluster with proper service account permissions\nVerify the service account token file exists at the expected path"
+      },
+      "1488": {
+        "name": "ErrReadInClusterCACode",
+        "code": "1488",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error reading in-cluster CA certificate",
+        "probable_cause": "Meshery may not be running in a Kubernetes cluster\nCA certificate file may be missing or inaccessible",
+        "suggested_remediation": "Ensure Meshery is running in-cluster with proper service account permissions\nVerify the CA certificate file exists at the expected path"
       }
     }
   }
