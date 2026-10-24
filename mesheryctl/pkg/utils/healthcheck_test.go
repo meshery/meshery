@@ -131,31 +131,28 @@ func TestCheckK8sVersion(t *testing.T) {
 
 func TestIsCompatibleVersion(t *testing.T) {
 	tests := []struct {
+		name     string
 		minimum  [3]int
 		current  [3]int
 		expected bool
 	}{
-		{
-			minimum:  [3]int{1, 12, 0},
-			current:  [3]int{1, 12, 0},
-			expected: true,
-		},
-		{
-			minimum:  [3]int{1, 11, 0},
-			current:  [3]int{2, 13, 2},
-			expected: true,
-		},
-		{
-			minimum:  [3]int{2, 13, 2},
-			current:  [3]int{1, 11, 0},
-			expected: false,
-		},
+		{"equal", [3]int{1, 12, 0}, [3]int{1, 12, 0}, true},
+		{"higher major", [3]int{1, 11, 0}, [3]int{2, 13, 2}, true},
+		{"lower major", [3]int{2, 13, 2}, [3]int{1, 11, 0}, false},
+		{"higher minor", [3]int{1, 28, 3}, [3]int{1, 29, 0}, true},
+		{"lower minor", [3]int{1, 28, 3}, [3]int{1, 27, 9}, false},
+		{"higher patch", [3]int{1, 28, 3}, [3]int{1, 28, 4}, true},
+		{"lower patch", [3]int{1, 28, 3}, [3]int{1, 28, 2}, false},
+		{"higher major overrides lower minor", [3]int{1, 28, 3}, [3]int{2, 0, 0}, true},
+		{"lower major overrides higher minor", [3]int{2, 0, 0}, [3]int{1, 99, 99}, false},
 	}
 
 	for _, tt := range tests {
-		t.Run("Check compatible Version", func(t *testing.T) {
-			if got := isCompatibleVersion(tt.minimum, tt.current); got != tt.expected {
-				t.Errorf("Version not compatible got %v, want %v", got, tt.expected)
+		t.Run(tt.name, func(t *testing.T) {
+			got := isCompatibleVersion(tt.minimum, tt.current)
+			if got != tt.expected {
+				t.Errorf("minimum=%v current=%v: got %v, want %v",
+					tt.minimum, tt.current, got, tt.expected)
 			}
 		})
 	}
