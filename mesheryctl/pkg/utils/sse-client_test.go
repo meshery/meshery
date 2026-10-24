@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 	"testing"
 	"time"
 )
@@ -37,19 +36,19 @@ func TestSSEConversion(t *testing.T) {
 		t.Fatal(err)
 	}
 	ev := <-ch
-	if strings.TrimSpace(ev.ID) != "id1" {
+	if ev.ID != "id1" {
 		t.Errorf("expected id id1 but got %s", ev.ID)
 	}
-	if strings.TrimSpace(ev.Name) != "event1" {
+	if ev.Name != "event1" {
 		t.Errorf("expected event event1 but got %s", ev.Name)
 	}
-	if strings.TrimSpace(ev.Data.Details) != "details1" {
+	if ev.Data.Details != "details1" {
 		t.Errorf("expected details details1 but got %s", ev.Data.Details)
 	}
-	if strings.TrimSpace(ev.Data.OperationID) != "op_id1" {
+	if ev.Data.OperationID != "op_id1" {
 		t.Errorf("expected operations id op_id1 but got %s", ev.Data.OperationID)
 	}
-	if strings.TrimSpace(ev.Data.Summary) != "summary1" {
+	if ev.Data.Summary != "summary1" {
 		t.Errorf("expected summary summary1 but got %s", ev.Data.Summary)
 	}
 }
