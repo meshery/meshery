@@ -6,6 +6,129 @@ aliases:
 categories: [troubleshooting]
 ---
 
+## Meshery Server startup troubleshooting
+
+If Meshery Server fails to start, first identify how Meshery is being run and then follow the troubleshooting steps for that startup or deployment method.
+
+Meshery Server can be started in different ways. The troubleshooting steps differ depending on whether you are running Meshery locally from source, using `mesheryctl`, in Docker, or on Kubernetes.
+
+### Common symptoms
+
+| Symptom | Possible cause |
+| --- | --- |
+| Meshery Server does not start | Server, container, or dependency failure |
+| Meshery Server is not reachable | Server/container is not running or the required port is unavailable |
+| `mesheryctl system start` fails | Deployment, configuration, or platform-specific issue |
+| `make server` fails | Local development environment, dependency, or database issue |
+
+### Basic diagnostics
+
+Before troubleshooting, identify how Meshery Server is being run and use the corresponding section below.
+
+#### Local development with `make server`
+
+Use `make server` when running Meshery Server locally from source.
+
+```bash
+make server
+```
+
+If the command fails, inspect the terminal output for errors related to:
+
+- missing or incompatible dependencies
+- local configuration
+- database initialization or migration
+- build failures
+- port conflicts
+
+See the [`make server`](#make-server) troubleshooting example below for a known database-related startup failure.
+
+#### Meshery CLI with `mesheryctl`
+
+When starting Meshery using the Meshery CLI, run:
+
+```bash
+mesheryctl system start
+```
+
+```bash
+mesheryctl system check --preflight
+```
+
+```bash
+mesheryctl system logs
+```
+
+If the command fails, inspect the CLI output to determine whether the failure is related to the configured deployment platform, existing resources, configuration, or another startup dependency.
+
+See the [`mesheryctl system start`](#mesheryctl-system-start) troubleshooting example below for a known Kubernetes resource ownership issue.
+
+#### Docker
+
+If Meshery Server is running in Docker, first verify that Docker is running and list the active containers:
+
+```bash
+docker ps -a --filter "name=meshery"
+```
+
+Identify the Meshery Server container from the output, then inspect its logs:
+
+```bash
+docker logs <container-name-or-id>
+```
+
+Look for errors related to:
+
+- container startup or unexpected restarts
+- port binding
+- configuration
+- database or dependency connections
+- application startup failures
+
+If the Meshery container is not listed among the running containers, also check stopped containers:
+
+```bash
+docker ps -a --filter "name=meshery"
+```
+
+#### Kubernetes
+
+If Meshery Server is running on Kubernetes, first check the status of the Meshery pods:
+
+```bash
+kubectl get pods -n meshery
+```
+
+Identify the affected Meshery Server pod from the output, then inspect its logs:
+
+```bash
+kubectl logs -n meshery <pod-name>
+```
+
+```bash
+kubectl describe pod <pod-name> -n meshery
+```
+
+If the pod contains multiple containers, list their names:
+
+```bash
+kubectl get pod <pod-name> -n meshery -o jsonpath='{.spec.containers[*].name}'
+```
+
+Then inspect the appropriate container:
+
+```bash
+kubectl logs -n meshery <pod-name> -c <container-name>
+```
+
+When checking the pod status and logs, look for:
+
+- `CrashLoopBackOff`
+- image pull failures
+- configuration errors
+- readiness or liveness probe failures
+- application startup errors
+
 ## mesheryctl system start
 
 ### Resources already exist and cannot be imported into the Helm release
