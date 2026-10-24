@@ -35,6 +35,7 @@ import SourceIcon from '@/assets/icons/SourceIcon';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
 import { capitalize } from 'lodash';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
+import { alpha } from '@/theme';
 import {
   CategoryDefinitionV1Beta1OpenApiSchema,
   ModelDefinitionV1Beta1OpenApiSchema,
@@ -203,13 +204,13 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
         component: (
           <div>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Typography>
+              <Typography sx={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
                 Please enter the appropriate <strong>Model Name</strong> (a unique name with
                 hyphens, not whitespaces) and <strong>Model Display Name</strong> for your model.
               </Typography>
             </Box>
             <Grid2 container spacing={2} size="grow">
-              <Grid2 size={{ xs: 6 }}>
+              <Grid2 size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth>
                   <TextField
                     required
@@ -227,7 +228,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                   />
                 </FormControl>
               </Grid2>
-              <Grid2 size={{ xs: 6 }}>
+              <Grid2 size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth>
                   <TextField
                     required
@@ -274,7 +275,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
         component: (
           <div>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Typography>
+              <Typography sx={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
                 {' '}
                 Please select the appropriate <strong>Category</strong> and{' '}
                 <strong>Subcategory</strong> relevant to your model.
@@ -282,7 +283,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
             </Box>
 
             <Grid2 container spacing={2} size="grow">
-              <Grid2 size={{ xs: 6 }}>
+              <Grid2 size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth variant="outlined" data-testid="UrlStepper-Select-Category">
                   <InputLabel id="category-label">Category</InputLabel>
                   <Select
@@ -303,7 +304,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                   </Select>
                 </FormControl>
               </Grid2>
-              <Grid2 size={{ xs: 6 }}>
+              <Grid2 size={{ xs: 12, sm: 6 }}>
                 <FormControl
                   fullWidth
                   variant="outlined"
@@ -364,15 +365,15 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
         component: (
           <div>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: '2rem' }}>
-              <Typography>
+              <Typography sx={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
                 Configure icons, colors, and a default shape for your model and its components.
                 <br />
                 <em>Note: If none of these are provided, default Meshery values will be used.</em>
               </Typography>
             </Box>
 
-            <Grid2 container spacing={1} size="grow">
-              <Grid2 size={{ xs: 6 }}>
+            <Grid2 container spacing={2} size="grow">
+              <Grid2 size={{ xs: 12, sm: 6 }}>
                 <FormControl
                   fullWidth
                   variant="outlined"
@@ -384,13 +385,13 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                     type="file"
                     accept=".svg"
                     onChange={handleLogoDarkThemeChange}
-                    style={{ marginTop: '1rem' }}
+                    style={{ marginTop: '1rem', maxWidth: '100%' }}
                     label=" "
                   />
                 </FormControl>
               </Grid2>
 
-              <Grid2 size={{ xs: 6 }}>
+              <Grid2 size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth data-testid="UrlStepper-Select-Logo-Light-Theme">
                   <Typography>Logo (Light Theme)</Typography>
                   <input
@@ -398,12 +399,12 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                     type="file"
                     accept=".svg"
                     onChange={handleLogoLightThemeChange}
-                    style={{ marginTop: '1rem' }}
+                    style={{ marginTop: '1rem', maxWidth: '100%' }}
                   />
                 </FormControl>
               </Grid2>
 
-              <Grid2 size={{ xs: 6 }} style={{ marginTop: '2rem' }}>
+              <Grid2 size={{ xs: 12, sm: 6 }} sx={{ mt: { xs: 1, sm: 2 } }}>
                 <FormControl fullWidth data-testid="UrlStepper-Select-Primary-Color">
                   <Typography>Primary Color</Typography>
                   <input
@@ -416,7 +417,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                 </FormControl>
               </Grid2>
 
-              <Grid2 size={{ xs: 6 }} style={{ marginTop: '2rem' }}>
+              <Grid2 size={{ xs: 12, sm: 6 }} sx={{ mt: { xs: 1, sm: 2 } }}>
                 <FormControl fullWidth data-testid="UrlStepper-Select-Secondary-Color">
                   <Typography>Secondary Color</Typography>
                   <input
@@ -429,7 +430,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                 </FormControl>
               </Grid2>
 
-              <Grid2 size={{ xs: 12 }} style={{ marginTop: '1rem' }}>
+              <Grid2 size={{ xs: 12 }} sx={{ mt: { xs: 1, sm: 2 } }}>
                 <FormControl fullWidth variant="outlined" data-testid="UrlStepper-Select-Shape">
                   <InputLabel id="shape-label">Shape</InputLabel>
                   <Select
@@ -483,18 +484,18 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
         component: (
           <div>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Typography>
+              <Typography sx={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
                 Please identify the location from which to source your model&apos;s components.
               </Typography>
             </Box>
-            <FormControl component="fieldset">
+            <FormControl component="fieldset" fullWidth>
               <RadioGroup
                 row
                 aria-label="source"
                 name="source"
                 value={modelSource}
                 onChange={(e) => setModelSource(e.target.value.toLowerCase())}
-                style={{ gap: '2rem' }}
+                sx={{ gap: { xs: '1rem', sm: '2rem' }, flexWrap: 'wrap' }}
               >
                 {['Artifact Hub', 'GitHub'].map((source, idx) => (
                   <FormControlLabel
@@ -556,10 +557,10 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
       },
       {
         component: (
-          <Grid2 size={{ xs: 12 }} style={{ marginTop: '1rem' }}>
-            <FormControl component="fieldset">
+          <Grid2 size={{ xs: 12 }} sx={{ mt: 1 }}>
+            <FormControl component="fieldset" fullWidth>
               <FormControlLabel
-                style={{ marginLeft: '0' }}
+                sx={{ ml: 0, wordBreak: 'break-word' }}
                 label="The components in this model are visual annotations only."
                 labelPlacement="start"
                 control={
@@ -593,7 +594,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
       },
       {
         component: (
-          <Box sx={{ maxHeight: '40vh' }}>
+          <Box sx={{ maxHeight: '45vh', overflowY: 'auto', overflowX: 'hidden', pr: 0.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <Typography variant="h6" sx={{ fontWeight: 500 }}>
                 Model Generation Summary
@@ -798,8 +799,40 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
 
   return (
     <>
-      <ModalBody>
-        <CustomizedStepper {...urlStepper}>{urlStepper.activeStepComponent}</CustomizedStepper>
+      <ModalBody
+        sx={{
+          maxWidth: '100%',
+          overflowX: 'hidden',
+          p: { xs: 2, sm: 3 },
+        }}
+      >
+        <Box
+          sx={(theme) => ({
+            width: '100%',
+            maxWidth: '100%',
+            overflowX: 'hidden',
+            '& .MuiStepper-root': {
+              maxWidth: '100%',
+              overflowX: 'auto',
+              overflowY: 'hidden',
+              scrollbarWidth: 'thin',
+              py: 1,
+              '&::-webkit-scrollbar': {
+                height: '6px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                backgroundColor: alpha(theme.palette.common.black, 0.2),
+                borderRadius: '4px',
+              },
+            },
+          })}
+        >
+          <CustomizedStepper {...urlStepper}>
+            <Box sx={{ width: '100%', maxWidth: '100%', overflowX: 'hidden', mt: 1 }}>
+              {urlStepper.activeStepComponent}
+            </Box>
+          </CustomizedStepper>
+        </Box>
       </ModalBody>
       <ModalFooter
         variant="filled"
