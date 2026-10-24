@@ -34,11 +34,11 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-     <div class="clipboardjs"> helm plugin install https://github.com/meshery-extensions/helm-snapshot </div>
+     <div class="clipboardjs"> helm plugin install https://github.com/meshery-extensions/helm-kanvas-snapshot </div>
    </div>
 </pre>
 
-3. Verify the installation by running:
+2. Verify the installation by running:
 
 
 <pre class="codeblock-pre">
@@ -47,9 +47,9 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
    </div>
 </pre>
 
-   You should see the snapshot listed as `helm-snapshot`.
+   You should see the plugin listed as `helm-kanvas-snapshot`.
 
-4. Set up the required environment variables (see the [Environment Variables](#environment-variables) section).
+3. Set up the required environment variables (see the [Environment Variables](#environment-variables) section).
 
 ### Usage
 
@@ -58,7 +58,7 @@ Once the plugin is installed, you can generate a snapshot using either a package
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-     <div class="clipboardjs">helm snapshot --f &lt;chart-URI&gt; [--name &lt;snapshot-name&gt;] [--email &lt;email&gt;]</div>
+     <div class="clipboardjs">helm helm-kanvas-snapshot -f &lt;chart-URI&gt; [--name &lt;snapshot-name&gt;] [--email &lt;email&gt;]</div>
    </div>
 </pre>
 
@@ -72,7 +72,7 @@ To generate a snapshot for a Helm chart located at `https://meshery.io/charts/v0
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-     <div class="clipboardjs">helm snapshot -f https://meshery.io/charts/v0.8.0-meshery.tar.gz --name meshery-chart</div>
+     <div class="clipboardjs">helm helm-kanvas-snapshot -f https://meshery.io/charts/v0.8.0-meshery.tar.gz --name meshery-chart</div>
    </div>
 </pre>
 
