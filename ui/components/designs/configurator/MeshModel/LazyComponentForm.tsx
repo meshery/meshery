@@ -26,9 +26,12 @@ export const Heading = styled(Typography)(({ theme }) => ({
 }));
 
 /**
- *
+ * Accordion for one component in the Design Configurator. The component's schema is
+ * fetched the first time it is expanded, and its settings form is rendered with its
+ * own reference so edits update only this component in the design.
  * @param {{
  * component: Types.ComponentDefinition
+ * disabled?: boolean
  * createSettingsChangeHandler: (reference: React.MutableRefObject<any>) => Function
  * }} param0
  * @returns
@@ -48,6 +51,10 @@ export default function LazyComponentForm({
   const formReference = React.useRef();
   const { notify } = useNotification();
 
+  /**
+   * Opens or closes the accordion. On first open it loads the component's schema.
+   * @param {boolean} state true to expand, false to collapse
+   */
   async function expand(state) {
     if (!state) {
       setExpanded(false);
@@ -111,6 +118,11 @@ export default function LazyComponentForm({
   );
 }
 
+/**
+ * Renders the accordion body only after it has been mounted once, then keeps it
+ * mounted so collapsing does not reset the form or its component id.
+ * @param {{ mounted: boolean, children?: React.ReactNode }} props
+ */
 function LazyAccordionDetails(props) {
   if (!props.mounted) return <AccordionDetails />;
 

@@ -26,6 +26,7 @@ import { getWebAdress } from '../../../../utils/webApis';
 import CodeEditor from '../CodeEditor';
 import LazyComponentForm from './LazyComponentForm';
 import useDesignLifecycle from './hooks/useDesignLifecycle';
+import { getComponentFormKey } from './utils';
 import { useRouter } from 'next/router';
 
 import { Keys } from '@meshery/schemas/permissions';
@@ -36,6 +37,10 @@ const ScrollContainer = styled('div')({
   height: '58.5vh',
 });
 
+/**
+ * Design Configurator: lists the components of the selected model as lazily loaded
+ * forms and keeps the design (shown as YAML) in sync with the edits made in them.
+ */
 export default function DesignConfigurator() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
@@ -244,7 +249,7 @@ export default function DesignConfigurator() {
                   const hasInvalidSchema = !!trimmedComponent.metadata?.hasInvalidSchema;
                   return (
                     <LazyComponentForm
-                      key={`${trimmedComponent.component.kind}-${idx}`}
+                      key={getComponentFormKey(selectedModel, trimmedComponent, idx)}
                       component={trimmedComponent}
                       createSettingsChangeHandler={(formReference) =>
                         onSettingsChange(trimmedComponent, formReference)

@@ -12,7 +12,7 @@ vi.mock('../../../../utils/utils', () => ({
   JsonParse: (input: string) => jsonParse(input),
 }));
 
-import { getComponentMetadata, getStyleOverrides } from './utils';
+import { getComponentFormKey, getComponentMetadata, getStyleOverrides } from './utils';
 
 describe('getComponentMetadata', () => {
   it('applies the default shape, colors and svg fields when metadata is empty', () => {
@@ -35,6 +35,20 @@ describe('getComponentMetadata', () => {
   it('copies background-image into svgWhite for legacy styled metadata', () => {
     const result = getComponentMetadata({ 'background-image': 'url(custom.svg)' });
     expect(result.svgWhite).toBe('url(custom.svg)');
+  });
+});
+
+describe('getComponentFormKey', () => {
+  const service = { component: { kind: 'Service' } };
+
+  it('combines the model name, component kind and position', () => {
+    expect(getComponentFormKey('kubernetes', service, 3)).toBe('kubernetes-Service-3');
+  });
+
+  it('gives the same kind at the same position a different key in another model', () => {
+    expect(getComponentFormKey('kubernetes', service, 3)).not.toBe(
+      getComponentFormKey('istio-base', service, 3),
+    );
   });
 });
 

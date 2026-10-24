@@ -21,6 +21,19 @@ export function getComponentMetadata(metadata) {
   );
 }
 
+/**
+ * Builds the React key for a component form in the Design Configurator list.
+ * The model name is part of the key so that switching models never reuses a form
+ * (and the component id it holds) that was opened for another model's component.
+ * @param {string} modelName name of the model whose components are listed
+ * @param {Types.ComponentDefinition} componentDefinition component shown by the form
+ * @param {number} index position of the component in the list
+ * @returns {string}
+ */
+export function getComponentFormKey(modelName, componentDefinition, index) {
+  return `${modelName}-${componentDefinition?.component?.kind}-${index}`;
+}
+
 export function getStyleOverrides(stringifiedOverrides) {
   if (stringifiedOverrides) {
     return JsonParse(stringifiedOverrides);
