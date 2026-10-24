@@ -112,10 +112,45 @@ As a self-service engineering platform, Meshery enables collaborative design and
 
 # Comment out if you don't want the "print entire section" link enabled.
 [outputs]
-  home = ["HTML", "RSS", "SITEMAP"]
-  section = ["HTML", "RSS"]
-  taxonomy = []
-  term = []
+  home = ["HTML", "RSS", "SITEMAP", "llms", "llmsfull", "md"]
+  page = ["HTML", "md"]
+  section = ["HTML", "RSS", "md"]
+  taxonomy = ["HTML", "md"]
+  term = ["HTML", "md"]
+
+[outputFormats.llms]
+  baseName       = "llms"
+  mediaType      = "text/plain"
+  isPlainText    = true
+  notAlternative = true
+
+[outputFormats.llmsfull]
+  baseName       = "llms-full"
+  mediaType      = "text/plain"
+  isPlainText    = true
+  notAlternative = true
+
+[outputFormats.md]
+  baseName       = "index"
+  mediaType      = "text/markdown"
+  isPlainText    = true
+  notAlternative = true
+
+[params.llms]
+  generate_llms_txt = true
+  generate_llms_full_txt = true
+  include = []
+
+  exclude = [
+    "v0.9/",
+    "v0.9/*",
+    "v0.8/",
+    "v0.8/*"
+  ]
+  # Keep only the newest N pages of a section in llms.txt.
+  # This is supported by the Layer5 docs module's index.llms layout.
+  [params.llms.limit_sections]
+    "/project/releases/" = 5
 
 [sitemap]
   changefreq = "daily"
@@ -216,7 +251,7 @@ enable = false
   # replacements = "github.com/google/docsy -> ../../docsy"
   [module.hugoVersion]
     extended = true
-    min = "0.110.0"
+    min = "0.147.2"
   [[module.imports]]
     path = "github.com/google/docsy"
     disable = false
@@ -233,6 +268,16 @@ enable = false
     [[module.imports.mounts]]
       source = "assets/scss/_yt-embed-container.scss"
       target = "assets/scss/_yt-embed-container.scss"
+    [[module.imports.mounts]]
+      source = "layouts/index.llms"
+      target = "layouts/index.llms"
+    [[module.imports.mounts]]
+      source = "layouts/index.llmsfull"
+      target = "layouts/index.llmsfull"
+    [[module.imports.mounts]]
+      source = "layouts/index.md"
+      target = "layouts/index.md"
+
   [[module.mounts]]
     source = "static"
     target = "static"
