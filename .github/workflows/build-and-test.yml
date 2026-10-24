@@ -47,7 +47,16 @@ permissions:
   contents: read
 
 jobs:
+  workflow-filter-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Verify edge image path filters
+        run: python3 .github/scripts/test_edge_image_path_filter.py
+
   build-meshery:
+    needs: [workflow-filter-tests]
     uses: ./.github/workflows/build-meshery-image.yml
   tests-e2e:
     needs: [build-meshery]
