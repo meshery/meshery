@@ -39,6 +39,11 @@ jobs:
         with:
           fetch-depth: 1
           ref: ${{ inputs.branch }} 
+      - name: Resolve checked-out source commit
+        id: source
+        run: |
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "short-sha=$(git rev-parse --short=8 HEAD)" >> "$GITHUB_OUTPUT"
       - name: Docker login
         uses: azure/docker-login@v2
         with:
@@ -46,13 +51,28 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Docker edge build & tag
         run: |
-          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:edge-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${{ env.LATEST_TAG }} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-          docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:edge-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${{ steps.source.outputs.sha }} --build-arg GIT_VERSION=${{ env.LATEST_TAG }} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+      - name: Verify built image commit
+        env:
+          EXPECTED_SHA: ${{ steps.source.outputs.sha }}
+          IMAGE_NAME: ${{ secrets.IMAGE_NAME }}:edge-latest
+        run: |
+          container_id=$(docker create "$IMAGE_NAME")
+          trap 'docker rm "$container_id" >/dev/null 2>&1 || true; rm -f "$RUNNER_TEMP/meshery-server"' EXIT
+          docker cp "$container_id":/app/server/cmd/meshery "$RUNNER_TEMP/meshery-server"
+          if ! strings -a "$RUNNER_TEMP/meshery-server" | grep -Fqx -- "$EXPECTED_SHA"; then
+            echo "::error::Built image does not contain the checked-out commit $EXPECTED_SHA"
+            exit 1
+          fi
+          echo "Verified built image contains checked-out commit $EXPECTED_SHA"
+      - name: Tag edge image
+        run: |
+          docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${{ steps.source.outputs.short-sha }}
           docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
       - name: Docker edge push
         run: |
           docker push ${{ secrets.IMAGE_NAME }}:edge-latest
-          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+          docker push ${{ secrets.IMAGE_NAME }}:edge-${{ steps.source.outputs.short-sha }}
           docker push ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
 
   update-staging-playground:
