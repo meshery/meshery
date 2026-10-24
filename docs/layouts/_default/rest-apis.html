@@ -416,7 +416,10 @@
                   {{ $serverDescription := index $server "description" | default "Meshery Server URL" }}
                   <div class="rest-api-try-item">
                     <p class="rest-api-try-item__label">{{ $serverDescription }}</p>
-                    <code class="rest-api-try-item__url">{{ printf "%s%s" $serverUrl $operationPath }}</code>
+                    <div class="rest-api-try-item__box">
+                      <code class="rest-api-try-item__url">{{ printf "%s%s" $serverUrl $operationPath }}</code>
+                      <div class="btn-copy-wrap"><button type="button" class="clipbtn" aria-label="Copy URL to clipboard"><i class="far fa-copy" aria-hidden="true"></i></button></div>
+                    </div>
                   </div>
                 {{ end }}
               </div>
