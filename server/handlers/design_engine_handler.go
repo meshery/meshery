@@ -174,6 +174,12 @@ func (h *Handler) PatternFileHandler(
 		metadata := map[string]interface{}{
 			"error": err,
 		}
+		if action == "deploy" || action == "undeploy" {
+			tally := tallyDeploymentOutcome(response)
+			if tally.Total > 0 {
+				addOutcomeMetadata(metadata, tally)
+			}
+		}
 
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to %s design '%s'.", action, patternFile.Name)).WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(*event, token)
@@ -202,10 +208,13 @@ func (h *Handler) PatternFileHandler(
 	metadata["designId"] = patternID
 
 	var event *events.Event
-	if action == "deploy" || action == "dry-run" {
-		event = eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
+	if action == "deploy" || action == "undeploy" {
+		tally := tallyDeploymentOutcome(response)
+		severity, desc := deploymentOutcomeEvent(action, tally, patternFile.Name, description)
+		addOutcomeMetadata(metadata, tally)
+		event = eventBuilder.WithSeverity(severity).WithDescription(desc).WithMetadata(metadata).Build()
 	} else {
-		event = eventBuilder.WithSeverity(events.Success).WithDescription(description).WithMetadata(metadata).Build()
+		event = eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
 	}
 
 	_ = provider.PersistEvent(*event, token)
