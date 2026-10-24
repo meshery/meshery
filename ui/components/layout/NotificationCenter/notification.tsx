@@ -55,6 +55,9 @@ import { FormattedLinkMetadata, FormattedMetadata, PropertyLinkFormatters } from
 import { truncate } from 'lodash';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { useDispatch } from 'react-redux';
+import { formatErrorCode } from './formatters/common';
+
+export { formatErrorCode };
 
 export const eventPreventDefault = (e) => {
   e.preventDefault();
@@ -256,29 +259,42 @@ export const getErrorCodesFromEvent = (event) => {
   if (!event || !event.metadata) return null;
 
   let errorCodes = new Set();
+  const component = event.category || 'meshery-server';
+
+  const addCode = (code) => {
+    if (code !== undefined && code !== null && String(code).trim() !== '') {
+      errorCodes.add(formatErrorCode(code, component));
+    }
+  };
+
   if (event.metadata.error) {
     if (Array.isArray(event.metadata.error)) {
       event.metadata.error.forEach((err) => {
-        if (err.Code) errorCodes.add(err.Code);
+        if (err?.Code) addCode(err.Code);
+        else if (err?.code) addCode(err.code);
       });
     } else if (event.metadata.error.Code) {
-      errorCodes.add(event.metadata.error.Code);
+      addCode(event.metadata.error.Code);
+    } else if (event.metadata.error.code) {
+      addCode(event.metadata.error.code);
     }
   }
 
   if (event.metadata.ModelDetails) {
     Object.values(event.metadata.ModelDetails).forEach((detail) => {
-      if (Array.isArray(detail.Errors)) {
+      if (Array.isArray(detail?.Errors)) {
         detail.Errors.forEach((error) => {
-          if (error.error?.Code) {
-            errorCodes.add(error.error.Code);
+          if (error?.error?.Code) {
+            addCode(error.error.Code);
+          } else if (error?.error?.code) {
+            addCode(error.error.code);
           }
         });
       }
     });
   }
 
-  return [...errorCodes];
+  return errorCodes.size > 0 ? [...errorCodes] : null;
 };
 export const Notification = ({ event_id }) => {
   const event = useSelector((state) => selectEventById(state, event_id));

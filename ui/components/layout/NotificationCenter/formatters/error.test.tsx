@@ -31,6 +31,21 @@ vi.mock('../../../data-formatter', () => ({
   },
 }));
 
+vi.mock('./common', () => ({
+  TitleLink: ({ href, children }: any) => (
+    <a data-testid="title-link" href={href}>
+      {children}
+    </a>
+  ),
+  formatErrorCode: (code: any, component = 'meshery-server') => {
+    if (!code) return '';
+    const trimmed = String(code).trim();
+    if (trimmed.includes('-')) return trimmed;
+    if (/^\d+$/.test(trimmed)) return `${component}-${trimmed}`;
+    return trimmed;
+  },
+}));
+
 import { ErrorMetadataFormatter } from './error';
 
 describe('ErrorMetadataFormatter', () => {
@@ -61,5 +76,40 @@ describe('ErrorMetadataFormatter', () => {
     expect(screen.getAllByText('Details').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Probable Cause').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Suggested Remediation').length).toBeGreaterThan(0);
+  });
+
+  it('renders the universal error code link when Code is provided in metadata', () => {
+    render(
+      <ErrorMetadataFormatter
+        metadata={{
+          Code: '1562',
+          LongDescription: ['Something went wrong'],
+        }}
+        event={{ description: 'An error occurred' }}
+      />,
+    );
+    const link = screen.getByTestId('title-link');
+    expect(link).toHaveAttribute(
+      'href',
+      'https://docs.meshery.io/reference/error-codes#meshery-server-1562',
+    );
+    expect(link).toHaveTextContent('meshery-server-1562');
+  });
+
+  it('renders existing full mnemonic error code without double-prefixing', () => {
+    render(
+      <ErrorMetadataFormatter
+        metadata={{
+          Code: 'meshery-server-1133',
+        }}
+        event={{ description: 'Conversion error' }}
+      />,
+    );
+    const link = screen.getByTestId('title-link');
+    expect(link).toHaveAttribute(
+      'href',
+      'https://docs.meshery.io/reference/error-codes#meshery-server-1133',
+    );
+    expect(link).toHaveTextContent('meshery-server-1133');
   });
 });
