@@ -188,3 +188,66 @@ func TestDeploymentOutcome_FailedComponentsSortedByNameThenLocation(t *testing.T
 		t.Fatalf("sorting mismatch: %+v", fc)
 	}
 }
+
+// TestDeploymentOutcome_ExampleEvent pins the event a real partial deployment
+// produces: three Kubernetes components on one cluster, one rejected by the
+// API server. The logged JSON is the example used in the PR description; run
+// with -v to see it.
+func TestDeploymentOutcome_ExampleEvent(t *testing.T) {
+	const host = "https://127.0.0.1:6443"
+	ok := func(name, kind string) []patterns.DeploymentMessagePerContext {
+		return []patterns.DeploymentMessagePerContext{{SystemName: "kind-meshery", Location: host, Summary: []patterns.DeploymentMessagePerComp{
+			{Kind: kind, Model: "kubernetes", CompName: name, Success: true, DesignName: "bookinfo", Message: "deployed bookinfo/" + name},
+		}}}
+	}
+	resp := map[string]interface{}{
+		"productpage": ok("productpage", "Deployment"),
+		"ratings":     ok("ratings", "Service"),
+		"reviews": []patterns.DeploymentMessagePerContext{{SystemName: "kind-meshery", Location: host, Summary: []patterns.DeploymentMessagePerComp{
+			{Kind: "Deployment", Model: "kubernetes", CompName: "reviews", DesignName: "bookinfo", Message: "Error deploying bookinfo/reviews",
+				Error: errors.New(`Deployment.apps "reviews" is invalid: spec.template.spec.containers[0].image: Required value`)},
+		}}},
+	}
+
+	tally := tallyDeploymentOutcome(resp)
+	severity, description := deploymentOutcomeEvent("deploy", tally, "bookinfo", "Deployment completed for design 'bookinfo'.")
+	metadata := map[string]interface{}{
+		"designName": "bookinfo",
+		"designId":   "8c5a1f4e-2b7d-4e0a-9f3c-6d1e2a4b7c90",
+	}
+	addOutcomeMetadata(metadata, tally)
+
+	got, err := json.MarshalIndent(map[string]interface{}{
+		"severity":    severity,
+		"description": description,
+		"metadata":    metadata,
+	}, "", "  ")
+	if err != nil {
+		t.Fatalf("marshal error: %v", err)
+	}
+	t.Logf("example event:\n%s", got)
+
+	want := `{
+  "description": "Deployment partially completed for design 'bookinfo': 1 of 3 components failed.",
+  "metadata": {
+    "designId": "8c5a1f4e-2b7d-4e0a-9f3c-6d1e2a4b7c90",
+    "designName": "bookinfo",
+    "failed": 1,
+    "failedComponents": [
+      {
+        "name": "reviews",
+        "kind": "Deployment",
+        "model": "kubernetes",
+        "location": "https://127.0.0.1:6443",
+        "error": "Deployment.apps \"reviews\" is invalid: spec.template.spec.containers[0].image: Required value"
+      }
+    ],
+    "succeeded": 2,
+    "total": 3
+  },
+  "severity": "warning"
+}`
+	if string(got) != want {
+		t.Errorf("example event changed:\n got: %s\nwant: %s", got, want)
+	}
+}

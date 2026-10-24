@@ -175,10 +175,7 @@ func (h *Handler) PatternFileHandler(
 		if action == "deploy" || action == "undeploy" {
 			tally := tallyDeploymentOutcome(response)
 			if tally.Total > 0 {
-				metadata["total"] = tally.Total
-				metadata["succeeded"] = tally.Succeeded
-				metadata["failed"] = tally.Failed
-				metadata["failedComponents"] = tally.FailedComponents
+				addOutcomeMetadata(metadata, tally)
 			}
 		}
 
@@ -212,10 +209,7 @@ func (h *Handler) PatternFileHandler(
 	if action == "deploy" || action == "undeploy" {
 		tally := tallyDeploymentOutcome(response)
 		severity, desc := deploymentOutcomeEvent(action, tally, patternFile.Name, description)
-		metadata["total"] = tally.Total
-		metadata["succeeded"] = tally.Succeeded
-		metadata["failed"] = tally.Failed
-		metadata["failedComponents"] = tally.FailedComponents
+		addOutcomeMetadata(metadata, tally)
 		event = eventBuilder.WithSeverity(severity).WithDescription(desc).WithMetadata(metadata).Build()
 	} else {
 		event = eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
