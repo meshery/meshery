@@ -32,6 +32,10 @@ vi.mock('../NotificationCenter/index', () => ({
   NotificationDrawerButton: () => <button data-testid="notification-drawer">bell</button>,
 }));
 
+vi.mock('@/components/command-palette/CommandPaletteTrigger', () => ({
+  default: () => <button data-testid="command-palette-trigger">trigger</button>,
+}));
+
 vi.mock('../../User', () => ({
   default: () => <div data-testid="user" />,
 }));
