@@ -40,8 +40,16 @@ vi.mock('../../data-formatter', () => ({
 }));
 
 vi.mock('../../layout/NotificationCenter/constants', () => ({
+  SEVERITY: {
+    INFO: 'informational',
+    ERROR: 'error',
+    WARNING: 'warning',
+    SUCCESS: 'success',
+  },
   SEVERITY_STYLE: {
+    informational: { color: '#00f' },
     success: { color: '#0f0' },
+    warning: { color: '#f80' },
     error: { color: '#f00' },
   },
 }));
@@ -68,6 +76,7 @@ vi.mock('next/router', () => ({
 }));
 
 import { DeploymentSummaryFormatter } from './DeploymentSummary';
+import { SEVERITY } from '../../layout/NotificationCenter/constants';
 
 describe('DeploymentSummaryFormatter', () => {
   it('renders the event description and skips Open In Operator when operator is disabled', () => {
@@ -153,5 +162,46 @@ describe('DeploymentSummaryFormatter', () => {
       />,
     );
     expect(screen.getByTestId('error-metadata')).toHaveTextContent('E_FAIL');
+  });
+
+  it.each([
+    [SEVERITY.WARNING, '1 of 3 components failed', 3, 1],
+    [SEVERITY.ERROR, '2 of 2 components failed', 2, 2],
+  ])('renders counts for %s', (severity, expectedText, total, failed) => {
+    const summary = {
+      c: [{ Location: 'loc', Summary: [{ CompName: 'db', Kind: 'Database', Success: false }] }],
+    };
+    render(
+      <DeploymentSummaryFormatter
+        event={{
+          description: 'Outcome',
+          severity,
+          action: 'deploy',
+          metadata: { total, failed, summary },
+        }}
+      />,
+    );
+    expect(screen.getByText(expectedText)).toBeInTheDocument();
+    expect(screen.getByText('Failed to deploy Database "db"')).toBeInTheDocument();
+  });
+
+  it('renders old-server event without the new keys as today without crashing', () => {
+    const summary = {
+      c: [
+        { Location: 'cluster-1', Summary: [{ CompName: 'web', Kind: 'Service', Success: true }] },
+      ],
+    };
+    render(
+      <DeploymentSummaryFormatter
+        event={{
+          description: 'Deployment completed',
+          severity: SEVERITY.INFO,
+          action: 'deploy',
+          metadata: { summary },
+        }}
+      />,
+    );
+    expect(screen.getByText('Deployed Service "web"')).toBeInTheDocument();
+    expect(screen.queryByText(/components failed/)).not.toBeInTheDocument();
   });
 });
