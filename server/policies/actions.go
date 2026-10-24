@@ -1,16 +1,21 @@
 package policies
 
 import (
+	"encoding/json"
+	"strings"
+
 	patching "github.com/meshery/meshkit/utils/patching"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
+	"github.com/tidwall/sjson"
 )
 
 // Action operation constants.
 const (
 	UpdateComponentOp              = "update_component"
 	UpdateComponentConfigurationOp = "update_component_configuration"
+	RemoveComponentConfigurationOp = "remove_component_configuration"
 	DeleteComponentOp              = "delete_component"
 	AddComponentOp                 = "add_component"
 	UpdateRelationshipOp           = "update_relationship"
@@ -53,6 +58,9 @@ func (a PolicyAction) toPatternAction() pattern.Action {
 		value["id"] = a.ID
 		value["path"] = a.UpdatePath
 		value["value"] = a.UpdateValue
+	case RemoveComponentConfigurationOp:
+		value["id"] = a.ID
+		value["path"] = a.UpdatePath
 	case AddComponentOp:
 		if a.Component != nil {
 			if m, err := toGenericMap(a.Component); err == nil {
@@ -101,6 +109,14 @@ func newComponentUpdateAction(op, id string, path []string, value interface{}) P
 		ID:          id,
 		UpdatePath:  path,
 		UpdateValue: value,
+	}
+}
+
+func newComponentRemoveAction(id string, path []string) PolicyAction {
+	return PolicyAction{
+		Op:         RemoveComponentConfigurationOp,
+		ID:         id,
+		UpdatePath: path,
 	}
 }
 
@@ -230,8 +246,8 @@ func applyActionsToDesign(design *pattern.PatternFile, actions []PolicyAction) *
 	return result
 }
 
-// applyComponentConfigPatches applies UpdateComponentConfiguration and UpdateComponent
-// actions to component configurations in the design.
+// applyComponentConfigPatches applies UpdateComponentConfiguration, UpdateComponent,
+// and RemoveComponentConfiguration actions to component configurations in the design.
 func applyComponentConfigPatches(design *pattern.PatternFile, actions []PolicyAction) {
 	type updateEntry struct {
 		id    string
@@ -240,16 +256,19 @@ func applyComponentConfigPatches(design *pattern.PatternFile, actions []PolicyAc
 	}
 
 	var updates []updateEntry
+	var removes []PolicyAction
 	for _, a := range actions {
-		if a.Op != UpdateComponentConfigurationOp && a.Op != UpdateComponentOp {
-			continue
-		}
 		if a.ID == "" {
 			continue
 		}
-		updates = append(updates, updateEntry{id: a.ID, path: a.UpdatePath, value: a.UpdateValue})
+		switch a.Op {
+		case UpdateComponentConfigurationOp, UpdateComponentOp:
+			updates = append(updates, updateEntry{id: a.ID, path: a.UpdatePath, value: a.UpdateValue})
+		case RemoveComponentConfigurationOp:
+			removes = append(removes, a)
+		}
 	}
-	if len(updates) == 0 {
+	if len(updates) == 0 && len(removes) == 0 {
 		return
 	}
 
@@ -265,13 +284,47 @@ func applyComponentConfigPatches(design *pattern.PatternFile, actions []PolicyAc
 			}
 			patches = append(patches, patching.Patch{Path: path, Value: up.value})
 		}
-		if len(patches) == 0 {
-			continue
+		if len(patches) > 0 {
+			if updated, err := patching.ApplyPatches(comp.Configuration, patches); err == nil {
+				comp.Configuration = updated
+			}
 		}
-		updatedConfig, err := patching.ApplyPatches(comp.Configuration, patches)
-		if err != nil {
-			continue
+
+		var compRemoves []PolicyAction
+		for _, rm := range removes {
+			if rm.ID == comp.ID.String() {
+				compRemoves = append(compRemoves, rm)
+			}
 		}
-		comp.Configuration = updatedConfig
+		if len(compRemoves) > 0 {
+			comp.Configuration = applyConfigRemoves(comp.Configuration, compRemoves)
+		}
 	}
+}
+
+// applyConfigRemoves removes fields from a component's configuration via sjson.Delete.
+func applyConfigRemoves(config map[string]interface{}, removes []PolicyAction) map[string]interface{} {
+	data, err := json.Marshal(config)
+	if err != nil {
+		return config
+	}
+	jsonStr := string(data)
+	for _, rm := range removes {
+		path := rm.UpdatePath
+		if len(path) > 0 && path[0] == "configuration" {
+			path = path[1:]
+		}
+		if len(path) == 0 {
+			continue
+		}
+		jsonStr, err = sjson.Delete(jsonStr, strings.Join(path, "."))
+		if err != nil {
+			return config
+		}
+	}
+	var result map[string]interface{}
+	if err := json.Unmarshal([]byte(jsonStr), &result); err != nil {
+		return config
+	}
+	return result
 }

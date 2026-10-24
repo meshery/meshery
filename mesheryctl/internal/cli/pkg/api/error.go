@@ -2,7 +2,7 @@ package api
 
 import "github.com/meshery/meshkit/errors"
 
-var ErrGenerateDataForInvalidResponseCode = "mesheryctl-1231"
+var ErrGenerateDataForInvalidResponseCode = "mesheryctl-1232"
 
 func ErrGenerateDataForInvalidResponse() error {
 	return errors.New(

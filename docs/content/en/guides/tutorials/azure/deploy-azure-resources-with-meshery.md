@@ -1,6 +1,6 @@
 ---
 title: Deploy Azure resources with Meshery
-description: Learn how to deploy and manage Azure resources through Kubernetes with Meshery, utilizing ASO operator to enhance cloud resource management
+description: Install Azure Service Operator in your cluster and deploy Azure resources, such as Storage Accounts and Key Vaults, from a Meshery Design.
 model: azure
 params:
    kind: resources
@@ -9,140 +9,85 @@ aliases:
 - /guides/tutorials/deploy-azure-resources-with-meshery
 ---
 
-### Introduction
+In this tutorial, you deploy Azure resources from a Meshery Design. Meshery manages Azure resources through [Azure Service Operator (ASO)](https://azure.github.io/azure-service-operator/), which represents each Azure resource, such as a Storage Account, Key Vault, or SQL Server, as a Kubernetes custom resource. You install ASO in your cluster, give it an Azure identity, and then design and deploy Azure resources from Meshery.
 
-Meshery now supports managing Azure resources declaratively through Kubernetes by integrating with Azure Service Operator (ASO). With this capability, you can visually design, deploy, and manage a variety of Azure resources—such as Storage Accounts, Key Vaults, SQL Servers, and more—directly from Meshery’s UI. In this tutorial, you’ll install the ASO operator (without CRD pattern configurations, as Meshery will handle them), create a Service Principal and a Kubernetes secret with your Azure credentials, and use Meshery to provision Azure resources seamlessly into your subscription.
+## Before you begin
 
+- Meshery, deployed by following the [installation guides]({{< ref "installation/_index.md" >}}), with a Kubernetes cluster connected to it. In Meshery UI, the cluster appears as **Connected** under **Lifecycle → Connections**.
+- `kubectl`, configured for the same cluster.
+- An Azure subscription to create resources in.
+- The [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), signed in with `az login`.
 
-### Prerequisites
+## 1. Create a service principal
 
-Before you begin, ensure you have the following:
+ASO signs in to Azure as a service principal. Create one with the Contributor role on your subscription:
 
-1. **Meshery Installed**
-   A self-hosted Meshery instance running on your Kubernetes cluster (in-cluster or out-of-cluster).
-2. **Kubernetes Cluster**
-   A running Kubernetes cluster (v1.16+) with `kubectl` configured.
-3. **Azure Subscription**
-   An active Azure subscription where Storage Accounts will be provisioned.
-4. **Azure CLI**
-   Installed and authenticated (`az login`) in your local shell.
-5. **cert-manager**
-   Installed in your Kubernetes cluster (required by Azure Service Operator).
+```bash
+az ad sp create-for-rbac -n azure-service-operator --role contributor --scopes /subscriptions/<AZURE_SUBSCRIPTION_ID>
+```
 
+The command prints `appId`, `displayName`, `password`, and `tenant`. Export them, with your subscription ID, for the next steps:
 
-### Table of Contents
+```bash
+export AZURE_CLIENT_ID=<appId>
+export AZURE_CLIENT_SECRET=<password>
+export AZURE_TENANT_ID=<tenant>
+export AZURE_SUBSCRIPTION_ID=<subscription-id>
+```
 
-1. [Create Azure Service Principal](#1-create-azure-service-principal)
-2. [Connect Meshery to Your Cluster](#2-connect-meshery-to-your-cluster)
-3. [Install Azure Service Operator (Operator Only)](#3-install-azure-service-operator-operator-only)
-   
-   * 3.1 [Deploy ASO Operator](#31-deploy-aso-operator)
-   * 3.2 [Create Azure Credentials Secret](#32-create-azure-credentials-secret)
-4. [Deploy ASO Operator using Kanvas](#4-deploy-aso-using-kanvas)
-5. [Start deploying azure resources in Kanvas](#5-start-deployment-of-azure-resources-using-kanvas)
-6. [Conclusion](#6-conclusion)
+## 2. Install cert-manager
 
-### 1. Create Azure Service Principal
+ASO needs [cert-manager](https://cert-manager.io/) for its webhook certificates. Install it, and wait for its Pods to be ready:
 
-If you do not already have a Service Principal (SP) for Meshery, create one using the Azure CLI:
+```bash
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.1/cert-manager.yaml
+kubectl wait --for=condition=Available deployment --all -n cert-manager --timeout=180s
+```
 
-<pre class="codeblock-pre"><div class="codeblock">
-<code class="clipboardjs">az ad sp create-for-rbac -n azure-service-operator --role contributor --scopes /subscriptions/&lt;AZURE_SUBSCRIPTION_ID&gt;
-</code>
-</div></pre>
+## 3. Install Azure Service Operator
 
-This command outputs the following credentials:
+1. Apply the ASO operator manifest:
 
-* `appId`: Application ID (Client ID)
-* `displayName`: Service Principal Name
-* `name`: Azure Service Principal URL
-* `password`: Client Secret
-* `tenant`: Tenant ID
+    ```bash
+    kubectl apply --server-side=true -f https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_v2.13.0.yaml
+    ```
 
-To export them, manually enter:
+    This manifest installs the operator but no resource CRDs, because its `--crd-pattern` is empty. Meshery installs the CRDs that your design's Azure components need when you deploy the design. See [Auto-Deployment of CRDs and Operators]({{< ref "guides/infrastructure-management/overview.md#auto-deployment-of-crds-and-operators" >}}).
 
-<pre class="codeblock-pre"><div class="codeblock">
-<code class="clipboardjs">export AZURE_CLIENT_ID=&lt;appId&gt;
-export AZURE_CLIENT_SECRET=&lt;password&gt;
-export AZURE_TENANT_ID=&lt;tenant&gt;
-export AZURE_SUBSCRIPTION_ID=&lt;subscriptionId&gt;
-</code>
-</div></pre>
+2. Create the secret ASO reads its Azure identity from. ASO looks for a secret named `aso-controller-settings` in the `azureserviceoperator-system` namespace:
 
+    ```bash
+    kubectl create secret generic aso-controller-settings \
+      --namespace azureserviceoperator-system \
+      --from-literal=AZURE_SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID" \
+      --from-literal=AZURE_TENANT_ID="$AZURE_TENANT_ID" \
+      --from-literal=AZURE_CLIENT_ID="$AZURE_CLIENT_ID" \
+      --from-literal=AZURE_CLIENT_SECRET="$AZURE_CLIENT_SECRET"
+    ```
 
-### 2. Connect Meshery to Your Cluster
+3. Confirm that the operator is running:
 
-If you haven’t already connected your cluster to Meshery, run:
+    ```bash
+    kubectl get pods -n azureserviceoperator-system
+    ```
 
-<pre class="codeblock-pre"><div class="codeblock">
-<code class="clipboardjs">mesheryctl system start
-</code>
-</div></pre>
+## 4. Deploy an Azure resource
 
+1. In Meshery UI, open **Configuration → Designs** and click **Create Design**.
+2. Choose the Azure model, then add and configure the component for the resource you want, such as a Storage Account. Set its resource group, location, and name.
+3. Save the design.
+4. Deploy the design to your cluster. See [Deploying a Design]({{< ref "guides/infrastructure-management/deploying-a-design.md" >}}).
+5. In the Azure portal, open the resource group and confirm that the new resource is there.
 
-Then open the Meshery UI (default: [`http://localhost:9081`](http://localhost:9081)) and ensure your cluster appears under **Lifecycle → Connections**.
+To start from a ready-made design instead, open the [Meshery Catalog](https://meshery.io/catalog), filter by **Azure**, and clone a design.
 
+## Clean up
 
+Undeploy the design from Meshery. ASO deletes the Azure resources that the design created. To remove the service principal, run `az ad sp delete --id "$AZURE_CLIENT_ID"`.
 
-### 3. Install Azure Service Operator (Operator Only)
+## What you learned
 
-#### Prerequisite
+- ASO turns Kubernetes custom resources into Azure resources, using the identity in `aso-controller-settings`.
+- Meshery deploys Azure resources the same way it deploys any other design.
 
-Create a cert-manager that is necessary for deployment of Azure Service operator
-
-<pre class="codeblock-pre"><div class="codeblock">
-<code class="clipboardjs">kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.14.1/cert-manager.yaml
-</code>
-</div></pre>
-
-
-#### 3.1 Deploy ASO Operator
-
-Apply the official ASO operator manifest (Meshery will manage CRDs):
-
-<pre class="codeblock-pre"><div class="codeblock">
-<code class="clipboardjs">kubectl apply -f https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_v2.13.0.yaml
-</code>
-</div></pre>
-
-#### 3.2 Create Azure Credentials Secret
-
-Azure Service Operator requires a Kubernetes secret with your Azure identity:
-
-<pre class="codeblock-pre"><div class="codeblock">
-<code class="clipboardjs">kubectl create secret generic azure-credentials --namespace azureserviceoperator-system --from-literal=AZURE_CLIENT_ID=$AZURE_CLIENT_ID --from-literal=AZURE_CLIENT_SECRET=$AZURE_CLIENT_SECRET --from-literal=AZURE_TENANT_ID=$AZURE_TENANT_ID --from-literal=AZURE_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
-</code>
-</div></pre>
-
-
-### 4. Deploy Azure Service Operator using Kanvas
-
-1. In the Meshery UI, navigate to **Kanvas**.
-2. Click **Catalog**, filter by **Azure**, and select the **Azure Operator** design.
-3. Click **Clone** to add it to your canvas.
-4. Update the secret **aso-controller-settings** in the design template. The details are also mentioned in the catalog
-5. Click **Actions → Deploy**.
-
-
-
-### 5. Start deployment of Azure resources using Kanvas
-
-* Go to Kanvas and start by picking up Azure components and putting it to design area.
-* Click **Actions → Deploy**.
-* **Azure Portal**: Confirm the new Storage Account appears in your specified resource group.
-
-
-
-### 6. Conclusion
-
-You have successfully:
-
-* Created an Azure Service Principal for Meshery
-* Connected your Kubernetes cluster to Meshery
-* Installed the Azure Service Operator (Meshery managed CRDs)
-* Created a Kubernetes secret for Azure credentials
-* Designed and deployed Azure resources using Meshery’s Kanvas
-
----
-
-If you want to learn more about Azure Service Operator, visit the [official ASO documentation](https://azure.github.io/azure-service-operator/).
+For a walkthrough of one resource, see [Deploy Azure Storage Account with Meshery]({{< ref "guides/tutorials/azure/deploy-azure-storage-account-with-meshery.md" >}}). For more about ASO, see the [ASO documentation](https://azure.github.io/azure-service-operator/).

@@ -170,9 +170,15 @@ func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http
 		Transport: tracing.NewTransport(http.DefaultTransport), // Create tracing transport to pass tracing context
 	}
 	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", token))
-	// if token == models.GlobalTokenForAnonymousResults { // disabling because of import cycle
-	req.Header.Set("X-API-Key", token) // adds the token as special passphrase incase the token is a special passphrase
-	// }
+	if token == GlobalTokenForAnonymousResults {
+		req.Header.Set("X-API-Key", token)
+	} else {
+		// Defensive: drop any inbound X-API-Key copied through proxy paths
+		// (e.g. ExtensionProxy). The cloud's static-token fallback rejects
+		// anything other than GlobalTokenForAnonymousResults, so leaking a
+		// caller-supplied value here would only confuse the auth path.
+		req.Header.Del("X-API-Key")
+	}
 	req.Header.Set("SystemID", viper.GetString("INSTANCE_ID")) // Adds the system id to the header for event tracking
 	resp, err := c.Do(req)
 	if err != nil {
@@ -377,6 +383,7 @@ func (l *RemoteProvider) revokeToken(tokenString string) error {
 		l.Log.Error(err)
 		return err
 	}
+	defer SafeClose(r.Body, l.Log)
 
 	if r.StatusCode != http.StatusOK {
 		return ErrTokenRevoke(fmt.Errorf("failed to revoke token: status %d", r.StatusCode))
@@ -410,6 +417,7 @@ func (l *RemoteProvider) introspectToken(tokenString string) error {
 		l.Log.Error(err)
 		return err
 	}
+	defer SafeClose(r.Body, l.Log)
 
 	if r.StatusCode == http.StatusUnauthorized {
 		return ErrTokenIntrospect(fmt.Errorf("unauthorized access: status %d", r.StatusCode))

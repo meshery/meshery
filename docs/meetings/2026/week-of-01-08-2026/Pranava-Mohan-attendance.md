@@ -6,7 +6,7 @@
 * **Location:** India
 
 ## About Me
-I am a Computer Science undergraduate passionate about open source. I am currently focusing on backend development with Golang and modern frontend frameworks. I am eager to contribute to the Layer5 community and Meshery ecosystem as an aspiring GSoC contributor.
+I am a Computer Science undergraduate passionate about open source. I am currently focusing on backend development with Golang and modern frontend frameworks. I am eager to contribute to the Meshery community and Meshery ecosystem as an aspiring GSoC contributor.
 
 ## Skills
 * **Languages:** Golang, Python, TypeScript, JavaScript

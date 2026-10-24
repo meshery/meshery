@@ -3,6 +3,9 @@ title: mesheryctl-filter-delete
 display_title: false
 command: filter
 subcommand: delete
+categories: [mesheryctl-filter]
+aliases:
+- /reference/references/mesheryctl/filter/delete/
 ---
 
 # mesheryctl filter delete
@@ -11,11 +14,14 @@ Delete a filter file
 
 ## Synopsis
 
-Delete a filter file using the name or ID of a filter
+Delete a filter file using the name or ID of a filter.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter delete [filter-name | ID] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +31,10 @@ Delete the specified WASM filter file using name or ID
 A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be deleted.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter delete [filter-name | ID]
 
+</div>
 </div>
 </pre> 
 
@@ -52,4 +60,4 @@ mesheryctl filter delete [filter-name | ID]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

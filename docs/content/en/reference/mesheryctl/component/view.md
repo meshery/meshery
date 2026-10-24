@@ -3,6 +3,9 @@ title: mesheryctl-component-view
 display_title: false
 command: component
 subcommand: view
+categories: [mesheryctl-component]
+aliases:
+- /reference/references/mesheryctl/component/view/
 ---
 
 # mesheryctl component view
@@ -15,8 +18,10 @@ View a component registered in Meshery Server
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl component view [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,24 +30,30 @@ mesheryctl component view [flags]
 View details of a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl component view [component-name | component-id]
 
+</div>
 </div>
 </pre> 
 
 View details of a specific component in specified format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl component view [component-name | component-id] -o [json|yaml]
 
+</div>
 </div>
 </pre> 
 
 View details of a specific component in specified format and save it as a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 
+</div>
 </div>
 </pre> 
 
@@ -69,4 +80,4 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

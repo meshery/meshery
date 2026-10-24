@@ -3,6 +3,9 @@ title: mesheryctl-adapter-deploy
 display_title: false
 command: adapter
 subcommand: deploy
+categories: [mesheryctl-adapter]
+aliases:
+- /reference/references/mesheryctl/adapter/deploy/
 ---
 
 # mesheryctl adapter deploy
@@ -14,8 +17,10 @@ Deploy infrastructure to the Kubernetes cluster
 Deploy infrastructure to the connected Kubernetes cluster
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter deploy [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,39 +29,40 @@ mesheryctl adapter deploy [flags]
 Deploy a infrastructure from an interactive on the default namespace
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter deploy
 
+</div>
 </div>
 </pre> 
 
 Deploy infrastructure
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter deploy linkerd
 
+</div>
 </div>
 </pre> 
 
 Deploy Linkerd mesh on a specific namespace
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter deploy linkerd --namespace linkerd-ns
 
+</div>
 </div>
 </pre> 
 
 Deploy Linkerd mesh and wait for it to be deployed
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter deploy linkerd --watch
 
 </div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-		
-
 </div>
 </pre> 
 
@@ -85,8 +91,8 @@ mesheryctl adapter deploy linkerd --watch
 ## Screenshots
 
 Usage of mesheryctl adapter deploy
-![mesh-deploy-usage](/reference/images/deploy-mesh.png)
+![mesh-deploy-usage](../../../images/deploy-mesh.png)
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -14,11 +14,7 @@ links:
 readme: "1. Ensure that the use of annotations clearly conveys the intended relationships between components. While annotations don’t have semantic meaning, their placement and direction should help viewers understand the context of the connection.\n\n2. Consider providing accompanying documentation or a legend that explains the purpose of the annotations. This helps viewers understand why certain components are annotated and what the relationships represent, even if they lack specific semantics. \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
-    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+    name: cf6aabe7-a397-444a-a087-eebad74c58cc
 screenshots:
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/69c0efd0-08bd-48f2-8b20-c172f3489ee2-light.png
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/69c0efd0-08bd-48f2-8b20-c172f3489ee2-dark.png
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

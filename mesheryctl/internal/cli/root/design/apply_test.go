@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/pkg/errors"
 )
 

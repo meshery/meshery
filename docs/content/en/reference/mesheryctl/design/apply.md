@@ -3,6 +3,9 @@ title: mesheryctl-design-apply
 display_title: false
 command: design
 subcommand: apply
+categories: [mesheryctl-design]
+aliases:
+- /reference/references/mesheryctl/design/apply/
 ---
 
 # mesheryctl design apply
@@ -11,11 +14,14 @@ Apply design file
 
 ## Synopsis
 
-Apply design will trigger deploy of the design file
+Apply design will trigger deploy of the design file.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design apply [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,16 +30,20 @@ mesheryctl design apply [flags]
 apply a design file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design apply -f [file | URL]
 
+</div>
 </div>
 </pre> 
 
 deploy a saved design
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design apply [design-name]
 
+</div>
 </div>
 </pre> 
 
@@ -62,8 +72,8 @@ mesheryctl design apply [design-name]
 ## Screenshots
 
 Usage of mesheryctl design apply
-![pattern-apply-usage](/reference/images/patternApply.png)
+![pattern-apply-usage](../../../images/patternApply.png)
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

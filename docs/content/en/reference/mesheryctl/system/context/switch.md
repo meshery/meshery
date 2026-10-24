@@ -3,11 +3,14 @@ title: mesheryctl-system-context-switch
 display_title: false
 command: system
 subcommand: context
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/context/switch/
 ---
 
 # mesheryctl system context switch
 
-switch context
+Switch context
 
 ## Synopsis
 
@@ -15,8 +18,10 @@ Configure mesheryctl to actively use one one context vs. another context.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context switch context-name [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +30,10 @@ mesheryctl system context switch context-name [flags]
 Switch to context named "sample"
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context switch sample
 
+</div>
 </div>
 </pre> 
 
@@ -54,8 +61,8 @@ mesheryctl system context switch sample
 ## Screenshots
 
 Usage of mesheryctl context switch
-![context-switch-usage](/reference/images/contextswitch.png)
+![context-switch-usage](../../../../images/contextswitch.png)
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

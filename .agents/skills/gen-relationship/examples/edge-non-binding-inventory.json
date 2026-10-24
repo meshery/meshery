@@ -1,0 +1,56 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1beta3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "inventory",
+  "status": "enabled",
+  "evaluationQuery": "",
+  "metadata": {
+    "description": "A rare edge form of inventory: one component lists or indexes another without parent-child nesting. The Database's name (mutator) is written into the Cluster's databaseRef (mutated); the indexed component is never modified.",
+    "isAnnotation": false
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "azure-kusto",
+    "version": "v1.0.0",
+    "displayName": "azure-kusto",
+    "registrant": { "kind": "github" },
+    "model": { "version": "v1.0.0" }
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Cluster",
+            "model": { "name": "azure-kusto", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["configuration", "spec", "databaseRef"]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Database",
+            "model": { "name": "azure-kusto", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["displayName"]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}

@@ -1,12 +1,10 @@
 ---
 title: REST API
 description: Meshery REST API documentation
-type: rest-apis
-data: openapi
-display_toc: false
-body_class: rest-api-reference-page
-aliases: 
+aliases:
+- /reference/references/rest-apis/
 - /reference/rest-apis/swagger
+data: openapi
 ---
 
 ## Meshery REST API specifications
@@ -17,13 +15,15 @@ Meshery's REST API specifications are now maintained and published from the [mes
 - Source repository: [github.com/meshery/schemas](https://github.com/meshery/schemas)
 - Contributor guide: [Schema-Driven Development](https://docs.meshery.io/project/contributing/contributing-schemas)
 
+{{% alert color="info" title="Registry API paths" %}}Operations on Meshery's capabilities registry (models, components, relationships, categories, registrants, policies, and connection definitions) are canonically served under <code>/api/registry</code>. The legacy <code>/api/meshmodels</code> routes remain available as deprecated aliases of the same operations, and the singular <code>/api/meshmodel/components/register</code> registrant route is retained for backward compatibility, so existing clients keep working.{{% /alert %}}
+
 Each of Meshery's APIs is subject to Meshery's authentication and authorization system. Meshery requires a valid token in order to allow clients to invoke its APIs.
 
 <details>
   <summary>Authentication</summary>
-  Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. The type of authentication is determined by the selected <a href='/extensibility/providers'>Providers</a>. Use of the Local Provider, "None", puts Meshery into single-user mode and uses minimal, intentionally insecure authentication.
+  Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. The type of authentication is determined by the selected <a href='{{< ref "reference/extensibility/providers/index.md" >}}'>Providers</a>. Use of the Local Provider, "None", puts Meshery into single-user mode and uses minimal, intentionally insecure authentication.
 
-  {{% alert color="dark" title="What are authentication tokens?" %}}Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>Meshery UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provides secure access to Meshery's management features.</p>{{% /alert %}}
+  {{% alert color="dark" title="What are authentication tokens?" %}}Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='{{< ref "reference/mesheryctl/_index.md" >}}'>Meshery CLI</a> and <a href='{{< ref "reference/extensibility/api.md#how-to-get-your-token" >}}'>Meshery dashboard</a>, or its two APIs: <a href='{{< ref "reference/rest-apis/_index.md" >}}'>REST</a> or <a href='{{< ref "reference/graphql-apis.md" >}}'>GraphQL</a>. <p>Meshery's authentication token system provides secure access to Meshery's management features.</p>{{% /alert %}}
 </details>
 
 ### How to get your token
@@ -31,9 +31,9 @@ Each of Meshery's APIs is subject to Meshery's authentication and authorization 
 There are two ways to get your authentication token:
 
 <details>
-  <summary>Meshery UI</summary>
+  <summary>Meshery dashboard</summary>
 
-Using Meshery UI, you can get a copy of your authentication token by following these steps:
+Using the Meshery dashboard, you can get a copy of your authentication token by following these steps:
 <br/>
 
 1. Log into Meshery by selecting your identity provider of choice (typically found at <code style="
@@ -49,7 +49,7 @@ Using Meshery UI, you can get a copy of your authentication token by following t
 
 2. Navigate to your user's avatar in the upper righthand corner and select "Get Token" from the dropdown of profile section:
 
-<a href="/reference/images/MesheryTokenUI.png"><img alt="Meshery Dashboard" src="/reference/images/MesheryTokenUI.png" width="680" height="400"/></a>
+<a href="images/MesheryTokenUI.png"><img class="content-image" alt="Meshery Dashboard" src="images/MesheryTokenUI.png" /></a>
 <br/>
 
 </details>
@@ -57,7 +57,7 @@ Using Meshery UI, you can get a copy of your authentication token by following t
 <details>
   <summary>Meshery CLI</summary>
   <br />
-Using <a href='/reference/mesheryctl'>Meshery CLI</a>, you can get a copy of your authentication token by executing the following command:
+Using <a href='{{< ref "reference/mesheryctl/_index.md" >}}'>Meshery CLI</a>, you can get a copy of your authentication token by executing the following command:
   <br/>
   <br/>
   <pre class="codeblock-pre">
@@ -79,8 +79,8 @@ Using curl, you can access Meshery's REST API by executing this command:
   <br/>
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">curl --location 'localhost:9081/api/&lt;endpoint&gt;' \
---header 'meshery-token: &lt;yourToken&gt;\
---header 'Cookie: meshery-provider=Layer5; cloud.layer5.io_ref=/;token=&lt;yourToken&gt;
+--header 'token: &lt;your-token&gt;\
+--header 'Cookie: provider=Meshery; cloud.meshery.io_ref=/;token=&lt;your-token&gt;
 </div>
 </div>
   </pre>
@@ -89,6 +89,9 @@ Using curl, you can access Meshery's REST API by executing this command:
 
 </details>
 
+#### Troubleshooting Authentication
+
+If the request returns an authentication or authorization error (e.g. 401 Unauthorized or 403 Forbidden), verify that a valid Meshery token is included in both the token header and the token= value inside the Cookie header, as shown in the curl example above. See the [Meshery token documentation]({{< ref "reference/extensibility/api.md#how-to-get-your-token" >}}) for instructions on obtaining a token.
 ## Endpoints
 
 See the published Meshery OpenAPI bundles in [meshery/schemas](https://github.com/meshery/schemas) for the authoritative REST API definitions.

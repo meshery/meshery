@@ -3,6 +3,9 @@ title: mesheryctl-adapter-validate
 display_title: false
 command: adapter
 subcommand: validate
+categories: [mesheryctl-adapter]
+aliases:
+- /reference/references/mesheryctl/adapter/validate/
 ---
 
 # mesheryctl adapter validate
@@ -14,8 +17,10 @@ Validate conformance to predefined standards
 Validate predefined conformance to different standard specifications
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter validate [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,16 +29,20 @@ mesheryctl adapter validate [flags]
 Validate conformance to predefined standards
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
 
+</div>
 </div>
 </pre> 
 
 Validate Istio to predefined standards
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
+</div>
 </div>
 </pre> 
 
@@ -63,8 +72,8 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 ## Screenshots
 
 Usage of mesheryctl adapter validate
-![mesh-validate-usage](/reference/images/mesh-validate.png)
+![mesh-validate-usage](../../../images/mesh-validate.png)
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

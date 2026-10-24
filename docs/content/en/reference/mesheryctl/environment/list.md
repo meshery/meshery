@@ -3,6 +3,9 @@ title: mesheryctl-environment-list
 display_title: false
 command: environment
 subcommand: list
+categories: [mesheryctl-environment]
+aliases:
+- /reference/references/mesheryctl/environment/list/
 ---
 
 # mesheryctl environment list
@@ -15,8 +18,10 @@ List detailed information of all registered environments
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment list [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,32 +30,40 @@ mesheryctl environment list [flags]
 List all registered environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment list --orgId [orgId]
 
+</div>
 </div>
 </pre> 
 
 List count of all registered environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment list --orgId [orgId] --count
 
+</div>
 </div>
 </pre> 
 
 List all registered environment at a specific page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment list --orgId [orgId] --page [page]
 
+</div>
 </div>
 </pre> 
 
 List all registered environment with a specific page size
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 
+</div>
 </div>
 </pre> 
 
@@ -79,4 +92,4 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

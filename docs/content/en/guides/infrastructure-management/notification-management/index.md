@@ -6,96 +6,81 @@ aliases:
 categories: [infrastructure]
 ---
 
-Meshery continuously tracks activities affecting your infrastructure and workloads. Meshery generates a variety of events, reflecting activities affecting the design and operation of your infrastructure whether those activities are directly or indirectly performed through Meshery operations.
+Meshery records an event for each activity that affects your designs and infrastructure, whether you started it or Meshery did on its own, such as a deployment, a validation, a relationship evaluation, or a MeshSync error. The Notification Center is where you review those events and act on them.
 
-### What is the Notification Center?
-The Notification Center is a dedicated panel in Meshery’s UI that helps you monitor, understand, and respond to events across your system. It acts as a central place where you can see important updates related to your infrastructure, workloads, and Meshery’s internal operations.
+## Open the Notification Center
+
+Click the bell icon in the header of Meshery UI. When you have unread errors, a red badge on the icon counts them. With no unread errors, a yellow badge counts unread warnings.
 
 <a href="./images/find-notification-center.gif">
-  <img src="./images/find-notification-center.gif" alt="Notification Position" style="width: 600px; height: auto; margin-top: 10px;" />
+  <img src="./images/find-notification-center.gif" alt="Opening the Notification Center" style="max-width: 600px; width: 100%; height: auto; margin-top: 10px;" />
 </a>
 
-### Types of Notifications
+## Read a notification
 
-Given the variety of activities that occur through the process of managing infrastructure, notifications have been grouped into categories so that you can readily understand what a notification means and what do to about any particular type you have received.
+Each notification summarizes what happened. Depending on the event, it includes:
 
-Each notification in Meshery includes a clear summary of what occurred in your system. Notifications vary in format depending on the event type, but typically include:
+- The action performed, such as saving a design or running a dry run.
+- The affected components, such as Deployments or MeshSync.
+- Validation results or errors, such as invalid values or missing fields.
+- Relationship updates, showing how components are linked.
+- Links to the related design or to more detail.
 
-- Action performed (e.g., saved a design, ran a dry run)
-- Affected components (e.g., deployments, MeshSync, events)
-- Validation results or errors (e.g., invalid values, missing fields)
-- Relationship updates (e.g., how components are linked)
-- Links to the related design or further details
-
-You can mark notifications as read or unread to stay organized and focused. Meshery highlights critical, actionable events in red, helping you quickly spot and respond to urgent issues.
+Expand a notification to see its full description. Meshery highlights critical, actionable events in red. Timestamps use your device's time zone.
 
 <a href="./images/description.png">
-  <img src="./images/description.png" alt="Event Descriptions" style="width: 600px; height: auto; margin-top: 10px;" />
+  <img src="./images/description.png" alt="Event descriptions" style="max-width: 600px; width: 100%; height: auto; margin-top: 10px;" />
 </a>
-
-> 🔗 For more technical details, see the [Contributor Reference](https://docs.meshery.io/project/contributing/contributing-ui-notification-center).
-
-### Notification Timestamps
-Each notification includes a timestamp showing when the event happened. The time is displayed based on your local device’s time zone, so it reflects your current time.
 
 <a href="./images/timestamps.png">
-  <img src="./images/timestamps.png" alt="Notification Timestamps" style="width: 600px; height: auto; margin-top: 10px;" />
+  <img src="./images/timestamps.png" alt="Notification timestamps" style="max-width: 600px; width: 100%; height: auto; margin-top: 10px;" />
 </a>
 
-### Data Sharing
-Need to collaborate?
-You can share notifications with teammates or stakeholders in just a few clicks — making it easier to communicate and resolve issues.
+## Find the notifications you need
 
-<a href="./images/notification-share.png">
-  <img src="./images/notification-share.png" alt="Notification Share" style="width: 600px; height: auto; margin-top: 10px;" />
-</a>
-
-### Filtering and Searching
-
-The Notification Center provides a powerful way to filter and search through events. You can narrow down results using filters such as **severity**, **status**, **action**, **category**, and **author**.
-
-> Note: Some filter options such as `action`, `category`, and `author` are dynamically generated based on the notifications your Meshery instance has received. These values are retrieved from the `/api/system/events/types` endpoint.
+Type in **Filter Notifications** to search, or filter by **severity**, **status**, **action**, **category**, and **author**. Meshery builds the action, category, and author options from the events your server has received.
 
 <a href="./images/notification-filter.gif">
-  <img src="./images/notification-filter.gif" alt="Notification Filter" style="width: 600px; height: auto; margin-top: 10px;" />
+  <img src="./images/notification-filter.gif" alt="Filtering notifications" style="max-width: 600px; width: 100%; height: auto; margin-top: 10px;" />
 </a>
 
-#### Severity  
+| Severity | Filter value | Use it for |
+|---|---|---|
+| Info | `informational` | General updates. |
+| Success | `success` | Actions that completed. |
+| Warning | `warning` | Potential issues. |
+| Error | `error` | Failures that need your attention. |
 
-Filter notifications based on the level of severity, indicated by icon color and symbol. These levels are defined in the `SEVERITY` constant and styled using `SEVERITY_STYLE`.
+| Status | Filter value | Meaning |
+|---|---|---|
+| Unread | `unread` | Notifications that are not marked as read. |
+| Read | `read` | Notifications marked as read. Opening a notification does not mark it as read. |
 
-| Level        | Code Value       | Icon       | Color (Light Mode)   | Description                     |
-|--------------|------------------|------------|----------------------|---------------------------------|
-| Info         | `informational`  | ℹ️ InfoIcon | Blue                 | General updates or logs         |
-| Warning      | `warning`        | ⚠️ AlertIcon | Yellow               | Potential issues                |
-| Error        | `error`          | ❌ ErrorIcon | Red                  | Failures or critical problems   |
-| Success      | `success`        | ✅ InfoIcon  | Green                | Successfully completed actions  |
+## Act on notifications
 
-#### Status  
-Filter notifications based on whether they have been read. These statuses are defined in `STATUS` and styled using `STATUS_STYLE`.
+- **Mark as read or unread:** select notifications and click **Mark selected notifications as read** or **Mark selected notifications as unread**.
+- **Delete:** select notifications and click **Delete selected notifications**, or delete a single one from its own menu.
+- **Share:** open a notification's share menu to send it to teammates or post it.
 
-| Status       | Code Value | Icon          | Description                        |
-|--------------|------------|---------------|------------------------------------|
-| Read         | `read`     | ReadIcon      | Notifications that have been opened |
-| Unread       | `unread`   | EnvelopeIcon  | New or untouched notifications      |
+<a href="./images/notification-share.png">
+  <img src="./images/notification-share.png" alt="Sharing a notification" style="max-width: 600px; width: 100%; height: auto; margin-top: 10px;" />
+</a>
 
-### Understanding Notification Logos and Icons
+## Who triggered a notification
 
-Meshery uses avatar icons to indicate who triggered a notification and what system was involved. These icons help users quickly understand the origin and nature of each event.
+The avatar on a notification shows who triggered it.
 
 <a href="./images/avatar-icons.png">
-  <img src="./images/avatar-icons.png" alt="Avatar Icons" style="width: 600px; height: auto; margin-top: 10px;" />
+  <img src="./images/avatar-icons.png" alt="Avatar Icons" style="max-width: 600px; width: 100%; height: auto; margin-top: 10px;" />
 </a>
 
 | Icon Type                       | Meaning                                                                 |
 |----------------------------------|-------------------------------------------------------------------------|
-| Meshery logo only               | System-triggered event – initiated automatically by Meshery (e.g., syncing errors, import failures). |
-| User avatar + Meshery logo      | User-triggered event – the user performed an action, and Meshery processed it (e.g., registering a Kubernetes context). |
+| Meshery logo only               | System-triggered event - initiated automatically by Meshery (e.g., syncing errors, import failures). |
+| User avatar + Meshery logo      | User-triggered event - the user performed an action, and Meshery processed it (e.g., registering a Kubernetes context). |
 | User avatar only (rare)         | User-triggered event with no system action involved. |
 
-These icons are generated dynamically using the event’s metadata:
- - If `user_id` is present → shows user avatar.
- - If `system_id` is present → shows Meshery logo.
+Meshery shows the user's avatar when the event carries a user ID and Meshery can look that user up, and the Meshery logo when the event carries a system ID.
 
 <details close><summary>Visual Representation of System/User-triggered Notifications</summary>
   <br>
@@ -124,13 +109,10 @@ These icons are generated dynamically using the event’s metadata:
 
 </details>
 
-### Notification Retention and Visibility
-**How long are notifications stored?**
+## How long Meshery keeps notifications
 
-The duration for which notifications are retained is determined by the provider you are using (e.g., Meshery Cloud, local Meshery Server).
+Your provider decides how long notifications are retained. To clear notifications sooner, delete them.
 
-**What happens when retention ends?** 
-
-In Meshery Cloud, notifications are removed once the provider is updated, helping ensure the event stream reflects the most recent and relevant information.
+For how the Notification Center is built, see the [contributor guide]({{< ref "project/contributing/ui/notification-center.md" >}}).
 
 {{< related-discussions tag="meshery" >}}

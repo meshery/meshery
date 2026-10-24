@@ -3,6 +3,9 @@ title: mesheryctl-model-search
 display_title: false
 command: model
 subcommand: search
+categories: [mesheryctl-model]
+aliases:
+- /reference/references/mesheryctl/model/search/
 ---
 
 # mesheryctl model search
@@ -15,8 +18,10 @@ Search model(s) by search string
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model search [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,24 +30,30 @@ mesheryctl model search [flags]
 Search model from current provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model search [query-text]
 
+</div>
 </div>
 </pre> 
 
 Search list of models for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model search [query-text] --page [page-number]
 
+</div>
 </div>
 </pre> 
 
 Search list of models for a specified pagesize
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model search [query-text] --pagesize [pagesize-number]
 
+</div>
 </div>
 </pre> 
 
@@ -69,4 +80,4 @@ mesheryctl model search [query-text] --pagesize [pagesize-number]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

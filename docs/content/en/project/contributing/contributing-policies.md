@@ -12,7 +12,7 @@ To start contributing to Meshery Policy Engine, make sure you have [OPA CLI](htt
 
 ## Components of Meshery Policy Engine
 
-Rego policies are the declarative logic behind the policy engine. These policies define how the underlying engine understands relationships within Meshery Designs. Rego policies can be found [here](https://github.com/meshery/meshery/tree/master/server/meshmodel/meshery-core/0.7.2/v1.0.0/policies) in the Meshery Github repository.
+Rego policies are the declarative logic behind the policy engine. These policies define how the underlying engine understands relationships within Meshery Designs. Rego policies can be found [here](https://github.com/meshery/meshery/tree/master/models/meshery-core/0.7.2/v1.0.0/policies) in the Meshery GitHub repository.
 
 Currently the Rego policies are invoked from the Go code in Meshery Server. This requires configuring the OPA context as seen [here](https://github.com/meshery/meshkit/blob/master/models/meshmodel/core/policies/rego_policy_relationship.go).
 
@@ -25,9 +25,13 @@ Working with the Meshery Policy Engine can feel complex because of the large num
 - Since we will be running these policies using the OPA CLI directly without the Go bootstrap code we need to provide the necessary context for the policy engine. This means providing a data structure containing the valid Meshery Relationships the policy engine will evaluate against. 
 - The input to the policy engine is a Meshery Design as a JSON data structure. When testing the Meshery Policy Engine you will need to provide this design as input. If you are working on a bug you will need to get the design from the issue or directly from the individual who reported the bug.
 
-## Executing OPA 
+## Testing the Policy Engine
 
-You can evaluate the Rego policies against test data stored in the `policies/test` folder:
+The relationship policy engine is implemented in Go as a module under `server/policies`. You can run the policy engine's test suite, which exercises the Rego policies through the native Go engine, with:
 
-{{< code code="make rego-eval" >}}
+{{< code code="make policy-test" >}}
+
+To format and lint the Rego policy files, run:
+
+{{< code code="make policy-lint" >}}
 

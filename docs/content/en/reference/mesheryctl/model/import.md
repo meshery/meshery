@@ -3,6 +3,9 @@ title: mesheryctl-model-import
 display_title: false
 command: model
 subcommand: import
+categories: [mesheryctl-model]
+aliases:
+- /reference/references/mesheryctl/model/import/
 ---
 
 # mesheryctl model import
@@ -15,8 +18,10 @@ Import models by specifying the directory, file, or URL. You can also provide a 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model import [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,48 +30,60 @@ mesheryctl model import [flags]
 Import model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model import --file [URI]
 
+</div>
 </div>
 </pre> 
 
 Import model from a URL to a meshery model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model import --file [URL]
 
+</div>
 </div>
 </pre> 
 
 Import model from an OCI artifact
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model import --file [OCI]
 
+</div>
 </div>
 </pre> 
 
 Import model from a tar.gz file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model import --file [path-to-model.tar.gz]
 
+</div>
 </div>
 </pre> 
 
 Import model from a path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model import --file [path-to-model]
 
+</div>
 </div>
 </pre> 
 
 Import model using CSV files
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model import --file [path-to-csv-directory]
 
+</div>
 </div>
 </pre> 
 
@@ -92,4 +109,4 @@ mesheryctl model import --file [path-to-csv-directory]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

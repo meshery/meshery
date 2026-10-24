@@ -3,14 +3,14 @@ import type { Theme } from '@sistent/sistent';
 /**
  * Meshery UI theme entry point.
  *
- * This module is a thin wrapper around {@link https://github.com/layer5io/sistent Sistent},
+ * This module is a thin wrapper around Sistent,
  * the Meshery design system. It exists so that every consumer in the
  * Meshery UI imports theme primitives (`useTheme`, `styled`, `alpha`,
  * `lighten`, ...) from a single, project-local path.
  *
  * Phase 1 treats `@/theme` as the approved, project-local import path for
  * theme primitives. Prefer it over importing those primitives directly from
- * Sistent or from legacy `@/themes*` modules.
+ * Sistent.
  *
  *   import { useTheme, styled, alpha } from '@/theme';
  *
@@ -19,11 +19,11 @@ import type { Theme } from '@sistent/sistent';
  *   - Prefer spacing from `theme.spacing()` instead of hard-coded pixel values where possible.
  *   - Prefer breakpoints from `theme.breakpoints.*`.
  *
- * Some legacy theme files in the UI still contain literal color and spacing
- * values; treat those as migration candidates rather than precedent for new code.
- *
- * `@/themes/hooks` remains for theme-preference plumbing until a later phase,
- * but new theme-entrypoint imports should start from `@/theme`.
+ * Sibling modules hold theme plumbing that is not part of the entry point:
+ * `@/theme/hooks` (theme-preference state), `@/theme/rjsf` (RJSF form themes),
+ * and `@/theme/snackbar` (the theme-responsive notification renderer). Treat
+ * remaining literal color and spacing values in the UI as migration
+ * candidates rather than precedent for new code.
  *
  * If Sistent is missing a token the app needs, open an issue or PR upstream
  * rather than redefining it here. This file must remain a thin wrapper:
@@ -47,6 +47,19 @@ export {
   CssBaseline,
   NoSsr,
 } from '@sistent/sistent';
+
+// `darken` is not currently re-exported by `@sistent/sistent` (only `lighten`
+// is). Until Sistent re-exports it, pull it from the same upstream module
+// `lighten` ultimately comes from so callers can still go through `@/theme`
+// as the project-local front door.
+// eslint-disable-next-line no-restricted-imports
+export { darken } from '@mui/material';
+
+// Bridged from MUI: Sistent doesn't yet export GlobalStyles. Routed through
+// `@/theme` so the rest of the app can stay off `@mui/material` directly;
+// this is the project's approved single bridge.
+// eslint-disable-next-line no-restricted-imports
+export { GlobalStyles } from '@mui/material';
 
 export type { Theme };
 

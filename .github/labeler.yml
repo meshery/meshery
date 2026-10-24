@@ -18,7 +18,7 @@ component/server:
 area/models:
 - changed-files:
   - any-glob-to-any-file:
-    - "server/meshmodel/**/*"
+    - "models/**/*"
 component/mesheryctl:
 - changed-files:
   - any-glob-to-any-file:

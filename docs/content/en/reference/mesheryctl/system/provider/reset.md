@@ -3,6 +3,9 @@ title: mesheryctl-system-provider-reset
 display_title: false
 command: system
 subcommand: provider
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/provider/reset/
 ---
 
 # mesheryctl system provider reset
@@ -14,8 +17,10 @@ Clear the configured provider
 Clear the configured provider for the current context. This allows users to select a provider on the next Meshery start. This clears the enforced provider so that users are presented with the provider selection UI on next start.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system provider reset [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,8 +29,10 @@ mesheryctl system provider reset [flags]
 Clear the configured provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system provider reset
 
+</div>
 </div>
 </pre> 
 
@@ -52,4 +59,4 @@ mesheryctl system provider reset
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

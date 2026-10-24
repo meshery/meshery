@@ -13,7 +13,7 @@ func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 	rscName := mux.Vars(r)["resourceName"]
 	rjsfSchema, uiSchema, err := schemas.ServeJSonFile(rscName)
 	if err != nil {
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrServeSchema(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -21,7 +21,7 @@ func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 	var uiSchemaJSON map[string]interface{}
 
 	if err := json.Unmarshal(rjsfSchema, &rjsfSchemaJSON); err != nil {
-		http.Error(rw, models.ErrUnmarshal(err, "RJSF schema").Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, models.ErrUnmarshal(err, "RJSF schema"), http.StatusInternalServerError)
 		return
 	}
 
@@ -37,13 +37,13 @@ func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 
 	mergedJSON, err := json.Marshal(mergedData)
 	if err != nil {
-		http.Error(rw, "Error marshalling json", http.StatusInternalServerError)
+		writeMeshkitError(rw, models.ErrMarshal(err, "merged RJSF + UI schema response"), http.StatusInternalServerError)
 		return
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
 	if _, writeErr := rw.Write(mergedJSON); writeErr != nil {
-		http.Error(rw, "Error writing response", http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrWriteResponse(writeErr), http.StatusInternalServerError)
 		return
 	}
 }

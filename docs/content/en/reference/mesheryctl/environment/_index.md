@@ -3,6 +3,9 @@ title: mesheryctl-environment
 display_title: false
 command: environment
 subcommand: nil
+categories: [mesheryctl-environment]
+aliases:
+- /reference/references/mesheryctl/environment/
 ---
 
 # mesheryctl environment
@@ -15,8 +18,10 @@ Create, delete, list of view details of environment(s) of a specific organizatio
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,32 +30,40 @@ mesheryctl environment [flags]
 Create an environment in an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment create --orgId [orgId] --name [name] --description [description]
 
+</div>
 </div>
 </pre> 
 
 Delete an environment in an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment delete environment-id
 
+</div>
 </div>
 </pre> 
 
 List of registered environments in an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment list --orgId [orgId]
 
+</div>
 </div>
 </pre> 
 
 View a particular environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment view --orgId [orgId]
 
+</div>
 </div>
 </pre> 
 
@@ -75,4 +88,4 @@ mesheryctl environment view --orgId [orgId]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

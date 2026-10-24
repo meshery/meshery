@@ -37,9 +37,9 @@
           </td>
           <td style="text-align: center; padding: 10px;">
             <a href="{{ .RelPermalink }}" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
-              <img src="{{ .Params.image }}" style="height: 24px; width: auto; display: inline-block;" 
-                   data-logo-for-dark="{{ .Params.white_image }}" 
-                   data-logo-for-light="{{ .Params.image }}" 
+              <img src="{{ .Params.image | relURL }}" style="height: 24px; width: auto; display: inline-block;" 
+                   data-logo-for-dark="{{ .Params.white_image | relURL }}" 
+                   data-logo-for-light="{{ .Params.image | relURL }}" 
                    loading="lazy" alt="{{ .Params.name }}" />
               <span>{{ .Params.name }}</span>
             </a>

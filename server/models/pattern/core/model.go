@@ -6,7 +6,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 )
 
 type ProcessPatternOptions struct {

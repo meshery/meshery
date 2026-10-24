@@ -12,6 +12,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 	"k8s.io/client-go/tools/clientcmd/api"
 )
 
@@ -22,6 +23,25 @@ type mockCloser struct {
 func (m mockCloser) Close() error {
 	return m.closeFunc()
 
+}
+
+func TestIsLocalProvider(t *testing.T) {
+	cases := []struct {
+		in   string
+		want bool
+	}{
+		{"Local", true},
+		{"local", true},
+		{"None", true}, // legacy alias
+		{"NONE", true},
+		{"Meshery", false},
+		{"", false},
+	}
+	for _, c := range cases {
+		if got := IsLocalProvider(c.in); got != c.want {
+			t.Errorf("IsLocalProvider(%q) = %v, want %v", c.in, got, c.want)
+		}
+	}
 }
 
 func TestSafeClose(t *testing.T) {
@@ -109,7 +129,7 @@ func TestSetFileLocation(t *testing.T) {
 
 func TestNavigateToBrowser(t *testing.T) {
 	// opens up a browser window whenever this test runs
-	err := NavigateToBrowser("https://layer5.io")
+	err := NavigateToBrowser("https://meshery.io")
 	if err != nil {
 		t.Errorf("NavigateToBrowser error: %v", err)
 	}
@@ -226,17 +246,17 @@ func TestValidateURL(t *testing.T) {
 	}{
 		{
 			name: "Correct URL",
-			url:  "https://www.layer5.io",
+			url:  "https://www.meshery.io",
 		},
 		{
 			name:    "Unsupported scheme",
-			url:     "mqtt://www.layer5.io",
+			url:     "mqtt://www.meshery.io",
 			wantErr: ErrParsingUrl(fmt.Errorf("mqtt is not a supported protocol")),
 		},
 		{
 			name:    "invalid URL",
-			url:     "layer5.io",
-			wantErr: ErrParsingUrl(fmt.Errorf("parse \"layer5.io\": invalid URI for request")),
+			url:     "meshery.io",
+			wantErr: ErrParsingUrl(fmt.Errorf("parse \"meshery.io\": invalid URI for request")),
 		},
 	}
 	for _, tt := range tests {
@@ -422,9 +442,6 @@ func TestSetOverrideValues(t *testing.T) {
 			},
 			mesheryImageVersion: "",
 			want: map[string]interface{}{
-				"meshery-app-mesh": map[string]interface{}{
-					"enabled": false,
-				},
 				"meshery-istio": map[string]interface{}{
 					"enabled": false,
 				},
@@ -441,9 +458,6 @@ func TestSetOverrideValues(t *testing.T) {
 					"enabled": false,
 				},
 				"meshery-nsm": map[string]interface{}{
-					"enabled": false,
-				},
-				"meshery-nginx-sm": map[string]interface{}{
 					"enabled": false,
 				},
 				"meshery-traefik-mesh": map[string]interface{}{
@@ -462,9 +476,6 @@ func TestSetOverrideValues(t *testing.T) {
 			},
 			mesheryImageVersion: "testImageVersion",
 			want: map[string]interface{}{
-				"meshery-app-mesh": map[string]interface{}{
-					"enabled": false,
-				},
 				"meshery-istio": map[string]interface{}{
 					"enabled": true,
 				},
@@ -482,9 +493,6 @@ func TestSetOverrideValues(t *testing.T) {
 				},
 				"meshery-nsm": map[string]interface{}{
 					"enabled": true,
-				},
-				"meshery-nginx-sm": map[string]interface{}{
-					"enabled": false,
 				},
 				"meshery-traefik-mesh": map[string]interface{}{
 					"enabled": false,
@@ -498,14 +506,11 @@ func TestSetOverrideValues(t *testing.T) {
 			name: "Context contains all available components and meshery image version",
 			ctx: &config.Context{
 				Components: []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-kuma",
-					"meshery-nsm", "meshery-nginx-sm", "meshery-traefik-mesh", "meshery-cilium"},
+					"meshery-nsm", "meshery-traefik-mesh", "meshery-cilium"},
 				Channel: testChannel,
 			},
 			mesheryImageVersion: "testImageVersion",
 			want: map[string]interface{}{
-				"meshery-app-mesh": map[string]interface{}{
-					"enabled": false,
-				},
 				"meshery-istio": map[string]interface{}{
 					"enabled": true,
 				},
@@ -522,9 +527,6 @@ func TestSetOverrideValues(t *testing.T) {
 					"enabled": true,
 				},
 				"meshery-nsm": map[string]interface{}{
-					"enabled": true,
-				},
-				"meshery-nginx-sm": map[string]interface{}{
 					"enabled": true,
 				},
 				"meshery-traefik-mesh": map[string]interface{}{
@@ -556,9 +558,6 @@ func TestSetOverrideValues(t *testing.T) {
 			customProviderURL:   "http://localhost:9876",
 			mesheryImageVersion: "",
 			want: map[string]interface{}{
-				"meshery-app-mesh": map[string]interface{}{
-					"enabled": false,
-				},
 				"meshery-istio": map[string]interface{}{
 					"enabled": false,
 				},
@@ -575,9 +574,6 @@ func TestSetOverrideValues(t *testing.T) {
 					"enabled": false,
 				},
 				"meshery-nsm": map[string]interface{}{
-					"enabled": false,
-				},
-				"meshery-nginx-sm": map[string]interface{}{
 					"enabled": false,
 				},
 				"meshery-traefik-mesh": map[string]interface{}{
@@ -695,6 +691,49 @@ func TestGetCurrentK8sContext(t *testing.T) {
 				} else if !strings.Contains(err.Error(), tt.wantErrString) {
 					t.Errorf("getCurrentK8sContextForTest() error = %v, want error containing %v", err.Error(), tt.wantErrString)
 				}
+			}
+		})
+	}
+}
+
+// TestSubcommandNames pins the contract that makes an "invalid subcommand"
+// message self-maintaining: the advertised list is derived from the same slice
+// the command validates against, so adding a subcommand cannot leave the error
+// message advertising a stale set.
+func TestSubcommandNames(t *testing.T) {
+	tests := []struct {
+		name      string
+		available []*cobra.Command
+		expected  string
+	}{
+		{
+			name:      "no subcommands",
+			available: nil,
+			expected:  "",
+		},
+		{
+			name:      "single subcommand",
+			available: []*cobra.Command{{Use: "view"}},
+			expected:  "view",
+		},
+		{
+			name: "names are sorted, not declaration-ordered",
+			available: []*cobra.Command{
+				{Use: "view"}, {Use: "generate"}, {Use: "list"}, {Use: "search"},
+			},
+			expected: "generate, list, search, view",
+		},
+		{
+			name:      "usage line is reduced to the command name",
+			available: []*cobra.Command{{Use: "view [model-name]"}, {Use: "list [flags]"}},
+			expected:  "list, view",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SubcommandNames(tt.available); got != tt.expected {
+				t.Errorf("SubcommandNames() = %q, want %q", got, tt.expected)
 			}
 		})
 	}

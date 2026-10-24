@@ -3,6 +3,9 @@ title: mesheryctl-environment-create
 display_title: false
 command: environment
 subcommand: create
+categories: [mesheryctl-environment]
+aliases:
+- /reference/references/mesheryctl/environment/create/
 ---
 
 # mesheryctl environment create
@@ -15,8 +18,10 @@ Create a new environment by providing the name and description of the environmen
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment create [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +30,10 @@ mesheryctl environment create [flags]
 Create a new environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment create --orgId [orgId] --name [name] --description [description]
 
+</div>
 </div>
 </pre> 
 
@@ -54,4 +61,4 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

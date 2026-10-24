@@ -33,7 +33,7 @@ type componentFlags struct {
 var (
 	availableSubcommands = []*cobra.Command{listComponentCmd, viewComponentCmd, searchComponentsCmd}
 
-	componentApiPath       = "api/meshmodels/components"
+	componentApiPath       = "api/registry/components"
 	componentFlagsProvided = &componentFlags{}
 )
 
@@ -118,5 +118,5 @@ func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponen
 
 	}
 
-	return rows, int64(componentsResponse.Count)
+	return rows, componentsResponse.TotalCount
 }

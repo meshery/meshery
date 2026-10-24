@@ -6,10 +6,11 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
+	relationshipv1alpha3 "github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // strPtr returns a pointer to the given string.
@@ -235,6 +236,75 @@ func TestFromAndToComponentsExist(t *testing.T) {
 	if fromAndToComponentsExist(relMissing, design) {
 		t.Error("Expected missing component to be detected")
 	}
+}
+
+func TestConvertRelationships(t *testing.T) {
+	t.Run("keeps v1beta2 pointers untouched", func(t *testing.T) {
+		src := &relationship.RelationshipDefinition{RelationshipType: "non-binding"}
+
+		got := ConvertRelationships([]interface{}{src})
+
+		if len(got) != 1 {
+			t.Fatalf("expected 1 relationship, got %d", len(got))
+		}
+		if got[0] != src {
+			t.Fatal("v1beta2 relationship pointer should be returned unchanged")
+		}
+	})
+
+	t.Run("bridges v1alpha3 without json tag loss", func(t *testing.T) {
+		sourceLabel := "mounted-by"
+		matchStrategyMatrix := [][]string{{"from.kind", "to.kind"}}
+		kind := "Deployment"
+
+		src := relationshipv1alpha3.RelationshipDefinition{
+			Kind:             relationshipv1alpha3.RelationshipDefinitionKind("edge"),
+			RelationshipType: "non-binding",
+			Metadata: &relationshipv1alpha3.RelationshipMetadata{
+				Styles: &relationshipv1alpha3.RelationshipDefinitionMetadataStyles{
+					SourceLabel:  &sourceLabel,
+					PrimaryColor: "#00B39F",
+					SvgColor:     "#111111",
+					SvgWhite:     "#FFFFFF",
+				},
+			},
+			Selectors: &relationshipv1alpha3.SelectorSet{
+				{
+					Allow: relationshipv1alpha3.Selector{
+						From: []relationshipv1alpha3.SelectorItem{
+							{
+								Kind:                &kind,
+								MatchStrategyMatrix: &matchStrategyMatrix,
+								Model:               &modelv1beta1.ModelReference{Name: "kubernetes"},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		got := ConvertRelationships([]interface{}{src})
+
+		if len(got) != 1 {
+			t.Fatalf("expected 1 relationship, got %d", len(got))
+		}
+		if got[0].RelationshipMetadata == nil || got[0].RelationshipMetadata.Styles == nil || got[0].RelationshipMetadata.Styles.SourceLabel == nil {
+			t.Fatal("converted relationship lost SourceLabel")
+		}
+		if *got[0].RelationshipMetadata.Styles.SourceLabel != sourceLabel {
+			t.Fatalf("SourceLabel = %q, want %q", *got[0].RelationshipMetadata.Styles.SourceLabel, sourceLabel)
+		}
+		if got[0].Selectors == nil || (*got[0].Selectors)[0].Allow.From[0].MatchStrategyMatrix == nil {
+			t.Fatal("converted relationship lost MatchStrategyMatrix")
+		}
+	})
+
+	t.Run("skips unsupported relationship shapes", func(t *testing.T) {
+		got := ConvertRelationships([]interface{}{"not-a-relationship"})
+		if len(got) != 0 {
+			t.Fatalf("expected unsupported value to be skipped, got %d relationships", len(got))
+		}
+	})
 }
 
 func TestValidateRelationshipsInDesign(t *testing.T) {
@@ -561,5 +631,60 @@ func TestAliasIsInvalidStatusMatrix(t *testing.T) {
 				t.Errorf("IsInvalid(status=%q) = %v, want %v", tt.status, result, tt.expected)
 			}
 		})
+	}
+}
+
+// MatchLabelsPolicy must produce identical relationship UUIDs across runs for
+// the same input. Pre-fix, sibling identification leaked Go map iteration order
+// (groupMap range) and pointer addresses (fmt.Sprintf("%v", selectorSetItem))
+// into the generated IDs.
+func TestMatchLabelsPolicyIdentificationIsDeterministic(t *testing.T) {
+	pod := func(idHex string) *component.ComponentDefinition {
+		c := &component.ComponentDefinition{
+			Component: component.Component{Kind: "Pod"},
+			Configuration: map[string]interface{}{
+				"metadata": map[string]interface{}{
+					"labels": map[string]interface{}{"app": "meshery", "tier": "api"},
+				},
+			},
+		}
+		c.ID, _ = uuid.FromString("00000000-0000-0000-0000-" + idHex)
+		return c
+	}
+	podA, podB, podC := pod("00000000aaa1"), pod("00000000bbb2"), pod("00000000ccc3")
+
+	makeRel := func() *relationship.RelationshipDefinition {
+		kind := "Pod"
+		refs := [][]string{{"configuration", "metadata", "labels"}}
+		ss := relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{{Kind: &kind, Match: &relationship.MatchSelector{Refs: &refs}}},
+				To:   []relationship.SelectorItem{{Kind: &kind, Match: &relationship.MatchSelector{Refs: &refs}}},
+			},
+		}
+		return &relationship.RelationshipDefinition{
+			Kind:             relationship.RelationshipDefinitionKind("edge"),
+			RelationshipType: "sibling",
+			Selectors:        &relationship.SelectorSet{ss},
+		}
+	}
+
+	design := makePatternFile([]*component.ComponentDefinition{podA, podB, podC}, nil)
+	p := &MatchLabelsPolicy{}
+
+	first := p.IdentifyRelationship(makeRel(), design)
+	if len(first) == 0 {
+		t.Fatal("expected at least one matchlabels relationship")
+	}
+	for i := 0; i < 5; i++ {
+		again := p.IdentifyRelationship(makeRel(), design)
+		if len(again) != len(first) {
+			t.Fatalf("identification count drift: run %d got %d, first run %d", i, len(again), len(first))
+		}
+		for j := range first {
+			if first[j].ID != again[j].ID {
+				t.Fatalf("UUID drift run=%d index=%d: %v vs %v", i, j, first[j].ID, again[j].ID)
+			}
+		}
 	}
 }

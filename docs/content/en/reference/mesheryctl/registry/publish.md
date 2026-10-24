@@ -3,6 +3,9 @@ title: mesheryctl-registry-publish
 display_title: false
 command: registry
 subcommand: publish
+categories: [mesheryctl-registry]
+aliases:
+- /reference/references/mesheryctl/registry/publish/
 ---
 
 # mesheryctl registry publish
@@ -15,8 +18,10 @@ Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,63 +30,79 @@ mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [model
 Publish To System
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
 
+</div>
 </div>
 </pre> 
 
 Publish To Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/server/meshmodel
+<div class='clipboardjs'>
+mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/models
 
+</div>
 </div>
 </pre> 
 
 Publish To Remote Provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels
 
+</div>
 </div>
 </pre> 
 
 Publish To Website
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels
 
+</div>
 </div>
 </pre> 
 
 Publishing to meshery docs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 cd docs;
 
+</div>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
 
+</div>
 </div>
 </pre> 
 
 Publishing to mesheryio site
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
 
+</div>
 </div>
 </pre> 
 
 Publishing to any website
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw path/to/models path/to/icons -o mdx
 
+</div>
 </div>
 </pre> 
 
@@ -107,4 +128,4 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -3,6 +3,9 @@ title: mesheryctl-connection-delete
 display_title: false
 command: connection
 subcommand: delete
+categories: [mesheryctl-connection]
+aliases:
+- /reference/references/mesheryctl/connection/delete/
 ---
 
 # mesheryctl connection delete
@@ -11,11 +14,14 @@ Delete a connection
 
 ## Synopsis
 
-Delete a connection
+Delete a connection.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection delete [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,8 +30,10 @@ mesheryctl connection delete [flags]
 Delete a connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection delete [connection_id]
 
+</div>
 </div>
 </pre> 
 
@@ -50,4 +58,4 @@ mesheryctl connection delete [connection_id]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -1,11 +1,14 @@
 package models
 
 import (
+	stderrors "errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"sync/atomic"
 	"testing"
+
+	"github.com/spf13/viper"
 )
 
 // TestRemoteProvider_OutboundOrgIdIsCanonical asserts that RemoteProvider
@@ -152,5 +155,32 @@ func TestRemoteProvider_OutboundOrgIdIsCanonical(t *testing.T) {
 				t.Errorf("expected path %q, got %q", tc.wantPath, got.path)
 			}
 		})
+	}
+}
+
+// TestRemoteProvider_GetUserByID_SystemInstanceReturnsSentinel pins the
+// contract with GetUserByIDHandler: when the caller asks for this Meshery
+// instance's own UUID (because a design's user_id is the instance UUID and
+// not a real user), the remote provider must signal with
+// ErrUserIsSystemInstance so the handler can respond 204 No Content instead
+// of conflating it with "user missing" (404) or emitting a plain-text body
+// that later crashes the client's JSON parser. This is the signal the Open
+// Recents 404/SyntaxError loop traced back to.
+func TestRemoteProvider_GetUserByID_SystemInstanceReturnsSentinel(t *testing.T) {
+	const instanceID = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+	viper.Set("INSTANCE_ID", instanceID)
+	t.Cleanup(func() { viper.Set("INSTANCE_ID", "") })
+
+	rp := &RemoteProvider{}
+	body, err := rp.GetUserByID(nil, instanceID)
+
+	if body != nil {
+		t.Errorf("expected nil body for system instance ID, got %q", string(body))
+	}
+	if err == nil {
+		t.Fatal("expected ErrUserIsSystemInstance, got nil — silent (nil, nil) is the old bug")
+	}
+	if !stderrors.Is(err, ErrUserIsSystemInstance) {
+		t.Errorf("expected err to match ErrUserIsSystemInstance via errors.Is, got %v", err)
 	}
 }

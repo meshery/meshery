@@ -3,6 +3,9 @@ title: mesheryctl-registry-update
 display_title: false
 command: registry
 subcommand: update
+categories: [mesheryctl-registry]
+aliases:
+- /reference/references/mesheryctl/registry/update/
 ---
 
 # mesheryctl registry update
@@ -15,8 +18,10 @@ Updates the component metadata (SVGs, shapes, styles and other) by referring fro
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry update [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,24 +30,30 @@ mesheryctl registry update [flags]
 Update models from Meshery Integration Spreadsheet
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred "$CRED" -i [path to the directory containing models].
 
+</div>
 </div>
 </pre> 
 
 Updating models in the meshery/meshery repository based on the spreadsheet
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED"
 
+</div>
 </div>
 </pre> 
 
 Updating models in the meshery/meshery repository based on flag
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED" --model "[model-name]"
 
+</div>
 </div>
 </pre> 
 
@@ -51,10 +62,10 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help                      help for update
-  -i, --input string              relative or absolute input path to the models directory (default "../server/meshmodel")
+  -i, --input string              relative or absolute input path to the models directory; when unset, the repo-root models directory is auto-detected (models from the repo root, ../models from a subdirectory) (default "./models")
   -m, --model string              specific model name to be generated
       --spreadsheet-cred string   base64 encoded credential to download the spreadsheet
-      --spreadsheet-id string     spreadsheet it for the integration spreadsheet
+      --spreadsheet-id string     spreadsheet ID for the integration spreadsheet
 
 </div>
 </pre>
@@ -71,4 +82,4 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

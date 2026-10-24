@@ -2,7 +2,7 @@ Hi, I’m **Nishant Borude**, a **3rd-year B.Tech student** and a passionate **F
 
 I specialize in building modern web applications using technologies like **React, Node.js, Express, MongoDB, and Tailwind CSS**. I enjoy developing scalable and user-friendly applications while continuously learning new technologies.
 
-I am actively involved in **open-source development** and contribute to projects such as **Layer5 (Meshery)**, where I collaborate with the community, work on issues, and improve my development workflow using GitHub and Linux.
+I am actively involved in **open-source development** and contribute to projects such as **Meshery**, where I collaborate with the community, work on issues, and improve my development workflow using GitHub and Linux.
 
 During my learning journey, I have built several real-world projects, including:
 • **AI-powered voice assistant applications** using speech recognition and AI APIs

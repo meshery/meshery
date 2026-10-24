@@ -1,9 +1,10 @@
 import { ability } from '../utils/can';
+import { isLocalProvider } from '../utils/provider';
 import { useGetUserKeysQuery } from './userKeys';
 import _ from 'lodash';
-import CustomErrorMessage from '@/components/ErrorPage';
-import DefaultError from '@/components/General/error-404';
-import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import CustomErrorMessage from '@/components/general/ErrorPage';
+import DefaultError from '@/components/general/error-404';
+import { DynamicFullScreenLoader } from '@/components/shared/LoadingState/DynamicFullscreenLoader';
 import {
   useGetProviderCapabilitiesQuery,
   useGetSelectedOrganization,
@@ -104,7 +105,7 @@ const SelectedOrganizationProvider = ({ children }) => {
   const prefUpdatedToFallback = useRef(false);
   const isLoading = isFetchingSelectedOrg || isLoadingAbilities;
   const loadingDiagnosticsRef = useRef({
-    providerType: providerCapabilities?.provider_type,
+    providerType: providerCapabilities?.providerType,
     hasSelectedOrganization,
     selectedOrganizationId,
     didFallback,
@@ -116,7 +117,7 @@ const SelectedOrganizationProvider = ({ children }) => {
 
   useEffect(() => {
     loadingDiagnosticsRef.current = {
-      providerType: providerCapabilities?.provider_type,
+      providerType: providerCapabilities?.providerType,
       hasSelectedOrganization,
       selectedOrganizationId,
       didFallback,
@@ -126,7 +127,7 @@ const SelectedOrganizationProvider = ({ children }) => {
       errorLoadingAbilities,
     };
   }, [
-    providerCapabilities?.provider_type,
+    providerCapabilities?.providerType,
     hasSelectedOrganization,
     selectedOrganizationId,
     didFallback,
@@ -210,7 +211,7 @@ const SelectedOrganizationProvider = ({ children }) => {
   }
 
   const loaderMessage = showSlowLoadingNotice
-    ? `Still initializing your ${providerCapabilities?.provider_type === 'local' ? 'local provider session' : 'session'}. Waiting for ${formatPendingSessionBootstrapStep(
+    ? `Still initializing your ${isLocalProvider(providerCapabilities) ? 'local provider session' : 'session'}. Waiting for ${formatPendingSessionBootstrapStep(
         {
           isFetchingSelectedOrg,
           isLoadingAbilities,

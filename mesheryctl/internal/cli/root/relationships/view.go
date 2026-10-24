@@ -35,8 +35,9 @@ var relationshipViewFlagsProvided relationshipViewFlags
 
 var viewCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view relationships of a model by its name",
-	Long:  "view a relationship queried by the model name",
+	Short: "View relationships of a model by its name",
+	Long: `View a relationship queried by the model name.
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/relationship/view`,
 	Example: `
 // View relationships of a model in default format yaml
 mesheryctl relationship view [model-name]
@@ -58,7 +59,7 @@ mesheryctl relationship view [model-name] --output-format json --save
 	RunE: func(cmd *cobra.Command, args []string) error {
 		model := args[0]
 
-		relationshipAPIPath := fmt.Sprintf("api/meshmodels/models/%s/relationships", model)
+		relationshipAPIPath := fmt.Sprintf("api/registry/models/%s/relationships", model)
 
 		selectedModel := new(relationship.RelationshipDefinition)
 
@@ -92,7 +93,7 @@ mesheryctl relationship view [model-name] --output-format json --save
 			shortID := selectedModel.ID.String()[:8]
 			sanitizer := strings.NewReplacer("/", "_")
 			sanitizedName := sanitizer.Replace(selectedModel.Model.Name)
-			fileName := fmt.Sprintf("relationship_%s_%s", sanitizedName, shortID)
+			fileName := fmt.Sprintf("relationship_%s_%s.%s", sanitizedName, shortID, strings.ToLower(relationshipViewFlagsProvided.outputFormat))
 			file := filepath.Join(utils.MesheryFolder, fileName)
 
 			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[relationship.RelationshipDefinition]{}

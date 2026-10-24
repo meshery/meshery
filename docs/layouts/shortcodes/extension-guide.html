@@ -6,7 +6,7 @@
       gap: 20px;
       justify-content: space-between;
       margin-top: 2rem;
-  
+
     }
     .extension-guide-card {
        display: flex;
@@ -35,7 +35,7 @@
      text-align: center;
   }
     @media (max-width: 767px) {
-      .extension-guide-container {
+      .extension-guides-container {
         flex-direction: column;
       }
       .extension-guide-svg-container {
@@ -44,28 +44,28 @@
       .extension-guide-svg-container img {
         width: 40%;
       }
-      .extenion-guide-card{
+      .extension-guide-card {
         max-width: 30rem;
         flex-direction: column;
       }
      }
   </style>
-  
+
 
 {{ $dataFile := .Get "data_file" }}
 {{ $guideTitle := .Get "guide_title" }}
 {{ $guideDescription := .Get "guide_description" }}
 {{ $guideSvg := .Get "guide_svg" }}
-{{ $guideAssetsFolder := .Get "guide_assests_folder" }}
+{{ $guideAssetsFolder := or (.Get "guide_assets_folder") (.Get "guide_assests_folder") }}
 
 <div class="extension-guides-container">
-  {{ $data := index .Site.Data $dataFile }}
-  
+  {{ $data := index hugo.Data $dataFile }}
+
   {{ range $data }}
     <div class="extension-guide-card">
       <div class="extension-guide-svg-container">
         {{ if index . $guideSvg }}
-          <img src="/images/{{ $guideAssetsFolder | lower }}/{{ index . $guideSvg }}" alt="{{ index . $guideTitle }}">
+          <img src="{{ printf "images/%s/%s" (lower $guideAssetsFolder) (index . $guideSvg) | relURL }}" alt="{{ index . $guideTitle }}">
         {{ end }}
         <div style="text-align:center;">{{ index . $guideTitle }}</div>
       </div>

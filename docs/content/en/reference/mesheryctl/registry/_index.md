@@ -3,6 +3,9 @@ title: mesheryctl-registry
 display_title: false
 command: registry
 subcommand: nil
+categories: [mesheryctl-registry]
+aliases:
+- /reference/references/mesheryctl/registry/
 ---
 
 # mesheryctl registry
@@ -15,8 +18,10 @@ Manage the state and contents of Meshery’s internal registry of capabilities.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,8 +29,10 @@ mesheryctl registry [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry [subcommand]
 
+</div>
 </div>
 </pre> 
 
@@ -50,4 +57,4 @@ mesheryctl registry [subcommand]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

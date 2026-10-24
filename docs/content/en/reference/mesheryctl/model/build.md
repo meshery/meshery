@@ -3,6 +3,9 @@ title: mesheryctl-model-build
 display_title: false
 command: model
 subcommand: build
+categories: [mesheryctl-model]
+aliases:
+- /reference/references/mesheryctl/model/build/
 ---
 
 # mesheryctl model build
@@ -17,8 +20,10 @@ Expects input to be in the format scaffolded by the model init command.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model build [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -27,22 +32,19 @@ mesheryctl model build [flags]
 Create an OCI-compliant package from the model files
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model build [model-name]
 
 </div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl model build [model-name]/[model-version]
-
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-    
+<div class='clipboardjs'>
+mesheryctl model build [model-name]/[model-version]
 
+</div>
 </div>
 </pre> 
 
@@ -68,4 +70,4 @@ mesheryctl model build [model-name]/[model-version]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

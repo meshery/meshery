@@ -1,28 +1,26 @@
 {
   "provider_type": "remote",
-  "package_version": "v0.8.157-1",
-  "package_url": "https://github.com/layer5labs/meshery-extensions-packages/releases/download/v0.8.157-1/provider-meshery.tar.gz",
-  "provider_name": "Layer5",
+  "package_version": "v1.0.0-1",
+  "package_url": "https://meshery.your-platform.com/releases/download/v0.8.157-1/ext-package.tar.gz",
+  "provider_name": "Meshery",
   "provider_description": [
-    "User Identity with Multi-tenancy: Orgs, Teams, Users",
+    "User Identity with multi-tenancy: Orgs, Teams, Users",
     "Environments, Workspaces, and private catalogs",
     "GitHub integration and design snapshots",
     "Performance test profiles and result history",
-    "Learning Academy and Challenges",
-    "Free, Team, and Enterprise subscription plans"
   ],
-  "provider_url": "https://cloud.layer5.io",
+  "provider_url": "https://meshery.your-platform.com",
   "extensions": {
     "navigator": [
       {
-        "title": "Kanvas",
+        "title": "Navigator Extension",
         "on_click_callback": 1,
         "href": {
-          "uri": "/meshmap",
+          "uri": "/extension",
           "external": false
         },
-        "component": "/provider/navigator/meshmap/index.js?packageVersion=v0.8.157-1",
-        "icon": "/provider/navigator/img/kanvas-icon.svg",
+        "component": "/provider/navigator/extension/index.js?packageVersion=v0.8.157-1",
+        "icon": "/provider/navigator/img/extension-icon.svg",
         "link": true,
         "show": true,
         "type": "full_page",
@@ -41,23 +39,23 @@
     ],
     "user_prefs": [
       {
-        "component": "/provider/userpref/meshmap_userpref/index.js",
+        "component": "/provider/userpref/ext_userpref/index.js",
         "type": "component"
       }
     ],
     "graphql": [
       {
-        "component": "meshmap",
-        "path": "provider/navigator/meshmap/graphql/plugin.so",
+        "component": "query",
+        "path": "provider/navigator/extension/graphql/plugin.so",
         "type": "backend"
       }
     ],
     "account": [
       {
-        "title": "Cloud Account",
+        "title": "User Account",
         "on_click_callback": 1,
         "href": {
-          "uri": "https://cloud.layer5.io/account/profile",
+          "uri": "https://meshery.your-platform.com/user/profile",
           "external": true
         },
         "link": true,
@@ -68,7 +66,7 @@
         "title": "Cloud Catalog",
         "on_click_callback": 1,
         "href": {
-          "uri": "https://cloud.layer5.io/catalog",
+          "uri": "https://meshery.your-platform.com/catalog",
           "external": true
         },
         "link": true,
@@ -79,7 +77,7 @@
         "title": "Cloud Dashboard",
         "on_click_callback": 1,
         "href": {
-          "uri": "https://cloud.layer5.io",
+          "uri": "https://meshery.your-platform.com",
           "external": true
         },
         "link": true,
@@ -89,7 +87,7 @@
     ],
     "collaborator": [
       {
-        "component": "/provider/navigator/meshmap/collaboratorsPlugin.js",
+        "component": "/provider/navigator/extension/collaboratorsPlugin.js",
         "type": "component"
       }
     ]
@@ -120,16 +118,8 @@
       "endpoint": "/api/events"
     },
     {
-      "feature": "persist-smp-test-profile",
-      "endpoint": "/user/test-config"
-    },
-    {
       "feature": "persist-performance-profiles",
       "endpoint": "/api/performance/profiles"
-    },
-    {
-      "feature": "persist-schedules",
-      "endpoint": "/user/schedules"
     },
     {
       "feature": "persist-meshery-patterns",
@@ -205,11 +195,11 @@
     }
   ],
   "redirects": {
-    "/": "/extension/meshmap",
-    "": "/extension/meshmap"
+    "/": "/extension/extension",
+    "": "/extension/extension"
   },
   "restrictedAccess": {
-    "isMesheryUiRestricted": true,
+    "isMesheryUIRestricted": true,
     "allowedComponents": {
       "navigator": {
         "help": true,

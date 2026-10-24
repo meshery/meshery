@@ -68,7 +68,7 @@ func (a *AdaptersTracker) GetAdapters(_ context.Context) []models.Adapter {
 	return ad
 }
 
-// AddAdapter is used to add new adapters to the collection
+// DeployAdapter deploys the adapter on the current platform (Docker or Kubernetes) and then adds it to the collection.
 func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adapter) (err error) {
 	platform := utils.GetPlatform()
 
@@ -96,7 +96,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			}
 		}
 
-		adapterImage := "layer5/" + adapter.Name + ":stable-latest"
+		adapterImage := "meshery/" + adapter.Name + ":stable-latest"
 
 		resp, err := cli.ImagePull(ctx, adapterImage, image.PullOptions{})
 		if err != nil {
@@ -221,7 +221,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 	return nil
 }
 
-// RemoveAdapter is used to remove existing adapters from the collection
+// UndeployAdapter undeploys the adapter from the current platform (Docker or Kubernetes) and then removes it from the collection.
 func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Adapter) (err error) {
 	platform := utils.GetPlatform()
 

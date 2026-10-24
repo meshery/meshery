@@ -26,7 +26,7 @@ import (
 )
 
 type cmdSystemLoginFlags struct {
-	Provider string `json:"provider" validate:"omitempty,oneof=Layer5 None"`
+	Provider string `json:"provider" validate:"omitempty"`
 }
 
 var systemLoginFlags cmdSystemLoginFlags
@@ -103,5 +103,5 @@ mesheryctl system login -p Meshery
 }
 
 func init() {
-	loginCmd.PersistentFlags().StringVarP(&systemLoginFlags.Provider, "provider", "p", "", "login Meshery with specified provider (Layer5 or None)")
+	loginCmd.PersistentFlags().StringVarP(&systemLoginFlags.Provider, "provider", "p", "", "login Meshery with specified provider (run 'mesheryctl system provider list' to see options)")
 }

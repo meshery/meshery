@@ -1,20 +1,6 @@
-import { fetchQuery, graphql } from 'react-relay';
-import { createRelayEnvironment } from '../../../lib/relayEnvironment';
-
-interface ResetDatabaseVariables {
-  selector: string;
-  k8scontextID: string;
-}
-
-export default function resetDatabase(variables: ResetDatabaseVariables) {
-  const environment = createRelayEnvironment({});
-  const vars = { selector: variables.selector, k8scontextID: variables.k8scontextID };
-
-  const ResetDatabaseQueryNode = graphql`
-    query ResetDatabaseQuery($selector: ReSyncActions!, $k8scontextID: String!) {
-      resetStatus: resyncCluster(selector: $selector, k8scontextID: $k8scontextID)
-    }
-  `;
-
-  return fetchQuery(environment, ResetDatabaseQueryNode, vars);
-}
+// Shim: master's ui/components/connections/ConnectionTable.tsx still imports
+// resetDatabase from '../graphql/queries/ResetDatabaseQuery', a path that
+// was moved out of components/ during the GraphQL module migration. This
+// re-export keeps the legacy import resolvable until the upstream file is
+// updated to import from '@/graphql/queries/ResetDatabaseQuery' directly.
+export { default } from '../../../graphql/queries/ResetDatabaseQuery';

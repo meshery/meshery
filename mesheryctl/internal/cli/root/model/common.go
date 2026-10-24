@@ -10,7 +10,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
-var modelsApiPath = "api/meshmodels/models"
+var modelsApiPath = "api/registry/models"
 
 func promptModelSelection(modelSearchTerm string, apiPath string) (*model.ModelDefinition, error) {
 	selectedModel := new(model.ModelDefinition)
@@ -21,7 +21,7 @@ func promptModelSelection(modelSearchTerm string, apiPath string) (*model.ModelD
 		},
 		formatLabel,
 		func(data *models.MeshmodelsAPIResponse) ([]model.ModelDefinition, int64) {
-			return data.Models, data.Count
+			return data.Models, data.TotalCount
 		},
 		selectedModel,
 	)

@@ -3,6 +3,9 @@ title: mesheryctl-model-generate
 display_title: false
 command: model
 subcommand: generate
+categories: [mesheryctl-model]
+aliases:
+- /reference/references/mesheryctl/model/generate/
 ---
 
 # mesheryctl model generate
@@ -15,8 +18,10 @@ Generate models by specifying the directory, file, or URL. You can also provide 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model generate [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,24 +30,40 @@ mesheryctl model generate [flags]
 Generate a model from a CSV directory
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model generate --f [path-to-csv-directory]
+<div class='clipboardjs'>
+mesheryctl model generate -f [path-to-csv-directory]
 
+</div>
 </div>
 </pre> 
 
 Generate a model from a URL based on a JSON template
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model generate --f [URL] -t [path-to-template.json]
+<div class='clipboardjs'>
+mesheryctl model generate -f [URL] -t [path-to-template.json]
 
+</div>
 </div>
 </pre> 
 
 Generate a model from a URL based on a JSON template skipping registration
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model generate --f [URL] -t [path-to-template.json] -r
+<div class='clipboardjs'>
+mesheryctl model generate --file [URL] --template [path-to-template.json] --skip-registration
 
+</div>
+</div>
+</pre> 
+
+Generate a specific model from a CSV directory
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl model generate -f [path-to-csv-directory] -m [model-name]
+
+</div>
 </div>
 </pre> 
 
@@ -50,10 +71,11 @@ mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -f, --file string       Specify path to the file or directory
-  -h, --help              help for generate
-  -r, --register          Skip registration of the model
-  -t, --template string   Specify path to the template JSON file
+  -f, --file string         Specify path to the file or directory
+  -h, --help                help for generate
+  -m, --model string        Generate only the specified model from CSV input
+      --skip-registration   Skip registration of the model (default is false)
+  -t, --template string     Specify path to the template JSON file
 
 </div>
 </pre>
@@ -70,4 +92,4 @@ mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

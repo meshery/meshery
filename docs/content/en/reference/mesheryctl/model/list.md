@@ -3,6 +3,9 @@ title: mesheryctl-model-list
 display_title: false
 command: model
 subcommand: list
+categories: [mesheryctl-model]
+aliases:
+- /reference/references/mesheryctl/model/list/
 ---
 
 # mesheryctl model list
@@ -11,12 +14,14 @@ List registered models
 
 ## Synopsis
 
-List all registered models by pagingation (10 models per page)
+List all registered models by pagination (10 models per page)
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model list [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,31 +30,30 @@ mesheryctl model list [flags]
 List of models
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model list
 
+</div>
 </div>
 </pre> 
 
 List of models for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model list --page [page-number] --pagesize [pagesize]
 
+</div>
 </div>
 </pre> 
 
 Display number of available models in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model list --count
 
 </div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-    
-
 </div>
 </pre> 
 
@@ -77,4 +81,4 @@ mesheryctl model list --count
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

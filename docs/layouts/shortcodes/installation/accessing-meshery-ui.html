@@ -2,9 +2,9 @@
 <h2>Accessing Meshery UI</h2>
 {{ end }}
 
-<p>After successfully deploying Meshery, you can access Meshery's web-based user interface. Your default browser will automatically open and navigate to Meshery UI (default location is <a href="http://localhost:9081">http://localhost:9081</a>).</p>
+<p>Once Meshery is running, <code>mesheryctl system start</code> opens Meshery UI in your default browser. On Docker, Meshery UI listens at <a href="http://localhost:9081">http://localhost:9081</a> by default. On Kubernetes, <code>mesheryctl</code> opens the address of the <code>meshery</code> service in the <code>meshery</code> namespace, which the Helm chart creates as a <code>LoadBalancer</code> service on port 9081.</p>
 
-<p>You can use the following command to open Meshery UI in your default browser:</p>
+<p>To open Meshery UI in your default browser at any time, run:</p>
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
@@ -12,7 +12,7 @@
 </div>
 </pre>
 
-<p>If you have installed Meshery on Kubernetes or a remote host, you can access Meshery UI by exposing it as a Kubernetes service or by port forwarding to Meshery UI.</p>
+<p>If your cluster does not give the <code>meshery</code> service a reachable address, forward a local port to Meshery instead. By default, <code>mesheryctl</code> listens on local port 9081; use <code>-p</code> to choose another port.</p>
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
@@ -20,7 +20,7 @@
 </div>
 </pre>
 
-<p>Depending on how you have networking configured in Kubernetes, you can use kubectl to port forward to the Meshery UI.</p>
+<p>You can also port-forward with <code>kubectl</code>:</p>
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
@@ -30,36 +30,32 @@
 
 <h4>Verify Kubernetes Connection</h4>
 
-After installing Meshery, regardless of the installation type, it is important to verify that your kubeconfig file has been uploaded correctly via the UI. 
+Whichever way you installed Meshery, verify that Meshery is connected to your cluster:
 
 <ol>
 <li>In the Meshery UI, navigate to <strong>Lifecycle</strong> from the menu on the left.</li>
-<li>Click on Connections.</li>
+<li>Select <strong>Connections</strong>.</li>
 <li>Ensure that your cluster appears in the list of connections and is marked as <code>Connected</code>.</li>
-<li>Click on the cluster name to perform a ping test and confirm that Meshery can communicate with your cluster.</li>
+<li>Click the cluster name to run a connectivity test and confirm that Meshery can reach your cluster.</li>
 </ol>
 
 <details>
 <summary>Customizing Your Meshery Provider Callback URL</summary>
 
 <p>
-  Meshery Server supports customizing your <a href="/extensibility/providers">Meshery Provider</a> authentication flow callback URL. This is helpful when deploying Meshery behind multiple layers of networking infrastructure.
+  You can customize the callback URL that your <a href="{{ relref . "reference/extensibility/providers/index.md" }}">Meshery Provider</a> redirects to after sign-in. This helps when Meshery runs behind several layers of networking infrastructure.
 </p>
 
 <p>
-  For production deployments, it is recommended to access the Meshery UI by setting up a reverse proxy or using a LoadBalancer. By specifying a custom redirect endpoint, you can ensure that authentication flows complete successfully, even when multiple routing layers are involved.
+  For production deployments, we recommend that you expose Meshery UI through a reverse proxy or a load balancer. A custom callback URL makes sure that sign-in completes even when requests pass through several routing layers.
 </p>
 
 <p>
-  <b>Note</b>: For production deployments, it is important to select the <code>Remote Provider</code> in order to control which identity providers are authorized. Learn more about this in the <a href="/extensibility/providers">Extensibility: Providers</a> guide.
+  <b>Note</b>: For production deployments, use a Remote Provider so that you control which identity providers can sign users in. Learn more about this in the <a href="{{ relref . "reference/extensibility/providers/index.md" }}">Extensibility: Providers</a> guide.
 </p>
 
 <p>
-  Define a custom callback URL by setting up the <code>MESHERY_SERVER_CALLBACK_URL</code> environment variable before installing Meshery.
-</p>
-
-<p>
-  To customize the authentication flow callback URL, use the following command:
+  To set a custom callback URL, set the <code>MESHERY_SERVER_CALLBACK_URL</code> environment variable when you start Meshery:
 </p>
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
@@ -69,7 +65,7 @@ After installing Meshery, regardless of the installation type, it is important t
 </pre>
 
 <p>
-  Meshery should now be running in your Kubernetes cluster and the Meshery UI should be accessible at the <code>EXTERNAL IP</code> of the <code>meshery</code> service.
+  On Kubernetes, Meshery UI is then available at the <code>EXTERNAL-IP</code> of the <code>meshery</code> service. Run <code>kubectl get svc meshery -n meshery</code> to find it.
 </p>
 
 </details>

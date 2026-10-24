@@ -17,6 +17,8 @@ package main
 import (
 	"bytes"
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -31,6 +33,9 @@ title: mesheryctl
 display_title: false
 command: mesheryctl
 subcommand: nil
+categories: [mesheryctl-ref]
+aliases:
+- /reference/references/mesheryctl/
 ---
 
 `
@@ -44,6 +49,9 @@ title: mesheryctl-adapter
 display_title: false
 command: adapter
 subcommand: nil
+categories: [mesheryctl-adapter]
+aliases:
+- /reference/references/mesheryctl/adapter/
 ---
 
 `
@@ -57,6 +65,9 @@ title: mesheryctl-adapter-deploy
 display_title: false
 command: adapter
 subcommand: deploy
+categories: [mesheryctl-adapter]
+aliases:
+- /reference/references/mesheryctl/adapter/deploy/
 ---
 
 `
@@ -70,12 +81,76 @@ title: mesheryctl-exp-relationship-generate
 display_title: false
 command: exp
 subcommand: relationship
+categories: [mesheryctl-exp]
+aliases:
+- /reference/references/mesheryctl/exp/relationship/generate/
 ---
 
 `
 		filename := "docs/content/en/reference/mesheryctl/exp/relationship/generate.md"
 		assert.Equal(t, expected, prepender(filename))
 	})
+
+	t.Run("Single command (completion.md)", func(t *testing.T) {
+		expected := `---
+title: mesheryctl-completion
+display_title: false
+command: completion
+subcommand: nil
+categories: [mesheryctl-completion]
+aliases:
+- /reference/references/mesheryctl/completion/
+---
+
+`
+		filename := "docs/content/en/reference/mesheryctl/completion.md"
+		assert.Equal(t, expected, prepender(filename))
+	})
+
+	t.Run("Single command (version.md)", func(t *testing.T) {
+		expected := `---
+title: mesheryctl-version
+display_title: false
+command: version
+subcommand: nil
+categories: [mesheryctl-version]
+aliases:
+- /reference/references/mesheryctl/version/
+---
+
+`
+		filename := "docs/content/en/reference/mesheryctl/version.md"
+		assert.Equal(t, expected, prepender(filename))
+	})
+
+	t.Run("Subcommand (system/start.md)", func(t *testing.T) {
+		expected := `---
+title: mesheryctl-system-start
+display_title: false
+command: system
+subcommand: start
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/start/
+---
+
+`
+		filename := "docs/content/en/reference/mesheryctl/system/start.md"
+		assert.Equal(t, expected, prepender(filename))
+	})
+}
+
+func TestPrependerWithoutMesheryctlPath(t *testing.T) {
+	expected := `---
+title: foo
+display_title: false
+command: foo
+subcommand: nil
+categories: [mesheryctl-ref]
+---
+
+`
+	assert.Equal(t, expected, prepender("foo.md"))
 }
 
 func TestDoc(t *testing.T) {
@@ -105,13 +180,21 @@ func TestDoc(t *testing.T) {
 		)
 	})
 
-	t.Run("Test GenMarkdownTreeCustom function", func(t *testing.T) {
+	t.Run("Test GenMarkdownTreeCustom function skips root _index.md", func(t *testing.T) {
 		cmd.AddCommand(&cobra.Command{
 			Use: "sub",
 		})
 		markDownPath := t.TempDir()
-		err := GenMarkdownTreeCustom(cmd, markDownPath, prepender, linkHandler)
+		rootIndex := filepath.Join(markDownPath, "_index.md")
+		err := os.WriteFile(rootIndex, []byte("hand-authored"), 0644)
 		assert.NoError(t, err)
+
+		err = GenMarkdownTreeCustom(cmd, markDownPath, prepender, linkHandler)
+		assert.NoError(t, err)
+
+		content, err := os.ReadFile(rootIndex)
+		assert.NoError(t, err)
+		assert.Equal(t, "hand-authored", string(content))
 	})
 
 	t.Run("Test HasSeeAlso function", func(t *testing.T) {
@@ -206,5 +289,67 @@ func TestDoc(t *testing.T) {
 		output = buf.String()
 		assert.Contains(t, output, "## Options inherited from parent commands")
 		assert.Contains(t, output, "--parentFlag")
+	})
+}
+
+// TestCodeBlockCopyButton checks that command blocks are copyable and options blocks are not
+func TestCodeBlockCopyButton(t *testing.T) {
+
+	newCmd := func(example string) *cobra.Command {
+		cmd := &cobra.Command{
+			Use:               "test",
+			Long:              "test_long",
+			Example:           example,
+			Run:               func(cmd *cobra.Command, args []string) {},
+			DisableAutoGenTag: true,
+		}
+		cmd.Flags().String("flag1", "default1", "description1")
+		return cmd
+	}
+
+	render := func(t *testing.T, cmd *cobra.Command) string {
+		t.Helper()
+		buf := &bytes.Buffer{}
+		assert.NoError(t, GenMarkdownCustom(cmd, buf, nil))
+		return buf.String()
+	}
+
+	t.Run("Command blocks are copyable", func(t *testing.T) {
+		output := render(t, newCmd("mesheryctl test --flag1 value"))
+
+		assert.Equal(t, 3, strings.Count(output, "codeblock-pre"))
+		assert.Equal(t, 2, strings.Count(output, "<div class='clipboardjs'>"))
+	})
+
+	t.Run("Options blocks are not copyable", func(t *testing.T) {
+		output := render(t, newCmd("mesheryctl test"))
+
+		index := strings.Index(output, "## Options")
+		assert.NotEqual(t, -1, index, "the command under test must emit an Options section")
+
+		assert.NotContains(t, output[index:], "clipboardjs")
+		assert.Contains(t, output[index:], "--flag1")
+	})
+
+	t.Run("Placeholders survive as text", func(t *testing.T) {
+		output := render(t, newCmd("mesheryctl test --file <path-to-file>"))
+
+		assert.Contains(t, output, "--file &lt;path-to-file&gt;")
+		assert.NotContains(t, output, "<path-to-file>")
+	})
+
+	t.Run("Ampersands are escaped before the angle brackets", func(t *testing.T) {
+		output := render(t, newCmd("mesheryctl test a && b"))
+
+		assert.Contains(t, output, "a &amp;&amp; b")
+		assert.NotContains(t, output, "&amp;lt;")
+	})
+
+	t.Run("A whitespace only example writes no block", func(t *testing.T) {
+		output := render(t, newCmd("mesheryctl test\n\t\t"))
+
+		assert.Equal(t, 3, strings.Count(output, "codeblock-pre"))
+		assert.Equal(t, 2, strings.Count(output, "<div class='clipboardjs'>"))
+		assert.NotContains(t, output, "<div class='clipboardjs'>\n\n\n")
 	})
 }

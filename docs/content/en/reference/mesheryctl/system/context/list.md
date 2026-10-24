@@ -3,11 +3,14 @@ title: mesheryctl-system-context-list
 display_title: false
 command: system
 subcommand: context
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/context/list/
 ---
 
 # mesheryctl system context list
 
-list contexts
+List contexts
 
 ## Synopsis
 
@@ -15,8 +18,10 @@ List current context and available contexts.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context list [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +30,10 @@ mesheryctl system context list [flags]
 List all contexts present
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context list
 
+</div>
 </div>
 </pre> 
 
@@ -53,4 +60,4 @@ mesheryctl system context list
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

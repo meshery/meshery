@@ -1,0 +1,604 @@
+import {
+  Breadcrumbs,
+  ErrorBoundary,
+  NoSsr,
+  WorkspaceRecentActivityModal,
+  WorkspaceTeamsTable,
+} from '@sistent/sistent';
+import {
+  Box,
+  CustomColumnVisibilityControl,
+  TeamsIcon,
+  WorkspaceIcon,
+  Modal,
+  createAndEditWorkspaceSchema,
+  createAndEditWorkspaceUiSchema,
+  editWorkspaceSchema,
+  Button,
+  Typography,
+  SearchBar,
+  useHasPermission,
+  useTheme,
+  PROMPT_VARIANTS,
+  ModalFooter,
+} from '@sistent/sistent';
+import { EmptyState } from '@/components/lifecycle/general';
+import AddIconCircleBorder from '@/assets/icons/AddIconCircleBorder';
+import { useRef, useState } from 'react';
+import {
+  useAssignTeamToWorkspaceMutation,
+  useCreateWorkspaceMutation,
+  useDeleteWorkspaceMutation,
+  useGetEventsOfWorkspaceQuery,
+  useGetTeamsOfWorkspaceQuery,
+  useGetWorkspacesQuery,
+  useUnassignTeamFromWorkspaceMutation,
+  useUpdateWorkspaceMutation,
+} from '../../rtk-query/workspace';
+import { useNotification, useNotificationHandlers } from '../../utils/hooks/useNotification';
+import { formatApiError } from '../../utils/helpers/meshkitError';
+import { RJSFModalWrapper } from '../shared/Modal/Modal';
+import _PromptComponent from '../general/PromptComponent';
+import { EVENT_TYPES } from '../../lib/event-types';
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '../general/error-404/index';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+import ViewSwitch from '@/components/general/ViewSwitch';
+import { CreateButtonWrapper } from './styles';
+import WorkspaceGridView from './WorkspaceGridView';
+import RightArrowIcon from '@/assets/icons/RightArrowIcon';
+import { useGetUsersForOrgQuery, useRemoveUserFromTeamMutation } from '@/rtk-query/user';
+import WorkspaceDataTable from './WorkspaceDataTable';
+import { iconMedium } from 'css/icons.styles';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
+import { useContext } from 'react';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { useEffect } from 'react';
+
+export const WORKSPACE_ACTION_TYPES = {
+  CREATE: 'create',
+  EDIT: 'edit',
+};
+
+const columnList = [
+  {
+    name: 'id',
+    label: 'ID',
+  },
+  {
+    name: 'owner_email',
+    label: 'Owner Email',
+  },
+  {
+    name: 'owner_id',
+    label: 'Owner Id',
+  },
+  {
+    name: 'org_name',
+    label: 'Org Name',
+  },
+  {
+    name: 'name',
+    label: 'Name',
+  },
+  {
+    name: 'description',
+    label: 'Description',
+  },
+  {
+    name: 'owner',
+    label: 'Owner',
+  },
+  {
+    name: 'teamCount',
+    label: 'Teams',
+  },
+  {
+    name: 'designCount',
+    label: 'Designs',
+  },
+  {
+    name: 'viewCount',
+    label: 'Views',
+  },
+  {
+    name: 'environmentCount',
+    label: 'Environments Count',
+  },
+  {
+    name: 'environments',
+    label: 'Environments',
+  },
+  {
+    name: 'created_at',
+    label: 'Created At',
+  },
+  {
+    name: 'updated_at',
+    label: 'Updated At',
+  },
+  {
+    name: 'actions',
+    label: 'Actions',
+  },
+];
+
+const Workspaces = ({ onSelectWorkspace }) => {
+  const theme = useTheme();
+  const canCreateWorkspace = useHasPermission(Keys.WorkspaceManagementCreateWorkspace);
+  const canEditWorkspace = useHasPermission(Keys.WorkspaceManagementEditWorkspace);
+  const canAssignTeam = useHasPermission(Keys.WorkspaceManagementAssignTeamToWorkspace);
+  const canDeleteTeam = useHasPermission(Keys.IdentityAccessManagementDeleteTeam);
+  const canEditTeam = useHasPermission(Keys.IdentityAccessManagementEditTeam);
+  const canLeaveTeam = useHasPermission(Keys.IdentityAccessManagementLeaveTeam);
+  const canViewWorkspace = useHasPermission(Keys.WorkspaceManagementViewWorkspace);
+  const canRemoveTeamFromWorkspace = useHasPermission(
+    Keys.WorkspaceManagementRemoveTeamFromWorkspace,
+  );
+  const [workspaceModal, setWorkspaceModal] = useState({
+    open: false,
+    schema: {},
+  });
+  const workspaceModalContext = useContext(WorkspaceModalContext);
+
+  const { organization } = useSelector((state) => state.ui);
+  const [page, setPage] = useState(0);
+  const pageSize = 10;
+  const sortOrder = 'updated_at desc';
+  const [search, setSearch] = useState('');
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [actionType, setActionType] = useState('');
+  const [initialData, setInitialData] = useState({});
+  const [editWorkspaceId, setEditWorkspaceId] = useState('');
+  let [selectedWorkspace, setSelectedWorkspace] = useState({
+    id: '',
+    name: '',
+  });
+  const [viewType, setViewType] = useState('table');
+  const [teamsModal, setTeamsModal] = useState({
+    open: false,
+    workspaceId: '',
+    workspaceName: '',
+  });
+  const [activityModal, setActivityModal] = useState({
+    open: false,
+    workspaceId: '',
+    workspaceName: '',
+  });
+
+  const handleRowClick = (rowData) => {
+    const workspaceId = rowData[0];
+    const workspaceName = rowData[4].props.children.at(-1); // Get the last child of the name cell
+    setSelectedWorkspace({
+      id: workspaceId,
+      name: workspaceName,
+    });
+    if (onSelectWorkspace) {
+      onSelectWorkspace({
+        id: workspaceId,
+        name: workspaceName,
+      });
+    }
+  };
+  const ref = useRef(null);
+  const bulkDeleteRef = useRef(null);
+  const { notify } = useNotification();
+
+  const { data: workspacesData } = useGetWorkspacesQuery(
+    {
+      page: page,
+      pagesize: pageSize,
+      search: search,
+      order: sortOrder,
+      orgId: organization?.id,
+    },
+    {
+      skip: !organization?.id || !canViewWorkspace,
+    },
+  );
+
+  const [createWorkspace, createResult] = useCreateWorkspaceMutation();
+
+  const [updateWorkspace, updateResult] = useUpdateWorkspaceMutation();
+
+  const [deleteWorkspace] = useDeleteWorkspaceMutation();
+
+  const workspaces = workspacesData?.workspaces ? workspacesData.workspaces : [];
+  const handleCreateWorkspace = ({ organizationId, name, description }) => {
+    createWorkspace({
+      workspacePayload: {
+        name: name,
+        description: description,
+        organization_id: organizationId,
+      },
+    })
+      .unwrap()
+      // Close the modal only after a successful create - closing it
+      // unconditionally here discarded the user's typed input on failure, the
+      // same silent-failure class this change exists to remove.
+      .then(() => {
+        handleSuccess(`Workspace "${name}" created`);
+        handleWorkspaceModalClose();
+      })
+      .catch((error) => handleError(`Unable to create workspace "${name}"`, error));
+  };
+
+  useEffect(() => {
+    if (workspaceModalContext.createNewWorkspaceModalOpen) {
+      const event = new Event('click');
+      handleWorkspaceModalOpen(event, WORKSPACE_ACTION_TYPES.CREATE, {});
+      workspaceModalContext.setCreateNewWorkspaceModalOpen(false);
+    }
+  }, [workspaceModalContext.createNewWorkspaceModalOpen]);
+
+  const handleEditWorkspace = ({ organizationId, name, description }) => {
+    updateWorkspace({
+      workspaceId: editWorkspaceId,
+      workspacePayload: {
+        name: name,
+        description: description,
+        organization_id: organizationId,
+      },
+    })
+      .unwrap()
+      .then(() => {
+        handleSuccess(`Workspace "${name}" updated`);
+        handleWorkspaceModalClose();
+      })
+      .catch((error) => handleError(`Unable to update workspace "${name}"`, error));
+  };
+
+  const handleDeleteWorkspace = (id, name) => {
+    deleteWorkspace({
+      workspaceId: id,
+    })
+      .unwrap()
+      .then(() => handleSuccess(`Workspace "${name}" deleted`))
+      .catch((error) => handleError(`Unable to delete workspace "${name}"`, error));
+  };
+
+  const fetchSchema = (workspaceActionType) => {
+    // Organization is derived from the user's active session and hidden by the
+    // canonical form UI schema (organizationId -> "ui:widget": "hidden" in
+    // meshery/schemas workspace/forms/createOrEdit.ui.json). Its value is
+    // seeded into the form via initialData, so no per-render schema patching is
+    // required here.
+    const baseSchema =
+      workspaceActionType === WORKSPACE_ACTION_TYPES.EDIT
+        ? editWorkspaceSchema
+        : createAndEditWorkspaceSchema;
+    setWorkspaceModal({
+      open: true,
+      schema: {
+        schema: baseSchema,
+        uiSchema: createAndEditWorkspaceUiSchema,
+      },
+    });
+  };
+
+  /**
+   * Surface a failed workspace operation.
+   *
+   * This was a curried `handleError(action) => (error) => ...` that every call
+   * site invoked as `handleError('some message')`, producing a function that
+   * was immediately discarded - so no workspace failure ever reached the user.
+   * It also read `action.error_msg` off a plain string, which is always
+   * undefined. A plain two-argument function makes that misuse impossible.
+   *
+   * `formatApiError` consumes the MeshKit envelope the server now sends
+   * (code and suggested remediation) and renders it as the markdown that
+   * `notify` displays through BasicMarkdown.
+   */
+  const handleError = (action, error) => {
+    updateProgress({ showProgress: false });
+    const { message } = formatApiError(error, action);
+    notify({
+      message,
+      event_type: EVENT_TYPES.ERROR,
+    });
+  };
+
+  const handleSuccess = (msg) => {
+    updateProgress({ showProgress: false });
+    notify({
+      message: msg,
+      event_type: EVENT_TYPES.SUCCESS,
+    });
+  };
+
+  const handleWorkspaceModalOpen = (e, workspaceActionType, workspaceObject) => {
+    e.stopPropagation();
+    if (workspaceActionType === WORKSPACE_ACTION_TYPES.EDIT) {
+      setActionType(WORKSPACE_ACTION_TYPES.EDIT);
+      setInitialData({
+        name: workspaceObject.name,
+        description: workspaceObject.description,
+        organizationId: workspaceObject.organizationId,
+      });
+      setEditWorkspaceId(workspaceObject.id);
+    } else {
+      setActionType(WORKSPACE_ACTION_TYPES.CREATE);
+      setInitialData({
+        name: undefined,
+        description: '',
+        organizationId: organization?.id,
+      });
+      setEditWorkspaceId('');
+    }
+    fetchSchema(workspaceActionType);
+  };
+
+  const handleTeamsModalOpen = (e, workspaceId, workspaceName) => {
+    e.stopPropagation();
+    setTeamsModal({
+      open: true,
+      workspaceId: workspaceId,
+      workspaceName: workspaceName,
+    });
+  };
+  const handleTeamsModalClose = () => {
+    setTeamsModal({
+      open: false,
+      workspaceId: '',
+      workspaceName: '',
+    });
+  };
+
+  const handleActivityModalOpen = (e, workspaceId, workspaceName) => {
+    e.stopPropagation();
+    setActivityModal({
+      open: true,
+      workspaceId: workspaceId,
+      workspaceName: workspaceName,
+    });
+  };
+
+  const handleActivityModalClose = () => {
+    setActivityModal({
+      open: false,
+      workspaceId: '',
+      workspaceName: '',
+    });
+  };
+
+  const handleWorkspaceModalClose = () => {
+    setWorkspaceModal({
+      open: false,
+      schema: {},
+    });
+    setActionType('');
+  };
+
+  const handleDeleteWorkspaceConfirm = async (e, workspace) => {
+    e.stopPropagation();
+    let response = await ref.current.show({
+      title: `Delete workspace ?`,
+      subtitle: deleteWorkspaceModalContent(workspace.name),
+      primaryOption: 'DELETE',
+      variant: PROMPT_VARIANTS.DANGER,
+    });
+    if (response === 'DELETE') {
+      handleDeleteWorkspace(workspace.id, workspace.name);
+    }
+  };
+
+  const deleteWorkspaceModalContent = (workspace) => (
+    <>
+      <p>Are you sure you want to delete this workspace? (This action is irreversible)</p>
+      <p>
+        Workspace Name:
+        <i>
+          <b>{workspace}</b>
+        </i>
+      </p>
+    </>
+  );
+
+  const handleViewChange = (val) => {
+    if (val === viewType) return;
+
+    setPage(0);
+    setSelectedWorkspace({ id: '', name: '' });
+    setViewType(val);
+  };
+
+  const [columnVisibility, setColumnVisibility] = useState({});
+
+  if (!canViewWorkspace) {
+    return <DefaultError permissionKey={Keys.WorkspaceManagementViewWorkspace} />;
+  }
+
+  return (
+    <NoSsr>
+      <ErrorBoundary>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <Breadcrumbs
+            separator={
+              <RightArrowIcon height={20} width={20} primaryFill={theme.palette.icon.default} />
+            }
+            aria-label="breadcrumb"
+          >
+            <div
+              style={{
+                cursor: selectedWorkspace.id ? 'pointer' : 'default',
+                color: selectedWorkspace.id
+                  ? theme.palette.background.brand.default
+                  : theme.palette.text.default,
+                textDecoration: 'none',
+              }}
+              onClick={() => {
+                if (selectedWorkspace.id) {
+                  setSelectedWorkspace({ id: '', name: '' });
+                }
+              }}
+            >
+              All Workspaces
+            </div>
+            {selectedWorkspace.id && <Typography>{selectedWorkspace.name}</Typography>}
+          </Breadcrumbs>
+        </div>
+        {!selectedWorkspace.id && (
+          <ToolWrapper>
+            <CreateButtonWrapper style={{ marginRight: '2rem' }}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={(e) =>
+                  handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE, selectedWorkspace)
+                }
+                sx={{
+                  backgroundColor: '#607d8b',
+                  padding: '8px',
+                  borderRadius: '5px',
+                }}
+                permissionKey={Keys.WorkspaceManagementCreateWorkspace}
+                data-cy="btnResetDatabase"
+              >
+                <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
+                <Typography
+                  sx={{
+                    paddingLeft: '4px',
+                    marginRight: '4px',
+                    textTransform: 'none',
+                  }}
+                >
+                  Create
+                </Typography>
+              </Button>
+            </CreateButtonWrapper>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              {!selectedWorkspace?.id && (
+                <>
+                  <SearchBar
+                    onSearch={(value) => {
+                      setSearch(value);
+                    }}
+                    placeholder="Search Workspaces..."
+                    expanded={isSearchExpanded}
+                    setExpanded={setIsSearchExpanded}
+                  />
+                  {viewType !== 'grid' && (
+                    <CustomColumnVisibilityControl
+                      columns={columnList}
+                      customToolsProps={{ columnVisibility, setColumnVisibility }}
+                    />
+                  )}
+                </>
+              )}
+              <ViewSwitch
+                view={viewType}
+                changeView={handleViewChange}
+                key={`view-switch-${viewType}`} // Add key to force re-render when viewType changes
+              />
+            </Box>
+          </ToolWrapper>
+        )}
+        <>
+          {workspaces.length === 0 ? (
+            <EmptyState
+              icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
+              message="No workspace available"
+              pointerLabel="Click “Create” to establish your first workspace."
+            />
+          ) : viewType === 'grid' ? (
+            <WorkspaceGridView
+              handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
+              handleWorkspaceModalOpen={handleWorkspaceModalOpen}
+              page={page}
+              setPage={setPage}
+              totalPages={Math.ceil(workspacesData?.totalCount / pageSize)}
+              workspacesData={workspaces}
+              key={`grid-view-${viewType}`}
+            />
+          ) : (
+            <WorkspaceDataTable
+              handleWorkspaceModalOpen={handleWorkspaceModalOpen}
+              handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
+              handleTeamsModalOpen={handleTeamsModalOpen}
+              handleActivityModalOpen={handleActivityModalOpen}
+              columnVisibility={columnVisibility}
+              handleRowClick={handleRowClick}
+              selectedWorkspace={selectedWorkspace}
+              setColumnVisibility={setColumnVisibility}
+              search={search}
+              viewType={viewType}
+            />
+          )}
+        </>
+        {(actionType === WORKSPACE_ACTION_TYPES.CREATE ? canCreateWorkspace : canEditWorkspace) &&
+          workspaceModal.open && (
+            <Modal
+              open={workspaceModal.open}
+              closeModal={handleWorkspaceModalClose}
+              title={
+                actionType === WORKSPACE_ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'
+              }
+            >
+              <RJSFModalWrapper
+                schema={workspaceModal.schema.schema}
+                uiSchema={workspaceModal.schema.uiSchema}
+                handleSubmit={
+                  actionType === WORKSPACE_ACTION_TYPES.CREATE
+                    ? handleCreateWorkspace
+                    : handleEditWorkspace
+                }
+                submitBtnText={actionType === WORKSPACE_ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                initialData={initialData}
+                handleClose={handleWorkspaceModalClose}
+                isSubmitting={createResult.isLoading || updateResult.isLoading}
+              />
+            </Modal>
+          )}
+        <Modal
+          maxWidth="lg"
+          open={teamsModal.open}
+          closeModal={handleTeamsModalClose}
+          title={`Manage "${teamsModal.workspaceName}" Teams`}
+          headerIcon={<TeamsIcon {...iconMedium} primaryFill={theme.palette.common.white} />}
+        >
+          <WorkspaceTeamsTable
+            workspaceId={teamsModal.workspaceId}
+            isAssignTeamAllowed={canAssignTeam}
+            isDeleteTeamAllowed={canDeleteTeam}
+            isEditTeamAllowed={canEditTeam}
+            isLeaveTeamAllowed={canLeaveTeam}
+            useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
+            useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
+            useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}
+            workspaceName={teamsModal.workspaceName}
+            fetchTeamUsers={() => {}}
+            org_id={organization?.id}
+            useGetUsersForOrgQuery={useGetUsersForOrgQuery}
+            useNotificationHandlers={useNotificationHandlers}
+            useRemoveUserFromTeamMutation={useRemoveUserFromTeamMutation}
+            isRemoveTeamFromWorkspaceAllowed={canRemoveTeamFromWorkspace}
+          />
+          <ModalFooter variant="filled"></ModalFooter>
+        </Modal>
+        <WorkspaceRecentActivityModal
+          workspaceId={activityModal.workspaceId}
+          workspaceName={activityModal.workspaceName}
+          open={activityModal.open}
+          handleClose={handleActivityModalClose}
+          useGetEventsOfWorkspaceQuery={useGetEventsOfWorkspaceQuery}
+        />
+
+        <_PromptComponent ref={ref} />
+        <_PromptComponent ref={bulkDeleteRef} />
+      </ErrorBoundary>
+    </NoSsr>
+  );
+};
+
+const WorkspacesPageWithErrorBoundary = ({ onSelectWorkspace }) => {
+  return (
+    <NoSsr>
+      <Workspaces onSelectWorkspace={onSelectWorkspace} />
+    </NoSsr>
+  );
+};
+
+export default WorkspacesPageWithErrorBoundary;

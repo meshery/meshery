@@ -3,6 +3,9 @@ title: mesheryctl-connection
 display_title: false
 command: connection
 subcommand: nil
+categories: [mesheryctl-connection]
+aliases:
+- /reference/references/mesheryctl/connection/
 ---
 
 # mesheryctl connection
@@ -15,8 +18,10 @@ View and manage your Meshery connection.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,60 +30,76 @@ mesheryctl connection [flags]
 Display total count of all available connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection --count
 
+</div>
 </div>
 </pre> 
 
 Create a new Kubernetes connection using a specific type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection create --type aks
 
 </div>
+</div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection create --type eks
 
 </div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl connection create --type gke
-
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl connection create --type gke
+
+</div>
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection create --type minikube
 
+</div>
 </div>
 </pre> 
 
 List all the connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection list
 
+</div>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection list --count
 
+</div>
 </div>
 </pre> 
 
 Delete a connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection delete [connection_id]
 
+</div>
 </div>
 </pre> 
 
@@ -104,4 +125,4 @@ mesheryctl connection delete [connection_id]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

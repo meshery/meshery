@@ -1,0 +1,1 @@
+Hi I'm Anjali Chhikara Btech student at IIIT delhi I am looking forward to contributing at meshery. The concept of meshery is really fascinating to me that it enables engineers to visually design, deploy, and operate Kubernetes clusters and cloud infrastructure.Would really like to contribute to such a cool idea.

@@ -3,6 +3,9 @@ title: mesheryctl-connection-list
 display_title: false
 command: connection
 subcommand: list
+categories: [mesheryctl-connection]
+aliases:
+- /reference/references/mesheryctl/connection/list/
 ---
 
 # mesheryctl connection list
@@ -15,8 +18,10 @@ List all available connections.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection list [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,40 +30,50 @@ mesheryctl connection list [flags]
 List all the connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection list
 
+</div>
 </div>
 </pre> 
 
 List all the connections with page number
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection list --page [page-number]
 
+</div>
 </div>
 </pre> 
 
 List all the connections matching a specific kind and status
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection list --kind [kind] --status [status]
 
+</div>
 </div>
 </pre> 
 
 List all the connections matching a set of kinds and statuses
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection list --kind [kind] --kind [kind] --status [status] --status [status]
 
+</div>
 </div>
 </pre> 
 
 Display total count of all available connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection list --count
 
+</div>
 </div>
 </pre> 
 
@@ -88,4 +103,4 @@ mesheryctl connection list --count
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

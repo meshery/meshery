@@ -3,6 +3,9 @@ title: mesheryctl-design-export
 display_title: false
 command: design
 subcommand: export
+categories: [mesheryctl-design]
+aliases:
+- /reference/references/mesheryctl/design/export/
 ---
 
 # mesheryctl design export
@@ -18,8 +21,10 @@ By default, the exported design will be saved in the current directory. The diff
 type allowed are oci, original, and current. The default design type is current.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design export [pattern-name | ID] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -28,32 +33,40 @@ mesheryctl design export [pattern-name | ID] [flags]
 Export a design with a specific ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design export [pattern-name | ID]
 
+</div>
 </div>
 </pre> 
 
 Export a design with a specific ID and type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design export [pattern-name | ID] --type [design-type]
 
+</div>
 </div>
 </pre> 
 
 Export a design and save it to a specific directory
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design export [pattern-name | ID] --output ./designs
 
+</div>
 </div>
 </pre> 
 
 Export a design with a specific type and save it to a directory
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exports
 
+</div>
 </div>
 </pre> 
 
@@ -81,4 +94,4 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

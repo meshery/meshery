@@ -23,11 +23,19 @@ on:
         required: true
         default: "warning"
 
+# Least-privilege baseline for the default GITHUB_TOKEN, which actions/checkout
+# persists into the runner's git config. Nothing here writes with it: the only
+# writes in this workflow push Allure results to the meshery/qa repository and
+# authenticate with the GH_ACCESS_TOKEN PAT, and actions/upload-artifact uses
+# the Actions runtime token rather than this one. Matches build-and-test.yml.
+permissions:
+  contents: read
+
 jobs:
   golangci-server:
     strategy:
       matrix:
-        go: [1.25]
+        go: [1.26.4]
         os: [ubuntu-24.04]
     name: golangci-lint-server
     if: github.repository == 'meshery/meshery'
@@ -40,9 +48,19 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.7
+          version: v2.12.2
           args: --config=../.github/.golangci.yml --timeout=10m
+          only-new-issues: ${{ github.event_name == 'pull_request' }}
           working-directory: ./server
+      # gorm's Order() interpolates a string into the SQL verbatim - the sink
+      # behind every Meshery CVE. models.SanitizeOrderInput closes it, and this
+      # analyzer is what keeps a new call site from skipping it. It covers the
+      # whole root module (server and mesheryctl), so it runs once here rather
+      # than in both lint jobs. golangci-lint cannot host it without a custom
+      # binary built from its module plugin system; see
+      # docs/content/en/project/contributing/contributing-lint.md.
+      - name: ORDER BY sanitization lint
+        run: go run ./server/internal/lint/orderby/cmd/orderbylint ./...
   unit-tests-server:
     name: server Unit tests
     runs-on: ubuntu-24.04
@@ -54,11 +72,11 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.25"
+          go-version-file: go.mod
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
       - name: Run coverage
         run: go test -json --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic > server-test-output.json
       - name: Convert Go test results to Allure
@@ -90,7 +108,7 @@ jobs:
         if: ${{ !cancelled() && github.event_name == 'push' }}
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: "[Meshery] Sync Go Unit Test Results - ${GITHUB_SHA}"
+          commit_message: "[Meshery] Sync Go Unit Test Results - ${{ github.sha }}"
           commit_options: "--signoff"
           repository: qa
           commit_user_name: meshery-ci
@@ -100,7 +118,7 @@ jobs:
   golangci-cli:
     strategy:
       matrix:
-        go: [1.25]
+        go: [1.26.4]
         os: [ubuntu-24.04]
     name: golangci-lint-cli
     if: github.repository == 'meshery/meshery'
@@ -113,8 +131,9 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.7
+          version: v2.12.2
           args: --config=../.github/.golangci.yml --timeout=10m
+          only-new-issues: ${{ github.event_name == 'pull_request' }}
           working-directory: ./mesheryctl
   unit-tests-cli:
     name: mesheryctl Unit tests
@@ -129,15 +148,23 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.25"
+          go-version-file: go.mod
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
       - name: Run mesheryctl coverage
-        run: go test -json --short ./mesheryctl/... -race -coverprofile=mesheryctl-coverage.txt -covermode=atomic > mesheryctl-test-output.json
+        # `| tee` makes the pipeline exit with tee's status, which is always 0.
+        # These steps run under GitHub's default shell, `bash -e {0}`, which does
+        # NOT set pipefail - so a failing `go test` here was invisible and this
+        # job could not fail on a mesheryctl test failure. The server step above
+        # is unaffected because it redirects with `>` rather than piping.
+        # Same pattern as ui/'s vitest step in eslint-gh.yml.
+        run: |
+          go test -json --short ./mesheryctl/... -race -coverprofile=mesheryctl-coverage.txt -covermode=atomic | tee mesheryctl-test-output.json
+          exit "${PIPESTATUS[0]}"
       - name: Convert Go test results to Allure
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && github.event_name == 'push' }}
         run: |
           ALLURE_OUTPUT_PATH=mesheryctl-allure-results \
           ALLURE_LABELS="project=mesheryctl,type=unit,env=ci" \
@@ -154,7 +181,7 @@ jobs:
       - name: Sync results with qa
         if: ${{ !cancelled() && github.event_name == 'push' }}
         working-directory: qa
-        run: make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl-allure-results
+        run: make mesheryctl-unit-results-sync MESHERYCTL_UNIT_RESULTS_PATH=../mesheryctl-allure-results
 
       - name: Pull latest qa changes
         if: ${{ !cancelled() && github.event_name == 'push' }}
@@ -165,7 +192,7 @@ jobs:
         if: ${{ !cancelled() && github.event_name == 'push' }}
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: "[Mesheryctl] Sync Go Unit Test Results - ${GITHUB_SHA}"
+          commit_message: "[Mesheryctl] Sync Go Unit Test Results - ${{ github.sha }}"
           commit_options: "--signoff"
           repository: qa
           commit_user_name: meshery-ci
@@ -187,7 +214,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.25"
+          go-version-file: go.mod
       - name: Build Mesheryctl Binaries
         run: make
         working-directory: ./mesheryctl
@@ -237,4 +264,3 @@ jobs:
           ./mesheryctl system stop -y;
           echo "Running Mesheryctl with ${{ matrix.platform }} completed."
         working-directory: ./mesheryctl
-
