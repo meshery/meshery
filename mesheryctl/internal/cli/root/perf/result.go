@@ -77,6 +77,9 @@ mesheryctl perf result saturday-profile --view
 		if outputFormatFlag != "" {
 			return display.ValidateOutputFormat(outputFormatFlag)
 		}
+		if pageNumber < 1 {
+			return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '%d'", pageNumber))
+		}
 		return nil
 	},
 
