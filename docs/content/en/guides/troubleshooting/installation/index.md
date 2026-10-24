@@ -4,106 +4,120 @@ description: Troubleshoot Meshery installation and deployment
 categories: [troubleshooting]
 ---
 
-## Meshery's Preflight Checks
+## mesheryctl preflight checks
 
-Anytime a `mesheryctl system` command is executed, a series of preflight checks are run. An attempt will be made to connect to the Kubernetes cluster configured in the user's kubeconfig as their current-context .
+Before `mesheryctl system start` and other `mesheryctl system` commands deploy anything, they check that your environment is ready. For a Kubernetes context, `mesheryctl` connects to the cluster in your kubeconfig's current context. To run the same checks yourself, run `mesheryctl system check --preflight`. See [Running system checks]({{< ref "guides/mesheryctl/running-system-checks-using-mesheryctl.md" >}}).
 
-1. Check whether `mesheryctl` can initialize a Kubernetes client.
+- **Situation:** `mesheryctl` cannot create a Kubernetes client or query the Kubernetes API.
 
-   Situation: `mesheryctl` fails to query for pods in the default namespace of the user's current Kubernetes context.
+  **Fix:** Run `kubectl config current-context` and `kubectl get pods` to confirm that your kubeconfig points at a reachable cluster.
 
-2. Remove `~/.meshery` to reinitialize Meshery
+- **Situation:** Meshery Server fails to start with the error `key/value size is invalid`.
 
-   Situation: Unable to start Meshery Server with `make run-local` due to error of `key/value size is invalid`
+  **Fix:** Meshery Server's local database is corrupt. Remove the database file and its write-ahead log files so that Meshery Server recreates them, then start Meshery again. This deletes the data Meshery stores locally, but keeps your `mesheryctl` contexts in `~/.meshery/config.yaml`:
 
-## Setting up Meshery using Kind or Minikube
+  ```bash
+  DB_DIR="${USER_DATA_FOLDER:-$HOME/.meshery/config}"
+  rm -f "$DB_DIR/mesherydb.sql" "$DB_DIR/mesherydb.sql-wal" "$DB_DIR/mesherydb.sql-shm"
+  ```
 
-The difficulty with Minikube and Kind clusters is that they typically don't support LoadBalancer service networking by default. Meshery UI and Meshery Broker are configured for LoadBalancer service networking by default. There are a number of solutions this overcoming this challenge. Here are a few methods:
+## Access Meshery UI on kind or Minikube
 
-1. Use the MetalLB Minikube add-on that provides load balancing. `minikube addons enable metallb`
+The Helm chart exposes Meshery Server through a `LoadBalancer` service by default. Minikube and kind clusters usually have no load balancer, so the service never gets an external address. Use one of these methods to reach Meshery UI:
 
-   MetalLB setup: [link](https://metallb.io/installation/)
+- **Port-forward with mesheryctl.** This works on any cluster:
 
-2. Use Minikube tunnel to expose services. `minikube tunnel`.
+    ```bash
+    mesheryctl system dashboard --port-forward
+    ```
 
-   Docs: [link](https://minikube.sigs.k8s.io/docs/handbook/accessing/#using-minikube-tunnel)
+    {{% mesheryctl/system-dashboard %}}
 
-   A simpler way to resolve this issue can be `port-forwarding`. Run the following command in terminal:
+- **Port-forward with kubectl:**
 
-   `kubectl port-forward service/meshery 9081:9081 -n meshery`
+    ```bash
+    kubectl port-forward service/meshery 9081:9081 -n meshery
+    ```
 
-   {% include mesheryctl/system-dashboard.md %}
+    Then open `http://localhost:9081`.
 
-3. For `kind`, you can prefer installing MetalLB with a custom configmap.
-
-   Docs: [link](https://kind.sigs.k8s.io/docs/user/loadbalancer/)
+- **Minikube tunnel.** Run `minikube tunnel` in a separate terminal to give `LoadBalancer` services an address. See [Using minikube tunnel](https://minikube.sigs.k8s.io/docs/handbook/accessing/#using-minikube-tunnel).
+- **MetalLB on Minikube.** Run `minikube addons enable metallb` and configure an address range. See [MetalLB installation](https://metallb.io/installation/).
+- **Cloud Provider KIND on kind.** See [LoadBalancer in kind](https://kind.sigs.k8s.io/docs/user/loadbalancer/).
 
 ## Meshery Operator
 
-By default, Meshery Operator is installed in all the connected clusters automatically once Meshery server detects those clusters. The operator can manually be turned off on particular cluster from the settings page.
+Meshery Server deploys Meshery Operator into each Kubernetes cluster you connect, unless you turn that off.
 
-### Disabling the operator
+### Turn off Meshery Operator
 
-The env variable DISABLE_OPERATOR=true can be used to signal Meshery server to not install operator in any of the clusters at any point in time after starting. While using Meshery server locally, the `make server-without-operator` should be used to start Meshery in disabled operator mode.
+Set the environment variable `DISABLE_OPERATOR=true` on Meshery Server to stop it from deploying Meshery Operator into any cluster. Set it in one of these ways:
+
+- On Docker with `mesheryctl`, add the variable to the `env` section of your context in `~/.meshery/config.yaml`, then run `mesheryctl system start`. `mesheryctl` uppercases the key and passes it to the Meshery Server container:
+
+    ```yaml
+    contexts:
+      local:
+        env:
+          disable_operator: true
+    ```
+
+- When you run Meshery Server from source, run `make server-without-operator` instead of `make server`.
+
+For per-cluster control and the other Operator settings, see [Configuring Meshery Operator, MeshSync, and Broker]({{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md" >}}).
 
 ### Meshery Broker
 
-Example of a healthy Meshery Broker server with an actively connected (subscribed) Meshery Server:
+Meshery Broker is a NATS server. Current Meshery Operator releases run it as the `meshery-nats` StatefulSet; older releases named it `meshery-broker`. A healthy Broker logs lines like these:
 
 ```shell
-➜  ~ kubectl logs -n meshery meshery-broker-0 nats
-[8] 2021/09/08 21:46:03.070952 [INF] Starting nats-server version 2.1.9
-[8] 2021/09/08 21:46:03.070982 [INF] Git commit [7c76626]
-[8] 2021/09/08 21:46:03.071308 [INF] Starting http monitor on 0.0.0.0:8222
-[8] 2021/09/08 21:46:03.071370 [INF] Listening for client connections on 0.0.0.0:4222
-[8] 2021/09/08 21:46:03.071512 [INF] Server id is NAAYJNX4LDDNXW5UE7IP7PRQR2W2JP546XSFNUWQQHN7JYY27RG47KSG
-[8] 2021/09/08 21:46:03.071516 [INF] Server is ready
+$ kubectl logs -n meshery meshery-nats-0 -c nats
+[7] [INF] Starting nats-server
+[7] [INF] Starting http monitor on 0.0.0.0:8222
+[7] [INF] Listening for client connections on 0.0.0.0:4222
+[7] [INF] Server is ready
 ```
 
-For details about the state of the Meshery Server subscription see the http monitor port on Meshery Broker.
+To see which clients, including Meshery Server, are subscribed, query the Broker's HTTP monitoring port, `8222`. For other Broker and MeshSync problems, see [Troubleshooting Meshery Operator, MeshSync, and Broker]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}).
 
-### Meshery Unable to Connect to Kubernetes
+### Meshery can't connect to Kubernetes
 
-Meshery is unable to detect the Kubernetes connection running on your local system, even after manually uploading the `.kube config` file
+If Meshery doesn't detect your cluster even after you import your kubeconfig, check two things:
 
-When deploying Meshery out-of-cluster, verify your kubeconfig's contexts and the ability for Meshery Server to reach Kubernetes cluster API from whatever host and network that Meshery Server is being deployed on.
+1. Your kubeconfig has the context you expect:
 
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">kubectl config get-contexts</div></div>
-</pre>
+    ```bash
+    kubectl config get-contexts
+    ```
 
-If you're using Docker Desktop, consider whether you need to change your current Kubernetes context to `docker-desktop`.
+    If you use Docker Desktop's Kubernetes, switch to its context:
 
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">kubectl config use-context
-docker-desktop</div></div>
-</pre>
+    ```bash
+    kubectl config use-context docker-desktop
+    ```
 
-## Meshery Remote Providers
+2. Meshery Server can reach the cluster's API server from the host and network it runs on. This matters most when Meshery runs outside the cluster, for example in Docker. A kubeconfig that points at `127.0.0.1` works from your shell but not from inside the Meshery container.
 
-Once Meshery is installed, the remote provider "Meshery" can be chosen from UI or by using the command `mesheryctl system login`:
+See [Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}) for how to import a kubeconfig.
+
+## Meshery remote providers
+
+After you install Meshery, choose the **Meshery** remote provider in Meshery UI or with `mesheryctl system login`:
 
 ![Providers](images/provider_screenshot.png)
 
-```bash
-➜  ~ mesheryctl system login
+```text
+$ mesheryctl system login
 Use the arrow keys to navigate: ↓ ↑ → ←
 ? Select a Provider:
   ▸ Meshery
-    None
+    Local
 ```
 
-If you cannot see "Meshery" Remote Provider and find such error logs in Meshery Server's logs (`mesheryctl system logs`), please make sure that Meshery Server is able to reach "https://cloud.meshery.io" in order to initialize the "Meshery" Remote Provider.
+If the **Meshery** provider is missing or fails when you pick it, run `mesheryctl system logs` and look for errors that reach `cloud.meshery.io`. Meshery Server must be able to reach `https://cloud.meshery.io` to load the Meshery provider's capabilities.
 
-```bash
-time="2021-11-10T11:05:30Z" level=error msg="[Initialize Provider]: Failed to get capabilities Get \"https://cloud.meshery.io/v0.5.71/capabilities?os=meshery\": dial tcp 3.140.89.205:443: i/o timeout"
-```
+For more about providers, see [Extensibility: Providers]({{< ref "reference/extensibility/providers/index.md" >}}).
 
-For more details about Meshery Providers:
+## Additional resources
 
-- [Extensibility: Providers]({{< ref "reference/extensibility/providers/index.md" >}})
-
-## Additional Resources
-
-- [Meshery Error Code Reference]({{< ref "reference/references/error-codes.md" >}})
-
+- [Meshery Error Code Reference]({{< ref "reference/error-codes.md" >}})

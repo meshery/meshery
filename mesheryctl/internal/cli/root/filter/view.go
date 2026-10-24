@@ -45,7 +45,7 @@ var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View filter(s)",
 	Long: `Displays the contents of a specific filter based on name or id.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/filter/view`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/filter/view`,
 	Example: `
 // View the specified WASM filter
 // A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.

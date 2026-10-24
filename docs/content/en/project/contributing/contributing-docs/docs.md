@@ -156,6 +156,7 @@ You should be able to access the site on port `1313`. If you want to access it i
 ### Make Necessary Changes
 - Make changes as required based on the issue you are solving.
 - Ensure to verify that your changes reflect correctly by serving the site locally using `make site`.
+- Before writing or restructuring a page, decide whether it is a tutorial, a how-to guide, a concept, or reference. See [Choosing a Content Type]({{< ref "project/contributing/contributing-docs/content-types" >}}).
 
 {{% alert color="light" title="Note" %}}
 Never move, rename, merge, or delete a published page without a redirect. In Hugo, add the old URL (trailing-slash form) to the `aliases` field in the front matter of the page that now holds the content, and keep any aliases the old page already had. Do not add an alias that matches the URL of another published page.

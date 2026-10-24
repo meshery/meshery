@@ -4,10 +4,12 @@ description: Learn how to create a Meshery Design using the built-in Design Conf
 categories: [configuration]
 aliases:
 - /guides/configuration-management/working-with-designs
+- /guides/configuration-management/pattern-management
 - /tasks/patterns
+- /tasks/pattern-management/
 ---
 
-A Meshery Design is the primary unit of configuration management in Meshery. It is a declarative document that describes the desired state of your infrastructure and applications — the components you want, their configuration, and their relationships. Designs can be deployed, shared, versioned, exported, and imported.
+A Meshery Design is the primary unit of configuration management in Meshery. It is a declarative document that describes the desired state of your infrastructure and applications: the components you want, their configuration, and their relationships. You can deploy, share, version, export, and import designs.
 
 See [Meshery Designs]({{< ref "concepts/logical/designs.md" >}}) for a full description of design capabilities.
 
@@ -18,60 +20,46 @@ Meshery UI | fa fa-desktop
 
 ## Using the Design Configurator in Meshery UI
 
-The Design Configurator is a built-in tool in Meshery UI. It lets you browse infrastructure categories and models, add components to a design, configure each component through guided forms, and save the resulting design — all without writing YAML by hand.
+The Design Configurator is built into Meshery UI. It lists the components of a model, gives each one a form generated from its schema, and shows the resulting design as YAML next to the forms, so you don't have to write YAML by hand.
 
-### Step 1 — Open the Design Configurator
+### Step 1: Open the Design Configurator
 
-1. Log in to Meshery and go to the **Designs** page (left navigation).
-2. Click **+ New Design** (or open an existing design to edit it).  
-   The Design Configurator opens with an empty canvas and a component panel on the left.
+1. In Meshery UI, go to **Configuration** > **Designs**.
+2. Click **Create Design**. To edit an existing design instead, open it from the list.
 
-Opening the configurator requires the **View Designs** permission, the same key the **Designs** page itself requires. Without it, the configurator shows the permission-denied page rather than the canvas. See [Extensibility: Authorization]({{< ref "reference/extensibility/authorization/index.md" >}}).
+The configurator opens with a YAML editor. Opening it requires the **View Designs** permission, the same key the **Designs** page requires. Without it, the configurator shows the permission-denied page instead. See [Extensibility: Authorization]({{< ref "reference/extensibility/authorization/index.md" >}}).
 
-### Step 2 — Name Your Design
+### Step 2: Name your design
 
-Give your design a meaningful name in the **Design Name** field at the top of the configurator. This name is used when saving, sharing, or deploying the design.
+Enter a name in the **Design Name** field in the toolbar. Meshery uses this name when you save, share, or deploy the design.
 
-### Step 3 — Add Components
+### Step 3: Choose a model
 
-1. In the **Category** dropdown, select the infrastructure category you want to work with (for example, *Kubernetes*, *AWS*, *Prometheus*).
-2. In the **Model** dropdown, select the specific model within that category (for example, *Deployment*, *Service*, *ConfigMap* within the Kubernetes category).
-3. Click the model or component name to add it to your design. The component appears in the design document on the right.
+1. In the **Select Category** dropdown, choose a category, for example *Orchestration & Management*.
+2. In the **Select Model** dropdown, choose a model in that category, for example *Kubernetes*.
 
-Repeat this process to add as many components as your design requires.
+The configurator lists a form for each component of the model, such as *Deployment*, *Service*, and *ConfigMap*, next to the YAML editor.
 
-### Step 4 — Configure Components
+### Step 4: Configure components
 
-Click any component in the design panel to open its configuration form. The form is generated from the component's schema and includes:
+Expand a component's form and fill in its fields. Each form is generated from the component's schema, so it marks required fields and shows nested properties you can expand. As you fill in a form, the configurator adds the component to the design and updates the YAML.
 
-- Required fields (highlighted)
-- Optional fields with defaults
-- Nested sub-properties (expand to configure)
+Choose another category or model at any time to add components from it to the same design.
 
-Fill in the fields for your environment. Changes are applied to the design document in real time.
+### Step 5: Save the design
 
-### Step 5 — Save the Design
+- For a new design, click the **Save Design as New File** icon.
+- For a design you opened from the list, click the **Update Design** icon to save your changes, or **Save Design as New File** to save a copy.
 
-Click **Save** (floppy disk icon) to save your design. Meshery stores the design in your account. Use **Save As** to create a copy under a new name.
+Your saved design appears on the **Designs** page, where you can deploy, export, share, or edit it.
 
-Your saved design appears on the **Designs** page, where you can deploy, export, share, or further edit it.
+## Editing YAML directly
 
-## Using the Design Configurator to Edit YAML Directly
+The YAML editor sits next to the component forms. To write or paste a design by hand, edit the YAML in that editor. It must follow the design schema in [Meshery Schemas](https://github.com/meshery/schemas). Your edits update the design, and changes from the forms appear in the editor.
 
-The Design Configurator also exposes a **code editor** panel alongside the form view. If you prefer to write or paste YAML directly:
+## Starting from an existing design
 
-1. Open or create a design.
-2. Switch to the **YAML/Code** view in the configurator toolbar.
-3. Enter valid Meshery Design YAML (following the [Meshery Schemas](https://github.com/meshery/schemas) spec).
-4. Click **Save**.
-
-Changes made in the code editor are reflected immediately in the form view, and vice versa.
-
-## Seed Designs
-
-When you start Meshery for the first time, a set of seed designs is available. These cover common Kubernetes patterns and serve as a starting point for exploration.
-
-You can also import community designs from the [Meshery Catalog](https://meshery.io/catalog) or from a Git repository.
+Instead of starting from nothing, import a design from the [Meshery Catalog](https://meshery.io/catalog), from a URL, or from a Kubernetes manifest, Helm chart, or Docker Compose file. See [Importing and Exporting Designs]({{< ref "guides/configuration-management/import-export-designs.md" >}}).
 
 <img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
 
@@ -80,21 +68,23 @@ mesheryctl | fa fa-terminal
 
 ## Using mesheryctl
 
-You can also create and manage designs from the command line using `mesheryctl`.
+Use `mesheryctl` to bring a design file into Meshery and deploy it from the command line.
 
 ### Import a design from a file
 
 ```bash
-mesheryctl design import -f your-design.yaml
+mesheryctl design import -f your-design.yaml -n "My Design"
 ```
 
-### Apply a design by file
+`-f` accepts a local path or a direct URL. The file can be a Meshery design, a Kubernetes manifest, a Helm chart, or a Docker Compose file.
+
+### Deploy a design from a file
 
 ```bash
 mesheryctl design apply -f your-design.yaml
 ```
 
-### Apply an already-imported design by name
+### Deploy a saved design by name
 
 ```bash
 mesheryctl design apply MyDesignName
@@ -106,5 +96,5 @@ mesheryctl design apply MyDesignName
 mesheryctl design list
 ```
 
-See the [`mesheryctl design` reference]({{< ref "reference/references/mesheryctl/design/_index.md" >}}) for the full subcommand reference.
+See the [`mesheryctl design` reference]({{< ref "reference/mesheryctl/design/_index.md" >}}) for the full subcommand reference.
 {{< /tabs >}}
