@@ -40,6 +40,9 @@ mesheryctl model search [query-text] --pagesize [pagesize-number]
 		if len(args) == 0 {
 			return utils.ErrInvalidArgument(errors.New(errSearchModelName))
 		}
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(errors.New(errInvalidArg))
+		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
