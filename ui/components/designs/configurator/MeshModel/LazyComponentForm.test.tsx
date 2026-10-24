@@ -75,7 +75,27 @@ describe('LazyComponentForm', () => {
     });
   });
 
-  it('requests the schema using the component api version', async () => {
+  it('requests the schema using the processed top-level api version', async () => {
+    const deployment = {
+      ...makeComponent('Deployment'),
+      component: { kind: 'Deployment', version: 'apps/v1beta1' },
+      apiVersion: 'apps/v1',
+    };
+    render(<LazyComponentForm component={deployment} />);
+
+    fireEvent.click(screen.getByTestId('accordion-toggle'));
+
+    await waitFor(() =>
+      expect(getMeshModelComponentMock).toHaveBeenCalledWith(
+        'kubernetes',
+        'Deployment',
+        'v1.0.0',
+        'apps/v1',
+      ),
+    );
+  });
+
+  it('falls back to the component api version when none was processed', async () => {
     render(<LazyComponentForm component={makeComponent('Deployment')} />);
 
     fireEvent.click(screen.getByTestId('accordion-toggle'));

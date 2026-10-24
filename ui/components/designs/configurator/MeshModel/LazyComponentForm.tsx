@@ -63,8 +63,11 @@ export default function LazyComponentForm({
 
     setExpanded(true);
     setHasBeenExpanded(true);
+    // useMeshModelComponents sets a top-level apiVersion to the latest version of the
+    // kind; fall back to the definition's own version when it is not present.
     const {
-      component: { version: apiVersion, kind },
+      component: { version: componentApiVersion, kind },
+      apiVersion = componentApiVersion,
       model,
     } = component;
     const {
