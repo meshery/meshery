@@ -1,0 +1,55 @@
+package utils
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+	"strings"
+	"testing"
+	"time"
+)
+
+func getMockSSE(chunks []string) *http.Response {
+	r, w := io.Pipe()
+	go func() {
+		defer w.Close()
+		for _, chunk := range chunks {
+			time.Sleep(200 * time.Millisecond)
+			fmt.Fprint(w, chunk)
+		}
+	}()
+
+	return &http.Response{
+		Body: r,
+	}
+}
+
+func TestSSEConversion(t *testing.T) {
+	chunks := []string{
+		"id: id1\n",
+		"event: event1\n",
+		`data: {"details":"details1","operation_id":"op_id1","summary":"summary1"}` + "\n",
+		"\n",
+	}
+	resp := getMockSSE(chunks)
+	ch, err := ConvertRespToSSE(resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ev := <-ch
+	if strings.TrimSpace(ev.ID) != "id1" {
+		t.Errorf("expected id id1 but got %s", ev.ID)
+	}
+	if strings.TrimSpace(ev.Name) != "event1" {
+		t.Errorf("expected event event1 but got %s", ev.Name)
+	}
+	if strings.TrimSpace(ev.Data.Details) != "details1" {
+		t.Errorf("expected details details1 but got %s", ev.Data.Details)
+	}
+	if strings.TrimSpace(ev.Data.OperationID) != "op_id1" {
+		t.Errorf("expected operations id op_id1 but got %s", ev.Data.OperationID)
+	}
+	if strings.TrimSpace(ev.Data.Summary) != "summary1" {
+		t.Errorf("expected summary summary1 but got %s", ev.Data.Summary)
+	}
+}
