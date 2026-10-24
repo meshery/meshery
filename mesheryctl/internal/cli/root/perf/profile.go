@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -74,12 +75,8 @@ mesheryctl perf profile test --view
 			return utils.ErrLoadConfig(err)
 		}
 
-		// handles spaces in args if quoted args passed
-		for i, arg := range args {
-			args[i] = strings.ReplaceAll(arg, " ", "%20")
-		}
 		// Merge args to get profile-name
-		searchString = strings.Join(args, "%20")
+		searchString = strings.Join(args, " ")
 
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
@@ -151,17 +148,17 @@ mesheryctl perf profile test --view
 func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber int) ([]perfprofile.PerformanceProfile, []byte, error) {
 	var response *perfprofile.PerformanceProfilePage
 
-	url := baseURL + "/api/performance/profiles"
+	reqURL := baseURL + "/api/performance/profiles"
 
 	// update the url
-	url = fmt.Sprintf("%s?pagesize=%d&page=%d", url, pageSize, pageNumber)
+	reqURL = fmt.Sprintf("%s?pagesize=%d&page=%d", reqURL, pageSize, pageNumber)
 	if searchString != "" {
-		url = url + "&search=" + searchString
+		reqURL = reqURL + "&search=" + url.QueryEscape(searchString)
 	}
 
-	// utils.Log.Debug(url)
+	// utils.Log.Debug(reqURL)
 
-	req, err := utils.NewRequest("GET", url, nil)
+	req, err := utils.NewRequest("GET", reqURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}

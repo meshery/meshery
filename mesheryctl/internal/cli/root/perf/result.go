@@ -96,12 +96,8 @@ mesheryctl perf result saturday-profile --view
 			return ErrNoProfileName()
 		}
 
-		// handles spaces in args if quoted args passed
-		for i, arg := range args {
-			args[i] = strings.ReplaceAll(arg, " ", "%20")
-		}
 		// Merge args to get profile-name
-		searchString = strings.Join(args, "%20")
+		searchString = strings.Join(args, " ")
 
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
