@@ -118,19 +118,19 @@ When your diagrams require a more distinct visual style or an element for emphas
 
 To see how this works in practice, let's take the Kubernetes `Deployment` component as an example. Its appearance adapts to different views in the Meshery UI:
 
-1.The full component shape as it appears in a design:
+1. The full component shape as it appears in a design:
 
 <a href="./images/deployment-shape.png">
     <img src="./images/deployment-shape.png" style="width:30%; height:auto;" alt="Deployment Component Shape">
 </a>
 
-2.The simplified icon as it appears in a component selection panel:
+2. The simplified icon as it appears in a component selection panel:
 
 <a href="./images/deployment-icon.png">
     <img src="./images/deployment-icon.png" style="width:50%; height:auto;" alt="Deployment icon in a component selection panel">
 </a>
 
-3.The icon as seen in a cluster resource overview:
+3. The icon as seen in a cluster resource overview:
 
 <a href="./images/deployment-dashboard.png">
     <img src="./images/deployment-dashboard.png" style="width:50%; height:auto;" alt="Deployment component in a cluster resource overview">

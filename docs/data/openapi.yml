@@ -69,8 +69,8 @@ tags:
     description: Operations related to Blowhorn profiles.
   - name: Claim_claims
     description: Operations related to claims on resources.
-  - name: ContentPiece_contentPieces
-    description: Operations related to content pieces.
+  - name: ContentItem_contentItems
+    description: Operations related to content items.
   - name: Design_designs
     description: Operations related to designs and infrastructure patterns
   - name: Design_github
@@ -95,10 +95,12 @@ tags:
     description: APIs for managing Meshery performance profiles.
   - name: Plan_Plans
     description: Operations related to plans
+  - name: Profile_profiles
+    description: APIs for profiles.
   - name: ProviderCapability_capabilities
     description: Operations related to the provider's capabilities document.
   - name: Schedule_schedules
-    description: Operations related to organization schedules and their claims.
+    description: Operations related to organization schedules.
   - name: Subscription_Subscriptions
     description: Operations related to subscriptions
   - name: Subscription_Plans
@@ -113,6 +115,8 @@ tags:
     description: APIs for Meshery Cloud views associated with workspaces.
   - name: Workspace_designs
     description: APIs for Meshery Cloud designs associated with workspaces.
+  - name: Workspace_profiles
+    description: APIs for Meshery Cloud profiles associated with workspaces.
 paths:
   /api/system/controllers/config:
     get:
@@ -4392,6 +4396,21 @@ paths:
                                         type: string
                                         format: date-time
                                         x-go-type-skip-optional-pointer: true
+                                      organizationId:
+                                        type: string
+                                        format: uuid
+                                        description: >-
+                                          A Universally Unique Identifier used to uniquely identify entities in Meshery.
+                                          The UUID core definition is used across different schemas.
+                                        x-go-type: uuid.UUID
+                                        x-go-type-import:
+                                          path: github.com/gofrs/uuid
+                                        x-go-name: OrganizationID
+                                        x-oapi-codegen-extra-tags:
+                                          db: organization_id
+                                          json: organizationId,omitempty
+                                          yaml: organizationId
+                                        x-order: 15
                                       environments:
                                         type: array
                                         description: Associated environments for this connection
@@ -8706,6 +8725,21 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          type: string
+                                          format: uuid
+                                          description: >-
+                                            A Universally Unique Identifier used to uniquely identify entities in
+                                            Meshery. The UUID core definition is used across different schemas.
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -12956,6 +12990,27 @@ paths:
                                       type: string
                                       format: date-time
                                       x-go-type-skip-optional-pointer: true
+                                    organizationId:
+                                      description: >
+                                        The organization the connection belongs to. The server sets it from the session
+                                        organization. A client-supplied value is ignored. Optional on this superseded
+                                        shape, which live model responses still embed as `registrant`
+                                        (`additionalProperties: false`, so the field has to be declared for the server
+                                        to return it). v1beta3 Connection requires it. Not marked readOnly: this
+                                        connection is inlined into `POST /api/registry/relationships/evaluate` through a
+                                        component model's registrant, and readOnly there drops the design field from the
+                                        generated RTK client.
+                                      x-go-name: OrganizationID
+                                      x-oapi-codegen-extra-tags:
+                                        db: organization_id
+                                        json: organizationId,omitempty
+                                        yaml: organizationId
+                                      x-order: 15
+                                      type: string
+                                      format: uuid
+                                      x-go-type: uuid.UUID
+                                      x-go-type-import:
+                                        path: github.com/gofrs/uuid
                                     environments:
                                       type: array
                                       description: Associated environments for this connection
@@ -14094,6 +14149,27 @@ paths:
                                       type: string
                                       format: date-time
                                       x-go-type-skip-optional-pointer: true
+                                    organizationId:
+                                      description: >
+                                        The organization the connection belongs to. The server sets it from the session
+                                        organization. A client-supplied value is ignored. Optional on this superseded
+                                        shape, which live model responses still embed as `registrant`
+                                        (`additionalProperties: false`, so the field has to be declared for the server
+                                        to return it). v1beta3 Connection requires it. Not marked readOnly: this
+                                        connection is inlined into `POST /api/registry/relationships/evaluate` through a
+                                        component model's registrant, and readOnly there drops the design field from the
+                                        generated RTK client.
+                                      x-go-name: OrganizationID
+                                      x-oapi-codegen-extra-tags:
+                                        db: organization_id
+                                        json: organizationId,omitempty
+                                        yaml: organizationId
+                                      x-order: 15
+                                      type: string
+                                      format: uuid
+                                      x-go-type: uuid.UUID
+                                      x-go-type-import:
+                                        path: github.com/gofrs/uuid
                                     environments:
                                       type: array
                                       description: Associated environments for this connection
@@ -15358,6 +15434,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -17606,6 +17703,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -34148,6 +34266,27 @@ paths:
                                       type: string
                                       format: date-time
                                       x-go-type-skip-optional-pointer: true
+                                    organizationId:
+                                      description: >
+                                        The organization the connection belongs to. The server sets it from the session
+                                        organization. A client-supplied value is ignored. Optional on this superseded
+                                        shape, which live model responses still embed as `registrant`
+                                        (`additionalProperties: false`, so the field has to be declared for the server
+                                        to return it). v1beta3 Connection requires it. Not marked readOnly: this
+                                        connection is inlined into `POST /api/registry/relationships/evaluate` through a
+                                        component model's registrant, and readOnly there drops the design field from the
+                                        generated RTK client.
+                                      x-go-name: OrganizationID
+                                      x-oapi-codegen-extra-tags:
+                                        db: organization_id
+                                        json: organizationId,omitempty
+                                        yaml: organizationId
+                                      x-order: 15
+                                      type: string
+                                      format: uuid
+                                      x-go-type: uuid.UUID
+                                      x-go-type-import:
+                                        path: github.com/gofrs/uuid
                                     environments:
                                       type: array
                                       description: Associated environments for this connection
@@ -35290,6 +35429,27 @@ paths:
                                       type: string
                                       format: date-time
                                       x-go-type-skip-optional-pointer: true
+                                    organizationId:
+                                      description: >
+                                        The organization the connection belongs to. The server sets it from the session
+                                        organization. A client-supplied value is ignored. Optional on this superseded
+                                        shape, which live model responses still embed as `registrant`
+                                        (`additionalProperties: false`, so the field has to be declared for the server
+                                        to return it). v1beta3 Connection requires it. Not marked readOnly: this
+                                        connection is inlined into `POST /api/registry/relationships/evaluate` through a
+                                        component model's registrant, and readOnly there drops the design field from the
+                                        generated RTK client.
+                                      x-go-name: OrganizationID
+                                      x-oapi-codegen-extra-tags:
+                                        db: organization_id
+                                        json: organizationId,omitempty
+                                        yaml: organizationId
+                                      x-order: 15
+                                      type: string
+                                      format: uuid
+                                      x-go-type: uuid.UUID
+                                      x-go-type-import:
+                                        path: github.com/gofrs/uuid
                                     environments:
                                       type: array
                                       description: Associated environments for this connection
@@ -36534,6 +36694,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -38789,6 +38970,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -41030,6 +41232,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -43278,6 +43501,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -45515,6 +45759,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -47318,6 +47583,7 @@ paths:
                     - subType
                     - kind
                     - status
+                    - organizationId
                   properties:
                     id:
                       description: Connection ID
@@ -47341,7 +47607,7 @@ paths:
                     description:
                       x-oapi-codegen-extra-tags:
                         db: description
-                        json: description
+                        json: description,omitempty
                       x-order: 3
                       type: string
                       description: Human-readable description of the connection and its purpose.
@@ -47349,7 +47615,7 @@ paths:
                     url:
                       x-oapi-codegen-extra-tags:
                         db: url
-                        json: url
+                        json: url,omitempty
                       x-order: 4
                       type: string
                       format: uri
@@ -48030,15 +48296,18 @@ paths:
                       x-go-type-skip-optional-pointer: true
                     organizationId:
                       description: >
-                        Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                        registration. Servers implementing this contract use it, with the owner and
-                        `metadata.machineId`, as the deduplication key for `desktop` connections. Lets an organization
-                        list and count its connections (for example its registered desktop installs) without going
-                        through each owner. Absent on connections that predate it.
+                        The organization the connection belongs to. The server sets it from the session organization
+                        (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
+                        connection is registered, and keeps it on later updates. Never accepted from clients on
+                        connection write payloads. Not marked readOnly: `RegistrantData` inlines this entity into
+                        registry registration requests, and readOnly there drops the connection field from the generated
+                        RTK client. A value sent on that inlined connection is ignored. With the owner and
+                        `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                      x-go-name: OrganizationID
+                      x-go-type-skip-optional-pointer: true
                       x-oapi-codegen-extra-tags:
                         db: organization_id
-                        json: organizationId,omitempty
-                      x-go-type-skip-optional-pointer: false
+                        json: organizationId
                       x-order: 19
                       type: string
                       format: uuid
@@ -48204,11 +48473,9 @@ paths:
                               What the environment exists for. `user` is an ordinary environment that people create to
                               logically group Connections and their Credentials. `administrative` designates an
                               environment the platform itself provisions to hold organization-level configuration, and
-                              which resolvers of that configuration therefore trust. `profile` is an ordinary,
-                              non-privileged environment that holds one profile, by convention one per profile: `name`
-                              is the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
-                              settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
-                              authority and a client may choose it.
+                              which resolvers of that configuration therefore trust. Profiles are not environments: they
+                              are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles`
+                              and assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                               Absent means `user`. Nothing may read an unset or unrecognised value as administrative:
@@ -48227,14 +48494,14 @@ paths:
 
                               Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
                               every environment POST and PUT requestBody references, accepts only the non-privileged
-                              values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                              environment create and update endpoints cannot designate an environment administrative.
-                              That restriction is a codegen guarantee, never access control: the registrant connection
-                              inlines the full environment entity, so `registerRegistryComponent` and
-                              `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                              refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                              assign this property only from server-side provisioning or a data migration. Permission to
-                              create an environment does not confer the ability to make one administrative.
+                              value `user`, and the create-or-edit form has no field for it, so the environment create
+                              and update endpoints cannot designate an environment administrative. That restriction is a
+                              codegen guarantee, never access control: the registrant connection inlines the full
+                              environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                              carry `purpose` in a request type and consumers MUST refuse it on input there too.
+                              Whatever surface a value arrives on, every consumer MUST assign this property only from
+                              server-side provisioning or a data migration. Permission to create an environment does not
+                              confer the ability to make one administrative.
 
 
                               The database index that enforces the uniqueness invariant, the migration path for
@@ -48244,11 +48511,9 @@ paths:
                             enum:
                               - user
                               - administrative
-                              - profile
                             x-enum-varnames:
                               - EnvironmentPurposeUser
                               - EnvironmentPurposeAdministrative
-                              - EnvironmentPurposeProfile
                             x-go-type-skip-optional-pointer: true
                             x-oapi-codegen-extra-tags:
                               db: purpose
@@ -48770,6 +49035,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -57511,6 +57797,7 @@ paths:
                     - subType
                     - kind
                     - status
+                    - organizationId
                   properties:
                     id:
                       description: Connection ID
@@ -57534,7 +57821,7 @@ paths:
                     description:
                       x-oapi-codegen-extra-tags:
                         db: description
-                        json: description
+                        json: description,omitempty
                       x-order: 3
                       type: string
                       description: Human-readable description of the connection and its purpose.
@@ -57542,7 +57829,7 @@ paths:
                     url:
                       x-oapi-codegen-extra-tags:
                         db: url
-                        json: url
+                        json: url,omitempty
                       x-order: 4
                       type: string
                       format: uri
@@ -58223,15 +58510,18 @@ paths:
                       x-go-type-skip-optional-pointer: true
                     organizationId:
                       description: >
-                        Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                        registration. Servers implementing this contract use it, with the owner and
-                        `metadata.machineId`, as the deduplication key for `desktop` connections. Lets an organization
-                        list and count its connections (for example its registered desktop installs) without going
-                        through each owner. Absent on connections that predate it.
+                        The organization the connection belongs to. The server sets it from the session organization
+                        (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
+                        connection is registered, and keeps it on later updates. Never accepted from clients on
+                        connection write payloads. Not marked readOnly: `RegistrantData` inlines this entity into
+                        registry registration requests, and readOnly there drops the connection field from the generated
+                        RTK client. A value sent on that inlined connection is ignored. With the owner and
+                        `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                      x-go-name: OrganizationID
+                      x-go-type-skip-optional-pointer: true
                       x-oapi-codegen-extra-tags:
                         db: organization_id
-                        json: organizationId,omitempty
-                      x-go-type-skip-optional-pointer: false
+                        json: organizationId
                       x-order: 19
                       type: string
                       format: uuid
@@ -58397,11 +58687,9 @@ paths:
                               What the environment exists for. `user` is an ordinary environment that people create to
                               logically group Connections and their Credentials. `administrative` designates an
                               environment the platform itself provisions to hold organization-level configuration, and
-                              which resolvers of that configuration therefore trust. `profile` is an ordinary,
-                              non-privileged environment that holds one profile, by convention one per profile: `name`
-                              is the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
-                              settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
-                              authority and a client may choose it.
+                              which resolvers of that configuration therefore trust. Profiles are not environments: they
+                              are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles`
+                              and assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                               Absent means `user`. Nothing may read an unset or unrecognised value as administrative:
@@ -58420,14 +58708,14 @@ paths:
 
                               Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
                               every environment POST and PUT requestBody references, accepts only the non-privileged
-                              values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                              environment create and update endpoints cannot designate an environment administrative.
-                              That restriction is a codegen guarantee, never access control: the registrant connection
-                              inlines the full environment entity, so `registerRegistryComponent` and
-                              `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                              refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                              assign this property only from server-side provisioning or a data migration. Permission to
-                              create an environment does not confer the ability to make one administrative.
+                              value `user`, and the create-or-edit form has no field for it, so the environment create
+                              and update endpoints cannot designate an environment administrative. That restriction is a
+                              codegen guarantee, never access control: the registrant connection inlines the full
+                              environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                              carry `purpose` in a request type and consumers MUST refuse it on input there too.
+                              Whatever surface a value arrives on, every consumer MUST assign this property only from
+                              server-side provisioning or a data migration. Permission to create an environment does not
+                              confer the ability to make one administrative.
 
 
                               The database index that enforces the uniqueness invariant, the migration path for
@@ -58437,11 +58725,9 @@ paths:
                             enum:
                               - user
                               - administrative
-                              - profile
                             x-enum-varnames:
                               - EnvironmentPurposeUser
                               - EnvironmentPurposeAdministrative
-                              - EnvironmentPurposeProfile
                             x-go-type-skip-optional-pointer: true
                             x-oapi-codegen-extra-tags:
                               db: purpose
@@ -58718,6 +59004,26 @@ paths:
                                   type: string
                                   format: date-time
                                   x-go-type-skip-optional-pointer: true
+                                organizationId:
+                                  description: >
+                                    The organization the connection belongs to. The server sets it from the session
+                                    organization. A client-supplied value is ignored. Optional on this superseded shape,
+                                    which live model responses still embed as `registrant` (`additionalProperties:
+                                    false`, so the field has to be declared for the server to return it). v1beta3
+                                    Connection requires it. Not marked readOnly: this connection is inlined into `POST
+                                    /api/registry/relationships/evaluate` through a component model's registrant, and
+                                    readOnly there drops the design field from the generated RTK client.
+                                  x-go-name: OrganizationID
+                                  x-oapi-codegen-extra-tags:
+                                    db: organization_id
+                                    json: organizationId,omitempty
+                                    yaml: organizationId
+                                  x-order: 15
+                                  type: string
+                                  format: uuid
+                                  x-go-type: uuid.UUID
+                                  x-go-type-import:
+                                    path: github.com/gofrs/uuid
                                 environments:
                                   type: array
                                   description: Associated environments for this connection
@@ -59536,6 +59842,27 @@ paths:
                                     type: string
                                     format: date-time
                                     x-go-type-skip-optional-pointer: true
+                                  organizationId:
+                                    description: >
+                                      The organization the connection belongs to. The server sets it from the session
+                                      organization. A client-supplied value is ignored. Optional on this superseded
+                                      shape, which live model responses still embed as `registrant`
+                                      (`additionalProperties: false`, so the field has to be declared for the server to
+                                      return it). v1beta3 Connection requires it. Not marked readOnly: this connection
+                                      is inlined into `POST /api/registry/relationships/evaluate` through a component
+                                      model's registrant, and readOnly there drops the design field from the generated
+                                      RTK client.
+                                    x-go-name: OrganizationID
+                                    x-oapi-codegen-extra-tags:
+                                      db: organization_id
+                                      json: organizationId,omitempty
+                                      yaml: organizationId
+                                    x-order: 15
+                                    type: string
+                                    format: uuid
+                                    x-go-type: uuid.UUID
+                                    x-go-type-import:
+                                      path: github.com/gofrs/uuid
                                   environments:
                                     type: array
                                     description: Associated environments for this connection
@@ -71034,6 +71361,7 @@ paths:
                         - subType
                         - kind
                         - status
+                        - organizationId
                       properties:
                         id:
                           description: Connection ID
@@ -71057,7 +71385,7 @@ paths:
                         description:
                           x-oapi-codegen-extra-tags:
                             db: description
-                            json: description
+                            json: description,omitempty
                           x-order: 3
                           type: string
                           description: Human-readable description of the connection and its purpose.
@@ -71065,7 +71393,7 @@ paths:
                         url:
                           x-oapi-codegen-extra-tags:
                             db: url
-                            json: url
+                            json: url,omitempty
                           x-order: 4
                           type: string
                           format: uri
@@ -71754,15 +72082,18 @@ paths:
                           x-go-type-skip-optional-pointer: true
                         organizationId:
                           description: >
-                            Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                            registration. Servers implementing this contract use it, with the owner and
-                            `metadata.machineId`, as the deduplication key for `desktop` connections. Lets an
-                            organization list and count its connections (for example its registered desktop installs)
-                            without going through each owner. Absent on connections that predate it.
+                            The organization the connection belongs to. The server sets it from the session organization
+                            (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when
+                            the connection is registered, and keeps it on later updates. Never accepted from clients on
+                            connection write payloads. Not marked readOnly: `RegistrantData` inlines this entity into
+                            registry registration requests, and readOnly there drops the connection field from the
+                            generated RTK client. A value sent on that inlined connection is ignored. With the owner and
+                            `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                          x-go-name: OrganizationID
+                          x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: organization_id
-                            json: organizationId,omitempty
-                          x-go-type-skip-optional-pointer: false
+                            json: organizationId
                           x-order: 19
                           type: string
                           format: uuid
@@ -71928,11 +72259,10 @@ paths:
                                   What the environment exists for. `user` is an ordinary environment that people create
                                   to logically group Connections and their Credentials. `administrative` designates an
                                   environment the platform itself provisions to hold organization-level configuration,
-                                  and which resolvers of that configuration therefore trust. `profile` is an ordinary,
-                                  non-privileged environment that holds one profile, by convention one per profile:
-                                  `name` is the profile's short name, `owner` is the profile's user, `metadata` holds
-                                  the profile's settings, and the profile's accounts are linked as Connections. Like
-                                  `user`, it carries no authority and a client may choose it.
+                                  and which resolvers of that configuration therefore trust. Profiles are not
+                                  environments: they are their own construct (`schemas/constructs/v1beta3/profile`,
+                                  served at `/api/profiles` and assigned to workspaces under
+                                  `/api/workspaces/{workspaceId}/profiles`).
 
 
                                   Absent means `user`. Nothing may read an unset or unrecognised value as
@@ -71951,8 +72281,8 @@ paths:
 
                                   Privileged values are server-owned and never client-settable. `EnvironmentPayload`,
                                   which every environment POST and PUT requestBody references, accepts only the
-                                  non-privileged values (`user` and `profile`), and the create-or-edit form has no field
-                                  for it, so the environment create and update endpoints cannot designate an environment
+                                  non-privileged value `user`, and the create-or-edit form has no field for it, so the
+                                  environment create and update endpoints cannot designate an environment
                                   administrative. That restriction is a codegen guarantee, never access control: the
                                   registrant connection inlines the full environment entity, so
                                   `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose` in a
@@ -71969,11 +72299,9 @@ paths:
                                 enum:
                                   - user
                                   - administrative
-                                  - profile
                                 x-enum-varnames:
                                   - EnvironmentPurposeUser
                                   - EnvironmentPurposeAdministrative
-                                  - EnvironmentPurposeProfile
                                 x-go-type-skip-optional-pointer: true
                                 x-oapi-codegen-extra-tags:
                                   db: purpose
@@ -72059,22 +72387,38 @@ paths:
         it is refused with a `409` MeshKit error that names the reserved GitHub App connection identity.
 
 
+        Every connection belongs to exactly one organization. The server assigns `organizationId` from the session
+        (`X-Current-Orgid`, then the caller's selected organization) and does not accept it in the body.
+
+
         Desktop registration uses this shared operation, but kind `desktop` is implemented by Cloud: a server that does
         not support it rejects a `desktop` body with `400`. The heartbeat and deregistration routes are Cloud-only. A
-        client desktop app install registers itself on sign-in with kind `desktop`, type `platform`, sub_type
-        `management`, status `connected`, and `metadata` matching `DesktopConnectionMetadata`. Servers implementing this
-        contract must take the organization from the `X-Current-Orgid` header, refuse a `desktop` registration without
-        it with `400`, and refuse a caller who is not a live member of that organization with `403`. They must
-        deduplicate on (organization, owner, `metadata.machineId`): registering the same machine again updates that
-        connection and returns `200`, while a new connection returns `201`. A `desktop` body whose metadata lacks
-        `machineId` is refused with `400`. The kind names the connection type, never the product that runs on the
-        machine.
+        client desktop app install registers itself on every connect to Cloud, sign-in included, with kind `desktop`,
+        type `platform`, sub_type `management`, status `connected`, and `metadata` matching `DesktopConnectionMetadata`.
+        Servers implementing this contract must take the organization from the `X-Current-Orgid` header, refuse a
+        `desktop` registration without it with `400`, and refuse a caller who is not a live member of that organization
+        with `403`. They must deduplicate on (organization, owner, `metadata.installationId`): registering the same
+        install again updates that connection and returns `200`, while a new connection returns `201`. A `desktop` body
+        whose metadata lacks `installationId` is refused with `400`. Installs on one computer share
+        `metadata.computerId`, so a server can group them by computer. The kind names the connection type, never the
+        product that runs on the machine.
+
+
+        A `desktop` registration whose `metadata.clientName` and `metadata.appVersion` fall below the server's minimum
+        version for that client is refused with `426` and a `ClientUpgradeRequiredError` body; the connection, when it
+        exists, is set to `maintenance`. Servers must link the API token that authenticated the registration to the
+        connection (`metadata.tokenId`, server-written) and revoke that token when the connection is deregistered or
+        deleted. When a later registration of the same connection authenticates with a different token, the server
+        revokes the token previously linked to it. Registrations beyond the organization's device limit are accepted;
+        the organization is flagged through the capabilities document's `session.deviceUsage` instead.
       parameters:
         - name: X-Current-Orgid
           in: header
           required: false
-          description: |
-            Organization the connection is registered in. Required for kind `desktop`; ignored for other kinds.
+          description: >
+            Session organization. The server assigns `Connection.organizationId` from this header when it is present,
+            and from the caller's selected organization when it is absent. Kind `desktop` requires the header: a desktop
+            registration without it is refused with 400.
           schema:
             type: string
             format: uuid
@@ -72084,7 +72428,9 @@ paths:
           application/json:
             schema:
               type: object
-              description: Payload for creating or updating a connection
+              description: >
+                Payload for creating or updating a connection. `organizationId` is not a client field. The server
+                assigns it from the session organization.
               properties:
                 id:
                   type: string
@@ -72570,6 +72916,7 @@ paths:
                   - subType
                   - kind
                   - status
+                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -72593,7 +72940,7 @@ paths:
                   description:
                     x-oapi-codegen-extra-tags:
                       db: description
-                      json: description
+                      json: description,omitempty
                     x-order: 3
                     type: string
                     description: Human-readable description of the connection and its purpose.
@@ -72601,7 +72948,7 @@ paths:
                   url:
                     x-oapi-codegen-extra-tags:
                       db: url
-                      json: url
+                      json: url,omitempty
                     x-order: 4
                     type: string
                     format: uri
@@ -73272,15 +73619,18 @@ paths:
                     x-go-type-skip-optional-pointer: true
                   organizationId:
                     description: >
-                      Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      The organization the connection belongs to. The server sets it from the session organization
+                      (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
+                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
+                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
+                      registration requests, and readOnly there drops the connection field from the generated RTK
+                      client. A value sent on that inlined connection is ignored. With the owner and
+                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                    x-go-name: OrganizationID
+                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId,omitempty
-                    x-go-type-skip-optional-pointer: false
+                      json: organizationId
                     x-order: 19
                     type: string
                     format: uuid
@@ -73444,11 +73794,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
-                            non-privileged environment that holds one profile, by convention one per profile: `name` is
-                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
-                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
-                            authority and a client may choose it.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -73466,15 +73814,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -73484,11 +73832,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -73538,6 +73884,7 @@ paths:
                   - subType
                   - kind
                   - status
+                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -73561,7 +73908,7 @@ paths:
                   description:
                     x-oapi-codegen-extra-tags:
                       db: description
-                      json: description
+                      json: description,omitempty
                     x-order: 3
                     type: string
                     description: Human-readable description of the connection and its purpose.
@@ -73569,7 +73916,7 @@ paths:
                   url:
                     x-oapi-codegen-extra-tags:
                       db: url
-                      json: url
+                      json: url,omitempty
                     x-order: 4
                     type: string
                     format: uri
@@ -74240,15 +74587,18 @@ paths:
                     x-go-type-skip-optional-pointer: true
                   organizationId:
                     description: >
-                      Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      The organization the connection belongs to. The server sets it from the session organization
+                      (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
+                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
+                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
+                      registration requests, and readOnly there drops the connection field from the generated RTK
+                      client. A value sent on that inlined connection is ignored. With the owner and
+                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                    x-go-name: OrganizationID
+                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId,omitempty
-                    x-go-type-skip-optional-pointer: false
+                      json: organizationId
                     x-order: 19
                     type: string
                     format: uuid
@@ -74412,11 +74762,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
-                            non-privileged environment that holds one profile, by convention one per profile: `name` is
-                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
-                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
-                            authority and a client may choose it.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -74434,15 +74782,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -74452,11 +74800,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -74548,6 +74894,71 @@ paths:
                     description: MeshKit's suggested remediations for the error.
                     items:
                       type: string
+        '426':
+          description: >
+            The client's version is below the provider's minimum for that client. The client must update before it can
+            register or keep a connection alive; the body names the minimum and where to get an update.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >
+                  Body of a 426 answer: a MeshKit error sentence plus the client's compatibility, so the client can show
+                  the minimum and where to update.
+                additionalProperties: false
+                required:
+                  - error
+                  - compatibility
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: MeshKit error code allocated by the emitting service; not a stable part of this contract.
+                  compatibility:
+                    type: object
+                    description: >
+                      Whether a client application's version meets the provider's minimum for that client. A client
+                      whose `compatible` is false must update before it registers or keeps a connection alive; the
+                      provider answers those calls with 426. A client the provider has no minimum for is compatible and
+                      has no `minimumVersion`.
+                    additionalProperties: false
+                    required:
+                      - clientName
+                      - clientVersion
+                      - compatible
+                    properties:
+                      clientName:
+                        type: string
+                        description: >
+                          Identifier of a client application, for example the product name of a desktop app, lowercase.
+                          It is a value chosen by the client; the provider keys its minimum client versions by it.
+                        minLength: 1
+                        maxLength: 64
+                        pattern: ^[a-z0-9][a-z0-9-]*$
+                      clientVersion:
+                        type: string
+                        description: >-
+                          The client's version as it reported it, as `MAJOR.MINOR.PATCH` with an optional leading `v`,
+                          for example `v1.25.0`. Versions are ordered by their numeric parts, so `v1.9.0` is older than
+                          `v1.25.0`.
+                        maxLength: 64
+                      minimumVersion:
+                        type: string
+                        description: >-
+                          Oldest client version the provider accepts for this client. Absent when the provider sets no
+                          minimum.
+                        maxLength: 64
+                      compatible:
+                        type: boolean
+                        description: True when `clientVersion` is at or above `minimumVersion`, or when there is no minimum.
+                      upgradeUrl:
+                        type: string
+                        description: Where the client can get an update, when the provider knows one.
+                        maxLength: 2048
         '500':
           description: Internal server error
           content:
@@ -74815,6 +75226,7 @@ paths:
                   - subType
                   - kind
                   - status
+                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -74838,7 +75250,7 @@ paths:
                   description:
                     x-oapi-codegen-extra-tags:
                       db: description
-                      json: description
+                      json: description,omitempty
                     x-order: 3
                     type: string
                     description: Human-readable description of the connection and its purpose.
@@ -74846,7 +75258,7 @@ paths:
                   url:
                     x-oapi-codegen-extra-tags:
                       db: url
-                      json: url
+                      json: url,omitempty
                     x-order: 4
                     type: string
                     format: uri
@@ -75517,15 +75929,18 @@ paths:
                     x-go-type-skip-optional-pointer: true
                   organizationId:
                     description: >
-                      Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      The organization the connection belongs to. The server sets it from the session organization
+                      (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
+                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
+                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
+                      registration requests, and readOnly there drops the connection field from the generated RTK
+                      client. A value sent on that inlined connection is ignored. With the owner and
+                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                    x-go-name: OrganizationID
+                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId,omitempty
-                    x-go-type-skip-optional-pointer: false
+                      json: organizationId
                     x-order: 19
                     type: string
                     format: uuid
@@ -75689,11 +76104,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
-                            non-privileged environment that holds one profile, by convention one per profile: `name` is
-                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
-                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
-                            authority and a client may choose it.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -75711,15 +76124,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -75729,11 +76142,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -75795,7 +76206,7 @@ paths:
         On the GitHub App connection itself, the server-written metadata keys `installations`, `installationId` and
         `installationsVerifiedAt` are carried forward from the stored row: a client edit can neither set nor erase them
         (other metadata keys are written as sent). Their shape is `GithubConnectionMetadata` in the v1beta3 `github`
-        construct.
+        construct. `organizationId` is not in the body. The server keeps the organization assigned at registration.
       parameters:
         - name: connectionId
           in: path
@@ -75810,7 +76221,9 @@ paths:
           application/json:
             schema:
               type: object
-              description: Payload for creating or updating a connection
+              description: >
+                Payload for creating or updating a connection. `organizationId` is not a client field. The server
+                assigns it from the session organization.
               properties:
                 id:
                   type: string
@@ -76296,6 +76709,7 @@ paths:
                   - subType
                   - kind
                   - status
+                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -76319,7 +76733,7 @@ paths:
                   description:
                     x-oapi-codegen-extra-tags:
                       db: description
-                      json: description
+                      json: description,omitempty
                     x-order: 3
                     type: string
                     description: Human-readable description of the connection and its purpose.
@@ -76327,7 +76741,7 @@ paths:
                   url:
                     x-oapi-codegen-extra-tags:
                       db: url
-                      json: url
+                      json: url,omitempty
                     x-order: 4
                     type: string
                     format: uri
@@ -76998,15 +77412,18 @@ paths:
                     x-go-type-skip-optional-pointer: true
                   organizationId:
                     description: >
-                      Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      The organization the connection belongs to. The server sets it from the session organization
+                      (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
+                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
+                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
+                      registration requests, and readOnly there drops the connection field from the generated RTK
+                      client. A value sent on that inlined connection is ignored. With the owner and
+                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                    x-go-name: OrganizationID
+                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId,omitempty
-                    x-go-type-skip-optional-pointer: false
+                      json: organizationId
                     x-order: 19
                     type: string
                     format: uuid
@@ -77170,11 +77587,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
-                            non-privileged environment that holds one profile, by convention one per profile: `name` is
-                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
-                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
-                            authority and a client may choose it.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -77192,15 +77607,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -77210,11 +77625,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -77320,7 +77733,7 @@ paths:
         - Connection_API_Connections
       operationId: deleteConnection
       summary: Delete a connection
-      description: Delete a specific connection
+      description: Delete a specific connection. Deleting a connection that has a `metadata.tokenId` revokes that token.
       parameters:
         - name: connectionId
           in: path
@@ -77424,6 +77837,7 @@ paths:
                   - subType
                   - kind
                   - status
+                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -77447,7 +77861,7 @@ paths:
                   description:
                     x-oapi-codegen-extra-tags:
                       db: description
-                      json: description
+                      json: description,omitempty
                     x-order: 3
                     type: string
                     description: Human-readable description of the connection and its purpose.
@@ -77455,7 +77869,7 @@ paths:
                   url:
                     x-oapi-codegen-extra-tags:
                       db: url
-                      json: url
+                      json: url,omitempty
                     x-order: 4
                     type: string
                     format: uri
@@ -78126,15 +78540,18 @@ paths:
                     x-go-type-skip-optional-pointer: true
                   organizationId:
                     description: >
-                      Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      The organization the connection belongs to. The server sets it from the session organization
+                      (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
+                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
+                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
+                      registration requests, and readOnly there drops the connection field from the generated RTK
+                      client. A value sent on that inlined connection is ignored. With the owner and
+                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                    x-go-name: OrganizationID
+                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId,omitempty
-                    x-go-type-skip-optional-pointer: false
+                      json: organizationId
                     x-order: 19
                     type: string
                     format: uuid
@@ -78298,11 +78715,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
-                            non-privileged environment that holds one profile, by convention one per profile: `name` is
-                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
-                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
-                            authority and a client may choose it.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -78320,15 +78735,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -78338,11 +78753,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -80403,7 +80816,12 @@ paths:
                 minItems: 1
                 items:
                   type: object
-                  description: Server-returned design (pattern) resource as persisted by meshery-cloud.
+                  description: >
+                    Server-returned design (pattern) resource as persisted in `meshery_patterns`. `organizationId` is
+                    required and read-only: the server assigns it from the session organization and clients never send
+                    it.
+                  required:
+                    - organizationId
                   properties:
                     id:
                       description: Server-generated design ID.
@@ -80520,6 +80938,23 @@ paths:
                       x-go-type-import:
                         path: github.com/gofrs/uuid
                       x-go-type-skip-optional-pointer: true
+                    organizationId:
+                      description: >
+                        The organization the design belongs to. The server sets it from the session organization
+                        (`X-Current-Orgid`, or the caller's selected organization) on create, including import. Never
+                        accepted from clients. A workspace this design is assigned to must belong to this same
+                        organization.
+                      readOnly: true
+                      x-go-name: OrganizationID
+                      x-go-type-skip-optional-pointer: true
+                      x-oapi-codegen-extra-tags:
+                        db: organization_id
+                        json: organizationId
+                      type: string
+                      format: uuid
+                      x-go-type: uuid.UUID
+                      x-go-type-import:
+                        path: github.com/gofrs/uuid
                     user:
                       description: >
                         Owning user record, joined inline by the catalog list/get handlers when shaping responses.
@@ -81336,7 +81771,7 @@ paths:
                   format: uuid
                 metadata:
                   type: object
-                  description: Free-form settings stored with the environment, for example a profile's settings.
+                  description: Free-form settings stored with the environment.
                   additionalProperties: true
                   x-go-type: core.Map
                   x-go-type-import:
@@ -81346,16 +81781,14 @@ paths:
                 purpose:
                   type: string
                   description: >-
-                    The purposes a client may give an environment on create or update: `user` (an ordinary environment)
-                    or `profile` (an ordinary environment holding one profile's settings and accounts). Omitted means
-                    `user` on create and unchanged on update. A server refuses any other value with 400, and never lets
-                    this field change an environment that already carries a privileged purpose.
+                    The purpose a client may give an environment on create or update: `user` (an ordinary environment).
+                    Profiles are not environments; they are their own construct at `/api/profiles`, assigned to
+                    workspaces. Omitted means `user` on create and unchanged on update. A server refuses any other value
+                    with 400, and never lets this field change an environment that already carries a privileged purpose.
                   enum:
                     - user
-                    - profile
                   x-enum-varnames:
                     - EnvironmentPayloadPurposeUser
-                    - EnvironmentPayloadPurposeProfile
       responses:
         '201':
           description: Created environment
@@ -81510,10 +81943,9 @@ paths:
                       What the environment exists for. `user` is an ordinary environment that people create to logically
                       group Connections and their Credentials. `administrative` designates an environment the platform
                       itself provisions to hold organization-level configuration, and which resolvers of that
-                      configuration therefore trust. `profile` is an ordinary, non-privileged environment that holds one
-                      profile, by convention one per profile: `name` is the profile's short name, `owner` is the
-                      profile's user, `metadata` holds the profile's settings, and the profile's accounts are linked as
-                      Connections. Like `user`, it carries no authority and a client may choose it.
+                      configuration therefore trust. Profiles are not environments: they are their own construct
+                      (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and assigned to workspaces under
+                      `/api/workspaces/{workspaceId}/profiles`).
 
 
                       Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test for
@@ -81529,10 +81961,10 @@ paths:
 
 
                       Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which every
-                      environment POST and PUT requestBody references, accepts only the non-privileged values (`user`
-                      and `profile`), and the create-or-edit form has no field for it, so the environment create and
-                      update endpoints cannot designate an environment administrative. That restriction is a codegen
-                      guarantee, never access control: the registrant connection inlines the full environment entity, so
+                      environment POST and PUT requestBody references, accepts only the non-privileged value `user`, and
+                      the create-or-edit form has no field for it, so the environment create and update endpoints cannot
+                      designate an environment administrative. That restriction is a codegen guarantee, never access
+                      control: the registrant connection inlines the full environment entity, so
                       `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose` in a request
                       type and consumers MUST refuse it on input there too. Whatever surface a value arrives on, every
                       consumer MUST assign this property only from server-side provisioning or a data migration.
@@ -81545,11 +81977,9 @@ paths:
                     enum:
                       - user
                       - administrative
-                      - profile
                     x-enum-varnames:
                       - EnvironmentPurposeUser
                       - EnvironmentPurposeAdministrative
-                      - EnvironmentPurposeProfile
                     x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: purpose
@@ -81635,10 +82065,8 @@ paths:
               What the environment exists for. `user` is an ordinary environment that people create to logically group
               Connections and their Credentials. `administrative` designates an environment the platform itself
               provisions to hold organization-level configuration, and which resolvers of that configuration therefore
-              trust. `profile` is an ordinary, non-privileged environment that holds one profile, by convention one per
-              profile: `name` is the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
-              settings, and the profile's accounts are linked as Connections. Like `user`, it carries no authority and a
-              client may choose it.
+              trust. Profiles are not environments: they are their own construct (`schemas/constructs/v1beta3/profile`,
+              served at `/api/profiles` and assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
               Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test for the
@@ -81654,14 +82082,14 @@ paths:
 
 
               Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which every
-              environment POST and PUT requestBody references, accepts only the non-privileged values (`user` and
-              `profile`), and the create-or-edit form has no field for it, so the environment create and update
-              endpoints cannot designate an environment administrative. That restriction is a codegen guarantee, never
-              access control: the registrant connection inlines the full environment entity, so
-              `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose` in a request type and
-              consumers MUST refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-              assign this property only from server-side provisioning or a data migration. Permission to create an
-              environment does not confer the ability to make one administrative.
+              environment POST and PUT requestBody references, accepts only the non-privileged value `user`, and the
+              create-or-edit form has no field for it, so the environment create and update endpoints cannot designate
+              an environment administrative. That restriction is a codegen guarantee, never access control: the
+              registrant connection inlines the full environment entity, so `registerRegistryComponent` and
+              `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST refuse it on input
+              there too. Whatever surface a value arrives on, every consumer MUST assign this property only from
+              server-side provisioning or a data migration. Permission to create an environment does not confer the
+              ability to make one administrative.
 
 
               The database index that enforces the uniqueness invariant, the migration path for environments that are
@@ -81670,11 +82098,9 @@ paths:
             enum:
               - user
               - administrative
-              - profile
             x-enum-varnames:
               - EnvironmentPurposeUser
               - EnvironmentPurposeAdministrative
-              - EnvironmentPurposeProfile
             x-go-type-skip-optional-pointer: true
             x-oapi-codegen-extra-tags:
               db: purpose
@@ -81863,11 +82289,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
-                            non-privileged environment that holds one profile, by convention one per profile: `name` is
-                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
-                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
-                            authority and a client may choose it.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -81885,15 +82309,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -81903,11 +82327,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -82138,11 +82560,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
-                            non-privileged environment that holds one profile, by convention one per profile: `name` is
-                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
-                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
-                            authority and a client may choose it.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -82160,15 +82580,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -82178,11 +82598,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -82282,7 +82700,7 @@ paths:
                   format: uuid
                 metadata:
                   type: object
-                  description: Free-form settings stored with the environment, for example a profile's settings.
+                  description: Free-form settings stored with the environment.
                   additionalProperties: true
                   x-go-type: core.Map
                   x-go-type-import:
@@ -82292,16 +82710,14 @@ paths:
                 purpose:
                   type: string
                   description: >-
-                    The purposes a client may give an environment on create or update: `user` (an ordinary environment)
-                    or `profile` (an ordinary environment holding one profile's settings and accounts). Omitted means
-                    `user` on create and unchanged on update. A server refuses any other value with 400, and never lets
-                    this field change an environment that already carries a privileged purpose.
+                    The purpose a client may give an environment on create or update: `user` (an ordinary environment).
+                    Profiles are not environments; they are their own construct at `/api/profiles`, assigned to
+                    workspaces. Omitted means `user` on create and unchanged on update. A server refuses any other value
+                    with 400, and never lets this field change an environment that already carries a privileged purpose.
                   enum:
                     - user
-                    - profile
                   x-enum-varnames:
                     - EnvironmentPayloadPurposeUser
-                    - EnvironmentPayloadPurposeProfile
       responses:
         '200':
           description: Environment page
@@ -82484,11 +82900,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
-                            non-privileged environment that holds one profile, by convention one per profile: `name` is
-                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
-                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
-                            authority and a client may choose it.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -82506,15 +82920,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -82524,11 +82938,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -83034,7 +83446,8 @@ paths:
                     json: idempotencyKey,omitempty
       description: >
         Records an event and answers 201 with it. When the payload carries an `idempotencyKey` the authenticated caller
-        already used, nothing new is recorded and the answer is 200 with the event first recorded under that key.
+        already used, nothing new is recorded and the answer is 200 with the event first recorded under that key. The
+        server assigns the organization from the session; clients do not send it.
       responses:
         '200':
           description: >
@@ -83060,6 +83473,7 @@ paths:
                   - severity
                   - status
                   - systemId
+                  - organizationId
                   - createdAt
                   - updatedAt
                 properties:
@@ -83067,6 +83481,7 @@ paths:
                     description: Event ID.
                     x-oapi-codegen-extra-tags:
                       db: id
+                    x-order: 7
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83077,6 +83492,7 @@ paths:
                     description: ID of the entity on which the event was performed.
                     x-oapi-codegen-extra-tags:
                       db: acted_upon
+                    x-order: 1
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83089,18 +83505,21 @@ paths:
                     maxLength: 500
                     x-oapi-codegen-extra-tags:
                       db: action
+                    x-order: 2
                   category:
                     type: string
                     description: Resource kind the operation was invoked on, for example `pattern`.
                     maxLength: 500
                     x-oapi-codegen-extra-tags:
                       db: category
+                    x-order: 3
                   description:
                     type: string
                     description: Human-readable summary of what happened.
                     maxLength: 5000
                     x-oapi-codegen-extra-tags:
                       db: description
+                    x-order: 6
                   metadata:
                     type: object
                     description: >
@@ -83114,11 +83533,13 @@ paths:
                     x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: metadata
+                    x-order: 8
                   operationId:
                     description: ID correlating the events one operation emitted.
                     x-go-name: OperationID
                     x-oapi-codegen-extra-tags:
                       db: operation_id
+                    x-order: 9
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83134,6 +83555,7 @@ paths:
                     maxLength: 255
                     x-oapi-codegen-extra-tags:
                       db: severity
+                    x-order: 12
                   status:
                     type: string
                     description: >
@@ -83143,8 +83565,16 @@ paths:
                     maxLength: 255
                     x-oapi-codegen-extra-tags:
                       db: status
+                    x-order: 13
                   systemId:
-                    description: ID of the system instance that emitted the event.
+                    description: >
+                      ID of the system instance that emitted the event. A Meshery Server sends its server instance ID;
+                      an event the provider emits itself carries the nil UUID. A client that registered a connection for
+                      its machine (for example a desktop client) sets its connection ID, so an event that records a run
+                      names the computer that ran it and can be joined to the claim it released (`Claim.outcomeEventId`)
+                      and to the connection (`connections.id`). The value is asserted by the sender and is not checked
+                      against the caller's connections.
+                    x-order: 14
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83165,10 +83595,28 @@ paths:
                       path: github.com/gofrs/uuid
                     x-oapi-codegen-extra-tags:
                       db: owner
+                    x-order: 10
+                  organizationId:
+                    type: string
+                    format: uuid
+                    description: >-
+                      A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core
+                      definition is used across different schemas.
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                    readOnly: true
+                    x-go-name: OrganizationID
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: organization_id
+                      json: organizationId
+                    x-order: 11
                   createdAt:
                     description: Timestamp when the event was recorded.
                     x-oapi-codegen-extra-tags:
                       db: created_at
+                    x-order: 4
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -83176,6 +83624,7 @@ paths:
                     description: Timestamp when the event was last updated.
                     x-oapi-codegen-extra-tags:
                       db: updated_at
+                    x-order: 15
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -83183,6 +83632,7 @@ paths:
                     description: Timestamp when the event was soft-deleted; omitted when it was not.
                     x-oapi-codegen-extra-tags:
                       db: deleted_at
+                    x-order: 5
                     x-go-type: meshcore.NullTime
                     x-go-type-import:
                       name: meshcore
@@ -83213,6 +83663,7 @@ paths:
                   - severity
                   - status
                   - systemId
+                  - organizationId
                   - createdAt
                   - updatedAt
                 properties:
@@ -83220,6 +83671,7 @@ paths:
                     description: Event ID.
                     x-oapi-codegen-extra-tags:
                       db: id
+                    x-order: 7
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83230,6 +83682,7 @@ paths:
                     description: ID of the entity on which the event was performed.
                     x-oapi-codegen-extra-tags:
                       db: acted_upon
+                    x-order: 1
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83242,18 +83695,21 @@ paths:
                     maxLength: 500
                     x-oapi-codegen-extra-tags:
                       db: action
+                    x-order: 2
                   category:
                     type: string
                     description: Resource kind the operation was invoked on, for example `pattern`.
                     maxLength: 500
                     x-oapi-codegen-extra-tags:
                       db: category
+                    x-order: 3
                   description:
                     type: string
                     description: Human-readable summary of what happened.
                     maxLength: 5000
                     x-oapi-codegen-extra-tags:
                       db: description
+                    x-order: 6
                   metadata:
                     type: object
                     description: >
@@ -83267,11 +83723,13 @@ paths:
                     x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: metadata
+                    x-order: 8
                   operationId:
                     description: ID correlating the events one operation emitted.
                     x-go-name: OperationID
                     x-oapi-codegen-extra-tags:
                       db: operation_id
+                    x-order: 9
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83287,6 +83745,7 @@ paths:
                     maxLength: 255
                     x-oapi-codegen-extra-tags:
                       db: severity
+                    x-order: 12
                   status:
                     type: string
                     description: >
@@ -83296,8 +83755,16 @@ paths:
                     maxLength: 255
                     x-oapi-codegen-extra-tags:
                       db: status
+                    x-order: 13
                   systemId:
-                    description: ID of the system instance that emitted the event.
+                    description: >
+                      ID of the system instance that emitted the event. A Meshery Server sends its server instance ID;
+                      an event the provider emits itself carries the nil UUID. A client that registered a connection for
+                      its machine (for example a desktop client) sets its connection ID, so an event that records a run
+                      names the computer that ran it and can be joined to the claim it released (`Claim.outcomeEventId`)
+                      and to the connection (`connections.id`). The value is asserted by the sender and is not checked
+                      against the caller's connections.
+                    x-order: 14
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83318,10 +83785,28 @@ paths:
                       path: github.com/gofrs/uuid
                     x-oapi-codegen-extra-tags:
                       db: owner
+                    x-order: 10
+                  organizationId:
+                    type: string
+                    format: uuid
+                    description: >-
+                      A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core
+                      definition is used across different schemas.
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                    readOnly: true
+                    x-go-name: OrganizationID
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: organization_id
+                      json: organizationId
+                    x-order: 11
                   createdAt:
                     description: Timestamp when the event was recorded.
                     x-oapi-codegen-extra-tags:
                       db: created_at
+                    x-order: 4
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -83329,6 +83814,7 @@ paths:
                     description: Timestamp when the event was last updated.
                     x-oapi-codegen-extra-tags:
                       db: updated_at
+                    x-order: 15
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -83336,6 +83822,7 @@ paths:
                     description: Timestamp when the event was soft-deleted; omitted when it was not.
                     x-oapi-codegen-extra-tags:
                       db: deleted_at
+                    x-order: 5
                     x-go-type: meshcore.NullTime
                     x-go-type-import:
                       name: meshcore
@@ -87246,11 +87733,9 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust. `profile` is an ordinary,
-                            non-privileged environment that holds one profile, by convention one per profile: `name` is
-                            the profile's short name, `owner` is the profile's user, `metadata` holds the profile's
-                            settings, and the profile's accounts are linked as Connections. Like `user`, it carries no
-                            authority and a client may choose it.
+                            which resolvers of that configuration therefore trust. Profiles are not environments: they
+                            are their own construct (`schemas/constructs/v1beta3/profile`, served at `/api/profiles` and
+                            assigned to workspaces under `/api/workspaces/{workspaceId}/profiles`).
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -87268,15 +87753,15 @@ paths:
 
 
                             Privileged values are server-owned and never client-settable. `EnvironmentPayload`, which
-                            every environment POST and PUT requestBody references, accepts only the non-privileged
-                            values (`user` and `profile`), and the create-or-edit form has no field for it, so the
-                            environment create and update endpoints cannot designate an environment administrative. That
-                            restriction is a codegen guarantee, never access control: the registrant connection inlines
-                            the full environment entity, so `registerRegistryComponent` and
-                            `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
-                            refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
-                            assign this property only from server-side provisioning or a data migration. Permission to
-                            create an environment does not confer the ability to make one administrative.
+                            every environment POST and PUT requestBody references, accepts only the non-privileged value
+                            `user`, and the create-or-edit form has no field for it, so the environment create and
+                            update endpoints cannot designate an environment administrative. That restriction is a
+                            codegen guarantee, never access control: the registrant connection inlines the full
+                            environment entity, so `registerRegistryComponent` and `registerRegistryRelationship` do
+                            carry `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                            surface a value arrives on, every consumer MUST assign this property only from server-side
+                            provisioning or a data migration. Permission to create an environment does not confer the
+                            ability to make one administrative.
 
 
                             The database index that enforces the uniqueness invariant, the migration path for
@@ -87286,11 +87771,9 @@ paths:
                           enum:
                             - user
                             - administrative
-                            - profile
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
-                            - EnvironmentPurposeProfile
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -87764,6 +88247,23 @@ paths:
                           x-go-type-import:
                             path: github.com/gofrs/uuid
                           x-go-type-skip-optional-pointer: true
+                        organizationId:
+                          description: >
+                            The organization the design belongs to. The server sets it from the session organization.
+                            Never accepted from clients. Optional on this superseded shape, which workspace design lists
+                            still return. v1beta3 MesheryPattern requires it. A client value on the deprecated design
+                            write is ignored. A workspace this design is assigned to must belong to this same
+                            organization.
+                          readOnly: true
+                          x-go-name: OrganizationID
+                          x-oapi-codegen-extra-tags:
+                            db: organization_id
+                            json: organizationId,omitempty
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
                         location:
                           type: object
                           additionalProperties:
@@ -88274,6 +88774,21 @@ paths:
                                                 type: string
                                                 format: date-time
                                                 x-go-type-skip-optional-pointer: true
+                                              organizationId:
+                                                type: string
+                                                format: uuid
+                                                description: >-
+                                                  A Universally Unique Identifier used to uniquely identify entities in
+                                                  Meshery. The UUID core definition is used across different schemas.
+                                                x-go-type: uuid.UUID
+                                                x-go-type-import:
+                                                  path: github.com/gofrs/uuid
+                                                x-go-name: OrganizationID
+                                                x-oapi-codegen-extra-tags:
+                                                  db: organization_id
+                                                  json: organizationId,omitempty
+                                                  yaml: organizationId
+                                                x-order: 15
                                               environments:
                                                 type: array
                                                 description: Associated environments for this connection
