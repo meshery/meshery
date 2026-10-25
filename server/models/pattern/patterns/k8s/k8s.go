@@ -218,8 +218,19 @@ func resolveResourcePath(k8sResource map[string]interface{}, namespace string, m
 		} else {
 			basePath = fmt.Sprintf("/apis/%s/%s", mapping.Resource.Group, mapping.Resource.Version)
 		}
-		if mapping.Scope.Name() == meta.RESTScopeNameNamespace && namespace != "" {
-			basePath = fmt.Sprintf("%s/namespaces/%s", basePath, namespace)
+		if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
+			ns := namespace
+			if ns == "" {
+				if metadata, ok := k8sResource["metadata"].(map[string]interface{}); ok {
+					if metaNs, ok := metadata["namespace"].(string); ok && metaNs != "" {
+						ns = metaNs
+					}
+				}
+			}
+			if ns == "" {
+				ns = "default"
+			}
+			basePath = fmt.Sprintf("%s/namespaces/%s", basePath, ns)
 		}
 	} else {
 		// Fall back to existing behavior if discovery fails or mapper is nil
@@ -231,6 +242,8 @@ func resolveResourcePath(k8sResource map[string]interface{}, namespace string, m
 		}
 		resourcePath = kindToResource(kind)
 		basePath = fmt.Sprintf("/%s/%s", apiString, aV)
+		// Scope is unknown without a mapper, and the body's metadata.namespace is always set (meshkit defaults
+		// it to "default" for every kind), so only an explicit namespace may add the segment here.
 		if namespace != "" {
 			basePath = fmt.Sprintf("%s/namespaces/%s", basePath, namespace)
 		}

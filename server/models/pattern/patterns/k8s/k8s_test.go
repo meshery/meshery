@@ -901,3 +901,153 @@ func TestDryRun_InDesignNamespaces_FallbackNameConflict(t *testing.T) {
 		}
 	})
 }
+
+// TestResolveResourcePath_NamespaceResolution tests namespace resolution order for namespaced and cluster-scoped resources.
+func TestResolveResourcePath_NamespaceResolution(t *testing.T) {
+	groupVersions := []schema.GroupVersion{
+		{Group: "", Version: "v1"},
+		{Group: "rbac.authorization.k8s.io", Version: "v1"},
+	}
+	mapper := meta.NewDefaultRESTMapper(groupVersions)
+	mapper.AddSpecific(
+		schema.GroupVersionKind{Group: "", Version: "v1", Kind: "Pod"},
+		schema.GroupVersionResource{Group: "", Version: "v1", Resource: "pods"},
+		schema.GroupVersionResource{Group: "", Version: "v1", Resource: "pod"},
+		meta.RESTScopeNamespace,
+	)
+	mapper.AddSpecific(
+		schema.GroupVersionKind{Group: "rbac.authorization.k8s.io", Version: "v1", Kind: "ClusterRole"},
+		schema.GroupVersionResource{Group: "rbac.authorization.k8s.io", Version: "v1", Resource: "clusterroles"},
+		schema.GroupVersionResource{Group: "rbac.authorization.k8s.io", Version: "v1", Resource: "clusterrole"},
+		meta.RESTScopeRoot,
+	)
+
+	tests := []struct {
+		name             string
+		k8sResource      map[string]interface{}
+		namespace        string
+		mapper           meta.RESTMapper
+		wantBasePath     string
+		wantResourcePath string
+	}{
+		{
+			name:             "Pod, no namespace arg, no metadata.namespace -> /api/v1/namespaces/default",
+			k8sResource:      map[string]interface{}{"apiVersion": "v1", "kind": "Pod"},
+			namespace:        "",
+			mapper:           mapper,
+			wantBasePath:     "/api/v1/namespaces/default",
+			wantResourcePath: "pods",
+		},
+		{
+			name: "Pod, metadata.namespace=staging -> /api/v1/namespaces/staging",
+			k8sResource: map[string]interface{}{
+				"apiVersion": "v1",
+				"kind":       "Pod",
+				"metadata":   map[string]interface{}{"namespace": "staging"},
+			},
+			namespace:        "",
+			mapper:           mapper,
+			wantBasePath:     "/api/v1/namespaces/staging",
+			wantResourcePath: "pods",
+		},
+		{
+			name: "Pod, explicit arg prod with metadata staging -> arg wins (prod)",
+			k8sResource: map[string]interface{}{
+				"apiVersion": "v1",
+				"kind":       "Pod",
+				"metadata":   map[string]interface{}{"namespace": "staging"},
+			},
+			namespace:        "prod",
+			mapper:           mapper,
+			wantBasePath:     "/api/v1/namespaces/prod",
+			wantResourcePath: "pods",
+		},
+		{
+			name:             "ClusterRole -> /apis/rbac.authorization.k8s.io/v1, no namespace segment",
+			k8sResource:      map[string]interface{}{"apiVersion": "rbac.authorization.k8s.io/v1", "kind": "ClusterRole"},
+			namespace:        "",
+			mapper:           mapper,
+			wantBasePath:     "/apis/rbac.authorization.k8s.io/v1",
+			wantResourcePath: "clusterroles",
+		},
+		{
+			name: "nil mapper ignores metadata.namespace",
+			k8sResource: map[string]interface{}{
+				"apiVersion": "v1",
+				"kind":       "Pod",
+				"metadata":   map[string]interface{}{"namespace": "staging"},
+			},
+			namespace:        "",
+			mapper:           nil,
+			wantBasePath:     "/api/v1",
+			wantResourcePath: "pods",
+		},
+		{
+			name:             "nil mapper + nothing -> no segment",
+			k8sResource:      map[string]interface{}{"apiVersion": "v1", "kind": "Pod"},
+			namespace:        "",
+			mapper:           nil,
+			wantBasePath:     "/api/v1",
+			wantResourcePath: "pods",
+		},
+		{
+			name: "nil mapper, ClusterRole with meshkit default metadata.namespace -> cluster-scoped",
+			k8sResource: map[string]interface{}{
+				"apiVersion": "rbac.authorization.k8s.io/v1",
+				"kind":       "ClusterRole",
+				"metadata":   map[string]interface{}{"namespace": "default"},
+			},
+			namespace:        "",
+			mapper:           nil,
+			wantBasePath:     "/apis/rbac.authorization.k8s.io/v1",
+			wantResourcePath: "clusterroles",
+		},
+		{
+			name:             "nil mapper, explicit namespace arg -> namespaced path",
+			k8sResource:      map[string]interface{}{"apiVersion": "v1", "kind": "Pod"},
+			namespace:        "staging",
+			mapper:           nil,
+			wantBasePath:     "/api/v1/namespaces/staging",
+			wantResourcePath: "pods",
+		},
+		{
+			name: "ClusterRole with meshkit default metadata.namespace -> no namespace segment",
+			k8sResource: map[string]interface{}{
+				"apiVersion": "rbac.authorization.k8s.io/v1",
+				"kind":       "ClusterRole",
+				"metadata":   map[string]interface{}{"namespace": "default"},
+			},
+			namespace:        "",
+			mapper:           mapper,
+			wantBasePath:     "/apis/rbac.authorization.k8s.io/v1",
+			wantResourcePath: "clusterroles",
+		},
+		{
+			name: "Pod with meshkit default metadata.namespace -> /api/v1/namespaces/default",
+			k8sResource: map[string]interface{}{
+				"apiVersion": "v1",
+				"kind":       "Pod",
+				"metadata":   map[string]interface{}{"namespace": "default"},
+			},
+			namespace:        "",
+			mapper:           mapper,
+			wantBasePath:     "/api/v1/namespaces/default",
+			wantResourcePath: "pods",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			basePath, resourcePath, err := resolveResourcePath(tc.k8sResource, tc.namespace, tc.mapper)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if basePath != tc.wantBasePath {
+				t.Errorf("basePath = %q, want %q", basePath, tc.wantBasePath)
+			}
+			if resourcePath != tc.wantResourcePath {
+				t.Errorf("resourcePath = %q, want %q", resourcePath, tc.wantResourcePath)
+			}
+		})
+	}
+}
