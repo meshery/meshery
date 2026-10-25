@@ -1,4 +1,5 @@
 import { JsonParse } from '../../../../utils/utils';
+import { componentUniqueKey } from '../../../../rtk-query/meshModel';
 
 export function getComponentMetadata(metadata) {
   const cleanedMeta = { ...metadata };
@@ -19,6 +20,23 @@ export function getComponentMetadata(metadata) {
     },
     cleanedMeta,
   );
+}
+
+/**
+ * Builds the React key for a component form in the Design Configurator list.
+ * The key includes the component definition's identity (kind, versions and model),
+ * so a form opened for one definition, and the component id it holds, is never
+ * reused for a different definition. The index keeps identical siblings distinct.
+ * @param {string} modelName name of the model whose components are listed
+ * @param {Types.ComponentDefinition} componentDefinition component shown by the form
+ * @param {number} index position of the component in the list
+ * @returns {string}
+ */
+export function getComponentFormKey(modelName, componentDefinition, index) {
+  const componentKey = componentDefinition?.model
+    ? componentUniqueKey(componentDefinition)
+    : componentDefinition?.component?.kind;
+  return `${modelName}-${componentKey}-${index}`;
 }
 
 export function getStyleOverrides(stringifiedOverrides) {
