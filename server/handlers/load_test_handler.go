@@ -349,8 +349,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	notify := req.Context()
 
 	respChan := make(chan *models.LoadTestResponse, 100)
-	endChan := make(chan struct{})
-	defer close(endChan)
+	endChan := make(chan struct{}, 1)
 
 	go func() {
 		defer func() {
@@ -395,18 +394,24 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 			flusher.Flush()
 			h.log.Debug("Flushed the messages on the wire...")
 		}
-		endChan <- struct{}{}
+		select {
+		case endChan <- struct{}{}:
+		default:
+		}
 		h.log.Debug("response channel closed")
 	}()
+
+	ctx, cancel := context.WithCancel(req.Context())
+	defer cancel()
+
 	go func() {
-		ctx := context.Background()
 		h.executeLoadTest(ctx, req, profileID, testName, meshName, testUUID, prefObj, provider, loadTestOptions, respChan)
 		close(respChan)
 	}()
 	select {
 	case <-notify.Done():
 		h.log.Debug("received signal to close connection and channels")
-		break
+		cancel()
 	case <-endChan:
 		h.log.Debug("load test completed")
 		_ = req.Body.Close()
@@ -414,9 +419,13 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 }
 
 func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profileID, testName, meshName, testUUID string, prefObj *models.Preference, provider models.Provider, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
-	respChan <- &models.LoadTestResponse{
+	select {
+	case respChan <- &models.LoadTestResponse{
 		Status:  models.LoadTestInfo,
 		Message: "Initiating load test . . . ",
+	}:
+	case <-ctx.Done():
+		return
 	}
 	var (
 		resultsMap map[string]interface{}
@@ -427,16 +436,23 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 	resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions, h.log)
 	if err != nil {
 		h.log.Error(ErrLoadTest(err, "unable to perform"))
-		respChan <- &models.LoadTestResponse{
+		select {
+		case respChan <- &models.LoadTestResponse{
 			Status:  models.LoadTestError,
 			Message: "unable to perform",
+		}:
+		case <-ctx.Done():
 		}
 		return
 	}
 
-	respChan <- &models.LoadTestResponse{
+	select {
+	case respChan <- &models.LoadTestResponse{
 		Status:  models.LoadTestInfo,
 		Message: "Load test completed, fetching metadata now",
+	}:
+	case <-ctx.Done():
+		return
 	}
 
 	resultsMap["load-generator"] = loadTestOptions.LoadGenerator
@@ -459,7 +475,6 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 		return
 	}
 
-	var resultsMx sync.Mutex
 	for _, k8context := range mk8sContexts {
 		wg.Add(1)
 		go func(mk8scontext models.K8sContext) {
@@ -470,9 +485,9 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 			// Get the k8sconfig
 			k8sconfig, err := mk8scontext.GenerateKubeConfig()
 			if err == nil {
-				nodesChan := make(chan []*models.K8SNode)
-				versionChan := make(chan string)
-				installedMeshesChan := make(chan map[string][]corev1.Pod)
+				nodesChan := make(chan []*models.K8SNode, 1)
+				versionChan := make(chan string, 1)
+				installedMeshesChan := make(chan map[string][]corev1.Pod, 1)
 
 				// Fire goroutines to get cluster information
 				go func() {
@@ -505,38 +520,58 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 					installedMeshesChan <- installedMeshes
 				}()
 
-				// Retrieve cluster information from the goroutines
-				serverVersion = <-versionChan
-				nodes = <-nodesChan
-				installedMeshes = <-installedMeshesChan
-			}
-
-			// Making sure different context goroutines don't interfere with each others' results Map
-			resultsMx.Lock()
-			defer resultsMx.Unlock()
-
-			resultsMap["kubernetes"] = nil
-			if serverVersion != "" {
-				resultsMap["kubernetes"] = map[string]interface{}{
-					"server_version": serverVersion,
-					"nodes":          nodes,
+				// Retrieve cluster information from the goroutines respecting context
+				select {
+				case <-ctx.Done():
+					return
+				case serverVersion = <-versionChan:
+				}
+				select {
+				case <-ctx.Done():
+					return
+				case nodes = <-nodesChan:
+				}
+				select {
+				case <-ctx.Done():
+					return
+				case installedMeshes = <-installedMeshesChan:
 				}
 			}
 
-			resultsMap["detected-meshes"] = nil
-			if len(installedMeshes) > 0 {
-				resultsMap["detected-meshes"] = installedMeshes
+			// Clone resultsMap so each context has an isolated copy without data races
+			clusterResultMap := make(map[string]interface{}, len(resultsMap)+2)
+			for k, v := range resultsMap {
+				clusterResultMap[k] = v
 			}
 
-			respChan <- &models.LoadTestResponse{
+			if serverVersion != "" {
+				clusterResultMap["kubernetes"] = map[string]interface{}{
+					"server_version": serverVersion,
+					"nodes":          nodes,
+				}
+			} else {
+				clusterResultMap["kubernetes"] = nil
+			}
+
+			if len(installedMeshes) > 0 {
+				clusterResultMap["detected-meshes"] = installedMeshes
+			} else {
+				clusterResultMap["detected-meshes"] = nil
+			}
+
+			select {
+			case respChan <- &models.LoadTestResponse{
 				Status:  models.LoadTestInfo,
 				Message: "Obtained the needed metadatas, attempting to persist the result for cluster " + mk8scontext.Name,
+			}:
+			case <-ctx.Done():
+				return
 			}
 
 			result := &models.MesheryResult{
 				Name:   testName,
 				Mesh:   meshName,
-				Result: resultsMap,
+				Result: clusterResultMap,
 			}
 
 			h.persistPerformanceTestResult(ctx, req, result, testUUID, profileID, resultInst, prefObj, provider, respChan)
@@ -550,15 +585,22 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 	resultID, err := provider.PublishResults(req, result, profileID)
 	if err != nil {
 		h.log.Error(ErrLoadTest(err, "unable to persist in cluster"))
-		respChan <- &models.LoadTestResponse{
+		select {
+		case respChan <- &models.LoadTestResponse{
 			Status:  models.LoadTestError,
 			Message: "unable to persist",
+		}:
+		case <-ctx.Done():
 		}
 		return
 	}
-	respChan <- &models.LoadTestResponse{
+	select {
+	case respChan <- &models.LoadTestResponse{
 		Status:  models.LoadTestInfo,
 		Message: "Done persisting the load test results.",
+	}:
+	case <-ctx.Done():
+		return
 	}
 
 	key := uuid.FromStringOrNil(resultID)
@@ -566,9 +608,13 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 		key = uuid.Must(uuid.NewV4())
 	}
 	result.ID = key
-	respChan <- &models.LoadTestResponse{
+	select {
+	case respChan <- &models.LoadTestResponse{
 		Status: models.LoadTestSuccess,
 		Result: result,
+	}:
+	case <-ctx.Done():
+		return
 	}
 }
 
