@@ -22,6 +22,7 @@ const (
 	ErrReadMesheryConfigCode = "mesheryctl-1220"
 	ErrDuplicateContextCode  = "mesheryctl-1221"
 	ErrWriteMeshConfigCode   = "mesheryctl-1222"
+	ErrInvalidVersionCode    = "mesheryctl-1256"
 )
 
 func ErrInvalidMeshConfig(err error) error {
@@ -59,4 +60,16 @@ func ErrWriteMeshConfig(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to write to config file"},
 		[]string{"Ensure that you have the correct permissions to write to the config file at `$HOME/.meshery/config.yaml`."})
+}
+
+// ErrInvalidVersion returns an error when version validation fails.
+func ErrInvalidVersion(err error) error {
+	return errors.New(
+		ErrInvalidVersionCode,
+		errors.Alert,
+		[]string{"Error validating Meshery version"},
+		[]string{err.Error()},
+		[]string{"The version in the context is invalid, unsupported, or unreachable on GitHub"},
+		[]string{"Verify the version in your context is valid, or check your network connection"},
+	)
 }
