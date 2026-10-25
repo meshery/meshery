@@ -2123,9 +2123,9 @@
         "code": "1256",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "command must be executed from the root of a meshery/meshery repository fork",
-        "probable_cause": "The command was executed outside of a local meshery/meshery repository fork\nThe current working directory is not the root or an immediate subdirectory of the Meshery repository",
-        "suggested_remediation": "Clone or fork https://github.com/meshery/meshery\nNavigate to the root directory of your local meshery/meshery repository fork and re-run the command"
+        "short_description": "command must be executed from within a meshery/meshery repository fork",
+        "probable_cause": "The command was executed outside of a local meshery/meshery repository fork\nThe current working directory is not within a Meshery repository fork",
+        "suggested_remediation": "Clone or fork https://github.com/meshery/meshery\nNavigate to your local meshery/meshery repository fork (root or any subdirectory) and re-run the command"
       }
     }
   }

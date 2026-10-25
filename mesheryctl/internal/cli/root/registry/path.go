@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // defaultModelsLocation resolves the default relative path to the repo-root
@@ -51,11 +52,31 @@ func isDirectory(path string) bool {
 	return err == nil && info.IsDir()
 }
 
-// isMesheryRepoRoot checks whether dir contains the marker directories of the Meshery repository root.
-// A valid Meshery repository root contains a "models" directory and at least one of "server" or "mesheryctl".
+// hasMesheryModuleDeclaration checks whether the go.mod file at path declares
+// "module github.com/meshery/meshery".
+func hasMesheryModuleDeclaration(goModPath string) bool {
+	data, err := os.ReadFile(goModPath)
+	if err != nil {
+		return false
+	}
+	lines := strings.Split(string(data), "\n")
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "module ") {
+			parts := strings.Fields(trimmed)
+			return len(parts) >= 2 && parts[1] == "github.com/meshery/meshery"
+		}
+	}
+	return false
+}
+
+// isMesheryRepoRoot checks whether dir contains the marker directories and root go.mod of a Meshery repository.
+// A valid Meshery repository root contains a "models" directory, at least one of "server" or "mesheryctl",
+// and a go.mod file declaring "module github.com/meshery/meshery".
 func isMesheryRepoRoot(dir string) bool {
 	return isDirectory(filepath.Join(dir, "models")) &&
-		(isDirectory(filepath.Join(dir, "server")) || isDirectory(filepath.Join(dir, "mesheryctl")))
+		(isDirectory(filepath.Join(dir, "server")) || isDirectory(filepath.Join(dir, "mesheryctl"))) &&
+		hasMesheryModuleDeclaration(filepath.Join(dir, "go.mod"))
 }
 
 // findMesheryRepoRoot walks up the directory tree from startDir looking for the
@@ -77,7 +98,7 @@ func findMesheryRepoRoot(startDir string) (string, bool) {
 }
 
 // verifyPrerequisiteRepo checks whether the command is being executed from within
-// a Meshery repository fork (at the root of the fork or an immediate subdirectory).
+// a Meshery repository fork (at the root of the fork or any subdirectory).
 func verifyPrerequisiteRepo() error {
 	cwd, err := os.Getwd()
 	if err != nil {

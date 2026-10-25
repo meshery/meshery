@@ -83,14 +83,14 @@ func ErrPurgeRemove(err error, path string) error {
 
 func ErrPrereqRepository(err error) error {
 	return errors.New(ErrPrereqRepositoryCode, errors.Alert,
-		[]string{"command must be executed from the root of a meshery/meshery repository fork"},
+		[]string{"command must be executed from within a meshery/meshery repository fork"},
 		[]string{err.Error()},
 		[]string{
 			"The command was executed outside of a local meshery/meshery repository fork",
-			"The current working directory is not the root or an immediate subdirectory of the Meshery repository",
+			"The current working directory is not within a Meshery repository fork",
 		},
 		[]string{
 			"Clone or fork https://github.com/meshery/meshery",
-			"Navigate to the root directory of your local meshery/meshery repository fork and re-run the command",
+			"Navigate to your local meshery/meshery repository fork (root or any subdirectory) and re-run the command",
 		})
 }
