@@ -162,21 +162,25 @@ Keep your copy of
 [`values-upgrade.yaml`](https://github.com/meshery/meshery/blob/master/install/kubernetes/helm/meshery/values-upgrade.yaml)
 version-controlled alongside your own values.
 
-### Managed-cluster components upgrade themselves
+### What happens to managed clusters
 
-No action is required on managed clusters. When the upgraded Meshery Server
-(re)connects to a managed cluster, it re-applies the `meshery-operator` Helm
-chart, which refreshes the `Broker` and `MeshSync` CRD schemas and rolls the
-Operator, which then reconciles MeshSync and Broker. The next section explains
-how the chart version is chosen.
+When the upgraded Meshery Server (re)connects to a managed cluster, it installs
+the `meshery-operator` Helm chart where the Operator is missing, and upgrades an
+installed release whose chart is older than `v1.0.51` - the oldest chart
+verified to run - to the chart it resolves for its own release. An Operator
+already on `v1.0.51` or newer is left on its chart: upgrading Meshery Server
+does not move it. The next section explains how the chart version is chosen and
+how to move an installed Operator yourself.
 
-{{% alert title="Do not hand-upgrade the Operator on Server-managed clusters" color="warning" %}}
-A manual `helm upgrade` of `meshery-operator` (or a hand-edited image tag) on
-a cluster that Meshery Server manages is a stopgap at best: the Server's
-reconciliation re-applies the chart version it resolves and will revert your
-change. The durable way to get a newer Operator is to upgrade Meshery Server;
-to hold one connection at a specific chart version, set `operator.version` on
-that connection - see
+{{% alert title="Hand-upgrading the Operator on Server-managed clusters" color="warning" %}}
+A manual `helm upgrade` of `meshery-operator` (or a hand-edited image tag) on a
+cluster that Meshery Server manages is not reverted on its own, but Meshery does
+not know about it either: the connection keeps resolving its own chart version,
+and the next redeploy - a changed `operator.version`, a MeshSync mode change, or
+an Operator reinstall - replaces your chart with that one. A hand-applied chart
+older than `v1.0.51` is upgraded on the next connect. To hold one connection at
+a specific chart version durably, set `operator.version` on that connection -
+see
 [Choosing the chart version yourself]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#choosing-the-chart-version-yourself" >}}).
 {{% /alert %}}
 
@@ -221,28 +225,40 @@ substituted, and the minimum above does not apply to it, so a pin below
 `v1.0.51` is installed as asked. See
 [Choosing the chart version yourself]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#choosing-the-chart-version-yourself" >}}).
 
-**Upgrades.** Upgrading Meshery Server is what upgrades the Operator: on
-(re)connection, the Server re-applies the operator chart at its own (new)
-version. That `helm upgrade` triggers the chart's CRD update Job - a
+**Upgrades.** The Server applies the operator chart at the version it resolves
+when it *installs* the Operator. It does not re-apply the chart to an Operator
+that is already installed, with one exception: on every connect it reads the
+installed `meshery-operator` release's chart version, and upgrades a release
+older than `v1.0.51` - the oldest chart verified to run - to the chart it
+resolves. Every chart from `v1.0.51` on can be reached that way. To move an
+installed Operator to a different chart yourself, set `operator.version` on the
+connection, which redeploys at that version.
+
+Any of these is a `helm upgrade`, which triggers the chart's CRD update Job - a
 pre-upgrade hook that server-side-applies the current `Broker` and `MeshSync`
-CRD schemas (Helm alone never updates CRDs on upgrade) - and rolls the
-Operator Deployment to the operator image pinned in the chart. The Operator
-then reconciles MeshSync and the Broker.
+CRD schemas (Helm alone never updates CRDs on upgrade) - and then rolls the
+Operator Deployment to the operator image pinned in the chart. If the Job fails,
+Helm stops before changing the Operator, so a new Operator never runs against
+old CRDs. The Operator then reconciles MeshSync and the Broker.
 
-**Reconciliation.** The Server periodically re-applies the operator chart if
-the Operator is missing or unhealthy. Two practical consequences:
+**Reconciliation.** On every connect the Server installs the Operator if it is
+missing, and applies the `v1.0.51` minimum to an installed release as above. A
+deliberate `operator.version` below `v1.0.51` is never overridden: the installed
+release is left alone and that is reported instead. Every such upgrade, refusal
+or failure appears in the events feed with its error code (`meshery-server-1487`
+through `meshery-server-1491`), and failures also appear in the connection's
+Diagnostics. Two practical consequences:
 
-- **Manual operator changes are temporary.** A hand-run
+- **Manual operator changes persist until something redeploys.** A hand-run
   `helm upgrade meshery-operator --version <x>` or an edited image tag on a
-  Server-managed cluster will be reverted to the chart version the Server
-  resolves (above) by the next reconciliation. `operator.version` on the
-  connection is the durable way to choose a version on a managed cluster;
-  standalone/manual operator installs are only durable on clusters that Meshery
-  Server does not manage.
+  Server-managed cluster stays until the next redeploy replaces it with the
+  chart the Server resolves - or, if it is older than `v1.0.51`, until the next
+  connect upgrades it. `operator.version` on the connection is the durable way
+  to choose a version on a managed cluster.
 - **Operator versions are pinned, not floating.** The operator image is a
   fixed version per chart release (no `stable-latest` drift): an Operator pod
-  restart never silently changes the operator version. Upgrades happen only
-  when the chart content changes - that is, when you upgrade Meshery Server.
+  restart never silently changes the operator version. The operator version
+  changes only when its chart is re-applied.
 
 **CRDs persist.** The `brokers.meshery.io` and `meshsyncs.meshery.io` CRDs
 (and your `Broker`/`MeshSync` objects) deliberately survive operator
@@ -296,17 +312,18 @@ helm rollback meshery --namespace meshery    # Kubernetes deployments
 Rolling back the Server is low-risk for data: durable state lives with your
 Remote Provider, and the local database is a rebuildable cache. Two notes:
 
-- The Operator follows the Server: after a rollback, the Server re-applies the
-  operator chart it resolves for the rolled-back release. Rolling back far
-  enough that the Server would name a chart older than the minimum deployable
-  version normally still lands a working Operator - the Server raises that
-  derived request to the oldest published chart at or above the minimum and
-  says so in the events feed. An explicit `operator.version` on a connection is
-  never raised, so a pin below the minimum survives the rollback unchanged.
-- CRD schemas are not rolled back by `helm rollback` directly. When the
-  rolled-back Server reconnects to managed clusters, it re-applies the older
-  operator chart as a Helm upgrade, and that chart's CRD update Job re-applies
-  the older schemas. Stored objects remain readable throughout, because served
-  versions stay identical across current schema revisions.
+- An installed Operator stays where it is: the rolled-back Server does not
+  re-apply its chart to an Operator that is already installed, and never moves
+  a release at or above the minimum deployable version (`v1.0.51`) at all. Where
+  the rolled-back Server installs the Operator fresh, it uses the chart it
+  resolves for its own release - raised to the oldest published chart at or
+  above the minimum if its own is older, and saying so in the events feed. An
+  explicit `operator.version` on a connection is never raised, so a pin below
+  the minimum survives the rollback unchanged.
+- CRD schemas are not rolled back by `helm rollback` either. Because an
+  installed Operator's chart is not re-applied, its CRDs stay at the schemas
+  that chart's CRD update Job last applied. Stored objects remain readable
+  throughout, because served versions stay identical across current schema
+  revisions.
 
 {{< related-discussions tag="meshery" >}}

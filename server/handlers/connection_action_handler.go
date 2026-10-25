@@ -339,7 +339,7 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 		SetMeshsyncDeploymentMode(newMode).
 		AddCtxControllerHandlers(machineCtx.K8sContext).
 		UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-		DeployUndeployedOperators(machineCtx.OperatorTracker, contextID).
+		DeployUndeployedOperators(machineCtx.OperatorTracker, machineCtx.K8sContext).
 		AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
 
 	return nil
