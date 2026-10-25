@@ -71,8 +71,14 @@ const SocialIconWrapper = styled('span')(({ theme }) => ({
 }));
 
 const ShareIconContainer = styled('div')({
-  display: 'flex',
-  justifyContent: 'flex-end',
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  zIndex: 1,
+});
+
+const ChartOuterWrapper = styled('div')({
+  position: 'relative',
 });
 
 function NonRecursiveConstructDisplayCells(data) {
@@ -354,82 +360,87 @@ function MesheryChart(props) {
 
   return (
     <NoSsr>
-      <ShareIconContainer>
-        <ShareIconButton aria-label="Share" onClick={(e) => handleSocialExpandClick(e, chartData)}>
-          <ReplyIcon />
-        </ShareIconButton>
-      </ShareIconContainer>
-      <SocialPopper open={socialExpand} anchorEl={anchorEl} transition placement="bottom-end">
-        {({ TransitionProps }) => (
-          <ClickAwayListener onClickAway={() => setSocialExpand(false)}>
-            <Fade {...TransitionProps} timeout={350}>
-              <SocialPaper>
-                <SocialIconWrapper>
-                  <TwitterShareButton
-                    url={'https://meshery.io'}
-                    title={socialMessage}
-                    hashtags={['opensource']}
-                  >
-                    <TwitterIcon size={32} />
-                  </TwitterShareButton>
-                </SocialIconWrapper>
-                <SocialIconWrapper>
-                  <LinkedinShareButton url={'https://meshery.io'} summary={socialMessage}>
-                    <LinkedinIcon size={32} />
-                  </LinkedinShareButton>
-                </SocialIconWrapper>
-                <SocialIconWrapper>
-                  <FacebookShareButton
-                    url={'https://meshery.io'}
-                    quote={socialMessage}
-                    hashtag={'#opensource'}
-                  >
-                    <FacebookIcon size={32} />
-                  </FacebookShareButton>
-                </SocialIconWrapper>
-              </SocialPaper>
-            </Fade>
-          </ClickAwayListener>
-        )}
-      </SocialPopper>
-      <div>
-        <ChartTitle ref={titleRef} style={{ display: 'none' }} />
-        <Grid2 container justifyContent="center" style={{ padding: '0.5rem' }} size="grow">
-          {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => (
-            <Grid2 key={`nri-${i}`} size={{ xs: 4 }}>
-              {el}
-            </Grid2>
-          ))}
-        </Grid2>
-        <ChartWrapper>
-          <ChartContainer ref={chartRef}></ChartContainer>
-          <ChartPercentiles
-            ref={(ch) => {
-              percentileRef.current = ch;
-              if (props.data.length > 2) {
-                processMultiChartData(chartData);
-              } else {
-                processChartData(chartData);
-              }
-            }}
+      <ChartOuterWrapper>
+        <ShareIconContainer>
+          <ShareIconButton
+            aria-label="Share"
+            onClick={(e) => handleSocialExpandClick(e, chartData)}
           >
-            {props.data.length === 1 ? (
-              <div>
-                <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom>
-                  Percentile Summary
-                </Typography>
+            <ReplyIcon />
+          </ShareIconButton>
+        </ShareIconContainer>
+        <SocialPopper open={socialExpand} anchorEl={anchorEl} transition placement="bottom-end">
+          {({ TransitionProps }) => (
+            <ClickAwayListener onClickAway={() => setSocialExpand(false)}>
+              <Fade {...TransitionProps} timeout={350}>
+                <SocialPaper>
+                  <SocialIconWrapper>
+                    <TwitterShareButton
+                      url={'https://meshery.io'}
+                      title={socialMessage}
+                      hashtags={['opensource']}
+                    >
+                      <TwitterIcon size={32} />
+                    </TwitterShareButton>
+                  </SocialIconWrapper>
+                  <SocialIconWrapper>
+                    <LinkedinShareButton url={'https://meshery.io'} summary={socialMessage}>
+                      <LinkedinIcon size={32} />
+                    </LinkedinShareButton>
+                  </SocialIconWrapper>
+                  <SocialIconWrapper>
+                    <FacebookShareButton
+                      url={'https://meshery.io'}
+                      quote={socialMessage}
+                      hashtag={'#opensource'}
+                    >
+                      <FacebookIcon size={32} />
+                    </FacebookShareButton>
+                  </SocialIconWrapper>
+                </SocialPaper>
+              </Fade>
+            </ClickAwayListener>
+          )}
+        </SocialPopper>
+        <div>
+          <ChartTitle ref={titleRef} style={{ display: 'none' }} />
+          <Grid2 container justifyContent="center" style={{ padding: '0.5rem' }} size="grow">
+            {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => (
+              <Grid2 key={`nri-${i}`} size={{ xs: 4 }}>
+                {el}
+              </Grid2>
+            ))}
+          </Grid2>
+          <ChartWrapper>
+            <ChartContainer ref={chartRef}></ChartContainer>
+            <ChartPercentiles
+              ref={(ch) => {
+                percentileRef.current = ch;
+                if (props.data.length > 2) {
+                  processMultiChartData(chartData);
+                } else {
+                  processChartData(chartData);
+                }
+              }}
+            >
+              {props.data.length === 1 ? (
                 <div>
-                  {NonRecursiveConstructDisplayCells(
-                    chartData?.options?.metadata?.percentiles?.display?.value || {},
-                  ).map((el, i) => (
-                    <div key={`percentile-${i}`}>{el}</div>
-                  ))}
+                  <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom>
+                    Percentile Summary
+                  </Typography>
+                  <div>
+                    {NonRecursiveConstructDisplayCells(
+                      chartData?.options?.metadata?.percentiles?.display?.value || {},
+                    ).map((el, i) => (
+                      <div key={`percentile-${i}`}>{el}</div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ) : null}
-          </ChartPercentiles>
-        </ChartWrapper>
-      </div>
+              ) : null}
+            </ChartPercentiles>
+          </ChartWrapper>
+        </div>
+      </ChartOuterWrapper>
     </NoSsr>
   );
 }
