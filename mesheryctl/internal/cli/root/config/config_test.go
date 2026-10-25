@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -301,6 +302,176 @@ func TestSetOperatorStatus(t *testing.T) {
 		if got != want {
 			t.Errorf("got %v want %v", got, want)
 		}
+	}
+}
+
+func TestGetCurrentContext(t *testing.T) {
+	tests := []struct {
+		name        string
+		cfg         MesheryCtlConfig
+		wantErr     bool
+		errContains string
+		wantName    string
+	}{
+		{
+			name: "Valid current-context exists",
+			cfg: MesheryCtlConfig{
+				CurrentContext: "local",
+				Contexts: map[string]Context{
+					"local": {
+						Endpoint: "http://localhost:9081",
+						Platform: "docker",
+						Channel:  "stable",
+						Version:  "latest",
+						Provider: "Local",
+					},
+				},
+			},
+			wantErr:  false,
+			wantName: "local",
+		},
+		{
+			name: "Empty current-context returns error without exit",
+			cfg: MesheryCtlConfig{
+				CurrentContext: "",
+				Contexts: map[string]Context{
+					"local": {Endpoint: "http://localhost:9081"},
+				},
+			},
+			wantErr:     true,
+			errContains: "Valid context is not available in meshconfig",
+		},
+		{
+			name: "Current context does not exist in contexts map",
+			cfg: MesheryCtlConfig{
+				CurrentContext: "nonexistent",
+				Contexts: map[string]Context{
+					"local": {Endpoint: "http://localhost:9081"},
+				},
+			},
+			wantErr:     true,
+			errContains: "current context nonexistent does not exist",
+		},
+		{
+			name: "Nil contexts map with current context set",
+			cfg: MesheryCtlConfig{
+				CurrentContext: "local",
+				Contexts:       nil,
+			},
+			wantErr:     true,
+			errContains: "current context local does not exist",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, err := tt.cfg.GetCurrentContext()
+			if tt.wantErr {
+				if err == nil {
+					t.Fatalf("GetCurrentContext() expected error, got nil")
+				}
+				if ctx != nil {
+					t.Errorf("GetCurrentContext() expected nil context on error, got %v", ctx)
+				}
+				if tt.errContains != "" && !strings.Contains(err.Error(), tt.errContains) {
+					t.Errorf("GetCurrentContext() error = %q, want substring %q", err.Error(), tt.errContains)
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("GetCurrentContext() unexpected error: %v", err)
+				}
+				if ctx == nil {
+					t.Fatalf("GetCurrentContext() expected valid context, got nil")
+				}
+				if ctx.Endpoint != tt.cfg.Contexts[tt.wantName].Endpoint {
+					t.Errorf("GetCurrentContext() endpoint = %q, want %q", ctx.Endpoint, tt.cfg.Contexts[tt.wantName].Endpoint)
+				}
+			}
+		})
+	}
+}
+
+func TestGetContext(t *testing.T) {
+	tests := []struct {
+		name         string
+		cfg          MesheryCtlConfig
+		queryName    string
+		wantErr      bool
+		errContains  string
+		wantEndpoint string
+	}{
+		{
+			name: "Valid named context exists",
+			cfg: MesheryCtlConfig{
+				Contexts: map[string]Context{
+					"k8s-ctx": {
+						Endpoint: "http://localhost:9081",
+						Platform: "kubernetes",
+					},
+				},
+			},
+			queryName:    "k8s-ctx",
+			wantErr:      false,
+			wantEndpoint: "http://localhost:9081",
+		},
+		{
+			name: "Named context does not exist",
+			cfg: MesheryCtlConfig{
+				Contexts: map[string]Context{
+					"k8s-ctx": {Endpoint: "http://localhost:9081"},
+				},
+			},
+			queryName:   "missing-ctx",
+			wantErr:     true,
+			errContains: "context missing-ctx does not exist",
+		},
+		{
+			name: "Empty context name returns error",
+			cfg: MesheryCtlConfig{
+				Contexts: map[string]Context{
+					"k8s-ctx": {Endpoint: "http://localhost:9081"},
+				},
+			},
+			queryName:   "",
+			wantErr:     true,
+			errContains: "context  does not exist",
+		},
+		{
+			name: "Nil contexts map returns error",
+			cfg: MesheryCtlConfig{
+				Contexts: nil,
+			},
+			queryName:   "any-ctx",
+			wantErr:     true,
+			errContains: "context any-ctx does not exist",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, err := tt.cfg.GetContext(tt.queryName)
+			if tt.wantErr {
+				if err == nil {
+					t.Fatalf("GetContext(%q) expected error, got nil", tt.queryName)
+				}
+				if ctx != nil {
+					t.Errorf("GetContext(%q) expected nil context on error, got %v", tt.queryName, ctx)
+				}
+				if tt.errContains != "" && !strings.Contains(err.Error(), tt.errContains) {
+					t.Errorf("GetContext(%q) error = %q, want substring %q", tt.queryName, err.Error(), tt.errContains)
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("GetContext(%q) unexpected error: %v", tt.queryName, err)
+				}
+				if ctx == nil {
+					t.Fatalf("GetContext(%q) expected valid context, got nil", tt.queryName)
+				}
+				if ctx.Endpoint != tt.wantEndpoint {
+					t.Errorf("GetContext(%q) endpoint = %q, want %q", tt.queryName, ctx.Endpoint, tt.wantEndpoint)
+				}
+			}
+		})
 	}
 }
 
