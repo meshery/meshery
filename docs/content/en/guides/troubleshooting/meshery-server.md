@@ -1,9 +1,6 @@
 ---
 title: Troubleshooting Errors while running Meshery
 description: Troubleshoot errors from mesheryctl system start and from running Meshery Server locally with make server.
-aliases: 
-- /guides/troubleshooting/running
-description: Troubleshooting Meshery errors when running make server / mesheryctl system start
 aliases:
   - /guides/troubleshooting/running
 categories: [troubleshooting]
@@ -38,37 +35,51 @@ make server
 
 If the command fails, inspect the terminal output for errors related to:
 
-- missing or incompatible dependencies
-- local configuration
-- database initialization or migration
-- build failures
-- port conflicts
+- Missing or incompatible dependencies
+- Local configuration
+- Database initialization or migration
+- Build failures
+- Port conflicts
 
 See the [`make server`](#make-server) troubleshooting example below for a known database-related startup failure.
 
 #### Meshery CLI with `mesheryctl`
 
-When starting Meshery using the Meshery CLI, run:
+When starting Meshery using the Meshery CLI, use the following commands to diagnose startup problems.
+
+**1. Start Meshery**
+
+Run the following command to start Meshery:
 
 ```bash
 mesheryctl system start
 ```
 
+**2. Check system prerequisites**
+
+Run the preflight check to identify potential environment or configuration issues. For details, see [Running system checks]({{< ref "guides/mesheryctl/running-system-checks-using-mesheryctl.md" >}}).
+
 ```bash
 mesheryctl system check --preflight
 ```
+
+**3. Collect startup logs**
+
+If Meshery fails to start or behaves unexpectedly, collect its logs for troubleshooting:
 
 ```bash
 mesheryctl system logs
 ```
 
-If the command fails, inspect the CLI output to determine whether the failure is related to the configured deployment platform, existing resources, configuration, or another startup dependency.
+If a command fails, inspect its output to determine whether the issue is related to the configured deployment platform, existing resources, configuration, or another startup dependency.
+
+For installation-related issues, including preflight checks and Kubernetes connectivity, see the [installation troubleshooting guide]({{< ref "guides/troubleshooting/installation/index.md" >}}).
 
 See the [`mesheryctl system start`](#mesheryctl-system-start) troubleshooting example below for a known Kubernetes resource ownership issue.
 
 #### Docker
 
-If Meshery Server is running in Docker, first verify that Docker is running and list the active containers:
+If Meshery Server is running in Docker, list all Meshery containers, including stopped containers, to check their status:
 
 ```bash
 docker ps -a --filter "name=meshery"
@@ -82,17 +93,11 @@ docker logs <container-name-or-id>
 
 Look for errors related to:
 
-- container startup or unexpected restarts
-- port binding
-- configuration
-- database or dependency connections
-- application startup failures
-
-If the Meshery container is not listed among the running containers, also check stopped containers:
-
-```bash
-docker ps -a --filter "name=meshery"
-```
+- Container startup or unexpected restarts
+- Port binding
+- Configuration
+- Database or dependency connections
+- Application startup failures
 
 #### Kubernetes
 
@@ -107,6 +112,8 @@ Identify the affected Meshery Server pod from the output, then inspect its logs:
 ```bash
 kubectl logs -n meshery <pod-name>
 ```
+
+Inspect the pod's configuration, events, and status to identify scheduling, image-pull, or startup issues:
 
 ```bash
 kubectl describe pod <pod-name> -n meshery
@@ -127,19 +134,19 @@ kubectl logs -n meshery <pod-name> -c <container-name>
 When checking the pod status and logs, look for:
 
 - `CrashLoopBackOff`
-- image pull failures
-- configuration errors
-- readiness or liveness probe failures
-- application startup errors
+- Image pull failures
+- Configuration errors
+- Readiness or liveness probe failures
+- Application startup errors
 
-## mesheryctl system start
+## `mesheryctl system start`
 
 ### Resources already exist and cannot be imported into the Helm release
 
 **Error:**
 
 ```text
-mesheryctl system start : : cannot start Meshery: rendered manifests contain a resource that already exists.
+mesheryctl system start: cannot start Meshery: rendered manifests contain a resource that already exists.
 Unable to continue with install: ServiceAccount "meshery-operator" in namespace "meshery" exists and cannot
 be imported into the current release: invalid ownership metadata; label validation error: missing key
 "app.kubernetes.io/managed-by": must be set to "Helm"; annotation validation error: missing key
@@ -149,48 +156,65 @@ be imported into the current release: invalid ownership metadata; label validati
 
 **Cause:** Meshery resources from an earlier installation are still in the cluster, but Helm does not manage them, so the new Helm release cannot take them over.
 
-**Fix:** Remove the leftover resources, then start Meshery again.
+**Fix:** Stop Meshery and check for leftover resources before deleting anything.
 
-1. Let `mesheryctl` remove every Meshery resource it finds, including cluster roles and cluster role bindings whose names contain `meshery`:
-**Fix: Clean the cluster using:**
+1. Stop Meshery and allow the CLI to clean up its resources:
 
-<pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">
-kubectl delete ns meshery
-kubectl delete clusterroles.rbac.authorization.k8s.io meshery-controller-role meshery-operator-role meshery-proxy-role meshery-metrics-reader
-kubectl delete clusterrolebindings.rbac.authorization.k8s.io meshery-controller-rolebinding meshery-operator-rolebinding meshery-proxy-rolebinding
-</div></div>
-</pre>
+   ```bash
+   mesheryctl system stop --force
+   ```
 
-_Issue Reference: [#4578](https://github.com/meshery/meshery/issues/4578)_
+2. If the error persists, inspect the namespace:
 
-    ```bash
-    mesheryctl system stop --force
-    ```
+   ```bash
+   kubectl get all -n meshery
+   ```
 
-2. If the error persists, find and delete the leftovers yourself. Check what the `meshery` namespace contains first (`kubectl get all -n meshery`), and delete it only if it holds nothing but Meshery. `mesheryctl system stop` deletes this namespace too unless you pass `--keep-namespace`.
+   Check the namespace and cluster-level resources for leftovers associated with Meshery. Delete only resources that you have confirmed belong to the obsolete Meshery installation. Do not delete a shared namespace or resources used by other applications.
+
+   For example, if you have confirmed that these resources are obsolete Meshery resources, delete them explicitly:
+
+   ```bash
+   kubectl delete ns meshery
+   kubectl delete clusterroles.rbac.authorization.k8s.io meshery-controller-role meshery-operator-role meshery-proxy-role meshery-metrics-reader
+   kubectl delete clusterrolebindings.rbac.authorization.k8s.io meshery-controller-rolebinding meshery-operator-rolebinding meshery-proxy-rolebinding
+   ```
+
+   **Warning:** Deleting the `meshery` namespace removes resources in that namespace. Verify its contents before proceeding.
+
+   See [Meshery issue #4578](https://github.com/meshery/meshery/issues/4578) for the related issue.
+
+3. Start Meshery again:
+
+   ```bash
+   mesheryctl system start
+   ```
+
+## `make server`
+
+### Database migration errors
+
+**Error:** Meshery Server exits during startup with a database error:
 
 ```text
-FATA[0000] constraints not implemented on sqlite, consider using DisableForeignKeyConstraintWhenMigrating, more details https://github.com/go-gorm/gorm/wiki/GORM-V2-Release-Note-Draft#all-new-migrator
+FATA[0000] constraints not implemented on sqlite, consider using DisableForeignKeyConstraintWhenMigrating
 exit status 1
 make: *** [Makefile: server] Error 1
 ```
 
-**Cause:** Meshery Server keeps its local SQLite database in `~/.meshery/config` (the `USER_DATA_FOLDER` environment variable overrides this location). A database created by a different Meshery version can fail to migrate.
+**Cause:** Meshery Server keeps its local SQLite database in `~/.meshery/config` by default. The `USER_DATA_FOLDER` environment variable overrides this location. A database created by a different Meshery version can fail to migrate.
 
-**Fix:**
+**Fix:** Back up your local Meshery data before removing the affected database files. The following commands remove the database file and its SQLite write-ahead log files, which may contain locally stored Meshery data.
 
-1. Delete the local database file and its write-ahead log files. This removes your locally stored Meshery data but leaves the rest of the folder in place:
-1. Flush the database by deleting the `.meshery/config`.
-2. Run:
+```bash
+DB_DIR="${USER_DATA_FOLDER:-$HOME/.meshery/config}"
+rm -f "$DB_DIR/mesherydb.sql" "$DB_DIR/mesherydb.sql-wal" "$DB_DIR/mesherydb.sql-shm"
+```
+
+Run the server again:
 
 ```bash
 make server
 ```
 
-    ```bash
-    DB_DIR="${USER_DATA_FOLDER:-$HOME/.meshery/config}"
-    rm -f "$DB_DIR/mesherydb.sql" "$DB_DIR/mesherydb.sql-wal" "$DB_DIR/mesherydb.sql-shm"
-    ```
-
-- [Error Code Reference]({{< ref "reference/references/error-codes.md" >}})
+For more information, see the [Error Code Reference]({{< ref "reference/references/error-codes.md" >}}).
