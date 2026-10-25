@@ -688,3 +688,142 @@ func TestMatchLabelsPolicyIdentificationIsDeterministic(t *testing.T) {
 		}
 	}
 }
+
+// TestClusterRoleAndRoleBindingNoCrossScopeOrGhostRelationships tests issue #21988:
+// Kind matching must be anchored so "Role" does not match "ClusterRole", and
+// "RoleBinding" or "Binding" does not match "ClusterRoleBinding".
+func TestClusterRoleAndRoleBindingNoCrossScopeOrGhostRelationships(t *testing.T) {
+	crID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	crbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
+	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000004")
+
+	clusterRole := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "ClusterRole"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{"name": "cluster-admin"},
+		},
+	}
+	clusterRole.ID = crID
+
+	clusterRoleBinding := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "ClusterRoleBinding"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"roleRef": map[string]interface{}{"name": "cluster-admin"},
+		},
+	}
+	clusterRoleBinding.ID = crbID
+
+	role := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Role"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{"name": "pod-reader"},
+		},
+	}
+	role.ID = roleID
+
+	roleBinding := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "RoleBinding"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"roleRef": map[string]interface{}{"name": "pod-reader"},
+		},
+	}
+	roleBinding.ID = rbID
+
+	// gbkch: ClusterRoleBinding -> ClusterRole
+	crbMutator := [][]string{{"configuration", "roleRef", "name"}}
+	crMutated := [][]string{{"configuration", "metadata", "name"}}
+	gbkchRel := &relationship.RelationshipDefinition{
+		Kind:             relationship.Edge,
+		RelationshipType: "non-binding",
+		SubType:          "reference",
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors: &relationship.SelectorSet{
+			{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{
+						{
+							Kind: strPtr("ClusterRoleBinding"),
+							RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+								MutatorRef: &crbMutator,
+							},
+						},
+					},
+					To: []relationship.SelectorItem{
+						{
+							Kind: strPtr("ClusterRole"),
+							RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+								MutatedRef: &crMutated,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	gbkchRel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
+
+	// keceb: RoleBinding -> Role
+	rbMutator := [][]string{{"configuration", "roleRef", "name"}}
+	roleMutated := [][]string{{"configuration", "metadata", "name"}}
+	kecebRel := &relationship.RelationshipDefinition{
+		Kind:             relationship.Edge,
+		RelationshipType: "non-binding",
+		SubType:          "reference",
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors: &relationship.SelectorSet{
+			{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{
+						{
+							Kind: strPtr("RoleBinding"),
+							RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+								MutatorRef: &rbMutator,
+							},
+						},
+					},
+					To: []relationship.SelectorItem{
+						{
+							Kind: strPtr("Role"),
+							RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+								MutatedRef: &roleMutated,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	kecebRel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000020")
+
+	policy := &EdgeNonBindingPolicy{}
+
+	// Test 1: Design with only ClusterRole and ClusterRoleBinding
+	// Expected: Exactly 1 edge from gbkch, 0 edges from keceb.
+	designClusterOnly := makePatternFile([]*component.ComponentDefinition{clusterRole, clusterRoleBinding}, nil)
+	gbkchMatches := policy.IdentifyRelationship(gbkchRel, designClusterOnly)
+	if len(gbkchMatches) != 1 {
+		t.Fatalf("Expected exactly 1 ClusterRoleBinding->ClusterRole relationship, got %d", len(gbkchMatches))
+	}
+	kecebGhostMatches := policy.IdentifyRelationship(kecebRel, designClusterOnly)
+	if len(kecebGhostMatches) != 0 {
+		t.Fatalf("Expected 0 relationships from RoleBinding->Role on ClusterRole/ClusterRoleBinding, got %d ghost relationship(s)", len(kecebGhostMatches))
+	}
+
+	// Test 2: Design with all 4 components (ClusterRole, ClusterRoleBinding, Role, RoleBinding)
+	// Expected: gbkch produces only 1, keceb produces only 1. Total = 2, no cross-scope pairings.
+	designAll := makePatternFile([]*component.ComponentDefinition{clusterRole, clusterRoleBinding, role, roleBinding}, nil)
+	gbkchAll := policy.IdentifyRelationship(gbkchRel, designAll)
+	if len(gbkchAll) != 1 {
+		t.Fatalf("Expected exactly 1 gbkch relationship on full design, got %d", len(gbkchAll))
+	}
+	kecebAll := policy.IdentifyRelationship(kecebRel, designAll)
+	if len(kecebAll) != 1 {
+		t.Fatalf("Expected exactly 1 keceb relationship on full design, got %d", len(kecebAll))
+	}
+}
+
