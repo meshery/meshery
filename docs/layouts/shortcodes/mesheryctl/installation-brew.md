@@ -2,11 +2,11 @@
 
 ### Prerequisites
 
-You need to have `Brew` installed on your **Linux** or **macOS** system to perform these actions.
+You need [Homebrew](https://brew.sh) installed on your **Linux** or **macOS** system.
 
 ### Install `mesheryctl` using Brew
 
-To install `mesheryctl` using homebrew, execute the following commands.
+To install `mesheryctl` with Homebrew, run:
 
 <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
@@ -14,7 +14,7 @@ To install `mesheryctl` using homebrew, execute the following commands.
  </div></div>
 </pre>
 
-You're ready to run Meshery. To do so, execute the following command.
+You're ready to run Meshery. To start it on Kubernetes, run:
 
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
@@ -23,7 +23,7 @@ You're ready to run Meshery. To do so, execute the following command.
 </div></div>
 </pre>
 
-If you are running Meshery on Docker, execute the following command.
+To run Meshery on Docker instead, run:
 
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
@@ -32,7 +32,7 @@ If you are running Meshery on Docker, execute the following command.
 </div></div>
 </pre>
 
-Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+To customize the callback URL that your Provider redirects to after sign-in, set `MESHERY_SERVER_CALLBACK_URL` when you start Meshery:
 
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
@@ -41,13 +41,13 @@ Meshery server supports customizing authentication flow callback URL, which can 
 </div></div>
 </pre>
 
-`mesheryctl` uses your current Kubernetes context, your KUBECONFIG environment variable (`~/.kube/config` by default). Confirm if this Kubernetes cluster you want Meshery to interact with by running the following command: `kubectl config get-contexts`.
+On Kubernetes, `mesheryctl` uses the current context of your kubeconfig (`~/.kube/config` by default). To confirm that it points at the cluster you want Meshery to use, run `kubectl config get-contexts`.
 
-If there are multiple contexts in your kubeconfig file, specify the one you want to use with the `use-context` subcommand: `kubectl config use-context <context-to-use>`.
+If your kubeconfig has several contexts, switch to the one you want with `kubectl config use-context <context-to-use>`.
 
 ### Upgrade `mesheryctl` using Brew
 
-To upgrade `mesheryctl`, execute the following command.
+To upgrade `mesheryctl`, run:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
@@ -55,24 +55,3 @@ To upgrade `mesheryctl`, execute the following command.
  </div></div>
  </pre>
 
-<details>
-<summary>
-Example output of a successful upgrade.
-</summary>
-
-<pre><code>
-➜  ~ brew upgrade mesheryctl
-==> Upgrading 1 outdated package:
-meshery/tap/mesheryctl 0.3.2 -> 0.3.4
-==> Upgrading meshery/tap/mesheryctl
-==> Downloading https://github.com/meshery/meshery/releases/download/v0.3.4/mesheryctl_0.3.4_Darwin_x86_64.zip
-==> Downloading from https://github-production-release-asset-2e65be.s3.amazonaws.com/157554479/17522b00-2af0-11ea-8aef-cbfe8
-######################################################################## 100.0%
-🍺  /usr/local/Cellar/mesheryctl/0.3.4: 5 files, 10.2MB, built in 4 seconds
-Removing: /usr/local/Cellar/mesheryctl/0.3.2... (5 files, 10.2MB)
-Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
-==> Checking for dependents of upgraded formulae...
-==> No dependents found!
-</code></pre>
-<br />
-</details>

@@ -43,7 +43,7 @@ var profileCmd = &cobra.Command{
 	Use:   "profile [profile-name]",
 	Short: "List performance profiles",
 	Long: `List all the available performance profiles.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/perf/profile`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/perf/profile`,
 	Args: cobra.MinimumNArgs(0),
 	Example: `
 // List performance profiles (maximum 25 profiles)
