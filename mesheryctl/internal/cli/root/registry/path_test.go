@@ -139,6 +139,22 @@ func TestVerifyPrerequisiteRepo(t *testing.T) {
 		t.Fatalf("mkdir mesheryctl: %v", err)
 	}
 
+	// Repository with marker directories but malformed go.mod.
+	malformedGoModRoot := t.TempDir()
+	malformedGoModRoot, err = filepath.EvalSymlinks(malformedGoModRoot)
+	if err != nil {
+		t.Fatalf("evalsymlinks: %v", err)
+	}
+	if err := os.MkdirAll(filepath.Join(malformedGoModRoot, "models"), 0o755); err != nil {
+		t.Fatalf("mkdir models: %v", err)
+	}
+	if err := os.MkdirAll(filepath.Join(malformedGoModRoot, "mesheryctl"), 0o755); err != nil {
+		t.Fatalf("mkdir mesheryctl: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(malformedGoModRoot, "go.mod"), []byte("invalid go.mod syntax !!!"), 0o644); err != nil {
+		t.Fatalf("write go.mod: %v", err)
+	}
+
 	emptyDir := t.TempDir()
 
 	tests := []struct {
@@ -169,6 +185,11 @@ func TestVerifyPrerequisiteRepo(t *testing.T) {
 		{
 			name:    "unrelated repository with matching folder markers but missing go.mod fails",
 			cwd:     missingGoModRoot,
+			wantErr: true,
+		},
+		{
+			name:    "repository with matching folder markers but malformed go.mod fails",
+			cwd:     malformedGoModRoot,
 			wantErr: true,
 		},
 		{

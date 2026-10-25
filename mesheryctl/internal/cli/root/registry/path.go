@@ -18,7 +18,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
+
+	"golang.org/x/mod/modfile"
 )
 
 // defaultModelsLocation resolves the default relative path to the repo-root
@@ -52,22 +53,19 @@ func isDirectory(path string) bool {
 	return err == nil && info.IsDir()
 }
 
-// hasMesheryModuleDeclaration checks whether the go.mod file at path declares
-// "module github.com/meshery/meshery".
+// hasMesheryModuleDeclaration parses the go.mod file at path with the Go module
+// parser and returns true only if parsing succeeds and the declared module path
+// is "github.com/meshery/meshery".
 func hasMesheryModuleDeclaration(goModPath string) bool {
 	data, err := os.ReadFile(goModPath)
 	if err != nil {
 		return false
 	}
-	lines := strings.Split(string(data), "\n")
-	for _, line := range lines {
-		trimmed := strings.TrimSpace(line)
-		if strings.HasPrefix(trimmed, "module ") {
-			parts := strings.Fields(trimmed)
-			return len(parts) >= 2 && parts[1] == "github.com/meshery/meshery"
-		}
+	f, err := modfile.Parse(goModPath, data, nil)
+	if err != nil || f.Module == nil {
+		return false
 	}
-	return false
+	return f.Module.Mod.Path == "github.com/meshery/meshery"
 }
 
 // isMesheryRepoRoot checks whether dir contains the marker directories and root go.mod of a Meshery repository.
