@@ -71,6 +71,8 @@ If Meshery fails to start or behaves unexpectedly, collect its logs for troubles
 mesheryctl system logs
 ```
 
+If preflight checks fail and the CLI cannot collect logs, inspect the deployment directly using the Docker or Kubernetes log commands described below.
+
 If a command fails, inspect its output to determine whether the issue is related to the configured deployment platform, existing resources, configuration, or another startup dependency.
 
 For installation-related issues, including preflight checks and Kubernetes connectivity, see the [installation troubleshooting guide]({{< ref "guides/troubleshooting/installation/index.md" >}}).
@@ -168,6 +170,8 @@ be imported into the current release: invalid ownership metadata; label validati
 
    ```bash
    kubectl get all -n meshery
+   kubectl get serviceaccount -n meshery
+   kubectl get clusterroles,clusterrolebindings | grep meshery
    ```
 
    Check the namespace and cluster-level resources for leftovers associated with Meshery. Delete only resources that you have confirmed belong to the obsolete Meshery installation. Do not delete a shared namespace or resources used by other applications.
