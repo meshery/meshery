@@ -3,12 +3,16 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"net/http"
+	"net/http/httptest"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/meshes"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
 	_events "github.com/meshery/meshkit/utils/events"
 )
@@ -430,3 +434,99 @@ func TestListenForCoreEvents_IgnoresUnexpectedPayloads(t *testing.T) {
 		t.Fatal("edge-case listener did not stop after cancellation")
 	}
 }
+
+type nonFlusherResponseWriter struct {
+	header     http.Header
+	statusCode int
+	body       bytes.Buffer
+}
+
+func (w *nonFlusherResponseWriter) Header() http.Header {
+	return w.header
+}
+
+func (w *nonFlusherResponseWriter) Write(b []byte) (int, error) {
+	return w.body.Write(b)
+}
+
+func (w *nonFlusherResponseWriter) WriteHeader(statusCode int) {
+	w.statusCode = statusCode
+}
+
+type mockEventsProvider struct {
+	models.DefaultLocalProvider
+}
+
+func TestCloseAdapterConnections_SafeAndIdempotent(t *testing.T) {
+	lock := &sync.Mutex{}
+	adapters := map[string]*meshes.MeshClient{}
+
+	cleared := closeAdapterConnections(lock, adapters)
+	if len(cleared) != 0 {
+		t.Fatalf("expected cleared map to be empty, got %d", len(cleared))
+	}
+
+	var wg sync.WaitGroup
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			_ = closeAdapterConnections(lock, adapters)
+		}()
+	}
+	wg.Wait()
+}
+
+func TestEventStreamHandler_UnsupportedFlusher(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	rw := &nonFlusherResponseWriter{header: make(http.Header)}
+	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/api/events", nil)
+
+	prefObj := &models.Preference{}
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	mockP := &mockEventsProvider{}
+
+	h.EventStreamHandler(rw, req, prefObj, user, mockP)
+
+	if rw.statusCode != http.StatusInternalServerError {
+		t.Fatalf("expected status code %d, got %d", http.StatusInternalServerError, rw.statusCode)
+	}
+}
+
+func TestEventStreamHandler_ImmediateClientDisconnection(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	sysID := uuid.Must(uuid.NewV4())
+	h.SystemID = &sysID
+	h.EventsBuffer = _events.NewEventStreamer()
+
+	rec := httptest.NewRecorder()
+	ctx, cancel := context.WithCancel(context.Background())
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/api/events", nil)
+
+	prefObj := &models.Preference{}
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	mockP := &mockEventsProvider{}
+
+	go func() {
+		time.Sleep(20 * time.Millisecond)
+		cancel()
+	}()
+
+	done := make(chan struct{})
+	go func() {
+		h.EventStreamHandler(rec, req, prefObj, user, mockP)
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		// Clean exit without deadlock or panic!
+	case <-time.After(2 * time.Second):
+		t.Fatal("EventStreamHandler failed to exit cleanly upon client disconnection")
+	}
+
+	if rec.Header().Get("Content-Type") != "text/event-stream" {
+		t.Errorf("expected Content-Type text/event-stream, got %s", rec.Header().Get("Content-Type"))
+	}
+}
+
