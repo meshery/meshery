@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 )
 
 // Event represents a Server-Sent Event
@@ -54,15 +55,15 @@ func loop(reader *bufio.Reader, events chan Event) {
 
 		// id of event
 		case hasPrefix(line, "id: "):
-			ev.ID = string(line[4:])
+			ev.ID = parseFieldValue(string(line), 4)
 		case hasPrefix(line, "id:"):
-			ev.ID = string(line[3:])
+			ev.ID = parseFieldValue(string(line), 3)
 
 		// name of event
 		case hasPrefix(line, "event: "):
-			ev.Name = string(line[7 : len(line)-1])
+			ev.Name = parseFieldValue(string(line), 7)
 		case hasPrefix(line, "event:"):
-			ev.Name = string(line[6 : len(line)-1])
+			ev.Name = parseFieldValue(string(line), 6)
 
 		// event data
 		case hasPrefix(line, "data: "):
@@ -96,4 +97,9 @@ func loop(reader *bufio.Reader, events chan Event) {
 
 func hasPrefix(s []byte, prefix string) bool {
 	return bytes.HasPrefix(s, []byte(prefix))
+}
+
+func parseFieldValue(line string, prefixLen int) string {
+	val := strings.TrimSuffix(strings.TrimSuffix(line[prefixLen:], "\n"), "\r")
+	return val
 }
