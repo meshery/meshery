@@ -137,20 +137,9 @@ func TestLoadTest_ConcurrentContextIsolation(t *testing.T) {
 		wg.Add(1)
 		go func(idx int) {
 			defer wg.Done()
-			// Clone resultsMap as implemented in load_test_handler.go
-			clusterResultMap := make(map[string]interface{}, len(baseResultsMap)+2)
-			for k, v := range baseResultsMap {
-				clusterResultMap[k] = v
-			}
-
 			serverVersion := fmt.Sprintf("v1.2%d.0", idx)
-			clusterResultMap["kubernetes"] = map[string]interface{}{
-				"server_version": serverVersion,
-				"context_id":     idx,
-			}
-			clusterResultMap["detected-meshes"] = map[string]interface{}{
-				"mesh": fmt.Sprintf("mesh-%d", idx),
-			}
+			nodes := []*models.K8SNode{{InternalIP: fmt.Sprintf("10.0.0.%d", idx)}}
+			clusterResultMap := buildClusterResultMap(baseResultsMap, serverVersion, nodes, nil)
 
 			res := &models.MesheryResult{
 				Name:   fmt.Sprintf("test-%d", idx),

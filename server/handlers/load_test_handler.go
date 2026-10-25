@@ -357,48 +357,56 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 				h.log.Error(ErrPanicRecovery(r))
 			}
 		}()
-		for data := range respChan {
-			bd, err := json.Marshal(data)
-			if err != nil {
-				// We are inside an active SSE connection — Content-Type:
-				// text/event-stream has already been committed above. Calling
-				// http.Error here would silently corrupt the stream (it tries
-				// to set text/plain after headers are flushed, then writes a
-				// trailing newline that breaks SSE framing). Instead, emit an
-				// in-protocol error event using the same LoadTestResponse
-				// envelope the client already understands (status="error" is
-				// handled by the EventSource onmessage consumer in the UI).
-				//
-				// We deliberately do NOT return here: the worker goroutine
-				// will keep writing into respChan until executeLoadTest
-				// exits, and an early return would block the worker once
-				// the buffered slots fill. Continue draining so the worker
-				// can finish and close(respChan) terminates this loop.
-				h.log.Error(models.ErrMarshal(err, "meshery result for shipping"))
-				errPayload, mErr := json.Marshal(&models.LoadTestResponse{
-					Status:  models.LoadTestError,
-					Message: models.ErrMarshal(err, "meshery result for shipping").Error(),
-				})
-				if mErr != nil {
-					// Last-resort: a static, hand-rolled JSON literal so the
-					// stream stays well-formed even if envelope marshal fails.
-					errPayload = []byte(`{"status":"error","message":"failed to marshal load test result"}`)
+		for {
+			select {
+			case <-notify.Done():
+				return
+			case data, ok := <-respChan:
+				if !ok {
+					select {
+					case endChan <- struct{}{}:
+					default:
+					}
+					h.log.Debug("response channel closed")
+					return
 				}
-				_, _ = fmt.Fprintf(w, "data: %s\n\n", errPayload)
-				flusher.Flush()
-				continue
-			}
+				bd, err := json.Marshal(data)
+				if err != nil {
+					// We are inside an active SSE connection — Content-Type:
+					// text/event-stream has already been committed above. Calling
+					// http.Error here would silently corrupt the stream (it tries
+					// to set text/plain after headers are flushed, then writes a
+					// trailing newline that breaks SSE framing). Instead, emit an
+					// in-protocol error event using the same LoadTestResponse
+					// envelope the client already understands (status="error" is
+					// handled by the EventSource onmessage consumer in the UI).
+					//
+					// We deliberately do NOT return here: the worker goroutine
+					// will keep writing into respChan until executeLoadTest
+					// exits, and an early return would block the worker once
+					// the buffered slots fill. Continue draining so the worker
+					// can finish and close(respChan) terminates this loop.
+					h.log.Error(models.ErrMarshal(err, "meshery result for shipping"))
+					errPayload, mErr := json.Marshal(&models.LoadTestResponse{
+						Status:  models.LoadTestError,
+						Message: models.ErrMarshal(err, "meshery result for shipping").Error(),
+					})
+					if mErr != nil {
+						// Last-resort: a static, hand-rolled JSON literal so the
+						// stream stays well-formed even if envelope marshal fails.
+						errPayload = []byte(`{"status":"error","message":"failed to marshal load test result"}`)
+					}
+					_, _ = fmt.Fprintf(w, "data: %s\n\n", errPayload)
+					flusher.Flush()
+					continue
+				}
 
-			h.log.Debug("received new data on response channel")
-			_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
-			flusher.Flush()
-			h.log.Debug("Flushed the messages on the wire...")
+				h.log.Debug("received new data on response channel")
+				_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
+				flusher.Flush()
+				h.log.Debug("Flushed the messages on the wire...")
+			}
 		}
-		select {
-		case endChan <- struct{}{}:
-		default:
-		}
-		h.log.Debug("response channel closed")
 	}()
 
 	ctx, cancel := context.WithCancel(req.Context())
@@ -541,25 +549,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 			}
 
 			// Clone resultsMap so each context has an isolated copy without data races
-			clusterResultMap := make(map[string]interface{}, len(resultsMap)+2)
-			for k, v := range resultsMap {
-				clusterResultMap[k] = v
-			}
-
-			if serverVersion != "" {
-				clusterResultMap["kubernetes"] = map[string]interface{}{
-					"server_version": serverVersion,
-					"nodes":          nodes,
-				}
-			} else {
-				clusterResultMap["kubernetes"] = nil
-			}
-
-			if len(installedMeshes) > 0 {
-				clusterResultMap["detected-meshes"] = installedMeshes
-			} else {
-				clusterResultMap["detected-meshes"] = nil
-			}
+			clusterResultMap := buildClusterResultMap(resultsMap, serverVersion, nodes, installedMeshes)
 
 			select {
 			case respChan <- &models.LoadTestResponse{
@@ -622,4 +612,28 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 
 func assignCertificatePath(key, path string, loadTestOptions *models.LoadTestOptions) {
 	loadTestOptions.CACert = path
+}
+
+// buildClusterResultMap clones the base resultsMap and attaches cluster-specific kubernetes and mesh metadata.
+func buildClusterResultMap(baseResultsMap map[string]interface{}, serverVersion string, nodes []*models.K8SNode, installedMeshes map[string][]corev1.Pod) map[string]interface{} {
+	clusterResultMap := make(map[string]interface{}, len(baseResultsMap)+2)
+	for k, v := range baseResultsMap {
+		clusterResultMap[k] = v
+	}
+
+	if serverVersion != "" {
+		clusterResultMap["kubernetes"] = map[string]interface{}{
+			"server_version": serverVersion,
+			"nodes":          nodes,
+		}
+	} else {
+		clusterResultMap["kubernetes"] = nil
+	}
+
+	if len(installedMeshes) > 0 {
+		clusterResultMap["detected-meshes"] = installedMeshes
+	} else {
+		clusterResultMap["detected-meshes"] = nil
+	}
+	return clusterResultMap
 }
