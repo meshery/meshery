@@ -12,6 +12,7 @@ import (
 type HandlerInterface interface {
 	ServerVersionHandler(w http.ResponseWriter, r *http.Request)
 
+	RecoveryMiddleware(next http.Handler) http.Handler
 	ProviderMiddleware(http.Handler) http.Handler
 	NoCacheMiddleware(next http.Handler) http.Handler
 	//Set the AuthenticationMechanism as NoAuth to skip provider authentication for certain endpoints. If the provider is enforced, then this flag will not be respected.
