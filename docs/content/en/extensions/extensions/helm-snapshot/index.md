@@ -66,11 +66,11 @@ Once the plugin is installed, you can generate a snapshot using either a package
 
 **Example**
 
-To generate a snapshot for a Helm chart located at `https://meshery.io/charts/v0.8.0-meshery.tar.gz`, you can use:
+To generate a snapshot for a Helm chart located at `https://meshery.io/charts/meshery-v0.8.12.tgz`, you can use:
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-     <div class="clipboardjs">helm helm-kanvas-snapshot -f https://meshery.io/charts/v0.8.0-meshery.tar.gz --name meshery-chart</div>
+     <div class="clipboardjs">helm helm-kanvas-snapshot -f https://meshery.io/charts/meshery-v0.8.12.tgz --name meshery-chart</div>
    </div>
 </pre>
 
