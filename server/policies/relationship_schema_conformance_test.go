@@ -45,7 +45,6 @@ var knownUnresolvedMutationPaths = map[string]bool{
 	"kubernetes/edge-non-binding-reference-keceb.json|RoleBinding|configuration.spec.roleRef.name":                                   true,
 	"kubernetes/edge-non-binding-reference-lnrwq.json|Node|configuration.spec.nodeSelector":                                          true,
 	"kubernetes/edge-non-binding-reference-mszif.json|PriorityLevelConfiguration|configuration.spec.priorityLevelConfiguration.name": true,
-	"kubernetes/edge-non-binding-reference-tvdia.json|ServiceAccount|configuration.spec.audiences":                                   true,
 	"kubernetes/edge-non-binding-reference-tvyop.json|Job|configuration.spec.jobTemplate":                                            true,
 	"kubernetes/edge-non-binding-reference-ulrah.json|ResourceClaim|configuration.spec.deviceClassName":                              true,
 	"kubernetes/edge-non-binding-reference-wasdd.json|StorageClass|configuration.spec.storageClassName":                              true,
