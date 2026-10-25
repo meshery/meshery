@@ -414,7 +414,9 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 		cancel()
 	case <-endChan:
 		h.log.Debug("load test completed")
-		_ = req.Body.Close()
+		if req.Body != nil {
+			_ = req.Body.Close()
+		}
 	}
 }
 
