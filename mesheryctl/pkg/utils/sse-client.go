@@ -100,6 +100,6 @@ func hasPrefix(s []byte, prefix string) bool {
 }
 
 func parseFieldValue(line string, prefixLen int) string {
-	val := strings.TrimSuffix(strings.TrimSuffix(line[prefixLen:], "\n"), "\r")
+	val := strings.TrimSuffix(line[prefixLen:], "\n")
 	return val
 }
