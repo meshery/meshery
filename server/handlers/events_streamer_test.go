@@ -459,7 +459,10 @@ type mockEventsProvider struct {
 
 func TestCloseAdapterConnections_SafeAndIdempotent(t *testing.T) {
 	lock := &sync.Mutex{}
-	adapters := map[string]*meshes.MeshClient{}
+	adapters := map[string]*meshes.MeshClient{
+		"adapter-a:10000": {},
+		"adapter-b:10001": {},
+	}
 
 	cleared := closeAdapterConnections(lock, adapters)
 	if len(cleared) != 0 {
