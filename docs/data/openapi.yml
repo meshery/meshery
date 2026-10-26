@@ -23,6 +23,8 @@ tags:
     description: APIs for configuring Meshery Operator, MeshSync, and Meshery Broker.
   - name: Console_API_Console
     description: Interactive terminal and log consoles against a connection's resources.
+  - name: Diagnostics_Diagnostics
+    description: Operations related to failure diagnostics
   - name: Evaluation_Evaluation
     description: Operations related to design evaluation
   - name: Feature_Features
@@ -65,8 +67,6 @@ tags:
     description: Operations related to Meshery Academy content and curriculum
   - name: BlowhornHealth_blowhornHealth
     description: Operations related to Blowhorn health.
-  - name: BlowhornProfile_blowhornProfiles
-    description: Operations related to Blowhorn profiles.
   - name: Claim_claims
     description: Operations related to claims on resources.
   - name: ContentItem_contentItems
@@ -100,7 +100,7 @@ tags:
   - name: ProviderCapability_capabilities
     description: Operations related to the provider's capabilities document.
   - name: Schedule_schedules
-    description: Operations related to organization schedules and their claims.
+    description: Operations related to organization schedules.
   - name: Subscription_Subscriptions
     description: Operations related to subscriptions
   - name: Subscription_Plans
@@ -4396,6 +4396,21 @@ paths:
                                         type: string
                                         format: date-time
                                         x-go-type-skip-optional-pointer: true
+                                      organizationId:
+                                        type: string
+                                        format: uuid
+                                        description: >-
+                                          A Universally Unique Identifier used to uniquely identify entities in Meshery.
+                                          The UUID core definition is used across different schemas.
+                                        x-go-type: uuid.UUID
+                                        x-go-type-import:
+                                          path: github.com/gofrs/uuid
+                                        x-go-name: OrganizationID
+                                        x-oapi-codegen-extra-tags:
+                                          db: organization_id
+                                          json: organizationId,omitempty
+                                          yaml: organizationId
+                                        x-order: 15
                                       environments:
                                         type: array
                                         description: Associated environments for this connection
@@ -8710,6 +8725,21 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          type: string
+                                          format: uuid
+                                          description: >-
+                                            A Universally Unique Identifier used to uniquely identify entities in
+                                            Meshery. The UUID core definition is used across different schemas.
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -12960,6 +12990,27 @@ paths:
                                       type: string
                                       format: date-time
                                       x-go-type-skip-optional-pointer: true
+                                    organizationId:
+                                      description: >
+                                        The organization the connection belongs to. The server sets it from the session
+                                        organization. A client-supplied value is ignored. Optional on this superseded
+                                        shape, which live model responses still embed as `registrant`
+                                        (`additionalProperties: false`, so the field has to be declared for the server
+                                        to return it). v1beta3 Connection requires it. Not marked readOnly: this
+                                        connection is inlined into `POST /api/registry/relationships/evaluate` through a
+                                        component model's registrant, and readOnly there drops the design field from the
+                                        generated RTK client.
+                                      x-go-name: OrganizationID
+                                      x-oapi-codegen-extra-tags:
+                                        db: organization_id
+                                        json: organizationId,omitempty
+                                        yaml: organizationId
+                                      x-order: 15
+                                      type: string
+                                      format: uuid
+                                      x-go-type: uuid.UUID
+                                      x-go-type-import:
+                                        path: github.com/gofrs/uuid
                                     environments:
                                       type: array
                                       description: Associated environments for this connection
@@ -14098,6 +14149,27 @@ paths:
                                       type: string
                                       format: date-time
                                       x-go-type-skip-optional-pointer: true
+                                    organizationId:
+                                      description: >
+                                        The organization the connection belongs to. The server sets it from the session
+                                        organization. A client-supplied value is ignored. Optional on this superseded
+                                        shape, which live model responses still embed as `registrant`
+                                        (`additionalProperties: false`, so the field has to be declared for the server
+                                        to return it). v1beta3 Connection requires it. Not marked readOnly: this
+                                        connection is inlined into `POST /api/registry/relationships/evaluate` through a
+                                        component model's registrant, and readOnly there drops the design field from the
+                                        generated RTK client.
+                                      x-go-name: OrganizationID
+                                      x-oapi-codegen-extra-tags:
+                                        db: organization_id
+                                        json: organizationId,omitempty
+                                        yaml: organizationId
+                                      x-order: 15
+                                      type: string
+                                      format: uuid
+                                      x-go-type: uuid.UUID
+                                      x-go-type-import:
+                                        path: github.com/gofrs/uuid
                                     environments:
                                       type: array
                                       description: Associated environments for this connection
@@ -15362,6 +15434,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -17610,6 +17703,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -34152,6 +34266,27 @@ paths:
                                       type: string
                                       format: date-time
                                       x-go-type-skip-optional-pointer: true
+                                    organizationId:
+                                      description: >
+                                        The organization the connection belongs to. The server sets it from the session
+                                        organization. A client-supplied value is ignored. Optional on this superseded
+                                        shape, which live model responses still embed as `registrant`
+                                        (`additionalProperties: false`, so the field has to be declared for the server
+                                        to return it). v1beta3 Connection requires it. Not marked readOnly: this
+                                        connection is inlined into `POST /api/registry/relationships/evaluate` through a
+                                        component model's registrant, and readOnly there drops the design field from the
+                                        generated RTK client.
+                                      x-go-name: OrganizationID
+                                      x-oapi-codegen-extra-tags:
+                                        db: organization_id
+                                        json: organizationId,omitempty
+                                        yaml: organizationId
+                                      x-order: 15
+                                      type: string
+                                      format: uuid
+                                      x-go-type: uuid.UUID
+                                      x-go-type-import:
+                                        path: github.com/gofrs/uuid
                                     environments:
                                       type: array
                                       description: Associated environments for this connection
@@ -35294,6 +35429,27 @@ paths:
                                       type: string
                                       format: date-time
                                       x-go-type-skip-optional-pointer: true
+                                    organizationId:
+                                      description: >
+                                        The organization the connection belongs to. The server sets it from the session
+                                        organization. A client-supplied value is ignored. Optional on this superseded
+                                        shape, which live model responses still embed as `registrant`
+                                        (`additionalProperties: false`, so the field has to be declared for the server
+                                        to return it). v1beta3 Connection requires it. Not marked readOnly: this
+                                        connection is inlined into `POST /api/registry/relationships/evaluate` through a
+                                        component model's registrant, and readOnly there drops the design field from the
+                                        generated RTK client.
+                                      x-go-name: OrganizationID
+                                      x-oapi-codegen-extra-tags:
+                                        db: organization_id
+                                        json: organizationId,omitempty
+                                        yaml: organizationId
+                                      x-order: 15
+                                      type: string
+                                      format: uuid
+                                      x-go-type: uuid.UUID
+                                      x-go-type-import:
+                                        path: github.com/gofrs/uuid
                                     environments:
                                       type: array
                                       description: Associated environments for this connection
@@ -36538,6 +36694,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -38793,6 +38970,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -41034,6 +41232,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -43282,6 +43501,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -45519,6 +45759,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -48034,15 +48295,22 @@ paths:
                       x-go-type-skip-optional-pointer: true
                     organizationId:
                       description: >
-                        Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                        registration. Servers implementing this contract use it, with the owner and
-                        `metadata.machineId`, as the deduplication key for `desktop` connections. Lets an organization
-                        list and count its connections (for example its registered desktop installs) without going
-                        through each owner. Absent on connections that predate it.
+                        The organization the connection belongs to. The server sets it from the session organization
+                        (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
+                        connection is registered, and keeps it on later updates. Every connection a server registers
+                        under this contract carries it. Absent only on connections registered before servers recorded an
+                        organization and whose owner belongs to several, so none can be assigned without guessing; those
+                        are scoped by their owner. A server may backfill a legacy connection whose organization is
+                        unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
+                        `RegistrantData` inlines this entity into registry registration requests, and readOnly there
+                        drops the connection field from the generated RTK client. A value sent on that inlined
+                        connection is ignored. With the owner and `metadata.installationId`, it is the deduplication key
+                        for `desktop` connections.
+                      nullable: true
+                      x-go-name: OrganizationID
                       x-oapi-codegen-extra-tags:
                         db: organization_id
                         json: organizationId,omitempty
-                      x-go-type-skip-optional-pointer: false
                       x-order: 19
                       type: string
                       format: uuid
@@ -48770,6 +49038,27 @@ paths:
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
+                                        organizationId:
+                                          description: >
+                                            The organization the connection belongs to. The server sets it from the
+                                            session organization. A client-supplied value is ignored. Optional on this
+                                            superseded shape, which live model responses still embed as `registrant`
+                                            (`additionalProperties: false`, so the field has to be declared for the
+                                            server to return it). v1beta3 Connection requires it. Not marked readOnly:
+                                            this connection is inlined into `POST /api/registry/relationships/evaluate`
+                                            through a component model's registrant, and readOnly there drops the design
+                                            field from the generated RTK client.
+                                          x-go-name: OrganizationID
+                                          x-oapi-codegen-extra-tags:
+                                            db: organization_id
+                                            json: organizationId,omitempty
+                                            yaml: organizationId
+                                          x-order: 15
+                                          type: string
+                                          format: uuid
+                                          x-go-type: uuid.UUID
+                                          x-go-type-import:
+                                            path: github.com/gofrs/uuid
                                         environments:
                                           type: array
                                           description: Associated environments for this connection
@@ -58223,15 +58512,22 @@ paths:
                       x-go-type-skip-optional-pointer: true
                     organizationId:
                       description: >
-                        Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                        registration. Servers implementing this contract use it, with the owner and
-                        `metadata.machineId`, as the deduplication key for `desktop` connections. Lets an organization
-                        list and count its connections (for example its registered desktop installs) without going
-                        through each owner. Absent on connections that predate it.
+                        The organization the connection belongs to. The server sets it from the session organization
+                        (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
+                        connection is registered, and keeps it on later updates. Every connection a server registers
+                        under this contract carries it. Absent only on connections registered before servers recorded an
+                        organization and whose owner belongs to several, so none can be assigned without guessing; those
+                        are scoped by their owner. A server may backfill a legacy connection whose organization is
+                        unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
+                        `RegistrantData` inlines this entity into registry registration requests, and readOnly there
+                        drops the connection field from the generated RTK client. A value sent on that inlined
+                        connection is ignored. With the owner and `metadata.installationId`, it is the deduplication key
+                        for `desktop` connections.
+                      nullable: true
+                      x-go-name: OrganizationID
                       x-oapi-codegen-extra-tags:
                         db: organization_id
                         json: organizationId,omitempty
-                      x-go-type-skip-optional-pointer: false
                       x-order: 19
                       type: string
                       format: uuid
@@ -58714,6 +59010,26 @@ paths:
                                   type: string
                                   format: date-time
                                   x-go-type-skip-optional-pointer: true
+                                organizationId:
+                                  description: >
+                                    The organization the connection belongs to. The server sets it from the session
+                                    organization. A client-supplied value is ignored. Optional on this superseded shape,
+                                    which live model responses still embed as `registrant` (`additionalProperties:
+                                    false`, so the field has to be declared for the server to return it). v1beta3
+                                    Connection requires it. Not marked readOnly: this connection is inlined into `POST
+                                    /api/registry/relationships/evaluate` through a component model's registrant, and
+                                    readOnly there drops the design field from the generated RTK client.
+                                  x-go-name: OrganizationID
+                                  x-oapi-codegen-extra-tags:
+                                    db: organization_id
+                                    json: organizationId,omitempty
+                                    yaml: organizationId
+                                  x-order: 15
+                                  type: string
+                                  format: uuid
+                                  x-go-type: uuid.UUID
+                                  x-go-type-import:
+                                    path: github.com/gofrs/uuid
                                 environments:
                                   type: array
                                   description: Associated environments for this connection
@@ -59532,6 +59848,27 @@ paths:
                                     type: string
                                     format: date-time
                                     x-go-type-skip-optional-pointer: true
+                                  organizationId:
+                                    description: >
+                                      The organization the connection belongs to. The server sets it from the session
+                                      organization. A client-supplied value is ignored. Optional on this superseded
+                                      shape, which live model responses still embed as `registrant`
+                                      (`additionalProperties: false`, so the field has to be declared for the server to
+                                      return it). v1beta3 Connection requires it. Not marked readOnly: this connection
+                                      is inlined into `POST /api/registry/relationships/evaluate` through a component
+                                      model's registrant, and readOnly there drops the design field from the generated
+                                      RTK client.
+                                    x-go-name: OrganizationID
+                                    x-oapi-codegen-extra-tags:
+                                      db: organization_id
+                                      json: organizationId,omitempty
+                                      yaml: organizationId
+                                    x-order: 15
+                                    type: string
+                                    format: uuid
+                                    x-go-type: uuid.UUID
+                                    x-go-type-import:
+                                      path: github.com/gofrs/uuid
                                   environments:
                                     type: array
                                     description: Associated environments for this connection
@@ -71750,15 +72087,22 @@ paths:
                           x-go-type-skip-optional-pointer: true
                         organizationId:
                           description: >
-                            Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                            registration. Servers implementing this contract use it, with the owner and
-                            `metadata.machineId`, as the deduplication key for `desktop` connections. Lets an
-                            organization list and count its connections (for example its registered desktop installs)
-                            without going through each owner. Absent on connections that predate it.
+                            The organization the connection belongs to. The server sets it from the session organization
+                            (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when
+                            the connection is registered, and keeps it on later updates. Every connection a server
+                            registers under this contract carries it. Absent only on connections registered before
+                            servers recorded an organization and whose owner belongs to several, so none can be assigned
+                            without guessing; those are scoped by their owner. A server may backfill a legacy connection
+                            whose organization is unambiguous. Never accepted from clients on connection write payloads.
+                            Not marked readOnly: `RegistrantData` inlines this entity into registry registration
+                            requests, and readOnly there drops the connection field from the generated RTK client. A
+                            value sent on that inlined connection is ignored. With the owner and
+                            `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                          nullable: true
+                          x-go-name: OrganizationID
                           x-oapi-codegen-extra-tags:
                             db: organization_id
                             json: organizationId,omitempty
-                          x-go-type-skip-optional-pointer: false
                           x-order: 19
                           type: string
                           format: uuid
@@ -72052,16 +72396,24 @@ paths:
         it is refused with a `409` MeshKit error that names the reserved GitHub App connection identity.
 
 
+        Every connection registered belongs to exactly one organization. The server assigns `organizationId` from the
+        session (`X-Current-Orgid`, then the caller's selected organization) and does not accept it in the body. When
+        the session names none, the server may use the caller's only organization (Meshery Cloud: the only live
+        organization the caller belongs to, else the only one of those the caller owns); it must not guess between
+        several, and answers 400 instead. Connections registered before servers recorded an organization may have none.
+
+
         Desktop registration uses this shared operation, but kind `desktop` is implemented by Cloud: a server that does
         not support it rejects a `desktop` body with `400`. The heartbeat and deregistration routes are Cloud-only. A
         client desktop app install registers itself on every connect to Cloud, sign-in included, with kind `desktop`,
         type `platform`, sub_type `management`, status `connected`, and `metadata` matching `DesktopConnectionMetadata`.
         Servers implementing this contract must take the organization from the `X-Current-Orgid` header, refuse a
         `desktop` registration without it with `400`, and refuse a caller who is not a live member of that organization
-        with `403`. They must deduplicate on (organization, owner, `metadata.machineId`): registering the same machine
-        again updates that connection and returns `200`, while a new connection returns `201`. A `desktop` body whose
-        metadata lacks `machineId` is refused with `400`. The kind names the connection type, never the product that
-        runs on the machine.
+        with `403`. They must deduplicate on (organization, owner, `metadata.installationId`): registering the same
+        install again updates that connection and returns `200`, while a new connection returns `201`. A `desktop` body
+        whose metadata lacks `installationId` is refused with `400`. Installs on one computer share
+        `metadata.computerId`, so a server can group them by computer. The kind names the connection type, never the
+        product that runs on the machine.
 
 
         A `desktop` registration whose `metadata.clientName` and `metadata.appVersion` fall below the server's minimum
@@ -72075,8 +72427,10 @@ paths:
         - name: X-Current-Orgid
           in: header
           required: false
-          description: |
-            Organization the connection is registered in. Required for kind `desktop`; ignored for other kinds.
+          description: >
+            Session organization. The server assigns `Connection.organizationId` from this header when it is present,
+            and from the caller's selected organization when it is absent. Kind `desktop` requires the header: a desktop
+            registration without it is refused with 400.
           schema:
             type: string
             format: uuid
@@ -72086,7 +72440,9 @@ paths:
           application/json:
             schema:
               type: object
-              description: Payload for creating or updating a connection
+              description: >
+                Payload for creating or updating a connection. `organizationId` is not a client field. The server
+                assigns it from the session organization.
               properties:
                 id:
                   type: string
@@ -73274,15 +73630,22 @@ paths:
                     x-go-type-skip-optional-pointer: true
                   organizationId:
                     description: >
-                      Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      The organization the connection belongs to. The server sets it from the session organization
+                      (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
+                      connection is registered, and keeps it on later updates. Every connection a server registers under
+                      this contract carries it. Absent only on connections registered before servers recorded an
+                      organization and whose owner belongs to several, so none can be assigned without guessing; those
+                      are scoped by their owner. A server may backfill a legacy connection whose organization is
+                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
+                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
+                      the connection field from the generated RTK client. A value sent on that inlined connection is
+                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
+                      connections.
+                    nullable: true
+                    x-go-name: OrganizationID
                     x-oapi-codegen-extra-tags:
                       db: organization_id
                       json: organizationId,omitempty
-                    x-go-type-skip-optional-pointer: false
                     x-order: 19
                     type: string
                     format: uuid
@@ -74238,15 +74601,22 @@ paths:
                     x-go-type-skip-optional-pointer: true
                   organizationId:
                     description: >
-                      Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      The organization the connection belongs to. The server sets it from the session organization
+                      (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
+                      connection is registered, and keeps it on later updates. Every connection a server registers under
+                      this contract carries it. Absent only on connections registered before servers recorded an
+                      organization and whose owner belongs to several, so none can be assigned without guessing; those
+                      are scoped by their owner. A server may backfill a legacy connection whose organization is
+                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
+                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
+                      the connection field from the generated RTK client. A value sent on that inlined connection is
+                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
+                      connections.
+                    nullable: true
+                    x-go-name: OrganizationID
                     x-oapi-codegen-extra-tags:
                       db: organization_id
                       json: organizationId,omitempty
-                    x-go-type-skip-optional-pointer: false
                     x-order: 19
                     type: string
                     format: uuid
@@ -74507,8 +74877,8 @@ paths:
                 description: >-
                   A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
                   description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
-                  `MeshkitError409`, `MeshkitError500` and `MeshkitError502` responses for an operation whose server
-                  answers its refusals this way.
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
                 required:
                   - error
                 additionalProperties: false
@@ -74607,6 +74977,59 @@ paths:
                         type: string
                         description: Where the client can get an update, when the provider knows one.
                         maxLength: 2048
+        '429':
+          description: >-
+            Too many requests - the caller exceeded the server's per-user request rate for this route family. Wait the
+            number of seconds in `Retry-After` before retrying.
+          headers:
+            Retry-After:
+              description: Number of seconds the caller must wait before retrying.
+              required: true
+              schema:
+                type: integer
+                minimum: 1
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
+                required:
+                  - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: >-
+                      MeshKit error code, a component-scoped identifier allocated by the emitting service (e.g.
+                      `<component>-<number>`); it is not a stable part of this contract. Omitted for an error that is
+                      not a MeshKit error.
+                  severity:
+                    type: string
+                    description: MeshKit severity name. Omitted when MeshKit reports none.
+                    enum:
+                      - emergency
+                      - alert
+                      - critical
+                      - fatal
+                  probableCause:
+                    type: array
+                    description: MeshKit's probable causes of the error.
+                    items:
+                      type: string
+                  suggestedRemediation:
+                    type: array
+                    description: MeshKit's suggested remediations for the error.
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
@@ -75576,15 +75999,22 @@ paths:
                     x-go-type-skip-optional-pointer: true
                   organizationId:
                     description: >
-                      Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      The organization the connection belongs to. The server sets it from the session organization
+                      (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
+                      connection is registered, and keeps it on later updates. Every connection a server registers under
+                      this contract carries it. Absent only on connections registered before servers recorded an
+                      organization and whose owner belongs to several, so none can be assigned without guessing; those
+                      are scoped by their owner. A server may backfill a legacy connection whose organization is
+                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
+                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
+                      the connection field from the generated RTK client. A value sent on that inlined connection is
+                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
+                      connections.
+                    nullable: true
+                    x-go-name: OrganizationID
                     x-oapi-codegen-extra-tags:
                       db: organization_id
                       json: organizationId,omitempty
-                    x-go-type-skip-optional-pointer: false
                     x-order: 19
                     type: string
                     format: uuid
@@ -75850,7 +76280,7 @@ paths:
         On the GitHub App connection itself, the server-written metadata keys `installations`, `installationId` and
         `installationsVerifiedAt` are carried forward from the stored row: a client edit can neither set nor erase them
         (other metadata keys are written as sent). Their shape is `GithubConnectionMetadata` in the v1beta3 `github`
-        construct.
+        construct. `organizationId` is not in the body. The server keeps the organization assigned at registration.
       parameters:
         - name: connectionId
           in: path
@@ -75865,7 +76295,9 @@ paths:
           application/json:
             schema:
               type: object
-              description: Payload for creating or updating a connection
+              description: >
+                Payload for creating or updating a connection. `organizationId` is not a client field. The server
+                assigns it from the session organization.
               properties:
                 id:
                   type: string
@@ -77053,15 +77485,22 @@ paths:
                     x-go-type-skip-optional-pointer: true
                   organizationId:
                     description: >
-                      Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      The organization the connection belongs to. The server sets it from the session organization
+                      (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
+                      connection is registered, and keeps it on later updates. Every connection a server registers under
+                      this contract carries it. Absent only on connections registered before servers recorded an
+                      organization and whose owner belongs to several, so none can be assigned without guessing; those
+                      are scoped by their owner. A server may backfill a legacy connection whose organization is
+                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
+                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
+                      the connection field from the generated RTK client. A value sent on that inlined connection is
+                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
+                      connections.
+                    nullable: true
+                    x-go-name: OrganizationID
                     x-oapi-codegen-extra-tags:
                       db: organization_id
                       json: organizationId,omitempty
-                    x-go-type-skip-optional-pointer: false
                     x-order: 19
                     type: string
                     format: uuid
@@ -77322,8 +77761,8 @@ paths:
                 description: >-
                   A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
                   description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
-                  `MeshkitError409`, `MeshkitError500` and `MeshkitError502` responses for an operation whose server
-                  answers its refusals this way.
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
                 required:
                   - error
                 additionalProperties: false
@@ -78177,15 +78616,22 @@ paths:
                     x-go-type-skip-optional-pointer: true
                   organizationId:
                     description: >
-                      Organization the connection is registered in, taken from the `X-Current-Orgid` header on
-                      registration. Servers implementing this contract use it, with the owner and `metadata.machineId`,
-                      as the deduplication key for `desktop` connections. Lets an organization list and count its
-                      connections (for example its registered desktop installs) without going through each owner. Absent
-                      on connections that predate it.
+                      The organization the connection belongs to. The server sets it from the session organization
+                      (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
+                      connection is registered, and keeps it on later updates. Every connection a server registers under
+                      this contract carries it. Absent only on connections registered before servers recorded an
+                      organization and whose owner belongs to several, so none can be assigned without guessing; those
+                      are scoped by their owner. A server may backfill a legacy connection whose organization is
+                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
+                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
+                      the connection field from the generated RTK client. A value sent on that inlined connection is
+                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
+                      connections.
+                    nullable: true
+                    x-go-name: OrganizationID
                     x-oapi-codegen-extra-tags:
                       db: organization_id
                       json: organizationId,omitempty
-                    x-go-type-skip-optional-pointer: false
                     x-order: 19
                     type: string
                     format: uuid
@@ -80450,7 +80896,12 @@ paths:
                 minItems: 1
                 items:
                   type: object
-                  description: Server-returned design (pattern) resource as persisted by meshery-cloud.
+                  description: >
+                    Server-returned design (pattern) resource as persisted in `meshery_patterns`. `organizationId` is
+                    required and read-only: the server assigns it from the session organization and clients never send
+                    it.
+                  required:
+                    - organizationId
                   properties:
                     id:
                       description: Server-generated design ID.
@@ -80567,6 +81018,23 @@ paths:
                       x-go-type-import:
                         path: github.com/gofrs/uuid
                       x-go-type-skip-optional-pointer: true
+                    organizationId:
+                      description: >
+                        The organization the design belongs to. The server sets it from the session organization
+                        (`X-Current-Orgid`, or the caller's selected organization) on create, including import. Never
+                        accepted from clients. A workspace this design is assigned to must belong to this same
+                        organization.
+                      readOnly: true
+                      x-go-name: OrganizationID
+                      x-go-type-skip-optional-pointer: true
+                      x-oapi-codegen-extra-tags:
+                        db: organization_id
+                        json: organizationId
+                      type: string
+                      format: uuid
+                      x-go-type: uuid.UUID
+                      x-go-type-import:
+                        path: github.com/gofrs/uuid
                     user:
                       description: >
                         Owning user record, joined inline by the catalog list/get handlers when shaping responses.
@@ -82782,6 +83250,59 @@ paths:
             text/plain:
               schema:
                 type: string
+        '429':
+          description: >-
+            Too many requests - the caller exceeded the server's per-user request rate for this route family. Wait the
+            number of seconds in `Retry-After` before retrying.
+          headers:
+            Retry-After:
+              description: Number of seconds the caller must wait before retrying.
+              required: true
+              schema:
+                type: integer
+                minimum: 1
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
+                required:
+                  - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: >-
+                      MeshKit error code, a component-scoped identifier allocated by the emitting service (e.g.
+                      `<component>-<number>`); it is not a stable part of this contract. Omitted for an error that is
+                      not a MeshKit error.
+                  severity:
+                    type: string
+                    description: MeshKit severity name. Omitted when MeshKit reports none.
+                    enum:
+                      - emergency
+                      - alert
+                      - critical
+                      - fatal
+                  probableCause:
+                    type: array
+                    description: MeshKit's probable causes of the error.
+                    items:
+                      type: string
+                  suggestedRemediation:
+                    type: array
+                    description: MeshKit's suggested remediations for the error.
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
@@ -82846,6 +83367,59 @@ paths:
             text/plain:
               schema:
                 type: string
+        '429':
+          description: >-
+            Too many requests - the caller exceeded the server's per-user request rate for this route family. Wait the
+            number of seconds in `Retry-After` before retrying.
+          headers:
+            Retry-After:
+              description: Number of seconds the caller must wait before retrying.
+              required: true
+              schema:
+                type: integer
+                minimum: 1
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
+                required:
+                  - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: >-
+                      MeshKit error code, a component-scoped identifier allocated by the emitting service (e.g.
+                      `<component>-<number>`); it is not a stable part of this contract. Omitted for an error that is
+                      not a MeshKit error.
+                  severity:
+                    type: string
+                    description: MeshKit severity name. Omitted when MeshKit reports none.
+                    enum:
+                      - emergency
+                      - alert
+                      - critical
+                      - fatal
+                  probableCause:
+                    type: array
+                    description: MeshKit's probable causes of the error.
+                    items:
+                      type: string
+                  suggestedRemediation:
+                    type: array
+                    description: MeshKit's suggested remediations for the error.
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
@@ -82916,6 +83490,59 @@ paths:
             text/plain:
               schema:
                 type: string
+        '429':
+          description: >-
+            Too many requests - the caller exceeded the server's per-user request rate for this route family. Wait the
+            number of seconds in `Retry-After` before retrying.
+          headers:
+            Retry-After:
+              description: Number of seconds the caller must wait before retrying.
+              required: true
+              schema:
+                type: integer
+                minimum: 1
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
+                required:
+                  - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: >-
+                      MeshKit error code, a component-scoped identifier allocated by the emitting service (e.g.
+                      `<component>-<number>`); it is not a stable part of this contract. Omitted for an error that is
+                      not a MeshKit error.
+                  severity:
+                    type: string
+                    description: MeshKit severity name. Omitted when MeshKit reports none.
+                    enum:
+                      - emergency
+                      - alert
+                      - critical
+                      - fatal
+                  probableCause:
+                    type: array
+                    description: MeshKit's probable causes of the error.
+                    items:
+                      type: string
+                  suggestedRemediation:
+                    type: array
+                    description: MeshKit's suggested remediations for the error.
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
@@ -82995,6 +83622,59 @@ paths:
             text/plain:
               schema:
                 type: string
+        '429':
+          description: >-
+            Too many requests - the caller exceeded the server's per-user request rate for this route family. Wait the
+            number of seconds in `Retry-After` before retrying.
+          headers:
+            Retry-After:
+              description: Number of seconds the caller must wait before retrying.
+              required: true
+              schema:
+                type: integer
+                minimum: 1
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
+                required:
+                  - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: >-
+                      MeshKit error code, a component-scoped identifier allocated by the emitting service (e.g.
+                      `<component>-<number>`); it is not a stable part of this contract. Omitted for an error that is
+                      not a MeshKit error.
+                  severity:
+                    type: string
+                    description: MeshKit severity name. Omitted when MeshKit reports none.
+                    enum:
+                      - emergency
+                      - alert
+                      - critical
+                      - fatal
+                  probableCause:
+                    type: array
+                    description: MeshKit's probable causes of the error.
+                    items:
+                      type: string
+                  suggestedRemediation:
+                    type: array
+                    description: MeshKit's suggested remediations for the error.
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
@@ -83058,7 +83738,8 @@ paths:
                     json: idempotencyKey,omitempty
       description: >
         Records an event and answers 201 with it. When the payload carries an `idempotencyKey` the authenticated caller
-        already used, nothing new is recorded and the answer is 200 with the event first recorded under that key.
+        already used, nothing new is recorded and the answer is 200 with the event first recorded under that key. The
+        server assigns the organization from the session; clients do not send it.
       responses:
         '200':
           description: >
@@ -83084,6 +83765,7 @@ paths:
                   - severity
                   - status
                   - systemId
+                  - organizationId
                   - createdAt
                   - updatedAt
                 properties:
@@ -83091,6 +83773,7 @@ paths:
                     description: Event ID.
                     x-oapi-codegen-extra-tags:
                       db: id
+                    x-order: 7
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83101,6 +83784,7 @@ paths:
                     description: ID of the entity on which the event was performed.
                     x-oapi-codegen-extra-tags:
                       db: acted_upon
+                    x-order: 1
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83113,18 +83797,21 @@ paths:
                     maxLength: 500
                     x-oapi-codegen-extra-tags:
                       db: action
+                    x-order: 2
                   category:
                     type: string
                     description: Resource kind the operation was invoked on, for example `pattern`.
                     maxLength: 500
                     x-oapi-codegen-extra-tags:
                       db: category
+                    x-order: 3
                   description:
                     type: string
                     description: Human-readable summary of what happened.
                     maxLength: 5000
                     x-oapi-codegen-extra-tags:
                       db: description
+                    x-order: 6
                   metadata:
                     type: object
                     description: >
@@ -83138,11 +83825,13 @@ paths:
                     x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: metadata
+                    x-order: 8
                   operationId:
                     description: ID correlating the events one operation emitted.
                     x-go-name: OperationID
                     x-oapi-codegen-extra-tags:
                       db: operation_id
+                    x-order: 9
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83158,6 +83847,7 @@ paths:
                     maxLength: 255
                     x-oapi-codegen-extra-tags:
                       db: severity
+                    x-order: 12
                   status:
                     type: string
                     description: >
@@ -83167,8 +83857,16 @@ paths:
                     maxLength: 255
                     x-oapi-codegen-extra-tags:
                       db: status
+                    x-order: 13
                   systemId:
-                    description: ID of the system instance that emitted the event.
+                    description: >
+                      ID of the system instance that emitted the event. A Meshery Server sends its server instance ID;
+                      an event the provider emits itself carries the nil UUID. A client that registered a connection for
+                      its machine (for example a desktop client) sets its connection ID, so an event that records a run
+                      names the computer that ran it and can be joined to the claim it released (`Claim.outcomeEventId`)
+                      and to the connection (`connections.id`). The value is asserted by the sender and is not checked
+                      against the caller's connections.
+                    x-order: 14
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83189,10 +83887,28 @@ paths:
                       path: github.com/gofrs/uuid
                     x-oapi-codegen-extra-tags:
                       db: owner
+                    x-order: 10
+                  organizationId:
+                    type: string
+                    format: uuid
+                    description: >-
+                      A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core
+                      definition is used across different schemas.
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                    readOnly: true
+                    x-go-name: OrganizationID
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: organization_id
+                      json: organizationId
+                    x-order: 11
                   createdAt:
                     description: Timestamp when the event was recorded.
                     x-oapi-codegen-extra-tags:
                       db: created_at
+                    x-order: 4
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -83200,6 +83916,7 @@ paths:
                     description: Timestamp when the event was last updated.
                     x-oapi-codegen-extra-tags:
                       db: updated_at
+                    x-order: 15
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -83207,6 +83924,7 @@ paths:
                     description: Timestamp when the event was soft-deleted; omitted when it was not.
                     x-oapi-codegen-extra-tags:
                       db: deleted_at
+                    x-order: 5
                     x-go-type: meshcore.NullTime
                     x-go-type-import:
                       name: meshcore
@@ -83237,6 +83955,7 @@ paths:
                   - severity
                   - status
                   - systemId
+                  - organizationId
                   - createdAt
                   - updatedAt
                 properties:
@@ -83244,6 +83963,7 @@ paths:
                     description: Event ID.
                     x-oapi-codegen-extra-tags:
                       db: id
+                    x-order: 7
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83254,6 +83974,7 @@ paths:
                     description: ID of the entity on which the event was performed.
                     x-oapi-codegen-extra-tags:
                       db: acted_upon
+                    x-order: 1
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83266,18 +83987,21 @@ paths:
                     maxLength: 500
                     x-oapi-codegen-extra-tags:
                       db: action
+                    x-order: 2
                   category:
                     type: string
                     description: Resource kind the operation was invoked on, for example `pattern`.
                     maxLength: 500
                     x-oapi-codegen-extra-tags:
                       db: category
+                    x-order: 3
                   description:
                     type: string
                     description: Human-readable summary of what happened.
                     maxLength: 5000
                     x-oapi-codegen-extra-tags:
                       db: description
+                    x-order: 6
                   metadata:
                     type: object
                     description: >
@@ -83291,11 +84015,13 @@ paths:
                     x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: metadata
+                    x-order: 8
                   operationId:
                     description: ID correlating the events one operation emitted.
                     x-go-name: OperationID
                     x-oapi-codegen-extra-tags:
                       db: operation_id
+                    x-order: 9
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83311,6 +84037,7 @@ paths:
                     maxLength: 255
                     x-oapi-codegen-extra-tags:
                       db: severity
+                    x-order: 12
                   status:
                     type: string
                     description: >
@@ -83320,8 +84047,16 @@ paths:
                     maxLength: 255
                     x-oapi-codegen-extra-tags:
                       db: status
+                    x-order: 13
                   systemId:
-                    description: ID of the system instance that emitted the event.
+                    description: >
+                      ID of the system instance that emitted the event. A Meshery Server sends its server instance ID;
+                      an event the provider emits itself carries the nil UUID. A client that registered a connection for
+                      its machine (for example a desktop client) sets its connection ID, so an event that records a run
+                      names the computer that ran it and can be joined to the claim it released (`Claim.outcomeEventId`)
+                      and to the connection (`connections.id`). The value is asserted by the sender and is not checked
+                      against the caller's connections.
+                    x-order: 14
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -83342,10 +84077,28 @@ paths:
                       path: github.com/gofrs/uuid
                     x-oapi-codegen-extra-tags:
                       db: owner
+                    x-order: 10
+                  organizationId:
+                    type: string
+                    format: uuid
+                    description: >-
+                      A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core
+                      definition is used across different schemas.
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                    readOnly: true
+                    x-go-name: OrganizationID
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: organization_id
+                      json: organizationId
+                    x-order: 11
                   createdAt:
                     description: Timestamp when the event was recorded.
                     x-oapi-codegen-extra-tags:
                       db: created_at
+                    x-order: 4
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -83353,6 +84106,7 @@ paths:
                     description: Timestamp when the event was last updated.
                     x-oapi-codegen-extra-tags:
                       db: updated_at
+                    x-order: 15
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -83360,6 +84114,7 @@ paths:
                     description: Timestamp when the event was soft-deleted; omitted when it was not.
                     x-oapi-codegen-extra-tags:
                       db: deleted_at
+                    x-order: 5
                     x-go-type: meshcore.NullTime
                     x-go-type-import:
                       name: meshcore
@@ -83380,6 +84135,59 @@ paths:
             text/plain:
               schema:
                 type: string
+        '429':
+          description: >-
+            Too many requests - the caller exceeded the server's per-user request rate for this route family. Wait the
+            number of seconds in `Retry-After` before retrying.
+          headers:
+            Retry-After:
+              description: Number of seconds the caller must wait before retrying.
+              required: true
+              schema:
+                type: integer
+                minimum: 1
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
+                required:
+                  - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: >-
+                      MeshKit error code, a component-scoped identifier allocated by the emitting service (e.g.
+                      `<component>-<number>`); it is not a stable part of this contract. Omitted for an error that is
+                      not a MeshKit error.
+                  severity:
+                    type: string
+                    description: MeshKit severity name. Omitted when MeshKit reports none.
+                    enum:
+                      - emergency
+                      - alert
+                      - critical
+                      - fatal
+                  probableCause:
+                    type: array
+                    description: MeshKit's probable causes of the error.
+                    items:
+                      type: string
+                  suggestedRemediation:
+                    type: array
+                    description: MeshKit's suggested remediations for the error.
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
@@ -87784,6 +88592,23 @@ paths:
                           x-go-type-import:
                             path: github.com/gofrs/uuid
                           x-go-type-skip-optional-pointer: true
+                        organizationId:
+                          description: >
+                            The organization the design belongs to. The server sets it from the session organization.
+                            Never accepted from clients. Optional on this superseded shape, which workspace design lists
+                            still return. v1beta3 MesheryPattern requires it. A client value on the deprecated design
+                            write is ignored. A workspace this design is assigned to must belong to this same
+                            organization.
+                          readOnly: true
+                          x-go-name: OrganizationID
+                          x-oapi-codegen-extra-tags:
+                            db: organization_id
+                            json: organizationId,omitempty
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
                         location:
                           type: object
                           additionalProperties:
@@ -88294,6 +89119,21 @@ paths:
                                                 type: string
                                                 format: date-time
                                                 x-go-type-skip-optional-pointer: true
+                                              organizationId:
+                                                type: string
+                                                format: uuid
+                                                description: >-
+                                                  A Universally Unique Identifier used to uniquely identify entities in
+                                                  Meshery. The UUID core definition is used across different schemas.
+                                                x-go-type: uuid.UUID
+                                                x-go-type-import:
+                                                  path: github.com/gofrs/uuid
+                                                x-go-name: OrganizationID
+                                                x-oapi-codegen-extra-tags:
+                                                  db: organization_id
+                                                  json: organizationId,omitempty
+                                                  yaml: organizationId
+                                                x-order: 15
                                               environments:
                                                 type: array
                                                 description: Associated environments for this connection

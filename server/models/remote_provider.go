@@ -1181,10 +1181,9 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 		return connections.Connection{}, err
 	}
 	if connection == nil {
-		// SaveConnection can return (nil, nil) when the remote provider answers
-		// 2xx but the connection page is empty or carries a null element. Guard
-		// the dereference below so a malformed response is a structured error,
-		// not a panic.
+		// SaveConnection returns (nil, nil) when a 2xx page's first entry is
+		// null. An empty page is already an error. Guard the dereference
+		// below so a malformed response is a structured error, not a panic.
 		err := ErrPersistConnection(fmt.Errorf("remote provider returned a nil connection for kubernetes context %q", conn.Name))
 		l.Log.Error(err)
 		return connections.Connection{}, err
@@ -4557,18 +4556,20 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
 	l.Log.Debugf("RemoteProvider::SaveConnection: bdr value is [%s]", string(bdr))
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-		connectionPage := &connections.ConnectionPage{}
-		err = json.Unmarshal(bdr, connectionPage)
-		if err != nil {
-			return nil, ErrUnmarshal(err, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
+		// 200 and 201 may be a ConnectionPage (current Cloud) or a bare
+		// Connection (v1beta3 registerConnection). Anything else on these
+		// statuses is still a failure to save.
+		decoded, decErr := decodeRemoteProviderConnection(bdr)
+		if decErr != nil {
+			if errors.Is(decErr, errRemoteProviderConnectionMissing) {
+				return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
+			}
+			return nil, ErrUnmarshal(decErr, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
 		}
-		l.Log.Debugf("RemoteProvider::SaveConnection: parsed %d connection(s) (page=%d, pageSize=%d, totalCount=%d)",
-			len(connectionPage.Connections), connectionPage.Page, connectionPage.PageSize, connectionPage.TotalCount)
-		// On POST request to Remote Provider API, the response always contains single entry/connection.
-		if len(connectionPage.Connections) > 0 {
-			return connectionPage.Connections[0], nil
+		if decoded != nil {
+			l.Log.Debugf("RemoteProvider::SaveConnection: parsed connection %s (%s)", decoded.Name, decoded.ID)
 		}
-		return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
+		return decoded, nil
 	}
 
 	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status \"%s\"", conn.Name, conn.Kind, conn.Status), string(bdr), resp.StatusCode)
@@ -4877,13 +4878,13 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID core.U
 		return nil, ErrDataRead(err, "Connection: "+connectionID.String())
 	}
 
-	if resp.StatusCode == http.StatusOK {
+	// deleteConnection is moving from 200 with a Connection body to 204 with
+	// an empty body. Any 2xx is success. A JSON body may be a bare Connection
+	// or a ConnectionPage (first entry). An empty body still has to return a
+	// connection, because callers dereference the result.
+	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
 		l.Log.Info("connection deleted from remote provider")
-		var conn connections.Connection
-		if err = json.Unmarshal(bdr, &conn); err != nil {
-			return nil, err
-		}
-		return &conn, nil
+		return connectionFromRemoteDelete(bdr, resp.StatusCode, connectionID)
 	}
 	err = ErrDelete(fmt.Errorf("error while deleting connection: %s", bdr), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
@@ -4920,7 +4921,10 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 		_ = resp.Body.Close()
 	}()
 
-	if resp.StatusCode == http.StatusOK {
+	// Same success range as DeleteConnection: 200 with a body and 204 No Content
+	// both mean the meshery connection is gone. This endpoint does not return
+	// the deleted row.
+	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
 		return nil
 	}
 
