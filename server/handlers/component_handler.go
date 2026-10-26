@@ -1353,7 +1353,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	if !ok {
 		err = fmt.Errorf("unexpected entity type for model: %T", e[0])
 		h.log.Error(err)
-		writeMeshkitError(rw, ErrExportModel(err, "invalid model entity"), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrExportModelEntity(err, "model entity decoding"), http.StatusInternalServerError)
 		return
 	}
 	//This path is used to so that the function can be aware of where the svg file is
@@ -1398,7 +1398,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		if !ok {
 			err = fmt.Errorf("unexpected components type: %T", model.Components)
 			h.log.Error(err)
-			writeMeshkitError(rw, ErrExportModel(err, "invalid components data"), http.StatusInternalServerError)
+			writeMeshkitError(rw, ErrExportModelEntity(err, "components decoding"), http.StatusInternalServerError)
 			return
 		}
 	}
@@ -1410,7 +1410,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		if !ok {
 			err = fmt.Errorf("unexpected relationships type: %T", model.Relationships)
 			h.log.Error(err)
-			writeMeshkitError(rw, ErrExportModel(err, "invalid relationships data"), http.StatusInternalServerError)
+			writeMeshkitError(rw, ErrExportModelEntity(err, "relationships decoding"), http.StatusInternalServerError)
 			return
 		}
 	}
