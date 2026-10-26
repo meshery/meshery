@@ -42,6 +42,26 @@ func IsBetaOrStable(str string) bool {
 	return str == "edge" || str == "stable"
 }
 
+// parseChannelVersion splits a [stable|stable-version|edge|edge-version]
+// argument into its release channel and version. It rejects unknown channels
+// and edge versions other than latest, the only edge release.
+func parseChannelVersion(channelVersion string) (channel string, version string, err error) {
+	channelNameSeparated := strings.SplitN(channelVersion, "-", 2)
+	channel = channelNameSeparated[0]
+	if !IsBetaOrStable(channel) {
+		return "", "", ErrSystemSetInvalidReleaseChannel(channel)
+	}
+
+	version = "latest"
+	if len(channelNameSeparated) > 1 {
+		version = channelNameSeparated[1]
+		if channel == "edge" && version != "latest" {
+			return "", "", ErrSystemSetInvalidEdgeRelease(version)
+		}
+	}
+	return channel, version, nil
+}
+
 var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View release channel and version",
@@ -109,7 +129,8 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", "set")))
 		}
-		return nil
+		_, _, err := parseChannelVersion(args[0])
+		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
@@ -123,26 +144,10 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 			focusedContext = tempContext
 		}
 
-		channelVersion := args[0]
-
-		channelNameSeparated := strings.SplitN(channelVersion, "-", 2)
-
-		if !IsBetaOrStable(channelNameSeparated[0]) {
-			return ErrSystemSetInvalidReleaseChannel(channelNameSeparated[0])
-		}
-
-		version := "latest"
-
-		if len(channelNameSeparated) > 1 {
-			switch channelNameSeparated[0] {
-			case "edge":
-				if channelNameSeparated[1] != "latest" {
-					return ErrSystemSetInvalidEdgeRelease(channelNameSeparated[1])
-				}
-			case "stable":
-				// version is set after the switch block
-			}
-			version = channelNameSeparated[1]
+		var channel, version string
+		channel, version, err = parseChannelVersion(args[0])
+		if err != nil {
+			return err
 		}
 
 		ContextContent, ok := mctlCfg.Contexts[focusedContext]
@@ -151,7 +156,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 		}
 
 		ContextContent.Version = version
-		ContextContent.Channel = channelNameSeparated[0]
+		ContextContent.Channel = channel
 
 		err = ContextContent.ValidateVersion()
 		if err != nil {
@@ -195,7 +200,10 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", "switch")))
 		}
-		return nil
+		// Reject an invalid channel here: cobra validates Args before PreRunE, so
+		// this fails before the preflight checks and the confirmation prompt.
+		_, _, err := parseChannelVersion(args[0])
+		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		userResponse := false
