@@ -487,6 +487,12 @@ describe('getComponentFromDesign', () => {
 describe('getDesignVersion', () => {
   it('returns the published version when visibility is published', () => {
     expect(
+      getDesignVersion({ visibility: 'published', catalogData: { publishedVersion: '1.2.3' } }),
+    ).toBe('1.2.3');
+  });
+
+  it('still reads the legacy snake_case catalog_data shape', () => {
+    expect(
       getDesignVersion({ visibility: 'published', catalog_data: { published_version: '1.2.3' } }),
     ).toBe('1.2.3');
   });
