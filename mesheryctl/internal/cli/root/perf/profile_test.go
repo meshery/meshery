@@ -92,7 +92,7 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --page '0'")),
 		},
 		{
 			Name: "given invalid output format when profile then throw error",
