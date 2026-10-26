@@ -49,6 +49,8 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
 
    You should see the snapshot listed as `helm-kanvas-snapshot`.
 
+No environment variables or tokens need to be set. The plugin installs a prebuilt release binary that already includes its Meshery Cloud configuration.
+
 ### Usage
 
 Once the plugin is installed, you can generate a snapshot using either a packaged or unpackaged Helm chart.
