@@ -1,0 +1,43 @@
+# Mesheryctl-System
+
+LLMS index: [llms.txt](/llms.txt)
+
+---
+
+Section pages:
+
+- [mesheryctl-system](/reference/mesheryctl/system/)
+- [mesheryctl-system-channel](/reference/mesheryctl/system/channel/)
+- [mesheryctl-system-channel-set](/reference/mesheryctl/system/channel/set/)
+- [mesheryctl-system-channel-switch](/reference/mesheryctl/system/channel/switch/)
+- [mesheryctl-system-channel-view](/reference/mesheryctl/system/channel/view/)
+- [mesheryctl-system-check](/reference/mesheryctl/system/check/)
+- [mesheryctl-system-context](/reference/mesheryctl/system/context/)
+- [mesheryctl-system-context-create](/reference/mesheryctl/system/context/create/)
+- [mesheryctl-system-context-delete](/reference/mesheryctl/system/context/delete/)
+- [mesheryctl-system-context-list](/reference/mesheryctl/system/context/list/)
+- [mesheryctl-system-context-switch](/reference/mesheryctl/system/context/switch/)
+- [mesheryctl-system-context-view](/reference/mesheryctl/system/context/view/)
+- [mesheryctl-system-dashboard](/reference/mesheryctl/system/dashboard/)
+- [mesheryctl-system-delete](/reference/mesheryctl/system/delete/)
+- [mesheryctl-system-login](/reference/mesheryctl/system/login/)
+- [mesheryctl-system-logout](/reference/mesheryctl/system/logout/)
+- [mesheryctl-system-logs](/reference/mesheryctl/system/logs/)
+- [mesheryctl-system-provider](/reference/mesheryctl/system/provider/)
+- [mesheryctl-system-provider-list](/reference/mesheryctl/system/provider/list/)
+- [mesheryctl-system-provider-reset](/reference/mesheryctl/system/provider/reset/)
+- [mesheryctl-system-provider-set](/reference/mesheryctl/system/provider/set/)
+- [mesheryctl-system-provider-switch](/reference/mesheryctl/system/provider/switch/)
+- [mesheryctl-system-provider-view](/reference/mesheryctl/system/provider/view/)
+- [mesheryctl-system-reset](/reference/mesheryctl/system/reset/)
+- [mesheryctl-system-restart](/reference/mesheryctl/system/restart/)
+- [mesheryctl-system-start](/reference/mesheryctl/system/start/)
+- [mesheryctl-system-status](/reference/mesheryctl/system/status/)
+- [mesheryctl-system-stop](/reference/mesheryctl/system/stop/)
+- [mesheryctl-system-token](/reference/mesheryctl/system/token/)
+- [mesheryctl-system-token-create](/reference/mesheryctl/system/token/create/)
+- [mesheryctl-system-token-delete](/reference/mesheryctl/system/token/delete/)
+- [mesheryctl-system-token-list](/reference/mesheryctl/system/token/list/)
+- [mesheryctl-system-token-set](/reference/mesheryctl/system/token/set/)
+- [mesheryctl-system-token-view](/reference/mesheryctl/system/token/view/)
+- [mesheryctl-system-update](/reference/mesheryctl/system/update/)
