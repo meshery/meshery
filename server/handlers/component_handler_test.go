@@ -79,7 +79,7 @@ func TestExportModel_TarGz_Success(t *testing.T) {
 
 	gzr, err := gzip.NewReader(bytes.NewReader(rec.Body.Bytes()))
 	require.NoError(t, err)
-	defer gzr.Close()
+	defer func() { _ = gzr.Close() }()
 
 	tr := tar.NewReader(gzr)
 	var foundModelJSON, foundFixtureComponent bool
@@ -136,6 +136,7 @@ func TestExportModel_OCI_Success(t *testing.T) {
 			foundLayerTarGz = true
 			gzr, err := gzip.NewReader(tr)
 			require.NoError(t, err)
+			defer func() { _ = gzr.Close() }()
 			layerTr := tar.NewReader(gzr)
 			var foundModelInLayer, foundCompInLayer bool
 			for {
