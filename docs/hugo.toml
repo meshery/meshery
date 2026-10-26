@@ -277,6 +277,9 @@ enable = false
     [[module.imports.mounts]]
       source = "layouts/index.md"
       target = "layouts/index.md"
+    [[module.imports.mounts]]
+      source = "layouts/partials/page-markdown-link.html"
+      target = "layouts/partials/page-markdown-link.html"
 
   [[module.mounts]]
     source = "static"
