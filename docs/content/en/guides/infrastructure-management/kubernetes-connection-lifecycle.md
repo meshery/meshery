@@ -61,8 +61,14 @@ chart that does not exist:
 - **Too old to run**: a version below the oldest chart verified to deploy is
   raised to the oldest published chart at or above that boundary.
 - **Release candidates** are never selected automatically.
+- **Already installed, but too old to run**: an Operator that is already
+  installed is otherwise left on its chart, but on every connect the Server
+  reads the installed `meshery-operator` release's chart version and upgrades a
+  release below the oldest chart verified to deploy to the chart it resolves. A
+  deliberate `operator.version` below that boundary is never overridden; the
+  Server reports it instead.
 
-Neither substitution is silent - each is reported in the events feed, naming
+None of these is silent - each is reported in the events feed, naming
 the version deployed and why. To choose the version yourself for one
 connection, set `operator.version`; an explicit pin is honored exactly, and is
 refused with a visible error if it names a version the repository does not

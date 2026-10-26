@@ -56,6 +56,16 @@ const (
 	// for the rest of its life. The floor therefore applies only to that
 	// derived default - an `operator.version` someone set deliberately is still
 	// honored, so pinning an older chart on purpose remains possible.
+	//
+	// The floor is enforced in two places, because a chart reaches a cluster in
+	// two ways. ResolveOperatorChartVersion raises the version a server *asks
+	// for* before it installs. reconcileOperatorChartFloor covers what is
+	// *already installed*: a cluster that received a chart below the floor
+	// before the floor existed would otherwise stay broken through every later
+	// server upgrade, because a present operator is never re-installed
+	// (meshery/meshery#22555). It upgrades such a release to the chart the
+	// connection resolves to, and leaves it - with an event saying why - only
+	// when a deliberate pin is below the floor too.
 	MinimumOperatorChartVersion = "v1.0.51"
 )
 
@@ -264,6 +274,74 @@ func ResolveOperatorChartVersion(repo string, published []string, requested stri
 	return floored, "Meshery Operator chart " + requested + " is older than " + MinimumOperatorChartVersion +
 		", the oldest chart verified to deploy successfully, so " + floored +
 		" was deployed instead. Set operator.version on the connection to override.", nil
+}
+
+// operatorChartFloorAction is what Meshery Server does about a meshery-operator
+// Helm release that is already installed, judged against
+// MinimumOperatorChartVersion.
+type operatorChartFloorAction int
+
+const (
+	// operatorChartFloorSatisfied: the installed chart is at or above the
+	// floor. The release is left exactly as it is - the floor is a statement
+	// about charts that cannot run, not a reason to move one that can.
+	operatorChartFloorSatisfied operatorChartFloorAction = iota
+
+	// operatorChartFloorUpgrade: the installed chart is below the floor and the
+	// chart this connection resolves to is at or above it, so upgrading moves
+	// the release from a chart that cannot run to one verified to.
+	operatorChartFloorUpgrade
+
+	// operatorChartFloorRefusePinned: the installed chart is below the floor
+	// and so is the chart operator.version deliberately pins. A pin is never
+	// overridden, so the release is left in place and the refusal reported.
+	operatorChartFloorRefusePinned
+
+	// operatorChartFloorRefuseUnreachable: the installed chart is below the
+	// floor, and so is the version Meshery Server derived, because the chart
+	// repository publishes nothing at or above the floor. There is no chart to
+	// upgrade to that would fix anything.
+	operatorChartFloorRefuseUnreachable
+)
+
+// decideOperatorChartFloor decides what to do about an installed
+// meshery-operator release at chart installed, given the chart version this
+// connection resolves to (target, already pinned to a published version by
+// ResolveOperatorChartVersion) and who chose that version.
+//
+// The floor only ever moves a release upward, and only out of the range known
+// not to run: an installed chart at or above the floor is never touched, and an
+// upgrade is chosen only when target itself clears the floor, so this can never
+// downgrade a release or trade one broken chart for another. That makes it safe
+// on a cluster that several Meshery Servers of different releases connect to -
+// none of them can flip the release back and forth.
+//
+// A pin is honored in both directions. A pin at or above the floor is what the
+// release is upgraded to: installing the chart the user asked for is not
+// overriding them. A pin below the floor is never overridden, and is reported.
+//
+// An installed version that does not parse as semver sorts below every one that
+// does (compareChartVersions), so it is treated as below the floor: it names no
+// chart verified to run. Helm refuses to install a chart whose version is not
+// semver, so this does not arise from a release Helm wrote.
+func decideOperatorChartFloor(installed, target string, source OperatorChartVersionSource) operatorChartFloorAction {
+	if !belowOperatorChartFloor(installed) {
+		return operatorChartFloorSatisfied
+	}
+	if isPinnedChartVersion(target) && !belowOperatorChartFloor(target) {
+		return operatorChartFloorUpgrade
+	}
+	if source == OperatorChartVersionRequested {
+		return operatorChartFloorRefusePinned
+	}
+	return operatorChartFloorRefuseUnreachable
+}
+
+// belowOperatorChartFloor reports whether chart version v is older than
+// MinimumOperatorChartVersion. An unparseable v is below it: it names no chart
+// verified to run.
+func belowOperatorChartFloor(v string) bool {
+	return compareChartVersions(v, MinimumOperatorChartVersion) < 0
 }
 
 // oldestPublishedAtLeast returns the smallest version in versions that is at or

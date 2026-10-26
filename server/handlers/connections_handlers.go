@@ -750,7 +750,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
 				AddCtxControllerHandlers(machineCtx.K8sContext).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				DeployUndeployedOperators(machineCtx.OperatorTracker, machineCtx.K8sContext.ID).
+				DeployUndeployedOperators(machineCtx.OperatorTracker, machineCtx.K8sContext).
 				AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
 		}
 
