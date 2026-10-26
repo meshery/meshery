@@ -65,8 +65,6 @@ tags:
     description: Operations related to Meshery Academy content and curriculum
   - name: BlowhornHealth_blowhornHealth
     description: Operations related to Blowhorn health.
-  - name: BlowhornProfile_blowhornProfiles
-    description: Operations related to Blowhorn profiles.
   - name: Claim_claims
     description: Operations related to claims on resources.
   - name: ContentItem_contentItems
