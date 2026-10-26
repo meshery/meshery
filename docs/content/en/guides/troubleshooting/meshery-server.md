@@ -6,13 +6,11 @@ aliases:
 categories: [troubleshooting]
 ---
 
-## Meshery Server startup troubleshooting
-
 If Meshery Server fails to start, first identify how Meshery is being run and then follow the troubleshooting steps for that startup or deployment method.
 
 Meshery Server can be started in different ways. The troubleshooting steps differ depending on whether you are running Meshery locally from source, using `mesheryctl`, in Docker, or on Kubernetes.
 
-### Common symptoms
+## Common symptoms
 
 | Symptom | Possible cause |
 | --- | --- |
@@ -21,11 +19,11 @@ Meshery Server can be started in different ways. The troubleshooting steps diffe
 | `mesheryctl system start` fails | Deployment, configuration, or platform-specific issue |
 | `make server` fails | Local development environment, dependency, or database issue |
 
-### Basic diagnostics
+## Where to look for logs
 
 Before troubleshooting, identify how Meshery Server is being run and use the corresponding section below.
 
-#### Local development with `make server`
+### Local development with `make server`
 
 Use `make server` when running Meshery Server locally from source.
 
@@ -43,7 +41,7 @@ If the command fails, inspect the terminal output for errors related to:
 
 See the [`make server`](#make-server) troubleshooting example below for a known database-related startup failure.
 
-#### Meshery CLI with `mesheryctl`
+### Meshery CLI with `mesheryctl`
 
 When starting Meshery using the Meshery CLI, use the following commands to diagnose startup problems.
 
@@ -79,7 +77,7 @@ For installation-related issues, including preflight checks and Kubernetes conne
 
 See the [`mesheryctl system start`](#mesheryctl-system-start) troubleshooting example below for a known Kubernetes resource ownership issue.
 
-#### Docker
+### Docker
 
 If Meshery Server is running in Docker, list all Meshery containers, including stopped containers, to check their status:
 
@@ -101,7 +99,7 @@ Look for errors related to:
 - Database or dependency connections
 - Application startup failures
 
-#### Kubernetes
+### Kubernetes
 
 If Meshery Server is running on Kubernetes, first check the status of the Meshery pods:
 
@@ -183,8 +181,6 @@ be imported into the current release: invalid ownership metadata; label validati
    kubectl delete clusterroles.rbac.authorization.k8s.io meshery-controller-role meshery-operator-role meshery-proxy-role meshery-metrics-reader
    kubectl delete clusterrolebindings.rbac.authorization.k8s.io meshery-controller-rolebinding meshery-operator-rolebinding meshery-proxy-rolebinding
    ```
-
-   **Warning:** Deleting the `meshery` namespace removes resources in that namespace. Verify its contents before proceeding.
 
    See [Meshery issue #4578](https://github.com/meshery/meshery/issues/4578) for the related issue.
 
