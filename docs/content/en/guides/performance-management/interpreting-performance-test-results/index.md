@@ -1,21 +1,23 @@
 ---
 title: Interpreting Performance Test Results
-description: This guide is to help users to glean an insights of what the performance tests result should look like.
+description: Read the latency and throughput results of a Meshery performance test, and compare runs in a way that produces useful conclusions.
 categories: [performance]
 ---
 
-Once a performance tests and run, it's disco analysis is performed and test results persisted. Results or downloadable and persisted in the [Cloud Native Performance](https://smp-spec.io/) format.
+When a performance test finishes, Meshery analyzes the results and stores them under the test's profile in the [Cloud Native Performance](https://smp-spec.io/) (SMP) format. You can view, download, and compare them.
 
-## Graphical View
+## Read a result
 
-<img src="images/performance-dashboard.png" />
+Open **Performance → Profiles**, open a profile, and select a result. The chart shows the latency distribution as a histogram, with the percentiles (such as p50, p90, and p99) and the achieved queries per second.
 
-<img src="images/chart.png" />
+<img src="images/performance-dashboard.png" alt="Performance results in Meshery" />
 
-## Tests
+<img src="images/chart.png" alt="Latency histogram of a performance test" />
 
-For the best experience, you should compare between two or more tests of similar configuration. Tests that are configured with a high degree of variance (e.g., one test ran for a duration of 5 minutes, while another test ran for a duration of 1 hour) will produce comparisons that are more difficult to extrapolate insights from.
+Latency and throughput are the two signals to examine first. A rising p99 with a steady p50 usually points to contention or queuing that affects only some requests.
 
-Latency and throughput are the two most significantly examined signals.
+## Compare results
 
-Meshery will use different algorithms to calculate results depending upon which load generator was used to run the test.
+Compare tests that share a similar configuration. Tests with very different settings, for example one that ran for 5 minutes and another that ran for an hour, produce comparisons that are hard to draw conclusions from. To compare, select two or more results and choose **Compare selected**.
+
+Meshery calculates results with the load generator that ran the test, so compare results from the same load generator.
