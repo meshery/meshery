@@ -147,7 +147,7 @@ weight: 100
 <li>If you don't see the specific entities in Meshery UI, you may choose to reset Meshery's database. This option is in the <code>Reset System</code> Tab in <code>Settings</code> page.</li>
 </ul>
 
-<p>Note: You can also verify the health of your system using <a href="{{< ref "reference/references/mesheryctl/system/check.md" >}}">mesheryctl system check</a></p>
+<p>Note: You can also verify the health of your system using <a href="{{< ref "reference/mesheryctl/system/check.md" >}}">mesheryctl system check</a></p>
 
 </details>
 
