@@ -57,7 +57,14 @@ vi.mock('../../../meshery-mesh-interface/PatternServiceForm', () => ({
   },
 }));
 
+vi.mock('@/rtk-query/design', () => ({
+  useUpdatePatternFileMutation: () => [vi.fn()],
+  useDeletePatternFileMutation: () => [vi.fn()],
+  useLazyGetDesignQuery: () => [vi.fn()],
+}));
+
 import LazyComponentForm from './LazyComponentForm';
+import useDesignLifecycle from './hooks/useDesignLifecycle';
 
 const makeComponent = (kind: string) => ({
   displayName: kind,
@@ -149,5 +156,43 @@ describe('LazyComponentForm', () => {
     expect(forms).toHaveLength(2);
     expect(references).toHaveLength(2);
     expect(references[0].current.referKey).not.toBe(references[1].current.referKey);
+  });
+
+  it('routes each mounted form edit to its own component in the design', async () => {
+    let design: any;
+    function Harness() {
+      const { onSettingsChange, designJson } = useDesignLifecycle();
+      design = designJson;
+      return (
+        <>
+          {['Namespace', 'Service'].map((kind) => {
+            const definition = makeComponent(kind);
+            return (
+              <LazyComponentForm
+                key={kind}
+                component={definition}
+                createSettingsChangeHandler={(reference) => onSettingsChange(definition, reference)}
+              />
+            );
+          })}
+        </>
+      );
+    }
+    render(<Harness />);
+
+    const [first, second] = screen.getAllByTestId('accordion-toggle');
+    fireEvent.click(first);
+    fireEvent.click(second);
+    const [namespaceForm, serviceForm] = await screen.findAllByTestId('form');
+
+    fireEvent.click(namespaceForm);
+    fireEvent.click(serviceForm);
+    fireEvent.click(namespaceForm);
+
+    await waitFor(() => expect(design.components).toHaveLength(2));
+    const byKind = Object.fromEntries(design.components.map((c: any) => [c.component.kind, c]));
+    expect(byKind.Namespace.id).toBe(namespaceForm.textContent);
+    expect(byKind.Service.id).toBe(serviceForm.textContent);
+    expect(byKind.Namespace.id).not.toBe(byKind.Service.id);
   });
 });
