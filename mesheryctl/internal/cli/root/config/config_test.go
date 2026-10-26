@@ -377,6 +377,7 @@ func TestValidateVersion(t *testing.T) {
 			version:       "v0.7.2",
 			respErr:       errors.New("connection refused"),
 			wantErr:       true,
+			expectedCode:  ErrInvalidVersionCode,
 			expectedError: "failed to make GET request",
 		},
 	}

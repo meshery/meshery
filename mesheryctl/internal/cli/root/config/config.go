@@ -257,11 +257,11 @@ func (ctx *Context) ValidateVersion() error {
 	url := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/tag/" + ctx.Version
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return err
+		return ErrInvalidVersion(err)
 	}
 	resp, err := validateVersionClient.Do(req)
 	if err != nil {
-		return errors.Wrapf(err, "failed to make GET request to %s", url)
+		return ErrInvalidVersion(errors.Wrapf(err, "failed to make GET request to %s", url))
 	}
 
 	defer func() {
