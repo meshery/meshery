@@ -23,6 +23,8 @@ tags:
     description: APIs for configuring Meshery Operator, MeshSync, and Meshery Broker.
   - name: Console_API_Console
     description: Interactive terminal and log consoles against a connection's resources.
+  - name: Diagnostics_Diagnostics
+    description: Operations related to failure diagnostics
   - name: Evaluation_Evaluation
     description: Operations related to design evaluation
   - name: Feature_Features
@@ -65,8 +67,6 @@ tags:
     description: Operations related to Meshery Academy content and curriculum
   - name: BlowhornHealth_blowhornHealth
     description: Operations related to Blowhorn health.
-  - name: BlowhornProfile_blowhornProfiles
-    description: Operations related to Blowhorn profiles.
   - name: Claim_claims
     description: Operations related to claims on resources.
   - name: ContentItem_contentItems
@@ -47583,7 +47583,6 @@ paths:
                     - subType
                     - kind
                     - status
-                    - organizationId
                   properties:
                     id:
                       description: Connection ID
@@ -48298,16 +48297,20 @@ paths:
                       description: >
                         The organization the connection belongs to. The server sets it from the session organization
                         (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
-                        connection is registered, and keeps it on later updates. Never accepted from clients on
-                        connection write payloads. Not marked readOnly: `RegistrantData` inlines this entity into
-                        registry registration requests, and readOnly there drops the connection field from the generated
-                        RTK client. A value sent on that inlined connection is ignored. With the owner and
-                        `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                        connection is registered, and keeps it on later updates. Every connection a server registers
+                        under this contract carries it. Absent only on connections registered before servers recorded an
+                        organization and whose owner belongs to several, so none can be assigned without guessing; those
+                        are scoped by their owner. A server may backfill a legacy connection whose organization is
+                        unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
+                        `RegistrantData` inlines this entity into registry registration requests, and readOnly there
+                        drops the connection field from the generated RTK client. A value sent on that inlined
+                        connection is ignored. With the owner and `metadata.installationId`, it is the deduplication key
+                        for `desktop` connections.
+                      nullable: true
                       x-go-name: OrganizationID
-                      x-go-type-skip-optional-pointer: true
                       x-oapi-codegen-extra-tags:
                         db: organization_id
-                        json: organizationId
+                        json: organizationId,omitempty
                       x-order: 19
                       type: string
                       format: uuid
@@ -57797,7 +57800,6 @@ paths:
                     - subType
                     - kind
                     - status
-                    - organizationId
                   properties:
                     id:
                       description: Connection ID
@@ -58512,16 +58514,20 @@ paths:
                       description: >
                         The organization the connection belongs to. The server sets it from the session organization
                         (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
-                        connection is registered, and keeps it on later updates. Never accepted from clients on
-                        connection write payloads. Not marked readOnly: `RegistrantData` inlines this entity into
-                        registry registration requests, and readOnly there drops the connection field from the generated
-                        RTK client. A value sent on that inlined connection is ignored. With the owner and
-                        `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                        connection is registered, and keeps it on later updates. Every connection a server registers
+                        under this contract carries it. Absent only on connections registered before servers recorded an
+                        organization and whose owner belongs to several, so none can be assigned without guessing; those
+                        are scoped by their owner. A server may backfill a legacy connection whose organization is
+                        unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
+                        `RegistrantData` inlines this entity into registry registration requests, and readOnly there
+                        drops the connection field from the generated RTK client. A value sent on that inlined
+                        connection is ignored. With the owner and `metadata.installationId`, it is the deduplication key
+                        for `desktop` connections.
+                      nullable: true
                       x-go-name: OrganizationID
-                      x-go-type-skip-optional-pointer: true
                       x-oapi-codegen-extra-tags:
                         db: organization_id
-                        json: organizationId
+                        json: organizationId,omitempty
                       x-order: 19
                       type: string
                       format: uuid
@@ -71361,7 +71367,6 @@ paths:
                         - subType
                         - kind
                         - status
-                        - organizationId
                       properties:
                         id:
                           description: Connection ID
@@ -72084,16 +72089,20 @@ paths:
                           description: >
                             The organization the connection belongs to. The server sets it from the session organization
                             (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when
-                            the connection is registered, and keeps it on later updates. Never accepted from clients on
-                            connection write payloads. Not marked readOnly: `RegistrantData` inlines this entity into
-                            registry registration requests, and readOnly there drops the connection field from the
-                            generated RTK client. A value sent on that inlined connection is ignored. With the owner and
+                            the connection is registered, and keeps it on later updates. Every connection a server
+                            registers under this contract carries it. Absent only on connections registered before
+                            servers recorded an organization and whose owner belongs to several, so none can be assigned
+                            without guessing; those are scoped by their owner. A server may backfill a legacy connection
+                            whose organization is unambiguous. Never accepted from clients on connection write payloads.
+                            Not marked readOnly: `RegistrantData` inlines this entity into registry registration
+                            requests, and readOnly there drops the connection field from the generated RTK client. A
+                            value sent on that inlined connection is ignored. With the owner and
                             `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                          nullable: true
                           x-go-name: OrganizationID
-                          x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: organization_id
-                            json: organizationId
+                            json: organizationId,omitempty
                           x-order: 19
                           type: string
                           format: uuid
@@ -72387,8 +72396,11 @@ paths:
         it is refused with a `409` MeshKit error that names the reserved GitHub App connection identity.
 
 
-        Every connection belongs to exactly one organization. The server assigns `organizationId` from the session
-        (`X-Current-Orgid`, then the caller's selected organization) and does not accept it in the body.
+        Every connection registered belongs to exactly one organization. The server assigns `organizationId` from the
+        session (`X-Current-Orgid`, then the caller's selected organization) and does not accept it in the body. When
+        the session names none, the server may use the caller's only organization (Meshery Cloud: the only live
+        organization the caller belongs to, else the only one of those the caller owns); it must not guess between
+        several, and answers 400 instead. Connections registered before servers recorded an organization may have none.
 
 
         Desktop registration uses this shared operation, but kind `desktop` is implemented by Cloud: a server that does
@@ -72916,7 +72928,6 @@ paths:
                   - subType
                   - kind
                   - status
-                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -73621,16 +73632,20 @@ paths:
                     description: >
                       The organization the connection belongs to. The server sets it from the session organization
                       (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
-                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
-                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
-                      registration requests, and readOnly there drops the connection field from the generated RTK
-                      client. A value sent on that inlined connection is ignored. With the owner and
-                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                      connection is registered, and keeps it on later updates. Every connection a server registers under
+                      this contract carries it. Absent only on connections registered before servers recorded an
+                      organization and whose owner belongs to several, so none can be assigned without guessing; those
+                      are scoped by their owner. A server may backfill a legacy connection whose organization is
+                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
+                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
+                      the connection field from the generated RTK client. A value sent on that inlined connection is
+                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
+                      connections.
+                    nullable: true
                     x-go-name: OrganizationID
-                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId
+                      json: organizationId,omitempty
                     x-order: 19
                     type: string
                     format: uuid
@@ -73884,7 +73899,6 @@ paths:
                   - subType
                   - kind
                   - status
-                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -74589,16 +74603,20 @@ paths:
                     description: >
                       The organization the connection belongs to. The server sets it from the session organization
                       (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
-                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
-                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
-                      registration requests, and readOnly there drops the connection field from the generated RTK
-                      client. A value sent on that inlined connection is ignored. With the owner and
-                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                      connection is registered, and keeps it on later updates. Every connection a server registers under
+                      this contract carries it. Absent only on connections registered before servers recorded an
+                      organization and whose owner belongs to several, so none can be assigned without guessing; those
+                      are scoped by their owner. A server may backfill a legacy connection whose organization is
+                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
+                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
+                      the connection field from the generated RTK client. A value sent on that inlined connection is
+                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
+                      connections.
+                    nullable: true
                     x-go-name: OrganizationID
-                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId
+                      json: organizationId,omitempty
                     x-order: 19
                     type: string
                     format: uuid
@@ -74859,8 +74877,8 @@ paths:
                 description: >-
                   A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
                   description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
-                  `MeshkitError409`, `MeshkitError500` and `MeshkitError502` responses for an operation whose server
-                  answers its refusals this way.
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
                 required:
                   - error
                 additionalProperties: false
@@ -74959,6 +74977,59 @@ paths:
                         type: string
                         description: Where the client can get an update, when the provider knows one.
                         maxLength: 2048
+        '429':
+          description: >-
+            Too many requests - the caller exceeded the server's per-user request rate for this route family. Wait the
+            number of seconds in `Retry-After` before retrying.
+          headers:
+            Retry-After:
+              description: Number of seconds the caller must wait before retrying.
+              required: true
+              schema:
+                type: integer
+                minimum: 1
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
+                required:
+                  - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: >-
+                      MeshKit error code, a component-scoped identifier allocated by the emitting service (e.g.
+                      `<component>-<number>`); it is not a stable part of this contract. Omitted for an error that is
+                      not a MeshKit error.
+                  severity:
+                    type: string
+                    description: MeshKit severity name. Omitted when MeshKit reports none.
+                    enum:
+                      - emergency
+                      - alert
+                      - critical
+                      - fatal
+                  probableCause:
+                    type: array
+                    description: MeshKit's probable causes of the error.
+                    items:
+                      type: string
+                  suggestedRemediation:
+                    type: array
+                    description: MeshKit's suggested remediations for the error.
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
@@ -75226,7 +75297,6 @@ paths:
                   - subType
                   - kind
                   - status
-                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -75931,16 +76001,20 @@ paths:
                     description: >
                       The organization the connection belongs to. The server sets it from the session organization
                       (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
-                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
-                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
-                      registration requests, and readOnly there drops the connection field from the generated RTK
-                      client. A value sent on that inlined connection is ignored. With the owner and
-                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                      connection is registered, and keeps it on later updates. Every connection a server registers under
+                      this contract carries it. Absent only on connections registered before servers recorded an
+                      organization and whose owner belongs to several, so none can be assigned without guessing; those
+                      are scoped by their owner. A server may backfill a legacy connection whose organization is
+                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
+                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
+                      the connection field from the generated RTK client. A value sent on that inlined connection is
+                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
+                      connections.
+                    nullable: true
                     x-go-name: OrganizationID
-                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId
+                      json: organizationId,omitempty
                     x-order: 19
                     type: string
                     format: uuid
@@ -76709,7 +76783,6 @@ paths:
                   - subType
                   - kind
                   - status
-                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -77414,16 +77487,20 @@ paths:
                     description: >
                       The organization the connection belongs to. The server sets it from the session organization
                       (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
-                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
-                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
-                      registration requests, and readOnly there drops the connection field from the generated RTK
-                      client. A value sent on that inlined connection is ignored. With the owner and
-                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                      connection is registered, and keeps it on later updates. Every connection a server registers under
+                      this contract carries it. Absent only on connections registered before servers recorded an
+                      organization and whose owner belongs to several, so none can be assigned without guessing; those
+                      are scoped by their owner. A server may backfill a legacy connection whose organization is
+                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
+                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
+                      the connection field from the generated RTK client. A value sent on that inlined connection is
+                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
+                      connections.
+                    nullable: true
                     x-go-name: OrganizationID
-                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId
+                      json: organizationId,omitempty
                     x-order: 19
                     type: string
                     format: uuid
@@ -77684,8 +77761,8 @@ paths:
                 description: >-
                   A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
                   description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
-                  `MeshkitError409`, `MeshkitError500` and `MeshkitError502` responses for an operation whose server
-                  answers its refusals this way.
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
                 required:
                   - error
                 additionalProperties: false
@@ -77837,7 +77914,6 @@ paths:
                   - subType
                   - kind
                   - status
-                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -78542,16 +78618,20 @@ paths:
                     description: >
                       The organization the connection belongs to. The server sets it from the session organization
                       (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
-                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
-                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
-                      registration requests, and readOnly there drops the connection field from the generated RTK
-                      client. A value sent on that inlined connection is ignored. With the owner and
-                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
+                      connection is registered, and keeps it on later updates. Every connection a server registers under
+                      this contract carries it. Absent only on connections registered before servers recorded an
+                      organization and whose owner belongs to several, so none can be assigned without guessing; those
+                      are scoped by their owner. A server may backfill a legacy connection whose organization is
+                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
+                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
+                      the connection field from the generated RTK client. A value sent on that inlined connection is
+                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
+                      connections.
+                    nullable: true
                     x-go-name: OrganizationID
-                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId
+                      json: organizationId,omitempty
                     x-order: 19
                     type: string
                     format: uuid
@@ -83170,6 +83250,59 @@ paths:
             text/plain:
               schema:
                 type: string
+        '429':
+          description: >-
+            Too many requests - the caller exceeded the server's per-user request rate for this route family. Wait the
+            number of seconds in `Retry-After` before retrying.
+          headers:
+            Retry-After:
+              description: Number of seconds the caller must wait before retrying.
+              required: true
+              schema:
+                type: integer
+                minimum: 1
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
+                required:
+                  - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: >-
+                      MeshKit error code, a component-scoped identifier allocated by the emitting service (e.g.
+                      `<component>-<number>`); it is not a stable part of this contract. Omitted for an error that is
+                      not a MeshKit error.
+                  severity:
+                    type: string
+                    description: MeshKit severity name. Omitted when MeshKit reports none.
+                    enum:
+                      - emergency
+                      - alert
+                      - critical
+                      - fatal
+                  probableCause:
+                    type: array
+                    description: MeshKit's probable causes of the error.
+                    items:
+                      type: string
+                  suggestedRemediation:
+                    type: array
+                    description: MeshKit's suggested remediations for the error.
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
@@ -83234,6 +83367,59 @@ paths:
             text/plain:
               schema:
                 type: string
+        '429':
+          description: >-
+            Too many requests - the caller exceeded the server's per-user request rate for this route family. Wait the
+            number of seconds in `Retry-After` before retrying.
+          headers:
+            Retry-After:
+              description: Number of seconds the caller must wait before retrying.
+              required: true
+              schema:
+                type: integer
+                minimum: 1
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
+                required:
+                  - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: >-
+                      MeshKit error code, a component-scoped identifier allocated by the emitting service (e.g.
+                      `<component>-<number>`); it is not a stable part of this contract. Omitted for an error that is
+                      not a MeshKit error.
+                  severity:
+                    type: string
+                    description: MeshKit severity name. Omitted when MeshKit reports none.
+                    enum:
+                      - emergency
+                      - alert
+                      - critical
+                      - fatal
+                  probableCause:
+                    type: array
+                    description: MeshKit's probable causes of the error.
+                    items:
+                      type: string
+                  suggestedRemediation:
+                    type: array
+                    description: MeshKit's suggested remediations for the error.
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
@@ -83304,6 +83490,59 @@ paths:
             text/plain:
               schema:
                 type: string
+        '429':
+          description: >-
+            Too many requests - the caller exceeded the server's per-user request rate for this route family. Wait the
+            number of seconds in `Retry-After` before retrying.
+          headers:
+            Retry-After:
+              description: Number of seconds the caller must wait before retrying.
+              required: true
+              schema:
+                type: integer
+                minimum: 1
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
+                required:
+                  - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: >-
+                      MeshKit error code, a component-scoped identifier allocated by the emitting service (e.g.
+                      `<component>-<number>`); it is not a stable part of this contract. Omitted for an error that is
+                      not a MeshKit error.
+                  severity:
+                    type: string
+                    description: MeshKit severity name. Omitted when MeshKit reports none.
+                    enum:
+                      - emergency
+                      - alert
+                      - critical
+                      - fatal
+                  probableCause:
+                    type: array
+                    description: MeshKit's probable causes of the error.
+                    items:
+                      type: string
+                  suggestedRemediation:
+                    type: array
+                    description: MeshKit's suggested remediations for the error.
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
@@ -83383,6 +83622,59 @@ paths:
             text/plain:
               schema:
                 type: string
+        '429':
+          description: >-
+            Too many requests - the caller exceeded the server's per-user request rate for this route family. Wait the
+            number of seconds in `Retry-After` before retrying.
+          headers:
+            Retry-After:
+              description: Number of seconds the caller must wait before retrying.
+              required: true
+              schema:
+                type: integer
+                minimum: 1
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
+                required:
+                  - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: >-
+                      MeshKit error code, a component-scoped identifier allocated by the emitting service (e.g.
+                      `<component>-<number>`); it is not a stable part of this contract. Omitted for an error that is
+                      not a MeshKit error.
+                  severity:
+                    type: string
+                    description: MeshKit severity name. Omitted when MeshKit reports none.
+                    enum:
+                      - emergency
+                      - alert
+                      - critical
+                      - fatal
+                  probableCause:
+                    type: array
+                    description: MeshKit's probable causes of the error.
+                    items:
+                      type: string
+                  suggestedRemediation:
+                    type: array
+                    description: MeshKit's suggested remediations for the error.
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
@@ -83843,6 +84135,59 @@ paths:
             text/plain:
               schema:
                 type: string
+        '429':
+          description: >-
+            Too many requests - the caller exceeded the server's per-user request rate for this route family. Wait the
+            number of seconds in `Retry-After` before retrying.
+          headers:
+            Retry-After:
+              description: Number of seconds the caller must wait before retrying.
+              required: true
+              schema:
+                type: integer
+                minimum: 1
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
+                  operation whose server answers its refusals this way.
+                required:
+                  - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    minLength: 1
+                    description: The sentence the caller is shown.
+                  code:
+                    type: string
+                    minLength: 1
+                    description: >-
+                      MeshKit error code, a component-scoped identifier allocated by the emitting service (e.g.
+                      `<component>-<number>`); it is not a stable part of this contract. Omitted for an error that is
+                      not a MeshKit error.
+                  severity:
+                    type: string
+                    description: MeshKit severity name. Omitted when MeshKit reports none.
+                    enum:
+                      - emergency
+                      - alert
+                      - critical
+                      - fatal
+                  probableCause:
+                    type: array
+                    description: MeshKit's probable causes of the error.
+                    items:
+                      type: string
+                  suggestedRemediation:
+                    type: array
+                    description: MeshKit's suggested remediations for the error.
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
