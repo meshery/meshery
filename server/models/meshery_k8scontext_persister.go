@@ -41,9 +41,13 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order stri
 		query = query.Where("(lower(name) like ?)", like)
 	}
 
-	query.Model(K8sContext{}).Count(&count)
+	if err := query.Model(K8sContext{}).Count(&count).Error; err != nil {
+		return nil, err
+	}
 
-	Paginate(uint(page), uint(pageSize))(query).Find(&contexts)
+	if err := Paginate(uint(page), uint(pageSize))(query).Find(&contexts).Error; err != nil {
+		return nil, err
+	}
 
 	mesheryK8sContextPage := MesheryK8sContextPage{
 		Page:       page,
@@ -52,8 +56,7 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order stri
 		Contexts:   contexts,
 	}
 
-	resp, _ := json.Marshal(mesheryK8sContextPage)
-	return resp, nil
+	return json.Marshal(mesheryK8sContextPage)
 }
 
 func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (connections.Connection, error) {
