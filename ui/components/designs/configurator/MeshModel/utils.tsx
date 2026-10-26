@@ -1,5 +1,4 @@
 import { JsonParse } from '../../../../utils/utils';
-import { componentUniqueKey } from '../../../../rtk-query/meshModel';
 
 export function getComponentMetadata(metadata) {
   const cleanedMeta = { ...metadata };
@@ -33,9 +32,12 @@ export function getComponentMetadata(metadata) {
  * @returns {string}
  */
 export function getComponentFormKey(modelName, componentDefinition, index) {
-  const componentKey = componentDefinition?.model
-    ? componentUniqueKey(componentDefinition)
-    : componentDefinition?.component?.kind;
+  // Same identity as componentUniqueKey in rtk-query/meshModel, built here so this
+  // leaf util does not pull in the RTK store.
+  const { component, version, model } = componentDefinition || {};
+  const componentKey = [component?.kind, component?.version, version, model?.name, model?.version]
+    .filter(Boolean)
+    .join('-');
   return `${modelName}-${componentKey}-${index}`;
 }
 

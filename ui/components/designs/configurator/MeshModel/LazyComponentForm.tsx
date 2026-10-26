@@ -49,6 +49,8 @@ export default function LazyComponentForm({
   const [schemaSet, setSchemaSet] = React.useState({});
   // Each form gets its own reference so edits are written to the matching component.
   const formReference = React.useRef();
+  // useStateCB keeps the first settings handler it receives, so create it once.
+  const onSettingsChange = React.useMemo(() => createSettingsChangeHandler?.(formReference), []);
   const { notify } = useNotification();
 
   /**
@@ -63,11 +65,10 @@ export default function LazyComponentForm({
 
     setExpanded(true);
     setHasBeenExpanded(true);
-    // useMeshModelComponents sets a top-level apiVersion to the latest version of the
-    // kind; fall back to the definition's own version when it is not present.
+    // Request the schema for this definition's own api version, which is also the
+    // version recorded in the design for this component.
     const {
-      component: { version: componentApiVersion, kind },
-      apiVersion = componentApiVersion,
+      component: { version: apiVersion, kind },
       model,
     } = component;
     const {
@@ -110,7 +111,7 @@ export default function LazyComponentForm({
               formData={{}}
               color={component?.styles?.primaryColor}
               {...otherprops}
-              onSettingsChange={createSettingsChangeHandler?.(formReference)}
+              onSettingsChange={onSettingsChange}
               reference={formReference}
               schemaSet={schemaSet}
             />

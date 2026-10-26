@@ -11,11 +11,6 @@ const jsonParse = vi.fn((input: string) => {
 vi.mock('../../../../utils/utils', () => ({
   JsonParse: (input: string) => jsonParse(input),
 }));
-
-// utils imports componentUniqueKey from rtk-query/meshModel, whose module graph
-// reaches the store; mock the store so the real helper can be used.
-vi.mock('../../../../store', () => ({ store: { dispatch: vi.fn() } }));
-
 import { getComponentFormKey, getComponentMetadata, getStyleOverrides } from './utils';
 
 describe('getComponentMetadata', () => {

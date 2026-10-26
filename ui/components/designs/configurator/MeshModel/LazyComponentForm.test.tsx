@@ -75,7 +75,8 @@ describe('LazyComponentForm', () => {
     });
   });
 
-  it('requests the schema using the processed top-level api version', async () => {
+  it('requests the schema for the definition api version recorded in the design', async () => {
+    // A differing top-level apiVersion must not change the requested schema version.
     const deployment = {
       ...makeComponent('Deployment'),
       component: { kind: 'Deployment', version: 'apps/v1beta1' },
@@ -90,22 +91,7 @@ describe('LazyComponentForm', () => {
         'kubernetes',
         'Deployment',
         'v1.0.0',
-        'apps/v1',
-      ),
-    );
-  });
-
-  it('falls back to the component api version when none was processed', async () => {
-    render(<LazyComponentForm component={makeComponent('Deployment')} />);
-
-    fireEvent.click(screen.getByTestId('accordion-toggle'));
-
-    await waitFor(() =>
-      expect(getMeshModelComponentMock).toHaveBeenCalledWith(
-        'kubernetes',
-        'Deployment',
-        'v1.0.0',
-        'apps/v1',
+        'apps/v1beta1',
       ),
     );
   });
@@ -132,6 +118,8 @@ describe('LazyComponentForm', () => {
 
     expect(formMounts).toHaveBeenCalledTimes(1);
     expect(handler).toHaveBeenCalledWith('key-1', { name: 'edited' });
+    // The settings handler is created once, not on every render.
+    expect(createSettingsChangeHandler).toHaveBeenCalledTimes(1);
   });
 
   it('gives every component form its own reference', async () => {
