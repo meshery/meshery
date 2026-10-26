@@ -474,6 +474,22 @@ touching any of them.
 - Hooks in `.agents/hooks/`: `format-frontend.sh` (post-edit Prettier) and
   `block-lockfiles.sh` (pre-edit lock-file guard).
 
+## Worktrees and landing a change
+
+- **Work in a treehouse worktree, never in the main clone.** Other agent sessions and the
+  no-mistakes pipeline share the main clone. Take a worktree with
+  `treehouse get --lease -b <branch>` (it prints the path; `--base <branch>` starts it from
+  another branch), work there, and release it with `treehouse return <path>` once the change
+  has merged. `treehouse status` lists the pool. Never make one with `git worktree add` or a
+  second clone.
+- **Land every change through no-mistakes, at most three runs per pull request.** Commit in
+  the worktree, then run `no-mistakes axi run --intent "<goal>"` (a clone without a
+  `no-mistakes` remote needs `no-mistakes init` once). `no-mistakes axi status` shows the step
+  and its findings, and `no-mistakes axi respond` answers a review gate. The pipeline reviews,
+  tests, pushes and opens the pull request. After the third run, merge the pull request as it
+  stands and open an issue for anything still flagged. A run that stopped on a usage limit
+  counts; one cancelled before it did anything does not.
+
 ## Reusable Workflows Consumed by Other Repos
 
 `.github/workflows/*.{yml,yaml}` here are called by repos across `meshery` and
