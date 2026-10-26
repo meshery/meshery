@@ -29,20 +29,27 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
+	meshkitutils "github.com/meshery/meshkit/utils"
 )
 
+// mockCSVProvider mocks Provider for CSV registration tests.
 type mockCSVProvider struct {
 	*models.DefaultLocalProvider
 }
 
+// GetProviderToken returns an empty provider token for testing.
 func (m *mockCSVProvider) GetProviderToken(_ *http.Request) (string, error) {
 	return "", nil
 }
 
+// PersistEvent implements the event persistence stub for testing.
 func (m *mockCSVProvider) PersistEvent(_ events.Event, _ string) error {
 	return nil
 }
 
+// TestRegisterMeshmodels_TemporaryCSVCleanup verifies that temporary CSV files
+// allocated during model, component, and relationship CSV processing are cleaned up
+// without leaking on disk across both early exit and full generation paths (Fixes #22571).
 func TestRegisterMeshmodels_TemporaryCSVCleanup(t *testing.T) {
 	systemID := uuid.Must(uuid.NewV4())
 	h := &Handler{
@@ -56,49 +63,107 @@ func TestRegisterMeshmodels_TemporaryCSVCleanup(t *testing.T) {
 	provider := &mockCSVProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
 	user := &models.User{ID: uuid.Must(uuid.NewV4())}
 
-	tempPattern := filepath.Join(os.TempDir(), "model-*.csv")
-	initialMatches, err := filepath.Glob(tempPattern)
-	if err != nil {
-		t.Fatalf("failed to list temp files: %v", err)
-	}
-	initialMap := make(map[string]bool, len(initialMatches))
-	for _, m := range initialMatches {
-		initialMap[m] = true
-	}
-
-	payload := map[string]interface{}{
-		"uploadType": "csv",
-		"importBody": map[string]interface{}{
-			"modelCsv":     "data:text/csv;base64," + base64.StdEncoding.EncodeToString([]byte("name,model\ntest,test-model")),
-			"componentCsv": "invalid-csv-data",
-		},
-	}
-	payloadBytes, err := json.Marshal(payload)
-	if err != nil {
-		t.Fatalf("failed to marshal request body: %v", err)
-	}
-
-	req := httptest.NewRequest(http.MethodPost, "/api/meshmodels/register", bytes.NewReader(payloadBytes))
-	rec := httptest.NewRecorder()
-
-	h.RegisterMeshmodels(rec, req, nil, user, provider)
-
-	afterMatches, err := filepath.Glob(tempPattern)
-	if err != nil {
-		t.Fatalf("failed to list temp files after handler run: %v", err)
-	}
-
-	for _, match := range afterMatches {
-		if !initialMap[match] {
-			t.Errorf("temporary file %s was leaked by RegisterMeshmodels", match)
+	trackTempFiles := func() (map[string]bool, func()) {
+		patterns := []string{"model-*.csv", "component-*.csv", "relationship-*.csv"}
+		initialMap := make(map[string]bool)
+		for _, pat := range patterns {
+			matches, _ := filepath.Glob(filepath.Join(os.TempDir(), pat))
+			for _, m := range matches {
+				initialMap[m] = true
+			}
 		}
+
+		assertNoLeaks := func() {
+			for _, pat := range patterns {
+				matches, _ := filepath.Glob(filepath.Join(os.TempDir(), pat))
+				for _, match := range matches {
+					if !initialMap[match] {
+						t.Errorf("temporary file %s was leaked by RegisterMeshmodels", match)
+					}
+				}
+			}
+		}
+		return initialMap, assertNoLeaks
 	}
+
+	validCSV := "data:text/csv;base64," + base64.StdEncoding.EncodeToString([]byte("name,model\ntest,test-model"))
+
+	t.Run("early exit on invalid component CSV cleans up model file", func(t *testing.T) {
+		_, assertNoLeaks := trackTempFiles()
+
+		payload := map[string]interface{}{
+			"uploadType": "csv",
+			"importBody": map[string]interface{}{
+				"modelCsv":     validCSV,
+				"componentCsv": "invalid-csv-data",
+			},
+		}
+		payloadBytes, err := json.Marshal(payload)
+		if err != nil {
+			t.Fatalf("failed to marshal payload: %v", err)
+		}
+
+		req := httptest.NewRequest(http.MethodPost, "/api/meshmodels/register", bytes.NewReader(payloadBytes))
+		rec := httptest.NewRecorder()
+		h.RegisterMeshmodels(rec, req, nil, user, provider)
+
+		assertNoLeaks()
+	})
+
+	t.Run("early exit on invalid relationship CSV cleans up model and component files", func(t *testing.T) {
+		_, assertNoLeaks := trackTempFiles()
+
+		payload := map[string]interface{}{
+			"uploadType": "csv",
+			"importBody": map[string]interface{}{
+				"modelCsv":        validCSV,
+				"componentCsv":    validCSV,
+				"relationshipCsv": "invalid-csv-data",
+			},
+		}
+		payloadBytes, err := json.Marshal(payload)
+		if err != nil {
+			t.Fatalf("failed to marshal payload: %v", err)
+		}
+
+		req := httptest.NewRequest(http.MethodPost, "/api/meshmodels/register", bytes.NewReader(payloadBytes))
+		rec := httptest.NewRecorder()
+		h.RegisterMeshmodels(rec, req, nil, user, provider)
+
+		assertNoLeaks()
+	})
+
+	t.Run("all three CSV files created are cleaned up after processing", func(t *testing.T) {
+		_, assertNoLeaks := trackTempFiles()
+
+		payload := map[string]interface{}{
+			"uploadType": "csv",
+			"importBody": map[string]interface{}{
+				"modelCsv":        validCSV,
+				"componentCsv":    validCSV,
+				"relationshipCsv": validCSV,
+			},
+		}
+		payloadBytes, err := json.Marshal(payload)
+		if err != nil {
+			t.Fatalf("failed to marshal payload: %v", err)
+		}
+
+		req := httptest.NewRequest(http.MethodPost, "/api/meshmodels/register", bytes.NewReader(payloadBytes))
+		rec := httptest.NewRecorder()
+		h.RegisterMeshmodels(rec, req, nil, user, provider)
+
+		assertNoLeaks()
+	})
 }
 
+// TestRegisterMeshmodels_CrossPlatformRegistryLocation verifies that the model
+// location resolves via meshkitutils.GetHome() rather than os.Getenv("HOME"),
+// ensuring correct cross-platform path resolution across Linux, macOS, and Windows (Fixes #22571).
 func TestRegisterMeshmodels_CrossPlatformRegistryLocation(t *testing.T) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		t.Skipf("skipping: user home directory not available: %v", err)
+	home := meshkitutils.GetHome()
+	if home == "" {
+		t.Fatalf("meshkitutils.GetHome() returned empty string")
 	}
 
 	modelLocation := filepath.Join(home, utils.RegistryLocation)

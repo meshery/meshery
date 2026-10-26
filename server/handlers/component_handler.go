@@ -923,8 +923,7 @@ func processComponentDefinitions(entities []entity.Entity) []component.Component
 	return comps
 }
 
-// request content byte in form value and header of the type in form
-
+// RegisterMeshmodels registers meshmodels from CSV, OCI, or URL sources into the registry.
 func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	var response models.RegistryAPIResponse
 	regErrorStore := models.NewRegistrationFailureLogHandler()
@@ -1065,15 +1064,8 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 
-		home, err := os.UserHomeDir()
-		if err != nil {
-			h.handleError(rw, err, "Error retrieving user home directory")
-			h.sendErrorEvent(userID, provider, "Error retrieving user home directory", err, token)
-			return
-		}
-
 		var wg sync.WaitGroup
-		modelLocation := filepath.Join(home, utils.RegistryLocation)
+		modelLocation := filepath.Join(meshkitutils.GetHome(), utils.RegistryLocation)
 		if _, err := os.Stat(modelLocation); os.IsNotExist(err) {
 			_ = os.MkdirAll(modelLocation, 0755)
 		}
