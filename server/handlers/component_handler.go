@@ -1351,7 +1351,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 	model, ok := e[0].(*_model.ModelDefinition)
 	if !ok {
-		err := fmt.Errorf("unexpected entity type for model: %T", e[0])
+		err = fmt.Errorf("unexpected entity type for model: %T", e[0])
 		h.log.Error(err)
 		writeMeshkitError(rw, ErrExportModel(err, "invalid model entity"), http.StatusInternalServerError)
 		return
@@ -1394,10 +1394,9 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	components := []component.ComponentDefinition{}
 	// Components can be nil if hasComponents is false
 	if model.Components != nil {
-		var ok bool
 		components, ok = model.Components.([]component.ComponentDefinition)
 		if !ok {
-			err := fmt.Errorf("unexpected components type: %T", model.Components)
+			err = fmt.Errorf("unexpected components type: %T", model.Components)
 			h.log.Error(err)
 			writeMeshkitError(rw, ErrExportModel(err, "invalid components data"), http.StatusInternalServerError)
 			return
@@ -1407,10 +1406,9 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	relationships := []relationship.RelationshipDefinition{}
 	// Relationships can be nil if hasRelationships is false
 	if model.Relationships != nil {
-		var ok bool
 		relationships, ok = model.Relationships.([]relationship.RelationshipDefinition)
 		if !ok {
-			err := fmt.Errorf("unexpected relationships type: %T", model.Relationships)
+			err = fmt.Errorf("unexpected relationships type: %T", model.Relationships)
 			h.log.Error(err)
 			writeMeshkitError(rw, ErrExportModel(err, "invalid relationships data"), http.StatusInternalServerError)
 			return
