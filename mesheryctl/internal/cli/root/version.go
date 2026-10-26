@@ -20,10 +20,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
+	pkgconstants "github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
@@ -132,7 +132,7 @@ mesheryctl version
 			return
 		}
 
-		client := &http.Client{Timeout: 10 * time.Second}
+		client := &http.Client{Timeout: pkgconstants.HttpClientTimeout}
 		resp, err := client.Do(req)
 
 		if err != nil {

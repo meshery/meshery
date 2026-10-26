@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -87,7 +88,9 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 
 // MakeRequest sends an HTTP request, validates the response, and returns the response or an error.
 func MakeRequest(req *http.Request) (*http.Response, error) {
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: constants.HttpClientTimeout,
+	}
 
 	// check status code from request, checks for issues with auth token
 	resp, err := client.Do(req)
@@ -230,7 +233,9 @@ func UpdateAuthDetails(filepath string) error {
 		return err
 	}
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: constants.HttpClientTimeout,
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		err = errors.Wrap(err, "error dispatching the request: ")
@@ -481,7 +486,9 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 		HttpOnly: true,
 	})
 
-	cli := &http.Client{}
+	cli := &http.Client{
+		Timeout: constants.HttpClientTimeout,
+	}
 	resp, err := cli.Do(req)
 	if err != nil {
 		return nil, err
