@@ -1065,8 +1065,15 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 
+		home, err := os.UserHomeDir()
+		if err != nil {
+			h.handleError(rw, err, "Error retrieving user home directory")
+			h.sendErrorEvent(userID, provider, "Error retrieving user home directory", err, token)
+			return
+		}
+
 		var wg sync.WaitGroup
-		modelLocation := filepath.Join(meshkitutils.GetHome(), utils.RegistryLocation)
+		modelLocation := filepath.Join(home, utils.RegistryLocation)
 		if _, err := os.Stat(modelLocation); os.IsNotExist(err) {
 			_ = os.MkdirAll(modelLocation, 0755)
 		}
