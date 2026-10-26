@@ -486,8 +486,9 @@ touching any of them.
   the worktree, then run `no-mistakes axi run --intent "<goal>"` (a clone without a
   `no-mistakes` remote needs `no-mistakes init` once). `no-mistakes axi status` shows the step
   and its findings, and `no-mistakes axi respond` answers a review gate. The pipeline reviews,
-  tests, pushes and opens the pull request. After the third run, merge the pull request as it
-  stands and open an issue for anything still flagged. A run that stopped on a usage limit
+  tests, pushes and opens the pull request. After the third run, open an issue for anything
+  still flagged and merge the pull request as it stands only if CI is green and it touches no
+  "Require Human Review" area; otherwise hand it to a human. A run that stopped on a usage limit
   counts; one cancelled before it did anything does not.
 
 ## Reusable Workflows Consumed by Other Repos
