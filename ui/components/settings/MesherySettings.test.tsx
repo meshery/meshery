@@ -16,6 +16,7 @@ const routerState = {
   pathname: '/settings',
   route: '/settings',
   push: vi.fn(),
+  replace: vi.fn(),
 };
 
 vi.mock('next/router', () => ({
@@ -167,6 +168,7 @@ describe('MesherySettings', () => {
     canSpy.mockClear();
     routerState.query = {};
     routerState.push.mockReset();
+    routerState.replace.mockReset();
     selectorReturn = {
       ui: { selectedK8sContexts: [], k8sConfig: { clusterConfigured: false } },
       telemetry: { prometheus: {}, grafana: {} },
@@ -221,5 +223,36 @@ describe('MesherySettings', () => {
     render(<MesherySettings />);
     expect(screen.getByTestId('tab-Adapters')).toBeDisabled();
     expect(screen.queryByTestId('adapter-config')).not.toBeInTheDocument();
+  });
+
+  it('redirects to /telemetry/metrics when visiting legacy settingsCategory=Metrics with tab=Prometheus', () => {
+    routerState.query = { settingsCategory: 'Metrics', tab: 'Prometheus' };
+    render(<MesherySettings />);
+    expect(routerState.replace).toHaveBeenCalledWith('/telemetry/metrics');
+  });
+
+  it('redirects to /telemetry/metrics when visiting legacy settingsCategory=Metrics without a tab', () => {
+    routerState.query = { settingsCategory: 'Metrics' };
+    render(<MesherySettings />);
+    expect(routerState.replace).toHaveBeenCalledWith('/telemetry/metrics');
+  });
+
+  it('redirects to /telemetry/charts when visiting legacy settingsCategory=Metrics with tab=Grafana', () => {
+    routerState.query = { settingsCategory: 'Metrics', tab: 'Grafana' };
+    render(<MesherySettings />);
+    expect(routerState.replace).toHaveBeenCalledWith('/telemetry/charts');
+  });
+
+  it('redirects to /telemetry/metrics when visiting settings with tab=Prometheus without settingsCategory', () => {
+    routerState.query = { tab: 'Prometheus' };
+    render(<MesherySettings />);
+    expect(routerState.replace).toHaveBeenCalledWith('/telemetry/metrics');
+  });
+
+  it('falls back to Overview and does not crash when an invalid settingsCategory is provided', () => {
+    routerState.query = { settingsCategory: 'UnknownInvalidCategory' };
+    render(<MesherySettings />);
+    expect(screen.getByTestId('dashboard-graph')).toBeInTheDocument();
+    expect(screen.getByTestId('tab-Overview')).toBeInTheDocument();
   });
 });
