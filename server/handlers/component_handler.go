@@ -991,6 +991,9 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			if err := modelCsvFile.Close(); err != nil {
 				h.log.Error(err)
 			}
+			if err := os.Remove(modelCsvFile.Name()); err != nil {
+				h.log.Error(err)
+			}
 		}()
 
 		_, err = modelCsvFile.Write(modelCSVData)
@@ -1017,6 +1020,9 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 		defer func() {
 			if err := componentCsvFile.Close(); err != nil {
+				h.log.Error(err)
+			}
+			if err := os.Remove(componentCsvFile.Name()); err != nil {
 				h.log.Error(err)
 			}
 		}()
@@ -1046,6 +1052,9 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			if err := relationshipCsvFile.Close(); err != nil {
 				h.log.Error(err)
 			}
+			if err := os.Remove(relationshipCsvFile.Name()); err != nil {
+				h.log.Error(err)
+			}
 		}()
 
 		_, err = relationshipCsvFile.Write(relationshipCSVData)
@@ -1057,7 +1066,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 
 		var wg sync.WaitGroup
-		modelLocation := filepath.Join(os.Getenv("HOME"), utils.RegistryLocation)
+		modelLocation := filepath.Join(meshkitutils.GetHome(), utils.RegistryLocation)
 		if _, err := os.Stat(modelLocation); os.IsNotExist(err) {
 			_ = os.MkdirAll(modelLocation, 0755)
 		}
