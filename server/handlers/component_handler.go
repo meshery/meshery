@@ -1484,7 +1484,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		rw.Header().Set("Content-Length", fmt.Sprintf("%d", len(byt)))
 	} else {
 		var tarData bytes.Buffer
-		err := meshkitutils.Compress(modelDir, &tarData)
+		err = meshkitutils.Compress(modelDir, &tarData)
 		if err != nil {
 			h.log.Error(err)
 			writeMeshkitError(rw, ErrExportModel(err, "tar.gz compress"), http.StatusInternalServerError)
@@ -1497,15 +1497,9 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 			writeMeshkitError(rw, ErrExportModel(err, "tar.gz write"), http.StatusInternalServerError)
 			return
 		}
-		byt, err = os.ReadFile(tarfileName)
-		if err != nil {
-			h.log.Error(err)
-			writeMeshkitError(rw, ErrExportModel(err, "tar.gz read"), http.StatusInternalServerError)
-			return
-		}
+		byt = tarData.Bytes()
 		rw.Header().Add("Content-Type", "application/gzip")
 		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.tar.gz\"", model.Name))
-
 	}
 
 	// 3. Send response
