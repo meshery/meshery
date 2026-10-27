@@ -68,7 +68,7 @@ jobs:
           else
             echo RELEASE_CHANNEL=edge >> $GITHUB_ENV
           fi
-          LATEST_VERSION=$(git ls-remote --tags --refs --sort=-v:refname origin 'refs/tags/v*' | grep -v -e '-patch' -e '-alpha' -e '-beta' -e '-rc' | head -1 | cut -f2 | sed 's/refs\/tags\///g')
+          LATEST_VERSION=$(git ls-remote --tags --refs --sort=-v:refname origin 'refs/tags/v*' | grep -v -e '-patch' -e '-alpha' -e '-beta' -e '-rc' | sed -n '1p' | cut -f2 | sed 's/refs\/tags\///g')
           if [ -z "$LATEST_VERSION" ]; then
             echo "ERROR: No stable version tags found after filtering prereleases" >&2
             exit 1
