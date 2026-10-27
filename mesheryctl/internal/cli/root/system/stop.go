@@ -45,7 +45,7 @@ var stopCmd = &cobra.Command{
 	Use:   "stop",
 	Short: "Stop Meshery",
 	Long: `Stop all Meshery containers / remove all Meshery resources.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/stop`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/stop`,
 	Example: `
 // Stop Meshery
 mesheryctl system stop

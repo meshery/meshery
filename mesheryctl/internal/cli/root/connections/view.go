@@ -41,7 +41,7 @@ var viewConnectionCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View a connection",
 	Long: `View a connection by its ID or name.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/connection/view`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/connection/view`,
 	Example: `
 // View details of a specific connection in default format (yaml)
 mesheryctl connection view [connection-name|connection-id]
@@ -89,12 +89,6 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 			selectedConnection = fetchedConnection
 		}
 
-		// Get the home directory of the user to save the output file
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
-		}
-
 		outputFormatterFactory := display.OutputFormatterFactory[connection.Connection]{}
 		outputFormatter, err := outputFormatterFactory.New(connectionViewFlagsProvided.outputFormat, *selectedConnection)
 		if err != nil {
@@ -107,6 +101,12 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 		}
 
 		if connectionViewFlagsProvided.save {
+			// Get the home directory of the user to save the output file
+			homeDir, err := os.UserHomeDir()
+			if err != nil {
+				return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
+			}
+
 			// Prepare the connection string for file naming since connection from local provider
 			// can be created without a name.
 			connectionString := func(c connection.Connection) string {

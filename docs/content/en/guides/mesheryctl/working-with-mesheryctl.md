@@ -4,128 +4,111 @@ categories: [mesheryctl]
 description: Guides for common tasks while using Meshery's CLI, mesheryctl.
 ---
 
-Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manage the lifecycle of Meshery itself and to access and invoke any of Meshery's application and cloud native management functions. `mesheryctl` commands can be categorized as follows:
+`mesheryctl` is Meshery's command line interface. Use it to manage the lifecycle of Meshery itself and to call Meshery's infrastructure management features from your terminal. Its commands fall into these groups:
 
-- `mesheryctl` - Global overrides and flags
-- `mesheryctl app` - Cloud Native Application Management
-- `mesheryctl filter` - Cloud Native Filter Management
-- `mesheryctl mesh` - Cloud Native Lifecycle & Configuration Management
-- `mesheryctl perf` - Cloud Native Performance Management
-- `mesheryctl design` - Cloud Native Pattern Configuration & Management
-- `mesheryctl system` - Meshery Lifecycle and Troubleshooting
+- `mesheryctl` - global flags (`--config`, `--verbose`), `version`, and `completion`
+- `mesheryctl system` - Meshery lifecycle, contexts, providers, tokens, and troubleshooting
+- `mesheryctl design` - design import, export, deployment, and evaluation
+- `mesheryctl model` - model management and registry operations
+- `mesheryctl component` - component lookup
+- `mesheryctl relationship` - relationship management
+- `mesheryctl registry` - capability registry generation and publishing
+- `mesheryctl connection` - connection management
+- `mesheryctl environment` - environment management
+- `mesheryctl workspace` - workspace management
+- `mesheryctl organization` - organization management
+- `mesheryctl filter` - WebAssembly filter management
+- `mesheryctl perf` - performance management
+- `mesheryctl adapter` - Meshery Adapter operations
+- `mesheryctl exp` - experimental commands
 
-## Configuring Meshery Deployments with meshconfig
+## Configure Meshery deployments with meshconfig
 
-_Meshconfig_ refers to a configuration file found at `~/.meshery/config.yaml`. Your meshconfig file must contain one or more `contexts` in order for any `mesheryctl system` command to work. Each context represents a Meshery deployment.
-
-Each of the `system` commands are used to control Meshery's lifecycle like `system start`, `stop`, `status`, `reset` and so on.
+_Meshconfig_ is the `mesheryctl` configuration file at `~/.meshery/config.yaml`. It holds one or more _contexts_, and each context describes one Meshery deployment. `mesheryctl system` commands such as `start`, `stop`, `status`, and `reset` act on the current context.
 
 ## Meshery CLI FAQ
 
-#### Question: What is the meshconfig?
+### What is the meshconfig?
 
-Like kubeconfig for `kubectl`, meshconfig is the name of your `mesheryctl` config file. You can find your meshconfig file in its default location of `~/.meshery/config.yaml`. By default, `mesheryctl` will look to this location for your meshconfig. You can override the default location at anytime with the use of the global parameter, `--config <my-other-meshconfig>`.
+Meshconfig is to `mesheryctl` what kubeconfig is to `kubectl`. `mesheryctl` reads it from `~/.meshery/config.yaml` by default. Pass the global `--config <path>` flag to any `mesheryctl` command to use a different file.
 
-#### Question: What is a context?
+### What is a context?
 
-A meshconfig `context` represents a single Meshery deployment. Using `context`s, you can configure different Meshery deployments with environment-specific settings and you can easily switching between your individual Meshery deployments by updating your current-context.
+A context describes a single Meshery deployment: where Meshery Server runs, which platform it runs on, which release channel and version it uses, which provider it enforces, and which Meshery Adapters it deploys. Contexts let you keep several Meshery deployments, for example a local Docker one and a shared Kubernetes one, and switch between them.
 
-#### Question: Why are contexts necessary?
+### What is `current-context`?
 
-Many Meshery users have more than one Meshery deployment. Contexts allow you to deploy different versions of Meshery, update your release channel subscription settings, selectively install one or more Meshery Adapters, and so on. Contexts allow you to configure your individual Meshery deployments.
+`current-context` names the context that `mesheryctl` commands use. Only one context is current at a time. Change it with `mesheryctl system context switch <name>`, or override it for a single `mesheryctl system` command with `-c <name>`.
 
-#### Question: What is `current-context`?
+### What's the difference between contexts and environments?
 
-`current-context` identifies the Meshery deployment that when any `mesheryctl` command is invoked will use the environment described in the `current-context`. You can switch between contexts. Only one context can be the `current-context`.
+A context configures a Meshery deployment (Meshery Server, its adapters, and its operator settings) and lives in your local meshconfig. An [environment]({{< ref "concepts/logical/environments.md" >}}) is a group of connections, such as Kubernetes clusters, that Meshery manages, and it lives in Meshery Server.
 
-#### Question: What's the difference between contexts and environments?
+### What does a meshconfig look like?
 
-Contexts configure Meshery deployments (server, adapters, operator and so on), while environments define a collection of Kubernetes clusters and cloud native infrastructure under management in Meshery.
+`mesheryctl` creates `~/.meshery/config.yaml` the first time you run it. The file has this shape. Most fields are optional.
 
-#### Question: What does the default meshconfig look like?
-
-The following template is used to create a config file from scratch. Not all of the following variables are required to be included. Some of the variables may have a null value or may be excluded (e.g. "adapters").
-
-#### Question: What is the importance of --config flag?
-
-The `--config` flag is a global option that applies to all `mesheryctl` commands. It allows you to specify the location of a custom meshconfig file, overriding the default configuration. This config file is used to set up the `mesheryctl` context, which defines the configuration for a particular Meshery deployment.
-
-<pre class="codeblock-pre">
-<div class="codeblock">
-<div class="clipboardjs">
+```yaml
 contexts:
-  [context1-name]:
-    endpoint: [url to meshery server rest api]
-    token: [name of token variable in this config file]
-    platform: [type of platform: "docker" or "kubernetes"]
-    # Future: specify type of kubernetes (e.g. eks)
-    channel: [release channel: "stable", "stable-version", "edge", or "edge-version"]
-    adapters: [collection of names of Meshery adapters:
-        "istio","linkerd","consul","nginx-sm","tanzu-sm","cilium","app-mesh","traefik-mesh","kuma","osm","nsm"]
-    version: [version of Meshery client "latest", "v0.8.132", ...]
-    provider: [meshery's providers: "Meshery", "None", ...]
-    # add ENVs here
-    env:
-      meshsync_default_deployment_mode: ["operator" or "embedded", defaults to "embedded"]
+  local:
+    endpoint: http://localhost:9081   # URL of Meshery Server
+    token: default                    # name of an entry under tokens
+    platform: kubernetes              # "docker" or "kubernetes"
+    channel: stable                   # "stable" or "edge"
+    version: latest                   # "latest" or a release tag such as v0.9.2
+    provider: Meshery                 # optional: enforce a provider, for example "Meshery" or "Local"
+    components:                       # optional: Meshery Adapters to deploy
+      - meshery-istio
+      - meshery-linkerd
+    env:                              # optional: extra environment variables for Meshery Server
+      meshsync_default_deployment_mode: embedded
 
-  [context2-name]:
-    endpoint: [url to meshery server rest api]
-    token: [name of token variable in this config file]
-    platform: [type of platform: "docker" or "kubernetes"]
-
-current-context: [context name]
+current-context: local
 
 tokens:
-  - name: [token1-name]
-    location: [token-location]
-  - name: [token2-name]
-    value: [token-value]
-    # Future: allow embedding of token certificate
+  - name: default
+    location: /home/me/.meshery/auth.json
+```
 
-</div></div>
-</pre>
-<br />
+`components` accepts `meshery-istio`, `meshery-linkerd`, `meshery-consul`, `meshery-nsm`, `meshery-traefik-mesh`, `meshery-kuma`, and `meshery-cilium`. `mesheryctl` uppercases each key under `env` and passes it to Meshery Server as an environment variable, so `meshsync_default_deployment_mode` becomes `MESHSYNC_DEFAULT_DEPLOYMENT_MODE`. See [Environment Variables]({{< ref "installation/advanced/environment-variables.md" >}}) for the variables Meshery Server reads.
 
-Try it out and see for yourself. Run `mesheryctl system context create test` and `mesheryctl system context view test`.
+To see a generated context, run:
 
-#### Question: How do endpoints work in meshconfig?
+```bash
+mesheryctl system context create test
+mesheryctl system context view test
+```
 
-Endpoints specify the access URL for the Meshery UI, for a deployment. Endpoints are developed based on platform:
+### What does the `--config` flag do?
 
-- Docker: Docker users can specify the endpoint in the meshconfig. The port specified in this will be used to generate the endpoint. The endpoint is of the form `http://localhost:port`, where `port` is taken from the meshconfig.
-- Kubernetes: Deployments with kubernetes as the platform have an endpoint generated by service discovery using the Kubernetes API. This endpoint overwrites the endpoint specified in the meshconfig.
+`--config` is a global flag that every `mesheryctl` command accepts. It points `mesheryctl` at a meshconfig other than `~/.meshery/config.yaml`, which is useful when you keep a separate meshconfig per project or per CI job.
 
-#### Question: Can I get an API token using mesheryctl?
+### How do endpoints work in meshconfig?
 
-Yes, if you need to establish a session with your Meshery Server, you can [authenticate using mesheryctl]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}), using `mesheryctl system login`.
+The `endpoint` is the URL where `mesheryctl` reaches Meshery Server and where it opens Meshery UI.
 
-## Advanced Installation
+- **Docker:** `mesheryctl system start` publishes Meshery on the port in the context's endpoint, for example `http://localhost:9081`.
+- **Kubernetes:** `mesheryctl system dashboard` looks up the Meshery service through the Kubernetes API and writes the address it finds back to the context's endpoint.
 
-Users can control the specific container image and tag (version) of Meshery that they would like to run by editing their local _~/.meshery/meshery.yaml_ (a docker compose file).
-Aligned with the Meshery container image, instead of leaving the implicit :stable-latest tag behind image: meshery/meshery, users will instead identify a specific image tag like so:
+### Can I get an API token using mesheryctl?
 
-<pre class="codeblock-pre">
-<div class="codeblock">
-<div class="clipboardjs">
-version: '3'
-services:
-  meshery:
-    image: meshery/meshery:v0.5.0
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-</div></div>
-</pre>
-<br />
+Yes. Run `mesheryctl system login`. See [Authenticating Meshery via CLI]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}).
 
-### Suggested Reading
+## Run a specific Meshery version
 
-For an exhaustive list of `mesheryctl` commands and syntax:
+Every time you run `mesheryctl system start`, `mesheryctl` regenerates the services in `~/.meshery/meshery.yaml` from the current context. Edits you make to the image tags in that file do not last. To pin Meshery to a release, set it on the context instead:
 
-- See [`mesheryctl` Command Reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
+```bash
+mesheryctl system channel set stable-v0.9.2
+mesheryctl system restart
+```
 
-Guides to using Meshery's various features and components.
+To go back to the newest stable release, run `mesheryctl system channel set stable`.
+
+## Suggested reading
+
+For every `mesheryctl` command and flag, see the [`mesheryctl` command reference]({{< ref "reference/mesheryctl/_index.md" >}}).
 
 {{< related-discussions tag="mesheryctl" >}}
 
 {{< discuss >}}
-

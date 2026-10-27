@@ -366,7 +366,7 @@ func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Requ
 	if fromMiddleWare {
 		return
 	}
-	redirectURL := resolvePostLoginRedirect(r.URL.Query().Get("ref"), "/")
+	redirectURL := resolvePostLoginRedirect(r.URL.Query().Get("ref"), "/", postLoginHost(r))
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
 
