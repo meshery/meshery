@@ -16,7 +16,7 @@ type MesheryTreeViewRegistrantsProps = {
   expanded: string[];
   selected: string[];
   setShowDetailsData: (_data: { type: string; data: any }) => void;
-  lastRegistrantRef: React.MutableRefObject<any>;
+  lastRegistrantRef?: React.MutableRefObject<any>;
   isRegistrantFetching: boolean;
   showDetailsData: { type: string; data: any };
 };
@@ -90,8 +90,11 @@ const MesheryTreeViewRegistrants = ({
             </div>
           </StyledTreeItem>
         ))}
-      <div ref={lastRegistrantRef} style={{ height: '48px' }}></div>
-      {isRegistrantFetching && <CircularProgress />}
+      {isRegistrantFetching && (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '0.5rem' }}>
+          <CircularProgress size={24} />
+        </div>
+      )}
     </SimpleTreeView>
   );
 };
