@@ -41,7 +41,7 @@ var (
 var ComponentCmd = &cobra.Command{
 	Use:   "component",
 	Short: "Manage Meshery components",
-	Long: `List, search and view component(s) and detailed informations
+	Long: `List, search and view component(s) and detailed information
 Find more information at: https://docs.meshery.io/reference/mesheryctl/component`,
 	Example: `
 // Display number of available components in Meshery

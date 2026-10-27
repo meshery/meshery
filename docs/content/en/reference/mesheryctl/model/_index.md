@@ -14,7 +14,7 @@ Manage models in the registry
 
 ## Synopsis
 
-Export, generate, import, list, search and view model(s) and detailed informations
+Export, generate, import, list, search and view model(s) and detailed information
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
