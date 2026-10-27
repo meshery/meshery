@@ -1,0 +1,27 @@
+# v0.7.5
+
+LLMS index: [llms.txt](/pr-preview/pr-22622/llms.txt)
+
+---
+
+## What's New
+## 🔤 General
+- [HELM] Fix Ingress Resource of Meshery @theBeginner86 (#9755)
+- preload kubernetes_resource_object_meta @MUzairS15 (#9753)
+
+## 🖥 Meshery UI
+
+- [Connection Register] - Register MeshSync data as a connection @senali-d (#9548)
+
+## 🐛 Bug Fixes
+
+- [bug] Fix Searching + Preloading Issue @theBeginner86 (#9754)
+
+## 📖 Documentation
+
+- [Docs] enhance: Customizing Meshery's Installation with values.yaml @leecalcote (#9747)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@MUzairS15, @leecalcote, @senali-d and @theBeginner86
