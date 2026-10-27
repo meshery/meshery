@@ -57,6 +57,7 @@ import {
   Link,
   LinkFormatters,
   TextWithLinks,
+  formatLabel,
   KeyValue,
   SectionHeading,
   SectionBody,
@@ -189,10 +190,55 @@ describe('TextWithLinks', () => {
   });
 });
 
+describe('formatLabel', () => {
+  it('formats camel-case strings into space-separated words', () => {
+    expect(formatLabel('camelCase')).toBe('camel Case');
+    expect(formatLabel('someKey')).toBe('some Key');
+    expect(formatLabel('probableCause')).toBe('probable Cause');
+    expect(formatLabel('suggestedRemediation')).toBe('suggested Remediation');
+    expect(formatLabel('longDescription')).toBe('long Description');
+    expect(formatLabel('ProbableCause')).toBe('Probable Cause');
+  });
+
+  it('formats acronyms and acronym boundaries correctly', () => {
+    expect(formatLabel('HTTPError')).toBe('HTTP Error');
+    expect(formatLabel('XMLHttpResponse')).toBe('XML Http Response');
+    expect(formatLabel('APIResponse')).toBe('API Response');
+    expect(formatLabel('getURL')).toBe('get URL');
+  });
+
+  it('formats mixed alphanumeric strings such as error2Message', () => {
+    expect(formatLabel('error2Message')).toBe('error2 Message');
+  });
+
+  it('replaces underscores with spaces', () => {
+    expect(formatLabel('some_snake_case_key')).toBe('some snake case key');
+    expect(formatLabel('error_code_detail')).toBe('error code detail');
+  });
+
+  it('returns non-string values unchanged', () => {
+    expect(formatLabel(null)).toBeNull();
+    expect(formatLabel(undefined)).toBeUndefined();
+    expect(formatLabel(123 as any)).toBe(123);
+    expect(formatLabel(true as any)).toBe(true);
+    const obj = { foo: 'bar' };
+    expect(formatLabel(obj as any)).toBe(obj);
+    const arr = [1, 2, 3];
+    expect(formatLabel(arr as any)).toBe(arr);
+    const element = <span>test</span>;
+    expect(formatLabel(element as any)).toBe(element);
+  });
+});
+
 describe('KeyValue', () => {
   it('renders the key with underscores replaced by spaces', () => {
     render(<KeyValue Key="some_key_here" Value="123" />);
     expect(screen.getByText(/some key here/)).toBeInTheDocument();
+  });
+
+  it('formats camel-case keys into readable labels', () => {
+    render(<KeyValue Key="someKey" Value="123" />);
+    expect(screen.getByText(/some Key/)).toBeInTheDocument();
   });
 
   it('renders the value as-is when it is a React element', () => {
@@ -205,6 +251,20 @@ describe('SectionHeading / SectionBody', () => {
   it('renders the heading with its children', () => {
     render(<SectionHeading>My Heading</SectionHeading>);
     expect(screen.getByText('My Heading')).toBeInTheDocument();
+  });
+
+  it('formats camel-case and acronym children into readable labels', () => {
+    render(<SectionHeading>HTTPError</SectionHeading>);
+    expect(screen.getByText('HTTP Error')).toBeInTheDocument();
+  });
+
+  it('renders non-string children unchanged in SectionHeading', () => {
+    render(
+      <SectionHeading>
+        <span data-testid="custom-child">Child Element</span>
+      </SectionHeading>,
+    );
+    expect(screen.getByTestId('custom-child')).toHaveTextContent('Child Element');
   });
 
   it('SectionBody renders its body text', () => {
