@@ -415,14 +415,15 @@ mesheryctl system context create `
 		if err != nil {
 			return err
 		}
-		currCtx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return ErrGetCurrentContext(err)
-		}
-		isRunning, _ := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
-		// if meshery running stop meshery before context switch
-		if isRunning {
-			utils.Log.Info("Meshery is running... switching context without stopping Meshery deployments.")
+		// The running check below is informational only. switch is the command that
+		// repairs an unset or dangling current-context, so it must not require a valid
+		// one: GetCurrentContext logs fatally (exits the process) when there is none.
+		if currCtx, cerr := mctlCfg.CheckIfCurrentContextIsValid(); cerr == nil {
+			isRunning, _ := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
+			// if meshery running stop meshery before context switch
+			if isRunning {
+				utils.Log.Info("Meshery is running... switching context without stopping Meshery deployments.")
+			}
 		}
 
 		configuration.CurrentContext = contextName
