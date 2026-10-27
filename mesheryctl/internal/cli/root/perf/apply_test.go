@@ -153,7 +153,136 @@
 //	}
 package perf
 
-import "testing"
+import (
+	"os"
+	"path/filepath"
+	"testing"
+
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
+)
+
+func clearPerfFlags() {
+	profileName = ""
+	testURL = ""
+	testName = ""
+	testMesh = ""
+	qps = ""
+	concurrentRequests = ""
+	testDuration = ""
+	loadGenerator = ""
+	loadTestBody = ""
+	filePath = ""
+}
+
+func TestApplyProfileParams(t *testing.T) {
+	clearPerfFlags()
+	defer resetVariables()
+
+	// Pre-set flags: URL and QPS set via CLI flags
+	testURL = "https://flag-override.example.com"
+	qps = "250"
+
+	profile := perfprofile.PerformanceProfile{
+		Name:              "test-profile",
+		Endpoints:         []string{"https://profile.example.com"},
+		LoadGenerators:    []string{"wrk2"},
+		ConcurrentRequest: 8,
+		QPS:               50,
+		Duration:          "45s",
+		ServiceMesh:       "linkerd",
+		RequestBody:       "{\"test\":true}",
+	}
+
+	applyProfileParams(profile)
+
+	if profileName != "test-profile" {
+		t.Errorf("expected profileName 'test-profile', got %q", profileName)
+	}
+	if testURL != "https://flag-override.example.com" {
+		t.Errorf("expected testURL from flag, got %q", testURL)
+	}
+	if qps != "250" {
+		t.Errorf("expected qps from flag '250', got %q", qps)
+	}
+	if loadGenerator != "wrk2" {
+		t.Errorf("expected loadGenerator 'wrk2', got %q", loadGenerator)
+	}
+	if concurrentRequests != "8" {
+		t.Errorf("expected concurrentRequests '8', got %q", concurrentRequests)
+	}
+	if testDuration != "45s" {
+		t.Errorf("expected testDuration '45s', got %q", testDuration)
+	}
+	if testMesh != "linkerd" {
+		t.Errorf("expected testMesh 'linkerd', got %q", testMesh)
+	}
+	if loadTestBody != "{\"test\":true}" {
+		t.Errorf("expected loadTestBody from profile, got %q", loadTestBody)
+	}
+}
+
+func TestApplyFileParams(t *testing.T) {
+	clearPerfFlags()
+	defer resetVariables()
+
+	// Error case: nonexistent file
+	err := applyFileParams("nonexistent-file.yaml")
+	if err == nil {
+		t.Fatal("expected error for nonexistent file, got nil")
+	}
+
+	// Valid SMP config
+	tempDir := t.TempDir()
+	confPath := filepath.Join(tempDir, "smp.yaml")
+	content := `
+mesh: istio
+test:
+  name: smp-test
+  duration: 1m
+  clients:
+    - endpointUrls:
+        - https://smp.example.com
+      rps: 500
+      connections: 20
+      loadGenerator: fortio
+      body: "payload"
+`
+	if err := os.WriteFile(confPath, []byte(content), 0644); err != nil {
+		t.Fatalf("failed to write test file: %v", err)
+	}
+
+	// Pre-set testName via flag
+	testName = "flag-test-name"
+
+	if err := applyFileParams(confPath); err != nil {
+		t.Fatalf("unexpected error applying file params: %v", err)
+	}
+
+	if testName != "flag-test-name" {
+		t.Errorf("expected testName from flag, got %q", testName)
+	}
+	if testURL != "https://smp.example.com" {
+		t.Errorf("expected testURL from file, got %q", testURL)
+	}
+	if testMesh != "istio" {
+		t.Errorf("expected testMesh 'istio', got %q", testMesh)
+	}
+	if qps != "500" {
+		t.Errorf("expected qps '500', got %q", qps)
+	}
+	if concurrentRequests != "20" {
+		t.Errorf("expected concurrentRequests '20', got %q", concurrentRequests)
+	}
+	if testDuration != "1m" {
+		t.Errorf("expected testDuration '1m', got %q", testDuration)
+	}
+	if loadGenerator != "fortio" {
+		t.Errorf("expected loadGenerator 'fortio', got %q", loadGenerator)
+	}
+	if loadTestBody != "payload" {
+		t.Errorf("expected loadTestBody 'payload', got %q", loadTestBody)
+	}
+}
 
 func TestSplitTestDurationDefaultsEmptyDuration(t *testing.T) {
 	value, unit := splitTestDuration("")
