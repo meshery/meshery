@@ -24,6 +24,7 @@ import (
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -48,6 +49,10 @@ type K8sContext struct {
 	// transition to the connected state. An unreachable context can still be
 	// registered as a (discovered) connection.
 	Reachable bool `json:"reachable" yaml:"-" gorm:"-"`
+	// Unauthorized reports that the API server answered the reachability probe
+	// with 401/403: the cluster is reachable but this credential is rejected.
+	// Transient like Reachable; always false when Reachable is true.
+	Unauthorized bool `json:"-" yaml:"-" gorm:"-"`
 }
 
 // K8sContextFromConnection converts a kubernetes connection into a K8sContext.
@@ -172,20 +177,23 @@ func NewK8sContextWithServerID(
 		return nil, err
 	}
 
-	err = ctx.AssignVersion(handler)
-	if err != nil {
+	// Probe the kube-system namespace first, as K8sContextsFromKubeconfigWithOptions
+	// and the FSM's DiscoverAction do, so a rejected credential is classified the
+	// same way everywhere. A 401/403 is an answer from a reachable API server, not
+	// an unreachable cluster: return the context flagged instead of dropping it, so
+	// the caller can register it and the user can act on it.
+	if err := ctx.AssignServerID(handler); err != nil {
+		if k8serrors.IsForbidden(err) || k8serrors.IsUnauthorized(err) {
+			ctx.Unauthorized = true
+			return &ctx, nil
+		}
 		return nil, err
 	}
+	ctx.Reachable = true
 
-	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
-	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
-	if err != nil {
+	if err := ctx.AssignVersion(handler); err != nil {
 		return nil, err
 	}
-	uid := ksns.GetUID()
-	ksUUID := uuid.FromStringOrNil(string(uid))
-
-	ctx.KubernetesServerID = &ksUUID
 
 	return &ctx, nil
 }
@@ -193,7 +201,7 @@ func NewK8sContextWithServerID(
 // K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
 // kubernetes contexts from it
 func K8sContextsFromKubeconfig(provider Provider, userID string, broadcast *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler) []*K8sContext {
-	return K8sContextsFromKubeconfigWithOptions(provider, userID, broadcast, kubeconfig, instanceID, eventMetadata, log, false)
+	return K8sContextsFromKubeconfigWithOptions(provider, userID, broadcast, kubeconfig, instanceID, eventMetadata, log, false, nil)
 }
 
 // K8sContextsFromKubeconfigWithOptions parses the kubeconfig into per-context
@@ -203,7 +211,12 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, broadcast *Broa
 // returned with Reachable=false so callers (the connection wizard's discover &
 // import flow) can register them as discovered connections and let the user
 // decide; reachability only gates the transition to the connected state.
-func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, includeUnreachable bool) []*K8sContext {
+//
+// skip, when non-nil, is consulted for every context BEFORE any network call
+// is made for it; a context it reports true for is left out entirely. The
+// greedy kubeconfig discovery uses it to leave alone contexts whose persisted
+// connection the user or the state machine has parked (e.g. DISCONNECTED).
+func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, includeUnreachable bool, skip func(*K8sContext) bool) []*K8sContext {
 	kcs := []*K8sContext{}
 
 	userUUID := uuid.FromStringOrNil(userID)
@@ -229,6 +242,9 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 		}
 		metadata := map[string]interface{}{}
 		kc, _ := kcfg.K8sContext(name, instanceID, log)
+		if skip != nil && skip(&kc) {
+			continue
+		}
 		eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(kc.ConnectionID)).WithCategory("connection").WithAction("register").FromSystem(*instanceID).FromOwner(userUUID)
 
 		metadata["context"] = RedactCredentialsForContext(&kc)
@@ -256,12 +272,20 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 		}
 
 		if err := kc.AssignServerID(handler); err != nil {
+			// AssignServerID deliberately returns the raw Kubernetes error so callers
+			// such as kubernetes.DiscoverAction can classify it with
+			// k8serrors.IsForbidden/IsUnauthorized - meshkit's *errors.Error has no
+			// Unwrap method, so errors.As cannot see an APIStatus through it. Wrap it
+			// here, at the presentation boundary, so the metadata this function hands
+			// to addK8SConfig - which persists and broadcasts it - keeps the
+			// meshery-server-1304 code, probable cause and suggested remediation.
+			mkErr := ErrUnreachableKubeAPI(err, kc.Server)
 
 			_ = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Could not assign server id, skipping context %s", kc.Name)).WithMetadata(map[string]interface{}{
-				"error": err,
+				"error": mkErr,
 			}).Build()
 
-			metadata["error"] = err
+			metadata["error"] = mkErr
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
 			eventMetadata[name] = metadata
 
@@ -276,6 +300,7 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 			// registered as a discovered connection (without a server ID/version).
 			if includeUnreachable {
 				kc.Reachable = false
+				kc.Unauthorized = k8serrors.IsForbidden(err) || k8serrors.IsUnauthorized(err)
 				kcs = append(kcs, &kc)
 			}
 			continue
@@ -480,7 +505,7 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
 	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
 	if err != nil {
-		return ErrUnreachableKubeAPI(err, kc.Server)
+		return err
 	}
 	uid := ksns.GetUID()
 	ksUUID := uuid.FromStringOrNil(string(uid))
