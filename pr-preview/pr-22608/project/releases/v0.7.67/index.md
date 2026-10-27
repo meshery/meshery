@@ -1,0 +1,32 @@
+# v0.7.67
+
+LLMS index: [llms.txt](/pr-preview/pr-22608/llms.txt)
+
+---
+
+## What's New
+## 🔤 General
+- delete stuck pods in valid_namespaces @MUzairS15 (#10904)
+
+## ⌨️ Meshery CLI
+
+- Set source-type flag required @lekaf974 (#11020)
+
+## 🖥 Meshery UI
+
+- Deployment lifecycle refactor @codeKraken19 (#11060)
+- Set source-type flag required @lekaf974 (#11020)
+
+## 🧰 Maintenance
+
+- Set source-type flag required @lekaf974 (#11020)
+- workflow fix @iArchitSharma (#11054)
+
+## 📖 Documentation
+
+- Set source-type flag required @lekaf974 (#11020)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@MUzairS15, @aabidsofi19, @codeKraken19, @iArchitSharma, @leecalcote and @lekaf974
