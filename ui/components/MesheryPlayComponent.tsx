@@ -75,8 +75,11 @@ const MesheryPlayComponent = () => {
       );
       if (selectedAdapter) {
         setAdapterState(selectedAdapter);
+        return;
       }
-    } else if (meshAdapters.length > 0) {
+    }
+
+    if (meshAdapters && meshAdapters.length > 0) {
       setAdapterState(meshAdapters[0]);
     }
   };
@@ -87,7 +90,7 @@ const MesheryPlayComponent = () => {
     return () => {
       router.events.off('routeChangeComplete', handleRouteChange);
     };
-  }, [router.events]);
+  }, [router.events, meshAdapters]);
 
   useEffect(() => {
     if (meshAdapters?.length > 0) {

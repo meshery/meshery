@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import MesheryPlayComponent from './MesheryPlayComponent';
 
@@ -118,6 +118,29 @@ describe('MesheryPlayComponent', () => {
   it('falls back to default adapter dropdown view when adapter query param is unknown', () => {
     mockRouter.query = { adapter: 'unknown-adapter:9999' };
     render(<MesheryPlayComponent />);
+
+    expect(screen.getByLabelText('Select Meshery Adapter')).toBeInTheDocument();
+    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Istio');
+  });
+
+  it('resets to default adapter when routeChangeComplete introduces an unknown adapter query after selecting another adapter', () => {
+    const { container } = render(<MesheryPlayComponent />);
+
+    // Select Linkerd
+    const input = container.querySelector('input[name="adapter_name"]') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'meshery-linkerd:10001' } });
+    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Linkerd');
+
+    // Simulate route change with unknown adapter query
+    mockRouter.query = { adapter: 'unknown-adapter:9999' };
+    const routeChangeHandler = mockRouter.events.on.mock.calls.find(
+      (call: any) => call[0] === 'routeChangeComplete',
+    )?.[1];
+    expect(routeChangeHandler).toBeDefined();
+
+    act(() => {
+      routeChangeHandler();
+    });
 
     expect(screen.getByLabelText('Select Meshery Adapter')).toBeInTheDocument();
     expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Istio');
