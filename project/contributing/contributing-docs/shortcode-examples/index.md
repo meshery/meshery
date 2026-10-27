@@ -452,6 +452,14 @@ Takes no body. Use the `{{< >}}` form.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
+          </a>
+        </li><li>
+          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
+            Request for a MeshMate — Active Meshery Contributor
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/bug-new-catalog-publish-request-email-renders-with-oversized-social-icons-and-squashed-content-on-mobile/8138" target="_blank" rel="noopener noreferrer">
             [Bug] &#34;New Catalog publish request&#34; email renders with oversized social icons and squashed content on mobile
           </a>
@@ -474,14 +482,6 @@ Takes no body. Use the `{{< >}}` form.
         </li><li>
           <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
             Design: Meshery MCP Server architecture and registration interface
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/the-meshery-mcp-server-foundation-is-up-lets-agree-on-what-to-build-next/7952" target="_blank" rel="noopener noreferrer">
-            The Meshery MCP Server foundation is up, let&#39;s agree on what to build next
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-intro-topic/7975" target="_blank" rel="noopener noreferrer">
-            New intro topic
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
