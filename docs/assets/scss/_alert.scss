@@ -81,6 +81,14 @@
     margin-bottom: 1rem;
   }
 }
+
+.dark-mode .alert-primary {
+  border-color: var(--color-secondary-light);
+  & .alert-heading > *,
+  & .alert-heading {
+    color: var(--color-secondary-light);
+  }
+}
 .alert-secondary {
   border-style: solid;
   border-color: var(--color-secondary-medium);
