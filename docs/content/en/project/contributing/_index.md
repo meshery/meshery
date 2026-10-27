@@ -106,12 +106,13 @@ Unless you are specifically working on the model registry or on an archived docu
 
 ### Recommended: sparse clone
 
-First [fork](https://github.com/meshery/meshery/fork) the repository, then replace `YOUR-USERNAME` with your GitHub username:
+First [fork](https://github.com/meshery/meshery/fork) the repository, then replace `USERNAME` and `FORKED-PROJECT` with your GitHub username and fork name:
 
 ```bash
 # 1. Blobless partial clone - fetches history metadata, not every file's contents
-git clone --no-checkout --filter=blob:none https://github.com/YOUR-USERNAME/meshery.git
+git clone --no-checkout --filter=blob:none https://github.com/USERNAME/FORKED-PROJECT.git
 cd meshery
+git remote add upstream https://github.com/meshery/meshery.git
 
 # 2. Check out everything EXCEPT the bulky generated directories:
 #      - every model except meshery-core and kubernetes
