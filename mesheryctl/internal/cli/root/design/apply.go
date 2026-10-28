@@ -35,8 +35,9 @@ import (
 )
 
 var (
-	skipSave   bool // skip saving a design
-	designFile string
+	skipSave      bool // skip saving a design
+	designFile    string
+	applyContexts []string
 )
 
 var linkDocPatternApply = map[string]string{
@@ -55,6 +56,9 @@ mesheryctl design apply -f [file | URL]
 
 // deploy a saved design
 mesheryctl design apply [design-name]
+
+// apply a design file targeting specific Kubernetes contexts
+mesheryctl design apply -f [file | URL] -c [context-id]
 	`,
 	Annotations: linkDocPatternApply,
 	Args:        cobra.MinimumNArgs(0),
@@ -67,6 +71,11 @@ mesheryctl design apply [design-name]
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
+
+		deployURL, err = appendContextsQuery(deployURL, applyContexts)
+		if err != nil {
+			return err
+		}
 
 		// pattern name has been passed
 		if len(args) > 0 {
@@ -298,4 +307,5 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern) int {
 func init() {
 	applyCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
 	applyCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a design")
+	applyCmd.Flags().StringSliceVarP(&applyContexts, "contexts", "c", []string{}, "Kubernetes context ID(s) or 'all' to target (default [all])")
 }
