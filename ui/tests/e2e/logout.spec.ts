@@ -26,7 +26,6 @@ test.describe('Logout Page Tests', () => {
     const request = await waitForLogoutRequest;
     expect(request.url()).toContain('/user/logout');
 
-    await page.waitForURL('/provider');
-    expect(page.url()).toContain(`/provider`);
+    await expect(page).toHaveURL('/provider');
   });
 });
