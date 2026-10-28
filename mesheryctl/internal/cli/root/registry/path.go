@@ -15,8 +15,11 @@
 package registry
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
+
+	"golang.org/x/mod/modfile"
 )
 
 // defaultModelsLocation resolves the default relative path to the repo-root
@@ -37,20 +40,72 @@ func defaultModelsLocation() string {
 	if err != nil {
 		return "models"
 	}
-	// Run from the repository root (the documented prerequisite).
-	if isDirectory(filepath.Join(cwd, "models")) {
-		return "models"
+	if repoRoot, ok := findMesheryRepoRoot(cwd); ok {
+		if rel, err := filepath.Rel(cwd, filepath.Join(repoRoot, "models")); err == nil {
+			return rel
+		}
 	}
-	// Run from an immediate subdirectory such as mesheryctl/.
-	if isDirectory(filepath.Join(cwd, "..", "models")) {
-		return filepath.Join("..", "models")
-	}
-	// Fall back to the repo-root assumption; generate will create the
-	// directory if it does not yet exist.
 	return "models"
 }
 
 func isDirectory(path string) bool {
 	info, err := os.Stat(path)
 	return err == nil && info.IsDir()
+}
+
+// hasMesheryModuleDeclaration parses the go.mod file at path with the Go module
+// parser and returns true only if parsing succeeds and the declared module path
+// is "github.com/meshery/meshery".
+func hasMesheryModuleDeclaration(goModPath string) bool {
+	data, err := os.ReadFile(goModPath)
+	if err != nil {
+		return false
+	}
+	f, err := modfile.Parse(goModPath, data, nil)
+	if err != nil || f.Module == nil {
+		return false
+	}
+	return f.Module.Mod.Path == "github.com/meshery/meshery"
+}
+
+// isMesheryRepoRoot checks whether dir contains the marker directories and root go.mod of a Meshery repository.
+// A valid Meshery repository root contains a "models" directory, at least one of "server" or "mesheryctl",
+// and a go.mod file declaring "module github.com/meshery/meshery".
+func isMesheryRepoRoot(dir string) bool {
+	return isDirectory(filepath.Join(dir, "models")) &&
+		(isDirectory(filepath.Join(dir, "server")) || isDirectory(filepath.Join(dir, "mesheryctl"))) &&
+		hasMesheryModuleDeclaration(filepath.Join(dir, "go.mod"))
+}
+
+// findMesheryRepoRoot walks up the directory tree from startDir looking for the
+// root of a Meshery repository fork. Returns the root directory path and true if found,
+// or an empty string and false if not found.
+func findMesheryRepoRoot(startDir string) (string, bool) {
+	dir := filepath.Clean(startDir)
+	for {
+		if isMesheryRepoRoot(dir) {
+			return dir, true
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return "", false
+}
+
+// verifyPrerequisiteRepo checks whether the command is being executed from within
+// a Meshery repository fork (at the root of the fork or any subdirectory).
+func verifyPrerequisiteRepo() error {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return ErrPrereqRepository(err)
+	}
+
+	if _, ok := findMesheryRepoRoot(cwd); ok {
+		return nil
+	}
+
+	return ErrPrereqRepository(fmt.Errorf("current working directory %q is not within a meshery/meshery repository fork", cwd))
 }

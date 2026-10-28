@@ -22,6 +22,7 @@ var (
 	ErrPurgeReadModelsDirCode    = "mesheryctl-1250"
 	ErrPurgeRemoveCode           = "mesheryctl-1251"
 	ErrPurgeUnsafePathCode       = "mesheryctl-1252"
+	ErrPrereqRepositoryCode      = "mesheryctl-1256"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
@@ -78,4 +79,18 @@ func ErrPurgeUnsafePath(path, modelsDir string) error {
 
 func ErrPurgeRemove(err error, path string) error {
 	return errors.New(ErrPurgeRemoveCode, errors.Alert, []string{fmt.Sprintf("error removing model version directory: %s", path)}, []string{err.Error()}, []string{"Insufficient filesystem permissions", "The directory is in use by another process"}, []string{"Ensure sufficient permissions to delete the directory", "Retry the purge after closing any process using the directory"})
+}
+
+func ErrPrereqRepository(err error) error {
+	return errors.New(ErrPrereqRepositoryCode, errors.Alert,
+		[]string{"command must be executed from within a meshery/meshery repository fork"},
+		[]string{err.Error()},
+		[]string{
+			"The command was executed outside of a local meshery/meshery repository fork",
+			"The current working directory is not within a Meshery repository fork",
+		},
+		[]string{
+			"Clone or fork https://github.com/meshery/meshery",
+			"Navigate to your local meshery/meshery repository fork (root or any subdirectory) and re-run the command",
+		})
 }
