@@ -238,7 +238,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 	},
 }
 
-// keepConnectionAlive to stop being timed out with port forwarding
+// keepConnectionAlive sends a periodic HTTP GET request to prevent port-forwarding timeouts and ensures the response body is safely closed.
 func keepConnectionAlive(url string) {
 	resp, err := http.Get(url)
 	if err != nil {
