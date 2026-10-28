@@ -1,0 +1,20 @@
+version: 0.0.2
+name: kratos.ai
+displayName: Kratos.ai
+createdAt: "2026-08-18T11:32:55Z"
+description: Kubernetes deployment design for Kratos.ai, an intelligent market intelligence platform. Includes a Node.js API gateway (portfolio management, trading simulation, live P&L tracking), an async FastAPI ML service running an LSTM/GRU PyTorch encoder and FinBERT for market regime detection (Stable Growth, Volatile, Crisis) with confidence scoring, and a Redis cache layer. MongoDB Atlas is used as the external data store and is not deployed in-cluster.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/0d10efaf-433e-4e3f-a2ff-ec6a4178f52f/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "MongoDB connection is external (Atlas) — the Secret in this design is a placeholder and must be replaced with a real connection string or wired through Meshery Connections/Credentials before deploy.\nRedis runs as a single replica with no persistence configured — cache loss on pod restart is expected; not suitable as a source of truth.\nThe FastAPI service assumes model artifacts (LSTM/GRU encoder, FinBERT) are pre-loaded onto the mounted PVC (kratos-model-pvc); the design does not include a model-sync/init step.\nNo GPU resource requests are defined for the ML service — PyTorch inference will run on CPU unless you add nvidia.com/gpu limits and a compatible node pool.\nResource requests/limits (CPU, memory, storage) are placeholder values and haven't been load-tested against real inference throughput.\nNo liveness/readiness probes, HPA, NetworkPolicy, or Ingress are defined — this design is deploy-ready for a dev/staging cluster, not production-hardened.\nImage references (kratos-ai/node-gateway: latest, kratos-ai/fastapi-service: latest) are placeholders — replace with your actual registry paths and pin to a specific tag rather than latest. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 87abd189-8f0b-44e1-ae6f-5692de43f131
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
