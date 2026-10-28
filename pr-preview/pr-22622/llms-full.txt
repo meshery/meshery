@@ -6521,6 +6521,10 @@ deployment, harden it, make it resilient, and observe it.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -6547,10 +6551,6 @@ deployment, harden it, make it resilient, and observe it.
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -6739,6 +6739,10 @@ data and events between each cluster and the Server. Production guidance:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -6765,10 +6769,6 @@ data and events between each cluster and the Server. Production guidance:
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -7001,6 +7001,10 @@ deployment; the provider restores user data; MeshSync restores the live view.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -7027,10 +7031,6 @@ deployment; the provider restores user data; MeshSync restores the live view.
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -7349,6 +7349,10 @@ Remote Provider, and the local database is a rebuildable cache. Two notes:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -7375,10 +7379,6 @@ Remote Provider, and the local database is a rebuildable cache. Two notes:
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -7796,6 +7796,10 @@ After deployment, validate connectivity end-to-end:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -7822,10 +7826,6 @@ After deployment, validate connectivity end-to-end:
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -8206,6 +8206,10 @@ extension before enabling it, and enable only what your deployment actually need
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -8232,10 +8236,6 @@ extension before enabling it, and enable only what your deployment actually need
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -8428,6 +8428,10 @@ Remote Provider is required for multi-user production.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -8454,10 +8458,6 @@ Remote Provider is required for multi-user production.
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -8628,6 +8628,10 @@ that matter:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -8654,10 +8658,6 @@ that matter:
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -8852,6 +8852,10 @@ When a KPI trips, these guides are the fastest path to resolution:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -8878,10 +8882,6 @@ When a KPI trips, these guides are the fastest path to resolution:
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -9132,6 +9132,10 @@ Work through these before going live. Each group links to its source page.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -9158,10 +9162,6 @@ Work through these before going live. Each group links to its source page.
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -9417,6 +9417,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -9443,10 +9447,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -9823,6 +9823,10 @@ To reach Meshery UI from your browser, forward its port from the codespace. See 
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -9849,10 +9853,6 @@ To reach Meshery UI from your browser, forward its port from the codespace. See 
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10101,6 +10101,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -10127,10 +10131,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10275,6 +10275,10 @@ Meshery creates its own Docker networks, which can remain after you uninstall th
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -10301,10 +10305,6 @@ Meshery creates its own Docker networks, which can remain after you uninstall th
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10510,6 +10510,10 @@ Meshery UI is available on your local machine at [`http://localhost:9081`](http:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -10536,10 +10540,6 @@ Meshery UI is available on your local machine at [`http://localhost:9081`](http:
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10744,6 +10744,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -10770,10 +10774,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11043,6 +11043,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -11069,10 +11073,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11289,6 +11289,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -11315,10 +11319,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11399,6 +11399,10 @@ Follow these steps in order.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -11425,10 +11429,6 @@ Follow these steps in order.
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11767,6 +11767,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -11793,10 +11797,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -15677,6 +15677,10 @@ From the connection in Meshery UI you can:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -15703,10 +15707,6 @@ From the connection in Meshery UI you can:
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -18666,6 +18666,10 @@ For how the Notification Center is built, see the [contributor guide](/pr-previe
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -18692,10 +18696,6 @@ For how the Notification Center is built, see the [contributor guide](/pr-previe
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -19050,6 +19050,10 @@ kubectl -n meshery get deploy meshery-meshsync \
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -19076,10 +19080,6 @@ kubectl -n meshery get deploy meshery-meshsync \
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -70052,6 +70052,10 @@ Takes no body. Use the `{{< >}}` form.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -70078,10 +70082,6 @@ Takes no body. Use the `{{< >}}` form.
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -70422,6 +70422,10 @@ References for using Meshery's various features and components.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -70448,10 +70452,6 @@ References for using Meshery's various features and components.
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
