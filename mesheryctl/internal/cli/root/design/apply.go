@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"strconv"
@@ -71,12 +72,16 @@ mesheryctl design apply [design-name]
 		// pattern name has been passed
 		if len(args) > 0 {
 			// Merge args to get pattern-name
-			patternName := strings.Join(args, "%20")
+			patternName := strings.Join(args, " ")
 
 			// search and fetch patterns with pattern-name
 			utils.Log.Debug("Fetching designs")
 
-			req, err = utils.NewRequest("GET", patternURL+"?populate=pattern_file&search="+patternName, nil)
+			queryParams := url.Values{}
+			queryParams.Set("populate", "pattern_file")
+			queryParams.Set("search", patternName)
+
+			req, err = utils.NewRequest("GET", fmt.Sprintf("%s?%s", patternURL, queryParams.Encode()), nil)
 			if err != nil {
 				return err
 			}

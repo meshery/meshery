@@ -94,6 +94,40 @@ func TestApplyCmd(t *testing.T) {
 				return utils.ErrUnmarshal(innerErr)
 			}(),
 		},
+		{
+			Name:             "given non-existent design name when design apply then throw error",
+			Args:             []string{"apply", "nonexistent-design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=nonexistent-design",
+					Response:     "pattern.empty.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:          filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignNotFound("nonexistent-design"),
+		},
+		{
+			Name:             "given multi-word design name with spaces when design apply and not found then throw error without raw percent encoding",
+			Args:             []string{"apply", "my", "sample", "design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=my+sample+design",
+					Response:     "pattern.empty.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:          filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignNotFound("my sample design"),
+		},
 	}
 
 	// Run tests
