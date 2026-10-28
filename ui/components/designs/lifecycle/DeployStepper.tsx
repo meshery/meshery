@@ -177,7 +177,11 @@ const DryRunStep = ({
       <CheckBoxField
         label="Include Dependencies"
         checked={includeDependencies}
-        helpText="Deploys Custom Resource Definitions (CRDs) and operators based on the source from which a particular component was registered, [learn more](https://docs.meshery.io/guides/infrastructure-management/overview#auto-deployment-of-crds-and-operators) about auto deployment of dependencies"
+        helpText={
+          deployment_type === DEPLOYMENT_TYPE.UNDEPLOY
+            ? 'Also removes the CRDs and operators this design depends on. If another design uses the same dependency, it will be removed for that design too.'
+            : 'Deploys Custom Resource Definitions (CRDs) and operators based on the source from which a particular component was registered, [learn more](https://docs.meshery.io/guides/infrastructure-management/overview#auto-deployment-of-crds-and-operators) about auto deployment of dependencies'
+        }
         onChange={toggleIncludeDependencies}
         data-testid="include-dependencies"
       />
@@ -213,6 +217,10 @@ export const UpdateDeploymentStepper = ({
     handlePerformDeployment({
       design,
       selectedK8sContexts: selectedDeployableK8scontextIds,
+      // The "Include Dependencies" checkbox already drives the dry run; pass the
+      // same choice to the real deploy/undeploy so dependency CRDs and operators
+      // are only installed or removed when it is checked.
+      skipCRD: !includeDependencies,
     });
   };
   const deployStepper = useStepper({
