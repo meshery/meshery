@@ -1,5 +1,14 @@
 import React, { useRef, useEffect } from 'react';
-import { List, ListItemText, ListItemIcon, Typography, Collapse } from '@sistent/sistent';
+import {
+  List,
+  ListItemText,
+  ListItemIcon,
+  Typography,
+  Collapse,
+  Button,
+  DownloadIcon,
+  Box,
+} from '@sistent/sistent';
 import { ExpandLess, ExpandMore } from '@/assets/icons';
 import { useState } from 'react';
 import { ComponentIcon, DEPLOYMENT_TYPE, Loading, processDesign } from './common';
@@ -20,6 +29,7 @@ import {
   DryRunRootListStyled,
   ValidationSubHeader,
 } from './styles';
+import { exportDryRunReport } from './exportDryRunReport';
 
 function breakCapitalizedWords(input) {
   // Use regular expression to split capitalized words
@@ -172,6 +182,7 @@ export const FormatDryRunResponse = ({
   annotationComponentsCount,
   validationMachine,
   currentComponentName,
+  design,
 }) => {
   const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
   const theme = useTheme();
@@ -182,6 +193,10 @@ export const FormatDryRunResponse = ({
     .filter((error) => error.type === 'RequestError')
     .flatMap((error) => error?.errors || []);
   const componentErrors = dryRunErrors.filter((error) => error.type === 'ComponentError');
+
+  const handleExportReport = () => {
+    exportDryRunReport(dryRunErrors, design);
+  };
 
   return (
     <DryRunRootListStyled
@@ -194,18 +209,29 @@ export const FormatDryRunResponse = ({
               and {annotationComponentsCount} annotations
             </Typography>
           )}
-          <Typography
-            data-testid="dry-run-summary-errors"
-            variant="h6"
-            disablePadding
-            style={{
-              color: `${
-                totalDryRunErrors > 0 ? theme.palette.error.dark : theme.palette.success.main
-              }`,
-            }}
-          >
-            {`${totalDryRunErrors} error(s)`}
-          </Typography>
+          <Box style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <Typography
+              data-testid="dry-run-summary-errors"
+              variant="h6"
+              disablePadding
+              style={{
+                color: `${
+                  totalDryRunErrors > 0 ? theme.palette.error.dark : theme.palette.success.main
+                }`,
+              }}
+            >
+              {`${totalDryRunErrors} error(s)`}
+            </Typography>
+            <Button
+              data-testid="export-dry-run-report"
+              variant="outlined"
+              size="small"
+              startIcon={<DownloadIcon />}
+              onClick={handleExportReport}
+            >
+              Export Report
+            </Button>
+          </Box>
         </ValidationSubHeader>
       }
     >
@@ -292,6 +318,7 @@ const DryRunComponent = (props) => {
       configurableComponentsCount={configurableComponents.length}
       validationMachine={validationMachine}
       currentComponentName={currentComponentName}
+      design={design}
     />
   );
 };
