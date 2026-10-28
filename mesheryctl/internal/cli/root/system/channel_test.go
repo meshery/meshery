@@ -199,6 +199,60 @@ func TestSetCmd(t *testing.T) {
 	t.Log("Set ChannelCmd Passed")
 }
 
+func TestParseChannelVersion(t *testing.T) {
+	tests := []struct {
+		name            string
+		channelVersion  string
+		expectedChannel string
+		expectedVersion string
+		expectedError   error
+	}{
+		{name: "given stable when parsed then latest stable", channelVersion: "stable", expectedChannel: "stable", expectedVersion: "latest"},
+		{name: "given stable version when parsed then that version", channelVersion: "stable-v0.6.0", expectedChannel: "stable", expectedVersion: "v0.6.0"},
+		{name: "given edge when parsed then latest edge", channelVersion: "edge", expectedChannel: "edge", expectedVersion: "latest"},
+		{name: "given edge-latest when parsed then latest edge", channelVersion: "edge-latest", expectedChannel: "edge", expectedVersion: "latest"},
+		{name: "given unknown channel when parsed then invalid channel error", channelVersion: "bogus", expectedError: ErrSystemSetInvalidReleaseChannel("bogus")},
+		{name: "given unknown channel with version when parsed then invalid channel error", channelVersion: "beta-v0.6.0", expectedError: ErrSystemSetInvalidReleaseChannel("beta")},
+		{name: "given edge version other than latest when parsed then invalid edge release error", channelVersion: "edge-v0.6.0", expectedError: ErrSystemSetInvalidEdgeRelease("v0.6.0")},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			channel, version, err := parseChannelVersion(tt.channelVersion)
+			if tt.expectedError != nil {
+				utils.AssertMeshkitErrorsEqual(t, err, tt.expectedError)
+				return
+			}
+			assert.NoError(t, err)
+			assert.Equal(t, tt.expectedChannel, channel)
+			assert.Equal(t, tt.expectedVersion, version)
+		})
+	}
+}
+
+// switch replaces the Meshery deployment, so it must reject an invalid channel
+// before its preflight checks and confirmation prompt, the same way set does.
+func TestChannelCmdRejectsInvalidChannelBeforeRunning(t *testing.T) {
+	setupContextTestEnv(t)
+	tests := []struct {
+		name          string
+		args          []string
+		expectedError error
+	}{
+		{name: "given unknown channel when channel set then invalid channel error", args: []string{"channel", "set", "bogus"}, expectedError: ErrSystemSetInvalidReleaseChannel("bogus")},
+		{name: "given unknown channel when channel switch then invalid channel error", args: []string{"channel", "switch", "bogus"}, expectedError: ErrSystemSetInvalidReleaseChannel("bogus")},
+		{name: "given edge version other than latest when channel switch then invalid edge release error", args: []string{"channel", "switch", "edge-v0.6.0"}, expectedError: ErrSystemSetInvalidEdgeRelease("v0.6.0")},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			SystemCmd.SetArgs(tt.args)
+			err := SystemCmd.Execute()
+			utils.AssertMeshkitErrorsEqual(t, err, tt.expectedError)
+		})
+	}
+}
+
 //UNDER REVIEW
 // func TestSwitchCmd(t *testing.T) {
 // 	_, filename, _, ok := runtime.Caller(0)
