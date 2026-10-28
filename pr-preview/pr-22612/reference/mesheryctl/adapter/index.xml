@@ -96,7 +96,7 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -t, --token string Path to token for authenticating to Meshery API
  -v, --verbose verbose output
 
@@ -160,7 +160,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;

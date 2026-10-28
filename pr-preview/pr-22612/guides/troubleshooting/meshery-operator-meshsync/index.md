@@ -303,6 +303,10 @@ kubectl -n meshery get deploy meshery-meshsync \
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -329,10 +333,6 @@ kubectl -n meshery get deploy meshery-meshsync \
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">

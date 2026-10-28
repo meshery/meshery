@@ -6521,6 +6521,10 @@ deployment, harden it, make it resilient, and observe it.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -6547,10 +6551,6 @@ deployment, harden it, make it resilient, and observe it.
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -6739,6 +6739,10 @@ data and events between each cluster and the Server. Production guidance:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -6765,10 +6769,6 @@ data and events between each cluster and the Server. Production guidance:
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -7001,6 +7001,10 @@ deployment; the provider restores user data; MeshSync restores the live view.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -7027,10 +7031,6 @@ deployment; the provider restores user data; MeshSync restores the live view.
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -7349,6 +7349,10 @@ Remote Provider, and the local database is a rebuildable cache. Two notes:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -7375,10 +7379,6 @@ Remote Provider, and the local database is a rebuildable cache. Two notes:
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -7796,6 +7796,10 @@ After deployment, validate connectivity end-to-end:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -7822,10 +7826,6 @@ After deployment, validate connectivity end-to-end:
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -8206,6 +8206,10 @@ extension before enabling it, and enable only what your deployment actually need
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -8232,10 +8236,6 @@ extension before enabling it, and enable only what your deployment actually need
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -8428,6 +8428,10 @@ Remote Provider is required for multi-user production.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -8454,10 +8458,6 @@ Remote Provider is required for multi-user production.
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -8628,6 +8628,10 @@ that matter:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -8654,10 +8658,6 @@ that matter:
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -8852,6 +8852,10 @@ When a KPI trips, these guides are the fastest path to resolution:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -8878,10 +8882,6 @@ When a KPI trips, these guides are the fastest path to resolution:
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -9132,6 +9132,10 @@ Work through these before going live. Each group links to its source page.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -9158,10 +9162,6 @@ Work through these before going live. Each group links to its source page.
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -9417,6 +9417,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -9443,10 +9447,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -9823,6 +9823,10 @@ To reach Meshery UI from your browser, forward its port from the codespace. See 
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -9849,10 +9853,6 @@ To reach Meshery UI from your browser, forward its port from the codespace. See 
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10101,6 +10101,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -10127,10 +10131,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10275,6 +10275,10 @@ Meshery creates its own Docker networks, which can remain after you uninstall th
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -10301,10 +10305,6 @@ Meshery creates its own Docker networks, which can remain after you uninstall th
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10510,6 +10510,10 @@ Meshery UI is available on your local machine at [`http://localhost:9081`](http:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -10536,10 +10540,6 @@ Meshery UI is available on your local machine at [`http://localhost:9081`](http:
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10744,6 +10744,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -10770,10 +10774,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11043,6 +11043,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -11069,10 +11073,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11289,6 +11289,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -11315,10 +11319,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11399,6 +11399,10 @@ Follow these steps in order.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -11425,10 +11429,6 @@ Follow these steps in order.
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11767,6 +11767,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -11793,10 +11797,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -15677,6 +15677,10 @@ From the connection in Meshery UI you can:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -15703,10 +15707,6 @@ From the connection in Meshery UI you can:
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -18666,6 +18666,10 @@ For how the Notification Center is built, see the [contributor guide](/pr-previe
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -18692,10 +18696,6 @@ For how the Notification Center is built, see the [contributor guide](/pr-previe
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -19050,6 +19050,10 @@ kubectl -n meshery get deploy meshery-meshsync \
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -19076,10 +19080,6 @@ kubectl -n meshery get deploy meshery-meshsync \
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -70052,6 +70052,10 @@ Takes no body. Use the `{{< >}}` form.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -70078,10 +70082,6 @@ Takes no body. Use the `{{< >}}` form.
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -70422,6 +70422,10 @@ References for using Meshery's various features and components.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -70448,10 +70452,6 @@ References for using Meshery's various features and components.
         </li><li>
           <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
             Your Path to Becoming a Certified Meshery Contributor Starts Here
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
-            Design: Meshery MCP Server architecture and registration interface
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -99751,7 +99751,7 @@ mesheryctl adapter deploy linkerd --watch
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -99824,7 +99824,7 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -t, --token string    Path to token for authenticating to Meshery API
   -v, --verbose         verbose output
 
@@ -99896,7 +99896,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100059,7 +100059,7 @@ mesheryctl completion fish &gt; ~/.config/fish/completions/mesheryctl.fish
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100150,7 +100150,7 @@ mesheryctl component list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100230,7 +100230,7 @@ mesheryctl component search [query-text] [--page 1]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100310,7 +100310,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100407,7 +100407,7 @@ mesheryctl connection create --type gke --token auth.json
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100465,7 +100465,7 @@ mesheryctl connection delete [connection_id]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100568,7 +100568,7 @@ mesheryctl connection list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100648,7 +100648,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100718,7 +100718,7 @@ mesheryctl design apply [design-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -100783,7 +100783,7 @@ mesheryctl design delete [file | URL]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -100845,7 +100845,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -100933,7 +100933,7 @@ mesheryctl design evaluate -f design.yaml --output-format json -o evaluated-desi
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -101027,7 +101027,7 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -101123,7 +101123,7 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -101226,7 +101226,7 @@ mesheryctl design list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -t, --token string    Path to token file default from current context
 
 </div>
@@ -101290,7 +101290,7 @@ mesheryctl design undeploy -f [filepath]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -101351,7 +101351,7 @@ mesheryctl design view [design-name | ID]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -101418,7 +101418,7 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -101476,7 +101476,7 @@ mesheryctl environment delete [environmentId]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -101568,7 +101568,7 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -101629,7 +101629,7 @@ mesheryctl environment view --orgId [orgId]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -101674,7 +101674,7 @@ mesheryctl exp [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -101733,7 +101733,7 @@ mesheryctl filter delete [filter-name | ID]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -101826,7 +101826,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -101909,7 +101909,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -t, --token string    Path to token file default from current context
 
 </div>
@@ -102011,7 +102011,7 @@ mesheryctl filter view "filter name"
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -102082,7 +102082,7 @@ mesheryctl model build [model-name]/[model-version]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102150,7 +102150,7 @@ mesheryctl model delete [model-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102255,7 +102255,7 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102347,7 +102347,7 @@ mesheryctl model generate -f [path-to-csv-directory] -m [model-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102456,7 +102456,7 @@ mesheryctl model import --file [path-to-csv-directory]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102547,7 +102547,7 @@ mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102628,7 +102628,7 @@ mesheryctl model list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102708,7 +102708,7 @@ mesheryctl model search [query-text] --pagesize [pagesize-number]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102788,7 +102788,7 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102869,7 +102869,7 @@ mesheryctl organization list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103040,7 +103040,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string          path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string          path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -o, --output-format string   (optional) format to display in [json|yaml]
   -t, --token string           (required) Path to meshery auth config
   -v, --verbose                verbose output
@@ -103128,7 +103128,7 @@ mesheryctl perf profile test --view
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string          path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string          path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -o, --output-format string   (optional) format to display in [json|yaml]
   -t, --token string           (required) Path to meshery auth config
   -v, --verbose                verbose output
@@ -103211,7 +103211,7 @@ mesheryctl perf result saturday-profile --view
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string          path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string          path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -o, --output-format string   (optional) format to display in [json|yaml]
   -t, --token string           (required) Path to meshery auth config
   -v, --verbose                verbose output
@@ -103349,7 +103349,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103477,7 +103477,7 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103583,7 +103583,7 @@ mesheryctl registry purge --retain 2 -y
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103665,7 +103665,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103747,7 +103747,7 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103838,7 +103838,7 @@ mesheryctl relationship list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103911,7 +103911,7 @@ mesheryctl relationship search [--kind &lt;kind&gt;] [--page &lt;int&gt;]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103991,7 +103991,7 @@ mesheryctl relationship view [model-name] --output-format json --save
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -104049,7 +104049,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104109,7 +104109,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104180,7 +104180,7 @@ mesheryctl system channel view --all
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104305,7 +104305,7 @@ mesheryctl system check --operator
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104385,7 +104385,7 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104451,7 +104451,7 @@ mesheryctl system context delete [context name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104511,7 +104511,7 @@ mesheryctl system context list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104571,7 +104571,7 @@ mesheryctl system context switch sample
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104670,7 +104670,7 @@ mesheryctl system context view --all
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
   -y, --yes             (optional) assume yes for user interactive prompts.
 
@@ -104776,7 +104776,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104846,7 +104846,7 @@ mesheryctl system delete -y
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104919,7 +104919,7 @@ mesheryctl system login -p Meshery
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104981,7 +104981,7 @@ mesheryctl system logout
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105062,7 +105062,7 @@ mesheryctl system logs meshery-istio
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105121,7 +105121,7 @@ mesheryctl system provider list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105180,7 +105180,7 @@ mesheryctl system provider reset
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105240,7 +105240,7 @@ mesheryctl system provider set [provider]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105299,7 +105299,7 @@ mesheryctl system provider switch [provider]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105360,7 +105360,7 @@ mesheryctl system provider view
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105420,7 +105420,7 @@ mesheryctl system reset
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105497,7 +105497,7 @@ mesheryctl system restart --skip-update
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105612,7 +105612,7 @@ mesheryctl system start --provider Meshery
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105683,7 +105683,7 @@ mesheryctl system status --verbose
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -y, --yes              (optional) assume yes for user interactive prompts.
 
@@ -105780,7 +105780,7 @@ mesheryctl system stop --force
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105859,7 +105859,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105917,7 +105917,7 @@ mesheryctl system token delete [token-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105975,7 +105975,7 @@ mesheryctl system token list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -106034,7 +106034,7 @@ mesheryctl system token set [token-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
   -y, --yes             (optional) assume yes for user interactive prompts.
 
@@ -106101,7 +106101,7 @@ mesheryctl system token view (show token of current context)
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -106172,7 +106172,7 @@ mesheryctl system update --skip-reset
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -106236,7 +106236,7 @@ mesheryctl version
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -106302,7 +106302,7 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -106384,7 +106384,7 @@ mesheryctl workspace list --orgId [orgId] --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -106475,7 +106475,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
   -v, --verbose         verbose output
 
 </div>

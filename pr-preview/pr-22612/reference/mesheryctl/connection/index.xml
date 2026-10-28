@@ -75,7 +75,7 @@ mesheryctl connection create --type gke --token auth.json
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -125,7 +125,7 @@ mesheryctl connection delete [connection_id]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;

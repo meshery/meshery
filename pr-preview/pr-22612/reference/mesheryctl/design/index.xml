@@ -51,7 +51,7 @@ mesheryctl design apply [design-name]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -t, --token string Path to token file default from current context
  -v, --verbose verbose output
 
@@ -104,7 +104,7 @@ mesheryctl design delete [file | URL]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -t, --token string Path to token file default from current context
  -v, --verbose verbose output
 
@@ -158,7 +158,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -t, --token string Path to token file default from current context
  -v, --verbose verbose output
 
@@ -324,7 +324,7 @@ mesheryctl design undeploy -f [filepath]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -t, --token string Path to token file default from current context
  -v, --verbose verbose output
 
@@ -377,7 +377,7 @@ mesheryctl design view [design-name | ID]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -t, --token string Path to token file default from current context
  -v, --verbose verbose output
 

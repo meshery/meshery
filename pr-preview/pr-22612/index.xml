@@ -37083,7 +37083,7 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -t, --token string Path to token for authenticating to Meshery API
  -v, --verbose verbose output
 
@@ -37147,7 +37147,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -37373,7 +37373,7 @@ mesheryctl component search [query-text] [--page 1]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -37443,7 +37443,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -37528,7 +37528,7 @@ mesheryctl connection create --type gke --token auth.json
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -37578,7 +37578,7 @@ mesheryctl connection delete [connection_id]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -37722,7 +37722,7 @@ mesheryctl design apply [design-name]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -t, --token string Path to token file default from current context
  -v, --verbose verbose output
 
@@ -37775,7 +37775,7 @@ mesheryctl design delete [file | URL]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -t, --token string Path to token file default from current context
  -v, --verbose verbose output
 
@@ -37829,7 +37829,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -t, --token string Path to token file default from current context
  -v, --verbose verbose output
 
@@ -37995,7 +37995,7 @@ mesheryctl design undeploy -f [filepath]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -t, --token string Path to token file default from current context
  -v, --verbose verbose output
 
@@ -38048,7 +38048,7 @@ mesheryctl design view [design-name | ID]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -t, --token string Path to token file default from current context
  -v, --verbose verbose output
 
@@ -38103,7 +38103,7 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -38153,7 +38153,7 @@ mesheryctl environment delete [environmentId]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -38252,7 +38252,7 @@ mesheryctl environment view --orgId [orgId]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -38290,7 +38290,7 @@ mesheryctl exp [flags]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -38341,7 +38341,7 @@ mesheryctl filter delete [filter-name | ID]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -t, --token string Path to token file default from current context
  -v, --verbose verbose output
 
@@ -38453,7 +38453,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -t, --token string Path to token file default from current context
 
 &lt;/div&gt;
@@ -38552,7 +38552,7 @@ mesheryctl model build [model-name]/[model-version]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -38611,7 +38611,7 @@ mesheryctl model delete [model-name]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -38848,7 +38848,7 @@ mesheryctl model list --count
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -38918,7 +38918,7 @@ mesheryctl model search [query-text] --pagesize [pagesize-number]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -39026,7 +39026,7 @@ mesheryctl organization list --count
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -39133,7 +39133,7 @@ mesheryctl perf profile test --view
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -o, --output-format string (optional) format to display in [json|yaml]
  -t, --token string (required) Path to meshery auth config
  -v, --verbose verbose output
@@ -39206,7 +39206,7 @@ mesheryctl perf result saturday-profile --view
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -o, --output-format string (optional) format to display in [json|yaml]
  -t, --token string (required) Path to meshery auth config
  -v, --verbose verbose output
@@ -39375,7 +39375,7 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -39455,7 +39455,7 @@ mesheryctl relationship list --count
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -39519,7 +39519,7 @@ mesheryctl relationship search [--kind &amp;lt;kind&amp;gt;] [--page &amp;lt;int
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -39606,7 +39606,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -39658,7 +39658,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -39720,7 +39720,7 @@ mesheryctl system channel view --all
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -39841,7 +39841,7 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -39897,7 +39897,7 @@ mesheryctl system context delete [context name]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -39949,7 +39949,7 @@ mesheryctl system context list
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -40001,7 +40001,7 @@ mesheryctl system context switch sample
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -40130,7 +40130,7 @@ mesheryctl system delete -y
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -40212,7 +40212,7 @@ mesheryctl system logout
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -40283,7 +40283,7 @@ mesheryctl system logs meshery-istio
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -40335,7 +40335,7 @@ mesheryctl system provider list
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -40387,7 +40387,7 @@ mesheryctl system provider reset
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -40440,7 +40440,7 @@ mesheryctl system provider set [provider]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -40492,7 +40492,7 @@ mesheryctl system provider switch [provider]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -40545,7 +40545,7 @@ mesheryctl system provider view
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -40597,7 +40597,7 @@ mesheryctl system reset
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -40661,7 +40661,7 @@ mesheryctl system restart --skip-update
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -40778,7 +40778,7 @@ mesheryctl system status --verbose
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -y, --yes (optional) assume yes for user interactive prompts.
 
@@ -40860,7 +40860,7 @@ mesheryctl system stop --force
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -40929,7 +40929,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -40980,7 +40980,7 @@ mesheryctl system token delete [token-name]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -41031,7 +41031,7 @@ mesheryctl system token list
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -41083,7 +41083,7 @@ mesheryctl system token set [token-name]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
 
@@ -41142,7 +41142,7 @@ mesheryctl system token view (show token of current context)
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -41204,7 +41204,7 @@ mesheryctl system update --skip-reset
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -c, --context string (optional) temporarily change the current context.
  -v, --verbose verbose output
  -y, --yes (optional) assume yes for user interactive prompts.
@@ -41257,7 +41257,7 @@ mesheryctl version
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -41311,7 +41311,7 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
@@ -41383,7 +41383,7 @@ mesheryctl workspace list --orgId [orgId] --count
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ --config string path to config file (default "C:\\Users\\saisu\\.meshery\\config.yaml")
  -v, --verbose verbose output
 
 &lt;/div&gt;
