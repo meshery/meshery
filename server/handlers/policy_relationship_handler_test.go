@@ -46,6 +46,65 @@ func newTestRegistryManager(t *testing.T) (*registry.RegistryManager, *database.
 	return rm, &db
 }
 
+func TestMeshmodelPoliciesResponsePagination(t *testing.T) {
+	for _, tc := range []struct {
+		name     string
+		limit    int
+		count    int64
+		pageSize int
+	}{
+		{name: "requested limit", limit: 3, count: 8, pageSize: 3},
+		{name: "unlimited page uses total count", limit: 0, count: 8, pageSize: 8},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			response := meshmodelPoliciesResponse(2, tc.limit, tc.count, nil)
+			assert.Equal(t, 2, response.Page)
+			assert.Equal(t, tc.pageSize, response.PageSize)
+			assert.Equal(t, tc.count, response.TotalCount)
+		})
+	}
+}
+
+func TestMeshmodelPolicyListingReturnsRegistryErrors(t *testing.T) {
+	handlers := []struct {
+		name   string
+		invoke func(*Handler, http.ResponseWriter, *http.Request)
+		vars   map[string]string
+	}{
+		{
+			name: "by model and name",
+			invoke: func(h *Handler, rw http.ResponseWriter, r *http.Request) {
+				h.GetAllMeshmodelPoliciesByName(rw, r)
+			},
+			vars: map[string]string{"model": "test-model", "name": "test-policy"},
+		},
+		{
+			name: "by model",
+			invoke: func(h *Handler, rw http.ResponseWriter, r *http.Request) {
+				h.GetAllMeshmodelPolicies(rw, r)
+			},
+			vars: map[string]string{"model": "test-model"},
+		},
+	}
+
+	for _, handler := range handlers {
+		t.Run(handler.name, func(t *testing.T) {
+			rm, db := newTestRegistryManager(t)
+			t.Cleanup(func() { _ = db.DBClose() })
+			require.NoError(t, db.Migrator().DropTable(&meshpolicy.PolicyDefinition{}))
+			h := &Handler{registryManager: rm, log: newTestLogger(t)}
+			r := httptest.NewRequest(http.MethodGet, "/models/test-model/policies", nil)
+			r = mux.SetURLVars(r, handler.vars)
+			rw := httptest.NewRecorder()
+
+			handler.invoke(h, rw, r)
+
+			assert.Equal(t, http.StatusInternalServerError, rw.Code)
+			assert.Contains(t, rw.Body.String(), "failed to retrieve meshmodel policies")
+		})
+	}
+}
+
 func TestRunRelationshipEvaluation_RecoversPanic(t *testing.T) {
 	// Production regression: an unrecovered panic in this goroutine used
 	// to crash the whole Meshery process, which manifested in CI as the
