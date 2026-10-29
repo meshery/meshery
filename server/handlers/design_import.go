@@ -214,7 +214,11 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	}
 
 	if identifiedFile.Type == core.MesheryDesign {
-		design := identifiedFile.ParsedFile.(pattern.PatternFile)
+		design, err := mesheryDesignFromParsedFile(identifiedFile.ParsedFile)
+		if err != nil {
+			return emptyDesign, "", err
+		}
+
 		return design, identifiedFile.Type, nil
 	}
 
@@ -235,6 +239,14 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	}
 
 	return design, identifiedFile.Type, err
+}
+
+func mesheryDesignFromParsedFile(parsedFile interface{}) (pattern.PatternFile, error) {
+	design, ok := parsedFile.(pattern.PatternFile)
+	if !ok {
+		return pattern.PatternFile{}, fmt.Errorf("parsed file is not of type pattern.PatternFile")
+	}
+	return design, nil
 }
 
 func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider models.Provider, err error, userID core.Uuid, eventBuilder *events.EventBuilder) {
@@ -390,6 +402,7 @@ func (h *Handler) DesignFileImportHandler(
 		return
 	}
 
+	rw.Header().Set("Content-Type", "application/json")
 	_, _ = rw.Write(savedDesignByt)
 
 	event := eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Imported design '%s' of type '%s'", design.Name, sourceFileType)).Build()
