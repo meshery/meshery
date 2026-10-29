@@ -217,6 +217,7 @@ const (
 	ErrMeshsyncReconcileCode               = "meshery-server-1442"
 	ErrUnsafeFilePathCode                  = "meshery-server-1443"
 	ErrModelNotFoundCode                   = "meshery-server-1485"
+	ErrExportModelEntityCode               = "meshery-server-1487"
 	// Environment, workspace, organization, user and key operations previously
 	// reported every failure as ErrGetResult ("unable to get result", probable
 	// cause "Result Identifier provided is not valid") - a performance-results
@@ -1013,6 +1014,16 @@ func ErrTelemetryPrometheusAuth(err error) error {
 // sub-step failed so the UI can surface a specific remediation.
 func ErrExportModel(err error, stage string) error {
 	return errors.New(ErrExportModelCode, errors.Alert, []string{fmt.Sprintf("Failed to export model during %s", stage)}, []string{err.Error()}, []string{"Temp directory is not writable.", "Model definition references a missing dependency.", "OCI/tar tooling produced an invalid artifact."}, []string{"Retry the export; if it persists, inspect server logs and disk availability under the temp directory."})
+}
+
+// ErrExportModelEntity wraps type assertion failures during model export when the
+// retrieved registry entity, components, or relationships do not match their expected definition types.
+func ErrExportModelEntity(err error, stage string) error {
+	return errors.New(ErrExportModelEntityCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to export model during %s", stage)},
+		[]string{err.Error()},
+		[]string{"Entity registered in the registry does not match the expected schema or definition type."},
+		[]string{"Verify that the model, components, and relationships are registered correctly and conform to the expected schema definitions."})
 }
 
 // ErrInvalidContextsConfig wraps failures to parse the `contexts` form field
