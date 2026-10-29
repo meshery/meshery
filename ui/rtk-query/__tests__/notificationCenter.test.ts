@@ -38,6 +38,7 @@ describe('notificationCenter – module surface', () => {
     const mod = await import('../notificationCenter');
     expect(typeof mod.useGetEventsSummaryQuery).toBe('function');
     expect(typeof mod.useUpdateStatusMutation).toBe('function');
+    expect(typeof mod.useMarkAllEventsReadMutation).toBe('function');
     expect(typeof mod.useDeleteEventMutation).toBe('function');
     expect(typeof mod.useLazyGetEventsQuery).toBe('function');
     expect(typeof mod.useGetEventFiltersQuery).toBe('function');

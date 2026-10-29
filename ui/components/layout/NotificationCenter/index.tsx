@@ -48,12 +48,6 @@ import {
   toggleNotificationCenter,
   updateCheckAllEvents,
 } from '../../../store/slices/events';
-import {
-  useDeleteEventsMutation,
-  useGetEventsSummaryQuery,
-  useLazyGetEventsQuery,
-  useUpdateEventsMutation,
-} from '../../../rtk-query/notificationCenter';
 import DoneIcon from '../../../assets/icons/DoneIcon';
 import { hasClass } from '../../../utils/Elements';
 import ReadIcon from '../../../assets/icons/ReadIcon';
@@ -64,6 +58,13 @@ import { operationsCenterActor } from 'machines/operationsCenter';
 import { useDispatch, useSelector } from 'react-redux';
 import { DeleteIcon, ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '../../shared/ErrorBoundary/ErrorBoundary';
+import {
+  useDeleteEventsMutation,
+  useGetEventsSummaryQuery,
+  useLazyGetEventsQuery,
+  useMarkAllEventsReadMutation,
+  useUpdateEventsMutation,
+} from '../../../rtk-query/notificationCenter';
 
 export const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,
@@ -265,7 +266,10 @@ const BulkActions = () => {
   // stores which update is currently going on , usefull to know which action is going
   // if multiple updates can be triggered from same mutator , only single bulk action is allowed at a time
   const [curentOngoingUpdate, setCurrentOngoingUpdate] = useState(null);
-  const isActionInProgress = isDeleting || isUpdatingStatus;
+  const [markAllAsRead, { isLoading: isMarkingAllRead }] = useMarkAllEventsReadMutation();
+  const [fetchEvents] = useLazyGetEventsQuery();
+  const currentFilters = useSelector((state) => state.events?.current_view?.filters);
+  const isActionInProgress = isDeleting || isUpdatingStatus || isMarkingAllRead;
 
   const dispatch = useDispatch();
   const areAllEventsChecked = useSelector(selectAreAllEventsChecked);
@@ -290,6 +294,17 @@ const BulkActions = () => {
         status,
       },
     }).then(resetSelection);
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await markAllAsRead().unwrap();
+      resetSelection();
+      // The server decides which events were marked, so refresh from it
+      dispatch(loadEvents(fetchEvents, 0, currentFilters));
+    } catch {
+      // Failures are already reported to the user by the global rtkErrorMiddleware
+    }
   };
 
   const BulkActionButton = ({ isLoading, isDisabled, tooltip, Icon, onClick }) => {
@@ -337,28 +352,38 @@ const BulkActions = () => {
           {areAllEventsChecked ? `Selected ${checkedEvents.length} notifications` : 'Select All'}
         </Typography>
       </Box>
-      <Collapse in={checkedEvents.length > 0}>
-        <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <Collapse in={checkedEvents.length > 0}>
+          <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <BulkActionButton
+              tooltip="Delete selected notifications"
+              Icon={DeleteIcon}
+              isLoading={isDeleting}
+              onClick={handleDelete}
+            />
+            <BulkActionButton
+              tooltip="Mark selected notifications as read"
+              Icon={ReadIcon}
+              isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.READ}
+              onClick={() => handleChangeStatus(STATUS.READ)}
+            />
+            <BulkActionButton
+              tooltip="Mark selected notifications as unread"
+              Icon={UnreadIcon}
+              isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.UNREAD}
+              onClick={() => handleChangeStatus(STATUS.UNREAD)}
+            />
+          </Box>
+        </Collapse>
+        {currentFilters?.status !== STATUS.READ && (
           <BulkActionButton
-            tooltip="Delete selected notifications"
-            Icon={DeleteIcon}
-            isLoading={isDeleting}
-            onClick={handleDelete}
+            tooltip="Mark all notifications as read"
+            Icon={DoneIcon}
+            isLoading={isMarkingAllRead}
+            onClick={handleMarkAllAsRead}
           />
-          <BulkActionButton
-            tooltip="Mark selected notifications as read"
-            Icon={ReadIcon}
-            isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.READ}
-            onClick={() => handleChangeStatus(STATUS.READ)}
-          />
-          <BulkActionButton
-            tooltip="Mark selected notifications as unread"
-            Icon={UnreadIcon}
-            isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.UNREAD}
-            onClick={() => handleChangeStatus(STATUS.UNREAD)}
-          />
-        </Box>
-      </Collapse>
+        )}
+      </Box>
     </Box>
   );
 };
