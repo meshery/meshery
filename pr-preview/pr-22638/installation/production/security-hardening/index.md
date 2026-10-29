@@ -376,6 +376,10 @@ extension before enabling it, and enable only what your deployment actually need
             Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/request-to-reactivate-my-slack-account/8168" target="_blank" rel="noopener noreferrer">
+            Request to Reactivate My Slack Account
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
@@ -398,10 +402,6 @@ extension before enabling it, and enable only what your deployment actually need
         </li><li>
           <a href="https://discuss.meshery.io/t/play-meshery-io-is-down/8045" target="_blank" rel="noopener noreferrer">
             play.meshery.io is DOWN
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/your-path-to-becoming-a-certified-meshery-contributor-starts-here/7652" target="_blank" rel="noopener noreferrer">
-            Your Path to Becoming a Certified Meshery Contributor Starts Here
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
