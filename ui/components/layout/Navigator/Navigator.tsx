@@ -479,17 +479,33 @@ const NavigatorContent = () => {
 
         const isActive = currentPath === href;
         const childExtensions = renderNavigatorExtensions(subItems, depth + 1);
+        // Root-level extensions use the same list item as the core navigator rows so that
+        // hover styling, padding and text treatment are uniform across the whole sidebar.
+        const isRootItem = depth === 1;
+        const ListItemComponent = isRootItem ? SideBarListItem : NavigatorListItem;
+        const listItemProps = isRootItem
+          ? {
+              // `link` gates only the hover background in SideBarListItem. Every core
+              // navigator row passes it, and the NavigatorListItem this replaces applied
+              // that background unconditionally, so pass it here too rather than deriving
+              // it from href - otherwise an href-less root extension would be the one row
+              // in the sidebar with no hover background.
+              dense: true,
+              link: true,
+              isActive,
+            }
+          : {
+              button: true,
+              depth,
+              isDrawerCollapsed,
+              isActive,
+            };
 
         return (
           <RootDiv key={id} data-testid={depth === 1 ? 'extension-nav-root-item' : undefined}>
-            <NavigatorListItem
-              button
-              depth={depth}
-              isDrawerCollapsed={isDrawerCollapsed}
-              isActive={isActive}
-            >
+            <ListItemComponent {...listItemProps}>
               {extensionPointContent(icon, href, title, isDrawerCollapsed)}
-            </NavigatorListItem>
+            </ListItemComponent>
             {childExtensions}
           </RootDiv>
         );
