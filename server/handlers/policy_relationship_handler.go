@@ -27,6 +27,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 
+	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	regv1alpha3 "github.com/meshery/meshkit/models/meshmodel/registry/v1alpha3"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
@@ -42,6 +43,19 @@ const (
 )
 
 const RELATIONSHIP_SUBTYPE_ALIAS = "alias"
+
+func meshmodelPoliciesResponse(page, limit int, count int64, policies []entity.Entity) models.MeshmodelPoliciesAPIResponse {
+	pageSize := limit
+	if limit == 0 {
+		pageSize = int(count)
+	}
+	return models.MeshmodelPoliciesAPIResponse{
+		Page:       page,
+		PageSize:   pageSize,
+		TotalCount: count,
+		Policies:   policies,
+	}
+}
 
 // Aliasses Are not resolved
 func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (coremodelv1beta2.NonResolvedAlias, bool) {
@@ -937,30 +951,23 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 		greedy = true
 	}
 
-	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
+	entities, count, _, err := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		Kind:      name,
 		ModelName: typ,
 		Greedy:    greedy,
+		Limit:     limit,
 		Offset:    offset,
 		OrderOn:   order,
 		Sort:      sort,
 	})
-
-	var pgSize int64
-	if limit == 0 {
-		pgSize = 0
-	} else {
-		pgSize = int64(limit)
+	if err != nil {
+		err = fmt.Errorf("failed to retrieve meshmodel policies: %w", err)
+		h.log.Error(err)
+		writeMeshkitError(rw, err, http.StatusInternalServerError)
+		return
 	}
 
-	response := models.MeshmodelPoliciesAPIResponse{
-		Page:       page,
-		PageSize:   int(pgSize),
-		TotalCount: 0,
-		Policies:   entities,
-	}
-
-	if err := enc.Encode(response); err != nil {
+	if err := enc.Encode(meshmodelPoliciesResponse(page, limit, count, entities)); err != nil {
 		if isClientDisconnect(err) {
 			h.log.Debug(ErrEncodeResponse(err))
 		} else {
@@ -980,30 +987,22 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 		greedy = true
 	}
 
-	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
+	entities, count, _, err := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		ModelName: typ,
 		Greedy:    greedy,
+		Limit:     limit,
 		Offset:    offset,
 		OrderOn:   order,
 		Sort:      sort,
 	})
-
-	var pgSize int64
-
-	if limit == 0 {
-		pgSize = 0
-	} else {
-		pgSize = int64(limit)
+	if err != nil {
+		err = fmt.Errorf("failed to retrieve meshmodel policies: %w", err)
+		h.log.Error(err)
+		writeMeshkitError(rw, err, http.StatusInternalServerError)
+		return
 	}
 
-	response := models.MeshmodelPoliciesAPIResponse{
-		Page:       page,
-		PageSize:   int(pgSize),
-		TotalCount: 0,
-		Policies:   entities,
-	}
-
-	if err := enc.Encode(response); err != nil {
+	if err := enc.Encode(meshmodelPoliciesResponse(page, limit, count, entities)); err != nil {
 		if isClientDisconnect(err) {
 			h.log.Debug(ErrEncodeResponse(err))
 		} else {
