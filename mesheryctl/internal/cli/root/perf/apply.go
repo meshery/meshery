@@ -128,63 +128,14 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			return err
 		}
 
-		// Importing SMP Configuration from the file
-		// TODO: Refactor: Move checks to a single location and consolidate for file, flags and performance profile
+		// Apply SMP file parameters. Flags already set take priority (Flags > File).
 		if filePath != "" {
-			// Read the test configuration file
-			smpConfig, err := os.ReadFile(filePath)
-			if err != nil {
-				return ErrReadFilepath(errors.Wrap(err, "Unable to read test configuration file. \n"))
-			}
-
-			testConfig := servermodels.PerformanceTestConfigFile{}
-
-			err = yaml.Unmarshal(smpConfig, &testConfig)
-			if err != nil {
-				return ErrFailUnmarshalFile(err)
-			}
-
-			if testConfig.Config == nil || len(testConfig.Config.Clients) == 0 {
-				return ErrInvalidTestConfigFile()
-			}
-
-			testClient := testConfig.Config.Clients[0]
-
-			// Override values from configuration if passed on as flags
-			if testName == "" {
-				testName = testConfig.Config.Name
-			}
-
-			if testURL == "" {
-				testURL = firstString(testClient.EndpointUrls)
-			}
-
-			if testMesh == "" {
-				testMesh = testConfig.ServiceMesh
-			}
-
-			if qps == "" {
-				qps = strconv.Itoa(testClient.Rps)
-			}
-
-			if concurrentRequests == "" {
-				concurrentRequests = strconv.Itoa(testClient.Connections)
-			}
-
-			if testDuration == "" {
-				testDuration = testConfig.Config.Duration
-			}
-
-			if loadGenerator == "" {
-				loadGenerator = testClient.LoadGenerator
-			}
-
-			if loadTestBody == "" {
-				loadTestBody = testClient.Body
+			if err := applyFileParams(filePath); err != nil {
+				return err
 			}
 		}
 
-		// Run test based on flags
+		// Fall back to a random name when no test name was supplied by any source.
 		if testName == "" {
 			utils.Log.Debug("Test Name not provided")
 			testName = utils.StringWithCharset(8)
@@ -251,34 +202,9 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				testURL = firstString(profiles[index].Endpoints)
 			}
 
-			// reset profile name without %20
-			// pull test configuration from the profile only if a test configuration is not provided and flag is not set
+			// Pull remaining parameters from the stored profile when no file was provided (Flags > File > Profile).
 			if filePath == "" {
-				profileName = profiles[index].Name
-
-				if loadGenerator == "" {
-					loadGenerator = firstString(profiles[index].LoadGenerators)
-				}
-
-				if concurrentRequests == "" {
-					concurrentRequests = strconv.Itoa(profiles[index].ConcurrentRequest)
-				}
-
-				if qps == "" {
-					qps = strconv.Itoa(profiles[index].QPS)
-				}
-
-				if testDuration == "" {
-					testDuration = profiles[index].Duration
-				}
-
-				if testMesh == "" {
-					testMesh = profiles[index].ServiceMesh
-				}
-
-				if loadTestBody == "" {
-					loadTestBody = profiles[index].RequestBody
-				}
+				applyProfileParams(profiles[index])
 			}
 		}
 
@@ -494,4 +420,76 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 
 	utils.Log.Debug("New profile created")
 	return profileID, profileName, nil
+}
+
+// applyFileParams reads the SMP test configuration file and fills in any
+// parameters not already set by CLI flags (Flags > File).
+func applyFileParams(path string) error {
+	smpConfig, err := os.ReadFile(path)
+	if err != nil {
+		return ErrReadFilepath(errors.Wrap(err, "Unable to read test configuration file. \n"))
+	}
+
+	testConfig := servermodels.PerformanceTestConfigFile{}
+	if err = yaml.Unmarshal(smpConfig, &testConfig); err != nil {
+		return ErrFailUnmarshalFile(err)
+	}
+	if testConfig.Config == nil || len(testConfig.Config.Clients) == 0 {
+		return ErrInvalidTestConfigFile()
+	}
+
+	client := testConfig.Config.Clients[0]
+
+	if testName == "" {
+		testName = testConfig.Config.Name
+	}
+	if testURL == "" {
+		testURL = firstString(client.EndpointUrls)
+	}
+	if testMesh == "" {
+		testMesh = testConfig.ServiceMesh
+	}
+	if qps == "" {
+		qps = strconv.Itoa(client.Rps)
+	}
+	if concurrentRequests == "" {
+		concurrentRequests = strconv.Itoa(client.Connections)
+	}
+	if testDuration == "" {
+		testDuration = testConfig.Config.Duration
+	}
+	if loadGenerator == "" {
+		loadGenerator = client.LoadGenerator
+	}
+	if loadTestBody == "" {
+		loadTestBody = client.Body
+	}
+	return nil
+}
+
+// applyProfileParams fills in any parameters not already set by flags or file
+// using values from the resolved performance profile (Flags > File > Profile).
+func applyProfileParams(p perfprofile.PerformanceProfile) {
+	profileName = p.Name
+	if testURL == "" {
+		testURL = firstString(p.Endpoints)
+	}
+	if loadGenerator == "" {
+		loadGenerator = firstString(p.LoadGenerators)
+	}
+	if concurrentRequests == "" {
+		concurrentRequests = strconv.Itoa(p.ConcurrentRequest)
+	}
+	if qps == "" {
+		qps = strconv.Itoa(p.QPS)
+	}
+	if testDuration == "" {
+		testDuration = p.Duration
+	}
+	if testMesh == "" {
+		testMesh = p.ServiceMesh
+	}
+	if loadTestBody == "" {
+		loadTestBody = p.RequestBody
+	}
 }
