@@ -200,6 +200,14 @@ export const notificationCenterApi = api
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),
 
+      markAllEventsRead: builder.mutation({
+        query: () => ({
+          url: `/api/events/mark-all-read`,
+          method: 'POST',
+        }),
+        invalidatesTags: [PROVIDER_TAGS.EVENT],
+      }),
+
       // Event Configuration Endpoints
       // TODO: yet to be integrated
       getEventConfig: builder.query({
@@ -252,4 +260,5 @@ export const {
   useGetEventFiltersQuery,
   useDeleteEventsMutation,
   useUpdateEventsMutation,
+  useMarkAllEventsReadMutation,
 } = notificationCenterApi;
