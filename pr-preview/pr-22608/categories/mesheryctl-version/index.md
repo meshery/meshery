@@ -1,9 +1,0 @@
-# Mesheryctl-Version
-
-LLMS index: [llms.txt](/pr-preview/pr-22608/llms.txt)
-
----
-
-Section pages:
-
-- [mesheryctl-version](/pr-preview/pr-22608/reference/mesheryctl/version/)
