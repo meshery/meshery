@@ -4408,6 +4408,15 @@
         "short_description": "The kubeconfig could not be parsed",
         "probable_cause": "A different file was selected, or the kubeconfig was truncated or edited by hand.",
         "suggested_remediation": "Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig <file>."
+      },
+      "1502": {
+        "name": "ErrMarkAllReadCode",
+        "code": "1502",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not mark all notifications as read.",
+        "probable_cause": "The database is unavailable.\nThe remote provider is unreachable or rejected the request.\nThe current provider does not support event persistence.",
+        "suggested_remediation": "Retry the request.\nVerify the configured provider is reachable and supports event persistence."
       }
     }
   }
