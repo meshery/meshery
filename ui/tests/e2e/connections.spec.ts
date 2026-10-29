@@ -130,7 +130,7 @@ test.describe.serial('Connection Management Tests', () => {
       // The hidden file input is present (attached, not visible) and the
       // dropzone prompt + wizard navigation are rendered.
       await expect(page.locator('#connection-wizard-kubeconfig-input')).toBeAttached();
-      await expect(page.getByText('Click to choose a kubeconfig file')).toBeVisible();
+      await expect(page.getByText('Click to choose a kubeconfig file', { exact: true })).toBeVisible();
       await expect(page.getByTestId('connection-wizard-next')).toBeVisible();
     },
   );
