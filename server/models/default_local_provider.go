@@ -2,6 +2,7 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -2196,6 +2197,14 @@ func (l *DefaultLocalProvider) BulkUpdateEventStatus(token string, eventIDs []*c
 	}
 	return nil
 
+}
+
+func (l *DefaultLocalProvider) MarkAllEventsRead(_ context.Context, _ string, userID core.Uuid) error {
+	return l.EventsPersister.DB.
+		Model(&events.Event{Status: events.Read}).
+		Where("owner = ? AND status = ?", userID, events.Unread).
+		Update("status", events.Read).
+		Error
 }
 
 func (l *DefaultLocalProvider) DeleteEvent(token string, eventID core.Uuid) error {

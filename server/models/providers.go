@@ -743,6 +743,7 @@ type Provider interface {
 	GetEventTypes(token string, userID core.Uuid, sysID core.Uuid) (EventTypesResponse, error)
 	UpdateEventStatus(token string, eventID core.Uuid, status string) error
 	BulkUpdateEventStatus(token string, eventIDs []*core.Uuid, status string) error
+	MarkAllEventsRead(ctx context.Context, token string, userID core.Uuid) error
 	DeleteEvent(token string, eventID core.Uuid) error
 	BulkDeleteEvent(token string, eventIDs []*core.Uuid) error
 }

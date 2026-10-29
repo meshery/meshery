@@ -1,15 +1,113 @@
 package models
 
 import (
+	"context"
 	stderrors "errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"sync/atomic"
 	"testing"
+	"time"
 
+	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/spf13/viper"
 )
+
+func TestRemoteProviderMarkAllEventsReadForwardsRequest(t *testing.T) {
+	const testJWT = "test-user-jwt"
+	var gotMethod, gotPath, gotAuthorization, gotAPIKey string
+	var gotBody []byte
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotMethod = r.Method
+		gotPath = r.URL.Path
+		gotAuthorization = r.Header.Get("Authorization")
+		gotAPIKey = r.Header.Get("X-API-Key")
+		gotBody, _ = io.ReadAll(r.Body)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"message":"All user-owned events marked as read"}`))
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = Capabilities{{Feature: PersistEvents, Endpoint: "/events"}}
+	if err := provider.MarkAllEventsRead(context.Background(), testJWT, uuid.Nil); err != nil {
+		t.Fatalf("MarkAllEventsRead returned error: %v", err)
+	}
+
+	if gotMethod != http.MethodPost {
+		t.Errorf("method = %q, want POST", gotMethod)
+	}
+	if gotPath != "/api/events/mark-all-read" {
+		t.Errorf("path = %q, want /api/events/mark-all-read", gotPath)
+	}
+	if len(gotBody) != 0 {
+		t.Errorf("body = %q, want empty body", gotBody)
+	}
+	if gotAuthorization != "bearer "+testJWT {
+		t.Errorf("Authorization = %q, want bearer token", gotAuthorization)
+	}
+	if gotAPIKey != "" {
+		t.Errorf("X-API-Key = %q, want empty for an authenticated user", gotAPIKey)
+	}
+}
+
+func TestRemoteProviderMarkAllEventsReadPreservesFailureStatus(t *testing.T) {
+	for _, status := range []int{http.StatusUnauthorized, http.StatusTooManyRequests, http.StatusInternalServerError} {
+		t.Run(http.StatusText(status), func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				w.WriteHeader(status)
+			}))
+			defer server.Close()
+
+			provider := newTestRemoteProvider(t, server.URL)
+			provider.Capabilities = Capabilities{{Feature: PersistEvents, Endpoint: "/events"}}
+			err := provider.MarkAllEventsRead(context.Background(), "test-user-jwt", uuid.Nil)
+			if err == nil {
+				t.Fatalf("MarkAllEventsRead returned nil, want HTTP %d error", status)
+			}
+			if got := httputil.StatusForProviderError(err, 0); got != status {
+				t.Errorf("provider status = %d, want %d", got, status)
+			}
+		})
+	}
+}
+
+func TestRemoteProviderMarkAllEventsReadHonorsCancellation(t *testing.T) {
+	requestStarted := make(chan struct{})
+	server := httptest.NewServer(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
+		close(requestStarted)
+		<-r.Context().Done()
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = Capabilities{{Feature: PersistEvents, Endpoint: "/events"}}
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan error, 1)
+	go func() {
+		done <- provider.MarkAllEventsRead(ctx, "test-user-jwt", uuid.Nil)
+	}()
+
+	select {
+	case <-requestStarted:
+		cancel()
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for remote request")
+	}
+
+	select {
+	case err := <-done:
+		if err == nil {
+			t.Fatal("MarkAllEventsRead returned nil after cancellation")
+		}
+	case <-time.After(time.Second):
+		t.Fatal("MarkAllEventsRead did not return after context cancellation")
+	}
+}
 
 // TestRemoteProvider_OutboundOrgIdIsCanonical asserts that RemoteProvider
 // emits the canonical camelCase `orgId` query parameter (not the legacy

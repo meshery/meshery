@@ -165,6 +165,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("GET")
 	gMux.Handle("/api/system/events/status/bulk", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.BulkUpdateEventStatus), models.ProviderAuth))).
 		Methods("PUT")
+	gMux.Handle("/api/events/mark-all-read", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.MarkAllEventsRead), models.ProviderAuth))).
+		Methods("POST")
 	gMux.Handle("/api/system/events/status/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateEventStatus), models.ProviderAuth))).
 		Methods("PUT")
 	gMux.Handle("/api/system/events/bulk", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.BulkDeleteEvent), models.ProviderAuth))).
