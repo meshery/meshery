@@ -84,7 +84,8 @@ function PatternServiceForm({
                 boxShadow: `0px 2px 4px -1px "#677E88"`,
                 background: `${theme.palette.mode === 'dark' ? '#202020' : '#647881'}`,
                 position: 'sticky',
-                zIndex: 'auto',
+                // Prevent form fields from overlapping the sticky Settings bar.
+                zIndex: 2,
               }}
             >
               <Toolbar
