@@ -1258,6 +1258,11 @@ func (h *Handler) CloneMesheryPatternHandler(
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
+	if patternID == "" {
+		h.log.Error(ErrClonePattern(fmt.Errorf("pattern ID is required")))
+		writeMeshkitError(rw, ErrClonePattern(fmt.Errorf("pattern ID is required")), http.StatusBadRequest)
+		return
+	}
 	patternUUID := uuid.FromStringOrNil(patternID)
 
 	userID := user.ID
@@ -1276,7 +1281,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 	}
 
 	var parsedBody *models.MesheryClonePatternRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || patternID == "" {
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || parsedBody == nil {
 		h.log.Error(ErrRequestBody(err))
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
