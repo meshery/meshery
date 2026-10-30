@@ -388,7 +388,7 @@ func BackupConfigFile(cfgFile string) {
 	if err != nil {
 		Log.Fatal(err)
 	}
-	_ = f.Close()
+	SafeClose(f)
 }
 
 const (
@@ -581,7 +581,7 @@ func CreateConfigFile() error {
 		if err != nil {
 			return err
 		}
-		_ = file.Close()
+		return file.Close()
 	}
 	return nil
 }
