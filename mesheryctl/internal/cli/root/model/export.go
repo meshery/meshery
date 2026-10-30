@@ -38,7 +38,7 @@ var exportModelCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export registered models",
 	Long: `Export the registered model to the specified output type
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/model/export`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/export`,
 	Example: `
 // Export a model by name 
 mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
@@ -56,15 +56,7 @@ mesheryctl model export [model-name] --discard-components --discard-relationship
 mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(exportModelFlagsProvided)
-		if err != nil {
-			return utils.ErrFlagsInvalid(err)
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &exportModelFlagsProvided)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model export [model-name]\nRun 'mesheryctl model export --help' to see detailed help message"

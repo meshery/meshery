@@ -4,72 +4,86 @@ categories: [mesheryctl]
 description: Bash, Zsh, Oh My Zsh, and fish autocompletion for `mesheryctl` commands.
 ---
 
-If you would like to have `mesheryctl` commands automatically completed for use as you use `mesheryctl`, then use the following instructions to configure automatic completion within your environment.
+`mesheryctl completion` prints a completion script for bash, zsh, or fish. Load that script in your shell so that pressing <kbd>Tab</kbd> completes `mesheryctl` commands and flags.
 
-## Autocompletion for Bash
+## Bash
 
-### bash <= 3.2
+Check your bash version with `bash --version`, then use the matching commands.
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">source /dev/stdin <<< "$(mesheryctl completion bash)"</div></div>
- </pre>
+### Linux, bash 4.0 or later
 
-### bash >= 4.0
+Load completion in the current shell:
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">source <(mesheryctl completion bash)</div></div>
- </pre>
+```bash
+source <(mesheryctl completion bash)
+```
 
-### bash <= 3.2 on MacOS
+To load it in every new shell, add that line to `~/.bashrc`.
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">brew install bash-completion # ensure you have bash-completion 1.3+
-mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl</div></div>
- </pre>
+### Linux, bash 3.2 or earlier
 
-### bash >= 4.0 on MacOS
+```bash
+source /dev/stdin <<< "$(mesheryctl completion bash)"
+```
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">brew install bash-completion@2
-mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl</div></div>
- </pre>
+### macOS
 
-## Autocompletion for zsh
+macOS ships bash 3.2. Install the `bash-completion` package that matches your bash version with Homebrew, then write the script to its completion directory:
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">source <(mesheryctl completion zsh)</div></div>
- </pre><br>
+```bash
+# bash 3.2: needs bash-completion 1.3 or later
+brew install bash-completion
+# bash 4.2 or later: use bash-completion@2 instead
+# brew install bash-completion@2
 
-If shell completion is not already enabled in your environment you will need to enable it. You can execute the following once:
+mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+```
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">~/.zshrc > echo "autoload -U compinit; compinit"</div></div>
- </pre>
+Follow the "Caveats" that `brew install` prints to source `bash_completion` from your `~/.bash_profile`.
 
-_Note_ : You might need to restart your shell for this setup to take effect.
+## Zsh
 
-#### zsh on MacOS and Oh My zsh
+1. If completion is not already turned on in zsh, turn it on in the current shell and in every new one:
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v cache) && mkdir -p $COMPLETION_DIR && mesheryctl completion zsh > "${COMPLETION_DIR}/_mesheryctl"</div></div>
- </pre>
+    ```bash
+    autoload -U compinit; compinit
+    echo "autoload -U compinit; compinit" >> ~/.zshrc
+    ```
 
-### Autocompletion for fish
+2. Load `mesheryctl` completion in the current shell:
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">mesheryctl completion fish | source</div></div>
- </pre><br>
+    ```bash
+    source <(mesheryctl completion zsh)
+    ```
 
-To load fish shell completions for each session, execute once:
+3. Start a new shell for the change to take effect.
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish</div></div>
- </pre>
+### Zsh on macOS and Oh My Zsh
 
-For an exhaustive list of `mesheryctl` commands and syntax:
+Write the script into a completion directory of your own and add that directory to your `fpath`, so that zsh loads it in every session:
 
-- See [`mesheryctl` Command Reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
+```bash
+mkdir -p ~/.zsh/completions
+mesheryctl completion zsh > ~/.zsh/completions/_mesheryctl
+echo 'fpath=(~/.zsh/completions $fpath)' >> ~/.zshrc
+```
 
-Guides to using Meshery's various features and components.
+The `fpath` line must come before `compinit` in `~/.zshrc`. If you use Oh My Zsh, add it before the line that sources `oh-my-zsh.sh`. Then start a new shell.
+
+## Fish
+
+Load completion in the current shell:
+
+```bash
+mesheryctl completion fish | source
+```
+
+To load it in every session, write it to fish's completions directory once:
+
+```bash
+mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish
+```
+
+For every `mesheryctl` command and flag, see the [`mesheryctl` command reference]({{< ref "reference/mesheryctl/_index.md" >}}).
 
 {{< related-discussions tag="mesheryctl" >}}

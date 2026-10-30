@@ -1,0 +1,20 @@
+version: 0.0.7
+name: on-prem-kubernetes-with-secure-cloud-logging
+displayName: On Prem Kubernetes with Secure Cloud Logging
+createdAt: "2026-09-07T07:25:44Z"
+description: This design represents a secure on-premises Kubernetes environment for running and automatically scaling a client application. Fluent Bit runs as a DaemonSet and collects application and cluster logs. Network policies use a default-deny approach and permit only the required internal application traffic and outbound log delivery to an authorized cloud logging endpoint. Cloud credentials are referenced through a Kubernetes Secret, while Fluent Bit configuration is stored in a ConfigMap
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/1d8a8ea2-fcbf-464c-9cfd-4d17cb0dc1d3/0.0.7/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a reference architecture and requires environment-specific configuration before production use. Replace placeholder cloud endpoints and credentials, enable TLS certificate verification, apply least-privilege RBAC, encrypt Kubernetes Secrets at rest, and rotate credentials regularly. NetworkPolicy enforcement requires a compatible CNI plugin. Kubernetes NetworkPolicy alone may not restrict traffic by domain name, so an egress gateway, firewall, or proxy should be used to guarantee that only approved logging destinations are reachable. Fluent Bit buffering, retry behavior, log filtering, and sensitive-data redaction should also be configured \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 43643949-e1f8-4d55-b65a-c61a2b99a0a1
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
