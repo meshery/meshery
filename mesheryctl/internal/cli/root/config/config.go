@@ -14,7 +14,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 
 	"net/http"
-	"time"
 )
 
 // legacyProviderConfigWarnOnce gates the one-shot deprecation warning emitted
@@ -257,7 +256,7 @@ func (ctx *Context) ValidateVersion() error {
 	if err != nil {
 		return err
 	}
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := &http.Client{Timeout: constants.HttpClientTimeout}
 	resp, err := client.Do(req)
 	if err != nil {
 		return errors.Wrapf(err, "failed to make GET request to %s", url)

@@ -5,7 +5,8 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"time"
+
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 )
 
 func GetLatestVersionForMesheryctl() (string, error) {
@@ -15,7 +16,7 @@ func GetLatestVersionForMesheryctl() (string, error) {
 		return "", err
 	}
 
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := &http.Client{Timeout: constants.HttpClientTimeout}
 
 	resp, err := client.Do(req)
 	if err != nil {

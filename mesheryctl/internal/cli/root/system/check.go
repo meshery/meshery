@@ -501,7 +501,9 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		return err
 	}
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: c.HttpClientTimeout,
+	}
 	resp, err := client.Do(req)
 	// failed to fetch response for server version
 	if err != nil || resp.StatusCode != 200 {
@@ -712,7 +714,9 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 // If no adapter is specified all the adapters are checked
 func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 	url := hc.mctlCfg.GetBaseMesheryURL()
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: c.HttpClientTimeout,
+	}
 	var adapters []*models.Adapter
 	prefs, err := utils.GetSessionData(hc.mctlCfg)
 	if err != nil {

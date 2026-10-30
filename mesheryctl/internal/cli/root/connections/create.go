@@ -25,6 +25,7 @@ import (
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -237,7 +238,9 @@ func createMinikubeConnection() error {
 }
 
 func getContexts(configFile string) ([]string, error) {
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: constants.HttpClientTimeout,
+	}
 
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
