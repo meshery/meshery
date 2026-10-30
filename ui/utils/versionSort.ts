@@ -8,25 +8,30 @@ import { WILDCARD_V } from './hooks/useMeshModelComponents';
  * @param {Array.<String>} versionList
  */
 export default function getMostRecentVersion(versionList) {
-  if (!versionList) return;
+  if (!versionList || !Array.isArray(versionList) || versionList.length === 0) return;
 
-  const stableList = [];
-  const alphaList = [];
-  const betaList = [];
+  const stableList: string[] = [];
+  const alphaList: string[] = [];
+  const betaList: string[] = [];
 
   versionList.forEach((apiVersion) => {
-    const isStable = /^v[0-9]$/.test(apiVersion); // returns true if matches v1-v9
-    const isAlpha = apiVersion.includes('alpha'); // returns true if matches alpha in string
-    const isBeta = apiVersion.includes('beta'); // returns true if matches beta in string
+    if (!apiVersion || typeof apiVersion !== 'string') return;
+    const isStable = /^v?[0-9]+(\.[0-9]+)*$/.test(apiVersion);
+    const isAlpha = apiVersion.includes('alpha');
+    const isBeta = apiVersion.includes('beta');
 
-    isStable && stableList.push(apiVersion);
-    isAlpha && alphaList.push(apiVersion);
-    isBeta && betaList.push(apiVersion);
+    if (isStable) {
+      stableList.push(apiVersion);
+    } else if (isBeta) {
+      betaList.push(apiVersion);
+    } else if (isAlpha) {
+      alphaList.push(apiVersion);
+    }
   });
 
-  stableList.sort().reverse();
-  alphaList.sort().reverse();
-  betaList.sort().reverse();
+  stableList.sort(versionSortComparatorFn).reverse();
+  alphaList.sort(versionSortComparatorFn).reverse();
+  betaList.sort(versionSortComparatorFn).reverse();
 
   // priority order: stable > beta > alpha
   return stableList?.[0] || betaList?.[0] || alphaList?.[0] || versionList?.[0];
@@ -40,32 +45,57 @@ export default function getMostRecentVersion(versionList) {
  * @returns
  */
 export function versionSortComparatorFn(versionA, versionB) {
-  if (!versionA || !versionB) {
+  if (versionA === undefined || versionB === undefined || versionA === null || versionB === null) {
     return;
   }
 
-  if (versionA === WILDCARD_V || versionB === WILDCARD_V) {
-    // wildcard support
+  if (versionA === versionB) {
+    return 0;
+  }
+
+  if (versionA === WILDCARD_V) {
     return -1;
   }
-
-  const verA = versionA.split('.');
-  const verB = versionB.split('.');
-
-  for (let i = 0; i < verA.length && i < verB.length; i++) {
-    let vA = verA[i];
-    let vB = verB[i];
-    // index 0 is the start of the version, remove v if present for proper sorting
-    if (i == 0) {
-      vA = removeVFromVersion(vA);
-      vB = removeVFromVersion(vB);
-    }
-    // move to next comparison
-    if (vA - vB === 0) {
-      continue;
-    }
-    return vA - vB;
+  if (versionB === WILDCARD_V) {
+    return 1;
   }
+
+  const verA = String(versionA).split('.');
+  const verB = String(versionB).split('.');
+  const maxLen = Math.max(verA.length, verB.length);
+
+  for (let i = 0; i < maxLen; i++) {
+    let segA = verA[i];
+    let segB = verB[i];
+
+    if (segA === undefined) return -1;
+    if (segB === undefined) return 1;
+
+    // index 0 is the start of the version, remove v if present for proper sorting
+    if (i === 0) {
+      segA = removeVFromVersion(segA);
+      segB = removeVFromVersion(segB);
+    }
+
+    const numA = parseInt(segA, 10);
+    const numB = parseInt(segB, 10);
+
+    if (!isNaN(numA) && !isNaN(numB)) {
+      if (numA !== numB) {
+        return numA - numB;
+      }
+      if (segA !== segB) {
+        return segA.localeCompare(segB);
+      }
+    } else {
+      const cmp = String(segA).localeCompare(String(segB));
+      if (cmp !== 0) {
+        return cmp;
+      }
+    }
+  }
+
+  return 0;
 }
 
 function removeVFromVersion(version) {
@@ -85,17 +115,19 @@ function removeVFromVersion(version) {
  * @returns Versions sorted in decreasing order
  */
 export const sortByVersionInDecreasingOrder = (versions) => {
-  if (!versions) {
+  if (!versions || !Array.isArray(versions)) {
     return;
   }
 
+  const uniqueVersions = [...new Set(versions.filter((v) => v !== WILDCARD_V))];
+
   // add wildcard only in the case of multiple distinct versions
-  let wildCardV = [];
-  if (versions.length > 1) {
+  let wildCardV: string[] = [];
+  if (uniqueVersions.length > 1) {
     wildCardV = [WILDCARD_V];
   }
 
-  return [...wildCardV, ...[...versions].sort(versionSortComparatorFn).reverse()];
+  return [...wildCardV, ...[...uniqueVersions].sort(versionSortComparatorFn).reverse()];
 };
 
 /**
@@ -106,6 +138,10 @@ export const sortByVersionInDecreasingOrder = (versions) => {
  */
 export function getGreaterVersion(v1, v2) {
   const comparatorResult = versionSortComparatorFn(v1, v2);
+
+  if (comparatorResult === undefined) {
+    return v1 || v2;
+  }
 
   if (comparatorResult >= 0) {
     return v1;
@@ -124,18 +160,30 @@ export function getGreaterVersion(v1, v2) {
  * @returns {Array} the de-duplicated models array with all the versions available
  */
 function groupModelsByVersion(models) {
-  if (!models) {
+  if (!models || !Array.isArray(models)) {
     return [];
   }
 
-  let modelMap = {};
+  const modelMap: Record<string, any> = {};
   models.forEach((model) => {
-    const modelMapCurr = modelMap[model.name];
-    if (modelMapCurr) {
-      modelMap[model.name].version = [...new Set([...modelMapCurr.version, model.version])]; // remove duplicate entries for version
+    if (!model || !model.name) return;
+    let modelVersions: string[] = [];
+    if (Array.isArray(model.version)) {
+      modelVersions = model.version;
+    } else if (model.version !== undefined) {
+      modelVersions = [model.version];
+    }
+    const existing = modelMap[model.name];
+    if (existing) {
+      modelMap[model.name] = {
+        ...existing,
+        version: [...new Set([...existing.version, ...modelVersions])],
+      };
     } else {
-      model.version = [model.version]; // the version is a string, to derive consistency the version is changed to array
-      modelMap[model.name] = model;
+      modelMap[model.name] = {
+        ...model,
+        version: [...modelVersions],
+      };
     }
   });
 
