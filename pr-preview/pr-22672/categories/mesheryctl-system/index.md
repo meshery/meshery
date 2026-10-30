@@ -1,0 +1,43 @@
+# Mesheryctl-System
+
+LLMS index: [llms.txt](/pr-preview/pr-22672/llms.txt)
+
+---
+
+Section pages:
+
+- [mesheryctl-system](/pr-preview/pr-22672/reference/mesheryctl/system/)
+- [mesheryctl-system-channel](/pr-preview/pr-22672/reference/mesheryctl/system/channel/)
+- [mesheryctl-system-channel-set](/pr-preview/pr-22672/reference/mesheryctl/system/channel/set/)
+- [mesheryctl-system-channel-switch](/pr-preview/pr-22672/reference/mesheryctl/system/channel/switch/)
+- [mesheryctl-system-channel-view](/pr-preview/pr-22672/reference/mesheryctl/system/channel/view/)
+- [mesheryctl-system-check](/pr-preview/pr-22672/reference/mesheryctl/system/check/)
+- [mesheryctl-system-context](/pr-preview/pr-22672/reference/mesheryctl/system/context/)
+- [mesheryctl-system-context-create](/pr-preview/pr-22672/reference/mesheryctl/system/context/create/)
+- [mesheryctl-system-context-delete](/pr-preview/pr-22672/reference/mesheryctl/system/context/delete/)
+- [mesheryctl-system-context-list](/pr-preview/pr-22672/reference/mesheryctl/system/context/list/)
+- [mesheryctl-system-context-switch](/pr-preview/pr-22672/reference/mesheryctl/system/context/switch/)
+- [mesheryctl-system-context-view](/pr-preview/pr-22672/reference/mesheryctl/system/context/view/)
+- [mesheryctl-system-dashboard](/pr-preview/pr-22672/reference/mesheryctl/system/dashboard/)
+- [mesheryctl-system-delete](/pr-preview/pr-22672/reference/mesheryctl/system/delete/)
+- [mesheryctl-system-login](/pr-preview/pr-22672/reference/mesheryctl/system/login/)
+- [mesheryctl-system-logout](/pr-preview/pr-22672/reference/mesheryctl/system/logout/)
+- [mesheryctl-system-logs](/pr-preview/pr-22672/reference/mesheryctl/system/logs/)
+- [mesheryctl-system-provider](/pr-preview/pr-22672/reference/mesheryctl/system/provider/)
+- [mesheryctl-system-provider-list](/pr-preview/pr-22672/reference/mesheryctl/system/provider/list/)
+- [mesheryctl-system-provider-reset](/pr-preview/pr-22672/reference/mesheryctl/system/provider/reset/)
+- [mesheryctl-system-provider-set](/pr-preview/pr-22672/reference/mesheryctl/system/provider/set/)
+- [mesheryctl-system-provider-switch](/pr-preview/pr-22672/reference/mesheryctl/system/provider/switch/)
+- [mesheryctl-system-provider-view](/pr-preview/pr-22672/reference/mesheryctl/system/provider/view/)
+- [mesheryctl-system-reset](/pr-preview/pr-22672/reference/mesheryctl/system/reset/)
+- [mesheryctl-system-restart](/pr-preview/pr-22672/reference/mesheryctl/system/restart/)
+- [mesheryctl-system-start](/pr-preview/pr-22672/reference/mesheryctl/system/start/)
+- [mesheryctl-system-status](/pr-preview/pr-22672/reference/mesheryctl/system/status/)
+- [mesheryctl-system-stop](/pr-preview/pr-22672/reference/mesheryctl/system/stop/)
+- [mesheryctl-system-token](/pr-preview/pr-22672/reference/mesheryctl/system/token/)
+- [mesheryctl-system-token-create](/pr-preview/pr-22672/reference/mesheryctl/system/token/create/)
+- [mesheryctl-system-token-delete](/pr-preview/pr-22672/reference/mesheryctl/system/token/delete/)
+- [mesheryctl-system-token-list](/pr-preview/pr-22672/reference/mesheryctl/system/token/list/)
+- [mesheryctl-system-token-set](/pr-preview/pr-22672/reference/mesheryctl/system/token/set/)
+- [mesheryctl-system-token-view](/pr-preview/pr-22672/reference/mesheryctl/system/token/view/)
+- [mesheryctl-system-update](/pr-preview/pr-22672/reference/mesheryctl/system/update/)

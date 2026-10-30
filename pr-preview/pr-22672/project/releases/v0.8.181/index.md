@@ -1,0 +1,28 @@
+# v0.8.181
+
+LLMS index: [llms.txt](/pr-preview/pr-22672/llms.txt)
+
+---
+
+## What's New
+## 🔤 General
+- optimize resources response and add support for getting resource by id @aabidsofi19 (#16675)
+
+## 🖥 Meshery UI
+
+- Enhance error handling and logging in GraphQL resolvers; improve context management and subscription handling @leecalcote (#16654)
+
+## 🧰 Maintenance
+
+- fix: Update Go version to 1.25 in error codes updater workflow @lekaf974 (#16676)
+
+## 📖 Documentation
+
+- fix incorrect example in Hierarchical-Parent-Wallet section @safiya2610 (#16609)
+- Docs: Reframe model generation terminology from filtering to grouping @parthivsaikia (#16637)
+- Enhance error handling and logging in GraphQL resolvers; improve context management and subscription handling @leecalcote (#16654)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@aabidsofi19, @fitzergerald, @hortison, @l5io, @leecalcote, @lekaf974, @parthivsaikia and @safiya2610

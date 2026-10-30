@@ -1,0 +1,21 @@
+# v0.5.19
+
+LLMS index: [llms.txt](/pr-preview/pr-22672/llms.txt)
+
+---
+
+## What's New
+
+## 🔤 General
+
+- Bug: system start does not change platform if config file is already created @navendu-pottekkat (#3140)
+- Generate and upload coverage report for unit tests @ramrodo (#3135)
+- updated helm action @kumarabd (#3138)
+- [WIP] Eliminate unnecessary warning when changing endpoint @metonymic-smokey (#3132)
+
+## 🧰 Maintenance
+
+- Bump github.com/meshery/meshery-operator from 0.2.12 to 0.2.17 @dependabot (#3110)
+
+## 📖 Documentation
+- Updated Docs about the installation of Meshery with Windows w/signoff @debjani1413 (#3120)
