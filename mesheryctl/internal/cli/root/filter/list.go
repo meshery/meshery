@@ -102,7 +102,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			if utils.IsLocalProvider(provider) {
 				for _, v := range response.Filters {
 					FilterID := v.ID.String()
-					FilterName := v.Name
+					FilterName := strings.TrimSuffix(v.Name, filepath.Ext(v.Name))
 					CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
 					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
 					data = append(data, []string{FilterID, FilterName, CreatedAt, UpdatedAt})
@@ -118,7 +118,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 					} else {
 						owner = "null"
 					}
-					FilterName := v.Name
+					FilterName := strings.TrimSuffix(v.Name, filepath.Ext(v.Name))
 					CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
 					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
 					data = append(data, []string{FilterID, owner, FilterName, CreatedAt, UpdatedAt})
@@ -145,7 +145,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 				} else {
 					owner = "null"
 				}
-				FilterName := v.Name
+				FilterName := strings.TrimSuffix(v.Name, filepath.Ext(v.Name))
 				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
 				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
 				data = append(data, []string{FilterID, owner, FilterName, CreatedAt, UpdatedAt})
