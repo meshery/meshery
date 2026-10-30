@@ -114,6 +114,7 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 			return k8sResource, true, nil
 		}
 		if stDef != nil && stDef["status"] == "Failure" {
+			annotateFallbackForbidden(stDef, namespace)
 			return stDef, false, nil
 		}
 		return stDef, okDef, reqErrDef
@@ -300,6 +301,20 @@ func isFallbackNameConflict(err error, st map[string]interface{}, k8sResource ma
 		return statusErr.ErrStatus.Details.Name == name
 	}
 	return false
+}
+
+// annotateFallbackForbidden prefixes the message of a Forbidden Status returned by the retry in "default" with
+// the declared namespace and the retry, since the policy that rejected the workload belongs to "default", a
+// namespace the user never declared. Reason and code are left untouched, so callers still see a Forbidden.
+func annotateFallbackForbidden(st map[string]interface{}, declaredNamespace string) {
+	if reason, _ := st["reason"].(string); reason != string(metav1.StatusReasonForbidden) {
+		return
+	}
+	message, _ := st["message"].(string)
+	st["message"] = fmt.Sprintf(
+		"namespace %q declared by this design does not exist on the cluster, so the dry-run was retried in namespace \"default\" and was rejected by the policies of \"default\": %s",
+		declaredNamespace, message,
+	)
 }
 
 // isMissingNamespaceError reports whether the failure is a NotFound response for the target namespace itself.

@@ -901,3 +901,99 @@ func TestDryRun_InDesignNamespaces_FallbackNameConflict(t *testing.T) {
 		}
 	})
 }
+
+// forbiddenStatus builds the Forbidden Status the API server returns when a policy rejects a create.
+func forbiddenStatus(message string) metav1.Status {
+	return metav1.Status{
+		TypeMeta: metav1.TypeMeta{Kind: "Status", APIVersion: "v1"},
+		Status:   metav1.StatusFailure,
+		Message:  message,
+		Reason:   metav1.StatusReasonForbidden,
+		Code:     http.StatusForbidden,
+		Details:  &metav1.StatusDetails{Name: "web", Kind: "pods"},
+	}
+}
+
+// TestDryRun_InDesignNamespaces_FallbackForbidden pins that a Forbidden from the retry in default names the
+// declared namespace and the retry, while keeping the Forbidden reason, code and the server's own message.
+func TestDryRun_InDesignNamespaces_FallbackForbidden(t *testing.T) {
+	tests := []struct {
+		name    string
+		message string
+	}{
+		{
+			name:    "PodSecurity",
+			message: `pods "web" is forbidden: violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false`,
+		},
+		{
+			name:    "ResourceQuota",
+			message: `pods "web" is forbidden: exceeded quota: compute-quota, requested: limits.cpu=2, used: limits.cpu=4, limited: limits.cpu=4`,
+		},
+		{
+			name:    "RBAC",
+			message: `pods is forbidden: User "meshery" cannot create resource "pods" in API group "" in the namespace "default"`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rClient := newFakeRESTClient(func(req *http.Request) (*http.Response, error) {
+				if req.URL.Path == "/api/v1/namespaces/default/pods" {
+					return jsonResponse(http.StatusForbidden, forbiddenStatus(tt.message))
+				}
+				return jsonResponse(http.StatusNotFound, namespaceNotFoundStatus("staging"))
+			})
+
+			pod := map[string]interface{}{
+				"apiVersion": "v1",
+				"kind":       "Pod",
+				"metadata":   map[string]interface{}{"name": "web", "namespace": "staging"},
+			}
+			opts := DryRunOptions{
+				RESTMapper:         newTestRESTMapper(),
+				DeclaredNamespaces: map[string]bool{"staging": true},
+			}
+
+			st, success, err := dryRun(rClient, pod, "staging", false, opts)
+			if err != nil || success {
+				t.Fatalf("expected a failed dry-run with no error, got success=%v err=%v", success, err)
+			}
+			if st["reason"] != string(metav1.StatusReasonForbidden) {
+				t.Errorf("expected reason Forbidden, got %v", st["reason"])
+			}
+			if code, _ := st["code"].(float64); int(code) != http.StatusForbidden {
+				t.Errorf("expected code 403, got %v", st["code"])
+			}
+			message, _ := st["message"].(string)
+			for _, want := range []string{`"staging"`, `retried in namespace "default"`, tt.message} {
+				if !strings.Contains(message, want) {
+					t.Errorf("expected message to contain %q, got %q", want, message)
+				}
+			}
+		})
+	}
+
+	t.Run("Forbidden without a fallback keeps its message", func(t *testing.T) {
+		message := `pods "web" is forbidden: violates PodSecurity "restricted:latest"`
+		rClient := newFakeRESTClient(func(req *http.Request) (*http.Response, error) {
+			return jsonResponse(http.StatusForbidden, forbiddenStatus(message))
+		})
+		pod := map[string]interface{}{
+			"apiVersion": "v1",
+			"kind":       "Pod",
+			"metadata":   map[string]interface{}{"name": "web", "namespace": "staging"},
+		}
+		opts := DryRunOptions{
+			RESTMapper:         newTestRESTMapper(),
+			DeclaredNamespaces: map[string]bool{"staging": true},
+		}
+
+		st, success, err := dryRun(rClient, pod, "staging", false, opts)
+		if err != nil || success {
+			t.Fatalf("expected a failed dry-run with no error, got success=%v err=%v", success, err)
+		}
+		if st["message"] != message {
+			t.Errorf("expected the server's message unchanged, got %q", st["message"])
+		}
+	})
+}
