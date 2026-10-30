@@ -35,7 +35,7 @@ command: mesheryctl
 subcommand: nil
 categories: [mesheryctl-ref]
 aliases:
-- /reference/mesheryctl/
+- /reference/references/mesheryctl/
 ---
 
 `
@@ -51,7 +51,7 @@ command: adapter
 subcommand: nil
 categories: [mesheryctl-adapter]
 aliases:
-- /reference/mesheryctl/adapter/
+- /reference/references/mesheryctl/adapter/
 ---
 
 `
@@ -67,7 +67,7 @@ command: adapter
 subcommand: deploy
 categories: [mesheryctl-adapter]
 aliases:
-- /reference/mesheryctl/adapter/deploy/
+- /reference/references/mesheryctl/adapter/deploy/
 ---
 
 `
@@ -83,7 +83,7 @@ command: exp
 subcommand: relationship
 categories: [mesheryctl-exp]
 aliases:
-- /reference/mesheryctl/exp/relationship/generate/
+- /reference/references/mesheryctl/exp/relationship/generate/
 ---
 
 `
@@ -99,7 +99,7 @@ command: completion
 subcommand: nil
 categories: [mesheryctl-completion]
 aliases:
-- /reference/mesheryctl/completion/
+- /reference/references/mesheryctl/completion/
 ---
 
 `
@@ -115,7 +115,7 @@ command: version
 subcommand: nil
 categories: [mesheryctl-version]
 aliases:
-- /reference/mesheryctl/version/
+- /reference/references/mesheryctl/version/
 ---
 
 `
@@ -131,7 +131,7 @@ command: system
 subcommand: start
 categories: [mesheryctl-system]
 aliases:
-- /reference/mesheryctl/system/start/
+- /reference/references/mesheryctl/system/start/
 ---
 
 `
