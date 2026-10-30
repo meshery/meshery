@@ -725,10 +725,16 @@ func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
 		return err
 	}
 
-	_, err = MakeRequest(req)
+	resp, err := MakeRequest(req)
 	if err != nil {
 		return err
 	}
+	defer SafeClose(resp.Body)
+
+	if resp.StatusCode != http.StatusOK {
+		return ErrResponseStatus(resp.StatusCode)
+	}
+
 	return nil
 }
 
