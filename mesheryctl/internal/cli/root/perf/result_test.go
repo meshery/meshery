@@ -84,6 +84,15 @@ func TestResultCmd(t *testing.T) {
 
 	loggerTests := []utils.MesheryMultiURLCommamdTest{
 		{
+			Name:             "negative page",
+			Args:             []string{"result", "abhishek", "--page", "-1"},
+			URLs:             []utils.MockURL{},
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --page '-1'")),
+		},
+		{
 			Name:             "invalid output format",
 			Args:             []string{"result", "abhishek", "-o", "invalid"},
 			URLs:             []utils.MockURL{},
