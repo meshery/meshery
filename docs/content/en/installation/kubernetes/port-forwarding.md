@@ -123,7 +123,7 @@ For production deployments, consider using:
 
 - [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) - Install Meshery using Helm
 - [Install Meshery on Kubernetes]({{< ref "installation/kubernetes/_index.md" >}}) - General Kubernetes installation guide
-- [mesheryctl system dashboard]({{< ref "reference/references/mesheryctl/system/dashboard.md" >}}) - CLI reference for dashboard command
+- [mesheryctl system dashboard]({{< ref "reference/mesheryctl/system/dashboard.md" >}}) - CLI reference for dashboard command
 - [Accessing Meshery UI]({{< ref "installation/accessing-meshery-ui.md" >}}) - General guide for accessing Meshery UI
 
 {{< related-discussions tag="meshery" >}}
