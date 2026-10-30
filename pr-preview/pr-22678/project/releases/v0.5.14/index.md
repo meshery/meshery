@@ -1,0 +1,15 @@
+# v0.5.14
+
+LLMS index: [llms.txt](/pr-preview/pr-22678/llms.txt)
+
+---
+
+### What's New
+
+## 🔤 General
+
+- manifests updated @kumarabd (#2986)
+- [Lifecycle] Helm: Update container image repo with the correct location @nakul-shahdadpuri (#2973)
+- Kumarabd/feature/fixe @kumarabd (#2964)
+- Kumarabd/feature/fi @kumarabd (#2978)
+- Change endpoint in meshconfig(platform: Docker) @metonymic-smokey (#2951)
