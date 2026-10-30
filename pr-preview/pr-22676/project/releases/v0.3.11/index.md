@@ -1,0 +1,10 @@
+# v0.3.11
+
+LLMS index: [llms.txt](/pr-preview/pr-22676/llms.txt)
+
+---
+
+### What's new?
+
+- Mesheryctl
+  - Fixes minor user experience issues on `mesheryctl perf` command. See [Meshery CLI Commands & Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#) for reference.
