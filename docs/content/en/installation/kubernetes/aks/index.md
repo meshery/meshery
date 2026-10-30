@@ -2,7 +2,7 @@
 title: AKS
 categories: [kubernetes]
 aliases:
-- /installation/platforms/aks
+  - /installation/platforms/aks
 display_title: false
 image: installation/kubernetes/aks/images/aks.svg
 description: Manage your AKS clusters with Meshery. Deploy Meshery in AKS in-cluster or out-of-cluster.
@@ -87,7 +87,7 @@ For detailed instructions on installing Meshery using Helm V3, please refer to t
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
@@ -137,6 +137,7 @@ For detailed instructions on using port forwarding, see the [Port Forwarding Gui
 Then open `http://localhost:9081` in your browser.
 
 {{% alert title="Port Forwarding vs LoadBalancer" color="info" %}}
+
 - **LoadBalancer**: Best for production deployments requiring external access on AKS
 - **Port Forwarding**: Best for development, testing, and local access
 

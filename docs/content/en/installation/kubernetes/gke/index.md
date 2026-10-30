@@ -2,7 +2,7 @@
 title: GKE
 categories: [kubernetes]
 aliases:
-- /installation/platforms/gke
+  - /installation/platforms/gke
 display_title: false
 image: installation/kubernetes/gke/images/gke.png
 description: Install Meshery on Google Kubernetes Engine. Deploy Meshery in GKE in-cluster or outside of GKE out-of-cluster.
@@ -48,16 +48,18 @@ Read through the following considerations prior to deploying Meshery on GKE.
 3. After a successful login, set the Project Id:
 
 {{< code code="gcloud config set project [PROJECT_ID]" >}}
+
 1. After setting the Project Id, set the cluster context.
 
 {{< code code="gcloud container clusters get-credentials [CLUSTER_NAME] --zone [CLUSTER_ZONE]" >}}
+
 1. Verify your kubeconfig's current context.
 
 {{< code code="kubectl config current-context" >}}
 
 ### Preflight: Plan your access to Meshery UI
 
-1. If you are using port-forwarding, please refer to the [port-forwarding]({{< ref "reference/references/mesheryctl/system/dashboard.md" >}}) guide for detailed instructions.
+1. If you are using port-forwarding, please refer to the [port-forwarding]({{< ref "reference/mesheryctl/system/dashboard.md" >}}) guide for detailed instructions.
 2. If you are using a LoadBalancer, please refer to the [LoadBalancer]({{< ref "installation/kubernetes/_index.md#exposing-meshery-serviceloadbalancer" >}}) guide for detailed instructions.
 3. Customize your Meshery Provider Callback URL. Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way:
 
@@ -83,7 +85,7 @@ For detailed instructions on installing Meshery using Helm V3, please refer to t
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
@@ -135,6 +137,7 @@ For detailed instructions on using port forwarding, see the [Port Forwarding Gui
 Then open `http://localhost:9081` in your browser.
 
 {{% alert title="Port Forwarding vs LoadBalancer" color="info" %}}
+
 - **LoadBalancer**: Best for production deployments requiring external access on GKE
 - **Port Forwarding**: Best for development, testing, and local access
 

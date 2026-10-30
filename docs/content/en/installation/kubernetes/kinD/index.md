@@ -2,7 +2,7 @@
 title: KinD
 categories: [kubernetes]
 aliases:
-- /installation/platforms/kind
+  - /installation/platforms/kind
 display_title: false
 image: installation/kubernetes/kinD/images/kind.png
 description: Install Meshery on KinD. Deploy Meshery in KinD in-cluster or outside of KinD out-of-cluster.
@@ -90,7 +90,7 @@ For detailed port-forwarding instructions, see the [Port Forwarding Guide]({{< r
 
 {{< code code="mesheryctl system dashboard --port-forward" >}}
 
-Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
