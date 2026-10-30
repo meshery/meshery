@@ -75,7 +75,7 @@ func isDynamicUIEndpoint(reqURL string) bool {
 	}
 
 	for extension := range dynamicUIEndpoints {
-		if strings.HasPrefix(reqURL, extension) {
+		if reqURL == extension || strings.HasPrefix(reqURL, extension+"/") {
 			return true
 		}
 	}
@@ -85,7 +85,7 @@ func isDynamicUIEndpoint(reqURL string) bool {
 
 func getDynamicUIEndpoint(reqURL string) string {
 	for prefix, mapping := range dynamicUIEndpoints {
-		if strings.HasPrefix(reqURL, prefix) {
+		if reqURL == prefix || strings.HasPrefix(reqURL, prefix+"/") {
 			return mapping
 		}
 	}
