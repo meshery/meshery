@@ -64,7 +64,7 @@ This command forwards:
 
 If you installed Meshery in a different namespace or with a different service name:
 
-{{< code code="kubectl port-forward svc/meshery 9081:8080 --namespace <your-namespace>" >}}
+{{< code code="kubectl port-forward svc/meshery 9081:9081 --namespace <your-namespace>" >}}
 
 ### Port Forward to a Specific Pod
 

@@ -116,18 +116,6 @@ Then open `http://localhost:9081` in your browser.
 Choose the method that best fits your use case. You can use both methods simultaneously if needed.
 {{% /alert %}}
 
-## Post-Installation Steps
-
-Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
-
-You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
-
-{{< installation/accessing-meshery-ui >}}
-
-## Accessing Meshery UI
-
-After installing Meshery in-cluster, you can access the Meshery UI using one of several methods depending on your environment and requirements.
-
 ### Option 1: LoadBalancer Service (Recommended for Production)
 
 When Meshery is installed in-cluster, Meshery UI is served by a Kubernetes `Service` named `meshery` in the `meshery` namespace. This `Service` is created as type `LoadBalancer` by default, forwarding port `9081` (Meshery UI) to the Meshery Server container on port `8080`.
