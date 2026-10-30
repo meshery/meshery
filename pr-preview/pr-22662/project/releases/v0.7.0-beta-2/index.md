@@ -1,0 +1,20 @@
+# v0.7.0-beta-2
+
+LLMS index: [llms.txt](/pr-preview/pr-22662/llms.txt)
+
+---
+
+## What's New
+## 🔤 General
+## 🖥 Meshery UI
+
+- [policies] Improve support for policies evaluation. @MUzairS15 (#9517)
+
+## 🐛 Bug Fixes
+
+- Add missing Watch-List configuration on Meshery Helm Chart CRD @KiptoonKipkurui (#9562)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@KiptoonKipkurui, @MUzairS15, @leecalcote and @sudhanshutech
