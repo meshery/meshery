@@ -214,7 +214,8 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	}
 
 	if identifiedFile.Type == core.MesheryDesign {
-		if design, ok := identifiedFile.ParsedFile.(pattern.PatternFile); !ok {
+		design, err := mesheryDesignFromParsedFile(identifiedFile.ParsedFile)
+		if err != nil {
 			return emptyDesign, "", err
 		}
 
