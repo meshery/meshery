@@ -6,6 +6,10 @@ import React, { useEffect } from 'react';
 import { iconSmall } from '../../css/icons.styles';
 import PatternServiceFormCore from './PatternServiceFormCore';
 
+// Stacking order for the sticky Settings bar. It must stay above the form fields
+// rendered below it, otherwise they overlap the bar while scrolling.
+const SETTINGS_BAR_Z_INDEX = 2;
+
 /**
  * PatternServiceForm renders a form from the workloads schema
  * @param {{
@@ -85,7 +89,7 @@ function PatternServiceForm({
                 background: `${theme.palette.mode === 'dark' ? '#202020' : '#647881'}`,
                 position: 'sticky',
                 // Prevent form fields from overlapping the sticky Settings bar.
-                zIndex: 2,
+                zIndex: SETTINGS_BAR_Z_INDEX,
               }}
             >
               <Toolbar
