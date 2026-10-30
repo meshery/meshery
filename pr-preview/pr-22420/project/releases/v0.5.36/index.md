@@ -1,0 +1,24 @@
+# v0.5.36
+
+LLMS index: [llms.txt](/pr-preview/pr-22420/llms.txt)
+
+---
+
+## What's New
+**General**
+- [mesheryctl] Fix for  @piyushsingariya (#3451)
+- [Fix] Add case for empty token @utkarsh-pro (#3445)
+
+## 🧰 Maintenance
+
+- [CI] - Added Meshery UI Figma File Link @adithyaakrishna (#3437)
+- [Docs] Release Notes for Meshery v0.5.35 @l5io (#3428)
+
+## 📖 Documentation
+
+- Update missing release pages in doc @alphaX86 (#3453)
+
+## Contributors
+
+Thank you to our contributors for making this release possible:
+@adithyaakrishna, @alphaX86, @l5io, @leecalcote, @piyushsingariya and @utkarsh-pro
