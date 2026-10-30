@@ -304,6 +304,11 @@ func TestIsDynamicUIEndpoint(t *testing.T) {
 			reqURL: "/settings",
 			want:   false,
 		},
+		{
+			name:   "extension-extra is not a dynamic extension endpoint",
+			reqURL: "/extension-extra",
+			want:   false,
+		},
 	}
 
 	for _, tt := range tests {
@@ -337,6 +342,11 @@ func TestGetDynamicUIEndpoint(t *testing.T) {
 		{
 			name:   "extensions page",
 			reqURL: "/extensions",
+			want:   "",
+		},
+		{
+			name:   "extension-extra does not map to a dynamic endpoint",
+			reqURL: "/extension-extra",
 			want:   "",
 		},
 	}
