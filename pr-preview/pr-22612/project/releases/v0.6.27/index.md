@@ -1,0 +1,19 @@
+# v0.6.27
+
+LLMS index: [llms.txt](/pr-preview/pr-22612/llms.txt)
+
+---
+
+## What's New
+## 🔤 General
+- [CI] Adding custom callback URL for playground @leecalcote (#6536)
+
+## 🖥 Meshery UI
+
+- removed modal-like focus on popup @franklinekoh (#6534)
+- [Provider-UI] Revert from v5 to v4 of styled-jsx @leecalcote (#6537)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@MUzairS15, @franklinekoh and @leecalcote
