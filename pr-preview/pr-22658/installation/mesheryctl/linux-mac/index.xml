@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Install Meshery CLI on Linux or macOS on Documentation</title><link>/pr-preview/pr-22658/installation/mesheryctl/linux-mac/</link><description>Recent content in Install Meshery CLI on Linux or macOS on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/pr-preview/pr-22658/installation/mesheryctl/linux-mac/index.xml" rel="self" type="application/rss+xml"/><item><title>Bash</title><link>/pr-preview/pr-22658/installation/mesheryctl/linux-mac/bash/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22658/installation/mesheryctl/linux-mac/bash/</guid><description>&lt;h1 id="install-meshery-cli-with-bash"&gt;
+	Install Meshery CLI with Bash
+&lt;/h1&gt;
+&lt;p&gt;To install or upgrade &lt;code&gt;mesheryctl&lt;/code&gt; with Bash, run one of the following commands.&lt;/p&gt;
+&lt;h4 id="option-1-only-install-mesheryctl-binary"&gt;
+	Option 1: Only install &lt;code&gt;mesheryctl&lt;/code&gt; binary
+&lt;/h4&gt;
+ &lt;pre class="codeblock-pre"&gt;
+ &lt;div class="codeblock"&gt;
+ &lt;div class="clipboardjs"&gt;
+ $ curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
+ &lt;/div&gt;&lt;/div&gt;
+ &lt;/pre&gt;
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;h4 id="option-2-install-mesheryctl-binary-and-deploy-meshery-on-docker"&gt;
+	Option 2: Install &lt;code&gt;mesheryctl&lt;/code&gt; binary and deploy Meshery on Docker
+&lt;/h4&gt;
+ &lt;pre class="codeblock-pre"&gt;
+ &lt;div class="codeblock"&gt;
+ &lt;div class="clipboardjs"&gt;
+ $ curl -L https://meshery.io/install | PLATFORM=docker bash -
+ &lt;/div&gt;&lt;/div&gt;
+ &lt;/pre&gt;
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;h4 id="option-3-install-mesheryctl-binary-and-deploy-meshery-on-kubernetes"&gt;
+	Option 3: Install &lt;code&gt;mesheryctl&lt;/code&gt; binary and deploy Meshery on Kubernetes
+&lt;/h4&gt;
+ &lt;pre class="codeblock-pre"&gt;
+ &lt;div class="codeblock"&gt;
+ &lt;div class="clipboardjs"&gt;
+ $ curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
+ &lt;/div&gt;&lt;/div&gt;
+ &lt;/pre&gt;
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;h4 id="option-4-install-mesheryctl-binary-and-meshery-adapters"&gt;
+	Option 4: Install &lt;code&gt;mesheryctl&lt;/code&gt; binary and Meshery adapter(s)
+&lt;/h4&gt;
+&lt;p&gt;Install the &lt;code&gt;mesheryctl&lt;/code&gt; binary and deploy Meshery together with one or more &lt;a href="/pr-preview/pr-22658/concepts/architecture/adapters/"&gt;adapters&lt;/a&gt;. Separate multiple adapters with spaces, for example &lt;code&gt;ADAPTERS=&amp;quot;istio linkerd&amp;quot;&lt;/code&gt;. &lt;code&gt;mesheryctl&lt;/code&gt; can deploy the &lt;code&gt;consul&lt;/code&gt;, &lt;code&gt;istio&lt;/code&gt;, &lt;code&gt;linkerd&lt;/code&gt;, &lt;code&gt;nsm&lt;/code&gt;, &lt;code&gt;kuma&lt;/code&gt;, &lt;code&gt;traefik&lt;/code&gt;, and &lt;code&gt;cilium&lt;/code&gt; adapters. The script also accepts &lt;code&gt;osm&lt;/code&gt;, &lt;code&gt;nighthawk&lt;/code&gt;, &lt;code&gt;nginx&lt;/code&gt;, &lt;code&gt;tanzu&lt;/code&gt;, and &lt;code&gt;app&lt;/code&gt;, but &lt;code&gt;mesheryctl&lt;/code&gt; has no deployment definition for those adapters, so &lt;code&gt;mesheryctl system start&lt;/code&gt; rejects them. The script ignores any other value.&lt;/p&gt;</description></item><item><title>Brew</title><link>/pr-preview/pr-22658/installation/mesheryctl/linux-mac/brew/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22658/installation/mesheryctl/linux-mac/brew/</guid><description>&lt;h1 id="install-meshery-cli-with-homebrew"&gt;
+	Install Meshery CLI with Homebrew
+&lt;/h1&gt;
+&lt;h3 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h3&gt;
+&lt;p&gt;You need &lt;a href="https://brew.sh"&gt;Homebrew&lt;/a&gt; installed on your &lt;strong&gt;Linux&lt;/strong&gt; or &lt;strong&gt;macOS&lt;/strong&gt; system.&lt;/p&gt;
+&lt;h3 id="install-mesheryctl-using-brew"&gt;
+	Install &lt;code&gt;mesheryctl&lt;/code&gt; using Brew
+&lt;/h3&gt;
+&lt;p&gt;To install &lt;code&gt;mesheryctl&lt;/code&gt; with Homebrew, run:&lt;/p&gt;
+&lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
+ &lt;div class="clipboardjs"&gt;
+ $ brew install mesheryctl
+ &lt;/div&gt;&lt;/div&gt;
+&lt;/pre&gt;
+&lt;p&gt;You&amp;rsquo;re ready to run Meshery. To start it on Kubernetes, run:&lt;/p&gt;
+&lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
+&lt;div class="clipboardjs"&gt;
+ $ mesheryctl system start
+
+&lt;/div&gt;&lt;/div&gt;
+&lt;/pre&gt;
+&lt;p&gt;To run Meshery on Docker instead, run:&lt;/p&gt;
+&lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
+&lt;div class="clipboardjs"&gt;
+ $ mesheryctl system start -p docker
+
+&lt;/div&gt;&lt;/div&gt;
+&lt;/pre&gt;
+&lt;p&gt;To customize the callback URL that your Provider redirects to after sign-in, set &lt;code&gt;MESHERY_SERVER_CALLBACK_URL&lt;/code&gt; when you start Meshery:&lt;/p&gt;</description></item></channel></rss>
