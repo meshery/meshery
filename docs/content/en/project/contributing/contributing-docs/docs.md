@@ -100,6 +100,8 @@ make docker
 
 This runs `docker compose watch`, which builds and serves the site inside a container.
 
+The initial startup may take several minutes while Hugo downloads modules and builds the site. Once ready, the site will be available at <http://localhost:1313/>.
+
 ### Using Gitpod
 - Ensure you have an account on <a href="https://www.gitpod.io/" class="meshery-light">Gitpod</a> and add the <a href="https://chromewebstore.google.com/detail/gitpod/dodmmooeoklaejobgleioelladacbeki" class="meshery-light">Gitpod extension</a> to your browser.
 - Open your forked Meshery repository on GitHub.
