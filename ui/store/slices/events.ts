@@ -150,6 +150,7 @@ export const {
   setCurrentView,
   updateEvent,
   toggleNotificationCenter,
+  openNotificationCenter,
   closeNotificationCenter,
   updateEvents,
 } = eventsSlice.actions;

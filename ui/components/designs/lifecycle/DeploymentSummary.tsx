@@ -2,7 +2,7 @@ import { styled, useTheme } from '@/theme';
 import { Box, Stack, Typography } from '@sistent/sistent';
 
 import { FormatStructuredData, TextWithLinks } from '../../data-formatter';
-import { SEVERITY_STYLE } from '../../layout/NotificationCenter/constants';
+import { SEVERITY, SEVERITY_STYLE } from '../../layout/NotificationCenter/constants';
 import { ComponentIcon } from './common';
 import { Button } from '@sistent/sistent';
 import { ExternalLinkIcon, componentIcon } from '@sistent/sistent';
@@ -54,14 +54,14 @@ const DeploymentComponentFormatter = ({ componentDetail, deploymentType }) => {
 const DeploymentSummaryFormatter_ = ({ event }) => {
   const theme = useTheme();
   const eventStyle = SEVERITY_STYLE[event?.severity] || {};
-  const errors = event.metadata?.error;
+  const errors = event?.metadata?.error;
   const errorAction = event?.action;
   const router = useRouter();
-  const componentsDetails = Object.values(event.metadata?.summary || {}).flatMap(
-    (perComponentDetail) => {
+  const componentsDetails = Object.values(event?.metadata?.summary || {}).flatMap(
+    (perComponentDetail: any) => {
       perComponentDetail = perComponentDetail?.flatMap ? perComponentDetail : [];
-      return perComponentDetail.flatMap((perContextDetail) =>
-        perContextDetail?.Summary?.map((detail) => ({
+      return perComponentDetail.flatMap((perContextDetail: any) =>
+        perContextDetail?.Summary?.map((detail: any) => ({
           ...detail,
           Location: perContextDetail.Location,
         })),
@@ -70,6 +70,11 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
   );
 
   const is_operator_enabled = useIsOperatorEnabled();
+
+  const isWarning = event?.severity === SEVERITY.WARNING;
+  const isError = event?.severity === SEVERITY.ERROR;
+  const { total, failed } = event?.metadata || {};
+  const hasCounts = total != null && failed != null;
 
   return (
     <Box>
@@ -93,8 +98,8 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
             color="primary"
             onClick={() =>
               openViewScopedToDesignInOperator(
-                event?.metadata?.design_name,
-                event?.metadata?.design_id,
+                event?.metadata?.designName,
+                event?.metadata?.designId,
                 router,
               )
             }
@@ -104,6 +109,13 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
           </Button>
         )}
       </StyledDetailBox>
+
+      {(isWarning || isError) && hasCounts && (
+        <Typography variant="textB1Regular" style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
+          {`${failed} of ${total} components failed`}
+        </Typography>
+      )}
+
       {errors && (
         <StyledDetailBox severityColor={eventStyle.color} bgOpacity={0}>
           <ErrorMetadataFormatter metadata={errors} event={event} />

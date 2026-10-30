@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext, useCallback, useRef } from 'react';
 import { ValidateDesign } from './ValidateDesign';
 import { DryRunDesign, getTotalCountOfDeploymentErrors } from './DryRun';
 import {
@@ -9,6 +9,7 @@ import {
   ModalButtonPrimary,
   ModalButtonSecondary,
   Box,
+  Button,
   Typography,
 } from '@sistent/sistent';
 import { CheckBoxField, DEPLOYMENT_TYPE, Loading } from './common';
@@ -22,13 +23,13 @@ import {
   useDryRunValidationResults,
   useIsValidatingDryRun,
 } from 'machines/validator/designValidator';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { styled } from '@sistent/sistent';
 import { useTheme } from '@sistent/sistent';
 import { EnvironmentIcon } from '@sistent/sistent';
-import { useContext } from 'react';
 import { NotificationCenterContext } from '../../layout/NotificationCenter';
-import { useEffect } from 'react';
+import { openNotificationCenter } from '@/store/slices/events';
+import { getLoginRedirectUrl } from '../../../lib/data-fetch';
 import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
 import { capitalize } from 'lodash';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
@@ -38,6 +39,8 @@ import EnvironmentModal from '../../environments/EnvironmentFormModal';
 import { openViewScopedToDesignInOperator } from '@/utils/utils';
 import { useRouter } from 'next/router';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
+
+export const DEPLOYMENT_EVENT_TIMEOUT_MS = 90000;
 
 export const ValidateContent = {
   btnText: 'Next',
@@ -57,37 +60,123 @@ const StepContent = styled('div', {
   backgroundColor: backgroundColor || theme.palette.background.default,
 }));
 
-export const FinishDeploymentStep = ({ perform_deployment, deployment_type, autoOpenView }) => {
+export const FinishDeploymentStep = ({
+  design,
+  perform_deployment,
+  deployment_type,
+  autoOpenView,
+}) => {
   const { operationsCenterActorRef } = useContext(NotificationCenterContext);
-
-  const [isDeploying, setIsDeploying] = useState(false);
-  const [deployEvent, setDeployEvent] = useState();
-  const [deployError, setDeployError] = useState(null);
+  const dispatch = useDispatch();
   const router = useRouter();
 
-  useEffect(() => {
-    try {
-      setIsDeploying(true);
-      perform_deployment();
-    } catch (error) {
-      setDeployError(error);
-      setIsDeploying(false);
-    }
+  const [isDeploying, setIsDeploying] = useState(true);
+  const [deployEvent, setDeployEvent] = useState<any>(null);
+  const [deployError, setDeployError] = useState<any>(null);
+  const [isTimedOut, setIsTimedOut] = useState(false);
+
+  const isMountedRef = useRef(true);
+  const sentRef = useRef(false);
+  const pendingRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const performRef = useRef(perform_deployment);
+
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      pendingRef.current = false;
+      if (isMountedRef.current) {
+        setIsTimedOut(true);
+        setIsDeploying(false);
+      }
+    }, DEPLOYMENT_EVENT_TIMEOUT_MS);
   }, []);
 
+  const sendDeploymentRequest = useCallback(async () => {
+    setIsDeploying(true);
+    setDeployError(null);
+    setIsTimedOut(false);
+    pendingRef.current = true;
+    startTimer();
+
+    try {
+      await performRef.current();
+    } catch (err: any) {
+      pendingRef.current = false;
+      if (!isMountedRef.current) return;
+      if (timerRef.current) clearTimeout(timerRef.current);
+      setIsDeploying(false);
+      setIsTimedOut(false);
+      const d = err?.data;
+      const msg =
+        typeof d?.message === 'string'
+          ? d.message
+          : typeof d?.error === 'string'
+            ? d.error
+            : typeof d === 'string'
+              ? d
+              : typeof err?.message === 'string'
+                ? err.message
+                : typeof err?.error === 'string'
+                  ? err.error
+                  : '';
+      const s = err?.originalStatus ?? err?.status;
+      const status = typeof s === 'number' ? s : undefined;
+      setDeployError({
+        status,
+        isAuthError: status === 401 || status === 403,
+        message: msg,
+      });
+    }
+  }, [startTimer]);
+
   useEffect(() => {
+    performRef.current = perform_deployment;
+  }, [perform_deployment]);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    if (!sentRef.current) {
+      sentRef.current = true;
+      sendDeploymentRequest();
+    } else if (pendingRef.current) {
+      startTimer();
+    }
+
+    return () => {
+      isMountedRef.current = false;
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [sendDeploymentRequest, startTimer]);
+
+  useEffect(() => {
+    if (!operationsCenterActorRef?.on) return;
+
     const subscription = operationsCenterActorRef.on(
       OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
-      (event) => {
-        const serverEvent = event.data.event;
-        if (serverEvent.action === deployment_type) {
+      (event: any) => {
+        if (!isMountedRef.current) return;
+        const serverEvent = event?.data?.event;
+        if (!serverEvent) return;
+
+        const matchesDesign =
+          serverEvent.actedUpon === design?.id || serverEvent.metadata?.designId === design?.id;
+
+        if (matchesDesign && serverEvent.action === deployment_type) {
+          pendingRef.current = false;
+          if (timerRef.current) clearTimeout(timerRef.current);
           setIsDeploying(false);
+          setIsTimedOut(false);
           setDeployEvent(serverEvent);
 
-          if (autoOpenView && serverEvent.severity == SEVERITY.SUCCESS) {
+          if (
+            autoOpenView &&
+            deployment_type === DEPLOYMENT_TYPE.DEPLOY &&
+            (serverEvent.severity === SEVERITY.INFO || serverEvent.severity === SEVERITY.SUCCESS)
+          ) {
             openViewScopedToDesignInOperator(
-              serverEvent?.metadata?.design_name,
-              serverEvent?.metadata?.design_id,
+              serverEvent?.metadata?.designName,
+              serverEvent?.metadata?.designId,
               router,
             );
           }
@@ -95,28 +184,50 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
       },
     );
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => subscription?.unsubscribe?.();
+  }, [operationsCenterActorRef, design?.id, deployment_type, autoOpenView, router]);
 
   const progressMessage = `${capitalize(deployment_type)}ing  design`;
+
+  if (deployEvent) {
+    return <DeploymentSummaryFormatter event={deployEvent} />;
+  }
 
   if (isDeploying) {
     return <Loading message={progressMessage} />;
   }
 
-  if (deployError) {
+  if (deployError || isTimedOut) {
+    const errorText = isTimedOut
+      ? 'Deployment status unknown. Check the notification center or cluster for details.'
+      : deployError?.isAuthError
+        ? 'Your session has expired. Please log in again.'
+        : typeof deployError?.status === 'number'
+          ? `Error ${deployError.status}: ${deployError.message || 'An unexpected error occurred.'}`
+          : deployError?.message ||
+            'A network error occurred. Please check your connection and try again.';
+
+    const handleAction = isTimedOut
+      ? () => dispatch(openNotificationCenter({}))
+      : deployError?.isAuthError
+        ? () => {
+            window.location.href = getLoginRedirectUrl();
+          }
+        : sendDeploymentRequest;
+
     return (
-      <Typography variant="h5" color="error">
-        Error deploying design: {JSON.stringify(deployError)}
-      </Typography>
+      <Box display="flex" flexDirection="column" gap={2} alignItems="flex-start">
+        <Typography variant="h6" color={isTimedOut ? undefined : 'error'}>
+          {errorText}
+        </Typography>
+        <Button variant="contained" color="primary" onClick={handleAction}>
+          {isTimedOut ? 'Open Notification Center' : deployError?.isAuthError ? 'Log In' : 'Retry'}
+        </Button>
+      </Box>
     );
   }
 
-  if (!deployEvent) {
-    return null;
-  }
-
-  return <DeploymentSummaryFormatter event={deployEvent} />;
+  return null;
 };
 
 const SelectTargetStep = () => {
@@ -210,7 +321,7 @@ export const UpdateDeploymentStepper = ({
 
   const FinalizeBackgroundColor = theme.palette?.background?.blur.light;
   const actionFunction = () => {
-    handlePerformDeployment({
+    return handlePerformDeployment({
       design,
       selectedK8sContexts: selectedDeployableK8scontextIds,
     });
