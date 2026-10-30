@@ -33,6 +33,20 @@ test('rejects a >100-file PR whose out-of-scope file is beyond the first page', 
   assert.deepEqual(result.invalidFiles, ['server/handlers/evil.go']);
 });
 
+test('rejects a rename that moves a file out of docs/meetings/ (previous_filename)', () => {
+  // listFiles reports a rename with the new path in filename and the old path
+  // in previous_filename. The new path is in scope but the move deletes a file
+  // outside docs/meetings/, so the PR must be blocked.
+  const files = [
+    { filename: 'docs/meetings/2026/a.md', previous_filename: 'server/a.go', status: 'renamed' },
+  ];
+
+  const result = validateFiles(files);
+
+  assert.equal(result.isValid, false);
+  assert.ok(result.invalidFiles.includes('server/a.go'));
+});
+
 test('accepts a large PR that is entirely under docs/meetings/', () => {
   const files = Array.from({ length: 250 }, (_, i) => meetingFile(i));
 

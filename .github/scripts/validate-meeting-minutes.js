@@ -41,13 +41,29 @@ function validateFiles(files) {
   const invalidFiles = [];
 
   for (const file of files) {
-    if (file.filename.startsWith(ALLOWED_PATH_PREFIX)) {
+    // A renamed file reports its new path in `filename` and its old path in
+    // `previous_filename`. BOTH must be under docs/meetings/: a rename that
+    // moves a file out of (or into) docs/meetings/ still changes a file
+    // outside the allowed area, so it must block the auto-merge.
+    const paths = [file.filename];
+    if (file.previous_filename) {
+      paths.push(file.previous_filename);
+    }
+
+    const outside = paths.filter((p) => !p.startsWith(ALLOWED_PATH_PREFIX));
+    if (outside.length === 0) {
       validFiles.push(file.filename);
     } else {
-      invalidFiles.push(file.filename);
+      for (const p of outside) {
+        invalidFiles.push(p);
+      }
     }
   }
 
+  // NB: a PR that genuinely changes exactly MAX_ENUMERABLE_FILES is also
+  // rejected — the flattened list cannot distinguish "exactly 3000" from
+  // "capped at 3000", and failing closed is the safe default for a workflow
+  // that bypasses branch protection.
   const enumerationCapped = files.length >= MAX_ENUMERABLE_FILES;
   const isValid =
     files.length > 0 && invalidFiles.length === 0 && !enumerationCapped;
