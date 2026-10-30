@@ -2,12 +2,6 @@ code {
   font-size: 95%;
   color: var(--code);
   word-break: break-word;
-  & ::-webkit-scrollbar {
-    display: none;
-  }
-}
-code::-webkit-scrollbar {
-  display: none;
 }
 .td-content {
   p code,
@@ -63,12 +57,6 @@ code::-webkit-scrollbar {
 pre {
   display: block;
   color: var(--color-grey-medium);
-  & ::-webkit-scrollbar {
-    display: none;
-  }
-}
-pre::-webkit-scrollbar {
-  display: none;
 }
 .highlight pre {
   border: none !important;
@@ -79,9 +67,6 @@ pre::-webkit-scrollbar {
     background-color: var(--color-primary-medium);
     padding: 0.75rem;
     overflow: hidden;
-    &::-webkit-scrollbar {
-      display: none;
-    }
   }
   .highlight pre {
     margin: 0;
