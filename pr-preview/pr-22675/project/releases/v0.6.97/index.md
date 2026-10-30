@@ -1,0 +1,21 @@
+# v0.6.97
+
+LLMS index: [llms.txt](/pr-preview/pr-22675/llms.txt)
+
+---
+
+## What's New
+## 🔤 General
+- Changed docs for catalog APIs @abdullah1308 (#7882)
+- Fixed unmarshal error due to catalog API change @abdullah1308 (#7875)
+- fix: Return error instead of nil client connection in gRPC err @Revolyssup (#7878)
+- fix crash in docker env due to GLIBC_2.34  not found @MUzairS15 (#7873)
+
+## 🧰 Maintenance
+
+- add workflow  dispatch for edge-release action @MUzairS15 (#7874)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@MUzairS15, @Revolyssup, @abdullah1308, @leecalcote, @theBeginner86 and MUzairS15
