@@ -10,7 +10,7 @@ description: Install Meshery on Google Kubernetes Engine. Deploy Meshery in GKE 
 
 <h1>Quick Start with GKE <img src="images/gke.png" style="width:35px;height:35px;" /></h1>
 
-Manage your GKE clusters with Meshery. Deploy Meshery inside your GKE cluster ([in-cluster](#in-cluster-installation)), or run it outside of GKE ([out-of-cluster]({{< ref "installation/kubernetes/_index.md#out-of-cluster-installation" >}})) and connect it to your cluster. **_Note: We recommend installing Meshery in your GKE clusters._**
+Manage your GKE clusters with Meshery. Deploy Meshery in GKE [in-cluster](#in-cluster-installation) or outside of GKE [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your GKE clusters_**
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
   <ol>
@@ -39,53 +39,106 @@ Follow the steps below to install Meshery in your GKE cluster.
 
 ## Preflight Checks
 
-Before you deploy Meshery on GKE, check the following.
+Read through the following considerations prior to deploying Meshery on GKE.
 
 ### Preflight: Cluster Connectivity
 
-Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) cluster. GKE kubeconfigs authenticate through `gke-gcloud-auth-plugin`, so [install the plugin](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_plugin) first.
-
-1. Sign in to your Google Cloud account with [gcloud auth login](https://cloud.google.com/sdk/gcloud/reference/auth/login).
-2. Set the project that contains your cluster:
+1. Verify your connection to a Google Kubernetes Engine Cluster using the gcloud CLI.
+2. Log in to your GCP account using [gcloud auth login](https://cloud.google.com/sdk/gcloud/reference/auth/login).
+3. After a successful login, set the Project Id:
 
 {{< code code="gcloud config set project [PROJECT_ID]" >}}
-3. Download the cluster's credentials and make it your current context:
+1. After setting the Project Id, set the cluster context.
 
-{{< code code="gcloud container clusters get-credentials [CLUSTER_NAME] --location [CLUSTER_LOCATION]" >}}
-4. Verify your kubeconfig's current context:
+{{< code code="gcloud container clusters get-credentials [CLUSTER_NAME] --zone [CLUSTER_ZONE]" >}}
+1. Verify your kubeconfig's current context.
 
 {{< code code="kubectl config current-context" >}}
 
 ### Preflight: Plan your access to Meshery UI
 
-1. To reach Meshery UI through port-forwarding, see the [port-forwarding]({{< ref "reference/mesheryctl/system/dashboard.md" >}}) guide.
-2. To reach it through a load balancer, see [Exposing Meshery Service (LoadBalancer)]({{< ref "installation/kubernetes/_index.md#exposing-meshery-serviceloadbalancer" >}}).
-3. If users reach Meshery through a custom host name, set the callback URL that your Provider redirects to after sign-in when you start Meshery:
+1. If you are using port-forwarding, please refer to the [port-forwarding]({{< ref "reference/references/mesheryctl/system/dashboard.md" >}}) guide for detailed instructions.
+2. If you are using a LoadBalancer, please refer to the [LoadBalancer]({{< ref "installation/kubernetes/_index.md#exposing-meshery-serviceloadbalancer" >}}) guide for detailed instructions.
+3. Customize your Meshery Provider Callback URL. Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way:
 
-{{< code code="MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start -p kubernetes" >}}
+{{< code code="MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start" >}}
 
-With a load balancer, Meshery UI is then available at `http://[EXTERNAL-IP]:9081`, where `EXTERNAL-IP` is the external address of the `meshery` service.
+Meshery should now be running in your GKE cluster, and the Meshery UI should be accessible at the `EXTERNAL IP` of the `meshery` service.
 
 ## Installation: Using `mesheryctl`
 
-With your GKE cluster as the current context, start Meshery on Kubernetes:
+Use Meshery's CLI to streamline your connection to your GKE cluster. Configure Meshery to connect to your GKE cluster by executing:
 
-{{< code code="mesheryctl system start -p kubernetes" >}}
+{{< code code="mesheryctl system config gke" >}}
 
-Meshery Server runs in the cluster and connects to it automatically, so you do not need to upload a kubeconfig. To connect a Meshery Server that runs elsewhere to this cluster, sign in with `mesheryctl system login` and run `mesheryctl connection create --type gke`. (`mesheryctl system config gke` is deprecated.)
+Once configured, execute the following command to start Meshery.
 
-If `mesheryctl` reports an authentication error, sign in with `mesheryctl system login`. See [Authenticate with Meshery via CLI]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}).
+{{< code code="mesheryctl system start" >}}
+
+If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}) to learn more.
 
 ## Installation: Using Helm
 
-To install Meshery with Helm 3, see the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide. This guide is common for all cloud providers including AWS, Azure, GCP, and Minikube cluster services.
 
 ## Post-Installation Steps
 
-Optionally, verify the health of your Meshery deployment with <a href='{{< ref "reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
-You're ready to use Meshery. Open Meshery UI in your browser.
+You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
 {{< installation/accessing-meshery-ui >}}
+
+For more information on accessing Meshery UI, including port-forwarding options, see the [Accessing Meshery UI]({{< ref "installation/kubernetes/_index.md#accessing-meshery-ui" >}}) section.
+
+## Accessing Meshery UI
+
+After installing Meshery in-cluster, you can access the Meshery UI using one of several methods depending on your environment and requirements.
+
+### Option 1: LoadBalancer Service (Recommended for Production)
+
+When Meshery is installed in-cluster, Meshery UI is served by a Kubernetes `Service` named `meshery` in the `meshery` namespace. This `Service` is created as type `LoadBalancer` by default, forwarding port `9081` (Meshery UI) to the Meshery Server container on port `8080`.
+
+On GKE, a `LoadBalancer` `Service` instructs Google Cloud to provision an external load balancer and assign it a routable `EXTERNAL-IP`. Retrieve the address with:
+
+{{< code code="kubectl get service meshery --namespace meshery" >}}
+
+Once the `EXTERNAL-IP` column shows an address instead of `<pending>`, open Meshery UI in your browser at `http://[EXTERNAL-IP]:9081`.
+
+If the `Service` was previously set to another type (for example, `ClusterIP`), switch it back to `LoadBalancer`:
+
+{{< code code=`kubectl patch service meshery --namespace meshery --type merge -p '{"spec":{"type":"LoadBalancer"}}'` >}}
+
+{{% alert title="EXTERNAL-IP not assigned?" color="warning" %}}
+A `LoadBalancer` `Service` is only assigned an external address when the cluster runs a load balancer controller. GCP provides one out of the box for GKE; however, if you encounter issues, ensure your GKE cluster has the cloud provider integration enabled. Alternatively, you can use port-forwarding instead.
+{{% /alert %}}
+
+### Option 2: Port Forwarding (Universal)
+
+Port forwarding is a universal method to access Meshery UI that works across all Kubernetes environments, including local clusters and managed clouds. This is particularly useful when:
+
+- A LoadBalancer is not available or practical
+- You're working in a local development environment
+- You need temporary access without exposing Meshery externally
+- You're behind a firewall or in a restricted network
+
+For detailed instructions on using port forwarding, see the [Port Forwarding Guide]({{< ref "installation/kubernetes/port-forwarding.md" >}}).
+
+**Quick example using mesheryctl:**
+
+{{< code code="mesheryctl system dashboard --port-forward" >}}
+
+**Quick example using kubectl:**
+
+{{< code code="kubectl port-forward svc/meshery 9081:9081 --namespace meshery" >}}
+
+Then open `http://localhost:9081` in your browser.
+
+{{% alert title="Port Forwarding vs LoadBalancer" color="info" %}}
+- **LoadBalancer**: Best for production deployments requiring external access on GKE
+- **Port Forwarding**: Best for development, testing, and local access
+
+Choose the method that best fits your use case. You can use both methods simultaneously if needed.
+{{% /alert %}}
 
 {{< related-discussions tag="meshery" >}}
