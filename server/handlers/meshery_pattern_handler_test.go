@@ -1,10 +1,14 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
 	component "github.com/meshery/schemas/models/v1beta2/component"
@@ -641,4 +645,190 @@ func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) 
 	require.True(t, ok, "design field should be a map")
 	assert.Equal(t, "test-design", designSub["name"])
 	assert.Equal(t, id.String(), designSub["id"])
+}
+
+// TestCloneMesheryPatternHandler_EmptyIDReturns400 verifies that calling
+// CloneMesheryPatternHandler with an empty resource ID and a valid JSON payload
+// returns HTTP 400 Bad Request and does not panic with a nil pointer dereference.
+func TestCloneMesheryPatternHandler_EmptyIDReturns400(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	body := []byte(`{"name": "my-cloned-pattern"}`)
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	req = mux.SetURLVars(req, map[string]string{"id": ""})
+
+	rec := httptest.NewRecorder()
+
+	assert.NotPanics(t, func() {
+		h.CloneMesheryPatternHandler(rec, req, nil, nil, nil)
+	}, "CloneMesheryPatternHandler must not panic when pattern ID is empty")
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+	assert.Contains(t, rec.Body.String(), "clone design")
+}
+
+// TestCloneMesheryFilterHandler_EmptyIDReturns400 verifies that calling
+// CloneMesheryFilterHandler with an empty resource ID and a valid JSON payload
+// returns HTTP 400 Bad Request and does not panic with a nil pointer dereference.
+func TestCloneMesheryFilterHandler_EmptyIDReturns400(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	body := []byte(`{"name": "my-cloned-filter"}`)
+	req := httptest.NewRequest(http.MethodPost, "/api/filter/clone/", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	req = mux.SetURLVars(req, map[string]string{"id": ""})
+
+	rec := httptest.NewRecorder()
+
+	assert.NotPanics(t, func() {
+		h.CloneMesheryFilterHandler(rec, req, nil, nil, nil)
+	}, "CloneMesheryFilterHandler must not panic when filter ID is empty")
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+	assert.Contains(t, rec.Body.String(), "filter ID is required")
+}
+
+// TestCloneMesheryPatternHandler_NullBodyReturns400 verifies that sending a
+// literal JSON null body (which decodes without error but yields a nil parsedBody)
+// returns HTTP 400 Bad Request instead of panicking on parsedBody.Name later.
+func TestCloneMesheryPatternHandler_NullBodyReturns400(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	sysID := uuid.Must(uuid.NewV4())
+	h.SystemID = &sysID
+
+	body := []byte(`null`)
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/test-id", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+
+	rec := httptest.NewRecorder()
+	user := models.LocalProviderUser()
+	provider := &models.DefaultLocalProvider{}
+
+	assert.NotPanics(t, func() {
+		h.CloneMesheryPatternHandler(rec, req, nil, user, provider)
+	}, "CloneMesheryPatternHandler must not panic on null JSON body")
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+// TestCloneMesheryFilterHandler_NullBodyReturns400 verifies that sending a
+// literal JSON null body (which decodes without error but yields a nil parsedBody)
+// returns HTTP 400 Bad Request instead of panicking on parsedBody.Name later.
+func TestCloneMesheryFilterHandler_NullBodyReturns400(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	body := []byte(`null`)
+	req := httptest.NewRequest(http.MethodPost, "/api/filter/clone/test-id", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+
+	rec := httptest.NewRecorder()
+	user := models.LocalProviderUser()
+	provider := &models.DefaultLocalProvider{}
+
+	assert.NotPanics(t, func() {
+		h.CloneMesheryFilterHandler(rec, req, nil, user, provider)
+	}, "CloneMesheryFilterHandler must not panic on null JSON body")
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+// TestCloneMesheryPatternHandler_MalformedBodyReturns400 verifies that sending
+// malformed JSON (not valid JSON at all) returns HTTP 400 Bad Request.
+func TestCloneMesheryPatternHandler_MalformedBodyReturns400(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	sysID := uuid.Must(uuid.NewV4())
+	h.SystemID = &sysID
+
+	body := []byte(`{invalid json!!!`)
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/test-id", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+
+	rec := httptest.NewRecorder()
+	user := models.LocalProviderUser()
+	provider := &models.DefaultLocalProvider{}
+
+	assert.NotPanics(t, func() {
+		h.CloneMesheryPatternHandler(rec, req, nil, user, provider)
+	}, "CloneMesheryPatternHandler must not panic on malformed JSON body")
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+// TestCloneMesheryPatternHandler_EmptyBodyReturns400 verifies that sending
+// an empty request body returns HTTP 400 Bad Request.
+func TestCloneMesheryPatternHandler_EmptyBodyReturns400(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	sysID := uuid.Must(uuid.NewV4())
+	h.SystemID = &sysID
+
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/test-id", bytes.NewReader([]byte("")))
+	req.Header.Set("Content-Type", "application/json")
+	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+
+	rec := httptest.NewRecorder()
+	user := models.LocalProviderUser()
+	provider := &models.DefaultLocalProvider{}
+
+	assert.NotPanics(t, func() {
+		h.CloneMesheryPatternHandler(rec, req, nil, user, provider)
+	}, "CloneMesheryPatternHandler must not panic on empty body")
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+// TestCloneMesheryFilterHandler_MalformedBodyReturns400 verifies that sending
+// malformed JSON returns HTTP 400 Bad Request.
+func TestCloneMesheryFilterHandler_MalformedBodyReturns400(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	body := []byte(`{not valid json`)
+	req := httptest.NewRequest(http.MethodPost, "/api/filter/clone/test-id", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+
+	rec := httptest.NewRecorder()
+	user := models.LocalProviderUser()
+	provider := &models.DefaultLocalProvider{}
+
+	assert.NotPanics(t, func() {
+		h.CloneMesheryFilterHandler(rec, req, nil, user, provider)
+	}, "CloneMesheryFilterHandler must not panic on malformed JSON body")
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+// TestCloneMesheryFilterHandler_EmptyBodyReturns400 verifies that sending
+// an empty request body returns HTTP 400 Bad Request.
+func TestCloneMesheryFilterHandler_EmptyBodyReturns400(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	req := httptest.NewRequest(http.MethodPost, "/api/filter/clone/test-id", bytes.NewReader([]byte("")))
+	req.Header.Set("Content-Type", "application/json")
+	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+
+	rec := httptest.NewRecorder()
+	user := models.LocalProviderUser()
+	provider := &models.DefaultLocalProvider{}
+
+	assert.NotPanics(t, func() {
+		h.CloneMesheryFilterHandler(rec, req, nil, user, provider)
+	}, "CloneMesheryFilterHandler must not panic on empty body")
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+// TestErrRequestBody_NilErrorDoesNotPanic asserts that ErrRequestBody defensively
+// handles a nil error argument without triggering a runtime nil pointer dereference panic.
+func TestErrRequestBody_NilErrorDoesNotPanic(t *testing.T) {
+	var err error
+	require.NotPanics(t, func() {
+		err = ErrRequestBody(nil)
+	}, "ErrRequestBody(nil) must not panic")
+
+	require.NotNil(t, err)
+	assert.Contains(t, err.Error(), "Request body is empty or faulty")
 }

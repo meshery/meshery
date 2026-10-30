@@ -16,8 +16,8 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1"
-	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta3/component"
 )
 
 func (h *Handler) GetMesheryFilterFileHandler(
@@ -312,8 +312,13 @@ func (h *Handler) CloneMesheryFilterHandler(
 	provider models.Provider,
 ) {
 	filterID := mux.Vars(r)["id"]
+	if filterID == "" {
+		h.log.Error(ErrCloneFilter(fmt.Errorf("filter ID is required")))
+		writeMeshkitError(rw, ErrCloneFilter(fmt.Errorf("filter ID is required")), http.StatusBadRequest)
+		return
+	}
 	var parsedBody *models.MesheryCloneFilterRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || filterID == "" {
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || parsedBody == nil {
 		h.log.Error(ErrRequestBody(err))
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return

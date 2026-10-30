@@ -347,8 +347,13 @@ func ErrPatternDeploy(err error, patternName string) error {
 	return errors.New(ErrPatternDeployCode, errors.Alert, []string{fmt.Sprintf("Unable to deploy the selected design \"%s\"", patternName)}, []string{err.Error()}, []string{"Connection Error: There was an error connecting to the selected target platform (i.e. Kubernetes cluster(s)).", "This connection might not be assigned to the selected environment."}, []string{"Verify that the Kubernetes connection status is 'Connected' or try uploading a new kubeconfig.", "Assign the current Kubernetes connection to the selected environment."})
 }
 
+// ErrRequestBody returns an error indicating the request body could not be read or is invalid.
 func ErrRequestBody(err error) error {
-	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to read the request body"}, []string{err.Error()}, []string{"Request body is empty or faulty"}, []string{"Check if the request is sent with proper values"})
+	errMsg := "Request body is empty or faulty"
+	if err != nil {
+		errMsg = err.Error()
+	}
+	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to read the request body"}, []string{errMsg}, []string{"Request body is empty or faulty"}, []string{"Check if the request is sent with proper values"})
 }
 
 func ErrParseBool(err error, obj string) error {
