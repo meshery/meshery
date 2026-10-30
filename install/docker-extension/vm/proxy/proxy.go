@@ -109,6 +109,10 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
 		ws, err := upgrader.Upgrade(wr, req, nil)
+		if err != nil {
+			log.Println(err)
+			return
+		}
 
 		ws.SetCloseHandler(func(code int, text string) error {
 			close(p.authWsChan)
@@ -119,9 +123,6 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			}
 			return nil
 		})
-		if err != nil {
-			log.Println(err)
-		}
 		go handleWsMessage(ws)
 		go func() {
 			for res := range p.authWsChan {
@@ -244,6 +245,7 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		resp, err := client.Do(req)
 		if err != nil {
 			http.Error(wr, "Server Error", http.StatusInternalServerError)
+			return
 		}
 		defer resp.Body.Close()
 
