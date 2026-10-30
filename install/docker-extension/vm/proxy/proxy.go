@@ -245,6 +245,7 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		resp, err := client.Do(req)
 		if err != nil {
 			http.Error(wr, "Server Error", http.StatusInternalServerError)
+			log.Println("proxy: backend request failed:", err)
 			return
 		}
 		defer resp.Body.Close()

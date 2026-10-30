@@ -24,7 +24,9 @@ func runRecover(f func()) (panicked bool, val interface{}) {
 // a nil response. ServeHTTP must write a clean 500 and return, not dereference
 // the nil response in `defer resp.Body.Close()`.
 func TestServeHTTP_BackendUnreachable(t *testing.T) {
+	old := proxy.MesheryServerHost
 	proxy.MesheryServerHost = "127.0.0.1:1" // connection refused
+	t.Cleanup(func() { proxy.MesheryServerHost = old })
 	p := &proxy.Proxy{}
 	req := httptest.NewRequest(http.MethodGet, "http://localhost/api/system/version", nil)
 	rec := httptest.NewRecorder()
