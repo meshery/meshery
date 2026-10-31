@@ -81,8 +81,7 @@ export default function MeshSyncTable(props) {
   );
   const serializedClusterIds = useMemo(() => JSON.stringify(clusterIds), [clusterIds]);
   const previousSerializedClusterIds = useRef(serializedClusterIds);
-  const pageForQuery =
-    previousSerializedClusterIds.current === serializedClusterIds ? page : 0;
+  const pageForQuery = previousSerializedClusterIds.current === serializedClusterIds ? page : 0;
 
   useEffect(() => {
     previousSerializedClusterIds.current = serializedClusterIds;
