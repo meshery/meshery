@@ -308,7 +308,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 
 	respChan := make(chan []byte, 100)
 
-	newAdaptersChan := make(chan *meshes.MeshClient)
+	newAdaptersChan := make(chan *meshes.MeshClient, 10)
 
 	go func() {
 		for mClient := range newAdaptersChan {
@@ -324,60 +324,75 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 	go listenForCoreEvents(req.Context(), h.EventsBuffer, respChan, h.log, p, defaultSubscribeToEventStream)
 	go writeEventStream(req.Context(), w, respChan, h.log, flusher)
 
+	var closeOnce sync.Once
+	closeNewAdapters := func() {
+		closeOnce.Do(func() {
+			close(newAdaptersChan)
+		})
+	}
+
 	defer func() {
+		closeNewAdapters()
 		closeAdapterConnections(localMeshAdaptersLock, localMeshAdapters)
 		h.log.Debug("events handler closed")
 	}()
 
-STOP:
+	pollAdapters := func() {
+		meshAdapters := prefObj.MeshAdapters
+		if meshAdapters == nil {
+			meshAdapters = []*models.Adapter{}
+		}
+
+		adaptersLen := len(meshAdapters)
+		if adaptersLen == 0 {
+			// Clear the adapter cache
+			localMeshAdapters = closeAdapterConnections(localMeshAdaptersLock, localMeshAdapters)
+		} else {
+			for _, ma := range meshAdapters {
+				localMeshAdaptersLock.Lock()
+				mClient, ok := localMeshAdapters[ma.Location]
+				localMeshAdaptersLock.Unlock()
+
+				if !ok {
+					var cErr error
+					mClient, cErr = meshes.CreateClient(req.Context(), ma.Location)
+					if cErr == nil {
+						localMeshAdaptersLock.Lock()
+						localMeshAdapters[ma.Location] = mClient
+						localMeshAdaptersLock.Unlock()
+					}
+				}
+				if mClient != nil {
+					_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
+					if err != nil {
+						_ = mClient.Close()
+						localMeshAdaptersLock.Lock()
+						delete(localMeshAdapters, ma.Location)
+						localMeshAdaptersLock.Unlock()
+					} else if !ok {
+						select {
+						case newAdaptersChan <- mClient:
+						case <-notify.Done():
+							return
+						}
+					}
+				}
+			}
+		}
+	}
+
+	pollTicker := time.NewTicker(5 * time.Second)
+	defer pollTicker.Stop()
+
+	pollAdapters()
+
 	for {
 		select {
 		case <-notify.Done():
 			h.log.Debug("received signal to close connection and channels")
-			close(newAdaptersChan)
-			break STOP
-		default:
-			meshAdapters := prefObj.MeshAdapters
-			if meshAdapters == nil {
-				meshAdapters = []*models.Adapter{}
-			}
-
-			adaptersLen := len(meshAdapters)
-			if adaptersLen == 0 {
-				// Clear the adapter cache
-				localMeshAdapters = closeAdapterConnections(localMeshAdaptersLock, localMeshAdapters)
-			} else {
-				localMeshAdaptersLock.Lock()
-				for _, ma := range meshAdapters {
-					mClient, ok := localMeshAdapters[ma.Location]
-					if !ok {
-						mClient, err = meshes.CreateClient(req.Context(), ma.Location)
-						if err == nil {
-							localMeshAdapters[ma.Location] = mClient
-						}
-					}
-					if mClient != nil {
-						_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
-						if err != nil {
-							_ = mClient.Close()
-							delete(localMeshAdapters, ma.Location)
-						} else {
-							if !ok { // reusing the map check, only when ok is false a new entry will be added
-								newAdaptersChan <- mClient
-							}
-						}
-					}
-				}
-				localMeshAdaptersLock.Unlock()
-			}
-		}
-
-		// Yield to the scheduler without going unresponsive to client
-		// disconnection: a bare time.Sleep would leave the handler pinned
-		// for up to 5 seconds after the request context is cancelled.
-		select {
-		case <-notify.Done():
-		case <-time.After(5 * time.Second):
+			return
+		case <-pollTicker.C:
+			pollAdapters()
 		}
 	}
 }
