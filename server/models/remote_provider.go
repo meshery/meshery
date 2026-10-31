@@ -1988,6 +1988,43 @@ func (l *RemoteProvider) BulkUpdateEventStatus(token string, eventIDs []*core.Uu
 	return nil
 }
 
+func (l *RemoteProvider) MarkAllEventsRead(ctx context.Context, token string, _ core.Uuid) error {
+	if !l.Capabilities.IsSupported(PersistEvents) {
+		err := ErrInvalidCapability("PersistEvents", l.ProviderName)
+		l.Log.Error(err)
+		return err
+	}
+
+	remoteProviderURL, err := url.JoinPath(l.RemoteProviderURL, "api/events/mark-all-read")
+	if err != nil {
+		return ErrPost(err, "mark all events read", 0)
+	}
+
+	cReq, err := http.NewRequestWithContext(ctx, http.MethodPost, remoteProviderURL, nil)
+	if err != nil {
+		return ErrPost(err, "mark all events read", 0)
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		return ErrUnreachableRemoteProvider(err)
+	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode != http.StatusOK {
+		return ErrPost(
+			errors.New("error marking all events as read with the remote provider"),
+			"mark all events read",
+			resp.StatusCode,
+		)
+	}
+
+	return nil
+}
+
 func (l *RemoteProvider) DeleteEvent(token string, eventID core.Uuid) error {
 	if !l.Capabilities.IsSupported(PersistEvents) {
 		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))

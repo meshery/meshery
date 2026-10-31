@@ -19,6 +19,7 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	_events "github.com/meshery/meshkit/utils/events"
 	"github.com/meshery/schemas/models/core"
+	eventv1beta3 "github.com/meshery/schemas/models/v1beta3/event"
 )
 
 // subscribeFunc registers ch to receive events published on eb. Pulled out
@@ -191,6 +192,26 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 		return
 	}
 
+}
+
+func (h *Handler) MarkAllEventsRead(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	if err := provider.MarkAllEventsRead(req.Context(), token, user.ID); err != nil {
+		status := providerStatusOrInternal(err)
+		markAllErr := ErrMarkAllRead(err)
+		h.log.Error(markAllErr)
+		writeMeshkitError(w, markAllErr, status)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(eventv1beta3.MarkAllEventsReadResponse{
+		Message: "All user-owned events marked as read",
+	}); err != nil {
+		// The response has already started streaming, so a fresh error response
+		// would corrupt the JSON body. Log the encoding failure only.
+		h.log.Error(models.ErrMarshal(err, "mark all events read response"))
+	}
 }
 
 func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {

@@ -132,6 +132,7 @@ const (
 	ErrUnsupportedEventStatusCode          = "meshery-server-1121"
 	ErrBulkUpdateEventCode                 = "meshery-server-1122"
 	ErrBulkDeleteEventCode                 = "meshery-server-1123"
+	ErrMarkAllReadCode                     = "meshery-server-1487"
 	ErrFetchMeshSyncResourcesCode          = "meshery-server-1124"
 	ErrDesignSourceContentCode             = "meshery-server-1125"
 	ErrGetConnectionsCode                  = "meshery-server-1126"
@@ -740,6 +741,10 @@ func ErrUpdateEvent(err error, id string) error {
 
 func ErrBulkUpdateEvent(err error) error {
 	return errors.New(ErrBulkUpdateEventCode, errors.Alert, []string{"Could not update status for one or more events."}, []string{err.Error()}, []string{"Event has been deleted or does not exist.", "The requested event status is invalid.", "Meshery Database is corrupt."}, []string{"Verify that the event still exists.", "Verify that the requested event status is supported.", "Visit Settings and reset the Meshery database."})
+}
+
+func ErrMarkAllRead(err error) error {
+	return errors.New(ErrMarkAllReadCode, errors.Alert, []string{"Could not mark all notifications as read."}, []string{err.Error()}, []string{"The database is unavailable.", "The remote provider is unreachable or rejected the request.", "The current provider does not support event persistence."}, []string{"Retry the request.", "Verify the configured provider is reachable and supports event persistence."})
 }
 
 func ErrDeleteEvent(err error, id string) error {
