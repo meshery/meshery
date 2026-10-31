@@ -270,7 +270,9 @@ const BulkActions = () => {
   const [fetchEvents] = useLazyGetEventsQuery();
   const currentFilters = useSelector((state) => state.events?.current_view?.filters);
   const latestFilters = useRef(currentFilters);
-  latestFilters.current = currentFilters;
+  useEffect(() => {
+    latestFilters.current = currentFilters;
+  }, [currentFilters]);
   const isActionInProgress = isDeleting || isUpdatingStatus || isMarkingAllRead;
 
   const dispatch = useDispatch();
