@@ -132,6 +132,28 @@ Now, it may be desirable to squash some of your smaller commits down into a smal
 
 This will open up a text editor where you can specify which commits to squash.
 <br><br>
+## <a name="markdown-export">LLM-friendly page output</a>
+
+Every documentation page is also published as Markdown at `<page-url>/index.md`,
+with the page title, description, and body content and no navigation, sidebar,
+footer, or styling. A **View as Markdown** link to it appears in the page's
+right-hand meta column (wide screens). The home page shows no link, but its Markdown is still
+published and listed in `llms.txt`. Hugo also generates
+[`/llms.txt`](https://llmstxt.org/) (an index of pages) and `/llms-full.txt`
+(full content of every page) at the site root for AI agents.
+
+The `llms.txt`, `llms-full.txt`, and home-page Markdown layouts are provided by
+the existing [Layer5 docs Hugo module](https://github.com/layer5io/docs), pinned
+in `go.mod`. Since `hugo.toml` sets `ignoreConfig = true` for that module and
+selects explicit mounts, it mounts `layouts/index.llms`, `layouts/index.llmsfull`,
+and `layouts/index.md` from the module and declares their output formats locally.
+
+To leave a path out of `llms.txt` and `llms-full.txt`, add it to `exclude` under
+`[params.llms]` in `hugo.toml`. To keep only the newest N pages of a section in `llms.txt`, add it to
+`[params.llms.limit_sections]`; Meshery releases under `/project/releases/` are
+capped at 5 this way. The limit is implemented by the Layer5 module's
+`layouts/index.llms` template.
+
 <li><h3>References</h3></li>
 <a href="https://git-scm.com/docs">Git Reference Docs</a>
 <br>

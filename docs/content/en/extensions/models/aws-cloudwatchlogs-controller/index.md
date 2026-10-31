@@ -33,7 +33,15 @@ components:
   colorIcon: extensions/models/aws-cloudwatchlogs-controller/components/resource-policy/icons/color/resource-policy-color.svg
   whiteIcon: extensions/models/aws-cloudwatchlogs-controller/components/resource-policy/icons/white/resource-policy-white.svg
   description: 
-components-count: 6
+- name: delivery-destination
+  colorIcon: extensions/models/aws-cloudwatchlogs-controller/components/delivery-destination/icons/color/delivery-destination-color.svg
+  whiteIcon: extensions/models/aws-cloudwatchlogs-controller/components/delivery-destination/icons/white/delivery-destination-white.svg
+  description: 
+- name: delivery-source
+  colorIcon: extensions/models/aws-cloudwatchlogs-controller/components/delivery-source/icons/color/delivery-source-color.svg
+  whiteIcon: extensions/models/aws-cloudwatchlogs-controller/components/delivery-source/icons/white/delivery-source-white.svg
+  description: 
+components-count: 8
 relationships: 
 - type: "non-binding"
   kind: "edge"
