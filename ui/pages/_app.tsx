@@ -107,6 +107,9 @@ import RegistryModalContextProvider from '@/utils/context/RegistryModalContextPr
 import ConnectionWizardContextProvider, {
   ConnectionWizardHost,
 } from '@/utils/context/ConnectionWizardContextProvider';
+import CommandPaletteContextProvider, {
+  CommandPaletteHost,
+} from '@/utils/context/CommandPaletteContextProvider';
 import { DynamicFullScreenLoader } from '@/components/shared/LoadingState/DynamicFullscreenLoader';
 
 export const mesheryExtensionRoute = '/extension/meshmap';
@@ -572,18 +575,21 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                                 <NotificationCenterProvider>
                                   <MesheryProgressBar />
                                   <KubernetesSubscription setAppState={setAppState} />
-                                  {!state.isFullScreenMode && (
-                                    <Header
-                                      onDrawerToggle={handleDrawerToggle}
-                                      onDrawerCollapse={isDrawerCollapsed}
-                                      contexts={state.k8sContexts}
-                                      activeContexts={state.activeK8sContexts}
-                                      setActiveContexts={setActiveContexts}
-                                      searchContexts={searchContexts}
-                                      updateExtensionType={updateCurrentExtensionType}
-                                      abilityUpdated={state.abilityUpdated}
-                                    />
-                                  )}
+                                  <CommandPaletteContextProvider>
+                                    {!state.isFullScreenMode && (
+                                      <Header
+                                        onDrawerToggle={handleDrawerToggle}
+                                        onDrawerCollapse={isDrawerCollapsed}
+                                        contexts={state.k8sContexts}
+                                        activeContexts={state.activeK8sContexts}
+                                        setActiveContexts={setActiveContexts}
+                                        searchContexts={searchContexts}
+                                        updateExtensionType={updateCurrentExtensionType}
+                                        abilityUpdated={state.abilityUpdated}
+                                      />
+                                    )}
+                                    <CommandPaletteHost />
+                                  </CommandPaletteContextProvider>
                                   <StyledContentWrapper>
                                     <StyledMainContent
                                       id="meshery-main"

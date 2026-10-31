@@ -143,7 +143,7 @@ const buildLifecycleIcon = (adapterName, href, currentPath) => {
   );
 };
 
-const resolveNavigatorComponents = ({
+export const resolveNavigatorComponents = ({
   providerUiAccessControl,
   theme,
   meshAdapters,
