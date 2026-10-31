@@ -22,4 +22,3 @@ export const waitFor = async <T>(func: () => T | Promise<T>, timeout = 5000): Pr
 
   return lastResult!;
 };
-
