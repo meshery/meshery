@@ -40,8 +40,11 @@ Every item in this pass must be verified before approval. If any check fails, th
   * Pass `{ skip: !canAccess }` to RTK Query hooks so denied sessions do not issue queries that fail with 403/401.
 
 ### 4. Schema-First API Discipline
-* **Rule**: Any new or changed HTTP API (endpoints, query parameters, request/response models) must be defined in `meshery/schemas`. Hand-rolled endpoints in `ui/rtk-query/*` or ad-hoc `axios`/`fetch` calls are forbidden.
-* **Remediation**: Define the OpenAPI contract in `meshery/schemas`, generate client bindings, and consume generated hooks.
+* **Rule**: Any new or changed HTTP API that can live in `meshery/schemas` (endpoints, query parameters, request/response models) must be defined there first and consumed via generated clients. Hand-rolled endpoints in `ui/rtk-query/*` or duplicate local model types are forbidden.
+* **Exceptions (per `AGENTS.md`)**:
+  * **SSE / Streaming Endpoints**: Streaming protocols and WebSocket handlers not representable in OpenAPI schemas are exempt.
+  * **Go-Models-Only Rule**: Where a Go type must stay local because it doubles as a GORM model, keep JSON tags identical to schemas and pin the column with `gorm:"column:..."`.
+* **Remediation**: For standard APIs, define the OpenAPI contract in `meshery/schemas`, regenerate bindings, and consume generated hooks.
 
 ### 5. Multi-Layer Identifier Naming
 * **Rule**: The ORM is the sole translation boundary:
@@ -73,7 +76,7 @@ These checks verify repository hygiene and long-term maintainability:
 
 ## Automated Verification
 
-Execute the following commands and include results in the review output:
+Execute the following verification targets and report their actual outputs:
 
 ```bash
 # Go server & CLI linting
@@ -81,4 +84,7 @@ make golangci
 
 # UI linting
 make ui-lint
+
+# Schemas validation and consumer audit (required on PRs with API or schema changes)
+cd ../schemas && make validate-schemas && make consumer-audit
 ```
