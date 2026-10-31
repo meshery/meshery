@@ -21,6 +21,26 @@ export function getComponentMetadata(metadata) {
   );
 }
 
+/**
+ * Builds the React key for a component form in the Design Configurator list.
+ * The key includes the component definition's identity (kind, versions and model),
+ * so a form opened for one definition, and the component id it holds, is never
+ * reused for a different definition. The index keeps identical siblings distinct.
+ * @param {string} modelName name of the model whose components are listed
+ * @param {Types.ComponentDefinition} componentDefinition component shown by the form
+ * @param {number} index position of the component in the list
+ * @returns {string}
+ */
+export function getComponentFormKey(modelName, componentDefinition, index) {
+  // Same identity as componentUniqueKey in rtk-query/meshModel, built here so this
+  // leaf util does not pull in the RTK store.
+  const { component, version, model } = componentDefinition || {};
+  const componentKey = [component?.kind, component?.version, version, model?.name, model?.version]
+    .filter(Boolean)
+    .join('-');
+  return `${modelName}-${componentKey}-${index}`;
+}
+
 export function getStyleOverrides(stringifiedOverrides) {
   if (stringifiedOverrides) {
     return JsonParse(stringifiedOverrides);
