@@ -90,7 +90,7 @@ func TestResultCmd(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '-1'")),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --page '-1'")),
 		},
 		{
 			Name:             "invalid output format",
