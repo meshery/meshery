@@ -217,7 +217,7 @@ Logical or declarative links between components where one component refers to an
 <script src="./images/embedded-design-hierarchical-parent-inventory-relationship.js" type="module" ></script>
 </details>
 
-### 8. Match - Labels (Tagsets)
+### 8. TagSets
 
 This relationship type defines the associations between components based on shared Labels or Annotations. In-tree Kubernetes models encode it as `kind: hierarchical`, `type: sibling`, `subType: matchlabels`. The schema `kind` enum also includes `sibling`; do not mix the two encodings in the same model.
 
