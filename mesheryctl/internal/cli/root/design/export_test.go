@@ -192,3 +192,33 @@ func TestFetchPatternDataSuccess(t *testing.T) {
 		t.Fatalf("expected pattern name 'my-design', got %+v", pattern)
 	}
 }
+
+// TestExportDesignNonOKDownloadStatus ensures exportDesign returns a status-based error
+// when the download endpoint responds with a non-200 status that MakeRequest accepts.
+func TestExportDesignNonOKDownloadStatus(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer utils.ResetCommandFlags(DesignCmd, t)
+	utils.TokenFlag = utils.GetToken(t)
+
+	design := "test-design-201"
+	patternBytes, _ := json.Marshal(models.MesheryPattern{Name: design})
+	patternURL := fmt.Sprintf("%s/api/pattern/%s", testContext.BaseURL, design)
+	httpmock.RegisterResponder("GET", patternURL, func(req *http.Request) (*http.Response, error) {
+		return httpmock.NewBytesResponse(http.StatusOK, patternBytes), nil
+	})
+
+	downloadURL := fmt.Sprintf("%s/api/pattern/download/%s", testContext.BaseURL, design)
+	httpmock.RegisterResponder("GET", downloadURL, func(req *http.Request) (*http.Response, error) {
+		return httpmock.NewStringResponse(http.StatusCreated, "created"), nil
+	})
+
+	err := exportDesign(testContext.BaseURL, design, "")
+	if err == nil {
+		t.Fatal("expected error on non-200 download response, got nil")
+	}
+	if meshkiterrors.GetCode(err) != utils.ErrResponseStatusCode {
+		t.Fatalf("expected ErrResponseStatusCode (%s), got %s", utils.ErrResponseStatusCode, meshkiterrors.GetCode(err))
+	}
+}
