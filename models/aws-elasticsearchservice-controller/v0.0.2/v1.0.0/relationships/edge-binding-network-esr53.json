@@ -94,6 +94,77 @@
         "from": [],
         "to": []
       }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "RecordSet",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-route53-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "resourceRecords",
+                  "0",
+                  "value"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "ElasticsearchDomain",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-elasticsearchservice-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "status",
+                  "endpoints",
+                  "vpc"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
     }
   ],
   "subType": "network",
