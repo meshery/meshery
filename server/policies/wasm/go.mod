@@ -1,6 +1,6 @@
 module github.com/meshery/meshery/server/policies/wasm
 
-go 1.26.4
+go 1.27.1
 
 // The wasm engine is built as its own module.
 //
