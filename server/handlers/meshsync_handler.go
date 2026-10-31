@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -412,6 +413,11 @@ func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Reques
 	enc := json.NewEncoder(rw)
 
 	resourceID := mux.Vars(r)["id"]
+	if _, err := uuid.FromString(resourceID); err != nil {
+		h.log.Error(models.ErrInvalidUUID(err))
+		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
+		return
+	}
 
 	var resource model.KubernetesResource
 
@@ -427,6 +433,12 @@ func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Reques
 	err := query.First(&resource).Error
 
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			notFoundErr := models.ErrResultNotFound(err)
+			h.log.Error(notFoundErr)
+			writeMeshkitError(rw, notFoundErr, http.StatusNotFound)
+			return
+		}
 		h.log.Error(ErrFetchMeshSyncResources(err))
 		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
 		return
@@ -533,12 +545,25 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 
 func (h *Handler) DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	resourceID := mux.Vars(r)["id"]
+	if _, err := uuid.FromString(resourceID); err != nil {
+		h.log.Error(models.ErrInvalidUUID(err))
+		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
+		return
+	}
+
 	db := provider.GetGenericPersister()
-	err := db.Model(&model.KubernetesResource{}).Delete(&model.KubernetesResource{ID: resourceID}).Error
-	if err != nil {
-		deleteErr := ErrFailToDelete(err, "meshsync resource")
+	tx := db.Model(&model.KubernetesResource{}).Delete(&model.KubernetesResource{ID: resourceID})
+	if tx.Error != nil {
+		deleteErr := ErrFailToDelete(tx.Error, "meshsync resource")
+		
 		h.log.Error(deleteErr)
 		writeMeshkitError(rw, deleteErr, http.StatusInternalServerError)
+		return
+	}
+	if tx.RowsAffected == 0 {
+		notFoundErr := models.ErrResultNotFound(gorm.ErrRecordNotFound)
+		h.log.Error(notFoundErr)
+		writeMeshkitError(rw, notFoundErr, http.StatusNotFound)
 		return
 	}
 
