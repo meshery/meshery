@@ -17,6 +17,39 @@ import { isLocalProvider } from '@/utils/provider';
 const DEFAULT_PAGE_SIZE = 10;
 const ROWS_PER_PAGE_OPTIONS = [10, 20, 25];
 
+// The server sends camelCase (runnerResults); the snake_case fallback keeps
+// older remote-provider payloads working.
+export const getRunnerResults = (record) => record?.runnerResults ?? record?.runner_results;
+
+// Format one result for display in the table
+export const formatResultRow = (record) => {
+  const runnerResults = getRunnerResults(record);
+  const row = {
+    name: record.name,
+    mesh: record.mesh,
+    test_start_time: runnerResults.StartTime,
+    qps: runnerResults.ActualQPS.toFixed(1),
+    duration: (runnerResults.ActualDuration / 1000000000).toFixed(1),
+    threads: runnerResults.NumThreads,
+  };
+
+  const percentiles = runnerResults.DurationHistogram?.Percentiles || [];
+  percentiles.forEach(({ Percentile, Value }) => {
+    row[`p${Percentile}`.replace('.', '_')] = Value.toFixed(3);
+  });
+
+  // Default values for percentiles if not available
+  if (percentiles.length === 0) {
+    row.p50 = 0;
+    row.p75 = 0;
+    row.p90 = 0;
+    row.p99 = 0;
+    row.p99_9 = 0;
+  }
+
+  return row;
+};
+
 const MesheryResults = () => {
   const { notify } = useNotification();
   const [page, setPage] = useState(0);
@@ -51,8 +84,8 @@ const MesheryResults = () => {
           setSearch(search);
           setSortOrder(sortOrder);
           setPage(result.page || 0);
-          setPageSize(result.page_size || DEFAULT_PAGE_SIZE);
-          setCount(result.total_count || 0);
+          setPageSize((result.pageSize ?? result.page_size) || DEFAULT_PAGE_SIZE);
+          setCount(result.totalCount ?? result.total_count ?? 0);
         }
       } catch (error) {
         handleError(error);
@@ -92,34 +125,7 @@ const MesheryResults = () => {
   const resetSelectedRowData = () => setSelectedRowData(null);
 
   // Format results for display in the table
-  const resultsForDisplay = useMemo(() => {
-    return results.map((record) => {
-      const row = {
-        name: record.name,
-        mesh: record.mesh,
-        test_start_time: record.runner_results.StartTime,
-        qps: record.runner_results.ActualQPS.toFixed(1),
-        duration: (record.runner_results.ActualDuration / 1000000000).toFixed(1),
-        threads: record.runner_results.NumThreads,
-      };
-
-      const percentiles = record.runner_results.DurationHistogram?.Percentiles || [];
-      percentiles.forEach(({ Percentile, Value }) => {
-        row[`p${Percentile}`.replace('.', '_')] = Value.toFixed(3);
-      });
-
-      // Default values for percentiles if not available
-      if (percentiles.length === 0) {
-        row.p50 = 0;
-        row.p75 = 0;
-        row.p90 = 0;
-        row.p99 = 0;
-        row.p99_9 = 0;
-      }
-
-      return row;
-    });
-  }, [results]);
+  const resultsForDisplay = useMemo(() => results.map(formatResultRow), [results]);
 
   // Columns configuration for the table
   const columns = useMemo(
@@ -343,7 +349,7 @@ const MesheryResults = () => {
       ),
       expandableRows: true,
       renderExpandableRow: (rowData, rowMeta) => {
-        const row = results[rowMeta.dataIndex].runner_results;
+        const row = getRunnerResults(results[rowMeta.dataIndex]);
         const colSpan = rowData.length + 1;
 
         return (

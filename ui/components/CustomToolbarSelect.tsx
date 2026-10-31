@@ -57,7 +57,10 @@ function CustomToolbarSelect({ setSelectedRows }) {
       Object.keys(rs[k1]).forEach((k2) => {
         if (typeof rs[k1][k2] !== 'undefined') {
           // Directly update the data state.
-          setData((prevData) => [...prevData, rs[k1][k2].runner_results]);
+          setData((prevData) => [
+            ...prevData,
+            rs[k1][k2].runnerResults ?? rs[k1][k2].runner_results,
+          ]);
         }
       });
     });
@@ -90,7 +93,7 @@ function CustomToolbarSelect({ setSelectedRows }) {
                 key="download"
                 aria-label="download"
                 color="inherit"
-                href={`/api/perf/profile/result/${encodeURIComponent(fullData[0].meshery_id)}`}
+                href={`/api/perf/profile/result/${encodeURIComponent(fullData[0].mesheryId ?? fullData[0].meshery_id)}`}
                 download={`${fullData[0].name}_test_result.json`}
               >
                 <StyledIcon>
