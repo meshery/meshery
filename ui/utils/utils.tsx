@@ -440,7 +440,7 @@ export const getComponentFromDesign = (design, componentId) => {
  */
 export const getDesignVersion = (design) => {
   if (design?.visibility === 'published') {
-    return design.catalog_data?.published_version;
+    return design.catalogData?.publishedVersion ?? design.catalog_data?.published_version;
   } else {
     try {
       const parsedYaml = jsYaml.load(design.patternFile);
