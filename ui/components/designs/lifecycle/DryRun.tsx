@@ -179,15 +179,18 @@ export const FormatDryRunResponse = ({
   validationMachine,
   currentComponentName,
 }) => {
-  const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
+  const actualErrors = Array.isArray(dryRunErrors)
+    ? dryRunErrors.filter((error) => error?.type !== 'CompatibilityMatrix')
+    : [];
+  const totalDryRunErrors = getTotalCountOfDeploymentErrors(actualErrors);
   const theme = useTheme();
   const canShowComponentCount =
     annotationComponentsCount !== undefined && annotationComponentsCount !== undefined;
 
-  const dryRunRequestErrors = dryRunErrors
+  const dryRunRequestErrors = actualErrors
     .filter((error) => error.type === 'RequestError')
     .flatMap((error) => error?.errors || []);
-  const componentErrors = dryRunErrors.filter((error) => error.type === 'ComponentError');
+  const componentErrors = actualErrors.filter((error) => error.type === 'ComponentError');
 
   return (
     <DryRunRootListStyled

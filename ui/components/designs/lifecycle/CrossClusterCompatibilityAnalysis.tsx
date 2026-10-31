@@ -1,10 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
   Card,
   Chip,
-  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -17,7 +16,6 @@ import KubernetesIcon from '@/assets/icons/KubernetesIcon';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import AlertIcon from '@/assets/icons/AlertIcon';
 import CrossCircleIcon from '@/assets/icons/CrossCircleIcon';
-import ClearIcon from '@/assets/icons/ClearIcon';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { alpha, useTheme } from '@/theme';
 import {
@@ -28,11 +26,7 @@ import {
 } from './compatibilityAnalysisUtils';
 import {
   BottomGrid,
-  CodeBox,
-  DetailCard,
-  DetailSection,
   HeaderContainer,
-  InsightBox,
   MatrixCard,
   MetricCard,
   MetricsGrid,
@@ -40,6 +34,7 @@ import {
   StatusChipStyled,
   TwoColumnGrid,
 } from './CrossClusterCompatibilityAnalysis.styles';
+import ValidationDetailsPanel from './ValidationDetailsPanel';
 
 export interface CrossClusterCompatibilityAnalysisProps {
   dryRunResponse?: any;
@@ -94,6 +89,22 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
     return null;
   });
 
+  // Keep selection in sync when async dry-run data arrives after mount
+  useEffect(() => {
+    setSelectedCell((prev) => {
+      if (prev) return prev;
+      const failedRes = data.resources.find((r) =>
+        Object.values(r.clusterResults).some((res) => res.status === 'failed'),
+      );
+      if (!failedRes) return prev;
+      const clusterId =
+        Object.keys(failedRes.clusterResults).find(
+          (cid) => failedRes.clusterResults[cid].status === 'failed',
+        ) || data.clusters[0]?.id;
+      return clusterId ? { resource: failedRes, clusterId } : prev;
+    });
+  }, [data]);
+
   const selectedCluster = useMemo(() => {
     if (!selectedCell) return null;
     return data.clusters.find((c) => c.id === selectedCell.clusterId) || null;
@@ -109,7 +120,9 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
     isSelected: boolean,
     onClick: () => void,
   ) => {
-    let icon = <CheckIcon width={14} height={14} fill={theme.palette.success.main} />;
+    let icon: React.ReactElement | undefined = (
+      <CheckIcon width={14} height={14} fill={theme.palette.success.main} />
+    );
     let label = 'Success';
 
     if (status === 'failed') {
@@ -119,6 +132,7 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
       icon = <AlertIcon width={14} height={14} fill={theme.palette.warning.main} />;
       label = 'Warning';
     } else if (status === 'incomplete') {
+      icon = undefined;
       label = 'Incomplete';
     }
 
@@ -386,111 +400,12 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
         </MatrixCard>
 
         {/* Right: Validation Details Inspector */}
-        <DetailCard data-testid="validation-details-panel">
-          {selectedCell && selectedCluster && selectedResult ? (
-            <>
-              <Box
-                sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}
-              >
-                <Box>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                    {selectedCell.resource.resourceName} — Validation Details
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Cluster: <strong>{selectedCluster.name}</strong> ({selectedCluster.version}) |
-                    Kind: <strong>{selectedCell.resource.kind}</strong> | Status:{' '}
-                    <Box
-                      component="span"
-                      sx={{
-                        color:
-                          selectedResult.status === 'failed'
-                            ? theme.palette.error.main
-                            : selectedResult.status === 'warning'
-                              ? theme.palette.warning.main
-                              : selectedResult.status === 'incomplete'
-                                ? theme.palette.text.secondary
-                                : theme.palette.success.main,
-                        fontWeight: 600,
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {selectedResult.status}
-                    </Box>
-                  </Typography>
-                </Box>
-                <IconButton size="small" onClick={() => setSelectedCell(null)}>
-                  <ClearIcon width={16} height={16} />
-                </IconButton>
-              </Box>
-
-              {/* Validation Error Section */}
-              <DetailSection>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 0.5 }}
-                >
-                  <CrossCircleIcon width={16} height={16} fill={theme.palette.error.main} />
-                  Validation Error
-                </Typography>
-                {selectedResult.errorMessage ? (
-                  <CodeBox>{selectedResult.errorMessage}</CodeBox>
-                ) : (
-                  <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                    No error detected. Component passed validation on {selectedCluster.name}.
-                  </Typography>
-                )}
-              </DetailSection>
-
-              {/* Possible Fix Section */}
-              {selectedResult.possibleFix && (
-                <DetailSection>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 600,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 0.5,
-                      color: theme.palette.primary.main,
-                    }}
-                  >
-                    Possible Fix
-                  </Typography>
-                  <InsightBox tone="fix">{selectedResult.possibleFix}</InsightBox>
-                </DetailSection>
-              )}
-
-              {/* Dependency Impact Section */}
-              {selectedResult.dependencyImpact && (
-                <DetailSection>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 600,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 0.5,
-                      color: theme.palette.warning.main,
-                    }}
-                  >
-                    Dependency Impact
-                  </Typography>
-                  <InsightBox tone="dependency">{selectedResult.dependencyImpact}</InsightBox>
-                </DetailSection>
-              )}
-            </>
-          ) : (
-            <Box sx={{ textAlign: 'center', py: 6 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-                Select a Resource to Inspect Details
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Click any cell in the Compatibility Matrix table to review validation errors,
-                suggested fixes, and dependency impacts.
-              </Typography>
-            </Box>
-          )}
-        </DetailCard>
+        <ValidationDetailsPanel
+          selectedCell={selectedCell}
+          selectedCluster={selectedCluster}
+          selectedResult={selectedResult}
+          onClearSelection={() => setSelectedCell(null)}
+        />
       </TwoColumnGrid>
 
       {/* 4. Bottom Row: Validation Summary + Next Steps */}

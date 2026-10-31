@@ -156,4 +156,23 @@ describe('FormatDryRunResponse', () => {
     );
     expect(screen.getByText('5 components and 4 annotations')).toBeInTheDocument();
   });
+
+  it('ignores CompatibilityMatrix entries and renders success state if no real errors', () => {
+    render(
+      <FormatDryRunResponse
+        dryRunErrors={[
+          {
+            type: 'CompatibilityMatrix',
+            rawDryRunResponse: { frontend: { 'c-1': { success: true } } },
+          },
+        ]}
+        configurableComponentsCount={2}
+        annotationComponentsCount={1}
+        validationMachine={{}}
+        currentComponentName={null}
+      />,
+    );
+    expect(screen.getByTestId('dry-run-summary-success')).toBeInTheDocument();
+    expect(screen.getByTestId('dry-run-summary-errors')).toHaveTextContent('0 error(s)');
+  });
 });

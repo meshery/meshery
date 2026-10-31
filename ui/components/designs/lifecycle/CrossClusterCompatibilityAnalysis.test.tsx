@@ -155,4 +155,46 @@ describe('CrossClusterCompatibilityAnalysis', () => {
 
     expect(handleReRun).toHaveBeenCalledTimes(1);
   });
+
+  it('syncs default selection when dry-run data arrives asynchronously after mount', () => {
+    const { rerender } = render(
+      <CrossClusterCompatibilityAnalysis
+        dryRunResponse={null}
+        selectedK8sConnections={sampleConnections}
+      />,
+    );
+
+    // Initially no cell selected
+    expect(screen.queryByText(/Validation Details/)).not.toBeInTheDocument();
+
+    // Dry-run results arrive asynchronously
+    rerender(
+      <CrossClusterCompatibilityAnalysis
+        dryRunResponse={sampleDryRunResponse}
+        selectedK8sConnections={sampleConnections}
+      />,
+    );
+
+    // First failed resource (postgres) should now be automatically selected
+    expect(screen.getByText('postgres — Validation Details')).toBeInTheDocument();
+  });
+
+  it('renders incomplete status badge for omitted cluster results', () => {
+    const incompleteResponse = {
+      frontend: {
+        'c-dev': { success: true, component: { kind: 'Deployment' } },
+        // c-staging is omitted
+      },
+    };
+
+    render(
+      <CrossClusterCompatibilityAnalysis
+        dryRunResponse={incompleteResponse}
+        selectedK8sConnections={sampleConnections.slice(0, 2)}
+      />,
+    );
+
+    expect(screen.getByTestId('status-badge-incomplete')).toBeInTheDocument();
+    expect(screen.getByText('Incomplete')).toBeInTheDocument();
+  });
 });
