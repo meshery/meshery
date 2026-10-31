@@ -41,8 +41,8 @@ func TestExamplesUseKnownFlags(t *testing.T) {
 			words := strings.Fields(strings.TrimPrefix(line, "mesheryctl "))
 			target, _, err := RootCmd.Find(words)
 			if err != nil {
-				// The example does not resolve to a command; that is
-				// outside the scope of this test.
+				t.Errorf("example for %q does not resolve to a valid command: %v\n    %s",
+					cmd.CommandPath(), err, line)
 				continue
 			}
 
