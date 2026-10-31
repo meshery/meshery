@@ -281,6 +281,15 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 	query.Count(&count)
 
 	var connectionsFetched []*connections.Connection
+
+	if page == "" {
+		page = "0"
+	}
+
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
