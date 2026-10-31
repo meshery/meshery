@@ -161,13 +161,13 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
         return;
       }
 
-      if (filterSchema[option.type].multiple === false) {
-        setSelectedFilters((prev) => [...prev.filter((f) => f.type !== option.type), newFilter]);
-      } else {
-        setSelectedFilters((prev) => [...prev, newFilter]);
-      }
+      const nextFilters =
+        filterSchema[option.type].multiple === false
+          ? [...selectedFilters.filter((f) => f.type !== option.type), newFilter]
+          : [...selectedFilters, newFilter];
 
-      handleFilter(transformData([...selectedFilters, newFilter]));
+      setSelectedFilters(nextFilters);
+      handleFilter(transformData(nextFilters));
       setInputValue('');
     }
   };
