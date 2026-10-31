@@ -17,8 +17,10 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"sync/atomic"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -95,6 +97,110 @@ func TestProviderUnmarshalJSON(t *testing.T) {
 		}
 		if provider.ProviderURL != "https://cloud.meshery.io" {
 			t.Fatalf("expected provider URL https://cloud.meshery.io, got %q", provider.ProviderURL)
+		}
+	})
+}
+
+type trackingBody struct {
+	io.ReadCloser
+	closed *atomic.Bool
+}
+
+func (b *trackingBody) Close() error {
+	b.closed.Store(true)
+	return b.ReadCloser.Close()
+}
+
+type trackingTransport struct {
+	base   http.RoundTripper
+	closed *atomic.Bool
+}
+
+func (t *trackingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	resp, err := t.base.RoundTrip(req)
+	if err != nil {
+		return nil, err
+	}
+	resp.Body = &trackingBody{
+		ReadCloser: resp.Body,
+		closed:     t.closed,
+	}
+	return resp, nil
+}
+
+func TestGetProviderInfo(t *testing.T) {
+	origTransport := http.DefaultTransport
+	t.Cleanup(func() {
+		http.DefaultTransport = origTransport
+	})
+
+	t.Run("Successfully returns provider info and closes response body", func(t *testing.T) {
+		var bodyClosed atomic.Bool
+		http.DefaultTransport = &trackingTransport{
+			base:   origTransport,
+			closed: &bodyClosed,
+		}
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path == "/api/providers" {
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write([]byte(`{"Meshery":{"providerName":"Meshery","providerUrl":"https://cloud.meshery.io"}}`))
+				return
+			}
+			w.WriteHeader(http.StatusNotFound)
+		}))
+		defer server.Close()
+
+		mctCfg := &config.MesheryCtlConfig{
+			Contexts: map[string]config.Context{
+				"test": {
+					Endpoint: server.URL,
+				},
+			},
+			CurrentContext: "test",
+		}
+
+		providers, err := GetProviderInfo(mctCfg)
+		if err != nil {
+			t.Fatalf("unexpected error from GetProviderInfo: %v", err)
+		}
+		if _, ok := providers["Meshery"]; !ok {
+			t.Fatalf("expected provider 'Meshery' in result, got: %v", providers)
+		}
+		if !bodyClosed.Load() {
+			t.Fatal("expected response body to be closed on success, but it was not")
+		}
+	})
+
+	t.Run("Handles error when decoding invalid JSON and closes response body", func(t *testing.T) {
+		var bodyClosed atomic.Bool
+		http.DefaultTransport = &trackingTransport{
+			base:   origTransport,
+			closed: &bodyClosed,
+		}
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`invalid json`))
+		}))
+		defer server.Close()
+
+		mctCfg := &config.MesheryCtlConfig{
+			Contexts: map[string]config.Context{
+				"test": {
+					Endpoint: server.URL,
+				},
+			},
+			CurrentContext: "test",
+		}
+
+		_, err := GetProviderInfo(mctCfg)
+		if err == nil {
+			t.Fatal("expected decode error for invalid json, got nil")
+		}
+		if !bodyClosed.Load() {
+			t.Fatal("expected response body to be closed on decode error, but it was not")
 		}
 	})
 }
