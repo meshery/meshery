@@ -652,9 +652,9 @@ func ChangeManifestVersion(channel, version, filePath string) error {
 
 // CreateManifestsFolder creates a new folder (.meshery/manifests)
 func CreateManifestsFolder() error {
-	log.Debug("Deleting " + ManifestsFolder + " folder...")
+	log.Debug("Deleting " + filepath.Join(MesheryFolder, ManifestsFolder) + " folder...")
 	// delete manifests folder if it already exists
-	if err := os.RemoveAll(ManifestsFolder); err != nil {
+	if err := os.RemoveAll(filepath.Join(MesheryFolder, ManifestsFolder)); err != nil {
 		return err
 	}
 	log.Debug("Creating " + ManifestsFolder + " folder...")
