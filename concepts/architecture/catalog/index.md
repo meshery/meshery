@@ -38,7 +38,7 @@ Meshery Catalog supports a collaborative environment, where DevOps engineers can
     - View design file:  `mesheryctl design view [design name | ID]`
     - List all designs: `mesheryctl design list`
 5. [Importing](/reference/mesheryctl/#infrastructure-design-configuration-and-management) a design. `mesheryctl design import -f [file-path] -s [manifest | compose | helm]`
-6. Applying [WASM Filter](/guides/configuration-management/#wasm-filters). `mesheryctl filter import [file | URL] --wasm-config [filepath|string]`
+6. Applying [WASM Filter](/guides/infrastructure-management/filter-management/#import-a-filter). `mesheryctl filter import [file | URL] --wasm-config [filepath|string]`
 
 
 ### Publishing a Design to Meshery Catalog
