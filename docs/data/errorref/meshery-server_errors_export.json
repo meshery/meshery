@@ -3547,7 +3547,7 @@
         "long_description": "No result id was supplied in the URL path",
         "short_description": "Missing result id in request",
         "probable_cause": "The client did not include a result identifier",
-        "suggested_remediation": "Provide the result id in the request URL, for example /api/user/performance/results/{id}"
+        "suggested_remediation": "Provide the result id in the request URL, for example /api/perf/profile/result/{id}"
       },
       "1407": {
         "name": "ErrHandlerGenerateUUIDCode",
