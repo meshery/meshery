@@ -112,6 +112,10 @@ Some selectors use a nested `match` block (`match.from` / `match.to` / `match.re
 
 Omit `patch` entirely when the relationship only matches (tagsets, annotation).
 
+### `match_strategy_matrix` (edge non-binding identification)
+
+The engine compares `mutatorRef[i]` on `from` with `mutatedRef[i]` on `to` before identifying an edge non-binding relationship. `match_strategy_matrix` on the **`from`** selector lists the strategies per pair (all must pass): `equal`, `equal_as_strings`, `to_contains_from` (from is a subset of to; objects/arrays), `not_null`. A `to`-side matrix is ignored. Missing, `null`, or short matrices fall back to `["equal"]` per pair. The key is snake_case in all in-tree files and in `eval_rules.rego`, although the v1beta2/v1beta3 schemas name it `matchStrategyMatrix`; keep snake_case. Common corpus value: `[["to_contains_from", "not_null"]]` for label selectors.
+
 ## Selectors
 
 `selectors` (plural) is an array of selector-set items. Each item has `allow` and optional `deny`, each with `from` and `to`.
@@ -159,6 +163,7 @@ If legacy tooling forces you to name a rule, the historical default is `{kind}_{
 - `selector` instead of `selectors`.
 - Flat paths (`"spec.containers[0].name"`) instead of nested arrays (`[["configuration","spec","containers","_","name"]]`).
 - Unpaired mutator/mutated sequences.
+- Misspelled match strategies (for example `not_nul`): an unknown strategy never passes, so the relationship is never identified.
 - Guessing JSON paths instead of reading the component schema.
 - Copying v1beta2 boilerplate blindly into a v1beta3 file (or the reverse) without checking required fields.
 - Mixing `kind: sibling` with in-tree `kind: hierarchical, type: sibling` in the same model.
