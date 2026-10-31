@@ -104,8 +104,8 @@
                 ],
                 [
                   "configuration",
-                  "spec",
-                  "azureName"
+                  "metadata",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"
