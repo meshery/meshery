@@ -221,6 +221,27 @@ describe('MeshSyncTable', () => {
     );
   });
 
+  it('resets to the first page when the selected clusters change', () => {
+    const { rerender } = render(<MeshSyncTable />);
+
+    act(() => {
+      dataTableProps.options.onTableChange('changePage', { page: 2 });
+    });
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: '2' }),
+    );
+
+    getK8sClusterIdsFromCtxId.mockReturnValue(['cluster-c']);
+    rerender(<MeshSyncTable />);
+
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        page: 0,
+        clusterIds: JSON.stringify(['cluster-c']),
+      }),
+    );
+  });
+
   it('notifies when fetching mesh sync resources fails', () => {
     useGetMeshSyncResourcesQuery.mockReturnValue({
       data: { resources: [], totalCount: 0 },

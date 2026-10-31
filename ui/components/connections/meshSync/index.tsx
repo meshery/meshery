@@ -73,6 +73,9 @@ export default function MeshSyncTable(props) {
     [k8sConfig, selectedK8sContexts],
   );
   const serializedClusterIds = useMemo(() => JSON.stringify(clusterIds), [clusterIds]);
+  useEffect(() => {
+    setPage(0);
+  }, [serializedClusterIds]);
 
   const handleRegistrationModalClose = () => {
     setRegistrationModal(false);
