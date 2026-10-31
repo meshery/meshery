@@ -86241,10 +86241,6 @@ paths:
               schema:
                 type: string
                 description: Performance test result specification YAML.
-            application/json:
-              schema:
-                type: object
-                description: Performance test result specification JSON representation.
         '400':
           description: Invalid or missing result ID
         '500':
