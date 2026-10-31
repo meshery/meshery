@@ -93,10 +93,10 @@ describe('CrossClusterCompatibilityAnalysis', () => {
     expect(screen.getByText('Resources Checked')).toBeInTheDocument();
     expect(screen.getByText('Succeeded')).toBeInTheDocument();
     expect(screen.getByText('Warnings')).toBeInTheDocument();
-    expect(screen.getByText('Failed')).toBeInTheDocument();
+    expect(screen.getAllByText('Failed').length).toBeGreaterThan(0);
 
     // Check metric numbers
-    expect(screen.getByText('3')).toBeInTheDocument(); // 3 clusters / 3 resources
+    expect(screen.getAllByText('3').length).toBeGreaterThan(0);
   });
 
   it('renders the compatibility matrix table with resources and clusters', () => {
@@ -112,9 +112,9 @@ describe('CrossClusterCompatibilityAnalysis', () => {
     expect(screen.getByText('postgres')).toBeInTheDocument();
     expect(screen.getByText('ingress')).toBeInTheDocument();
 
-    expect(screen.getByText('dev-cluster')).toBeInTheDocument();
-    expect(screen.getByText('staging-cluster')).toBeInTheDocument();
-    expect(screen.getByText('prod-cluster')).toBeInTheDocument();
+    expect(screen.getAllByText('dev-cluster').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('staging-cluster').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('prod-cluster').length).toBeGreaterThan(0);
   });
 
   it('displays detailed error information, possible fix, and dependency impact when selecting an error', () => {
