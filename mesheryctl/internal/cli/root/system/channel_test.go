@@ -10,6 +10,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
@@ -205,51 +206,139 @@ func TestChannelArgsValidation(t *testing.T) {
 
 	tests := []struct {
 		name          string
+		cmd           *cobra.Command
+		cliArgs       []string
 		args          []string
+		wantErr       bool
 		expectedError string
 	}{
+		// Rejection paths - switch
 		{
 			name:          "switch with no args fails in Args validation",
-			args:          []string{"channel", "switch"},
+			cmd:           switchCmd,
+			cliArgs:       []string{"channel", "switch"},
+			args:          []string{},
+			wantErr:       true,
 			expectedError: "Only one release channel can be specified as an argument",
 		},
 		{
 			name:          "switch with invalid channel fails in Args validation before PreRunE or confirmation",
-			args:          []string{"channel", "switch", "bogus"},
+			cmd:           switchCmd,
+			cliArgs:       []string{"channel", "switch", "bogus"},
+			args:          []string{"bogus"},
+			wantErr:       true,
 			expectedError: "Invalid release channel",
 		},
 		{
 			name:          "switch with invalid edge version fails in Args validation",
-			args:          []string{"channel", "switch", "edge-v1.0.0"},
+			cmd:           switchCmd,
+			cliArgs:       []string{"channel", "switch", "edge-v1.0.0"},
+			args:          []string{"edge-v1.0.0"},
+			wantErr:       true,
 			expectedError: "Invalid edge release version",
 		},
+
+		// Acceptance paths - switch
+		{
+			name:    "switch with valid stable channel passes Args validation",
+			cmd:     switchCmd,
+			args:    []string{"stable"},
+			wantErr: false,
+		},
+		{
+			name:    "switch with valid stable version passes Args validation",
+			cmd:     switchCmd,
+			args:    []string{"stable-v0.7.0"},
+			wantErr: false,
+		},
+		{
+			name:    "switch with valid edge-latest passes Args validation",
+			cmd:     switchCmd,
+			args:    []string{"edge-latest"},
+			wantErr: false,
+		},
+		{
+			name:    "switch with valid edge channel passes Args validation",
+			cmd:     switchCmd,
+			args:    []string{"edge"},
+			wantErr: false,
+		},
+
+		// Rejection paths - set
 		{
 			name:          "set with no args fails in Args validation",
-			args:          []string{"channel", "set"},
+			cmd:           setCmd,
+			cliArgs:       []string{"channel", "set"},
+			args:          []string{},
+			wantErr:       true,
 			expectedError: "Only one release channel can be specified as an argument",
 		},
 		{
 			name:          "set with invalid channel fails in Args validation",
-			args:          []string{"channel", "set", "bogus"},
+			cmd:           setCmd,
+			cliArgs:       []string{"channel", "set", "bogus"},
+			args:          []string{"bogus"},
+			wantErr:       true,
 			expectedError: "Invalid release channel",
 		},
 		{
 			name:          "set with invalid edge version fails in Args validation",
-			args:          []string{"channel", "set", "edge-v1.0.0"},
+			cmd:           setCmd,
+			cliArgs:       []string{"channel", "set", "edge-v1.0.0"},
+			args:          []string{"edge-v1.0.0"},
+			wantErr:       true,
 			expectedError: "Invalid edge release version",
+		},
+
+		// Acceptance paths - set
+		{
+			name:    "set with valid stable channel passes Args validation",
+			cmd:     setCmd,
+			args:    []string{"stable"},
+			wantErr: false,
+		},
+		{
+			name:    "set with valid stable version passes Args validation",
+			cmd:     setCmd,
+			args:    []string{"stable-v0.7.0"},
+			wantErr: false,
+		},
+		{
+			name:    "set with valid edge-latest passes Args validation",
+			cmd:     setCmd,
+			args:    []string{"edge-latest"},
+			wantErr: false,
+		},
+		{
+			name:    "set with valid edge channel passes Args validation",
+			cmd:     setCmd,
+			args:    []string{"edge"},
+			wantErr: false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			buf := setupSystemOutCmdTest(t)
-			defer buf.Reset()
+			// Verify Args validation directly
+			err := tt.cmd.Args(tt.cmd, tt.args)
+			if tt.wantErr {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.expectedError)
+			} else {
+				assert.NoError(t, err)
+			}
 
-			SystemCmd.SetArgs(tt.args)
-			err := SystemCmd.Execute()
-			assert.Error(t, err)
-			assert.Contains(t, err.Error(), tt.expectedError)
-			BreakupFunc()
+			// If cliArgs is provided and we expect an error, verify SystemCmd execution rejects upfront
+			if len(tt.cliArgs) > 0 && tt.wantErr {
+				buf := setupSystemOutCmdTest(t)
+				defer buf.Reset()
+
+				SystemCmd.SetArgs(tt.cliArgs)
+				execErr := SystemCmd.Execute()
+				assert.Error(t, execErr)
+				assert.Contains(t, execErr.Error(), tt.expectedError)
+				BreakupFunc()
+			}
 		})
 	}
 }
