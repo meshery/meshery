@@ -25,6 +25,19 @@ import { useResourceOwner } from '@/utils/hooks/useResourceOwner';
 import useTestIDsGenerator from '@/utils/hooks/useTestIDs';
 import { BottomPart, CardButton, ResultContainer } from './style';
 
+// Profiles saved before the form blocked invalid JSON can still hold plain text,
+// and a throw here would take down every card on the page.
+const parseAdditionalOptions = (additionalOptions?: string[]) => {
+  const options = additionalOptions?.[0];
+  if (!options) return '';
+
+  try {
+    return JSON.parse(options);
+  } catch {
+    return options;
+  }
+};
+
 function PerformanceCard({
   profile,
   handleDelete,
@@ -68,10 +81,7 @@ function PerformanceCard({
     },
     {
       name: 'Additional Option',
-      value:
-        metadata?.additional_options && metadata?.additional_options[0] !== ''
-          ? JSON.parse(metadata?.additional_options[0])
-          : '',
+      value: parseAdditionalOptions(metadata?.additional_options),
     },
     {
       name: 'Certifcate Name',

@@ -81,10 +81,10 @@ const MesheryPerformanceComponent_ = (props) => {
   const [blockRunTestState, setBlockRunTest] = useState(false);
   const [urlErrorState, setUrlError] = useState(false);
   const [tErrorState, setTError] = useState('');
-  const [jsonErrorState, setJsonError] = useState(false);
-  const [disableTestState, setDisableTest] = useState(
-    !(URLValidator(urlState) || isValidJSON(additionalOptionsState)),
+  const [jsonErrorState, setJsonError] = useState(
+    additionalOptionsState !== '' && !isValidJSON(additionalOptionsState),
   );
+  const [disableTestState, setDisableTest] = useState(!URLValidator(urlState));
   const [testUUIDState, setTestUUID] = useState(generateUUID());
   const [selectedMeshState, setSelectedMesh] = useState('');
   const [availableAdaptersState, setAvailableAdapters] = useState([]);
@@ -208,6 +208,7 @@ const MesheryPerformanceComponent_ = (props) => {
     setProfileName('');
     setLoadGenerator('');
     setAdditionalOptions('');
+    setJsonError(false);
     setUrl('');
     setMeshName('');
     setC(0);
@@ -530,6 +531,7 @@ const MesheryPerformanceComponent_ = (props) => {
               <React.Fragment>
                 <PerformanceFormActions
                   disableTest={disableTestState}
+                  hasJsonError={jsonErrorState}
                   blockRunTest={blockRunTestState}
                   hasTestResult={!!testResult}
                   onAbort={handleAbort}
