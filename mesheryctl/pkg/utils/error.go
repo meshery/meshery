@@ -607,7 +607,7 @@ func ErrInvalidAPIResponse(err error) error {
 func ErrLoadConfig(err error) error {
 	return errors.New(ErrLoadConfigCode, errors.Alert,
 		[]string{"Error processing config"},
-		[]string{"Error processing config:" + err.Error()},
+		[]string{"Error processing config: " + err.Error()},
 		[]string{"Unable to load meshconfig due to wrong configurations"},
 		[]string{"Ensure your `config.yaml` file in your `.meshery` is valid, or run `mesheryctl system config`."})
 }
@@ -615,7 +615,7 @@ func ErrLoadConfig(err error) error {
 func ErrParseGithubFile(err error, URL string) error {
 	return errors.New(ErrParseGithubFileCode, errors.Alert,
 		[]string{"Failed to parse github file"},
-		[]string{"Failed to parse github file" + err.Error()},
+		[]string{"Failed to parse github file: " + err.Error()},
 		[]string{"Unable to retrieve file from URL: %s", URL},
 		[]string{"Ensure you have a github url in file path"})
 }
