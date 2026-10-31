@@ -401,4 +401,3 @@ export const useDryRunRawResponse = (validationMachine) => {
   const matrixEntry = results.find((r) => r?.type === 'CompatibilityMatrix');
   return matrixEntry?.rawDryRunResponse || null;
 };
-

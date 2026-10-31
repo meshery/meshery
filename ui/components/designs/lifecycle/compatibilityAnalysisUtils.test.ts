@@ -109,16 +109,14 @@ describe('compatibilityAnalysisUtils', () => {
       expect(analysis.metrics.failedCount).toBe(1); // postgres
 
       // Check prod-cluster status on postgres
-      const postgresProd = analysis.resources
-        .find((r) => r.resourceName === 'postgres')
+      const postgresProd = analysis.resources.find((r) => r.resourceName === 'postgres')
         ?.clusterResults['cluster-3'];
       expect(postgresProd?.status).toBe('failed');
       expect(postgresProd?.possibleFix).toContain('Custom Resource Definition');
       expect(postgresProd?.dependencyImpact).toContain('database connectivity');
 
       // Check staging-cluster status on ingress
-      const ingressStaging = analysis.resources
-        .find((r) => r.resourceName === 'ingress')
+      const ingressStaging = analysis.resources.find((r) => r.resourceName === 'ingress')
         ?.clusterResults['cluster-2'];
       expect(ingressStaging?.status).toBe('warning');
 
@@ -129,7 +127,9 @@ describe('compatibilityAnalysisUtils', () => {
       expect(prodSummary?.passed).toBe(2);
 
       // Check next steps
-      expect(analysis.nextSteps.some((s) => s.includes('postgres') && s.includes('prod-cluster'))).toBe(true);
+      expect(
+        analysis.nextSteps.some((s) => s.includes('postgres') && s.includes('prod-cluster')),
+      ).toBe(true);
     });
 
     it('gracefully handles empty dry-run responses without crashing', () => {
@@ -138,9 +138,84 @@ describe('compatibilityAnalysisUtils', () => {
         selectedK8sConnections: [],
       });
       expect(analysis.clusters).toHaveLength(1);
+      expect(analysis.clusters[0].version).toBe('Unknown');
+      expect(analysis.clusters[0].status).toBe('unknown');
       expect(analysis.resources).toHaveLength(0);
       expect(analysis.metrics.totalResources).toBe(0);
-      expect(analysis.nextSteps).toContain('All resources successfully validated across all targeted clusters.');
+      expect(analysis.nextSteps).toContain(
+        'All resources successfully validated across all targeted clusters.',
+      );
+    });
+
+    it('does not treat "all" as a cluster ID when resolving selectedK8sContexts', () => {
+      const selectedK8sConnections = [
+        { id: 'cluster-1', metadata: { name: 'dev-cluster', version: 'v1.29.0' } },
+      ];
+      const analysis = buildCompatibilityAnalysis({
+        dryRunResponse: {
+          frontend: { 'cluster-1': { success: true } },
+        },
+        selectedK8sConnections,
+        selectedK8sContexts: ['all'],
+      });
+
+      expect(analysis.clusters.some((c) => c.id === 'all')).toBe(false);
+      expect(analysis.clusters).toHaveLength(1);
+      expect(analysis.clusters[0].id).toBe('cluster-1');
+    });
+
+    it('marks missing cluster results as incomplete and does not declare deployment readiness', () => {
+      const dryRunResponse = {
+        frontend: {
+          'cluster-1': { success: true },
+          // cluster-2 is absent from response
+        },
+      };
+
+      const selectedK8sConnections = [
+        { id: 'cluster-1', metadata: { name: 'dev-cluster', version: 'v1.29.0' } },
+        { id: 'cluster-2', metadata: { name: 'prod-cluster', version: 'v1.28.0' } },
+      ];
+
+      const analysis = buildCompatibilityAnalysis({
+        dryRunResponse,
+        selectedK8sConnections,
+      });
+
+      expect(analysis.clusters).toHaveLength(2);
+      const frontend = analysis.resources.find((r) => r.resourceName === 'frontend');
+      expect(frontend?.clusterResults['cluster-2']?.status).toBe('incomplete');
+      expect(frontend?.clusterResults['cluster-2']?.errorMessage).toContain(
+        'No dry-run result was returned for prod-cluster',
+      );
+
+      // Incomplete cells should not count as succeeded
+      expect(analysis.metrics.succeededCount).toBe(0);
+      expect(analysis.metrics.incompleteCount).toBe(1);
+
+      // Cluster summary should track incomplete count
+      const prodSummary = analysis.clusterSummaries.find((c) => c.clusterId === 'cluster-2');
+      expect(prodSummary?.incomplete).toBe(1);
+      expect(prodSummary?.passed).toBe(0);
+
+      // Next steps must not declare readiness
+      expect(analysis.nextSteps).not.toContain('Design is ready for deployment.');
+      expect(
+        analysis.nextSteps.some((s) =>
+          s.includes('unavailable or incomplete cluster prod-cluster'),
+        ),
+      ).toBe(true);
+    });
+
+    it('uses Unknown and unknown fallback values for missing version and status', () => {
+      const selectedK8sConnections = [{ id: 'cluster-anon' }];
+      const analysis = buildCompatibilityAnalysis({
+        dryRunResponse: null,
+        selectedK8sConnections,
+      });
+
+      expect(analysis.clusters[0].version).toBe('Unknown');
+      expect(analysis.clusters[0].status).toBe('unknown');
     });
   });
 });

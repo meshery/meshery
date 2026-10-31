@@ -3,13 +3,22 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@sistent/sistent', () => {
-  const styled = (_tag: any) => () => {
+  const styled = (_tag: any, _options?: any) => () => {
     const Styled = ({ children, ...rest }: any) => <div {...rest}>{children}</div>;
     Styled.displayName = 'StyledMock';
     return Styled;
   };
   return {
     styled,
+    Box: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    Button: ({ children, onClick, ...rest }: any) => (
+      <button type="button" onClick={onClick} {...rest}>
+        {children}
+      </button>
+    ),
+    ButtonGroup: ({ children, ...rest }: any) => <div>{children}</div>,
+    Card: ({ children, ...rest }: any) => <div>{children}</div>,
+    Chip: ({ label, ...rest }: any) => <span {...rest}>{label}</span>,
     List: ({ children, ...rest }: any) => <ul {...rest}>{children}</ul>,
     ListItemText: ({ primary }: any) => <span>{primary}</span>,
     ListItemIcon: ({ children }: any) => <span>{children}</span>,
@@ -26,7 +35,9 @@ vi.mock('@sistent/sistent', () => {
         success: { main: '#0f0' },
         error: { main: '#f00' },
         warning: { main: '#f80' },
+        primary: { main: '#00B39F' },
       },
+      spacing: (n: number) => `${n * 8}px`,
     }),
     ErrorIcon: () => <svg data-testid="error-icon" />,
   };
@@ -54,6 +65,7 @@ vi.mock('../../../machines/validator/designValidator', () => ({
   },
   useDryRunValidationResults: vi.fn(),
   useIsValidatingDryRun: vi.fn(),
+  useDryRunRawResponse: vi.fn(),
 }));
 
 vi.mock('../../data-formatter', () => ({
@@ -88,9 +100,10 @@ describe('getTotalCountOfDeploymentErrors', () => {
     expect(getTotalCountOfDeploymentErrors([])).toBe(0);
   });
 
-  it('sums up errors across entries', () => {
+  it('sums up errors across entries and skips entries without errors array', () => {
     const result = getTotalCountOfDeploymentErrors([
       { errors: [1, 2] },
+      { type: 'CompatibilityMatrix', rawDryRunResponse: {} },
       { errors: [3] },
       { errors: [] },
     ] as any);

@@ -35,6 +35,7 @@ export interface ValidationMetrics {
   succeededCount: number;
   warningCount: number;
   failedCount: number;
+  incompleteCount?: number;
 }
 
 export interface ClusterSummaryItem {
@@ -44,6 +45,7 @@ export interface ClusterSummaryItem {
   passed: number;
   warnings: number;
   failed: number;
+  incomplete?: number;
   total: number;
 }
 
@@ -125,11 +127,16 @@ export function generateDependencyImpact(
     const dependentWorkloads = allResourceNames.filter(
       (name) => name !== resourceName && !name.toLowerCase().includes('ingress'),
     );
-    const dependentsStr = dependentWorkloads.length > 0 ? dependentWorkloads.join(', ') : 'backend services';
+    const dependentsStr =
+      dependentWorkloads.length > 0 ? dependentWorkloads.join(', ') : 'backend services';
     return `This failure may affect dependent resources (e.g., ${dependentsStr}) that require persistent data or database connectivity to initialize.`;
   }
 
-  if (lowerKind.includes('ingress') || lowerKind.includes('gateway') || lowerKind.includes('route')) {
+  if (
+    lowerKind.includes('ingress') ||
+    lowerKind.includes('gateway') ||
+    lowerKind.includes('route')
+  ) {
     return `External ingress routing and SSL termination will fail; services exposed by this ingress will not be reachable outside the cluster.`;
   }
 
@@ -161,44 +168,45 @@ export function buildCompatibilityAnalysis({
   // 1. Resolve cluster list
   const clusterMap: Record<string, ClusterInfo> = {};
 
-  // Build clusters from selected connections first
+  // Build clusters from selected connections first (skip 'all' which is a context selector, not a cluster ID)
   selectedK8sConnections.forEach((conn) => {
     const id = conn.metadata?.id || conn.id;
-    if (id) {
+    if (id && id !== 'all') {
       const name = conn.metadata?.name || conn.name || `cluster-${id.slice(0, 6)}`;
       const version =
         conn.metadata?.server_version ||
         conn.metadata?.version ||
         conn.metadata?.k8s_version ||
-        'v1.28.0';
-      const status = conn.status || 'connected';
+        'Unknown';
+      const status = conn.status || 'unknown';
       clusterMap[id] = { id, name, version, status };
     }
   });
 
-  // Also include any contexts in selectedK8sContexts
-  selectedK8sContexts.forEach((ctxId) => {
+  // Also include any concrete contexts in selectedK8sContexts (excluding 'all')
+  const effectiveContexts = selectedK8sContexts.filter((ctxId) => ctxId && ctxId !== 'all');
+  effectiveContexts.forEach((ctxId) => {
     if (!clusterMap[ctxId]) {
       clusterMap[ctxId] = {
         id: ctxId,
         name: `cluster-${ctxId.slice(0, 6)}`,
-        version: 'v1.28.0',
-        status: 'connected',
+        version: 'Unknown',
+        status: 'unknown',
       };
     }
   });
 
-  // Also discover any cluster IDs in the dryRunResponse
+  // Also discover any cluster IDs in the dryRunResponse (excluding 'all')
   if (dryRunResponse && typeof dryRunResponse === 'object') {
     Object.values(dryRunResponse).forEach((contextMap: any) => {
       if (contextMap && typeof contextMap === 'object') {
         Object.keys(contextMap).forEach((ctxId) => {
-          if (!clusterMap[ctxId]) {
+          if (ctxId && ctxId !== 'all' && !clusterMap[ctxId]) {
             clusterMap[ctxId] = {
               id: ctxId,
               name: `cluster-${ctxId.slice(0, 6)}`,
-              version: 'v1.28.0',
-              status: 'connected',
+              version: 'Unknown',
+              status: 'unknown',
             };
           }
         });
@@ -211,8 +219,8 @@ export function buildCompatibilityAnalysis({
     clusters.push({
       id: 'default-cluster',
       name: 'kubernetes-cluster',
-      version: 'v1.28.0',
-      status: 'connected',
+      version: 'Unknown',
+      status: 'unknown',
     });
   }
 
@@ -318,9 +326,10 @@ export function buildCompatibilityAnalysis({
   resources.forEach((resource) => {
     clusters.forEach((cluster) => {
       if (!resource.clusterResults[cluster.id]) {
-        // If there's no result for this cluster, check if dry-run has any failures
+        // If there's no result for this cluster, mark as incomplete
         resource.clusterResults[cluster.id] = {
-          status: 'success', // Default to success if no error was registered
+          status: 'incomplete',
+          errorMessage: `No dry-run result was returned for ${cluster.name}.`,
         };
       }
     });
@@ -330,12 +339,15 @@ export function buildCompatibilityAnalysis({
   let succeededCount = 0;
   let warningCount = 0;
   let failedCount = 0;
+  let incompleteCount = 0;
 
   // Aggregate resource-level overall status
   resources.forEach((resource) => {
     const statuses = Object.values(resource.clusterResults).map((r) => r.status);
     if (statuses.includes('failed')) {
       failedCount++;
+    } else if (statuses.includes('incomplete')) {
+      incompleteCount++;
     } else if (statuses.includes('warning')) {
       warningCount++;
     } else {
@@ -349,6 +361,7 @@ export function buildCompatibilityAnalysis({
     succeededCount,
     warningCount,
     failedCount,
+    incompleteCount,
   };
 
   // 4. Compute per-cluster summaries
@@ -356,6 +369,7 @@ export function buildCompatibilityAnalysis({
     let passed = 0;
     let warnings = 0;
     let failed = 0;
+    let incomplete = 0;
 
     resources.forEach((res) => {
       const resStatus = res.clusterResults[cluster.id]?.status || 'incomplete';
@@ -365,6 +379,8 @@ export function buildCompatibilityAnalysis({
         warnings++;
       } else if (resStatus === 'failed') {
         failed++;
+      } else if (resStatus === 'incomplete') {
+        incomplete++;
       }
     });
 
@@ -375,12 +391,14 @@ export function buildCompatibilityAnalysis({
       passed,
       warnings,
       failed,
+      incomplete,
       total: resources.length,
     };
   });
 
   // 5. Generate Next Steps
   const nextSteps: string[] = [];
+  const incompleteClusters = new Set<string>();
   resources.forEach((res) => {
     clusters.forEach((cluster) => {
       const r = res.clusterResults[cluster.id];
@@ -388,8 +406,16 @@ export function buildCompatibilityAnalysis({
         nextSteps.push(`Resolve the failed resource (${res.resourceName}) on ${cluster.name}.`);
       } else if (r?.status === 'warning') {
         nextSteps.push(`Review the warning for ${res.resourceName} on ${cluster.name}.`);
+      } else if (r?.status === 'incomplete') {
+        incompleteClusters.add(cluster.name);
       }
     });
+  });
+
+  incompleteClusters.forEach((clusterName) => {
+    nextSteps.push(
+      `Obtain validation results for unavailable or incomplete cluster ${clusterName}.`,
+    );
   });
 
   if (nextSteps.length === 0) {

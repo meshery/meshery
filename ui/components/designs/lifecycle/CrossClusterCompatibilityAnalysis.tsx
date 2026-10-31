@@ -11,9 +11,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tooltip,
   Typography,
-  styled,
 } from '@sistent/sistent';
 import KubernetesIcon from '@/assets/icons/KubernetesIcon';
 import CheckIcon from '@/assets/icons/CheckIcon';
@@ -28,150 +26,20 @@ import {
   ResourceRow,
   buildCompatibilityAnalysis,
 } from './compatibilityAnalysisUtils';
-
-const RootContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(2.5),
-  padding: theme.spacing(2),
-  width: '100%',
-  backgroundColor: theme.palette.background.default,
-  color: theme.palette.text.primary,
-}));
-
-const HeaderContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  flexWrap: 'wrap',
-  gap: theme.spacing(1),
-  borderBottom: `1px solid ${theme.palette.divider}`,
-  paddingBottom: theme.spacing(1.5),
-}));
-
-const MetricsGrid = styled(Box)(({ theme }) => ({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-  gap: theme.spacing(2),
-}));
-
-const MetricCard = styled(Card, {
-  shouldForwardProp: (prop) => prop !== 'accentColor',
-})<{ accentColor?: string }>(({ theme, accentColor }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(2),
-  gap: theme.spacing(1.5),
-  backgroundColor: theme.palette.background.paper,
-  border: `1px solid ${accentColor ? alpha(accentColor, 0.4) : theme.palette.divider}`,
-  borderRadius: theme.shape.borderRadius,
-  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-  '&:hover': {
-    transform: 'translateY(-2px)',
-    boxShadow: `0 4px 12px ${alpha(accentColor || theme.palette.common.black, 0.15)}`,
-  },
-}));
-
-const MatrixCard = styled(Card)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper,
-  border: `1px solid ${theme.palette.divider}`,
-  borderRadius: theme.shape.borderRadius,
-  overflow: 'hidden',
-}));
-
-const TwoColumnGrid = styled(Box)(({ theme }) => ({
-  display: 'grid',
-  gridTemplateColumns: '2fr 1.2fr',
-  gap: theme.spacing(2.5),
-  alignItems: 'start',
-  [theme.breakpoints.down('md')]: {
-    gridTemplateColumns: '1fr',
-  },
-}));
-
-const BottomGrid = styled(Box)(({ theme }) => ({
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: theme.spacing(2.5),
-  [theme.breakpoints.down('sm')]: {
-    gridTemplateColumns: '1fr',
-  },
-}));
-
-const DetailCard = styled(Card)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper,
-  border: `1px solid ${theme.palette.divider}`,
-  borderRadius: theme.shape.borderRadius,
-  padding: theme.spacing(2.5),
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(2),
-}));
-
-const DetailSection = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(0.75),
-}));
-
-const CodeBox = styled(Box)(({ theme }) => ({
-  backgroundColor: alpha(theme.palette.background.default, 0.8),
-  border: `1px solid ${theme.palette.divider}`,
-  borderRadius: theme.shape.borderRadius,
-  padding: theme.spacing(1.5),
-  fontFamily: 'monospace',
-  fontSize: '0.85rem',
-  color: theme.palette.error.main,
-  wordBreak: 'break-word',
-  maxHeight: '180px',
-  overflowY: 'auto',
-}));
-
-const InsightBox = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'tone',
-})<{ tone?: 'fix' | 'dependency' }>(({ theme, tone }) => {
-  const isFix = tone === 'fix';
-  const baseColor = isFix ? theme.palette.info?.main || '#00B39F' : theme.palette.warning.main;
-  return {
-    backgroundColor: alpha(baseColor, 0.08),
-    borderLeft: `4px solid ${baseColor}`,
-    borderRadius: `0 ${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0`,
-    padding: theme.spacing(1.5),
-    fontSize: '0.9rem',
-    lineHeight: 1.5,
-  };
-});
-
-const StatusChipStyled = styled(Chip, {
-  shouldForwardProp: (prop) => prop !== 'status' && prop !== 'isSelected',
-})<{ status: CompatibilityStatus; isSelected?: boolean }>(({ theme, status, isSelected }) => {
-  let color = theme.palette.success.main;
-  let bg = alpha(theme.palette.success.main, 0.15);
-
-  if (status === 'failed') {
-    color = theme.palette.error.main;
-    bg = alpha(theme.palette.error.main, 0.15);
-  } else if (status === 'warning') {
-    color = theme.palette.warning.main;
-    bg = alpha(theme.palette.warning.main, 0.15);
-  } else if (status === 'incomplete') {
-    color = theme.palette.text.secondary;
-    bg = alpha(theme.palette.action.disabled, 0.15);
-  }
-
-  return {
-    color,
-    backgroundColor: bg,
-    border: `1px solid ${isSelected ? color : 'transparent'}`,
-    fontWeight: 600,
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    '&:hover': {
-      backgroundColor: alpha(color, 0.25),
-      transform: 'scale(1.02)',
-    },
-  };
-});
+import {
+  BottomGrid,
+  CodeBox,
+  DetailCard,
+  DetailSection,
+  HeaderContainer,
+  InsightBox,
+  MatrixCard,
+  MetricCard,
+  MetricsGrid,
+  RootContainer,
+  StatusChipStyled,
+  TwoColumnGrid,
+} from './CrossClusterCompatibilityAnalysis.styles';
 
 export interface CrossClusterCompatibilityAnalysisProps {
   dryRunResponse?: any;
@@ -186,7 +54,9 @@ export interface CrossClusterCompatibilityAnalysisProps {
  * CrossClusterCompatibilityAnalysis renders a consolidated multi-cluster matrix
  * showing resource-level dry run results across environments.
  */
-export const CrossClusterCompatibilityAnalysis: React.FC<CrossClusterCompatibilityAnalysisProps> = ({
+export const CrossClusterCompatibilityAnalysis: React.FC<
+  CrossClusterCompatibilityAnalysisProps
+> = ({
   dryRunResponse,
   design,
   selectedK8sConnections = [],
@@ -234,7 +104,11 @@ export const CrossClusterCompatibilityAnalysis: React.FC<CrossClusterCompatibili
     return selectedCell.resource.clusterResults[selectedCluster.id] || null;
   }, [selectedCell, selectedCluster]);
 
-  const renderStatusBadge = (status: CompatibilityStatus, isSelected: boolean, onClick: () => void) => {
+  const renderStatusBadge = (
+    status: CompatibilityStatus,
+    isSelected: boolean,
+    onClick: () => void,
+  ) => {
     let icon = <CheckIcon width={14} height={14} fill={theme.palette.success.main} />;
     let label = 'Success';
 
@@ -266,7 +140,10 @@ export const CrossClusterCompatibilityAnalysis: React.FC<CrossClusterCompatibili
       {/* 1. Header */}
       <HeaderContainer>
         <Box>
-          <Typography variant="h5" sx={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography
+            variant="h5"
+            sx={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}
+          >
             <DryRunIcon width={24} height={24} />
             Cross-Cluster Compatibility Analysis
             <Chip
@@ -282,7 +159,8 @@ export const CrossClusterCompatibilityAnalysis: React.FC<CrossClusterCompatibili
             />
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Compare the dry-run validation results of this design across multiple Kubernetes clusters.
+            Compare the dry-run validation results of this design across multiple Kubernetes
+            clusters.
           </Typography>
         </Box>
         {onReRunAnalysis && (
@@ -319,12 +197,12 @@ export const CrossClusterCompatibilityAnalysis: React.FC<CrossClusterCompatibili
               width: 32,
               height: 32,
               borderRadius: '50%',
-              backgroundColor: alpha(theme.palette.info?.main || '#00B39F', 0.15),
+              backgroundColor: alpha(theme.palette.primary.main, 0.15),
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 700,
-              color: theme.palette.info?.main || '#00B39F',
+              color: theme.palette.primary.main,
             }}
           >
             #
@@ -432,7 +310,14 @@ export const CrossClusterCompatibilityAnalysis: React.FC<CrossClusterCompatibili
                   <TableCell sx={{ fontWeight: 600, width: '20%' }}>Kind</TableCell>
                   {data.clusters.map((cluster) => (
                     <TableCell key={cluster.id} align="center" sx={{ fontWeight: 600 }}>
-                      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.25 }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: 0.25,
+                        }}
+                      >
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                           <KubernetesIcon width={16} height={16} />
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
@@ -504,28 +389,33 @@ export const CrossClusterCompatibilityAnalysis: React.FC<CrossClusterCompatibili
         <DetailCard data-testid="validation-details-panel">
           {selectedCell && selectedCluster && selectedResult ? (
             <>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <Box
+                sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}
+              >
                 <Box>
                   <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
                     {selectedCell.resource.resourceName} — Validation Details
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Cluster: <strong>{selectedCluster.name}</strong> ({selectedCluster.version}) | Kind:{' '}
-                    <strong>{selectedCell.resource.kind}</strong> | Status:{' '}
-                    <span
-                      style={{
+                    Cluster: <strong>{selectedCluster.name}</strong> ({selectedCluster.version}) |
+                    Kind: <strong>{selectedCell.resource.kind}</strong> | Status:{' '}
+                    <Box
+                      component="span"
+                      sx={{
                         color:
                           selectedResult.status === 'failed'
                             ? theme.palette.error.main
                             : selectedResult.status === 'warning'
-                            ? theme.palette.warning.main
-                            : theme.palette.success.main,
+                              ? theme.palette.warning.main
+                              : selectedResult.status === 'incomplete'
+                                ? theme.palette.text.secondary
+                                : theme.palette.success.main,
                         fontWeight: 600,
                         textTransform: 'capitalize',
                       }}
                     >
                       {selectedResult.status}
-                    </span>
+                    </Box>
                   </Typography>
                 </Box>
                 <IconButton size="small" onClick={() => setSelectedCell(null)}>
@@ -535,7 +425,10 @@ export const CrossClusterCompatibilityAnalysis: React.FC<CrossClusterCompatibili
 
               {/* Validation Error Section */}
               <DetailSection>
-                <Typography variant="body2" sx={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 0.5 }}
+                >
                   <CrossCircleIcon width={16} height={16} fill={theme.palette.error.main} />
                   Validation Error
                 </Typography>
@@ -558,7 +451,7 @@ export const CrossClusterCompatibilityAnalysis: React.FC<CrossClusterCompatibili
                       display: 'flex',
                       alignItems: 'center',
                       gap: 0.5,
-                      color: theme.palette.info?.main || '#00B39F',
+                      color: theme.palette.primary.main,
                     }}
                   >
                     Possible Fix
@@ -592,8 +485,8 @@ export const CrossClusterCompatibilityAnalysis: React.FC<CrossClusterCompatibili
                 Select a Resource to Inspect Details
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Click any cell in the Compatibility Matrix table to review validation errors, suggested fixes,
-                and dependency impacts.
+                Click any cell in the Compatibility Matrix table to review validation errors,
+                suggested fixes, and dependency impacts.
               </Typography>
             </Box>
           )}
@@ -603,8 +496,17 @@ export const CrossClusterCompatibilityAnalysis: React.FC<CrossClusterCompatibili
       {/* 4. Bottom Row: Validation Summary + Next Steps */}
       <BottomGrid>
         {/* Left: Validation Summary */}
-        <Card sx={{ p: 2.5, backgroundColor: theme.palette.background.paper, border: `1px solid ${theme.palette.divider}` }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Card
+          sx={{
+            p: 2.5,
+            backgroundColor: theme.palette.background.paper,
+            border: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          <Typography
+            variant="subtitle1"
+            sx={{ fontWeight: 600, mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}
+          >
             <KubernetesIcon width={18} height={18} />
             Validation Summary
           </Typography>
@@ -633,8 +535,8 @@ export const CrossClusterCompatibilityAnalysis: React.FC<CrossClusterCompatibili
                         backgroundColor: hasErrors
                           ? theme.palette.error.main
                           : summary.warnings > 0
-                          ? theme.palette.warning.main
-                          : theme.palette.success.main,
+                            ? theme.palette.warning.main
+                            : theme.palette.success.main,
                       }}
                     />
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>
@@ -652,8 +554,8 @@ export const CrossClusterCompatibilityAnalysis: React.FC<CrossClusterCompatibili
                       color: hasErrors
                         ? theme.palette.error.main
                         : summary.warnings > 0
-                        ? theme.palette.warning.main
-                        : theme.palette.success.main,
+                          ? theme.palette.warning.main
+                          : theme.palette.success.main,
                     }}
                   >
                     {isAllPass
@@ -669,12 +571,24 @@ export const CrossClusterCompatibilityAnalysis: React.FC<CrossClusterCompatibili
         </Card>
 
         {/* Right: Next Steps */}
-        <Card sx={{ p: 2.5, backgroundColor: theme.palette.background.paper, border: `1px solid ${theme.palette.divider}` }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Card
+          sx={{
+            p: 2.5,
+            backgroundColor: theme.palette.background.paper,
+            border: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          <Typography
+            variant="subtitle1"
+            sx={{ fontWeight: 600, mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}
+          >
             <DryRunIcon width={18} height={18} />
             Next Steps
           </Typography>
-          <Box component="ul" sx={{ pl: 2.5, m: 0, display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Box
+            component="ul"
+            sx={{ pl: 2.5, m: 0, display: 'flex', flexDirection: 'column', gap: 1 }}
+          >
             {data.nextSteps.map((step, idx) => (
               <Typography key={idx} component="li" variant="body2" color="text.secondary">
                 {step}

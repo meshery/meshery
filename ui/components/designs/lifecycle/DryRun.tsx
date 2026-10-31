@@ -37,11 +37,13 @@ function breakCapitalizedWords(input) {
  * @returns
  */
 export function getTotalCountOfDeploymentErrors(errors) {
-  if (!errors) {
+  if (!errors || !Array.isArray(errors)) {
     return 0;
   }
 
-  return errors.reduce((preCount, currEle) => preCount + currEle.errors.length, 0);
+  return errors
+    .filter((entry) => Array.isArray(entry?.errors))
+    .reduce((preCount, currEle) => preCount + currEle.errors.length, 0);
 }
 
 function getFieldPathString(fieldPath) {
