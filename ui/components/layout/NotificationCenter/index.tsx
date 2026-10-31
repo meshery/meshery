@@ -269,6 +269,8 @@ const BulkActions = () => {
   const [markAllAsRead, { isLoading: isMarkingAllRead }] = useMarkAllEventsReadMutation();
   const [fetchEvents] = useLazyGetEventsQuery();
   const currentFilters = useSelector((state) => state.events?.current_view?.filters);
+  const latestFilters = useRef(currentFilters);
+  latestFilters.current = currentFilters;
   const isActionInProgress = isDeleting || isUpdatingStatus || isMarkingAllRead;
 
   const dispatch = useDispatch();
@@ -301,9 +303,10 @@ const BulkActions = () => {
       await markAllAsRead().unwrap();
       resetSelection();
       // The server decides which events were marked, so refresh from it
-      dispatch(loadEvents(fetchEvents, 0, currentFilters));
+      dispatch(loadEvents(fetchEvents, 0, latestFilters.current));
     } catch {
-      // Failures are already reported to the user by the global rtkErrorMiddleware
+      // Failures are already reported to the user by the g
+      // lobal rtkErrorMiddleware
     }
   };
 
