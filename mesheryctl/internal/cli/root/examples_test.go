@@ -39,11 +39,17 @@ func TestExamplesUseKnownFlags(t *testing.T) {
 			}
 
 			words := strings.Fields(strings.TrimPrefix(line, "mesheryctl "))
-			target, _, err := RootCmd.Find(words)
-			if err != nil {
-				t.Errorf("example for %q does not resolve to a valid command: %v\n    %s",
-					cmd.CommandPath(), err, line)
-				continue
+			var target *cobra.Command
+			if len(words) == 0 || strings.HasPrefix(words[0], "-") {
+				target = RootCmd
+			} else {
+				var err error
+				target, _, err = RootCmd.Find(words)
+				if err != nil {
+					t.Errorf("example for %q does not resolve to a valid command: %v\n    %s",
+						cmd.CommandPath(), err, line)
+					continue
+				}
 			}
 
 			for _, match := range exampleFlagPattern.FindAllStringSubmatch(line, -1) {
