@@ -244,7 +244,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 func mesheryDesignFromParsedFile(parsedFile interface{}) (pattern.PatternFile, error) {
 	design, ok := parsedFile.(pattern.PatternFile)
 	if !ok {
-		return pattern.PatternFile{}, fmt.Errorf("parsed file is not of type pattern.PatternFile")
+		return pattern.PatternFile{}, fmt.Errorf("parsed file is not of type pattern.PatternFile: got %T", parsedFile)
 	}
 	return design, nil
 }
