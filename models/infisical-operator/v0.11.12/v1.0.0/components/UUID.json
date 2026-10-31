@@ -3,7 +3,7 @@
   "schemaVersion": "components.meshery.io/v1beta2",
   "version": "v1.0.0",
   "displayName": "UUID",
-  "description": "UUID generates a version 4 UUID (e56657e3-764f-11ef-a397-65231a88c216). InfisicalPushSecret resources reference it through push.generators[].generatorRef (kind UUID) to create new values in Infisical.",
+  "description": "UUID generates a version 4 UUID. InfisicalPushSecret resources reference it through push.generators[].generatorRef (kind UUID) to create new values in Infisical.",
   "format": "JSON",
   "model": {
     "id": "00000000-0000-0000-0000-000000000000",
@@ -88,7 +88,7 @@
   "component": {
     "version": "secrets.infisical.com/v1alpha1",
     "kind": "UUID",
-    "schema": "{\n \"description\": \"UUID generates a version 4 UUID (e56657e3-764f-11ef-a397-65231a88c216).\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"UUIDSpec controls the behavior of the uuid generator.\",\n   \"type\": \"object\"\n  }\n },\n \"title\": \"UUID\",\n \"type\": \"object\"\n}"
+    "schema": "{\n \"description\": \"UUID generates a version 4 UUID.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"UUIDSpec controls the behavior of the uuid generator.\",\n   \"type\": \"object\"\n  }\n },\n \"title\": \"UUID\",\n \"type\": \"object\"\n}"
   },
   "createdAt": "0001-01-01T00:00:00Z",
   "updatedAt": "0001-01-01T00:00:00Z",
