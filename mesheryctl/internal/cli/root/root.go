@@ -109,6 +109,10 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, "path to config file")
+	// Use the canonical tilde form in generated docs so the runner's home dir is never embedded.
+	if f := RootCmd.PersistentFlags().Lookup("config"); f != nil {
+		f.DefValue = "~/.meshery/config.yaml"
+	}
 
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
