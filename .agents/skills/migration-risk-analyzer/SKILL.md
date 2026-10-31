@@ -40,4 +40,6 @@ Before approving any PR touching `server/models/*`:
 - [ ] **Field Renames**: Does the PR change any Go struct field or GORM column tag? If so, verify that existing data in SQLite is copied or read with backwards compatibility.
 - [ ] **Table List Coverage**: Is any newly introduced table or join model included in `SystemDatabaseModels()`?
 - [ ] **Defaults for New Columns**: Do newly added non-nullable columns have explicit `gorm:"default:..."` tags?
-- [ ] **Regression Tests**: Does the PR include tests in `server/models/*_test.go` confirming both fresh-install migrations and upgrades from existing databases succeed?
+- [ ] **Reset & Rollback Safety**: Is the model covered in `SystemDatabaseModels()` so database resets and hard resets do not drop or corrupt tables?
+- [ ] **WAL Mode Handling**: Are SQLite resets and backups capturing the database and active WAL journal safely (e.g. via `VACUUM INTO` or atomic copy)?
+- [ ] **Regression Tests**: Does the PR include tests in `server/models/*_test.go` confirming fresh-install migrations, existing database upgrades, and reset behaviors succeed?
