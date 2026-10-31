@@ -455,6 +455,7 @@ const MesheryPerformanceComponent_ = (props) => {
 
   const handleCertificateUpload = (event) => {
     const file = event.target.files[0];
+
     if (file) {
       const newMetadata = {
         ...metadataState,
@@ -463,7 +464,9 @@ const MesheryPerformanceComponent_ = (props) => {
           name: file.name,
         },
       };
+
       setMetadata(newMetadata);
+      setCaCertificate(newMetadata.ca_certificate);
     }
   };
 
