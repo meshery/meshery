@@ -7,7 +7,7 @@ setup() {
     export HELM_CONFIG_HOME="$BATS_TEST_TMPDIR/helm_config"
     export HELM_CACHE_HOME="$BATS_TEST_TMPDIR/helm_cache"
     export HELM_DATA_HOME="$BATS_TEST_TMPDIR/helm_data"
-    export TEST_NS="meshery-helm-test"
+    export TEST_NS="meshery-helm-$RANDOM"
     export CREATED_NS=0
 }
 
@@ -23,7 +23,7 @@ common_kube_and_helm_assertions() {
 teardown() {
     if [ "$CREATED_NS" -eq 1 ]; then
         helm uninstall meshery -n "$TEST_NS" >/dev/null 2>&1 || true
-        kubectl delete ns "$TEST_NS" --timeout=30s >/dev/null 2>&1 || true
+        kubectl delete ns "$TEST_NS" --timeout=60s --wait=true >/dev/null 2>&1 || true
     fi
     rm -rf "$HELM_CONFIG_HOME" "$HELM_CACHE_HOME" "$HELM_DATA_HOME" >/dev/null 2>&1 || true
 }
@@ -45,6 +45,24 @@ teardown() {
     assert_success
     assert_output --partial "STATUS: deployed"
 
+    # Validate deployment rollout
     run kubectl rollout status deployment/meshery -n "$TEST_NS" --timeout=180s
     assert_success
+
+    # Validate Meshery pod is running and ready (readiness probe /healthz/ready passed)
+    run kubectl get pods -n "$TEST_NS" -l app.kubernetes.io/name=meshery -o jsonpath='{.items[0].status.phase}'
+    assert_success
+    assert_equal "$output" "Running"
+
+    run kubectl get pods -n "$TEST_NS" -l app.kubernetes.io/name=meshery -o jsonpath='{.items[0].status.conditions[?(@.type=="Ready")].status}'
+    assert_success
+    assert_equal "$output" "True"
+
+    # Validate Meshery service is created and endpoints are attached
+    run kubectl get svc meshery -n "$TEST_NS"
+    assert_success
+
+    run kubectl get endpoints meshery -n "$TEST_NS" -o jsonpath='{.subsets[*].addresses[*].ip}'
+    assert_success
+    [ -n "$output" ]
 }
