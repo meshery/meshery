@@ -81,3 +81,20 @@ func commandAcceptsFlag(cmd *cobra.Command, flag string) bool {
 		cmd.InheritedFlags().ShorthandLookup(shorthand) != nil
 }
 
+func TestExampleResolutionWithLeadingFlags(t *testing.T) {
+	line := "mesheryctl --verbose system config gke --token auth.json"
+	words := strings.Fields(strings.TrimPrefix(line, "mesheryctl "))
+	target, _, err := RootCmd.Find(words)
+	if err != nil {
+		t.Fatalf("expected command to resolve: %v", err)
+	}
+	if target.Name() != "gke" {
+		t.Fatalf("expected target command 'gke', got %q", target.Name())
+	}
+	for _, match := range exampleFlagPattern.FindAllStringSubmatch(line, -1) {
+		flag := match[1]
+		if !commandAcceptsFlag(target, flag) {
+			t.Errorf("expected target %q to accept flag %q", target.CommandPath(), flag)
+		}
+	}
+}
