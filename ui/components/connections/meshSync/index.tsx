@@ -73,6 +73,9 @@ export default function MeshSyncTable(props) {
     [k8sConfig, selectedK8sContexts],
   );
   const serializedClusterIds = useMemo(() => JSON.stringify(clusterIds), [clusterIds]);
+  useEffect(() => {
+    setPage(0);
+  }, [serializedClusterIds]);
 
   const handleRegistrationModalClose = () => {
     setRegistrationModal(false);
@@ -661,6 +664,7 @@ export default function MeshSyncTable(props) {
     setKindFilter(kindFilter);
     setModeFilter(modelFilter);
     setNamespaceFilter(namespaceFilter);
+    setPage(0);
   };
 
   const [tableCols, updateCols] = useState(columns);
@@ -697,6 +701,7 @@ export default function MeshSyncTable(props) {
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
+                setPage(0);
               }}
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
