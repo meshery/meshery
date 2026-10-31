@@ -70,7 +70,7 @@ export const ValidationSubHeader = styled(ListSubheader)({
 });
 
 export const DryRunRootListStyled = styled(List)({
-  width: '100%'
+  width: '100%',
     maxHeight: '60vh',
   overflowY: 'auto',
   
