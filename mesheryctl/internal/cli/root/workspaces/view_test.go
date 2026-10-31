@@ -90,3 +90,31 @@ func TestViewWorkspace(t *testing.T) {
 
 	utils.InvokeMesheryctlTestCommand(t, update, WorkSpaceCmd, tests, currDir, "workspace")
 }
+
+// TestViewWorkspaceSaveFlattensSeparatorsInName verifies that --save writes one
+// file for a workspace whose name has path separators, and that the real
+// ~/.meshery is never touched.
+func TestViewWorkspaceSaveFlattensSeparatorsInName(t *testing.T) {
+	const workspaceID = "0dd47d1a-d1c9-47dc-897c-40bf4a71d96b"
+	const orgID = "da154170-4582-46d7-8c0f-ea5f1964776d"
+
+	mesheryctlflags.InitValidators(WorkSpaceCmd)
+	mesheryDir := utils.IsolateMesheryHome(t)
+
+	run := utils.MesheryCommandRun{
+		Cmd:        WorkSpaceCmd,
+		Args:       []string{"view", workspaceID, "--orgId", orgID, "--save"},
+		CommandDir: utils.CallerDir(t),
+		Mocks: []utils.MockURL{
+			{
+				URL:      fmt.Sprintf("/%s/%s?orgId=%s", workspacesApiPath, workspaceID, orgID),
+				Response: "view.workspace.save.name.api.response.golden",
+			},
+		},
+	}
+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "workspace_team_alpha_beta_gamma.yaml"))
+}
