@@ -965,10 +965,13 @@ func TestDryRun_InDesignNamespaces_FallbackForbidden(t *testing.T) {
 				t.Errorf("expected code 403, got %v", st["code"])
 			}
 			message, _ := st["message"].(string)
-			for _, want := range []string{`"staging"`, `retried in namespace "default"`, tt.message} {
+			for _, want := range []string{`"staging"`, `retried and rejected in namespace "default"`, tt.message} {
 				if !strings.Contains(message, want) {
 					t.Errorf("expected message to contain %q, got %q", want, message)
 				}
+			}
+			if strings.Contains(message, "policies of") {
+				t.Errorf("message must not attribute the rejection to namespace policies, got %q", message)
 			}
 		})
 	}
