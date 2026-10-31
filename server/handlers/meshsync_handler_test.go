@@ -15,6 +15,7 @@
 package handlers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -220,5 +221,77 @@ func TestDeleteMeshSyncResource_Success(t *testing.T) {
 	err := db.Where("id = ?", resID).First(&check).Error
 	if err == nil {
 		t.Errorf("expected resource to be deleted from database, but it still exists")
+	}
+}
+
+func TestGetMeshSyncResourceByID_Base64ID_Success(t *testing.T) {
+	h, provider, db := newMeshSyncTestFixture(t)
+
+	base64ID := base64.StdEncoding.EncodeToString([]byte("test-cluster.Pod.v1.default.test-base64-resource"))
+	meta := model.KubernetesResourceObjectMeta{
+		ID:   base64ID,
+		Name: "test-base64-resource",
+		UID:  base64ID,
+	}
+	if err := db.Create(&meta).Error; err != nil {
+		t.Fatalf("failed to seed resource meta: %v", err)
+	}
+
+	resource := model.KubernetesResource{
+		ID:        base64ID,
+		ClusterID: "test-cluster",
+		ComponentMetadata: map[string]interface{}{
+			"name": "test-base64-resource",
+		},
+	}
+	if err := db.Table("kubernetes_resources").Create(&resource).Error; err != nil {
+		t.Fatalf("failed to seed resource: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/system/meshsync/resources/"+base64ID, nil)
+	req = mux.SetURLVars(req, map[string]string{"id": base64ID})
+	rec := httptest.NewRecorder()
+
+	h.GetMeshSyncResourceByID(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+
+	if ct := rec.Header().Get("Content-Type"); ct != "application/json" {
+		t.Errorf("expected Content-Type application/json, got %q", ct)
+	}
+}
+
+func TestDeleteMeshSyncResource_Base64ID_Success(t *testing.T) {
+	h, provider, db := newMeshSyncTestFixture(t)
+
+	base64ID := base64.StdEncoding.EncodeToString([]byte("test-cluster.Pod.v1.default.test-delete-base64"))
+	resource := model.KubernetesResource{
+		ID:        base64ID,
+		ClusterID: "test-cluster",
+	}
+	if err := db.Table("kubernetes_resources").Create(&resource).Error; err != nil {
+		t.Fatalf("failed to seed resource: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/meshsync/resources/"+base64ID, nil)
+	req = mux.SetURLVars(req, map[string]string{"id": base64ID})
+	rec := httptest.NewRecorder()
+
+	h.DeleteMeshSyncResource(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+
+	var response struct {
+		Deleted bool `json:"deleted"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil {
+		t.Fatalf("failed to unmarshal delete response: %v (body=%q)", err, rec.Body.String())
+	}
+	if !response.Deleted {
+		t.Errorf("expected deleted to be true, got false")
 	}
 }
