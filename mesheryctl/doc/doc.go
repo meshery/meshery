@@ -270,7 +270,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 				}
 			})
 		}
-		buf.WriteString(`Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.`)
+		buf.WriteString(`Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.`)
 		buf.WriteString("\n")
 	}
 
@@ -400,8 +400,8 @@ func isGeneratedShortcode(shortcodeContent string) bool {
 	return shortcodeContent == `ref "reference/mesheryctl/_index.md"` ||
 		shortcodeContent == `ref "reference/references/mesheryctl/_index.md"` ||
 		shortcodeContent == `ref "reference/reference/mesheryctl/_index.md"` ||
-		shortcodeContent == `ref "project/contributing/cli/cli.md#preserving-manually-added-documentation"` ||
-		shortcodeContent == `ref "project/contributing/cli/index.md#preserving-manually-added-documentation"`
+		shortcodeContent == `ref "project/contributing/cli/cli.md#documenting"` ||
+		shortcodeContent == `ref "project/contributing/cli/index.md#documenting"`
 }
 
 func main() {
