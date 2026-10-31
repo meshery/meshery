@@ -34,6 +34,7 @@ import {
   Typography,
   ExternalLinkIcon,
   LockIcon,
+  alpha,
   styled,
   charcoal,
   accentGrey,
@@ -57,6 +58,14 @@ function CustomDialogTitle(props) {
             right: "16px",
             top: "16px",
             color: (theme) => theme.palette.grey[500],
+            // The title bar stays dark in both color modes, so the default
+            // light-mode hover overlay (black at 4%) cannot be seen on it.
+            "&:hover": {
+              backgroundColor: (theme) => alpha(theme.palette.common.white, 0.08),
+              "@media (hover: none)": {
+                backgroundColor: "transparent",
+              },
+            },
           }}
         >
           <CloseIcon />
