@@ -503,23 +503,48 @@ func TestLoginHandler_NoneProviderFromMiddleware(t *testing.T) {
 
 func TestDeleteMeshSyncResource(t *testing.T) {
 	handler := newTestHandler(t, map[string]models.Provider{}, "")
+	validUUID := "11111111-1111-1111-1111-111111111111"
 
 	tests := []struct {
 		name                 string
+		resourceID           string
+		seedResource         bool
 		migrateResourceTable bool
 		expectedStatus       int
 		expectedContentType  string
 		expectedBody         string
 	}{
 		{
-			name:                 "given resource table migrated when DeleteMeshSyncResource then return status 200 and deleted true",
+			name:                 "given resource table migrated and resource exists when DeleteMeshSyncResource then return status 200 and deleted true",
+			resourceID:           validUUID,
+			seedResource:         true,
 			migrateResourceTable: true,
 			expectedStatus:       http.StatusOK,
 			expectedContentType:  "application/json",
 			expectedBody:         `"deleted":true`,
 		},
 		{
+			name:                 "given resource table migrated but resource does not exist when DeleteMeshSyncResource then return status 404",
+			resourceID:           validUUID,
+			seedResource:         false,
+			migrateResourceTable: true,
+			expectedStatus:       http.StatusNotFound,
+			expectedContentType:  "application/json",
+			expectedBody:         "meshery-server-",
+		},
+		{
+			name:                 "given invalid uuid when DeleteMeshSyncResource then return status 400",
+			resourceID:           "not-a-uuid",
+			seedResource:         false,
+			migrateResourceTable: true,
+			expectedStatus:       http.StatusBadRequest,
+			expectedContentType:  "application/json",
+			expectedBody:         "meshery-server-",
+		},
+		{
 			name:                 "given resource table not migrated when DeleteMeshSyncResource then return status 500 and failed to delete",
+			resourceID:           validUUID,
+			seedResource:         false,
 			migrateResourceTable: false,
 			expectedStatus:       http.StatusInternalServerError,
 			expectedContentType:  "application/json",
@@ -534,6 +559,9 @@ func TestDeleteMeshSyncResource(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 			if err != nil {
+				if strings.Contains(err.Error(), "go-sqlite3 requires cgo") {
+					t.Skip("skipping SQLite test: go-sqlite3 requires cgo (disabled on this platform)")
+				}
 				t.Fatalf("failed to create in-memory database: %v", err)
 			}
 
@@ -541,14 +569,19 @@ func TestDeleteMeshSyncResource(t *testing.T) {
 				if err := db.AutoMigrate(&model.KubernetesResource{}); err != nil {
 					t.Fatalf("failed to migrate kubernetes resource table: %v", err)
 				}
+				if tt.seedResource {
+					if err := db.Table("kubernetes_resources").Create(&model.KubernetesResource{ID: tt.resourceID}).Error; err != nil {
+						t.Fatalf("failed to seed resource: %v", err)
+					}
+				}
 			}
 
 			provider := &models.DefaultLocalProvider{}
 			provider.Initialize()
 			provider.GenericPersister = &database.Handler{DB: db}
 
-			req := httptest.NewRequest(http.MethodDelete, "/api/system/meshsync/resources/resource-1", nil)
-			req = mux.SetURLVars(req, map[string]string{"id": "resource-1"})
+			req := httptest.NewRequest(http.MethodDelete, "/api/system/meshsync/resources/"+tt.resourceID, nil)
+			req = mux.SetURLVars(req, map[string]string{"id": tt.resourceID})
 			rw := httptest.NewRecorder()
 
 			handler.DeleteMeshSyncResource(rw, req, nil, nil, provider)
