@@ -1,25 +1,33 @@
+import { expect } from '@playwright/test';
+
+/**
+ * Polls `func` until it returns a truthy value or `timeout` expires, then
+ * resolves with that value.
+ *
+ * Uses Playwright's native `expect.poll` so failures surface inside the step
+ * log and trace viewer rather than as generic rejection strings.
+ *
+ * **Retry-on-throw:** if `func` throws, the error is caught and polling
+ * continues until the timeout expires, rather than rejecting immediately.
+ * Callers that need fail-fast error propagation should handle errors inside
+ * `func` or not use this helper.
+ */
 export const waitFor = async <T>(func: () => T | Promise<T>, timeout = 5000): Promise<T> => {
-  return new Promise((resolve, reject) => {
-    let pollingInterval: ReturnType<typeof setInterval>;
+  let lastResult: T;
 
-    const pollFn = async () => {
-      try {
-        const result = await func();
-        if (result) {
-          clearInterval(pollingInterval);
-          resolve(result);
-        }
-      } catch (error) {
-        clearInterval(pollingInterval);
-        reject(error);
-      }
-    };
+  await expect
+    .poll(
+      async () => {
+        lastResult = await func();
+        return Boolean(lastResult);
+      },
+      {
+        message: `Condition did not resolve within ${timeout} ms`,
+        timeout,
+        intervals: [100, 200, 500],
+      },
+    )
+    .toBe(true);
 
-    pollingInterval = setInterval(pollFn, 200);
-
-    setTimeout(() => {
-      clearInterval(pollingInterval);
-      reject(`Timeout after ${timeout} ms for condition ${func.toString()}`);
-    }, timeout);
-  });
+  return lastResult!;
 };
