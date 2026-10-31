@@ -661,6 +661,7 @@ export default function MeshSyncTable(props) {
     setKindFilter(kindFilter);
     setModeFilter(modelFilter);
     setNamespaceFilter(namespaceFilter);
+    setPage(0);
   };
 
   const [tableCols, updateCols] = useState(columns);
@@ -697,6 +698,7 @@ export default function MeshSyncTable(props) {
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
+                setPage(0);
               }}
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}

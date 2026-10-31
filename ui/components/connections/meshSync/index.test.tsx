@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import MeshSyncTable from './index';
 
@@ -9,6 +9,8 @@ const useGetMeshSyncResourcesQuery = vi.fn();
 const useGetMeshSyncResourceKindsQuery = vi.fn();
 const getResponsiveColumnVisibility = vi.fn();
 let dataTableProps: any;
+let searchBarProps: any;
+let filterProps: any;
 let windowWidth = 1200;
 
 vi.mock('@sistent/sistent', () => ({
@@ -25,8 +27,14 @@ vi.mock('@sistent/sistent', () => ({
     dataTableProps = props;
     return <div data-testid="mesh-sync-table" />;
   },
-  SearchBar: () => <div />,
-  UniversalFilter: () => <div />,
+  SearchBar: (props) => {
+    searchBarProps = props;
+    return <div />;
+  },
+  UniversalFilter: (props) => {
+    filterProps = props;
+    return <div />;
+  },
   TableCell: ({ children }) => <div>{children}</div>,
   TableRow: ({ children }) => <div>{children}</div>,
   styled: (Component) => () => {
@@ -118,6 +126,8 @@ vi.mock('./MeshSyncEmptyState', () => ({
 describe('MeshSyncTable', () => {
   beforeEach(() => {
     dataTableProps = undefined;
+    searchBarProps = undefined;
+    filterProps = undefined;
     notify.mockReset();
     getK8sClusterIdsFromCtxId.mockReset();
     useGetMeshSyncResourcesQuery.mockReset();
@@ -170,6 +180,44 @@ describe('MeshSyncTable', () => {
       expect.objectContaining({
         clusterIds: ['cluster-a', 'cluster-b'],
       }),
+    );
+  });
+
+  it('resets to the first page when the search changes', () => {
+    render(<MeshSyncTable />);
+
+    act(() => {
+      dataTableProps.options.onTableChange('changePage', { page: 2 });
+    });
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: '2' }),
+    );
+
+    act(() => {
+      searchBarProps.onSearch('cor');
+    });
+
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 0, search: 'cor' }),
+    );
+  });
+
+  it('resets to the first page when filters are applied', () => {
+    render(<MeshSyncTable />);
+
+    act(() => {
+      dataTableProps.options.onTableChange('changePage', { page: 2 });
+    });
+
+    act(() => {
+      filterProps.setSelectedFilters({ kind: 'Pod', model: 'All', namespace: 'All' });
+    });
+    act(() => {
+      filterProps.handleApplyFilter();
+    });
+
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 0, kind: 'Pod' }),
     );
   });
 
