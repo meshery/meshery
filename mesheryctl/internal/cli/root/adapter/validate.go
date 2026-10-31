@@ -47,7 +47,7 @@ var validateCmd = &cobra.Command{
 	Short: "Validate conformance to predefined standards",
 	Example: `
 // Validate conformance to predefined standards
-mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --token [path to token for authentication] --spec [specification to be used for conformance test]
 
 // Validate Istio to predefined standards
 mesheryctl adapter validate istio --adapter meshery-istio --spec smi
