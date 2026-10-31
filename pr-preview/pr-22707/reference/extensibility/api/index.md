@@ -36,7 +36,7 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
 
 ### Authentication
 
-Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected [Provider](#providers). Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication.
+Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected [Provider](/pr-preview/pr-22707/reference/extensibility/providers/). Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication.
 
 <div class="alert alert-dark" role="alert"><div class="h4 alert-heading" role="heading">What are authentication tokens?</div>
 

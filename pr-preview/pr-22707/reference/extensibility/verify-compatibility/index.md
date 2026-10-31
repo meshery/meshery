@@ -15,7 +15,7 @@ This guide outlines the key areas of compatibility and provides a general proces
 <div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Meshery's Bill of Materials</div>
 
 
-Meshery's version is defined by its [Bill of Materials (BOM)](/pr-preview/pr-22707/project/contributing/#meshery-contribution-flow), which specifies versions for Go, Node.js, and other key dependencies. Extension developers should reference the BOM to ensure alignment.
+Meshery's version is defined by its Bill of Materials (BOM), which specifies versions for Go, Node.js, and other key dependencies. Extension developers should reference the BOM to ensure alignment.
 </div>
 
 

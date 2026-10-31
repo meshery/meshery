@@ -70,7 +70,7 @@ code snippet
 <code>cd docs</code></li><li>Create and checkout a new branch to make changes within
 <code>git checkout -b &lt;my-changes></code></li><li>Edit/add documentation.
 <code>vi &lt;specific page>.md</code></li><li>Add redirect link on the old page (only when a new page is created that replaces the old page). In Hugo, use the <code>aliases</code> frontmatter field.</li><li>Run site locally to preview changes.
-<code>make site</code></li><li>Commit, <a href=/pr-preview/pr-22707/project/contributing/contributing-docs/docs/#commit-signing>sign-off</a>, and push changes to your remote branch.
+<code>make site</code></li><li>Commit, <a href=/pr-preview/pr-22707/project/contributing/>sign-off</a>, and push changes to your remote branch.
 <code>git push origin &lt;my-changes></code></li><li>Open a pull request (in your web browser) against the repo: <a href=https://github.com/meshery/meshery>https://github.com/meshery/meshery</a>.</li></ol><h3 id=navigation-table-of-contents-in-sidebar-toc>Navigation Table of Contents in Sidebar (toc)</h3><p>Sidebars use a data file at <code>data/toc.yml</code> to create a table of contents. It is written in the following manner:</p><pre tabindex=0><code>- title: Group 1
   url: group1
   links:
