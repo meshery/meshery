@@ -73,8 +73,7 @@ export const DryRunRootListStyled = styled(List)({
   width: '100%',
     maxHeight: '60vh',
   overflowY: 'auto',
-  
-  position: 'relative',
+    position: 'relative',
   marginBottom: '0.5rem',
 });
 
