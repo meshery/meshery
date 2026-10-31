@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/schemas/models/core"
+	"github.com/spf13/viper"
 )
 
 // TestGetMesheryPatternResources_SendsCanonicalOamTypeParam pins the
@@ -80,5 +82,82 @@ func TestRemoteProviderDeleteUserCredential_SendsCanonicalCredentialIdParam(t *t
 	}
 	if _, legacy := gotQuery["credential_id"]; legacy {
 		t.Errorf("request still carries the legacy snake_case `credential_id`: %v", gotQuery)
+	}
+}
+
+
+// TestRemoteProvider_FetchCapabilities_EscapesQueryParams pins URL query parameter
+// encoding for remote provider capability requests. When OS or PLAYGROUND environment
+// variables contain reserved URL characters (such as '&', '=', or '#'), they must be
+// safely percent-encoded so that parameter keys and values are preserved over the wire
+// rather than being split into separate parameters or truncated as URL fragments.
+func TestRemoteProvider_FetchCapabilities_EscapesQueryParams(t *testing.T) {
+	const (
+		testOS         = "linux&arm=64"
+		testPlayground = "preview#blue"
+		testVersion    = "v1.2.3"
+	)
+
+	origOS := viper.GetString("OS")
+	origPlayground := viper.GetString("PLAYGROUND")
+	origBuild := viper.GetString("BUILD")
+	t.Cleanup(func() {
+		viper.Set("OS", origOS)
+		viper.Set("PLAYGROUND", origPlayground)
+		viper.Set("BUILD", origBuild)
+	})
+
+	viper.Set("OS", testOS)
+	viper.Set("PLAYGROUND", testPlayground)
+	viper.Set("BUILD", testVersion)
+
+	tests := []struct {
+		name      string
+		versioned bool
+		wantPath  string
+	}{
+		{
+			name:      "unversioned capabilities request encodes reserved characters",
+			versioned: false,
+			wantPath:  "/capabilities",
+		},
+		{
+			name:      "versioned capabilities request encodes reserved characters",
+			versioned: true,
+			wantPath:  "/" + testVersion + "/capabilities",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			var gotQuery url.Values
+			var gotPath string
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				gotPath = r.URL.Path
+				gotQuery = r.URL.Query()
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write([]byte(`{}`))
+			}))
+			defer server.Close()
+
+			provider := newTestRemoteProvider(t, server.URL)
+			if _, err := provider.fetchCapabilities(context.Background(), "test-token", tc.versioned); err != nil {
+				t.Fatalf("fetchCapabilities: %v", err)
+			}
+
+			if gotPath != tc.wantPath {
+				t.Errorf("path = %q, want %q", gotPath, tc.wantPath)
+			}
+			if gotOS := gotQuery.Get("os"); gotOS != testOS {
+				t.Errorf("os query param = %q, want %q (full query: %v)", gotOS, testOS, gotQuery)
+			}
+			if gotPG := gotQuery.Get("playground"); gotPG != testPlayground {
+				t.Errorf("playground query param = %q, want %q (full query: %v)", gotPG, testPlayground, gotQuery)
+			}
+			if _, stray := gotQuery["arm"]; stray {
+				t.Errorf("unexpected stray query param 'arm' found due to unencoded '&': %v", gotQuery)
+			}
+		})
 	}
 }
