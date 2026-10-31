@@ -108,3 +108,31 @@ func TestConnectionViewNoSaveWithBrokenHome(t *testing.T) {
 		t.Fatalf("view without --save should succeed even with no HOME: %v", err)
 	}
 }
+
+// TestConnectionViewSaveReplacesSlashInName verifies that a slash in the
+// connection name does not turn the file name into a path.
+func TestConnectionViewSaveReplacesSlashInName(t *testing.T) {
+	mesheryDir := utils.IsolateMesheryHome(t)
+
+	run := connectionViewRun(utils.CallerDir(t), []string{"view", connectionId, "--save"})
+	run.Mocks[0].Response = "view.connection.slash.api.response.golden"
+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "connection_mini_kube.yaml"))
+}
+
+// TestConnectionViewSaveReplacesBackslashInName verifies that a backslash in
+// the connection name does not turn the file name into a path on Windows.
+func TestConnectionViewSaveReplacesBackslashInName(t *testing.T) {
+	mesheryDir := utils.IsolateMesheryHome(t)
+
+	run := connectionViewRun(utils.CallerDir(t), []string{"view", connectionId, "--save"})
+	run.Mocks[0].Response = "view.connection.backslash.api.response.golden"
+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "connection_mini_kube.yaml"))
+}
