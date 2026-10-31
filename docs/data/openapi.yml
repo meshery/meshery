@@ -89,6 +89,10 @@ tags:
     description: Operations related to invitation
   - name: Ledger_ledgers
     description: Operations related to organization ledgers and their entries.
+  - name: MediaAsset_mediaAssets
+    description: Operations related to media assets.
+  - name: MentionAlias_mentionAliases
+    description: Operations related to mention aliases.
   - name: PatternResource_patternResources
     description: Operations related to Meshery pattern resources.
   - name: Performance_Profile_performance
