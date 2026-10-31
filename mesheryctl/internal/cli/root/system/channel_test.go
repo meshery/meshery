@@ -199,6 +199,61 @@ func TestSetCmd(t *testing.T) {
 	t.Log("Set ChannelCmd Passed")
 }
 
+func TestChannelArgsValidation(t *testing.T) {
+	setupContextTestEnv(t)
+	t.Cleanup(BreakupFunc)
+
+	tests := []struct {
+		name          string
+		args          []string
+		expectedError string
+	}{
+		{
+			name:          "switch with no args fails in Args validation",
+			args:          []string{"channel", "switch"},
+			expectedError: "Only one release channel can be specified as an argument",
+		},
+		{
+			name:          "switch with invalid channel fails in Args validation before PreRunE or confirmation",
+			args:          []string{"channel", "switch", "bogus"},
+			expectedError: "Invalid release channel",
+		},
+		{
+			name:          "switch with invalid edge version fails in Args validation",
+			args:          []string{"channel", "switch", "edge-v1.0.0"},
+			expectedError: "Invalid edge release version",
+		},
+		{
+			name:          "set with no args fails in Args validation",
+			args:          []string{"channel", "set"},
+			expectedError: "Only one release channel can be specified as an argument",
+		},
+		{
+			name:          "set with invalid channel fails in Args validation",
+			args:          []string{"channel", "set", "bogus"},
+			expectedError: "Invalid release channel",
+		},
+		{
+			name:          "set with invalid edge version fails in Args validation",
+			args:          []string{"channel", "set", "edge-v1.0.0"},
+			expectedError: "Invalid edge release version",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			buf := setupSystemOutCmdTest(t)
+			defer buf.Reset()
+
+			SystemCmd.SetArgs(tt.args)
+			err := SystemCmd.Execute()
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), tt.expectedError)
+			BreakupFunc()
+		})
+	}
+}
+
 //UNDER REVIEW
 // func TestSwitchCmd(t *testing.T) {
 // 	_, filename, _, ok := runtime.Caller(0)
