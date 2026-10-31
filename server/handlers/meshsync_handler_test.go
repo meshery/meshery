@@ -84,12 +84,13 @@ func newMeshSyncTestFixture(t *testing.T) (*Handler, *models.DefaultLocalProvide
 
 func TestGetMeshSyncResourceByID_InvalidUUID(t *testing.T) {
 	h := newMockHandler(t)
+	provider := &models.DefaultLocalProvider{}
 
 	req := httptest.NewRequest(http.MethodGet, "/api/system/meshsync/resources/not-a-uuid", nil)
 	req = mux.SetURLVars(req, map[string]string{"id": "not-a-uuid"})
 	rec := httptest.NewRecorder()
 
-	h.GetMeshSyncResourceByID(rec, req, nil, nil, nil)
+	h.GetMeshSyncResourceByID(rec, req, nil, nil, provider)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("expected status 400 for invalid UUID, got %d (body=%q)", rec.Code, rec.Body.String())
@@ -155,12 +156,13 @@ func TestGetMeshSyncResourceByID_Success(t *testing.T) {
 
 func TestDeleteMeshSyncResource_InvalidUUID(t *testing.T) {
 	h := newMockHandler(t)
+	provider := &models.DefaultLocalProvider{}
 
 	req := httptest.NewRequest(http.MethodDelete, "/api/system/meshsync/resources/invalid-uuid", nil)
 	req = mux.SetURLVars(req, map[string]string{"id": "invalid-uuid"})
 	rec := httptest.NewRecorder()
 
-	h.DeleteMeshSyncResource(rec, req, nil, nil, nil)
+	h.DeleteMeshSyncResource(rec, req, nil, nil, provider)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("expected status 400 for invalid UUID, got %d (body=%q)", rec.Code, rec.Body.String())
