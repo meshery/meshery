@@ -41,7 +41,7 @@ This document records the provenance, modifications, and upstream licensing for 
 ```text
 MIT License
 
-Copyright (c) 2026 Mathews Tom
+Copyright (c) 2026 Tom
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
