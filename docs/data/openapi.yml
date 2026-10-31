@@ -86209,6 +86209,46 @@ paths:
             text/plain:
               schema:
                 type: string
+  /api/perf/profile/result/{id}:
+    get:
+      x-internal:
+        - cloud
+        - meshery
+      tags:
+        - Performance_Profile_performance
+      operationId: getPerformanceResultById
+      summary: Get an individual performance result by ID
+      description: Returns an individual performance result specification in YAML format for the given result ID.
+      parameters:
+        - name: id
+          in: path
+          description: Performance result identifier (UUID).
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: >-
+              A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is
+              used across different schemas.
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+      responses:
+        '200':
+          description: Performance test result specification
+          content:
+            application/yaml:
+              schema:
+                type: string
+                description: Performance test result specification YAML.
+            application/json:
+              schema:
+                type: object
+                description: Performance test result specification JSON representation.
+        '400':
+          description: Invalid or missing result ID
+        '500':
+          description: Internal server error or failure retrieving result from provider
   /api/users:
     get:
       x-internal:
