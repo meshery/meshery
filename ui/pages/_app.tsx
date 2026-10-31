@@ -23,7 +23,7 @@ import { startSessionTimer } from '../lib/sessionTimer';
 import Header from '../components/layout/Header/Header';
 import MesheryProgressBar from '../components/general/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
-import { subscribeToControllersStatus } from 'lib/controllersStatusSubscription';
+import { watchControllersStatus } from 'lib/controllersStatusSubscription';
 import { useLazyGetSystemSyncQuery, useLazyGetKubernetesContextsQuery } from '../rtk-query/system';
 import { useGetUserPrefQuery } from '../rtk-query/user';
 import { api } from '../rtk-query';
@@ -285,7 +285,8 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
       // SSE stream (replaces the subscribeMesheryControllersStatus GraphQL
       // subscription). The server sends the full controller-status array on
       // every change, so we just replace the redux state — no client merge.
-      const mesheryControllerSubscription = subscribeToControllersStatus(connectionIDs, (data) => {
+      // watchControllersStatus reopens the stream if the browser closes it.
+      const mesheryControllerSubscription = watchControllersStatus(connectionIDs, (data) => {
         dispatch(setControllerState({ controllerState: data }));
       });
       mesheryControllerSubscriptionRef.current = mesheryControllerSubscription;
