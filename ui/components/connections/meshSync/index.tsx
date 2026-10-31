@@ -42,6 +42,13 @@ const ACTION_TYPES = {
   },
 };
 
+/**
+ * MeshSyncTable renders the paginated, searchable, and filterable table of
+ * discovered MeshSync resources across connected Kubernetes clusters.
+ *
+ * @param {Object} props Component properties.
+ * @returns {React.JSX.Element} The rendered MeshSync table component.
+ */
 export default function MeshSyncTable(props) {
   const { selectedResourceId, updateUrlWithResourceId, tabs } = props;
   const callbackRef = useRef();
@@ -73,6 +80,13 @@ export default function MeshSyncTable(props) {
     [k8sConfig, selectedK8sContexts],
   );
   const serializedClusterIds = useMemo(() => JSON.stringify(clusterIds), [clusterIds]);
+  const previousSerializedClusterIds = useRef(serializedClusterIds);
+  const pageForQuery = previousSerializedClusterIds.current === serializedClusterIds ? page : 0;
+
+  useEffect(() => {
+    previousSerializedClusterIds.current = serializedClusterIds;
+    setPage(0);
+  }, [serializedClusterIds]);
 
   const handleRegistrationModalClose = () => {
     setRegistrationModal(false);
@@ -83,7 +97,7 @@ export default function MeshSyncTable(props) {
     isError: isError,
     error: meshSyncError,
   } = useGetMeshSyncResourcesQuery({
-    page: page,
+    page: pageForQuery,
     pagesize: pageSize,
     search: search,
     order: sortOrder,
@@ -106,7 +120,7 @@ export default function MeshSyncTable(props) {
   }, [isError, meshSyncError?.data, notify]);
 
   const { data: clusterSummary } = useGetMeshSyncResourceKindsQuery({
-    page: page,
+    page: pageForQuery,
     pagesize: 'all',
     search: search,
     order: sortOrder,
@@ -442,7 +456,7 @@ export default function MeshSyncTable(props) {
     count: meshSyncData?.totalCount,
     rowsPerPage: pageSize,
     fixedHeader: true,
-    page,
+    page: pageForQuery,
     print: false,
     download: false,
     sortOrder: {
@@ -653,6 +667,10 @@ export default function MeshSyncTable(props) {
     },
   };
 
+  /**
+   * Applies the selected kind, model, and namespace filters and resets
+   * pagination back to the first page.
+   */
   const handleApplyFilter = () => {
     const kindFilter = selectedFilters.kind === 'All' ? null : selectedFilters.kind;
     const modelFilter = selectedFilters.model === 'All' ? null : selectedFilters.model;
@@ -661,6 +679,7 @@ export default function MeshSyncTable(props) {
     setKindFilter(kindFilter);
     setModeFilter(modelFilter);
     setNamespaceFilter(namespaceFilter);
+    setPage(0);
   };
 
   const [tableCols, updateCols] = useState(columns);
@@ -697,6 +716,7 @@ export default function MeshSyncTable(props) {
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
+                setPage(0);
               }}
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
