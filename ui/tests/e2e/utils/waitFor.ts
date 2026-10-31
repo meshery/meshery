@@ -1,12 +1,16 @@
 import { expect } from '@playwright/test';
 
 /**
- * Polls `func` using Playwright's native `expect.poll` until it returns a
- * truthy value, then resolves with that value.
+ * Polls `func` until it returns a truthy value or `timeout` expires, then
+ * resolves with that value.
  *
- * Replaces a legacy hand-rolled `setInterval`/`setTimeout` loop so that
- * poll failures surface inside Playwright's step log and trace viewer instead
- * of throwing generic rejection strings.
+ * Uses Playwright's native `expect.poll` so failures surface inside the step
+ * log and trace viewer rather than as generic rejection strings.
+ *
+ * **Retry-on-throw:** if `func` throws, the error is caught and polling
+ * continues until the timeout expires, rather than rejecting immediately.
+ * Callers that need fail-fast error propagation should handle errors inside
+ * `func` or not use this helper.
  */
 export const waitFor = async <T>(func: () => T | Promise<T>, timeout = 5000): Promise<T> => {
   let lastResult: T;
