@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// GetLatestVersionForMesheryctl fetches the latest release version string of mesheryctl from the documentation site
 func GetLatestVersionForMesheryctl() (string, error) {
 	req, err := http.NewRequest(http.MethodGet, "https://docs.meshery.io/project/releases/latest", nil)
 
@@ -22,7 +23,11 @@ func GetLatestVersionForMesheryctl() (string, error) {
 		return "", err
 	}
 
-	defer func() { _ = resp.Body.Close() }()
+	defer SafeClose(resp.Body)
+
+	if resp.StatusCode != http.StatusOK {
+		return "", ErrResponseStatus(resp.StatusCode)
+	}
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
