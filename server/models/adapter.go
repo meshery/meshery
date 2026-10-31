@@ -12,14 +12,12 @@ var (
 	Linkerd   = Adapter{Name: "meshery-linkerd", Location: "10001"}
 	Consul    = Adapter{Name: "meshery-consul", Location: "10002"}
 	NSM       = Adapter{Name: "meshery-nsm", Location: "10004"}
-	AppMesh   = Adapter{Name: "meshery-app-mesh", Location: "10005"}
 	Traefik   = Adapter{Name: "meshery-traefik-mesh", Location: "10006"}
 	Kuma      = Adapter{Name: "meshery-kuma", Location: "10007"}
-	Nginx     = Adapter{Name: "meshery-nginx-sm", Location: "10010"}
 	Cilium    = Adapter{Name: "meshery-cilium", Location: "10012"}
 )
 
-var ListAvailableAdapters = []Adapter{Istio, Linkerd, Consul, Kuma, NSM, Nginx, AppMesh, Cilium, Traefik}
+var ListAvailableAdapters = []Adapter{Istio, Linkerd, Consul, Kuma, NSM, Cilium, Traefik}
 
 // Adapter represents an adapter in Meshery
 type Adapter struct {

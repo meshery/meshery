@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/github/workflow/status/meshery/meshery/Meshery%20Build%20and%20Releaser%20(edge)" /></a>
 <a href="https://bestpractices.coreinfrastructure.org/projects/3564" alt="CLI Best Practices">
   <img src="https://bestpractices.coreinfrastructure.org/projects/3564/badge" /></a>
-<a href="https://meshery.io/community#community-forums" alt="Discuss Users">
+<a href="https://discuss.meshery.io" alt="Discuss Users">
   <img src="https://img.shields.io/discourse/users?label=discuss&logo=discourse&server=https%3A%2F%2Fdiscuss.meshery.io" /></a>
 <a href="https://slack.meshery.io" alt="Join Slack">
   <img src="https://img.shields.io/badge/Slack-@meshery.svg?logo=slack"></a>
@@ -89,5 +89,5 @@ docker extension update meshery/docker-extension-meshery:edge-latest
 <a href ="https://meshery.io/community"><img alt="MeshMates" src="https://docs.meshery.io/assets/img/readme/community.svg" style="margin-right:10px; margin-bottom:7px;" width="28%" align="center" /></a>
 </p>
 <p style="text-align:center; width:100%;" align="center">
-<h3 style="text-align:center;" align="center"><em>Have questions? Need help?</em> <strong>Ask in the <a href="https://meshery.io/community#community-forums">Community Forum</a></strong>.</h3></p>
+<h3 style="text-align:center;" align="center"><em>Have questions? Need help?</em> <strong>Ask in the <a href="https://discuss.meshery.io">Community Forum</a></strong>.</h3></p>
 

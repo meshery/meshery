@@ -1,0 +1,7 @@
+,,,Authorization,,,,,,,,Keychain,Keys,,
+Category,Function,Feature,User,Team Admin,Academy Admin,Leaner,Workspace Admin,Org Billing Manager,Org Admin,Provider Admin,Keychain ID,Key ID,Inserted,Local Provider
+Catalog,panic-row,A row whose save panics,X,X,,,X,,X,X,Chain A,55555555-5555-4555-8555-555555555555,X,TRUE
+Catalog,Second Key,A second key,X,X,,,X,,X,X,Chain A,66666666-6666-4666-8666-666666666666,X,TRUE
+Catalog,Last Key,A last key,X,X,,,X,,X,X,Chain A,77777777-7777-4777-8777-777777777777,X,TRUE
+Catalog,Skipped One,Not registered with the local provider,,,,,,,,,,Chain A,88888888-8888-4888-8888-888888888888,X,FALSE
+Catalog,Skipped Two,Not registered with the local provider,,,,,,,,,,Chain A,99999999-9999-4999-8999-999999999999,X,FALSE

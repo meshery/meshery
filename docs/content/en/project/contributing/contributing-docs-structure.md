@@ -7,6 +7,8 @@ categories: [contributing]
 Providing well-structured, easy-to-navigate documentation tailored for a diverse audience—from beginners to experts.
 
 
+Each page in Meshery Docs is exactly one content type: a tutorial, a how-to (task) guide, a concept, or reference. See [Choosing a Content Type]({{< ref "project/contributing/contributing-docs/content-types" >}}) to decide which type a page is.
+
 ## Target Audience
 
 We first identify **who** this documentation serves before diving into how it’s organized. By clarifying different user personas, we can better direct them to relevant sections:
@@ -28,7 +30,7 @@ After defining our audience, we introduce the **overall structure** of Meshery�
 
 1. [Overview and Installation (User Persona)](#overview-and-installation-user-persona)
 2. [Tasks & Operations (User Guide)](#tasks--operations-user-guide)
-3. [Administrator’s Guide (Advanced Topics)](#administrators-guide-advanced-topics)
+3. [Administrator’s Guide (Advanced Topics)](#administrators-guide-platform-engineer--operator-persona-advanced-topics)
 4. [Integrations and Extensions (All Personas)](#integrations-and-extensions-all-personas)
 5. [Tutorials (All Personas)](#tutorials-all-personas)
 6. [Reference & Resources (All Personas)](#reference--resources-all-personas)
@@ -115,7 +117,7 @@ Meshery’s extensibility allows for seamless integration with existing systems 
 
 ### Tutorials (All Personas)
 
-A tutorial page shows how to accomplish a goal that is larger than a single task. Typically a tutorial page has several sections, each of which has a sequence of steps. For example, a tutorial might provide a walkthrough of a code sample that illustrates a certain feature of Kubernetes. Tutorials can include surface-level explanations, but should link to related concept topics for deep explanations.
+A tutorial page is a lesson. The author chooses the goal, the environment, and the result, and walks a learner through a guided exercise, such as building a sample design in the Meshery Playground, so the learner gains skill and confidence. A tutorial is not simply a longer or more detailed task page: task pages serve readers who bring a goal from their own work. Tutorials can include surface-level explanations, but should link to related concept topics for deep explanations. See [Choosing a Content Type]({{< ref "project/contributing/contributing-docs/content-types" >}}) for the tests that separate tutorials from task (how-to) pages.
 
 - **Tutorials:** Dedicated walk-throughs with labs and step-by-step instructions using Meshery's features.
 

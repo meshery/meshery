@@ -108,7 +108,7 @@ jobs:
         if: ${{ !cancelled() && github.event_name == 'push' }}
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: "[Meshery] Sync Go Unit Test Results - ${GITHUB_SHA}"
+          commit_message: "[Meshery] Sync Go Unit Test Results - ${{ github.sha }}"
           commit_options: "--signoff"
           repository: qa
           commit_user_name: meshery-ci
@@ -192,7 +192,7 @@ jobs:
         if: ${{ !cancelled() && github.event_name == 'push' }}
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: "[Mesheryctl] Sync Go Unit Test Results - ${GITHUB_SHA}"
+          commit_message: "[Mesheryctl] Sync Go Unit Test Results - ${{ github.sha }}"
           commit_options: "--signoff"
           repository: qa
           commit_user_name: meshery-ci

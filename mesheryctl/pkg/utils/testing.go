@@ -228,7 +228,7 @@ func visible(s string) string {
 	return out
 }
 
-// Path to the current file
+// GetBasePath returns the directory containing this file
 func GetBasePath(t *testing.T) string {
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -251,7 +251,7 @@ func (tf *GoldenFile) Load() string {
 	return normalizedContent
 }
 
-// Load a Golden file
+// LoadByte loads a golden file and returns its raw bytes
 func (tf *GoldenFile) LoadByte() []byte {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
@@ -263,7 +263,7 @@ func (tf *GoldenFile) LoadByte() []byte {
 	return content
 }
 
-// write a Golden file
+// Write writes content to the golden file, creating it if it does not already exist
 func (tf *GoldenFile) Write(content string) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
@@ -286,7 +286,7 @@ func (tf *GoldenFile) Write(content string) {
 	}
 }
 
-// write a Golden file
+// WriteInByte writes raw bytes to the golden file
 func (tf *GoldenFile) WriteInByte(content []byte) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
@@ -330,7 +330,7 @@ func CopyMeshconfigFixture(t *testing.T, src string) string {
 	return dst
 }
 
-// use default context /pkg/utils/TestConfig.yaml
+// SetupContextEnv sets up the test context using the default pkg/utils/TestConfig.yaml configuration
 func SetupContextEnv(t *testing.T) {
 	configPath := CopyMeshconfigFixture(t, SharedTestConfigPath(t))
 	viper.Reset()
@@ -347,7 +347,7 @@ func SetupContextEnv(t *testing.T) {
 	}
 }
 
-// setup logrus formatter and return the buffer in which commands output is to be set.
+// SetupLogrusGrabTesting sets up the logrus formatter and returns the buffer that command output is written to.
 func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	logrus.SetOutput(b)
@@ -355,7 +355,7 @@ func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 	return b
 }
 
-// setup meshkit logger for testing and return the buffer in which commands output is to be set.
+// SetupMeshkitLoggerTesting sets up the Meshkit logger for testing and returns the buffer that command output is written to.
 func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	logLevel := logrus.InfoLevel
@@ -369,7 +369,7 @@ func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	return b
 }
 
-// setup custom context with SetupCustomContextEnv
+// SetupCustomContextEnv sets up the test context using the configuration file at pathToContext
 func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	viper.Reset()
 	ViperCompose = viper.New()
@@ -389,18 +389,18 @@ func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	}
 }
 
-// Start mock HTTP client to mock requests
+// StartMockery activates HTTP mocking so requests made during the test are intercepted
 func StartMockery(t *testing.T) {
 	// activate http mocking
 	httpmock.Activate()
 }
 
-// stop HTTP mock client
+// StopMockery deactivates HTTP mocking and resets it
 func StopMockery(_ *testing.T) {
 	httpmock.DeactivateAndReset()
 }
 
-// Set file location for testing stuff
+// SetFileLocationTesting points MesheryFolder, DockerComposeFile, and AuthConfigFile at fixtures under dir, for use in tests
 func SetFileLocationTesting(dir string) {
 	MesheryFolder = filepath.Join(dir, "fixtures", MesheryFolder)
 	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
@@ -460,16 +460,15 @@ func StartMockMesheryServer(t *testing.T) error {
 	return nil
 }
 
-// The HandlePagination function add special characters that is not
-// handle properly in test. This function will remove undesired characters
-// and spaces to ensure excepted versus actual result match when using http.MockURL
+// CleanStringFromHandlePagination removes undesired characters and spaces added by the
+// HandlePagination function so that expected and actual results match in tests using MockURL
 func CleanStringFromHandlePagination(data string) string {
 	cleaned := StripAnsiEscapeCodes(data)
 	cleaned = formatToTabs(cleaned)
 	return cleaned
 }
 
-// removeANSICodes removes ANSI escape codes from a string.
+// StripAnsiEscapeCodes removes ANSI escape codes from a string.
 //
 // Parameters:
 //
@@ -913,4 +912,117 @@ func ResetCommandFlags(c *cobra.Command, t *testing.T) {
 	for _, sub := range c.Commands() {
 		ResetCommandFlags(sub, t)
 	}
+}
+
+type MesheryCommandRun struct {
+	Cmd *cobra.Command
+
+	Args []string
+
+	CommandDir string
+
+	Mocks []MockURL
+
+	Token string
+}
+
+func RunMesheryctlCommand(t *testing.T, run MesheryCommandRun) (string, error) {
+	t.Helper()
+
+	if run.Cmd == nil {
+		t.Fatal("RunMesheryctlCommand: Cmd is required")
+	}
+
+	testContext := InitTestEnvironment(t)
+	t.Cleanup(func() { StopMockery(t) })
+	t.Cleanup(func() { ResetCommandFlags(run.Cmd, t) })
+
+	if run.Token != "" {
+		TokenFlag = run.Token
+	} else {
+		TokenFlag = GetToken(t)
+	}
+
+	fixturesDir := filepath.Join(run.CommandDir, "fixtures")
+	for _, mock := range run.Mocks {
+		url := mock.URL
+		if strings.HasPrefix(url, "/") {
+			url = testContext.BaseURL + url
+		}
+
+		method := mock.Method
+		if method == "" {
+			method = http.MethodGet
+		}
+
+		code := mock.ResponseCode
+		if code == 0 {
+			code = http.StatusOK
+		}
+
+		apiResponse := NewGoldenFile(t, mock.Response, fixturesDir).Load()
+		httpmock.RegisterResponder(method, url, httpmock.NewStringResponder(code, apiResponse))
+	}
+
+	buf := &bytes.Buffer{}
+	_ = SetupMeshkitLoggerTesting(t, false)
+	run.Cmd.SetOut(buf)
+	run.Cmd.SetErr(buf)
+	run.Cmd.SetArgs(run.Args)
+
+	err := run.Cmd.Execute()
+	return buf.String(), err
+}
+
+func IsolateMesheryHome(t *testing.T) string {
+	t.Helper()
+
+	tmpHome := t.TempDir()
+	t.Setenv("HOME", tmpHome)
+	t.Setenv("USERPROFILE", tmpHome)
+
+	mesheryDir := filepath.Join(tmpHome, ".meshery")
+	if err := os.MkdirAll(mesheryDir, 0755); err != nil {
+		t.Fatalf("unable to create %s: %v", mesheryDir, err)
+	}
+
+	original := MesheryFolder
+	MesheryFolder = mesheryDir
+	t.Cleanup(func() { MesheryFolder = original })
+
+	return mesheryDir
+}
+
+func AssertFileExists(t *testing.T, path string) {
+	t.Helper()
+
+	_, err := os.Stat(path)
+	if err == nil {
+		return
+	}
+	if !os.IsNotExist(err) {
+		t.Fatalf("unable to stat %s: %v", path, err)
+	}
+
+	dir := filepath.Dir(path)
+	entries, readErr := os.ReadDir(dir)
+	if readErr != nil {
+		t.Fatalf("expected %s to exist; %s could not be read: %v", path, dir, readErr)
+	}
+
+	names := make([]string, 0, len(entries))
+	for _, entry := range entries {
+		names = append(names, entry.Name())
+	}
+	t.Fatalf("expected %s to exist; %s contains %v", path, dir, names)
+}
+
+func CallerDir(t *testing.T) string {
+	t.Helper()
+
+	_, filename, _, ok := runtime.Caller(1)
+	if !ok {
+		t.Fatal("unable to determine the calling file's directory")
+	}
+	return filepath.Dir(filename)
 }

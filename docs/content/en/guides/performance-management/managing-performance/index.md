@@ -3,80 +3,41 @@ title: Managing Performance
 aliases: 
 - /tasks/performance/managing-performance
 categories: [performance]
-description: Advanced performance characterization with Meshery.
+description: Organize load tests into performance profiles, choose and configure the load generator, and read infrastructure metrics alongside your results.
 ---
 
-Key to the efficient operation of any infrastructure is the measurement and management of it's performance.
+Measuring and managing performance is key to operating any infrastructure efficiently. Meshery organizes that work around performance profiles. For step-by-step instructions on running a test, see [Performance Management with Meshery]({{< ref "guides/performance-management/performance-management/index.md" >}}).
 
 ## Performance Profiles
 
-Performance Profile is a new and improved way to save performance test configurations, schedule performance tests, etc. Meshery Performance Profiles offers the following features:
+A performance profile saves a load test's configuration so you can run the same test again and track how performance changes over time. With profiles you can:
 
-1. Saving Test Configurations
-2. Create schedules for running tests automatically.
-3. Meshery offers UI for describing the schedules which are as powerful as CRON but without the hassle of remembering its syntax!
-4. All the tests performed are under Profiles which has multiple advantages like:
-   - Access test results ran under a certain profiles at one place.
-   - If running ad-hoc tests, user can anytime come back and rename the performance profiles for re-use.
+1. Save a test configuration and rerun it from Meshery UI or with `mesheryctl perf apply <profile-name>`.
+2. Keep every result of a test in one place, under its profile.
+3. Rename a profile that started as an ad hoc test so you can reuse it.
 
 ## Load Generators
 
-Meshery provides users with a choice about the kind of load generator they prefer to use for a given performance test. Users may set their configure based on their own preference of load generator different from that of the default load generator.
+Meshery runs tests with [fortio](https://github.com/fortio/fortio), a fast, small, embeddable Go load testing library and command-line tool. Meshery's load generator interface is [extensible]({{< ref "reference/extensibility/_index.md" >}}) to support others.
 
-Meshery supports the following load generators and is [extendible]({{< ref "reference/extensibility/_index.md" >}}) to support others:
+## Configuring a test
 
-- [fortio](#fortio)
+Each test or profile sets:
 
-### fortio
+- The endpoint URL to test.
+- Duration.
+- Concurrent requests.
+- Queries per second.
+- Request headers, cookies, body, and content type.
+- A CA certificate for HTTPS endpoints.
+- Additional options passed straight to the load generator, as JSON.
 
-Fortio is a fast, small (3Mb docker image, minimal dependencies),
-reusable, embeddable go library as well as a command line tool and server process,
-the server includes a simple web UI and graphical representation of the results
-(both a single latency graph and a multiple results comparative min, max, avg, qps and percentiles graphs).
+See [Cloud Native Performance](https://smp-spec.io) for the full description of the test types that Meshery supports.
 
-## Configuring performance testing settings
+## Comparing results
 
-Meshery provides a highly configurable set of load profiles with various, tuneable facets, including support for generating TCP, gRPC, and HTTP load with optional configuration of the performance test's:
+Meshery runs statistical analysis when each test finishes and presents latency as a histogram with percentile buckets, alongside throughput. Select two or more results of a profile and choose **Compare selected** to compare their latency and throughput. See [Interpreting Performance Test Results]({{< ref "guides/performance-management/interpreting-performance-test-results/index.md" >}}).
 
-- Duration
-- Concurrent Threads
-- Concurrent Generators
-- Load Generator Type
-- Custom HTTP Headers
+## Infrastructure metrics alongside results
 
-See [Cloud Native Performance](https://smp-spec.io) for a full description of the different types of performance tests that Meshery provides.
-
-### Using Performance Test Profiles
-
-As Meshery user you can customize and save your load test configuration in the form of a Performance Test Profile. Using Performance Test Profiles, you can return to Meshery to run the same set of customized tests again and again, tracking variations in performance overtime.
-
-### Comparing Test Results and Different Configurations
-
-Meshery users can easily compare the difference in request performance (latency and throughput) between independent performance tests. Statistical analysis is run upon finalization of every performance test and presented in the form of a histogram with latency buckets.
-
-## Kubernetes Cluster and Workload Metrics
-
-Meshery provides performance test results alongside environment metrics, including control and data plane metrics as well as cluster node resource metrics, so that operators may easily understand the overhead of their control plane and data plane in context of the overhead incurred on nodes within the cluster.
-
-### Grafana and Meshery
-
-Connect Meshery to your existing Grafana instance. Meshery will auto-import the boards of your choosing:
-
-<a href="images/meshery-and-grafana.png">
-    <img src="images/meshery-and-grafana.png" style="width: 52%" />
-</a>
-
-### Connecting to Grafana
-
-If you have an API key configured to restrict access to your Grafana boards, you will need to enter the API key when establishing Meshery's connection to Grafana. You may also set up a [Grafana board](https://grafana.com/docs/grafana/latest/http_api/dashboard/#create-update-dashboard) and then set up an API key:
-
-- Import Grafana boards
-  - Import existing Grafana boards via API
-  - Import custom Grafana board via yaml
-- Configure graph panel preferences
-
-### Prometheus and Meshery
-
-Meshery allows users to connect to one or more Prometheus instances in order to gather telemetric data (in the form of metrics). These metrics may pertain to Kubernetes and applications or any other metric that Prometheus has collected.
-
-Once you have connected Meshery to your Prometheus deployment(s), you may perform ad-hoc connectivity tests to verify communication between Meshery and Prometheus.
+To understand what a test costs your cluster, view your Grafana dashboards and Prometheus metrics in Meshery while the test runs. Register Grafana or Prometheus as a [Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}), then open **Telemetry**. See [Grafana Dashboards]({{< ref "guides/telemetry/grafana-dashboards.md" >}}) and [Prometheus Metrics]({{< ref "guides/telemetry/prometheus-metrics.md" >}}).

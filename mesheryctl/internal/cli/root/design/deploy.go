@@ -56,7 +56,7 @@ var deployDesignCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploy design",
 	Long: `Command will trigger deploy of design.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/design/deploy`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/design/deploy`,
 	Example: `
 // Deploy design by providing file path
 mesheryctl design deploy -f [filepath] -s [source type]

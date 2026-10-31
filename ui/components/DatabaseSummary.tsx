@@ -101,10 +101,13 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
     fixedHeader: true,
     serverSide: true,
     rowsPerPage: rowsPerPage,
-    count: databaseSummary?.total_tables,
+    count: databaseSummary?.totalTables,
     page: page,
     onChangePage: debounce((p) => setPage(p), 200),
-    onChangeRowsPerPage: debounce((p) => setRowsPerPage(p), 200),
+    onChangeRowsPerPage: debounce((p) => {
+      setRowsPerPage(p);
+      setPage(0);
+    }, 200),
     onSearchChange: debounce((searchText) => {
       if (searchText) setPage(0);
       setSearchText(searchText != null ? searchText : '');

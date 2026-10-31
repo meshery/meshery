@@ -1,7 +1,5 @@
 ---
 title: Old Compatibility Matrix
-aliases: 
- - /project/compatibility-matrix
 description: An installation compatibility matrix and project test status dashboard.
 display_title: false
 cascade:

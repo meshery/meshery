@@ -39,7 +39,7 @@ type ModelTemplate struct {
 
 var K8sMeshModelMetadata = ModelTemplate{}
 
-// INstead define a set of actions
+// String converts a RegistrationStatus into its string representation
 func (rs RegistrationStatus) String() string {
 	switch rs {
 	case RegistrationComplete:
@@ -69,7 +69,7 @@ func NewComponentsRegistrationHelper(logger logger.Handler) *ComponentsRegistrat
 	}
 }
 
-// update the map with the given list of contexts
+// UpdateContexts updates the map with the given list of contexts
 func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *ComponentsRegistrationHelper {
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
@@ -84,7 +84,7 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 
 type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID core.Uuid, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error
 
-// start registration of components for the contexts
+// RegisterComponents starts registration of components for the contexts
 func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, reg *meshmodel.RegistryManager, eventsBrodcaster *Broadcast, provider Provider, userID string, skip bool) {
 	/* If flag "SKIP_COMP_GEN" is set but the registration is invoked in form of API request explicitly,
 	then flag should not be respected and to control this behaviour skip is introduced.

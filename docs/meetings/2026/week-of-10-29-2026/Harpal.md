@@ -1,0 +1,1 @@
+Hi everyone, I’m Harpal. I’m excited to be part of the Meshery community and learn more about cloud native technologies. I’m looking forward to connecting with you, sharing ideas, and contributing where I can. Great to meet you all!

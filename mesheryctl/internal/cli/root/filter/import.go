@@ -36,7 +36,7 @@ var importCmd = &cobra.Command{
 	Use:   "import [URI]",
 	Short: "Import a WASM filter",
 	Long: `Import a WASM filter from a URI (http/s) or local filesystem path.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/filter/import`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/filter/import`,
 	Example: `
 // Import a filter file from local filesystem
 mesheryctl filter import /path/to/filter.wasm

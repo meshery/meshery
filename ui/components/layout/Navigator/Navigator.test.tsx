@@ -49,6 +49,12 @@ vi.mock('@sistent/sistent', () => ({
   Collapse: ({ children, in: open }: any) => (open ? <div>{children}</div> : null),
   Box: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   NoSsr: ({ children }: any) => <>{children}</>,
+  ClickAwayListener: ({ children, onClickAway }: any) => (
+    <div>
+      <button data-testid="click-away-trigger" type="button" onClick={onClickAway} />
+      {children}
+    </div>
+  ),
   Zoom: ({ children, in: open }: any) => (open ? <div>{children}</div> : null),
   HelpOutlinedIcon: () => <svg data-testid="help-outlined" />,
   LeftArrowIcon: () => <svg data-testid="left-arrow" />,
@@ -56,6 +62,7 @@ vi.mock('@sistent/sistent', () => ({
   OpenInNewIcon: () => <svg data-testid="open-in-new" />,
   RemoveIcon: () => <svg data-testid="remove" />,
   useTheme: () => ({
+    breakpoints: { down: vi.fn((breakpoint: string) => breakpoint) },
     palette: {
       icon: { default: '#000', brand: '#brand' },
       background: {
@@ -313,6 +320,20 @@ describe('Navigator', () => {
     expect(dispatchMock.mock.calls.some(([action]) => action?.type === 'ui/toggleDrawer')).toBe(
       true,
     );
+  });
+
+  it('collapses the open drawer when clicking away on a small screen', () => {
+    useMediaQueryMock.mockReturnValue(true);
+    stateContainer.isDrawerCollapsed = false;
+    render(<Navigator />);
+    dispatchMock.mockClear();
+
+    fireEvent.click(screen.getByTestId('click-away-trigger'));
+
+    expect(dispatchMock).toHaveBeenCalledWith({
+      type: 'ui/toggleDrawer',
+      payload: { isDrawerCollapsed: true },
+    });
   });
 
   it('renders the chevron and version footer area', () => {

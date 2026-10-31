@@ -37,7 +37,7 @@ mesheryctl model import -f digitalocean-icons-v0-1-0.tar
 ```
 
 `mesheryctl model import` talks to the Meshery Server of your current context, so you must be
-logged in (see [`mesheryctl system login`]({{< ref "reference/references/mesheryctl/system/login.md" >}})).
+logged in (see [`mesheryctl system login`]({{< ref "reference/mesheryctl/system/login.md" >}})).
 The file can be an OCI `.tar`, a compressed `tar.gz`, a model directory, or a remote URL - see
 [Importing Models]({{< ref "guides/configuration-management/importing-models/index.md" >}}) for
 the full list of supported sources.

@@ -398,7 +398,7 @@ Several discovery and delivery controls are designed but not yet shipped. They a
 <!-- The brownfield guide ships in a parallel PR at this agreed permalink. Convert to a
      ref-shortcode link once it exists on master, since an unresolved ref fails the Hugo build. -->
 - [Bringing Existing Infrastructure Under Meshery Management](https://docs.meshery.io/guides/infrastructure-management/managing-existing-infrastructure) - discovering and managing brownfield infrastructure.
-- [Meshery Operator CRDs reference]({{< ref "reference/references/meshery-operator-crds.md" >}}) - full `Broker` and `MeshSync` schema reference.
+- [Meshery Operator CRDs reference]({{< ref "reference/meshery-operator-crds.md" >}}) - full `Broker` and `MeshSync` schema reference.
 - [Troubleshooting Meshery Operator, MeshSync, and Broker]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}) - failure scenarios and recovery.
 - [`kubectl meshsync snapshot`]({{< ref "extensions/extensions/kubectl-meshsync-snapshot/index.md" >}}) - file-mode cluster snapshots without a Broker.
 

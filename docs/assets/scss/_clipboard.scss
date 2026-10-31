@@ -24,6 +24,9 @@ pre.codeblock-pre {
   margin: 0px;
   padding: 0px;
 }
+.codeblock:not(:has(.clipboardjs)) {
+  padding: 0.5rem 0.75rem;
+}
 .clipboardjs {
   width: 100%;
   overflow: auto;

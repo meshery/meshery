@@ -59,7 +59,7 @@ var resultCmd = &cobra.Command{
 	Use:   "result [profile-name]",
 	Short: "List performance test results",
 	Long: `List all the available test results of a performance profile.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/perf/result`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/perf/result`,
 	Args: cobra.MinimumNArgs(0),
 	Example: `
 // List Test results (maximum 25 results)
@@ -73,6 +73,9 @@ mesheryctl perf result saturday-profile --view
 `,
 	Annotations: linkDocPerfResult,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if pageNumber < 1 {
+			return utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --page '%d'", pageNumber))
+		}
 		// Check for valid output Format
 		if outputFormatFlag != "" {
 			return display.ValidateOutputFormat(outputFormatFlag)

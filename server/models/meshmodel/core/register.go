@@ -151,7 +151,9 @@ func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
 	return m
 }
 
-// move to meshmodel
+// GetK8sMeshModelComponents fetches Kubernetes CRDs and OpenAPI definitions using the given kubeconfig and converts them into MeshModel component definitions.
+//
+// TODO: move to meshmodel
 func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {

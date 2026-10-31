@@ -34,11 +34,11 @@ The following minimum Windows build versions are required:
     <th id="model">Version</th> 
   </tr>
   <tr>
-    <td><a href="#wsl1">WSL1</a></td>
+    <td>WSL1</td>
     <td><b>x64</b> - Windows 7 </td>
   </tr>
   <tr>
-    <td><a href="#wsl2">WSL2</a></td>
+    <td><a href="#using-wsl2">WSL2</a></td>
     <td><b>x64</b> - Version 1903, Build 18362; <b>ARM 64</b> - Version 2004, Build 19041</td>
   </tr>
   <tr>
@@ -109,7 +109,7 @@ The Docker Desktop application for Windows includes a comprehensive set of tools
   </tr>
   <tr>
     <td>Home</td>
-    <td><a href="https://docs.docker.com/docker-for-windows/install-windows-home/">Docker Desktop for Windows Home</a></td>
+    <td><a href="https://docs.docker.com/desktop/install/windows-install/">Docker Desktop for Windows</a></td>
   </tr>
 </table>
 

@@ -1,0 +1,20 @@
+version: 0.0.1
+name: my-mesh-design
+displayName: my-mesh-design
+createdAt: "2026-10-20T21:52:47Z"
+description: none
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/ecff93ab-0ae0-4799-a5f8-e295582185ea/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "nonre \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: f7e0f41d-e4b8-43b8-a4bd-5d1009f1f83c
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

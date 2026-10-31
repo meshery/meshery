@@ -12,8 +12,8 @@ aliases:
 - /installation/production/hardening
 ---
 
-Meshery is a management plane with broad visibility into—and, when you use it
-for lifecycle management, control over—the infrastructure it connects to. That
+Meshery is a management plane with broad visibility into - and, when you use it
+for lifecycle management, control over - the infrastructure it connects to. That
 makes hardening it a priority. This page covers the controls that reduce
 Meshery's attack surface and blast radius in production. Identity and provider
 choices are covered separately in
@@ -101,7 +101,7 @@ and providers.
   them.
 - **In-cluster credentials.** When Meshery runs in-cluster and manages its own
   cluster, it can use the in-cluster ServiceAccount rather than a kubeconfig
-  file—one fewer long-lived secret to manage.
+  file - one fewer long-lived secret to manage.
 - **Provider and OAuth secrets.** Keep Remote Provider configuration and any
   client secrets in Kubernetes Secrets (or an external secrets manager), not in
   plaintext values files committed to source control.
@@ -133,8 +133,7 @@ When Meshery Server is out-of-cluster, the Broker (`4222/tcp`) is exposed beyond
 the cluster so the Server can reach it. Treat that exposure deliberately:
 
 - Restrict the Broker's reachable endpoint to the Meshery Server's network
-  origin using load-balancer source ranges, security groups, or firewall rules—
-  do not expose `4222` to the public internet broadly.
+  origin using load-balancer source ranges, security groups, or firewall rules - do not expose `4222` to the public internet broadly.
 - Prefer private connectivity (VPC peering, private load balancers, VPN) between
   an out-of-cluster Server and managed-cluster Brokers over public exposure.
 - Pair exposure with network policies that allow Broker ingress only from the

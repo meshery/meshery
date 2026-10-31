@@ -1,0 +1,20 @@
+version: 0.0.2
+name: autoscaling-demo
+displayName: autoscaling-demo
+createdAt: "2026-10-23T09:49:06Z"
+description: 'A horizontally auto-scaling Kubernetes web application. A Deployment runs the web tier behind a ClusterIP Service, while a HorizontalPodAutoscaler dynamically adjusts replicas between 2 and 10 based on CPU utilization. All resources live in a dedicated Namespace. This pattern demonstrates Kubernetes-native elasticity with minimal component count: traffic scales with demand, failed pods are replaced automatically, and idle load collapses back to the two-replica floor. It runs on any conformant Kubernetes cluster, including EKS, GKE, AKS, kind, and minikube.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/a7701717-2abc-4223-aab0-3eb09693561e/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Requires metrics-server. The HPA cannot function without metrics-server installed in the cluster, because it depends on the resource metrics API to read CPU utilization. Most managed clusters (EKS, GKE, AKS) include it by default; kind and minikube may require enabling the metrics-server addon manually. Without it, the HPA will report <unknown> metrics and will not scale.\n\nThe image is a placeholder. nginx:1.27-alpine is used to demonstrate the pattern. Replace it with your actual application image and adjust resources.requests.cpu accordingly — HPA CPU targets are calculated as a percentage of the requested CPU, so a missing or too-small request value will distort scaling behaviour.\n\nCPU is a proxy metric. This HPA scales on CPU utilization. Applications that are I/O-bound, queue-depth-bound, or memory-bound should use custom or external metrics instead of — or in addition to — CPU. The design is intentionally minimal; adding custom metrics requires Prometheus or another metrics adapter. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 6d8f0768-ad93-4eaa-8ba2-81d733dd694e
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -96,6 +96,10 @@ type UseConnectionColumnsArgs = {
   ping: (name: string, server: string, id: string) => void;
   pingGrafana: (connectionID: string, name?: string) => void;
   pingPrometheus: (connectionID: string, name?: string) => void;
+  // meshery-kind connections have no by-id server ping endpoint (schemas only
+  // defines pingKubernetes), so this probes the connection's own recorded
+  // serverLocation from the browser — see useMesheryPingHook.
+  pingMeshery: (serverLocation?: string, name?: string) => void;
   // Per-kind connection state machine, keyed by connection kind. Sourced from
   // the connection definitions' `transitionMap` (see `_app.tsx`).
   transitionMapByKind: Record<string, ConnectionTransitionMap | undefined> | null;
@@ -114,6 +118,7 @@ export const useConnectionColumns = ({
   ping,
   pingGrafana,
   pingPrometheus,
+  pingMeshery,
   transitionMapByKind,
 }: UseConnectionColumnsArgs) => {
   const canAssignConnectionsToEnv = useHasPermission(
@@ -205,6 +210,10 @@ export const useConnectionColumns = ({
                   connectionId,
                   getColumnValue(tableMeta.rowData, 'name', nextColumns),
                 );
+            } else if (kind === CoreConnectionKinds.meshery) {
+              // `server` resolves metadata.serverLocation (camelCase, current
+              // records) or the legacy snake_case sibling for meshery rows.
+              handlePing = () => pingMeshery(server, value || name || kind);
             }
 
             return (
@@ -554,6 +563,7 @@ export const useConnectionColumns = ({
     ping,
     pingGrafana,
     pingPrometheus,
+    pingMeshery,
     transitionMapByKind,
     updatingConnection,
     url,

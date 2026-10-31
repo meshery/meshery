@@ -119,7 +119,7 @@ ServiceAccount to the `meshery-metrics-reader` ClusterRole and scrape the
 `meshery-operator` Service.
 
 **Upgrade the Operator:** upgrade Meshery Server — see the
-[Upgrading Meshery guide]({{< ref "guides/upgrading-meshery/index.md" >}}).
+[Upgrading Meshery guide]({{< ref "installation/upgrades/index.md" >}}).
 
 ## Operator FAQs
 

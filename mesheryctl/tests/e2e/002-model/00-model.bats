@@ -8,7 +8,7 @@ setup() {
 }
 
 
-@test "mesheryctl model --count return total numbers of models" {
+@test "[cut=Model][tg=Model List] mesheryctl model --count return total numbers of models" {
   run $MESHERYCTL_BIN model --count
   assert_success
 

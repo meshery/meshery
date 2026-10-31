@@ -10,9 +10,9 @@ description: Install Meshery on Kubernetes using Helm. Deploy Meshery in Kuberne
 
 <div class="prereqs"><h4>Prerequisites</h4>
 <ol>
-<li><a href="https://helm.sh/docs/intro/install/" class="meshery-light">Helm</a> should be installed on your local machine.</li>
-<li>You should have access to the cluster/platform where you want to deploy Meshery.</li>
-<li>Ensure that the kubeconfig file has the correct current context/cluster configuration.</li>
+<li>Install <a href="https://helm.sh/docs/intro/install/" class="meshery-light">Helm</a> and <a href="https://kubernetes.io/docs/tasks/tools/" class="meshery-light">kubectl</a> on your local machine.</li>
+<li>Access to the cluster where you want to deploy Meshery.</li>
+<li>A kubeconfig whose current context points at that cluster.</li>
 </ol>
 </div>
 
@@ -21,21 +21,21 @@ description: Install Meshery on Kubernetes using Helm. Deploy Meshery in Kuberne
 {{< code code=`helm repo add meshery https://meshery.io/charts/
 helm install meshery meshery/meshery --namespace meshery --create-namespace` >}}
 
-Optionally, Meshery Server supports customizing the callback URL for your remote provider, like so:
+Optionally, customize the callback URL that your Remote Provider redirects to after sign-in:
 
 {{< code code="helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host --create-namespace" >}}
 
 ### Customizing Meshery's Installation with values.yaml
 
-Meshery's Helm chart supports a number of configuration options. Please refer to the [Meshery Helm chart](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery#readme) and [Meshery Operator Helm Chart](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery-operator#readme) for more information.
+Meshery's Helm chart supports many configuration options. See the [Meshery Helm chart](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery#readme) and [Meshery Operator Helm Chart](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery-operator#readme) for more information.
 
 #### Configuring Kubernetes Configuration Location
 
-By default, Meshery looks for Kubernetes configuration in the `/home/appuser/.kube` directory within the container. You can customize this location by setting the `KUBECONFIG_FOLDER` environment variable:
+By default, Meshery Server looks for Kubernetes configuration in the `/home/appuser/.kube` directory inside the container. To change this location, set the `KUBECONFIG_FOLDER` environment variable:
 
 {{< code code="helm install meshery meshery/meshery --namespace meshery --set env.KUBECONFIG_FOLDER=/custom/path/to/.kube --create-namespace" >}}
 
-This is useful when providing a Meshery deployment with a predefined Kubernetes context or when using custom volume mounts for kubeconfig files.
+A custom location helps when you give a Meshery deployment a predefined Kubernetes context or mount kubeconfig files from a custom volume.
 
 ## Upgrading Meshery with Helm
 
@@ -44,7 +44,7 @@ To upgrade an existing Meshery deployment:
 {{< code code=`helm repo update
 helm upgrade meshery meshery/meshery --namespace meshery` >}}
 
-For optimal upgrade performance with health check support, use the upgrade-specific values:
+Alternatively, run this command instead to use the upgrade-specific values file, which tunes the health checks for a rolling upgrade:
 
 {{< code code=`helm upgrade meshery meshery/meshery --namespace meshery -f https://raw.githubusercontent.com/meshery/meshery/master/install/kubernetes/helm/meshery/values-upgrade.yaml --wait --timeout 10m` >}}
 
@@ -53,26 +53,30 @@ The upgrade configuration includes:
 - **Optimized probe timing** for capability reloading
 - **Higher failure thresholds** to tolerate temporary unavailability during upgrades
 
-See the [Health Check Configuration Guide](https://github.com/meshery/meshery/blob/master/install/kubernetes/helm/meshery/HEALTHCHECKS.md) for detailed information.
+For details, see the [Health Check Configuration Guide](https://github.com/meshery/meshery/blob/master/install/kubernetes/helm/meshery/HEALTHCHECKS.md).
 
 ## Health Checks and Monitoring
 
-Meshery implements Kubernetes-compliant health check endpoints that follow best practices from the Kubernetes API server:
+Meshery Server exposes health check endpoints modeled on the Kubernetes API server's:
 
-- **Liveness probe** (`/healthz/live`) - Checks if Meshery is running and responsive
-- **Readiness probe** (`/healthz/ready`) - Checks if Meshery is ready to accept traffic
+- **Liveness probe** (`/healthz/live`): checks that Meshery is running and responsive.
+- **Readiness probe** (`/healthz/ready`): checks that Meshery is ready to accept traffic.
 
 ### Monitoring Deployment Status
 
-Monitor the status of your Meshery deployment:
+Watch the status of your Meshery pods:
 
 {{< code code="kubectl get pods --namespace meshery -w" >}}
 
 ### Checking Health Status
 
-Verify health status with detailed information using verbose mode:
+To see each health check's result, query the readiness endpoint in verbose mode. The Meshery Server image does not include `curl`, so forward a local port to the deployment first:
 
-{{< code code=`kubectl exec --namespace meshery deployment/meshery -- curl -s 'http://localhost:8080/healthz/ready?verbose=1'` >}}
+{{< code code=`kubectl port-forward --namespace meshery deployment/meshery 8080:8080` >}}
+
+Then, in another terminal:
+
+{{< code code=`curl -s 'http://localhost:8080/healthz/ready?verbose=1'` >}}
 
 **Example output:**
 ```
@@ -82,19 +86,19 @@ healthz check passed
 ```
 
 **Legend:**
-- `[+]` - Health check passed
-- `[-]` - Health check failed (causes pod to be marked unhealthy)
-- `[i]` - Informational status (does not affect health)
+- `[+]`: the check passed.
+- `[-]`: the check failed, and Kubernetes marks the pod unhealthy.
+- `[i]`: informational only; it does not affect health.
 
 ### Health Check Configuration
 
-The Helm chart includes pre-configured health checks with sensible defaults:
+The Helm chart configures health checks with these defaults:
 
-- **Liveness probe**: Initial delay of 80 seconds to allow for server startup and provider initialization
-- **Readiness probe**: Initial delay of 10 seconds with frequent checks for faster readiness detection
-- **Startup probe**: Optional (disabled by default) for handling slow-starting containers
+- **Liveness probe**: an initial delay of 80 seconds, to allow for server startup and provider initialization.
+- **Readiness probe**: an initial delay of 10 seconds, with frequent checks to detect readiness quickly.
+- **Startup probe**: optional and disabled by default, for slow-starting containers.
 
-To customize probe settings, modify your `values.yaml`:
+To customize the probes, set them in your `values.yaml`:
 
 {{< code code=`probe:
   livenessProbe:
@@ -111,13 +115,13 @@ To customize probe settings, modify your `values.yaml`:
     failureThreshold: 4
     timeoutSeconds: 3` >}}
 
-For comprehensive guidance on configuring health checks for different scenarios (installation, upgrades, troubleshooting), see the [Health Check Configuration Guide](https://github.com/meshery/meshery/blob/master/install/kubernetes/helm/meshery/HEALTHCHECKS.md).
+For guidance on configuring health checks for installation, upgrades, and troubleshooting, see the [Health Check Configuration Guide](https://github.com/meshery/meshery/blob/master/install/kubernetes/helm/meshery/HEALTHCHECKS.md).
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Optionally, verify the health of your Meshery deployment with <a href='{{< ref "reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
-You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
+You're ready to use Meshery. Open Meshery UI in your browser.
 
 {{< installation/accessing-meshery-ui >}}
 

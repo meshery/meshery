@@ -60,7 +60,7 @@ var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate relationships documents",
 	Long: `Generate relationships documents from a CSV file or Google Spreadsheet.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/relationship/generate`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/relationship/generate`,
 	Example: `
 // Generate relationships documents from a CSV file
 mesheryctl relationship generate --file <path-to-relationships.csv>

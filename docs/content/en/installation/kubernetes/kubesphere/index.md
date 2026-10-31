@@ -10,41 +10,41 @@ description: Install Meshery on KubeSphere
 
 {{< installation/installation_prerequisites >}}
 
-[Meshery](https://meshery.io/) is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, all kinds of cloud native infrastructure, and their workloads.
+[Meshery](https://meshery.io/) is the open source, cloud native manager for Kubernetes, all kinds of cloud native infrastructure, and their workloads.
 
-This tutorial walks you through an example of deploying Meshery from the App Store of KubeSphere.
+This guide walks you through deploying Meshery from the KubeSphere App Store.
 
 
 ## Prerequisites
 
-- Please make sure you enable the OpenPitrix system.
-- You need to create a workspace, a project, and a user account (`project-regular`) for this tutorial. The account needs to be a platform regular user and to be invited as the project operator with the `operator` role. In this tutorial, you log in as `project-regular` and work in the project `demo-project` in the workspace `demo-workspace`. For more information, see Create Workspaces, Projects, Users and Roles.
+- Enable the OpenPitrix system (the KubeSphere App Store).
+- Create a workspace, a project, and a user account. The account must be a platform regular user, invited to the project as an operator with the `operator` role. This guide uses the user `project-regular`, the project `demo-project`, and the workspace `demo-workspace`. For details, see Create Workspaces, Projects, Users and Roles in the KubeSphere documentation.
 
 
 ## Hands-on Lab
 
-Perform the following steps in order:
+Follow these steps in order.
 
 ### 1. <b>Deploy Meshery from the App Store</b>
 
 
 1. On the **Overview** page of the project `demo-project`, click **App Store** in the upper-left corner.
-2. Search for **Meshery** in the App Store, and click on the search result to open the app.
+2. Search for **Meshery** in the App Store, and click the search result to open the app.
 
     ![meshery-app](images/meshery-app.png)
-3. In the **App Information** page, click **Install** on the upper right corner.
+3. On the **App Information** page, click **Install** in the upper-right corner.
 
     ![meshery-install](images/Meshery-install.png)
 
-4. In the App Settings page, set the application **Name**, **Location** (as your namespace), and **App Version**, then click **Next** on the upper right corner.
+4. On the **App Settings** page, set the application **Name**, **Location** (your namespace), and **App Version**, then click **Next** in the upper-right corner.
 
     ![meshery-info](images/Meshery-info.png)
 
-5. Configure the **values.yaml** file as needed, or click **Install** to use the default configuration.
+5. Edit the **values.yaml** file as needed, or click **Install** to use the default configuration. The chart creates the Meshery service as a `LoadBalancer` by default. If your cluster has no load balancer, set `service.type` to `NodePort` here.
 
     ![meshery-yaml](images/Meshery-yaml.png)
 
-6. Wait for the deployment to be finished. Upon completion, **Meshery** will be shown as **Running** in KubeSphere.
+6. Wait for the deployment to finish. When it completes, KubeSphere shows **Meshery** as **Running**.
 
     ![meshery-app-running](images/Meshery-app-running.png)
 
@@ -53,12 +53,12 @@ Perform the following steps in order:
 ### 2. <b>Access the Meshery Dashboard</b>
 
 
-1. Go to **Services** and click the service name of Meshery.
-2. In the **Resource Status** page, copy the **NodePort** of Meshery.
+1. Go to **Services** and click the Meshery service.
+2. In the **Resource Status** page, copy the external IP address of the Meshery service or, if you set the service type to `NodePort`, its **NodePort**.
 
     ![meshery-service](images/Meshery-service.png)
 
-3. Access the Meshery Dashboard by entering **${NodeIP}:${NODEPORT}** in your browser.
+3. Open Meshery UI in your browser at **${EXTERNAL_IP}:9081**, or at **${NodeIP}:${NODEPORT}** for a `NodePort` service.
 
     ![meshery-dashboard](images/meshery-dashboard.png)
 

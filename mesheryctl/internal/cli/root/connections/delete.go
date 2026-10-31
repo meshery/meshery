@@ -13,7 +13,7 @@ var deleteConnectionCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a connection",
 	Long: `Delete a connection.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/connection/delete`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/connection/delete`,
 
 	Example: `
 // Delete a connection

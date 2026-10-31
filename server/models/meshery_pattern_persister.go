@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
+
+	"gorm.io/gorm"
 
 	"github.com/meshery/schemas/models/core"
 
@@ -276,6 +279,39 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 	}
 
 	return marshalMesheryPatterns(finalPatterns), mpp.DB.Create(finalPatterns).Error
+}
+
+// ReplaceSeededPatterns makes the published designs in the database mirror the
+// supplied set, which SeedContent derives from the on-disk catalog directory.
+//
+// Replacement rather than upsert, for two reasons: seeded designs are minted
+// with a fresh uuid.NewV4() on every pass, so re-saving them inserts duplicates
+// instead of overwriting; and deleting is what drops designs whose catalog file
+// has since been removed upstream, which an upsert would leave orphaned.
+//
+// Delete and inserts share one transaction so a failure part-way through rolls
+// back, rather than committing the delete and leaving the catalog empty.
+//
+// Safe to scope by visibility because a local user cannot create a published
+// design - PublishCatalogPattern returns ErrLocalProviderSupport - so published
+// rows here are always seeded, and private user-authored designs never match.
+func (mpp *MesheryPatternPersister) ReplaceSeededPatterns(seeded []*MesheryPattern) error {
+	return mpp.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("visibility = ?", Published).
+			Delete(&MesheryPattern{}).Error; err != nil {
+			return err
+		}
+
+		txPersister := &MesheryPatternPersister{
+			DB: &database.Handler{DB: tx, Mutex: &sync.Mutex{}},
+		}
+		for _, pattern := range seeded {
+			if _, err := txPersister.SaveMesheryPattern(pattern); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func (mpp *MesheryPatternPersister) GetMesheryPattern(id core.Uuid) ([]byte, error) {

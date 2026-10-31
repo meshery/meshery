@@ -1,5 +1,6 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { CoreConnectionKinds } from '@/utils/Enum';
+import { EVENT_TYPES } from 'lib/event-types';
 import {
   buildConnectionWizardKindConfigs,
   buildCredentialSecret,
@@ -294,20 +295,30 @@ describe('ConnectionWizard.helpers', () => {
     expect(isCreateConnectionQuery('false')).toBe(false);
   });
 
-  it('builds connection-created notify payloads with optional View connections action', () => {
-    vi.stubGlobal('window', { location: { pathname: '/dashboard' } });
-    const payload = connectionCreatedNotify('Prometheus');
-    expect(payload.message).toBe('Prometheus connection created.');
-    expect(payload.link?.href).toBe('/management/connections');
-    vi.stubGlobal('window', { location: { pathname: '/management/connections' } });
-    expect(connectionCreatedNotify('Grafana').link).toBeUndefined();
-    vi.unstubAllGlobals();
+  it('builds connection-created notify payloads', () => {
+    expect(connectionCreatedNotify('Prometheus')).toEqual({
+      message: 'Prometheus connection created.',
+      event_type: EVENT_TYPES.SUCCESS,
+    });
+    expect(connectionCreatedNotify('')).toEqual({
+      message: 'Connection created.',
+      event_type: EVENT_TYPES.SUCCESS,
+    });
   });
 
   it('formats kubernetes import notify summaries', () => {
-    vi.stubGlobal('window', { location: { pathname: '/dashboard' } });
-    expect(kubernetesImportedNotify(2).message).toBe('Imported 2 Kubernetes connections.');
-    vi.unstubAllGlobals();
+    expect(kubernetesImportedNotify(1)).toEqual({
+      message: 'Imported 1 Kubernetes connection.',
+      event_type: EVENT_TYPES.SUCCESS,
+    });
+    expect(kubernetesImportedNotify(2)).toEqual({
+      message: 'Imported 2 Kubernetes connections.',
+      event_type: EVENT_TYPES.SUCCESS,
+    });
+    expect(kubernetesImportedNotify(0)).toEqual({
+      message: 'Imported 0 Kubernetes connections.',
+      event_type: EVENT_TYPES.WARNING,
+    });
   });
 });
 

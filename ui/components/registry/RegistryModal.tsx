@@ -21,6 +21,7 @@ import {
   ListItemText,
   Box,
   FileIcon,
+  AppRegistrationIcon,
   CustomTooltip,
   Drawer,
   DatabaseIcon,
@@ -313,7 +314,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
     if (item) {
       setHeaderInfo({
         title: `Registry - ${id}`,
-        icon: <FileIcon {...iconMedium} fill={theme.palette.common.white} />,
+        icon: <AppRegistrationIcon {...iconMedium} fill={theme.palette.common.white} />,
       });
     }
   };
@@ -352,8 +353,11 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
         />
       </StyledMainContent>
       <ChevronButtonWrapper
+        type="button"
         isCollapsed={!open}
         onClick={handleDrawerToggle}
+        aria-label="Toggle registry navigation"
+        aria-expanded={open}
         sx={{
           position: 'absolute',
           bottom: '12%',
@@ -369,7 +373,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
         }}
       >
         <LeftArrowIcon
-          aria-label="Sidebar collapse toggle"
+          aria-hidden="true"
           style={{
             cursor: 'pointer',
             verticalAlign: 'middle',
@@ -390,7 +394,7 @@ const RegistryModal: FC = () => {
   const registryContext = useContext(RegistryModalContext);
   const [headerInfo, setHeaderInfo] = useState<HeaderInfo>({
     title: 'Registry',
-    icon: <FileIcon {...iconMedium} fill={theme.palette.icon.default} />,
+    icon: <AppRegistrationIcon {...iconMedium} fill={theme.palette.icon.default} />,
   });
 
   return (

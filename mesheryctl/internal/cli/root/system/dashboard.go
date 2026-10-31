@@ -67,7 +67,7 @@ var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
 	Short: "Open Meshery UI in browser.",
 	Long: `Open Meshery UI in browser.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/dashboard`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/dashboard`,
 	Args: cobra.NoArgs,
 	Example: `
 // Open Meshery UI in browser

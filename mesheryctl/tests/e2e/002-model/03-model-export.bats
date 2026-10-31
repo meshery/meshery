@@ -12,7 +12,7 @@ setup() {
 
 
 
-@test "mesheryctl model export displays usage instructions when no model name provided" {
+@test "[cut=Model][tg=Model Export] mesheryctl model export displays usage instructions when no model name provided" {
   run $MESHERYCTL_BIN model export
   assert_failure
   
@@ -20,7 +20,7 @@ setup() {
   assert_output --partial "Usage: mesheryctl model export [model-name]"
 }
 
-@test "mesheryctl model export succeeds with default options" {
+@test "[cut=Model][tg=Model Export] mesheryctl model export succeeds with default options" {
   run $MESHERYCTL_BIN model export accurate -l "$TESTDATA_DIR"
   assert_success
 
@@ -28,7 +28,7 @@ setup() {
   assert_file_exists "$TESTDATA_DIR/accurate.tar"
 }
 
-@test "mesheryctl model export succeeds with tar output type" {
+@test "[cut=Model][tg=Model Export] mesheryctl model export succeeds with tar output type" {
   run $MESHERYCTL_BIN model export accurate -l $TESTDATA_DIR -o tar
   assert_success
 
@@ -38,7 +38,7 @@ setup() {
 
 }
 
-@test "mesheryctl model export succeeds with json output format" {
+@test "[cut=Model][tg=Model Export] mesheryctl model export succeeds with json output format" {
   run $MESHERYCTL_BIN model export accurate -t json -l $TESTDATA_DIR
   assert_success
 
@@ -46,7 +46,7 @@ setup() {
   assert_file_exists "$TESTDATA_DIR/accurate.tar"
 }
 
-@test "mesheryctl model export includes version when specified" {
+@test "[cut=Model][tg=Model Export] mesheryctl model export includes version when specified" {
   run $MESHERYCTL_BIN model export accurate --version v1.7.0 -l $TESTDATA_DIR
   assert_success
 
@@ -54,7 +54,7 @@ setup() {
   assert_file_exists "$TESTDATA_DIR/accurate.tar"
 }
 
-@test "mesheryctl model export handles discard flags correctly" {
+@test "[cut=Model][tg=Model Export] mesheryctl model export handles discard flags correctly" {
   run $MESHERYCTL_BIN model export accurate $TESTDATA_DIR --discard-components --discard-relationships -l $TESTDATA_DIR
   assert_success
 

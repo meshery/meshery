@@ -53,6 +53,7 @@ vi.mock('@sistent/sistent', () => ({
   LeftArrowIcon: (props) =>
     React.createElement('svg', { 'data-component': 'left-arrow-icon', ...props }),
   FileIcon: () => <svg data-testid="file-icon" />,
+  AppRegistrationIcon: () => <svg data-testid="app-registration-icon" />,
   InfoIcon: () => <svg data-testid="info-icon" />,
   DatabaseIcon: () => <svg data-testid="database-icon" />,
   CustomTooltip: ({ children }: any) => <>{children}</>,
@@ -155,12 +156,13 @@ vi.mock('./helper', () => ({
 }));
 
 vi.mock('../general/style', () => ({
-  ChevronButtonWrapper: ({ children, onClick, isCollapsed }: any) => (
+  ChevronButtonWrapper: ({ children, onClick, isCollapsed, sx, ...props }: any) => (
     <button
       type="button"
       onClick={onClick}
       data-collapsed={String(!!isCollapsed)}
       data-testid="sidebar-collapse-toggle"
+      {...props}
     >
       {children}
     </button>

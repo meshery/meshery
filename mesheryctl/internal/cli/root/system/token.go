@@ -65,7 +65,7 @@ var createTokenCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a token in your meshconfig",
 	Long: `Create the token with provided token name (optionally token path) to your meshconfig tokens.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/token/create`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/token/create`,
 	Example: `
 mesheryctl system token create [token-name] -f [token-path]
 mesheryctl system token create [token-name] (default path is auth.json)
