@@ -6,11 +6,15 @@ import { ComponentIcon, DEPLOYMENT_TYPE, Loading, processDesign } from './common
 import {
   designValidatorCommands,
   designValidatorEvents,
+  useDryRunRawResponse,
   useDryRunValidationResults,
   useIsValidatingDryRun,
 } from '../../../machines/validator/designValidator';
-import { ErrorIcon } from '@sistent/sistent';
+import { ErrorIcon, Box, Button, ButtonGroup } from '@sistent/sistent';
 import { useTheme } from '@/theme';
+import { useSelector } from 'react-redux';
+import { selectAllSelectedK8sConnections } from '@/store/slices/globalEnvironmentContext';
+import { CrossClusterCompatibilityAnalysis } from './CrossClusterCompatibilityAnalysis';
 import { FormatStructuredData } from '../../data-formatter';
 import {
   DryRunComponentLabel,
@@ -33,11 +37,13 @@ function breakCapitalizedWords(input) {
  * @returns
  */
 export function getTotalCountOfDeploymentErrors(errors) {
-  if (!errors) {
+  if (!errors || !Array.isArray(errors)) {
     return 0;
   }
 
-  return errors.reduce((preCount, currEle) => preCount + currEle.errors.length, 0);
+  return errors
+    .filter((entry) => Array.isArray(entry?.errors))
+    .reduce((preCount, currEle) => preCount + currEle.errors.length, 0);
 }
 
 function getFieldPathString(fieldPath) {
@@ -173,15 +179,18 @@ export const FormatDryRunResponse = ({
   validationMachine,
   currentComponentName,
 }) => {
-  const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
+  const actualErrors = Array.isArray(dryRunErrors)
+    ? dryRunErrors.filter((error) => error?.type !== 'CompatibilityMatrix')
+    : [];
+  const totalDryRunErrors = getTotalCountOfDeploymentErrors(actualErrors);
   const theme = useTheme();
   const canShowComponentCount =
     annotationComponentsCount !== undefined && annotationComponentsCount !== undefined;
 
-  const dryRunRequestErrors = dryRunErrors
+  const dryRunRequestErrors = actualErrors
     .filter((error) => error.type === 'RequestError')
     .flatMap((error) => error?.errors || []);
-  const componentErrors = dryRunErrors.filter((error) => error.type === 'ComponentError');
+  const componentErrors = actualErrors.filter((error) => error.type === 'ComponentError');
 
   return (
     <DryRunRootListStyled
@@ -250,10 +259,14 @@ const DryRunComponent = (props) => {
   } = props;
 
   const dryRunErrors = useDryRunValidationResults(validationMachine);
+  const rawDryRunResponse = useDryRunRawResponse(validationMachine);
   const isLoading = useIsValidatingDryRun(validationMachine);
   const { configurableComponents, annotationComponents } = processDesign(design);
+  const selectedK8sConnections = useSelector(selectAllSelectedK8sConnections);
 
-  useEffect(() => {
+  const [viewMode, setViewMode] = useState<'matrix' | 'list'>('matrix');
+
+  const handleReRun = () => {
     const dryRunCommand =
       deployment_type == DEPLOYMENT_TYPE.DEPLOY
         ? designValidatorCommands.dryRunDesignDeployment
@@ -265,6 +278,10 @@ const DryRunComponent = (props) => {
         includeDependencies,
       }),
     );
+  };
+
+  useEffect(() => {
+    handleReRun();
   }, [includeDependencies]);
 
   if (isLoading) {
@@ -286,13 +303,45 @@ const DryRunComponent = (props) => {
   }
 
   return (
-    <FormatDryRunResponse
-      dryRunErrors={dryRunErrors}
-      annotationComponentsCount={annotationComponents.length}
-      configurableComponentsCount={configurableComponents.length}
-      validationMachine={validationMachine}
-      currentComponentName={currentComponentName}
-    />
+    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 1 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+        <ButtonGroup size="small" variant="outlined">
+          <Button
+            variant={viewMode === 'matrix' ? 'contained' : 'outlined'}
+            onClick={() => setViewMode('matrix')}
+            data-testid="toggle-view-matrix"
+          >
+            Compatibility Matrix
+          </Button>
+          <Button
+            variant={viewMode === 'list' ? 'contained' : 'outlined'}
+            onClick={() => setViewMode('list')}
+            data-testid="toggle-view-list"
+          >
+            List View
+          </Button>
+        </ButtonGroup>
+      </Box>
+
+      {viewMode === 'matrix' ? (
+        <CrossClusterCompatibilityAnalysis
+          dryRunResponse={rawDryRunResponse}
+          design={design}
+          selectedK8sConnections={selectedK8sConnections}
+          selectedK8sContexts={selectedK8sContexts}
+          onReRunAnalysis={handleReRun}
+          isReRunning={isLoading}
+        />
+      ) : (
+        <FormatDryRunResponse
+          dryRunErrors={dryRunErrors}
+          annotationComponentsCount={annotationComponents.length}
+          configurableComponentsCount={configurableComponents.length}
+          validationMachine={validationMachine}
+          currentComponentName={currentComponentName}
+        />
+      )}
+    </Box>
   );
 };
 
