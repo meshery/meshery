@@ -83,7 +83,8 @@ func ErrDesignManifest() error {
 		[]string{"No file path detected"},
 		[]string{"No manifest file path detected"},
 		[]string{"Manifest path not provided"},
-		[]string{fmt.Sprintf("Provide the path to the design manifest. \n\n%v", errPatternMsg)})
+		[]string{"Provide the path to the design manifest.", `Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`})
 }
 
 func ErrDesignFileNotProvided() error {
@@ -91,7 +92,8 @@ func ErrDesignFileNotProvided() error {
 		[]string{"Design file path not provided"},
 		[]string{"Design [File | File Path | URL] isn't specified"},
 		[]string{"[File | File Path | URL] not detected. The '-f' flag is missing or empty in the 'mesheryctl design import' command"},
-		[]string{fmt.Sprintf("Provide the path to the design file using the '-f' flag. Ensure that the file path or URL is correctly specified and accessible. \n\n%v", errPatternMsg)})
+		[]string{"Provide the path to the design file using the '-f' flag. Ensure that the file path or URL is correctly specified and accessible.", `Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`})
 }
 
 func ErrDeployDesign() error {
@@ -108,7 +110,8 @@ func ErrDesignSourceType() error {
 		[]string{"Source type for the design to import not specified"},
 		[]string{"Empty  source type detected"},
 		[]string{"Design source type not provided"},
-		[]string{fmt.Sprintf("Provide one of the supported source type for the design to import. \n\n%v", errPatternMsg)})
+		[]string{"Provide one of the supported source type for the design to import.", `Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`})
 }
 
 func ErrViewDesignFlag() error {
@@ -124,7 +127,9 @@ func ErrUndeployDesign(err error) error {
 		[]string{"Undeploying design failed"},
 		[]string{"Unable to undeploy design due to empty path"},
 		[]string{"File path or design name not provided."},
-		[]string{fmt.Sprintf("Provide a file path/design name. \n\n%v", errUndeployMsg)})
+		[]string{"Provide a file path/design name.", `Usage: mesheryctl design undeploy -f [filepath]
+Example: mesheryctl design undeploy -f ./pattern.yml
+Description: Undeploy design`})
 }
 
 func ErrParseDesignFile(err error) error {
