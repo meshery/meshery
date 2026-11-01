@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
@@ -216,31 +215,6 @@ func TestCheckMesheryNsDelete(t *testing.T) {
 	})
 }
 
-type hcTrackingTransport struct {
-	base http.RoundTripper
-	body *hcTrackingBody
-}
-
-func (t *hcTrackingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	resp, err := t.base.RoundTrip(req)
-	if err != nil || resp == nil || resp.Body == nil {
-		return resp, err
-	}
-	t.body = &hcTrackingBody{ReadCloser: resp.Body}
-	resp.Body = t.body
-	return resp, nil
-}
-
-type hcTrackingBody struct {
-	io.ReadCloser
-	closed bool
-}
-
-func (b *hcTrackingBody) Close() error {
-	b.closed = true
-	return b.ReadCloser.Close()
-}
-
 func TestIsMesheryRunning(t *testing.T) {
 	_ = SetupMeshkitLoggerTesting(t, false)
 
@@ -262,7 +236,7 @@ func TestIsMesheryRunning(t *testing.T) {
 		viper.Set("contexts.local.endpoint", server.URL)
 		viper.Set("current-context", "local")
 
-		transport := &hcTrackingTransport{base: http.DefaultTransport}
+		transport := &trackingTransport{base: http.DefaultTransport}
 		previousTransport := http.DefaultClient.Transport
 		http.DefaultClient.Transport = transport
 		t.Cleanup(func() { http.DefaultClient.Transport = previousTransport })
@@ -292,7 +266,7 @@ func TestIsMesheryRunning(t *testing.T) {
 		viper.Set("contexts.local.endpoint", server.URL)
 		viper.Set("current-context", "local")
 
-		transport := &hcTrackingTransport{base: http.DefaultTransport}
+		transport := &trackingTransport{base: http.DefaultTransport}
 		previousTransport := http.DefaultClient.Transport
 		http.DefaultClient.Transport = transport
 		t.Cleanup(func() { http.DefaultClient.Transport = previousTransport })

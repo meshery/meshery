@@ -17,7 +17,6 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -101,31 +100,6 @@ func TestProviderUnmarshalJSON(t *testing.T) {
 	})
 }
 
-type authTrackingTransport struct {
-	base http.RoundTripper
-	body *authTrackingBody
-}
-
-func (t *authTrackingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	resp, err := t.base.RoundTrip(req)
-	if err != nil || resp == nil || resp.Body == nil {
-		return resp, err
-	}
-	t.body = &authTrackingBody{ReadCloser: resp.Body}
-	resp.Body = t.body
-	return resp, nil
-}
-
-type authTrackingBody struct {
-	io.ReadCloser
-	closed bool
-}
-
-func (b *authTrackingBody) Close() error {
-	b.closed = true
-	return b.ReadCloser.Close()
-}
-
 func TestMakeRequest_Status302AndHTMLResponseHandling(t *testing.T) {
 	_ = SetupMeshkitLoggerTesting(t, false)
 
@@ -135,7 +109,7 @@ func TestMakeRequest_Status302AndHTMLResponseHandling(t *testing.T) {
 		}))
 		defer server.Close()
 
-		transport := &authTrackingTransport{base: http.DefaultTransport}
+		transport := &trackingTransport{base: http.DefaultTransport}
 		previousTransport := http.DefaultTransport
 		http.DefaultTransport = transport
 		t.Cleanup(func() { http.DefaultTransport = previousTransport })
@@ -169,7 +143,7 @@ func TestMakeRequest_Status302AndHTMLResponseHandling(t *testing.T) {
 		}))
 		defer server.Close()
 
-		transport := &authTrackingTransport{base: http.DefaultTransport}
+		transport := &trackingTransport{base: http.DefaultTransport}
 		previousTransport := http.DefaultTransport
 		http.DefaultTransport = transport
 		t.Cleanup(func() { http.DefaultTransport = previousTransport })
