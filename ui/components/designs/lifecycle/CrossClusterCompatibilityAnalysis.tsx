@@ -21,7 +21,6 @@ import { alpha, useTheme } from '@/theme';
 import {
   CompatibilityAnalysisData,
   CompatibilityStatus,
-  ResourceRow,
   buildCompatibilityAnalysis,
 } from './compatibilityAnalysisUtils';
 import {
@@ -402,7 +401,10 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
                         return (
                           <TableCell key={cluster.id} align="center">
                             {renderStatusBadge(cellRes.status, isSelected, () => {
-                              setSelectedCell({ resourceName: res.resourceName, clusterId: cluster.id });
+                              setSelectedCell({
+                                resourceName: res.resourceName,
+                                clusterId: cluster.id,
+                              });
                             })}
                           </TableCell>
                         );
