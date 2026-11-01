@@ -59,13 +59,16 @@ Tags change with each operator release. Before mirroring, render the chart with 
 On a machine with internet access, pull each image, retag it for your registry, and push it:
 
 {{< code code=`registry=registry.example.local
-for image in meshery/meshery:<release-tag> meshery/meshery-operator:1.0.6 alpine/k8s:1.35.6 meshery/meshsync:1.0.3 nats:2.14.2-alpine natsio/nats-server-config-reloader:0.23.0; do
+# Add a meshery/meshery-<adapter>:<release-tag> entry here for each adapter you enable. The example values file below enables meshery-istio, so it is included here.
+for image in meshery/meshery:<release-tag> meshery/meshery-operator:1.0.6 alpine/k8s:1.35.6 meshery/meshery-istio:<release-tag> meshery/meshsync:1.0.3 nats:2.14.2-alpine natsio/nats-server-config-reloader:0.23.0; do
   docker pull "$image"
   docker tag "$image" "$registry/$image"
   docker push "$registry/$image"
 done` >}}
 
-If your registry requires authentication, create the pull secret in the `meshery` namespace before installing, and name it in your values file (below):
+If your registry requires authentication, create the `meshery` namespace first, then create the pull secret in it before installing, and name it in your values file (below). The namespace must exist before the secret is created; `helm install --create-namespace` below runs later, so it does not help here.
+
+{{< code code="kubectl create namespace meshery --dry-run=client -o yaml | kubectl apply -f -" >}}
 
 {{< code code="kubectl create secret docker-registry private-registry --namespace meshery --docker-server=registry.example.local --docker-username=<username> --docker-password=<password>" >}}
 
@@ -73,8 +76,10 @@ If your registry requires authentication, create the pull secret in the `meshery
 
 If you have no registry, archive the images, transfer the archive, and load it on every node:
 
-{{< code code=`docker pull meshery/meshery:<release-tag> meshery/meshery-operator:1.0.6 alpine/k8s:1.35.6 meshery/meshsync:1.0.3 nats:2.14.2-alpine natsio/nats-server-config-reloader:0.23.0
-docker save -o meshery-images.tar meshery/meshery:<release-tag> meshery/meshery-operator:1.0.6 alpine/k8s:1.35.6 meshery/meshsync:1.0.3 nats:2.14.2-alpine natsio/nats-server-config-reloader:0.23.0` >}}
+{{< code code=`for image in meshery/meshery:<release-tag> meshery/meshery-operator:1.0.6 alpine/k8s:1.35.6 meshery/meshery-istio:<release-tag> meshery/meshsync:1.0.3 nats:2.14.2-alpine natsio/nats-server-config-reloader:0.23.0; do
+  docker pull "$image"
+done
+docker save -o meshery-images.tar meshery/meshery:<release-tag> meshery/meshery-operator:1.0.6 alpine/k8s:1.35.6 meshery/meshery-istio:<release-tag> meshery/meshsync:1.0.3 nats:2.14.2-alpine natsio/nats-server-config-reloader:0.23.0` >}}
 
 On each node, import the archive into the container runtime. For containerd (the runtime most Kubernetes distributions use today):
 
@@ -125,18 +130,32 @@ meshery-istio:
   image:
     repository: registry.example.local/meshery/meshery-istio:<release-tag>
     pullPolicy: IfNotPresent
+  imagePullSecrets:
+    - name: private-registry
 ```
 
 Notes on this file:
 
 - The operator has its own `image`, `imagePullSecrets`, and CRD job image settings, nested under `meshery-operator`. There is no single global registry setting shared by the charts, so each component is repointed separately.
+- Each adapter subchart has its own `imagePullSecrets` (default empty), so the top-level secret does not cover an enabled adapter. Set it under that adapter, as shown for `meshery-istio` above.
 - If you side-loaded the images instead of mirroring them, keep the original image references, omit `imagePullSecrets`, and set only the pinned tags and `pullPolicy: IfNotPresent`.
 
 ### Operator-Managed Images
 
 MeshSync and Broker images cannot be repointed in `values.yaml` or in their custom resources. Meshery Operator names the repositories (`meshery/meshsync` and `nats`) in its own code; the MeshSync and Broker resources accept only a version (`spec.version`), which selects the tag, and the NATS configuration reloader image is fixed in the operator's embedded Broker manifests. You have two ways to serve these images offline:
 
-1. **Configure a registry mirror on every node.** Point your container runtime's mirror for Docker Hub at your private registry (for containerd, the `registry.mirrors` / registry configuration for `docker.io`), and mirror the three operator-managed images under their original names. The operator's requests then resolve to your registry without any Meshery configuration change.
+1. **Configure a registry mirror on every node.** Point your container runtime's mirror for Docker Hub at your private registry, and mirror the three operator-managed images under their original names. The operator's requests then resolve to your registry without any Meshery configuration change.
+
+   For containerd, use the hosts directory layout, not the deprecated `registry.mirrors` field in `config.toml`. Set `config_path = "/etc/containerd/certs.d"` in containerd's registry configuration, then add `/etc/containerd/certs.d/docker.io/hosts.toml`:
+
+   ```toml
+   server = "https://docker.io"
+
+   [host."https://registry.example.local"]
+     capabilities = ["pull", "resolve"]
+   ```
+
+   Helm `imagePullSecrets` cover chart-created Pods only, not the MeshSync and Broker Pods the operator creates, so an authenticated private registry needs its credentials configured at the node level for this mirror as well.
 2. **Side-load the three images onto every node** under their original names, as in Option B above. The operator pulls pinned tags with `IfNotPresent`, so pre-loaded images are used without contacting a registry.
 
 ## Install
