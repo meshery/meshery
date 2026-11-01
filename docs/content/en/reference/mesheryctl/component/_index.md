@@ -14,7 +14,7 @@ Manage Meshery components
 
 ## Synopsis
 
-List, search and view component(s) and detailed informations
+List, search and view component(s) and detailed information
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>

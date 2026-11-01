@@ -89,6 +89,10 @@ tags:
     description: Operations related to invitation
   - name: Ledger_ledgers
     description: Operations related to organization ledgers and their entries.
+  - name: MediaAsset_mediaAssets
+    description: Operations related to media assets.
+  - name: MentionAlias_mentionAliases
+    description: Operations related to mention aliases.
   - name: PatternResource_patternResources
     description: Operations related to Meshery pattern resources.
   - name: Performance_Profile_performance
@@ -47583,6 +47587,7 @@ paths:
                     - subType
                     - kind
                     - status
+                    - organizationId
                   properties:
                     id:
                       description: Connection ID
@@ -48297,20 +48302,16 @@ paths:
                       description: >
                         The organization the connection belongs to. The server sets it from the session organization
                         (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
-                        connection is registered, and keeps it on later updates. Every connection a server registers
-                        under this contract carries it. Absent only on connections registered before servers recorded an
-                        organization and whose owner belongs to several, so none can be assigned without guessing; those
-                        are scoped by their owner. A server may backfill a legacy connection whose organization is
-                        unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
-                        `RegistrantData` inlines this entity into registry registration requests, and readOnly there
-                        drops the connection field from the generated RTK client. A value sent on that inlined
-                        connection is ignored. With the owner and `metadata.installationId`, it is the deduplication key
-                        for `desktop` connections.
-                      nullable: true
+                        connection is registered, and keeps it on later updates. Never accepted from clients on
+                        connection write payloads. Not marked readOnly: `RegistrantData` inlines this entity into
+                        registry registration requests, and readOnly there drops the connection field from the generated
+                        RTK client. A value sent on that inlined connection is ignored. With the owner and
+                        `metadata.installationId`, it is the deduplication key for `desktop` connections.
                       x-go-name: OrganizationID
+                      x-go-type-skip-optional-pointer: true
                       x-oapi-codegen-extra-tags:
                         db: organization_id
-                        json: organizationId,omitempty
+                        json: organizationId
                       x-order: 19
                       type: string
                       format: uuid
@@ -57800,6 +57801,7 @@ paths:
                     - subType
                     - kind
                     - status
+                    - organizationId
                   properties:
                     id:
                       description: Connection ID
@@ -58514,20 +58516,16 @@ paths:
                       description: >
                         The organization the connection belongs to. The server sets it from the session organization
                         (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
-                        connection is registered, and keeps it on later updates. Every connection a server registers
-                        under this contract carries it. Absent only on connections registered before servers recorded an
-                        organization and whose owner belongs to several, so none can be assigned without guessing; those
-                        are scoped by their owner. A server may backfill a legacy connection whose organization is
-                        unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
-                        `RegistrantData` inlines this entity into registry registration requests, and readOnly there
-                        drops the connection field from the generated RTK client. A value sent on that inlined
-                        connection is ignored. With the owner and `metadata.installationId`, it is the deduplication key
-                        for `desktop` connections.
-                      nullable: true
+                        connection is registered, and keeps it on later updates. Never accepted from clients on
+                        connection write payloads. Not marked readOnly: `RegistrantData` inlines this entity into
+                        registry registration requests, and readOnly there drops the connection field from the generated
+                        RTK client. A value sent on that inlined connection is ignored. With the owner and
+                        `metadata.installationId`, it is the deduplication key for `desktop` connections.
                       x-go-name: OrganizationID
+                      x-go-type-skip-optional-pointer: true
                       x-oapi-codegen-extra-tags:
                         db: organization_id
-                        json: organizationId,omitempty
+                        json: organizationId
                       x-order: 19
                       type: string
                       format: uuid
@@ -71367,6 +71365,7 @@ paths:
                         - subType
                         - kind
                         - status
+                        - organizationId
                       properties:
                         id:
                           description: Connection ID
@@ -72089,20 +72088,16 @@ paths:
                           description: >
                             The organization the connection belongs to. The server sets it from the session organization
                             (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when
-                            the connection is registered, and keeps it on later updates. Every connection a server
-                            registers under this contract carries it. Absent only on connections registered before
-                            servers recorded an organization and whose owner belongs to several, so none can be assigned
-                            without guessing; those are scoped by their owner. A server may backfill a legacy connection
-                            whose organization is unambiguous. Never accepted from clients on connection write payloads.
-                            Not marked readOnly: `RegistrantData` inlines this entity into registry registration
-                            requests, and readOnly there drops the connection field from the generated RTK client. A
-                            value sent on that inlined connection is ignored. With the owner and
+                            the connection is registered, and keeps it on later updates. Never accepted from clients on
+                            connection write payloads. Not marked readOnly: `RegistrantData` inlines this entity into
+                            registry registration requests, and readOnly there drops the connection field from the
+                            generated RTK client. A value sent on that inlined connection is ignored. With the owner and
                             `metadata.installationId`, it is the deduplication key for `desktop` connections.
-                          nullable: true
                           x-go-name: OrganizationID
+                          x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: organization_id
-                            json: organizationId,omitempty
+                            json: organizationId
                           x-order: 19
                           type: string
                           format: uuid
@@ -72396,11 +72391,11 @@ paths:
         it is refused with a `409` MeshKit error that names the reserved GitHub App connection identity.
 
 
-        Every connection registered belongs to exactly one organization. The server assigns `organizationId` from the
-        session (`X-Current-Orgid`, then the caller's selected organization) and does not accept it in the body. When
-        the session names none, the server may use the caller's only organization (Meshery Cloud: the only live
-        organization the caller belongs to, else the only one of those the caller owns); it must not guess between
-        several, and answers 400 instead. Connections registered before servers recorded an organization may have none.
+        Every connection belongs to exactly one organization. The server assigns `organizationId` from the session
+        (`X-Current-Orgid`, then the caller's selected organization) and does not accept it in the body. When the
+        session names none, the server may use the caller's only organization (Meshery Cloud: the only live organization
+        the caller belongs to, else the only one of those the caller owns); it must not guess between several, and
+        answers 400 instead.
 
 
         Desktop registration uses this shared operation, but kind `desktop` is implemented by Cloud: a server that does
@@ -72928,6 +72923,7 @@ paths:
                   - subType
                   - kind
                   - status
+                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -73632,20 +73628,16 @@ paths:
                     description: >
                       The organization the connection belongs to. The server sets it from the session organization
                       (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
-                      connection is registered, and keeps it on later updates. Every connection a server registers under
-                      this contract carries it. Absent only on connections registered before servers recorded an
-                      organization and whose owner belongs to several, so none can be assigned without guessing; those
-                      are scoped by their owner. A server may backfill a legacy connection whose organization is
-                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
-                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
-                      the connection field from the generated RTK client. A value sent on that inlined connection is
-                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
-                      connections.
-                    nullable: true
+                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
+                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
+                      registration requests, and readOnly there drops the connection field from the generated RTK
+                      client. A value sent on that inlined connection is ignored. With the owner and
+                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
                     x-go-name: OrganizationID
+                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId,omitempty
+                      json: organizationId
                     x-order: 19
                     type: string
                     format: uuid
@@ -73899,6 +73891,7 @@ paths:
                   - subType
                   - kind
                   - status
+                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -74603,20 +74596,16 @@ paths:
                     description: >
                       The organization the connection belongs to. The server sets it from the session organization
                       (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
-                      connection is registered, and keeps it on later updates. Every connection a server registers under
-                      this contract carries it. Absent only on connections registered before servers recorded an
-                      organization and whose owner belongs to several, so none can be assigned without guessing; those
-                      are scoped by their owner. A server may backfill a legacy connection whose organization is
-                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
-                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
-                      the connection field from the generated RTK client. A value sent on that inlined connection is
-                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
-                      connections.
-                    nullable: true
+                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
+                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
+                      registration requests, and readOnly there drops the connection field from the generated RTK
+                      client. A value sent on that inlined connection is ignored. With the owner and
+                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
                     x-go-name: OrganizationID
+                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId,omitempty
+                      json: organizationId
                     x-order: 19
                     type: string
                     format: uuid
@@ -75297,6 +75286,7 @@ paths:
                   - subType
                   - kind
                   - status
+                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -76001,20 +75991,16 @@ paths:
                     description: >
                       The organization the connection belongs to. The server sets it from the session organization
                       (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
-                      connection is registered, and keeps it on later updates. Every connection a server registers under
-                      this contract carries it. Absent only on connections registered before servers recorded an
-                      organization and whose owner belongs to several, so none can be assigned without guessing; those
-                      are scoped by their owner. A server may backfill a legacy connection whose organization is
-                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
-                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
-                      the connection field from the generated RTK client. A value sent on that inlined connection is
-                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
-                      connections.
-                    nullable: true
+                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
+                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
+                      registration requests, and readOnly there drops the connection field from the generated RTK
+                      client. A value sent on that inlined connection is ignored. With the owner and
+                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
                     x-go-name: OrganizationID
+                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId,omitempty
+                      json: organizationId
                     x-order: 19
                     type: string
                     format: uuid
@@ -76783,6 +76769,7 @@ paths:
                   - subType
                   - kind
                   - status
+                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -77487,20 +77474,16 @@ paths:
                     description: >
                       The organization the connection belongs to. The server sets it from the session organization
                       (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
-                      connection is registered, and keeps it on later updates. Every connection a server registers under
-                      this contract carries it. Absent only on connections registered before servers recorded an
-                      organization and whose owner belongs to several, so none can be assigned without guessing; those
-                      are scoped by their owner. A server may backfill a legacy connection whose organization is
-                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
-                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
-                      the connection field from the generated RTK client. A value sent on that inlined connection is
-                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
-                      connections.
-                    nullable: true
+                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
+                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
+                      registration requests, and readOnly there drops the connection field from the generated RTK
+                      client. A value sent on that inlined connection is ignored. With the owner and
+                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
                     x-go-name: OrganizationID
+                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId,omitempty
+                      json: organizationId
                     x-order: 19
                     type: string
                     format: uuid
@@ -77914,6 +77897,7 @@ paths:
                   - subType
                   - kind
                   - status
+                  - organizationId
                 properties:
                   id:
                     description: Connection ID
@@ -78618,20 +78602,16 @@ paths:
                     description: >
                       The organization the connection belongs to. The server sets it from the session organization
                       (`X-Current-Orgid`, or the caller's selected organization when that header is absent) when the
-                      connection is registered, and keeps it on later updates. Every connection a server registers under
-                      this contract carries it. Absent only on connections registered before servers recorded an
-                      organization and whose owner belongs to several, so none can be assigned without guessing; those
-                      are scoped by their owner. A server may backfill a legacy connection whose organization is
-                      unambiguous. Never accepted from clients on connection write payloads. Not marked readOnly:
-                      `RegistrantData` inlines this entity into registry registration requests, and readOnly there drops
-                      the connection field from the generated RTK client. A value sent on that inlined connection is
-                      ignored. With the owner and `metadata.installationId`, it is the deduplication key for `desktop`
-                      connections.
-                    nullable: true
+                      connection is registered, and keeps it on later updates. Never accepted from clients on connection
+                      write payloads. Not marked readOnly: `RegistrantData` inlines this entity into registry
+                      registration requests, and readOnly there drops the connection field from the generated RTK
+                      client. A value sent on that inlined connection is ignored. With the owner and
+                      `metadata.installationId`, it is the deduplication key for `desktop` connections.
                     x-go-name: OrganizationID
+                    x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: organization_id
-                      json: organizationId,omitempty
+                      json: organizationId
                     x-order: 19
                     type: string
                     format: uuid
@@ -80928,20 +80908,12 @@ paths:
                           description: Tracks the specific content version that has been made available in the Catalog.
                           type: string
                           maxLength: 500
-                        class:
+                        contentClass:
                           description: >-
                             Published content is classifed by its support level. Content classes help you understand the
                             origin and expected support level for each piece of content. It is important to note that
                             the level of support may vary within each class, and you should exercise discretion when
-                            using community-contributed content. Content produced and fully supported by Meshery
-                            maintainers. This represents the highest level of support and is considered the most
-                            reliable. Content produced by partners and verified by Meshery maintainers. While not
-                            directly maintained by Meshery, it has undergone a verification process to ensure quality
-                            and compatibility. Content produced and supported by the respective project or organization
-                            responsible for the specific technology. This class offers a level of support from the
-                            project maintainers themselves. Content produced and shared by Meshery users. This includes
-                            a wide range of content, such as performance profiles, test results, filters, patterns, and
-                            applications. Community content may have varying levels of support and reliability.
+                            using community-contributed content.
                           type: string
                           oneOf:
                             - const: official
@@ -80953,11 +80925,11 @@ paths:
                                 Content produced by partners and verified by Meshery maintainers. While not directly
                                 maintained by Meshery, it has undergone a verification process to ensure quality and
                                 compatibility.
-                            - const: reference architecture
+                            - const: community
                               description: >-
                                 Content produced and shared by Meshery users. This includes a wide range of content,
                                 such as performance profiles, test results, filters, patterns, and applications.
-                                Reference architecture content may have varying levels of support and reliability.
+                                Community content may have varying levels of support and reliability.
                           maxLength: 500
                         compatibility:
                           type: array
@@ -80996,7 +80968,7 @@ paths:
                             - Workloads
                           default: Deployment
                           description: Categorization of the type of design or operational flow depicted in this design.
-                        snapshotURL:
+                        imageURL:
                           type: array
                           items:
                             type: string
@@ -88501,21 +88473,12 @@ paths:
                             publishedVersion:
                               description: Tracks the specific content version that has been made available in the Catalog.
                               type: string
-                            class:
+                            contentClass:
                               description: >-
                                 Published content is classifed by its support level. Content classes help you understand
                                 the origin and expected support level for each piece of content. It is important to note
                                 that the level of support may vary within each class, and you should exercise discretion
-                                when using community-contributed content. Content produced and fully supported by
-                                Meshery maintainers. This represents the highest level of support and is considered the
-                                most reliable. Content produced by partners and verified by Meshery maintainers. While
-                                not directly maintained by Meshery, it has undergone a verification process to ensure
-                                quality and compatibility. Content produced and supported by the respective project or
-                                organization responsible for the specific technology. This class offers a level of
-                                support from the project maintainers themselves. Content produced and shared by Meshery
-                                users. This includes a wide range of content, such as performance profiles, test
-                                results, filters, patterns, and applications. Community content may have varying levels
-                                of support and reliability.
+                                when using community-contributed content.
                               type: string
                               oneOf:
                                 - const: official
@@ -88527,11 +88490,11 @@ paths:
                                     Content produced by partners and verified by Meshery maintainers. While not directly
                                     maintained by Meshery, it has undergone a verification process to ensure quality and
                                     compatibility.
-                                - const: reference architecture
+                                - const: community
                                   description: >-
                                     Content produced and shared by Meshery users. This includes a wide range of content,
                                     such as performance profiles, test results, filters, patterns, and applications.
-                                    Reference architecture content may have varying levels of support and reliability.
+                                    Community content may have varying levels of support and reliability.
                             compatibility:
                               type: array
                               title: Model
@@ -88544,13 +88507,13 @@ paths:
                               description: >-
                                 One or more models associated with this catalog item. For designs, a list of one or more
                                 models implicated by components within the design. For models, this is self-referential.
-                            pattern_caveats:
+                            patternCaveats:
                               type: string
                               title: Caveats and Considerations
                               description: >-
                                 Specific stipulations to consider and known behaviors to be aware of when using this
                                 design.
-                            pattern_info:
+                            patternInfo:
                               type: string
                               title: Description
                               minLength: 1
@@ -88569,7 +88532,7 @@ paths:
                                 - Workloads
                               default: Deployment
                               description: Categorization of the type of design or operational flow depicted in this design.
-                            snapshotURL:
+                            imageURL:
                               type: array
                               items:
                                 type: string
@@ -88578,8 +88541,8 @@ paths:
                               description: Contains reference to the dark and light mode snapshots of the design.
                           required:
                             - compatibility
-                            - pattern_caveats
-                            - pattern_info
+                            - patternCaveats
+                            - patternInfo
                             - type
                         created_at:
                           type: string
