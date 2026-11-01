@@ -504,19 +504,27 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	// failed to fetch response for server version
-	if err != nil || resp.StatusCode != 200 {
+	if err != nil {
 		if hc.Options.PrintLogs { // log if we're supposed to
 			utils.Log.Info("!! failed to check Meshery Server version. try starting Meshery with `mesheryctl system start`")
 			skipServerLogs = true
 		} else {
 			return err
 		}
+	} else {
+		defer func() { _ = resp.Body.Close() }()
+		if resp.StatusCode != http.StatusOK {
+			if hc.Options.PrintLogs {
+				utils.Log.Info("!! failed to check Meshery Server version. try starting Meshery with `mesheryctl system start`")
+				skipServerLogs = true
+			} else {
+				return utils.ErrResponseStatus(resp.StatusCode)
+			}
+		}
 	}
 
 	// skip this part as we failed to get a response from the api
 	if !skipServerLogs {
-		// needs multiple defer as Body.Close needs a valid response
-		defer func() { _ = resp.Body.Close() }()
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return errors.Errorf("\n  Invalid response: %v", err)
@@ -532,13 +540,13 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 			return err
 		}
 		if hc.Options.PrintLogs { // log if we're supposed to
-			if !*isOutdated {
+			if isOutdated != nil && !*isOutdated {
 				utils.Log.Infof("✓ Meshery Server is up-to-date (stable-%s)", serverVersion.GetBuild())
 			} else {
 				utils.Log.Info("!! Meshery Server is not up-to-date")
 			}
 		} else { // else we grab the error
-			if *isOutdated {
+			if isOutdated != nil && *isOutdated {
 				return errors.New("!! Meshery Server is not up-to-date")
 			}
 		}
@@ -735,7 +743,6 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 	}
 	for _, adapter := range adapters {
 		name := adapter.Location
-		skipAdapter := false
 		req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, name), nil)
 		if err != nil {
 			return err
@@ -744,25 +751,24 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		if err != nil {
 			if hc.Options.PrintLogs { // incase we're printing logs
 				utils.Log.Infof("!! failed to connect to Meshery Adapter for %s ", name)
-				skipAdapter = true
 			} else { // or we're supposed to grab the errors
 				return utils.ErrFailedToConnectAdapter(name, err)
 			}
 			continue
 		}
-		if !skipAdapter {
-			// needs multiple defer as Body.Close needs a valid response
-			defer func() { _ = resp.Body.Close() }()
-			if resp.StatusCode != 200 {
-				if hc.Options.PrintLogs { // incase we're printing logs
-					utils.Log.Infof("!! Meshery Adapter for %s is running but not reachable", name)
-				} else { // or we're supposed to grab the errors
-					return utils.ErrAdapterNotReachable(name)
-				}
-			} else { // if status == 200 we check if we are supposed to print logs
-				if hc.Options.PrintLogs { // incase we're printing logs
-					utils.Log.Infof("✓ %s adapter is running and reachable", name)
-				}
+
+		statusCode := resp.StatusCode
+		_ = resp.Body.Close()
+
+		if statusCode != http.StatusOK {
+			if hc.Options.PrintLogs { // incase we're printing logs
+				utils.Log.Infof("!! Meshery Adapter for %s is running but not reachable", name)
+			} else { // or we're supposed to grab the errors
+				return utils.ErrAdapterNotReachable(name)
+			}
+		} else { // if status == 200 we check if we are supposed to print logs
+			if hc.Options.PrintLogs { // incase we're printing logs
+				utils.Log.Infof("✓ %s adapter is running and reachable", name)
 			}
 		}
 	}
