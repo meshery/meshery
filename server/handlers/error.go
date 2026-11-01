@@ -352,7 +352,11 @@ func ErrRequestBody(err error) error {
 }
 
 func ErrParseBool(err error, obj string) error {
-	return errors.New(ErrParseBoolCode, errors.Alert, []string{"unable to parse : ", obj}, []string{err.Error()}, []string{"Failed due to invalid value of : ", obj}, []string{"please provide a valid value for : ", obj})
+	errStr := ""
+	if err != nil {
+		errStr = err.Error()
+	}
+	return errors.New(ErrParseBoolCode, errors.Alert, []string{"unable to parse : ", obj}, []string{errStr}, []string{"Failed due to invalid value of : ", obj}, []string{"please provide a valid value for : ", obj})
 }
 
 func ErrStreamEvents(err error) error {
