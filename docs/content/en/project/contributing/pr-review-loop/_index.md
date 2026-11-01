@@ -83,15 +83,17 @@ pull_request_target event
 
 ### Concurrency Control
 
-The workflow coordinates execution using a stable concurrency group keyed on the pull request number:
+Execution serialization is scoped specifically to the `suggest-reviews` job using a stable concurrency group keyed on the pull request number:
 
 ```yaml
-concurrency:
-  group: pr-review-${{ github.event.pull_request.number }}
-  cancel-in-progress: false
+jobs:
+  suggest-reviews:
+    concurrency:
+      group: pr-review-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
 ```
 
-Setting `cancel-in-progress: false` ensures that in-flight comment write operations complete sequentially without partial update truncation. When a queued run begins, it re-queries the GitHub API for the freshest repository state.
+Scoping concurrency to the job level ensures that the upstream `triage` labeler job executes immediately on PR submission and synchronization without waiting in a concurrency queue or being cancelled by rapid successive events. Setting `cancel-in-progress: false` on `suggest-reviews` guarantees that in-flight comment write and update operations complete sequentially without partial update truncation. When a queued `suggest-reviews` job begins, it re-queries the GitHub API for the freshest repository state.
 
 ---
 

@@ -14,10 +14,6 @@ on:
     branches:
       - master
 
-concurrency:
-  group: pr-review-${{ github.event.pull_request.number }}
-  cancel-in-progress: false
-
 permissions: {}
 
 jobs:
@@ -36,6 +32,9 @@ jobs:
   suggest-reviews:
     name: PR Review Suggestions
     needs: [triage]
+    concurrency:
+      group: pr-review-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
     if: |
       always() &&
       (needs.triage.result == 'success' || needs.triage.result == 'skipped') &&
