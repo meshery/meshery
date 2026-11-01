@@ -433,7 +433,7 @@ func isValidMeshSyncResourceID(id string) bool {
 
 	if decoded != "" {
 		parts := strings.Split(decoded, ".")
-		if len(parts) >= 4 {
+		if len(parts) >= 5 {
 			return true
 		}
 	}
