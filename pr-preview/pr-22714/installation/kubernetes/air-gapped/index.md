@@ -77,11 +77,16 @@ On a machine with internet access, pull each image, retag it for your registry, 
 	<div class="codeblock">
 		<code class="clipboardjs">registry=registry.example.local
 # Add a meshery/meshery-&lt;adapter&gt;:&lt;release-tag&gt; entry here for each adapter you enable. The example values file below enables meshery-istio, so it is included here.
-for image in meshery/meshery:&lt;release-tag&gt; meshery/meshery-operator:1.0.6 alpine/k8s:1.35.6 meshery/meshery-istio:&lt;release-tag&gt; meshery/meshsync:1.0.3 nats:2.14.2-alpine natsio/nats-server-config-reloader:0.23.0; do
+for image in meshery/meshery:&lt;release-tag&gt; meshery/meshery-operator:1.0.6 alpine/k8s:1.35.6 meshery/meshery-istio:&lt;release-tag&gt; meshery/meshsync:1.0.3 natsio/nats-server-config-reloader:0.23.0; do
   docker pull &#34;$image&#34;
   docker tag &#34;$image&#34; &#34;$registry/$image&#34;
   docker push &#34;$registry/$image&#34;
-done</code>
+done
+# NATS is a bare Docker Hub image, so its canonical repository is library/nats.
+# A docker.io mirror looks up library/nats, not nats, so mirror it under that path:
+docker pull nats:2.14.2-alpine
+docker tag nats:2.14.2-alpine &#34;$registry/library/nats:2.14.2-alpine&#34;
+docker push &#34;$registry/library/nats:2.14.2-alpine&#34;</code>
 	</div>
 </pre>
 
@@ -193,13 +198,14 @@ Notes on this file:
 
 - The operator has its own `image`, `imagePullSecrets`, and CRD job image settings, nested under `meshery-operator`. There is no single global registry setting shared by the charts, so each component is repointed separately.
 - Each adapter subchart has its own `imagePullSecrets` (default empty), so the top-level secret does not cover an enabled adapter. Set it under that adapter, as shown for `meshery-istio` above.
+- `meshery-operator.imagePullSecrets` applies only to the operator Deployment. The CRD update Job (`crds.updateJob.image`) has no chart-level pull-secret setting, so on an authenticated registry either side-load the `alpine/k8s` image onto every node or configure node-runtime credentials for the registry; otherwise the Job fails with `ImagePullBackOff` and CRD updates do not apply.
 - If you side-loaded the images instead of mirroring them, keep the original image references, omit `imagePullSecrets`, and set only the pinned tags and `pullPolicy: IfNotPresent`.
 
 ### Operator-Managed Images
 
 MeshSync and Broker images cannot be repointed in `values.yaml` or in their custom resources. Meshery Operator names the repositories (`meshery/meshsync` and `nats`) in its own code; the MeshSync and Broker resources accept only a version (`spec.version`), which selects the tag, and the NATS configuration reloader image is fixed in the operator's embedded Broker manifests. You have two ways to serve these images offline:
 
-1. **Configure a registry mirror on every node.** Point your container runtime's mirror for Docker Hub at your private registry, and mirror the three operator-managed images under their original names. The operator's requests then resolve to your registry without any Meshery configuration change.
+1. **Configure a registry mirror on every node.** Point your container runtime's mirror for Docker Hub at your private registry, and mirror the three operator-managed images under their original Docker Hub names: `meshery/meshsync`, `library/nats` (the bare `nats` reference), and `natsio/nats-server-config-reloader`. The operator's requests then resolve to your registry without any Meshery configuration change.
 
    For containerd, use the hosts directory layout, not the deprecated `registry.mirrors` field in `config.toml`. Set `config_path = "/etc/containerd/certs.d"` in containerd's registry configuration, then add `/etc/containerd/certs.d/docker.io/hosts.toml`:
 
