@@ -115,7 +115,11 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	ltURL, err := url.Parse(loadTestOptions.URL)
 	if err != nil || !ltURL.IsAbs() {
-		h.log.Error(ErrInvalidLTURL(loadTestOptions.URL))
+		invalidURL := loadTestOptions.URL
+		if err != nil {
+			invalidURL = fmt.Sprintf("%s (%v)", loadTestOptions.URL, err)
+		}
+		h.log.Error(ErrInvalidLTURL(invalidURL))
 		writeMeshkitError(w, ErrInvalidLTURL(loadTestOptions.URL), http.StatusBadRequest)
 		return
 	}
@@ -304,7 +308,11 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	loadTestURL := q.Get("url")
 	ltURL, err := url.Parse(loadTestURL)
 	if err != nil || !ltURL.IsAbs() {
-		h.log.Error(ErrInvalidLTURL(loadTestURL))
+		invalidURL := loadTestURL
+		if err != nil {
+			invalidURL = fmt.Sprintf("%s (%v)", loadTestURL, err)
+		}
+		h.log.Error(ErrInvalidLTURL(invalidURL))
 		writeMeshkitError(w, ErrInvalidLTURL(loadTestURL), http.StatusBadRequest)
 		return
 	}

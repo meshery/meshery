@@ -53,6 +53,10 @@ func TestLoadTestHandlerInvalidURL(t *testing.T) {
 			name: "Empty URL",
 			url:  "",
 		},
+		{
+			name: "Malformed URL with parse error",
+			url:  "http://[::1]:namedport",
+		},
 	}
 
 	for _, tc := range testCases {
@@ -92,40 +96,63 @@ func TestLoadTestHandlerInvalidURL(t *testing.T) {
 // TestLoadTestUsingSMPHandlerInvalidURL verifies that LoadTestUsingSMPHandler rejects
 // non-absolute or malformed URLs in the SMP performance configuration with HTTP 400.
 func TestLoadTestUsingSMPHandlerInvalidURL(t *testing.T) {
-	h := &Handler{
-		log: newTestLogger(t),
+	testCases := []struct {
+		name string
+		url  string
+	}{
+		{
+			name: "Schemeless URL",
+			url:  "example.com",
+		},
+		{
+			name: "Malformed URL with parse error",
+			url:  "http://[::1]:namedport",
+		},
 	}
 
-	rawJSON := `{
-		"test": {
-			"name": "test-smp",
-			"duration": "1s",
-			"clients": [
-				{
-					"endpointUrls": ["example.com"]
-				}
-			]
-		}
-	}`
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := &Handler{
+				log: newTestLogger(t),
+			}
 
-	req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/run", bytes.NewBufferString(rawJSON))
-	rec := httptest.NewRecorder()
+			rawJSON := map[string]interface{}{
+				"test": map[string]interface{}{
+					"name":     "test-smp",
+					"duration": "1s",
+					"clients": []map[string]interface{}{
+						{
+							"endpointUrls": []string{tc.url},
+						},
+					},
+				},
+			}
 
-	h.LoadTestUsingSMPHandler(rec, req, nil, nil, nil)
+			payloadBytes, err := json.Marshal(rawJSON)
+			if err != nil {
+				t.Fatalf("failed to marshal SMP config: %v", err)
+			}
 
-	if rec.Code != http.StatusBadRequest {
-		t.Fatalf("expected status 400 Bad Request, got %d. Body: %s", rec.Code, rec.Body.String())
-	}
+			req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/run", bytes.NewReader(payloadBytes))
+			rec := httptest.NewRecorder()
 
-	var body struct {
-		Code  string `json:"code"`
-		Error string `json:"error"`
-	}
-	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
-		t.Fatalf("failed to decode response JSON: %v", err)
-	}
+			h.LoadTestUsingSMPHandler(rec, req, nil, nil, nil)
 
-	if body.Code != ErrInvalidLTURLCode {
-		t.Fatalf("expected error code %s, got %s", ErrInvalidLTURLCode, body.Code)
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected status 400 Bad Request, got %d. Body: %s", rec.Code, rec.Body.String())
+			}
+
+			var body struct {
+				Code  string `json:"code"`
+				Error string `json:"error"`
+			}
+			if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+				t.Fatalf("failed to decode response JSON: %v", err)
+			}
+
+			if body.Code != ErrInvalidLTURLCode {
+				t.Fatalf("expected error code %s, got %s", ErrInvalidLTURLCode, body.Code)
+			}
+		})
 	}
 }
