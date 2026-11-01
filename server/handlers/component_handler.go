@@ -1359,8 +1359,20 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		h.log.Error(err)
 	}
 	// 2. Convert it to oci
-	temp := os.TempDir()
-	modelDir := filepath.Join(temp, model.Name)
+	tempDir, err := os.MkdirTemp("", fmt.Sprintf("meshery-model-export-%s-*", model.Name))
+	if err != nil {
+		err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
+		h.log.Error(err)
+		writeMeshkitError(rw, ErrExportModel(err, "temp directory creation"), http.StatusInternalServerError)
+		return
+	}
+	defer func() {
+		if err := os.RemoveAll(tempDir); err != nil {
+			h.log.Error(err)
+		}
+	}()
+
+	modelDir := filepath.Join(tempDir, model.Name)
 	versionDir := filepath.Join(modelDir, model.Model.Version, model.Version)
 
 	// Create necessary directories: {modelName}/v1.0.0/1.0.0/{components, relationships}
@@ -1379,11 +1391,6 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	defer func() {
-		if err := os.RemoveAll(modelDir); err != nil {
-			h.log.Error(err)
-		}
-	}()
 
 	components := []component.ComponentDefinition{}
 	// Components can be nil if hasComponents is false
