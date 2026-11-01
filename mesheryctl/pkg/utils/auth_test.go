@@ -17,6 +17,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -100,14 +101,44 @@ func TestProviderUnmarshalJSON(t *testing.T) {
 	})
 }
 
+type authTrackingTransport struct {
+	base http.RoundTripper
+	body *authTrackingBody
+}
+
+func (t *authTrackingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	resp, err := t.base.RoundTrip(req)
+	if err != nil || resp == nil || resp.Body == nil {
+		return resp, err
+	}
+	t.body = &authTrackingBody{ReadCloser: resp.Body}
+	resp.Body = t.body
+	return resp, nil
+}
+
+type authTrackingBody struct {
+	io.ReadCloser
+	closed bool
+}
+
+func (b *authTrackingBody) Close() error {
+	b.closed = true
+	return b.ReadCloser.Close()
+}
+
 func TestMakeRequest_Status302AndHTMLResponseHandling(t *testing.T) {
 	_ = SetupMeshkitLoggerTesting(t, false)
 
-	t.Run("MakeRequest returns ErrInvalidToken on 302 redirect", func(t *testing.T) {
+	t.Run("MakeRequest returns ErrInvalidToken on 302 redirect and closes body", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusFound)
 		}))
 		defer server.Close()
+
+		transport := &authTrackingTransport{base: http.DefaultTransport}
+		previousTransport := http.DefaultTransport
+		http.DefaultTransport = transport
+		t.Cleanup(func() { http.DefaultTransport = previousTransport })
 
 		req, err := http.NewRequest(http.MethodGet, server.URL, nil)
 		if err != nil {
@@ -125,15 +156,23 @@ func TestMakeRequest_Status302AndHTMLResponseHandling(t *testing.T) {
 		if errors.GetCode(err) != errors.GetCode(expectedErr) {
 			t.Errorf("expected error code %s, got %s", errors.GetCode(expectedErr), errors.GetCode(err))
 		}
+		if transport.body == nil || !transport.body.closed {
+			t.Fatal("expected response body to be closed on 302 redirect")
+		}
 	})
 
-	t.Run("MakeRequest returns ErrUnauthenticated on HTML Content-Type", func(t *testing.T) {
+	t.Run("MakeRequest returns ErrUnauthenticated on HTML Content-Type and closes body", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.WriteHeader(http.StatusOK)
 			_, _ = fmt.Fprint(w, "<html><body>Login</body></html>")
 		}))
 		defer server.Close()
+
+		transport := &authTrackingTransport{base: http.DefaultTransport}
+		previousTransport := http.DefaultTransport
+		http.DefaultTransport = transport
+		t.Cleanup(func() { http.DefaultTransport = previousTransport })
 
 		req, err := http.NewRequest(http.MethodGet, server.URL, nil)
 		if err != nil {
@@ -150,6 +189,9 @@ func TestMakeRequest_Status302AndHTMLResponseHandling(t *testing.T) {
 		expectedErr := ErrUnauthenticated()
 		if errors.GetCode(err) != errors.GetCode(expectedErr) {
 			t.Errorf("expected error code %s, got %s", errors.GetCode(expectedErr), errors.GetCode(err))
+		}
+		if transport.body == nil || !transport.body.closed {
+			t.Fatal("expected response body to be closed on HTML content-type response")
 		}
 	})
 }

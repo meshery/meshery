@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
@@ -215,10 +216,35 @@ func TestCheckMesheryNsDelete(t *testing.T) {
 	})
 }
 
+type hcTrackingTransport struct {
+	base http.RoundTripper
+	body *hcTrackingBody
+}
+
+func (t *hcTrackingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	resp, err := t.base.RoundTrip(req)
+	if err != nil || resp == nil || resp.Body == nil {
+		return resp, err
+	}
+	t.body = &hcTrackingBody{ReadCloser: resp.Body}
+	resp.Body = t.body
+	return resp, nil
+}
+
+type hcTrackingBody struct {
+	io.ReadCloser
+	closed bool
+}
+
+func (b *hcTrackingBody) Close() error {
+	b.closed = true
+	return b.ReadCloser.Close()
+}
+
 func TestIsMesheryRunning(t *testing.T) {
 	_ = SetupMeshkitLoggerTesting(t, false)
 
-	t.Run("Returns true when Meshery server is reachable with 200 OK", func(t *testing.T) {
+	t.Run("Returns true and closes body when Meshery server is reachable with 200 OK", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.URL.Path == "/api/system/version" {
 				w.WriteHeader(http.StatusOK)
@@ -236,12 +262,45 @@ func TestIsMesheryRunning(t *testing.T) {
 		viper.Set("contexts.local.endpoint", server.URL)
 		viper.Set("current-context", "local")
 
+		transport := &hcTrackingTransport{base: http.DefaultTransport}
+		previousTransport := http.DefaultClient.Transport
+		http.DefaultClient.Transport = transport
+		t.Cleanup(func() { http.DefaultClient.Transport = previousTransport })
+
 		running, err := IsMesheryRunning("docker")
 		if err != nil {
 			t.Fatalf("unexpected error from IsMesheryRunning: %v", err)
 		}
 		if !running {
 			t.Errorf("expected running to be true, got false")
+		}
+		if transport.body == nil || !transport.body.closed {
+			t.Fatal("expected the health-check response body to be closed")
+		}
+	})
+
+	t.Run("Closes response body before entering fallback platform checks on non-200 response", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusServiceUnavailable)
+		}))
+		defer server.Close()
+
+		tempConfig := filepath.Join(t.TempDir(), "config.yaml")
+		viper.Reset()
+		t.Cleanup(func() { viper.Reset() })
+		viper.SetConfigFile(tempConfig)
+		viper.Set("contexts.local.endpoint", server.URL)
+		viper.Set("current-context", "local")
+
+		transport := &hcTrackingTransport{base: http.DefaultTransport}
+		previousTransport := http.DefaultClient.Transport
+		http.DefaultClient.Transport = transport
+		t.Cleanup(func() { http.DefaultClient.Transport = previousTransport })
+
+		_, _ = IsMesheryRunning("invalid-platform")
+
+		if transport.body == nil || !transport.body.closed {
+			t.Fatal("expected the health-check response body to be closed on non-200 response")
 		}
 	})
 }
