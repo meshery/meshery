@@ -1,8 +1,12 @@
 package utils
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"path/filepath"
 	"testing"
 
+	"github.com/spf13/viper"
 	"k8s.io/apimachinery/pkg/version"
 )
 
@@ -207,6 +211,37 @@ func TestCheckMesheryNsDelete(t *testing.T) {
 	t.Run("Test Existing Meshery Namespace", func(t *testing.T) {
 		if got, _ := CheckMesheryNsDelete(); got != expected {
 			t.Errorf("Namespace not deleted got %v want %v ", got, expected)
+		}
+	})
+}
+
+func TestIsMesheryRunning(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	t.Run("Returns true when Meshery server is reachable with 200 OK", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path == "/api/system/version" {
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write([]byte(`{"build":"v0.7.0"}`))
+				return
+			}
+			w.WriteHeader(http.StatusNotFound)
+		}))
+		defer server.Close()
+
+		tempConfig := filepath.Join(t.TempDir(), "config.yaml")
+		viper.Reset()
+		t.Cleanup(func() { viper.Reset() })
+		viper.SetConfigFile(tempConfig)
+		viper.Set("contexts.local.endpoint", server.URL)
+		viper.Set("current-context", "local")
+
+		running, err := IsMesheryRunning("docker")
+		if err != nil {
+			t.Fatalf("unexpected error from IsMesheryRunning: %v", err)
+		}
+		if !running {
+			t.Errorf("expected running to be true, got false")
 		}
 	})
 }
