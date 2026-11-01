@@ -76,23 +76,12 @@ language/javascript:
   - changed-files:
       - any-glob-to-any-file:
           - "**/*.js"
-          - "**/*.jsx"
 
 language/typescript:
   - changed-files:
       - any-glob-to-any-file:
           - "**/*.ts"
           - "**/*.tsx"
-
-language/python:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "**/*.py"
-
-language/ruby:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "**/*.rb"
 
 language/shell:
   - changed-files:
