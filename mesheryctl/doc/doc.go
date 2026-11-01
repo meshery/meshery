@@ -165,16 +165,41 @@ func printOptions(buf *bytes.Buffer, cmd *cobra.Command) error {
 	flags := cmd.NonInheritedFlags()
 	flags.SetOutput(buf)
 	if flags.HasAvailableFlags() {
+		configFlag := flags.Lookup("config")
+		originalDefault := ""
+		if configFlag != nil {
+			originalDefault = configFlag.DefValue
+			configFlag.DefValue = "~/.meshery/config.yaml"
+		}
 		buf.WriteString("## Options\n\n<pre class='codeblock-pre'>\n<div class='codeblock'>\n")
 		flags.PrintDefaults()
+
+		if configFlag != nil{
+			configFlag.DefValue = originalDefault
+		}
+
 		buf.WriteString("\n</div>\n</pre>\n\n")
 	}
 
 	parentFlags := cmd.InheritedFlags()
 	parentFlags.SetOutput(buf)
+
 	if parentFlags.HasAvailableFlags() {
+		configFlag := parentFlags.Lookup("config")
+		originalDefault := ""
+
+		if configFlag != nil {
+			originalDefault = configFlag.DefValue
+			configFlag.DefValue = "~/.meshery/config.yaml"
+		}
+
 		buf.WriteString("## Options inherited from parent commands\n\n<pre class='codeblock-pre'>\n<div class='codeblock'>\n")
 		parentFlags.PrintDefaults()
+
+		if configFlag != nil {
+			configFlag.DefValue = originalDefault
+		}
+
 		buf.WriteString("\n</div>\n</pre>\n\n")
 	}
 	return nil
