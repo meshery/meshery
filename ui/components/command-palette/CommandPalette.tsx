@@ -234,7 +234,9 @@ export const CommandPalette = () => {
           value={null}
           inputValue={inputValue}
           onInputChange={(_e, v, reason) => {
-            if (reason !== 'reset') {
+            // Only typing updates the query. MUI also reports selectOption/blur/reset when it
+            // syncs the input to the chosen option, which would rewrite the text mid-close.
+            if (reason === 'input') {
               setInputValue(v);
             }
           }}
@@ -308,7 +310,10 @@ export const CommandPalette = () => {
                       <>
                         <InputAdornment position="start">
                           <SearchIcon
-                            sx={{ color: theme.palette.icon.default, fontSize: '1.25rem' }}
+                            width={20}
+                            height={20}
+                            fill={theme.palette.icon.default}
+                            aria-hidden="true"
                           />
                         </InputAdornment>
                         {paramsSlotProps?.input?.startAdornment}

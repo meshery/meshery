@@ -63,12 +63,7 @@ export const CommandPaletteTrigger = () => {
           },
         }}
       >
-        <SearchIcon
-          sx={{
-            fontSize: '1.25rem',
-            color: theme.palette.common.white,
-          }}
-        />
+        <SearchIcon width={20} height={20} fill={theme.palette.common.white} aria-hidden="true" />
         <Box
           component="span"
           sx={{
