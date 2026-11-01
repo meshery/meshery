@@ -616,7 +616,7 @@ func ErrParseGithubFile(err error, URL string) error {
 	return errors.New(ErrParseGithubFileCode, errors.Alert,
 		[]string{"Failed to parse github file"},
 		[]string{"Failed to parse github file" + err.Error()},
-		[]string{"Unable to retrieve file from URL: %s", URL},
+		[]string{fmt.Sprintf("Unable to retrieve file from URL: %s", URL)},
 		[]string{"Ensure you have a github url in file path"})
 }
 
@@ -759,7 +759,7 @@ func ErrMarkFlagRequire(flagName string, err error) error {
 		[]string{fmt.Sprintf("Failed to mark the flag '%s' as required", flagName)},
 		[]string{err.Error()},
 		[]string{"The flag may not exist or there was some error while specifying the flag."},
-		[]string{"Please ensure that the required flag '%s' is correctly specified and set before running the command."})
+		[]string{fmt.Sprintf("Please ensure that the required flag '%s' is correctly specified and set before running the command.", flagName)})
 }
 
 func ErrReadFromBody(err error) error {
