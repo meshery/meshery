@@ -83,6 +83,10 @@ export function generatePossibleFix(
     return `The specified apiVersion is unavailable or deprecated on Kubernetes ${clusterName}. Verify the cluster Kubernetes version and update the apiVersion in your design.`;
   }
 
+  if (lowerMsg.includes('immutable')) {
+    return `An immutable field change was attempted. Recreate the resource or retain the original immutable field values.`;
+  }
+
   if (
     lowerMsg.includes('namespace') ||
     lowerMsg.includes('namespaces') ||
@@ -93,10 +97,6 @@ export function generatePossibleFix(
 
   if (lowerMsg.includes('quota') || lowerMsg.includes('exceeded') || lowerMsg.includes('limit')) {
     return `Resource limits or quota exceeded on ${clusterName}. Reduce resource requests or increase cluster quota limits.`;
-  }
-
-  if (lowerMsg.includes('immutable') || lowerMsg.includes('forbidden: field is immutable')) {
-    return `An immutable field change was attempted. Recreate the resource or retain the original immutable field values.`;
   }
 
   return `Verify that the configuration of ${kind} adheres to the target schema for ${clusterName} and that required cluster operators are healthy.`;
@@ -292,9 +292,10 @@ export function buildCompatibilityAnalysis({
             }
 
             // Detect warnings (e.g. non-blocking annotations or deprecations)
+            const normalizedMessage = errorMessage.toLowerCase();
             if (
-              errorMessage.toLowerCase().includes('warning') ||
-              errorMessage.toLowerCase().includes('deprecated')
+              normalizedMessage.startsWith('warning') ||
+              normalizedMessage.includes('deprecated')
             ) {
               status = 'warning';
             }
@@ -418,7 +419,9 @@ export function buildCompatibilityAnalysis({
     );
   });
 
-  if (nextSteps.length === 0) {
+  if (resources.length === 0) {
+    nextSteps.push('No resources found to validate.');
+  } else if (nextSteps.length === 0) {
     nextSteps.push('All resources successfully validated across all targeted clusters.');
     nextSteps.push('Design is ready for deployment.');
   } else {

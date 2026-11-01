@@ -197,4 +197,36 @@ describe('CrossClusterCompatibilityAnalysis', () => {
     expect(screen.getByTestId('status-badge-incomplete')).toBeInTheDocument();
     expect(screen.getByText('Incomplete')).toBeInTheDocument();
   });
+
+  it('resets selection when selected resource no longer exists in updated matrix', () => {
+    const { rerender } = render(
+      <CrossClusterCompatibilityAnalysis
+        dryRunResponse={sampleDryRunResponse}
+        selectedK8sConnections={sampleConnections}
+      />,
+    );
+
+    // Initial default selection is postgres
+    expect(screen.getByText('postgres — Validation Details')).toBeInTheDocument();
+
+    // Re-run with new data where postgres was removed and all remaining pass
+    const updatedResponse = {
+      frontend: {
+        'c-dev': { success: true, component: { kind: 'Deployment' } },
+        'c-staging': { success: true, component: { kind: 'Deployment' } },
+        'c-prod': { success: true, component: { kind: 'Deployment' } },
+      },
+    };
+
+    rerender(
+      <CrossClusterCompatibilityAnalysis
+        dryRunResponse={updatedResponse}
+        selectedK8sConnections={sampleConnections}
+      />,
+    );
+
+    // Stale postgres selection should be cleared
+    expect(screen.queryByText('postgres — Validation Details')).not.toBeInTheDocument();
+    expect(screen.getByText('Select a Resource to Inspect Details')).toBeInTheDocument();
+  });
 });

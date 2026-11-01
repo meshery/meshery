@@ -45,6 +45,9 @@ export interface CrossClusterCompatibilityAnalysisProps {
   isReRunning?: boolean;
 }
 
+const DEFAULT_CONNECTIONS: any[] = [];
+const DEFAULT_CONTEXTS: string[] = [];
+
 /**
  * CrossClusterCompatibilityAnalysis renders a consolidated multi-cluster matrix
  * showing resource-level dry run results across environments.
@@ -54,8 +57,8 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
 > = ({
   dryRunResponse,
   design,
-  selectedK8sConnections = [],
-  selectedK8sContexts = [],
+  selectedK8sConnections = DEFAULT_CONNECTIONS,
+  selectedK8sContexts = DEFAULT_CONTEXTS,
   onReRunAnalysis,
   isReRunning = false,
 }) => {
@@ -70,9 +73,9 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
     });
   }, [dryRunResponse, design, selectedK8sConnections, selectedK8sContexts]);
 
-  // Selected cell state
+  // Selected cell state tracking resource name and cluster ID
   const [selectedCell, setSelectedCell] = useState<{
-    resource: ResourceRow;
+    resourceName: string;
     clusterId: string;
   } | null>(() => {
     // Default select first failed or warning resource if available
@@ -84,26 +87,39 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
         Object.keys(failedRes.clusterResults).find(
           (cid) => failedRes.clusterResults[cid].status === 'failed',
         ) || data.clusters[0]?.id;
-      return { resource: failedRes, clusterId };
+      return { resourceName: failedRes.resourceName, clusterId };
     }
     return null;
   });
 
-  // Keep selection in sync when async dry-run data arrives after mount
+  // Keep selection in sync when async dry-run data arrives after mount or updates
   useEffect(() => {
     setSelectedCell((prev) => {
-      if (prev) return prev;
+      if (prev) {
+        // Check if previously selected resource and cluster still exist in updated matrix
+        const stillExists =
+          data.resources.some((r) => r.resourceName === prev.resourceName) &&
+          data.clusters.some((c) => c.id === prev.clusterId);
+        if (stillExists) return prev;
+        // Previously selected resource or cluster no longer exists; reset selection
+      }
+
       const failedRes = data.resources.find((r) =>
         Object.values(r.clusterResults).some((res) => res.status === 'failed'),
       );
-      if (!failedRes) return prev;
+      if (!failedRes) return null;
       const clusterId =
         Object.keys(failedRes.clusterResults).find(
           (cid) => failedRes.clusterResults[cid].status === 'failed',
         ) || data.clusters[0]?.id;
-      return clusterId ? { resource: failedRes, clusterId } : prev;
+      return clusterId ? { resourceName: failedRes.resourceName, clusterId } : null;
     });
   }, [data]);
+
+  const selectedResource = useMemo(() => {
+    if (!selectedCell) return null;
+    return data.resources.find((r) => r.resourceName === selectedCell.resourceName) || null;
+  }, [selectedCell, data.resources]);
 
   const selectedCluster = useMemo(() => {
     if (!selectedCell) return null;
@@ -111,9 +127,9 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
   }, [selectedCell, data.clusters]);
 
   const selectedResult = useMemo(() => {
-    if (!selectedCell || !selectedCluster) return null;
-    return selectedCell.resource.clusterResults[selectedCluster.id] || null;
-  }, [selectedCell, selectedCluster]);
+    if (!selectedResource || !selectedCluster) return null;
+    return selectedResource.clusterResults[selectedCluster.id] || null;
+  }, [selectedResource, selectedCluster]);
 
   const renderStatusBadge = (
     status: CompatibilityStatus,
@@ -362,7 +378,7 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
                     <TableRow
                       key={res.resourceName}
                       hover
-                      selected={selectedCell?.resource.resourceName === res.resourceName}
+                      selected={selectedCell?.resourceName === res.resourceName}
                       sx={{ cursor: 'pointer' }}
                     >
                       <TableCell sx={{ fontWeight: 500 }}>
@@ -381,12 +397,12 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
                       {data.clusters.map((cluster) => {
                         const cellRes = res.clusterResults[cluster.id] || { status: 'incomplete' };
                         const isSelected =
-                          selectedCell?.resource.resourceName === res.resourceName &&
+                          selectedCell?.resourceName === res.resourceName &&
                           selectedCell?.clusterId === cluster.id;
                         return (
                           <TableCell key={cluster.id} align="center">
                             {renderStatusBadge(cellRes.status, isSelected, () => {
-                              setSelectedCell({ resource: res, clusterId: cluster.id });
+                              setSelectedCell({ resourceName: res.resourceName, clusterId: cluster.id });
                             })}
                           </TableCell>
                         );
@@ -401,7 +417,11 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
 
         {/* Right: Validation Details Inspector */}
         <ValidationDetailsPanel
-          selectedCell={selectedCell}
+          selectedCell={
+            selectedResource && selectedCluster
+              ? { resource: selectedResource, clusterId: selectedCluster.id }
+              : null
+          }
           selectedCluster={selectedCluster}
           selectedResult={selectedResult}
           onClearSelection={() => setSelectedCell(null)}

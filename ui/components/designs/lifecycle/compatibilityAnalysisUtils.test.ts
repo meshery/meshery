@@ -35,6 +35,16 @@ describe('compatibilityAnalysisUtils', () => {
       );
       expect(fix).toContain('quota');
     });
+
+    it('detects immutable field errors before namespace/forbidden check', () => {
+      const fix = generatePossibleFix(
+        'forbidden: field is immutable: spec.clusterIP',
+        'Service',
+        'prod-cluster',
+      );
+      expect(fix).toContain('immutable field change was attempted');
+      expect(fix).not.toContain('target namespace may be missing');
+    });
   });
 
   describe('generateDependencyImpact', () => {
@@ -142,7 +152,8 @@ describe('compatibilityAnalysisUtils', () => {
       expect(analysis.clusters[0].status).toBe('unknown');
       expect(analysis.resources).toHaveLength(0);
       expect(analysis.metrics.totalResources).toBe(0);
-      expect(analysis.nextSteps).toContain(
+      expect(analysis.nextSteps).toContain('No resources found to validate.');
+      expect(analysis.nextSteps).not.toContain(
         'All resources successfully validated across all targeted clusters.',
       );
     });
@@ -216,6 +227,42 @@ describe('compatibilityAnalysisUtils', () => {
 
       expect(analysis.clusters[0].version).toBe('Unknown');
       expect(analysis.clusters[0].status).toBe('unknown');
+    });
+
+    it('does not classify errors containing warning substring in field names as warnings', () => {
+      const dryRunResponse = {
+        backend: {
+          'cluster-1': {
+            success: false,
+            error: {
+              Status: 'Invalid value for field warningThreshold: must be greater than 0',
+            },
+          },
+        },
+      };
+
+      const analysis = buildCompatibilityAnalysis({
+        dryRunResponse,
+        selectedK8sConnections: [{ id: 'cluster-1', metadata: { name: 'dev-cluster' } }],
+      });
+
+      expect(analysis.resources[0].clusterResults['cluster-1'].status).toBe('failed');
+      expect(analysis.metrics.failedCount).toBe(1);
+      expect(analysis.metrics.warningCount).toBe(0);
+    });
+
+    it('sets next steps appropriately when zero resources were validated', () => {
+      const analysis = buildCompatibilityAnalysis({
+        dryRunResponse: null,
+        selectedK8sConnections: [{ id: 'cluster-1' }],
+      });
+
+      expect(analysis.resources).toHaveLength(0);
+      expect(analysis.nextSteps).toContain('No resources found to validate.');
+      expect(analysis.nextSteps).not.toContain('Design is ready for deployment.');
+      expect(analysis.nextSteps).not.toContain(
+        'All resources successfully validated across all targeted clusters.',
+      );
     });
   });
 });
