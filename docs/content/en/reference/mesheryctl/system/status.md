@@ -73,6 +73,11 @@ mesheryctl system status --verbose
 Usage of mesheryctl system status
 ![status-usage](../../../images/status.png)
 
+## Terminal Sessions
+
+Demonstration of `mesheryctl system status`:
+{{< meshery-design-embed src="891568" >}}
+
 ## See Also
 
 Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -113,6 +113,11 @@ mesheryctl system start --provider Meshery
 </div>
 </pre>
 
+## Terminal Sessions
+
+Demonstration of `mesheryctl system start`:
+{{< meshery-design-embed src="891566" >}}
+
 ## See Also
 
 Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
