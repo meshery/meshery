@@ -30,6 +30,7 @@ import (
 	"github.com/meshery/meshsync/pkg/model"
 )
 
+// newMockHandler initializes a mock Handler instance configured for testing.
 func newMockHandler(t *testing.T) *Handler {
 	t.Helper()
 	log, err := logger.New("test", logger.Options{})
@@ -45,6 +46,8 @@ func newMockHandler(t *testing.T) *Handler {
 	}
 }
 
+// newMeshSyncTestFixture sets up an in-memory SQLite database, migrates MeshSync models,
+// and returns an initialized Handler along with a mock provider and database handle.
 func newMeshSyncTestFixture(t *testing.T) (*Handler, *models.DefaultLocalProvider, database.Handler) {
 	t.Helper()
 
@@ -82,6 +85,7 @@ func newMeshSyncTestFixture(t *testing.T) (*Handler, *models.DefaultLocalProvide
 	return h, provider, db
 }
 
+// TestGetMeshSyncResourceByID_InvalidUUID verifies that passing an invalid UUID returns HTTP 400 Bad Request.
 func TestGetMeshSyncResourceByID_InvalidUUID(t *testing.T) {
 	h := newMockHandler(t)
 	provider := &models.DefaultLocalProvider{}
@@ -98,6 +102,7 @@ func TestGetMeshSyncResourceByID_InvalidUUID(t *testing.T) {
 	assertJSONErrorEnvelope(t, rec.Result())
 }
 
+// TestGetMeshSyncResourceByID_NotFound verifies that querying a non-existent resource returns HTTP 404 Not Found.
 func TestGetMeshSyncResourceByID_NotFound(t *testing.T) {
 	h, provider, _ := newMeshSyncTestFixture(t)
 
@@ -114,6 +119,7 @@ func TestGetMeshSyncResourceByID_NotFound(t *testing.T) {
 	assertJSONErrorEnvelope(t, rec.Result())
 }
 
+// TestGetMeshSyncResourceByID_Success verifies that querying an existing resource returns HTTP 200 OK with JSON data.
 func TestGetMeshSyncResourceByID_Success(t *testing.T) {
 	h, provider, db := newMeshSyncTestFixture(t)
 
@@ -154,6 +160,7 @@ func TestGetMeshSyncResourceByID_Success(t *testing.T) {
 	}
 }
 
+// TestDeleteMeshSyncResource_InvalidUUID verifies that passing an invalid resource ID returns HTTP 400 Bad Request.
 func TestDeleteMeshSyncResource_InvalidUUID(t *testing.T) {
 	h := newMockHandler(t)
 	provider := &models.DefaultLocalProvider{}
@@ -170,6 +177,7 @@ func TestDeleteMeshSyncResource_InvalidUUID(t *testing.T) {
 	assertJSONErrorEnvelope(t, rec.Result())
 }
 
+// TestDeleteMeshSyncResource_NotFound verifies that attempting to delete a non-existent resource returns HTTP 404 Not Found.
 func TestDeleteMeshSyncResource_NotFound(t *testing.T) {
 	h, provider, _ := newMeshSyncTestFixture(t)
 
@@ -186,6 +194,7 @@ func TestDeleteMeshSyncResource_NotFound(t *testing.T) {
 	assertJSONErrorEnvelope(t, rec.Result())
 }
 
+// TestDeleteMeshSyncResource_Success verifies that deleting an existing resource removes it and returns HTTP 200 OK.
 func TestDeleteMeshSyncResource_Success(t *testing.T) {
 	h, provider, db := newMeshSyncTestFixture(t)
 
@@ -226,6 +235,7 @@ func TestDeleteMeshSyncResource_Success(t *testing.T) {
 	}
 }
 
+// TestGetMeshSyncResourceByID_Base64ID_Success verifies that querying a resource by a valid base64 composite ID succeeds.
 func TestGetMeshSyncResourceByID_Base64ID_Success(t *testing.T) {
 	h, provider, db := newMeshSyncTestFixture(t)
 
@@ -265,6 +275,7 @@ func TestGetMeshSyncResourceByID_Base64ID_Success(t *testing.T) {
 	}
 }
 
+// TestDeleteMeshSyncResource_Base64ID_Success verifies that deleting a resource by a valid base64 composite ID succeeds.
 func TestDeleteMeshSyncResource_Base64ID_Success(t *testing.T) {
 	h, provider, db := newMeshSyncTestFixture(t)
 

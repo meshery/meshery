@@ -501,6 +501,7 @@ func TestLoginHandler_NoneProviderFromMiddleware(t *testing.T) {
 	}
 }
 
+// TestDeleteMeshSyncResource verifies DeleteMeshSyncResource handling across migrated, unmigrated, missing, and invalid-ID scenarios.
 func TestDeleteMeshSyncResource(t *testing.T) {
 	handler := newTestHandler(t, map[string]models.Provider{}, "")
 	validUUID := "11111111-1111-1111-1111-111111111111"

@@ -440,6 +440,8 @@ func isValidMeshSyncResourceID(id string) bool {
 	return false
 }
 
+// GetMeshSyncResourceByID retrieves a single Kubernetes resource from MeshSync by its ID.
+// It returns HTTP 400 if the resource ID is invalid, or HTTP 404 if the resource does not exist.
 func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -576,6 +578,8 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	}
 }
 
+// DeleteMeshSyncResource removes a single Kubernetes resource from MeshSync by its ID.
+// It returns HTTP 400 if the resource ID is invalid, or HTTP 404 if no resource was found to delete.
 func (h *Handler) DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	resourceID := mux.Vars(r)["id"]
 	if !isValidMeshSyncResourceID(resourceID) {
