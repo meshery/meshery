@@ -32,7 +32,11 @@ type trackingTransport struct {
 }
 
 func (t *trackingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	resp, err := t.base.RoundTrip(req)
+	base := t.base
+	if base == nil {
+		base = http.DefaultTransport
+	}
+	resp, err := base.RoundTrip(req)
 	if err == nil && resp != nil && resp.Body != nil {
 		t.body = &trackingBody{ReadCloser: resp.Body}
 		resp.Body = t.body
