@@ -45,11 +45,6 @@ vi.mock('../../public/static/img/drawer-icons/configuration_hover_svg', () => ({
   default: () => null,
 }));
 
-vi.mock('@sistent/sistent', async () => {
-  const { createSistentMock: createMock } = await import('./testUtils');
-  return createMock();
-});
-
 const mockRouter = {
   pathname: '/dashboard',
   asPath: '/dashboard',

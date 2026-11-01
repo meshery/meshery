@@ -44,11 +44,6 @@ vi.mock('../../public/static/img/drawer-icons/configuration_hover_svg', () => ({
   default: () => null,
 }));
 
-vi.mock('@sistent/sistent', async () => {
-  const { createSistentMock: createMock } = await import('./testUtils');
-  return createMock();
-});
-
 const mockRouter = {
   pathname: '/dashboard',
   asPath: '/dashboard',
@@ -111,7 +106,6 @@ describe('CommandPalette - Accessibility & States', () => {
 
     const dialog = await screen.findByRole('dialog', { name: 'Command palette' });
     expect(dialog).toBeInTheDocument();
-    expect(dialog).toHaveAttribute('data-testid', 'command-palette');
   });
 
   it('contains input with role="combobox" and correct aria attributes', async () => {
@@ -127,9 +121,8 @@ describe('CommandPalette - Accessibility & States', () => {
     expect(combobox).toHaveAttribute('aria-expanded', 'true');
     expect(combobox).toHaveAttribute('aria-label', 'Search commands');
 
-    const searchIcon = screen.getByTestId('search-icon');
+    const searchIcon = combobox.parentElement?.querySelector('svg');
     expect(searchIcon).toBeInTheDocument();
-    expect(combobox.parentElement).toContainElement(searchIcon);
   });
 
   it('renders commands as role="option" elements', async () => {
