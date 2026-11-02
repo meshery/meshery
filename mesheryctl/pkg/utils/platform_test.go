@@ -241,6 +241,7 @@ func TestResolveDockerComposeBinaryURL(t *testing.T) {
 	}{
 		{"missing tag_name", `{}`},
 		{"empty tag_name", `{"tag_name": ""}`},
+		{"non-string tag_name", `{"tag_name": 123}`},
 	} {
 		t.Run("falls back to default version on "+tc.name, func(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

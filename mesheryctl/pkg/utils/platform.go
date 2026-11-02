@@ -760,6 +760,7 @@ func Startdockerdaemon(subcommand string) error {
 	return nil
 }
 
+// InstallprereqDocker downloads and installs the prerequisite Docker Compose binary for the current OS and architecture.
 func InstallprereqDocker() error {
 	log.Info("Attempting Docker-Compose installation...")
 	ostype, osarch, err := prereq()
@@ -796,19 +797,20 @@ func resolveDockerComposeBinaryURL() string {
 		return dockerComposeBinaryURL + defaultDockerComposeVersion
 	}
 
-	var dat map[string]interface{}
+	var release struct {
+		TagName string `json:"tag_name"`
+	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return dockerComposeBinaryURL + defaultDockerComposeVersion
 	}
-	if err := json.Unmarshal(body, &dat); err != nil {
+	if err := json.Unmarshal(body, &release); err != nil {
 		return dockerComposeBinaryURL + defaultDockerComposeVersion
 	}
-	num := dat["tag_name"]
-	if num == nil || fmt.Sprintf("%v", num) == "" {
+	if release.TagName == "" {
 		return dockerComposeBinaryURL + defaultDockerComposeVersion
 	}
-	return fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
+	return dockerComposeBinaryURL + release.TagName + "/docker-compose"
 }
 
 // SetKubeConfig sets the path to user's kubeconfig file into global variables
