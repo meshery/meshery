@@ -12840,7 +12840,7 @@ Invalid payload</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">The client did not include a result identifier</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Provide the result id in the request URL, for example /api/user/performance/results/{id}</p>
+              <p class="error-details">Provide the result id in the request URL, for example /api/perf/profile/result/{id}</p>
             </td>
           </tr>
         

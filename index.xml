@@ -35818,7 +35818,16 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;p&gt;If your cluster does not give the &lt;code&gt;meshery&lt;/code&gt; service a reachable address, forward a local port to Meshery instead. By default, &lt;code&gt;mesheryctl&lt;/code&gt; listens on local port 9081; use &lt;code&gt;-p&lt;/code&gt; to choose another port.&lt;/p&gt;</description></item><item><title>Accurate</title><link>/extensions/models/accurate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/accurate/</guid><description/></item><item><title>Actions Runner Controller (ARC)</title><link>/extensions/models/actions-runner-controller/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/actions-runner-controller/</guid><description/></item><item><title>Adapters</title><link>/concepts/architecture/adapters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/concepts/architecture/adapters/</guid><description>&lt;h2 id="what-are-meshery-adapters"&gt;
 	What are Meshery Adapters?
 &lt;/h2&gt;
-&lt;p&gt;Part of Meshery&amp;rsquo;s extensibility as a platform, Meshery Adapters are purpose-built to address an area in need of management that is either considered optional to the platform and/or is considered an area in which additional depth of control is needed. Adapters extend Meshery&amp;rsquo;s management capabilities in any number of ways, including lifecycle, configuration, performance, governance, identity and so on. Meshery Adapters come in different form factors, and depending on their purpose, deliver different sets or capabilities. Each Adapter registers its capabilities with Meshery Server. Meshery Server, in-turn, exposes those capabilities for you to control.&lt;/p&gt;</description></item><item><title>Aerokube</title><link>/extensions/models/aerokube/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/aerokube/</guid><description/></item><item><title>Aerospike Kubernetes Operator</title><link>/extensions/models/aerospike-kubernetes-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/aerospike-kubernetes-operator/</guid><description/></item><item><title>AIGIS UK</title><link>/extensions/models/aigisuk/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/aigisuk/</guid><description/></item><item><title>Akri</title><link>/extensions/models/akri/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/akri/</guid><description/></item><item><title>AKS</title><link>/installation/kubernetes/aks/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/kubernetes/aks/</guid><description>&lt;h1&gt;Quick Start with AKS &lt;img src="images/aks.svg" style="width:35px;height:35px;" /&gt;&lt;/h1&gt;
+&lt;p&gt;Part of Meshery&amp;rsquo;s extensibility as a platform, Meshery Adapters are purpose-built to address an area in need of management that is either considered optional to the platform and/or is considered an area in which additional depth of control is needed. Adapters extend Meshery&amp;rsquo;s management capabilities in any number of ways, including lifecycle, configuration, performance, governance, identity and so on. Meshery Adapters come in different form factors, and depending on their purpose, deliver different sets or capabilities. Each Adapter registers its capabilities with Meshery Server. Meshery Server, in-turn, exposes those capabilities for you to control.&lt;/p&gt;</description></item><item><title>Aerokube</title><link>/extensions/models/aerokube/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/aerokube/</guid><description/></item><item><title>Aerospike Kubernetes Operator</title><link>/extensions/models/aerospike-kubernetes-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/aerospike-kubernetes-operator/</guid><description/></item><item><title>AIGIS UK</title><link>/extensions/models/aigisuk/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/aigisuk/</guid><description/></item><item><title>Air-Gapped Installation</title><link>/installation/kubernetes/air-gapped/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/kubernetes/air-gapped/</guid><description>&lt;h1 id="install-meshery-on-kubernetes-in-an-air-gapped-environment"&gt;
+	Install Meshery on Kubernetes in an Air-Gapped Environment
+&lt;/h1&gt;
+&lt;p&gt;An air-gapped cluster cannot pull images or charts from the internet. Installing Meshery there takes three steps, in order:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Collect every container image the installation needs, on a machine with internet access.&lt;/li&gt;
+&lt;li&gt;Move the images and the Helm chart into the air-gapped environment, either by mirroring the images to a private registry the cluster can reach or by side-loading them onto the cluster nodes.&lt;/li&gt;
+&lt;li&gt;Install from the local chart with a values file that points the chart at your local copies.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This guide covers installation on Kubernetes with Helm. It assumes you have already chosen the Meshery release and Meshery Operator release to deploy, and that you pin both. Do not install a moving tag such as &lt;code&gt;stable-latest&lt;/code&gt; in an air-gapped environment: record the exact tags (or digests) you mirrored, so the installation is reproducible.&lt;/p&gt;</description></item><item><title>Akri</title><link>/extensions/models/akri/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/akri/</guid><description/></item><item><title>AKS</title><link>/installation/kubernetes/aks/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/kubernetes/aks/</guid><description>&lt;h1&gt;Quick Start with AKS &lt;img src="images/aks.svg" style="width:35px;height:35px;" /&gt;&lt;/h1&gt;
 &lt;p&gt;Manage your AKS clusters with Meshery. Deploy Meshery inside your AKS cluster (&lt;a href="/installation/kubernetes/aks/#in-cluster-installation"&gt;in-cluster&lt;/a&gt;), or run it outside of AKS (&lt;a href="/installation/kubernetes/#out-of-cluster-installation"&gt;out-of-cluster&lt;/a&gt;) and connect it to your cluster. &lt;strong&gt;&lt;em&gt;Note: We recommend installing Meshery in your AKS clusters.&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;div class="prereqs"&gt;&lt;h4&gt;Prerequisites&lt;/h4&gt;
 &lt;ol&gt;
@@ -37092,7 +37101,7 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-adapter-validate</title><link>/reference/mesheryctl/adapter/validate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/adapter/validate/</guid><description>&lt;h1 id="mesheryctl-adapter-validate"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-adapter-validate</title><link>/reference/mesheryctl/adapter/validate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/adapter/validate/</guid><description>&lt;h1 id="mesheryctl-adapter-validate"&gt;
 	mesheryctl adapter validate
 &lt;/h1&gt;
 &lt;p&gt;Validate conformance to predefined standards&lt;/p&gt;
@@ -37381,7 +37390,7 @@ mesheryctl component search [query-text] [--page 1]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-component-view</title><link>/reference/mesheryctl/component/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/component/view/</guid><description>&lt;h1 id="mesheryctl-component-view"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-component-view</title><link>/reference/mesheryctl/component/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/component/view/</guid><description>&lt;h1 id="mesheryctl-component-view"&gt;
 	mesheryctl component view
 &lt;/h1&gt;
 &lt;p&gt;View registered components&lt;/p&gt;
@@ -37451,7 +37460,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-connection-create</title><link>/reference/mesheryctl/connection/create/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/connection/create/</guid><description>&lt;h1 id="mesheryctl-connection-create"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-connection-create</title><link>/reference/mesheryctl/connection/create/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/connection/create/</guid><description>&lt;h1 id="mesheryctl-connection-create"&gt;
 	mesheryctl connection create
 &lt;/h1&gt;
 &lt;p&gt;Create a new connection&lt;/p&gt;
@@ -37536,7 +37545,7 @@ mesheryctl connection create --type gke --token auth.json
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-connection-delete</title><link>/reference/mesheryctl/connection/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/connection/delete/</guid><description>&lt;h1 id="mesheryctl-connection-delete"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-connection-delete</title><link>/reference/mesheryctl/connection/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/connection/delete/</guid><description>&lt;h1 id="mesheryctl-connection-delete"&gt;
 	mesheryctl connection delete
 &lt;/h1&gt;
 &lt;p&gt;Delete a connection&lt;/p&gt;
@@ -37586,7 +37595,7 @@ mesheryctl connection delete [connection_id]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-connection-list</title><link>/reference/mesheryctl/connection/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/connection/list/</guid><description>&lt;h1 id="mesheryctl-connection-list"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-connection-list</title><link>/reference/mesheryctl/connection/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/connection/list/</guid><description>&lt;h1 id="mesheryctl-connection-list"&gt;
 	mesheryctl connection list
 &lt;/h1&gt;
 &lt;p&gt;List all the connections&lt;/p&gt;
@@ -37784,7 +37793,7 @@ mesheryctl design delete [file | URL]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-design-deploy</title><link>/reference/mesheryctl/design/deploy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/deploy/</guid><description>&lt;h1 id="mesheryctl-design-deploy"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-design-deploy</title><link>/reference/mesheryctl/design/deploy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/deploy/</guid><description>&lt;h1 id="mesheryctl-design-deploy"&gt;
 	mesheryctl design deploy
 &lt;/h1&gt;
 &lt;p&gt;Deploy design&lt;/p&gt;
@@ -38004,7 +38013,7 @@ mesheryctl design undeploy -f [filepath]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-design-view</title><link>/reference/mesheryctl/design/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/view/</guid><description>&lt;h1 id="mesheryctl-design-view"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-design-view</title><link>/reference/mesheryctl/design/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/view/</guid><description>&lt;h1 id="mesheryctl-design-view"&gt;
 	mesheryctl design view
 &lt;/h1&gt;
 &lt;p&gt;Display a design content&lt;/p&gt;
@@ -38111,7 +38120,7 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-environment-delete</title><link>/reference/mesheryctl/environment/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/environment/delete/</guid><description>&lt;h1 id="mesheryctl-environment-delete"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-environment-delete</title><link>/reference/mesheryctl/environment/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/environment/delete/</guid><description>&lt;h1 id="mesheryctl-environment-delete"&gt;
 	mesheryctl environment delete
 &lt;/h1&gt;
 &lt;p&gt;Delete an environment&lt;/p&gt;
@@ -38161,7 +38170,7 @@ mesheryctl environment delete [environmentId]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-environment-list</title><link>/reference/mesheryctl/environment/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/environment/list/</guid><description>&lt;h1 id="mesheryctl-environment-list"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-environment-list</title><link>/reference/mesheryctl/environment/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/environment/list/</guid><description>&lt;h1 id="mesheryctl-environment-list"&gt;
 	mesheryctl environment list
 &lt;/h1&gt;
 &lt;p&gt;List registered environments&lt;/p&gt;
@@ -38260,7 +38269,7 @@ mesheryctl environment view --orgId [orgId]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-exp</title><link>/reference/mesheryctl/exp/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/exp/</guid><description>&lt;h1 id="mesheryctl-exp"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-exp</title><link>/reference/mesheryctl/exp/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/exp/</guid><description>&lt;h1 id="mesheryctl-exp"&gt;
 	mesheryctl exp
 &lt;/h1&gt;
 &lt;p&gt;Preview experimental commands&lt;/p&gt;
@@ -38298,7 +38307,7 @@ mesheryctl exp [flags]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-filter-delete</title><link>/reference/mesheryctl/filter/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/filter/delete/</guid><description>&lt;h1 id="mesheryctl-filter-delete"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-filter-delete</title><link>/reference/mesheryctl/filter/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/filter/delete/</guid><description>&lt;h1 id="mesheryctl-filter-delete"&gt;
 	mesheryctl filter delete
 &lt;/h1&gt;
 &lt;p&gt;Delete a filter file&lt;/p&gt;
@@ -38350,7 +38359,7 @@ mesheryctl filter delete [filter-name | ID]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-filter-import</title><link>/reference/mesheryctl/filter/import/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/filter/import/</guid><description>&lt;h1 id="mesheryctl-filter-import"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-filter-import</title><link>/reference/mesheryctl/filter/import/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/filter/import/</guid><description>&lt;h1 id="mesheryctl-filter-import"&gt;
 	mesheryctl filter import
 &lt;/h1&gt;
 &lt;p&gt;Import a WASM filter&lt;/p&gt;
@@ -38461,7 +38470,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-filter-view</title><link>/reference/mesheryctl/filter/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/filter/view/</guid><description>&lt;h1 id="mesheryctl-filter-view"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-filter-view</title><link>/reference/mesheryctl/filter/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/filter/view/</guid><description>&lt;h1 id="mesheryctl-filter-view"&gt;
 	mesheryctl filter view
 &lt;/h1&gt;
 &lt;p&gt;View filter(s)&lt;/p&gt;
@@ -38560,7 +38569,7 @@ mesheryctl model build [model-name]/[model-version]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-model-delete</title><link>/reference/mesheryctl/model/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/model/delete/</guid><description>&lt;h1 id="mesheryctl-model-delete"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-model-delete</title><link>/reference/mesheryctl/model/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/model/delete/</guid><description>&lt;h1 id="mesheryctl-model-delete"&gt;
 	mesheryctl model delete
 &lt;/h1&gt;
 &lt;p&gt;Delete a model&lt;/p&gt;
@@ -38619,7 +38628,7 @@ mesheryctl model delete [model-name]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-model-export</title><link>/reference/mesheryctl/model/export/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/model/export/</guid><description>&lt;h1 id="mesheryctl-model-export"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-model-export</title><link>/reference/mesheryctl/model/export/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/model/export/</guid><description>&lt;h1 id="mesheryctl-model-export"&gt;
 	mesheryctl model export
 &lt;/h1&gt;
 &lt;p&gt;Export registered models&lt;/p&gt;
@@ -38856,7 +38865,7 @@ mesheryctl model list --count
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-model-search</title><link>/reference/mesheryctl/model/search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/model/search/</guid><description>&lt;h1 id="mesheryctl-model-search"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-model-search</title><link>/reference/mesheryctl/model/search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/model/search/</guid><description>&lt;h1 id="mesheryctl-model-search"&gt;
 	mesheryctl model search
 &lt;/h1&gt;
 &lt;p&gt;Search model(s)&lt;/p&gt;
@@ -38926,7 +38935,7 @@ mesheryctl model search [query-text] --pagesize [pagesize-number]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-model-view</title><link>/reference/mesheryctl/model/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/model/view/</guid><description>&lt;h1 id="mesheryctl-model-view"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-model-view</title><link>/reference/mesheryctl/model/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/model/view/</guid><description>&lt;h1 id="mesheryctl-model-view"&gt;
 	mesheryctl model view
 &lt;/h1&gt;
 &lt;p&gt;View model&lt;/p&gt;
@@ -39034,7 +39043,7 @@ mesheryctl organization list --count
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-perf-apply</title><link>/reference/mesheryctl/perf/apply/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/perf/apply/</guid><description>&lt;h1 id="mesheryctl-perf-apply"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-perf-apply</title><link>/reference/mesheryctl/perf/apply/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/perf/apply/</guid><description>&lt;h1 id="mesheryctl-perf-apply"&gt;
 	mesheryctl perf apply
 &lt;/h1&gt;
 &lt;p&gt;Run a Performance test&lt;/p&gt;
@@ -39144,7 +39153,7 @@ mesheryctl perf profile test --view
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-perf-result</title><link>/reference/mesheryctl/perf/result/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/perf/result/</guid><description>&lt;h1 id="mesheryctl-perf-result"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-perf-result</title><link>/reference/mesheryctl/perf/result/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/perf/result/</guid><description>&lt;h1 id="mesheryctl-perf-result"&gt;
 	mesheryctl perf result
 &lt;/h1&gt;
 &lt;p&gt;List performance test results&lt;/p&gt;
@@ -39383,7 +39392,7 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-relationship-list</title><link>/reference/mesheryctl/relationship/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/relationship/list/</guid><description>&lt;h1 id="mesheryctl-relationship-list"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-relationship-list</title><link>/reference/mesheryctl/relationship/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/relationship/list/</guid><description>&lt;h1 id="mesheryctl-relationship-list"&gt;
 	mesheryctl relationship list
 &lt;/h1&gt;
 &lt;p&gt;List registered relationships&lt;/p&gt;
@@ -39463,7 +39472,7 @@ mesheryctl relationship list --count
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-relationship-search</title><link>/reference/mesheryctl/relationship/search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/relationship/search/</guid><description>&lt;h1 id="mesheryctl-relationship-search"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-relationship-search</title><link>/reference/mesheryctl/relationship/search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/relationship/search/</guid><description>&lt;h1 id="mesheryctl-relationship-search"&gt;
 	mesheryctl relationship search
 &lt;/h1&gt;
 &lt;p&gt;Search registered relationship(s)&lt;/p&gt;
@@ -39527,7 +39536,7 @@ mesheryctl relationship search [--kind &amp;lt;kind&amp;gt;] [--page &amp;lt;int
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-relationship-view</title><link>/reference/mesheryctl/relationship/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/relationship/view/</guid><description>&lt;h1 id="mesheryctl-relationship-view"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-relationship-view</title><link>/reference/mesheryctl/relationship/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/relationship/view/</guid><description>&lt;h1 id="mesheryctl-relationship-view"&gt;
 	mesheryctl relationship view
 &lt;/h1&gt;
 &lt;p&gt;View relationships of a model by its name&lt;/p&gt;
@@ -39616,7 +39625,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-channel-switch</title><link>/reference/mesheryctl/system/channel/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/channel/switch/</guid><description>&lt;h1 id="mesheryctl-system-channel-switch"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-channel-switch</title><link>/reference/mesheryctl/system/channel/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/channel/switch/</guid><description>&lt;h1 id="mesheryctl-system-channel-switch"&gt;
 	mesheryctl system channel switch
 &lt;/h1&gt;
 &lt;p&gt;Switch release channel and version&lt;/p&gt;
@@ -39668,7 +39677,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-channel-view</title><link>/reference/mesheryctl/system/channel/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/channel/view/</guid><description>&lt;h1 id="mesheryctl-system-channel-view"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-channel-view</title><link>/reference/mesheryctl/system/channel/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/channel/view/</guid><description>&lt;h1 id="mesheryctl-system-channel-view"&gt;
 	mesheryctl system channel view
 &lt;/h1&gt;
 &lt;p&gt;View release channel and version&lt;/p&gt;
@@ -39730,7 +39739,7 @@ mesheryctl system channel view --all
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-check</title><link>/reference/mesheryctl/system/check/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/check/</guid><description>&lt;h1 id="mesheryctl-system-check"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-check</title><link>/reference/mesheryctl/system/check/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/check/</guid><description>&lt;h1 id="mesheryctl-system-check"&gt;
 	mesheryctl system check
 &lt;/h1&gt;
 &lt;p&gt;Pre-deployment and post-deployment healthchecks for Meshery&lt;/p&gt;
@@ -39907,7 +39916,7 @@ mesheryctl system context delete [context name]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-list</title><link>/reference/mesheryctl/system/context/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/context/list/</guid><description>&lt;h1 id="mesheryctl-system-context-list"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-list</title><link>/reference/mesheryctl/system/context/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/context/list/</guid><description>&lt;h1 id="mesheryctl-system-context-list"&gt;
 	mesheryctl system context list
 &lt;/h1&gt;
 &lt;p&gt;List contexts&lt;/p&gt;
@@ -39959,7 +39968,7 @@ mesheryctl system context list
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-switch</title><link>/reference/mesheryctl/system/context/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/context/switch/</guid><description>&lt;h1 id="mesheryctl-system-context-switch"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-switch</title><link>/reference/mesheryctl/system/context/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/context/switch/</guid><description>&lt;h1 id="mesheryctl-system-context-switch"&gt;
 	mesheryctl system context switch
 &lt;/h1&gt;
 &lt;p&gt;Switch context&lt;/p&gt;
@@ -40140,7 +40149,7 @@ mesheryctl system delete -y
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-login</title><link>/reference/mesheryctl/system/login/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/login/</guid><description>&lt;h1 id="mesheryctl-system-login"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-login</title><link>/reference/mesheryctl/system/login/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/login/</guid><description>&lt;h1 id="mesheryctl-system-login"&gt;
 	mesheryctl system login
 &lt;/h1&gt;
 &lt;p&gt;Authenticate to a Meshery Server&lt;/p&gt;
@@ -40222,7 +40231,7 @@ mesheryctl system logout
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-logs</title><link>/reference/mesheryctl/system/logs/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/logs/</guid><description>&lt;h1 id="mesheryctl-system-logs"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-logs</title><link>/reference/mesheryctl/system/logs/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/logs/</guid><description>&lt;h1 id="mesheryctl-system-logs"&gt;
 	mesheryctl system logs
 &lt;/h1&gt;
 &lt;p&gt;Print logs&lt;/p&gt;
@@ -40293,7 +40302,7 @@ mesheryctl system logs meshery-istio
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-list</title><link>/reference/mesheryctl/system/provider/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/provider/list/</guid><description>&lt;h1 id="mesheryctl-system-provider-list"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-list</title><link>/reference/mesheryctl/system/provider/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/provider/list/</guid><description>&lt;h1 id="mesheryctl-system-provider-list"&gt;
 	mesheryctl system provider list
 &lt;/h1&gt;
 &lt;p&gt;List available providers&lt;/p&gt;
@@ -40345,7 +40354,7 @@ mesheryctl system provider list
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-reset</title><link>/reference/mesheryctl/system/provider/reset/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/provider/reset/</guid><description>&lt;h1 id="mesheryctl-system-provider-reset"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-reset</title><link>/reference/mesheryctl/system/provider/reset/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/provider/reset/</guid><description>&lt;h1 id="mesheryctl-system-provider-reset"&gt;
 	mesheryctl system provider reset
 &lt;/h1&gt;
 &lt;p&gt;Clear the configured provider&lt;/p&gt;
@@ -40397,7 +40406,7 @@ mesheryctl system provider reset
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-set</title><link>/reference/mesheryctl/system/provider/set/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/provider/set/</guid><description>&lt;h1 id="mesheryctl-system-provider-set"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-set</title><link>/reference/mesheryctl/system/provider/set/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/provider/set/</guid><description>&lt;h1 id="mesheryctl-system-provider-set"&gt;
 	mesheryctl system provider set
 &lt;/h1&gt;
 &lt;p&gt;Set provider&lt;/p&gt;
@@ -40450,7 +40459,7 @@ mesheryctl system provider set [provider]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-switch</title><link>/reference/mesheryctl/system/provider/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/provider/switch/</guid><description>&lt;h1 id="mesheryctl-system-provider-switch"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-switch</title><link>/reference/mesheryctl/system/provider/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/provider/switch/</guid><description>&lt;h1 id="mesheryctl-system-provider-switch"&gt;
 	mesheryctl system provider switch
 &lt;/h1&gt;
 &lt;p&gt;Switch provider and redeploy&lt;/p&gt;
@@ -40502,7 +40511,7 @@ mesheryctl system provider switch [provider]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-view</title><link>/reference/mesheryctl/system/provider/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/provider/view/</guid><description>&lt;h1 id="mesheryctl-system-provider-view"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-view</title><link>/reference/mesheryctl/system/provider/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/provider/view/</guid><description>&lt;h1 id="mesheryctl-system-provider-view"&gt;
 	mesheryctl system provider view
 &lt;/h1&gt;
 &lt;p&gt;View provider&lt;/p&gt;
@@ -40555,7 +40564,7 @@ mesheryctl system provider view
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-reset</title><link>/reference/mesheryctl/system/reset/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/reset/</guid><description>&lt;h1 id="mesheryctl-system-reset"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-reset</title><link>/reference/mesheryctl/system/reset/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/reset/</guid><description>&lt;h1 id="mesheryctl-system-reset"&gt;
 	mesheryctl system reset
 &lt;/h1&gt;
 &lt;p&gt;Reset Meshery&amp;rsquo;s configuration&lt;/p&gt;
@@ -40671,7 +40680,7 @@ mesheryctl system restart --skip-update
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-start</title><link>/reference/mesheryctl/system/start/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/start/</guid><description>&lt;h1 id="mesheryctl-system-start"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-start</title><link>/reference/mesheryctl/system/start/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/start/</guid><description>&lt;h1 id="mesheryctl-system-start"&gt;
 	mesheryctl system start
 &lt;/h1&gt;
 &lt;p&gt;Start Meshery&lt;/p&gt;
@@ -40870,7 +40879,7 @@ mesheryctl system stop --force
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-token-create</title><link>/reference/mesheryctl/system/token/create/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/token/create/</guid><description>&lt;h1 id="mesheryctl-system-token-create"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-token-create</title><link>/reference/mesheryctl/system/token/create/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/token/create/</guid><description>&lt;h1 id="mesheryctl-system-token-create"&gt;
 	mesheryctl system token create
 &lt;/h1&gt;
 &lt;p&gt;Create a token in your meshconfig&lt;/p&gt;
@@ -40939,7 +40948,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-token-delete</title><link>/reference/mesheryctl/system/token/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/token/delete/</guid><description>&lt;h1 id="mesheryctl-system-token-delete"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-token-delete</title><link>/reference/mesheryctl/system/token/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/token/delete/</guid><description>&lt;h1 id="mesheryctl-system-token-delete"&gt;
 	mesheryctl system token delete
 &lt;/h1&gt;
 &lt;p&gt;Delete a token from your meshconfig&lt;/p&gt;
@@ -40990,7 +40999,7 @@ mesheryctl system token delete [token-name]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-token-list</title><link>/reference/mesheryctl/system/token/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/token/list/</guid><description>&lt;h1 id="mesheryctl-system-token-list"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-token-list</title><link>/reference/mesheryctl/system/token/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/token/list/</guid><description>&lt;h1 id="mesheryctl-system-token-list"&gt;
 	mesheryctl system token list
 &lt;/h1&gt;
 &lt;p&gt;List tokens&lt;/p&gt;
@@ -41041,7 +41050,7 @@ mesheryctl system token list
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-token-set</title><link>/reference/mesheryctl/system/token/set/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/token/set/</guid><description>&lt;h1 id="mesheryctl-system-token-set"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-token-set</title><link>/reference/mesheryctl/system/token/set/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/token/set/</guid><description>&lt;h1 id="mesheryctl-system-token-set"&gt;
 	mesheryctl system token set
 &lt;/h1&gt;
 &lt;p&gt;Set token for context&lt;/p&gt;
@@ -41092,7 +41101,7 @@ mesheryctl system token set [token-name]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-token-view</title><link>/reference/mesheryctl/system/token/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/token/view/</guid><description>&lt;h1 id="mesheryctl-system-token-view"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-token-view</title><link>/reference/mesheryctl/system/token/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/token/view/</guid><description>&lt;h1 id="mesheryctl-system-token-view"&gt;
 	mesheryctl system token view
 &lt;/h1&gt;
 &lt;p&gt;View token&lt;/p&gt;
@@ -41152,7 +41161,7 @@ mesheryctl system token view (show token of current context)
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-update</title><link>/reference/mesheryctl/system/update/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/update/</guid><description>&lt;h1 id="mesheryctl-system-update"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-update</title><link>/reference/mesheryctl/system/update/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/update/</guid><description>&lt;h1 id="mesheryctl-system-update"&gt;
 	mesheryctl system update
 &lt;/h1&gt;
 &lt;p&gt;Pull new Meshery images/manifest files.&lt;/p&gt;
@@ -41319,7 +41328,7 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-workspace-list</title><link>/reference/mesheryctl/workspace/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/workspace/list/</guid><description>&lt;h1 id="mesheryctl-workspace-list"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-workspace-list</title><link>/reference/mesheryctl/workspace/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/workspace/list/</guid><description>&lt;h1 id="mesheryctl-workspace-list"&gt;
 	mesheryctl workspace list
 &lt;/h1&gt;
 &lt;p&gt;List registered workspaces&lt;/p&gt;
@@ -41391,7 +41400,7 @@ mesheryctl workspace list --orgId [orgId] --count
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-workspace-view</title><link>/reference/mesheryctl/workspace/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/workspace/view/</guid><description>&lt;h1 id="mesheryctl-workspace-view"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-workspace-view</title><link>/reference/mesheryctl/workspace/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/workspace/view/</guid><description>&lt;h1 id="mesheryctl-workspace-view"&gt;
 	mesheryctl workspace view
 &lt;/h1&gt;
 &lt;p&gt;View a workspace&lt;/p&gt;

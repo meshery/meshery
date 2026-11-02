@@ -284,6 +284,7 @@ If you expose Meshery through an ingress on Minikube, the following steps set up
 
 Section pages:
 
+- [Air-Gapped Installation](/installation/kubernetes/air-gapped/): Install Meshery on Kubernetes in an air-gapped (offline) environment using Helm, a private registry, or side-loaded images.
 - [AKS](/installation/kubernetes/aks/): Manage your AKS clusters with Meshery. Deploy Meshery in AKS in-cluster or out-of-cluster.
 - [DigitalOcean](/installation/kubernetes/digitalocean/): Install Meshery on DigitalOcean. Deploy Meshery out-of-cluster with Docker on a Droplet, or in-cluster on DigitalOcean Kubernetes (DOKS).
 - [EKS](/installation/kubernetes/eks/): Install Meshery on Elastic Kubernetes Service. Deploy Meshery in EKS in-cluster or outside of EKS out-of-cluster.

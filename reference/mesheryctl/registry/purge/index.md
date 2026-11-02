@@ -102,4 +102,4 @@ mesheryctl registry purge --retain 2 -y
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/cli/cli/#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/cli/cli/#documenting) for guidance.

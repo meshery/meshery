@@ -24,6 +24,7 @@
 - [Monitoring, Observability & Health KPIs](/installation/production/monitoring-observability-and-kpis/index.md): Health endpoints, the key performance indicators of Meshery's health, metrics, distributed tracing, centralized logging, alerting, and synthetic checks for observing Meshery in production.
 - [Operational Readiness Checklist & Known Caveats](/installation/production/operational-readiness-checklist/index.md): A consolidated, actionable production-readiness checklist across every dimension, the upgrade strategy for Meshery, and the known caveats and limitations to plan around.
 - [Accessing Meshery UI](/installation/accessing-meshery-ui/index.md): Accessing Meshery's web-based user interface
+- [Air-Gapped Installation](/installation/kubernetes/air-gapped/index.md): Install Meshery on Kubernetes in an air-gapped (offline) environment using Helm, a private registry, or side-loaded images.
 - [AKS](/installation/kubernetes/aks/index.md): Manage your AKS clusters with Meshery. Deploy Meshery in AKS in-cluster or out-of-cluster.
 - [Bash](/installation/mesheryctl/linux-mac/bash/index.md): Install Meshery CLI on Linux or MacOS with Bash
 - [Brew](/installation/mesheryctl/linux-mac/brew/index.md): Install Meshery CLI on Linux or macOS with Homebrew
