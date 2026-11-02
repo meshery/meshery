@@ -28,6 +28,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	core "github.com/meshery/schemas/models/core"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -150,8 +151,8 @@ mesheryctl perf profile test --view
 	},
 }
 
-// Fetch performance profiles
-func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber int) ([]perfprofile.PerformanceProfile, []byte, error) {
+// Fetch performance profiles and their total count.
+func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber int) ([]perfprofile.PerformanceProfile, int, error) {
 	var response *perfprofile.PerformanceProfilePage
 
 	url := baseURL + "/api/performance/profiles"
@@ -166,25 +167,57 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 
 	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, nil, err
+		return nil, 0, err
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return nil, nil, err
+		return nil, 0, err
 	}
 	defer func() { _ = resp.Body.Close() }()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, nil, utils.ErrReadResponseBody(err)
+		return nil, 0, utils.ErrReadResponseBody(err)
 	}
 
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, nil, ErrFailUnmarshal(err)
+		return nil, 0, ErrFailUnmarshal(err)
 	}
 
-	return response.Profiles, body, nil
+	return response.Profiles, response.TotalCount, nil
+}
+
+// fetchAllPerformanceProfiles returns every profile matching searchString, across all pages.
+func fetchAllPerformanceProfiles(baseURL, searchString string) ([]perfprofile.PerformanceProfile, error) {
+	var profiles []perfprofile.PerformanceProfile
+	seen := make(map[core.Uuid]struct{})
+	expectedTotal := 0
+	for page := 0; ; page++ {
+		pageProfiles, total, err := fetchPerformanceProfiles(baseURL, searchString, pageSize, page)
+		if err != nil {
+			return nil, err
+		}
+		if page == 0 {
+			expectedTotal = total
+		}
+		if total < 0 || total != expectedTotal || len(pageProfiles) > expectedTotal-len(profiles) {
+			return nil, ErrProfileTraversal()
+		}
+		for _, profile := range pageProfiles {
+			if _, exists := seen[profile.ID]; exists {
+				return nil, ErrProfileTraversal()
+			}
+			seen[profile.ID] = struct{}{}
+		}
+		profiles = append(profiles, pageProfiles...)
+		if len(profiles) == expectedTotal {
+			return profiles, nil
+		}
+		if len(pageProfiles) == 0 {
+			return nil, ErrProfileTraversal()
+		}
+	}
 }
 
 // add profiles as string arrays to print in a tabular format

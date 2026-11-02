@@ -3967,6 +3967,24 @@
       "suggestedRemediation": [
         "Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"
       ]
+    },
+    {
+      "code": "mesheryctl-1256",
+      "moniker": "ErrProfileTraversalCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1256",
+      "severity": "alert",
+      "shortDescription": "Unable to complete performance profile lookup",
+      "longDescription": "The matching performance profile pages changed or were inconsistent during lookup",
+      "probableCause": [
+        "Profiles were added, deleted, or reordered during lookup, or the provider returned inconsistent pagination data"
+      ],
+      "suggestedRemediation": [
+        "Rerun the command to refresh the matching profile list"
+      ]
     }
   ],
   "schemaVersion": 2

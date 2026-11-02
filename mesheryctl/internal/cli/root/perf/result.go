@@ -111,6 +111,7 @@ mesheryctl perf result saturday-profile --view
 
 		profiles, err := fetchAllPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString)
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 
