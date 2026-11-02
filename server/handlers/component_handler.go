@@ -1367,8 +1367,9 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// 2. Convert it to oci
-	safeName := filepath.Base(model.Name)
-	tempDir, err := os.MkdirTemp("", fmt.Sprintf("meshery-model-export-%s-*", safeName))
+	// Fixed pattern: the model name is already preserved in modelDir inside the
+	// temp root, and embedding it here risks exceeding filesystem name limits.
+	tempDir, err := os.MkdirTemp("", "meshery-model-export-*")
 	if err != nil {
 		err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
 		h.log.Error(err)
