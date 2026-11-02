@@ -254,16 +254,21 @@ func TestAskForConfirmation(t *testing.T) {
 }
 
 func TestCreateConfigFile(t *testing.T) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		t.Error(err, "failed to get users home directory")
-	}
+	tempDir := t.TempDir()
 	originalDefaultConfigPath := DefaultConfigPath
 	defer func() { DefaultConfigPath = originalDefaultConfigPath }()
-	DefaultConfigPath = filepath.Join(home, "config.yaml")
-	err = CreateConfigFile()
+	DefaultConfigPath = filepath.Join(tempDir, "config.yaml")
+	err := CreateConfigFile()
 	if err != nil {
 		t.Errorf("CreateConfigFile error = %v", err)
+	}
+
+	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
+		t.Errorf("expected config file to exist at %s", DefaultConfigPath)
+	}
+
+	if err := os.Remove(DefaultConfigPath); err != nil {
+		t.Errorf("expected file descriptor to be closed so file can be removed, got: %v", err)
 	}
 }
 
@@ -766,4 +771,50 @@ func TestSubcommandNames(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestUploadFileWithParams(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	oldToken := TokenFlag
+	TokenFlag = GetToken(t)
+	t.Cleanup(func() { TokenFlag = oldToken })
+
+	t.Run("success builds request and closes file handle", func(t *testing.T) {
+		tempDir := t.TempDir()
+		tempFile := filepath.Join(tempDir, "upload-test.txt")
+		err := os.WriteFile(tempFile, []byte("test content for upload"), 0600)
+		if err != nil {
+			t.Fatalf("failed to create temp file: %v", err)
+		}
+
+		params := map[string]string{
+			"param1": "value1",
+		}
+		req, err := UploadFileWithParams("http://localhost:9081/api/upload", params, "file", tempFile)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if req == nil {
+			t.Fatal("expected non-nil request")
+		}
+		if req.Method != http.MethodPost {
+			t.Errorf("expected POST method, got %s", req.Method)
+		}
+		if !strings.HasPrefix(req.Header.Get("Content-Type"), "multipart/form-data") {
+			t.Errorf("expected multipart/form-data content type, got %s", req.Header.Get("Content-Type"))
+		}
+
+		// Ensure file can be safely removed, proving file descriptor was closed
+		if err := os.Remove(tempFile); err != nil {
+			t.Errorf("expected file descriptor to be closed so file can be removed, got error: %v", err)
+		}
+	})
+
+	t.Run("returns error when file does not exist", func(t *testing.T) {
+		_, err := UploadFileWithParams("http://localhost:9081/api/upload", nil, "file", filepath.Join(t.TempDir(), "nonexistent.txt"))
+		if err == nil {
+			t.Fatal("expected error for nonexistent file, got nil")
+		}
+	})
 }

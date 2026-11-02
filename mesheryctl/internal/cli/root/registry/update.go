@@ -71,6 +71,12 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		defer func() {
+			if logFile != nil {
+				_ = logFile.Close()
+				logFile = nil
+			}
+		}()
 
 		// When the user did not pass --input explicitly, auto-detect the
 		// repo-root models directory so the command works whether it is run
