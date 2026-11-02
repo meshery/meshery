@@ -41,7 +41,11 @@ components:
   colorIcon: extensions/models/aws-cloudwatchlogs-controller/components/delivery-source/icons/color/delivery-source-color.svg
   whiteIcon: extensions/models/aws-cloudwatchlogs-controller/components/delivery-source/icons/white/delivery-source-white.svg
   description: 
-components-count: 8
+- name: delivery
+  colorIcon: extensions/models/aws-cloudwatchlogs-controller/components/delivery/icons/color/delivery-color.svg
+  whiteIcon: extensions/models/aws-cloudwatchlogs-controller/components/delivery/icons/white/delivery-white.svg
+  description: 
+components-count: 9
 relationships: 
 - type: "non-binding"
   kind: "edge"

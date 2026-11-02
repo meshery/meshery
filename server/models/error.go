@@ -637,7 +637,7 @@ func ErrDoRequest(err error, method, endpoint string) error {
 }
 
 func ErrMarshalYAML(err error, obj string) error {
-	return errors.New(ErrMarshalYAMLCode, errors.Alert, []string{"unable to marshal yaml \"%s\""}, []string{err.Error()}, []string{"Object has invalid yaml format"}, []string{"Make sure to input a valid yaml object"})
+	return errors.New(ErrMarshalYAMLCode, errors.Alert, []string{"Unable to marshal yaml", fmt.Sprintf("object: %s", obj)}, []string{err.Error()}, []string{"Object has invalid yaml format"}, []string{"Make sure to input a valid yaml object"})
 }
 func ErrDeleteK8sResource(err error, name, namespace string) error {
 	return errors.New(ErrDeleteK8sResourceCode, errors.Alert,
