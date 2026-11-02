@@ -68,7 +68,7 @@ mesheryctl --help
 mesheryctl system start --help
 
 // For viewing verbose output:
-mesheryctl --verbose
+mesheryctl -v [or] --verbose
 `,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		// Initialize a validator and add it to the command context

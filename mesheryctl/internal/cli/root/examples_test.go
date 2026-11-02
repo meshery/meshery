@@ -22,9 +22,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// exampleFlagPattern matches a flag token such as --token, --page=2 or -s
-// that starts a whitespace-separated word in an example line.
-var exampleFlagPattern = regexp.MustCompile(`(?:^|\s)(--[a-zA-Z][a-zA-Z0-9-]*|-[a-zA-Z])(?:=|\s|$)`)
+// exampleFlagPattern matches a flag token such as --token, --page=2, -s or
+// -Xauth.json that starts a whitespace-separated word in an example line.
+// For a shorthand with an attached value (-Xauth.json) only the flag letter
+// (-X) is captured, so the value is not mistaken for part of the flag.
+var exampleFlagPattern = regexp.MustCompile(`(?:^|\s)(--[a-zA-Z][a-zA-Z0-9-]*|-[a-zA-Z])(?:=\S*|[^\s=][^\s]*)?(?=\s|$)`)
 
 // TestExamplesUseKnownFlags makes sure every flag used in a command's Example
 // text is a flag that the example's target command actually accepts. The
@@ -81,6 +83,10 @@ func commandAcceptsFlag(cmd *cobra.Command, flag string) bool {
 		cmd.InheritedFlags().ShorthandLookup(shorthand) != nil
 }
 
+// TestExampleResolutionWithLeadingFlags pins the behavior of resolving an
+// example command when root-level flags (e.g. --verbose) precede the
+// subcommand, so TestExamplesUseKnownFlags checks flags against the right
+// target command in that case too.
 func TestExampleResolutionWithLeadingFlags(t *testing.T) {
 	line := "mesheryctl --verbose system config gke --token auth.json"
 	words := strings.Fields(strings.TrimPrefix(line, "mesheryctl "))
