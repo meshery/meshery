@@ -37,10 +37,27 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete design file",
 	Long: `delete design file will trigger deletion of the design file.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/design/delete`,
-	Args: cobra.MinimumNArgs(0),
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 && file == "" {
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return utils.ErrInvalidArgument(fmt.Errorf("please provide a design name, ID, or file path"))
+		}
+		if len(args) > 0 && file != "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a positional argument and the --file flag"))
+		}
+		return nil
+	},
 	Example: `
 // delete a design file
 mesheryctl design delete [file | URL]
+
+// delete a design by ID
+mesheryctl design delete [ID]
+
+// delete a design using --file
+mesheryctl design delete -f [file | URL]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
@@ -52,12 +69,22 @@ mesheryctl design delete [file | URL]
 		pattern := ""
 		isID := false
 		if len(args) > 0 {
-			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
-			if err != nil {
-				if errors.GetCode(err) == utils.ErrNotFoundCode {
-					return ErrDesignNotFound(args[0])
+			target := args[0]
+			if govalidator.IsURL(target) {
+				file = target
+			} else if _, statErr := os.Stat(target); statErr == nil {
+				file = target
+			} else {
+				pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), target, "pattern")
+				if err != nil {
+					if errors.GetCode(err) == utils.ErrNotFoundCode {
+						return ErrDesignNotFound(target)
+					}
+					return utils.ErrInvalidNameOrID(err)
 				}
-				return utils.ErrInvalidNameOrID(err)
+				if !isID {
+					file = target
+				}
 			}
 		}
 

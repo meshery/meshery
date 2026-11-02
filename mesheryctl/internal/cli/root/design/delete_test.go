@@ -40,6 +40,20 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
+			Name:             "given valid file as positional argument when design delete then design is deleted",
+			Args:             []string{"delete", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			ExpectedResponse: "delete.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
+		{
 			Name:             "given invalid file path when design delete then error is thrown",
 			Args:             []string{"delete", "-f", invalidFilePath},
 			ExpectedResponse: "",
@@ -69,6 +83,24 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound(nonExistentID),
+		},
+		{
+			Name:             "given no arguments when design delete then error is thrown",
+			Args:             []string{"delete"},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("please provide a design name, ID, or file path")),
+		},
+		{
+			Name:             "given both positional argument and -f flag when design delete then error is thrown",
+			Args:             []string{"delete", filepath.Join(fixturesDir, "sampleDesign.golden"), "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a positional argument and the --file flag")),
 		},
 	}
 
