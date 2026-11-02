@@ -800,10 +800,10 @@ func resolveDockerComposeBinaryURL() (string, error) {
 			var dat map[string]interface{}
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				return "", errors.Wrap(err, "failed to read response body")
+				return "", ErrReadResponseBody(err)
 			}
 			if err := json.Unmarshal(body, &dat); err != nil {
-				return "", errors.Wrap(err, "failed to unmarshal json into object")
+				return "", ErrUnmarshal(err)
 			}
 			num := dat["tag_name"]
 			if num == nil || fmt.Sprintf("%v", num) == "" {

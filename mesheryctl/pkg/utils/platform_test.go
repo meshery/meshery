@@ -219,6 +219,44 @@ func TestResolveDockerComposeBinaryURL(t *testing.T) {
 		}
 	})
 
+	for _, tc := range []struct {
+		name string
+		body string
+	}{
+		{"missing tag_name", `{}`},
+		{"empty tag_name", `{"tag_name": ""}`},
+	} {
+		t.Run("falls back to default version on "+tc.name, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write([]byte(tc.body))
+			}))
+			defer server.Close()
+
+			origURL := dockerComposeWebURL
+			dockerComposeWebURL = server.URL
+			defer func() { dockerComposeWebURL = origURL }()
+
+			transport := &trackingTransport{base: http.DefaultTransport}
+			previousTransport := http.DefaultTransport
+			http.DefaultTransport = transport
+			t.Cleanup(func() { http.DefaultTransport = previousTransport })
+
+			got, err := resolveDockerComposeBinaryURL()
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			expected := dockerComposeBinaryURL + defaultDockerComposeVersion
+			if got != expected {
+				t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
+			}
+
+			if transport.body == nil || !transport.body.closed {
+				t.Errorf("expected response body to be closed on %s path", tc.name)
+			}
+		})
+	}
+
 	t.Run("falls back to default version and closes response body on non-200 status code", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusForbidden)
