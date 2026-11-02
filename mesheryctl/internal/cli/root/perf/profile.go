@@ -150,8 +150,8 @@ mesheryctl perf profile test --view
 	},
 }
 
-// Fetch performance profiles
-func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber int) ([]perfprofile.PerformanceProfile, []byte, error) {
+// Fetch performance profiles and their total count.
+func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber int) ([]perfprofile.PerformanceProfile, int, error) {
 	var response *perfprofile.PerformanceProfilePage
 
 	url := baseURL + "/api/performance/profiles"
@@ -166,25 +166,25 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 
 	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, nil, err
+		return nil, 0, err
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return nil, nil, err
+		return nil, 0, err
 	}
 	defer func() { _ = resp.Body.Close() }()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, nil, utils.ErrReadResponseBody(err)
+		return nil, 0, utils.ErrReadResponseBody(err)
 	}
 
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, nil, ErrFailUnmarshal(err)
+		return nil, 0, ErrFailUnmarshal(err)
 	}
 
-	return response.Profiles, body, nil
+	return response.Profiles, response.TotalCount, nil
 }
 
 // add profiles as string arrays to print in a tabular format

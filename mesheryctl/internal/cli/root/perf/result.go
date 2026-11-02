@@ -28,6 +28,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	core "github.com/meshery/schemas/models/core"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -106,7 +107,7 @@ mesheryctl perf result saturday-profile --view
 		// Merge args to get profile-name
 		searchString = strings.Join(args, "%20")
 
-		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, 0)
+		profiles, err := fetchAllPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString)
 		if err != nil {
 			return err
 		}
@@ -181,6 +182,20 @@ mesheryctl perf result saturday-profile --view
 		}
 		return nil
 	},
+}
+
+func fetchAllPerformanceProfiles(baseURL, searchString string) ([]perfprofile.PerformanceProfile, error) {
+	var profiles []perfprofile.PerformanceProfile
+	for page := 0; ; page++ {
+		pageProfiles, total, err := fetchPerformanceProfiles(baseURL, searchString, pageSize, page)
+		if err != nil {
+			return nil, err
+		}
+		profiles = append(profiles, pageProfiles...)
+		if len(pageProfiles) == 0 || len(profiles) >= total {
+			return profiles, nil
+		}
+	}
 }
 
 // Fetch results for a specific profile

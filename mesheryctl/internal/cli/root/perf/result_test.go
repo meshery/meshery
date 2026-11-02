@@ -3,11 +3,14 @@ package perf
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	core "github.com/meshery/schemas/models/core"
@@ -183,6 +186,98 @@ func TestResultCmd(t *testing.T) {
 
 	// Run tests in logger format
 	utils.RunMesheryctlMultiURLTests(t, update, PerfCmd, loggerTests, currDir, "perf", resetVariables)
+}
+
+func TestFetchAllPerformanceProfiles(t *testing.T) {
+	for _, tt := range []struct {
+		name          string
+		total         int
+		pageSize      int
+		failPage      int
+		wantPages     int
+		emptyLastPage bool
+	}{
+		{name: "more than 25 matching profiles", total: 26, pageSize: 25, failPage: -1, wantPages: 2},
+		{name: "exactly one full page", total: 25, pageSize: 25, failPage: -1, wantPages: 1},
+		{name: "exactly two full pages", total: 50, pageSize: 25, failPage: -1, wantPages: 2},
+		{name: "three pages", total: 51, pageSize: 25, failPage: -1, wantPages: 3},
+		{name: "server caps page size", total: 26, pageSize: 10, failPage: -1, wantPages: 3},
+		{name: "no matching profiles", pageSize: 25, failPage: -1, wantPages: 1},
+		{name: "empty later page", total: 26, pageSize: 25, failPage: -1, wantPages: 2, emptyLastPage: true},
+		{name: "later page fails", total: 26, pageSize: 25, failPage: 1, wantPages: 2},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			testContext := utils.InitTestEnvironment(t)
+			t.Cleanup(func() { utils.StopMockery(t) })
+			previousToken := utils.TokenFlag
+			utils.TokenFlag = utils.GetToken(t)
+			t.Cleanup(func() { utils.TokenFlag = previousToken })
+
+			profiles := make([]perfprofile.PerformanceProfile, tt.total)
+			for i := range profiles {
+				profiles[i] = perfprofile.PerformanceProfile{
+					ID:   core.Uuid(uuid.FromStringOrNil(fmt.Sprintf("00000000-0000-0000-0000-%012d", i+1))),
+					Name: "matching profile",
+				}
+			}
+
+			requests := 0
+			httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/performance/profiles", func(req *http.Request) (*http.Response, error) {
+				query := req.URL.Query()
+				page, err := strconv.Atoi(query.Get("page"))
+				if err != nil || page != requests || requests >= tt.wantPages {
+					t.Errorf("unexpected profile page %q on request %d", query.Get("page"), requests)
+					return httpmock.NewStringResponse(500, "{}"), nil
+				}
+				requests++
+				if query.Get("search") != "matching profile" || query.Get("pagesize") != "25" {
+					t.Errorf("unexpected profile query: %v", query)
+				}
+				if page == tt.failPage {
+					return httpmock.NewStringResponse(500, "{}"), nil
+				}
+
+				start := page * tt.pageSize
+				end := min(start+tt.pageSize, len(profiles))
+				pageProfiles := profiles[start:end]
+				if tt.emptyLastPage && page == 1 {
+					pageProfiles = nil
+				}
+				return httpmock.NewJsonResponse(200, perfprofile.PerformanceProfilePage{
+					Page:       page,
+					PageSize:   tt.pageSize,
+					TotalCount: tt.total,
+					Profiles:   pageProfiles,
+				})
+			})
+
+			got, err := fetchAllPerformanceProfiles(testContext.BaseURL, "matching%20profile")
+			if tt.failPage >= 0 {
+				if err == nil || len(got) != 0 {
+					t.Fatalf("expected an error without partial profiles, got %d profiles and %v", len(got), err)
+				}
+			} else {
+				if err != nil {
+					t.Fatal(err)
+				}
+				expectedProfiles := profiles
+				if tt.emptyLastPage {
+					expectedProfiles = profiles[:tt.pageSize]
+				}
+				if len(got) != len(expectedProfiles) {
+					t.Fatalf("expected all %d matching profiles, got %d", len(expectedProfiles), len(got))
+				}
+				for i := range expectedProfiles {
+					if got[i].ID != expectedProfiles[i].ID {
+						t.Errorf("profile %d: expected ID %s, got %s", i, expectedProfiles[i].ID, got[i].ID)
+					}
+				}
+			}
+			if requests != tt.wantPages {
+				t.Errorf("expected %d profile page requests, got %d", tt.wantPages, requests)
+			}
+		})
+	}
 }
 
 func TestProfilesToStringArraysHandlesMissingLoadGenerators(t *testing.T) {
