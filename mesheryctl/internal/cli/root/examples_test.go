@@ -26,7 +26,7 @@ import (
 // -Xauth.json that starts a whitespace-separated word in an example line.
 // For a shorthand with an attached value (-Xauth.json) only the flag letter
 // (-X) is captured, so the value is not mistaken for part of the flag.
-var exampleFlagPattern = regexp.MustCompile(`(?:^|\s)(--[a-zA-Z][a-zA-Z0-9-]*|-[a-zA-Z])(?:=\S*|[^\s=][^\s]*)?(?=\s|$)`)
+var exampleFlagPattern = regexp.MustCompile(`(?:^|\s)(--[a-zA-Z][a-zA-Z0-9-]*|-[a-zA-Z])(?:=\S*|[^\s=]\S*)?`)
 
 // TestExamplesUseKnownFlags makes sure every flag used in a command's Example
 // text is a flag that the example's target command actually accepts. The
