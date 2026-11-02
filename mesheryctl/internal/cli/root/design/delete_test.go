@@ -63,6 +63,15 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectedError:    utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, invalidFilePath)),
 		},
 		{
+			Name:             "given mistyped file path positionally when server unreachable then file read error is thrown",
+			Args:             []string{"delete", invalidFilePath},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, invalidFilePath)),
+		},
+		{
 			Name:             "given nonexistent design ID when design delete then error is thrown",
 			Args:             []string{"delete", nonExistentID},
 			ExpectedResponse: "",
@@ -92,6 +101,15 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("please provide a design name, ID, or file path")),
+		},
+		{
+			Name:             "given multiple positional arguments when design delete then error is thrown",
+			Args:             []string{"delete", "a.yaml", "b.yaml"},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("expected at most one positional argument, got 2")),
 		},
 		{
 			Name:             "given both positional argument and -f flag when design delete then error is thrown",

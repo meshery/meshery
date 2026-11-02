@@ -44,6 +44,9 @@ var deleteCmd = &cobra.Command{
 			}
 			return utils.ErrInvalidArgument(fmt.Errorf("please provide a design name, ID, or file path"))
 		}
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("expected at most one positional argument, got %d", len(args)))
+		}
 		if len(args) > 0 && file != "" {
 			return utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a positional argument and the --file flag"))
 		}
@@ -80,9 +83,11 @@ mesheryctl design delete -f [file | URL]
 					if errors.GetCode(err) == utils.ErrNotFoundCode {
 						return ErrDesignNotFound(target)
 					}
-					return utils.ErrInvalidNameOrID(err)
-				}
-				if !isID {
+					// If the server is unreachable or another network error occurs,
+					// fall through to treat target as a file path so the descriptive
+					// file-read error is surfaced instead of an obscure ID error.
+					file = target
+				} else if !isID {
 					file = target
 				}
 			}
