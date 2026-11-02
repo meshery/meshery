@@ -7,6 +7,7 @@ import UndeployIcon from '../../../public/static/img/UndeployIcon';
 import CloneIcon from '../../../public/static/img/CloneIcon';
 
 import { DefaultTableCell, SortableTableCell } from '../../connections/common';
+import { toServerSortOrder, toUiSortOrder } from '../../connections/ConnectionTable.constants';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
@@ -209,6 +210,7 @@ export function buildPatternColumns({ patterns, handlers, permissions }) {
     {
       // Named after the camelCase wire fields so the cell gets a value;
       // Sistent's ResponsiveDataTable formats createdAt/updatedAt itself.
+      // Sort clicks map back to DB columns via toServerSortOrder.
       name: 'createdAt',
       label: 'Created At',
       options: {
@@ -317,6 +319,7 @@ export function buildPatternsTableOptions({
   deletePatterns,
   showModal,
 }) {
+  const [uiSortField, uiSortDirection] = toUiSortOrder(sortOrder).split(' ');
   return {
     customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
       <CustomToolbarSelect
@@ -343,8 +346,8 @@ export function buildPatternsTableOptions({
     print: false,
     download: false,
     sortOrder: {
-      name: sortOrder.split(' ')[0],
-      direction: sortOrder.split(' ')[1],
+      name: uiSortField,
+      direction: uiSortDirection,
     },
     textLabels: {
       selectedRows: {
@@ -375,7 +378,7 @@ export function buildPatternsTableOptions({
       const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
       let order = '';
       if (tableState.activeColumn != null) {
-        order = `${columns[tableState.activeColumn].name} desc`;
+        order = toServerSortOrder(`${columns[tableState.activeColumn].name} desc`);
       }
 
       switch (action) {
@@ -397,11 +400,8 @@ export function buildPatternsTableOptions({
           break;
         case 'sort':
           if (sortInfo.length === 2) {
-            if (sortInfo[1] === 'ascending') {
-              order = `${columns[tableState.activeColumn].name} asc`;
-            } else {
-              order = `${columns[tableState.activeColumn].name} desc`;
-            }
+            const direction = sortInfo[1] === 'ascending' ? 'asc' : 'desc';
+            order = toServerSortOrder(`${columns[tableState.activeColumn].name} ${direction}`);
           }
           if (order !== sortOrder) {
             setSortOrder(order);

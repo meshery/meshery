@@ -60,6 +60,7 @@ import {
 } from './MesheryPatterns.columns';
 import { buildDesignLifecycleHandlers } from './design-lifecycle-handlers';
 import { createPatternsActions } from './patterns-actions';
+import { toServerSortOrder, toUiSortOrder } from '../../connections/ConnectionTable.constants';
 
 function MesheryPatterns({
   disableCreateImportDesignButton = false,
@@ -137,7 +138,7 @@ function MesheryPatterns({
     page: page,
     pagesize: pageSize,
     search: search,
-    order: sortOrder,
+    order: toServerSortOrder(sortOrder),
     visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
     populate: 'pattern_file',
   });
@@ -394,9 +395,11 @@ function MesheryPatterns({
     },
   });
 
+  // sortOrder holds the server (snake_case) form; columns are camelCase.
+  const [uiSortField, uiSortDirection] = toUiSortOrder(sortOrder).split(' ');
   columns.forEach((column, idx) => {
-    if (column.name === sortOrder.split(' ')[0]) {
-      columns[idx].options.sortDirection = sortOrder.split(' ')[1];
+    if (column.name === uiSortField) {
+      columns[idx].options.sortDirection = uiSortDirection;
     }
   });
 

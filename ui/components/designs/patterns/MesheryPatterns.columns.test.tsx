@@ -239,6 +239,46 @@ describe('buildPatternsTableOptions', () => {
     expect(options.download).toBe(false);
   });
 
+  it('maps a snake_case server sort order to the camelCase column for the indicator', () => {
+    const options = build({ sortOrder: 'updated_at desc' });
+    expect(options.sortOrder).toEqual({ name: 'updatedAt', direction: 'desc' });
+  });
+
+  it('sends the snake_case DB column when a camelCase date column is sorted', () => {
+    const setSortOrder = vi.fn();
+    const columns = [{ name: 'name' }, { name: 'createdAt' }];
+    const options = build({ columns, setSortOrder });
+    options.onTableChange('sort', {
+      activeColumn: 1,
+      announceText: 'Table now sorted by createdAt : ascending',
+    });
+    expect(setSortOrder).toHaveBeenCalledWith('created_at asc');
+  });
+
+  it('passes non-date columns through unchanged when sorted', () => {
+    const setSortOrder = vi.fn();
+    const columns = [{ name: 'name' }, { name: 'visibility' }];
+    const options = build({ columns, setSortOrder, sortOrder: 'updated_at desc' });
+    options.onTableChange('sort', {
+      activeColumn: 0,
+      announceText: 'Table now sorted by name : ascending',
+    });
+    expect(setSortOrder).toHaveBeenCalledWith('name asc');
+    options.onTableChange('sort', {
+      activeColumn: 1,
+      announceText: 'Table now sorted by visibility : descending',
+    });
+    expect(setSortOrder).toHaveBeenLastCalledWith('visibility desc');
+  });
+
+  it('keeps the indicator on a camelCase or single-token sort order', () => {
+    expect(build({ sortOrder: 'createdAt asc' }).sortOrder).toEqual({
+      name: 'createdAt',
+      direction: 'asc',
+    });
+    expect(build({ sortOrder: 'name' }).sortOrder).toEqual({ name: 'name', direction: 'desc' });
+  });
+
   it('disables sort on the local provider and enables it on a remote provider', () => {
     expect(build({ isLocalProvider: true }).sort).toBe(false);
     expect(build().sort).toBe(true);
