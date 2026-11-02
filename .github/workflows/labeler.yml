@@ -20,6 +20,9 @@ jobs:
   triage:
     name: Triage (Labeler)
     if: contains(fromJSON('["opened", "reopened", "synchronize"]'), github.event.action)
+    concurrency:
+      group: pr-triage-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -33,7 +36,7 @@ jobs:
     name: PR Review Suggestions
     needs: [triage]
     concurrency:
-      group: pr-review-${{ github.event.pull_request.number }}
+      group: pr-review-suggestions-${{ github.event.pull_request.number }}
       cancel-in-progress: false
     if: |
       always() &&
