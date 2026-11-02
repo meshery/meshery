@@ -1257,11 +1257,28 @@ func (h *Handler) CloneMesheryPatternHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
 	patternID := mux.Vars(r)["id"]
+	if patternID == "" {
+		cloneErr := ErrClonePattern(fmt.Errorf("missing design ID"))
+		h.log.Error(cloneErr)
+		writeMeshkitError(rw, cloneErr, http.StatusBadRequest)
+		return
+	}
+
 	patternUUID := uuid.FromStringOrNil(patternID)
 
-	userID := user.ID
-	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("clone").ActedUpon(patternUUID).WithSeverity(events.Informational)
+	var userID core.Uuid
+	if user != nil {
+		userID = user.ID
+	}
+	eventBuilder := events.NewEvent().FromOwner(userID).WithCategory("pattern").WithAction("clone").ActedUpon(patternUUID).WithSeverity(events.Informational)
+	if h.SystemID != nil {
+		eventBuilder = eventBuilder.FromSystem(*h.SystemID)
+	}
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
@@ -1270,21 +1287,26 @@ func (h *Handler) CloneMesheryPatternHandler(
 			"error": ErrRetrieveUserToken(err),
 		}).WithDescription("No auth token provided in the request.").Build()
 		_ = provider.PersistEvent(*event, "")
-		go h.config.EventBroadcaster.Publish(userID, event)
+		if h.config != nil && h.config.EventBroadcaster != nil {
+			go h.config.EventBroadcaster.Publish(userID, event)
+		}
 		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
 
 	var parsedBody *models.MesheryClonePatternRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || patternID == "" {
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
-	defer func() {
-		_ = r.Body.Close()
-	}()
+	if parsedBody == nil || parsedBody.Name == "" {
+		cloneErr := ErrClonePattern(fmt.Errorf("design name is required"))
+		h.log.Error(cloneErr)
+		writeMeshkitError(rw, cloneErr, http.StatusBadRequest)
+		return
+	}
 
 	mesheryPatternByt, err := provider.GetMesheryPattern(r, patternID, "false")
 	if err != nil {
