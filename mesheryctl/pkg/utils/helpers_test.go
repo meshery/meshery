@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -267,9 +268,7 @@ func TestCreateConfigFile(t *testing.T) {
 		t.Errorf("expected config file to exist at %s", DefaultConfigPath)
 	}
 
-	if err := os.Remove(DefaultConfigPath); err != nil {
-		t.Errorf("expected file descriptor to be closed so file can be removed, got: %v", err)
-	}
+	assertFileDescriptorClosed(t, DefaultConfigPath)
 }
 
 func TestValidateURL(t *testing.T) {
@@ -805,10 +804,8 @@ func TestUploadFileWithParams(t *testing.T) {
 			t.Errorf("expected multipart/form-data content type, got %s", req.Header.Get("Content-Type"))
 		}
 
-		// Ensure file can be safely removed, proving file descriptor was closed
-		if err := os.Remove(tempFile); err != nil {
-			t.Errorf("expected file descriptor to be closed so file can be removed, got error: %v", err)
-		}
+		// Ensure file descriptor is closed across Linux and Windows
+		assertFileDescriptorClosed(t, tempFile)
 	})
 
 	t.Run("returns error when file does not exist", func(t *testing.T) {
@@ -817,4 +814,29 @@ func TestUploadFileWithParams(t *testing.T) {
 			t.Fatal("expected error for nonexistent file, got nil")
 		}
 	})
+}
+
+func assertFileDescriptorClosed(t *testing.T, path string) {
+	t.Helper()
+	// On Linux, verify that no open file descriptor in /proc/self/fd points to the path.
+	if runtime.GOOS == "linux" {
+		fds, err := os.ReadDir("/proc/self/fd")
+		if err == nil {
+			absPath, err := filepath.Abs(path)
+			if err != nil {
+				absPath = path
+			}
+			for _, fd := range fds {
+				target, err := os.Readlink(filepath.Join("/proc/self/fd", fd.Name()))
+				if err == nil && target == absPath {
+					t.Fatalf("expected file descriptor for %s to be closed, but found open fd /proc/self/fd/%s", path, fd.Name())
+				}
+			}
+		}
+	}
+	// On Windows, removing an open file fails with sharing violation / permission denied,
+	// verifying descriptor closure.
+	if err := os.Remove(path); err != nil {
+		t.Fatalf("expected file descriptor to be closed so file can be removed, got error: %v", err)
+	}
 }

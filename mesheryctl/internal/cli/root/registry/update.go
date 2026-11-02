@@ -56,8 +56,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 // Updating models in the meshery/meshery repository based on flag
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED" --model "[model-name]"
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-
+	RunE: func(cmd *cobra.Command, args []string) error {
 		err := os.MkdirAll(logDirPath, 0755)
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
@@ -68,9 +67,6 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
 		}
-		return nil
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
 		defer func() {
 			if logFile != nil {
 				_ = logFile.Close()
