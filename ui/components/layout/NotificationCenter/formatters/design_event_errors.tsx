@@ -31,7 +31,7 @@ export const DesignEventErrorsFormatter = ({ summary }: { summary: DesignEventEr
   const countLabel = `${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`;
 
   return (
-    <Box display="flex" flexDirection="column" gap={1}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
       <Typography variant="textB1Regular">
         {status ? (
           <>

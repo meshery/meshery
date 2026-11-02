@@ -41,7 +41,7 @@ export const SchemaValidationFormatter = ({ event }: { event: SchemaValidationEv
 
   if (errorSummary || !metadata?.validationResult) {
     return (
-      <Box display="flex" flexDirection="column" gap={1} sx={{ mt: 1 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
         <Typography variant="textB1Regular">
           Design: <strong>{designName}</strong>
         </Typography>

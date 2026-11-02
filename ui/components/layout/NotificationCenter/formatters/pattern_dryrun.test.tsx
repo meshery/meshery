@@ -238,4 +238,33 @@ describe('SchemaValidationFormatter', () => {
     expect(screen.getByText('Showing the first 20 of 25 errors.')).toBeInTheDocument();
     expect(screen.queryByTestId('validation-results')).not.toBeInTheDocument();
   });
+
+  it('stacks the design line and each error on its own line', () => {
+    render(
+      <SchemaValidationFormatter
+        event={{
+          metadata: {
+            designName: 'my-design',
+            status: 'failed',
+            errorCount: 2,
+            errors: [
+              { code: 'required', componentId: 'c1' },
+              { code: 'type', componentId: 'c2' },
+            ],
+          },
+        }}
+      />,
+    );
+
+    // Each line is an inline Typography span, so the containers must lay
+    // them out as flex columns or the summary renders as one run-on line.
+    const errorList = screen.getAllByTestId('design-event-error')[0].parentElement!;
+    const outer = screen.getByText(/Design:/).parentElement!;
+    for (const container of [errorList, outer]) {
+      const style = window.getComputedStyle(container);
+      expect(style.display).toBe('flex');
+      expect(style.flexDirection).toBe('column');
+      expect(container).not.toHaveAttribute('flexdirection');
+    }
+  });
 });
