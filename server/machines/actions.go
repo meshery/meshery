@@ -26,6 +26,20 @@ type Action interface {
 	ExecuteOnExit(context context.Context, machinectx interface{}, data interface{}) (EventType, *events.Event, error)
 }
 
+type DefaultAction struct{}
+
+func (da *DefaultAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+
+func (da *DefaultAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+
+func (da *DefaultAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+
 type DefaultConnectAction struct{}
 
 func (da *DefaultConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
