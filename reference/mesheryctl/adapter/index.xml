@@ -128,7 +128,7 @@ mesheryctl adapter validate [flags]
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --token [path to token for authentication] --spec [specification to be used for conformance test]
 
 &lt;/div&gt;
 &lt;/div&gt;
