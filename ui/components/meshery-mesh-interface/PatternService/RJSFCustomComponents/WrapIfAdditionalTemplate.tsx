@@ -17,8 +17,8 @@ const WrapIfAdditionalTemplate = ({
   disabled,
   id,
   label,
-  onDropPropertyClick,
-  onKeyChange,
+  onRemoveProperty,
+  onKeyRenameBlur,
   readonly,
   required,
   schema,
@@ -31,7 +31,6 @@ const WrapIfAdditionalTemplate = ({
   if (!additional) {
     return <div className={classNames}>{children}</div>;
   }
-  const handleChange = ({ target }) => onKeyChange(target.value);
 
   return (
     <Grid2
@@ -51,7 +50,7 @@ const WrapIfAdditionalTemplate = ({
             disabled={disabled || readonly}
             id={`${id}-key`}
             name={`${id}-key`}
-            onChange={!readonly ? handleChange : undefined}
+            onChange={!readonly ? onKeyRenameBlur : undefined}
             type="text"
           />
         </FormControl>
@@ -61,11 +60,7 @@ const WrapIfAdditionalTemplate = ({
       </Grid2>
       <Grid2 size={{ xs: 12 }}>{children}</Grid2>
       <Grid2>
-        <IconButton
-          component="span"
-          disabled={disabled || readonly}
-          onClick={onDropPropertyClick(label)}
-        >
+        <IconButton component="span" disabled={disabled || readonly} onClick={onRemoveProperty}>
           <DeleteIcon style={iconMedium} fill={theme?.palette?.icon?.default} />
         </IconButton>
       </Grid2>

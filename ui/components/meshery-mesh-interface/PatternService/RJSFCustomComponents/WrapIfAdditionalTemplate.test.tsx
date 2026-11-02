@@ -40,8 +40,8 @@ describe('WrapIfAdditionalTemplate', () => {
         classNames="classy"
         id="id1"
         label="key1"
-        onDropPropertyClick={() => vi.fn()}
-        onKeyChange={vi.fn()}
+        onRemoveProperty={() => vi.fn()}
+        onKeyRenameBlur={vi.fn()}
         schema={{}}
       />,
     );
@@ -57,8 +57,8 @@ describe('WrapIfAdditionalTemplate', () => {
         classNames="cls"
         id="id1"
         label="key1"
-        onDropPropertyClick={(label: string) => () => onDrop(label)}
-        onKeyChange={vi.fn()}
+        onRemoveProperty={(label: string) => () => onDrop(label)}
+        onKeyRenameBlur={vi.fn()}
         schema={{ __ADDITIONAL_PROPERTY__: true }}
       />,
     );
@@ -74,8 +74,8 @@ describe('WrapIfAdditionalTemplate', () => {
         classNames="cls"
         id="id1"
         label="key1"
-        onDropPropertyClick={() => vi.fn()}
-        onKeyChange={vi.fn()}
+        onRemoveProperty={() => vi.fn()}
+        onKeyRenameBlur={vi.fn()}
         schema={{ __ADDITIONAL_PROPERTY__: true }}
       />,
     );
@@ -89,29 +89,29 @@ describe('WrapIfAdditionalTemplate', () => {
         classNames="cls"
         id="id1"
         label="newKey-foo"
-        onDropPropertyClick={() => vi.fn()}
-        onKeyChange={vi.fn()}
+        onRemoveProperty={() => vi.fn()}
+        onKeyRenameBlur={vi.fn()}
         schema={{ __ADDITIONAL_PROPERTY__: true }}
       />,
     );
     expect(screen.getByTestId('key-input')).toHaveValue('');
   });
 
-  it('forwards key edits to onKeyChange', () => {
-    const onKeyChange = vi.fn();
+  it('forwards key edits to onKeyRenameBlur', () => {
+    const onKeyRenameBlur = vi.fn();
     render(
       <WrapIfAdditionalTemplate
         children={<div>child</div>}
         classNames="cls"
         id="id1"
         label="key1"
-        onDropPropertyClick={() => vi.fn()}
-        onKeyChange={onKeyChange}
+        onRemoveProperty={() => vi.fn()}
+        onKeyRenameBlur={onKeyRenameBlur}
         schema={{ __ADDITIONAL_PROPERTY__: true }}
       />,
     );
     fireEvent.change(screen.getByTestId('key-input'), { target: { value: 'newKey' } });
-    expect(onKeyChange).toHaveBeenCalledWith('newKey');
+    expect(onKeyRenameBlur).toHaveBeenCalledWith('newKey');
   });
 
   it('disables the input and delete button when readonly is true', () => {
@@ -122,8 +122,8 @@ describe('WrapIfAdditionalTemplate', () => {
         id="id1"
         label="key1"
         readonly
-        onDropPropertyClick={() => vi.fn()}
-        onKeyChange={vi.fn()}
+        onRemoveProperty={() => vi.fn()}
+        onKeyRenameBlur={vi.fn()}
         schema={{ __ADDITIONAL_PROPERTY__: true }}
       />,
     );
