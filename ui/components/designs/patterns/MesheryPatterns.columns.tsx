@@ -172,8 +172,8 @@ export function buildPatternActions({
  */
 export const PATTERN_COL_VIEWS = [
   ['name', 'xs'],
-  ['created_at', 'm'],
-  ['updated_at', 'm'],
+  ['createdAt', 'm'],
+  ['updatedAt', 'm'],
   ['visibility', 's'],
   ['Actions', 'xs'],
 ];
@@ -208,7 +208,7 @@ export function buildPatternColumns({ patterns, handlers, permissions }) {
       },
     },
     {
-      name: 'created_at',
+      name: 'createdAt',
       label: 'Created At',
       options: {
         filter: false,
@@ -230,7 +230,7 @@ export function buildPatternColumns({ patterns, handlers, permissions }) {
       },
     },
     {
-      name: 'updated_at',
+      name: 'updatedAt',
       label: 'Updated At',
       options: {
         filter: false,

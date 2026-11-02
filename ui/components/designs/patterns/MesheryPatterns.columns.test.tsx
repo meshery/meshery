@@ -119,8 +119,8 @@ describe('PATTERN_COL_VIEWS', () => {
   it('declares the responsive column view config', () => {
     expect(PATTERN_COL_VIEWS).toEqual([
       ['name', 'xs'],
-      ['created_at', 'm'],
-      ['updated_at', 'm'],
+      ['createdAt', 'm'],
+      ['updatedAt', 'm'],
       ['visibility', 's'],
       ['Actions', 'xs'],
     ]);
@@ -186,8 +186,8 @@ describe('buildPatternColumns', () => {
 
     expect(columns.map((c: any) => c.name)).toEqual([
       'name',
-      'created_at',
-      'updated_at',
+      'createdAt',
+      'updatedAt',
       'visibility',
       'Actions',
     ]);
@@ -197,14 +197,14 @@ describe('buildPatternColumns', () => {
     expect(screen.getByTestId('action-popover')).toBeInTheDocument();
   });
 
-  it('renders a Moment-formatted cell for created_at and updated_at', () => {
+  it('renders a Moment-formatted cell for createdAt and updatedAt', () => {
     const patterns = [{ id: 'p1', name: 'p', visibility: 'private', patternFile: '' }];
     const columns = buildPatternColumns({
       patterns,
       handlers: makeHandlers(),
       permissions: makePermissions(),
     });
-    const createdAt = columns.find((c: any) => c.name === 'created_at');
+    const createdAt = columns.find((c: any) => c.name === 'createdAt');
     render(createdAt!.options.customBodyRender('2024-01-02'));
     expect(screen.getByTestId('moment')).toHaveTextContent('2024-01-02');
   });
