@@ -12,10 +12,6 @@ vi.mock('@sistent/sistent', () => ({
   EditIcon: () => <svg data-testid="edit" />,
 }));
 
-vi.mock('react-moment', () => ({
-  default: ({ children }: any) => <span data-testid="moment">{children}</span>,
-}));
-
 vi.mock('@/assets/icons', () => ({
   GetApp: () => <svg data-testid="get-app" />,
   DoneAll: () => <svg data-testid="done-all" />,
@@ -197,16 +193,16 @@ describe('buildPatternColumns', () => {
     expect(screen.getByTestId('action-popover')).toBeInTheDocument();
   });
 
-  it('renders a Moment-formatted cell for createdAt and updatedAt', () => {
-    const patterns = [{ id: 'p1', name: 'p', visibility: 'private', patternFile: '' }];
+  it('leaves createdAt and updatedAt to Sistent date formatting', () => {
     const columns = buildPatternColumns({
-      patterns,
+      patterns: [],
       handlers: makeHandlers(),
       permissions: makePermissions(),
     });
-    const createdAt = columns.find((c: any) => c.name === 'createdAt');
-    render(createdAt!.options.customBodyRender('2024-01-02'));
-    expect(screen.getByTestId('moment')).toHaveTextContent('2024-01-02');
+    for (const name of ['createdAt', 'updatedAt']) {
+      const column = columns.find((c: any) => c.name === name);
+      expect(column!.options.customBodyRender).toBeUndefined();
+    }
   });
 });
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, crimson, InfoOutlinedIcon, AccountTreeIcon, EditIcon } from '@sistent/sistent';
 import { Keys } from '@meshery/schemas/permissions';
-import Moment from 'react-moment';
 import { GetApp as GetAppIcon } from '@/assets/icons';
 import { DoneAll as DoneAllIcon, Public as PublicIcon } from '@/assets/icons';
 import UndeployIcon from '../../../public/static/img/UndeployIcon';
@@ -208,6 +207,8 @@ export function buildPatternColumns({ patterns, handlers, permissions }) {
       },
     },
     {
+      // Named after the camelCase wire fields so the cell gets a value;
+      // Sistent's ResponsiveDataTable formats createdAt/updatedAt itself.
       name: 'createdAt',
       label: 'Created At',
       options: {
@@ -223,9 +224,6 @@ export function buildPatternColumns({ patterns, handlers, permissions }) {
               onSort={() => sortColumn(index)}
             />
           );
-        },
-        customBodyRender: function CustomBody(value) {
-          return <Moment format="LLLL">{value}</Moment>;
         },
       },
     },
@@ -245,9 +243,6 @@ export function buildPatternColumns({ patterns, handlers, permissions }) {
               onSort={() => sortColumn(index)}
             />
           );
-        },
-        customBodyRender: function CustomBody(value) {
-          return <Moment format="LLLL">{value}</Moment>;
         },
       },
     },
