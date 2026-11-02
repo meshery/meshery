@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Defines the non-binding reference from a PriorityClass to a Job. Evaluates and automatically patches the priorityClassName field within the Job's configuration.",
+    "description": "",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -77,7 +77,7 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",

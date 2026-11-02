@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"path/filepath"
 	"sort"
 	"testing"
 
@@ -16,17 +17,53 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/environment"
 )
 
-// The shipped model directories that boot-time registration reads: the
-// meshery-core model carries the connection definitions, and the two others are
-// representative models whose model.json `registrant` is `artifacthub` and
-// `github`. Registering them is what creates the registrant Connections that
-// SeedConnections is scoped to, so this fixture is the same input the server
-// gets on boot rather than a synthetic one.
-const (
-	seedCoreModelDir            = "../../models/meshery-core/0.7.2/v1.0.0"
-	seedArtifactHubRegistrantIn = "../../models/kubevault/2026.1.8-rc.0/v1.0.0"
-	seedGitHubRegistrantIn      = "../../models/azure-operational-insights/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml/v1.0.0"
-)
+// artifactHubRegistrantModelDir is a minimal in-repo model published under the
+// `artifacthub` registrant. The shipped Artifact Hub models it would otherwise
+// come from live under models/, which the recommended sparse checkout excludes,
+// so committing a fixture keeps the Artifact Hub seeding path covered without
+// pulling in the model registry.
+const artifactHubRegistrantModelDir = "testdata/artifacthub-registrant-model"
+
+// seedModelDirs resolves the model directories that boot-time registration reads
+// for this fixture. All are available in a sparse clone (see the "Cloning the
+// Repository" contributing guide), so the default `go test ./...` keeps passing
+// there:
+//
+//   - meshery-core carries the Connection *definitions* (Artifact Hub, GitHub,
+//     Kubernetes, ...) and registers under the `meshery` registrant.
+//   - kubernetes registers under the `github` registrant, which is what makes the
+//     GitHub connection definition seedable.
+//   - the committed artifacthub-registrant-model registers under the
+//     `artifacthub` registrant, which makes the Artifact Hub definition seedable.
+//
+// Together they create the `artifacthub` and `github` registrant Connections
+// that SeedConnections is scoped to, so this fixture is the same input the
+// server gets on boot rather than a synthetic one.
+func seedModelDirs(t *testing.T) []string {
+	t.Helper()
+	return []string{
+		resolveModelDir(t, "meshery-core"),
+		resolveModelDir(t, "kubernetes"),
+		artifactHubRegistrantModelDir,
+	}
+}
+
+// resolveModelDir returns a shipped model's registration directory
+// (models/<name>/<version>/v1.0.0) without pinning a specific version, so the
+// test keeps working as the model registry is re-synced. It selects the highest
+// version directory that contains a model.json.
+func resolveModelDir(t *testing.T, name string) string {
+	t.Helper()
+	matches, err := filepath.Glob(filepath.Join("..", "..", "models", name, "*", "v1.0.0", "model.json"))
+	if err != nil {
+		t.Fatalf("glob model dir for %q: %v", name, err)
+	}
+	if len(matches) == 0 {
+		t.Fatalf("no shipped model directory found under ../../models/%s/*/v1.0.0 - is it excluded by a sparse checkout?", name)
+	}
+	sort.Strings(matches)
+	return filepath.Dir(matches[len(matches)-1])
+}
 
 // apiConnection is the connection as it reaches the wire (and therefore the
 // Connections page), decoded from the handler's own response rather than read
@@ -70,7 +107,7 @@ func newSeedConnectionsAPIFixture(t *testing.T) (*Handler, models.Provider, *dat
 	}
 
 	regHelper := registration.NewRegistrationHelper(t.TempDir(), regm, models.NewRegistrationFailureLogHandler())
-	for _, dir := range []string{seedCoreModelDir, seedArtifactHubRegistrantIn, seedGitHubRegistrantIn} {
+	for _, dir := range seedModelDirs(t) {
 		regHelper.Register(registration.NewDir(dir))
 	}
 
@@ -221,7 +258,7 @@ func TestConnectionsAPISeededConnectionsSurviveRestart(t *testing.T) {
 	// A restart: registration runs again, then seeding, exactly as
 	// SeedComponents sequences them.
 	regHelper := registration.NewRegistrationHelper(t.TempDir(), regm, models.NewRegistrationFailureLogHandler())
-	for _, dir := range []string{seedCoreModelDir, seedArtifactHubRegistrantIn, seedGitHubRegistrantIn} {
+	for _, dir := range seedModelDirs(t) {
 		regHelper.Register(registration.NewDir(dir))
 	}
 	models.SeedConnections(log, db, regm)

@@ -8,7 +8,7 @@ setup() {
     mkdir -p "$TESTDATA_DIR"
 }
 
-@test "given missing --type flag when running mesheryctl connection create then it fails displaying error message" {
+@test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] given missing --type flag when running mesheryctl connection create then it fails displaying error message" {
     run $MESHERYCTL_BIN connection create
 
     assert_failure
@@ -16,7 +16,7 @@ setup() {
     assert_output --partial "Use --type flag"
 }
 
-@test "given non valid argument for --type flag when running mesheryctl connection create --type then it fails displaying error message" {
+@test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] given non valid argument for --type flag when running mesheryctl connection create --type then it fails displaying error message" {
     run $MESHERYCTL_BIN connection create --type foo
 
     assert_failure
@@ -25,7 +25,7 @@ setup() {
     assert_output --partial "Error"
 }
 
-@test "given no argument for --type flag when running mesheryctl connection create --type then it fails displaying error message" {
+@test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] given no argument for --type flag when running mesheryctl connection create --type then it fails displaying error message" {
     run $MESHERYCTL_BIN connection create --type
 
     assert_failure
@@ -33,24 +33,26 @@ setup() {
     assert_output --partial "Error"
 }
 
-@test "given valid type minikube is provided when running mesheryctl connection create --type minikube then a new connection is created" {
+@test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] given valid type minikube is provided when running mesheryctl connection create --type minikube then a new connection is created" {
     if ! command -v minikube >/dev/null 2>&1; then
         skip "minikube not installed"
     fi
 
     run $MESHERYCTL_BIN connection create --type minikube
     assert_success
-    assert_output --partial "Minikube connection created" 
+    assert_output --partial "Minikube connection created"
     assert_output --partial "Token set in context minikube"
 
-    #Extract connection ID if present and store it in temp dir
+    # Capture the connection id emitted by `connection create` ("connection_id: <uuid>")
+    # so the view/delete suites can exercise the positive lifecycle against a real
+    # connection. See create.go setToken().
     CONNECTION_ID=$(
         echo "$output" \
-        | grep -o '"connection_id":"[^"]*"' \
+        | grep -oiE 'connection_id: [0-9a-f-]{36}' \
         | head -n1 \
-        | cut -d'"' -f4
-)
-    [ -n "$CONNECTION_ID" ] || skip "No connected connection found"
+        | awk '{print $2}'
+    )
+    [ -n "$CONNECTION_ID" ] || fail "connection create did not emit a connection_id line"
 
     echo "$CONNECTION_ID" > "$TESTDATA_DIR/id"
 }

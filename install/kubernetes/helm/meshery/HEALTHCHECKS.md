@@ -108,12 +108,16 @@ probe:
 
 During troubleshooting, you can manually check health status with verbose output:
 
+The Meshery Server image does not include `curl`, so port-forward to the pod and query the endpoints from your workstation:
+
 ```bash
-# Check liveness with details
-kubectl exec -n meshery deployment/meshery -- curl -s "http://localhost:8080/healthz/live?verbose=1"
+kubectl port-forward -n meshery deployment/meshery 8080:8080
+
+# In another terminal: check liveness with details
+curl -s "http://localhost:8080/healthz/live?verbose=1"
 
 # Check readiness with details
-kubectl exec -n meshery deployment/meshery -- curl -s "http://localhost:8080/healthz/ready?verbose=1"
+curl -s "http://localhost:8080/healthz/ready?verbose=1"
 ```
 
 Example verbose output:

@@ -217,7 +217,8 @@ const ReviewContextsStepBody = ({ ctx }: { ctx: WizardContext }) => {
                 onChange={(event) => updateChoice(context.id, { selected: event.target.checked })}
                 sx={{ p: 0 }}
               />
-              <Box sx={{ flex: 1, minWidth: 0 }}>
+              {/* data-testid anchors each discovered context row for e2e. */}
+              <Box sx={{ flex: 1, minWidth: 0 }} data-testid="connection-wizard-context-row">
                 <TextField
                   variant="standard"
                   fullWidth

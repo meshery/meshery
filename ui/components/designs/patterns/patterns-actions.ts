@@ -24,7 +24,7 @@ export function createPatternsActions(deps) {
     unpublishCatalog,
     deletePattern,
     deletePatternFile,
-    importPattern,
+    importDesign,
     updatePattern,
     uploadPatternFile,
     deployPatternMutation,
@@ -321,8 +321,8 @@ export function createPatternsActions(deps) {
       return;
     }
 
-    importPattern({
-      importBody: importRequest.requestBody,
+    return importDesign({
+      body: importRequest.requestBody,
     })
       .unwrap()
       .then(() => {

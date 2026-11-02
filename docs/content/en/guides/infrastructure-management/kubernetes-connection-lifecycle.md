@@ -35,7 +35,7 @@ running in the cluster.
 
 ## The in-cluster components
 
-In the default **operator** mode, three components run inside the managed cluster
+In **operator** mode, three components run inside the managed cluster
 (namespace `meshery`):
 
 | Component | What it is | What it does |
@@ -47,6 +47,32 @@ In the default **operator** mode, three components run inside the managed cluste
 Each reports a status that surfaces on the connection (for example the Broker and
 MeshSync move to **CONNECTED** once Meshery is actually receiving data). See
 [Understanding the status]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#understanding-the-status-of-meshery-operator-meshsync-and-meshery-broker" >}}).
+
+### Which Operator version gets installed
+
+Meshery Server installs the Operator as a Helm chart from
+[meshery.io/charts](https://meshery.io/charts). The version it asks for tracks
+the Meshery Server release, but the Server checks that version against the
+repository's published index **before** installing, so it never asks Helm for a
+chart that does not exist:
+
+- **Not published yet** (chart publishing trails Server releases): the newest
+  published chart is installed instead.
+- **Too old to run**: a version below the oldest chart verified to deploy is
+  raised to the oldest published chart at or above that boundary.
+- **Release candidates** are never selected automatically.
+
+Neither substitution is silent - each is reported in the events feed, naming
+the version deployed and why. To choose the version yourself for one
+connection, set `operator.version`; an explicit pin is honored exactly, and is
+refused with a visible error if it names a version the repository does not
+publish or a moving tag such as `stable-latest`. Details, including how to
+confirm what is deployed, are in
+[Choosing the chart version yourself]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#choosing-the-chart-version-yourself" >}}).
+
+What the Operator then deploys is pinned by the Operator itself: MeshSync and
+the Broker run specific released versions with pull policies to match, so
+nothing drifts underneath a restart.
 
 ## MeshSync deployment modes
 
@@ -128,13 +154,15 @@ kubectl port-forward -n meshery svc/meshery-nats 4222:4222
 Click a Kubernetes connection's row in the Connections table to open its detail
 view. Alongside the Operator / MeshSync / Broker status chips, a **Diagnostics**
 section reports actionable problems and remediation, computed from the live
-controller status and Meshery's actual Broker connection. Common diagnostics:
+controller status and Meshery's actual Broker connection. The codes it reports:
 
 | Code | Meaning | What to do |
 |---|---|---|
 | `connection_inactive` | No active session for the connection yet. | Connect the cluster. |
+| `operator_deploy_failed` | Meshery tried to deploy the Operator and could not; the underlying cause is carried in the diagnostic. | Read the cause. An unreadable kubeconfig or missing permissions in the `meshery` namespace need fixing first; an unresolvable chart version means the requested `operator.version` is not published, or the chart repository was unreachable. Redeploying the Operator re-resolves the version, so a transient repository outage clears on retry. |
 | `operator_not_deployed` | The Operator isn't deployed (operator mode). | Reconnect the cluster, or switch MeshSync mode; ensure Meshery can create resources in the `meshery` namespace. |
 | `broker_unreachable` | The Broker is up but Meshery can't reach/authenticate to it. | Make the Broker reachable (the managed port-forward normally handles this; otherwise port-forward it, expose it via NodePort/LoadBalancer, or run Meshery in-cluster). |
+| `broker_networking` | Informational: how Meshery reaches the Broker - managed port-forward, in-cluster ClusterIP, or a direct endpoint - and the address in use. | Nothing to fix; it reports the transport behind a Broker that Meshery can see. |
 
 The same diagnostics are available programmatically at
 `GET /api/system/controllers/diagnostics?connectionId=<id>`.

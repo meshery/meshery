@@ -41,7 +41,7 @@ const UnknownServerSideError = (props) => {
 };
 
 const DefaultError = (props) => {
-  const { errorTitle, errorContent, errorType } = props;
+  const { errorTitle, errorContent, errorType, permissionKey } = props;
   const theme = useTheme();
 
   return (
@@ -75,7 +75,7 @@ const DefaultError = (props) => {
             <Typography variant="h5" component="h5" align="center" fontWeight={600}>
               YOUR CURRENT SESSION
             </Typography>
-            <CurrentSessionInfo />
+            <CurrentSessionInfo permissionKey={permissionKey} />
           </ErrorSection>
           <StyledDivider orientation="vertical" flexItem />
           <ErrorSection>
@@ -90,7 +90,7 @@ const DefaultError = (props) => {
                 justifyContent: 'center',
               }}
             >
-              <OrgSwitcher />
+              <OrgSwitcher permissionKey={permissionKey} />
               {/*<Divider />
                 <RequestForm />*/}
             </ErrorSectionContent>
@@ -107,11 +107,8 @@ const DefaultError = (props) => {
       </StyledButton>
       <Typography variant="textB1Regular" component="p" align="center">
         For more help, please inquire on the
-        <ErrorLink href="https://meshery.io/community#community-forums">
-          {' '}
-          discussion forum
-        </ErrorLink>{' '}
-        or the <ErrorLink href="https://slack.meshery.io"> Slack workspace</ErrorLink>.
+        <ErrorLink href="https://discuss.meshery.io"> discussion forum</ErrorLink> or the{' '}
+        <ErrorLink href="https://slack.meshery.io"> Slack workspace</ErrorLink>.
       </Typography>
     </ErrorMain>
   );

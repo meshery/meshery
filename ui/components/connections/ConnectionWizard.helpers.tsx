@@ -1,4 +1,5 @@
 import { CoreConnectionKinds } from '@/utils/Enum';
+import { resolveCredentialAuthSecret } from '@/utils/credentialSecret';
 import { EVENT_TYPES } from 'lib/event-types';
 
 /*
@@ -49,26 +50,17 @@ export const isCreateConnectionQuery = (value: string | string[] | undefined): b
 export type ConnectionCreatedNotifyPayload = {
   message: string;
   event_type: typeof EVENT_TYPES.SUCCESS | typeof EVENT_TYPES.WARNING;
-  link?: { href: string; label: string };
 };
 
-const isOnConnectionsPage = (): boolean =>
-  typeof window !== 'undefined' && window.location.pathname.startsWith(CONNECTIONS_PATH);
-
 /**
- * Success snackbar after create/import. Plain string (BasicMarkdown-safe) plus an
- * optional same-tab action when not already on the Connections page.
+ * Success snackbar after create/import. Plain string (BasicMarkdown-safe).
  */
 export const connectionCreatedNotify = (label: string): ConnectionCreatedNotifyPayload => {
   const name = (label && String(label).trim()) || '';
   const summary = name ? `${name} connection created.` : 'Connection created.';
-  if (isOnConnectionsPage()) {
-    return { message: summary, event_type: EVENT_TYPES.SUCCESS };
-  }
   return {
     message: summary,
     event_type: EVENT_TYPES.SUCCESS,
-    link: { href: CONNECTIONS_PATH, label: 'View connections' },
   };
 };
 
@@ -76,13 +68,9 @@ export const kubernetesImportedNotify = (count: number): ConnectionCreatedNotify
   const noun = count === 1 ? 'connection' : 'connections';
   const summary = `Imported ${count} Kubernetes ${noun}.`;
   const event_type = count > 0 ? EVENT_TYPES.SUCCESS : EVENT_TYPES.WARNING;
-  if (isOnConnectionsPage() || count === 0) {
-    return { message: summary, event_type };
-  }
   return {
     message: summary,
     event_type,
-    link: { href: CONNECTIONS_PATH, label: 'View connections' },
   };
 };
 
@@ -264,11 +252,13 @@ export const normalizeCredentialPayload = (formData?: GenericRecord | null): Gen
 /**
  * Builds the `credentialSecret` payload the registration state machine expects.
  *
- * For an existing credential we must forward the stored secret (nested under
- * `secret.secret`) alongside the id and name, otherwise the backend `register`
- * (verify) step rehydrates an empty `PromCred`/`GrafanaCred` and verification
- * fails for any auth-protected endpoint. For a new credential we pass the
- * normalized form payload, which the backend persists verbatim.
+ * For an existing credential we must forward the stored auth material alongside
+ * the id and name, otherwise the backend `register` (verify) step rehydrates an
+ * empty `PromCred`/`GrafanaCred` and verification fails for any auth-protected
+ * endpoint. Which persisted shape holds that material is not this function's
+ * business - `resolveCredentialAuthSecret` tolerates all of them. For a new
+ * credential we pass the normalized form payload, which the backend persists
+ * verbatim.
  */
 export const buildCredentialSecret = (
   selectedCredential?: CredentialRecord | null,
@@ -278,7 +268,7 @@ export const buildCredentialSecret = (
     return {
       id: selectedCredential.id,
       name: selectedCredential.name,
-      secret: selectedCredential.secret?.secret,
+      secret: resolveCredentialAuthSecret(selectedCredential.secret),
     };
   }
 

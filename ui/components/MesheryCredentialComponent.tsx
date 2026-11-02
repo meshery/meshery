@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Chip,
   CustomColumnVisibilityControl,
   DeleteIcon,
   IconButton,
+  PROMPT_VARIANTS,
   ResponsiveDataTable,
   styled,
   TableCell,
   TableSortLabel,
   Tooltip,
+  useHasPermission,
   useTheme,
 } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from './general/error-404/index';
 import Modal from './shared/Modal/Modal';
+import _PromptComponent, { PromptRef } from './general/PromptComponent';
 import { CON_OPS, CoreConnectionKinds } from '../utils/Enum';
 import Moment from 'react-moment';
 import LoadingScreen from './shared/LoadingState/LoadingComponent';
@@ -77,12 +82,16 @@ interface ColumnMeta {
 }
 
 const MesheryCredentialComponent: React.FC = () => {
-  const { data: credentialsData, isLoading } = useGetCredentialsQuery();
+  const canViewCredentials = useHasPermission(Keys.SecurityManagementViewCredentials);
+  const { data: credentialsData, isLoading } = useGetCredentialsQuery(undefined, {
+    skip: !canViewCredentials,
+  });
   const [createCredential] = useCreateCredentialMutation();
   const [updateCredential] = useUpdateCredentialMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
   const { connectionMetadataState } = useSelector((state: RootState) => state.ui);
 
+  const modalRef = useRef<PromptRef>(null);
   const [formData, setFormData] = useState<CredentialFormData>({});
   const [credModal, setCredModal] = useState<CredentialModalState>({
     open: false,
@@ -293,16 +302,17 @@ const MesheryCredentialComponent: React.FC = () => {
         },
         customBodyRender: (_: unknown, tableMeta: MUIDataTableMeta) => {
           const credentials = credentialsData?.credentials || [];
-          const rowData = credentials[tableMeta.rowIndex] as { id: string } | undefined;
+          const rowData = credentials[tableMeta.rowIndex] as
+            | { id: string; name?: string; type?: string }
+            | undefined;
           return (
             <ActionContainer>
               <Tooltip key={`delete_credential-${tableMeta.rowIndex}`} title="Delete Credential">
                 <IconButton
                   aria-label="delete"
-                  onClick={() =>
-                    handleSubmit({ type: CON_OPS.DELETE, id: rowData?.id || undefined })
-                  }
+                  onClick={(e) => handleDeleteCredentialConfirm(e, rowData)}
                   size="large"
+                  permissionKey={Keys.SecurityManagementDeleteCredential}
                 >
                   <DeleteIcon fill={theme?.palette?.icon?.default} />
                 </IconButton>
@@ -329,6 +339,29 @@ const MesheryCredentialComponent: React.FC = () => {
     draggableColumns: {
       enabled: true,
     },
+  };
+
+  const handleDeleteCredentialConfirm = async (
+    e: React.MouseEvent,
+    rowData?: { id: string; name?: string; type?: string },
+  ): Promise<void> => {
+    e.stopPropagation();
+    if (!rowData?.id || !modalRef.current) {
+      return;
+    }
+
+    const credentialName = rowData.name || rowData.type || 'this credential';
+
+    const response = await modalRef.current.show({
+      title: `Delete Credential?`,
+      subtitle: `Are you sure you want to delete "${credentialName}"? (This action is irreversible and may break dependent connections)`,
+      primaryOption: 'DELETE',
+      variant: PROMPT_VARIANTS.DANGER,
+    });
+
+    if (response === 'DELETE') {
+      handleSubmit({ type: CON_OPS.DELETE, id: rowData.id });
+    }
   };
 
   // control the entire submit
@@ -401,6 +434,10 @@ const MesheryCredentialComponent: React.FC = () => {
     marginTop: '1rem',
   };
 
+  if (!canViewCredentials) {
+    return <DefaultError permissionKey={Keys.SecurityManagementViewCredentials} />;
+  }
+
   if (isLoading) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Credentials" />;
   }
@@ -441,6 +478,7 @@ const MesheryCredentialComponent: React.FC = () => {
         payload={{ type: credModal.actionType, id: credModal.id }}
         submitBtnText="Save"
       />
+      <_PromptComponent ref={modalRef} />
     </div>
   );
 };

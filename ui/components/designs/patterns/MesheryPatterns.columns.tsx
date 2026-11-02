@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, crimson, InfoOutlinedIcon, AccountTreeIcon, EditIcon } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import Moment from 'react-moment';
 import { GetApp as GetAppIcon } from '@/assets/icons';
 import { DoneAll as DoneAllIcon, Public as PublicIcon } from '@/assets/icons';
@@ -53,6 +54,7 @@ export function buildPatternActions({
         handleOpenInConfigurator(rowData.id);
       },
       disabled: !permissions.editDesign,
+      permissionKey: Keys.CatalogManagementEditDesign,
       condition: userCanEdit(rowData),
     },
     {
@@ -63,6 +65,7 @@ export function buildPatternActions({
         handleClone(rowData.id, rowData.name);
       },
       disabled: !permissions.cloneDesign,
+      permissionKey: Keys.CatalogManagementCloneDesign,
       condition: visibility === VISIBILITY.PUBLISHED,
     },
     {
@@ -73,6 +76,7 @@ export function buildPatternActions({
         handleOpenInConfigurator(patterns[tableMeta.rowIndex].id);
       },
       disabled: !permissions.editDesign,
+      permissionKey: Keys.CatalogManagementEditDesign,
       condition: visibility !== VISIBILITY.PUBLISHED,
     },
     {
@@ -82,6 +86,7 @@ export function buildPatternActions({
         openValidateModal(e, rowData.patternFile, rowData.name, rowData.id);
       },
       disabled: !permissions.validateDesign,
+      permissionKey: Keys.CatalogManagementValidateDesign,
     },
     {
       label: 'Dry Run',
@@ -90,6 +95,7 @@ export function buildPatternActions({
         openDryRunModal(e, rowData.patternFile, rowData.name, rowData.id);
       },
       disabled: !permissions.validateDesign,
+      permissionKey: Keys.CatalogManagementValidateDesign,
     },
     {
       label: 'Evaluate',
@@ -99,6 +105,7 @@ export function buildPatternActions({
         handleEvaluateRelationship(rowData);
       },
       disabled: !permissions.evaluateRelationships,
+      permissionKey: Keys.CatalogManagementEvaluateRelationships,
     },
     {
       label: 'Undeploy',
@@ -107,6 +114,7 @@ export function buildPatternActions({
         openUndeployModal(e, rowData.patternFile, rowData.name, rowData.id);
       },
       disabled: !permissions.undeployDesign,
+      permissionKey: Keys.CatalogManagementUndeployDesign,
     },
     {
       label: 'Deploy',
@@ -115,6 +123,7 @@ export function buildPatternActions({
         openDeployModal(e, rowData.patternFile, rowData.name, rowData.id);
       },
       disabled: !permissions.deployDesign,
+      permissionKey: Keys.CatalogManagementDeployDesign,
     },
     {
       label: 'Download',
@@ -123,6 +132,7 @@ export function buildPatternActions({
         handleDesignDownloadModal(e, rowData);
       },
       disabled: !permissions.downloadDesign,
+      permissionKey: Keys.CatalogManagementDownloadADesign,
     },
     {
       label: 'Design Information',
@@ -131,6 +141,7 @@ export function buildPatternActions({
         genericClickHandler(e, () => handleInfoModal(rowData));
       },
       disabled: !permissions.detailsOfDesign,
+      permissionKey: Keys.CatalogManagementDetailsOfDesign,
     },
 
     /* Publish action can be done through Info modal so we might not need separate publish action */
@@ -149,6 +160,7 @@ export function buildPatternActions({
         handleUnpublishModal(e, rowData)();
       },
       disabled: !permissions.unpublishDesign,
+      permissionKey: Keys.CatalogManagementUnpublishDesign,
       condition: visibility === VISIBILITY.PUBLISHED,
     },
   ].filter((action) => action.condition === undefined || action.condition);

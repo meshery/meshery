@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   FormControl,
   FormControlLabel,
@@ -24,6 +24,7 @@ import {
   useGetSelectedWorkspace,
   useUpdateSelectedWorkspaceMutation,
 } from '@/rtk-query/user';
+import { BottomSheetInlineSelect } from './BottomSheetInlineSelect';
 
 export const HoverMenuItem = styled(MenuItem)(({ theme }) => ({
   display: 'flex',
@@ -49,7 +50,7 @@ const WorkspaceIconWrapper = styled('div')(({ theme }) => ({
   },
 }));
 
-function WorkspaceSwitcher({ open, fromMobileView }) {
+function WorkspaceSwitcher({ open, fromMobileView, expanded, onExpandedChange, onMobileSelect }) {
   const { selectedOrganization } = useGetSelectedOrganization();
   const {
     selectedWorkspace: selectedWorkspacePref,
@@ -71,18 +72,25 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
 
   const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
     useUpdateSelectedWorkspaceMutation();
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  // useEffect(() => {
-  //   if (selectedWorkspace?.id) {
-  //     setSelectedWorkspace(selectedWorkspace);
-  //   }
-  // }, [selectedWorkspace, setSelectedWorkspace]);
+  useEffect(() => {
+    if (!open) {
+      setMenuOpen(false);
+    }
+  }, [open]);
 
   const handleChangeWorkspace = (e) => {
+    setMenuOpen(false);
     const newId = e.target.value;
     setSelectedWorkspace(allWorkspaces.find((w) => w.id === newId));
     updateSelectedWorkspace(selectedOrganization.id, newId);
-    openWorkspaceModal(true);
+    onMobileSelect?.();
+    // Mobile UX: selecting a workspace should just switch context and close the sheet.
+    // Desktop UX: selecting should open the workspace explorer modal.
+    if (!fromMobileView) {
+      openWorkspaceModal(true);
+    }
   };
 
   if (workspaceError) {
@@ -93,12 +101,56 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
     return <CircularProgress height="1.5rem" width="1.5rem" />;
   }
 
+  if (fromMobileView) {
+    const workspaceIcon = (
+      <WorkspaceIcon
+        {...iconMedium}
+        fill={theme.palette.icon.default}
+        secondaryFill={theme.palette.icon.default}
+      />
+    );
+
+    return (
+      <NoSsr>
+        {!isLoadingWorkspaces && allWorkspaces?.length > 0 && open && (
+          <BottomSheetInlineSelect
+            data-cy="mesh-adapter-url"
+            value={selectedWorkspace?.id || ''}
+            options={allWorkspaces.map((works) => ({
+              id: works.id,
+              label: works.name,
+            }))}
+            onSelect={(id) => handleChangeWorkspace({ target: { value: id } })}
+            expanded={expanded}
+            onExpandedChange={onExpandedChange}
+            renderOption={(option) => (
+              <>
+                {workspaceIcon}
+                <Box
+                  component="span"
+                  sx={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {option.label}
+                </Box>
+              </>
+            )}
+          />
+        )}
+      </NoSsr>
+    );
+  }
+
   return (
     <NoSsr>
       {!isLoadingWorkspaces && allWorkspaces?.length > 0 && (
         <Grid2
           sx={{
-            width: isSmallScreen ? '80%' : open ? 'auto' : 0,
+            width: isSmallScreen ? '100%' : open ? 'auto' : 0,
+            minWidth: 0,
             overflow: open ? '' : 'hidden',
             transition: 'all 1s',
           }}
@@ -117,6 +169,9 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                     <Grid2 size={{ xs: 12 }} data-cy="mesh-adapter-url">
                       <StyledSelect
                         size="small"
+                        open={menuOpen}
+                        onOpen={() => setMenuOpen(true)}
+                        onClose={() => setMenuOpen(false)}
                         value={selectedWorkspace?.id || ''}
                         onChange={(e) => {
                           if (e.target.value !== selectedWorkspace?.id) {
@@ -132,17 +187,9 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                             paddingInline: '18px 34px',
                           },
                         }}
-                        renderValue={() => {
-                          return (
-                            <span
-                              style={{
-                                color: fromMobileView ? theme.palette.text.default : undefined,
-                              }}
-                            >
-                              {selectedWorkspace?.name || 'Private Workspace'}
-                            </span>
-                          );
-                        }}
+                        renderValue={() => (
+                          <span>{selectedWorkspace?.name || 'Private Workspace'}</span>
+                        )}
                         MenuProps={{
                           anchorOrigin: {
                             vertical: 'bottom',
@@ -153,6 +200,7 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                             horizontal: 'left',
                           },
                           getContentAnchorEl: null,
+                          style: { zIndex: theme.zIndex.modal + 200 },
                         }}
                       >
                         {allWorkspaces?.map((works) => (
@@ -172,11 +220,20 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                           </HoverMenuItem>
                         ))}
                         <Divider />
-                        <Box sx={{ gap: 2, px: 2, display: 'flex' }}>
+                        <Box
+                          sx={{
+                            gap: 2,
+                            px: 2,
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                          }}
+                        >
                           <Button
                             variant="contained"
                             onClick={(e) => {
                               e.stopPropagation();
+                              setMenuOpen(false);
                               openWorkspaceModal(true);
                             }}
                             permissionKey={Keys.WorkspaceManagementViewWorkspace}
@@ -187,6 +244,7 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                             variant="outlined"
                             onClick={(e) => {
                               e.stopPropagation();
+                              setMenuOpen(false);
                               setSelectedWorkspace({
                                 id: 'All Workspaces',
                                 name: 'All Workspaces',

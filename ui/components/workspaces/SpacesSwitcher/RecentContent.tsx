@@ -222,7 +222,7 @@ const RecentContent = () => {
           {/* Import Button */}
           {filters.type === RESOURCE_TYPE.DESIGN && (
             <Grid2 size={{ xs: 6, sm: 3, md: 3, lg: 1 }}>
-              <ImportButton refetch={refetch} />
+              <ImportButton refetch={refetch} permissionKey={Keys.CatalogManagementImportDesign} />
             </Grid2>
           )}
         </Grid2>

@@ -29,7 +29,6 @@ Sistent leverages Material UI libraries and provides a custom theme on top of it
 
 - [Usage](#usage)
 - [How to use Sistent tokens/theme colors](#how-to-use-tokenscolors-from-sistent-theme)
-- [Examples](#examples)
 
 The Sistent design system includes a variety of base components such as `Button`, `Textfield`, `Checkbox`, and more. These components are designed to be flexible and customizable, allowing developers to easily adapt them to their specific needs while maintaining a consistent design language across the application.
 

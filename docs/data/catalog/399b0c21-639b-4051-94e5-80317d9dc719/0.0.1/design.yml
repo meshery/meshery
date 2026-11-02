@@ -1,0 +1,422 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "Twenty CRM Deployment",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.1",
+  "components": [
+    {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "schemaVersion": "",
+      "version": "",
+      "displayName": "",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "",
+        "registrant": {
+          "kind": ""
+        },
+        "version": ""
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "twenty-postgres"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "twenty-postgres"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "POSTGRES_USER",
+                      "value": "twenty"
+                    },
+                    {
+                      "name": "POSTGRES_PASSWORD",
+                      "value": "twenty_password"
+                    },
+                    {
+                      "name": "POSTGRES_DB",
+                      "value": "twenty"
+                    }
+                  ],
+                  "image": "pgvector/pgvector:pg16",
+                  "name": "postgres",
+                  "ports": [
+                    {
+                      "containerPort": 5432
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "",
+        "kind": "",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "schemaVersion": "",
+      "version": "",
+      "displayName": "",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "",
+        "registrant": {
+          "kind": ""
+        },
+        "version": ""
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "spec": {
+          "ports": [
+            {
+              "port": 5432,
+              "targetPort": 5432
+            }
+          ],
+          "selector": {
+            "app": "twenty-postgres"
+          }
+        }
+      },
+      "component": {
+        "version": "",
+        "kind": "",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "schemaVersion": "",
+      "version": "",
+      "displayName": "",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "",
+        "registrant": {
+          "kind": ""
+        },
+        "version": ""
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "twenty-redis"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "twenty-redis"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "redis:7-alpine",
+                  "name": "redis",
+                  "ports": [
+                    {
+                      "containerPort": 6379
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "",
+        "kind": "",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "schemaVersion": "",
+      "version": "",
+      "displayName": "",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "",
+        "registrant": {
+          "kind": ""
+        },
+        "version": ""
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "spec": {
+          "ports": [
+            {
+              "port": 6379,
+              "targetPort": 6379
+            }
+          ],
+          "selector": {
+            "app": "twenty-redis"
+          }
+        }
+      },
+      "component": {
+        "version": "",
+        "kind": "",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "schemaVersion": "",
+      "version": "",
+      "displayName": "",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "",
+        "registrant": {
+          "kind": ""
+        },
+        "version": ""
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "twenty-app"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "twenty-app"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "PORT",
+                      "value": "3000"
+                    },
+                    {
+                      "name": "NODE_ENV",
+                      "value": "production"
+                    },
+                    {
+                      "name": "PG_DATABASE_URL",
+                      "value": "postgresql://twenty:twenty_password@twenty-postgres-service:5432/twenty"
+                    },
+                    {
+                      "name": "REDIS_URL",
+                      "value": "redis://twenty-redis-service:6379"
+                    },
+                    {
+                      "name": "APP_SECRET",
+                      "value": "f3a8b291c04e47d2b8e99a12c4567890e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6"
+                    },
+                    {
+                      "name": "JWT_SECRET",
+                      "value": "9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c"
+                    },
+                    {
+                      "name": "SERVER_URL",
+                      "value": "http://localhost:3000"
+                    },
+                    {
+                      "name": "FRONTEND_URL",
+                      "value": "http://localhost:3000"
+                    }
+                  ],
+                  "image": "twentycrm/twenty:latest",
+                  "name": "twenty",
+                  "ports": [
+                    {
+                      "containerPort": 3000
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "",
+        "kind": "",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "schemaVersion": "",
+      "version": "",
+      "displayName": "",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "",
+        "registrant": {
+          "kind": ""
+        },
+        "version": ""
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "spec": {
+          "ports": [
+            {
+              "nodePort": 30300,
+              "port": 3000,
+              "targetPort": 3000
+            }
+          ],
+          "selector": {
+            "app": "twenty-app"
+          },
+          "type": "NodePort"
+        }
+      },
+      "component": {
+        "version": "",
+        "kind": "",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "relationships": null
+}

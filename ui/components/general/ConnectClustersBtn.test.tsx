@@ -18,8 +18,13 @@ vi.mock('@/utils/context/ConnectionWizardContextProvider', () => ({
 
 vi.mock('@sistent/sistent', () => ({
   AddCircleIcon: (props: any) => <svg data-testid="add-icon" {...props} />,
-  Button: ({ children, onClick, ...props }: any) => (
-    <button type="button" onClick={onClick} {...props}>
+  Button: ({ children, onClick, permissionKey, ...props }: any) => (
+    <button
+      type="button"
+      onClick={onClick}
+      data-permission-key={permissionKey?.id ?? ''}
+      {...props}
+    >
       {children}
     </button>
   ),
@@ -52,5 +57,12 @@ describe('ConnectClustersBtn', () => {
     render(<ConnectClustersBtn />);
     expect(screen.getByText(/Connect Clusters/i)).toBeInTheDocument();
     expect(screen.getByTestId('add-icon')).toBeInTheDocument();
+  });
+
+  it('passes the LifecycleManagementAddCluster permission key to the Button', () => {
+    render(<ConnectClustersBtn />);
+    const button = screen.getByRole('button', { name: /Connect Clusters/i });
+    expect(button).toHaveAttribute('data-permission-key');
+    expect(button.getAttribute('data-permission-key')).not.toBe('');
   });
 });

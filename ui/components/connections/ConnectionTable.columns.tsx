@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import {
   Box,
   IconButton,
-  Grid2,
   TableCell,
   InfoOutlinedIcon,
   MoreVertIcon,
@@ -97,6 +96,10 @@ type UseConnectionColumnsArgs = {
   ping: (name: string, server: string, id: string) => void;
   pingGrafana: (connectionID: string, name?: string) => void;
   pingPrometheus: (connectionID: string, name?: string) => void;
+  // meshery-kind connections have no by-id server ping endpoint (schemas only
+  // defines pingKubernetes), so this probes the connection's own recorded
+  // serverLocation from the browser — see useMesheryPingHook.
+  pingMeshery: (serverLocation?: string, name?: string) => void;
   // Per-kind connection state machine, keyed by connection kind. Sourced from
   // the connection definitions' `transitionMap` (see `_app.tsx`).
   transitionMapByKind: Record<string, ConnectionTransitionMap | undefined> | null;
@@ -115,6 +118,7 @@ export const useConnectionColumns = ({
   ping,
   pingGrafana,
   pingPrometheus,
+  pingMeshery,
   transitionMapByKind,
 }: UseConnectionColumnsArgs) => {
   const canAssignConnectionsToEnv = useHasPermission(
@@ -206,6 +210,10 @@ export const useConnectionColumns = ({
                   connectionId,
                   getColumnValue(tableMeta.rowData, 'name', nextColumns),
                 );
+            } else if (kind === CoreConnectionKinds.meshery) {
+              // `server` resolves metadata.serverLocation (camelCase, current
+              // records) or the legacy snake_case sibling for meshery rows.
+              handlePing = () => pingMeshery(server, value || name || kind);
             }
 
             return (
@@ -258,41 +266,53 @@ export const useConnectionColumns = ({
             );
           },
           customBodyRender: (value, tableMeta) => {
+            // Skip nameless envs — id-as-label painted UUID/black chips.
             const cleanedEnvs =
-              value?.map((environment) => ({
-                label: environment.name,
-                value: environment.id,
-              })) || [];
+              value
+                ?.filter((environment) => environment?.id && String(environment?.name ?? '').trim())
+                .map((environment) => ({
+                  label: String(environment.name).trim(),
+                  value: environment.id,
+                })) || [];
 
             return (
               isEnvironmentsSuccess && (
-                <div onClick={(event) => event.stopPropagation()}>
-                  <Grid2 size={{ xs: 12 }} style={{ height: '5rem', width: '15rem' }}>
-                    <Grid2 size={{ xs: 12 }} style={{ marginTop: '2rem', cursor: 'pointer' }}>
-                      <MultiSelectWrapper
-                        updating={updatingConnection.current}
-                        onChange={(selected, unselected) =>
-                          handleEnvironmentSelect(
-                            getColumnValue(tableMeta.rowData, 'id', nextColumns),
-                            getColumnValue(tableMeta.rowData, 'name', nextColumns),
-                            cleanedEnvs,
-                            selected,
-                            unselected,
-                          )
-                        }
-                        options={environmentOptions}
-                        value={cleanedEnvs}
-                        placeholder={`Select or create an environment`}
-                        noOptionsMessage={() =>
-                          'No matching environments. Type to create a new one.'
-                        }
-                        isSelectAll={true}
-                        menuPlacement={'bottom'}
-                        disabled={!canAssignConnectionsToEnv}
-                      />
-                    </Grid2>
-                  </Grid2>
-                </div>
+                <Box
+                  onClick={(event) => event.stopPropagation()}
+                  sx={{
+                    width: '15rem',
+                    minHeight: '5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Box sx={{ width: '100%' }}>
+                    <MultiSelectWrapper
+                      updating={updatingConnection.current}
+                      disabled={!canAssignConnectionsToEnv}
+                      onChange={(selected, unselected) =>
+                        handleEnvironmentSelect(
+                          getColumnValue(tableMeta.rowData, 'id', nextColumns),
+                          getColumnValue(tableMeta.rowData, 'name', nextColumns),
+                          cleanedEnvs,
+                          selected,
+                          unselected,
+                        )
+                      }
+                      options={environmentOptions}
+                      value={cleanedEnvs}
+                      placeholder="Select or create..."
+                      noOptionsMessage={({ inputValue }) =>
+                        inputValue?.trim()
+                          ? 'No matching environments. Type to create a new one.'
+                          : null
+                      }
+                      isSelectAll={true}
+                      menuPlacement={'bottom'}
+                    />
+                  </Box>
+                </Box>
               )
             );
           },
@@ -543,6 +563,7 @@ export const useConnectionColumns = ({
     ping,
     pingGrafana,
     pingPrometheus,
+    pingMeshery,
     transitionMapByKind,
     updatingConnection,
     url,

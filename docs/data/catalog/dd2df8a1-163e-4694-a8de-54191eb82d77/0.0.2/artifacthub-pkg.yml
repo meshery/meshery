@@ -1,0 +1,20 @@
+version: 0.0.2
+name: kubernetes-web-application
+displayName: Kubernetes Web Application
+createdAt: "2026-08-17T14:23:10Z"
+description: A simple Kubernetes web application architecture using an NGINX Deployment and a ClusterIP Service. The Deployment runs two NGINX replicas, while the Service provides internal network access to the application pods.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/dd2df8a1-163e-4694-a8de-54191eb82d77/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This design is intended as a simple reference architecture for a Kubernetes web application. The NGINX image uses the latest tag for demonstration purposes and should be pinned to a specific version for production deployments. The Service uses ClusterIP and is therefore accessible only within the Kubernetes cluster. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9de5afba-b9d0-458d-90c3-20e52297b2bc
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

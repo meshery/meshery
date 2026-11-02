@@ -1,5 +1,5 @@
 import { FormControl, MenuItem } from '@sistent/sistent';
-import { ConnectionStyledSelect } from './styles';
+import { ConnectionStyledSelect, ConnectionStyledMenuItem } from './styles';
 import { ConnectionStateChip } from './ConnectionChip';
 import { getNextStates, type ConnectionTransitionMap } from './ConnectionTable.constants';
 
@@ -25,8 +25,9 @@ export const ConnectionStatusSelect = ({
   disabled,
   onChange,
 }: ConnectionStatusSelectProps) => {
-  const options = getNextStates(transitionMap, status);
-  options.push(status);
+  // Only the reachable next states go into the menu; current status is
+  // shown in the closed trigger via renderValue.
+  const nextStates = getNextStates(transitionMap, status);
 
   return (
     <FormControl sx={{ width: 'fit-content' }}>
@@ -35,32 +36,28 @@ export const ConnectionStatusSelect = ({
         id="connection-status-select"
         disabled={disabled}
         value={status}
-        defaultValue={status}
+        // renderValue owns the closed-trigger chip; menu options are next-states only.
+        renderValue={(value) => <ConnectionStateChip status={value as string} actionable={false} />}
         onClick={(event) => event.stopPropagation()}
         onChange={(event) => onChange(event.target.value as string)}
         disableUnderline
         MenuProps={{
           anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
           transformOrigin: { vertical: 'top', horizontal: 'left' },
-          getContentAnchorEl: null,
-          MenuListProps: { disablePadding: true },
+          // sx owns list padding; no disablePadding conflict.
+          sx: { '& .MuiList-root': { padding: '4px' } },
           PaperProps: { square: true },
         }}
       >
-        {options.length === 1 && <MenuItem disabled>No transitions Available</MenuItem>}
-        {options.map((option) => (
-          <MenuItem
-            disabled={option === status}
-            style={{
-              padding: 0,
-              display: option === status ? 'none' : 'flex',
-              justifyContent: 'center',
-            }}
-            value={option}
-            key={option}
-          >
-            <ConnectionStateChip status={option} actionable={option !== status} />
+        {nextStates.length === 0 && (
+          <MenuItem disabled sx={{ padding: '4px 8px' }}>
+            No transitions available
           </MenuItem>
+        )}
+        {nextStates.map((option) => (
+          <ConnectionStyledMenuItem value={option} key={option}>
+            <ConnectionStateChip status={option} actionable />
+          </ConnectionStyledMenuItem>
         ))}
       </ConnectionStyledSelect>
     </FormControl>

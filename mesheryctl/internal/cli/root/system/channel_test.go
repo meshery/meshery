@@ -1,11 +1,17 @@
 package system
 
 import (
+	"bytes"
+	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -65,6 +71,100 @@ func TestViewCmd(t *testing.T) {
 	}
 }
 
+// TestSetCmdWritesToTheActiveConfigNotTheSharedFixture pins the invariant that
+// keeps `go test ./mesheryctl/...` deterministic: pkg/utils/TestConfig.yaml is
+// read by every mesheryctl test package, those packages run as concurrent
+// processes, and viper.WriteConfig truncates before it rewrites. A sibling
+// package reading the fixture inside that truncate window parsed an empty
+// document without error and exited its whole test binary from
+// GetBaseMesheryURL's Log.Fatal, which surfaced as a bare package-level FAIL
+// naming no test.
+//
+// `channel set edge` is used rather than `stable` precisely because it differs
+// from the fixture, so a write that reaches the shared file changes its bytes
+// instead of rewriting them identically.
+func TestSetCmdWritesToTheActiveConfigNotTheSharedFixture(t *testing.T) {
+	fixture := utils.SharedTestConfigPath(t)
+	before, err := os.ReadFile(fixture)
+	if err != nil {
+		t.Fatalf("unable to read shared meshconfig fixture: %v", err)
+	}
+	info, err := os.Stat(fixture)
+	if err != nil {
+		t.Fatalf("unable to stat shared meshconfig fixture: %v", err)
+	}
+	t.Cleanup(func() {
+		// A regression here corrupts the fixture for every other package, so
+		// put it back rather than letting one failure cascade.
+		after, err := os.ReadFile(fixture)
+		if err != nil || bytes.Equal(before, after) {
+			return
+		}
+
+		// Put it back by rename rather than by writing it in place. Writing
+		// truncates first, and a sibling package reading the fixture inside
+		// that window is the very failure this test exists to prevent - the
+		// repair must not reproduce it.
+		restored, err := os.CreateTemp(filepath.Dir(fixture), ".TestConfig.yaml-restore-*")
+		if err != nil {
+			t.Errorf("unable to create the meshconfig fixture restore file: %v", err)
+			return
+		}
+		defer func() { _ = os.Remove(restored.Name()) }()
+
+		if _, err := restored.Write(before); err != nil {
+			_ = restored.Close()
+			t.Errorf("unable to write the meshconfig fixture restore file: %v", err)
+			return
+		}
+
+		if err := restored.Close(); err != nil {
+			t.Errorf("unable to close the meshconfig fixture restore file: %v", err)
+			return
+		}
+
+		if err := os.Chmod(restored.Name(), info.Mode().Perm()); err != nil {
+			t.Errorf("unable to set the mode of the meshconfig fixture restore file: %v", err)
+			return
+		}
+
+		if err := os.Rename(restored.Name(), fixture); err != nil {
+			t.Errorf("unable to restore shared meshconfig fixture: %v", err)
+		}
+	})
+
+	setupContextTestEnv(t)
+	t.Cleanup(BreakupFunc)
+	active := viper.ConfigFileUsed()
+
+	buf := setupSystemOutCmdTest(t)
+	SystemCmd.SetArgs([]string{"channel", "set", "edge", "-c", "local"})
+	if err := SystemCmd.Execute(); err != nil {
+		t.Fatalf("channel set: %v", err)
+	}
+	assert.Equal(t, "Channel set to edge-latest\n", buf.String())
+
+	after, err := os.ReadFile(fixture)
+	if err != nil {
+		t.Fatalf("unable to re-read shared meshconfig fixture: %v", err)
+	}
+	assert.Equal(t, string(before), string(after),
+		"`channel set` wrote through to the shared meshconfig fixture %s; every mesheryctl test package reads that file concurrently", fixture)
+
+	// The write still has to land somewhere, or this passes for the wrong reason.
+	assert.NotEqual(t, fixture, active)
+	written := viper.New()
+	written.SetConfigFile(active)
+	if err := written.ReadInConfig(); err != nil {
+		t.Fatalf("unable to read the active meshconfig %v: %v", active, err)
+	}
+	persisted, err := config.GetMesheryCtl(written)
+	if err != nil {
+		t.Fatalf("unable to decode the active meshconfig: %v", err)
+	}
+	assert.Equal(t, "edge", persisted.Contexts["local"].Channel)
+}
+
 func TestSetCmd(t *testing.T) {
 	setupContextTestEnv(t)
 	tests := []CmdTestInput{
@@ -98,6 +198,149 @@ func TestSetCmd(t *testing.T) {
 		})
 	}
 	t.Log("Set ChannelCmd Passed")
+}
+
+func TestChannelArgsValidation(t *testing.T) {
+	setupContextTestEnv(t)
+	t.Cleanup(BreakupFunc)
+
+	tests := []struct {
+		name          string
+		cmd           *cobra.Command
+		cliArgs       []string
+		args          []string
+		wantErr       bool
+		expectedError string
+	}{
+		// Rejection paths - switch
+		{
+			name:          "switch with no args fails in Args validation",
+			cmd:           switchCmd,
+			cliArgs:       []string{"channel", "switch"},
+			args:          []string{},
+			wantErr:       true,
+			expectedError: "Only one release channel can be specified as an argument",
+		},
+		{
+			name:          "switch with invalid channel fails in Args validation before PreRunE or confirmation",
+			cmd:           switchCmd,
+			cliArgs:       []string{"channel", "switch", "bogus"},
+			args:          []string{"bogus"},
+			wantErr:       true,
+			expectedError: "Invalid release channel",
+		},
+		{
+			name:          "switch with invalid edge version fails in Args validation",
+			cmd:           switchCmd,
+			cliArgs:       []string{"channel", "switch", "edge-v1.0.0"},
+			args:          []string{"edge-v1.0.0"},
+			wantErr:       true,
+			expectedError: "Invalid edge release version",
+		},
+
+		// Acceptance paths - switch
+		{
+			name:    "switch with valid stable channel passes Args validation",
+			cmd:     switchCmd,
+			args:    []string{"stable"},
+			wantErr: false,
+		},
+		{
+			name:    "switch with valid stable version passes Args validation",
+			cmd:     switchCmd,
+			args:    []string{"stable-v0.7.0"},
+			wantErr: false,
+		},
+		{
+			name:    "switch with valid edge-latest passes Args validation",
+			cmd:     switchCmd,
+			args:    []string{"edge-latest"},
+			wantErr: false,
+		},
+		{
+			name:    "switch with valid edge channel passes Args validation",
+			cmd:     switchCmd,
+			args:    []string{"edge"},
+			wantErr: false,
+		},
+
+		// Rejection paths - set
+		{
+			name:          "set with no args fails in Args validation",
+			cmd:           setCmd,
+			cliArgs:       []string{"channel", "set"},
+			args:          []string{},
+			wantErr:       true,
+			expectedError: "Only one release channel can be specified as an argument",
+		},
+		{
+			name:          "set with invalid channel fails in Args validation",
+			cmd:           setCmd,
+			cliArgs:       []string{"channel", "set", "bogus"},
+			args:          []string{"bogus"},
+			wantErr:       true,
+			expectedError: "Invalid release channel",
+		},
+		{
+			name:          "set with invalid edge version fails in Args validation",
+			cmd:           setCmd,
+			cliArgs:       []string{"channel", "set", "edge-v1.0.0"},
+			args:          []string{"edge-v1.0.0"},
+			wantErr:       true,
+			expectedError: "Invalid edge release version",
+		},
+
+		// Acceptance paths - set
+		{
+			name:    "set with valid stable channel passes Args validation",
+			cmd:     setCmd,
+			args:    []string{"stable"},
+			wantErr: false,
+		},
+		{
+			name:    "set with valid stable version passes Args validation",
+			cmd:     setCmd,
+			args:    []string{"stable-v0.7.0"},
+			wantErr: false,
+		},
+		{
+			name:    "set with valid edge-latest passes Args validation",
+			cmd:     setCmd,
+			args:    []string{"edge-latest"},
+			wantErr: false,
+		},
+		{
+			name:    "set with valid edge channel passes Args validation",
+			cmd:     setCmd,
+			args:    []string{"edge"},
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Verify Args validation directly
+			err := tt.cmd.Args(tt.cmd, tt.args)
+			if tt.wantErr {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.expectedError)
+			} else {
+				assert.NoError(t, err)
+			}
+
+			// If cliArgs is provided and we expect an error, verify SystemCmd execution rejects upfront
+			if len(tt.cliArgs) > 0 && tt.wantErr {
+				buf := setupSystemOutCmdTest(t)
+				defer buf.Reset()
+
+				SystemCmd.SetArgs(tt.cliArgs)
+				execErr := SystemCmd.Execute()
+				assert.Error(t, execErr)
+				assert.Contains(t, execErr.Error(), tt.expectedError)
+				BreakupFunc()
+			}
+		})
+	}
 }
 
 //UNDER REVIEW

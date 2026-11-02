@@ -12,50 +12,110 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# ---------------------------------------------------------------------------
+# SHARED TEMPLATE — PROPAGATE CHANGES
+#
+# This Makefile is a shared template. Any change to a main recipe below must be
+# mirrored in the corresponding Makefile of each repository listed here:
+#
+#   - https://github.com/layer5io/docs
+#   - https://github.com/meshery/meshery/tree/master/docs
+#   - https://github.com/topics/meshery-academy
+#
+# Target names, prerequisites, and the npm scripts they call form the shared
+# contract; keep them identical across repositories. The Docker section,
+# theme-update, the check-go implementation, and any extra check-deps guards are
+# per-repository adaptations and are expected to differ.
+#
+# MAIN TARGETS
+#
+#   setup              Install site dependencies (npm install).
+#   build              Build locally with draft, future, and expired content.
+#   build-preview      Build for a deploy preview (uses DEPLOY_PRIME_URL).
+#   build-production   Build for production. Pass BASE_URL=... to set the base URL.
+#   site               Serve locally with live reload.
+#   serve              Serve locally once, file watcher off (no live reload).
+#   clean              Empty the build cache, reinstall dependencies, run 'site'.
+#   lint / lint-fix    Check or auto-fix Markdown linting issues.
+#   check-links        Check internal links in the built site.
+#   check-deps         Verify required commands and local dependencies.
+#   check-go           Verify Go is installed (required by Hugo Modules).
+#
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# MAINTENANCE: Show help for available targets
+# ---------------------------------------------------------------------------
+
+## Verify required commands and local dependencies are present.
+check-deps:
+	@echo "Checking if 'npm', local 'sass', and local 'hugo' binary are present..."
+	@command -v npm > /dev/null || { echo "Error: 'npm' not found. Please install Node.js and npm."; exit 1; }
+	@command -v sass > /dev/null || { echo "Error: Dart Sass not found. See https://gohugo.io/functions/css/sass/#dart-sass"; exit 1; }
+	@test -x node_modules/.bin/hugo || { echo "Error: Hugo binary not found in node_modules. Please run 'make setup' first."; exit 1; }
+	@echo "Dependencies check passed."
+
+## Validate Go is installed by delegating to the root Makefile check.
+check-go:
+	@$(MAKE) -C .. check-go
+
+## Check internal links in the built site.
+check-links: check-go check-deps
+	npm run check:links
+
+## Check Markdown for linting issues.
+lint: check-deps
+	npm run lint
+
+## Fix Markdown linting issues.
+lint-fix: check-deps
+	npm run lint:fix
+
+# ---------------------------------------------------------------------------
+# LOCAL BUILDS: Show help for available targets
+# ---------------------------------------------------------------------------
 
 ## Install docs.meshery.io dependencies on your local machine.
 ## See https://gohugo.io/categories/installation
 setup:
 	npm install
 
-## Verify required commands and local dependencies are present.
-check-deps:
-	@echo "Checking if 'npm' and local 'hugo' binary are present..."
-	@command -v npm > /dev/null || { echo "Error: 'npm' not found. Please install Node.js and npm."; exit 1; }
-	@test -x node_modules/.bin/hugo || { echo "Error: Hugo binary not found in node_modules. Please run 'make setup' first."; exit 1; }
-	@echo "Dependencies check passed."
-
-## Run docs.meshery.io on your local machine with draft and future content enabled.
-site: check-deps check-go
-	npm run dev:site
-
-## Run docs.meshery.io on your local machine in serve mode (without file watching).
-serve: check-deps check-go
-	npm run dev:serve
-
 ## Build docs.meshery.io on your local machine.
-build: check-deps check-go
-	npm run dev:build
+build: check-go check-deps
+	npm run build
+
+## Build docs.meshery.io for a deploy preview.
+build-preview: check-go check-deps
+	npm run build:preview
 
 ## Build docs.meshery.io for production with optional base URL.
-build-production: check-deps
+build-production: check-go check-deps
 	set -e; \
 	if [ -n "$(BASE_URL)" ]; then \
 		base_url="$(BASE_URL)"; \
 		base_url="$${base_url%/}/"; \
-		npm run build:production -- --gc --baseURL "$$base_url"; \
+		npm run build:production -- --baseURL "$$base_url"; \
 	else \
-		npm run build:production -- --gc; \
+		npm run build:production; \
 	fi
 
-## Empty build cache and run docs.meshery.io on your local machine.
-clean: check-deps
-	npm run dev:clean
+## Build and run docs.meshery.io on your local machine (draft and future content enabled).
+site: check-go check-deps
+	npm run site
+
+## Build and serve docs.meshery.io on your local machine (without file watching).
+serve: check-go check-deps
+	npm run serve
+
+## Empty the build cache, reinstall dependencies, and run docs.meshery.io locally.
+clean:
+	npm run clean
+	$(MAKE) setup
 	$(MAKE) site
 
-## Validate Go is installed by delegating to the root Makefile check.
-check-go:
-	@$(MAKE) -C .. check-go
+# ---------------------------------------------------------------------------
+# DOCKER: Show help for available targets
+# ---------------------------------------------------------------------------
 
 ## Install base OS dependencies needed in Docker-based docs builds.
 docker-install-base-deps:
@@ -132,12 +192,16 @@ docker:
 
 .PHONY: \
 	setup \
-	check-deps \
 	build \
+	build-preview \
 	build-production \
 	site \
 	serve \
 	clean \
+	check-links \
+	lint \
+	lint-fix \
+	check-deps \
 	check-go \
 	docker \
 	docker-install-base-deps \

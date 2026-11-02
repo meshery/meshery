@@ -159,6 +159,15 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		}
 	}()
 
+	// Read the server-wide defaults once for the whole import: every context
+	// resolves its inherited mode against the same layer, and a failure here
+	// must not silently become "no default", which would make every context
+	// look like it diverges and pin an override on all of them.
+	registrationServerDefaults, serverDefaultsErr := models.GetControllersConfigDefaults(h.dbHandler)
+	if serverDefaultsErr != nil {
+		h.log.Error(serverDefaultsErr)
+	}
+
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	// TODO:
 	// when new api with param "contexts" will be addopted,
@@ -184,12 +193,45 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		// Create context-specific metadata with appropriate meshsync deployment
 		// mode. Resolve the mode before any rename so the lookup still keys off
 		// the discovered context ID.
-		k8sContextsMetadata := make(map[string]any, 1)
-		meshsyncMode := getMeshsyncModeForContext(ctx)
-		connections.SetMeshsyncDeploymentModeToMetadata(
-			k8sContextsMetadata,
-			connections.MeshsyncDeploymentModeFromString(meshsyncMode),
-		)
+		//
+		// A mode that DIVERGES from what this connection would inherit is an
+		// explicit per-context choice, so it is stored where every explicit
+		// choice is stored - the layered controllers-configuration override -
+		// and materialized into meshsync_deployment_mode for the consumers that
+		// read that cache.
+		//
+		// A mode that MATCHES the inherited one is not recorded as an override.
+		// The wizard's picker is pre-selected rather than empty, so a mode
+		// arrives on every import and the server cannot tell a deliberate choice
+		// from an untouched default. Pinning both meant every newly registered
+		// connection carried an override, and an override does not follow the
+		// server-wide default - which would have made a default set in Settings
+		// reach almost nothing. See ShouldRecordDeploymentModeOverride.
+		k8sContextsMetadata := make(map[string]any, 2)
+		meshsyncMode := connections.MeshsyncDeploymentModeFromString(getMeshsyncModeForContext(ctx))
+		inheritedMode := connections.ResolveDeploymentMode(registrationServerDefaults, nil, h.MeshsyncDefaultDeploymentMode).Mode
+		if connections.ShouldRecordDeploymentModeOverride(meshsyncMode, inheritedMode) {
+			if modeErr := connections.SetDeploymentModeOverride(k8sContextsMetadata, meshsyncMode); modeErr != nil {
+				// Recording the choice in only one of the two stores is exactly
+				// the divergence this write-through exists to prevent, so the
+				// context is reported as errored rather than imported with a
+				// mode the controllers editor would contradict.
+				h.log.Error(modeErr)
+				saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
+				metadata["description"] = fmt.Sprintf("Unable to record the MeshSync deployment mode for context \"%s\" at %s", ctx.Name, ctx.Server)
+				metadata["error"] = modeErr
+				event := eventBuilder.WithSeverity(events.Error).WithDescription(metadata["description"].(string)).WithMetadata(metadata).Build()
+				_ = provider.PersistEvent(*event, token)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				continue
+			}
+		}
+		// The cache reflects what the connection runs, override or not, so the
+		// pre-layered consumers (state machine, header chips, kubeconfig flows)
+		// see the truth either way.
+		if meshsyncMode != connections.MeshsyncDeploymentModeUndefined {
+			connections.MaterializeMeshsyncDeploymentMode(k8sContextsMetadata, meshsyncMode)
+		}
 
 		// Apply an optional name override. The identity is derived from the name,
 		// so regenerate the context ID to keep the struct's ID in sync with the

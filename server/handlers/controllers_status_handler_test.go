@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"sort"
 	"strings"
 	"testing"
 	"time"
@@ -13,6 +14,7 @@ import (
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/core"
+	system "github.com/meshery/schemas/models/v1beta1/system"
 )
 
 // trackerWith builds an instance tracker holding a single connection->machine
@@ -113,6 +115,83 @@ func TestMachineCtxForConnection(t *testing.T) {
 				t.Fatalf("expected the tracked machine context to be returned, got %#v", ctx)
 			}
 		})
+	}
+}
+
+// TestCollectControllersStatus_EveryControllerRowSurvivesMissingHandlers: the
+// SSE snapshot is the complete controller list and the client replaces its
+// state with it wholesale, so a controller missing from the snapshot is a card
+// that disappears from the UI rather than one that reports a problem.
+//
+// No handler is attached whenever Meshery could not build one - an unreadable
+// kubeconfig or a failed Kubernetes client take out all three, and an
+// unresolvable Meshery Operator chart version takes out the operator - which is
+// exactly when those cards have something to say. Every controller must get a
+// row carrying an existing status value; the reason belongs to the connection
+// diagnostics, not to this payload.
+func TestCollectControllersStatus_EveryControllerRowSurvivesMissingHandlers(t *testing.T) {
+	connID := uuid.Must(uuid.NewV4())
+	// A controllers helper with no attached handlers at all: the widest case,
+	// covering kubeconfig failure, client-creation failure, and withheld
+	// operator lifecycle alike.
+	mctx := &kubernetes.MachineCtx{MesheryCtrlsHelper: &models.MesheryControllersHelper{}}
+
+	h := &Handler{
+		config:                                  &models.HandlerConfig{},
+		log:                                     newTestLogger(t),
+		ConnectionToStateMachineInstanceTracker: trackerWith(connID, &machines.StateMachine{ID: connID, Context: mctx}),
+	}
+
+	items := h.collectControllersStatus([]string{connID.String()})
+
+	if len(items) != len(models.MesheryControllers) {
+		t.Fatalf("snapshot has %d rows, want one per controller (%d): %+v",
+			len(items), len(models.MesheryControllers), items)
+	}
+	seen := map[system.ControllerStatusController]bool{}
+	for _, item := range items {
+		if item.ConnectionId != connID {
+			t.Fatalf("connectionId = %s, want %s", item.ConnectionId, connID)
+		}
+		if item.Status != controllersStatusUnknown {
+			t.Fatalf("%s status = %q, want %q - Meshery did not probe the cluster, so it does not know",
+				item.Controller, item.Status, controllersStatusUnknown)
+		}
+		if item.Version != "" {
+			t.Fatalf("%s version = %q, want it empty for a synthesized row", item.Controller, item.Version)
+		}
+		if seen[item.Controller] {
+			t.Fatalf("%s reported twice: duplicate rows break the snapshot's sort key", item.Controller)
+		}
+		seen[item.Controller] = true
+	}
+	for _, want := range []system.ControllerStatusController{
+		system.ControllerStatusControllerBROKER,
+		system.ControllerStatusControllerMESHSYNC,
+		system.ControllerStatusControllerOPERATOR,
+	} {
+		if !seen[want] {
+			t.Fatalf("no %s row in the snapshot %+v: that card vanishes from the UI", want, items)
+		}
+	}
+	if !sort.SliceIsSorted(items, func(i, j int) bool {
+		if items[i].ConnectionId != items[j].ConnectionId {
+			return items[i].ConnectionId.String() < items[j].ConnectionId.String()
+		}
+		return items[i].Controller < items[j].Controller
+	}) {
+		t.Fatalf("snapshot is not sorted by (connectionId, controller); SSE change detection compares it byte-for-byte: %+v", items)
+	}
+}
+
+// A connection with no ready FSM instance still reports nothing: there is no
+// context to read, and inventing rows for it would report on connections
+// Meshery is not tracking.
+func TestCollectControllersStatus_UnresolvedConnectionReportsNothing(t *testing.T) {
+	h := newControllersStatusTestHandler(t)
+
+	if items := h.collectControllersStatus([]string{uuid.Must(uuid.NewV4()).String()}); len(items) != 0 {
+		t.Fatalf("snapshot = %+v, want it empty for a connection with no ready instance", items)
 	}
 }
 

@@ -9,6 +9,7 @@ import {
   Typography,
   SettingsIcon,
 } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import { useSelector } from 'react-redux';
 import { EVENT_TYPES } from 'lib/event-types';
 import { CONNECTION_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '@/utils/Enum';
@@ -21,6 +22,7 @@ import type { ConnectionStateTransitionModalRef } from '../ConnectionStateTransi
 import type { ConnectionTransitionMap } from '../ConnectionTable.constants';
 import {
   MeshsyncDeploymentModePicker,
+  applyMeshsyncModeResult,
   getConfiguredConnection,
   getCurrentDeploymentMode,
   getSelectedDeploymentMode,
@@ -257,7 +259,12 @@ const SettingsStepBody = ({ ctx }: { ctx: WizardContext }) => {
             Clear this cluster&apos;s cached state; it is repopulated by a running MeshSync.
           </Typography>
         </Box>
-        <Button variant="outlined" onClick={flushMeshSync} disabled={flushBusy}>
+        <Button
+          variant="outlined"
+          onClick={flushMeshSync}
+          disabled={flushBusy}
+          permissionKey={Keys.LifecycleManagementFlushMeshsyncData}
+        >
           {flushBusy ? <CircularProgress size={16} /> : 'Flush MeshSync'}
         </Button>
       </Box>
@@ -308,12 +315,11 @@ export const kubernetesSettingsStep: WizardStep = {
       if (modeChanged) {
         // Dedicated action endpoint: the server owns the metadata merge and the
         // MeshSync (and operator stack) redeploy, keyed on the connection id.
-        await ctx.services.setMeshsyncMode(connectionId, selectedMode as 'operator' | 'embedded');
-        const metadata = {
-          ...((nextConnection.metadata as GenericRecord) || {}),
-          meshsync_deployment_mode: selectedMode,
-        };
-        nextConnection = { ...nextConnection, metadata };
+        const updated = await ctx.services.setMeshsyncMode(
+          connectionId,
+          selectedMode as 'operator' | 'embedded',
+        );
+        nextConnection = applyMeshsyncModeResult(nextConnection, updated, selectedMode);
       }
 
       ctx.patch({ registrationResult: nextConnection });

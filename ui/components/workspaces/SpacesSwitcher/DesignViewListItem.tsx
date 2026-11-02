@@ -131,7 +131,9 @@ const DesignViewListItem = ({
             }}
           >
             <StyledAvatarContainer>
-              <StyledListIcon>{useGetIconBasedOnMode({ mode: type })}</StyledListIcon>
+              <StyledListIcon withCheckbox={isMultiSelectMode}>
+                {useGetIconBasedOnMode({ mode: type })}
+              </StyledListIcon>
               <StyledListItemText
                 showWorkspaceName={showWorkspaceName}
                 primary={selectedItem.name || ''}

@@ -501,25 +501,51 @@ func TestLoginHandler_NoneProviderFromMiddleware(t *testing.T) {
 	}
 }
 
+// TestDeleteMeshSyncResource verifies DeleteMeshSyncResource handling across migrated, unmigrated, missing, and invalid-ID scenarios.
 func TestDeleteMeshSyncResource(t *testing.T) {
 	handler := newTestHandler(t, map[string]models.Provider{}, "")
+	validUUID := "11111111-1111-1111-1111-111111111111"
 
 	tests := []struct {
 		name                 string
+		resourceID           string
+		seedResource         bool
 		migrateResourceTable bool
 		expectedStatus       int
 		expectedContentType  string
 		expectedBody         string
 	}{
 		{
-			name:                 "given resource table migrated when DeleteMeshSyncResource then return status 200 and deleted true",
+			name:                 "given resource table migrated and resource exists when DeleteMeshSyncResource then return status 200 and deleted true",
+			resourceID:           validUUID,
+			seedResource:         true,
 			migrateResourceTable: true,
 			expectedStatus:       http.StatusOK,
 			expectedContentType:  "application/json",
 			expectedBody:         `"deleted":true`,
 		},
 		{
+			name:                 "given resource table migrated but resource does not exist when DeleteMeshSyncResource then return status 404",
+			resourceID:           validUUID,
+			seedResource:         false,
+			migrateResourceTable: true,
+			expectedStatus:       http.StatusNotFound,
+			expectedContentType:  "application/json",
+			expectedBody:         "meshery-server-",
+		},
+		{
+			name:                 "given invalid uuid when DeleteMeshSyncResource then return status 400",
+			resourceID:           "not-a-uuid",
+			seedResource:         false,
+			migrateResourceTable: true,
+			expectedStatus:       http.StatusBadRequest,
+			expectedContentType:  "application/json",
+			expectedBody:         "meshery-server-",
+		},
+		{
 			name:                 "given resource table not migrated when DeleteMeshSyncResource then return status 500 and failed to delete",
+			resourceID:           validUUID,
+			seedResource:         false,
 			migrateResourceTable: false,
 			expectedStatus:       http.StatusInternalServerError,
 			expectedContentType:  "application/json",
@@ -534,6 +560,9 @@ func TestDeleteMeshSyncResource(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 			if err != nil {
+				if strings.Contains(err.Error(), "go-sqlite3 requires cgo") {
+					t.Skip("skipping SQLite test: go-sqlite3 requires cgo (disabled on this platform)")
+				}
 				t.Fatalf("failed to create in-memory database: %v", err)
 			}
 
@@ -541,14 +570,19 @@ func TestDeleteMeshSyncResource(t *testing.T) {
 				if err := db.AutoMigrate(&model.KubernetesResource{}); err != nil {
 					t.Fatalf("failed to migrate kubernetes resource table: %v", err)
 				}
+				if tt.seedResource {
+					if err := db.Table("kubernetes_resources").Create(&model.KubernetesResource{ID: tt.resourceID}).Error; err != nil {
+						t.Fatalf("failed to seed resource: %v", err)
+					}
+				}
 			}
 
 			provider := &models.DefaultLocalProvider{}
 			provider.Initialize()
 			provider.GenericPersister = &database.Handler{DB: db}
 
-			req := httptest.NewRequest(http.MethodDelete, "/api/system/meshsync/resources/resource-1", nil)
-			req = mux.SetURLVars(req, map[string]string{"id": "resource-1"})
+			req := httptest.NewRequest(http.MethodDelete, "/api/system/meshsync/resources/"+tt.resourceID, nil)
+			req = mux.SetURLVars(req, map[string]string{"id": tt.resourceID})
 			rw := httptest.NewRecorder()
 
 			handler.DeleteMeshSyncResource(rw, req, nil, nil, provider)
@@ -582,4 +616,85 @@ func TestDeleteMeshSyncResource(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestProviderHandler_EnforcedRemoteIgnoresLocalSwitch(t *testing.T) {
+	local := &models.DefaultLocalProvider{}
+	local.Initialize()
+	remote := &models.RemoteProvider{RemoteProviderURL: "https://cloud.meshery.io"}
+	remote.Initialize()
+	remote.SetProviderProperties(models.ProviderProperties{
+		ProviderName: "Meshery",
+		ProviderType: models.RemoteProviderType,
+		ProviderURL:  remote.RemoteProviderURL,
+	})
+
+	providers := map[string]models.Provider{
+		local.Name(): local,
+		"Meshery":    remote,
+	}
+	h := newTestHandler(t, providers, "Meshery")
+
+	req := httptest.NewRequest(http.MethodGet, "/api/provider?provider=Local", nil)
+	rec := httptest.NewRecorder()
+	h.ProviderHandler(rec, req)
+
+	resp := rec.Result()
+	t.Cleanup(func() { _ = resp.Body.Close() })
+	if resp.StatusCode != http.StatusFound {
+		t.Fatalf("expected 302, got %d", resp.StatusCode)
+	}
+	var cookieVal string
+	for _, c := range resp.Cookies() {
+		if c.Name == "meshery-provider" {
+			cookieVal = c.Value
+		}
+	}
+	if cookieVal != "Meshery" {
+		t.Fatalf("cookie = %q, want Meshery (Local switch must be ignored)", cookieVal)
+	}
+}
+
+func TestProvidersHandler_EnforcedRemoteOmitsLocal(t *testing.T) {
+	local := &models.DefaultLocalProvider{}
+	local.Initialize()
+	remote := &models.RemoteProvider{RemoteProviderURL: "https://cloud.meshery.io"}
+	remote.Initialize()
+	remote.SetProviderProperties(models.ProviderProperties{
+		ProviderName: "Meshery",
+		ProviderType: models.RemoteProviderType,
+		ProviderURL:  remote.RemoteProviderURL,
+	})
+
+	providers := map[string]models.Provider{
+		local.Name(): local,
+		"Meshery":    remote,
+	}
+	h := newTestHandler(t, providers, "Meshery")
+
+	req := httptest.NewRequest(http.MethodGet, "/api/providers", nil)
+	rec := httptest.NewRecorder()
+	h.ProvidersHandler(rec, req)
+
+	var got map[string]models.ProviderProperties
+	if err := json.NewDecoder(rec.Body).Decode(&got); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if _, ok := got[models.LocalProviderName]; ok {
+		t.Fatal("Local must not appear in /api/providers when a remote is enforced")
+	}
+	if _, ok := got["Meshery"]; !ok {
+		t.Fatalf("expected Meshery in /api/providers, got keys %v", keysOfProps(got))
+	}
+	if len(got) != 1 {
+		t.Fatalf("len = %d, want 1", len(got))
+	}
+}
+
+func keysOfProps(m map[string]models.ProviderProperties) []string {
+	out := make([]string, 0, len(m))
+	for k := range m {
+		out = append(out, k)
+	}
+	return out
 }

@@ -8,12 +8,12 @@ categories: [performance]
 
 Meshery integrates with **Grafana** and **Prometheus** so you can visualize the health and resource usage of your cloud native infrastructure without leaving Meshery.
 
-Metrics visualization lives in the dedicated **[Telemetry]({{< ref "guides/telemetry/_index.md" >}})** section of Meshery. Rather than entering a Grafana or Prometheus URL and API key into a settings form, you register Grafana and Prometheus as Meshery [Connections]({{< ref "concepts/logical/connections/index.md" >}}) (each with an associated [Credential]({{< ref "concepts/logical/credentials.md" >}})), and Telemetry queries them on your behalf — proxying every request securely through the Meshery server.
+Metrics visualization lives in the dedicated **[Telemetry]({{< ref "guides/telemetry/_index.md" >}})** section of Meshery. Rather than entering a Grafana or Prometheus URL and API key into a settings form, you register Grafana and Prometheus as Meshery [Connections]({{< ref "concepts/logical/connections/index.md" >}}) (each with an associated [Credential]({{< ref "concepts/logical/credentials.md" >}})), and Telemetry queries them on your behalf - proxying every request securely through the Meshery server.
 
 There are two ways to view metrics:
 
-- **[Grafana Dashboards]({{< ref "guides/telemetry/grafana-dashboards.md" >}})** (Telemetry → Charts) — browse, pin, and render your existing Grafana dashboards.
-- **[Prometheus Metrics]({{< ref "guides/telemetry/prometheus-metrics.md" >}})** (Telemetry → Metrics) — explore metrics, compose PromQL, preview the result, and save your own panels.
+- **[Grafana Dashboards]({{< ref "guides/telemetry/grafana-dashboards.md" >}})** (Telemetry → Charts) - browse, pin, and render your existing Grafana dashboards.
+- **[Prometheus Metrics]({{< ref "guides/telemetry/prometheus-metrics.md" >}})** (Telemetry → Metrics) - explore metrics, compose PromQL, preview the result, and save your own panels.
 
 ---
 
