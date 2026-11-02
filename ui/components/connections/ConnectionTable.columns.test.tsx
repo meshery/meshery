@@ -5,11 +5,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // Key-aware so a test can deny one capability at a time. A blanket boolean
 // cannot tell a dropped gate from a cross-wired one.
 const deniedPermissionIds = new Set<string>();
+let capturedMultiSelectProps: any[] = [];
+let capturedChipProps: any[] = [];
 
 vi.mock('@sistent/sistent', () => ({
   useHasPermission: (key: { id?: string }) => !deniedPermissionIds.has(key?.id ?? ''),
   Box: ({ children }: any) => <div>{children}</div>,
-  Grid2: ({ children }: any) => <div>{children}</div>,
   IconButton: ({ children }: any) => <button type="button">{children}</button>,
   TableCell: ({ children }: any) => <td>{children}</td>,
   InfoOutlinedIcon: () => <svg />,
@@ -29,10 +30,14 @@ vi.mock('../../css/icons.styles', () => ({
 }));
 
 vi.mock('../general/multi-select-wrapper', () => ({
-  // Surface `disabled` so permission-denied rendering is assertable.
-  default: ({ disabled }: any) => (
-    <div data-testid="multi-select-wrapper" data-disabled={String(Boolean(disabled))} />
-  ),
+  // Surface props so permission-denied rendering and Environments UX
+  // (placeholder / empty-state gating) are assertable.
+  default: (props: any) => {
+    capturedMultiSelectProps.push(props);
+    return (
+      <div data-testid="multi-select-wrapper" data-disabled={String(Boolean(props.disabled))} />
+    );
+  },
 }));
 
 vi.mock('./ConnectionStatusSelect', () => ({
@@ -42,7 +47,11 @@ vi.mock('./ConnectionStatusSelect', () => ({
 }));
 
 vi.mock('./ConnectionChip', () => ({
-  TooltipWrappedConnectionChip: () => <div data-testid="connection-chip" />,
+  // Surface props so the per-kind ping wiring is assertable.
+  TooltipWrappedConnectionChip: (props: any) => {
+    capturedChipProps.push(props);
+    return <div data-testid="connection-chip" />;
+  },
 }));
 
 vi.mock('../meshery-mesh-interface/PatternService/CustomTextTooltip', () => ({
@@ -59,7 +68,7 @@ vi.mock('../../utils/utils', () => ({
 import { Keys } from '@meshery/schemas/permissions';
 import { useConnectionColumns } from './ConnectionTable.columns';
 
-const renderColumns = () =>
+const renderColumns = (overrides: Record<string, unknown> = {}) =>
   renderHook(() =>
     useConnectionColumns({
       url: 'https://docs.meshery.io',
@@ -74,7 +83,9 @@ const renderColumns = () =>
       ping: vi.fn(),
       pingGrafana: vi.fn(),
       pingPrometheus: vi.fn(),
+      pingMeshery: vi.fn(),
       transitionMapByKind: { kubernetes: ['connected'] },
+      ...overrides,
     } as any),
   ).result.current;
 
@@ -105,6 +116,7 @@ const rowControlStates = () => {
 describe('useConnectionColumns permission gating', () => {
   beforeEach(() => {
     deniedPermissionIds.clear();
+    capturedMultiSelectProps = [];
   });
 
   // The environment select and the status select are the table's only mutating
@@ -131,5 +143,121 @@ describe('useConnectionColumns permission gating', () => {
     expect(cellDisabledState(columns, 'status', 'deleted', 'connection-status-select')).toBe(
       'true',
     );
+  });
+});
+
+describe('useConnectionColumns Environments multi-select UX', () => {
+  beforeEach(() => {
+    deniedPermissionIds.clear();
+    capturedMultiSelectProps = [];
+  });
+
+  it('uses the shortened placeholder and gates empty-state on trim', () => {
+    const columns = renderColumns();
+    const column = columns.find((col) => col.name === 'environments');
+    render(<>{column.options.customBodyRender([], { rowData: [] })}</>);
+    const props = capturedMultiSelectProps.at(-1);
+
+    expect(props.placeholder).toBe('Select or create...');
+    expect(props.noOptionsMessage({ inputValue: '' })).toBeNull();
+    expect(props.noOptionsMessage({ inputValue: '   ' })).toBeNull();
+    expect(props.noOptionsMessage({ inputValue: 'zzz' })).toBe(
+      'No matching environments. Type to create a new one.',
+    );
+  });
+});
+
+describe('useConnectionColumns chip ping wiring', () => {
+  beforeEach(() => {
+    capturedChipProps = [];
+  });
+
+  /** Place row values at their column indexes (getColumnValue is index-based). */
+  const buildRow = (columns: any[], values: Record<string, unknown>) => {
+    const row: unknown[] = [];
+    for (const [columnName, value] of Object.entries(values)) {
+      row[columns.findIndex((col) => col.name === columnName)] = value;
+    }
+    return row;
+  };
+
+  const renderNameCell = (columns: any[], values: Record<string, unknown>, cellValue: unknown) => {
+    capturedChipProps = [];
+    const column = columns.find((col) => col.name === 'name');
+    render(
+      <>{column.options.customBodyRender(cellValue, { rowData: buildRow(columns, values) })}</>,
+    );
+    return capturedChipProps.at(-1);
+  };
+
+  // Regression test for #15341: clicking a Meshery Server chip used to be a
+  // no-op because handlePing was only attached for kubernetes/grafana/
+  // prometheus, while ChipWrapper always painted a pointer cursor.
+  it('wires meshery-kind chips to pingMeshery with the recorded server location', () => {
+    const ping = vi.fn();
+    const pingMeshery = vi.fn();
+    const columns = renderColumns({ ping, pingMeshery });
+
+    const chip = renderNameCell(
+      columns,
+      {
+        id: 'conn-1',
+        kind: 'meshery',
+        'metadata.serverLocation': 'https://meshery.example.com',
+        'metadata.name': undefined,
+      },
+      'meshery-local',
+    );
+
+    expect(chip.handlePing).toBeTypeOf('function');
+    chip.handlePing();
+    expect(pingMeshery).toHaveBeenCalledWith('https://meshery.example.com', 'meshery-local');
+    // The kubernetes ping must stay untouched for a meshery-kind row.
+    expect(ping).not.toHaveBeenCalled();
+  });
+
+  it('falls back to the legacy snake_case server_location for older meshery rows', () => {
+    const pingMeshery = vi.fn();
+    const columns = renderColumns({ pingMeshery });
+
+    const chip = renderNameCell(
+      columns,
+      {
+        id: 'conn-2',
+        kind: 'meshery',
+        'metadata.server_location': 'http://localhost:9081',
+      },
+      'old-meshery',
+    );
+
+    chip.handlePing();
+    expect(pingMeshery).toHaveBeenCalledWith('http://localhost:9081', 'old-meshery');
+  });
+
+  it('keeps kubernetes-kind chips on the kubernetes ping and off pingMeshery', () => {
+    const ping = vi.fn();
+    const pingMeshery = vi.fn();
+    const columns = renderColumns({ ping, pingMeshery });
+
+    const chip = renderNameCell(
+      columns,
+      {
+        id: 'conn-3',
+        kind: 'kubernetes',
+        'metadata.server': 'https://cluster-a.local',
+        'metadata.name': 'cluster-a',
+      },
+      'cluster-a',
+    );
+
+    chip.handlePing();
+    expect(ping).toHaveBeenCalledWith('cluster-a', 'https://cluster-a.local', 'conn-3');
+    expect(pingMeshery).not.toHaveBeenCalled();
+  });
+
+  it('attaches no ping handler for kinds without one (github)', () => {
+    const columns = renderColumns();
+    const chip = renderNameCell(columns, { id: 'conn-4', kind: 'github' }, 'github-repo');
+    expect(chip.handlePing).toBeUndefined();
   });
 });

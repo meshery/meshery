@@ -6,12 +6,10 @@ import React, { useContext, useState, useEffect, FC } from 'react';
 import {
   AccessTimeFilledIcon,
   Box,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   DesignIcon,
   Divider,
   ErrorBoundary,
-  IconButton,
+  LeftArrowIcon,
   List,
   PeopleIcon,
   ViewIcon,
@@ -21,12 +19,13 @@ import {
 } from '@sistent/sistent';
 import { styled, useTheme } from '@/theme';
 import { WorkspacesComponent } from '@/components/lifecycle';
+import { ChevronButtonWrapper } from '@/components/general/style';
 import { iconMedium, iconSmall } from 'css/icons.styles';
 import MyViewsContent from './SpacesSwitcher/MyViewsContent';
 import MyDesignsContent from './SpacesSwitcher/MyDesignsContent';
 import RecentContent from './SpacesSwitcher/RecentContent';
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
-import { DrawerHeader, StyledDrawer, StyledMainContent } from './SpacesSwitcher/styles';
+import { StyledDrawer, StyledMainContent } from './SpacesSwitcher/styles';
 import WorkspaceContent from './SpacesSwitcher/WorkspaceContent';
 import { useGetProviderCapabilitiesQuery, useGetSelectedOrganization } from '@/rtk-query/user';
 import { isLocalProvider } from '@/utils/provider';
@@ -39,10 +38,14 @@ import { NavItem, WorkspacesSection, NavConfigItem } from './WorkspaceFormModalS
 /** Nav item selected on open, and the fallback when a selection loses its gate. */
 const DEFAULT_NAV_ID = 'Recents (Global)';
 
+const DRAWER_WIDTH = 300;
+
 const Layout = styled(Box)({
   display: 'flex',
   position: 'relative',
   height: '100%',
+  minHeight: 0,
+  overflow: 'hidden',
 });
 
 export type HeaderInfo = {
@@ -262,14 +265,40 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
               isLoading={isLoading}
             />
           </List>
-
-          <DrawerHeader open={open}>
-            <IconButton onClick={handleDrawerToggle}>
-              {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </IconButton>
-          </DrawerHeader>
         </StyledDrawer>
       </ErrorBoundary>
+      <ChevronButtonWrapper
+        type="button"
+        isCollapsed={!open}
+        onClick={handleDrawerToggle}
+        aria-label="Toggle workspace navigation"
+        aria-expanded={open}
+        sx={{
+          position: 'absolute',
+          bottom: '12%',
+          left: open
+            ? `${DRAWER_WIDTH}px`
+            : {
+                xs: `calc(${theme.spacing(7)} + 1px - 1.2rem)`,
+                sm: `calc(${theme.spacing(8)} + 1px - 1.2rem)`,
+              },
+          right: 'auto',
+          top: 'auto',
+          zIndex: 1400,
+        }}
+      >
+        <LeftArrowIcon
+          aria-hidden="true"
+          style={{
+            cursor: 'pointer',
+            verticalAlign: 'middle',
+          }}
+          fill={theme.palette.icon.default}
+          stroke={theme.palette.icon.default}
+          width="1.2rem"
+          height="2.8rem"
+        />
+      </ChevronButtonWrapper>
       <ErrorBoundary>
         <StyledMainContent>
           <WorkspaceContentWrapper

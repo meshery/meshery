@@ -41,6 +41,7 @@ import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import _PromptComponent from '../general/PromptComponent';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '../general/error-404/index';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import ViewSwitch from '@/components/general/ViewSwitch';
 import { CreateButtonWrapper } from './styles';
@@ -131,6 +132,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
   const canDeleteTeam = useHasPermission(Keys.IdentityAccessManagementDeleteTeam);
   const canEditTeam = useHasPermission(Keys.IdentityAccessManagementEditTeam);
   const canLeaveTeam = useHasPermission(Keys.IdentityAccessManagementLeaveTeam);
+  const canViewWorkspace = useHasPermission(Keys.WorkspaceManagementViewWorkspace);
   const canRemoveTeamFromWorkspace = useHasPermission(
     Keys.WorkspaceManagementRemoveTeamFromWorkspace,
   );
@@ -192,7 +194,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
       orgId: organization?.id,
     },
     {
-      skip: !organization?.id ? true : false,
+      skip: !organization?.id || !canViewWorkspace,
     },
   );
 
@@ -402,6 +404,10 @@ const Workspaces = ({ onSelectWorkspace }) => {
   };
 
   const [columnVisibility, setColumnVisibility] = useState({});
+
+  if (!canViewWorkspace) {
+    return <DefaultError permissionKey={Keys.WorkspaceManagementViewWorkspace} />;
+  }
 
   return (
     <NoSsr>

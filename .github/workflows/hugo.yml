@@ -37,7 +37,9 @@ jobs:
           # entire repository, which materially cuts checkout IO. There are no
           # submodules, so submodule fetching is intentionally omitted.
           filter: blob:none
-          sparse-checkout: docs
+          sparse-checkout: |
+            install
+            docs
           sparse-checkout-cone-mode: true
       - name: Checkout gh-pages for preview retention
         if: github.event.action != 'closed'
@@ -83,7 +85,7 @@ jobs:
       - name: Install Node.js dependencies
         run: |
           cd docs
-          [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
+          npm ci
       - name: Build with Hugo
         env:
           # For maximum backward compatibility with Hugo modules

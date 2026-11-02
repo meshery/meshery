@@ -1,0 +1,142 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "Kubernetes Web Application",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.2",
+  "components": [
+    {
+      "id": "b21793b0-7774-466f-b856-a52b6123c0a5",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "web-app",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app": "web-app"
+          },
+          "name": "web-app",
+          "namespace": "default"
+        },
+        "spec": {
+          "replicas": 2,
+          "selector": {
+            "matchLabels": {
+              "app": "web-app"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "web-app"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx:latest",
+                  "name": "nginx",
+                  "ports": [
+                    {
+                      "containerPort": 80
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "6c5a3f72-5d5d-4c43-9d42-0c7d0c4e8b11",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "web-service",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": "web-service",
+          "namespace": "default"
+        },
+        "spec": {
+          "ports": [
+            {
+              "port": 80,
+              "targetPort": 80
+            }
+          ],
+          "selector": {
+            "app": "web-app"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "relationships": null
+}

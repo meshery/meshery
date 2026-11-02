@@ -61,10 +61,36 @@ Or you may configure your IDE, for example, VSCode to automatically sign-off com
 <li>
 Should an unsigned commit slip through anyway, the repository's <code>commit-msg</code> hook
 (installed with the UI dependencies, see <code>ui/.husky/</code>) rejects it locally rather than
-letting the DCO check fail in CI, where the only remedy is rewriting the branch. To sign off
-a commit you have already written:
+letting the DCO check fail in CI. The hook applies the same rules the DCO check does, so a
+message it accepts is one CI accepts: merge commits are exempt, and at least one
+<code>Signed-off-by</code> trailer has to name the author or the committer. When it rejects a
+commit, nothing was committed - your message is waiting in <code>.git/COMMIT_EDITMSG</code>, so
+re-run the commit with <code>-s</code>.
+</li>
+
+<li>
+Treat that hook as a safety net rather than a guarantee. Git runs whichever hooks
+<code>core.hooksPath</code> resolves to, so a clone where <code>make ui-setup</code> was never
+run has no hook at all, and any tool that repoints <code>core.hooksPath</code> at a directory of
+its own - other hook managers, and worktree-based automation that commits on your behalf -
+replaces it without a warning. Commit with <code>-s</code> rather than relying on the hook to
+notice.
+</li>
+
+<li>
+To sign off a commit you have already written but have <em>not</em> pushed:
 
 <pre><code>$ git commit --amend -s --no-edit</code></pre>
+
+Once the branch is pushed, amending reaches only its tip, and a DCO failure usually names more
+than one commit. Sign off every commit the pull request carries and replace the pushed branch:
+
+<pre><code>$ git rebase &lt;base-branch&gt; --signoff
+$ git push --force-with-lease</code></pre>
+
+That rewrites the branch, so settle it first with anyone else working on it, and with any
+automation that is tracking the branch by commit hash - a force push moves the tip out from
+under both.
 </li>
 </ul>
 </details>
@@ -135,7 +161,7 @@ git sparse-checkout disable
   <li><strong>Familiarize</strong> yourself with the broader set of projects in Meshery's ecosystem, including the <a href="https://github.com/meshery-extensions">meshery-extensions</a> repositories (the <a href="https://meshery.io/community">community handbook</a> is a helpful resource): Spend time understanding each of the initiatives through high-level overviews available in the community drive and through discussions with your MeshMate.</li>
   <li><strong>Identify</strong> your area of interest: Use the time with your MeshMate to familiarize yourself with the architecture and technologies used in the projects. Inform your MeshMate of your current skills and what skills you aim to develop.</li>
   <li><strong><a href="https://play.meshery.io">Play with Meshery</a></strong>: Put on your user hat and walk-through all of Meshery’s features and functions as a user.</li>
-  <li><strong>Build Meshery Server and UI</strong>: Confirm that you have a usable development environment. See <a href="#contributing-guides">Guides</a> below.</li>
+  <li><strong>Build Meshery Server and UI</strong>: Confirm that you have a usable development environment. See <a href="#specific-contribution-guides">Guides</a> below.</li>
   <li><strong>Discuss</strong> with the community by engaging in the <a href="https://discuss.meshery.io/">discussion forum</a>.</li>
   <li><strong>Contribute</strong> by grabbing any open issue with the <a href="https://github.com/issues?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Ameshery+org%3Ameshery-extensions+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22+">help-wanted label</a> and jump in. If needed, create a <a href="https://github.com/meshery/meshery/issues/new/choose">new issue</a>. All <a href="https://github.com/meshery/meshery/pulls">pull requests</a> should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to <a href="https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords">automatically close issues in GitHub</a>.</li>
   <li><strong>Fill in</strong> a <a href="https://meshery.io/newcomers">community member form</a> to gain access to community resources.</li>

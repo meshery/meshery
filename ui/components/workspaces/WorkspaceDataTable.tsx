@@ -272,6 +272,9 @@ const WorkspaceDataTable = ({
         customBodyRender: (value, tableMeta) => {
           const workspaceId = getColumnValue(tableMeta.rowData, 'id', columns);
           const workspaceName = getColumnValue(tableMeta.rowData, 'name', columns);
+          const workspaceById = workspacesData.find((w) => w.id === workspaceId);
+
+          if (!workspaceById) return null;
 
           return (
             <WorkspaceActionList
@@ -281,7 +284,7 @@ const WorkspaceDataTable = ({
               handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
               workspaceId={workspaceId}
               workspaceName={workspaceName}
-              selectedWorkspace={workspacesData[tableMeta.rowIndex]}
+              selectedWorkspace={workspaceById}
             />
           );
         },

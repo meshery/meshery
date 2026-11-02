@@ -8,6 +8,17 @@ aliases:
 
 Meshery UI has a number of extension points that allow you to greatly customize both its functional behavior and visual appearance. These extension points come in different types, and this document describes each type, its example use, best practices to consider, and caveats of which to be aware.
 
+{{% alert color="warning" title="UI extensions share Meshery UI's origin and session" %}}
+Extension components are loaded into Meshery UI's own browser origin and JavaScript
+context. They share the DOM, the session cookie, and the ability to call any API the
+signed-in user can call. There is no iframe or sandbox boundary between an extension
+component and the rest of the UI, so an enabled UI extension is trusted code. Operators
+should read
+[Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}});
+authors should read
+[Ensuring Extension Compatibility]({{< ref "reference/extensibility/verify-compatibility.md" >}}).
+{{% /alert %}}
+
 ### Extensibility: Customizing Text-based Forms using RJSF Custom Component
 
 RJSFWrapperComponent provides customizations for RJSF forms, overriding the default behavior of meshery-ui rjsf forms. The [Rjsf forms are wrapped](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L66) in this component to receive custom props from a Meshery extension.

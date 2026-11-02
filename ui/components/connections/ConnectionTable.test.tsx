@@ -162,6 +162,12 @@ vi.mock('@/utils/hooks/usePrometheusPingHook', () => ({
   default: () => pingPrometheus,
 }));
 
+const pingMeshery = vi.fn();
+
+vi.mock('@/utils/hooks/useMesheryPingHook', () => ({
+  default: () => pingMeshery,
+}));
+
 vi.mock('./ConnectionChip', () => ({
   ConnectionStateChip: () => <div />,
   TooltipWrappedConnectionChip: () => <div />,
@@ -277,6 +283,7 @@ describe('ConnectionTable', () => {
     notify.mockReset();
     push.mockReset();
     ping.mockReset();
+    pingMeshery.mockReset();
     modalShow.mockReset();
     refetchConnections.mockReset();
 
@@ -517,6 +524,86 @@ describe('ConnectionTable', () => {
       connectionId: 'connection-2',
       body: { status: 'deleted' },
     });
+
+    // Both succeeded → one consolidated success notification, no error toast.
+    await waitFor(() => {
+      expect(notify).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: '2 Connections deleted',
+          event_type: expect.objectContaining({ type: 'success' }),
+        }),
+      );
+    });
+    expect(notify).not.toHaveBeenCalledWith(
+      expect.objectContaining({ event_type: expect.objectContaining({ type: 'error' }) }),
+    );
+  });
+
+  it('emits consolidated success and failure counts on partial bulk-delete failure', async () => {
+    const user = userEvent.setup();
+
+    // First call rejects (network error), second succeeds.
+    updateConnectionByIdMutator
+      .mockImplementationOnce(() => ({ unwrap: () => Promise.reject(new Error('server error')) }))
+      .mockImplementationOnce(({ connectionId, body }) => ({
+        unwrap: () => Promise.resolve({ connectionId, body }),
+      }));
+
+    render(<ConnectionTable />);
+
+    const toolbar = dataTableProps.options.customToolbarSelect({
+      data: [{ index: 0 }, { index: 1 }],
+    });
+    render(toolbar);
+
+    await user.click(screen.getByRole('button', { name: /delete/i }));
+
+    await waitFor(() => {
+      // 1 success, 1 failure → both notifications fired.
+      expect(notify).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: '1 Connection deleted',
+          event_type: expect.objectContaining({ type: 'success' }),
+        }),
+      );
+      expect(notify).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Failed to delete 1 Connection',
+          event_type: expect.objectContaining({ type: 'error' }),
+        }),
+      );
+    });
+  });
+
+  it('emits only a failure notification when all bulk deletions fail', async () => {
+    const user = userEvent.setup();
+
+    // Both calls reject.
+    updateConnectionByIdMutator.mockImplementation(() => ({
+      unwrap: () => Promise.reject(new Error('server error')),
+    }));
+
+    render(<ConnectionTable />);
+
+    const toolbar = dataTableProps.options.customToolbarSelect({
+      data: [{ index: 0 }, { index: 1 }],
+    });
+    render(toolbar);
+
+    await user.click(screen.getByRole('button', { name: /delete/i }));
+
+    await waitFor(() => {
+      expect(notify).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Failed to delete 2 Connections',
+          event_type: expect.objectContaining({ type: 'error' }),
+        }),
+      );
+    });
+    // No success notification at all.
+    expect(notify).not.toHaveBeenCalledWith(
+      expect.objectContaining({ event_type: expect.objectContaining({ type: 'success' }) }),
+    );
   });
 
   it('applies no transition when the bulk delete confirmation is cancelled', async () => {

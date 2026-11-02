@@ -124,12 +124,12 @@ const MyDesignsContent = () => {
         </Grid2>
 
         {/* Sort By Select */}
-        <Grid2 size={{ xs: 4, md: 2 }}>
+        <Grid2 size={{ xs: 12, sm: 6, md: 2 }}>
           <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
         </Grid2>
 
         {/* Visibility Select */}
-        <Grid2 size={{ xs: 4, md: 2 }}>
+        <Grid2 size={{ xs: 12, sm: 6, md: 2 }}>
           <VisibilitySelect
             visibility={filters.visibility}
             handleVisibilityChange={handleVisibilityChange}
@@ -138,7 +138,7 @@ const MyDesignsContent = () => {
         </Grid2>
 
         {/* Import Button */}
-        <Grid2 size={{ xs: 4, md: 1 }}>
+        <Grid2 size={{ xs: 12, sm: 6, md: 1 }}>
           <ImportButton refetch={refetch} permissionKey={Keys.CatalogManagementImportDesign} />
         </Grid2>
       </Grid2>

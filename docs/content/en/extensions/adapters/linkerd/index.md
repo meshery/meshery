@@ -25,19 +25,19 @@ aliases:
 
 The Meshery Adapter for Linkerd includes the ability to deploy a variety of sample applications. Use Meshery to deploy any of these sample applications:
 
-- [Emojivoto]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
+- Emojivoto
 
   - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
-- [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
+- Bookinfo
 
   - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 
-- [Linkerd Books]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
+- Linkerd Books
 
   - A sample application built for demonstrating manage your bookshelf.
 
-- [HTTPbin]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
+- HTTPbin
   - A simple HTTP Request & Response Service.
 
 Identify overhead involved in running Linkerd, various Linkerd configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.

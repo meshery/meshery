@@ -4,7 +4,7 @@ vi.mock('uuid', () => ({
   v4: () => 'mocked-uuid-value',
 }));
 
-import { generateTestName, generateUUID } from './helper';
+import { buildPerformanceRunUrl, generateTestName, generateUUID } from './helper';
 
 describe('generateTestName', () => {
   it('returns the original name when one is supplied', () => {
@@ -35,5 +35,35 @@ describe('generateTestName', () => {
 describe('generateUUID', () => {
   it('proxies to the uuid v4 implementation', () => {
     expect(generateUUID()).toBe('mocked-uuid-value');
+  });
+});
+
+describe('buildPerformanceRunUrl', () => {
+  it('constructs valid URL when no Kubernetes contexts are selected', () => {
+    const url = buildPerformanceRunUrl('test-profile-id', [], 'name=load-test&qps=50');
+    expect(url).toBe(
+      '/api/user/performance/profiles/test-profile-id/run?cert=true&name=load-test&qps=50',
+    );
+  });
+
+  it('constructs valid URL when Kubernetes contexts are selected', () => {
+    const url = buildPerformanceRunUrl(
+      'test-profile-id',
+      ['ctx-1', 'ctx-2'],
+      'name=load-test&qps=50',
+    );
+    expect(url).toBe(
+      '/api/user/performance/profiles/test-profile-id/run?contexts=ctx-1&contexts=ctx-2&cert=true&name=load-test&qps=50',
+    );
+  });
+
+  it('handles null or undefined selectedK8sContexts', () => {
+    const url = buildPerformanceRunUrl('test-profile-id', null, 'name=load-test');
+    expect(url).toBe('/api/user/performance/profiles/test-profile-id/run?cert=true&name=load-test');
+  });
+
+  it('handles empty params string', () => {
+    const url = buildPerformanceRunUrl('test-profile-id', []);
+    expect(url).toBe('/api/user/performance/profiles/test-profile-id/run?cert=true');
   });
 });

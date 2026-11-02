@@ -171,6 +171,34 @@ test("a [client=...] token does not produce a duplicate client label", () => {
   }
 });
 
+test("converter-owned project and framework labels cannot be overridden", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b2a-"));
+  const cwd = process.cwd();
+  const prevLabels = process.env.ALLURE_LABELS;
+  try {
+    process.chdir(tmp);
+    process.env.ALLURE_LABELS = "project=suite-override,framework=jest";
+    fs.writeFileSync(
+      path.join(tmp, "s.tap"),
+      "1..1\nok 1 [project=CLI-Docs][framework=cucumber] docs command works\n"
+    );
+
+    const [r] = convertTapToAllure(path.join(tmp, "s.tap"));
+    assert.equal(r.name, "docs command works");
+    assert.deepEqual(r.labels.filter(l => l.name === "project"), [
+      { name: "project", value: "mesheryctl" }
+    ]);
+    assert.deepEqual(r.labels.filter(l => l.name === "framework"), [
+      { name: "framework", value: "bats" }
+    ]);
+  } finally {
+    process.chdir(cwd);
+    if (prevLabels === undefined) delete process.env.ALLURE_LABELS;
+    else process.env.ALLURE_LABELS = prevLabels;
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
 test("convertTapToAllure end-to-end writes results with base + per-test labels", () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b2a-"));
   const cwd = process.cwd();

@@ -23,7 +23,7 @@ setup() {
   export TESTDATA_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/testdata/model-view"
 }
 
-@test "mesheryctl model view displays usage instructions when no model name is provided" {
+@test "[cut=Model][tg=Model View] mesheryctl model view displays usage instructions when no model name is provided" {
   run $MESHERYCTL_BIN model view
   
   assert_failure
@@ -32,7 +32,7 @@ setup() {
   assert_output --partial "Usage: mesheryctl model view [model-name]"
 }
 
-@test "mesheryctl model view displays an existing model" {
+@test "[cut=Model][tg=Model View] mesheryctl model view displays an existing model" {
   run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu -o json \
     | yq -e \"$REQUIRED_FIELDS\""
 
@@ -40,14 +40,14 @@ setup() {
   assert_output "true"
 }
 
-@test "mesheryctl model view handles non-existent models gracefully" {
+@test "[cut=Model][tg=Model View] mesheryctl model view handles non-existent models gracefully" {
   run $MESHERYCTL_BIN model view non-existent-model
 
   assert_success
   assert_output --partial "No model(s) found for the given name  non-existent-model"
 }
 
-@test "mesheryctl model view supports JSON output" {
+@test "[cut=Model][tg=Model View] mesheryctl model view supports JSON output" {
   run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu -o json \
     | jq -e \"$REQUIRED_FIELDS\""
 
@@ -55,7 +55,7 @@ setup() {
   assert_output "true"
 }
 
-@test "mesheryctl model view supports YAML output" {
+@test "[cut=Model][tg=Model View] mesheryctl model view supports YAML output" {
   run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu -o yaml \
     | yq -e \"$REQUIRED_FIELDS\""
 

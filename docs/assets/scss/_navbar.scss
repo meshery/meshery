@@ -258,15 +258,6 @@ html {
   }
 }
 
-// Ensure content is properly spaced
-.main-container {
-  padding-top: var(--navbar-height);
-
-  @media (max-width: 600px) {
-    padding-top: calc(var(--navbar-height) - 2.5rem);
-  }
-}
-
 // Breadcrumb styles
 .breadcrumb {
   font-size: 1.05rem;

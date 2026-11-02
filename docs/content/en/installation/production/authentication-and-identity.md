@@ -25,7 +25,7 @@ Meshery supports two kinds of [providers]({{< ref "reference/extensibility/provi
 
 | Provider | Identity | Durable state | Production fit |
 | :--- | :--- | :--- | :--- |
-| **Local** (built-in; legacy alias `None`) | **None**—sessions are unauthenticated | Only the ephemeral local database | Evaluation and single-operator local use. **Not for shared production.** |
+| **Local** (built-in; legacy alias `None`) | **None** - sessions are unauthenticated | Only the ephemeral local database | Evaluation and single-operator local use. **Not for shared production.** |
 | **Remote** (pluggable, e.g. Meshery Cloud) | Delegated to the provider's identity providers (OAuth) | **Durable, long-term** persistence of users, environments, and saved work | The production choice. |
 
 The Local Provider exists so Meshery can run with zero external dependencies,
@@ -47,13 +47,8 @@ Two environment variables control provider behavior. Set them via the Helm chart
 (`env.*`) or your deployment's environment. See the
 [environment variables reference]({{< ref "installation/advanced/environment-variables.md" >}}).
 
-- **`PROVIDER`** — enforces a single provider and **bypasses the provider
-  selection screen**. Set it to your Remote Provider's registered name (for
-  example `Meshery`). Setting `PROVIDER=Local` (or the legacy alias `None`)
-  pins the Local Provider—avoid that in production.
-- **`PROVIDER_BASE_URLS`** — the comma-separated list of Remote Provider base
-  URLs Meshery registers at startup. Restrict this to the provider(s) you
-  intend to allow rather than the full default list.
+- **`PROVIDER`** - hard-enforces a single provider at **server boot**. Set it to your Remote Provider's registered name (for example `Meshery`). When it is set to a remote, the Local Provider is not registered and cannot be selected via the chooser, cookie, header, or `?provider=`. Setting `PROVIDER=Local` (or the legacy alias `None`) pins the Local Provider; avoid that in production. If `PROVIDER` is set but does not match a registered provider, Meshery **refuses to start** rather than falling back to the chooser.
+- **`PROVIDER_BASE_URLS`** - the comma-separated list of Remote Provider base URLs Meshery registers at startup. Restrict this to the provider you intend to pin rather than the full default list. This setting is read at process start; change it and restart (for example with `helm upgrade`) to re-point an existing deployment. Provider-bound data does not migrate. `mesheryctl system provider switch` changes `PROVIDER` only, never this list - see [below](#preselecting-the-provider).
 
 ```bash
 helm install meshery meshery/meshery --namespace meshery --create-namespace \
@@ -62,13 +57,26 @@ helm install meshery meshery/meshery --namespace meshery --create-namespace \
 ```
 
 Pinning both `PROVIDER` and a single `PROVIDER_BASE_URLS` entry means users are
-taken straight into the chosen Remote Provider's authentication flow, with no
-opportunity to select the Local Provider.
+taken straight into the chosen Remote Provider's authentication flow. The Local Provider is not registered on that server, and cookies or query parameters cannot switch to it.
 
 `mesheryctl` users can also view and set the provider for CLI-driven workflows
 via `mesheryctl system provider` (see the
-[reference]({{< ref "reference/references/mesheryctl/system/provider/set.md" >}})), but the server-side
+[reference]({{< ref "reference/mesheryctl/system/provider/set.md" >}})), but the server-side
 `PROVIDER` setting is what governs the deployment as a whole.
+
+`mesheryctl system provider switch` sets the provider on the CLI's current
+context and restarts the deployment, which is how that value reaches the server
+as `PROVIDER`. It does **not** add anything to `PROVIDER_BASE_URLS` - that list
+is read separately at server start - so the target provider's base URL must
+already be present there. Two consequences follow on a deployment that is
+already pinned:
+
+- `mesheryctl system provider set` validates against the running server's
+  `/api/providers`, which reports only the pinned provider, so selecting a
+  different one requires `--force`.
+- If the value you force is not resolvable when the server restarts, the server
+  refuses to start rather than falling back to the chooser. Add the provider's
+  URL to `PROVIDER_BASE_URLS` first.
 
 ## Configuring the OAuth callback URL
 
@@ -77,7 +85,7 @@ browser back to Meshery. Behind an ingress, reverse proxy, or load balancer,
 Meshery's internal address differs from the external URL, so you must tell
 Meshery its external callback address:
 
-- **`MESHERY_SERVER_CALLBACK_URL`** — overrides the OAuth callback URL. Set it to
+- **`MESHERY_SERVER_CALLBACK_URL`** - overrides the OAuth callback URL. Set it to
   Meshery's external base URL; the effective callback path is
   `/api/user/token`.
 
@@ -104,7 +112,7 @@ for the ingress, TLS, and WebSocket configuration the OAuth flow depends on.
 
 A Remote Provider is what integrates Meshery with identity providers (the OAuth/
 OIDC sources that actually authenticate users). By controlling which Remote
-Provider(s) you allow—and thus which identity providers are recognized—you
+Provider(s) you allow - and thus which identity providers are recognized - you
 control your authentication surface. Choose a Remote Provider whose supported
 identity providers match your organization's SSO, and restrict
 `PROVIDER_BASE_URLS` accordingly.
@@ -112,7 +120,7 @@ identity providers match your organization's SSO, and restrict
 ## Capabilities and authorization
 
 After authentication, a Remote Provider returns a **capabilities** document that
-determines which features and actions are available to the user—this is how
+determines which features and actions are available to the user - this is how
 authorization is expressed through the provider model. Production notes:
 
 - Meshery loads provider capabilities at startup; readiness/health reflect that
@@ -124,6 +132,14 @@ authorization is expressed through the provider model. Production notes:
   fetching the provider's current set.
 - `SKIP_DOWNLOAD_EXTENSIONS` controls whether provider extension packages are
   downloaded/refreshed; existing local packages can still be used.
+
+{{% alert title="Choosing a provider is also an extension-trust decision" color="warning" %}}
+The capabilities document does more than enable features: it names the **extension
+package** Meshery downloads and loads, whose UI components run in Meshery UI's own browser
+context and whose server-side plugin, if present, runs in-process inside Meshery Server.
+Selecting a Remote Provider therefore decides whose code runs inside your deployment. See
+[Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}).
+{{% /alert %}}
 
 ## Keys and permissions
 
@@ -145,7 +161,7 @@ Remote Provider is required for multi-user production.
   Provider.
 - Serve all authenticated traffic over TLS so tokens are never sent in the
   clear.
-- Treat the Remote Provider as part of your availability model—login depends on
+- Treat the Remote Provider as part of your availability model - login depends on
   it. See
   [High Availability & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}}).
 

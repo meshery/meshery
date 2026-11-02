@@ -651,7 +651,7 @@ const Extensions = () => {
           <Adapters />
         </Grid2>
       ) : (
-        <DefaultError />
+        <DefaultError permissionKey={Keys.ExtensibilityViewExtensions} />
       )}
     </>
   );

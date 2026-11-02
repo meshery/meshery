@@ -45,6 +45,7 @@ require (
 	github.com/fatih/color v1.18.0
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/ghodss/yaml v1.0.0
+	github.com/go-logr/logr v1.4.3
 	github.com/go-openapi/strfmt v0.25.0
 	github.com/go-playground/validator/v10 v10.30.1
 	github.com/gofrs/uuid v4.4.0+incompatible
@@ -55,7 +56,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v1.0.3
-	github.com/meshery/meshkit v1.0.22
+	github.com/meshery/meshkit v1.0.24
 	github.com/meshery/meshsync v1.0.3
 	github.com/meshery/schemas v1.3.37
 	github.com/nsf/termbox-go v1.1.1
@@ -77,6 +78,7 @@ require (
 	golang.org/x/oauth2 v0.36.0
 	golang.org/x/term v0.44.0
 	golang.org/x/text v0.38.0
+	golang.org/x/tools v0.45.0
 	gonum.org/v1/gonum v0.17.0
 	google.golang.org/api v0.287.0
 	google.golang.org/grpc v1.82.1
@@ -207,7 +209,6 @@ require (
 	github.com/go-git/go-git/v5 v5.19.1 // indirect
 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
 	github.com/go-ini/ini v1.67.0 // indirect
-	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/errors v0.22.4 // indirect
 	github.com/go-openapi/jsonpointer v0.22.5 // indirect
@@ -400,6 +401,7 @@ require (
 	golang.org/x/crypto v0.53.0 // indirect
 	golang.org/x/crypto/x509roots/fallback v0.0.0-20250406160420-959f8f3db0fb // indirect
 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+	golang.org/x/mod v0.36.0 // indirect
 	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/sync v0.21.0 // indirect
 	golang.org/x/sys v0.46.0 // indirect
