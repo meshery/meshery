@@ -70,11 +70,14 @@ type apiError struct {
 	Method     string
 	Path       string
 	Body       string
+	Cause      error
 }
 
 func (e *apiError) Error() string {
 	return fmt.Sprintf("grafana: %s %s returned %d: %s", e.Method, e.Path, e.StatusCode, e.Body)
 }
+
+func (e *apiError) Unwrap() error { return e.Cause }
 
 // DatasourceNotFoundError indicates a panel referenced a datasource the Grafana
 // instance could not resolve — typically a name or stale uid carried by a
@@ -135,7 +138,7 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values) 
 	body, err := telemetry.ReadBody(resp.Body)
 	if errors.Is(err, ErrResponseTooLarge) {
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-			return nil, &apiError{StatusCode: resp.StatusCode, Method: method, Path: path, Body: ErrResponseTooLarge.Error()}
+			return nil, &apiError{StatusCode: resp.StatusCode, Method: method, Path: path, Body: ErrResponseTooLarge.Error(), Cause: ErrResponseTooLarge}
 		}
 		return nil, fmt.Errorf("grafana: %w from %s; reduce the query time range or number of series", ErrResponseTooLarge, path)
 	}
@@ -247,7 +250,7 @@ func (c *Client) QueryRange(ctx context.Context, dsRef string, params url.Values
 	// frequently reference datasources by name (or a stale uid) instead, so try to
 	// resolve the reference to a real uid and retry once before giving up.
 	var apiErr *apiError
-	if errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound {
+	if errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound && !errors.Is(err, ErrResponseTooLarge) {
 		// dsRef may be a name (or stale uid) rather than a real uid. Resolve it
 		// against the live datasource list and retry once before giving up.
 		sources, listErr := c.ListDatasources(ctx)
@@ -354,7 +357,7 @@ func (c *Client) queryRangeWith(ctx context.Context, dsRef string, params url.Va
 		return body, nil
 	}
 	var apiErr *apiError
-	if errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound {
+	if errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound && !errors.Is(err, ErrResponseTooLarge) {
 		if errors.Is(listErr, ErrResponseTooLarge) {
 			return nil, listErr
 		}

@@ -69,11 +69,14 @@ type apiError struct {
 	Method     string
 	Path       string
 	Body       string
+	Cause      error
 }
 
 func (e *apiError) Error() string {
 	return fmt.Sprintf("prometheus: %s %s returned %d: %s", e.Method, e.Path, e.StatusCode, e.Body)
 }
+
+func (e *apiError) Unwrap() error { return e.Cause }
 
 // StatusCode returns the HTTP status carried by a Prometheus API error, or 0 when
 // err is not one. It lets callers classify failures without depending on the
@@ -114,7 +117,7 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values) 
 	body, err := telemetry.ReadBody(resp.Body)
 	if errors.Is(err, ErrResponseTooLarge) {
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-			return nil, &apiError{StatusCode: resp.StatusCode, Method: method, Path: path, Body: ErrResponseTooLarge.Error()}
+			return nil, &apiError{StatusCode: resp.StatusCode, Method: method, Path: path, Body: ErrResponseTooLarge.Error(), Cause: ErrResponseTooLarge}
 		}
 		return nil, fmt.Errorf("prometheus: %w from %s; reduce the query time range or number of series", ErrResponseTooLarge, path)
 	}
