@@ -109,6 +109,7 @@ mesheryctl perf result saturday-profile --view
 
 		profiles, err := fetchAllPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString)
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 
@@ -186,14 +187,31 @@ mesheryctl perf result saturday-profile --view
 
 func fetchAllPerformanceProfiles(baseURL, searchString string) ([]perfprofile.PerformanceProfile, error) {
 	var profiles []perfprofile.PerformanceProfile
+	seen := make(map[core.Uuid]struct{})
+	expectedTotal := 0
 	for page := 0; ; page++ {
 		pageProfiles, total, err := fetchPerformanceProfiles(baseURL, searchString, pageSize, page)
 		if err != nil {
 			return nil, err
 		}
+		if page == 0 {
+			expectedTotal = total
+		}
+		if total < 0 || total != expectedTotal || len(pageProfiles) > expectedTotal-len(profiles) {
+			return nil, ErrProfileTraversal()
+		}
+		for _, profile := range pageProfiles {
+			if _, exists := seen[profile.ID]; exists {
+				return nil, ErrProfileTraversal()
+			}
+			seen[profile.ID] = struct{}{}
+		}
 		profiles = append(profiles, pageProfiles...)
-		if len(pageProfiles) == 0 || len(profiles) >= total {
+		if len(profiles) == expectedTotal {
 			return profiles, nil
+		}
+		if len(pageProfiles) == 0 {
+			return nil, ErrProfileTraversal()
 		}
 	}
 }

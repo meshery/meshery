@@ -2117,6 +2117,15 @@
         "short_description": "Unexpected response from GitHub API",
         "probable_cause": "GitHub API may be rate-limiting requests or the requested resource may not exist",
         "suggested_remediation": "Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"
+      },
+      "1256": {
+        "name": "ErrProfileTraversalCode",
+        "code": "1256",
+        "severity": "Alert",
+        "long_description": "The matching performance profile pages changed or were inconsistent during lookup",
+        "short_description": "Unable to complete performance profile lookup",
+        "probable_cause": "Profiles were added, deleted, or reordered during lookup, or the provider returned inconsistent pagination data",
+        "suggested_remediation": "Rerun mesheryctl perf result to refresh the matching profile list"
       }
     }
   }

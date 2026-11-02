@@ -29,6 +29,7 @@ const (
 	ErrConvertConcurrentRequestCode = "mesheryctl-1161"
 	ErrConvertQPSCode               = "mesheryctl-1162"
 	ErrPerfProfileServerCode        = "mesheryctl-1245"
+	ErrProfileTraversalCode         = "mesheryctl-1256"
 )
 
 func ErrReadFilepath(err error) error {
@@ -189,4 +190,12 @@ func ErrPerfProfileServer(err error) error {
 		[]string{err.Error()},
 		[]string{"Provider Database could be down or not reachable"},
 		[]string{"Make sure provider is up and reachable", formatErrorWithReference()})
+}
+
+func ErrProfileTraversal() error {
+	return errors.New(ErrProfileTraversalCode, errors.Alert,
+		[]string{"Unable to complete performance profile lookup"},
+		[]string{"The matching performance profile pages changed or were inconsistent during lookup"},
+		[]string{"Profiles were added, deleted, or reordered during lookup, or the provider returned inconsistent pagination data"},
+		[]string{"Rerun mesheryctl perf result to refresh the matching profile list", formatErrorWithReference()})
 }
