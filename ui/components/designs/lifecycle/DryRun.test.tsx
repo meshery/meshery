@@ -68,6 +68,14 @@ vi.mock('../../../machines/validator/designValidator', () => ({
   useDryRunRawResponse: vi.fn(),
 }));
 
+vi.mock('react-redux', () => ({
+  useSelector: vi.fn(() => []),
+}));
+
+vi.mock('./CrossClusterCompatibilityAnalysis', () => ({
+  CrossClusterCompatibilityAnalysis: () => <div data-testid="compatibility-matrix" />,
+}));
+
 vi.mock('../../data-formatter', () => ({
   FormatStructuredData: ({ data }: any) => (
     <pre data-testid="structured">{JSON.stringify(data)}</pre>
@@ -92,7 +100,12 @@ vi.mock('./styles', () => ({
   ValidationSubHeader: ({ children }: any) => <div>{children}</div>,
 }));
 
-import { FormatDryRunResponse, getTotalCountOfDeploymentErrors } from './DryRun';
+import { FormatDryRunResponse, DryRunDesign, getTotalCountOfDeploymentErrors } from './DryRun';
+import {
+  useDryRunValidationResults,
+  useIsValidatingDryRun,
+  useDryRunRawResponse,
+} from '../../../machines/validator/designValidator';
 
 describe('getTotalCountOfDeploymentErrors', () => {
   it('returns 0 when there are no errors', () => {
@@ -174,5 +187,40 @@ describe('FormatDryRunResponse', () => {
     );
     expect(screen.getByTestId('dry-run-summary-success')).toBeInTheDocument();
     expect(screen.getByTestId('dry-run-summary-errors')).toHaveTextContent('0 error(s)');
+  });
+});
+
+describe('DryRunDesign view fallback', () => {
+  const baseProps = {
+    handleClose: vi.fn(),
+    currentComponentName: null,
+    design: { name: 'test-design' },
+    validationMachine: {},
+    selectedK8sContexts: [],
+    deployment_type: 'deploy',
+    includeDependencies: false,
+  };
+
+  it('falls back to the list view and hides the view toggle when there is no raw dry-run response', () => {
+    vi.mocked(useDryRunValidationResults).mockReturnValue([]);
+    vi.mocked(useIsValidatingDryRun).mockReturnValue(false);
+    vi.mocked(useDryRunRawResponse).mockReturnValue(null);
+
+    render(<DryRunDesign {...baseProps} />);
+
+    expect(screen.queryByTestId('toggle-view-matrix')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('compatibility-matrix')).not.toBeInTheDocument();
+    expect(screen.getByTestId('dry-run-summary-errors')).toHaveTextContent('0 error(s)');
+  });
+
+  it('renders the matrix view and the view toggle when a raw dry-run response exists', () => {
+    vi.mocked(useDryRunValidationResults).mockReturnValue([]);
+    vi.mocked(useIsValidatingDryRun).mockReturnValue(false);
+    vi.mocked(useDryRunRawResponse).mockReturnValue({ frontend: {} });
+
+    render(<DryRunDesign {...baseProps} />);
+
+    expect(screen.getByTestId('toggle-view-matrix')).toBeInTheDocument();
+    expect(screen.getByTestId('compatibility-matrix')).toBeInTheDocument();
   });
 });

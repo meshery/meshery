@@ -304,26 +304,28 @@ const DryRunComponent = (props) => {
 
   return (
     <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 1 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
-        <ButtonGroup size="small" variant="outlined">
-          <Button
-            variant={viewMode === 'matrix' ? 'contained' : 'outlined'}
-            onClick={() => setViewMode('matrix')}
-            data-testid="toggle-view-matrix"
-          >
-            Compatibility Matrix
-          </Button>
-          <Button
-            variant={viewMode === 'list' ? 'contained' : 'outlined'}
-            onClick={() => setViewMode('list')}
-            data-testid="toggle-view-list"
-          >
-            List View
-          </Button>
-        </ButtonGroup>
-      </Box>
+      {rawDryRunResponse && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+          <ButtonGroup size="small" variant="outlined">
+            <Button
+              variant={viewMode === 'matrix' ? 'contained' : 'outlined'}
+              onClick={() => setViewMode('matrix')}
+              data-testid="toggle-view-matrix"
+            >
+              Compatibility Matrix
+            </Button>
+            <Button
+              variant={viewMode === 'list' ? 'contained' : 'outlined'}
+              onClick={() => setViewMode('list')}
+              data-testid="toggle-view-list"
+            >
+              List View
+            </Button>
+          </ButtonGroup>
+        </Box>
+      )}
 
-      {viewMode === 'matrix' ? (
+      {viewMode === 'matrix' && rawDryRunResponse ? (
         <CrossClusterCompatibilityAnalysis
           dryRunResponse={rawDryRunResponse}
           design={design}

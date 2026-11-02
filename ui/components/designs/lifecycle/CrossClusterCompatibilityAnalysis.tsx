@@ -17,6 +17,7 @@ import CheckIcon from '@/assets/icons/CheckIcon';
 import AlertIcon from '@/assets/icons/AlertIcon';
 import CrossCircleIcon from '@/assets/icons/CrossCircleIcon';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
+import HelpOutlineIcon from '@/assets/icons/HelpOutlineIcon';
 import { alpha, useTheme } from '@/theme';
 import {
   CompatibilityAnalysisData,
@@ -317,6 +318,30 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
             </Typography>
           </Box>
         </MetricCard>
+
+        <MetricCard accentColor={theme.palette.text.secondary}>
+          <Box
+            sx={{
+              width: 32,
+              height: 32,
+              borderRadius: '50%',
+              backgroundColor: alpha(theme.palette.text.secondary, 0.15),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <HelpOutlineIcon width={18} height={18} fill={theme.palette.text.secondary} />
+          </Box>
+          <Box>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: theme.palette.text.secondary }}>
+              {data.metrics.incompleteCount ?? 0}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Incomplete
+            </Typography>
+          </Box>
+        </MetricCard>
       </MetricsGrid>
 
       {/* 3. Main Analysis Grid: Matrix + Details Inspector */}
@@ -449,8 +474,10 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
             {data.clusterSummaries.map((summary) => {
-              const isAllPass = summary.failed === 0 && summary.warnings === 0;
+              const incomplete = summary.incomplete ?? 0;
+              const isAllPass = summary.failed === 0 && summary.warnings === 0 && incomplete === 0;
               const hasErrors = summary.failed > 0;
+              const hasIncomplete = !hasErrors && summary.warnings === 0 && incomplete > 0;
               return (
                 <Box
                   key={summary.clusterId}
@@ -473,7 +500,9 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
                           ? theme.palette.error.main
                           : summary.warnings > 0
                             ? theme.palette.warning.main
-                            : theme.palette.success.main,
+                            : hasIncomplete
+                              ? theme.palette.text.secondary
+                              : theme.palette.success.main,
                       }}
                     />
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>
@@ -492,14 +521,16 @@ export const CrossClusterCompatibilityAnalysis: React.FC<
                         ? theme.palette.error.main
                         : summary.warnings > 0
                           ? theme.palette.warning.main
-                          : theme.palette.success.main,
+                          : hasIncomplete
+                            ? theme.palette.text.secondary
+                            : theme.palette.success.main,
                     }}
                   >
                     {isAllPass
                       ? `${summary.passed} / ${summary.total} Passed`
                       : `${summary.passed} Passed${summary.warnings > 0 ? `, ${summary.warnings} Warning` : ''}${
                           summary.failed > 0 ? `, ${summary.failed} Failed` : ''
-                        }`}
+                        }${incomplete > 0 ? `, ${incomplete} Incomplete` : ''}`}
                   </Typography>
                 </Box>
               );

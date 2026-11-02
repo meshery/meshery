@@ -57,7 +57,7 @@ export const ValidationDetailsPanel: React.FC<ValidationDetailsPanelProps> = ({
                 </Box>
               </Typography>
             </Box>
-            <IconButton size="small" onClick={onClearSelection}>
+            <IconButton size="small" onClick={onClearSelection} aria-label="Clear selection">
               <ClearIcon width={16} height={16} />
             </IconButton>
           </Box>

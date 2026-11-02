@@ -195,7 +195,28 @@ describe('CrossClusterCompatibilityAnalysis', () => {
     );
 
     expect(screen.getByTestId('status-badge-incomplete')).toBeInTheDocument();
-    expect(screen.getByText('Incomplete')).toBeInTheDocument();
+    expect(screen.getAllByText('Incomplete').length).toBeGreaterThan(0);
+  });
+
+  it('shows incomplete results in the cluster summary instead of a passing state', () => {
+    const incompleteResponse = {
+      frontend: {
+        'c-dev': { success: true, component: { kind: 'Deployment' } },
+        // c-staging is omitted
+      },
+    };
+
+    render(
+      <CrossClusterCompatibilityAnalysis
+        dryRunResponse={incompleteResponse}
+        selectedK8sConnections={sampleConnections.slice(0, 2)}
+      />,
+    );
+
+    // dev-cluster passed everything, so it keeps the all-pass label
+    expect(screen.getByText('1 / 1 Passed')).toBeInTheDocument();
+    // staging-cluster has no results: not a pass, and the incomplete count is surfaced
+    expect(screen.getByText('0 Passed, 1 Incomplete')).toBeInTheDocument();
   });
 
   it('resets selection when selected resource no longer exists in updated matrix', () => {
