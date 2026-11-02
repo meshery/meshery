@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	stderrors "errors"
 	"fmt"
 	"strings"
 
+	"github.com/meshery/meshery/server/models/telemetry/grafana"
+	"github.com/meshery/meshery/server/models/telemetry/prometheus"
 	"github.com/meshery/meshkit/errors"
 )
 
@@ -217,6 +220,7 @@ const (
 	ErrMeshsyncReconcileCode               = "meshery-server-1442"
 	ErrUnsafeFilePathCode                  = "meshery-server-1443"
 	ErrModelNotFoundCode                   = "meshery-server-1485"
+	ErrTelemetrySizeCode                   = "meshery-server-1487"
 	// Environment, workspace, organization, user and key operations previously
 	// reported every failure as ErrGetResult ("unable to get result", probable
 	// cause "Result Identifier provided is not valid") - a performance-results
@@ -977,6 +981,9 @@ func ErrUpdateConnection(err error) error {
 // (health, board search/fetch, datasource listing, or datasource query proxy).
 // The op string identifies the operation that failed. Emitted with HTTP 502.
 func ErrTelemetryGrafana(err error, op string) error {
+	if stderrors.Is(err, grafana.ErrResponseTooLarge) {
+		return ErrTelemetrySize(err)
+	}
 	return errors.New(ErrTelemetryGrafanaCode, errors.Alert, []string{fmt.Sprintf("Grafana telemetry request failed during %s", op)}, []string{err.Error()}, []string{"The Grafana instance is unreachable or returned an error.", "The stored credential (API key / basic auth) is missing, expired, or lacks permission.", "The connection's URL is incorrect."}, []string{"Verify the Grafana URL is reachable from the Meshery server and that the connection's credential is valid, then retry."})
 }
 
@@ -1002,7 +1009,19 @@ func ErrTelemetryGrafanaAuth(err error) error {
 // connection (health, metric/label discovery, metadata, or query/query_range).
 // The op string identifies the operation that failed. Emitted with HTTP 502.
 func ErrTelemetryPrometheus(err error, op string) error {
+	if stderrors.Is(err, prometheus.ErrResponseTooLarge) {
+		return ErrTelemetrySize(err)
+	}
 	return errors.New(ErrTelemetryPrometheusCode, errors.Alert, []string{fmt.Sprintf("Prometheus telemetry request failed during %s", op)}, []string{err.Error()}, []string{"The Prometheus instance is unreachable or returned an error.", "The stored credential (API key / basic auth) is missing, expired, or lacks permission.", "The connection's URL is incorrect."}, []string{"Verify the Prometheus URL is reachable from the Meshery server and that the connection's credential is valid, then retry."})
+}
+
+// ErrTelemetrySize gives users a useful error when an upstream telemetry response exceeds the limit.
+func ErrTelemetrySize(err error) error {
+	return errors.New(ErrTelemetrySizeCode, errors.Alert,
+		[]string{"Telemetry response exceeds Meshery's 16 MiB limit"},
+		[]string{err.Error()},
+		[]string{"The upstream response contains more data than Meshery can return."},
+		[]string{"Reduce the response size, then retry.", "For panel queries, shorten the time range or use more selective label matchers."})
 }
 
 // ErrTelemetryPrometheusAuth reports that Prometheus rejected the connection's

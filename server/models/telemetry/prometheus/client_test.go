@@ -2,13 +2,41 @@ package prometheus
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"sort"
+	"strconv"
+	"strings"
 	"sync"
 	"testing"
 )
+
+func TestQueryRangeResponseSizeLimit(t *testing.T) {
+	const limit = 16 << 20
+	const prefix = `{"status":"success","padding":"`
+	const suffix = `"}`
+	for _, size := range []int{limit, limit + 1} {
+		t.Run(strconv.Itoa(size), func(t *testing.T) {
+			payload := prefix + strings.Repeat("x", size-len(prefix)-len(suffix)) + suffix
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				w.Header().Set("Content-Length", strconv.Itoa(len(payload)))
+				_, _ = w.Write([]byte(payload))
+			}))
+			defer srv.Close()
+			body, err := New(srv.URL, "", nil).QueryRange(context.Background(), "up", "1", "2", "15")
+			if size == limit {
+				if err != nil || string(body) != payload {
+					t.Fatalf("at limit: body length %d, error %v", len(body), err)
+				}
+			} else if body != nil || !errors.Is(err, ErrResponseTooLarge) || !strings.Contains(err.Error(), "16 MiB") {
+				t.Fatalf("over limit: body length %d, error %v", len(body), err)
+			}
+		})
+	}
+
+}
 
 func TestAuthHeader(t *testing.T) {
 	cases := []struct {
