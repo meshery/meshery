@@ -16,6 +16,7 @@ import {
 } from '@sistent/sistent';
 import { useSelector } from 'react-redux';
 
+import type { RootState } from '../../store';
 import { iconMedium } from 'css/icons.styles';
 import { ActionButton } from './style';
 
@@ -183,7 +184,7 @@ export const LayoutActionButton = ({
 }: LayoutActionButtonProps) => {
   const theme = useTheme();
   const iconsProps = actionIconProps(theme);
-  const { isDrawerCollapsed } = useSelector((state) => state.ui);
+  const { isDrawerCollapsed } = useSelector((state: RootState) => state.ui);
   const isSmallTablet = useMediaQuery(theme.breakpoints.down('md'));
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
