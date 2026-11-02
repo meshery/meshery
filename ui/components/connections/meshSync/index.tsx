@@ -78,8 +78,7 @@ export default function MeshSyncTable(props) {
   // request with the new cluster IDs and the stale page before the reset
   // effect below runs.
   const previousSerializedClusterIds = useRef(serializedClusterIds);
-  const pageForQuery =
-    previousSerializedClusterIds.current === serializedClusterIds ? page : 0;
+  const pageForQuery = previousSerializedClusterIds.current === serializedClusterIds ? page : 0;
   useEffect(() => {
     previousSerializedClusterIds.current = serializedClusterIds;
     setPage(0);
