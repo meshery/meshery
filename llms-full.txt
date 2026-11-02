@@ -81441,7 +81441,7 @@ Ensure network connectivity to the resource from your network</p>
             <td id=" -1322" class="error-name-code">
               <code>ErrMarshalYAMLCode-1322</code>
             </td>
-            <td>unable to marshal yaml \&#34;%s\</td>
+            <td>Unable to marshal yaml</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMarshalYAMLCode-1322" target="_blank">search forum</a></td>
           </tr>
           <tr id="meshery-server-ErrMarshalYAMLCode-more-info" class="tbl-hidden-row">
@@ -85406,7 +85406,10 @@ Check if the selected target platform is assigned to the current environment.\n<
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">File path or design name not provided.</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Provide a file path/design name. \n\n%v</p>
+              <p class="error-details">Provide a file path/design name.
+`Usage: mesheryctl design undeploy -f [filepath]
+Example: mesheryctl design undeploy -f ./pattern.yml
+Description: Undeploy design`</p>
             </td>
           </tr>
         
@@ -85452,7 +85455,9 @@ Check if the selected target platform is assigned to the current environment.\n<
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">Manifest path not provided</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Provide the path to the design manifest. \n\n%v</p>
+              <p class="error-details">Provide the path to the design manifest.
+`Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#34;`</p>
             </td>
           </tr>
         
@@ -86095,7 +86100,7 @@ See https://docs.meshery.io for help getting started with Meshery</p>
               <div class="error-heading">Long Description</div>
               <p class="error-details">Unable to validate mesh name</p>
               <div class="error-heading">Probable Cause</div>
-              <p class="error-details">%s is not a valid mesh name or is unsupported</p>
+              <p class="error-details">The provided mesh name is not valid or is unsupported</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Enter a valid mesh name</p>
             </td>
@@ -86551,7 +86556,7 @@ Ensure sufficient permissions to allow creation of model directory.</p>
             <td id=" -1056" class="error-name-code">
               <code>ErrGenerateComponentCode-1056</code>
             </td>
-            <td>error generating comp %s of model %s</td>
+            <td>Error generating component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGenerateComponentCode-1056" target="_blank">search forum</a></td>
           </tr>
           <tr id="mesheryctl-ErrGenerateComponentCode-more-info" class="tbl-hidden-row">
@@ -87814,7 +87819,7 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
               <div class="error-heading">Long Description</div>
               <p class="error-details"></p>
               <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Unable to retrieve file from URL: %s</p>
+              <p class="error-details">Unable to retrieve file from the given URL</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Ensure you have a github url in file path</p>
             </td>
@@ -87979,7 +87984,9 @@ Ensure model name formatting is correct</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">Design source type not provided</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Provide one of the supported source type for the design to import. \n\n%v</p>
+              <p class="error-details">Provide one of the supported source type for the design to import.
+`Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#34;`</p>
             </td>
           </tr>
         
@@ -88065,7 +88072,7 @@ Ensure model name formatting is correct</p>
             <td id=" -1126" class="error-name-code">
               <code>ErrMarkFlagRequireCode-1126</code>
             </td>
-            <td></td>
+            <td>Failed to mark the flag as required</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMarkFlagRequireCode-1126" target="_blank">search forum</a></td>
           </tr>
           <tr id="mesheryctl-ErrMarkFlagRequireCode-more-info" class="tbl-hidden-row">
@@ -88075,7 +88082,7 @@ Ensure model name formatting is correct</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">The flag may not exist or there was some error while specifying the flag.</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Please ensure that the required flag &#39;%s&#39; is correctly specified and set before running the command.</p>
+              <p class="error-details"></p>
             </td>
           </tr>
         
@@ -88342,7 +88349,9 @@ Regenerate corrupted component</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">[File | File Path | URL] not detected. The &#39;-f&#39; flag is missing or empty in the &#39;mesheryctl design import&#39; command</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Provide the path to the design file using the &#39;-f&#39; flag. Ensure that the file path or URL is correctly specified and accessible. \n\n%v</p>
+              <p class="error-details">Provide the path to the design file using the &#39;-f&#39; flag. Ensure that the file path or URL is correctly specified and accessible.
+`Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#34;`</p>
             </td>
           </tr>
         
@@ -99737,7 +99746,7 @@ mesheryctl adapter deploy linkerd --watch
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -99810,7 +99819,7 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token for authenticating to Meshery API
   -v, --verbose         verbose output
 
@@ -99882,7 +99891,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100045,7 +100054,7 @@ mesheryctl completion fish &gt; ~/.config/fish/completions/mesheryctl.fish
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100136,7 +100145,7 @@ mesheryctl component list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100216,7 +100225,7 @@ mesheryctl component search [query-text] [--page 1]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100296,7 +100305,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100393,7 +100402,7 @@ mesheryctl connection create --type gke --token auth.json
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100451,7 +100460,7 @@ mesheryctl connection delete [connection_id]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100554,7 +100563,7 @@ mesheryctl connection list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100634,7 +100643,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -100704,7 +100713,7 @@ mesheryctl design apply [design-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -100769,7 +100778,7 @@ mesheryctl design delete [file | URL]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -100831,7 +100840,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -100919,7 +100928,7 @@ mesheryctl design evaluate -f design.yaml --output-format json -o evaluated-desi
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -101013,7 +101022,7 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -101109,7 +101118,7 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -101212,7 +101221,7 @@ mesheryctl design list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
 
 </div>
@@ -101276,7 +101285,7 @@ mesheryctl design undeploy -f [filepath]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -101337,7 +101346,7 @@ mesheryctl design view [design-name | ID]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -101404,7 +101413,7 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -101462,7 +101471,7 @@ mesheryctl environment delete [environmentId]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -101554,7 +101563,7 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -101615,7 +101624,7 @@ mesheryctl environment view --orgId [orgId]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -101660,7 +101669,7 @@ mesheryctl exp [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -101719,7 +101728,7 @@ mesheryctl filter delete [filter-name | ID]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -101812,7 +101821,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -101895,7 +101904,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
 
 </div>
@@ -101997,7 +102006,7 @@ mesheryctl filter view "filter name"
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -102068,7 +102077,7 @@ mesheryctl model build [model-name]/[model-version]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102136,7 +102145,7 @@ mesheryctl model delete [model-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102241,7 +102250,7 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102333,7 +102342,7 @@ mesheryctl model generate -f [path-to-csv-directory] -m [model-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102442,7 +102451,7 @@ mesheryctl model import --file [path-to-csv-directory]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102533,7 +102542,7 @@ mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102614,7 +102623,7 @@ mesheryctl model list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102694,7 +102703,7 @@ mesheryctl model search [query-text] --pagesize [pagesize-number]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102774,7 +102783,7 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -102855,7 +102864,7 @@ mesheryctl organization list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103026,7 +103035,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string          path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string          path to config file (default "~/.meshery/config.yaml")
   -o, --output-format string   (optional) format to display in [json|yaml]
   -t, --token string           (required) Path to meshery auth config
   -v, --verbose                verbose output
@@ -103114,7 +103123,7 @@ mesheryctl perf profile test --view
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string          path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string          path to config file (default "~/.meshery/config.yaml")
   -o, --output-format string   (optional) format to display in [json|yaml]
   -t, --token string           (required) Path to meshery auth config
   -v, --verbose                verbose output
@@ -103197,7 +103206,7 @@ mesheryctl perf result saturday-profile --view
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string          path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string          path to config file (default "~/.meshery/config.yaml")
   -o, --output-format string   (optional) format to display in [json|yaml]
   -t, --token string           (required) Path to meshery auth config
   -v, --verbose                verbose output
@@ -103335,7 +103344,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103463,7 +103472,7 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103569,7 +103578,7 @@ mesheryctl registry purge --retain 2 -y
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103651,7 +103660,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103733,7 +103742,7 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103824,7 +103833,7 @@ mesheryctl relationship list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103897,7 +103906,7 @@ mesheryctl relationship search [--kind &lt;kind&gt;] [--page &lt;int&gt;]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -103977,7 +103986,7 @@ mesheryctl relationship view [model-name] --output-format json --save
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -104035,7 +104044,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104095,7 +104104,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104166,7 +104175,7 @@ mesheryctl system channel view --all
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104291,7 +104300,7 @@ mesheryctl system check --operator
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104371,7 +104380,7 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104437,7 +104446,7 @@ mesheryctl system context delete [context name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104497,7 +104506,7 @@ mesheryctl system context list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104557,7 +104566,7 @@ mesheryctl system context switch sample
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104656,7 +104665,7 @@ mesheryctl system context view --all
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
   -y, --yes             (optional) assume yes for user interactive prompts.
 
@@ -104762,7 +104771,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104832,7 +104841,7 @@ mesheryctl system delete -y
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104905,7 +104914,7 @@ mesheryctl system login -p Meshery
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -104967,7 +104976,7 @@ mesheryctl system logout
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105048,7 +105057,7 @@ mesheryctl system logs meshery-istio
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105107,7 +105116,7 @@ mesheryctl system provider list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105166,7 +105175,7 @@ mesheryctl system provider reset
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105226,7 +105235,7 @@ mesheryctl system provider set [provider]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105285,7 +105294,7 @@ mesheryctl system provider switch [provider]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105346,7 +105355,7 @@ mesheryctl system provider view
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105406,7 +105415,7 @@ mesheryctl system reset
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105483,7 +105492,7 @@ mesheryctl system restart --skip-update
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105598,7 +105607,7 @@ mesheryctl system start --provider Meshery
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105669,7 +105678,7 @@ mesheryctl system status --verbose
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -y, --yes              (optional) assume yes for user interactive prompts.
 
@@ -105766,7 +105775,7 @@ mesheryctl system stop --force
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105845,7 +105854,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105903,7 +105912,7 @@ mesheryctl system token delete [token-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -105961,7 +105970,7 @@ mesheryctl system token list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -106020,7 +106029,7 @@ mesheryctl system token set [token-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
   -y, --yes             (optional) assume yes for user interactive prompts.
 
@@ -106087,7 +106096,7 @@ mesheryctl system token view (show token of current context)
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -106158,7 +106167,7 @@ mesheryctl system update --skip-reset
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -106222,7 +106231,7 @@ mesheryctl version
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -106288,7 +106297,7 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -106370,7 +106379,7 @@ mesheryctl workspace list --orgId [orgId] --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -106461,7 +106470,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>

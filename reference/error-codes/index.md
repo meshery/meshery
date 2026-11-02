@@ -10905,7 +10905,7 @@ Ensure network connectivity to the resource from your network</p>
             <td id=" -1322" class="error-name-code">
               <code>ErrMarshalYAMLCode-1322</code>
             </td>
-            <td>unable to marshal yaml \&#34;%s\</td>
+            <td>Unable to marshal yaml</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMarshalYAMLCode-1322" target="_blank">search forum</a></td>
           </tr>
           <tr id="meshery-server-ErrMarshalYAMLCode-more-info" class="tbl-hidden-row">
@@ -14870,7 +14870,10 @@ Check if the selected target platform is assigned to the current environment.\n<
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">File path or design name not provided.</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Provide a file path/design name. \n\n%v</p>
+              <p class="error-details">Provide a file path/design name.
+`Usage: mesheryctl design undeploy -f [filepath]
+Example: mesheryctl design undeploy -f ./pattern.yml
+Description: Undeploy design`</p>
             </td>
           </tr>
         
@@ -14916,7 +14919,9 @@ Check if the selected target platform is assigned to the current environment.\n<
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">Manifest path not provided</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Provide the path to the design manifest. \n\n%v</p>
+              <p class="error-details">Provide the path to the design manifest.
+`Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#34;`</p>
             </td>
           </tr>
         
@@ -15559,7 +15564,7 @@ See https://docs.meshery.io for help getting started with Meshery</p>
               <div class="error-heading">Long Description</div>
               <p class="error-details">Unable to validate mesh name</p>
               <div class="error-heading">Probable Cause</div>
-              <p class="error-details">%s is not a valid mesh name or is unsupported</p>
+              <p class="error-details">The provided mesh name is not valid or is unsupported</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Enter a valid mesh name</p>
             </td>
@@ -16015,7 +16020,7 @@ Ensure sufficient permissions to allow creation of model directory.</p>
             <td id=" -1056" class="error-name-code">
               <code>ErrGenerateComponentCode-1056</code>
             </td>
-            <td>error generating comp %s of model %s</td>
+            <td>Error generating component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGenerateComponentCode-1056" target="_blank">search forum</a></td>
           </tr>
           <tr id="mesheryctl-ErrGenerateComponentCode-more-info" class="tbl-hidden-row">
@@ -17278,7 +17283,7 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
               <div class="error-heading">Long Description</div>
               <p class="error-details"></p>
               <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Unable to retrieve file from URL: %s</p>
+              <p class="error-details">Unable to retrieve file from the given URL</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Ensure you have a github url in file path</p>
             </td>
@@ -17443,7 +17448,9 @@ Ensure model name formatting is correct</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">Design source type not provided</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Provide one of the supported source type for the design to import. \n\n%v</p>
+              <p class="error-details">Provide one of the supported source type for the design to import.
+`Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#34;`</p>
             </td>
           </tr>
         
@@ -17529,7 +17536,7 @@ Ensure model name formatting is correct</p>
             <td id=" -1126" class="error-name-code">
               <code>ErrMarkFlagRequireCode-1126</code>
             </td>
-            <td></td>
+            <td>Failed to mark the flag as required</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMarkFlagRequireCode-1126" target="_blank">search forum</a></td>
           </tr>
           <tr id="mesheryctl-ErrMarkFlagRequireCode-more-info" class="tbl-hidden-row">
@@ -17539,7 +17546,7 @@ Ensure model name formatting is correct</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">The flag may not exist or there was some error while specifying the flag.</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Please ensure that the required flag &#39;%s&#39; is correctly specified and set before running the command.</p>
+              <p class="error-details"></p>
             </td>
           </tr>
         
@@ -17806,7 +17813,9 @@ Regenerate corrupted component</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">[File | File Path | URL] not detected. The &#39;-f&#39; flag is missing or empty in the &#39;mesheryctl design import&#39; command</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Provide the path to the design file using the &#39;-f&#39; flag. Ensure that the file path or URL is correctly specified and accessible. \n\n%v</p>
+              <p class="error-details">Provide the path to the design file using the &#39;-f&#39; flag. Ensure that the file path or URL is correctly specified and accessible.
+`Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#34;`</p>
             </td>
           </tr>
         
