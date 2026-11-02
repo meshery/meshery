@@ -113,7 +113,7 @@ describe('WrapIfAdditionalTemplate', () => {
     );
 
     fireEvent.change(screen.getByTestId('key-input'), { target: { value: 'newKey' } });
-
+    expect(onKeyRenameBlur).not.toHaveBeenCalled();
     fireEvent.blur(screen.getByTestId('key-input'));
     expect(onKeyRenameBlur.mock.calls[0][0].target.value).toBe('newKey');
   });
