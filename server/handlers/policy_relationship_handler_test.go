@@ -887,7 +887,7 @@ func TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys(t *testin
 	assert.Equal(t, designID, metadata["designId"])
 	assert.Equal(t, "evaluated-design", metadata["designName"])
 	assert.Equal(t, "1.2.3", metadata["designVersion"])
-	assert.Equal(t, "http://meshery.test/extension/meshmap?mode=operator&type=view&design_id="+designID.String(), metadata["designLink"])
+	assert.Equal(t, "http://meshery.test/extension/meshmap?mode=design&design="+designID.String(), metadata["designLink"])
 }
 
 // TestBuildPolicyEvaluationEventMetadata_NilTimestamp pins that a response

@@ -56,15 +56,15 @@ _Note: In certain conditions you must add some fields with specific keys:_
 
 ### Design Event Metadata
 
-An event about a design carries the design's identity and a bounded summary, never the design itself - no `design` contents, `designFile`, `patternFile`, `components`, `relationships`, `trace`, `evaluationResponse` or raw process `summary` ([#22764](https://github.com/meshery/meshery/issues/22764)). Build the identity with `models.DesignEventIdentity` (`server/models/event_metadata.go`) and add the event's own fields:
+An event about a design carries the design's identity and a bounded summary, never the design itself - no `design` contents, `designFile`, `patternFile`, `components`, `relationships`, `trace`, `evaluationResponse` or raw process `summary` ([#22764](https://github.com/meshery/meshery/issues/22764)). Build the identity with `models.DesignEventIdentity` (`server/models/event_metadata.go`), passing the `designLink` that matches the event, and add the event's own fields:
 
 | Event | Metadata |
 |---|---|
 | any design event | `designId`, `designName`, `designVersion` (when set), `designLink` |
-| `pattern/create`, `pattern/update` (design saved) | identity, plus `design` as exactly `{id, name}` - the Notification Center's "Saved design" link reads it - `historyTitle` and `doclink` |
-| `relationship/evaluation` | identity, `historyTitle`, `relationshipsAdded`, `relationshipsRemoved`, `relationshipsUpdated`, `evaluationStatus`, `evaluationDurationMs`, `evaluatedAt` |
-| `pattern/validate`, `pattern/deploy`, `pattern/undeploy`, `pattern/dry-run` | identity (plus `viewLink`), `status`, `errorCount`, `errors[]` of at most 20 `{code, componentId}`, `truncated` |
-| a failed design event | identity and `error` (the MeshKit error) |
+| `pattern/create`, `pattern/update` (design saved) | identity with `designLink` set to the designer URL (`models.DesignerLink`, `/extension/meshmap?mode=design&design=<id>`), plus `design` as exactly `{id, name}` - the Notification Center's "Saved design" link reads it - `historyTitle` and `doclink` |
+| `relationship/evaluation` | identity with `designLink` set to the designer URL (`models.DesignerLink`), `historyTitle`, `relationshipsAdded`, `relationshipsRemoved`, `relationshipsUpdated`, `evaluationStatus`, `evaluationDurationMs`, `evaluatedAt` |
+| `pattern/validate`, `pattern/deploy`, `pattern/undeploy`, `pattern/dry-run` | identity with `designLink` and `viewLink` both set to the operator view URL (`models.DesignLink`, `/extension/meshmap?mode=operator&type=view&design_id=<id>`), `status`, `errorCount`, `errors[]` of at most 20 `{code, componentId}`, `truncated` |
+| a failed design event | identity (operator view `designLink`) and `error` (the MeshKit error) |
 
 `errorCount` is always the full count; `truncated` marks that `errors[]` was capped. `design` is allowed only as the two-field identity object - `models.IsDesignIdentityObject` is the check. Persisted metadata larger than 16 KB (`models.MaxEventMetadataBytes`) is reduced by `models.GuardEventMetadataSize` to the identity fields, `historyTitle` and that `design` object.
 

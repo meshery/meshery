@@ -296,6 +296,35 @@ describe('DeploymentSummaryFormatter', () => {
     expect(openViewScopedToDesignInOperator).toHaveBeenLastCalledWith('New Name', 'new-id', router);
   });
 
+  it('offers Open In Operator for a deploy event but not for a dry-run event', () => {
+    useIsOperatorEnabled.mockReturnValue(true);
+    const metadata = { designId: 'd1', designName: 'My Design' };
+    const { unmount } = render(
+      <DeploymentSummaryFormatter
+        event={{
+          description: 'Dry run complete',
+          severity: 'informational',
+          action: 'dry-run',
+          metadata,
+        }}
+      />,
+    );
+    expect(screen.queryByText(/Open In Operator/)).not.toBeInTheDocument();
+    unmount();
+
+    render(
+      <DeploymentSummaryFormatter
+        event={{
+          description: 'Deployment Complete',
+          severity: 'success',
+          action: 'deploy',
+          metadata,
+        }}
+      />,
+    );
+    expect(screen.getByText(/Open In Operator/)).toBeInTheDocument();
+  });
+
   it('notes when the errors list is truncated', () => {
     render(
       <DeploymentSummaryFormatter

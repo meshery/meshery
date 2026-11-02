@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
@@ -29,15 +30,26 @@ const (
 // GuardEventMetadataSize.
 const MaxEventMetadataBytes = 16 * 1024
 
-// designViewLinkFormat is the meshmap view URL for a design.
+// designViewLinkFormat is the meshmap operator view URL for a design.
 //
 // NOTE: design_id (snake_case) is the meshmap extension's URL query-param
 // contract; flipping it requires a coordinated meshmap-side change.
 const designViewLinkFormat = "%s/extension/meshmap?mode=operator&type=view&design_id=%s"
 
-// DesignLink returns the URL that opens the design in the meshmap extension.
+// designerLinkFormat is the meshmap designer URL for a design, the same one
+// the notification center's "Saved design" link opens.
+const designerLinkFormat = "%s/extension/meshmap?mode=design&design=%s"
+
+// DesignLink returns the URL that opens the design in the meshmap operator
+// view. Deploy, undeploy and dry-run events link here.
 func DesignLink(serverURL string, designID core.Uuid) string {
 	return fmt.Sprintf(designViewLinkFormat, serverURL, designID)
+}
+
+// DesignerLink returns the URL that opens the design in the meshmap
+// designer. Design-saved and relationship-evaluation events link here.
+func DesignerLink(serverURL string, designID core.Uuid) string {
+	return fmt.Sprintf(designerLinkFormat, serverURL, url.QueryEscape(designID.String()))
 }
 
 // ServerURLFromRequest returns the Meshery server URL stored on the request
@@ -52,12 +64,13 @@ func ServerURLFromRequest(r *http.Request) string {
 
 // DesignEventIdentity returns the identity fields every design-related event
 // carries: designId, designName, designLink and, when non-empty,
-// designVersion. Callers add event-specific fields to the returned map.
-func DesignEventIdentity(serverURL string, designID core.Uuid, name, version string) map[string]interface{} {
+// designVersion. link is DesignLink or DesignerLink, whichever view the event
+// is about. Callers add event-specific fields to the returned map.
+func DesignEventIdentity(designID core.Uuid, name, version, link string) map[string]interface{} {
 	metadata := map[string]interface{}{
 		EventMetadataDesignID:   designID,
 		EventMetadataDesignName: name,
-		EventMetadataDesignLink: DesignLink(serverURL, designID),
+		EventMetadataDesignLink: link,
 	}
 	if version != "" {
 		metadata[EventMetadataDesignVersion] = version

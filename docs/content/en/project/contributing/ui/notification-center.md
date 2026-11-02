@@ -418,7 +418,7 @@ The **Deployment Summary Formatter** is responsible for rendering notifications 
    - **Errors**: The MeshKit `error` of a failed event, rendered through `ErrorMetadataFormatter`.
    - **Error Summary**: `status`, `errorCount`, `errors[]` and `truncated`, rendered through `DesignEventErrorsFormatter`. A rewritten deploy error may carry a `code` but no `componentId`.
    - **Component Details**: For an event stored before [#22764](https://github.com/meshery/meshery/issues/22764) without an error summary, the components flattened out of the legacy per-context `summary`, or its `dryRunResponse`.
-   - **Open In Operator**: A shortcut to the deployed design, shown only when the Meshery Operator is enabled and the action is not a registration.
+   - **Open In Operator**: A shortcut to the deployed design, shown only when the Meshery Operator is enabled and the action is neither a registration nor a dry-run - a dry-run deploys nothing to view.
 
 **Props:**
 

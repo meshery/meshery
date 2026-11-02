@@ -624,7 +624,7 @@ func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) 
 	require.Contains(t, metadata, "historyTitle")
 	require.Contains(t, metadata, "design")
 	require.Contains(t, metadata, "doclink")
-	require.Contains(t, metadata, "designLink")
+	assert.Equal(t, "http://meshery.test/extension/meshmap?mode=design&design="+id.String(), metadata["designLink"])
 
 	// Legacy snake_case key MUST NOT be present.
 	require.NotContains(t, metadata, "history_title")

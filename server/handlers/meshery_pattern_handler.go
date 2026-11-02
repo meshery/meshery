@@ -259,7 +259,7 @@ func (h *Handler) PatternFileRequestHandler(
 // doclink. It never carries the design's contents (#22764). Keys are
 // camelCase and pinned by TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys.
 func buildDesignSavedEventMetadata(designFile design.PatternFile, serverURL string) map[string]interface{} {
-	metadata := models.DesignEventIdentity(serverURL, designFile.ID, designFile.Name, string(designFile.Version))
+	metadata := models.DesignEventIdentity(designFile.ID, designFile.Name, string(designFile.Version), models.DesignerLink(serverURL, designFile.ID))
 	metadata[models.EventMetadataDesign] = map[string]interface{}{
 		"name": designFile.Name,
 		"id":   designFile.ID.String(),

@@ -97,7 +97,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
             fontWeight: 'bold',
           }}
         />
-        {is_operator_enabled && errorAction != 'register' && (
+        {is_operator_enabled && errorAction != 'register' && errorAction != 'dry-run' && (
           <Button
             variant="contained"
             color="primary"

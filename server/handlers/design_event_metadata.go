@@ -182,8 +182,9 @@ func meshkitCode(err error) string {
 // of the response - never the raw response, which embeds the components
 // (#22764).
 func buildPatternProcessEventMetadata(response map[string]interface{}, serverURL string, designID core.Uuid, name, version string) map[string]interface{} {
-	metadata := models.DesignEventIdentity(serverURL, designID, name, version)
-	metadata["viewLink"] = models.DesignLink(serverURL, designID)
+	link := models.DesignLink(serverURL, designID)
+	metadata := models.DesignEventIdentity(designID, name, version, link)
+	metadata["viewLink"] = link
 
 	summary := summarizePatternProcessResponse(response)
 	metadata["status"] = summary.Status
