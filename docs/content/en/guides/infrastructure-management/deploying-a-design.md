@@ -26,6 +26,7 @@ Use this guide to put a [Design]({{< ref "concepts/logical/designs.md" >}}) onto
 5. **Dry Run.** Meshery sends the design to each selected cluster's API server as a server-side dry run, without changing anything, and lists the errors it would hit, by component and cluster. Common errors are a missing namespace, a missing CRD, or a field the cluster's Kubernetes version rejects.
     - **Next** stays disabled while the dry run reports errors. Fix the design, or select **Bypass errors and initiate deployment** to deploy anyway.
     - For components from Artifact Hub-sourced models, Meshery tries to install the CRDs and operators they need before it applies them, on every deployment from Meshery UI. The **Include Dependencies** checkbox on this step does not currently change that. See [Auto-Deployment of CRDs and Operators]({{< ref "guides/infrastructure-management/overview.md#auto-deployment-of-crds-and-operators" >}}).
+    - **Export Report:** Click **Export Report** to download the dry run results as a standardized JSON report for auditing, sharing, or CI/CD integration. See [Exporting Dry Run Validation Reports](#exporting-dry-run-validation-reports) below.
 6. **Finalize Deployment.** Review the design and the Environments you selected, then click **Deploy**.
 7. Read the deployment summary on the last step. It lists each component's result on each cluster, with error details for any component that failed.
 
@@ -42,6 +43,96 @@ For the full rules, see the [Deployment Engine]({{< ref "concepts/architecture/d
 ## Check a design without deploying it
 
 From the design's actions, click **Validate Design** to run only the schema check, or **Dry Run** to run only the dry run against the clusters you select. Neither changes your clusters.
+
+### Exporting Dry Run Validation Reports
+
+After running a Dry Run, you can export the validation outcomes as a structured JSON report by clicking **Export Report** in the Dry Run results interface. The exported report makes it easy to archive results, share findings with teammates, and automate validation checks in CI/CD pipelines without copying details manually.
+
+#### Example Report
+
+```json
+{
+  "schemaVersion": "1.0.0",
+  "reportType": "meshery.dry-run-validation",
+  "design": {
+    "id": "ecommerce-app",
+    "name": "ecommerce-app"
+  },
+  "run": {
+    "startTime": "2026-10-28T10:42:21Z",
+    "completedTime": "2026-10-28T10:42:25Z",
+    "status": "failed",
+    "durationSeconds": 4.2
+  },
+  "summary": {
+    "resourcesChecked": 4,
+    "resourcesPassed": 3,
+    "resourcesFailed": 1,
+    "warnings": 0
+  },
+  "results": [
+    {
+      "name": "frontend",
+      "type": "Deployment",
+      "status": "valid",
+      "errors": []
+    },
+    {
+      "name": "service",
+      "type": "Service",
+      "status": "valid",
+      "errors": []
+    },
+    {
+      "name": "redis",
+      "type": "StatefulSet",
+      "status": "valid",
+      "errors": []
+    },
+    {
+      "name": "postgres",
+      "type": "StatefulSet",
+      "status": "failed",
+      "errors": [
+        {
+          "message": "StorageClass \"fast-ssd\" not found",
+          "errorType": "ComponentError",
+          "fieldPath": "spec.storageClassName",
+          "resourceKind": "StorageClass",
+          "apiVersion": "apps/v1"
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### Report Fields
+
+| Field | Type | Description |
+|---|---|---|
+| `schemaVersion` | string | Version of the report schema (currently `"1.0.0"`). |
+| `reportType` | string | Identifies the report domain (`"meshery.dry-run-validation"`). |
+| `design.id` | string | Unique identifier of the evaluated design. |
+| `design.name` | string | Name of the evaluated design. |
+| `run.startTime` | string | ISO-8601 timestamp when validation began. |
+| `run.completedTime` | string | ISO-8601 timestamp when validation finished. |
+| `run.status` | string | Overall validation outcome: `"success"`, `"failed"`, or `"incomplete"`. |
+| `run.durationSeconds` | number | Validation duration in seconds. |
+| `summary.resourcesChecked` | number | Total number of configurable resources analyzed. |
+| `summary.resourcesPassed` | number | Count of resources that passed validation. |
+| `summary.resourcesFailed` | number | Count of resources with validation errors. |
+| `summary.warnings` | number | Count of validation warnings. |
+| `results` | array | Resource-level outcomes. |
+| `results[].name` | string | Name of the resource in the design. |
+| `results[].type` | string | Component kind (e.g., `Deployment`, `Service`, `StatefulSet`). |
+| `results[].status` | string | Resource status (`"valid"` or `"failed"`). |
+| `results[].errors` | array | List of errors encountered for this resource. |
+| `results[].errors[].message` | string | Error message or status string. |
+| `results[].errors[].errorType` | string | Category of error (e.g., `"ComponentError"`). |
+| `results[].errors[].fieldPath` | string | JSON/spec path associated with the issue. |
+| `results[].errors[].resourceKind` | string | Kind of resource referenced by the error, when available. |
+| `results[].errors[].apiVersion` | string | API version of the component, when available. |
 
 ## Undeploy a design
 

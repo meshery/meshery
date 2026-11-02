@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@sistent/sistent', () => {
@@ -10,6 +10,14 @@ vi.mock('@sistent/sistent', () => {
   };
   return {
     styled,
+    Box: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    Button: ({ children, onClick, 'data-testid': testId, startIcon, ...rest }: any) => (
+      <button data-testid={testId} onClick={onClick} {...rest}>
+        {startIcon}
+        {children}
+      </button>
+    ),
+    DownloadIcon: () => <svg data-testid="download-icon" />,
     List: ({ children, ...rest }: any) => <ul {...rest}>{children}</ul>,
     ListItemText: ({ primary }: any) => <span>{primary}</span>,
     ListItemIcon: ({ children }: any) => <span>{children}</span>,
@@ -24,7 +32,7 @@ vi.mock('@sistent/sistent', () => {
         text: { default: '#000' },
         background: { error: { default: '#f00' } },
         success: { main: '#0f0' },
-        error: { main: '#f00' },
+        error: { main: '#f00', dark: '#900' },
         warning: { main: '#f80' },
       },
     }),
@@ -78,8 +86,14 @@ vi.mock('./styles', () => ({
     </div>
   ),
   ValidationSubHeader: ({ children }: any) => <div>{children}</div>,
+  DryRunExportButtonWrapper: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
 }));
 
+vi.mock('./exportDryRunReport', () => ({
+  exportDryRunReport: vi.fn(),
+}));
+
+import { exportDryRunReport } from './exportDryRunReport';
 import { FormatDryRunResponse, getTotalCountOfDeploymentErrors } from './DryRun';
 
 describe('getTotalCountOfDeploymentErrors', () => {
@@ -142,5 +156,35 @@ describe('FormatDryRunResponse', () => {
       />,
     );
     expect(screen.getByText('5 components and 4 annotations')).toBeInTheDocument();
+  });
+
+  it('renders the Export Report button and calls exportDryRunReport on click', () => {
+    const mockDesign = { id: 'd-1', name: 'sample-design' };
+    const mockErrors = [
+      {
+        type: 'ComponentError',
+        compName: 'redis',
+        errors: [{ Type: 'Error', FieldPath: 'spec', Message: 'failed' }],
+      },
+    ];
+
+    render(
+      <FormatDryRunResponse
+        dryRunErrors={mockErrors as any}
+        configurableComponentsCount={1}
+        annotationComponentsCount={0}
+        validationMachine={{}}
+        currentComponentName={null}
+        design={mockDesign}
+      />,
+    );
+
+    const exportBtn = screen.getByTestId('export-dry-run-report');
+    expect(exportBtn).toBeInTheDocument();
+    expect(exportBtn).toHaveTextContent('Export Report');
+
+    fireEvent.click(exportBtn);
+
+    expect(exportDryRunReport).toHaveBeenCalledWith(mockErrors, mockDesign);
   });
 });

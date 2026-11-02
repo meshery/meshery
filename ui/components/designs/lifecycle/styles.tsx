@@ -80,3 +80,9 @@ export const DryRunSignleError = styled(ListItemText)(({ theme }) => ({
   paddingBlock: theme.spacing(1),
   marginInline: theme.spacing(0.5),
 }));
+
+export const DryRunExportButtonWrapper = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  padding: theme.spacing(1, 0, 0.5, 0),
+}));
