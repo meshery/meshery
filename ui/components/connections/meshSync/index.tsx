@@ -73,7 +73,15 @@ export default function MeshSyncTable(props) {
     [k8sConfig, selectedK8sContexts],
   );
   const serializedClusterIds = useMemo(() => JSON.stringify(clusterIds), [clusterIds]);
+  // Tracks the cluster IDs from the previous render so the query can resolve
+  // to page 0 synchronously when clusters change, instead of firing one
+  // request with the new cluster IDs and the stale page before the reset
+  // effect below runs.
+  const previousSerializedClusterIds = useRef(serializedClusterIds);
+  const pageForQuery =
+    previousSerializedClusterIds.current === serializedClusterIds ? page : 0;
   useEffect(() => {
+    previousSerializedClusterIds.current = serializedClusterIds;
     setPage(0);
   }, [serializedClusterIds]);
 
@@ -86,7 +94,7 @@ export default function MeshSyncTable(props) {
     isError: isError,
     error: meshSyncError,
   } = useGetMeshSyncResourcesQuery({
-    page: page,
+    page: pageForQuery,
     pagesize: pageSize,
     search: search,
     order: sortOrder,
