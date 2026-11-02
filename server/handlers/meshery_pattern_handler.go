@@ -1315,7 +1315,9 @@ func (h *Handler) CloneMesheryPatternHandler(
 			"error": ErrGetPattern(err),
 		}).WithDescription(fmt.Sprintf("Failed to fetch meshery pattern \"%s\" with id: %s.", parsedBody.Name, patternID)).Build()
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		if h.config != nil && h.config.EventBroadcaster != nil {
+			go h.config.EventBroadcaster.Publish(userID, event)
+		}
 
 		writeMeshkitError(rw, ErrGetPattern(err), http.StatusNotFound)
 		return
@@ -1330,29 +1332,46 @@ func (h *Handler) CloneMesheryPatternHandler(
 			"error": models.ErrUnmarshal(err, obj),
 		}).WithDescription(fmt.Sprintf("Failed to fetch meshery pattern \"%s\" with ID: %s.", parsedBody.Name, patternID)).Build()
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		if h.config != nil && h.config.EventBroadcaster != nil {
+			go h.config.EventBroadcaster.Publish(userID, event)
+		}
 
 		writeMeshkitError(rw, models.ErrUnmarshal(err, obj), http.StatusInternalServerError)
 		return
 	}
 
+	if pattern != nil && pattern.ID != nil {
+		patternUUID = *pattern.ID
+	}
+
 	isOldFormat, err := patternutils.IsDesignInAlpha2Format(pattern.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
-		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromOwner(userID).WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": patternID}).Build()
+		parseEventBuilder := events.NewEvent().ActedUpon(patternUUID).FromOwner(userID).WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": patternID})
+		if h.SystemID != nil {
+			parseEventBuilder = parseEventBuilder.FromSystem(*h.SystemID)
+		}
+		event := parseEventBuilder.Build()
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		if h.config != nil && h.config.EventBroadcaster != nil {
+			go h.config.EventBroadcaster.Publish(userID, event)
+		}
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusInternalServerError)
 		return
 	}
 
 	if isOldFormat {
-		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("convert")
-		_, patternFileStr, err := h.convertV1alpha2ToV1beta3(pattern, eventBuilder)
-		event := eventBuilder.Build()
+		convertEventBuilder := events.NewEvent().ActedUpon(patternUUID).FromOwner(userID).WithCategory("pattern").WithAction("convert")
+		if h.SystemID != nil {
+			convertEventBuilder = convertEventBuilder.FromSystem(*h.SystemID)
+		}
+		_, patternFileStr, err := h.convertV1alpha2ToV1beta3(pattern, convertEventBuilder)
+		event := convertEventBuilder.Build()
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		if h.config != nil && h.config.EventBroadcaster != nil {
+			go h.config.EventBroadcaster.Publish(userID, event)
+		}
 		if err != nil {
 			h.log.Error(err)
 			writeMeshkitError(rw, err, http.StatusInternalServerError)
@@ -1363,12 +1382,14 @@ func (h *Handler) CloneMesheryPatternHandler(
 		if err != nil {
 			h.log.Error(ErrSavePattern(err))
 
-			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			event := convertEventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 				"error": ErrSavePattern(_errors.Wrapf(err, "failed to persist converted v1beta3 design file \"%s\" with id: %s", parsedBody.Name, patternID)),
 			}).WithDescription(ErrSavePattern(err).Error()).Build()
 
 			_ = provider.PersistEvent(*event, token)
-			go h.config.EventBroadcaster.Publish(userID, event)
+			if h.config != nil && h.config.EventBroadcaster != nil {
+				go h.config.EventBroadcaster.Publish(userID, event)
+			}
 			writeMeshkitError(rw, ErrSavePattern(err), http.StatusInternalServerError)
 			return
 		}
