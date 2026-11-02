@@ -292,7 +292,7 @@ function PerformanceProfile() {
                   <IconButton
                     onClick={(ev) => {
                       ev.stopPropagation();
-                      setSelectedProfile(testProfiles[tableMeta.rowIndex]);
+                      setProfileForModal({ ...testProfiles[tableMeta.rowIndex] });
                     }}
                     aria-label="edit"
                     permissionKey={Keys.PerformanceManagementEditPerformanceTest}
@@ -580,6 +580,7 @@ function PerformanceProfile() {
           maxWidth="md"
         >
           <MesheryPerformanceComponent
+            key={profileForModal?.id}
             loadAsPerformanceProfile
             performanceProfileID={profileForModal?.id}
             profileName={profileForModal?.name}
