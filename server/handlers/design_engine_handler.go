@@ -208,7 +208,7 @@ func (h *Handler) PatternFileHandler(
 // the design's identity and the MeshKit error, never the design or the
 // request payload.
 func patternErrorEventMetadata(r *http.Request, designID core.Uuid, name, version string, err error) map[string]interface{} {
-	metadata := models.DesignEventIdentity(designID, name, version, models.DesignLink(models.ServerURLFromRequest(r), designID))
+	metadata := models.DesignEventIdentity(models.ServerURLFromRequest(r), designID, name, version)
 	metadata["error"] = err
 	return metadata
 }

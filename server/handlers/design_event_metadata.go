@@ -178,13 +178,12 @@ func meshkitCode(err error) string {
 
 // buildPatternProcessEventMetadata builds the metadata of a successful
 // pattern deploy, undeploy or dry-run event: the design's identity, the
-// viewLink kept for existing readers, and the status and per-component errors
+// operator view viewLink kept for existing readers, and the status and per-component errors
 // of the response - never the raw response, which embeds the components
 // (#22764).
 func buildPatternProcessEventMetadata(response map[string]interface{}, serverURL string, designID core.Uuid, name, version string) map[string]interface{} {
-	link := models.DesignLink(serverURL, designID)
-	metadata := models.DesignEventIdentity(designID, name, version, link)
-	metadata["viewLink"] = link
+	metadata := models.DesignEventIdentity(serverURL, designID, name, version)
+	metadata["viewLink"] = models.DesignOperatorViewLink(serverURL, designID)
 
 	summary := summarizePatternProcessResponse(response)
 	metadata["status"] = summary.Status

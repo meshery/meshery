@@ -30,26 +30,26 @@ const (
 // GuardEventMetadataSize.
 const MaxEventMetadataBytes = 16 * 1024
 
-// designViewLinkFormat is the meshmap operator view URL for a design.
+// designLinkFormat is the meshmap designer URL for a design, the same one the
+// notification center's "Saved design" link opens.
+const designLinkFormat = "%s/extension/meshmap?mode=design&design=%s"
+
+// designOperatorViewLinkFormat is the meshmap operator view URL for a design.
 //
 // NOTE: design_id (snake_case) is the meshmap extension's URL query-param
 // contract; flipping it requires a coordinated meshmap-side change.
-const designViewLinkFormat = "%s/extension/meshmap?mode=operator&type=view&design_id=%s"
+const designOperatorViewLinkFormat = "%s/extension/meshmap?mode=operator&type=view&design_id=%s"
 
-// designerLinkFormat is the meshmap designer URL for a design, the same one
-// the notification center's "Saved design" link opens.
-const designerLinkFormat = "%s/extension/meshmap?mode=design&design=%s"
-
-// DesignLink returns the URL that opens the design in the meshmap operator
-// view. Deploy, undeploy and dry-run events link here.
+// DesignLink returns the URL that opens the design in the meshmap designer.
+// It is the designLink of every design event.
 func DesignLink(serverURL string, designID core.Uuid) string {
-	return fmt.Sprintf(designViewLinkFormat, serverURL, designID)
+	return fmt.Sprintf(designLinkFormat, serverURL, url.QueryEscape(designID.String()))
 }
 
-// DesignerLink returns the URL that opens the design in the meshmap
-// designer. Design-saved and relationship-evaluation events link here.
-func DesignerLink(serverURL string, designID core.Uuid) string {
-	return fmt.Sprintf(designerLinkFormat, serverURL, url.QueryEscape(designID.String()))
+// DesignOperatorViewLink returns the URL that opens the design in the meshmap
+// operator view. It is the viewLink of deploy, undeploy and dry-run events.
+func DesignOperatorViewLink(serverURL string, designID core.Uuid) string {
+	return fmt.Sprintf(designOperatorViewLinkFormat, serverURL, designID)
 }
 
 // ServerURLFromRequest returns the Meshery server URL stored on the request
@@ -64,13 +64,12 @@ func ServerURLFromRequest(r *http.Request) string {
 
 // DesignEventIdentity returns the identity fields every design-related event
 // carries: designId, designName, designLink and, when non-empty,
-// designVersion. link is DesignLink or DesignerLink, whichever view the event
-// is about. Callers add event-specific fields to the returned map.
-func DesignEventIdentity(designID core.Uuid, name, version, link string) map[string]interface{} {
+// designVersion. Callers add event-specific fields to the returned map.
+func DesignEventIdentity(serverURL string, designID core.Uuid, name, version string) map[string]interface{} {
 	metadata := map[string]interface{}{
 		EventMetadataDesignID:   designID,
 		EventMetadataDesignName: name,
-		EventMetadataDesignLink: link,
+		EventMetadataDesignLink: DesignLink(serverURL, designID),
 	}
 	if version != "" {
 		metadata[EventMetadataDesignVersion] = version

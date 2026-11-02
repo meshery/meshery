@@ -301,7 +301,7 @@ The **Relationship Evaluation Formatter** is responsible for rendering notificat
 #### Key Components
 
 1. **RelationshipEvaluationEventFormatter**:
-   The main formatter component. It renders the event description and the evaluation summary: the relationship change counts, `evaluationStatus`, `evaluationDurationMs` and an "Open design" link from `designLink`. Each of the last three is rendered only when present - rows Meshery Cloud rewrote to this shape lack them. Only an event without the summary fields falls back to `RelationshipEvaluationTraceFormatter`.
+   The main formatter component. It renders the event description and the evaluation summary: the relationship change counts, `evaluationStatus`, `evaluationDurationMs` and an "Open design" link from `designLink`, the designer URL (falling back to `viewLink` on older rows). Each of the last three is rendered only when present - rows Meshery Cloud rewrote to this shape lack them. Only an event without the summary fields falls back to `RelationshipEvaluationTraceFormatter`.
 
 **Props:**
 
@@ -388,7 +388,7 @@ The **Dry Run Formatter** is responsible for rendering notifications related to 
    - **currentComponentName** (string): The name of the component currently being validated.
 
 3. **SchemaValidationFormatter**:
-   The event specific formatter registered for `pattern/validate` events. It renders the design name and, through `DesignEventErrorsFormatter`, `status`, `errorCount`, `errors[]` of `{code, componentId}` and `truncated`. An error's `code` is the JSON-schema validator keyword (`required`, `type`, ...) and is shown as-is. Only an event without that summary that still holds a legacy `validationResult` is rendered through `ValidationResults`, with `total_components` and `configurable_components`.
+   The event specific formatter registered for `pattern/validate` events. It renders the design name and, through `DesignEventErrorsFormatter`, `status`, `errorCount`, `errors[]` of `{code, componentId}` and `truncated`. An error's `code` is the JSON-schema validator keyword (`required`, `type`, ...) and is shown as-is. Only an event without that summary that still holds a legacy `validationResult` is rendered through `ValidationResults`, with `totalComponents`, `configurableComponents` and `totalErrors`, falling back to the snake_case `total_components`, `configurable_components` and `total_errors`, and for `totalErrors` finally to counting the `validationResult` errors.
 
    **Props:**
 

@@ -21,8 +21,12 @@ type SchemaValidationEvent = {
     // Events persisted before #22764 embedded the per-component validation
     // results, components included.
     validationResult?: Record<string, { errors?: unknown[] }>;
+    totalComponents?: number;
+    configurableComponents?: number;
+    totalErrors?: number;
     total_components?: number;
     configurable_components?: number;
+    total_errors?: number;
   };
 };
 
@@ -47,13 +51,16 @@ export const SchemaValidationFormatter = ({ event }: { event: SchemaValidationEv
   }
 
   const results = metadata.validationResult;
-  const totalComponents = metadata.total_components || 0;
-  const configurableComponents = metadata.configurable_components || 0;
-
-  const totalErrors = Object.values(results).reduce(
-    (acc: number, serviceResult) => acc + (serviceResult?.errors?.length || 0),
-    0,
-  );
+  const totalComponents = metadata.totalComponents ?? metadata.total_components ?? 0;
+  const configurableComponents =
+    metadata.configurableComponents ?? metadata.configurable_components ?? 0;
+  const totalErrors =
+    metadata.totalErrors ??
+    metadata.total_errors ??
+    Object.values(results).reduce(
+      (acc: number, serviceResult) => acc + (serviceResult?.errors?.length || 0),
+      0,
+    );
 
   const validationMachine = {
     send: () => {},

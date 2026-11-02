@@ -171,4 +171,71 @@ describe('SchemaValidationFormatter', () => {
     expect(screen.getByTestId('vr-comp-count')).toHaveTextContent('3');
     expect(screen.getByTestId('vr-annotation-count')).toHaveTextContent('2');
   });
+  it('reads the camelCase totals of a legacy validationResult event first', () => {
+    render(
+      <SchemaValidationFormatter
+        event={{
+          metadata: {
+            validationResult: { serviceA: { errors: [1] } },
+            designName: 'camel-design',
+            totalComponents: 9,
+            configurableComponents: 4,
+            totalErrors: 7,
+            total_components: 1,
+            configurable_components: 1,
+            total_errors: 1,
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId('vr-design')).toHaveTextContent('camel-design');
+    expect(screen.getByTestId('vr-errors')).toHaveTextContent('7');
+    expect(screen.getByTestId('vr-comp-count')).toHaveTextContent('4');
+    expect(screen.getByTestId('vr-annotation-count')).toHaveTextContent('5');
+  });
+
+  it('falls back to the snake_case totals of a legacy validationResult event', () => {
+    render(
+      <SchemaValidationFormatter
+        event={{
+          metadata: {
+            validationResult: { serviceA: { errors: [1] } },
+            design_name: 'snake-design',
+            total_components: 6,
+            configurable_components: 2,
+            total_errors: 4,
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId('vr-errors')).toHaveTextContent('4');
+    expect(screen.getByTestId('vr-comp-count')).toHaveTextContent('2');
+    expect(screen.getByTestId('vr-annotation-count')).toHaveTextContent('4');
+  });
+
+  it('notes a truncated errors list of a new-format validate event', () => {
+    render(
+      <SchemaValidationFormatter
+        event={{
+          metadata: {
+            designName: 'big-design',
+            status: 'failed',
+            errorCount: 25,
+            errors: Array.from({ length: 20 }, (_, i) => ({
+              code: 'required',
+              componentId: `c${i}`,
+            })),
+            truncated: true,
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByText(/Status:/)).toHaveTextContent('Status: failed - 25 errors');
+    expect(errorLines()).toHaveLength(20);
+    expect(screen.getByText('Showing the first 20 of 25 errors.')).toBeInTheDocument();
+    expect(screen.queryByTestId('validation-results')).not.toBeInTheDocument();
+  });
 });

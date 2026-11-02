@@ -14,28 +14,28 @@ import (
 func TestDesignEventIdentity(t *testing.T) {
 	id := uuid.Must(uuid.NewV4())
 
-	withVersion := DesignEventIdentity(id, "d", "1.0.0", DesignLink("http://meshery.test", id))
+	withVersion := DesignEventIdentity("http://meshery.test", id, "d", "1.0.0")
 	assert.Equal(t, map[string]interface{}{
 		"designId":      id,
 		"designName":    "d",
 		"designVersion": "1.0.0",
-		"designLink":    "http://meshery.test/extension/meshmap?mode=operator&type=view&design_id=" + id.String(),
+		"designLink":    "http://meshery.test/extension/meshmap?mode=design&design=" + id.String(),
 	}, withVersion)
 
-	withoutVersion := DesignEventIdentity(id, "d", "", DesignLink("", id))
+	withoutVersion := DesignEventIdentity("", id, "d", "")
 	assert.NotContains(t, withoutVersion, "designVersion")
 }
 
-func TestDesignerLink(t *testing.T) {
+func TestDesignOperatorViewLink(t *testing.T) {
 	id := uuid.Must(uuid.NewV4())
 	assert.Equal(t,
-		"http://meshery.test/extension/meshmap?mode=design&design="+id.String(),
-		DesignerLink("http://meshery.test", id))
+		"http://meshery.test/extension/meshmap?mode=operator&type=view&design_id="+id.String(),
+		DesignOperatorViewLink("http://meshery.test", id))
 }
 
 func TestGuardEventMetadataSize_OversizedKeepsIdentityAndHistoryTitle(t *testing.T) {
 	id := uuid.Must(uuid.NewV4())
-	metadata := DesignEventIdentity(id, "big", "2.0.0", DesignLink("http://meshery.test", id))
+	metadata := DesignEventIdentity("http://meshery.test", id, "big", "2.0.0")
 	metadata["historyTitle"] = "3 changes made at version 2.0.0"
 	metadata["components"] = strings.Repeat("x", MaxEventMetadataBytes)
 	metadata["viewLink"] = "kept only when small"

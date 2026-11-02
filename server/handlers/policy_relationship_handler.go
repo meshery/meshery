@@ -311,7 +311,7 @@ const policyEvaluationStatusCompleted = "completed"
 // and pinned by TestBuildPolicyEvaluationEventMetadata_*.
 func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse, serverURL string, duration time.Duration) map[string]interface{} {
 	design := resp.Design
-	metadata := models.DesignEventIdentity(design.ID, design.Name, string(design.Version), models.DesignerLink(serverURL, design.ID))
+	metadata := models.DesignEventIdentity(serverURL, design.ID, design.Name, string(design.Version))
 
 	added, removed, updated := relationshipChangeCounts(resp.Actions)
 	metadata[models.EventMetadataHistoryTitle] = fmt.Sprintf("%d changes made at version %s", len(resp.Actions), design.Version)

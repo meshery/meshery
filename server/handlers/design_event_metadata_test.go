@@ -135,9 +135,8 @@ func TestBuildPatternProcessEventMetadata_DeployOutcomes(t *testing.T) {
 	assert.Equal(t, designID, metadata["designId"])
 	assert.Equal(t, "my-design", metadata["designName"])
 	assert.Equal(t, "0.0.2", metadata["designVersion"])
-	link := "http://meshery.test/extension/meshmap?mode=operator&type=view&design_id=" + designID.String()
-	assert.Equal(t, link, metadata["designLink"])
-	assert.Equal(t, link, metadata["viewLink"])
+	assert.Equal(t, "http://meshery.test/extension/meshmap?mode=design&design="+designID.String(), metadata["designLink"])
+	assert.Equal(t, "http://meshery.test/extension/meshmap?mode=operator&type=view&design_id="+designID.String(), metadata["viewLink"])
 
 	assert.Equal(t, patternProcessStatusPartial, metadata["status"])
 	assert.Equal(t, 2, metadata["errorCount"])
@@ -233,5 +232,6 @@ func TestPatternErrorEventMetadata_CarriesOnlyIdentityAndError(t *testing.T) {
 		keys = append(keys, key)
 	}
 	assert.ElementsMatch(t, []string{"designId", "designName", "designVersion", "designLink", "error"}, keys, strings.Join(keys, ","))
+	assert.Equal(t, "/extension/meshmap?mode=design&design="+designID.String(), metadata["designLink"])
 	assert.Equal(t, err, metadata["error"])
 }
