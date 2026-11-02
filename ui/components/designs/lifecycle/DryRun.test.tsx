@@ -195,7 +195,7 @@ describe('DryRunDesign view fallback', () => {
     handleClose: vi.fn(),
     currentComponentName: null,
     design: { name: 'test-design' },
-    validationMachine: {},
+    validationMachine: { send: vi.fn() },
     selectedK8sContexts: [],
     deployment_type: 'deploy',
     includeDependencies: false,
