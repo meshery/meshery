@@ -37,7 +37,7 @@ const ObjectFieldTemplate = ({
   idSchema,
   schema,
   formData,
-  onAddClick,
+  onAddProperty,
 
   errorSchema,
 }) => {
@@ -73,7 +73,7 @@ const ObjectFieldTemplate = ({
             >
               <IconButton
                 className="object-property-expand"
-                onClick={typeof onAddClick === 'function' ? onAddClick(schema) : undefined}
+                onClick={typeof onAddProperty === 'function' ? onAddProperty : undefined}
                 disabled={disabled || readonly}
               >
                 <AddIcon
