@@ -2798,7 +2798,7 @@
         "code": "1322",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "unable to marshal yaml \\\"%s\\",
+        "short_description": "Unable to marshal yaml",
         "probable_cause": "Object has invalid yaml format",
         "suggested_remediation": "Make sure to input a valid yaml object"
       },
