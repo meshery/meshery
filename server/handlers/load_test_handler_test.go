@@ -46,6 +46,10 @@ func TestLoadTestHandlerInvalidURL(t *testing.T) {
 			url:  "example.com",
 		},
 		{
+			name: "Host and port without scheme",
+			url:  "example.com:8080",
+		},
+		{
 			name: "Relative Path",
 			url:  "/relative/endpoint",
 		},
@@ -103,6 +107,10 @@ func TestLoadTestUsingSMPHandlerInvalidURL(t *testing.T) {
 		{
 			name: "Schemeless URL",
 			url:  "example.com",
+		},
+		{
+			name: "Host and port without scheme",
+			url:  "example.com:8080",
 		},
 		{
 			name: "Malformed URL with parse error",
