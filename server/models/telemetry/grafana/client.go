@@ -6,19 +6,22 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/meshery/meshery/server/models/telemetry"
 	"github.com/meshery/meshkit/logger"
 )
 
 // defaultTimeout bounds every outbound call to Grafana so a slow or unreachable
 // instance can never hang a Meshery request indefinitely.
 const defaultTimeout = 30 * time.Second
+
+// ErrResponseTooLarge identifies an upstream response that cannot be returned intact.
+var ErrResponseTooLarge = telemetry.ErrResponseTooLarge
 
 // Client is a minimal, dependency-light Grafana HTTP API client. A Client is
 // scoped to a single Grafana instance + credential and is safe for concurrent
@@ -129,7 +132,13 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values) 
 	}
 	defer func() { _ = resp.Body.Close() }()
 
-	body, err := io.ReadAll(io.LimitReader(resp.Body, 16<<20)) // cap at 16MiB
+	body, err := telemetry.ReadBody(resp.Body)
+	if errors.Is(err, ErrResponseTooLarge) {
+		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+			return nil, &apiError{StatusCode: resp.StatusCode, Method: method, Path: path, Body: ErrResponseTooLarge.Error()}
+		}
+		return nil, fmt.Errorf("grafana: %w from %s; reduce the query time range or number of series", ErrResponseTooLarge, path)
+	}
 	if err != nil {
 		return nil, fmt.Errorf("grafana: read response from %s: %w", path, err)
 	}
@@ -241,10 +250,13 @@ func (c *Client) QueryRange(ctx context.Context, dsRef string, params url.Values
 	if errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound {
 		// dsRef may be a name (or stale uid) rather than a real uid. Resolve it
 		// against the live datasource list and retry once before giving up.
-		sources, _ := c.ListDatasources(ctx)
+		sources, listErr := c.ListDatasources(ctx)
+		if errors.Is(listErr, ErrResponseTooLarge) {
+			return nil, listErr
+		}
 		if uid := datasourceUIDByName(sources, dsRef); uid != "" && uid != dsRef {
-			if body, retryErr := c.queryRangeByUID(ctx, uid, params); retryErr == nil {
-				return body, nil
+			if body, retryErr := c.queryRangeByUID(ctx, uid, params); retryErr == nil || errors.Is(retryErr, ErrResponseTooLarge) {
+				return body, retryErr
 			}
 		}
 		// Still unresolved. Surface a typed error naming the reference and what
@@ -288,9 +300,8 @@ type BatchResult struct {
 //
 // A single failing query never fails the whole batch: its result simply carries
 // an Err while the others succeed. The datasource list is fetched at most once
-// for the entire batch (best-effort; an error is treated as an empty list) and
-// shared across every query's name-resolution fallback, so a board with many
-// panels referencing datasources by name doesn't trigger a list lookup per query.
+// and shared across name-resolution fallbacks. An oversized datasource list is
+// reported to queries needing a fallback; direct UID queries can still succeed.
 //
 // start, end and step are the shared Prometheus query_range window for the batch.
 func (c *Client) QueryRangeBatch(ctx context.Context, start, end, step string, queries []BatchQuery) []BatchResult {
@@ -299,10 +310,9 @@ func (c *Client) QueryRangeBatch(ctx context.Context, start, end, step string, q
 		return results
 	}
 
-	// Resolve the datasource list once for the whole batch (best-effort). A
-	// failure here is non-fatal: name resolution simply has nothing to match
-	// against, and individual queries fall back to a DatasourceNotFoundError.
-	sources, _ := c.ListDatasources(ctx)
+	// Resolve the datasource list once for the whole batch. Direct UID queries
+	// can still succeed if it exceeds the limit; name fallbacks report that error.
+	sources, listErr := c.ListDatasources(ctx)
 
 	sem := make(chan struct{}, batchConcurrency)
 	var wg sync.WaitGroup
@@ -323,7 +333,7 @@ func (c *Client) QueryRangeBatch(ctx context.Context, start, end, step string, q
 				"end":   {end},
 				"step":  {step},
 			}
-			body, err := c.queryRangeWith(ctx, q.DS, params, sources)
+			body, err := c.queryRangeWith(ctx, q.DS, params, sources, listErr)
 			results[i] = BatchResult{ID: q.ID, Body: body, Err: err}
 		}(i, q)
 	}
@@ -335,7 +345,7 @@ func (c *Client) QueryRangeBatch(ctx context.Context, start, end, step string, q
 // resolved datasource list (sources) instead of fetching it per query. It mirrors
 // QueryRange's 404 -> resolve-name -> retry-once dance, surfacing a typed
 // DatasourceNotFoundError when the reference still can't be resolved.
-func (c *Client) queryRangeWith(ctx context.Context, dsRef string, params url.Values, sources []Datasource) (json.RawMessage, error) {
+func (c *Client) queryRangeWith(ctx context.Context, dsRef string, params url.Values, sources []Datasource, listErr error) (json.RawMessage, error) {
 	if strings.TrimSpace(dsRef) == "" {
 		return nil, fmt.Errorf("grafana: empty datasource uid")
 	}
@@ -345,9 +355,12 @@ func (c *Client) queryRangeWith(ctx context.Context, dsRef string, params url.Va
 	}
 	var apiErr *apiError
 	if errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound {
+		if errors.Is(listErr, ErrResponseTooLarge) {
+			return nil, listErr
+		}
 		if uid := datasourceUIDByName(sources, dsRef); uid != "" && uid != dsRef {
-			if body, retryErr := c.queryRangeByUID(ctx, uid, params); retryErr == nil {
-				return body, nil
+			if body, retryErr := c.queryRangeByUID(ctx, uid, params); retryErr == nil || errors.Is(retryErr, ErrResponseTooLarge) {
+				return body, retryErr
 			}
 		}
 		return nil, &DatasourceNotFoundError{Ref: dsRef, Available: datasourceIdentifiers(sources)}
