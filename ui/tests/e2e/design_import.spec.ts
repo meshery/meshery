@@ -249,20 +249,23 @@ test.describe('Design Import Tests', () => {
       const importReq = await importReqPromise;
 
       // ── Wire contract: fileName must be camelCase ─────────────────────────
-      // The request is sent as multipart/form-data or JSON depending on the
-      // RJSF widget. Inspect whichever form the body takes.
-      const rawBody = importReq.postData() ?? '';
-
-      // `fileName` (camelCase) must appear in the serialised body.
-      expect(rawBody, 'wire body must use camelCase `fileName` (not `file_name`)').toContain(
-        'fileName',
+      // The generated import mutation sends JSON for file uploads too.
+      const contentType = await importReq.headerValue('content-type');
+      expect(contentType || '', 'Import request must use JSON').toMatch(
+        /^application\/json(?:;|$)/,
       );
+      const body = importReq.postDataJSON();
 
-      // `file_name` (snake_case) must NOT appear — this is the regression from #21105.
+      // Inspect top-level fields so fixture contents cannot satisfy or fail
+      // the regression guard just by containing either spelling.
+      expect(body, 'wire body must use camelCase `fileName` (not `file_name`)').toHaveProperty(
+        'fileName',
+        path.basename(DESIGN_FIXTURE_FILE),
+      );
       expect(
-        rawBody,
+        body,
         'wire body must NOT contain snake_case `file_name` (regression guard for #21105)',
-      ).not.toContain('file_name');
+      ).not.toHaveProperty('file_name');
 
       // Success notification.
       await waitForSnackBar(page, 'design uploaded');
@@ -273,8 +276,8 @@ test.describe('Design Import Tests', () => {
   //
   // After the user clicks Import, the button must immediately become disabled
   // and show "Importing…" so a rapid second click cannot fire a second POST.
-  // Uses a slow-responding stub (300 ms delay) to hold the in-flight window
-  // open long enough to assert the disabled state.
+  // Holds the stubbed response until the in-flight assertions finish, so a
+  // slow CI worker cannot miss the disabled state.
   test(
     'Import button is disabled and shows Importing… while a submission is in flight',
     { tag: designImportTags('preventsDuplicateSubmit') },
@@ -282,12 +285,15 @@ test.describe('Design Import Tests', () => {
       await annotateDesignImportCase(testInfo, 'preventsDuplicateSubmit');
 
       let importCallCount = 0;
+      let releaseImportResponse!: () => void;
+      const importResponseGate = new Promise<void>((resolve) => {
+        releaseImportResponse = resolve;
+      });
 
-      // Slow stub: holds the response for 300 ms so we can assert the button
-      // state before it resolves.
+      // Keep every import request pending until the button state is checked.
       await page.route('**/api/pattern/import', async (route) => {
         importCallCount += 1;
-        await page.waitForTimeout(300);
+        await importResponseGate;
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -305,13 +311,17 @@ test.describe('Design Import Tests', () => {
 
       const importBtn = dialog.getByRole('button', { name: /Import|Importing/i });
 
-      // Rapid double click to verify duplicate prevention guard.
-      await importBtn.dblclick();
+      try {
+        // Rapid double click to verify duplicate prevention guard.
+        await importBtn.dblclick();
 
-      // The button must transition to disabled with "Importing…" text while the
-      // stub is still holding (within the 300 ms window).
-      await expect(importBtn).toBeDisabled({ timeout: 5_000 });
-      await expect(importBtn).toHaveText(/Importing/i);
+        // The response stays pending for both assertions, however long they take.
+        await expect(importBtn).toBeDisabled({ timeout: 5_000 });
+        await expect(importBtn).toHaveText(/Importing/i);
+      } finally {
+        // Release the route even when an assertion fails, so teardown cannot hang.
+        releaseImportResponse();
+      }
 
       // Wait for the request to complete and the modal to close.
       await waitForSnackBar(page, 'design uploaded');
