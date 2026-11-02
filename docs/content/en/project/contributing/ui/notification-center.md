@@ -332,10 +332,15 @@ The **Relationship Evaluation Formatter** is specifically designed to handle not
 1. **Evaluation Summary**:
    The notification starts with a summary of the evaluation process.
    Example:
-   `"Relationship evaluation completed for design 'Deploy Meshery using Meshery-X' at version '0.0.11'"`
+   `"Relationship evaluation complete: 3 changes in 'Deploy Meshery using Meshery-X' at version '0.0.11'"`
    This gives the user context about which design and version were evaluated.
 
-2. **Detailed Changes**:
+2. **Change Counts**:
+   The number of relationships added, removed and updated, followed by the evaluation status, its duration and an "Open design" link, each only when present. If no relationship changed, an empty state is shown instead.
+
+The remaining items apply only to a legacy event stored before [#22764](https://github.com/meshery/meshery/issues/22764), rendered by `RelationshipEvaluationTraceFormatter`:
+
+3. **Detailed Changes**:
    The notification breaks down the changes into collapsible categories:
 
    - **Components**:
@@ -349,10 +354,10 @@ The **Relationship Evaluation Formatter** is specifically designed to handle not
 
    If the evaluation produced no actions at all, an empty state is shown instead.
 
-3. **Component Details**:
+4. **Component Details**:
    For each component, the notification displays its icon, kind, name, and the model and version it belongs to.
 
-4. **Relationship Details**:
+5. **Relationship Details**:
    For each relationship, the notification displays its type, the source and target components involved, and the associated model and version.
 
 ### Dry Run and Schema Validation Formatters
