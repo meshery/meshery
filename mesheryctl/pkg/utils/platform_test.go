@@ -15,6 +15,7 @@
 package utils
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -157,8 +158,55 @@ func TestGetCleanPodName(t *testing.T) {
 	}
 }
 
+type readErrorBody struct {
+	closed bool
+}
+
+func (b *readErrorBody) Read([]byte) (int, error) {
+	return 0, errors.New("read failed")
+}
+
+func (b *readErrorBody) Close() error {
+	b.closed = true
+	return nil
+}
+
+type readErrorTransport struct {
+	body *readErrorBody
+}
+
+func (t *readErrorTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	t.body = &readErrorBody{}
+	return &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       t.body,
+		Header:     make(http.Header),
+		Request:    req,
+	}, nil
+}
+
 func TestResolveDockerComposeBinaryURL(t *testing.T) {
 	_ = SetupMeshkitLoggerTesting(t, false)
+
+	t.Run("falls back to default version and closes response body on read error", func(t *testing.T) {
+		origURL := dockerComposeWebURL
+		dockerComposeWebURL = "http://read-error.test"
+		defer func() { dockerComposeWebURL = origURL }()
+
+		transport := &readErrorTransport{}
+		previousTransport := http.DefaultTransport
+		http.DefaultTransport = transport
+		t.Cleanup(func() { http.DefaultTransport = previousTransport })
+
+		got := resolveDockerComposeBinaryURL()
+		expected := dockerComposeBinaryURL + defaultDockerComposeVersion
+		if got != expected {
+			t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
+		}
+		if transport.body == nil || !transport.body.closed {
+			t.Errorf("expected response body to be closed on read-error path")
+		}
+	})
 
 	t.Run("success returns release binary url and closes response body", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
