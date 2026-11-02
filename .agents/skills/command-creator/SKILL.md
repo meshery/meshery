@@ -208,3 +208,25 @@ When creating a command:
 6. **Confirm and iterate** as needed
 
 Focus on creating commands that agents can execute autonomously, with clear steps, explicit tool usage, and proper error handling.
+
+---
+
+## Landing through no-mistakes — mandatory
+
+Every pull request that results from work under this skill must use and pass the
+no-mistakes pipeline before it merges. This is the repository landing gate in
+`AGENTS.md` ("Worktrees and landing a change"), not an optional final check.
+
+- Work in a treehouse worktree, never in the main clone: `treehouse get --lease -b <branch>`,
+  and release it with `treehouse return <path>` once the change has merged.
+- Commit, then run `no-mistakes axi run --intent "<goal>"` (a clone without a
+  `no-mistakes` remote needs `no-mistakes init` once). `no-mistakes axi status` shows
+  the step and its findings, and `no-mistakes axi respond` answers a review gate.
+- At most three no-mistakes runs per pull request. A run that stopped on a usage limit
+  counts; one cancelled before it did anything does not.
+- A pull request merges only after a no-mistakes run passes. If it has still not passed
+  after three runs, do not merge it as it stands: open an issue for anything still
+  flagged and hand the pull request to a human.
+- A green CI run, a passing test suite, or a favourable review from another tool does
+  not replace a passing no-mistakes run, and a passing no-mistakes run does not waive
+  the "Require Human Review" areas listed in `AGENTS.md`.

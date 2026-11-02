@@ -482,14 +482,16 @@ touching any of them.
   another branch), work there, and release it with `treehouse return <path>` once the change
   has merged. `treehouse status` lists the pool. Never make one with `git worktree add` or a
   second clone.
-- **Land every change through no-mistakes, at most three runs per pull request.** Commit in
+- **Every pull request must use and pass no-mistakes before it merges.** Commit in
   the worktree, then run `no-mistakes axi run --intent "<goal>"` (a clone without a
   `no-mistakes` remote needs `no-mistakes init` once). `no-mistakes axi status` shows the step
   and its findings, and `no-mistakes axi respond` answers a review gate. The pipeline reviews,
-  tests, pushes and opens the pull request. After the third run, open an issue for anything
-  still flagged and merge the pull request as it stands only if CI is green and it touches no
-  "Require Human Review" area; otherwise hand it to a human. A run that stopped on a usage limit
-  counts; one cancelled before it did anything does not.
+  tests, pushes and opens the pull request. At most three runs per pull request: a run that
+  stopped on a usage limit counts; one cancelled before it did anything does not. If the
+  pipeline has still not passed after three runs, open an issue for anything still flagged
+  and hand the pull request to a human — do not merge it as it stands. A green CI run alone
+  is not a pass, and a passing no-mistakes run does not waive the "Require Human Review"
+  areas above. Every skill in `.agents/skills/` carries this same gate.
 
 ## Reusable Workflows Consumed by Other Repos
 
