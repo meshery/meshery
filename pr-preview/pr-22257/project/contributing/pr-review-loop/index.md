@@ -86,17 +86,25 @@ pull_request_target event
 
 ### Concurrency Control
 
-Execution serialization is scoped specifically to the `suggest-reviews` job using a stable concurrency group keyed on the pull request number:
+Execution serialization is decoupled at the job level, with separate per-PR concurrency groups for automated labeling and review suggestions:
 
 ```yaml
 jobs:
+  triage:
+    concurrency:
+      group: pr-triage-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+
   suggest-reviews:
     concurrency:
-      group: pr-review-${{ github.event.pull_request.number }}
+      group: pr-review-suggestions-${{ github.event.pull_request.number }}
       cancel-in-progress: false
 ```
 
-Scoping concurrency to the job level ensures that the upstream `triage` labeler job executes immediately on PR submission and synchronization without waiting in a concurrency queue or being cancelled by rapid successive events. Setting `cancel-in-progress: false` on `suggest-reviews` guarantees that in-flight comment write and update operations complete sequentially without partial update truncation. When a queued `suggest-reviews` job begins, it re-queries the GitHub API for the freshest repository state.
+Decoupling concurrency into dedicated job-level groups guarantees:
+- **Triage Isolation**: The `triage` labeler job serializes independently (`pr-triage-${{ github.event.pull_request.number }}`), preventing race conditions from rapid pushes while ensuring suggestion-only events (such as `labeled` or `unlabeled`) cannot cancel or replace pending triage runs.
+- **Suggestion Serialization**: The `suggest-reviews` job serializes independently (`pr-review-suggestions-${{ github.event.pull_request.number }}`), ensuring that in-flight comment creation, update, and retirement operations complete sequentially without partial update truncation.
+- **State Freshness**: Setting `cancel-in-progress: false` across both groups ensures that every queued job completes, re-querying the GitHub API for the freshest repository metadata upon execution.
 
 ---
 
