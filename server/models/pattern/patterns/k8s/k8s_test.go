@@ -902,6 +902,156 @@ func TestDryRun_InDesignNamespaces_FallbackNameConflict(t *testing.T) {
 	})
 }
 
+// TestResolveResourcePath_NamespaceResolution tests namespace resolution order for namespaced and cluster-scoped resources.
+func TestResolveResourcePath_NamespaceResolution(t *testing.T) {
+	groupVersions := []schema.GroupVersion{
+		{Group: "", Version: "v1"},
+		{Group: "rbac.authorization.k8s.io", Version: "v1"},
+	}
+	mapper := meta.NewDefaultRESTMapper(groupVersions)
+	mapper.AddSpecific(
+		schema.GroupVersionKind{Group: "", Version: "v1", Kind: "Pod"},
+		schema.GroupVersionResource{Group: "", Version: "v1", Resource: "pods"},
+		schema.GroupVersionResource{Group: "", Version: "v1", Resource: "pod"},
+		meta.RESTScopeNamespace,
+	)
+	mapper.AddSpecific(
+		schema.GroupVersionKind{Group: "rbac.authorization.k8s.io", Version: "v1", Kind: "ClusterRole"},
+		schema.GroupVersionResource{Group: "rbac.authorization.k8s.io", Version: "v1", Resource: "clusterroles"},
+		schema.GroupVersionResource{Group: "rbac.authorization.k8s.io", Version: "v1", Resource: "clusterrole"},
+		meta.RESTScopeRoot,
+	)
+
+	tests := []struct {
+		name             string
+		k8sResource      map[string]interface{}
+		namespace        string
+		mapper           meta.RESTMapper
+		wantBasePath     string
+		wantResourcePath string
+	}{
+		{
+			name:             "Pod, no namespace arg, no metadata.namespace -> /api/v1/namespaces/default",
+			k8sResource:      map[string]interface{}{"apiVersion": "v1", "kind": "Pod"},
+			namespace:        "",
+			mapper:           mapper,
+			wantBasePath:     "/api/v1/namespaces/default",
+			wantResourcePath: "pods",
+		},
+		{
+			name: "Pod, metadata.namespace=staging -> /api/v1/namespaces/staging",
+			k8sResource: map[string]interface{}{
+				"apiVersion": "v1",
+				"kind":       "Pod",
+				"metadata":   map[string]interface{}{"namespace": "staging"},
+			},
+			namespace:        "",
+			mapper:           mapper,
+			wantBasePath:     "/api/v1/namespaces/staging",
+			wantResourcePath: "pods",
+		},
+		{
+			name: "Pod, explicit arg prod with metadata staging -> arg wins (prod)",
+			k8sResource: map[string]interface{}{
+				"apiVersion": "v1",
+				"kind":       "Pod",
+				"metadata":   map[string]interface{}{"namespace": "staging"},
+			},
+			namespace:        "prod",
+			mapper:           mapper,
+			wantBasePath:     "/api/v1/namespaces/prod",
+			wantResourcePath: "pods",
+		},
+		{
+			name:             "ClusterRole -> /apis/rbac.authorization.k8s.io/v1, no namespace segment",
+			k8sResource:      map[string]interface{}{"apiVersion": "rbac.authorization.k8s.io/v1", "kind": "ClusterRole"},
+			namespace:        "",
+			mapper:           mapper,
+			wantBasePath:     "/apis/rbac.authorization.k8s.io/v1",
+			wantResourcePath: "clusterroles",
+		},
+		{
+			name: "nil mapper ignores metadata.namespace",
+			k8sResource: map[string]interface{}{
+				"apiVersion": "v1",
+				"kind":       "Pod",
+				"metadata":   map[string]interface{}{"namespace": "staging"},
+			},
+			namespace:        "",
+			mapper:           nil,
+			wantBasePath:     "/api/v1",
+			wantResourcePath: "pods",
+		},
+		{
+			name:             "nil mapper + nothing -> no segment",
+			k8sResource:      map[string]interface{}{"apiVersion": "v1", "kind": "Pod"},
+			namespace:        "",
+			mapper:           nil,
+			wantBasePath:     "/api/v1",
+			wantResourcePath: "pods",
+		},
+		{
+			name: "nil mapper, ClusterRole with meshkit default metadata.namespace -> cluster-scoped",
+			k8sResource: map[string]interface{}{
+				"apiVersion": "rbac.authorization.k8s.io/v1",
+				"kind":       "ClusterRole",
+				"metadata":   map[string]interface{}{"namespace": "default"},
+			},
+			namespace:        "",
+			mapper:           nil,
+			wantBasePath:     "/apis/rbac.authorization.k8s.io/v1",
+			wantResourcePath: "clusterroles",
+		},
+		{
+			name:             "nil mapper, explicit namespace arg -> namespaced path",
+			k8sResource:      map[string]interface{}{"apiVersion": "v1", "kind": "Pod"},
+			namespace:        "staging",
+			mapper:           nil,
+			wantBasePath:     "/api/v1/namespaces/staging",
+			wantResourcePath: "pods",
+		},
+		{
+			name: "ClusterRole with meshkit default metadata.namespace -> no namespace segment",
+			k8sResource: map[string]interface{}{
+				"apiVersion": "rbac.authorization.k8s.io/v1",
+				"kind":       "ClusterRole",
+				"metadata":   map[string]interface{}{"namespace": "default"},
+			},
+			namespace:        "",
+			mapper:           mapper,
+			wantBasePath:     "/apis/rbac.authorization.k8s.io/v1",
+			wantResourcePath: "clusterroles",
+		},
+		{
+			name: "Pod with meshkit default metadata.namespace -> /api/v1/namespaces/default",
+			k8sResource: map[string]interface{}{
+				"apiVersion": "v1",
+				"kind":       "Pod",
+				"metadata":   map[string]interface{}{"namespace": "default"},
+			},
+			namespace:        "",
+			mapper:           mapper,
+			wantBasePath:     "/api/v1/namespaces/default",
+			wantResourcePath: "pods",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			basePath, resourcePath, err := resolveResourcePath(tc.k8sResource, tc.namespace, tc.mapper)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if basePath != tc.wantBasePath {
+				t.Errorf("basePath = %q, want %q", basePath, tc.wantBasePath)
+			}
+			if resourcePath != tc.wantResourcePath {
+				t.Errorf("resourcePath = %q, want %q", resourcePath, tc.wantResourcePath)
+			}
+		})
+	}
+}
+
 // forbiddenStatus builds the Forbidden Status the API server returns when a policy rejects a create.
 func forbiddenStatus(message string) metav1.Status {
 	return metav1.Status{
@@ -997,6 +1147,60 @@ func TestDryRun_InDesignNamespaces_FallbackForbidden(t *testing.T) {
 		}
 		if st["message"] != message {
 			t.Errorf("expected the server's message unchanged, got %q", st["message"])
+		}
+	})
+}
+
+// TestDryRun_UnconfiguredNamespace pins that a component without a configured namespace has its namespace checks
+// run against the namespace its request is sent to, and that a cluster-scoped kind is never given one.
+func TestDryRun_UnconfiguredNamespace(t *testing.T) {
+	ingress := func() map[string]interface{} {
+		return map[string]interface{}{
+			"apiVersion": "networking.k8s.io/v1",
+			"kind":       "Ingress",
+			"metadata":   map[string]interface{}{"name": "web", "namespace": "default"},
+		}
+	}
+	defaultMissing := newFakeRESTClient(func(req *http.Request) (*http.Response, error) {
+		return jsonResponse(http.StatusNotFound, namespaceNotFoundStatus("default"))
+	})
+
+	t.Run("declared default missing from the cluster passes the create", func(t *testing.T) {
+		opts := DryRunOptions{RESTMapper: newTestRESTMapper(), DeclaredNamespaces: map[string]bool{"default": true}}
+		st, success, err := dryRun(defaultMissing, ingress(), "", false, opts)
+		if err != nil || !success {
+			t.Fatalf("expected a non-fatal pass, got success=%v err=%v st=%v", success, err, st)
+		}
+		if st["kind"] != "Ingress" {
+			t.Errorf("expected the workload itself to be returned, got: %v", st)
+		}
+	})
+
+	t.Run("missing default namespace on undeploy is not deployed", func(t *testing.T) {
+		st, success, err := dryRun(defaultMissing, ingress(), "", true, DryRunOptions{RESTMapper: newTestRESTMapper()})
+		if err != nil || !success || st["status"] != "Success" {
+			t.Fatalf("expected the missing namespace to be suppressed, got success=%v err=%v st=%v", success, err, st)
+		}
+	})
+
+	t.Run("cluster-scoped kind keeps no namespace", func(t *testing.T) {
+		var paths []string
+		rClient := newFakeRESTClient(func(req *http.Request) (*http.Response, error) {
+			paths = append(paths, req.URL.Path)
+			return jsonResponse(http.StatusNotFound, namespaceNotFoundStatus("default"))
+		})
+		ns := map[string]interface{}{
+			"apiVersion": "v1",
+			"kind":       "Namespace",
+			"metadata":   map[string]interface{}{"name": "staging", "namespace": "default"},
+		}
+		opts := DryRunOptions{RESTMapper: newTestRESTMapper(), DeclaredNamespaces: map[string]bool{"default": true}}
+		_, success, _ := dryRun(rClient, ns, "", false, opts)
+		if success {
+			t.Errorf("expected the failure to surface without a fallback retry")
+		}
+		if len(paths) != 1 || paths[0] != "/api/v1/namespaces" {
+			t.Errorf("expected a single cluster-scoped request, got %v", paths)
 		}
 	})
 }
