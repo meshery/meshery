@@ -240,9 +240,40 @@ describe('RelationshipEvaluationEventFormatter', () => {
     expect(screen.getByText('Evaluation finished')).toBeInTheDocument();
   });
 
-  it('renders the empty state when no actions are present', () => {
+  it('renders the empty state when no relationship changes are reported', () => {
     render(<RelationshipEvaluationEventFormatter event={{ description: 'no-op', metadata: {} }} />);
 
-    expect(screen.getByText(/No changes detected/i)).toBeInTheDocument();
+    expect(screen.getByText(/No relationship changes detected/i)).toBeInTheDocument();
+  });
+
+  it('renders counts, status, duration and a design link from the slim metadata', () => {
+    render(
+      <RelationshipEvaluationEventFormatter
+        event={{
+          description: 'Relationship evaluation complete',
+          metadata: {
+            designId: 'd1',
+            designName: 'My Design',
+            designLink: 'http://meshery/extension/meshmap?mode=operator&type=view&design_id=d1',
+            relationshipsAdded: 2,
+            relationshipsRemoved: 1,
+            relationshipsUpdated: 0,
+            evaluationStatus: 'completed',
+            evaluationDurationMs: 42,
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByText(/Relationships added/)).toHaveTextContent('Relationships added: 2');
+    expect(screen.getByText(/Relationships removed/)).toHaveTextContent('Relationships removed: 1');
+    expect(screen.getByText(/Relationships updated/)).toHaveTextContent('Relationships updated: 0');
+    expect(screen.getByText('completed')).toBeInTheDocument();
+    expect(screen.getByText('42 ms')).toBeInTheDocument();
+    expect(screen.getByText(/Open design/).closest('a')).toHaveAttribute(
+      'href',
+      'http://meshery/extension/meshmap?mode=operator&type=view&design_id=d1',
+    );
+    expect(screen.queryByText(/No relationship changes detected/i)).not.toBeInTheDocument();
   });
 });

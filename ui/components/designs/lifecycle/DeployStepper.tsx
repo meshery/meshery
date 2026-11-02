@@ -86,8 +86,8 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
 
           if (autoOpenView && serverEvent.severity == SEVERITY.SUCCESS) {
             openViewScopedToDesignInOperator(
-              serverEvent?.metadata?.design_name,
-              serverEvent?.metadata?.design_id,
+              serverEvent?.metadata?.designName ?? serverEvent?.metadata?.design_name,
+              serverEvent?.metadata?.designId ?? serverEvent?.metadata?.design_id,
               router,
             );
           }

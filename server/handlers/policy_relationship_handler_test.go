@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/core"
@@ -456,8 +457,8 @@ func TestProcessEvaluationResponse_PreservesUserCustomizationsOnExistingComponen
 	t.Parallel()
 
 	rm, _ := newTestRegistryManager(t)
-	seedTestComponent(t, rm)        // Job, registry BackgroundColor "#123456"
-	seedNamespaceComponent(t, rm)   // Namespace, registry BackgroundColor "#326CE5"
+	seedTestComponent(t, rm)      // Job, registry BackgroundColor "#123456"
+	seedNamespaceComponent(t, rm) // Namespace, registry BackgroundColor "#326CE5"
 
 	existingPodID, err := uuid.NewV4()
 	require.NoError(t, err)
@@ -477,9 +478,9 @@ func TestProcessEvaluationResponse_PreservesUserCustomizationsOnExistingComponen
 
 	// New component the evaluator just added — bare, no styles.
 	addedNamespace := &component.ComponentDefinition{
-		ID:          addedNamespaceID,
-		Component:   component.Component{Kind: "Namespace", Version: "v1"},
-		DisplayName: "default",
+		ID:             addedNamespaceID,
+		Component:      component.Component{Kind: "Namespace", Version: "v1"},
+		DisplayName:    "default",
 		ModelReference: model.ModelReference{Name: "kubernetes"},
 	}
 
@@ -537,8 +538,8 @@ func TestProcessEvaluationResponse_HydratesMultipleAddedComponents(t *testing.T)
 	t.Parallel()
 
 	rm, _ := newTestRegistryManager(t)
-	seedTestComponent(t, rm)       // Job → BackgroundColor "#123456"
-	seedNamespaceComponent(t, rm)  // Namespace → BackgroundColor "#326CE5"
+	seedTestComponent(t, rm)      // Job → BackgroundColor "#123456"
+	seedNamespaceComponent(t, rm) // Namespace → BackgroundColor "#326CE5"
 
 	jobID, err := uuid.NewV4()
 	require.NoError(t, err)
@@ -825,33 +826,52 @@ func TestParseRelationshipToAlias(t *testing.T) {
 
 // TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys pins
 // the canonical camelCase keys emitted into event_trackers.metadata on the
-// relationship-evaluation success event. Production carried 125,840 rows
-// each of the legacy snake_case spellings before this flip; this test
-// guards against regression and ensures legacy spellings cannot be
-// re-introduced silently.
+// relationship-evaluation success event, and that the event carries the
+// design's identity and an evaluation summary - never the design, its trace
+// or the raw evaluation response (#22764).
 func TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) {
 	now := time.Now()
+	designID := uuid.Must(uuid.NewV4())
 	resp := pattern.EvaluationResponse{
 		Design: pattern.PatternFile{
+			ID:      designID,
+			Name:    "evaluated-design",
 			Version: "1.2.3",
+			Components: []*component.ComponentDefinition{
+				{DisplayName: "must-not-leak"},
+			},
 		},
-		Actions:   make([]pattern.Action, 7),
-		Trace:     pattern.Trace{},
+		Actions: []pattern.Action{
+			{Op: gopolicies.AddRelationshipOp},
+			{Op: gopolicies.AddRelationshipOp},
+			{Op: gopolicies.DeleteRelationshipOp},
+			{Op: gopolicies.UpdateRelationshipOp},
+			{Op: gopolicies.UpdateRelationshipOp},
+			{Op: gopolicies.UpdateRelationshipOp},
+			{Op: gopolicies.AddComponentOp},
+		},
+		Trace: pattern.Trace{
+			PolicyActions: []string{"must-not-leak"},
+		},
 		Timestamp: &now,
 	}
 
-	metadata := buildPolicyEvaluationEventMetadata(resp)
+	metadata := buildPolicyEvaluationEventMetadata(resp, "http://meshery.test", 1500*time.Millisecond)
 
-	// Canonical camelCase keys MUST be present.
-	require.Contains(t, metadata, "historyTitle")
-	require.Contains(t, metadata, "trace")
-	require.Contains(t, metadata, "evaluationResponse")
-	require.Contains(t, metadata, "evaluatedAt")
+	for _, key := range []string{
+		"historyTitle", "evaluatedAt", "relationshipsAdded", "relationshipsRemoved",
+		"relationshipsUpdated", "evaluationStatus", "evaluationDurationMs",
+		"designId", "designName", "designVersion", "designLink",
+	} {
+		require.Contains(t, metadata, key)
+	}
 
 	// Legacy snake_case keys MUST NOT be present.
 	require.NotContains(t, metadata, "history_title")
 	require.NotContains(t, metadata, "evaluation_response")
 	require.NotContains(t, metadata, "evaluated_at")
+	assertNoBannedDesignEventMetadataKeys(t, metadata)
+	assertMetadataExcludes(t, metadata, "must-not-leak")
 
 	// Spot-check that historyTitle reflects the action count + version
 	// so future contributors don't repurpose the helper without keeping
@@ -859,4 +879,26 @@ func TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys(t *testin
 	assert.Contains(t, metadata["historyTitle"], "7 changes")
 	assert.Contains(t, metadata["historyTitle"], "1.2.3")
 	assert.Equal(t, now, metadata["evaluatedAt"])
+	assert.Equal(t, 2, metadata["relationshipsAdded"])
+	assert.Equal(t, 1, metadata["relationshipsRemoved"])
+	assert.Equal(t, 3, metadata["relationshipsUpdated"])
+	assert.Equal(t, "completed", metadata["evaluationStatus"])
+	assert.Equal(t, int64(1500), metadata["evaluationDurationMs"])
+	assert.Equal(t, designID, metadata["designId"])
+	assert.Equal(t, "evaluated-design", metadata["designName"])
+	assert.Equal(t, "1.2.3", metadata["designVersion"])
+	assert.Equal(t, "http://meshery.test/extension/meshmap?mode=operator&type=view&design_id="+designID.String(), metadata["designLink"])
+}
+
+// TestBuildPolicyEvaluationEventMetadata_NilTimestamp pins that a response
+// without a timestamp no longer panics and simply omits evaluatedAt, and that
+// an empty design version is omitted.
+func TestBuildPolicyEvaluationEventMetadata_NilTimestamp(t *testing.T) {
+	var metadata map[string]interface{}
+	require.NotPanics(t, func() {
+		metadata = buildPolicyEvaluationEventMetadata(pattern.EvaluationResponse{}, "", 0)
+	})
+	assert.NotContains(t, metadata, "evaluatedAt")
+	assert.NotContains(t, metadata, "designVersion")
+	assert.Equal(t, 0, metadata["relationshipsAdded"])
 }

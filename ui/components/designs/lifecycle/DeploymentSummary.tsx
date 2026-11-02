@@ -51,23 +51,50 @@ const DeploymentComponentFormatter = ({ componentDetail, deploymentType }) => {
   );
 };
 
+// DeploymentErrorsFormatter renders the status, error count and per-component
+// errors that deploy, undeploy and dry-run events carry since #22764. The list
+// is capped server-side; truncated marks that errorCount exceeds it.
+const DeploymentErrorsFormatter = ({ metadata }) => {
+  const errorList = Array.isArray(metadata?.errors) ? metadata.errors : [];
+  const errorCount = metadata?.errorCount ?? errorList.length;
+
+  return (
+    <Box display="flex" flexDirection="column" gap={1}>
+      <Typography variant="textB1Regular">
+        Status: <strong>{metadata.status}</strong> - {errorCount}{' '}
+        {errorCount === 1 ? 'error' : 'errors'}
+      </Typography>
+      {errorList.map((error, index) => (
+        <Typography variant="textB1Regular" key={`${error?.componentId}-${error?.code}-${index}`}>
+          {error?.code || 'Unknown error'} - component {error?.componentId || 'unknown'}
+        </Typography>
+      ))}
+      {metadata.truncated && (
+        <Typography variant="textB1Regular">
+          Showing the first {errorList.length} of {errorCount} errors.
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
 const DeploymentSummaryFormatter_ = ({ event }) => {
   const theme = useTheme();
   const eventStyle = SEVERITY_STYLE[event?.severity] || {};
-  const errors = event.metadata?.error;
+  const metadata = event?.metadata || {};
+  const errors = metadata.error;
   const errorAction = event?.action;
   const router = useRouter();
-  const componentsDetails = Object.values(event.metadata?.summary || {}).flatMap(
-    (perComponentDetail) => {
-      perComponentDetail = perComponentDetail?.flatMap ? perComponentDetail : [];
-      return perComponentDetail.flatMap((perContextDetail) =>
-        perContextDetail?.Summary?.map((detail) => ({
-          ...detail,
-          Location: perContextDetail.Location,
-        })),
-      );
-    },
-  );
+  // Events persisted before #22764 embedded the raw deployment summary.
+  const componentsDetails = Object.values(metadata.summary || {}).flatMap((perComponentDetail) => {
+    perComponentDetail = perComponentDetail?.flatMap ? perComponentDetail : [];
+    return perComponentDetail.flatMap((perContextDetail) =>
+      perContextDetail?.Summary?.map((detail) => ({
+        ...detail,
+        Location: perContextDetail.Location,
+      })),
+    );
+  });
 
   const is_operator_enabled = useIsOperatorEnabled();
 
@@ -93,8 +120,8 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
             color="primary"
             onClick={() =>
               openViewScopedToDesignInOperator(
-                event?.metadata?.design_name,
-                event?.metadata?.design_id,
+                metadata.designName ?? metadata.design_name,
+                metadata.designId ?? metadata.design_id,
                 router,
               )
             }
@@ -109,6 +136,8 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
           <ErrorMetadataFormatter metadata={errors} event={event} />
         </StyledDetailBox>
       )}
+
+      {metadata.status && <DeploymentErrorsFormatter metadata={metadata} />}
 
       {componentsDetails.map((componentDetail) => (
         <DeploymentComponentFormatter

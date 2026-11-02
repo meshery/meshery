@@ -254,21 +254,15 @@ func (h *Handler) PatternFileRequestHandler(
 }
 
 // buildDesignSavedEventMetadata builds the metadata map emitted on the
-// design-saved event. Extracted into a named function so the canonical
-// camelCase keys (`historyTitle`, `design`, `doclink`) are pinned by a
-// focused unit test — see TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys.
-// Drift here would silently re-introduce the snake_case `history_title`
-// key that production carried for 263,378 rows pre-flip.
-func buildDesignSavedEventMetadata(designFile design.PatternFile) map[string]interface{} {
-	return map[string]interface{}{
-		"historyTitle": fmt.Sprintf("Version %s - %d components and %d relationships",
-			designFile.Version, len(designFile.Components), len(designFile.Relationships)),
-		"design": map[string]interface{}{
-			"name": designFile.Name,
-			"id":   designFile.ID.String(),
-		},
-		"doclink": "https://docs.meshery.io/concepts/logical/designs",
-	}
+// design-saved event: the design's identity, historyTitle and doclink. It
+// never carries the design itself (#22764). Keys are camelCase and pinned
+// by TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys.
+func buildDesignSavedEventMetadata(designFile design.PatternFile, serverURL string) map[string]interface{} {
+	metadata := models.DesignEventIdentity(serverURL, designFile.ID, designFile.Name, string(designFile.Version))
+	metadata[models.EventMetadataHistoryTitle] = fmt.Sprintf("Version %s - %d components and %d relationships",
+		designFile.Version, len(designFile.Components), len(designFile.Relationships))
+	metadata["doclink"] = "https://docs.meshery.io/concepts/logical/designs"
+	return metadata
 }
 
 func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID core.Uuid, body []byte, err error, provider models.Provider, token string) {
@@ -406,7 +400,7 @@ func (h *Handler) handlePatternPOST(
 	description := fmt.Sprintf("Design %s saved at version %s", requestPayload.DesignFile.Name, requestPayload.DesignFile.Version)
 	event := eventBuilder.
 		WithDescription(description).
-		WithMetadata(buildDesignSavedEventMetadata(requestPayload.DesignFile)).
+		WithMetadata(buildDesignSavedEventMetadata(requestPayload.DesignFile, models.ServerURLFromRequest(r))).
 		Build()
 	_ = provider.PersistEvent(*event, token)
 

@@ -334,17 +334,68 @@ export const RelationshipEvaluationTraceFormatter = ({ actions, design }) => {
   );
 };
 
+// RelationshipEvaluationSummary renders the evaluation summary that events
+// carry since #22764: relationship change counts, status and duration, and a
+// link to the design. Events no longer embed the design or its trace.
+const RelationshipEvaluationSummary = ({ metadata }) => {
+  const counts = [
+    ['Relationships added', metadata.relationshipsAdded],
+    ['Relationships removed', metadata.relationshipsRemoved],
+    ['Relationships updated', metadata.relationshipsUpdated],
+  ];
+  const hasChanges = counts.some(([, count]) => Number(count) > 0);
+
+  return (
+    <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
+      {hasChanges ? (
+        counts.map(([label, count]) => (
+          <Typography variant="body2" key={label}>
+            {label}: <strong>{count ?? 0}</strong>
+          </Typography>
+        ))
+      ) : (
+        <EmptyState>
+          <InfoIcon />
+          <Typography ml={1}>No relationship changes detected in this evaluation</Typography>
+        </EmptyState>
+      )}
+      {metadata.evaluationStatus && (
+        <Typography variant="body2">
+          Status: <strong>{metadata.evaluationStatus}</strong>
+        </Typography>
+      )}
+      {metadata.evaluationDurationMs != null && (
+        <Typography variant="body2">
+          Duration: <strong>{metadata.evaluationDurationMs} ms</strong>
+        </Typography>
+      )}
+      {metadata.designLink && (
+        <a href={metadata.designLink} target="_self" style={{ color: 'inherit' }}>
+          <Typography variant="body2">
+            Open design {metadata.designName ? `"${metadata.designName}"` : ''}
+          </Typography>
+        </a>
+      )}
+    </Box>
+  );
+};
+
 export const RelationshipEvaluationEventFormatter = ({ event }) => {
-  const evaluationResponse =
-    event?.metadata?.evaluationResponse || event?.metadata?.evaluation_response;
+  const metadata = event?.metadata || {};
+  // Events persisted before #22764 embedded the whole evaluation response.
+  const legacyEvaluationResponse = metadata.evaluationResponse || metadata.evaluation_response;
   return (
     <ErrorBoundary>
       <Box sx={{ mt: 2 }}>
         <Typography variant="body1">{event.description}</Typography>
-        <RelationshipEvaluationTraceFormatter
-          actions={evaluationResponse?.actions || []}
-          design={evaluationResponse?.design || {}}
-        />
+        {legacyEvaluationResponse ? (
+          <RelationshipEvaluationTraceFormatter
+            actions={legacyEvaluationResponse?.actions || []}
+            design={legacyEvaluationResponse?.design || {}}
+          />
+        ) : (
+          <RelationshipEvaluationSummary metadata={metadata} />
+        )}
       </Box>
     </ErrorBoundary>
   );

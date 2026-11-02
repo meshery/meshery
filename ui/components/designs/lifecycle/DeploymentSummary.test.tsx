@@ -86,7 +86,7 @@ describe('DeploymentSummaryFormatter', () => {
     expect(screen.queryByText('Open In Operator')).not.toBeInTheDocument();
   });
 
-  it('renders the success component details from the summary metadata', () => {
+  it('renders the success component details from legacy summary metadata', () => {
     render(
       <DeploymentSummaryFormatter
         event={{
@@ -137,6 +137,52 @@ describe('DeploymentSummaryFormatter', () => {
       />,
     );
     expect(screen.getByText('Failed to deploy Pod "pod"')).toBeInTheDocument();
+  });
+
+  it('renders status, errorCount and the per-component errors from the slim metadata', () => {
+    render(
+      <DeploymentSummaryFormatter
+        event={{
+          description: 'Deployment Failed',
+          severity: 'error',
+          action: 'deploy',
+          metadata: {
+            designId: 'd1',
+            designName: 'My Design',
+            status: 'partial',
+            errorCount: 2,
+            errors: [
+              { code: 'meshery-server-1480', componentId: 'c1' },
+              { code: 'FieldValueInvalid', componentId: 'c2' },
+            ],
+            truncated: false,
+          },
+        }}
+      />,
+    );
+    expect(screen.getByText(/Status:/)).toHaveTextContent('Status: partial - 2 errors');
+    expect(screen.getByText('meshery-server-1480 - component c1')).toBeInTheDocument();
+    expect(screen.getByText('FieldValueInvalid - component c2')).toBeInTheDocument();
+    expect(screen.queryByText(/Showing the first/)).not.toBeInTheDocument();
+  });
+
+  it('notes when the errors list is truncated', () => {
+    render(
+      <DeploymentSummaryFormatter
+        event={{
+          description: 'Deployment Failed',
+          severity: 'error',
+          action: 'deploy',
+          metadata: {
+            status: 'failed',
+            errorCount: 25,
+            errors: Array.from({ length: 20 }, (_, i) => ({ code: 'E', componentId: `c${i}` })),
+            truncated: true,
+          },
+        }}
+      />,
+    );
+    expect(screen.getByText('Showing the first 20 of 25 errors.')).toBeInTheDocument();
   });
 
   it('renders ErrorMetadataFormatter when errors are present at the top level', () => {
