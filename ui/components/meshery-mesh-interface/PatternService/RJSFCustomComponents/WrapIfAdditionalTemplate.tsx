@@ -50,7 +50,7 @@ const WrapIfAdditionalTemplate = ({
             disabled={disabled || readonly}
             id={`${id}-key`}
             name={`${id}-key`}
-            onChange={!readonly ? onKeyRenameBlur : undefined}
+            onBlur={!readonly ? onKeyRenameBlur : undefined}
             type="text"
           />
         </FormControl>
