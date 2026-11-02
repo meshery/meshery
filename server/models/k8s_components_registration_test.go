@@ -39,8 +39,14 @@ func TestLoadK8sMeshModelMetadata_Success(t *testing.T) {
 	err := os.WriteFile(filePath, []byte(validJSON), 0600)
 	require.NoError(t, err, "failed to write test file")
 
+	// Track open file descriptors around the call (effective on Linux /proc/self/fd)
+	beforeFDs, _ := filepath.Glob("/proc/self/fd/*")
 	metadata, err := loadK8sMeshModelMetadata(filePath)
 	require.NoError(t, err, "loadK8sMeshModelMetadata should succeed for valid JSON")
+	afterFDs, _ := filepath.Glob("/proc/self/fd/*")
+	if len(beforeFDs) > 0 && len(afterFDs) > 0 {
+		assert.Equal(t, len(beforeFDs), len(afterFDs), "file descriptor count should remain unchanged after successful load")
+	}
 
 	assert.Equal(t, "#326CE5", metadata.PrimaryColor)
 	require.NotNil(t, metadata.SecondaryColor)
@@ -75,17 +81,23 @@ func TestLoadK8sMeshModelMetadata_CorruptedJSON(t *testing.T) {
 	err := os.WriteFile(filePath, []byte(malformedJSON), 0600)
 	require.NoError(t, err, "failed to write corrupt test file")
 
+	// Track open file descriptors around the call (effective on Linux /proc/self/fd)
+	beforeFDs, _ := filepath.Glob("/proc/self/fd/*")
 	metadata, err := loadK8sMeshModelMetadata(filePath)
 	assert.Error(t, err, "expected error for corrupted JSON content")
+	afterFDs, _ := filepath.Glob("/proc/self/fd/*")
+	if len(beforeFDs) > 0 && len(afterFDs) > 0 {
+		assert.Equal(t, len(beforeFDs), len(afterFDs), "file descriptor should be closed even on unmarshal error")
+	}
 	assert.Empty(t, metadata.PrimaryColor)
 
-	// Verify deferred close executed despite JSON unmarshal error:
+	// Verify deferred close executed despite JSON unmarshal error (effective on Windows file locks):
 	removeErr := os.Remove(filePath)
 	assert.NoError(t, removeErr, "file descriptor should be closed even on unmarshal error")
 }
 
 // TestLoadK8sMeshModelMetadata_LiveTemplate verifies that the actual project-relative
-// template file at k8sMeshModelPath can be read and parsed.
+// template file at k8sMeshModelPath can be read and parsed without coupling to volatile values.
 func TestLoadK8sMeshModelMetadata_LiveTemplate(t *testing.T) {
 	if _, err := os.Stat(k8sMeshModelPath); os.IsNotExist(err) {
 		t.Skipf("skipping live template test: %s not found from current directory", k8sMeshModelPath)
@@ -93,23 +105,23 @@ func TestLoadK8sMeshModelMetadata_LiveTemplate(t *testing.T) {
 
 	metadata, err := loadK8sMeshModelMetadata(k8sMeshModelPath)
 	require.NoError(t, err, "failed to load live model_template.json")
-	assert.Equal(t, "#326CE5", metadata.PrimaryColor)
+	assert.NotEmpty(t, metadata.PrimaryColor)
 	require.NotNil(t, metadata.SecondaryColor)
-	assert.Equal(t, "#7aa1f0", *metadata.SecondaryColor)
+	assert.NotEmpty(t, *metadata.SecondaryColor)
 	require.NotNil(t, metadata.Shape)
-	assert.Equal(t, "circle", string(*metadata.Shape))
+	assert.NotEmpty(t, string(*metadata.Shape))
 }
 
 // TestK8sMeshModelMetadata_PackageVar verifies that the package-level K8sMeshModelMetadata
-// is initialized by init() when the template file is available.
+// is initialized by init() when the template file is available without coupling to volatile values.
 func TestK8sMeshModelMetadata_PackageVar(t *testing.T) {
 	if _, err := os.Stat(k8sMeshModelPath); os.IsNotExist(err) {
 		t.Skipf("skipping package var test: %s not found from current directory", k8sMeshModelPath)
 	}
 
-	assert.Equal(t, "#326CE5", K8sMeshModelMetadata.PrimaryColor)
+	assert.NotEmpty(t, K8sMeshModelMetadata.PrimaryColor)
 	require.NotNil(t, K8sMeshModelMetadata.SecondaryColor)
-	assert.Equal(t, "#7aa1f0", *K8sMeshModelMetadata.SecondaryColor)
+	assert.NotEmpty(t, *K8sMeshModelMetadata.SecondaryColor)
 	require.NotNil(t, K8sMeshModelMetadata.Shape)
-	assert.Equal(t, "circle", string(*K8sMeshModelMetadata.Shape))
+	assert.NotEmpty(t, string(*K8sMeshModelMetadata.Shape))
 }
