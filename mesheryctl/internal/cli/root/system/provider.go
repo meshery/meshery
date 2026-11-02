@@ -40,7 +40,7 @@ var viewProviderCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View provider",
 	Long: `View provider of context in focus.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/provider/view`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/provider/view`,
 	Example: `
 // View current provider
 mesheryctl system provider view

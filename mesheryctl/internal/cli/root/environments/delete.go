@@ -28,7 +28,7 @@ var deleteEnvironmentCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete an environment",
 	Long: `Delete an environment by providing the environment ID
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/environment/delete`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/delete`,
 	Example: `
 // delete a new environment
 mesheryctl environment delete [environmentId]
@@ -46,10 +46,11 @@ mesheryctl environment delete [environmentId]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		_, err := api.Delete(fmt.Sprintf("%s/%s", environmentApiPath, args[0]))
+		resp, err := api.Delete(fmt.Sprintf("%s/%s", environmentApiPath, args[0]))
 		if err != nil {
 			return err
 		}
+		defer utils.SafeClose(resp.Body)
 
 		utils.Log.Infof("Environment with ID %s has been deleted", args[0])
 		return nil

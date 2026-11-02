@@ -16,7 +16,13 @@ import (
 var (
 	//USE WITH CAUTION: Wherever read/write is performed, use this in a thread safe way, using the global mutex
 	extendedEndpoints = make(map[string]*extensions.Router)
-	mx                sync.Mutex
+	// loadedExtensionPackages records the outcome of loading each extension
+	// plugin, keyed by its path, so a plugin is opened at most once per process.
+	// Go cannot unload a plugin, and re-opening one whose first load failed
+	// leaves the runtime without fresh module data, which is a fatal,
+	// unrecoverable error ("runtime: no plugin module data"). Guarded by mx.
+	loadedExtensionPackages = make(map[string]error)
+	mx                      sync.Mutex
 )
 
 // ExtensionVersion defines the version metadata for the extension
@@ -36,6 +42,9 @@ func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Req
 	writeMeshkitError(w, ErrExtensionEndpointNotRegistered(req.URL.Path), http.StatusNotFound)
 }
 
+// LoadExtensionFromPackage loads the provider's extension plugin once and
+// returns the outcome of that first attempt on every later call, so a request
+// never triggers a second plugin.Open of the same package.
 func (h *Handler) LoadExtensionFromPackage(_ http.ResponseWriter, _ *http.Request, provider models.Provider) error {
 	mx.Lock()
 	defer mx.Unlock()
@@ -43,8 +52,20 @@ func (h *Handler) LoadExtensionFromPackage(_ http.ResponseWriter, _ *http.Reques
 	if len(provider.GetProviderProperties().Extensions.GraphQL) > 0 {
 		packagePath = provider.GetProviderProperties().Extensions.GraphQL[0].Path
 	}
+	pluginPath := path.Join(provider.PackageLocation(), packagePath)
 
-	plug, err := plugin.Open(path.Join(provider.PackageLocation(), packagePath))
+	if err, loaded := loadedExtensionPackages[pluginPath]; loaded {
+		return err
+	}
+	err := h.loadExtensionPlugin(pluginPath, provider)
+	loadedExtensionPackages[pluginPath] = err
+	return err
+}
+
+// loadExtensionPlugin opens the plugin at pluginPath, runs it and registers
+// its HTTP endpoint. Callers must hold mx.
+func (h *Handler) loadExtensionPlugin(pluginPath string, provider models.Provider) error {
+	plug, err := plugin.Open(pluginPath)
 	if err != nil {
 		return ErrPluginOpen(err)
 	}

@@ -1,0 +1,3 @@
+I’m a third-semester CSE-AIML student and relatively new to open source. I’m looking forward to learning how real-world open-source projects are developed, understanding the contribution workflow, and making meaningful contributions. I’d especially appreciate guidance on finding beginner-friendly issues, understanding the Meshery codebase, and getting started with my first contribution. I’m excited to learn from the community, improve my technical skills, and gradually become a more active contributor.
+https://www.linkedin.com/in/ayush-kumar-mishra-088679381/
+https://github.com/AyushKumarMishra123

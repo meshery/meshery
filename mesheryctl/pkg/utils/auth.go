@@ -92,18 +92,23 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 	// check status code from request, checks for issues with auth token
 	resp, err := client.Do(req)
 
-	if err != nil && resp == nil {
+	if err != nil {
+		if resp != nil && resp.Body != nil {
+			SafeClose(resp.Body)
+		}
 		return nil, ErrFailRequest(err)
 	}
 
 	// If statuscode = 302, then we either have an expired or invalid token
 	// We return the response and correct error message
 	if resp.StatusCode == 302 {
+		SafeClose(resp.Body)
 		return nil, ErrInvalidToken()
 	}
 
 	// failsafe for not being authenticated
 	if ContentTypeIsHTML(resp) {
+		SafeClose(resp.Body)
 		return nil, ErrUnauthenticated()
 	}
 
@@ -232,12 +237,11 @@ func UpdateAuthDetails(filepath string) error {
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
-	defer SafeClose(resp.Body)
-
 	if err != nil {
-		err = errors.Wrap(err, "error dispatching there request: ")
+		err = errors.Wrap(err, "error dispatching the request: ")
 		return err
 	}
+	defer SafeClose(resp.Body)
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {

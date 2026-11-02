@@ -162,6 +162,12 @@ vi.mock('@/utils/hooks/usePrometheusPingHook', () => ({
   default: () => pingPrometheus,
 }));
 
+const pingMeshery = vi.fn();
+
+vi.mock('@/utils/hooks/useMesheryPingHook', () => ({
+  default: () => pingMeshery,
+}));
+
 vi.mock('./ConnectionChip', () => ({
   ConnectionStateChip: () => <div />,
   TooltipWrappedConnectionChip: () => <div />,
@@ -277,6 +283,7 @@ describe('ConnectionTable', () => {
     notify.mockReset();
     push.mockReset();
     ping.mockReset();
+    pingMeshery.mockReset();
     modalShow.mockReset();
     refetchConnections.mockReset();
 

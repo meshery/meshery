@@ -1,6 +1,6 @@
 ---
 title: Deploy AWS EC2 Instances with Meshery
-description: Learn how to deploy and manage AWS EC2 instances through Kubernetes with Meshery, utilizing AWS Controllers for Kubernetes (ACK) to enhance cloud resource management
+description: Deploy an EC2 instance and its VPC from Meshery, using AWS Controllers for Kubernetes (ACK) and designs from the Meshery Catalog.
 model: aws
 params:
     kind: EC2
@@ -9,144 +9,105 @@ aliases:
 - /guides/tutorials/deploy-aws-ec2-instances-with-meshery
 ---
 
-### Introduction
+In this tutorial, you deploy an AWS EC2 instance, and the network it runs in, from Meshery. Meshery manages AWS resources through [AWS Controllers for Kubernetes (ACK)](https://aws-controllers-k8s.github.io/community/), which represents each AWS resource as a Kubernetes custom resource. You start from three ready-made designs in the [Meshery Catalog](https://meshery.io/catalog), open them in [Kanvas]({{< ref "extensions/extensions/kanvas/index.md" >}}), add your AWS credentials, and deploy them in order:
 
-Meshery is a powerful multi-cloud management platform that enables you to configure, deploy, and manage AWS resources, such as EC2 instances. In order to manage AWS resources, Meshery uses [AWS Controllers for Kubernetes (ACK)](https://aws.amazon.com/blogs/containers/aws-controllers-for-kubernetes-ack/). ACK facilitates the bridge between Kubernetes and AWS services, enabling Meshery to manage AWS resources and Meshery enabling you to benefit from the enhanced experience that Meshery and its extensions offer.
+1. The EC2 controller, which turns EC2 custom resources into real AWS resources.
+2. A VPC and its networking.
+3. The EC2 instances.
 
-Meshery has a number of extensions, adapters, and plugins. In this tutorial, we will use the Meshery Design Configurator to provide an intuitive, visual experience for configuring and deploying an AWS EC2 instance. Among other aspects, the Design Configurator provides an alternative to command-line tools like `kubectl` by offering infrastructure as design. Once you connect your Kubernetes cluster to Meshery, you can configure, deploy, and manage AWS resources directly from the Meshery UI, making deployments more intuitive and collaborative
+## Before you begin
 
-In this guide, you'll explore how to deploy AWS resources, including setup and architecture details. This guide also covers how to access pre-configured designs from [Meshery Catalog](https://meshery.io/catalog) and demonstrates how to visualize deployed resources using Meshery Dashboard's operator mode, offering a comprehensive understanding of AWS resource management.
+- Meshery, deployed by following the [installation guides]({{< ref "installation/_index.md" >}}). This tutorial uses Meshery deployed in a minikube cluster.
+- An AWS account, and an access key for a user that can create VPC and EC2 resources.
+- A Kubernetes cluster, such as minikube or Amazon EKS, connected to Meshery.
 
-### Prerequisites
+The designs create real AWS resources, including a NAT Gateway and an Elastic IP, which AWS bills for. Delete them when you finish.
 
-1. [Self Hosted Meshery Installation]({{< ref "installation/_index.md" >}}).
-1. **AWS Account**: An active AWS account is required for accessing AWS resources.
-1. **Kubernetes Cluster**: A running Kubernetes cluster, such as Minikube or EKS.
+## 1. Connect your cluster to Meshery
 
-### Table of Contents
-
-- [Introduction](#introduction)
-- [Prerequisites](#prerequisites)
-- [Table of Contents](#table-of-contents)
-- [Overview of Deployment Steps](#overview-of-deployment-steps)
-- [1. Connect your Kubernetes Cluster to Meshery](#1-connect-your-kubernetes-cluster-to-meshery)
-- [2. Configure and Deploy the EC2 Controller](#2-configure-and-deploy-the-ec2-controller)
-  - [Configure the AWS Secret](#configure-the-aws-secret)
-  - [Configure the EC2 Controller Pod to Use the Secret](#configure-the-ec2-controller-pod-to-use-the-secret)
-  - [Deploy EC2 Controller Design](#deploy-ec2-controller-design)
-- [3. Deploy the VPC Workflow](#3-deploy-the-vpc-workflow)
-- [4. Deploy EC2 Instance](#4-deploy-ec2-instance)
-- [Conclusion](#conclusion)
-
-### Overview of Deployment Steps
-
-**1. Integrate Your Kubernetes Cluster with Meshery**
-
-Begin by connecting your Kubernetes cluster to Meshery, establishing the foundation for interaction with AWS resources via ACK.
-
-**2. Set Up Essential AWS Resources**
-
-Use Meshery to deploy foundational resources such as VPCs, subnets, and other networking components necessary for your EC2 instance within AWS.
-
-**3. Verify and Monitor Deployment**
-
-Once deployment is complete, verify the EC2 instances via the AWS Management Console or Meshery’s visualization mode, where you’ll gain an interactive view of your deployed resources.
-
-### 1. Connect your Kubernetes Cluster to Meshery
-
-To begin, connect your Kubernetes cluster to Meshery. This guide uses `minikube`, which supports two deployment options for Meshery:
-
-- **In-Cluster Deployment**: Deploys Meshery within the Kubernetes cluster using Helm inside the meshery namespace.
-- **Out-of-Cluster Deployment**: Runs Meshery in Docker containers, allowing external connectivity to the Minikube cluster.
-
-For this guide, the `in-cluster deployment` method is used.  Follow this [setup guide for Meshery on Minikube]({{< ref "installation/kubernetes/minikube/index.md" >}}) to deploy Meshery in-cluster. After the deployment, open the Meshery UI at `localhost:9081` to verify that the cluster is listed. Click on the cluster name to ping and confirm connectivity.
+1. Deploy Meshery into minikube by following [Meshery on Minikube]({{< ref "installation/kubernetes/minikube/index.md" >}}). Meshery runs in the `meshery` namespace and connects to the cluster it runs in.
+2. Open Meshery UI at `http://localhost:9081` and go to **Lifecycle → Connections**. Confirm that your cluster is listed as **Connected**. Click its name to ping it.
 
 ![Connect Minikube Cluster](images/aws-connection.png)
 
-### 2. Configure and Deploy the EC2 Controller
+## 2. Deploy the EC2 controller
 
-In this section, you will set up the EC2 controller and configure it to connect to your AWS account. This process involves creating a Kubernetes secret that contains your AWS access keys and configuring the controller pod to consume this secret. While these configurations are already included in our designs, the steps will be demonstrated for clarity.
+The [EC2 controller design](https://meshery.io/catalog/deployment/ec2-controller-design-8f7e1431-3885-4ebf-9ef7-d2ec64bd4eb5.html) deploys everything ACK needs into the `ack-system` namespace:
 
-1. **Clone the EC2 Controller Design**: Start by [cloning the EC2 controller design](https://meshery.io/catalog/deployment/ec2-controller-design-8f7e1431-3885-4ebf-9ef7-d2ec64bd4eb5.html) from the catalog. To do this, click on **Clone** on the catalog page. Once cloned, open the design in the playground, and you will see it displayed on the canvas.
+- **The EC2 controller Pod**, which creates, updates, and deletes EC2 and VPC resources in AWS.
+- **Custom Resource Definitions (CRDs)** for VPCs, subnets, NAT gateways, instances, and the other resources the controller manages.
+- **A Service Account** for the controller Pod.
+- **A Secret named `aws-creds`**, which you fill with the AWS access key the controller signs in with.
 
-2. **Set the Deployment Namespace**: This design has been configured to be deployed in the `ack-system` namespace.
+### Open the design
 
-This EC2 controller design includes:
+On the catalog page, click **Clone**, then open the cloned design in Kanvas.
 
-- **The EC2 Controller Pod**: This runs the main EC2 controller. This pod is responsible for managing the lifecycle of EC2 instances and their associated resources.
-- **Custom Resource Definitions (CRDs)**: These CRDs define the desired state of various AWS resources, such as VPCs, subnets, NAT gateways, and other networking components.By utilizing these CRDs, the EC2 controller can interact with the AWS API to create, update, and manage these resources.
-- **Service Account**: The service account associated with the controller pod has the necessary IAM permissions. These permissions allow the controller to perform essential functions, such as creating and managing AWS resources.
-- **AWS Credentials secret**: The AWS credentials secret stores your AWS access keys and secret access keys securely. This secret is essential for authenticating the AWS controller with your AWS account.
+### Add your AWS credentials
 
-#### Configure the AWS Secret
+The Secret's **Data** fields hold base64-encoded values. Encode your access key ID and secret access key on your own machine, rather than pasting them into a website:
 
-To connect the EC2 controller to AWS, create a Kubernetes secret containing your AWS credentials.
+```bash
+printf '%s' '<your-access-key-id>' | base64
+printf '%s' '<your-secret-access-key>' | base64
+```
 
-1. Double-click the Secret component to open its configuration.
+1. Double-click the `aws-creds` Secret to open its configuration.
+2. Under **Data**, set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to the two encoded values.
 
-1. Under **Data**, add the base 64 encoded values of your AWS keys.
-    - **AWS_ACCESS_KEY_ID**: `<base64-encoded-key>`
-    - **AWS_SECRET_ACCESS_KEY**: `<base64-encoded-secret>`
+### Pass the credentials and region to the controller
 
-    Encode your AWS key and secret with a [base64 encoder](https://www.base64encode.org/), then enter them in the configuration.
+The controller reads its credentials and region from environment variables. In the catalog design, the controller container does not read the Secret yet and leaves `AWS_REGION` empty, so set them:
 
-#### Configure the EC2 Controller Pod to Use the Secret
+1. Double-click the EC2 controller Pod to open its configuration.
+2. Under **Containers**, find the `controller` container and scroll to **env**.
+3. Set `AWS_REGION` to the region you deploy to, for example `us-east-1`.
+4. Click **+** to add an environment variable named `AWS_ACCESS_KEY_ID`. Under **Value From → Secret Key Ref**, set **Name** to `aws-creds` and **Key** to `AWS_ACCESS_KEY_ID`.
+5. Add `AWS_SECRET_ACCESS_KEY` the same way, with **Key** set to `AWS_SECRET_ACCESS_KEY`.
+6. If the design also contains a Deployment for the controller, make the same changes to its container.
 
-While this step is already handled in the design, but it's worth clarifying how the controller pod connects to the secret through environment variables.
+### Deploy the controller
 
-1. Double-click the EC2 controller pod to open its configuration tab.
+1. Click **Actions** at the top of the canvas, then **Deploy**. For what each step of the deployment does, see [Deploying a Design]({{< ref "guides/infrastructure-management/deploying-a-design.md" >}}).
+2. When the deployment finishes, click **Open in Visualizer**. Kanvas switches to Operator mode and filters the view to the resources you just deployed.
 
-1. In the **Containers** section, scroll to **env** and click the **+** to add two environment variables:
+To build the same view yourself, click the filter icon and set:
 
-    - **AWS_ACCESS_KEY_ID**: For the name, put in `AWS_ACCESS_KEY_ID`, click on the `secret Key Ref` dropdown and put in the **key** as `AWS_ACCESS_KEY_ID` and the secret resource **name** as `aws_creds`.
-    - **AWS_SECRET_ACCESS_KEY**: Set the `AWS_SECRET_ACCESS_KEY` similarly, using the same secret key reference.
+- **View Selector:** Single namespace
+- **Kinds:** Deployment, Pod, Secret
+- **Namespace:** `ack-system`
 
-#### Deploy EC2 Controller Design
+## 3. Deploy the VPC
 
-After configuring your design, the next step is deployment. To learn more about deploying your designs in Meshery, see [Deploying Meshery Designs](https://cloud.meshery.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs). To deploy the resources, follow these steps:
-
-1. Click the **Actions** button at the top of the canvas and click **Deploy**.
-
-1. Once the deployment is complete, click **Open in Visualizer** to switch to Operator mode and see a pre-filtered view of your just deployed resources in the cluster. Alternatively, you can click *Operate* at the top to enter Operator mode.
-
-To get the filtered view shown above, click the filter icon and adjust the following settings:
-
-- For `view Selector` select `single namespace`
-- For `Kinds` select `Deployment, Pod, secret`
-- For `namespace` select `ack-system`
-
-### 3. Deploy the VPC Workflow
-
-This step involves deploying all the necessary resources to create the VPC and other networking components for the EC2 instance. The resources included in this network toplology include:
+The [VPC workflow design](https://meshery.io/catalog/deployment/vpc-workflow-design-2f7597bd-9713-461e-b64f-c571415d2a86.html) creates the network the EC2 instance runs in:
 
 - 1 VPC
 - 1 Internet Gateway
 - 1 NAT Gateway
 - 1 Elastic IP
-- 2 Route Tables (Public and Private)
-- 2 Subnets (1 Public, 1 Private)
+- 2 Route Tables (public and private)
+- 2 Subnets (1 public, 1 private)
 - 1 Security Group
 
-1. Start by [cloning the design](https://meshery.io/catalog/deployment/vpc-workflow-design-2f7597bd-9713-461e-b64f-c571415d2a86.html) from the catalog.
+1. Clone the design from the catalog and open it in Kanvas.
+2. The design deploys to the `us-east-1` region. To change the region, CIDR blocks, or other values, open each component's configuration.
+3. Click **Actions**, then **Deploy**.
+4. In the AWS Management Console, open the VPC dashboard and confirm that the VPC and its subnets exist.
 
-2. Once cloned, open the design in the playground, and you will see it displayed on the canvas.
+## 4. Deploy the EC2 instances
 
-3. You can adjust CIDR blocks, region, and other parameters as needed through the configuration tab. This design is configured to be deployed in the `us-east-1` region.
+1. Clone the [EC2 instances design](https://meshery.io/catalog/deployment/ec2-instances-cca2fb89-48e1-419d-8e1b-e69e1e12931a.html) and open it in Kanvas.
+2. Click **Actions**, then **Deploy**.
+3. In the AWS Management Console, open the EC2 dashboard and confirm that the instances are running.
 
-4. Click the **Actions** button to deploy.
+## Clean up
 
-5. After deployment, verify the setup in your AWS Management Console.
+Undeploy the designs in reverse order: the EC2 instances, then the VPC, then the EC2 controller. The controller deletes the AWS resources only while it is running, so undeploy it last. Then confirm in the AWS Management Console that the instances, NAT Gateway, and Elastic IP are gone.
 
-### 4. Deploy EC2 Instance
+## What you learned
 
-With the VPC and networking resources set up, deploy the EC2 instances within the VPC using the following steps.
+- Meshery manages AWS resources through ACK controllers that run in your cluster.
+- A catalog design gives you a working starting point that you clone and adjust.
+- Kanvas Operator mode shows what a deployment created in your cluster.
 
-1. [Clone the EC2 instances design](https://meshery.io/catalog/deployment/ec2-instances-cca2fb89-48e1-419d-8e1b-e69e1e12931a.html) from the catalog.
-
-2. Open the design on the Playground and deploy the instances.
-
-3. Navigate to the AWS Management Console to confirm the instances' successful deployment.
-
-### Conclusion
-
-This guide covered the steps to deploy and manage EC2 instances using Meshery. It demonstrated how to leverage pre-configured catalog designs, configure and deploy resources, set up the controller and necessary secrets, configure VPC networking resources, and ultimately deploy the EC2 instances. It also showed how to visualize Kubernetes resources using Meshery Dashboard's operator mode. This process highlights the ease of managing AWS resources visually through Meshery's UI, eliminating the need for CLI commands.
+Next, see [Deploying a Design]({{< ref "guides/infrastructure-management/deploying-a-design.md" >}}) to deploy your own designs, and [Sharing a Cluster with Your Team]({{< ref "guides/infrastructure-management/sharing-a-cluster-with-your-team.md" >}}) to let teammates deploy to the same cluster.

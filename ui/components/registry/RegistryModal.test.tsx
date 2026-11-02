@@ -53,6 +53,7 @@ vi.mock('@sistent/sistent', () => ({
   LeftArrowIcon: (props) =>
     React.createElement('svg', { 'data-component': 'left-arrow-icon', ...props }),
   FileIcon: () => <svg data-testid="file-icon" />,
+  AppRegistrationIcon: () => <svg data-testid="app-registration-icon" />,
   InfoIcon: () => <svg data-testid="info-icon" />,
   DatabaseIcon: () => <svg data-testid="database-icon" />,
   CustomTooltip: ({ children }: any) => <>{children}</>,

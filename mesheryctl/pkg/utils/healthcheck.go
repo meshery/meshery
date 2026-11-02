@@ -153,8 +153,11 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 		Log.Infof("Checking if Meshery is running using the platform: %s\n", currPlatform)
 	}
 
-	if resp != nil && resp.StatusCode == 200 {
-		return true, nil
+	if resp != nil {
+		SafeClose(resp.Body)
+		if resp.StatusCode == 200 {
+			return true, nil
+		}
 	}
 
 	// If not, use the platforms to check if Meshery is running or not
@@ -231,9 +234,6 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 				return false, err
 			}
 			containers = convertToComposeSummaries(containersSummary)
-			if err != nil {
-				return false, err
-			}
 			return ContainsMesheryContainer(containers), nil
 		}
 	case "kubernetes":

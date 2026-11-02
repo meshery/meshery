@@ -47,7 +47,7 @@ var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Check Meshery status",
 	Long: `Check status of Meshery and Meshery components.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/status`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/status`,
 	Example: `
 // Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
 mesheryctl system status
@@ -174,18 +174,14 @@ mesheryctl system status --verbose
 
 				// Get the status of each of the pods
 				podStatus := pod.Status
+				totalContainers := len(pod.Spec.Containers)
 				var containerRestarts int32
 				var containerReady int
-				var totalContainers int
 
-				if len(pod.Spec.Containers) > 0 && len(podStatus.ContainerStatuses) > 0 {
-					// If a pod has multiple containers, get the status from all
-					for container := range pod.Spec.Containers {
-						containerRestarts += podStatus.ContainerStatuses[container].RestartCount
-						if podStatus.ContainerStatuses[container].Ready {
-							containerReady++
-						}
-						totalContainers++
+				for _, cs := range podStatus.ContainerStatuses {
+					containerRestarts += cs.RestartCount
+					if cs.Ready {
+						containerReady++
 					}
 				}
 

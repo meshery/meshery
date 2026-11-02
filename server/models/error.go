@@ -149,6 +149,7 @@ const (
 	ErrSeedingConnectionKindCode          = "meshery-server-1463"
 	ErrNoSystemEventSinkCode              = "meshery-server-1482"
 	ErrSeedingStagePanicCode              = "meshery-server-1483"
+	ErrKeysRegisterColumnMissingCode      = "meshery-server-1486"
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
@@ -632,11 +633,15 @@ func ErrInitializeDBHandler(err error) error {
 }
 
 func ErrDoRequest(err error, method, endpoint string) error {
-	return errors.New(ErrDoRequestCode, errors.Alert, []string{fmt.Sprintf("unable to make %s request to %s", method, endpoint)}, []string{err.Error()}, []string{"Requested resource is not reachable.", "Unable to instantiate TCP connection"}, []string{"Ensure correct URL is specified", "Ensure network connectivity to the resource from your network"})
+	cause := ""
+	if err != nil {
+		cause = err.Error()
+	}
+	return errors.New(ErrDoRequestCode, errors.Alert, []string{fmt.Sprintf("unable to make %s request to %s", method, endpoint)}, []string{cause}, []string{"Requested resource is not reachable.", "Unable to instantiate TCP connection"}, []string{"Ensure correct URL is specified", "Ensure network connectivity to the resource from your network"})
 }
 
 func ErrMarshalYAML(err error, obj string) error {
-	return errors.New(ErrMarshalYAMLCode, errors.Alert, []string{"unable to marshal yaml \"%s\""}, []string{err.Error()}, []string{"Object has invalid yaml format"}, []string{"Make sure to input a valid yaml object"})
+	return errors.New(ErrMarshalYAMLCode, errors.Alert, []string{"Unable to marshal yaml", fmt.Sprintf("object: %s", obj)}, []string{err.Error()}, []string{"Object has invalid yaml format"}, []string{"Make sure to input a valid yaml object"})
 }
 func ErrDeleteK8sResource(err error, name, namespace string) error {
 	return errors.New(ErrDeleteK8sResourceCode, errors.Alert,
@@ -738,6 +743,22 @@ func ErrSeedingStagePanic(stage string, cause interface{}, stack []byte) error {
 		[]string{fmt.Sprintf("faulting stage: %s", stage), fmt.Sprintf("%v\n%s", cause, stack)},
 		[]string{"An unexpected condition was hit while seeding, either at startup or while reseeding after a database reset"},
 		[]string{"Meshery Server is still serving, but whatever the faulting stage contributes may be missing or incomplete. Report the stack trace above at https://github.com/meshery/meshery/issues/new/choose, then seed again - restart Meshery Server, or re-run the reset that triggered the seeding"},
+	)
+}
+
+// ErrKeysRegisterColumnMissing reports that the keys file's header row no
+// longer carries the column that selects which keys register with the Local
+// Provider, so SeedKeys can select no row at all. The short description stays
+// literal: errorutil can only lift static strings into docs/data/errorref, so
+// the absent column name carries in the details.
+func ErrKeysRegisterColumnMissing(column string) error {
+	return errors.New(
+		ErrKeysRegisterColumnMissingCode,
+		errors.Alert,
+		[]string{"Meshery Server could not determine which keys to register with the Local Provider"},
+		[]string{fmt.Sprintf("register column %q is missing from the keys file header", column)},
+		[]string{"The header row of the keys file was renamed or dropped, so no row could be selected for registration and nothing is seeded from this file; on a fresh or reset database the Key table stays empty, while previously seeded keys are left untouched"},
+		[]string{"Restore the missing header in server/permissions/keys.csv (or the file KEYS_PATH points at) and restart Meshery Server so keys seed again"},
 	)
 }
 
