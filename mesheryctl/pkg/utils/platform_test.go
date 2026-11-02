@@ -15,6 +15,7 @@
 package utils
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -155,4 +156,137 @@ func TestGetCleanPodName(t *testing.T) {
 			}
 		})
 	}
+}
+
+type trackingTransport struct {
+	base http.RoundTripper
+	body *trackingBody
+}
+
+func (t *trackingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	base := t.base
+	if base == nil {
+		base = http.DefaultTransport
+	}
+	resp, err := base.RoundTrip(req)
+	if err == nil && resp != nil && resp.Body != nil {
+		t.body = &trackingBody{ReadCloser: resp.Body}
+		resp.Body = t.body
+	}
+	return resp, err
+}
+
+type trackingBody struct {
+	io.ReadCloser
+	closed bool
+}
+
+func (b *trackingBody) Close() error {
+	b.closed = true
+	return b.ReadCloser.Close()
+}
+
+func TestResolveDockerComposeBinaryURL(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	t.Run("success returns release binary url and closes response body", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"tag_name": "v2.24.5"}`))
+		}))
+		defer server.Close()
+
+		origURL := dockerComposeWebURL
+		dockerComposeWebURL = server.URL
+		defer func() { dockerComposeWebURL = origURL }()
+
+		transport := &trackingTransport{base: http.DefaultTransport}
+		previousTransport := http.DefaultTransport
+		http.DefaultTransport = transport
+		t.Cleanup(func() { http.DefaultTransport = previousTransport })
+
+		got, err := resolveDockerComposeBinaryURL()
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		expected := dockerComposeBinaryURL + "v2.24.5/docker-compose"
+		if got != expected {
+			t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
+		}
+
+		if transport.body == nil || !transport.body.closed {
+			t.Errorf("expected response body to be closed on success path")
+		}
+	})
+
+	t.Run("falls back to default version and closes response body on non-200 status code", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusForbidden)
+			_, _ = w.Write([]byte(`{"message": "API rate limit exceeded"}`))
+		}))
+		defer server.Close()
+
+		origURL := dockerComposeWebURL
+		dockerComposeWebURL = server.URL
+		defer func() { dockerComposeWebURL = origURL }()
+
+		transport := &trackingTransport{base: http.DefaultTransport}
+		previousTransport := http.DefaultTransport
+		http.DefaultTransport = transport
+		t.Cleanup(func() { http.DefaultTransport = previousTransport })
+
+		got, err := resolveDockerComposeBinaryURL()
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		expected := dockerComposeBinaryURL + defaultDockerComposeVersion
+		if got != expected {
+			t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
+		}
+
+		if transport.body == nil || !transport.body.closed {
+			t.Errorf("expected response body to be closed on non-200 status code path")
+		}
+	})
+
+	t.Run("returns error and closes response body on malformed json", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"invalid": "json"`))
+		}))
+		defer server.Close()
+
+		origURL := dockerComposeWebURL
+		dockerComposeWebURL = server.URL
+		defer func() { dockerComposeWebURL = origURL }()
+
+		transport := &trackingTransport{base: http.DefaultTransport}
+		previousTransport := http.DefaultTransport
+		http.DefaultTransport = transport
+		t.Cleanup(func() { http.DefaultTransport = previousTransport })
+
+		_, err := resolveDockerComposeBinaryURL()
+		if err == nil {
+			t.Fatalf("expected error on malformed json, got nil")
+		}
+
+		if transport.body == nil || !transport.body.closed {
+			t.Errorf("expected response body to be closed on malformed json path")
+		}
+	})
+
+	t.Run("falls back to default version on unreachable endpoint", func(t *testing.T) {
+		origURL := dockerComposeWebURL
+		dockerComposeWebURL = "http://127.0.0.1:0/unreachable"
+		defer func() { dockerComposeWebURL = origURL }()
+
+		got, err := resolveDockerComposeBinaryURL()
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		expected := dockerComposeBinaryURL + defaultDockerComposeVersion
+		if got != expected {
+			t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
+		}
+	})
 }

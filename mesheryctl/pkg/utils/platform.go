@@ -769,22 +769,9 @@ func InstallprereqDocker() error {
 
 	osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
 
-	dockerComposeBinaryURL := dockerComposeBinaryURL
-	//checks for the latest docker-compose
-	resp, err := http.Get(dockerComposeWebURL)
+	dockerComposeBinaryURL, err := resolveDockerComposeBinaryURL()
 	if err != nil {
-		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
-	} else {
-		var dat map[string]interface{}
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return errors.Wrap(err, "failed to read response body")
-		}
-		if err := json.Unmarshal(body, &dat); err != nil {
-			return errors.Wrap(err, "failed to unmarshal json into object")
-		}
-		num := dat["tag_name"]
-		dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
+		return err
 	}
 	dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
 	if err := meshkitutils.DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
@@ -795,6 +782,38 @@ func InstallprereqDocker() error {
 	}
 	log.Info("Prerequisite Docker Compose is installed.")
 	return nil
+}
+
+// resolveDockerComposeBinaryURL queries the GitHub release API for the latest docker-compose release tag
+// and resolves the download URL base. On transport error or non-200 status, it falls back to defaultDockerComposeVersion.
+func resolveDockerComposeBinaryURL() (string, error) {
+	dockerComposeBinaryURL := dockerComposeBinaryURL
+	// checks for the latest docker-compose
+	resp, err := http.Get(dockerComposeWebURL)
+	if err != nil {
+		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
+	} else {
+		defer SafeClose(resp.Body)
+		if resp.StatusCode != http.StatusOK {
+			dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
+		} else {
+			var dat map[string]interface{}
+			body, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return "", errors.Wrap(err, "failed to read response body")
+			}
+			if err := json.Unmarshal(body, &dat); err != nil {
+				return "", errors.Wrap(err, "failed to unmarshal json into object")
+			}
+			num := dat["tag_name"]
+			if num == nil || fmt.Sprintf("%v", num) == "" {
+				dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
+			} else {
+				dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
+			}
+		}
+	}
+	return dockerComposeBinaryURL, nil
 }
 
 // SetKubeConfig sets the path to user's kubeconfig file into global variables
