@@ -401,7 +401,9 @@ func isGeneratedShortcode(shortcodeContent string) bool {
 		shortcodeContent == `ref "reference/references/mesheryctl/_index.md"` ||
 		shortcodeContent == `ref "reference/reference/mesheryctl/_index.md"` ||
 		shortcodeContent == `ref "project/contributing/cli/cli.md#documenting"` ||
-		shortcodeContent == `ref "project/contributing/cli/index.md#documenting"`
+		shortcodeContent == `ref "project/contributing/cli/index.md#documenting"` ||
+		shortcodeContent == `ref "project/contributing/cli/cli.md#preserving-manually-added-documentation"` ||
+		shortcodeContent == `ref "project/contributing/cli/index.md#preserving-manually-added-documentation"`
 }
 
 func main() {
