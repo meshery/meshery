@@ -41,6 +41,17 @@ func TestResultCmd(t *testing.T) {
 
 	listTests := []utils.MesheryMultiURLCommamdTest{
 		{
+			Name: "results page does not paginate profile lookup",
+			Args: []string{"result", "abhishek", "--page", "2"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: "profile.empty.response.golden", ResponseCode: 200},
+				{Method: "GET", URL: profileURL + "?pagesize=25&page=0&search=abhishek", Response: "result.profile.response.golden", ResponseCode: 200},
+				{Method: "GET", URL: resultURL + "?pagesize=25&page=1", Response: "result.list.response.golden", ResponseCode: 200},
+			},
+			ExpectedResponse: "result.list.output.golden",
+			ExpectError:      false,
+		},
+		{
 			Name: "standard results output",
 			Args: []string{"result", "abhishek"},
 			URLs: []utils.MockURL{
