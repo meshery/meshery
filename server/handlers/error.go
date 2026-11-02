@@ -178,10 +178,7 @@ const (
 	ErrUnknownConnectionKindCode           = "meshery-server-1394"
 	ErrGetK8sContextsCode                  = "meshery-server-1395"
 	ErrEncodeK8sContextsCode               = "meshery-server-1396"
-	ErrCreateDatabaseArchiveDirCode        = "meshery-server-1397"
-	ErrOpenDatabaseFileCode                = "meshery-server-1398"
 	ErrCreateDatabaseArchiveFileCode       = "meshery-server-1399"
-	ErrCopyDatabaseFileCode                = "meshery-server-1400"
 	ErrObtainDatabaseHandlerCode           = "meshery-server-1401"
 	ErrAccessDatabaseTablesCode            = "meshery-server-1402"
 	ErrDropDatabaseTableCode               = "meshery-server-1403"
@@ -892,20 +889,8 @@ func ErrEncodeK8sContexts(err error) error {
 	return errors.New(ErrEncodeK8sContextsCode, errors.Alert, []string{"Failed to encode Kubernetes context response"}, []string{err.Error()}, []string{"Response data could not be serialized to JSON"}, []string{"Check server logs for serialization details"})
 }
 
-func ErrCreateDatabaseArchiveDir(err error) error {
-	return errors.New(ErrCreateDatabaseArchiveDirCode, errors.Alert, []string{"Directory could not be created due to a non-existent path"}, []string{err.Error()}, []string{"Meshery's configuration directory does not exist or is not writable"}, []string{"Verify that ~/.meshery/config exists and that the server process has write permission"})
-}
-
-func ErrOpenDatabaseFile(err error) error {
-	return errors.New(ErrOpenDatabaseFileCode, errors.Alert, []string{"The database does not exist or you don't have enough permission to access it"}, []string{err.Error()}, []string{"mesherydb.sql is missing or not readable by the server process"}, []string{"Verify that mesherydb.sql exists under ~/.meshery/config and that the server process can read it"})
-}
-
 func ErrCreateDatabaseArchiveFile(err error) error {
 	return errors.New(ErrCreateDatabaseArchiveFileCode, errors.Alert, []string{"Destination file can not be created"}, []string{err.Error()}, []string{"Archive target path is not writable or disk is full"}, []string{"Ensure ~/.meshery/config/.archive is writable and has free space"})
-}
-
-func ErrCopyDatabaseFile(err error) error {
-	return errors.New(ErrCopyDatabaseFileCode, errors.Alert, []string{"Can not copy file from source to destination"}, []string{err.Error()}, []string{"I/O error while archiving the current database, or disk is full"}, []string{"Check disk space and filesystem permissions for ~/.meshery/config"})
 }
 
 func ErrObtainDatabaseHandler() error {

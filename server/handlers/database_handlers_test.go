@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -23,7 +22,7 @@ func TestResetSystemDatabase_RejectedWhenLockHeldWritesNoBackup(t *testing.T) {
 
 	dbFile := filepath.Join(tempDir, "mesherydb.sql")
 	db, err := database.New(database.Options{
-		Filename: fmt.Sprintf("file:%s?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL", filepath.ToSlash(dbFile)),
+		Filename: models.SystemDatabaseDSN(dbFile),
 		Engine:   database.SQLITE,
 	})
 	require.NoError(t, err)

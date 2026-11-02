@@ -783,8 +783,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to open this design",
-        "probable_cause": "The design ID in the URL is malformed or does not exist.\nThe design has been deleted by its owner.\nYour account does not have permission to view this design — it may belong to another organization or be set to private.\nYour session has expired or the remote provider is currently unreachable.",
-        "suggested_remediation": "Verify the design link — confirm the full design ID is intact, with no missing or extra characters.\nOpen My Designs and confirm the design still exists; if it was shared with you, ask the owner to re-share or grant access.\nSign out and sign back in to refresh your session, then retry."
+        "probable_cause": "The design ID in the URL is malformed or does not exist.\nThe design has been deleted by its owner.\nYour account does not have permission to view this design \u2014 it may belong to another organization or be set to private.\nYour session has expired or the remote provider is currently unreachable.",
+        "suggested_remediation": "Verify the design link \u2014 confirm the full design ID is intact, with no missing or extra characters.\nOpen My Designs and confirm the design still exists; if it was shared with you, ask the owner to re-share or grant access.\nSign out and sign back in to refresh your session, then retry."
       },
       "1088": {
         "name": "ErrDeletePatternCode",
@@ -792,7 +792,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to delete this design",
-        "probable_cause": "The design ID is malformed or no longer exists — it may already have been deleted.\nYour account does not have permission to delete this design — only authorized users (such as the owner) can delete it.\nYour session has expired or the remote provider is currently unreachable.",
+        "probable_cause": "The design ID is malformed or no longer exists \u2014 it may already have been deleted.\nYour account does not have permission to delete this design \u2014 only authorized users (such as the owner) can delete it.\nYour session has expired or the remote provider is currently unreachable.",
         "suggested_remediation": "Refresh the designs list to confirm the design still exists before retrying.\nIf the design was shared with you, ask its owner to delete it.\nSign out and sign back in to refresh your session, then retry."
       },
       "1089": {
@@ -3459,24 +3459,6 @@
         "probable_cause": "Response data could not be serialized to JSON",
         "suggested_remediation": "Check server logs for serialization details"
       },
-      "1397": {
-        "name": "ErrCreateDatabaseArchiveDirCode",
-        "code": "1397",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Directory could not be created due to a non-existent path",
-        "probable_cause": "Meshery's configuration directory does not exist or is not writable",
-        "suggested_remediation": "Verify that ~/.meshery/config exists and that the server process has write permission"
-      },
-      "1398": {
-        "name": "ErrOpenDatabaseFileCode",
-        "code": "1398",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "The database does not exist or you don't have enough permission to access it",
-        "probable_cause": "mesherydb.sql is missing or not readable by the server process",
-        "suggested_remediation": "Verify that mesherydb.sql exists under ~/.meshery/config and that the server process can read it"
-      },
       "1399": {
         "name": "ErrCreateDatabaseArchiveFileCode",
         "code": "1399",
@@ -3485,15 +3467,6 @@
         "short_description": "Destination file can not be created",
         "probable_cause": "Archive target path is not writable or disk is full",
         "suggested_remediation": "Ensure ~/.meshery/config/.archive is writable and has free space"
-      },
-      "1400": {
-        "name": "ErrCopyDatabaseFileCode",
-        "code": "1400",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Can not copy file from source to destination",
-        "probable_cause": "I/O error while archiving the current database, or disk is full",
-        "suggested_remediation": "Check disk space and filesystem permissions for ~/.meshery/config"
       },
       "1401": {
         "name": "ErrObtainDatabaseHandlerCode",
@@ -3519,7 +3492,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Cannot drop table from database",
-        "probable_cause": "Migrator could not drop an existing table — schema or connection issue",
+        "probable_cause": "Migrator could not drop an existing table \u2014 schema or connection issue",
         "suggested_remediation": "Check server logs for details and verify database integrity"
       },
       "1404": {
@@ -3690,7 +3663,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Invalid design import request",
-        "probable_cause": "The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `fileName`, the URL variant requires `url`.\nBoth variants were provided, or neither was.",
+        "probable_cause": "The request body did not match exactly one variant of the import oneOf \u2014 the File variant requires `file` and `fileName`, the URL variant requires `url`.\nBoth variants were provided, or neither was.",
         "suggested_remediation": "Send a request body with exactly one variant set: either {\\\"file\\\": <bytes>, \\\"fileName\\\": \\\"design.yml\\\"} or {\\\"url\\\": \\\"https://...\\\"}."
       },
       "1423": {
@@ -3726,7 +3699,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Failed to update entity status",
-        "probable_cause": "The entity ID does not exist in the registry.\nThe registry's persistence layer rejected the status update — typically a database connection or transaction failure.",
+        "probable_cause": "The entity ID does not exist in the registry.\nThe registry's persistence layer rejected the status update \u2014 typically a database connection or transaction failure.",
         "suggested_remediation": "Verify the entity ID exists by listing the entities of the same type. If it does, retry the request and inspect server logs for the underlying registry error."
       },
       "1427": {
