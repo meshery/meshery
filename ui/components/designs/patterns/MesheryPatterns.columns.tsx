@@ -167,6 +167,23 @@ export function buildPatternActions({
 }
 
 /**
+ * Builds the arguments for `useGetPatternsQuery`. The table keeps the sort
+ * order in whatever form the URL carries (`updated_at desc`, `createdAt asc`,
+ * or a bare `name`), so it is converted to the server's snake_case
+ * `<column> <asc|desc>` form here, at the request boundary.
+ */
+export function buildPatternsQueryArgs({ page, pageSize, search, sortOrder, visibilityFilter }) {
+  return {
+    page,
+    pagesize: pageSize,
+    search,
+    order: toServerSortOrder(sortOrder),
+    visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
+    populate: 'pattern_file',
+  };
+}
+
+/**
  * Builds the responsive-column view configuration used to determine which
  * columns are visible at different viewport widths.
  */

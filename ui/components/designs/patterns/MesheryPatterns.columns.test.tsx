@@ -80,6 +80,7 @@ vi.mock('./MesheryPatterns.constants', () => ({
 import {
   buildPatternActions,
   buildPatternColumns,
+  buildPatternsQueryArgs,
   buildPatternsTableOptions,
   PATTERN_COL_VIEWS,
 } from './MesheryPatterns.columns';
@@ -282,5 +283,41 @@ describe('buildPatternsTableOptions', () => {
   it('disables sort on the local provider and enables it on a remote provider', () => {
     expect(build({ isLocalProvider: true }).sort).toBe(false);
     expect(build().sort).toBe(true);
+  });
+});
+
+describe('buildPatternsQueryArgs', () => {
+  const args = (overrides: any = {}) =>
+    buildPatternsQueryArgs({
+      page: 2,
+      pageSize: 25,
+      search: 'nginx',
+      sortOrder: 'updated_at desc',
+      visibilityFilter: null,
+      ...overrides,
+    });
+
+  it('sends the default server sort order unchanged', () => {
+    expect(args()).toEqual({
+      page: 2,
+      pagesize: 25,
+      search: 'nginx',
+      order: 'updated_at desc',
+      visibility: '',
+      populate: 'pattern_file',
+    });
+  });
+
+  it('converts a camelCase sort order to the snake_case DB column', () => {
+    expect(args({ sortOrder: 'createdAt asc' }).order).toBe('created_at asc');
+    expect(args({ sortOrder: 'updatedAt desc' }).order).toBe('updated_at desc');
+  });
+
+  it('adds a direction to a single-token sort order', () => {
+    expect(args({ sortOrder: 'name' }).order).toBe('name desc');
+  });
+
+  it('wraps the visibility filter in a JSON array', () => {
+    expect(args({ visibilityFilter: 'public' }).visibility).toBe('["public"]');
   });
 });
