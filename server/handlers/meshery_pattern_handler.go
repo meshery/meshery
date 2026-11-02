@@ -1340,8 +1340,17 @@ func (h *Handler) CloneMesheryPatternHandler(
 		return
 	}
 
-	if pattern != nil && pattern.ID != nil {
-		patternUUID = *pattern.ID
+	if pattern != nil {
+		if pattern.ID != nil {
+			patternUUID = *pattern.ID
+		} else if patternUUID != uuid.Nil {
+			pattern.ID = &patternUUID
+		} else {
+			cloneErr := ErrClonePattern(fmt.Errorf("design ID is required"))
+			h.log.Error(cloneErr)
+			writeMeshkitError(rw, cloneErr, http.StatusBadRequest)
+			return
+		}
 	}
 
 	isOldFormat, err := patternutils.IsDesignInAlpha2Format(pattern.PatternFile)
