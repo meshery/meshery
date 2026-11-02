@@ -59,6 +59,8 @@ Tags change with each operator release. Before mirroring, render the chart with 
 On a machine with internet access, pull each image, retag it for your registry, and push it:
 
 {{< code code=`registry=registry.example.local
+# If your registry requires authentication, log the Docker client in before pushing:
+docker login "$registry"
 # Add a meshery/meshery-<adapter>:<release-tag> entry here for each adapter you enable. The example values file below enables meshery-istio, so it is included here.
 for image in meshery/meshery:<release-tag> meshery/meshery-operator:1.0.6 alpine/k8s:1.35.6 meshery/meshery-istio:<release-tag> meshery/meshsync:1.0.3 natsio/nats-server-config-reloader:0.23.0; do
   docker pull "$image"
