@@ -254,11 +254,16 @@ func (h *Handler) PatternFileRequestHandler(
 }
 
 // buildDesignSavedEventMetadata builds the metadata map emitted on the
-// design-saved event: the design's identity, historyTitle and doclink. It
-// never carries the design itself (#22764). Keys are camelCase and pinned
-// by TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys.
+// design-saved event: the design's identity, the `design` {name, id} object
+// the notification center's "Saved design" link reads, historyTitle and
+// doclink. It never carries the design's contents (#22764). Keys are
+// camelCase and pinned by TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys.
 func buildDesignSavedEventMetadata(designFile design.PatternFile, serverURL string) map[string]interface{} {
 	metadata := models.DesignEventIdentity(serverURL, designFile.ID, designFile.Name, string(designFile.Version))
+	metadata[models.EventMetadataDesign] = map[string]interface{}{
+		"name": designFile.Name,
+		"id":   designFile.ID.String(),
+	}
 	metadata[models.EventMetadataHistoryTitle] = fmt.Sprintf("Version %s - %d components and %d relationships",
 		designFile.Version, len(designFile.Components), len(designFile.Relationships))
 	metadata["doclink"] = "https://docs.meshery.io/concepts/logical/designs"

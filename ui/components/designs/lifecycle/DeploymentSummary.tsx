@@ -7,6 +7,12 @@ import { ComponentIcon } from './common';
 import { Button } from '@sistent/sistent';
 import { ExternalLinkIcon, componentIcon } from '@sistent/sistent';
 import { ErrorMetadataFormatter } from '../../layout/NotificationCenter/formatters/error';
+import { DesignEventErrorsFormatter } from '../../layout/NotificationCenter/formatters/design_event_errors';
+import {
+  getDesignEventErrorSummary,
+  getDesignEventIdentity,
+} from '../../layout/NotificationCenter/formatters/design_event_metadata';
+import { DryRunResponse } from '../../layout/NotificationCenter/formatters/pattern_dryrun';
 
 import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/utils';
 import { useRouter } from 'next/router';
@@ -51,33 +57,6 @@ const DeploymentComponentFormatter = ({ componentDetail, deploymentType }) => {
   );
 };
 
-// DeploymentErrorsFormatter renders the status, error count and per-component
-// errors that deploy, undeploy and dry-run events carry since #22764. The list
-// is capped server-side; truncated marks that errorCount exceeds it.
-const DeploymentErrorsFormatter = ({ metadata }) => {
-  const errorList = Array.isArray(metadata?.errors) ? metadata.errors : [];
-  const errorCount = metadata?.errorCount ?? errorList.length;
-
-  return (
-    <Box display="flex" flexDirection="column" gap={1}>
-      <Typography variant="textB1Regular">
-        Status: <strong>{metadata.status}</strong> - {errorCount}{' '}
-        {errorCount === 1 ? 'error' : 'errors'}
-      </Typography>
-      {errorList.map((error, index) => (
-        <Typography variant="textB1Regular" key={`${error?.componentId}-${error?.code}-${index}`}>
-          {error?.code || 'Unknown error'} - component {error?.componentId || 'unknown'}
-        </Typography>
-      ))}
-      {metadata.truncated && (
-        <Typography variant="textB1Regular">
-          Showing the first {errorList.length} of {errorCount} errors.
-        </Typography>
-      )}
-    </Box>
-  );
-};
-
 const DeploymentSummaryFormatter_ = ({ event }) => {
   const theme = useTheme();
   const eventStyle = SEVERITY_STYLE[event?.severity] || {};
@@ -85,8 +64,12 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
   const errors = metadata.error;
   const errorAction = event?.action;
   const router = useRouter();
-  // Events persisted before #22764 embedded the raw deployment summary.
-  const componentsDetails = Object.values(metadata.summary || {}).flatMap((perComponentDetail) => {
+  const { designId, designName } = getDesignEventIdentity(metadata);
+  const errorSummary = getDesignEventErrorSummary(metadata);
+  // Events persisted before #22764 embedded the raw deployment or dry-run
+  // response; it is rendered only when the event has no error summary.
+  const legacySummary = errorSummary ? {} : metadata.summary || {};
+  const componentsDetails = Object.values(legacySummary).flatMap((perComponentDetail) => {
     perComponentDetail = perComponentDetail?.flatMap ? perComponentDetail : [];
     return perComponentDetail.flatMap((perContextDetail) =>
       perContextDetail?.Summary?.map((detail) => ({
@@ -118,13 +101,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
           <Button
             variant="contained"
             color="primary"
-            onClick={() =>
-              openViewScopedToDesignInOperator(
-                metadata.designName ?? metadata.design_name,
-                metadata.designId ?? metadata.design_id,
-                router,
-              )
-            }
+            onClick={() => openViewScopedToDesignInOperator(designName, designId, router)}
             style={{ gap: '0.25rem' }}
           >
             Open In Operator <ExternalLinkIcon fill={theme.palette.background.constant.white} />
@@ -137,7 +114,9 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
         </StyledDetailBox>
       )}
 
-      {metadata.status && <DeploymentErrorsFormatter metadata={metadata} />}
+      {errorSummary && <DesignEventErrorsFormatter summary={errorSummary} />}
+
+      {legacySummary.dryRunResponse && <DryRunResponse response={legacySummary.dryRunResponse} />}
 
       {componentsDetails.map((componentDetail) => (
         <DeploymentComponentFormatter

@@ -622,6 +622,7 @@ func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) 
 
 	// Canonical camelCase keys MUST be present.
 	require.Contains(t, metadata, "historyTitle")
+	require.Contains(t, metadata, "design")
 	require.Contains(t, metadata, "doclink")
 	require.Contains(t, metadata, "designLink")
 
@@ -640,4 +641,10 @@ func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) 
 	assert.Equal(t, id, metadata["designId"])
 	assert.Equal(t, "test-design", metadata["designName"])
 	assert.Equal(t, "0.0.1", metadata["designVersion"])
+
+	// `design` sub-object carries only the design's id and name: the
+	// notification center's "Saved design" link reads it.
+	designSub, ok := metadata["design"].(map[string]interface{})
+	require.True(t, ok, "design field should be a map")
+	assert.Equal(t, map[string]interface{}{"name": "test-design", "id": id.String()}, designSub)
 }

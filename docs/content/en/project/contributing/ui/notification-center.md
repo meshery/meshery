@@ -130,6 +130,8 @@ This directory houses reusable formatter components dedicated to specific types 
 - **error.tsx**: Defines `ErrorMetadataFormatter` for displaying structured error details.
 - **model_registration.tsx**: Contains formatters for model import/registration events (`ModelImportMessages`, `ModelImportedSection`).
 - **pattern_dryrun.tsx**: Defines `DryRunResponse` and `SchemaValidationFormatter`, which delegate to the design lifecycle components.
+- **design_event_metadata.ts**: The single reader of design event metadata. `getDesignEventIdentity` returns `designId`, `designName`, `designVersion`, `designLink` and `viewLink`, falling back to the legacy `design_id`, `design_name` and `view_link` only when the camelCase key is absent; `getDesignEventErrorSummary` reads `status`, `errorCount`, `errors[]` and `truncated`; `isMeshkitErrorCode` tells a MeshKit code (`meshery-server-1480`) from a JSON-schema keyword or Kubernetes cause type. Never index these metadata keys directly in a formatter.
+- **design_event_errors.tsx**: Defines `DesignEventErrorsFormatter`, which renders an error summary for validate, deploy, undeploy and dry-run events and links only MeshKit codes to the error code reference.
 - **relationship_evaluation.tsx**: Defines `RelationshipEvaluationEventFormatter`, responsible for rendering notifications related to the evaluation of relationships between components in a design.
 - **meshsync_events.tsx**: Defines `MeshSyncPropertyFormatters` for connection and MeshSync deployment fields.
 - **academy_events.tsx**: Defines `AcademyEventsFormatter` for quiz evaluation results.
@@ -187,7 +189,7 @@ The core logic for rendering metadata is handled by the `FormattedMetadata` comp
    If the event has no metadata, or the metadata is empty at all depths, `EmptyState` renders the event description on its own.
 
 3. **Fallback to Property-Based Formatting**
-   Otherwise, `FormattedMetadata` reorders the metadata into a stable display order, strips out properties that are rendered elsewhere (links, `id`, `kind`), and hands the result to `FormatStructuredData` along with:
+   Otherwise, `FormattedMetadata` reorders the metadata into a stable display order, strips out properties that are rendered elsewhere (links, `id`, `kind`, and - when a design-saved event's `design` {id, name} link names the design - the design identity keys), and hands the result to `FormatStructuredData` along with:
 
    - `PropertyFormatters` – for structured or specialized visual formats.
    - `PropertyLinkFormatters` – consumed separately by the ellipsis menu in `notification.tsx` to render actionable links (e.g. file downloads, log views).
@@ -299,18 +301,16 @@ The **Relationship Evaluation Formatter** is responsible for rendering notificat
 #### Key Components
 
 1. **RelationshipEvaluationEventFormatter**:
-   The main formatter component that renders the event description and invokes the `RelationshipEvaluationTraceFormatter` to display detailed traces.
+   The main formatter component. It renders the event description and the evaluation summary: the relationship change counts, `evaluationStatus`, `evaluationDurationMs` and an "Open design" link from `designLink`. Each of the last three is rendered only when present - rows Meshery Cloud rewrote to this shape lack them. Only an event without the summary fields falls back to `RelationshipEvaluationTraceFormatter`.
 
 **Props:**
 
 - `event` (object): Contains:
   - **description**: A description of the evaluation process.
-  - **metadata.evaluationResponse** (or `metadata.evaluation_response`): The evaluation result, containing:
-    - `actions` (Array): The list of changes produced by the evaluation.
-    - `design` (Object): The evaluated design, used to resolve components and relationships by ID.
+  - **metadata**: `relationshipsAdded`, `relationshipsRemoved`, `relationshipsUpdated`, `evaluationStatus`, `evaluationDurationMs`, `historyTitle`, `evaluatedAt` and the design identity. Events stored before [#22764](https://github.com/meshery/meshery/issues/22764) instead carry `evaluationResponse` (or `evaluation_response`) with the `actions` and the evaluated `design`.
 
 2. **RelationshipEvaluationTraceFormatter**:
-   Takes `actions` and `design` and derives the displayed categories by filtering actions on their `op` field:
+   Renders a legacy `evaluationResponse`. Takes `actions` and `design` and derives the displayed categories by filtering actions on their `op` field:
 
    - Components: `add_component`, `delete_component`, `update_component` / `update_component_configuration`
    - Relationships: `add_relationship`, `delete_relationship`, `update_relationship`
@@ -325,7 +325,7 @@ The **Relationship Evaluation Formatter** is specifically designed to handle not
 
 1. When a notification involves the evaluation of relationships between components in a design.
 2. When you need to display categorized changes in components and relationships.
-3. When the event metadata includes an `evaluationResponse` object containing the actions and the evaluated design.
+3. When the event is a `relationship/evaluation` event; the formatter handles both the summary and the legacy `evaluationResponse` shape.
 
 #### User Experience: Relationship Evaluation Notification
 
@@ -367,7 +367,7 @@ The **Dry Run Formatter** is responsible for rendering notifications related to 
 #### Key Components
 
 1. **DryRunResponse**:
-   The property formatter registered for the `dryRunResponse` metadata field. It normalizes the raw response and hands it to `FormatDryRunResponse`.
+   The property formatter registered for the `dryRunResponse` metadata field, also used by `DeploymentSummaryFormatter` for a legacy dry-run event's `summary.dryRunResponse`. It normalizes the raw response and hands it to `FormatDryRunResponse`. A `pattern/dry-run` event in the current shape is rendered by the Deployment Summary Formatter.
 
    **Props:**
 
@@ -388,7 +388,7 @@ The **Dry Run Formatter** is responsible for rendering notifications related to 
    - **currentComponentName** (string): The name of the component currently being validated.
 
 3. **SchemaValidationFormatter**:
-   The event specific formatter registered for design validation events. It reads `metadata.validationResult`, `metadata.design_name`, `metadata.total_components`, and `metadata.configurable_components`, totals the errors across services, and renders `ValidationResults`.
+   The event specific formatter registered for `pattern/validate` events. It renders the design name and, through `DesignEventErrorsFormatter`, `status`, `errorCount`, `errors[]` of `{code, componentId}` and `truncated`. An error's `code` is the JSON-schema validator keyword (`required`, `type`, ...) and is shown as-is. Only an event without that summary that still holds a legacy `validationResult` is rendered through `ValidationResults`, with `total_components` and `configurable_components`.
 
    **Props:**
 
@@ -415,28 +415,29 @@ The **Deployment Summary Formatter** is responsible for rendering notifications 
 1. **DeploymentSummaryFormatter**:
    This component is used to display:
    - **Event Description**: A brief description of the deployment event.
-   - **Errors**: Any errors encountered during the deployment process, rendered through `ErrorMetadataFormatter`.
-   - **Component Details**: A list of components with their deployment status and metadata, flattened out of the per-context summary.
+   - **Errors**: The MeshKit `error` of a failed event, rendered through `ErrorMetadataFormatter`.
+   - **Error Summary**: `status`, `errorCount`, `errors[]` and `truncated`, rendered through `DesignEventErrorsFormatter`. A rewritten deploy error may carry a `code` but no `componentId`.
+   - **Component Details**: For an event stored before [#22764](https://github.com/meshery/meshery/issues/22764) without an error summary, the components flattened out of the legacy per-context `summary`, or its `dryRunResponse`.
    - **Open In Operator**: A shortcut to the deployed design, shown only when the Meshery Operator is enabled and the action is not a registration.
 
 **Props:**
 
 - **event** (object): Contains:
   - **description**: A brief description of the deployment event.
-  - **action**: The type of action performed (e.g., `deploy`, `undeploy`).
+  - **action**: The type of action performed (`deploy`, `undeploy` or `dry-run`).
   - **severity**: The severity level of the event, used to colour the summary.
   - **metadata**:
-    - **summary**: A detailed summary of the deployment process, including component details per context.
-    - **error**: Any errors encountered during the deployment process.
-    - **design_name**: The name of the design being deployed.
-    - **design_id**: The ID of the design being deployed.
+    - **status**, **errorCount**, **errors**, **truncated**: The outcome and up to 20 `{code, componentId}` errors.
+    - **error**: The MeshKit error of a failed event.
+    - **designName** and **designId** (legacy `design_name` and `design_id`): The design opened by **Open In Operator**, read through `getDesignEventIdentity`.
+    - **summary**: Legacy only - the raw process response of an event stored before #22764.
 
 #### When to Use
 
 The **Deployment Summary Formatter** should be used in the following scenarios:
 
-1. **Deployment or Undeployment Events**:
-   When the `event.action` is either `deploy` or `undeploy` and the `event.metadata` includes `design_name`.
+1. **Deployment, Undeployment or Dry-Run Events**:
+   It is registered for `pattern/deploy`, `pattern/undeploy` and `pattern/dry-run`.
 2. When a notification involves the deployment or undeployment of a design.
 
 ### MeshSync Events Formatter

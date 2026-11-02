@@ -4,6 +4,7 @@ import { ComponentIcon } from '@/components/designs/lifecycle/common';
 import { InfoIcon } from '@sistent/sistent'; // Assuming MUI icons are available
 import ExpandLessIcon from '@/assets/icons/ExpandLessIcon';
 import { ExpandMoreIcon } from '@sistent/sistent';
+import { getDesignEventIdentity } from './design_event_metadata';
 
 // Styled components
 const SectionContainer = styled(Box)(({ theme }) => ({
@@ -334,16 +335,24 @@ export const RelationshipEvaluationTraceFormatter = ({ actions, design }) => {
   );
 };
 
+const RELATIONSHIP_CHANGE_COUNTS = [
+  ['Relationships added', 'relationshipsAdded'],
+  ['Relationships removed', 'relationshipsRemoved'],
+  ['Relationships updated', 'relationshipsUpdated'],
+];
+
 // RelationshipEvaluationSummary renders the evaluation summary that events
 // carry since #22764: relationship change counts, status and duration, and a
-// link to the design. Events no longer embed the design or its trace.
+// link to the design. Events no longer embed the design or its trace. Rows
+// Meshery Cloud rewrote to this shape lack evaluationStatus,
+// evaluationDurationMs and designLink, so each is rendered only when present;
+// the design link falls back to viewLink (or the legacy view_link) they may carry.
 const RelationshipEvaluationSummary = ({ metadata }) => {
-  const counts = [
-    ['Relationships added', metadata.relationshipsAdded],
-    ['Relationships removed', metadata.relationshipsRemoved],
-    ['Relationships updated', metadata.relationshipsUpdated],
-  ];
+  const { designName, designLink: identityDesignLink, viewLink } = getDesignEventIdentity(metadata);
+  const designLink = identityDesignLink || viewLink;
+  const counts = RELATIONSHIP_CHANGE_COUNTS.map(([label, key]) => [label, metadata[key]]);
   const hasChanges = counts.some(([, count]) => Number(count) > 0);
+  const duration = metadata.evaluationDurationMs;
 
   return (
     <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -364,26 +373,31 @@ const RelationshipEvaluationSummary = ({ metadata }) => {
           Status: <strong>{metadata.evaluationStatus}</strong>
         </Typography>
       )}
-      {metadata.evaluationDurationMs != null && (
+      {typeof duration === 'number' && Number.isFinite(duration) && (
         <Typography variant="body2">
-          Duration: <strong>{metadata.evaluationDurationMs} ms</strong>
+          Duration: <strong>{duration} ms</strong>
         </Typography>
       )}
-      {metadata.designLink && (
-        <a href={metadata.designLink} target="_self" style={{ color: 'inherit' }}>
-          <Typography variant="body2">
-            Open design {metadata.designName ? `"${metadata.designName}"` : ''}
-          </Typography>
+      {designLink && (
+        <a href={designLink} target="_self" style={{ color: 'inherit' }}>
+          <Typography variant="body2">Open design{designName ? ` "${designName}"` : ''}</Typography>
         </a>
       )}
     </Box>
   );
 };
 
+const isEvaluationSummary = (metadata) =>
+  metadata.evaluationStatus != null ||
+  RELATIONSHIP_CHANGE_COUNTS.some(([, key]) => metadata[key] != null);
+
 export const RelationshipEvaluationEventFormatter = ({ event }) => {
   const metadata = event?.metadata || {};
-  // Events persisted before #22764 embedded the whole evaluation response.
-  const legacyEvaluationResponse = metadata.evaluationResponse || metadata.evaluation_response;
+  // Events persisted before #22764 embedded the whole evaluation response; it
+  // is rendered only for an event without the evaluation summary.
+  const legacyEvaluationResponse = isEvaluationSummary(metadata)
+    ? null
+    : metadata.evaluationResponse || metadata.evaluation_response;
   return (
     <ErrorBoundary>
       <Box sx={{ mt: 2 }}>

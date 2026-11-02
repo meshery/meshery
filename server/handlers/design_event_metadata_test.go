@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models"
 	patterncore "github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshery/server/models/pattern/patterns"
 	"github.com/meshery/meshery/server/models/pattern/stages"
@@ -16,29 +17,31 @@ import (
 )
 
 // bannedDesignEventMetadataKeys may not appear at any nesting level of a
-// design-related event's metadata (#22764).
+// design-related event's metadata (#22764). `design` is banned only when it
+// carries contents: the design-saved event's {id, name} object is allowed.
 var bannedDesignEventMetadataKeys = []string{
 	"design", "designFile", "patternFile", "pattern_file", "components",
 	"relationships", "trace", "evaluationResponse", "summary",
 }
 
-// assertNoBannedDesignEventMetadataKeys walks the JSON form of metadata - the
-// form that is persisted - and fails on any banned key at any depth.
-func assertNoBannedDesignEventMetadataKeys(t *testing.T, metadata map[string]interface{}) {
+// bannedDesignEventMetadataKeysIn returns the path of every banned key in the
+// JSON form of metadata - the form that is persisted - at any depth.
+func bannedDesignEventMetadataKeysIn(t *testing.T, metadata map[string]interface{}) []string {
 	t.Helper()
 	data, err := json.Marshal(metadata)
 	require.NoError(t, err)
 	var decoded interface{}
 	require.NoError(t, json.Unmarshal(data, &decoded))
 
+	var found []string
 	var walk func(path string, value interface{})
 	walk = func(path string, value interface{}) {
 		switch v := value.(type) {
 		case map[string]interface{}:
 			for key, child := range v {
 				for _, banned := range bannedDesignEventMetadataKeys {
-					if key == banned {
-						t.Errorf("banned key %q present at %s", key, path)
+					if key == banned && (key != models.EventMetadataDesign || !models.IsDesignIdentityObject(child)) {
+						found = append(found, path+"."+key)
 					}
 				}
 				walk(path+"."+key, child)
@@ -50,6 +53,42 @@ func assertNoBannedDesignEventMetadataKeys(t *testing.T, metadata map[string]int
 		}
 	}
 	walk("metadata", decoded)
+	return found
+}
+
+// assertNoBannedDesignEventMetadataKeys fails on any banned key at any depth
+// of metadata.
+func assertNoBannedDesignEventMetadataKeys(t *testing.T, metadata map[string]interface{}) {
+	t.Helper()
+	for _, path := range bannedDesignEventMetadataKeysIn(t, metadata) {
+		t.Errorf("banned key present at %s", path)
+	}
+}
+
+func TestBannedDesignEventMetadataKeys_DesignIdentityObject(t *testing.T) {
+	cases := []struct {
+		name   string
+		design interface{}
+		banned bool
+	}{
+		{name: "id and name", design: map[string]interface{}{"id": "d1", "name": "my-design"}},
+		{name: "id only", design: map[string]interface{}{"id": "d1"}},
+		{name: "name only", design: map[string]interface{}{"name": "my-design"}},
+		{name: "with contents", design: map[string]interface{}{"id": "d1", "name": "my-design", "components": []interface{}{}}, banned: true},
+		{name: "with another key", design: map[string]interface{}{"id": "d1", "version": "1.0.0"}, banned: true},
+		{name: "not a map", design: "name: my-design", banned: true},
+		{name: "a list", design: []interface{}{map[string]interface{}{"id": "d1"}}, banned: true},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			found := bannedDesignEventMetadataKeysIn(t, map[string]interface{}{"design": tc.design})
+			if tc.banned {
+				assert.Contains(t, found, "metadata.design")
+			} else {
+				assert.Empty(t, found)
+			}
+		})
+	}
 }
 
 // assertMetadataExcludes fails when needle appears anywhere in the JSON form

@@ -18,6 +18,10 @@ const (
 	EventMetadataDesignVersion = "designVersion"
 	EventMetadataDesignLink    = "designLink"
 	EventMetadataHistoryTitle  = "historyTitle"
+	// EventMetadataDesign is the design-saved event's {id, name} object that
+	// the notification center's "Saved design" link reads. It is allowed only
+	// in that two-field form; see IsDesignIdentityObject.
+	EventMetadataDesign = "design"
 )
 
 // MaxEventMetadataBytes is the largest JSON-serialized event metadata that is
@@ -70,11 +74,28 @@ var eventMetadataIdentityKeys = []string{
 	EventMetadataHistoryTitle,
 }
 
+// IsDesignIdentityObject reports whether value is a `design` metadata object
+// that only identifies the design: a map whose keys are all "id" or "name".
+// A `design` carrying anything else holds design contents and is banned.
+func IsDesignIdentityObject(value interface{}) bool {
+	design, ok := value.(map[string]interface{})
+	if !ok {
+		return false
+	}
+	for key := range design {
+		if key != "id" && key != "name" {
+			return false
+		}
+	}
+	return true
+}
+
 // GuardEventMetadataSize bounds the metadata of an event about to be
 // persisted. When its JSON serialization exceeds MaxEventMetadataBytes, the
-// returned event's metadata holds only the design identity fields (and
-// historyTitle) that were present, and a warning naming the event's category,
-// action and original size - never its contents - is logged.
+// returned event's metadata holds only the design identity fields,
+// historyTitle and a `design` that IsDesignIdentityObject accepts, of those
+// present, and a warning naming the event's category, action and original
+// size - never its contents - is logged.
 //
 // The event's own metadata map is never mutated: the same map is often shared
 // with the copy published to the EventBroadcaster. A nil log is allowed.
@@ -94,11 +115,14 @@ func GuardEventMetadataSize(event events.Event, log logger.Handler) events.Event
 		return event
 	}
 
-	slim := make(map[string]interface{}, len(eventMetadataIdentityKeys))
+	slim := make(map[string]interface{}, len(eventMetadataIdentityKeys)+1)
 	for _, key := range eventMetadataIdentityKeys {
 		if value, ok := event.Metadata[key]; ok {
 			slim[key] = value
 		}
+	}
+	if value, ok := event.Metadata[EventMetadataDesign]; ok && IsDesignIdentityObject(value) {
+		slim[EventMetadataDesign] = value
 	}
 	event.Metadata = slim
 

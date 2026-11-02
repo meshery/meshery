@@ -48,6 +48,34 @@ func TestGuardEventMetadataSize_OversizedKeepsIdentityAndHistoryTitle(t *testing
 	assert.Contains(t, metadata, "components")
 }
 
+func TestGuardEventMetadataSize_OversizedKeepsOnlyDesignIdentityObject(t *testing.T) {
+	id := uuid.Must(uuid.NewV4())
+	padding := strings.Repeat("x", MaxEventMetadataBytes)
+
+	identity := map[string]interface{}{"id": id.String(), "name": "saved"}
+	kept := GuardEventMetadataSize(events.Event{Metadata: map[string]interface{}{
+		"designId":   id,
+		"design":     identity,
+		"components": padding,
+	}}, nil)
+	assert.Equal(t, map[string]interface{}{"designId": id, "design": identity}, kept.Metadata)
+
+	dropped := GuardEventMetadataSize(events.Event{Metadata: map[string]interface{}{
+		"designId": id,
+		"design":   map[string]interface{}{"id": id.String(), "name": "saved", "components": padding},
+	}}, nil)
+	assert.Equal(t, map[string]interface{}{"designId": id}, dropped.Metadata)
+}
+
+func TestIsDesignIdentityObject(t *testing.T) {
+	assert.True(t, IsDesignIdentityObject(map[string]interface{}{"id": "d1", "name": "n"}))
+	assert.True(t, IsDesignIdentityObject(map[string]interface{}{"id": "d1"}))
+	assert.True(t, IsDesignIdentityObject(map[string]interface{}{"name": "n"}))
+	assert.False(t, IsDesignIdentityObject(map[string]interface{}{"id": "d1", "components": []interface{}{}}))
+	assert.False(t, IsDesignIdentityObject("d1"))
+	assert.False(t, IsDesignIdentityObject(nil))
+}
+
 func TestGuardEventMetadataSize_SmallUntouched(t *testing.T) {
 	metadata := map[string]interface{}{
 		"designId": uuid.Must(uuid.NewV4()),
