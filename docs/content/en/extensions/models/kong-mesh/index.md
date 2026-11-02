@@ -241,7 +241,15 @@ components:
   colorIcon: extensions/models/kong-mesh/components/workload/icons/color/workload-color.svg
   whiteIcon: extensions/models/kong-mesh/components/workload/icons/white/workload-white.svg
   description: 
-components-count: 58
+- name: mesh-open-telemetry-backend
+  colorIcon: extensions/models/kong-mesh/components/mesh-open-telemetry-backend/icons/color/mesh-open-telemetry-backend-color.svg
+  whiteIcon: extensions/models/kong-mesh/components/mesh-open-telemetry-backend/icons/white/mesh-open-telemetry-backend-white.svg
+  description: 
+- name: mesh-zone-address
+  colorIcon: extensions/models/kong-mesh/components/mesh-zone-address/icons/color/mesh-zone-address-color.svg
+  whiteIcon: extensions/models/kong-mesh/components/mesh-zone-address/icons/white/mesh-zone-address-white.svg
+  description: 
+components-count: 60
 relationships: 
 relationship-count: 0
 featureList: [

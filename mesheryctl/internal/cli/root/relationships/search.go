@@ -43,7 +43,7 @@ var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search registered relationship(s)",
 	Long: `Search registered relationship(s) used by different models.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/relationship/search`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/relationship/search`,
 	Example: `
 // Search for a specific relationship
 mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]

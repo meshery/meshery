@@ -86,9 +86,22 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	k8scontext, err := provider.GetK8sContext(token, contextID)
 	if err != nil {
-		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to delete connection for %s", k8scontext.Name)).WithMetadata(map[string]interface{}{
-			"error": err,
-		})
+		ctxName := k8scontext.Name
+		if ctxName == "" {
+			ctxName = contextID
+		}
+		event := eventBuilder.WithSeverity(events.Error).
+			WithDescription(fmt.Sprintf("Failed to delete connection for %s", ctxName)).
+			WithMetadata(map[string]interface{}{
+				"error": err,
+			}).Build()
+		_ = provider.PersistEvent(*event, token)
+		if h.config != nil && h.config.EventBroadcaster != nil {
+			go h.config.EventBroadcaster.Publish(userID, event)
+		}
+		h.log.Error(ErrGetK8sContexts(err))
+		writeMeshkitError(w, ErrGetK8sContexts(err), http.StatusInternalServerError)
+		return
 	}
 
 	description := fmt.Sprintf("Delete request received for kubernetes context \"%s\"", k8scontext.Name)
@@ -149,7 +162,9 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		})
 		event := eventBuilder.Build()
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		if h.config != nil && h.config.EventBroadcaster != nil {
+			go h.config.EventBroadcaster.Publish(userID, event)
+		}
 	}
 	// go h.config.EventBroadcaster.Publish(userID, event)
 

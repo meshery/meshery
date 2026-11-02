@@ -22,7 +22,7 @@ make ui-build` >}}
 {{< code code=`make server` >}}
 
 Any time changes are made to the Go code, you will have to stop the server and run the above command again.
-Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`. One thing to note, you might NOT see the [Meshery UI](#contributing-ui) until the UI code is built as well.
+Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`. One thing to note, you might NOT see the [Meshery UI]({{< ref "project/contributing/ui/ui#contributing-ui" >}}) until the UI code is built as well.
 After running Meshery server, you will need to select your **Cloud Provider** by navigating to `localhost:9081`. Only then you will be able to use the Meshery UI on port `3000`.
 
 **Please note**: If you get error while starting the server as **"Meshery Development Incompatible"** then follow the below guideline 👇
@@ -54,6 +54,16 @@ Every Golang-based component within the Meshery ecosystem incorporates a utility
 {{< code code=`make error` >}}
 
 For more details, <a href="{{< ref "project/contributing/contributing-error.md" >}}">Error Utility</a>
+
+#### Lint the server
+
+{{< code code=`make golangci` >}}
+
+This runs `golangci-lint` plus Meshery's repo-specific Go rules - notably the
+one that fails the build when a `gorm` `ORDER BY` clause is built from a value
+that is neither a constant nor a result of `models.SanitizeOrderInput`. The same rules run in
+CI's `golangci-lint-server` job. For what each rule protects and what to do when
+one fires, see <a href="{{< ref "project/contributing/contributing-lint.md" >}}">Go Lint Rules</a>.
 
 ### Configuring Log levels at Runtime
 

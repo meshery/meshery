@@ -14,14 +14,12 @@ import (
 func TestView(t *testing.T) {
 	mesheryctlflags.InitValidators(RelationshipCmd)
 
-	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
 
-	// test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "given no model name provided when running relationship view then throw error",
@@ -53,6 +51,28 @@ func TestView(t *testing.T) {
 		},
 	}
 
-	// Run tests
 	utils.InvokeMesheryctlTestListCommand(t, update, RelationshipCmd, tests, currDir, "relationships")
+}
+
+func TestRelationshipViewSaveCreatesFileWithExtension(t *testing.T) {
+	mesheryctlflags.InitValidators(RelationshipCmd)
+
+	mesheryDir := utils.IsolateMesheryHome(t)
+
+	run := utils.MesheryCommandRun{
+		Cmd:        RelationshipCmd,
+		Args:       []string{"view", "kubernetes", "--output-format", "json", "--save"},
+		CommandDir: utils.CallerDir(t),
+		Mocks: []utils.MockURL{
+			{
+				URL:      "/api/registry/models/kubernetes/relationships",
+				Response: "view.relationship.save.api.response.golden",
+			},
+		},
+	}
+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "relationship_kubernetes_aaaabbbb.json"))
 }
