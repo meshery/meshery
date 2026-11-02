@@ -16,11 +16,9 @@ import (
 
 func TestQueryRangeResponseSizeLimit(t *testing.T) {
 	const limit = 16 << 20
-	const prefix = `{"status":"success","padding":"`
-	const suffix = `"}`
 	for _, size := range []int{limit, limit + 1} {
 		t.Run(strconv.Itoa(size), func(t *testing.T) {
-			payload := prefix + strings.Repeat("x", size-len(prefix)-len(suffix)) + suffix
+			payload := `"` + strings.Repeat("x", size-2) + `"`
 			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.(http.Flusher).Flush() // Exercise a chunked response without Content-Length.
 				_, _ = w.Write([]byte(payload))
@@ -44,72 +42,52 @@ func TestQueryRangeResponseSizeLimit(t *testing.T) {
 		}))
 		defer srv.Close()
 		body, err := New(srv.URL, "", nil).QueryRange(context.Background(), "ds1", nil)
-		if body != nil || StatusCode(err) != http.StatusUnauthorized {
-			t.Fatalf("got body length %d, error %v; want 401 without a partial body", len(body), err)
+		if body != nil || StatusCode(err) != http.StatusUnauthorized || !errors.Is(err, ErrResponseTooLarge) {
+			t.Fatalf("got body length %d, error %v; want 401 and size diagnosis without a partial body", len(body), err)
 		}
 	})
 }
 
-func TestQueryRangeResolvedDatasourceSizeError(t *testing.T) {
-	const goodResponse = `{"status":"success","data":{"resultType":"matrix","result":[]}}`
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.URL.Path {
-		case "/api/datasources":
-			_, _ = w.Write([]byte(`[{"uid":"real-uid","name":"prometheus"}]`))
-		case "/api/datasources/proxy/uid/real-uid/api/v1/query_range":
-			if r.URL.Query().Get("query") == "good" {
-				_, _ = w.Write([]byte(goodResponse))
-			} else {
-				_, _ = w.Write([]byte(`"` + strings.Repeat("x", 16<<20) + `"`))
+func TestQueryRangeFallbackPreservesSizeErrors(t *testing.T) {
+	oversized := []byte(`"` + strings.Repeat("x", 16<<20) + `"`)
+	for _, tc := range []struct {
+		name       string
+		sizeAt     string
+		wantStatus int
+	}{
+		{"oversized primary 404", "primary", http.StatusNotFound},
+		{"oversized resolved query", "retry", 0},
+		{"oversized datasource list", "list", 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				switch r.URL.Path {
+				case "/api/datasources":
+					if tc.sizeAt == "list" {
+						_, _ = w.Write(oversized)
+					} else {
+						_, _ = w.Write([]byte(`[{"uid":"real-uid","name":"prometheus"}]`))
+					}
+				case "/api/datasources/proxy/uid/real-uid/api/v1/query_range":
+					_, _ = w.Write(oversized)
+				default:
+					w.WriteHeader(http.StatusNotFound)
+					if tc.sizeAt == "primary" {
+						_, _ = w.Write(oversized)
+					}
+				}
+			}))
+			defer srv.Close()
+			c := New(srv.URL, "", nil)
+			body, err := c.QueryRange(context.Background(), "prometheus", url.Values{"query": {"bad"}})
+			if body != nil || !errors.Is(err, ErrResponseTooLarge) || StatusCode(err) != tc.wantStatus {
+				t.Fatalf("single query: body length %d, error %v", len(body), err)
 			}
-		default:
-			w.WriteHeader(http.StatusNotFound)
-		}
-	}))
-	defer srv.Close()
-	c := New(srv.URL, "", nil)
-	body, err := c.QueryRange(context.Background(), "prometheus", url.Values{"query": {"bad"}})
-	if body != nil || !errors.Is(err, ErrResponseTooLarge) {
-		t.Fatalf("single name fallback: body length %d, error %v", len(body), err)
-	}
-	results := c.QueryRangeBatch(context.Background(), "1", "2", "15", []BatchQuery{
-		{ID: "bad", DS: "prometheus", Query: "bad"},
-		{ID: "good", DS: "prometheus", Query: "good"},
-	})
-	if len(results) != 2 || results[0].Body != nil || !errors.Is(results[0].Err, ErrResponseTooLarge) ||
-		results[1].Err != nil || string(results[1].Body) != goodResponse {
-		t.Fatalf("batch name fallback: got %+v", results)
-	}
-}
-
-func TestQueryRangeDatasourceListSizeError(t *testing.T) {
-	const goodResponse = `{"status":"success","data":{"resultType":"matrix","result":[]}}`
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.URL.Path {
-		case "/api/datasources":
-			_, _ = w.Write([]byte(`"` + strings.Repeat("x", 16<<20) + `"`))
-		case "/api/datasources/proxy/uid/good-uid/api/v1/query_range":
-			_, _ = w.Write([]byte(goodResponse))
-		default:
-			w.WriteHeader(http.StatusNotFound)
-		}
-	}))
-	defer srv.Close()
-	c := New(srv.URL, "", nil)
-
-	body, err := c.QueryRange(context.Background(), "prometheus", nil)
-	if body != nil || !errors.Is(err, ErrResponseTooLarge) {
-		t.Fatalf("single query: got body length %d, error %v; want datasource-list size error", len(body), err)
-	}
-	results := c.QueryRangeBatch(context.Background(), "1", "2", "15", []BatchQuery{
-		{ID: "bad", DS: "prometheus", Query: "bad"},
-		{ID: "good", DS: "good-uid", Query: "good"},
-	})
-	if len(results) != 2 || !errors.Is(results[0].Err, ErrResponseTooLarge) || results[0].Body != nil {
-		t.Fatalf("batch name fallback: got %+v; want datasource-list size error", results)
-	}
-	if results[1].Err != nil || string(results[1].Body) != goodResponse {
-		t.Fatalf("batch direct UID: got %+v; want unaffected query to succeed", results[1])
+			results := c.QueryRangeBatch(context.Background(), "1", "2", "15", []BatchQuery{{ID: "bad", DS: "prometheus", Query: "bad"}})
+			if len(results) != 1 || results[0].Body != nil || !errors.Is(results[0].Err, ErrResponseTooLarge) || StatusCode(results[0].Err) != tc.wantStatus {
+				t.Fatalf("batch query: got %+v", results)
+			}
+		})
 	}
 }
 

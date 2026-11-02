@@ -15,11 +15,9 @@ import (
 
 func TestQueryRangeResponseSizeLimit(t *testing.T) {
 	const limit = 16 << 20
-	const prefix = `{"status":"success","padding":"`
-	const suffix = `"}`
 	for _, size := range []int{limit, limit + 1} {
 		t.Run(strconv.Itoa(size), func(t *testing.T) {
-			payload := prefix + strings.Repeat("x", size-len(prefix)-len(suffix)) + suffix
+			payload := `"` + strings.Repeat("x", size-2) + `"`
 			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Length", strconv.Itoa(len(payload)))
 				_, _ = w.Write([]byte(payload))
@@ -35,6 +33,17 @@ func TestQueryRangeResponseSizeLimit(t *testing.T) {
 			}
 		})
 	}
+	t.Run("oversized upstream auth error", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			w.WriteHeader(http.StatusUnauthorized)
+			_, _ = w.Write([]byte(`"` + strings.Repeat("x", limit) + `"`))
+		}))
+		defer srv.Close()
+		body, err := New(srv.URL, "", nil).QueryRange(context.Background(), "up", "1", "2", "15")
+		if body != nil || StatusCode(err) != http.StatusUnauthorized || !errors.Is(err, ErrResponseTooLarge) {
+			t.Fatalf("got body length %d, error %v; want 401 and size diagnosis without a partial body", len(body), err)
+		}
+	})
 
 }
 
