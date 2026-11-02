@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 
@@ -143,10 +144,10 @@ func TestExportModel_Concurrent(t *testing.T) {
 				errs <- fmt.Errorf("worker %d gzip reader error: %w", workerID, err)
 				return
 			}
-			defer gzReader.Close()
 
 			tr := tar.NewReader(gzReader)
 			fileCount := 0
+			modelJSONFound := false
 			for {
 				hdr, err := tr.Next()
 				if err == io.EOF {
@@ -154,15 +155,30 @@ func TestExportModel_Concurrent(t *testing.T) {
 				}
 				if err != nil {
 					errs <- fmt.Errorf("worker %d tar read error: %w", workerID, err)
+					_ = gzReader.Close()
 					return
 				}
-				if hdr.Name != "" {
-					fileCount++
+				// Count only regular files; directory headers carry no content.
+				if hdr.Typeflag != tar.TypeReg {
+					continue
 				}
+				fileCount++
+				if strings.HasSuffix(hdr.Name, "model.json") {
+					modelJSONFound = true
+				}
+			}
+
+			if err := gzReader.Close(); err != nil {
+				errs <- fmt.Errorf("worker %d gzip close error: %w", workerID, err)
+				return
 			}
 
 			if fileCount == 0 {
 				errs <- fmt.Errorf("worker %d tar archive was empty", workerID)
+				return
+			}
+			if !modelJSONFound {
+				errs <- fmt.Errorf("worker %d tar archive is missing model.json", workerID)
 				return
 			}
 		}(i)
