@@ -63,7 +63,8 @@ An event about a design carries the design's identity and a bounded summary, nev
 | any design event | `designId`, `designName`, `designVersion` (when set), `designLink` (designer URL) |
 | `pattern/create`, `pattern/update` (design saved) | identity, plus `design` as exactly `{id, name}` - the Notification Center's "Saved design" link reads it - `historyTitle` and `doclink` |
 | `relationship/evaluation` | identity, `historyTitle`, `relationshipsAdded`, `relationshipsRemoved`, `relationshipsUpdated`, `evaluationStatus`, `evaluationDurationMs`, `evaluatedAt` |
-| `pattern/validate`, `pattern/deploy`, `pattern/undeploy`, `pattern/dry-run` | identity, `viewLink` set to the operator view URL (`models.DesignOperatorViewLink`, `/extension/meshmap?mode=operator&type=view&design_id=<id>`), `status`, `errorCount`, `errors[]` of at most 20 `{code, componentId}`, `truncated` |
+| `pattern/deploy`, `pattern/undeploy`, `pattern/dry-run` | identity, `viewLink` set to the operator view URL (`models.DesignOperatorViewLink`, `/extension/meshmap?mode=operator&type=view&design_id=<id>`), `status`, `errorCount`, `errors[]` of at most 20 `{code, componentId}`, `truncated` |
+| `pattern/validate` | identity, `status`, `errorCount`, `errors[]` of at most 20 `{code, componentId}`, `truncated` - no `viewLink`. Meshery server does not emit this event; Meshery UI's `SchemaValidationFormatter` reads it in this shape |
 | a failed design event | identity and `error` (the MeshKit error) |
 
 `errorCount` is always the full count; `truncated` marks that `errors[]` was capped. `design` is allowed only as the two-field identity object - `models.IsDesignIdentityObject` is the check. Persisted metadata larger than 16 KB (`models.MaxEventMetadataBytes`) is reduced by `models.GuardEventMetadataSize` to the identity fields, `historyTitle` and that `design` object.
