@@ -61,6 +61,7 @@ type ComponentsRegistrationHelper struct {
 	mx              sync.RWMutex
 }
 
+// NewComponentsRegistrationHelper initializes and returns a new ComponentsRegistrationHelper.
 func NewComponentsRegistrationHelper(logger logger.Handler) *ComponentsRegistrationHelper {
 	return &ComponentsRegistrationHelper{
 		ctxRegStatusMap: make(map[string]RegistrationStatus),
@@ -156,20 +157,36 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 	}
 }
 
-// Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation
-func init() {
-	f, err := os.Open(filepath.Join(k8sMeshModelPath))
+// loadK8sMeshModelMetadata reads and unmarshals the Kubernetes mesh model template from the specified path,
+// ensuring the file descriptor is closed across all return paths.
+func loadK8sMeshModelMetadata(path string) (ModelTemplate, error) {
+	f, err := os.Open(filepath.Join(path))
 	if err != nil {
-		return
+		return ModelTemplate{}, err
 	}
+	defer func() {
+		_ = f.Close()
+	}()
+
 	byt, err := io.ReadAll(f)
 	if err != nil {
-		return
+		return ModelTemplate{}, err
 	}
+
 	componentStyles := ModelTemplate{}
 	err = json.Unmarshal(byt, &componentStyles)
 	if err != nil {
+		return ModelTemplate{}, err
+	}
+
+	return componentStyles, nil
+}
+
+// Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation
+func init() {
+	metadata, err := loadK8sMeshModelMetadata(k8sMeshModelPath)
+	if err != nil {
 		return
 	}
-	K8sMeshModelMetadata = componentStyles
+	K8sMeshModelMetadata = metadata
 }
