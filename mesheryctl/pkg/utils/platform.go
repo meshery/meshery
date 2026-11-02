@@ -769,11 +769,7 @@ func InstallprereqDocker() error {
 
 	osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
 
-	dockerComposeBinaryURL, err := resolveDockerComposeBinaryURL()
-	if err != nil {
-		return err
-	}
-	dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
+	dockerComposeBinaryURL := resolveDockerComposeBinaryURL() + "-" + osdetails
 	if err := meshkitutils.DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
 		return errors.Wrapf(err, "failed to download %s from %s", dockerComposeBinary, dockerComposeBinaryURL)
 	}
@@ -785,35 +781,34 @@ func InstallprereqDocker() error {
 }
 
 // resolveDockerComposeBinaryURL queries the GitHub release API for the latest docker-compose release tag
-// and resolves the download URL base. On transport error or non-200 status, it falls back to defaultDockerComposeVersion.
-func resolveDockerComposeBinaryURL() (string, error) {
+// and resolves the download URL base. On transport error, non-200 status, read failure, or malformed JSON,
+// it safely falls back to defaultDockerComposeVersion so prerequisite installation does not abort.
+func resolveDockerComposeBinaryURL() string {
 	dockerComposeBinaryURL := dockerComposeBinaryURL
 	// checks for the latest docker-compose
 	resp, err := http.Get(dockerComposeWebURL)
 	if err != nil {
-		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
-	} else {
-		defer SafeClose(resp.Body)
-		if resp.StatusCode != http.StatusOK {
-			dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
-		} else {
-			var dat map[string]interface{}
-			body, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return "", ErrReadResponseBody(err)
-			}
-			if err := json.Unmarshal(body, &dat); err != nil {
-				return "", ErrUnmarshal(err)
-			}
-			num := dat["tag_name"]
-			if num == nil || fmt.Sprintf("%v", num) == "" {
-				dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
-			} else {
-				dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
-			}
-		}
+		return dockerComposeBinaryURL + defaultDockerComposeVersion
 	}
-	return dockerComposeBinaryURL, nil
+	defer SafeClose(resp.Body)
+
+	if resp.StatusCode != http.StatusOK {
+		return dockerComposeBinaryURL + defaultDockerComposeVersion
+	}
+
+	var dat map[string]interface{}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return dockerComposeBinaryURL + defaultDockerComposeVersion
+	}
+	if err := json.Unmarshal(body, &dat); err != nil {
+		return dockerComposeBinaryURL + defaultDockerComposeVersion
+	}
+	num := dat["tag_name"]
+	if num == nil || fmt.Sprintf("%v", num) == "" {
+		return dockerComposeBinaryURL + defaultDockerComposeVersion
+	}
+	return fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
 }
 
 // SetKubeConfig sets the path to user's kubeconfig file into global variables

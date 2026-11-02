@@ -205,10 +205,7 @@ func TestResolveDockerComposeBinaryURL(t *testing.T) {
 		http.DefaultTransport = transport
 		t.Cleanup(func() { http.DefaultTransport = previousTransport })
 
-		got, err := resolveDockerComposeBinaryURL()
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
+		got := resolveDockerComposeBinaryURL()
 		expected := dockerComposeBinaryURL + "v2.24.5/docker-compose"
 		if got != expected {
 			t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
@@ -242,10 +239,7 @@ func TestResolveDockerComposeBinaryURL(t *testing.T) {
 			http.DefaultTransport = transport
 			t.Cleanup(func() { http.DefaultTransport = previousTransport })
 
-			got, err := resolveDockerComposeBinaryURL()
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
-			}
+			got := resolveDockerComposeBinaryURL()
 			expected := dockerComposeBinaryURL + defaultDockerComposeVersion
 			if got != expected {
 				t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
@@ -273,10 +267,7 @@ func TestResolveDockerComposeBinaryURL(t *testing.T) {
 		http.DefaultTransport = transport
 		t.Cleanup(func() { http.DefaultTransport = previousTransport })
 
-		got, err := resolveDockerComposeBinaryURL()
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
+		got := resolveDockerComposeBinaryURL()
 		expected := dockerComposeBinaryURL + defaultDockerComposeVersion
 		if got != expected {
 			t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
@@ -287,7 +278,7 @@ func TestResolveDockerComposeBinaryURL(t *testing.T) {
 		}
 	})
 
-	t.Run("returns error and closes response body on malformed json", func(t *testing.T) {
+	t.Run("falls back to default version and closes response body on malformed json", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(`{"invalid": "json"`))
@@ -303,9 +294,10 @@ func TestResolveDockerComposeBinaryURL(t *testing.T) {
 		http.DefaultTransport = transport
 		t.Cleanup(func() { http.DefaultTransport = previousTransport })
 
-		_, err := resolveDockerComposeBinaryURL()
-		if err == nil {
-			t.Fatalf("expected error on malformed json, got nil")
+		got := resolveDockerComposeBinaryURL()
+		expected := dockerComposeBinaryURL + defaultDockerComposeVersion
+		if got != expected {
+			t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
 		}
 
 		if transport.body == nil || !transport.body.closed {
@@ -318,10 +310,7 @@ func TestResolveDockerComposeBinaryURL(t *testing.T) {
 		dockerComposeWebURL = "http://127.0.0.1:0/unreachable"
 		defer func() { dockerComposeWebURL = origURL }()
 
-		got, err := resolveDockerComposeBinaryURL()
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
+		got := resolveDockerComposeBinaryURL()
 		expected := dockerComposeBinaryURL + defaultDockerComposeVersion
 		if got != expected {
 			t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
