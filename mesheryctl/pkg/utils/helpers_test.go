@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -23,6 +24,34 @@ type mockCloser struct {
 func (m mockCloser) Close() error {
 	return m.closeFunc()
 
+}
+
+type trackingTransport struct {
+	base http.RoundTripper
+	body *trackingBody
+}
+
+func (t *trackingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	base := t.base
+	if base == nil {
+		base = http.DefaultTransport
+	}
+	resp, err := base.RoundTrip(req)
+	if err == nil && resp != nil && resp.Body != nil {
+		t.body = &trackingBody{ReadCloser: resp.Body}
+		resp.Body = t.body
+	}
+	return resp, err
+}
+
+type trackingBody struct {
+	io.ReadCloser
+	closed bool
+}
+
+func (b *trackingBody) Close() error {
+	b.closed = true
+	return b.ReadCloser.Close()
 }
 
 func TestIsLocalProvider(t *testing.T) {

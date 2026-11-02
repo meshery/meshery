@@ -17,6 +17,8 @@ package utils
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -154,5 +156,35 @@ func TestGetCleanPodName(t *testing.T) {
 				t.Errorf("GetCleanPodName(%q) = %q, want %q", tc.podName, got, tc.expected)
 			}
 		})
+	}
+}
+
+func TestCreateManifestsFolder(t *testing.T) {
+	// a manifests folder in the working directory belongs to the user, not mesheryctl
+	t.Chdir(t.TempDir())
+	if err := os.MkdirAll(filepath.Join(ManifestsFolder, "keep"), os.ModePerm); err != nil {
+		t.Fatalf("expected no error, got: %v", err)
+	}
+
+	originalMesheryFolder := MesheryFolder
+	defer func() { MesheryFolder = originalMesheryFolder }()
+	MesheryFolder = t.TempDir()
+	stale := filepath.Join(MesheryFolder, ManifestsFolder, "stale")
+	if err := os.MkdirAll(stale, os.ModePerm); err != nil {
+		t.Fatalf("expected no error, got: %v", err)
+	}
+
+	if err := CreateManifestsFolder(); err != nil {
+		t.Fatalf("expected no error, got: %v", err)
+	}
+
+	if _, err := os.Stat(filepath.Join(ManifestsFolder, "keep")); err != nil {
+		t.Errorf("expected ./%s in the working directory to be untouched, got: %v", ManifestsFolder, err)
+	}
+	if _, err := os.Stat(stale); !os.IsNotExist(err) {
+		t.Errorf("expected stale files in %s to be removed, got: %v", filepath.Join(MesheryFolder, ManifestsFolder), err)
+	}
+	if _, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder)); err != nil {
+		t.Errorf("expected %s to exist, got: %v", filepath.Join(MesheryFolder, ManifestsFolder), err)
 	}
 }
