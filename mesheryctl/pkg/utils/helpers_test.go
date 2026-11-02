@@ -804,6 +804,22 @@ func TestUploadFileWithParams(t *testing.T) {
 			t.Errorf("expected multipart/form-data content type, got %s", req.Header.Get("Content-Type"))
 		}
 
+		uploaded, _, formErr := req.FormFile("file")
+		if formErr != nil {
+			t.Fatalf("expected file part: %v", formErr)
+		}
+		defer uploaded.Close()
+		content, readErr := io.ReadAll(uploaded)
+		if readErr != nil {
+			t.Fatalf("failed to read file part: %v", readErr)
+		}
+		if string(content) != "test content for upload" {
+			t.Errorf("unexpected file content: %q", content)
+		}
+		if got := req.FormValue("param1"); got != "value1" {
+			t.Errorf("unexpected param1 value: %q", got)
+		}
+
 		// Ensure file descriptor is closed across Linux and Windows
 		assertFileDescriptorClosed(t, tempFile)
 	})
@@ -821,16 +837,18 @@ func assertFileDescriptorClosed(t *testing.T, path string) {
 	// On Linux, verify that no open file descriptor in /proc/self/fd points to the path.
 	if runtime.GOOS == "linux" {
 		fds, err := os.ReadDir("/proc/self/fd")
-		if err == nil {
-			absPath, err := filepath.Abs(path)
-			if err != nil {
-				absPath = path
-			}
-			for _, fd := range fds {
-				target, err := os.Readlink(filepath.Join("/proc/self/fd", fd.Name()))
-				if err == nil && target == absPath {
-					t.Fatalf("expected file descriptor for %s to be closed, but found open fd /proc/self/fd/%s", path, fd.Name())
-				}
+		if err != nil {
+			t.Fatalf("cannot inspect /proc/self/fd: %v", err)
+		}
+		targetInfo, err := os.Stat(path)
+		if err != nil {
+			t.Fatalf("cannot stat path %s: %v", path, err)
+		}
+		for _, fd := range fds {
+			fdPath := filepath.Join("/proc/self/fd", fd.Name())
+			fdInfo, err := os.Stat(fdPath)
+			if err == nil && os.SameFile(targetInfo, fdInfo) {
+				t.Fatalf("expected file descriptor for %s to be closed, but found open fd /proc/self/fd/%s", path, fd.Name())
 			}
 		}
 	}
