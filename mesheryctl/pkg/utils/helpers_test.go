@@ -808,7 +808,7 @@ func TestUploadFileWithParams(t *testing.T) {
 		if formErr != nil {
 			t.Fatalf("expected file part: %v", formErr)
 		}
-		defer uploaded.Close()
+		defer func() { _ = uploaded.Close() }()
 		content, readErr := io.ReadAll(uploaded)
 		if readErr != nil {
 			t.Fatalf("failed to read file part: %v", readErr)
