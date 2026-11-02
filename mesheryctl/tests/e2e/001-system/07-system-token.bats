@@ -86,4 +86,5 @@ tokens:
 EOF
     run "$MESHERYCTL_BIN" --config "$isolated_config" system token view
     assert_failure
+    assert_output --partial "No token found for the Current context"
 }
