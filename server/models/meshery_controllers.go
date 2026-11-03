@@ -1048,6 +1048,8 @@ func NewOperatorTracker(disabled bool) *OperatorTracker {
 }
 
 func (ot *OperatorTracker) Undeployed(ctxID string, undeployed bool) {
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
 	if ot.DisableOperator { //no-op when operator is disabled
 		return
 	}
@@ -1058,6 +1060,8 @@ func (ot *OperatorTracker) Undeployed(ctxID string, undeployed bool) {
 }
 
 func (ot *OperatorTracker) IsUndeployed(ctxID string) bool {
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return true
 	}
