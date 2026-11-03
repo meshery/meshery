@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/logger"
@@ -129,10 +130,19 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 // Wherever possible use the userID and systemID from context as the events can be created from other comps or actors and not only user actors.
 // In cases when the event is received as part of some other event and not explicitly created by an actor, use the userID and systemID of the actor who initially invoked the machine.
 func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	userUUID := user.ID
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	userUUID, sysID := ExtractActorIDs(ctx)
+	if userUUID == core.Uuid(uuid.Nil) && sm.UserID != core.Uuid(uuid.Nil) {
+		userUUID = sm.UserID
+		ctx = context.WithValue(ctx, models.UserCtxKey, &models.User{ID: userUUID})
+	}
+	if sysID != nil && ctx.Value(models.SystemIDKey) == nil {
+		ctx = context.WithValue(ctx, models.SystemIDKey, sysID)
+	}
 	ctx = context.WithValue(ctx, models.ProviderCtxKey, sm.Provider)
+
 	sm.mx.Lock()
 	defer sm.mx.Unlock()
 	var event *events.Event
@@ -143,7 +153,8 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// follow-up event), and the description has to name the event that actually
 	// failed, not the one the caller originally sent.
 	invalidTransitionEvent := func(failedEventType EventType, err error) *events.Event {
-		return events.NewEvent().WithDescription(fmt.Sprintf("Invalid status change requested to %s for connection type %s.", failedEventType, sm.Name)).ActedUpon(sm.ID).FromOwner(userUUID).FromSystem(*sysID).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build()
+		eb := events.NewEvent().WithDescription(fmt.Sprintf("Invalid status change requested to %s for connection type %s.", failedEventType, sm.Name)).ActedUpon(sm.ID).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err})
+		return ApplyEventAttribution(eb, userUUID, sysID).Build()
 	}
 
 	// eventType is reassigned inside the transition loop (to the recovery event,
@@ -194,6 +205,14 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// CurrentState would corrupt the persisted status) and treat it as no-change
 	// so the repeated background failure is suppressed.
 	haltedWithoutTransition := false
+
+	if !HasActorAttribution(userUUID, sysID) {
+		failureErr = ErrEventAttribution(fmt.Errorf("event attribution requires either a valid user ID or system ID"))
+		eb := events.NewEvent().WithDescription(fmt.Sprintf("%s connection action failed.", sm.Name)).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": failureErr})
+		failureEvent = eb.Build()
+		haltedWithoutTransition = true
+		eventType = NoOp
+	}
 
 	for eventType != NoOp {
 		nextState, err := sm.getNextState(eventType)
@@ -313,8 +332,8 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		connection, _, err := sm.Provider.GetConnectionByID(token, sm.ID)
 
 		if err != nil {
-
-			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			eb := events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).ActedUpon(sm.ID).WithCategory("connection").WithAction("update")
+			return ApplyEventAttribution(eb, userUUID, sysID).Build(), err
 		}
 
 		// Defensive guard: a provider that reports no error but hands back a nil
@@ -322,7 +341,8 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// retrieval failure so the caller sees an error instead of a crash.
 		if connection == nil {
 			err = ErrConnectionNotFound(sm.ID.String())
-			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			eb := events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).ActedUpon(sm.ID).WithCategory("connection").WithAction("update")
+			return ApplyEventAttribution(eb, userUUID, sysID).Build(), err
 		}
 
 		// Compare the currently persisted status against the state the machine
@@ -344,7 +364,8 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 
 		if err != nil {
 			// In this case should the current state be again set to previous state i.e. should we rollback. But not only state should be rollback but other actions as well, rn we don't rollback state.
-			return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			eb := events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState)).WithMetadata(map[string]interface{}{"error": err}).ActedUpon(sm.ID).WithCategory("connection").WithAction("update")
+			return ApplyEventAttribution(eb, userUUID, sysID).Build(), err
 		}
 
 		sm.Log.Debugf("%s: updated \"status\" for connection with id: %s to \"%s\"", sm.Name, connection.ID, sm.CurrentState)
@@ -379,7 +400,8 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// dedicated "connection action failed" Error event so a misbehaving
 		// action can never turn a surfaced failure into a nil-pointer panic.
 		if failureEvent == nil {
-			failureEvent = events.NewEvent().WithDescription(fmt.Sprintf("%s connection action failed.", sm.Name)).ActedUpon(sm.ID).FromOwner(userUUID).FromSystem(*sysID).WithCategory("connection").WithAction("update").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": failureErr}).Build()
+			eb := events.NewEvent().WithDescription(fmt.Sprintf("%s connection action failed.", sm.Name)).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": failureErr})
+			failureEvent = ApplyEventAttribution(eb, userUUID, sysID).Build()
 		}
 		return failureEvent, failureErr
 	}
@@ -387,10 +409,11 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// The action func only emits event when an error occurs.
 	// If "event" is nil, it indicates actions were execeuted successfully, hence send an confirmation that request was processed successsfully.
 	if event == nil {
-		event = events.NewEvent().WithDescription(fmt.Sprintf("%s connection changed to %s", sm.Name, sm.CurrentState)).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").WithMetadata(map[string]interface{}{
+		eb := events.NewEvent().WithDescription(fmt.Sprintf("%s connection changed to %s", sm.Name, sm.CurrentState)).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").WithMetadata(map[string]interface{}{
 			"previousStatus": sm.PreviousState,
 			"currentStatus":  sm.CurrentState,
-		}).WithSeverity(events.Informational).Build()
+		}).WithSeverity(events.Informational)
+		event = ApplyEventAttribution(eb, userUUID, sysID).Build()
 	}
 
 	return event, nil

@@ -10,7 +10,6 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils"
-	"github.com/meshery/schemas/models/core"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -34,11 +33,10 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		return machines.NoOp, nil, models.ErrInitLogger(err)
 	}
 
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	userUUID := user.ID
+	userUUID, sysID := machines.ExtractActorIDs(ctx)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	eventBuilder := events.NewEvent().WithCategory("connection").WithAction("update").WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	machines.ApplyEventAttribution(eventBuilder, userUUID, sysID)
 
 	connPayload, err := utils.Cast[connections.ConnectionPayload](data)
 	if err != nil {
