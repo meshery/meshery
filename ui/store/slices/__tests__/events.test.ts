@@ -109,6 +109,8 @@ describe('events thunks – failed page handling', () => {
     expect(fetch).toHaveBeenCalledWith({ page: 2, filters: { status: 'unread' } });
     // only setLoadError dispatched; no setCurrentView / pushEvents advancing the page
     expect(dispatched.map((a) => a.type)).toEqual(['events/setLoadError']);
+    // the failed page + filters are recorded for retry
+    expect(dispatched[0].payload).toEqual({ page: 2, filters: { status: 'unread' } });
   });
 
   it('loadNextPage does not advance while a load error is set', async () => {
@@ -120,18 +122,36 @@ describe('events thunks – failed page handling', () => {
     expect(dispatch).not.toHaveBeenCalled();
   });
 
-  it('retryCurrentPage re-requests the same page with the same filters', async () => {
+  it('retryCurrentPage re-requests the failed page, not the last loaded page', async () => {
     const dispatched: any[] = [];
     const dispatch = (action: any) =>
       typeof action === 'function' ? action(dispatch, getState) : (dispatched.push(action), action);
+    // current page is 3 (last loaded), but page 4 failed and is pending retry
     const getState = () =>
-      makeState({ current_view: { page: 3, filters: { status: 'read' }, load_error: true } });
+      makeState({
+        current_view: {
+          page: 3,
+          filters: { status: 'read' },
+          load_error: true,
+          failed_request: { page: 4, filters: { status: 'unread' } },
+        },
+      });
     const fetch = vi.fn().mockResolvedValue({ data: { events: [makeEvent()] } });
 
     await retryCurrentPage(fetch)(dispatch, getState);
 
-    // retries page 3, not page 4
-    expect(fetch).toHaveBeenCalledWith({ page: 3, filters: { status: 'read' } });
+    // retries the failed page 4 with its filters, not current page 3
+    expect(fetch).toHaveBeenCalledWith({ page: 4, filters: { status: 'unread' } });
+  });
+
+  it('retryCurrentPage is a no-op when no request is pending', async () => {
+    const dispatch = vi.fn();
+    const getState = () =>
+      makeState({ current_view: { page: 2, filters: {}, failed_request: null } });
+
+    await retryCurrentPage(vi.fn())(dispatch, getState);
+
+    expect(dispatch).not.toHaveBeenCalled();
   });
 
   it('a successful empty final page still stops pagination', async () => {

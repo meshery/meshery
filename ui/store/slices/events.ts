@@ -12,6 +12,7 @@ const initialState = {
     // Set when a page request fails so the UI can show an error + retry without
     // treating the failure as the end of the list.
     load_error: false,
+    failed_request: null,
   },
 
   // this is used to fetch the view when notification center is opened
@@ -61,6 +62,7 @@ export const eventsSlice = createSlice({
 
       state.current_view.has_more = action.payload.length == 0 ? false : true;
       state.current_view.load_error = false;
+      state.current_view.failed_request = null;
     },
 
     pushEvents: (state, action) => {
@@ -68,12 +70,14 @@ export const eventsSlice = createSlice({
       eventsEntityAdapter.addMany(state, action.payload);
       state.current_view.has_more = action.payload.length == 0 ? false : true;
       state.current_view.load_error = false;
+      state.current_view.failed_request = null;
     },
 
-    // A page request failed. Keep has_more and the current page untouched so the
-    // same page can be retried, and flag the error for the UI.
-    setLoadError: (state) => {
+    // A page request failed: flag the error and record the { page, filters } that
+    // failed so retry repeats that request, not the last page that loaded.
+    setLoadError: (state, action) => {
       state.current_view.load_error = true;
+      state.current_view.failed_request = action.payload || null;
     },
 
     pushEvent: (state, action) => {
@@ -177,7 +181,7 @@ export const loadEvents = (fetch, page, filters) => async (dispatch, getState) =
     // making a transient failure look like the end of the list.
     const { data, error } = await fetch({ page, filters });
     if (error) {
-      dispatch(setLoadError());
+      dispatch(setLoadError({ page, filters }));
       console.error('Error while fetching events in store --loadEvents', error);
       return;
     }
@@ -187,6 +191,7 @@ export const loadEvents = (fetch, page, filters) => async (dispatch, getState) =
         page,
         filters,
         load_error: false,
+        failed_request: null,
       }),
     );
     if (page <= 0) {
@@ -195,7 +200,7 @@ export const loadEvents = (fetch, page, filters) => async (dispatch, getState) =
     }
     dispatch(pushEvents(data?.events || []));
   } catch (e) {
-    dispatch(setLoadError());
+    dispatch(setLoadError({ page, filters }));
     console.error('Error while setting events in store --loadEvents', e);
     return;
   }
@@ -211,11 +216,15 @@ export const loadNextPage = (fetch) => async (dispatch, getState) => {
   dispatch(loadEvents(fetch, currentView.page + 1, currentView.filters));
 };
 
-// Re-request the page that failed, with the same filters, so a retry does not
-// skip a page or duplicate notifications.
+// Re-request the exact page + filters that failed (not the last page that
+// loaded), so a retry does not skip a page or duplicate notifications.
 export const retryCurrentPage = (fetch) => async (dispatch, getState) => {
   const currentView = getState().events.current_view;
-  dispatch(loadEvents(fetch, currentView.page, currentView.filters));
+  const failed = currentView.failed_request;
+  if (!failed) {
+    return;
+  }
+  dispatch(loadEvents(fetch, failed.page, failed.filters));
 };
 
 export const updateEventStatus =
