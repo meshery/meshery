@@ -81,9 +81,21 @@ const MesheryPerformanceComponent_ = (props) => {
   const [blockRunTestState, setBlockRunTest] = useState(false);
   const [urlErrorState, setUrlError] = useState(false);
   const [tErrorState, setTError] = useState('');
-  const [jsonErrorState, setJsonError] = useState(false);
+  const [jsonErrorState, setJsonError] = useState(
+    Boolean(additionalOptionsState && !isValidJSON(additionalOptionsState)),
+  );
+  const isSupportedUrl = (url: string): boolean => {
+    if (!url) return false;
+    try {
+      const parsed = new URL(url);
+      return ['http:', 'https:', 'nats:', 'tcp:'].includes(parsed.protocol);
+    } catch {
+      return Boolean(URLValidator(url));
+    }
+  };
+
   const isFormValid = (url: string, additionalOptions: string) => {
-    const isUrlValid = Boolean(URLValidator(url));
+    const isUrlValid = isSupportedUrl(url);
     const isOptionsValid = !additionalOptions || isValidJSON(additionalOptions);
     return isUrlValid && isOptionsValid;
   };
@@ -155,8 +167,11 @@ const MesheryPerformanceComponent_ = (props) => {
 
   const handleSubmit = () => {
     if (urlState === '' || !isFormValid(urlState, additionalOptionsState)) {
-      if (urlState === '' || !URLValidator(urlState)) {
+      if (urlState === '' || !isSupportedUrl(urlState)) {
         setUrlError(true);
+      }
+      if (additionalOptionsState && !isValidJSON(additionalOptionsState)) {
+        setJsonError(true);
       }
       return;
     }
@@ -196,6 +211,9 @@ const MesheryPerformanceComponent_ = (props) => {
 
   const submitProfile = (cb) => {
     if (!isFormValid(urlState, additionalOptionsState)) {
+      if (additionalOptionsState && !isValidJSON(additionalOptionsState)) {
+        setJsonError(true);
+      }
       return;
     }
     const profile = generatePerformanceProfile({
@@ -544,7 +562,8 @@ const MesheryPerformanceComponent_ = (props) => {
             <ModalFooter variant="filled">
               <React.Fragment>
                 <PerformanceFormActions
-                  disableTest={disableTestState || !isFormValid(urlState, additionalOptionsState)}
+                  disableTest={disableTestState}
+                  disableSubmit={disableTestState || !isFormValid(urlState, additionalOptionsState)}
                   blockRunTest={blockRunTestState}
                   hasTestResult={!!testResult}
                   onAbort={handleAbort}
