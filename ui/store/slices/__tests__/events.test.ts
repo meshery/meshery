@@ -174,4 +174,31 @@ describe('events thunks – failed page handling', () => {
     const state = eventsReducer(eventsReducer(undefined, { type: 'x' }), pushed);
     expect(state.current_view.has_more).toBe(false);
   });
+
+  it('a superseded request failing late does not overwrite the current view', async () => {
+    const dispatched: any[] = [];
+    const dispatch = (action: any) =>
+      typeof action === 'function' ? action(dispatch, getState) : (dispatched.push(action), action);
+    const getState = () => makeState();
+
+    // Old request (old filters) is slow and will fail. Control its resolution.
+    let failOld!: () => void;
+    const oldFetch = vi.fn().mockReturnValue(
+      new Promise((resolve) => {
+        failOld = () => resolve({ error: { status: 500 } });
+      }),
+    );
+    const oldPromise = loadEvents(oldFetch, 1, { status: 'old' })(dispatch, getState);
+
+    // Newer request (new filters) supersedes it and succeeds first.
+    const newFetch = vi.fn().mockResolvedValue({ data: { events: [makeEvent()] } });
+    await loadEvents(newFetch, 0, { status: 'new' })(dispatch, getState);
+
+    // Now the stale old request fails.
+    failOld();
+    await oldPromise;
+
+    // The late failure from the superseded request must be ignored.
+    expect(dispatched.some((a) => a.type === 'events/setLoadError')).toBe(false);
+  });
 });

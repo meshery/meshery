@@ -172,14 +172,25 @@ export const {
 
 export default eventsSlice.reducer;
 
+// Monotonic token identifying the latest in-flight load. A filter change or a
+// newer page load claims a fresh token; any earlier request whose result
+// arrives late is superseded and its success/error is ignored, so a stale
+// failure cannot overwrite the current view (e.g. re-flag an obsolete filter).
+let latestRequestId = 0;
+
 export const loadEvents = (fetch, page, filters) => async (dispatch, getState) => {
   const currentView = getState().events.current_view;
+  const requestId = ++latestRequestId;
+  const isSuperseded = () => requestId !== latestRequestId;
   try {
     // RTK Query's lazy trigger resolves with { error } on failure instead of
     // throwing, so a failed request must be detected here explicitly. Treating
     // it as an empty page would set has_more=false and advance the page,
     // making a transient failure look like the end of the list.
     const { data, error } = await fetch({ page, filters });
+    if (isSuperseded()) {
+      return;
+    }
     if (error) {
       dispatch(setLoadError({ page, filters }));
       console.error('Error while fetching events in store --loadEvents', error);
@@ -200,6 +211,9 @@ export const loadEvents = (fetch, page, filters) => async (dispatch, getState) =
     }
     dispatch(pushEvents(data?.events || []));
   } catch (e) {
+    if (isSuperseded()) {
+      return;
+    }
     dispatch(setLoadError({ page, filters }));
     console.error('Error while setting events in store --loadEvents', e);
     return;
