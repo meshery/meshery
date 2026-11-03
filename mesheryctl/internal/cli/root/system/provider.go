@@ -203,22 +203,8 @@ mesheryctl system provider set [provider]
 		provider := args[0]
 
 		if !providerSetFlags.Force {
-			// Verify provider
-			availableProviders, err := utils.GetProviderInfo(mctlCfg)
-			if err != nil {
-				return ErrProviderInfo(err)
-			}
-
-			isValidProvider := false
-
-			for k := range availableProviders {
-				if provider == k {
-					isValidProvider = true
-				}
-			}
-
-			if !isValidProvider {
-				return ErrValidProvider()
+			if err := validateProvider(mctlCfg, provider); err != nil {
+				return err
 			}
 		}
 
@@ -279,6 +265,12 @@ mesheryctl system provider switch [provider]
 			focusedContext = mctlCfg.CurrentContext
 		}
 
+		// Check the provider before asking to replace the deployment, so an
+		// unknown provider fails without a confirmation prompt.
+		if err := validateProvider(mctlCfg, args[0]); err != nil {
+			return err
+		}
+
 		//skip asking confirmation if -y flag used
 		if utils.SilentFlag {
 			userResponse = true
@@ -301,6 +293,21 @@ mesheryctl system provider switch [provider]
 		}
 		return nil
 	},
+}
+
+// validateProvider returns an error unless provider is one of the providers
+// offered by the Meshery server.
+func validateProvider(mctlCfg *config.MesheryCtlConfig, provider string) error {
+	availableProviders, err := utils.GetProviderInfo(mctlCfg)
+	if err != nil {
+		return ErrProviderInfo(err)
+	}
+
+	if _, ok := availableProviders[provider]; !ok {
+		return ErrValidProvider()
+	}
+
+	return nil
 }
 
 // resetProviderCmd represents the reset command

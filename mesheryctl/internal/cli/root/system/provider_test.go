@@ -1,10 +1,13 @@
 package system
 
 import (
+	"net/http"
+	"os"
 	"slices"
 	"strings"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/stretchr/testify/assert"
 )
@@ -80,4 +83,55 @@ func TestRunProviderWithNoCmdOrFlag(t *testing.T) {
 		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 	}
 	BreakupFunc()
+}
+
+func TestSwitchProviderCmdValidatesProviderBeforeConfirmation(t *testing.T) {
+	setupContextTestEnv(t)
+	t.Cleanup(BreakupFunc)
+
+	httpmock.Activate()
+	t.Cleanup(httpmock.DeactivateAndReset)
+	httpmock.RegisterResponder(http.MethodGet, "http://localhost:9081/api/providers",
+		httpmock.NewStringResponder(http.StatusOK, `{"Local":{"providerName":"Local"}}`))
+
+	tests := []struct {
+		name          string
+		provider      string
+		expectedError string
+	}{
+		{
+			name:          "given unknown provider when provider switch then fail before asking for confirmation",
+			provider:      "bogus",
+			expectedError: "Invalid provider",
+		},
+		{
+			name:          "given available provider when provider switch then ask for confirmation",
+			provider:      "Local",
+			expectedError: "provider switch aborted",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Decline the confirmation prompt, so a prompt shown before the
+			// provider is checked ends the switch as aborted.
+			r, w, err := os.Pipe()
+			if err != nil {
+				t.Fatal(err)
+			}
+			_, _ = w.WriteString("n\n")
+			_ = w.Close()
+			stdin := os.Stdin
+			os.Stdin = r
+			defer func() {
+				os.Stdin = stdin
+				_ = r.Close()
+			}()
+
+			err = switchProviderCmd.RunE(switchProviderCmd, []string{tt.provider})
+			if assert.Error(t, err) {
+				assert.Contains(t, err.Error(), tt.expectedError)
+			}
+		})
+	}
 }
