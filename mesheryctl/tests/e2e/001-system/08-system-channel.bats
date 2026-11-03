@@ -12,17 +12,52 @@ setup() {
 # Record the original channel/version once, so every test can be reverted to it.
 setup_file() {
     run "$MESHERYCTL_BIN" system channel view
+    if [ "$status" -ne 0 ]; then
+        echo "# setup_file: 'system channel view' failed (status $status): $output" >&3
+        return 1
+    fi
+
     export ORIGINAL_CHANNEL=$(echo "$output" | sed -n 's/^Channel: //p' | head -n1)
     export ORIGINAL_VERSION=$(echo "$output" | sed -n 's/^Version: //p' | head -n1)
 
-    # A crashed earlier run may have left a test value in the config; never treat it as the default.
-    case "$ORIGINAL_VERSION" in
-        v0.5.0|v0.7.999|"$PINNED_VERSION") export ORIGINAL_VERSION="latest" ;;
-    esac
-    [ -n "$ORIGINAL_CHANNEL" ] || export ORIGINAL_CHANNEL="stable"
-    [ -n "$ORIGINAL_VERSION" ] || export ORIGINAL_VERSION="latest"
+    # Without both fields there is nothing safe to restore; stop rather than guess a default.
+    if [ -z "$ORIGINAL_CHANNEL" ] || [ -z "$ORIGINAL_VERSION" ]; then
+        echo "# setup_file: could not read channel and version from: $output" >&3
+        return 1
+    fi
 
     echo "$ORIGINAL_CHANNEL-$ORIGINAL_VERSION" > "$BATS_FILE_TMPDIR/original_channel"
+
+    _save_deployment_env
+}
+
+# Deployment settings that CI patches into the in-cluster meshery deployment (kubectl set env)
+# and that later suites (connection, diagnostics) depend on. A channel switch reinstalls the
+# Helm release and drops them, so they are recorded here and re-applied after each redeploy.
+DEPLOYMENT_ENV_NAMES="PROVIDER_BASE_URLS MESHSYNC_DEFAULT_DEPLOYMENT_MODE MESHERY_MANAGED_BROKER_PORTFORWARD"
+
+_save_deployment_env() {
+    : > "$BATS_FILE_TMPDIR/deployment_env"
+    command -v kubectl >/dev/null 2>&1 || return 0
+
+    local env_list name
+    env_list=$(kubectl -n meshery set env deployment/meshery --list 2>/dev/null) || return 0
+    for name in $DEPLOYMENT_ENV_NAMES; do
+        echo "$env_list" | grep "^$name=" >> "$BATS_FILE_TMPDIR/deployment_env" || true
+    done
+}
+
+# Re-apply the recorded settings and wait for the rollout. A no-op when none were recorded.
+_restore_deployment_env() {
+    [ -s "$BATS_FILE_TMPDIR/deployment_env" ] || return 0
+
+    local settings=() line
+    while IFS= read -r line; do
+        settings+=("$line")
+    done < "$BATS_FILE_TMPDIR/deployment_env"
+    kubectl -n meshery rollout status deployment/meshery --timeout=180s || return 1
+    kubectl -n meshery set env deployment/meshery "${settings[@]}" || return 1
+    kubectl -n meshery rollout status deployment/meshery --timeout=180s
 }
 
 # Redeploy Meshery on the original channel. Retries transient failures (e.g. TLS timeouts)
@@ -31,34 +66,40 @@ _redeploy_original() {
     local original="$1" attempt
     for attempt in 1 2 3; do
         if "$MESHERYCTL_BIN" system channel switch "$original" -y; then
-            return 0
+            _restore_deployment_env
+            return
         fi
         echo "# teardown: redeploy attempt $attempt failed, cleaning up" >&3
         "$MESHERYCTL_BIN" system stop --force -y || true
         if "$MESHERYCTL_BIN" system start --skip-browser -y; then
-            return 0
+            _restore_deployment_env
+            return
         fi
         sleep 10
     done
     return 1
 }
 
-# Runs after every test and never fails it: restore the original channel/version in the config,
-# and if the test switched channels, repair and redeploy Meshery so the next test starts clean.
+# Runs after every test: restore the original channel/version in the config and, if the test
+# switched channels, redeploy Meshery. Any failure fails the test, and the "switched" marker is
+# only removed once the redeploy succeeds, so the next teardown retries the recovery.
 teardown() {
     local original
     original=$(cat "$BATS_FILE_TMPDIR/original_channel" 2>/dev/null)
     [ -n "$original" ] || return 0
 
-    "$MESHERYCTL_BIN" system channel set "$original" || \
+    if ! "$MESHERYCTL_BIN" system channel set "$original"; then
         echo "# teardown: could not restore channel to $original" >&3
+        return 1
+    fi
 
     if [ -f "$BATS_FILE_TMPDIR/switched" ]; then
-        rm -f "$BATS_FILE_TMPDIR/switched"
-        _redeploy_original "$original" || \
+        if ! _redeploy_original "$original"; then
             echo "# teardown: Meshery could not be redeployed on $original; fix it manually" >&3
+            return 1
+        fi
+        rm -f "$BATS_FILE_TMPDIR/switched"
     fi
-    return 0
 }
 
 # bats test_tags=system:channel
@@ -136,7 +177,7 @@ teardown() {
     assert_output --partial "not a valid Meshery release"
 }
 
-# A channel switch replaces the running deployment; teardown_file restores the original one.
+# A channel switch replaces the running deployment; teardown restores the original one.
 # bats test_tags=system:channel
 @test "[cut=System][tg=System Channel] given a running deployment when switching to edge then Meshery is redeployed on edge" {
     touch "$BATS_FILE_TMPDIR/switched"
@@ -144,6 +185,11 @@ teardown() {
 
     assert_success
     assert_output --partial "Channel set to edge-latest"
+
+    run "$MESHERYCTL_BIN" system channel view
+    assert_success
+    assert_line "Channel: edge"
+    assert_line "Version: latest"
 }
 
 # bats test_tags=system:channel
@@ -153,6 +199,11 @@ teardown() {
 
     assert_success
     assert_output --partial "Channel set to stable-latest"
+
+    run "$MESHERYCTL_BIN" system channel view
+    assert_success
+    assert_line "Channel: stable"
+    assert_line "Version: latest"
 }
 
 # bats test_tags=system:channel
@@ -162,6 +213,11 @@ teardown() {
 
     assert_success
     assert_output --partial "Channel set to stable-$PINNED_VERSION"
+
+    run "$MESHERYCTL_BIN" system channel view
+    assert_success
+    assert_line "Channel: stable"
+    assert_line "Version: $PINNED_VERSION"
 }
 
 # bats test_tags=system:channel
