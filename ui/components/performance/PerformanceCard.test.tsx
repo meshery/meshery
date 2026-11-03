@@ -126,4 +126,30 @@ describe('PerformanceCard', () => {
     expect(screen.getByTestId('avatar')).toBeInTheDocument();
     expect(screen.getByTestId('avatar').closest('a')).toBeNull();
   });
+
+  it('safely renders without throwing when metadata.additional_options contains invalid JSON or is empty', () => {
+    const propsWithInvalidJson = {
+      ...baseProps,
+      profile: {
+        ...baseProps.profile,
+        metadata: {
+          additional_options: ['invalid JSON string'],
+        },
+      },
+    };
+
+    expect(() => render(<PerformanceCard {...propsWithInvalidJson} />)).not.toThrow();
+
+    const propsWithEmptyOptions = {
+      ...baseProps,
+      profile: {
+        ...baseProps.profile,
+        metadata: {
+          additional_options: [],
+        },
+      },
+    };
+
+    expect(() => render(<PerformanceCard {...propsWithEmptyOptions} />)).not.toThrow();
+  });
 });

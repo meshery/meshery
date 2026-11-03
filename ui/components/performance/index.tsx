@@ -82,8 +82,14 @@ const MesheryPerformanceComponent_ = (props) => {
   const [urlErrorState, setUrlError] = useState(false);
   const [tErrorState, setTError] = useState('');
   const [jsonErrorState, setJsonError] = useState(false);
+  const isFormValid = (url: string, additionalOptions: string) => {
+    const isUrlValid = Boolean(URLValidator(url));
+    const isOptionsValid = !additionalOptions || isValidJSON(additionalOptions);
+    return isUrlValid && isOptionsValid;
+  };
+
   const [disableTestState, setDisableTest] = useState(
-    !(URLValidator(urlState) || isValidJSON(additionalOptionsState)),
+    !isFormValid(urlState, additionalOptionsState),
   );
   const [testUUIDState, setTestUUID] = useState(generateUUID());
   const [selectedMeshState, setSelectedMesh] = useState('');
@@ -113,6 +119,10 @@ const MesheryPerformanceComponent_ = (props) => {
     };
     fetchMeshModels();
   }, []);
+
+  useEffect(() => {
+    setDisableTest(!isFormValid(urlState, additionalOptionsState));
+  }, [urlState, additionalOptionsState]);
 
   const handleChange = createPerformanceFormChangeHandler({
     setProfileName,
@@ -144,8 +154,10 @@ const MesheryPerformanceComponent_ = (props) => {
   };
 
   const handleSubmit = () => {
-    if (urlState === '') {
-      setUrlError(true);
+    if (urlState === '' || !isFormValid(urlState, additionalOptionsState)) {
+      if (urlState === '' || !URLValidator(urlState)) {
+        setUrlError(true);
+      }
       return;
     }
 
@@ -183,6 +195,9 @@ const MesheryPerformanceComponent_ = (props) => {
   };
 
   const submitProfile = (cb) => {
+    if (!isFormValid(urlState, additionalOptionsState)) {
+      return;
+    }
     const profile = generatePerformanceProfile({
       name: profileNameState,
       loadGenerator: loadGeneratorState,
@@ -529,7 +544,7 @@ const MesheryPerformanceComponent_ = (props) => {
             <ModalFooter variant="filled">
               <React.Fragment>
                 <PerformanceFormActions
-                  disableTest={disableTestState}
+                  disableTest={disableTestState || !isFormValid(urlState, additionalOptionsState)}
                   blockRunTest={blockRunTestState}
                   hasTestResult={!!testResult}
                   onAbort={handleAbort}
