@@ -90,7 +90,7 @@ mesheryctl design undeploy -f [filepath]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				return utils.ErrFileRead(err)
+				return utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, file))
 			}
 			designFile = string(content)
 		} else {
