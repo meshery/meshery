@@ -5,13 +5,22 @@ on:
       - "master"
     paths:
       - "**.go"
+      - "server/helpers/component_info.json"
+      - "mesheryctl/helpers/component_info.json"
       - ".github/workflows/error-codes-updater.yaml"
+      - ".github/actions/errorutil-runner/**"
   pull_request:
     branches:
       - "master"
     paths:
       - "**.go"
+      - "server/helpers/component_info.json"
+      - "mesheryctl/helpers/component_info.json"
       - ".github/workflows/error-codes-updater.yaml"
+      - ".github/actions/errorutil-runner/**"
+
+permissions:
+  contents: read
 
 jobs:
   Update-error-codes:
@@ -23,7 +32,58 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Determine merge-base
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+
+          # The baseline for `errorutil check` MUST be this branch's merge-base with
+          # the base branch. If we cannot resolve it we fail the job: a missing
+          # baseline previously left MERGE_BASE empty, which made actions/checkout
+          # fall back to the event's default ref and silently turned this check into
+          # a no-op.
+          if ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+            if ! git fetch --no-tags --quiet origin "${BASE_SHA}"; then
+              echo "::error::Unable to fetch base commit ${BASE_SHA} of meshery/meshery; cannot establish an error-code validation baseline."
+              exit 1
+            fi
+          fi
+
+          if ! MERGE_BASE="$(git merge-base HEAD "${BASE_SHA}")"; then
+            echo "::error::Unable to determine the merge-base between this pull request and base commit ${BASE_SHA} of meshery/meshery. Error-code validation cannot run without a baseline, so this check fails closed."
+            exit 1
+          fi
+
+          if ! printf '%s' "${MERGE_BASE}" | grep -Eq '^[0-9a-f]{40}$'; then
+            echo "::error::Resolved merge-base '${MERGE_BASE}' is not a 40-character commit SHA; refusing to continue."
+            exit 1
+          fi
+
+          echo "Resolved merge-base: ${MERGE_BASE}"
+          echo "MERGE_BASE=${MERGE_BASE}" >> "$GITHUB_ENV"
+      - name: Checkout merge-base (baseline)
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ env.MERGE_BASE }}
+          path: .baseline
           fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify baseline checkout
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          set -euo pipefail
+          ACTUAL="$(git -C .baseline rev-parse HEAD)"
+          if [ "${ACTUAL}" != "${MERGE_BASE}" ]; then
+            echo "::error::Baseline checkout resolved to ${ACTUAL} but the merge-base is ${MERGE_BASE}; refusing to validate against the wrong tree."
+            exit 1
+          fi
+          echo "Baseline verified at ${ACTUAL}"
       - uses: actions/checkout@v6
         if: ${{ github.event_name == 'push' }}
         with:
@@ -36,28 +96,46 @@ jobs:
           go-version-file: go.mod
 
       - name: Build Error Utility
+        shell: bash
+        env:
+          # meshery/meshkit master at the merge of PR #1105 (the final reviewed
+          # state of `errorutil check`). Built from source rather than
+          # `go install ...@sha` because meshkit's go.mod carries `replace`
+          # directives, which `go install pkg@version` refuses.
+          MESHKIT_SHA: 4021148daf2a06c6d728b363186262f4c515a864
         run: |
-          go get github.com/meshery/meshkit/cmd/errorutil@master
-          go build -o ~/errorutil github.com/meshery/meshkit/cmd/errorutil
+          set -euo pipefail
 
+          rm -rf "$RUNNER_TEMP/meshkit"
+          mkdir -p "$RUNNER_TEMP/meshkit"
+          cd "$RUNNER_TEMP/meshkit"
+
+          curl -fsSL --proto '=https' --tlsv1.2 --retry 3 --retry-delay 2 \
+            -o meshkit.tar.gz \
+            "https://github.com/meshery/meshkit/archive/${MESHKIT_SHA}.tar.gz"
+          tar -xzf meshkit.tar.gz --strip-components=1
+          rm -f meshkit.tar.gz
+
+          GOBIN="$HOME" go install ./cmd/errorutil
       - name: Run Utility For Meshery Server
-        run: |
-          ~/errorutil update -d . -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,docs
-          output=$(~/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl | wc -c)
-          if [ "$output" -ne 0 ]; then
-            exit 1
-          fi
-          echo '{ "errors_export": "" }' | jq --slurpfile export ./server/helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ./docs/data/errorref/meshery-server_errors_export.json
+        uses: ./.github/actions/errorutil-runner
+        with:
+          scan_dir: '.'
+          baseline_scan_dir: '.baseline'
+          helpers_dir: './server/helpers'
+          baseline_helpers_dir: '.baseline/server/helpers'
+          skip_dirs: 'mesheryctl,docs'
+          export_dest: './docs/data/errorref/meshery-server_errors_export.json'
 
       - name: Run Utility For Mesheryctl
-        run: |
-          cd ./mesheryctl
-          ~/errorutil update -d . -i ./helpers -o ./helpers
-          output=$(~/errorutil -d . analyze -i ./helpers -o ./helpers | wc -c)
-          if [ "$output" -ne 0 ]; then
-            exit 1
-          fi
-          echo '{ "errors_export": "" }' | jq --slurpfile export ../mesheryctl/helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ../docs/data/errorref/mesheryctl_errors_export.json
+        uses: ./.github/actions/errorutil-runner
+        with:
+          scan_dir: './mesheryctl'
+          baseline_scan_dir: '.baseline/mesheryctl'
+          helpers_dir: './mesheryctl/helpers'
+          baseline_helpers_dir: '.baseline/mesheryctl/helpers'
+          skip_dirs: ''
+          export_dest: './docs/data/errorref/mesheryctl_errors_export.json'
 
       - name: Pull changes from remote
         if: ${{ github.event_name != 'pull_request' }}  # Skip for pull requests
