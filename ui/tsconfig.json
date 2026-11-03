@@ -61,6 +61,10 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "include": ["next-env.d.ts", "ui/**/*.ts", "ui/**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
   "exclude": ["node_modules"]
 }
