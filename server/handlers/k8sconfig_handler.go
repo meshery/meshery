@@ -50,6 +50,11 @@ type ContextOptions struct {
 // timestamps that would emit zero-value createdAt/updatedAt for
 // freshly-discovered contexts. Swap to the schemas type once its timestamps
 // are nullable (tracked follow-up in meshery/schemas).
+//
+// Every bucket holds contexts passed through models.StripCredentialsForContext:
+// this response goes back to the uploader, and the cluster/auth maps carry the
+// uploaded kubeconfig's credentials. No consumer reads them - the wizard counts
+// the buckets and mesheryctl reads name/connectionId.
 type SaveK8sContextResponse struct {
 	RegisteredContexts []models.K8sContext `json:"registeredContexts"`
 	ConnectedContexts  []models.K8sContext `json:"connectedContexts"`
@@ -217,7 +222,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				// context is reported as errored rather than imported with a
 				// mode the controllers editor would contradict.
 				h.log.Error(modeErr)
-				saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
+				saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, models.StripCredentialsForContext(ctx))
 				metadata["description"] = fmt.Sprintf("Unable to record the MeshSync deployment mode for context \"%s\" at %s", ctx.Name, ctx.Server)
 				metadata["error"] = modeErr
 				event := eventBuilder.WithSeverity(events.Error).WithDescription(metadata["description"].(string)).WithMetadata(metadata).Build()
@@ -246,7 +251,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		importedCount++
 		connection, err := provider.SaveK8sContext(token, *ctx, k8sContextsMetadata)
 		if err != nil {
-			saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
+			saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, models.StripCredentialsForContext(ctx))
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
 			metadata["error"] = err
 		} else {
@@ -278,15 +283,15 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 
 			switch status {
 			case connections.CONNECTED:
-				saveK8sContextResponse.ConnectedContexts = append(saveK8sContextResponse.ConnectedContexts, *ctx)
+				saveK8sContextResponse.ConnectedContexts = append(saveK8sContextResponse.ConnectedContexts, models.StripCredentialsForContext(ctx))
 				metadata["description"] = fmt.Sprintf("Connection already exists with Kubernetes context \"%s\" at %s", ctx.Name, ctx.Server)
 
 			case connections.IGNORED:
-				saveK8sContextResponse.IgnoredContexts = append(saveK8sContextResponse.IgnoredContexts, *ctx)
+				saveK8sContextResponse.IgnoredContexts = append(saveK8sContextResponse.IgnoredContexts, models.StripCredentialsForContext(ctx))
 				metadata["description"] = fmt.Sprintf("Kubernetes context \"%s\" is set to ignored state.", ctx.Name)
 
 			case connections.DISCOVERED:
-				saveK8sContextResponse.RegisteredContexts = append(saveK8sContextResponse.RegisteredContexts, *ctx)
+				saveK8sContextResponse.RegisteredContexts = append(saveK8sContextResponse.RegisteredContexts, models.StripCredentialsForContext(ctx))
 				metadata["description"] = fmt.Sprintf("Connection registered with kubernetes context \"%s\" at %s.", ctx.Name, ctx.Server)
 			}
 
@@ -454,7 +459,17 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userUUID, event)
 
-	err = json.NewEncoder(w).Encode(contexts)
+	// Discovery is a parse-only endpoint: the response must carry each context's
+	// identity (the wizard selects by ID and shows name/server; mesheryctl reads
+	// name) and nothing else. The cluster and auth maps hold the uploaded
+	// kubeconfig's credentials verbatim, so echoing them back hands the caller
+	// whatever helpers.FlattenMinifyKubeConfig inlined from the server's disk.
+	strippedContexts := make([]models.K8sContext, 0, len(contexts))
+	for _, ctx := range contexts {
+		strippedContexts = append(strippedContexts, models.StripCredentialsForContext(ctx))
+	}
+
+	err = json.NewEncoder(w).Encode(strippedContexts)
 	if err != nil {
 		// Response body has already started streaming via json.Encoder —
 		// a partial JSON envelope is on the wire and a fresh error

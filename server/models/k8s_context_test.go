@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/database"
 	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
@@ -269,5 +270,58 @@ func TestK8sContextsFromKubeconfigDiscoversAllContexts(t *testing.T) {
 		if want := fmt.Sprintf("ctx-%d", i); name != want {
 			t.Errorf("context[%d] = %q, want %q", i, name, want)
 		}
+	}
+}
+
+// TestStripCredentialsForContext pins the contract the kubeconfig endpoints rely
+// on: the cluster and auth blocks — which carry the uploaded kubeconfig's
+// credentials verbatim, including any bytes helpers.FlattenMinifyKubeConfig
+// inlined from disk — must not survive into a response, while the identity the
+// connection wizard and mesheryctl read must.
+func TestStripCredentialsForContext(t *testing.T) {
+	serverID := uuid.FromStringOrNil("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+	instanceID := uuid.FromStringOrNil("6ba7b811-9dad-11d1-80b4-00c04fd430c8")
+
+	ctx := &K8sContext{
+		ID:                 "ctx-id",
+		Name:               "prod",
+		Server:             "https://1.2.3.4:6443",
+		ConnectionID:       "conn-id",
+		Version:            "v1.29.0",
+		Reachable:          true,
+		DeploymentType:     "out_cluster",
+		KubernetesServerID: &serverID,
+		MesheryInstanceID:  &instanceID,
+		Auth: sql.Map{
+			"user": map[string]interface{}{"token": "super-secret"},
+		},
+		Cluster: sql.Map{
+			"cluster": map[string]interface{}{"certificate-authority-data": "aW5saW5lZC1zZWNyZXQ="},
+		},
+	}
+
+	stripped := StripCredentialsForContext(ctx)
+
+	if stripped.Auth != nil {
+		t.Errorf("auth must be dropped, got %#v", stripped.Auth)
+	}
+	if stripped.Cluster != nil {
+		t.Errorf("cluster must be dropped, got %#v", stripped.Cluster)
+	}
+
+	// The wizard selects a discovered context by ID and displays name/server;
+	// mesheryctl reads name and connectionId. Blanking any of these (as
+	// RedactCredentialsForContext deliberately does for event metadata) would
+	// break context selection on import.
+	if stripped.ID != ctx.ID || stripped.Name != ctx.Name || stripped.Server != ctx.Server ||
+		stripped.ConnectionID != ctx.ConnectionID || stripped.Version != ctx.Version ||
+		stripped.Reachable != ctx.Reachable || stripped.DeploymentType != ctx.DeploymentType ||
+		stripped.KubernetesServerID != ctx.KubernetesServerID || stripped.MesheryInstanceID != ctx.MesheryInstanceID {
+		t.Errorf("identity fields must survive stripping, got %#v", stripped)
+	}
+
+	// The caller keeps using the original after the copy is handed to the encoder.
+	if ctx.Auth == nil || ctx.Cluster == nil {
+		t.Error("StripCredentialsForContext must not mutate its argument")
 	}
 }
