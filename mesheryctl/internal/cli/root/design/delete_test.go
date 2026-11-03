@@ -54,6 +54,20 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
+			Name:             "given valid relative file as positional argument when design delete then design is deleted",
+			Args:             []string{"delete", filepath.Join("fixtures", "sampleDesign.golden")},
+			ExpectedResponse: "delete.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
+		{
 			Name:             "given invalid file path when design delete then error is thrown",
 			Args:             []string{"delete", "-f", invalidFilePath},
 			ExpectedResponse: "",
@@ -103,6 +117,24 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("please provide a design name, ID, or file path")),
 		},
 		{
+			Name:             "given empty positional argument when design delete then error is thrown",
+			Args:             []string{"delete", ""},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("target cannot be empty")),
+		},
+		{
+			Name:             "given whitespace positional argument when design delete then error is thrown",
+			Args:             []string{"delete", "   "},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("target cannot be empty")),
+		},
+		{
 			Name:             "given multiple positional arguments when design delete then error is thrown",
 			Args:             []string{"delete", "a.yaml", "b.yaml"},
 			ExpectedResponse: "",
@@ -119,6 +151,15 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a positional argument and the --file flag")),
+		},
+		{
+			Name:             "given empty file flag when design delete then error is thrown",
+			Args:             []string{"delete", "-f", ""},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("file path cannot be empty")),
 		},
 	}
 

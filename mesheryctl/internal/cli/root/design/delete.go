@@ -20,9 +20,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -31,6 +32,14 @@ import (
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
+
+func isURL(s string) bool {
+	u, err := url.ParseRequestURI(s)
+	if err != nil || u.Scheme == "" || u.Host == "" {
+		return false
+	}
+	return u.Scheme == "http" || u.Scheme == "https"
+}
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
@@ -44,11 +53,17 @@ var deleteCmd = &cobra.Command{
 			}
 			return utils.ErrInvalidArgument(fmt.Errorf("please provide a design name, ID, or file path"))
 		}
+		if len(args) > 0 && strings.TrimSpace(args[0]) == "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("target cannot be empty"))
+		}
 		if len(args) > 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("expected at most one positional argument, got %d", len(args)))
 		}
 		if len(args) > 0 && file != "" {
 			return utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a positional argument and the --file flag"))
+		}
+		if cmd.Flags().Changed("file") && strings.TrimSpace(file) == "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("file path cannot be empty"))
 		}
 		return nil
 	},
@@ -73,9 +88,9 @@ mesheryctl design delete -f [file | URL]
 		isID := false
 		if len(args) > 0 {
 			target := args[0]
-			if govalidator.IsURL(target) {
+			if _, statErr := os.Stat(target); statErr == nil {
 				file = target
-			} else if _, statErr := os.Stat(target); statErr == nil {
+			} else if isURL(target) {
 				file = target
 			} else {
 				pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), target, "pattern")
@@ -110,7 +125,7 @@ mesheryctl design delete -f [file | URL]
 
 		var patternFileByt []byte
 		// If file path not a valid URL, treat it like a local file path
-		if !govalidator.IsURL(file) {
+		if !isURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
 				return utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, file))
