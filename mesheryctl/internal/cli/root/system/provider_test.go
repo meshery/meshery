@@ -85,6 +85,9 @@ func TestRunProviderWithNoCmdOrFlag(t *testing.T) {
 	BreakupFunc()
 }
 
+// TestSwitchProviderCmdValidatesProviderBeforeConfirmation checks that
+// `system provider switch` rejects a provider the server does not offer before
+// asking to replace the deployment, and still asks for an available one.
 func TestSwitchProviderCmdValidatesProviderBeforeConfirmation(t *testing.T) {
 	setupContextTestEnv(t)
 	t.Cleanup(BreakupFunc)
