@@ -3,34 +3,40 @@ import { mesheryApiPath } from '../index';
 
 // ---------------------------------------------------------------------------
 // Unit tests for rtk-query/filter.ts. Endpoints managed:
-//   GET    /api/filter                       getFilters
-//   POST   /api/filter/clone/:id             cloneFilter
-//   POST   /api/filter/catalog/publish       publishFilter
-//   DELETE /api/filter/catalog/unpublish     unpublishFilter
-//   DELETE /api/filter/:id                   deleteFilter
-//   POST   /api/filter                       updateFilterFile
-//   POST   /api/filter (octet-stream)        uploadFilterFile
+//   GET    /api/content/filters                       getFilters
+//   POST   /api/content/filters/clone/:id             cloneFilter
+//   POST   /api/content/filters/catalog/publish       publishFilter
+//   DELETE /api/content/filters/catalog/unpublish     unpublishFilter
+//   DELETE /api/content/filters/:id                   deleteFilter
+//   POST   /api/content/filters                       updateFilterFile
+//   POST   /api/content/filters (octet-stream)        uploadFilterFile
 // ---------------------------------------------------------------------------
 
 describe('filter – URLs', () => {
-  it('builds the base /filter URL', () => {
-    expect(mesheryApiPath('filter')).toBe('/api/filter');
+  it('builds the base content/filters URL', () => {
+    expect(mesheryApiPath('content/filters')).toBe('/api/content/filters');
   });
 
-  it('builds /filter/clone/:id', () => {
-    expect(mesheryApiPath('filter/clone/abc-123')).toBe('/api/filter/clone/abc-123');
+  it('builds content/filters/clone/:id', () => {
+    expect(mesheryApiPath('content/filters/clone/abc-123')).toBe(
+      '/api/content/filters/clone/abc-123',
+    );
   });
 
-  it('builds /filter/catalog/publish', () => {
-    expect(mesheryApiPath('filter/catalog/publish')).toBe('/api/filter/catalog/publish');
+  it('builds content/filters/catalog/publish', () => {
+    expect(mesheryApiPath('content/filters/catalog/publish')).toBe(
+      '/api/content/filters/catalog/publish',
+    );
   });
 
-  it('builds /filter/catalog/unpublish', () => {
-    expect(mesheryApiPath('filter/catalog/unpublish')).toBe('/api/filter/catalog/unpublish');
+  it('builds content/filters/catalog/unpublish', () => {
+    expect(mesheryApiPath('content/filters/catalog/unpublish')).toBe(
+      '/api/content/filters/catalog/unpublish',
+    );
   });
 
-  it('builds /filter/:id for delete', () => {
-    expect(mesheryApiPath('filter/abc-123')).toBe('/api/filter/abc-123');
+  it('builds content/filters/:id for delete', () => {
+    expect(mesheryApiPath('content/filters/abc-123')).toBe('/api/content/filters/abc-123');
   });
 });
 
@@ -64,7 +70,7 @@ describe('filter – HTTP contracts', () => {
       text: () => Promise.resolve(JSON.stringify({ filters: [], total_count: 0 })),
     });
 
-    const url = `${mesheryApiPath('filter')}?page=0&pagesize=10&order=asc&visibility=public&search=istio`;
+    const url = `${mesheryApiPath('content/filters')}?page=0&pagesize=10&order=asc&visibility=public&search=istio`;
     await fetch(url, { method: 'GET' });
 
     expect(global.fetch).toHaveBeenCalledWith(url, expect.objectContaining({ method: 'GET' }));
@@ -78,49 +84,49 @@ describe('filter – HTTP contracts', () => {
     });
 
     const body = { name: 'cloned-filter' };
-    await fetch(mesheryApiPath('filter/clone/abc'), {
+    await fetch(mesheryApiPath('content/filters/clone/abc'), {
       method: 'POST',
       body: JSON.stringify(body),
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      '/api/filter/clone/abc',
+      '/api/content/filters/clone/abc',
       expect.objectContaining({ method: 'POST', body: JSON.stringify(body) }),
     );
   });
 
-  it('publishFilter posts publishBody to /filter/catalog/publish', async () => {
+  it('publishFilter posts publishBody to content/filters/catalog/publish', async () => {
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: true,
       status: 200,
       text: () => Promise.resolve('{}'),
     });
 
-    await fetch(mesheryApiPath('filter/catalog/publish'), {
+    await fetch(mesheryApiPath('content/filters/catalog/publish'), {
       method: 'POST',
       body: JSON.stringify({ id: 'f-1' }),
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      '/api/filter/catalog/publish',
+      '/api/content/filters/catalog/publish',
       expect.objectContaining({ method: 'POST' }),
     );
   });
 
-  it('unpublishFilter DELETEs /filter/catalog/unpublish with body', async () => {
+  it('unpublishFilter DELETEs content/filters/catalog/unpublish with body', async () => {
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: true,
       status: 200,
       text: () => Promise.resolve('{}'),
     });
 
-    await fetch(mesheryApiPath('filter/catalog/unpublish'), {
+    await fetch(mesheryApiPath('content/filters/catalog/unpublish'), {
       method: 'DELETE',
       body: JSON.stringify({ id: 'f-1' }),
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      '/api/filter/catalog/unpublish',
+      '/api/content/filters/catalog/unpublish',
       expect.objectContaining({ method: 'DELETE' }),
     );
   });
@@ -132,10 +138,10 @@ describe('filter – HTTP contracts', () => {
       text: () => Promise.resolve(''),
     });
 
-    await fetch(mesheryApiPath('filter/abc'), { method: 'DELETE' });
+    await fetch(mesheryApiPath('content/filters/abc'), { method: 'DELETE' });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      '/api/filter/abc',
+      '/api/content/filters/abc',
       expect.objectContaining({ method: 'DELETE' }),
     );
   });
@@ -148,14 +154,14 @@ describe('filter – HTTP contracts', () => {
     });
 
     const uploadBody = new ArrayBuffer(8);
-    await fetch(mesheryApiPath('filter'), {
+    await fetch(mesheryApiPath('content/filters'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/octet-stream' },
       body: uploadBody,
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      '/api/filter',
+      '/api/content/filters',
       expect.objectContaining({
         method: 'POST',
         headers: expect.objectContaining({ 'Content-Type': 'application/octet-stream' }),
@@ -170,7 +176,7 @@ describe('filter – HTTP contracts', () => {
       text: () => Promise.resolve('not found'),
     });
 
-    const resp = await fetch(mesheryApiPath('filter'), { method: 'GET' });
+    const resp = await fetch(mesheryApiPath('content/filters'), { method: 'GET' });
     expect(resp.ok).toBe(false);
     expect(resp.status).toBe(404);
   });

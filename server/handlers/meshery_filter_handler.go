@@ -16,8 +16,8 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1"
-	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta3/component"
 )
 
 func (h *Handler) GetMesheryFilterFileHandler(
@@ -48,7 +48,7 @@ func (h *Handler) GetMesheryFilterFileHandler(
 }
 
 // FilterFileRequestHandler will handle requests of both type GET and POST
-// on the route /api/filter
+// on the route /api/content/filters
 func (h *Handler) FilterFileRequestHandler(
 	rw http.ResponseWriter,
 	r *http.Request,

@@ -85,7 +85,7 @@ describe('downloadContent', () => {
 
   it('builds the filter download URL', () => {
     downloadContent({ id: 'f1', type: FILTER, name: 'filter.wasm' });
-    expect(setAttributeSpy).toHaveBeenCalledWith('href', '/api/filter/download/f1');
+    expect(setAttributeSpy).toHaveBeenCalledWith('href', '/api/content/filters/download/f1');
   });
 
   it('throws for an unknown content type', () => {

@@ -11,7 +11,7 @@ const filters = api
     endpoints: (builder) => ({
       getFilters: builder.query({
         query: (queryArg) => ({
-          url: mesheryApiPath(`filter`),
+          url: mesheryApiPath(`content/filters`),
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
@@ -25,41 +25,41 @@ const filters = api
       }),
       cloneFilter: builder.mutation({
         query: (queryArg) => ({
-          url: mesheryApiPath(`filter/clone/${queryArg.filterID}`),
+          url: mesheryApiPath(`content/filters/clone/${queryArg.filterID}`),
           method: 'POST',
           body: queryArg.body,
         }),
       }),
       publishFilter: builder.mutation({
         query: (queryArg) => ({
-          url: mesheryApiPath(`filter/catalog/publish`),
+          url: mesheryApiPath(`content/filters/catalog/publish`),
           method: 'POST',
           body: queryArg.publishBody,
         }),
       }),
       unpublishFilter: builder.mutation({
         query: (queryArg) => ({
-          url: mesheryApiPath(`filter/catalog/unpublish`),
+          url: mesheryApiPath(`content/filters/catalog/unpublish`),
           method: 'DELETE',
           body: queryArg.unpublishBody,
         }),
       }),
       deleteFilter: builder.mutation({
         query: (queryArg) => ({
-          url: mesheryApiPath(`filter/${queryArg.id}`),
+          url: mesheryApiPath(`content/filters/${queryArg.id}`),
           method: 'DELETE',
         }),
       }),
       updateFilterFile: builder.mutation({
         query: (queryArg) => ({
-          url: mesheryApiPath(`filter`),
+          url: mesheryApiPath(`content/filters`),
           method: 'POST',
           body: queryArg.updateBody,
         }),
       }),
       uploadFilterFile: builder.mutation({
         query: (queryArg) => ({
-          url: mesheryApiPath(`filter`),
+          url: mesheryApiPath(`content/filters`),
           headers: {
             'Content-Type': 'application/octet-stream', // Set appropriate content type for binary data
           },

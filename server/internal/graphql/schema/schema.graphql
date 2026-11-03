@@ -289,7 +289,7 @@ type K8sContextsPage {
 
 # NOTE: ConfigurationPage / ApplicationPage / ApplicationResult / FilterPage /
 # FilterResult were removed along with subscribeConfiguration. Patterns and
-# filters are served over REST (GET /api/pattern, GET /api/filter) and the UI
+# filters are served over REST (GET /api/pattern, GET /api/content/filters) and the UI
 # refetches via RTK cache invalidation.
 
 type NullString {
@@ -577,7 +577,7 @@ type Mutation {
 #   subscribePerfProfiles/Results    -> GET /api/user/performance/profiles[/{id}/results]
 #   subscribeClusterResources        -> GET /api/system/meshsync/resources[/summary]
 #   subscribeMeshModelSummary        -> GET /api/meshmodels/{components,relationships}
-#   subscribeConfiguration           -> GET /api/pattern, GET /api/filter
+#   subscribeConfiguration           -> GET /api/pattern, GET /api/content/filters
 #
 # The last four were pure refetch-on-signal loops over an equivalent Query, and
 # the UI now refetches via RTK cache invalidation instead.

@@ -7,7 +7,7 @@ const DOWNLOAD_PATH = {
       : params
         ? `/api/pattern/download/${id}?${params}`
         : `/api/pattern/download/${id}`,
-  [FILTER]: ({ id }) => `/api/filter/download/${id}`,
+  [FILTER]: ({ id }) => `/api/content/filters/download/${id}`,
 };
 
 export const downloadFileFromUrl = (url, name) => {

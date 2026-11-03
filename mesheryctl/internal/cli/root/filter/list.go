@@ -170,7 +170,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*models.FiltersAPIResponse, error) {
 	var response *models.FiltersAPIResponse
 
-	url := baseURL + "/api/filter"
+	url := baseURL + "/api/content/filters"
 
 	url = fmt.Sprintf("%s?pagesize=%d&page=%d", url, pageSize, pageNumber)
 	if searchString != "" {
