@@ -1,0 +1,84 @@
+{
+  "page": 1,
+  "page_size": 1,
+  "total_count": 1,
+  "components": [
+    {
+      "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "Test",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "component-test-0",
+        "displayName": "Component test",
+        "status": "enabled",
+        "registrant": {
+          "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
+          "name": "Artifact Hub",
+          "credentialId": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "subType": "",
+          "kind": "artifacthub",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-03-30T19:59:46.350667005Z",
+          "updated_at": "2025-03-30T19:59:46.350667005Z",
+          "deleted_at": {"Time": "0001-01-01T00:00:00Z", "Valid": false}
+        },
+        "connection_id": "fd01c4e7-14ae-4435-8236-adfb9cea0395",
+        "category": {
+          "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
+          "name": "category"
+        },
+        "subCategory": "sub-category",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#ff9900",
+          "secondaryColor": "#F4BC79",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubeform-provider-aws/color/kubeform-provider-aws-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubeform-provider-aws/white/kubeform-provider-aws-white.svg"
+        },
+        "model": {
+          "version": "2023.11.1"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#ff9900",
+        "secondaryColor": "#F4BC79",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubeform-provider-aws/color/acl-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubeform-provider-aws/white/acl-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": null,
+      "component": {
+        "version": "memorydb.aws.kubeform.com/v1alpha1",
+        "kind": "Test",
+        "schema": ""
+      },
+      "duplicates": 0
+    }
+  ]
+}
