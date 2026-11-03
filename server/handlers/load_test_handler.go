@@ -224,10 +224,15 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 				cleanUpFiles = append(cleanUpFiles, file.Name())
 
 				_, err = file.Write([]byte(certificateData))
-				_ = file.Close()
 				if err != nil {
+					_ = file.Close()
 					h.log.Error(ErrCreateFile(err, certificateName))
 					writeMeshkitError(w, ErrCreateFile(err, certificateName), http.StatusInternalServerError)
+					return
+				}
+				if closeErr := file.Close(); closeErr != nil {
+					h.log.Error(ErrCreateFile(closeErr, certificateName))
+					writeMeshkitError(w, ErrCreateFile(closeErr, certificateName), http.StatusInternalServerError)
 					return
 				}
 				assignCertificatePath("ca_certificate", file.Name(), loadTestOptions)
