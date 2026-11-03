@@ -47,6 +47,9 @@ var deleteCmd = &cobra.Command{
 	Long: `delete design file will trigger deletion of the design file.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/design/delete`,
 	Args: func(cmd *cobra.Command, args []string) error {
+		if cmd.Flags().Changed("file") && strings.TrimSpace(file) == "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("file path cannot be empty"))
+		}
 		if len(args) == 0 && file == "" {
 			if err := cmd.Usage(); err != nil {
 				return err
@@ -61,9 +64,6 @@ var deleteCmd = &cobra.Command{
 		}
 		if len(args) > 0 && file != "" {
 			return utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a positional argument and the --file flag"))
-		}
-		if cmd.Flags().Changed("file") && strings.TrimSpace(file) == "" {
-			return utils.ErrInvalidArgument(fmt.Errorf("file path cannot be empty"))
 		}
 		return nil
 	},
