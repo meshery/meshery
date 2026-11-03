@@ -13,11 +13,15 @@ import (
 
 type fakeLoadTestProvider struct {
 	*models.DefaultLocalProvider
+	profile *models.PerformanceProfile
 }
 
 func (f *fakeLoadTestProvider) GetPerformanceProfile(req *http.Request, profileID string) ([]byte, error) {
 	profile := models.PerformanceProfile{
 		Metadata: map[string]interface{}{},
+	}
+	if f.profile != nil {
+		profile = *f.profile
 	}
 	return json.Marshal(profile)
 }
@@ -145,6 +149,108 @@ func TestLoadTestUsingSMPHandlerInvalidURL(t *testing.T) {
 			rec := httptest.NewRecorder()
 
 			h.LoadTestUsingSMPHandler(rec, req, nil, nil, nil)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected status 400 Bad Request, got %d. Body: %s", rec.Code, rec.Body.String())
+			}
+
+			var body struct {
+				Code  string `json:"code"`
+				Error string `json:"error"`
+			}
+			if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+				t.Fatalf("failed to decode response JSON: %v", err)
+			}
+
+			if body.Code != ErrInvalidLTURLCode {
+				t.Fatalf("expected error code %s, got %s", ErrInvalidLTURLCode, body.Code)
+			}
+		})
+	}
+}
+
+// TestLoadTestHandlerSSLCertificateTypeAssertion verifies that LoadTestHandler does not panic
+// when ca_certificate in performance profile metadata has missing or invalid types for name or file.
+func TestLoadTestHandlerSSLCertificateTypeAssertion(t *testing.T) {
+	testCases := []struct {
+		name     string
+		metadata map[string]interface{}
+	}{
+		{
+			name: "Missing file field in ca_certificate",
+			metadata: map[string]interface{}{
+				"ca_certificate": map[string]interface{}{
+					"name": "ca.crt",
+				},
+			},
+		},
+		{
+			name: "Nil file field in ca_certificate",
+			metadata: map[string]interface{}{
+				"ca_certificate": map[string]interface{}{
+					"name": "ca.crt",
+					"file": nil,
+				},
+			},
+		},
+		{
+			name: "Non-string file field in ca_certificate",
+			metadata: map[string]interface{}{
+				"ca_certificate": map[string]interface{}{
+					"name": "ca.crt",
+					"file": 12345,
+				},
+			},
+		},
+		{
+			name: "Nil name field in ca_certificate",
+			metadata: map[string]interface{}{
+				"ca_certificate": map[string]interface{}{
+					"name": nil,
+					"file": "some-cert-data",
+				},
+			},
+		},
+		{
+			name: "Non-map ca_certificate",
+			metadata: map[string]interface{}{
+				"ca_certificate": "invalid-cert-structure",
+			},
+		},
+		{
+			name: "Valid ca_certificate with name and file",
+			metadata: map[string]interface{}{
+				"ca_certificate": map[string]interface{}{
+					"name": "ca.crt",
+					"file": "-----BEGIN CERTIFICATE-----\nMIIB...\n-----END CERTIFICATE-----",
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := &Handler{
+				log: newTestLogger(t),
+			}
+
+			provider := &fakeLoadTestProvider{
+				DefaultLocalProvider: &models.DefaultLocalProvider{},
+				profile: &models.PerformanceProfile{
+					Metadata: tc.metadata,
+				},
+			}
+
+			req := httptest.NewRequest(http.MethodGet, "/api/perf/profile/run?cert=true&name=test-test&url=example.com", nil)
+			rec := httptest.NewRecorder()
+
+			defer func() {
+				if r := recover(); r != nil {
+					t.Fatalf("LoadTestHandler panicked on %q: %v", tc.name, r)
+				}
+			}()
+
+			h.LoadTestHandler(rec, req, nil, nil, provider)
 
 			if rec.Code != http.StatusBadRequest {
 				t.Fatalf("expected status 400 Bad Request, got %d. Body: %s", rec.Code, rec.Body.String())

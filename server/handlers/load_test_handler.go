@@ -210,8 +210,9 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 		caCertificate, certificateOk := performanceProfile.Metadata["ca_certificate"].(map[string]interface{})
 
 		if certificateOk {
-			certificateName, ok := caCertificate["name"].(string)
-			if ok {
+			certificateName, nameOk := caCertificate["name"].(string)
+			certificateData, fileOk := caCertificate["file"].(string)
+			if nameOk && fileOk {
 				filePath := utils.SanitizeFileName(certificateName)
 
 				file, err := os.CreateTemp(os.TempDir(), filePath)
@@ -221,9 +222,9 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 					return
 				}
 				cleanUpFiles = append(cleanUpFiles, file.Name())
-				certificateData := caCertificate["file"].(string)
 
 				_, err = file.Write([]byte(certificateData))
+				_ = file.Close()
 				if err != nil {
 					h.log.Error(ErrCreateFile(err, certificateName))
 					writeMeshkitError(w, ErrCreateFile(err, certificateName), http.StatusInternalServerError)
