@@ -806,13 +806,38 @@ registry:
     publish:
       name: publish
       description: Publish Meshery Models to Websites, Remote Provider, Meshery Server
-      usage: mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]
+      usage: mesheryctl registry publish --system [system] --spreadsheet-cred [credential] --spreadsheet-id [sheet-id] --models-output-path [models-output-path] --imgs-output-path [imgs-output-path]
       flags:
+        system:
+          name: --system, -s
+          description: system to publish to [meshery | remote-provider | website]
+          usage: mesheryctl registry publish --system [system] --spreadsheet-cred [credential] --spreadsheet-id [sheet-id] --models-output-path [models-output-path] --imgs-output-path [imgs-output-path]
+          example: mesheryctl registry publish --system website --spreadsheet-cred "$CRED" --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --models-output-path docs/pages/integrations --imgs-output-path docs/assets/img/integrations -o md
+        spreadsheet-cred:
+          name: --spreadsheet-cred
+          description: base64 encoded credential to download the spreadsheet
+          usage: mesheryctl registry publish --system [system] --spreadsheet-cred [credential] --spreadsheet-id [sheet-id] --models-output-path [models-output-path] --imgs-output-path [imgs-output-path]
+          example: mesheryctl registry publish --system website --spreadsheet-cred "$CRED" --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --models-output-path docs/pages/integrations --imgs-output-path docs/assets/img/integrations -o md
+        spreadsheet-id:
+          name: --spreadsheet-id
+          description: spreadsheet ID for the integration spreadsheet
+          usage: mesheryctl registry publish --system [system] --spreadsheet-cred [credential] --spreadsheet-id [sheet-id] --models-output-path [models-output-path] --imgs-output-path [imgs-output-path]
+          example: mesheryctl registry publish --system website --spreadsheet-cred "$CRED" --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --models-output-path docs/pages/integrations --imgs-output-path docs/assets/img/integrations -o md
+        models-output-path:
+          name: --models-output-path, -m
+          description: path to write the published models to
+          usage: mesheryctl registry publish --system [system] --spreadsheet-cred [credential] --spreadsheet-id [sheet-id] --models-output-path [models-output-path] --imgs-output-path [imgs-output-path]
+          example: mesheryctl registry publish --system website --spreadsheet-cred "$CRED" --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --models-output-path docs/pages/integrations --imgs-output-path docs/assets/img/integrations -o md
+        imgs-output-path:
+          name: --imgs-output-path, -i
+          description: (optional for meshery; required for remote-provider and website) path to write model and component icons to
+          usage: mesheryctl registry publish --system [system] --spreadsheet-cred [credential] --spreadsheet-id [sheet-id] --models-output-path [models-output-path] --imgs-output-path [imgs-output-path]
+          example: mesheryctl registry publish --system website --spreadsheet-cred "$CRED" --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --models-output-path docs/pages/integrations --imgs-output-path docs/assets/img/integrations -o md
         output-format:
           name: --output-format, -o
           description: (optional) format to display in [md | mdx | js]
-          usage: mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [md | mdx | js]
-          example: mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o md
+          usage: mesheryctl registry publish --system [system] --spreadsheet-cred [credential] --spreadsheet-id [sheet-id] --models-output-path [models-output-path] --imgs-output-path [imgs-output-path] -o [md | mdx | js]
+          example: mesheryctl registry publish --system website --spreadsheet-cred "$CRED" --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --models-output-path docs/pages/integrations --imgs-output-path docs/assets/img/integrations -o md
     update:
       name: update
       description: Update the registry with latest data.
