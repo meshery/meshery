@@ -169,3 +169,86 @@ func TestMakeRequest_Status302AndHTMLResponseHandling(t *testing.T) {
 		}
 	})
 }
+
+func TestGetProviderInfoClosesResponseBody(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	tests := []struct {
+		name    string
+		payload string
+		wantErr bool
+	}{
+		{
+			name:    "successful decoding closes body",
+			payload: `{"local":{"providerName":"Local","providerUrl":""}}`,
+		},
+		{
+			name:    "failed decoding closes body",
+			payload: `{invalid`,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(
+				func(w http.ResponseWriter, r *http.Request) {
+					w.Header().Set("Content-Type", "application/json")
+					_, _ = fmt.Fprint(w, tt.payload)
+				},
+			))
+			defer server.Close()
+
+			transport := &trackingTransport{
+				base: http.DefaultTransport,
+			}
+
+			previousTransport := http.DefaultTransport
+			http.DefaultTransport = transport
+			t.Cleanup(func() {
+				http.DefaultTransport = previousTransport
+			})
+
+			cfg := &config.MesheryCtlConfig{
+				CurrentContext: "test",
+				Contexts: map[string]config.Context{
+					"test": {
+						Endpoint: server.URL,
+					},
+				},
+			}
+
+			providers, err := GetProviderInfo(cfg)
+
+			// Check cleanup on both decoding paths.
+			if transport.body == nil {
+				t.Fatal("expected an HTTP response body to be tracked")
+			}
+			if !transport.body.closed {
+				t.Error("expected response body to be closed")
+			}
+
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("error = %v, wantErr = %v", err, tt.wantErr)
+			}
+
+			if tt.wantErr {
+				if providers != nil {
+					t.Errorf("expected nil providers, got %#v", providers)
+				}
+				return
+			}
+
+			provider, ok := providers["local"]
+			if !ok {
+				t.Fatal("expected local provider in response")
+			}
+			if provider.ProviderName != "Local" {
+				t.Errorf(
+					"provider name = %q, want Local",
+					provider.ProviderName,
+				)
+			}
+		})
+	}
+}
