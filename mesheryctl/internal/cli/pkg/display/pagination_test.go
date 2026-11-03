@@ -267,6 +267,20 @@ func TestPromptAsyncPagination(t *testing.T) {
 			expectItem:    &testItem{ID: "abc-123", Name: "Istio Base"},
 		},
 		{
+			name:       "Given_Multiple_Results_With_Single_Exact_Match_When_PromptAsyncPagination_Then_AutoSelect",
+			searchTerm: "kubernetes",
+			apiItems: []testItem{
+				{ID: "1", Name: "aws-eks-controller"},
+				{ID: "2", Name: "aerospike-kubernetes-operator"},
+				{ID: "5", Name: "kubernetes"},
+				{ID: "7", Name: "kube-ui-server"},
+			},
+			apiStatusCode: 200,
+			hasToken:      true,
+			expectError:   false,
+			expectItem:    &testItem{ID: "5", Name: "kubernetes"},
+		},
+		{
 			name:          "Given_Missing_Token_When_PromptAsyncPagination_Then_AuthError",
 			searchTerm:    "istio",
 			apiItems:      []testItem{},
