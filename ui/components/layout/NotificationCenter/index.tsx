@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { CustomTooltip, NoSsr } from '@sistent/sistent';
 import {
   alpha,
@@ -429,9 +429,9 @@ const NotificationCenterDrawer = () => {
     );
   }, []);
 
-  const loadMore = () => {
+  const loadMore = useCallback(() => {
     dispatch(loadNextPage(fetchEvents));
-  };
+  }, [dispatch, fetchEvents]);
 
   const handleClose = () => {
     if (!isNotificationCenterOpen) {
