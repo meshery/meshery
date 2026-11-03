@@ -247,4 +247,121 @@ describe('MesheryTreeView', () => {
     await user.click(screen.getByTestId('switch'));
     expect(setChecked).toHaveBeenCalled();
   });
+
+  describe('scroll position across infinite-scroll page loads', () => {
+    it('restores the scroll offset after more records arrive', () => {
+      const { container, rerender } = render(
+        <MesheryTreeView {...makeProps({ view: 'Models', data: [{ id: 'm1' }] })} />,
+      );
+
+      const scroller = container.querySelector('.scrollElement') as HTMLDivElement;
+      expect(scroller).not.toBeNull();
+
+      fireEvent.scroll(scroller, { target: { scrollTop: 120 } });
+
+      // Stand in for the browser dropping the offset when the list re-renders
+      // with the next page of records.
+      scroller.scrollTop = 0;
+
+      rerender(
+        <MesheryTreeView {...makeProps({ view: 'Models', data: [{ id: 'm1' }, { id: 'm2' }] })} />,
+      );
+
+      expect(scroller.scrollTop).toBe(120);
+    });
+
+    it('does not throw when the list empties and the scroll container unmounts', () => {
+      const { container, rerender } = render(
+        <MesheryTreeView {...makeProps({ view: 'Models', data: [{ id: 'm1' }] })} />,
+      );
+
+      const scroller = container.querySelector('.scrollElement') as HTMLDivElement;
+      fireEvent.scroll(scroller, { target: { scrollTop: 120 } });
+
+      // A search that matches nothing swaps the scrollable container out for the
+      // "No result found" state, so the restore must tolerate its absence.
+      expect(() =>
+        rerender(
+          <MesheryTreeView
+            {...makeProps({ view: 'Models', data: [], searchText: 'no-such-model' })}
+          />,
+        ),
+      ).not.toThrow();
+      expect(screen.getByText('No result found')).toBeInTheDocument();
+    });
+
+    it('restores the offset of the view being returned to, not the last one scrolled', () => {
+      // The reproduction from the issue: switching tabs unmounts and remounts
+      // the scroll container. Each view keeps its own offset, so coming back to
+      // Models must not land on wherever Relationships was left.
+      const { container, rerender } = render(
+        <MesheryTreeView {...makeProps({ view: 'Models', data: [{ id: 'm1' }] })} />,
+      );
+
+      const modelsScroller = container.querySelector('.scrollElement') as HTMLDivElement;
+      fireEvent.scroll(modelsScroller, { target: { scrollTop: 120 } });
+
+      // Switch to Relationships and scroll it somewhere else entirely.
+      rerender(<MesheryTreeView {...makeProps({ view: 'Relationships', data: [{ id: 'r1' }] })} />);
+      const relScroller = container.querySelector('.scrollElement') as HTMLDivElement;
+      fireEvent.scroll(relScroller, { target: { scrollTop: 40 } });
+
+      // Back to Models: the remounted container starts at 0 and must be
+      // restored to Models' own 120, not Relationships' 40.
+      rerender(<MesheryTreeView {...makeProps({ view: 'Models', data: [{ id: 'm1' }] })} />);
+      const restored = container.querySelector('.scrollElement') as HTMLDivElement;
+
+      expect(restored.scrollTop).toBe(120);
+    });
+    // The `!== undefined` comparison exists so that a saved offset of 0 is
+    // restored rather than skipped. Every other test here saves a non-zero
+    // offset, so a regression to a truthiness check would leave them green.
+    it('restores a saved offset of 0', () => {
+      const { container, rerender } = render(
+        <MesheryTreeView {...makeProps({ view: 'Models', data: [{ id: 'm1' }] })} />,
+      );
+
+      const scroller = container.querySelector('.scrollElement') as HTMLDivElement;
+      fireEvent.scroll(scroller, { target: { scrollTop: 120 } });
+      fireEvent.scroll(scroller, { target: { scrollTop: 0 } });
+
+      // Stand in for the browser leaving the list somewhere else before the
+      // re-render; the saved 0 must win.
+      scroller.scrollTop = 99;
+
+      rerender(
+        <MesheryTreeView {...makeProps({ view: 'Models', data: [{ id: 'm1' }, { id: 'm2' }] })} />,
+      );
+
+      expect(scroller.scrollTop).toBe(0);
+    });
+
+    // The container is not merely re-rendered here: the empty state replaces it
+    // entirely, so the ref is detached and a new node is attached on the way
+    // back. Distinct from the tab switch above, which swaps one view's container
+    // for another's.
+    it('restores the offset after the empty state detaches and reattaches the container', () => {
+      const { container, rerender } = render(
+        <MesheryTreeView {...makeProps({ view: 'Models', data: [{ id: 'm1' }] })} />,
+      );
+
+      const before = container.querySelector('.scrollElement') as HTMLDivElement;
+      fireEvent.scroll(before, { target: { scrollTop: 120 } });
+
+      // A search matching nothing swaps the list out for "No result found".
+      rerender(
+        <MesheryTreeView
+          {...makeProps({ view: 'Models', data: [], searchText: 'no-such-model' })}
+        />,
+      );
+      expect(container.querySelector('.scrollElement')).toBeNull();
+
+      // Clearing the search brings the list, and a fresh container, back.
+      rerender(<MesheryTreeView {...makeProps({ view: 'Models', data: [{ id: 'm1' }] })} />);
+      const after = container.querySelector('.scrollElement') as HTMLDivElement;
+
+      expect(after).not.toBe(before);
+      expect(after.scrollTop).toBe(120);
+    });
+  });
 });
