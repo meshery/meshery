@@ -412,6 +412,7 @@ const EventsView = ({ handleLoadNextPage, handleRetry, isFetching, hasMore, load
       {isFetching && hasMore && <Loading />}
       {loadError && !isFetching && (
         <Box
+          role="alert"
           sx={{
             display: 'flex',
             flexDirection: 'column',
