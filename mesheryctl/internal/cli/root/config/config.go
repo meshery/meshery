@@ -54,6 +54,18 @@ type Context struct {
 	EnvVars    map[string]any `yaml:"env,omitempty" mapstructure:"env,omitempty"`
 }
 
+// EnsureConfigPathNotEmpty checks that a Meshery configuration context path is
+// not empty (or all whitespace) before it is handed off to viper or the
+// filesystem. Left unchecked, an empty path is silently ignored by
+// viper.SetConfigFile and can surface later as a raw panic or a confusing
+// low-level OS error instead of a clean, actionable message.
+func EnsureConfigPathNotEmpty(configPath string) error {
+	if strings.TrimSpace(configPath) == "" {
+		return ErrEmptyConfigPath()
+	}
+	return nil
+}
+
 // GetMesheryCtl returns a reference to the mesheryctl configuration object
 func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 	c := &MesheryCtlConfig{}
@@ -362,6 +374,9 @@ func (v *Version) GetCommitSHA() string {
 
 // AddTokenToConfig adds token passed to it to mesheryctl config file
 func AddTokenToConfig(token Token, configPath string) error {
+	if err := EnsureConfigPathNotEmpty(configPath); err != nil {
+		return err
+	}
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return err
 	}
@@ -403,6 +418,9 @@ func AddTokenToConfig(token Token, configPath string) error {
 
 // DeleteTokenFromConfig deletes a token passed to it to mesheryctl config file
 func DeleteTokenFromConfig(tokenName string, configPath string) error {
+	if err := EnsureConfigPathNotEmpty(configPath); err != nil {
+		return err
+	}
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return err
 	}
@@ -440,6 +458,9 @@ func DeleteTokenFromConfig(tokenName string, configPath string) error {
 }
 
 func SetTokenToConfig(tokenName string, configPath string, ctxName string) error {
+	if err := EnsureConfigPathNotEmpty(configPath); err != nil {
+		return err
+	}
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return err
 	}
@@ -469,6 +490,9 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 // AddContextToConfig adds context passed to it to mesheryctl config file. If overwrite is set to true, existing
 // context with the contextName is overwritten
 func AddContextToConfig(contextName string, context Context, configPath string, set bool, overwrite bool) error {
+	if err := EnsureConfigPathNotEmpty(configPath); err != nil {
+		return err
+	}
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return err
 	}
