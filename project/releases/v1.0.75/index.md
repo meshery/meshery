@@ -1,0 +1,125 @@
+# v1.0.75
+
+LLMS index: [llms.txt](/llms.txt)
+
+---
+
+## What's New
+## 🔤 General
+- \[Server\] Default namespace for namespaced kinds in resolveResourcePath @rudrakshSoni-dev (#22566)
+- \[server\] Prevent nil pointer dereference on invalid load test URL @Supersaiyan101 (#22736)
+- \[Server\] Allow GitHub and Artifact Hub connections to register @Karman580 (#22711)
+- \[Agents\] Add pre-landing-review and migration-risk-analyzer skills (#22372) @VimalN2005 (#22718)
+- \[Server\] Isolate ExportModel working directory with per-request temp dir (#22609) @VimalN2005 (#22742)
+- \[Server\] Fix race in MeshSync deployment mode notifications @Karman580 (#22733)
+- \[Server\] Remove unused SetOverrideValues from graphql/model @RameshwariS (#22737)
+- \[Server\] Return 404 for missing resources and validate UUID in MeshSync handlers @Amansingh0807 (#22695)
+- \[Server\] Name the declared namespace on a Forbidden from the default fallback dry-run @rudrakshSoni-dev (#22661)
+- chore: make CLAUDE.md a symlink to AGENTS.md @ritzorama (#22606)
+- docs(agents): require treehouse worktrees and no-mistakes landing @CodeAhmedJamil (#22605)
+- Fix(server): resolve dry-run GVR discovery and in-design namespaces @rudrakshSoni-dev (#22464)
+
+## ⌨️ Meshery CLI
+
+- \[mesheryctl\] fix command help examples using unaccepted flags @Fazlul105 (#22707)
+- \[mesheryctl\] return errors from system token list and view @Fazlul105 (#22706)
+- \[mesheryctl\] validate channel argument upfront on system channel switch @Fazlul105 (#22703)
+- \[mesheryctl\] system start / system reset delete a "manifests" folder in the current directory @ayushgade06 (#22700)
+- \[mesheryctl\] Fix nil pointer dereference panic in design export on non-200 responses @Supersaiyan101 (#22705)
+- \[Docs\]fix CLI reference anchor @shatrughantwt (#22721)
+- \[mesheryctl\] Add missing delimiter between error message and cause @kkm121 (#22715)
+- fix(mesheryctl): close unclosed HTTP response bodies across api.Delete and api.Add callers @The-AnkitPatel (#22724)
+- \[mesheryctl\] Fix HTTP response body and connection leaks in IsMesheryRunning and MakeRequest @muskan-creates352 (#22727)
+- \[Server/mesheryctl\] Interpolate format args in MeshKit error construc… @barbierajput378-pixel (#22735)
+- fix/CLI reference docs should not include /home/runner/... @Aravind226 (#22746)
+- \[mesheryctl\] Print model list flag validation errors once @adityacosmos24 (#22604)
+- \[mesheryctl\] Fix grammar in component and model command descriptions @Ultronious (#22622)
+- \[mesheryctl\] Fix continuous HTTP response body leak in system dashboard @muskan-creates352 (#22627)
+- \[mesheryctl\] Fix HTTP response body descriptor leaks in system check @muskan-creates352 (#22583)
+- \[mesheryctl\] model: fix double-wrapped export flag validation error and add tests @somaz94 (#19866)
+- \[mesheryctl\] Re-enable unit tests and fix query URL in environment list_test.go @AliRana30 (#22589)
+- fix(mesheryctl): golangci-lint errors in mesheryctl @banana-three-join (#22580)
+- \[mesheryctl\] Reject --page values below 1 in perf profile and perf result @Raghavcommercialwinner (#22248)
+
+## 🖥 Meshery UI
+
+- fix(server): stop embedding design contents in event metadata @yi-nuo426 (#22769)
+- Fix Responsiveness of Cancel, Save, Reset Action Buttons @Katotodan (#21312)
+- \[UI\] Fix form fields overlapping the sticky Settings bar @NerfedAce (#22683)
+- Fix preservation of saved performance profile metadata @aryan105825 (#22702)
+- \[UI\] Reset MeshSync table to first page on search and filter @harshiltewari2004 (#22710)
+- \[CI\] Replace legacy setInterval polling in waitFor.ts with Playwright expect.poll @Rohith-Saran (#22713)
+- \[UI\] Make provider dialog close button hover visible @Saidkhusayn (#22728)
+- feat(ui): enhance cross-cluster design validation with unified compatibility analysis @ThakurUjjwal1706 (#22739)
+- \[UI\] Fix Design Configurator "+" for key/value fields after RJSF v6 upgrade @HelanaNady (#22744)
+- fix(ui): manage blob URL lifecycle and prevent memory leak in DataToF… @Ayush-AM (#22570)
+- \[UI\] Fix inert adapter selection and variable shadowing in MesheryPlayComponent @Ayush-AM (#22349)
+- \[UI\] Fix schema dropdown rendering condition and HTML nesting in LegacyRJSFModal @Ayush-AM (#22350)
+- \[UI\] Replace waitForTimeout in user preference e2e spec with a web-first assertion @nguyenvanlinh14 (#22619)
+- fix(ui): upgrade Next.js to address security vulnerabilities @SajanBisht (#22550)
+
+## 🧰 Maintenance
+
+- \[mesheryctl\] return errors from system token list and view @Fazlul105 (#22706)
+- \[CI\] Replace legacy setInterval polling in waitFor.ts with Playwright expect.poll @Rohith-Saran (#22713)
+- Fix broken DCO documentation link in PR welcome comment @motalib6 (#22745)
+- \[UI\] Replace waitForTimeout in user preference e2e spec with a web-first assertion @nguyenvanlinh14 (#22619)
+- \[Docs\] Fix two stale links in GOVERNANCE.md @ayanasarkar (#22453)
+
+## 📖 Documentation
+
+- fix(server): stop embedding design contents in event metadata @yi-nuo426 (#22769)
+- \[Docs\] Update outdated Playwright E2E testing guide references @muskan-creates352 (#22226)
+- \[mesheryctl\] fix command help examples using unaccepted flags @Fazlul105 (#22707)
+- \[Server\] Document performance result endpoint and correct stale error route (#22240) @VimalN2005 (#22697)
+- \[Docs\] Add air-gapped Kubernetes installation guide @rahmanaisha (#22714)
+- \[Docs\]fix CLI reference anchor @shatrughantwt (#22721)
+- \[Docs\] Serve the main docs font as WOFF2 and preload it @ayushgade06 (#22738)
+- fix/CLI reference docs should not include /home/runner/... @Aravind226 (#22746)
+- \[Docs\] Clarify Docker startup delay and local site URL @peremunoz (#22652)
+- \[mesheryctl\] Fix grammar in component and model command descriptions @Ultronious (#22622)
+- \[Docs\] Fix broken in-page anchor links across docs @ayanasarkar (#22441)
+- Docs(meeting): add Shukria Sultani's introduction @shukria-sultani (#22696)
+- chore: prashanth - introduction for week-of-10-29-2026 @knocBack (#22673)
+- Yoshita dwivedi patch 2 @Yoshita-Dwivedi (#22676)
+- My introduction @merytpeters (#22678)
+- Aravind's Attendance @Aravind226 (#22677)
+- Add Harpal's introduction to meetings documentation @Hpsingh26 (#22680)
+- Create introduction for Emmanuel Wilson Dismas. Computer engineer. @dismasdev (#22679)
+- docs: add Arpan Dasgupta's community introduction @Ultronious (#22672)
+- \[Docs\] Add Aman Singh to newcomers meeting attendance for week-of-10-29-2026 @Amansingh0807 (#22671)
+- Aryan Patel - Introduction @aryanap07 (#22670)
+- Add Maanvi's introduction to community document @Maanvi212006 (#22669)
+- \[Docs\] Introduction - Abhinav Deval @abhinavkdeval08-design (#22662)
+- Add Maanvi Chetwani's introduction to meeting notes @Maanvi212006 (#22658)
+- \[Docs\] Fix Helm Snapshot install URL and plugin usage @CyberRik (#22574)
+- \[Docs\] Add "View as Markdown" links, per-page Markdown output and llms.txt @Katotodan (#22375)
+- docs: add Paul Anyebe introduction @cutewizzy11 (#22594)
+- Introduction - Muskan Kumari @muskan-creates352 (#22579)
+- Introduction - Shatrughan Mishra @shatrughantwt (#22576)
+- \[Docs\] Fix typos, missing words, and duplicate tokens in Workspaces and Operator CRDs guides @Paramveersingh-S (#22300)
+- docs: add Tristan Brian introduction @TristanBrian (#22560)
+- \[Docs\] Introduction - AryaBhatt @AryaBhatt45 (#22558)
+- introduction- Pranav Gupta @sabertooth-123 (#22557)
+- Create Dipansu Mishra.md with personal details @dipansumishra9797-sudo (#22548)
+- Update introduction in Prince-Kumar.md @Princekr267 (#22546)
+- Add YashPawar.md with Introduction. @yashspidey (#22533)
+- Introduction - Sajan Bisht @SajanBisht (#22545)
+- Create Jaikishan_Nayak.md with personal introduction @jaikishan1234 (#22544)
+- Add introduction for Prayas Pal in markdown @Prayas-35 (#22542)
+- DishanSamuel.md for community profile @DishanSamuel (#22538)
+- Introduction - Sarah Ogunlalu @Aden1ke (#22537)
+- Okoko Jerry @OkokoJerry (#22536)
+- Update Ashutosh's introduction with additional details @Ashuvis (#22541)
+- Okoko Jerry @OkokoJerry (#22540)
+- Add introduction for Bhaumik in meetings documentation @BHAUMIK0711 (#22539)
+- Introduction - Onunwa Goodness @Noble-47 (#22535)
+- Introduction - Shivam Singh @Th-Shivam (#22534)
+- Add introduction for Abhay Pratap Yadav @QUBITABHAY (#22532)
+- Add maanvi.md with introduction @Maanvi212006 (#22531)
+- \[Newcomer's Meet\]: Add maanvi-chetwani.md with introduction @Maanvi212006 (#22528)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@Aden1ke, @AliRana30, @Amansingh0807, @Aravind226, @AryaBhatt45, @Ashuvis, @Ayush-AM, @BHAUMIK0711, @CodeAhmedJamil, @CyberRik, @DishanSamuel, @Fazlul105, @HelanaNady, @Hpsingh26, @Karman580, @Katotodan, @Maanvi212006, @NerfedAce, @Noble-47, @OkokoJerry, @Paramveersingh-S, @Prayas-35, @Princekr267, @QUBITABHAY, @Raghavcommercialwinner, @RameshwariS, @Rohith-Saran, @Saidkhusayn, @SajanBisht, @Supersaiyan101, @Th-Shivam, @ThakurUjjwal1706, @The-AnkitPatel, @TristanBrian, @Ultronious, @VimalN2005, @Yoshita-Dwivedi, @abhinavkdeval08-design, @adityacosmos24, @alexquincy, @arjunmehta-git, @aryan105825, @aryanap07, @ayanasarkar, @ayushgade06, @banana-three-join, @barbierajput378-pixel, @cutewizzy11, @dipansumishra9797-sudo, @dismasdev, @fitzergerald, @harshiltewari2004, @hiyach28, @ianrwhitney, @jaikishan1234, @kkm121, @knocBack, @l5io, @leecalcote, @lekaf974, @merytpeters, @meshery-ci, @motalib6, @muskan-creates352, @nguyenvanlinh14, @peremunoz, @pontusringblom, @rahmanaisha, @ritzorama, @rudrakshSoni-dev, @sabertooth-123, @shatrughantwt, @shukria-sultani, @somaz94, @winkletinkle, @yashspidey, @yi-nuo426 and pontusringblom
