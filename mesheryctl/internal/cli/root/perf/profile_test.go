@@ -207,6 +207,12 @@ func TestFormatAdditionalOptions(t *testing.T) {
 			expected: "",
 			hasErr:   false,
 		},
+		{
+			name:     "unmarshalable value returns error",
+			input:    make(chan int),
+			expected: "",
+			hasErr:   true,
+		},
 	}
 
 	for _, tt := range tests {
