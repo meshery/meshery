@@ -31,11 +31,13 @@ vi.mock('@sistent/sistent', () => {
     ),
     ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
     Box: ({ children }: any) => <div>{children}</div>,
-    TextField: ({ label, value, onChange, id }: any) => (
+    TextField: ({ label, value, onChange, id, placeholder, disabled }: any) => (
       <label>
         {label}
         <input
           data-testid={`textfield-${id || label}`}
+          placeholder={placeholder}
+          disabled={disabled}
           value={value || ''}
           onChange={(e) => onChange?.(e)}
         />
@@ -57,9 +59,9 @@ vi.mock('@sistent/sistent', () => {
       </select>
     ),
     InputLabel: ({ children }: any) => <label>{children}</label>,
-    FormControlLabel: ({ label, control }: any) => (
+    FormControlLabel: ({ label, control, value }: any) => (
       <label>
-        {control}
+        {React.cloneElement(control, { value })}
         {label}
       </label>
     ),
@@ -68,9 +70,9 @@ vi.mock('@sistent/sistent', () => {
     ),
     Typography: ({ children }: any) => <span>{children}</span>,
     FormControl: ({ children }: any) => <div>{children}</div>,
-    RadioGroup: ({ children }: any) => <div>{children}</div>,
+    RadioGroup: ({ children, onChange }: any) => <div onChange={onChange}>{children}</div>,
     MenuItem: ({ children, value }: any) => <option value={value}>{children}</option>,
-    Radio: () => <input type="radio" />,
+    Radio: (props: any) => <input type="radio" {...props} />,
     Grid2: ({ children }: any) => <div>{children}</div>,
     AppRegistrationIcon: () => <svg />,
     BrushIcon: () => <svg />,
@@ -183,6 +185,43 @@ describe('UrlStepper', () => {
     };
   });
 
+  it.each([
+    ['Artifact Hub', 'artifacthub', 'https://artifacthub.io/packages/helm/meshery/meshery'],
+    ['GitHub', 'github', 'git://github.com/cert-manager/cert-manager/master/deploy/crds'],
+  ])(
+    'uses the canonical registrant for %s and keeps its display label',
+    (label, registrant, url) => {
+      stepperState.activeStep = 3;
+      const { rerender } = render(<UrlStepper handleClose={vi.fn()} />);
+      fireEvent.click(screen.getByLabelText(label));
+      expect(screen.getByLabelText('Model URL')).not.toHaveAttribute(
+        'placeholder',
+        'Select a source first',
+      );
+      fireEvent.change(screen.getByLabelText('Model URL'), { target: { value: url } });
+      expect(screen.getByTestId('UrlStepper-Button-Next')).toBeEnabled();
+      expect(stepperState.steps[6].component.props.requestBody.importBody.model.registrant).toBe(
+        registrant,
+      );
+      stepperState.activeStep = 5;
+      rerender(<UrlStepper handleClose={vi.fn()} />);
+      expect(screen.getByText(label)).toBeInTheDocument();
+    },
+  );
+
+  it('rejects invalid Artifact Hub URLs and accepts supported search URLs', () => {
+    stepperState.activeStep = 3;
+    render(<UrlStepper handleClose={vi.fn()} />);
+    fireEvent.click(screen.getByLabelText('Artifact Hub'));
+    fireEvent.change(screen.getByLabelText('Model URL'), {
+      target: { value: 'https://example.com/not-artifacthub' },
+    });
+    expect(screen.getByTestId('UrlStepper-Button-Next')).toBeDisabled();
+    fireEvent.change(screen.getByLabelText('Model URL'), {
+      target: { value: 'https://artifacthub.io/packages/search?ts_query_web=meshery-operator' },
+    });
+    expect(screen.getByTestId('UrlStepper-Button-Next')).toBeEnabled();
+  });
   it('renders modal body and footer', () => {
     render(<UrlStepper handleClose={vi.fn()} />);
     expect(screen.getByTestId('modal-body')).toBeInTheDocument();
