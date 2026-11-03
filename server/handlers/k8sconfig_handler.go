@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -327,8 +328,11 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			// has still been persisted in the discovered state; just skip the
 			// event. See mhelpers.HasMachineContext.
 			if mhelpers.HasMachineContext(inst) {
+				// detach from the http request lifecycle so that the goroutine isn't cancelled when
+				// the handler returns, while preserving context values that downstream calls depend on.
+				detachedCtx := context.WithoutCancel(req.Context())
 				go func(inst *machines.StateMachine) {
-					event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
+					event, err := inst.SendEvent(detachedCtx, machines.EventType(mhelpers.StatusToEvent(status)), nil)
 					if err != nil {
 						_ = provider.PersistEvent(*event, token)
 						go h.config.EventBroadcaster.Publish(userID, event)
