@@ -174,7 +174,12 @@ function MesheryPatternGrid({
       let id = design.id;
       let name = design.name;
       downloadContent({ id, name, type: 'pattern', source_type, params });
-      notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
+      if (source_type) {
+        notify({
+          message: `"${name}" design downloaded`,
+          event_type: EVENT_TYPES.INFO,
+        });
+      }
     } catch (e) {
       console.error(e);
     }
