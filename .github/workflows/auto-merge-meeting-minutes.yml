@@ -183,13 +183,11 @@ jobs:
           github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
-            const prNumber = ${{ steps.validate.outputs.pr_number }};
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const expectedHeadSha = process.env.VALIDATED_HEAD_SHA;
-            
-            core.info(`Approving PR #${prNumber}`);
+
             core.info(`Approving PR #${prNumber} at commit ${expectedHeadSha}`);
-            
+
             try {
               await github.rest.pulls.createReview({
                 owner,
@@ -217,18 +215,16 @@ jobs:
           github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
-            const prNumber = ${{ steps.validate.outputs.pr_number }};
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const expectedHeadSha = process.env.VALIDATED_HEAD_SHA;
-            
-            core.info(`Attempting to merge PR #${prNumber}`);
+
             if (!expectedHeadSha) {
               core.setFailed('Missing validated head SHA output from validation step.');
               return;
             }
 
             core.info(`Attempting to merge PR #${prNumber} bound to validated commit ${expectedHeadSha}`);
-            
+
             try {
               // First, check if the PR is mergeable
               const { data: pr } = await github.rest.pulls.get({
@@ -247,7 +243,6 @@ jobs:
                 return;
               }
               
-              // Merge the PR using squash merge
               if (pr.head.sha !== expectedHeadSha) {
                 core.setFailed(`PR #${prNumber} head commit changed from ${expectedHeadSha} to ${pr.head.sha}. Aborting merge.`);
                 return;
