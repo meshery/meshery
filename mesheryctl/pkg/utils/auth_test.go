@@ -189,9 +189,8 @@ func TestMakeRequest_Status302AndHTMLResponseHandling(t *testing.T) {
 		if err == nil {
 			t.Fatal("expected error on 500, got nil")
 		}
-		expectedErr := ErrMesheryServerInternalError(errors.New(""))
-		if errors.GetCode(err) != errors.GetCode(expectedErr) {
-			t.Errorf("expected error code %s, got %s", errors.GetCode(expectedErr), errors.GetCode(err))
+		if errors.GetCode(err) != ErrMesheryServerInternalErrorCode {
+			t.Errorf("expected error code %s, got %s", ErrMesheryServerInternalErrorCode, errors.GetCode(err))
 		}
 	})
 }

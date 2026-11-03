@@ -259,6 +259,12 @@ func TestCreatePerformanceProfile_ServerErrors(t *testing.T) {
 			responseBody:  `{"error":"unauthorized access"}`,
 			expectedInErr: "unauthorized access",
 		},
+		{
+			name:          "server returns 204 no content",
+			statusCode:    http.StatusNoContent,
+			responseBody:  "",
+			expectedInErr: "204",
+		},
 	}
 
 	for _, tt := range tests {
