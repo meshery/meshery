@@ -97,6 +97,43 @@ function isDesignNavNodeShown(categories: NavigatorCategory[]): boolean {
   return false;
 }
 
+type CommandBase = Omit<Command, 'permission' | 'disabled' | 'requires'>;
+
+function withPermission(
+  base: CommandBase,
+  permission: PermissionKeySpec | undefined,
+  can: CanFn,
+): Command {
+  const allowed = isAllowed(permission, can);
+  return {
+    ...base,
+    permission,
+    disabled: !allowed,
+    requires: allowed ? undefined : formatRequires(permission),
+  };
+}
+
+function toNavCommand(
+  node: NavigatorCategory | NavigatorChild,
+  href: string,
+  can: CanFn,
+  parent?: NavigatorCategory,
+): Command {
+  return withPermission(
+    {
+      id: `nav:${href}`,
+      title: node.title,
+      section: 'Navigate',
+      subtitle: parent?.title,
+      keywords: parent ? [parent.title] : [],
+      href,
+      icon: node.icon,
+    },
+    node.permissionKey,
+    can,
+  );
+}
+
 /**
  * Builds the complete list of commands for the command palette.
  * Takes the already-resolved navigator array and a ProviderUiAccessControl instance.
@@ -116,176 +153,117 @@ export function buildCommands(
   const navigateCommands: Command[] = [];
   const settingsCommands: Command[] = [];
 
-  // Actions section: Create and Import design commands
-  // Omitted if in playground mode or if the resolved design node is not shown
+  // Actions: omitted in playground mode or when the resolved design node is not shown
   if (!isPlayground && isDesignNavNodeShown(rawList)) {
-    const createDesignPermission: PermissionKeySpec = {
-      allOf: [Keys.CatalogManagementViewDesigns, Keys.CatalogManagementCreateNewDesign],
-    };
-    const createAllowed = isAllowed(createDesignPermission, can);
-    actionsCommands.push({
-      id: 'action:create-design',
-      title: 'Create new Design',
-      section: 'Actions',
-      keywords: ['design', 'create', 'pattern', 'new', 'configurator'],
-      href: '/configuration/designs/configurator',
-      permission: createDesignPermission,
-      disabled: !createAllowed,
-      requires: !createAllowed ? formatRequires(createDesignPermission) : undefined,
-    });
-
-    const importDesignPermission: PermissionKeySpec = {
-      allOf: [Keys.CatalogManagementViewDesigns, Keys.CatalogManagementImportDesign],
-    };
-    const importAllowed = isAllowed(importDesignPermission, can);
-    actionsCommands.push({
-      id: 'action:import-design',
-      title: 'Import Design',
-      section: 'Actions',
-      keywords: ['design', 'import', 'upload', 'pattern'],
-      href: '/configuration/designs?action=import',
-      permission: importDesignPermission,
-      disabled: !importAllowed,
-      requires: !importAllowed ? formatRequires(importDesignPermission) : undefined,
-    });
+    actionsCommands.push(
+      withPermission(
+        {
+          id: 'action:create-design',
+          title: 'Create new Design',
+          section: 'Actions',
+          keywords: ['design', 'create', 'pattern', 'new', 'configurator'],
+          href: '/configuration/designs/configurator',
+        },
+        { allOf: [Keys.CatalogManagementViewDesigns, Keys.CatalogManagementCreateNewDesign] },
+        can,
+      ),
+      withPermission(
+        {
+          id: 'action:import-design',
+          title: 'Import Design',
+          section: 'Actions',
+          keywords: ['design', 'import', 'upload', 'pattern'],
+          href: '/configuration/designs?action=import',
+        },
+        { allOf: [Keys.CatalogManagementViewDesigns, Keys.CatalogManagementImportDesign] },
+        can,
+      ),
+    );
   }
 
-  // Navigate section: two levels only (top-level nodes and their direct children)
+  // Navigate: two levels only (top-level nodes and their direct children), deduped by href
   const seenHrefs = new Set<string>();
+  const addNavCommand = (
+    node: NavigatorCategory | NavigatorChild,
+    href: string,
+    parent?: NavigatorCategory,
+  ) => {
+    if (seenHrefs.has(href)) {
+      return;
+    }
+    seenHrefs.add(href);
+    navigateCommands.push(toNavCommand(node, href, can, parent));
+  };
 
   for (const category of rawList) {
     if (!category) {
       continue;
     }
-
     if (
       providerUiAccessControl &&
       !providerUiAccessControl.isNavigatorComponentEnabled([category.id])
     ) {
       continue;
     }
-
-    // Top-level node: skipped if show is falsy
     if (!category.show) {
       continue;
     }
 
-    const hasChildren = Array.isArray(category.children) && category.children.length > 0;
-
-    if (hasChildren) {
-      // 1. Compute shown direct children first
-      const shownChildren: NavigatorChild[] = [];
-      for (const child of category.children!) {
+    if (Array.isArray(category.children) && category.children.length > 0) {
+      const shownChildren = category.children.filter((child) => {
         if (
           providerUiAccessControl &&
           isPlayground &&
           !providerUiAccessControl.isNavigatorComponentEnabled([category.id, child.id])
         ) {
-          continue;
+          return false;
         }
-
-        // Child node: skipped only if typeof show !== 'undefined' && !show
+        // A child is skipped only when show is explicitly falsy; undefined show is included
         if (typeof child.show !== 'undefined' && !child.show) {
-          continue;
+          return false;
         }
+        return Boolean(child.href);
+      });
+      const shownChildHrefs = new Set(shownChildren.map((child) => child.href));
 
-        if (!child.href) {
-          continue;
-        }
-
-        shownChildren.push(child);
+      // Parent command only when it links somewhere its shown children do not already go
+      if (category.link && category.href && !shownChildHrefs.has(category.href)) {
+        addNavCommand(category, category.href);
       }
-
-      const shownChildHrefs = new Set<string>(shownChildren.map((c) => c.href!));
-
-      // 2. Parent command: when link && href, unless its href equals the href of one of its shown children or already seen
-      if (
-        category.link &&
-        category.href &&
-        !shownChildHrefs.has(category.href) &&
-        !seenHrefs.has(category.href)
-      ) {
-        seenHrefs.add(category.href);
-        const allowed = isAllowed(category.permissionKey, can);
-        navigateCommands.push({
-          id: `nav:${category.href}`,
-          title: category.title,
-          section: 'Navigate',
-          keywords: [],
-          href: category.href,
-          icon: category.icon,
-          permission: category.permissionKey,
-          disabled: !allowed,
-          requires: !allowed ? formatRequires(category.permissionKey) : undefined,
-        });
-      }
-
-      // 3. Direct children commands (order: parent first, then its children)
       for (const child of shownChildren) {
-        if (seenHrefs.has(child.href!)) {
-          continue;
-        }
-        seenHrefs.add(child.href!);
-
-        const allowed = isAllowed(child.permissionKey, can);
-        navigateCommands.push({
-          id: `nav:${child.href}`,
-          title: child.title,
-          section: 'Navigate',
-          subtitle: category.title,
-          keywords: [category.title],
-          href: child.href!,
-          icon: child.icon,
-          permission: child.permissionKey,
-          disabled: !allowed,
-          requires: !allowed ? formatRequires(child.permissionKey) : undefined,
-        });
+        addNavCommand(child, child.href!, category);
       }
     } else if (category.link && category.href) {
-      // Node without children becomes one command
-      if (!seenHrefs.has(category.href)) {
-        seenHrefs.add(category.href);
-        const allowed = isAllowed(category.permissionKey, can);
-        navigateCommands.push({
-          id: `nav:${category.href}`,
-          title: category.title,
-          section: 'Navigate',
-          keywords: [],
-          href: category.href,
-          icon: category.icon,
-          permission: category.permissionKey,
-          disabled: !allowed,
-          requires: !allowed ? formatRequires(category.permissionKey) : undefined,
-        });
-      }
+      addNavCommand(category, category.href);
     }
   }
 
-  // Settings section: Settings and Preferences
-  // Omitted if in playground mode
+  // Settings: omitted in playground mode
   if (!isPlayground) {
-    const settingsAllowed = isAllowed(Keys.MesherySystemViewSettings, can);
-    settingsCommands.push({
-      id: 'settings',
-      title: 'Settings',
-      section: 'Settings',
-      keywords: ['settings', 'configure', 'system'],
-      href: '/settings',
-      permission: Keys.MesherySystemViewSettings,
-      disabled: !settingsAllowed,
-      requires: !settingsAllowed ? formatRequires(Keys.MesherySystemViewSettings) : undefined,
-    });
-
-    settingsCommands.push({
-      id: 'preferences',
-      title: 'Preferences',
-      section: 'Settings',
-      keywords: ['preferences', 'user', 'profile'],
-      href: '/user/preferences',
-      permission: undefined,
-      disabled: false,
-      requires: undefined,
-    });
+    settingsCommands.push(
+      withPermission(
+        {
+          id: 'settings',
+          title: 'Settings',
+          section: 'Settings',
+          keywords: ['settings', 'configure', 'system'],
+          href: '/settings',
+        },
+        Keys.MesherySystemViewSettings,
+        can,
+      ),
+      withPermission(
+        {
+          id: 'preferences',
+          title: 'Preferences',
+          section: 'Settings',
+          keywords: ['preferences', 'user', 'profile'],
+          href: '/user/preferences',
+        },
+        undefined,
+        can,
+      ),
+    );
   }
 
   return [...actionsCommands, ...navigateCommands, ...settingsCommands];

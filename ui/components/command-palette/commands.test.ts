@@ -15,24 +15,6 @@ vi.mock('../../css/icons.styles', () => ({
   iconSmall: {},
 }));
 
-vi.mock('@sistent/sistent', () => ({
-  createCanShow: () => () => null,
-  EventBus: class {
-    on() {
-      return { subscribe: () => {} };
-    }
-  },
-  useTheme: () => ({
-    palette: {
-      background: { constant: { white: 'white' } },
-      icon: { default: 'black' },
-    },
-  }),
-  CatalogIcon: () => null,
-  TachographDigitalIcon: () => null,
-  InsertChartIcon: () => null,
-}));
-
 // Stub the 7 static .js drawer-icon SVG assets that Vite cannot parse as JSX
 vi.mock('../../public/static/img/drawer-icons/lifecycle_mgmt_svg', () => ({
   default: () => null,
