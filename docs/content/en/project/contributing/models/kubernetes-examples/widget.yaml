@@ -1,0 +1,7 @@
+apiVersion: examples.meshery.io/v1alpha1
+kind: Widget
+metadata:
+  name: meshery-example-widget
+spec:
+  message: Hello from Meshery
+  replicas: 1

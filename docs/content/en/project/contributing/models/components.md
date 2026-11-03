@@ -11,6 +11,10 @@ In Meshery, a [Components]({{< ref "concepts/logical/components.md" >}}) is a fu
 
 ## Overview of Steps to Create Components
 
+Explore the [Kubernetes resource examples]({{< ref
+"project/contributing/models/kubernetes-examples/index.md" >}}) for downloadable
+manifests and a CRD with usage and cleanup instructions.
+
 **Prework:**
 
 <!-- 1. [Component Identification](#component-identification) -->
