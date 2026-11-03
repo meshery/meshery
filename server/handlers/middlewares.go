@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
@@ -372,10 +373,11 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			continue
 		}
 		inst.ResetState()
-		// detach from the http request lifecycle so that the goroutine isn't cancelled when
-		// the handler returns, while preserving context values that downstream calls depend on.
-		detachedCtx := context.WithoutCancel(ctx)
+		// detach from the http request lifecycle with a bounded timeout so that the goroutine isn't cancelled when
+		// the handler returns, while preventing goroutine leaks if downstream calls hang.
+		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 2*time.Minute)
 		go func(inst *machines.StateMachine) {
+			defer cancel()
 			event, err := inst.SendEvent(detachedCtx, machines.Discovery, nil)
 			if err != nil {
 				_ = provider.PersistEvent(*event, token)
@@ -440,10 +442,11 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			continue
 		}
 		inst.ResetState()
-		// detach from the http request lifecycle so that the goroutine isn't cancelled when
-		// the handler returns, while preserving context values that downstream calls depend on.
-		detachedCtx := context.WithoutCancel(ctx)
+		// detach from the http request lifecycle with a bounded timeout so that the goroutine isn't cancelled when
+		// the handler returns, while preventing goroutine leaks if downstream calls hang.
+		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 2*time.Minute)
 		go func(inst *machines.StateMachine) {
+			defer cancel()
 			event, err := inst.SendEvent(detachedCtx, machines.Discovery, nil)
 			if err != nil {
 				_ = provider.PersistEvent(*event, token)

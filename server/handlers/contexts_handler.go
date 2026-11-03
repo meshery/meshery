@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -146,10 +147,11 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			smInstanceTracker.Remove(connectionUUID)
 		}
 	} else {
-		// detach from the http request lifecycle so that the goroutine isn't cancelled when
-		// the handler returns, while preserving context values that downstream calls depend on.
-		detachedCtx := context.WithoutCancel(req.Context())
+		// detach from the http request lifecycle with a bounded timeout so that the goroutine isn't cancelled when
+		// the handler returns, while preventing goroutine leaks if downstream calls hang.
+		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), 2*time.Minute)
 		go func(inst *machines.StateMachine) {
+			defer cancel()
 			if smInstanceTracker != nil {
 				defer smInstanceTracker.Remove(connectionUUID)
 			}

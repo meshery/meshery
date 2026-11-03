@@ -169,7 +169,6 @@ func TestDeleteContext_GetK8sContextError_WithNameFallback(t *testing.T) {
 	}
 }
 
-
 func TestDeleteContext_TrackerRemovedOnStateMachineFailure(t *testing.T) {
 	systemID := uuid.Must(uuid.NewV4())
 	userID := uuid.Must(uuid.NewV4())
