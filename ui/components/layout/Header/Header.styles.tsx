@@ -60,6 +60,9 @@ export const MenuIconButton = styled(IconButton)(({ theme }) => ({
 
 export const UserSpan = styled('span')(({ theme }) => ({
   marginLeft: theme.spacing(1),
+  [theme.breakpoints.down('sm')]: {
+    marginLeft: theme.spacing(0.5),
+  },
 }));
 
 export const HeaderIcons = styled(MenuIcon)(({ theme }) => ({
@@ -117,7 +120,8 @@ export const IconButtonMenu = styled(IconButton)(({ theme }) => ({
 export const UserInfoContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  [theme.breakpoints.down('399')]: {
-    gap: '0.3rem',
+  gap: '0.5rem',
+  [theme.breakpoints.down('sm')]: {
+    gap: '0.15rem',
   },
 }));
