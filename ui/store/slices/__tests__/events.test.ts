@@ -122,26 +122,31 @@ describe('events thunks – failed page handling', () => {
     expect(dispatch).not.toHaveBeenCalled();
   });
 
-  it('retryCurrentPage re-requests the failed page, not the last loaded page', async () => {
-    const dispatched: any[] = [];
-    const dispatch = (action: any) =>
-      typeof action === 'function' ? action(dispatch, getState) : (dispatched.push(action), action);
-    // current page is 3 (last loaded), but page 4 failed and is pending retry
-    const getState = () =>
-      makeState({
-        current_view: {
-          page: 3,
-          filters: { status: 'read' },
-          load_error: true,
-          failed_request: { page: 4, filters: { status: 'unread' } },
-        },
-      });
-    const fetch = vi.fn().mockResolvedValue({ data: { events: [makeEvent()] } });
+  it('retryCurrentPage re-requests the failed page through the real failure flow', async () => {
+    // Drive the real reducer so setLoadError's payload actually lands in state,
+    // then retry reads it back — rather than hand-setting failed_request.
+    let state = eventsReducer(undefined, { type: 'init' });
+    const getState = () => ({ events: state });
+    const dispatch = (action: any) => {
+      if (typeof action === 'function') return action(dispatch, getState);
+      state = eventsReducer(state, action);
+      return action;
+    };
+    const filters = { status: 'unread' };
 
-    await retryCurrentPage(fetch)(dispatch, getState);
+    // page 1 loads fine; page 2 fails
+    const okFetch = vi.fn().mockResolvedValue({ data: { events: [makeEvent({ id: 'p1' })] } });
+    await loadEvents(okFetch, 1, filters)(dispatch, getState);
+    const failFetch = vi.fn().mockResolvedValue({ error: { status: 500 } });
+    await loadNextPage(failFetch)(dispatch, getState);
 
-    // retries the failed page 4 with its filters, not current page 3
-    expect(fetch).toHaveBeenCalledWith({ page: 4, filters: { status: 'unread' } });
+    expect(state.current_view.page).toBe(1); // last successful page
+    expect(state.current_view.load_error).toBe(true);
+
+    // retry must request the failed page 2 with the original filters, not page 1
+    const retryFetch = vi.fn().mockResolvedValue({ data: { events: [makeEvent({ id: 'p2' })] } });
+    await retryCurrentPage(retryFetch)(dispatch, getState);
+    expect(retryFetch).toHaveBeenCalledWith({ page: 2, filters });
   });
 
   it('retryCurrentPage is a no-op when no request is pending', async () => {
