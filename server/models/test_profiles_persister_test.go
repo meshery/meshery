@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/gofrs/uuid"
+	"github.com/meshery/meshkit/database"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 )
 
@@ -81,5 +83,51 @@ func TestDecodePerformanceTestConfigSupportsSchemaNativeJSON(t *testing.T) {
 
 	if config.ID != original.ID || config.SmpVersion != original.SmpVersion || config.Clients[0].Protocol != "tcp" {
 		t.Fatalf("schema-native config changed during decode: %+v", config)
+	}
+}
+
+func TestTestProfilesPersisterWriteTestConfigUpdatesExistingRow(t *testing.T) {
+	db, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
+	if err != nil {
+		t.Fatalf("open database: %v", err)
+	}
+	if err := db.AutoMigrate(&PerformanceTestConfig{}); err != nil {
+		t.Fatalf("migrate test configs: %v", err)
+	}
+	persister := &TestProfilesPersister{DB: &db}
+
+	marshalConfig := func(name string) []byte {
+		payload, err := json.Marshal(&perfprofile.PerformanceTestConfig{Name: name})
+		if err != nil {
+			t.Fatalf("marshal test config: %v", err)
+		}
+		return payload
+	}
+
+	existingID := uuid.Must(uuid.NewV4())
+	if err := persister.WriteTestConfig(existingID, marshalConfig("old")); err != nil {
+		t.Fatalf("write initial config: %v", err)
+	}
+	if err := persister.WriteTestConfig(existingID, marshalConfig("new")); err != nil {
+		t.Fatalf("update config: %v", err)
+	}
+	updated, err := persister.GetTestConfig(existingID)
+	if err != nil {
+		t.Fatalf("read updated config: %v", err)
+	}
+	if updated.Name != "new" {
+		t.Fatalf("updated config name = %q, want %q", updated.Name, "new")
+	}
+
+	newID := uuid.Must(uuid.NewV4())
+	if err := persister.WriteTestConfig(newID, marshalConfig("inserted")); err != nil {
+		t.Fatalf("write new config: %v", err)
+	}
+	inserted, err := persister.GetTestConfig(newID)
+	if err != nil {
+		t.Fatalf("read new config: %v", err)
+	}
+	if inserted.Name != "inserted" {
+		t.Fatalf("inserted config name = %q, want %q", inserted.Name, "inserted")
 	}
 }
