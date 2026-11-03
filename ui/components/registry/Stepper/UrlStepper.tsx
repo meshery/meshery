@@ -44,6 +44,56 @@ import FinishModelGenerateStep from './FinishModelGenerateStep';
 
 type UrlStepperProps = { handleClose: () => void };
 
+// The source radio stores each option's label lower-cased, so "Artifact Hub"
+// is held as "artifact hub" - space included. Deriving the options and every
+// comparison from this one list keeps them from drifting apart again: the
+// validator previously tested for "artifacthub", which no option could ever
+// equal, so no pattern was selected and every URL was accepted.
+const MODEL_SOURCE_LABELS = ['Artifact Hub', 'GitHub'] as const;
+const [ARTIFACT_HUB_SOURCE, GITHUB_SOURCE] = MODEL_SOURCE_LABELS.map((label) =>
+  label.toLowerCase(),
+);
+
+// Compiled once at module scope rather than per keystroke. None carry the `g`
+// flag, so they hold no lastIndex state between `test` calls.
+const SOURCE_URL_PATTERNS: Record<string, RegExp> = {
+  [ARTIFACT_HUB_SOURCE]:
+    /^https:\/\/artifacthub\.io\/packages\/(search\?ts_query_web=[\w.-]+|[\w.-]+\/[\w.-]+\/[\w.-]+)$/,
+  [GITHUB_SOURCE]: /^git:\/\/github\.com\/[\w.-]+\/[\w.-]+(\/[\w.-]+\/[\w/-]+)?$/,
+};
+
+const SOURCE_URL_ERRORS: Record<string, string> = {
+  [ARTIFACT_HUB_SOURCE]:
+    'Invalid ArtifactHub URL. Example: https://artifacthub.io/packages/search?ts_query_web={meshery-operator}',
+  [GITHUB_SOURCE]: 'Invalid GitHub URL. Format: git://github.com/org/repo/branch/path',
+};
+
+const UNSUPPORTED_SOURCE_URL_ERROR = 'Select a supported model source before entering a URL.';
+
+// The Source step gates Next on `!urlError`, so an unmapped source must still
+// yield a non-empty message: returning undefined would read as "no error" and
+// re-open the hole the pattern lookup exists to close, letting an unvalidated
+// URL through for any source added without a matching pattern.
+const sourceUrlError = (source: string) =>
+  SOURCE_URL_ERRORS[source] ?? UNSUPPORTED_SOURCE_URL_ERROR;
+
+// A URL is only meaningful relative to a source, so both are arguments here
+// rather than one being read from state: the source-change handler has to
+// validate against the source it is switching *to*, which state does not hold
+// yet at that point.
+const isValidSourceUrl = (url: string, source: string) => {
+  const pattern = SOURCE_URL_PATTERNS[source];
+
+  // An unknown source has nothing to validate against, so reject. The previous
+  // code fell through to `new RegExp(undefined)`, which is the empty pattern
+  // `/(?:)/` and matches every string - reporting any input as valid.
+  if (!url || !pattern) {
+    return false;
+  }
+
+  return pattern.test(url);
+};
+
 const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
   const ModelDefinitionV1Beta1Schema =
     ModelDefinitionV1Beta1OpenApiSchema.components.schemas.ModelDefinition;
@@ -118,36 +168,26 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
     }
   };
 
-  const validateUrl = (url: string) => {
-    let testUrl;
-    if (!url) {
-      return false;
-    }
-
-    if (modelSource === 'github') {
-      testUrl = '^git://github\\.com/[\\w.-]+/[\\w.-]+(/[\\w.-]+/[\\w/-]+)?$';
-    } else if (modelSource === 'artifacthub') {
-      testUrl =
-        '^https:\\/\\/artifacthub\\.io\\/packages\\/(search\\?ts_query_web=[\\w.-]+|[\\w.-]+\\/[\\w.-]+\\/[\\w.-]+)$';
-    }
-    return new RegExp(testUrl).test(url);
-  };
-
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newUrl = e.target.value;
     setModelUrl(newUrl);
     if (modelSource) {
-      const isValid = validateUrl(newUrl);
-      if (!isValid) {
-        setUrlError(
-          modelSource === 'github'
-            ? 'Invalid GitHub URL. Format: git://github.com/org/repo/branch/path'
-            : 'Invalid ArtifactHub URL. Example: https://artifacthub.io/packages/search?ts_query_web={meshery-operator}',
-        );
-      } else {
-        setUrlError('');
-      }
+      setUrlError(isValidSourceUrl(newUrl, modelSource) ? '' : sourceUrlError(modelSource));
     }
+  };
+
+  const handleSourceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const nextSource = e.target.value.toLowerCase();
+    setModelSource(nextSource);
+
+    // Re-check whatever is already typed against the source being switched to.
+    // Without this, a URL accepted for the previous source keeps its cleared
+    // error, so Next stays enabled and the wizard submits, say, a GitHub URL
+    // with registrant "artifact hub". An empty field has nothing to complain
+    // about yet, so it just clears the error.
+    setUrlError(
+      modelUrl && !isValidSourceUrl(modelUrl, nextSource) ? sourceUrlError(nextSource) : '',
+    );
   };
 
   // Summary field component with consistent styling
@@ -493,10 +533,10 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                 aria-label="source"
                 name="source"
                 value={modelSource}
-                onChange={(e) => setModelSource(e.target.value.toLowerCase())}
+                onChange={handleSourceChange}
                 style={{ gap: '2rem' }}
               >
-                {['Artifact Hub', 'GitHub'].map((source, idx) => (
+                {MODEL_SOURCE_LABELS.map((source, idx) => (
                   <FormControlLabel
                     key={idx}
                     value={source.toLowerCase()}
@@ -519,9 +559,9 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                 helperText={urlError}
                 disabled={!modelSource}
                 placeholder={
-                  modelSource === 'github'
+                  modelSource === GITHUB_SOURCE
                     ? 'git://github.com/cert-manager/cert-manager/master/deploy/crds'
-                    : modelSource === 'artifact hub'
+                    : modelSource === ARTIFACT_HUB_SOURCE
                       ? 'https://artifacthub.io/packages/search?ts_query_web={model-name}'
                       : 'Select a source first'
                 }
