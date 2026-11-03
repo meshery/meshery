@@ -37,7 +37,7 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
   -->
 </p>
 
-<h5><p align="center"><i>If you like Meshery, please <a href="https://github.com/meshery/meshery/stargazers">★</a> this repository to show your support! 🤩</i></p></h5>
+<h5><p align="center"><i>If you like Meshery, please <a href="https://github.com/meshery/meshery/stargazers">â</a> this repository to show your support! ð¤©</i></p></h5>
 <p align="center" >
 MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 </p>
@@ -67,7 +67,7 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
     - [Stargazers](#stargazers)
     - [License](#license)
 -->
-<!-- <p style="clear:both;">&nbsp;</p>
+<!-- <p style="clear:both;"> </p>
 <a href="https://meshery.io"><picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-light-text-side.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-dark-text-side.svg">
@@ -79,7 +79,115 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
   <br /><br /><br />
 </h3> -->
 
-<p style="clear:both;">&nbsp;</p>
+<p style="clear:both;">
+
+# Installation
+
+Meshery can be installed using Docker, Helm, or a native CLI (`mesheryctl`). Choose the path that matches your environment.
+
+## Quick Start (Docker)
+
+**Prerequisites:** Docker v20.10+ and Docker Compose v2.0+.
+
+```bash
+# 1. Download and start Meshery
+curl -L https://meshery.io/install | PLATFORM=docker bash -
+
+# 2. Verify that Meshery is running
+docker ps --filter "name=meshery" --format "{{.Names}}: {{.Status}}"
+
+# Expected output:
+# meshery: Up (healthy)
+
+# 3. Open the Meshery UI in your browser
+#    Default URL: http://localhost:9081
+```
+
+If `curl` is unavailable, download `mesheryctl` directly from the [latest release page](https://github.com/meshery/meshery/releases/latest) and run:
+
+```bash
+mesheryctl system start
+```
+
+## Install with Helm (Kubernetes)
+
+**Prerequisites:** Kubernetes v1.22+ and Helm v3.8+.
+
+```bash
+# 1. Add the Meshery Helm repository
+helm repo add meshery https://meshery.io/charts
+helm repo update
+
+# 2. Install Meshery into the 'meshery' namespace
+helm install meshery meshery/meshery --namespace meshery --create-namespace
+
+# 3. Verify the deployment
+kubectl get pods -n meshery
+
+# Expected output:
+# NAME                       READY   STATUS    RESTARTS   AGE
+# meshery-<hash>             1/1     Running   0          60s
+
+# 4. Port-forward to access the UI
+kubectl port-forward -n meshery svc/meshery 9081:8080
+```
+
+## Install with Homebrew (macOS/Linux)
+
+**Prerequisites:** Homebrew v3.6+.
+
+```bash
+# 1. Install mesheryctl
+brew install mesheryctl
+
+# 2. Start Meshery
+mesheryctl system start
+
+# 3. Verify the installation
+mesheryctl version
+
+# Expected output:
+# mesheryctl: v0.7.x
+# git commit: <sha>
+```
+
+## Install with Scoop (Windows)
+
+**Prerequisites:** Scoop v0.3+ and PowerShell v5.1+.
+
+```powershell
+# 1. Install mesheryctl
+scoop install mesheryctl
+
+# 2. Start Meshery
+mesheryctl system start
+
+# 3. Verify the installation
+mesheryctl version
+```
+
+## Verify Your Installation
+
+After starting Meshery using any method above, run these checks:
+
+```bash
+# Check that Meshery server is responding
+curl -s http://localhost:9081/api/system/health | jq .
+
+# Expected output:
+# { "status": "healthy", "version": "v0.7.x" }
+```
+
+If the health check fails, check the [troubleshooting guide](https://docs.meshery.io/guides/troubleshooting/installation) or run `mesheryctl system check` for diagnostics.
+
+## Environment Variables
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `PORT` | `9081` | Port for the Meshery UI and API |
+| `MESHERY_SERVER` | `http://localhost:9081` | Base URL of the Meshery server |
+| `PLATFORM` | `docker` | Deployment target (`docker`, `kubernetes`) |
+ </p>
 
 # Functionality
 
@@ -105,7 +213,7 @@ Meshery provides a single pane of glass to manage multiple Kubernetes clusters a
 <details><summary><h4>Dry-run your deployments</h4></summary>
 Meshery leverages Kubernetes' built-in dry-run capabilities to allow you to simulate deployments without actually applying the changes to your cluster. This enables you to:
 
-- Validate configurations: Ensure your deployment specifications (e.g., YAML manifests, Helm charts, Meshery Designs) are syntactically correct and will be accepted by the Kubernetes API server.  
+- Validate configurations: Ensure your deployment specifications (e.g., YAML manifests, Helm charts, Meshery Designs) are syntactically correct and will be accepted by the Kubernetes API server. Â 
 - Identify potential issues: Detect errors in your configurations, such as invalid resource definitions, missing fields, or API version mismatches, before they impact your live environment.
 - Preview changes: Understand the objects that Kubernetes would create or modify during a real deployment.
 - Integrate with CI/CD: Incorporate dry-run as a step in your continuous integration and continuous delivery pipelines to automate pre-deployment checks and prevent faulty deployments.
@@ -226,39 +334,39 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 
 | Platform                                                                                                                                                                                                                                              | Supported?  |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------: |
-| <img alt="" src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker](https://docs.meshery.io/installation/docker)                                                               |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker App](https://docs.meshery.io/installation/docker)                               |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker Extension](https://docs.meshery.io/installation/docker/docker-extension)        |     ✔️      |
-| <img alt="" src="https://docs.meshery.io/installation/kubernetes/images/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes](https://docs.meshery.io/installation/kubernetes)                                               |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/aks/images/aks.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - AKS](https://docs.meshery.io/installation/kubernetes/aks)                     |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Docker Desktop](https://docs.meshery.io/installation#mac-or-linux)                 |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/eks/images/eks.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - EKS](https://docs.meshery.io/installation/kubernetes/eks)                     |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/gke/images/gke.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - GKE](https://docs.meshery.io/installation/kubernetes/gke)                     |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/images/helm.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Helm](https://docs.meshery.io/installation/kubernetes/helm)                      |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/kind/images/kind.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - kind](https://docs.meshery.io/installation/kubernetes/kind)                 |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/minikube/images/minikube.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - Minikube](https://docs.meshery.io/installation/kubernetes/minikube) |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/images/openshift.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - OpenShift](https://docs.meshery.io/installation/kubernetes)                 |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/images/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Rancher](https://docs.meshery.io/installation/kubernetes)                  |     ✔️      |
-| <img alt="" src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/linux.svg" width="20" height="20" vertical-align="middle" /> [Linux](https://docs.meshery.io/installation#mac-or-linux)                                             |     ✔️      |
-| <img alt="" src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac](https://docs.meshery.io/installation#mac-or-linux)                                               |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://docs.meshery.io/installation#mac-or-linux)              |     ✔️      |
-| <img alt="" src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://docs.meshery.io/installation#windows)                                                   |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [Scoop](https://docs.meshery.io/installation#windows)                                  |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://docs.meshery.io/installation/platforms/windows#wsl2)                    |     ✔️      |
+| <img alt="" src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker](https://docs.meshery.io/installation/docker)                                                               |     âï¸      |
+|     <img alt="" src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker App](https://docs.meshery.io/installation/docker)                               |     âï¸      |
+|     <img alt="" src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker Extension](https://docs.meshery.io/installation/docker/docker-extension)        |     âï¸      |
+| <img alt="" src="https://docs.meshery.io/installation/kubernetes/images/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes](https://docs.meshery.io/installation/kubernetes)                                               |     âï¸      |
+|     <img alt="" src="https://docs.meshery.io/installation/kubernetes/aks/images/aks.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - AKS](https://docs.meshery.io/installation/kubernetes/aks)                     |     âï¸      |
+|     <img alt="" src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Docker Desktop](https://docs.meshery.io/installation#mac-or-linux)                 |     âï¸      |
+|     <img alt="" src="https://docs.meshery.io/installation/kubernetes/eks/images/eks.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - EKS](https://docs.meshery.io/installation/kubernetes/eks)                     |     âï¸      |
+|     <img alt="" src="https://docs.meshery.io/installation/kubernetes/gke/images/gke.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - GKE](https://docs.meshery.io/installation/kubernetes/gke)                     |     âï¸      |
+|     <img alt="" src="https://docs.meshery.io/installation/kubernetes/images/helm.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Helm](https://docs.meshery.io/installation/kubernetes/helm)                      |     âï¸      |
+|     <img alt="" src="https://docs.meshery.io/installation/kubernetes/kind/images/kind.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - kind](https://docs.meshery.io/installation/kubernetes/kind)                 |     âï¸      |
+|     <img alt="" src="https://docs.meshery.io/installation/kubernetes/minikube/images/minikube.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - Minikube](https://docs.meshery.io/installation/kubernetes/minikube) |     âï¸      |
+|     <img alt="" src="https://docs.meshery.io/installation/kubernetes/images/openshift.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - OpenShift](https://docs.meshery.io/installation/kubernetes)                 |     âï¸      |
+|     <img alt="" src="https://docs.meshery.io/installation/kubernetes/images/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Rancher](https://docs.meshery.io/installation/kubernetes)                  |     âï¸      |
+| <img alt="" src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/linux.svg" width="20" height="20" vertical-align="middle" /> [Linux](https://docs.meshery.io/installation#mac-or-linux)                                             |     âï¸      |
+| <img alt="" src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac](https://docs.meshery.io/installation#mac-or-linux)                                               |     âï¸      |
+|     <img alt="" src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://docs.meshery.io/installation#mac-or-linux)              |     âï¸      |
+| <img alt="" src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://docs.meshery.io/installation#windows)                                                   |     âï¸      |
+|     <img alt="" src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [Scoop](https://docs.meshery.io/installation#windows)                                  |     âï¸      |
+|     <img alt="" src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://docs.meshery.io/installation/platforms/windows#wsl2)                    |     âï¸      |
 | <img alt="" src="https://docs.meshery.io/installation/kubernetes/images/raspberry-pi.png" width="20" height="20" vertical-align="middle" /> Raspberry Pi                                                                                              | In Progress |
 
 [Meshery documentation](https://docs.meshery.io/installation) offers thorough installation guides for your platform of choice.
 
  </details>
 
-<p style="clear:both;">&nbsp;</p>
+<p style="clear:both;"> </p>
 
-<div>&nbsp;</div>
+<div> </div>
 
 ## Join the Meshery community
 
 <a name="contributing"></a><a name="community"></a>
-Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://meshery.io/community">Contributor Journey Map</a> and <a href="https://meshery.io/community#handbook">Community Handbook</a> for a tour of resources available to you. Jump into community <a href="https://slack.meshery.io">Slack</a> or <a href="https://discuss.meshery.io/">discussion forum</a> to participate.
+Our projects are community-built and welcome collaboration. ð Be sure to see the <a href="https://meshery.io/community">Contributor Journey Map</a> and <a href="https://meshery.io/community#handbook">Community Handbook</a> for a tour of resources available to you. Jump into community <a href="https://slack.meshery.io">Slack</a> or <a href="https://discuss.meshery.io/">discussion forum</a> to participate.
 
 <p style="clear:both;">
 <h3>Find your MeshMate</h3>
@@ -275,12 +383,12 @@ Learn more about the <a href="https://meshery.io/community#meshmates">MeshMates<
 </div>
 <div style="width:60%; padding-left: 16px; padding-right: 16px">
 <p>
-✔️ <em><strong>Join</strong></em> any or all of the weekly meetings on <a href="https://meshery.io/calendar">community calendar</a>.<br />
-✔️ <em><strong>Watch</strong></em> community <a href="https://www.youtube.com/@mesheryio?sub_confirmation=1">meeting recordings</a>.<br />
-✔️ <em><strong>Fill-in</strong></em> a <a href="https://meshery.io/newcomers">member form</a> and gain access to community resources.
+âï¸ <em><strong>Join</strong></em> any or all of the weekly meetings on <a href="https://meshery.io/calendar">community calendar</a>.<br />
+âï¸ <em><strong>Watch</strong></em> community <a href="https://www.youtube.com/@mesheryio?sub_confirmation=1">meeting recordings</a>.<br />
+âï¸ <em><strong>Fill-in</strong></em> a <a href="https://meshery.io/newcomers">member form</a> and gain access to community resources.
 <br />
-✔️ <em><strong>Discuss</strong></em> in the <a href="https://discuss.meshery.io/">community forum</a>.<br />
-✔️ <em><strong>Explore more</strong></em> in the <a href="https://meshery.io/community#handbook">community handbook</a>.<br />
+âï¸ <em><strong>Discuss</strong></em> in the <a href="https://discuss.meshery.io/">community forum</a>.<br />
+âï¸ <em><strong>Explore more</strong></em> in the <a href="https://meshery.io/community#handbook">community handbook</a>.<br />
 </p>
 </div><br /><br />
 <div>
@@ -295,17 +403,17 @@ Learn more about the <a href="https://meshery.io/community#meshmates">MeshMates<
 </div>
 <br /><br />
 <p align="left">
-&nbsp;&nbsp;&nbsp;&nbsp; <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?q=is%3Aopen%20is%3Aissue%20archived%3Afalse%20(org%3Ameshery%20OR%20org%3Aservice-mesh-performance%20OR%20org%3Aservice-mesh-patterns%20OR%20org%3Ameshery-extensions)%20label%3A%22help%20wanted%22%20">help-wanted label</a>.
+     <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?q=is%3Aopen%20is%3Aissue%20archived%3Afalse%20(org%3Ameshery%20OR%20org%3Aservice-mesh-performance%20OR%20org%3Aservice-mesh-patterns%20OR%20org%3Ameshery-extensions)%20label%3A%22help%20wanted%22%20">help-wanted label</a>.
 </p>
 <br /><br />
 
-<div>&nbsp;</div>
+<div> </div>
 
 ## Contributing
 
 Please do! We're a warm and welcoming community of open source contributors. Please join. All types of contributions are welcome. Be sure to read the [Contributor Guides](https://docs.meshery.io/project/contributing) for a tour of resources available to you and how to get started.
 
-**Naming conventions.** This repository adheres to the canonical camelCase-wire identifier-naming contract shared across the Meshery ecosystem. See the [identifier-naming contributor guide](https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md) in `meshery/schemas` for the full reader-friendly directory (26-row naming table with before/after and do/don't examples). Repo-specific mandates live in [`AGENTS.md § Identifier Naming Conventions`](./AGENTS.md).
+**Naming conventions.** This repository adheres to the canonical camelCase-wire identifier-naming contract shared across the Meshery ecosystem. See the [identifier-naming contributor guide](https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md) in `meshery/schemas` for the full reader-friendly directory (26-row naming table with before/after and do/don't examples). Repo-specific mandates live in [`AGENTS.md Â§ Identifier Naming Conventions`](./AGENTS.md).
 
 ### Cloning this repository (sparse clone recommended)
 
@@ -326,12 +434,12 @@ This keeps only the `meshery-core` and `kubernetes` models and the latest docs s
 
 <!-- <a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="https://docs.meshery.io/assets/img/readme/deploying-linkerd-with-meshery.png" width="100%" align="center" /></a> -->
 
-<div>&nbsp;</div>
+<div> </div>
 
 ### Stargazers
 
 <p align="center">
-  <i>If you like Meshery, please <a href="../../stargazers">★</a> star this repository to show your support! 🤩</i>
+  <i>If you like Meshery, please <a href="../../stargazers">â</a> star this repository to show your support! ð¤©</i>
  <br />
 <a href="../../stargazers">
  <img align="center" src="https://api.star-history.com/svg?repos=meshery/meshery&type=Date" />
