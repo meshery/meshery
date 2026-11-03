@@ -77,10 +77,12 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 
 			msgsPerComp := make([]DeploymentMessagePerComp, 0)
 			for _, comp := range componets {
-				if !skipCrdAndOperator && depHandler != nil && comp.Model.Name != (_models.Kubernetes{}).String() {
+				modelName := patternutils.ModelName(&comp)
+
+				if !skipCrdAndOperator && depHandler != nil && modelName != (_models.Kubernetes{}).String() {
 					deploymentMsg := DeploymentMessagePerComp{
 						Kind:           comp.Component.Kind,
-						Model:          comp.Model.Name,
+						Model:          modelName,
 						CompName:       comp.DisplayName,
 						Success:        true,
 						DesignName:     patternName,
@@ -113,7 +115,7 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 
 				_msg := DeploymentMessagePerComp{
 					Kind:       comp.Component.Kind,
-					Model:      comp.Model.Name,
+					Model:      modelName,
 					CompName:   comp.DisplayName,
 					Success:    true,
 					DesignName: patternName,

@@ -108,6 +108,13 @@ func fillVersion(component *component.ComponentDefinition, flattenedPattern map[
 	// So that if user chooses a comp def of other comps but all other comps in design refer to some other version,
 	// So instead of choosing new comp of correct version, user can quickly point to particular version?
 	// But it can be that the version are not compatible??
+	//
+	// Model is nil when the component is not registered; there is then no
+	// model version to substitute into.
+	if component.Model == nil {
+		return nil
+	}
+
 	versionKey, ok := matchPattern(component.Model.Model.Version)
 	if !ok {
 		return nil

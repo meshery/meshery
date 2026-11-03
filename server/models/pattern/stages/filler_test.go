@@ -1,5 +1,14 @@
 package stages
 
+import (
+	"testing"
+
+	"github.com/gofrs/uuid"
+	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta2/component"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
+)
+
 // Update tests
 // func TestFiller(t *testing.T) {
 // 	type args struct {
@@ -119,3 +128,55 @@ package stages
 // 		})
 // 	}
 // }
+
+// A component the registry does not know reaches this stage with a nil Model,
+// since hydration skips it. The stage has to carry it through untouched and
+// leave the miss for the Validator stage to report.
+func TestFillerUnregisteredComponent(t *testing.T) {
+	unregistered := &component.ComponentDefinition{
+		ID:          uuid.Must(uuid.NewV4()),
+		DisplayName: "unregistered",
+	}
+	unregistered.Component.Kind = "Widget"
+
+	registered := &component.ComponentDefinition{
+		ID:          uuid.Must(uuid.NewV4()),
+		DisplayName: "registered",
+		Model: &model.ModelDefinition{
+			Name:  "kubernetes",
+			Model: model.Model{Version: "v1.25.0"},
+		},
+	}
+	registered.Component.Kind = "Namespace"
+
+	design := pattern.PatternFile{
+		Name:       "unregistered-component",
+		Components: []*component.ComponentDefinition{unregistered, registered},
+	}
+
+	data := &Data{Pattern: &design, Other: map[string]interface{}{}}
+
+	var nextCalled bool
+	var nextErr error
+
+	Filler(true)(data, nil, func(_ *Data, err error) {
+		nextCalled = true
+		nextErr = err
+	})
+
+	if !nextCalled {
+		t.Fatal("Filler did not call the next stage")
+	}
+
+	if nextErr != nil {
+		t.Fatalf("unexpected error: %v", nextErr)
+	}
+
+	if unregistered.Model != nil {
+		t.Errorf("expected the unregistered component's model to stay nil, got %+v", unregistered.Model)
+	}
+
+	if registered.Model == nil || registered.Model.Model.Version != "v1.25.0" {
+		t.Errorf("expected model version v1.25.0 to be left alone, got %+v", registered.Model)
+	}
+}

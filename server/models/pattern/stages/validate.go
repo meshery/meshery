@@ -8,6 +8,7 @@ import (
 	"github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshery/server/models/pattern/jsonschema"
 	"github.com/meshery/meshery/server/models/pattern/resource/selector"
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/v1beta2/component"
 
 	"gopkg.in/yaml.v2"
@@ -76,12 +77,15 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate boo
 		}
 
 		for _, component := range data.Pattern.Components {
-			wc, err := s.GetDefinition(component.Component.Kind, component.Model.Model.Version, component.Model.Name, component.Component.Version, false)
+			modelName := patternutils.ModelName(component)
+			modelVersion := patternutils.ModelVersion(component)
+
+			wc, err := s.GetDefinition(component.Component.Kind, modelVersion, modelName, component.Component.Version, false)
 			if err != nil {
 				act.Terminate(err)
 				return
 			}
-			act.Log(fmt.Sprintf("%s version for %s: %s", component.Model.Name, component.DisplayName, wc.Model.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
+			act.Log(fmt.Sprintf("%s version for %s: %s", modelName, component.DisplayName, patternutils.ModelVersion(&wc))) //Eg: kubernetes version for Namespace: v1.25.0
 			if core.Format {
 				component.Configuration = core.Format.DePrettify(component.Configuration, false)
 			}
