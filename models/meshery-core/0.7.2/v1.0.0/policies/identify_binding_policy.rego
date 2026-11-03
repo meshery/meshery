@@ -37,13 +37,21 @@ identify_relationship(
 	from := extract_components(design_file.components, from_selectors)
 	to := extract_components(design_file.components, to_selectors)
 
-	# should consider model and versions (regex/operator/normal string)
-	binding_comps := {type |
-		some match_selector in selector_set.allow.from[_].match
+	via_selectors := object.get(selector_set.allow, "via", [])
+	binding_comps := union({
+		{type |
+			count(via_selectors) > 0
+			some via_selector in via_selectors
+			type = via_selector.kind
+		},
+		{type |
+			count(via_selectors) == 0
+			some match_selector in selector_set.allow.from[_].match
 
-		match_selector[0].kind != "self"
-		type = match_selector[0].kind
-	}
+			match_selector[0].kind != "self"
+			type = match_selector[0].kind
+		}
+	})
 	deny_selectors := object.get(selector_set, "deny", [])
 
 	# This is a set of set,
