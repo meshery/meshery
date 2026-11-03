@@ -26,15 +26,17 @@ export const downloadFileFromUrl = (url, name) => {
  * @returns {void}
  */
 export default function downloadContent({ id, type, name, source_type, params }) {
-  const uri = DOWNLOAD_PATH[type]({ id, source_type, params });
-  if (!uri) {
-    throw new Error('Invalid type of content to download', type);
+  // Own keys only, so inherited names like 'toString' or '__proto__' are rejected too
+  if (!Object.prototype.hasOwnProperty.call(DOWNLOAD_PATH, type)) {
+    throw new Error(`Invalid type of content to download: ${type}`);
   }
-  downloadFileFromUrl(uri, name);
+  downloadFileFromUrl(DOWNLOAD_PATH[type]({ id, source_type, params }), name);
 }
 
 export const downloadFileFromContent = (content, fileName, type) => {
   const blob = new Blob([content], { type: type });
   const url = window.URL.createObjectURL(blob);
   downloadFileFromUrl(url, fileName);
+  // Deferred so the browser has started the download before the URL is released
+  setTimeout(() => window.URL.revokeObjectURL(url), 0);
 };
