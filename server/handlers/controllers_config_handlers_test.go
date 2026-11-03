@@ -704,3 +704,41 @@ func TestReconcileInheritedDeploymentMode_SkipsConnectionWithUnparseableOverride
 		t.Fatalf("the unreadable override must be left intact for deliberate correction, got %#v", raw)
 	}
 }
+
+func TestEmitControllersConfigApplyEventActedUponAndSuppressesRepeat(t *testing.T) {
+	h, provider := newControllersConfigTestHandler(t)
+	connectionID := uuid.Must(uuid.NewV4())
+	userID := uuid.Must(uuid.NewV4())
+	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromOwner(userID).WithCategory("connection").WithAction("update")
+	description := "Failed to persist the MeshSync deployment mode inherited from the server-wide default."
+	metadata := map[string]interface{}{"error": "boom", "connectionId": connectionID}
+
+	h.emitControllersConfigApplyEvent(eventBuilder, provider, "token", userID, events.Error, controllersRetryPersistMode, description, metadata)
+	h.emitControllersConfigApplyEvent(eventBuilder, provider, "token", userID, events.Error, controllersRetryPersistMode, description, metadata)
+	if len(provider.events) != 1 {
+		t.Fatalf("expected the identical error to be persisted once, got %d", len(provider.events))
+	}
+	if provider.events[0].ActedUpon != connectionID {
+		t.Fatalf("expected ActedUpon %s, got %s", connectionID, provider.events[0].ActedUpon)
+	}
+	if provider.events[0].Metadata["connectionId"] != connectionID {
+		t.Fatalf("expected metadata connectionId to be kept, got %#v", provider.events[0].Metadata["connectionId"])
+	}
+
+	h.emitControllersConfigApplyEvent(eventBuilder, provider, "token", userID, events.Error, controllersRetryRedeployMode, "Failed to redeploy MeshSync for the deployment mode inherited from the server-wide default.", map[string]interface{}{"error": "boom", "connectionId": connectionID})
+	if len(provider.events) != 2 {
+		t.Fatalf("expected a different operation to be emitted, got %d events", len(provider.events))
+	}
+
+	h.emitControllersConfigApplyEvent(eventBuilder, provider, "token", userID, events.Informational, controllersRetryPersistMode, "MeshSync deployment mode changed from 'embedded' to 'operator' following the server-wide default.", map[string]interface{}{"connectionId": connectionID})
+	h.emitControllersConfigApplyEvent(eventBuilder, provider, "token", userID, events.Error, controllersRetryPersistMode, description, metadata)
+	if len(provider.events) != 4 {
+		t.Fatalf("expected success to be emitted and the next failure to be reported, got %d events", len(provider.events))
+	}
+	if provider.events[2].Severity != events.Informational {
+		t.Fatalf("expected the success event to stay informational, got %q", provider.events[2].Severity)
+	}
+	if provider.events[3].ActedUpon != connectionID {
+		t.Fatalf("expected ActedUpon %s on the failure after success, got %s", connectionID, provider.events[3].ActedUpon)
+	}
+}

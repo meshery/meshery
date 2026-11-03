@@ -34,6 +34,9 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
+	if connectionID := uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID); connectionID != uuid.Nil {
+		eventBuilder.ActedUpon(connectionID)
+	}
 
 	machinectx.log.Debug("executing ping test for connection", machinectx.K8sContext.ConnectionID)
 	err = machinectx.K8sContext.PingTest()

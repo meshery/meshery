@@ -313,8 +313,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		connection, _, err := sm.Provider.GetConnectionByID(token, sm.ID)
 
 		if err != nil {
-
-			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			return sm.suppressDiscoveryRepeat(originalEventType, connectionStatusEvent(sysID, userUUID, sm.ID, fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID), err), err)
 		}
 
 		// Defensive guard: a provider that reports no error but hands back a nil
@@ -322,7 +321,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// retrieval failure so the caller sees an error instead of a crash.
 		if connection == nil {
 			err = ErrConnectionNotFound(sm.ID.String())
-			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			return sm.suppressDiscoveryRepeat(originalEventType, connectionStatusEvent(sysID, userUUID, sm.ID, fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID), err), err)
 		}
 
 		// Compare the currently persisted status against the state the machine
@@ -344,7 +343,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 
 		if err != nil {
 			// In this case should the current state be again set to previous state i.e. should we rollback. But not only state should be rollback but other actions as well, rn we don't rollback state.
-			return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			return sm.suppressDiscoveryRepeat(originalEventType, connectionStatusEvent(sysID, userUUID, sm.ID, fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState), err), err)
 		}
 
 		sm.Log.Debugf("%s: updated \"status\" for connection with id: %s to \"%s\"", sm.Name, connection.ID, sm.CurrentState)
@@ -379,9 +378,9 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// dedicated "connection action failed" Error event so a misbehaving
 		// action can never turn a surfaced failure into a nil-pointer panic.
 		if failureEvent == nil {
-			failureEvent = events.NewEvent().WithDescription(fmt.Sprintf("%s connection action failed.", sm.Name)).ActedUpon(sm.ID).FromOwner(userUUID).FromSystem(*sysID).WithCategory("connection").WithAction("update").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": failureErr}).Build()
+			failureEvent = events.NewEvent().WithDescription(fmt.Sprintf("%s connection action failed.", sm.Name)).ActedUpon(sm.ID).FromOwner(userUUID).FromSystem(*sysID).WithCategory("connection").WithAction("update").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": failureErr, "connectionId": sm.ID}).Build()
 		}
-		return failureEvent, failureErr
+		return sm.suppressDiscoveryRepeat(originalEventType, failureEvent, failureErr)
 	}
 
 	// The action func only emits event when an error occurs.
@@ -392,6 +391,44 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			"currentStatus":  sm.CurrentState,
 		}).WithSeverity(events.Informational).Build()
 	}
+	if event.Severity == events.Informational || event.Severity == events.Success {
+		models.DefaultRetryEventSuppressor.ClearConnection(models.RetryEventScopeConnectionStatus, sm.ID.String())
+	}
 
 	return event, nil
+}
+
+// connectionStatusEvent builds an error event for a connection status write.
+// ActedUpon and metadata connectionId are both the connection.
+func connectionStatusEvent(sysID *core.Uuid, userUUID, connectionID core.Uuid, description string, err error) *events.Event {
+	return events.NewEvent().WithDescription(description).WithMetadata(map[string]interface{}{
+		"error":        err,
+		"connectionId": connectionID,
+	}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(connectionID).WithCategory("connection").WithAction("update").WithSeverity(events.Error).Build()
+}
+
+// suppressDiscoveryRepeat drops a background Discovery error when the same
+// connection, category, action and description was already emitted within the
+// suppressor TTL. User-initiated events are returned unchanged so a manual
+// retry is still reported. A nil event alongside a nil error tells callers
+// not to persist anything.
+func (sm *StateMachine) suppressDiscoveryRepeat(original EventType, event *events.Event, err error) (*events.Event, error) {
+	if event == nil || err == nil || original != Discovery {
+		return event, err
+	}
+	category := event.Category
+	if category == "" {
+		category = "connection"
+	}
+	action := event.Action
+	if action == "" {
+		action = "update"
+	}
+	if models.DefaultRetryEventSuppressor.Admit(models.RetryEventScopeConnectionStatus, sm.ID.String(), category, action, event.Description) {
+		return event, err
+	}
+	if sm.Log != nil {
+		sm.Log.Debugf("suppressed repeated connection event for %s: %s", sm.ID, event.Description)
+	}
+	return nil, nil
 }

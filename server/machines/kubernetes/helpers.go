@@ -86,5 +86,5 @@ func AssignControllerHandlers(machinectx *MachineCtx, systemID *core.Uuid, provi
 		machinectx.EventBroadcaster,
 		provider,
 		systemID,
-	)
+	).SetConnectionID(uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID))
 }

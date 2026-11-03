@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -580,5 +581,97 @@ func TestSendEvent_ExitActionFailureHaltsWithoutTransition(t *testing.T) {
 	}
 	if provider.status != connections.CONNECTED {
 		t.Fatalf("expected persisted status to remain CONNECTED, got %q", provider.status)
+	}
+}
+
+func TestSendEvent_StatusUpdateFailureSuppressedUntilSuccess(t *testing.T) {
+	provider := &fakeProvider{
+		status:    connections.DISCOVERED,
+		updateErr: errors.New("db down"),
+	}
+	sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+	ctx := newTestContext(t)
+
+	event, err := sm.SendEvent(ctx, Discovery, nil)
+	if err == nil || event == nil {
+		t.Fatalf("expected the first status update failure to surface, got event=%v err=%v", event, err)
+	}
+	if event.ActedUpon != sm.ID {
+		t.Fatalf("expected ActedUpon %s, got %s", sm.ID, event.ActedUpon)
+	}
+	if event.Metadata["connectionId"] != sm.ID {
+		t.Fatalf("expected metadata connectionId %s, got %#v", sm.ID, event.Metadata["connectionId"])
+	}
+	if !strings.Contains(event.Description, "Operation succeeded but failed to update the status") {
+		t.Fatalf("unexpected description %q", event.Description)
+	}
+
+	sm.ResetState()
+	event, err = sm.SendEvent(ctx, Discovery, nil)
+	if err != nil || event != nil {
+		t.Fatalf("expected the repeat status update failure to be suppressed, got event=%v err=%v", event, err)
+	}
+
+	provider.updateErr = nil
+	sm.ResetState()
+	event, err = sm.SendEvent(ctx, Discovery, nil)
+	if err != nil || event == nil || event.Severity != events.Informational {
+		t.Fatalf("expected success to still emit an informational event, got event=%v err=%v", event, err)
+	}
+
+	provider.updateErr = errors.New("db down")
+	sm.ResetState()
+	event, err = sm.SendEvent(ctx, Discovery, nil)
+	if err == nil || event == nil {
+		t.Fatalf("expected a failure after success to be reported again, got event=%v err=%v", event, err)
+	}
+	if event.ActedUpon != sm.ID {
+		t.Fatalf("expected ActedUpon %s after success cleared suppression, got %s", sm.ID, event.ActedUpon)
+	}
+}
+
+func TestSendEvent_UserInitiatedStatusUpdateFailureNotSuppressed(t *testing.T) {
+	log, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatalf("failed to build test logger: %v", err)
+	}
+	connectionID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate connection UUID: %v", err)
+	}
+	provider := &fakeProvider{
+		status:    connections.CONNECTED,
+		updateErr: errors.New("db down"),
+	}
+	sm := &StateMachine{
+		ID:            core.Uuid(connectionID),
+		Name:          "kubernetes",
+		InitialState:  InitialState,
+		CurrentState:  InitialState,
+		PreviousState: DefaultState,
+		Log:           log,
+		Provider:      provider,
+		States: States{
+			InitialState: State{
+				Events: Events{Connect: CONNECTED},
+			},
+			CONNECTED: State{
+				Action: &stubAction{execNext: NoOp},
+			},
+		},
+	}
+	ctx := newTestContext(t)
+
+	event, err := sm.SendEvent(ctx, Connect, nil)
+	if err == nil || event == nil {
+		t.Fatalf("expected the first user-initiated status failure to surface, got event=%v err=%v", event, err)
+	}
+	sm.ResetState()
+	event, err = sm.SendEvent(ctx, Connect, nil)
+	if err == nil || event == nil {
+		t.Fatalf("expected a repeated user-initiated status failure to still be reported, got event=%v err=%v", event, err)
+	}
+	if event.ActedUpon != sm.ID {
+		t.Fatalf("expected ActedUpon %s, got %s", sm.ID, event.ActedUpon)
 	}
 }
