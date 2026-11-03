@@ -1,0 +1,80 @@
+{
+  "page": 1,
+  "page_size": 1,
+  "total_count": 1,
+  "components": [
+    {
+      "id": "b0a80101-0000-0000-0000-000000000001",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "CustomComponent",
+      "description": "Component under test model",
+      "format": "JSON",
+      "model": {
+        "id": "b0a80101-0000-0000-0000-000000000001",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "test model",
+        "displayName": "Test Model",
+        "status": "enabled",
+        "registrant": {
+          "id": "b0a80101-0000-0000-0000-000000000001",
+          "name": "Meshery",
+          "credentialId": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-03-30T19:59:46.350667005Z",
+          "updated_at": "2025-03-30T19:59:46.350667005Z",
+          "deleted_at": {"Time": "0001-01-01T00:00:00Z", "Valid": false}
+        },
+        "connection_id": "b0a80101-0000-0000-0000-000000000001",
+        "category": {
+          "id": "b0a80101-0000-0000-0000-000000000001",
+          "name": "Testing"
+        },
+        "subCategory": "Testing",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#4ad3c1",
+          "shape": "circle",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "model": {
+          "version": "v1.0.0"
+        },
+        "components_count": 1,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#4ad3c1",
+        "shape": "circle",
+        "svgColor": "",
+        "svgWhite": ""
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": null,
+      "component": {
+        "version": "v1alpha1",
+        "kind": "CustomComponent",
+        "schema": "{}"
+      },
+      "duplicates": 0
+    }
+  ]
+}

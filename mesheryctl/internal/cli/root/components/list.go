@@ -15,15 +15,18 @@
 package components
 
 import (
+	"net/url"
+
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/spf13/cobra"
 )
 
 type componentListFlag struct {
-	Count    bool `json:"count" validate:"boolean"`
-	Page     int  `json:"page" validate:"omitempty,gte=1"`
-	PageSize int  `json:"page-size" validate:"omitempty,gte=1"`
+	Count    bool   `json:"count" validate:"boolean"`
+	Page     int    `json:"page" validate:"omitempty,gte=1"`
+	PageSize int    `json:"pagesize" validate:"omitempty,gte=1"`
+	Model    string `json:"model"`
 }
 
 var cmdComponentListFlag componentListFlag
@@ -46,13 +49,21 @@ mesheryctl component list --page [page-number] --pagesize [page-size]
 
 // Display the number of components present in Meshery
 mesheryctl component list --count
+
+// View list of components filtered by a specific model
+mesheryctl component list --model [model-name]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentListFlag)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		urlPath := componentApiPath
+		if cmdComponentListFlag.Model != "" {
+			urlPath = "api/registry/models/" + url.PathEscape(cmdComponentListFlag.Model) + "/components"
+		}
+
 		componentData := display.DisplayDataAsync{
-			UrlPath:          componentApiPath,
+			UrlPath:          urlPath,
 			DataType:         "component",
 			Header:           []string{"ID", "Name", "Model", "Version"},
 			Page:             cmdComponentListFlag.Page,
@@ -74,4 +85,5 @@ func init() {
 	listComponentCmd.Flags().IntVarP(&cmdComponentListFlag.Page, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
 	listComponentCmd.Flags().IntVarP(&cmdComponentListFlag.PageSize, "pagesize", "s", 10, "(optional) List next set of components with --pagesize (default = 10)")
 	listComponentCmd.Flags().BoolVarP(&cmdComponentListFlag.Count, "count", "c", false, "(optional) Display count only")
+	listComponentCmd.Flags().StringVarP(&cmdComponentListFlag.Model, "model", "m", "", "(optional) List components of a specific model")
 }
