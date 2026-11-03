@@ -212,7 +212,7 @@ function initTableOfContentsScrollSpy() {
         }
     }, { passive: true });
 
-    tocLinks.forEach(link => {
+    headings.forEach(({ link }) => {
         link.addEventListener("click", () => setActive(link));
     });
 
