@@ -97,7 +97,8 @@ export const NotificationCenterProvider = ({ children }) => {
 };
 
 const getSeverityCount = (countBySeverityLevel, severity) => {
-  return countBySeverityLevel.find((item) => item.severity === severity)?.count || 0;
+  const severityLevels = countBySeverityLevel || [];
+  return severityLevels.find((item) => item.severity === severity)?.count || 0;
 };
 
 const EmptyState = () => {
@@ -197,11 +198,12 @@ const Header = ({ handleFilter, handleClose }) => {
   const { data } = useGetEventsSummaryQuery({
     status: STATUS.UNREAD,
   });
-  const { countBySeverityLevel, readCount } = data || {
+  const { countBySeverityLevel: severityLevels, readCount } = data || {
     countBySeverityLevel: [],
     totalCount: 0,
     readCount: 0,
   };
+  const countBySeverityLevel = severityLevels || [];
 
   const onClickSeverity = (severity) => {
     handleFilter({
