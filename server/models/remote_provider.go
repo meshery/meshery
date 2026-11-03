@@ -5,7 +5,9 @@ import (
 	"bytes"
 	"compress/gzip"
 	"context"
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -39,13 +41,20 @@ import (
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/spf13/viper"
+	"golang.org/x/sync/singleflight"
 	"k8s.io/client-go/util/homedir"
 )
 
 const (
 	PROVIDER_CAPABILITIES_FILEPATH_ENV = "PROVIDER_CAPABILITIES_FILEPATH"
 	SKIP_DOWNLOAD_EXTENSIONS_ENV       = "SKIP_DOWNLOAD_EXTENSIONS"
+	DefaultUserCacheTTL                = 5 * time.Minute
 )
+
+type userCacheEntry struct {
+	user      *User
+	expiresAt time.Time
+}
 
 // statusOf reports the HTTP status carried by resp, or 0 when there is no
 // response to read one from.
@@ -91,6 +100,14 @@ type RemoteProvider struct {
 	TokenStore    map[string]string
 	TokenStoreMut sync.Mutex
 	Keys          []map[string]string
+
+	// userCache caches user profiles retrieved from remote provider keyed by
+	// SHA-256 hash of their token to eliminate redundant WAN calls in
+	// SessionInjectorMiddleware (#22796).
+	userCache      map[string]userCacheEntry
+	userCacheMut   sync.RWMutex
+	UserCacheTTL   time.Duration
+	userCacheGroup singleflight.Group
 
 	// mostRecentToken caches the last valid user token observed during the
 	// session so it can be reused at server shutdown to authenticate the
@@ -171,6 +188,76 @@ func (l *RemoteProvider) Initialize() {
 	l.propertiesMu.Lock()
 	l.ProviderProperties = props
 	l.propertiesMu.Unlock()
+
+	l.userCacheMut.Lock()
+	if l.userCache == nil {
+		l.userCache = make(map[string]userCacheEntry)
+	}
+	l.userCacheMut.Unlock()
+}
+
+func hashToken(token string) string {
+	h := sha256.Sum256([]byte(token))
+	return hex.EncodeToString(h[:])
+}
+
+func (l *RemoteProvider) getUserFromCache(tokenHash string) (*User, bool) {
+	l.userCacheMut.RLock()
+	defer l.userCacheMut.RUnlock()
+
+	if l.userCache == nil {
+		return nil, false
+	}
+
+	entry, found := l.userCache[tokenHash]
+	if !found {
+		return nil, false
+	}
+
+	if time.Now().After(entry.expiresAt) {
+		return nil, false
+	}
+
+	userCopy := *entry.user
+	return &userCopy, true
+}
+
+func (l *RemoteProvider) setUserInCache(tokenHash string, user *User) {
+	l.userCacheMut.Lock()
+	defer l.userCacheMut.Unlock()
+
+	if l.userCache == nil {
+		l.userCache = make(map[string]userCacheEntry)
+	}
+
+	if len(l.userCache) > 100 {
+		now := time.Now()
+		for k, v := range l.userCache {
+			if now.After(v.expiresAt) {
+				delete(l.userCache, k)
+			}
+		}
+	}
+
+	ttl := l.UserCacheTTL
+	if ttl <= 0 {
+		ttl = DefaultUserCacheTTL
+	}
+
+	userCopy := *user
+	l.userCache[tokenHash] = userCacheEntry{
+		user:      &userCopy,
+		expiresAt: time.Now().Add(ttl),
+	}
+}
+
+func (l *RemoteProvider) evictUserFromCache(tokenHash string) {
+	l.userCacheMut.Lock()
+	defer l.userCacheMut.Unlock()
+
+	if l.userCache != nil {
+		delete(l.userCache, tokenHash)
+	}
 }
 
 // VerifyAvailability is the non-blocking-friendly availability probe.
@@ -737,54 +824,78 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 		return &User{}, ErrInvalidCapability("UserProfile", l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(UsersProfile)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := l.DoRequest(cReq, token)
-	if err != nil {
-		if resp == nil {
-			return nil, ErrUnreachableRemoteProvider(err)
+	tokenHash := hashToken(token)
+
+	// Fast path: serve from thread-safe in-memory TTL cache
+	if cachedUser, ok := l.getUserFromCache(tokenHash); ok {
+		return cachedUser, nil
+	}
+
+	// Slow path: deduplicate concurrent outbound requests for the same token
+	res, err, _ := l.userCacheGroup.Do(tokenHash, func() (interface{}, error) {
+		// Double-check cache inside singleflight in case a concurrent call resolved it
+		if cachedUser, ok := l.getUserFromCache(tokenHash); ok {
+			return cachedUser, nil
 		}
-		return nil, ErrFetch(err, "User Data", http.StatusUnauthorized)
-	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-	bd, err := io.ReadAll(resp.Body)
+
+		ep, _ := l.Capabilities.GetEndpointForFeature(UsersProfile)
+		remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+		cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+		resp, err := l.DoRequest(cReq, token)
+		if err != nil {
+			if resp == nil {
+				return nil, ErrUnreachableRemoteProvider(err)
+			}
+			return nil, ErrFetch(err, "User Data", http.StatusUnauthorized)
+		}
+		defer func() {
+			_ = resp.Body.Close()
+		}()
+		bd, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, ErrDataRead(err, "User Data")
+		}
+
+		up := &UserPref{
+			Preferences: &Preference{
+				AnonymousUsageStats:  true,
+				AnonymousPerfResults: true,
+			},
+		}
+		err = json.Unmarshal(bd, up)
+		if err != nil {
+			return nil, ErrUnmarshal(err, "User Pref")
+		}
+
+		if l.SessionPreferencePersister != nil {
+			prefLocal, _ := l.ReadFromPersister(up.ID.String())
+
+			// Guard up.Preferences: up is pre-initialized with a non-nil Preferences, so
+			// an absent `preferences` field stays non-nil; but an explicit
+			// `"preferences": null` from the remote provider overwrites it to nil, and
+			// dereferencing UpdatedAt / RemoteProviderPreferences below would then panic.
+			// Nothing to persist in that case.
+			if up.Preferences != nil && (prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences)) {
+				_ = l.WriteToPersister(up.ID.String(), up.Preferences)
+			}
+		}
+
+		l.setUserInCache(tokenHash, &up.User)
+		return &up.User, nil
+	})
 	if err != nil {
-		return nil, ErrDataRead(err, "User Data")
+		return nil, err
 	}
 
-	up := &UserPref{
-		Preferences: &Preference{
-			AnonymousUsageStats:  true,
-			AnonymousPerfResults: true,
-		},
-	}
-	err = json.Unmarshal(bd, up)
-	if err != nil {
-		return nil, ErrUnmarshal(err, "User Pref")
-	}
-
-	prefLocal, _ := l.ReadFromPersister(up.ID.String())
-
-	// Guard up.Preferences: up is pre-initialized with a non-nil Preferences, so
-	// an absent `preferences` field stays non-nil; but an explicit
-	// `"preferences": null` from the remote provider overwrites it to nil, and
-	// dereferencing UpdatedAt / RemoteProviderPreferences below would then panic.
-	// Nothing to persist in that case.
-	if up.Preferences != nil && (prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences)) {
-		_ = l.WriteToPersister(up.ID.String(), up.Preferences)
-	}
-
-	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote
-	// l.Log.Debug("retrieved user: %v", up.User)
-	return &up.User, nil
+	user := res.(*User)
+	userCopy := *user
+	return &userCopy, nil
 }
 
 func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
@@ -1065,9 +1176,11 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 	// if request succeeds then redirect to Provider UI
 	// And empties the token and session cookies
 	if resp.StatusCode == http.StatusFound || resp.StatusCode == http.StatusOK {
+		l.evictUserFromCache(hashToken(tokenString))
 		// gets the token from the request headers
 		ck, err := req.Cookie(TokenCookieName)
 		if err == nil {
+			l.evictUserFromCache(hashToken(ck.Value))
 			err = l.revokeToken(ck.Value)
 		}
 		if err != nil {
@@ -4963,6 +5076,7 @@ func (l *RemoteProvider) LogoutMesheryServer() error {
 		return nil
 	}
 	defer l.clearMostRecentToken()
+	l.evictUserFromCache(hashToken(token))
 
 	if err := l.revokeToken(token); err != nil {
 		return ErrLogout(err)

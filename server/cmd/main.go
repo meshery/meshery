@@ -370,6 +370,7 @@ func main() {
 			EventsPersister:               &models.EventsPersister{DB: dbHandler},
 			Log:                           log,
 			CookieDuration:                24 * time.Hour,
+			UserCacheTTL:                  models.DefaultUserCacheTTL,
 			MeshsyncDefaultDeploymentMode: meshsyncDefaultDeploymentMode,
 		}
 

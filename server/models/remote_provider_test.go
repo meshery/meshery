@@ -5,8 +5,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -182,5 +184,116 @@ func TestRemoteProvider_GetUserByID_SystemInstanceReturnsSentinel(t *testing.T) 
 	}
 	if !stderrors.Is(err, ErrUserIsSystemInstance) {
 		t.Errorf("expected err to match ErrUserIsSystemInstance via errors.Is, got %v", err)
+	}
+}
+
+// TestRemoteProvider_GetUserDetails_CachingAndDeduplication verifies that
+// GetUserDetails implements in-memory TTL caching and singleflight request
+// deduplication (#22796):
+//  1. 10 concurrent requests for the same token trigger exactly 1 outbound call.
+//  2. Subsequent calls within TTL are served from memory (0 outbound calls).
+//  3. After TTL expires, the next request refreshes from remote provider.
+//  4. Logging out evicts the cached entry so the next request refreshes.
+func TestRemoteProvider_GetUserDetails_CachingAndDeduplication(t *testing.T) {
+	var outboundCalls int32
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/logout" {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"message": "logged out"}`))
+			return
+		}
+
+		if r.URL.Path == "/api/user/profile" {
+			atomic.AddInt32(&outboundCalls, 1)
+			time.Sleep(30 * time.Millisecond) // Simulate WAN latency
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{
+				"id": "11111111-2222-3333-4444-555555555555",
+				"firstName": "Test",
+				"lastName": "User",
+				"email": "test@meshery.io"
+			}`))
+			return
+		}
+
+		http.NotFound(w, r)
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = Capabilities{
+		{Feature: UsersProfile, Endpoint: "/api/user/profile"},
+	}
+	provider.UserCacheTTL = 60 * time.Millisecond
+
+	const testToken = "test-auth-jwt-token"
+	req, _ := http.NewRequest(http.MethodGet, "/api/dashboard", nil)
+	req.AddCookie(&http.Cookie{Name: TokenCookieName, Value: testToken})
+
+	// Phase 1: 10 concurrent requests with the same token
+	const concurrentCount = 10
+	var wg sync.WaitGroup
+	wg.Add(concurrentCount)
+
+	for i := 0; i < concurrentCount; i++ {
+		go func() {
+			defer wg.Done()
+			user, err := provider.GetUserDetails(req)
+			if err != nil {
+				t.Errorf("GetUserDetails failed: %v", err)
+				return
+			}
+			if user == nil || user.FirstName != "Test" {
+				t.Errorf("expected user with FirstName 'Test', got %+v", user)
+			}
+		}()
+	}
+	wg.Wait()
+
+	// Assert: Singleflight deduplicated all concurrent requests to exactly 1 outbound call
+	if calls := atomic.LoadInt32(&outboundCalls); calls != 1 {
+		t.Fatalf("expected exactly 1 outbound HTTP call for 10 concurrent requests, got %d", calls)
+	}
+
+	// Phase 2: Sequential cached call (served from memory)
+	user, err := provider.GetUserDetails(req)
+	if err != nil || user == nil {
+		t.Fatalf("cached GetUserDetails failed: %v", err)
+	}
+	if calls := atomic.LoadInt32(&outboundCalls); calls != 1 {
+		t.Fatalf("expected outbound calls to remain 1 on cache hit, got %d", calls)
+	}
+
+	// Phase 3: TTL expiry
+	time.Sleep(80 * time.Millisecond) // Wait for UserCacheTTL (60ms) to elapse
+
+	userExpired, err := provider.GetUserDetails(req)
+	if err != nil || userExpired == nil {
+		t.Fatalf("GetUserDetails after TTL failed: %v", err)
+	}
+	if calls := atomic.LoadInt32(&outboundCalls); calls != 2 {
+		t.Fatalf("expected outbound calls to be 2 after TTL expiry, got %d", calls)
+	}
+
+	// Phase 4: Logout invalidation
+	rec := httptest.NewRecorder()
+	logoutReq, _ := http.NewRequest(http.MethodPost, "/logout", nil)
+	logoutReq.AddCookie(&http.Cookie{Name: TokenCookieName, Value: testToken})
+	logoutReq.AddCookie(&http.Cookie{Name: "session_cookie", Value: "test-session"})
+
+	if err := provider.Logout(rec, logoutReq); err != nil {
+		t.Fatalf("Logout failed: %v", err)
+	}
+
+	// Next call must refresh from remote provider because cache entry was evicted
+	userAfterLogout, err := provider.GetUserDetails(req)
+	if err != nil || userAfterLogout == nil {
+		t.Fatalf("GetUserDetails after logout failed: %v", err)
+	}
+	if calls := atomic.LoadInt32(&outboundCalls); calls != 3 {
+		t.Fatalf("expected outbound calls to be 3 after logout eviction, got %d", calls)
 	}
 }
