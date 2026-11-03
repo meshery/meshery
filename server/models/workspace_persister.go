@@ -272,11 +272,6 @@ func (wp *WorkspacePersister) AddEnvironmentToWorkspace(workspaceID, environment
 	return wsJSON, nil
 }
 
-type WorkspaceFilter struct {
-	Assigned  bool `json:"assigned"`
-	DeletedAt bool `json:"deletedAt"`
-}
-
 // GetWorkspaceEnvironments returns environments for a workspace
 func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, search, order, page, pageSize, filter string) ([]byte, error) {
 	// Sanitize the order input
@@ -284,14 +279,10 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
 	}
-	// Parse the filter parameter
-	var workspaceFilter WorkspaceFilter
-	workspaceFilter.Assigned = true // Default to true
-	if filter != "" {
-		err := json.Unmarshal([]byte(filter), &workspaceFilter)
-		if err != nil {
-			return nil, err
-		}
+
+	workspaceFilter, err := ParseWorkspaceFilter(filter)
+	if err != nil {
+		return nil, err
 	}
 
 	query := wp.DB.Table("environments AS e").Select("*")
@@ -317,9 +308,10 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
 		query = query.Where("lower(e.name) LIKE ? OR lower(e.description) LIKE ?", like, like)
 	}
 
-	// Apply additional filters
-	dynamicKeys := []string{"owner", "organization_id"}
-	query = utils.ApplyFilters(query, filter, dynamicKeys)
+	if workspaceFilter.Owner != "" {
+		query = query.Where("e.owner = ?", workspaceFilter.Owner)
+	}
+
 	query = query.Order(order)
 
 	count := int64(0)
@@ -456,14 +448,9 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 		order = defaultOrderUpdatedAtDesc
 	}
 
-	// Parse the filter parameter
-	var workspaceFilter WorkspaceFilter
-	workspaceFilter.Assigned = true // Default to true
-	if filter != "" {
-		err := json.Unmarshal([]byte(filter), &workspaceFilter)
-		if err != nil {
-			return nil, err
-		}
+	workspaceFilter, err := ParseWorkspaceFilter(filter)
+	if err != nil {
+		return nil, err
 	}
 
 	// Build the query to find designs associated with the given workspace ID
@@ -484,8 +471,10 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 		query = query.Where("lower(d.name) LIKE ?", like)
 	}
 
-	dynamicKeys := []string{"owner", "organization_id"}
-	query = utils.ApplyFilters(query, filter, dynamicKeys)
+	// No owner predicate here: `meshery_patterns` has neither an `owner` nor
+	// an `organization_id` column (MesheryPattern.UserID is `gorm:"-"`), so
+	// the keys the previous ApplyFilters call declared could only have
+	// produced a SQL error had they ever been reachable.
 	query = query.Order(order)
 
 	count := int64(0)
@@ -621,13 +610,9 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 		order = defaultOrderUpdatedAtDesc
 	}
 
-	var workspaceFilter WorkspaceFilter
-	workspaceFilter.Assigned = true
-	if filter != "" {
-		err := json.Unmarshal([]byte(filter), &workspaceFilter)
-		if err != nil {
-			return nil, err
-		}
+	workspaceFilter, err := ParseWorkspaceFilter(filter)
+	if err != nil {
+		return nil, err
 	}
 
 	query := wp.DB.Table("meshery_views AS v").Select("*")
@@ -650,8 +635,11 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 		query = query.Where("lower(v.name) LIKE ?", like)
 	}
 
-	dynamicKeys := []string{"owner", "organization_id"}
-	query = utils.ApplyFilters(query, filter, dynamicKeys)
+	// No owner predicate here: on `meshery_views` the field is named UserID,
+	// from which gorm derives `user_id`, so a `v.owner = ?` predicate could
+	// only have produced a SQL error had the previous ApplyFilters call ever
+	// been reachable. `organization_id` does exist on this table but is not
+	// served either - the enclosing workspace already scopes the listing.
 	query = query.Order(order)
 
 	count := int64(0)
@@ -749,13 +737,9 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 		order = defaultOrderUpdatedAtDesc
 	}
 
-	var workspaceFilter WorkspaceFilter
-	workspaceFilter.Assigned = true
-	if filter != "" {
-		err := json.Unmarshal([]byte(filter), &workspaceFilter)
-		if err != nil {
-			return nil, err
-		}
+	workspaceFilter, err := ParseWorkspaceFilter(filter)
+	if err != nil {
+		return nil, err
 	}
 
 	query := wp.DB.Table("teams AS t").Select("*")
@@ -778,8 +762,10 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 		query = query.Where("lower(t.name) LIKE ?", like)
 	}
 
-	dynamicKeys := []string{"owner", "organization_id"}
-	query = utils.ApplyFilters(query, filter, dynamicKeys)
+	if workspaceFilter.Owner != "" {
+		query = query.Where("t.owner = ?", workspaceFilter.Owner)
+	}
+
 	query = query.Order(order)
 
 	count := int64(0)
