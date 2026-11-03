@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -125,9 +126,10 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	}
 
 	// Parse the optional selection. When provided, only the listed context IDs
-	// are imported (keyed by the discovered context ID); when absent every
-	// discovered context is imported, preserving the previous behaviour for
-	// existing clients.
+	// or names are imported (keyed by discovered context ID or context name);
+	// when absent every discovered context is imported, preserving the previous
+	// behaviour for existing clients.
+	// selectedContexts is authoritative; legacy contextName is only used as a fallback.
 	var selectedContexts map[string]struct{}
 	if selectedJSON := req.FormValue(SelectedContextsFormKey); selectedJSON != "" {
 		var ids []string
@@ -139,6 +141,10 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		selectedContexts = make(map[string]struct{}, len(ids))
 		for _, id := range ids {
 			selectedContexts[id] = struct{}{}
+		}
+	} else if contextName := req.FormValue("contextName"); contextName != "" {
+		selectedContexts = map[string]struct{}{
+			contextName: {},
 		}
 	}
 
@@ -179,9 +185,11 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	hasUnreachableContext := false
 	for _, ctx := range contexts {
 		// Honor an explicit selection: skip contexts the caller did not pick.
-		// Matched against the discovered context ID, before any rename below.
+		// Matched against the discovered context ID or Name, before any rename below.
 		if selectedContexts != nil {
-			if _, ok := selectedContexts[ctx.ID]; !ok {
+			_, hasID := selectedContexts[ctx.ID]
+			_, hasName := selectedContexts[ctx.Name]
+			if !hasID && !hasName {
 				continue
 			}
 		}
@@ -327,13 +335,17 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			// has still been persisted in the discovered state; just skip the
 			// event. See mhelpers.HasMachineContext.
 			if mhelpers.HasMachineContext(inst) {
-				go func(inst *machines.StateMachine) {
-					event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
+				// Detach from the HTTP request lifecycle so that the background
+				// goroutine is not cancelled when the handler returns, while
+				// preserving context values (e.g. TokenCtxKey) that downstream operations depend on.
+				detachedCtx := context.WithoutCancel(req.Context())
+				go func(inst *machines.StateMachine, ctx context.Context, status connections.ConnectionStatus) {
+					event, err := inst.SendEvent(ctx, machines.EventType(mhelpers.StatusToEvent(status)), nil)
 					if err != nil {
 						_ = provider.PersistEvent(*event, token)
 						go h.config.EventBroadcaster.Publish(userID, event)
 					}
-				}(inst)
+				}(inst, detachedCtx, status)
 			}
 		}
 
