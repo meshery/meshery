@@ -99,7 +99,10 @@ describe('FinishDeploymentStep', () => {
     vi.clearAllMocks();
     eventCallback = null;
   });
-  afterEach(() => vi.useRealTimers());
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
 
   it('renders summary when event arrives before or after HTTP response resolves, and ignores other designs', async () => {
     let resolveHttp: any;
@@ -143,12 +146,9 @@ describe('FinishDeploymentStep', () => {
     expect(screen.getByText(btn)).toBeInTheDocument();
 
     if (isLogin) {
-      const orig = window.location;
-      delete (window as any).location;
-      window.location = { ...orig, host: 'localhost:3000', href: 'http://localhost:3000/' } as any;
+      vi.stubGlobal('location', { host: 'localhost:3000', href: 'http://localhost:3000/' });
       fireEvent.click(screen.getByText('Log In'));
       expect(window.location.href).toBe('/user/login');
-      window.location = orig;
     }
   });
 

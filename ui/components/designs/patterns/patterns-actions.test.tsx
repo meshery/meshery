@@ -87,6 +87,7 @@ const baseDeps = () => {
 describe('createPatternsActions', () => {
   beforeEach(() => {
     buildImportDesignRequestBody.mockReset();
+    vi.mocked(updateProgress).mockClear();
   });
 
   it('returns the canonical set of action methods', () => {
@@ -146,7 +147,10 @@ describe('createPatternsActions', () => {
     await expect(
       createPatternsActions(deps).handleDeploy({ design: { id: 'd1' }, selectedK8sContexts: [] }),
     ).rejects.toThrow('fail');
-    expect(updateProgress).toHaveBeenCalledWith({ showProgress: false });
+    expect(vi.mocked(updateProgress).mock.calls).toEqual([
+      [{ showProgress: true }],
+      [{ showProgress: false }],
+    ]);
   });
 
   it('handleUploadImport opens the import modal', () => {
