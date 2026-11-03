@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+	"sync"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -93,4 +95,35 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 	if len(mch.ctxControllerHandlers) != 0 {
 		t.Fatalf("expected ctxControllerHandlers to be empty, got %d", len(mch.ctxControllerHandlers))
 	}
+}
+
+// TestOperatorTrackerConcurrentAccess exercises Undeployed and IsUndeployed
+// concurrently across many goroutines and context IDs. Run with `go test
+// -race` - prior to guarding ctxIDtoDeploymentStatus with ot.mx, this
+// reliably tripped the race detector (and, under real concurrent load, Go's
+// fatal, unrecoverable "concurrent map writes" error).
+func TestOperatorTrackerConcurrentAccess(t *testing.T) {
+	tracker := NewOperatorTracker(false)
+
+	const goroutines = 50
+	const contexts = 10
+
+	var wg sync.WaitGroup
+	wg.Add(goroutines * 2)
+
+	for i := range goroutines {
+		ctxID := fmt.Sprintf("ctx-%d", i%contexts)
+
+		go func(ctxID string, undeployed bool) {
+			defer wg.Done()
+			tracker.Undeployed(ctxID, undeployed)
+		}(ctxID, i%2 == 0)
+
+		go func(ctxID string) {
+			defer wg.Done()
+			_ = tracker.IsUndeployed(ctxID)
+		}(ctxID)
+	}
+
+	wg.Wait()
 }
