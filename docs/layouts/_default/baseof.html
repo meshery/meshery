@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ .Site.Language.Lang }}" class="no-js">
+<html lang="{{ .Site.Language.Lang }}" class="no-js{{ if .Site.Params.archived_version }} has-version-banner{{ end }}">
   <head>
     {{ partial "head.html" (dict "Title" .Title "Description" .Params.abstract "Kind" .Kind "Permalink" .Permalink "Site" .Site) }}
     {{ partialCached "header.html" . .RelPermalink }}
@@ -10,7 +10,8 @@
     
   </head>
 
-  <body class="td-{{ .Kind }}{{ with .Params.body_class }} {{ . }}{{ end }}{{ block "body_class" . }}{{ end }}">
+  <body class="td-{{ .Kind }}{{ with .Params.body_class }} {{ . }}{{ end }}{{ block "body_class" . }}{{ end }}{{ if .Site.Params.archived_version }} has-version-banner{{ end }}">
+    {{ partial "version-banner.html" . }}
     <script>
       (function() {
         const savedMode = localStorage.getItem("mode");
