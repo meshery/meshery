@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 	"fmt"
 	"net"
 	"os"
@@ -21,6 +22,7 @@ import (
 	channelBroker "github.com/meshery/meshkit/broker/channel"
 	"github.com/meshery/meshkit/broker/nats"
 	"github.com/meshery/meshkit/database"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/controllers"
 	"github.com/meshery/meshkit/models/events"
@@ -110,6 +112,13 @@ type MesheryControllersHelper struct {
 	// the only record of what a later `operator.version` change has to differ
 	// from before a redeploy is warranted. "" until handlers are attached.
 	attachedOperatorChartVersion string
+
+	// operatorRelease reads and upgrades the Meshery Operator's Helm release on
+	// the cluster the attached handlers observe. It is attached and detached
+	// with ctxControllerHandlers, and is nil exactly when they are. It is what
+	// reconcileOperatorChartFloor reaches the installed chart through; see
+	// operatorRelease for why meshkit's handler cannot serve that purpose.
+	operatorRelease operatorRelease
 
 	// chartVersions lists the versions a Helm repository publishes for a chart.
 	// Injected rather than called directly so tests resolve against a fixed
@@ -828,6 +837,7 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 		}, uuid.Nil)
 		ctxHandlers[MesheryOperator] = controllers.NewMesheryOperatorHandler(client, mch.operatorDeploymentConfig())
 		mch.ctxControllerHandlers = ctxHandlers
+		mch.operatorRelease = newHelmOperatorRelease(client)
 		// The attached handler carries no installable version, so the next
 		// reconcile must not mistake a stale value for "already at the desired
 		// version".
@@ -846,6 +856,7 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 
 	ctxHandlers[MesheryOperator] = controllers.NewMesheryOperatorHandler(client, depConfig)
 	mch.ctxControllerHandlers = ctxHandlers
+	mch.operatorRelease = newHelmOperatorRelease(client)
 	mch.attachedOperatorChartVersion = depConfig.MesheryReleaseVersion
 	mch.setOperatorChartError(nil)
 
@@ -1006,6 +1017,7 @@ func (mch *MesheryControllersHelper) ReconcileOperatorChartVersion(k8sctx K8sCon
 
 func (mch *MesheryControllersHelper) RemoveCtxControllerHandler(ctx context.Context, contextID string) {
 	mch.ctxControllerHandlers = nil
+	mch.operatorRelease = nil
 }
 
 // UpdateOperatorsStatusMap updates the status of MesheryOperator in all the contexts
@@ -1087,11 +1099,12 @@ func (mch *MesheryControllersHelper) attachedOperatorHandler() controllers.IMesh
 // condition callers report differently (see setOperatorErrorIfUnset).
 //
 // This is the single guard every install path goes through. There are exactly
-// three, and all three call this: the FSM's DeployUndeployedOperators, the
-// user-initiated SetOperatorDeployment, and ReconcileOperatorChartVersion. They
-// are the only callers of Deploy on an operator handler in this repository, so
-// none of them can drift into handing Helm an unpublishable chart version while
-// the others refuse it.
+// four, and all four call this: the FSM's DeployUndeployedOperators, the
+// user-initiated SetOperatorDeployment, ReconcileOperatorChartVersion, and the
+// below-floor upgrade in reconcileOperatorChartFloor. The first three are the
+// only callers of Deploy on an operator handler in this repository and the
+// fourth the only caller of operatorRelease.Upgrade, so none of them can drift
+// into handing Helm an unpublishable chart version while the others refuse it.
 //
 // Installing is the one operator action that needs a chart version. The handler
 // is attached for observation even when none could be resolved, so refusing
@@ -1187,16 +1200,37 @@ func (mch *MesheryControllersHelper) SetOperatorDeployment(k8sctx K8sContext, de
 	return nil
 }
 
-// DeployUndeployedOperators looks at the status of Meshery Operator for each cluster and takes necessary action.
-// it will deploy the operator only when it is in NotDeployed state
-func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTracker, contextID string) *MesheryControllersHelper {
+// DeployUndeployedOperators is where Meshery decides, on every connect, what the
+// Meshery Operator on k8sctx's cluster needs:
+//
+//   - NotDeployed: install it.
+//   - Deployed, or Deploying (which is also what a crash-looping operator
+//     reports, its rollout never completing): leave it - unless its Helm
+//     release is on a chart below MinimumOperatorChartVersion, which
+//     reconcileOperatorChartFloor upgrades or reports.
+//   - Anything else (Undeployed by the user, or a status that could not be
+//     read): leave it.
+//
+// It takes the whole K8sContext rather than its ID so that every event it
+// emits names the connection, which is what lets a background reconcile's
+// event be persisted (shouldPersistControllerEvent) rather than only broadcast
+// to whoever happens to be watching when the server reconnects at boot.
+func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTracker, k8sctx K8sContext) *MesheryControllersHelper {
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return mch
 	}
 	if mch.meshsyncDeploymentMode != connections.MeshsyncDeploymentModeOperator {
 		return mch
 	}
-	if mch.ctxOperatorStatus != controllers.NotDeployed {
+	contextID := k8sctx.ID
+	switch mch.ctxOperatorStatus {
+	case controllers.NotDeployed:
+	case controllers.Deployed, controllers.Deploying:
+		if !ot.IsUndeployed(contextID) {
+			mch.reconcileOperatorChartFloor(k8sctx)
+		}
+		return mch
+	default:
 		return mch
 	}
 
@@ -1219,12 +1253,141 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 		mch.log.Error(err)
 		mch.emitErrorEvent("Failed to deploy Meshery Operator", err, map[string]any{
 			"k8sContextID":           contextID,
+			"k8sContextName":         k8sctx.Name,
+			"connectionID":           k8sctx.ConnectionID,
 			"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
 			"operatorStatus":         mch.ctxOperatorStatus,
 		}, uuid.Nil)
 	}
 
 	return mch
+}
+
+// reconcileOperatorChartFloor enforces MinimumOperatorChartVersion on a Meshery
+// Operator that is already installed (meshery/meshery#22555).
+//
+// The floor in ResolveOperatorChartVersion governs only the chart a server is
+// about to install, and a present operator is never re-installed - so before
+// this, a cluster that received a chart below the floor stayed on it through
+// every later server upgrade, its operator crash-looping on a webhook
+// certificate the chart never mounted. This reads the installed release's chart
+// version and, when it is below the floor, upgrades the release to the chart
+// this connection resolves to (attachedOperatorChartVersion: the derived
+// version, already floored, or the operator.version pin).
+//
+// Every outcome other than "already at or above the floor" and "no
+// meshery-operator release here" is emitted as an event carrying a MeshKit
+// error code, and every failure is also recorded for the connection's
+// diagnostics:
+//
+//   - upgraded: ErrOperatorChartBelowFloorUpgraded (warning)
+//   - left because operator.version pins a chart below the floor:
+//     ErrOperatorChartPinnedBelowFloor - a pin is never overridden
+//   - left because nothing published reaches the floor:
+//     ErrOperatorChartFloorUnreachable
+//   - the release could not be read: ErrReadOperatorRelease
+//   - the upgrade failed: ErrUpgradeOperatorRelease, retried on the next
+//     connect because the deployed revision is still below the floor
+//
+// No release is ordinary, not an error: an operator installed as a subchart of
+// the Meshery chart belongs to the "meshery" release and moves with it, and one
+// applied without Helm has no chart version to judge.
+//
+// CRDs need nothing from here. Helm never upgrades a chart's crds/ directory,
+// but every published chart at or above the floor carries a pre-upgrade CRD
+// update Job that applies the current CRDs before the operator Deployment
+// changes; see helmOperatorRelease.Upgrade.
+func (mch *MesheryControllersHelper) reconcileOperatorChartFloor(k8sctx K8sContext) {
+	contextID := k8sctx.ID
+	metadata := map[string]any{
+		"k8sContextID":                k8sctx.ID,
+		"k8sContextName":              k8sctx.Name,
+		"connectionID":                k8sctx.ConnectionID,
+		"minimumOperatorChartVersion": MinimumOperatorChartVersion,
+		"operatorStatus":              mch.ctxOperatorStatus.String(),
+	}
+
+	release := mch.operatorRelease
+	if release == nil {
+		// operatorRelease is attached with the handlers, and a Deployed or
+		// Deploying status can only have been read through an attached
+		// handler, so reaching here means the two were separated. Nothing can
+		// be checked; say so rather than pass over it.
+		mch.reportMissingOperatorHandler("Failed to check the Meshery Operator chart version", contextID)
+		return
+	}
+
+	installed, found, err := release.DeployedChartVersion()
+	if err != nil {
+		mch.setOperatorError(err)
+		mch.log.Error(err)
+		mch.emitErrorEvent("Unable to read the Meshery Operator Helm release", err, metadata, uuid.Nil)
+		return
+	}
+	if !found {
+		mch.log.Debugf("No deployed Helm release %s/%s on Kubernetes context %s; the operator chart floor does not apply to an operator this server did not install as that release", OperatorReleaseNamespace, OperatorReleaseName, contextID)
+		return
+	}
+	metadata["installedOperatorChartVersion"] = installed
+
+	// Checked before anything needs a target, so a healthy release costs one
+	// read and nothing else - not even a latched chart-resolution failure,
+	// which concerns installing, not observing.
+	if !belowOperatorChartFloor(installed) {
+		return
+	}
+
+	// The same guard every other install path takes. A latched chart
+	// resolution failure was already emitted by AddCtxControllerHandlers, so
+	// it is recorded and logged, not emitted again.
+	if _, attached, targetErr := mch.operatorInstallTarget(contextID); targetErr != nil {
+		if !attached {
+			mch.reportMissingOperatorHandler("Failed to upgrade Meshery Operator", contextID)
+			return
+		}
+		mch.setOperatorError(targetErr)
+		mch.log.Error(targetErr)
+		return
+	}
+
+	source := OperatorChartVersionDerived
+	if connections.OperatorChartVersionFromControllersConfig(mch.controllersConfig) != "" {
+		source = OperatorChartVersionRequested
+	}
+	target := mch.attachedOperatorChartVersion
+	metadata["operatorChartVersion"] = target
+
+	switch decideOperatorChartFloor(installed, target, source) {
+	case operatorChartFloorSatisfied:
+		return
+	case operatorChartFloorRefusePinned:
+		refusal := ErrOperatorChartPinnedBelowFloor(installed, target)
+		mch.setOperatorError(refusal)
+		mch.log.Error(refusal)
+		mch.emitErrorEvent("Meshery Operator left on a chart too old to run: operator.version pins it", refusal, metadata, uuid.Nil)
+		return
+	case operatorChartFloorRefuseUnreachable:
+		refusal := ErrOperatorChartFloorUnreachable(installed, target, mch.operatorDeploymentConfig().HelmChartRepo)
+		mch.setOperatorError(refusal)
+		mch.log.Error(refusal)
+		mch.emitErrorEvent("Meshery Operator left on a chart too old to run: no deployable chart is published", refusal, metadata, uuid.Nil)
+		return
+	case operatorChartFloorUpgrade:
+	}
+
+	depConfig := mch.operatorDeploymentConfig()
+	depConfig.MesheryReleaseVersion = target
+	mch.log.Infof("Upgrading Meshery Operator on Kubernetes context %s from chart %s, below the minimum %s, to chart %s", contextID, installed, MinimumOperatorChartVersion, target)
+	if upgradeErr := release.Upgrade(depConfig); upgradeErr != nil {
+		failure := ErrUpgradeOperatorRelease(installed, target, upgradeErr)
+		mch.setOperatorError(failure)
+		mch.log.Error(failure)
+		mch.emitErrorEvent("Failed to upgrade Meshery Operator from a chart too old to run", failure, metadata, uuid.Nil)
+		return
+	}
+	notice := ErrOperatorChartBelowFloorUpgraded(installed, target)
+	mch.log.Warn(notice)
+	mch.emitWarningEvent("Meshery Operator upgraded from a chart too old to run", notice, metadata, uuid.Nil)
 }
 
 func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTracker, contextID string) *MesheryControllersHelper {
@@ -1523,10 +1686,28 @@ func (mch *MesheryControllersHelper) emitEventWithError(description string, seve
 	}
 
 	if err != nil {
-		eventMetadata["error"] = err.Error()
+		eventMetadata["error"] = eventErrorMetadata(err)
 	}
 
 	mch.emitEvent(description, severity, eventMetadata, userID)
+}
+
+// eventErrorMetadata is the value an event's "error" metadata key carries for
+// err.
+//
+// A MeshKit error is carried as itself. The notification center renders
+// metadata.error as a structured MeshKit error - its LongDescription,
+// ProbableCause and SuggestedRemediation, keyed by those exported field names -
+// and the event's code travels with it. Flattening it to err.Error() kept only
+// the short description, so every controller event dropped the remediation it
+// was built to deliver along with its error code. Any other error has no
+// structure to keep and is carried as its text.
+func eventErrorMetadata(err error) any {
+	var meshkitErr *meshkiterrors.Error
+	if stderrors.As(err, &meshkitErr) {
+		return meshkitErr
+	}
+	return err.Error()
 }
 
 // Helper method to emit error events

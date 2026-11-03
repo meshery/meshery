@@ -451,7 +451,7 @@ func TestDeployIsRefusedWhileNoChartVersionResolves(t *testing.T) {
 	chartErr := ErrNoOperatorChartPublished(OperatorChartName, testChartRepo)
 	mch.setOperatorChartError(chartErr)
 
-	mch.DeployUndeployedOperators(NewOperatorTracker(false), testContextID)
+	mch.DeployUndeployedOperators(NewOperatorTracker(false), K8sContext{ID: testContextID})
 
 	if stub.deploys != 0 {
 		t.Fatalf("Deploy was called %d times with no installable chart version", stub.deploys)
@@ -462,7 +462,7 @@ func TestDeployIsRefusedWhileNoChartVersionResolves(t *testing.T) {
 
 	// Cleared, the same handler installs.
 	mch.setOperatorChartError(nil)
-	mch.DeployUndeployedOperators(NewOperatorTracker(false), testContextID)
+	mch.DeployUndeployedOperators(NewOperatorTracker(false), K8sContext{ID: testContextID})
 	if stub.deploys != 1 {
 		t.Fatalf("Deploy was called %d times once a chart version resolved, want 1", stub.deploys)
 	}
@@ -628,7 +628,7 @@ func TestMissingOperatorHandlerIsNeverASilentNoOp(t *testing.T) {
 			name:   "deploy",
 			status: controllers.NotDeployed,
 			act: func(mch *MesheryControllersHelper) {
-				mch.DeployUndeployedOperators(NewOperatorTracker(false), testContextID)
+				mch.DeployUndeployedOperators(NewOperatorTracker(false), K8sContext{ID: testContextID})
 			},
 		},
 		{
@@ -888,7 +888,7 @@ func TestChartErrorLatchSurvivesAReattachThatNeverResolves(t *testing.T) {
 	mch.ctxControllerHandlers[MesheryOperator] = stub
 	mch.ctxOperatorStatus = controllers.NotDeployed
 
-	mch.DeployUndeployedOperators(NewOperatorTracker(false), testContextID)
+	mch.DeployUndeployedOperators(NewOperatorTracker(false), K8sContext{ID: testContextID})
 
 	if stub.deploys != 0 {
 		t.Fatalf("Deploy was called %d times with an unresolved chart version still attached", stub.deploys)

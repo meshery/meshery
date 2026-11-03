@@ -104,7 +104,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 			SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
 			AddCtxControllerHandlers(machinectx.K8sContext).
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-			DeployUndeployedOperators(machinectx.OperatorTracker, machinectx.K8sContext.ID)
+			DeployUndeployedOperators(machinectx.OperatorTracker, machinectx.K8sContext)
 		ctrlHelper.AddMeshsyncDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)
 
 		// Operator mode: best-effort apply of the explicitly-set

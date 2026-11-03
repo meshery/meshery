@@ -34,11 +34,14 @@ Meshery Server installs the `meshery-operator` Helm chart from
 [meshery.io/charts](https://meshery.io/charts) into the `meshery` namespace of
 each managed cluster, requesting the chart version that **matches the Meshery
 Server release** and resolving it against the versions the repository actually
-publishes. Upgrading Meshery Server is therefore what upgrades the
-Operator: the Server re-applies the newer chart, the chart's CRD update Job
-refreshes the CRD schemas, and the Operator Deployment rolls to the operator
-version pinned in that chart. Manual operator upgrades on Server-managed
-clusters are reverted by the Server's reconciliation — see
+publishes. That chart is applied when the Server installs the Operator; an
+Operator that is already installed keeps its chart across Server upgrades, with
+one exception. On every connect the Server reads the installed release's chart
+version, and upgrades a release older than `v1.0.51` - the oldest chart verified
+to run - to the chart it resolves, unless a deliberate `operator.version` pins a
+chart below `v1.0.51` too, which it reports rather than overrides. On any such
+upgrade, the chart's CRD update Job refreshes the CRD schemas before the
+Operator Deployment rolls to the operator version pinned in that chart - see
 [How Meshery Server manages Meshery Operator]({{< ref "installation/upgrades/index.md#how-meshery-server-manages-meshery-operator" >}}).
 
 Resolution is what keeps that request honest. Because charts are published

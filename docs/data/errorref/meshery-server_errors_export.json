@@ -4268,6 +4268,51 @@
         "short_description": "Meshery Server could not determine which keys to register with the Local Provider",
         "probable_cause": "The header row of the keys file was renamed or dropped, so no row could be selected for registration and nothing is seeded from this file; on a fresh or reset database the Key table stays empty, while previously seeded keys are left untouched",
         "suggested_remediation": "Restore the missing header in server/permissions/keys.csv (or the file KEYS_PATH points at) and restart Meshery Server so keys seed again"
+      },
+      "1487": {
+        "name": "ErrOperatorChartBelowFloorUpgradedCode",
+        "code": "1487",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Operator was upgraded from a chart too old to run",
+        "probable_cause": "The Meshery Operator was installed before the minimum deployable chart was published, by an earlier Meshery Server or by hand. Charts below the minimum set no ENABLE_WEBHOOKS, so current operator images crash-loop looking for a webhook serving certificate the chart never created.",
+        "suggested_remediation": "No action is required. Confirm the operator becomes ready with: kubectl -n meshery rollout status deploy/meshery-operator\nTo choose the chart version yourself, set operator.version on the Kubernetes connection."
+      },
+      "1488": {
+        "name": "ErrOperatorChartPinnedBelowFloorCode",
+        "code": "1488",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Operator chart is older than the minimum deployable chart, and operator.version pins it there",
+        "probable_cause": "operator.version on the Kubernetes connection, or in the server-wide controllers defaults, names a chart older than the minimum. Charts below the minimum set no ENABLE_WEBHOOKS, so current operator images crash-loop looking for a webhook serving certificate the chart never created.",
+        "suggested_remediation": "Set operator.version to a chart at or above the minimum named in this error's details, or clear it to track the Meshery Server release, then reconnect the Kubernetes connection."
+      },
+      "1489": {
+        "name": "ErrOperatorChartFloorUnreachableCode",
+        "code": "1489",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Operator chart is older than the minimum deployable chart, and no chart at or above the minimum is published",
+        "probable_cause": "The Meshery Operator chart repository is a mirror that has not synced recent charts, or its newer charts were removed.",
+        "suggested_remediation": "Confirm the chart repository publishes a chart at or above the minimum named in this error's details, then reconnect the Kubernetes connection."
+      },
+      "1490": {
+        "name": "ErrReadOperatorReleaseCode",
+        "code": "1490",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to read the Meshery Operator Helm release",
+        "probable_cause": "Meshery Server could not list the Helm release records (Secrets) in the meshery namespace, usually because the identity in the connection's kubeconfig may not get or list Secrets there, or because the cluster API was unreachable.\nThe deployed revision of the release records no chart version, which Helm does not write itself.",
+        "suggested_remediation": "Grant the identity in the connection's kubeconfig get and list on Secrets in the meshery namespace, then reconnect the Kubernetes connection.\nInspect the release with: helm -n meshery history meshery-operator"
+      },
+      "1491": {
+        "name": "ErrUpgradeOperatorReleaseCode",
+        "code": "1491",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to upgrade the Meshery Operator from a chart too old to run",
+        "probable_cause": "The chart could not be downloaded from the chart repository, the chart's pre-upgrade CRD update Job did not complete (for example, its image could not be pulled), or another Helm operation on the release was in progress. A failed pre-upgrade hook leaves the operator Deployment unchanged.",
+        "suggested_remediation": "Reconnect the Kubernetes connection to retry; Meshery Server retries the upgrade on every connect while the release stays below the minimum.\nInspect the release with: helm -n meshery history meshery-operator\nIf the CRD update Job failed, read its logs with: kubectl -n meshery logs job/meshery-operator-crd-update"
       }
     }
   }
