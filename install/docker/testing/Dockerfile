@@ -1,4 +1,4 @@
-FROM golang:1.26.4 AS meshery-server
+FROM golang:1.27.1 AS meshery-server
 ARG GIT_VERSION
 
 RUN adduser --disabled-login appuser

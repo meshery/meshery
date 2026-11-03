@@ -35,7 +35,7 @@ jobs:
   golangci-server:
     strategy:
       matrix:
-        go: [1.26.4]
+        go: [1.27.1]
         os: [ubuntu-24.04]
     name: golangci-lint-server
     if: github.repository == 'meshery/meshery'
@@ -48,7 +48,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.12.2
+          version: v2.13.0
           args: --config=../.github/.golangci.yml --timeout=10m
           only-new-issues: ${{ github.event_name == 'pull_request' }}
           working-directory: ./server
@@ -118,7 +118,7 @@ jobs:
   golangci-cli:
     strategy:
       matrix:
-        go: [1.26.4]
+        go: [1.27.1]
         os: [ubuntu-24.04]
     name: golangci-lint-cli
     if: github.repository == 'meshery/meshery'
@@ -131,7 +131,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.12.2
+          version: v2.13.0
           args: --config=../.github/.golangci.yml --timeout=10m
           only-new-issues: ${{ github.event_name == 'pull_request' }}
           working-directory: ./mesheryctl
