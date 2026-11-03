@@ -150,8 +150,9 @@ document.addEventListener("click", (event) => {
 
 /* Table of Contents Scrollspy & Auto-scroll (Modern Docs) */
 function initTableOfContentsScrollSpy() {
-    const tocNav = document.querySelector(".content-table-wrapper .td-toc nav") || document.querySelector(".content-table-wrapper nav");
-    if (!tocNav) return;
+    const tocWrapper = document.querySelector(".content-table-wrapper");
+    const tocNav = tocWrapper ? (tocWrapper.querySelector(".td-toc nav") || tocWrapper.querySelector("nav")) : null;
+    if (!tocWrapper || !tocNav) return;
 
     const tocLinks = Array.from(tocNav.querySelectorAll('a[href^="#"]'));
     if (!tocLinks.length) return;
@@ -173,13 +174,28 @@ function initTableOfContentsScrollSpy() {
 
     if (!headings.length) return;
 
+    function scrollTocContainer(link) {
+        if (!tocWrapper || tocWrapper.offsetParent === null) return;
+        const wrapperRect = tocWrapper.getBoundingClientRect();
+        const linkRect = link.getBoundingClientRect();
+        const padding = 20;
+
+        if (linkRect.top < wrapperRect.top + padding || linkRect.bottom > wrapperRect.bottom - padding) {
+            const targetScrollTop = tocWrapper.scrollTop + (linkRect.top - wrapperRect.top) - (wrapperRect.height / 3);
+            tocWrapper.scrollTo({
+                top: Math.max(0, targetScrollTop),
+                behavior: "smooth"
+            });
+        }
+    }
+
     let activeLink = null;
     function setActive(link) {
         if (!link || link === activeLink) return;
         if (activeLink) activeLink.classList.remove("active");
         link.classList.add("active");
         activeLink = link;
-        link.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        scrollTocContainer(link);
     }
 
     function onScroll() {
