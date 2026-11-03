@@ -367,6 +367,7 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
   const events = useSelector(selectEvents);
   // const page = useSelector((state) => state.events.current_view.page);
   const lastEventRef = useRef(null);
+  const shouldShowEmptyState = !isFetching && events.length === 0;
   const intersectionObserver = useRef(
     new IntersectionObserver(
       (entries) => {
@@ -404,7 +405,7 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
         );
       })}
 
-      {events.length === 0 && <EmptyState />}
+      {shouldShowEmptyState && <EmptyState />}
 
       <div ref={lastEventRef}></div>
       {isFetching && hasMore && <Loading />}
