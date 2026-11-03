@@ -6,7 +6,7 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
 <p align="center">
 <a href="https://hub.docker.com/r/meshery/meshery" alt="Docker pulls">
   <img src="https://img.shields.io/docker/pulls/meshery/meshery.svg" /></a>
-<a href="https://github.com/issues?q=is%3Aopen%20is%3Aissue%20archived%3Afalse%20(org%3Ameshery%20OR%20org%3Aservice-mesh-performance%20OR%20org%3Aservice-mesh-patterns%20OR%20org%3Ameshery-extensions)%20label%3A%22help%20wanted%22%20" alt="GitHub issues by-label">
+<a href="https://github.com/search?q=is%3Aopen+is%3Aissue+archived%3Afalse+(org%3Ameshery+OR+org%3Aservice-mesh-performance+OR+org%3Aservice-mesh-patterns+OR+org%3Ameshery-extensions)+label%3A%22help+wanted%22&type=issues" alt="GitHub issues by-label">
   <img src="https://img.shields.io/github/issues/meshery/meshery/help%20wanted.svg?color=informational" /></a>
 <a href="https://github.com/meshery/meshery/blob/master/LICENSE" alt="LICENSE">
   <img src="https://img.shields.io/github/license/meshery/meshery?color=brightgreen" /></a>
@@ -295,7 +295,7 @@ Learn more about the <a href="https://meshery.io/community#meshmates">MeshMates<
 </div>
 <br /><br />
 <p align="left">
-&nbsp;&nbsp;&nbsp;&nbsp; <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?q=is%3Aopen%20is%3Aissue%20archived%3Afalse%20(org%3Ameshery%20OR%20org%3Aservice-mesh-performance%20OR%20org%3Aservice-mesh-patterns%20OR%20org%3Ameshery-extensions)%20label%3A%22help%20wanted%22%20">help-wanted label</a>.
+&nbsp;&nbsp;&nbsp;&nbsp; <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/search?q=is%3Aopen+is%3Aissue+archived%3Afalse+(org%3Ameshery+OR+org%3Aservice-mesh-performance+OR+org%3Aservice-mesh-patterns+OR+org%3Ameshery-extensions)+label%3A%22help+wanted%22&type=issues">help-wanted label</a>.
 </p>
 <br /><br />
 
