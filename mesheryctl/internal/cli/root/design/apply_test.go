@@ -2,6 +2,7 @@ package design
 
 import (
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -38,7 +39,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?contexts=all",
 					Response:     "apply.designDeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -53,7 +54,49 @@ func TestApplyCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?contexts=all",
+					Response:     "apply.designDeploy.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: false,
+		},
+		{
+			Name:             "given valid file and single --contexts when design apply then target context is passed",
+			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--contexts", "k8s-cluster-1"},
+			ExpectedResponse: "apply.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?contexts=k8s-cluster-1",
+					Response:     "apply.designDeploy.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: false,
+		},
+		{
+			Name:             "given valid file and multiple --contexts when design apply then repeated context query params are passed",
+			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-c", "k8s-cluster-1,k8s-cluster-2"},
+			ExpectedResponse: "apply.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?contexts=k8s-cluster-1&contexts=k8s-cluster-2",
 					Response:     "apply.designDeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -93,6 +136,16 @@ func TestApplyCmd(t *testing.T) {
 
 				return utils.ErrUnmarshal(innerErr)
 			}(),
+		},
+		{
+			Name:             "given invalid combination of all and specific context ID when design apply then return error",
+			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--contexts", "all,k8s-cluster-1"},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    fmt.Errorf("cannot combine 'all' with specific context IDs"),
 		},
 	}
 

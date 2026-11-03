@@ -32,6 +32,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+var undeployContexts []string
+
 var designUndeployCmd = &cobra.Command{
 	Use:   "undeploy",
 	Short: "Undeploy design",
@@ -40,6 +42,9 @@ var designUndeployCmd = &cobra.Command{
 	Example: `
 // Undeploy design by providing file path
 mesheryctl design undeploy -f [filepath]
+
+// Undeploy design targeting specific Kubernetes contexts
+mesheryctl design undeploy -f [filepath] -c [context-id]
 	`,
 
 	Args: func(cmd *cobra.Command, args []string) error {
@@ -64,6 +69,12 @@ mesheryctl design undeploy -f [filepath]
 			return err
 		}
 
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
+		deployURL, err = appendContextsQuery(deployURL, undeployContexts)
+		if err != nil {
+			return err
+		}
+
 		design := ""
 		isID := false
 		if len(args) > 0 {
@@ -84,8 +95,6 @@ mesheryctl design undeploy -f [filepath]
 		}
 
 		designURLPath := "api/pattern"
-
-		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
 
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
@@ -158,4 +167,5 @@ mesheryctl design undeploy -f [filepath]
 
 func init() {
 	designUndeployCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
+	designUndeployCmd.Flags().StringSliceVarP(&undeployContexts, "contexts", "c", []string{}, "Kubernetes context ID(s) or 'all' to target (default [all])")
 }

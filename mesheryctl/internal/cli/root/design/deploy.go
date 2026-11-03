@@ -40,9 +40,10 @@ import (
 )
 
 type cmdDesignDeployFlags struct {
-	File       string `json:"file" validate:"omitempty,file"`
-	SourceType string `json:"source-type" validate:"omitempty,design-source-type"`
-	SkipSave   bool   `json:"skip-save" validate:"boolean"`
+	File       string   `json:"file" validate:"omitempty,file"`
+	SourceType string   `json:"source-type" validate:"omitempty,design-source-type"`
+	SkipSave   bool     `json:"skip-save" validate:"boolean"`
+	Contexts   []string `json:"contexts" validate:"omitempty"`
 }
 
 var designDeployFlags cmdDesignDeployFlags
@@ -60,6 +61,9 @@ var deployDesignCmd = &cobra.Command{
 	Example: `
 // Deploy design by providing file path
 mesheryctl design deploy -f [filepath] -s [source type]
+
+// Deploy design targeting specific Kubernetes contexts
+mesheryctl design deploy -f [filepath] -c [context-id]
 	`,
 	Annotations: linkDocDesignDeploy,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -100,6 +104,11 @@ mesheryctl design deploy -f [filepath] -s [source type]
 
 		deployURLPath := "api/pattern/deploy"
 		patternURLPath := "api/pattern"
+
+		deployURLPath, err = appendContextsQuery(deployURLPath, designDeployFlags.Contexts)
+		if err != nil {
+			return err
+		}
 
 		// pattern name has been passed
 		if len(args) > 0 {
@@ -218,4 +227,5 @@ func init() {
 	deployDesignCmd.Flags().StringVarP(&designDeployFlags.File, "file", "f", "", "Path to design file")
 	deployDesignCmd.Flags().BoolVarP(&designDeployFlags.SkipSave, "skip-save", "", false, "Skip saving a design")
 	deployDesignCmd.Flags().StringVarP(&designDeployFlags.SourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
+	deployDesignCmd.Flags().StringSliceVarP(&designDeployFlags.Contexts, "contexts", "c", []string{}, "Kubernetes context ID(s) or 'all' to target (default [all])")
 }

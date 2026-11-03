@@ -36,7 +36,47 @@ func TestUndeployCmd(t *testing.T) {
 				},
 				{
 					Method:       "DELETE",
-					URL:          "/api/pattern/deploy",
+					URL:          "/api/pattern/deploy?contexts=all",
+					Response:     "undeploy.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
+		{
+			Name:             "given valid file and single --contexts when design undeploy then target context is passed",
+			Args:             []string{"undeploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--contexts", "k8s-cluster-1"},
+			ExpectedResponse: "undeploy.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          "/api/pattern",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          "/api/pattern/deploy?contexts=k8s-cluster-1",
+					Response:     "undeploy.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
+		{
+			Name:             "given valid file and multiple --contexts when design undeploy then repeated context query params are passed",
+			Args:             []string{"undeploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-c", "k8s-cluster-1,k8s-cluster-2"},
+			ExpectedResponse: "undeploy.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          "/api/pattern",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          "/api/pattern/deploy?contexts=k8s-cluster-1&contexts=k8s-cluster-2",
 					Response:     "undeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -90,6 +130,15 @@ func TestUndeployCmd(t *testing.T) {
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound(filepath.Join(fixturesDir, "sampleDesign.golden")),
+		},
+		{
+			Name:             "given invalid combination of all and specific context ID when design undeploy then return error",
+			Args:             []string{"undeploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--contexts", "all,k8s-cluster-1"},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    fmt.Errorf("cannot combine 'all' with specific context IDs"),
 		},
 	}
 

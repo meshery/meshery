@@ -17,6 +17,7 @@ package design
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"slices"
 	"strings"
 
@@ -125,4 +126,56 @@ func fetchDesignByID(baseUrl, designID string) (pattern.PatternFile, error) {
 		return pattern.PatternFile{}, ErrParseDesignFile(errors.New("bridged pattern file is nil"))
 	}
 	return *bridged, nil
+}
+
+// appendContextsQuery appends the target Kubernetes context IDs as query parameters
+// to the given rawURL. If contexts is empty, it defaults to "all" to match
+// Meshery Server's multi-context deployment contract. If 'all' is provided, it
+// must be the only context parameter; combining 'all' with specific context IDs
+// returns an error. Duplicate context IDs are deduplicated.
+func appendContextsQuery(rawURL string, contexts []string) (string, error) {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		return rawURL, err
+	}
+
+	q := u.Query()
+	var targets []string
+	hasAll := false
+	hasSpecific := false
+	seen := make(map[string]bool)
+
+	for _, entry := range contexts {
+		for _, c := range strings.Split(entry, ",") {
+			c = strings.TrimSpace(c)
+			if c == "" || c == "[]" {
+				continue
+			}
+			if strings.EqualFold(c, "all") {
+				hasAll = true
+			} else {
+				hasSpecific = true
+				if !seen[c] {
+					seen[c] = true
+					targets = append(targets, c)
+				}
+			}
+		}
+	}
+
+	if hasAll && hasSpecific {
+		return rawURL, errors.New("cannot combine 'all' with specific context IDs")
+	}
+
+	if hasAll || len(targets) == 0 {
+		targets = []string{"all"}
+	}
+
+	q.Del("contexts")
+	for _, c := range targets {
+		q.Add("contexts", c)
+	}
+
+	u.RawQuery = q.Encode()
+	return u.String(), nil
 }
