@@ -21,7 +21,7 @@ var (
 var ConnectionsCmd = &cobra.Command{
 	Use:   "connection",
 	Short: "Manage Meshery connections",
-	Long: `View and manage your Meshery connection.
+	Long: `View and manage your Meshery connections.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/connection`,
 	Example: `
 // Display total count of all available connections
@@ -33,9 +33,12 @@ mesheryctl connection create --type eks
 mesheryctl connection create --type gke
 mesheryctl connection create --type minikube
 
-// List all the connection
+// List all the connections
 mesheryctl connection list
 mesheryctl connection list --count
+
+// View details of a specific connection
+mesheryctl connection view [connection-name|connection-id]
 
 // Delete a connection
 mesheryctl connection delete [connection_id]
