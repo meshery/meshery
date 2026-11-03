@@ -10,6 +10,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/jinzhu/copier"
 	pkgerrors "github.com/pkg/errors"
 
 	"github.com/meshery/meshery/server/models"
@@ -98,17 +99,28 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		_ = req.Body.Close()
 	}()
 
-	// read user preferences from JSON request body
-	if err := json.NewDecoder(req.Body).Decode(&prefObj); err != nil {
+	// clone existing preferences into a staged object so unvalidated mutations
+	// do not corrupt in-memory or persisted state on rejected updates
+	stagedPref := models.NewDefaultPreference()
+	if prefObj != nil {
+		if err := copier.CopyWithOption(stagedPref, prefObj, copier.Option{DeepCopy: true}); err != nil {
+			h.log.Error(ErrDecoding(err, "user preferences"))
+			writeMeshkitError(w, ErrDecoding(err, "user preferences"), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	// read user preferences from JSON request body into the staged copy
+	if err := json.NewDecoder(req.Body).Decode(stagedPref); err != nil {
 		h.log.Error(ErrDecoding(err, "user preferences"))
 		writeMeshkitError(w, ErrDecoding(err, "user preferences"), http.StatusInternalServerError)
 		return
 	}
 
 	// only validate load test data when LoadTestPreferences is send
-	if prefObj.LoadTestPreferences != nil {
+	if stagedPref.LoadTestPreferences != nil {
 		// validate load test data
-		qps := prefObj.LoadTestPreferences.QueriesPerSecond
+		qps := stagedPref.LoadTestPreferences.QueriesPerSecond
 		if qps < 0 {
 			err := fmt.Errorf("QPS value less than 0")
 			h.log.Error(ErrSavingUserPreference(err))
@@ -116,7 +128,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 			return
 		}
 
-		dur := prefObj.LoadTestPreferences.Duration
+		dur := stagedPref.LoadTestPreferences.Duration
 		if _, err := time.ParseDuration(dur); err != nil {
 			err = pkgerrors.Wrap(err, "unable to parse test duration")
 			h.log.Error(ErrSavingUserPreference(err))
@@ -124,7 +136,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 			return
 		}
 
-		c := prefObj.LoadTestPreferences.ConcurrentRequests
+		c := stagedPref.LoadTestPreferences.ConcurrentRequests
 		if c < 0 {
 			err := fmt.Errorf("number of concurrent requests less than 0")
 			h.log.Error(ErrSavingUserPreference(err))
@@ -136,7 +148,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		// (default) and the removed "wrk2" (legacy preferences) are
 		// tolerated and transparently run on fortio. Any other value is
 		// rejected as an invalid generator.
-		loadGen := prefObj.LoadTestPreferences.LoadGenerator
+		loadGen := stagedPref.LoadTestPreferences.LoadGenerator
 		if loadGen != "" && loadGen != models.FortioLG.Name() && loadGen != "wrk2" {
 			err := fmt.Errorf("invalid load generator: %s", loadGen)
 			h.log.Error(ErrSavingUserPreference(err))
@@ -145,15 +157,19 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		}
 	}
 
-	if err := provider.RecordPreferences(req, user.ID.String(), prefObj); err != nil {
+	if err := provider.RecordPreferences(req, user.ID.String(), stagedPref); err != nil {
 		err := fmt.Errorf("unable to save user preferences: %v", err)
 		h.log.Error(ErrSavingUserPreference(err))
 		writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusInternalServerError)
 		return
 	}
 
+	if prefObj != nil {
+		*prefObj = *stagedPref
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(prefObj); err != nil {
+	if err := json.NewEncoder(w).Encode(stagedPref); err != nil {
 		obj := "user preferences"
 		h.log.Error(models.ErrEncoding(err, obj))
 		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
