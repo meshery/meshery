@@ -6,6 +6,10 @@ on:
     paths:
       - "**.go"
       - "**.golden"
+      - "go.mod"
+      - "go.sum"
+      - "**/go.mod"
+      - "**/go.sum"
       - ".github/workflows/go-testing-ci.yml"
       - ".github/.golangci.yml"
   pull_request:
@@ -14,6 +18,10 @@ on:
     paths:
       - "**.go"
       - "**.golden"
+      - "go.mod"
+      - "go.sum"
+      - "**/go.mod"
+      - "**/go.sum"
       - ".github/workflows/go-testing-ci.yml"
       - ".github/.golangci.yml"
   workflow_dispatch:
