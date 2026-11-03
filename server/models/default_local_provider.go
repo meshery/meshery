@@ -584,7 +584,7 @@ func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order s
 		return nil, ErrPageSize(err)
 	}
 
-	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
+	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, withStatus, pg, pgs)
 }
 
 func (l *DefaultLocalProvider) GetK8sContext(_, id string) (K8sContext, error) {
