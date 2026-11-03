@@ -45,6 +45,34 @@ const testTheme = {
   },
 };
 
+const makeNavNode = (
+  title: string,
+  href?: string,
+  id: string = title.toLowerCase().replace(/\s+/g, '-'),
+  opts?:
+    | NavigatorCategory['children']
+    | {
+        icon?: NavigatorCategory['icon'];
+        permission?: NavigatorCategory['permissionKey'];
+        children?: NavigatorCategory['children'];
+        show?: boolean;
+        link?: boolean;
+      },
+): NavigatorCategory => {
+  const isArr = Array.isArray(opts);
+  const conf = isArr ? { children: opts } : opts || {};
+  return {
+    id,
+    title,
+    href,
+    link: conf.link ?? true,
+    ...('show' in conf ? (conf.show !== undefined ? { show: conf.show } : {}) : { show: true }),
+    ...(conf.children ? { children: conf.children } : {}),
+    ...(conf.icon ? { icon: conf.icon } : {}),
+    ...(conf.permission ? { permissionKey: conf.permission } : {}),
+  };
+};
+
 describe('commands.ts', () => {
   beforeEach(() => {
     ability.update([]);
@@ -107,8 +135,23 @@ describe('commands.ts', () => {
       },
     };
 
-    it('denied commands remain listed with disabled: true and requires set', () => {
-      ability.update([]); // All denied
+    it.each([
+      {
+        name: 'denied commands remain listed with disabled: true and requires set',
+        abilities: [],
+        disabled: true,
+        settingsRequires: Keys.MesherySystemViewSettings.function,
+        connectionsRequires: Keys.WorkspaceManagementViewConnections.function,
+      },
+      {
+        name: 'allowed commands have disabled: false and requires: undefined',
+        abilities: [{ action: 'manage', subject: 'all' }],
+        disabled: false,
+        settingsRequires: undefined,
+        connectionsRequires: undefined,
+      },
+    ])('$name', ({ abilities, disabled, settingsRequires, connectionsRequires }) => {
+      ability.update(abilities);
       const accessControl = new ProviderUiAccessControl(defaultPayload);
       const nav = getNavigatorComponents(accessControl, testTheme);
 
@@ -116,89 +159,91 @@ describe('commands.ts', () => {
 
       const settingsCmd = commands.find((c) => c.id === 'settings');
       expect(settingsCmd).toBeDefined();
-      expect(settingsCmd?.disabled).toBe(true);
-      expect(settingsCmd?.requires).toBe(Keys.MesherySystemViewSettings.function);
+      expect(settingsCmd?.disabled).toBe(disabled);
+      expect(settingsCmd?.requires).toBe(settingsRequires);
 
       const connectionsCmd = commands.find((c) => c.href === '/management/connections');
       expect(connectionsCmd).toBeDefined();
-      expect(connectionsCmd?.disabled).toBe(true);
-      expect(connectionsCmd?.requires).toBe(Keys.WorkspaceManagementViewConnections.function);
+      expect(connectionsCmd?.disabled).toBe(disabled);
+      expect(connectionsCmd?.requires).toBe(connectionsRequires);
     });
 
-    it('allowed commands have disabled: false and requires: undefined', () => {
-      ability.update([{ action: 'manage', subject: 'all' }]);
-      const accessControl = new ProviderUiAccessControl(defaultPayload);
-      const nav = getNavigatorComponents(accessControl, testTheme);
-
-      const commands = buildCommands(nav, accessControl, CAN);
-
-      const settingsCmd = commands.find((c) => c.id === 'settings');
-      expect(settingsCmd?.disabled).toBe(false);
-      expect(settingsCmd?.requires).toBeUndefined();
-
-      const connectionsCmd = commands.find((c) => c.href === '/management/connections');
-      expect(connectionsCmd?.disabled).toBe(false);
-      expect(connectionsCmd?.requires).toBeUndefined();
+    const viewKey = Keys.CatalogManagementViewDesigns;
+    const createKey = Keys.CatalogManagementCreateNewDesign;
+    const importKey = Keys.CatalogManagementImportDesign;
+    const toGrant = (key: (typeof Keys)[keyof typeof Keys]) => ({
+      action: key.id,
+      subject: _.lowerCase(key.function),
     });
 
-    it('evaluates Create/Import permissions with partial and full key grants', () => {
-      const accessControl = new ProviderUiAccessControl(defaultPayload);
-      const nav = getNavigatorComponents(accessControl, testTheme);
+    it.each([
+      {
+        name: '1. All denied',
+        grants: [],
+        createDisabled: true,
+        importDisabled: true,
+      },
+      {
+        name: '2. Granted only ViewDesigns: Create disabled, requires lists CreateNewDesign; Import disabled, requires lists ImportDesign',
+        grants: [toGrant(viewKey)],
+        createDisabled: true,
+        createRequires: createKey.function,
+        importDisabled: true,
+        importRequires: importKey.function,
+      },
+      {
+        name: '3. Granted only CreateNewDesign: disabled',
+        grants: [toGrant(createKey)],
+        createDisabled: true,
+      },
+      {
+        name: '4. Granted only ImportDesign: disabled',
+        grants: [toGrant(importKey)],
+        importDisabled: true,
+      },
+      {
+        name: '5. Granted both ViewDesigns and CreateNewDesign: Create allowed',
+        grants: [toGrant(viewKey), toGrant(createKey)],
+        createDisabled: false,
+        createRequiresUndefined: true,
+      },
+      {
+        name: '6. Granted both ViewDesigns and ImportDesign: Import allowed',
+        grants: [toGrant(viewKey), toGrant(importKey)],
+        importDisabled: false,
+        importRequiresUndefined: true,
+      },
+    ])(
+      'evaluates Create/Import permissions with partial and full key grants: $name',
+      ({
+        grants,
+        createDisabled,
+        createRequires,
+        createRequiresUndefined,
+        importDisabled,
+        importRequires,
+        importRequiresUndefined,
+      }) => {
+        ability.update(grants);
+        const accessControl = new ProviderUiAccessControl(defaultPayload);
+        const nav = getNavigatorComponents(accessControl, testTheme);
+        const commands = buildCommands(nav, accessControl, CAN);
 
-      const viewKey = Keys.CatalogManagementViewDesigns;
-      const createKey = Keys.CatalogManagementCreateNewDesign;
-      const importKey = Keys.CatalogManagementImportDesign;
+        if (createDisabled !== undefined) {
+          const createCmd = commands.find((c) => c.id === 'action:create-design');
+          expect(createCmd?.disabled).toBe(createDisabled);
+          if (createRequires) expect(createCmd?.requires).toContain(createRequires);
+          if (createRequiresUndefined) expect(createCmd?.requires).toBeUndefined();
+        }
 
-      // 1. All denied
-      ability.update([]);
-      let commands = buildCommands(nav, accessControl, CAN);
-      let createCmd = commands.find((c) => c.id === 'action:create-design');
-      let importCmd = commands.find((c) => c.id === 'action:import-design');
-      expect(createCmd?.disabled).toBe(true);
-      expect(importCmd?.disabled).toBe(true);
-
-      // 2. Granted only ViewDesigns: Create disabled, requires lists CreateNewDesign; Import disabled, requires lists ImportDesign
-      ability.update([{ action: viewKey.id, subject: _.lowerCase(viewKey.function) }]);
-      commands = buildCommands(nav, accessControl, CAN);
-      createCmd = commands.find((c) => c.id === 'action:create-design');
-      importCmd = commands.find((c) => c.id === 'action:import-design');
-      expect(createCmd?.disabled).toBe(true);
-      expect(createCmd?.requires).toContain(createKey.function);
-      expect(importCmd?.disabled).toBe(true);
-      expect(importCmd?.requires).toContain(importKey.function);
-
-      // 3. Granted only CreateNewDesign: disabled
-      ability.update([{ action: createKey.id, subject: _.lowerCase(createKey.function) }]);
-      commands = buildCommands(nav, accessControl, CAN);
-      createCmd = commands.find((c) => c.id === 'action:create-design');
-      expect(createCmd?.disabled).toBe(true);
-
-      // 4. Granted only ImportDesign: disabled
-      ability.update([{ action: importKey.id, subject: _.lowerCase(importKey.function) }]);
-      commands = buildCommands(nav, accessControl, CAN);
-      importCmd = commands.find((c) => c.id === 'action:import-design');
-      expect(importCmd?.disabled).toBe(true);
-
-      // 5. Granted both ViewDesigns and CreateNewDesign: Create allowed
-      ability.update([
-        { action: viewKey.id, subject: _.lowerCase(viewKey.function) },
-        { action: createKey.id, subject: _.lowerCase(createKey.function) },
-      ]);
-      commands = buildCommands(nav, accessControl, CAN);
-      createCmd = commands.find((c) => c.id === 'action:create-design');
-      expect(createCmd?.disabled).toBe(false);
-      expect(createCmd?.requires).toBeUndefined();
-
-      // 6. Granted both ViewDesigns and ImportDesign: Import allowed
-      ability.update([
-        { action: viewKey.id, subject: _.lowerCase(viewKey.function) },
-        { action: importKey.id, subject: _.lowerCase(importKey.function) },
-      ]);
-      commands = buildCommands(nav, accessControl, CAN);
-      importCmd = commands.find((c) => c.id === 'action:import-design');
-      expect(importCmd?.disabled).toBe(false);
-      expect(importCmd?.requires).toBeUndefined();
-    });
+        if (importDisabled !== undefined) {
+          const importCmd = commands.find((c) => c.id === 'action:import-design');
+          expect(importCmd?.disabled).toBe(importDisabled);
+          if (importRequires) expect(importCmd?.requires).toContain(importRequires);
+          if (importRequiresUndefined) expect(importCmd?.requires).toBeUndefined();
+        }
+      },
+    );
 
     it('real getNavigatorComponents output includes commands for /performance and /telemetry, deduping /management/connections and /configuration/designs', () => {
       const accessControl = new ProviderUiAccessControl(defaultPayload);
@@ -219,54 +264,16 @@ describe('commands.ts', () => {
 
     it('parent without link is not a command; parent with link whose href equals a shown child href is deduped', () => {
       const mockNav: NavigatorCategory[] = [
-        {
-          id: 'parent-no-link',
-          title: 'Parent No Link',
-          href: '/no-link-parent',
+        makeNavNode('Parent No Link', '/no-link-parent', 'parent-no-link', {
           link: false,
-          show: true,
-          children: [
-            {
-              id: 'child-1',
-              title: 'Child 1',
-              href: '/child-1',
-              link: true,
-              show: true,
-            },
-          ],
-        },
-        {
-          id: 'parent-dup',
-          title: 'Parent Dup',
-          href: '/duplicate-href',
-          link: true,
-          show: true,
-          children: [
-            {
-              id: 'child-dup',
-              title: 'Child Dup',
-              href: '/duplicate-href',
-              link: true,
-              show: true,
-            },
-          ],
-        },
-        {
-          id: 'parent-with-distinct-href',
-          title: 'Parent Distinct',
-          href: '/distinct-parent',
-          link: true,
-          show: true,
-          children: [
-            {
-              id: 'child-distinct',
-              title: 'Child Distinct',
-              href: '/distinct-child',
-              link: true,
-              show: true,
-            },
-          ],
-        },
+          children: [makeNavNode('Child 1', '/child-1', 'child-1')],
+        }),
+        makeNavNode('Parent Dup', '/duplicate-href', 'parent-dup', [
+          makeNavNode('Child Dup', '/duplicate-href', 'child-dup'),
+        ]),
+        makeNavNode('Parent Distinct', '/distinct-parent', 'parent-with-distinct-href', [
+          makeNavNode('Child Distinct', '/distinct-child', 'child-distinct'),
+        ]),
       ];
 
       const commands = buildCommands(mockNav, null, CAN);
@@ -289,20 +296,8 @@ describe('commands.ts', () => {
 
     it('childless top-level node with link: false is not a command', () => {
       const mockNav: NavigatorCategory[] = [
-        {
-          id: 'no-link-leaf',
-          title: 'No Link Leaf',
-          href: '/no-link-leaf',
-          link: false,
-          show: true,
-        },
-        {
-          id: 'link-leaf',
-          title: 'Link Leaf',
-          href: '/link-leaf',
-          link: true,
-          show: true,
-        },
+        makeNavNode('No Link Leaf', '/no-link-leaf', 'no-link-leaf', { link: false }),
+        makeNavNode('Link Leaf', '/link-leaf', 'link-leaf'),
       ];
 
       const commands = buildCommands(mockNav, null, CAN);
@@ -312,28 +307,11 @@ describe('commands.ts', () => {
 
     it('skips top-level nodes if show is falsy', () => {
       const mockNav: NavigatorCategory[] = [
-        {
-          id: 'shown-category',
-          title: 'Shown',
-          show: true,
-          link: true,
-          href: '/shown',
-        },
-        {
-          id: 'hidden-category',
-          title: 'Hidden',
+        makeNavNode('Shown', '/shown', 'shown-category'),
+        makeNavNode('Hidden', undefined, 'hidden-category', {
           show: false,
-          link: true,
-          children: [
-            {
-              id: 'child',
-              title: 'Hidden Child',
-              href: '/hidden-child',
-              link: true,
-              show: true,
-            },
-          ],
-        },
+          children: [makeNavNode('Hidden Child', '/hidden-child', 'child')],
+        }),
       ];
 
       const commands = buildCommands(mockNav, null, CAN);
@@ -343,35 +321,13 @@ describe('commands.ts', () => {
 
     it('skips child only when typeof show !== "undefined" && !show (undefined show is included)', () => {
       const mockNav: NavigatorCategory[] = [
-        {
-          id: 'cat',
-          title: 'Category',
-          show: true,
-          link: true,
-          children: [
-            {
-              id: 'explicitly-hidden',
-              title: 'Hidden Child',
-              href: '/explicitly-hidden',
-              link: true,
-              show: false,
-            },
-            {
-              id: 'explicitly-shown',
-              title: 'Shown Child',
-              href: '/explicitly-shown',
-              link: true,
-              show: true,
-            },
-            {
-              id: 'undefined-show',
-              title: 'Undefined Show Child',
-              href: '/undefined-show',
-              link: true,
-              // show is undefined
-            },
-          ],
-        },
+        makeNavNode('Category', undefined, 'cat', [
+          makeNavNode('Hidden Child', '/explicitly-hidden', 'explicitly-hidden', { show: false }),
+          makeNavNode('Shown Child', '/explicitly-shown', 'explicitly-shown', { show: true }),
+          makeNavNode('Undefined Show Child', '/undefined-show', 'undefined-show', {
+            show: undefined,
+          }),
+        ]),
       ];
 
       const commands = buildCommands(mockNav, null, CAN);
@@ -382,31 +338,11 @@ describe('commands.ts', () => {
 
     it('does not recurse into grandchildren', () => {
       const mockNav: NavigatorCategory[] = [
-        {
-          id: 'lifecycle',
-          title: 'Lifecycle',
-          show: true,
-          link: true,
-          href: '/management/adapter',
-          children: [
-            {
-              id: 'service_mesh',
-              title: 'Adapters',
-              href: '/management/adapter',
-              link: true,
-              show: true,
-              children: [
-                {
-                  id: 'istio',
-                  title: 'Istio Adapter Child',
-                  href: '/management/adapter/istio',
-                  link: true,
-                  show: true,
-                },
-              ],
-            },
-          ],
-        },
+        makeNavNode('Lifecycle', '/management/adapter', 'lifecycle', [
+          makeNavNode('Adapters', '/management/adapter', 'service_mesh', [
+            makeNavNode('Istio Adapter Child', '/management/adapter/istio', 'istio'),
+          ]),
+        ]),
       ];
 
       const commands = buildCommands(mockNav, null, CAN);
@@ -416,28 +352,10 @@ describe('commands.ts', () => {
 
     it('dedupes commands by href', () => {
       const mockNav: NavigatorCategory[] = [
-        {
-          id: 'cat-1',
-          title: 'Cat 1',
-          show: true,
-          link: true,
-          children: [
-            {
-              id: 'child-1',
-              title: 'Child 1',
-              href: '/same-href',
-              link: true,
-              show: true,
-            },
-            {
-              id: 'child-2',
-              title: 'Child 2',
-              href: '/same-href',
-              link: true,
-              show: true,
-            },
-          ],
-        },
+        makeNavNode('Cat 1', undefined, 'cat-1', [
+          makeNavNode('Child 1', '/same-href', 'child-1'),
+          makeNavNode('Child 2', '/same-href', 'child-2'),
+        ]),
       ];
 
       const commands = buildCommands(mockNav, null, CAN);
