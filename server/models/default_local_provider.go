@@ -433,16 +433,13 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 	if err != nil {
 		return nil, ErrInvalidUUID(err)
 	}
-	orgId := core.Uuid(environmentPayload.OrgID)
-	environment := &environment.Environment{
-		ID:             id,
-		CreatedAt:      time.Now(),
-		Description:    environmentPayload.Description,
-		Name:           environmentPayload.Name,
-		OrganizationID: orgId,
-		Owner:          &uuid.Nil, // "Meshery"
-		UpdatedAt:      time.Now(),
+	environment, err := l.EnvironmentPersister.GetEnvironment(id)
+	if err != nil {
+		return nil, err
 	}
+	environment.Description = environmentPayload.Description
+	environment.Name = environmentPayload.Name
+	environment.UpdatedAt = time.Now()
 	return l.EnvironmentPersister.UpdateEnvironmentByID(environment)
 }
 
