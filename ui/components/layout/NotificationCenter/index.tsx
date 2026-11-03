@@ -389,7 +389,7 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
     return () => {
       observer.unobserve(node);
     };
-  }, [lastEventRef.current, isFetching, hasMore, handleLoadNextPage]);
+  }, [isFetching, hasMore, handleLoadNextPage]);
 
   return (
     <>
