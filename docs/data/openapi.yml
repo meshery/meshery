@@ -93,6 +93,8 @@ tags:
     description: Operations related to media assets.
   - name: MentionAlias_mentionAliases
     description: Operations related to mention aliases.
+  - name: OauthConsent_oauthConsents
+    description: Operations related to the OAuth consents of the signed-in user.
   - name: OauthConsentRequest_oauthConsentRequests
     description: Reads of the pending OAuth consent requests of the signed-in user.
   - name: OauthConsentRequest_oauthConsentDecisions
