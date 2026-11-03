@@ -1,4 +1,15 @@
-import { Popover, Typography, SettingsIcon, CopyLinkIcon } from '@sistent/sistent';
+import {
+  BottomSheet,
+  ListItemIcon,
+  MenuItem,
+  MenuList,
+  Popover,
+  Typography,
+  SettingsIcon,
+  CopyLinkIcon,
+  useMediaQuery,
+  useTheme,
+} from '@sistent/sistent';
 import { ActionButton, ActionListItem } from './styles';
 import { Keys } from '@meshery/schemas/permissions';
 import { iconMedium } from '../../css/icons.styles';
@@ -20,63 +31,81 @@ export const ConnectionActionMenu = ({
   onConfigureControllers,
   onCopyLink,
 }: ConnectionActionMenuProps) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const actions = [
+    {
+      show: !!onConfigure,
+      label: 'Configure',
+      icon: <SettingsIcon {...iconMedium} />,
+      onClick: () => {
+        onConfigure?.();
+        onClose();
+      },
+      testId: 'btnConfigureConnection',
+      permissionKey: Keys.LifecycleManagementEditConnection,
+    },
+    {
+      show: !!onConfigureControllers,
+      label: 'Configure Controllers',
+      icon: <SettingsIcon {...iconMedium} />,
+      onClick: () => {
+        onConfigureControllers?.();
+        onClose();
+      },
+      testId: 'btnConfigureConnectionControllers',
+      permissionKey: Keys.LifecycleManagementEditConnection,
+    },
+    {
+      show: !!onCopyLink,
+      label: 'Copy link',
+      icon: <CopyLinkIcon {...iconMedium} />,
+      onClick: () => {
+        onCopyLink?.();
+        onClose();
+      },
+      testId: 'btnCopyConnectionLink',
+    },
+  ].filter((a) => a.show);
+
+  if (isMobile) {
+    return (
+      <BottomSheet open={open} onClose={onClose} title="Connection Actions">
+        <MenuList disablePadding>
+          {actions.map(({ label, icon, onClick, testId, permissionKey }) => (
+            <MenuItem key={label} onClick={onClick} data-cy={testId} permissionKey={permissionKey}>
+              <ListItemIcon>{icon}</ListItemIcon>
+              {label}
+            </MenuItem>
+          ))}
+        </MenuList>
+      </BottomSheet>
+    );
+  }
+
   return (
     <Popover
       open={open}
       anchorEl={anchorEl}
       onClose={onClose}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left',
-      }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
     >
-      {onConfigure && (
-        <ActionListItem>
+      {actions.map(({ label, icon, onClick, testId, permissionKey }) => (
+        <ActionListItem key={label}>
           <ActionButton
             type="button"
-            onClick={onConfigure}
-            data-cy="btnConfigureConnection"
-            permissionKey={Keys.LifecycleManagementEditConnection}
+            onClick={onClick}
+            data-cy={testId}
+            permissionKey={permissionKey}
           >
-            <SettingsIcon {...iconMedium} />
+            {icon}
             <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
-              Configure
+              {label}
             </Typography>
           </ActionButton>
         </ActionListItem>
-      )}
-      {onConfigureControllers && (
-        <ActionListItem>
-          <ActionButton
-            type="button"
-            onClick={onConfigureControllers}
-            data-cy="btnConfigureConnectionControllers"
-            permissionKey={Keys.LifecycleManagementEditConnection}
-          >
-            <SettingsIcon {...iconMedium} />
-            <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
-              Configure Controllers
-            </Typography>
-          </ActionButton>
-        </ActionListItem>
-      )}
-      {onCopyLink && (
-        <ActionListItem>
-          <ActionButton
-            type="button"
-            onClick={() => {
-              onCopyLink();
-              onClose();
-            }}
-            data-cy="btnCopyConnectionLink"
-          >
-            <CopyLinkIcon {...iconMedium} />
-            <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
-              Copy link
-            </Typography>
-          </ActionButton>
-        </ActionListItem>
-      )}
+      ))}
     </Popover>
   );
 };
