@@ -28,7 +28,7 @@ setup_file() {
 
     echo "$ORIGINAL_CHANNEL-$ORIGINAL_VERSION" > "$BATS_FILE_TMPDIR/original_channel"
 
-    _save_deployment_env
+    _save_deployment_env || return 1
 }
 
 # Deployment settings that CI patches into the in-cluster meshery deployment (kubectl set env)
@@ -40,8 +40,14 @@ _save_deployment_env() {
     : > "$BATS_FILE_TMPDIR/deployment_env"
     command -v kubectl >/dev/null 2>&1 || return 0
 
+    # Absent deployment (e.g. Docker platform): nothing to preserve. Present: capture must succeed.
+    kubectl -n meshery get deployment/meshery >/dev/null 2>&1 || return 0
+
     local env_list name
-    env_list=$(kubectl -n meshery set env deployment/meshery --list 2>/dev/null) || return 0
+    if ! env_list=$(kubectl -n meshery set env deployment/meshery --list); then
+        echo "# setup_file: could not capture deployment/meshery environment" >&3
+        return 1
+    fi
     for name in $DEPLOYMENT_ENV_NAMES; do
         echo "$env_list" | grep "^$name=" >> "$BATS_FILE_TMPDIR/deployment_env" || true
     done
@@ -72,7 +78,8 @@ _redeploy_original() {
         echo "# teardown: redeploy attempt $attempt failed, cleaning up" >&3
         "$MESHERYCTL_BIN" system stop --force -y || true
         if "$MESHERYCTL_BIN" system start --skip-browser -y; then
-            _restore_deployment_env
+            _restore_deployment_env || return 1
+            "$MESHERYCTL_BIN" system dashboard --skip-browser
             return
         fi
         sleep 10
