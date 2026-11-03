@@ -201,12 +201,8 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			return ErrorArgumentOverflow()
 		}
 
-		// handles spaces in args if quoted args passed
-		for i, arg := range args {
-			args[i] = strings.ReplaceAll(arg, " ", "%20")
-		}
 		// join all args to form profile name
-		profileName = strings.Join(args, "%20")
+		profileName = strings.Join(args, " ")
 
 		// Check if the profile name is valid, if not prompt the user to create a new one
 		utils.Log.Debug("Fetching performance profile")

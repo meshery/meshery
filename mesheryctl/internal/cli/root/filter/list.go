@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"strings"
 
@@ -67,7 +68,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		}
 		var searchString string
 		if len(args) > 0 {
-			searchString = strings.ReplaceAll(args[0], " ", "%20")
+			searchString = args[0]
 		}
 
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, filterListFlagsProvided.PageSize, filterListFlagsProvided.Page-1)
@@ -170,14 +171,14 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*models.FiltersAPIResponse, error) {
 	var response *models.FiltersAPIResponse
 
-	url := baseURL + "/api/filter"
+	reqURL := baseURL + "/api/filter"
 
-	url = fmt.Sprintf("%s?pagesize=%d&page=%d", url, pageSize, pageNumber)
+	reqURL = fmt.Sprintf("%s?pagesize=%d&page=%d", reqURL, pageSize, pageNumber)
 	if searchString != "" {
-		url = url + "&search=" + searchString
+		reqURL = reqURL + "&search=" + url.QueryEscape(searchString)
 	}
 
-	req, err := utils.NewRequest("GET", url, nil)
+	req, err := utils.NewRequest("GET", reqURL, nil)
 	if err != nil {
 		return nil, utils.ErrCreatingRequest(err)
 	}

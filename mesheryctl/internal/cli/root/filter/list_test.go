@@ -41,6 +41,16 @@ func TestListCmd(t *testing.T) {
 			HttpStatusCode:   200,
 		},
 		{
+			Name:             "Fetch Filter List escapes reserved characters in the search term",
+			Args:             []string{"list", "a&b"},
+			ExpectedResponse: "list.filter.search.output.golden",
+			Fixture:          "list.filter.api.response.golden",
+			URL:              "/api/filter?pagesize=25&page=0&search=a%26b",
+			ExpectError:      false,
+			HttpMethod:       "GET",
+			HttpStatusCode:   200,
+		},
+		{
 			Name:             "List filters with invalid page number",
 			Args:             []string{"list", "--page", "0"},
 			ExpectedResponse: "",
