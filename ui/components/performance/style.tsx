@@ -114,10 +114,11 @@ export const CenterTimer = styled('div')(() => ({
 }));
 
 export const HelpIcon = styled(HelpOutlineOutlined)(({ theme }) => ({
-  width: '15px',
+  width: '18px',
   height: '18px',
   marginBottom: theme.spacing(1),
   marginLeft: theme.spacing(0.3),
+  flexShrink: 0,
 }));
 
 export const RadioButton = styled(Radio)(({ theme }) => ({
