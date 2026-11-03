@@ -7,7 +7,7 @@ setup() {
 
 # Basic tests to validate cli has been build and behave properly at root
 
-@test "cli is available" {
+@test "[cut=mesheryctl CLI][tg=CLI Prerequisites] cli is available" {
     if [[ -z "$MESHERYCTL_BIN" ]]; then
         echo "Error: MESHERYCTL_BIN is not defined. Set it before running tests."
         exit 1
@@ -17,7 +17,7 @@ setup() {
     assert_success
 }
 
-@test "mesheryctl version return Client and Server" {
+@test "[cut=mesheryctl CLI][tg=CLI Prerequisites] mesheryctl version return Client and Server" {
     run $MESHERYCTL_BIN version
     assert_success
     

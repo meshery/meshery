@@ -10,13 +10,13 @@ setup() {
   export TESTDATA_PATH="$FIXTURES_DIR/design-import/nginx.yaml"
 }
 
-@test "mesheryctl design apply applies design file" {
+@test "[cut=Design][tg=Design Apply] mesheryctl design apply applies design file" {
   run $MESHERYCTL_BIN design apply -f "$TESTDATA_PATH"
 
   assert_success
 }
 
-@test "mesheryctl design apply -f invalid path shows error" {
+@test "[cut=Design][tg=Design Apply] mesheryctl design apply -f invalid path shows error" {
   INVALID_PATH="./test/invalid/path/nginx.yaml"
   run $MESHERYCTL_BIN design apply -f "$INVALID_PATH"
 
