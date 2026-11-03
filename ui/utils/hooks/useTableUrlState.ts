@@ -54,8 +54,10 @@ function parseIntSafe(value: string | string[] | undefined, fallback: number): n
   return Number.isFinite(n) ? n : fallback;
 }
 
-function decodeParam(value: string | string[] | undefined): string {
-  return typeof value === 'string' ? decodeURIComponent(value) : '';
+// Next.js already URL-decodes `router.query` values; decoding them again would
+// throw on a bare "%" and corrupt values such as "50%25".
+function readParam(value: string | string[] | undefined): string {
+  return typeof value === 'string' ? value : '';
 }
 
 export function useTableUrlState<F extends Record<string, string> = Record<string, string>>(
@@ -78,13 +80,13 @@ export function useTableUrlState<F extends Record<string, string> = Record<strin
 
     const page = parseIntSafe(query[`${prefix}page`], defaults.page ?? 0);
     const pageSize = parseIntSafe(query[`${prefix}ps`], defaults.pageSize ?? 10);
-    const sortOrder = decodeParam(query[`${prefix}sort`]) || defaults.sortOrder || '';
-    const search = decodeParam(query[`${prefix}q`]) || '';
+    const sortOrder = readParam(query[`${prefix}sort`]) || defaults.sortOrder || '';
+    const search = readParam(query[`${prefix}q`]) || '';
 
     const filters: Record<string, string> = {};
     if (defaults.filters) {
       for (const key of Object.keys(defaults.filters)) {
-        const raw = decodeParam(query[`${prefix}${key}`]);
+        const raw = readParam(query[`${prefix}${key}`]);
         filters[key] = raw || defaults.filters[key] || '';
       }
     }
