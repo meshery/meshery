@@ -137,6 +137,13 @@ func validateMesh(mctlCfg *config.MesheryCtlConfig, meshName string) (string, er
 	}
 
 	// allow the user to select a mesh from the list of available ones
+	if !utils.IsInteractiveTerminal() {
+		return "", utils.ErrNoTerminalForPrompt(
+			"which mesh adapter to use",
+			"Name the adapter explicitly instead of selecting from a list",
+		)
+	}
+
 	prompt := promptui.Select{
 		Label: "Select a component from the list",
 		Items: meshNames,
