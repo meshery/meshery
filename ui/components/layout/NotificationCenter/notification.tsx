@@ -387,7 +387,11 @@ export const Notification = ({ event_id }) => {
           spacing={0}
           style={{ flexWrap: 'nowrap' }}
         >
-          <GridItem item xs="auto">
+          <GridItem
+            item
+            xs="auto"
+            style={{ paddingTop: '0.45rem', paddingRight: '0.5rem', flexShrink: 0 }}
+          >
             <Checkbox
               onClick={eventstopPropagation}
               checked={Boolean(event.checked)}
@@ -396,17 +400,17 @@ export const Notification = ({ event_id }) => {
                 margin: '0rem',
                 padding: '0rem',
                 paddingLeft: '0.5rem',
-                paddingRight: '0.25rem',
+                paddingRight: '0.5rem',
               }}
             />
 
             <severityStyles.icon
               {...iconLarge}
               fill={severityStyles?.color}
-              style={{ paddingRight: '0.25rem' }}
+              style={{ paddingRight: '0.5rem' }}
             />
           </GridItem>
-          <GridItem item xs>
+          <GridItem item xs style={{ minWidth: 0 }}>
             <Message variant="body1" style={{ paddingRight: '1rem' }}>
               {truncate(title, {
                 length: MAX_NOTIFICATION_DESCRIPTION_LENGTH,
