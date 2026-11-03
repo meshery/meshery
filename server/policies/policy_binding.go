@@ -156,6 +156,7 @@ func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, d
 		return nil
 	}
 	var identified []*relationship.RelationshipDefinition
+	componentMaps := make(componentMapCache)
 
 	for _, ss := range *relDef.Selectors {
 		fromSelByKind := make(map[string]relationship.SelectorItem)
@@ -202,7 +203,7 @@ func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, d
 					if !exists {
 						continue
 					}
-					if !isValidBindingTyped(bindingDecl, toDecl, toSel, design) {
+					if !isValidBindingTypedCached(bindingDecl, toDecl, toSel, design, componentMaps) {
 						continue
 					}
 					validToDecls[bindingDecl.ID] = append(validToDecls[bindingDecl.ID], toMatch{decl: toDecl, sel: toSel})
@@ -220,7 +221,7 @@ func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, d
 					if fromDecl.ID == bindingDecl.ID {
 						continue
 					}
-					if !isValidBindingTyped(fromDecl, bindingDecl, fromSel, design) {
+					if !isValidBindingTypedCached(fromDecl, bindingDecl, fromSel, design, componentMaps) {
 						continue
 					}
 
@@ -326,8 +327,33 @@ func patchBindingSelectorIDsTyped(sel *relationship.SelectorItem, matchFromID, m
 	}
 }
 
+// componentMapCache memoizes the generic map conversion of a component for the
+// duration of one binding identification pass. isValidBindingTyped only reads
+// the converted map, so a component that takes part in many candidate pairs can
+// be converted once instead of once per pair.
+type componentMapCache map[*component.ComponentDefinition]map[string]interface{}
+
+// genericMap returns the cached generic map for comp, converting it on first use.
+func (c componentMapCache) genericMap(comp *component.ComponentDefinition) map[string]interface{} {
+	if c == nil {
+		m, _ := toGenericMap(comp)
+		return m
+	}
+	if m, ok := c[comp]; ok {
+		return m
+	}
+	m, _ := toGenericMap(comp)
+	c[comp] = m
+	return m
+}
+
 // isValidBindingTyped checks if two components match via a binding selector's match field.
 func isValidBindingTyped(comp1, comp2 *component.ComponentDefinition, sel relationship.SelectorItem, design *pattern.PatternFile) bool {
+	return isValidBindingTypedCached(comp1, comp2, sel, design, nil)
+}
+
+// isValidBindingTypedCached is isValidBindingTyped with a caller-owned cache.
+func isValidBindingTypedCached(comp1, comp2 *component.ComponentDefinition, sel relationship.SelectorItem, design *pattern.PatternFile, cache componentMapCache) bool {
 	if sel.Match == nil {
 		return false
 	}
@@ -338,16 +364,16 @@ func isValidBindingTyped(comp1, comp2 *component.ComponentDefinition, sel relati
 		return false
 	}
 
-	mutatorMap, _ := toGenericMap(mutatorComp)
-	mutatedMap, _ := toGenericMap(mutatedComp)
+	mutatorMap := cache.genericMap(mutatorComp)
+	mutatedMap := cache.genericMap(mutatedComp)
 
 	count := min(len(mutatorPaths), len(mutatedPaths))
 
 	for i := range count {
 		resolvedFrom := resolvePath(mutatorPaths[i], mutatorMap)
 		resolvedTo := resolvePath(mutatedPaths[i], mutatedMap)
-		val1 := configurationForComponentAtPath(resolvedFrom, mutatorComp, design)
-		val2 := configurationForComponentAtPath(resolvedTo, mutatedComp, design)
+		val1 := configurationForComponentAtPathWithCache(resolvedFrom, mutatorComp, design, cache)
+		val2 := configurationForComponentAtPathWithCache(resolvedTo, mutatedComp, design, cache)
 		if val1 != nil && val2 != nil && !deepEqual(val1, val2) {
 			return false
 		}
