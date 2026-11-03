@@ -17,6 +17,7 @@ package perf
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -453,12 +454,13 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		certData := string(certFile)
 		certName := fileInfo.Name()
 
-		// check if values["metadata"] is nil
-		if values["metadata"] == nil {
-			values["metadata"] = map[string]interface{}{}
+		metadata, ok := values["metadata"].(map[string]interface{})
+		if !ok || metadata == nil {
+			metadata = map[string]interface{}{}
+			values["metadata"] = metadata
 		}
 
-		values["metadata"].(map[string]interface{})["ca_certificate"] = map[string]interface{}{
+		metadata["ca_certificate"] = map[string]interface{}{
 			"name":     certName,
 			"certName": certData,
 		}
@@ -475,7 +477,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return "", "", ErrPerfProfileServer(errors.New("failed to save performance profile on server"))
+		return "", "", ErrPerfProfileServer(err)
 	}
 
 	var response *perfprofile.PerformanceProfile
@@ -485,10 +487,23 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	if err != nil {
 		return "", "", utils.ErrReadResponseBody(err)
 	}
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		serverErrMsg := string(body)
+		if strings.TrimSpace(serverErrMsg) == "" {
+			serverErrMsg = fmt.Sprintf("server returned status: %s", resp.Status)
+		}
+		return "", "", ErrPerfProfileServer(errors.New(serverErrMsg))
+	}
+
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return "", "", ErrFailUnmarshal(err)
 	}
+
+	if response == nil {
+		return "", "", ErrPerfProfileServer(errors.New("server returned empty performance profile"))
+	}
+
 	profileID = response.ID.String()
 	profileName = response.Name
 

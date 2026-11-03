@@ -153,7 +153,18 @@
 //	}
 package perf
 
-import "testing"
+import (
+	"net/http"
+	"path/filepath"
+	"runtime"
+	"strings"
+	"testing"
+
+	"github.com/jarcoal/httpmock"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/viper"
+)
 
 func TestSplitTestDurationDefaultsEmptyDuration(t *testing.T) {
 	value, unit := splitTestDuration("")
@@ -201,4 +212,174 @@ func resetVariables() {
 	outputFormatFlag = ""
 	viewSingleProfile = false
 	viewSingleResult = false
+}
+
+func TestCreatePerformanceProfile_ServerErrors(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	origToken := utils.TokenFlag
+	utils.TokenFlag = filepath.Join(currDir, "fixtures", "auth.json")
+	defer func() { utils.TokenFlag = origToken }()
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatalf("failed to get mesheryctl config: %v", err)
+	}
+
+	profileURL := testContext.BaseURL + "/api/performance/profiles"
+
+	tests := []struct {
+		name          string
+		statusCode    int
+		responseBody  string
+		expectedInErr string
+	}{
+		{
+			name:          "server returns 500 internal server error",
+			statusCode:    http.StatusInternalServerError,
+			responseBody:  `{"error":"failed to save profile in database"}`,
+			expectedInErr: "failed to save profile in database",
+		},
+		{
+			name:          "server returns 400 with empty body uses status code",
+			statusCode:    http.StatusBadRequest,
+			responseBody:  "",
+			expectedInErr: "400",
+		},
+		{
+			name:          "server returns 401 unauthorized",
+			statusCode:    http.StatusUnauthorized,
+			responseBody:  `{"error":"unauthorized access"}`,
+			expectedInErr: "unauthorized access",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resetVariables()
+			profileName = "test-profile"
+			testURL = "https://meshery.io"
+
+			httpmock.RegisterResponder("POST", profileURL,
+				httpmock.NewStringResponder(tt.statusCode, tt.responseBody))
+
+			id, name, err := createPerformanceProfile(mctlCfg)
+			if err == nil {
+				t.Fatalf("expected error for status code %d, got nil", tt.statusCode)
+			}
+			if !strings.Contains(err.Error(), tt.expectedInErr) {
+				t.Errorf("expected error to contain %q, got %q", tt.expectedInErr, err.Error())
+			}
+			if id != "" || name != "" {
+				t.Errorf("expected empty profile ID and name on error, got id=%q, name=%q", id, name)
+			}
+		})
+	}
+}
+
+func TestCreatePerformanceProfile_NullResponseGuardsAgainstPanic(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	origToken := utils.TokenFlag
+	utils.TokenFlag = filepath.Join(currDir, "fixtures", "auth.json")
+	defer func() { utils.TokenFlag = origToken }()
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatalf("failed to get mesheryctl config: %v", err)
+	}
+
+	profileURL := testContext.BaseURL + "/api/performance/profiles"
+
+	resetVariables()
+	profileName = "test-profile-null"
+	testURL = "https://meshery.io"
+
+	httpmock.RegisterResponder("POST", profileURL,
+		httpmock.NewStringResponder(http.StatusOK, "null"))
+
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("createPerformanceProfile panicked on null response: %v", r)
+		}
+	}()
+
+	id, name, err := createPerformanceProfile(mctlCfg)
+	if err == nil {
+		t.Fatal("expected error on null response, got nil")
+	}
+	if !strings.Contains(err.Error(), "empty performance profile") {
+		t.Errorf("expected error to contain 'empty performance profile', got: %v", err)
+	}
+	if id != "" || name != "" {
+		t.Errorf("expected empty profile ID and name, got id=%q, name=%q", id, name)
+	}
+}
+
+func TestCreatePerformanceProfile_Success(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	origToken := utils.TokenFlag
+	utils.TokenFlag = filepath.Join(currDir, "fixtures", "auth.json")
+	defer func() { utils.TokenFlag = origToken }()
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatalf("failed to get mesheryctl config: %v", err)
+	}
+
+	profileURL := testContext.BaseURL + "/api/performance/profiles"
+
+	successJSON := `{"id":"906f8876-33b5-4a97-906e-7a409d3b8ae9","name":"test-success-profile"}`
+
+	tests := []struct {
+		name       string
+		statusCode int
+	}{
+		{name: "success with 200 OK", statusCode: http.StatusOK},
+		{name: "success with 201 Created", statusCode: http.StatusCreated},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resetVariables()
+			profileName = "test-success-profile"
+			testURL = "https://meshery.io"
+
+			httpmock.RegisterResponder("POST", profileURL,
+				httpmock.NewStringResponder(tt.statusCode, successJSON))
+
+			id, name, err := createPerformanceProfile(mctlCfg)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if id != "906f8876-33b5-4a97-906e-7a409d3b8ae9" {
+				t.Errorf("expected profile ID '906f8876-33b5-4a97-906e-7a409d3b8ae9', got %q", id)
+			}
+			if name != "test-success-profile" {
+				t.Errorf("expected profile name 'test-success-profile', got %q", name)
+			}
+		})
+	}
 }
