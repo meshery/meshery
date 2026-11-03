@@ -367,10 +367,15 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
   const events = useSelector(selectEvents);
   // const page = useSelector((state) => state.events.current_view.page);
   const lastEventRef = useRef(null);
-  const intersectionObserver = useRef(
-    new IntersectionObserver(
+
+  useEffect(() => {
+    const node = lastEventRef.current;
+    if (!node) {
+      return;
+    }
+    const observer = new IntersectionObserver(
       (entries) => {
-        if (isFetching && !hasMore) {
+        if (isFetching || !hasMore) {
           return;
         }
         const firstEntry = entries[0];
@@ -379,20 +384,12 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
         }
       },
       { threshold: 1 },
-    ),
-  );
-
-  useEffect(() => {
-    const currentObserver = intersectionObserver.current;
-    if (lastEventRef.current) {
-      currentObserver.observe(lastEventRef.current);
-    }
+    );
+    observer.observe(node);
     return () => {
-      if (lastEventRef.current) {
-        currentObserver.unobserve(lastEventRef.current);
-      }
+      observer.unobserve(node);
     };
-  }, [lastEventRef.current]);
+  }, [lastEventRef.current, isFetching, hasMore, handleLoadNextPage]);
 
   return (
     <>
