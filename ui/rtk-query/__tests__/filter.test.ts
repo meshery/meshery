@@ -1,5 +1,23 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { mesheryApiPath } from '../index';
+import { describe, expect, it, vi, beforeEach, afterEach, afterAll } from 'vitest';
+import { configureStore } from '@reduxjs/toolkit';
+import { api, mesheryApiPath } from '../index';
+
+// The list endpoint is read by fetchBaseQuery as a (possibly relative) URL;
+// pin an absolute base like the other rtk-query suites do (vi.hoisted runs
+// ahead of the imports).
+const { previousEndpointPrefix } = vi.hoisted(() => {
+  const previous = process.env.RTK_MESHERY_ENDPOINT_PREFIX;
+  process.env.RTK_MESHERY_ENDPOINT_PREFIX = 'http://localhost';
+  return { previousEndpointPrefix: previous };
+});
+
+afterAll(() => {
+  if (previousEndpointPrefix === undefined) {
+    delete process.env.RTK_MESHERY_ENDPOINT_PREFIX;
+  } else {
+    process.env.RTK_MESHERY_ENDPOINT_PREFIX = previousEndpointPrefix;
+  }
+});
 
 // ---------------------------------------------------------------------------
 // Unit tests for rtk-query/filter.ts. Endpoints managed:
@@ -173,5 +191,75 @@ describe('filter – HTTP contracts', () => {
     const resp = await fetch(mesheryApiPath('filter'), { method: 'GET' });
     expect(resp.ok).toBe(false);
     expect(resp.status).toBe(404);
+  });
+});
+
+describe('filter – cache invalidation', () => {
+  const MUTATIONS = [
+    { name: 'cloneFilter', arg: { filterID: 'f-1', body: { name: 'clone' } } },
+    { name: 'publishFilter', arg: { publishBody: { id: 'f-1' } } },
+    { name: 'unpublishFilter', arg: { unpublishBody: { id: 'f-1' } } },
+    { name: 'deleteFilter', arg: { id: 'f-1' } },
+    { name: 'updateFilterFile', arg: { updateBody: { id: 'f-1' } } },
+    { name: 'uploadFilterFile', arg: { uploadBody: new ArrayBuffer(4) } },
+  ] as const;
+
+  const setup = () => {
+    const fetchMock = vi.fn(() =>
+      Promise.resolve(
+        new Response(JSON.stringify({ filters: [], total_count: 0 }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
+      ),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const store = configureStore({
+      reducer: { [api.reducerPath]: api.reducer },
+      middleware: (getDefault) => getDefault().concat(api.middleware),
+    });
+
+    return { fetchMock, store };
+  };
+
+  const urlOf = (call: unknown[]) =>
+    typeof call[0] === 'string' ? call[0] : (call[0] as Request).url;
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  it('refetches the filters list after every mutation', async () => {
+    const { fetchMock, store } = setup();
+    // filter.ts injects its endpoints into the shared api when imported.
+    await import('../filter');
+
+    for (const { name, arg } of MUTATIONS) {
+      const listSub = store.dispatch(api.endpoints.getFilters.initiate({ page: 0, pagesize: 10 }));
+      await listSub;
+      const fetchesAfterList = fetchMock.mock.calls.length;
+
+      await store.dispatch(api.endpoints[name].initiate(arg as never)).unwrap();
+
+      // Let the invalidation-driven refetch settle.
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      const listRefetches = fetchMock.mock.calls
+        .slice(fetchesAfterList)
+        .filter((call) => urlOf(call).includes('/api/filter?'));
+      expect(
+        listRefetches.length,
+        `${name} should invalidate the filters tag so the list refetches`,
+      ).toBeGreaterThan(0);
+
+      fetchMock.mockClear();
+      listSub.unsubscribe();
+    }
   });
 });
