@@ -488,8 +488,8 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		return "", "", utils.ErrReadResponseBody(err)
 	}
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
-		serverErrMsg := string(body)
-		if strings.TrimSpace(serverErrMsg) == "" {
+		serverErrMsg := strings.TrimSpace(string(body))
+		if serverErrMsg == "" {
 			serverErrMsg = fmt.Sprintf("server returned status: %s", resp.Status)
 		}
 		return "", "", ErrPerfProfileServer(errors.New(serverErrMsg))
