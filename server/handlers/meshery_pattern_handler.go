@@ -1044,6 +1044,10 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			event := eb.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to create artifacthub pkg for the design \"%s\"", pattern.Name)).WithMetadata(map[string]interface{}{"error": err}).Build()
 			_ = provider.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userID, event)
+		} else {
+			defer func() {
+				_ = artifactHubPkgFile.Close()
+			}()
 		}
 
 		data, err := createArtifactHubPkg(pattern, strings.Trim(fmt.Sprintf("%s %s", user.FirstName, user.LastName), " "))
@@ -1055,7 +1059,10 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			go h.config.EventBroadcaster.Publish(userID, event)
 		}
 
-		_, err = artifactHubPkgFile.Write(data)
+		if artifactHubPkgFile != nil {
+			_, err = artifactHubPkgFile.Write(data)
+			_ = artifactHubPkgFile.Close()
+		}
 		if err != nil {
 			err = ErrWritingIntoFile(err, "artifacthub-pkg.yml")
 			h.log.Error(err)
@@ -1126,7 +1133,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			return
 		}
 
-		file, err = os.OpenFile(tmpOCITarFilePath, os.O_RDONLY, 0444)
+		ociTarFile, err := os.OpenFile(tmpOCITarFilePath, os.O_RDONLY, 0444)
 		if err != nil {
 			h.log.Error(ErrOpenFile(tmpOCITarFilePath))
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
@@ -1138,7 +1145,11 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			writeMeshkitError(rw, ErrOpenFile(tmpOCITarFilePath), http.StatusInternalServerError)
 			return
 		}
-		content, err := io.ReadAll(file)
+		defer func() {
+			_ = ociTarFile.Close()
+		}()
+		content, err := io.ReadAll(ociTarFile)
+		_ = ociTarFile.Close()
 		if err != nil {
 			h.log.Error(ErrIOReader(err))
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
