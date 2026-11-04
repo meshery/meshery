@@ -263,6 +263,8 @@ var (
 func ErrGenerateClusterContext(err error) error {
 	return errors.New(ErrGenerateClusterContextCode, errors.Alert, []string{"Failed to generate in cluster context."}, []string{err.Error()}, []string{}, []string{})
 }
+
+// ErrNilClusterContext occurs when no Kubernetes contexts are detected from in-cluster configuration.
 func ErrNilClusterContext(err error) error {
 	errStr := ""
 	if err != nil {

@@ -531,6 +531,8 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 	writeJSONMessage(w, map[string]string{"status": "accepted"}, http.StatusAccepted)
 }
 
+// DiscoverK8SContextFromKubeConfig attempts to discover Kubernetes contexts from the filesystem
+// kubeconfig, falling back to in-cluster configuration discovery when unavailable.
 func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, prov models.Provider) ([]*models.K8sContext, error) {
 	var contexts []*models.K8sContext
 	// userUUID := uuid.FromStringOrNil(userID)
