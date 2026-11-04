@@ -15,6 +15,7 @@ import (
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
@@ -395,6 +396,30 @@ type dataHandlerToClusterID struct {
 	clusterID string
 }
 
+// shouldDriveDiscovery reports whether this middleware may re-drive Discovery for a
+// connection. ResetState() rewinds the machine to InitialState before every
+// SendEvent(Discovery), so without this check a connection already parked in
+// DISCONNECTED is rediscovered - and the cluster re-probed - on every request.
+// connections.ShouldConnectionBeManaged is the single authority on
+// which statuses may be managed; the kubeconfig-discovery path applies it too.
+//
+// A missing connection is not manageable. Any other lookup failure proceeds, so a
+// momentarily unreachable provider does not silently stop Kubernetes management.
+func shouldDriveDiscovery(h *Handler, provider models.Provider, token string, connectionID uuid.UUID) bool {
+	conn, status, err := provider.GetConnectionByID(token, connectionID)
+	if err != nil {
+		if status == http.StatusNotFound {
+			return false
+		}
+		h.log.Debugf("could not read connection %s to decide whether discovery may run; proceeding: %v", connectionID, err)
+		return true
+	}
+	if conn == nil {
+		return false
+	}
+	return connections.ShouldConnectionBeManaged(*conn)
+}
+
 func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider, user *models.User) {
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
@@ -434,6 +459,9 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		// on ResetState/SendEvent, or type-asserting its nil Context on the Cast
 		// below. See mhelpers.HasMachineContext for why.
 		if !mhelpers.HasMachineContext(inst) {
+			continue
+		}
+		if !shouldDriveDiscovery(h, provider, token, connectionUUID) {
 			continue
 		}
 		inst.ResetState()
