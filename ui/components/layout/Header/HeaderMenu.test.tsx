@@ -116,12 +116,6 @@ describe('HeaderMenu', () => {
     tokenState.error = null;
     extensionPointResult.items = [];
 
-    // Stub window.location.assign so logout doesn't throw in jsdom.
-    Object.defineProperty(window, 'location', {
-      value: { href: '', assign: vi.fn() },
-      writable: true,
-      configurable: true,
-    });
   });
 
   it('renders the menu button and opens the popover on click', () => {
@@ -203,11 +197,16 @@ describe('HeaderMenu', () => {
     expect(openRegistryModalMock).toHaveBeenCalled();
   });
 
-  it('navigates to logout on Logout click', () => {
+  it('submits a same-origin POST to logout on Logout click', () => {
+    const submit = vi.spyOn(HTMLFormElement.prototype, 'submit').mockImplementation(() => {});
     render(<HeaderMenu />);
     fireEvent.click(screen.getByTestId('menu-button'));
     fireEvent.click(screen.getByTestId('nav-item-logout'));
-    expect(window.location.href).toBe('/user/logout');
+    const form = document.querySelector('form[action="/user/logout"]');
+    expect(form?.getAttribute('method')).toBe('post');
+    expect(submit).toHaveBeenCalledOnce();
+    form?.remove();
+    submit.mockRestore();
   });
 
   it('disables the Get Token item when the download-token permission is denied', () => {

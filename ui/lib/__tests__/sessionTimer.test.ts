@@ -89,43 +89,22 @@ describe('sessionTimer', () => {
     expect(fetchMock).toHaveBeenCalled();
   });
 
-  it('clicking "Log Out" navigates to /user/logout', async () => {
-    const originalLocation = window.location;
-    const setHrefSpy = vi.fn();
+  it('clicking "Log Out" submits a same-origin POST to logout', async () => {
+    const submit = vi.spyOn(HTMLFormElement.prototype, 'submit').mockImplementation(() => {});
+    const { recordActivity } = await import('../sessionTimer');
+    recordActivity();
+    vi.advanceTimersByTime(55 * 60 * 1000);
 
-    Object.defineProperty(window, 'location', {
-      configurable: true,
-      writable: true,
-      value: {
-        ...originalLocation,
-        set href(value: string) {
-          setHrefSpy(value);
-        },
-        get href() {
-          return originalLocation.href;
-        },
-      },
-    });
+    const overlay = document.getElementById('meshery-session-warning')!;
+    const logoutBtn = Array.from(overlay.querySelectorAll('button')).find(
+      (b) => b.textContent === 'Log Out',
+    )!;
+    logoutBtn.click();
 
-    try {
-      const { recordActivity } = await import('../sessionTimer');
-      recordActivity();
-      vi.advanceTimersByTime(55 * 60 * 1000);
-
-      const overlay = document.getElementById('meshery-session-warning')!;
-      const logoutBtn = Array.from(overlay.querySelectorAll('button')).find(
-        (b) => b.textContent === 'Log Out',
-      )!;
-      logoutBtn.click();
-
-      expect(setHrefSpy).toHaveBeenCalledWith('/user/logout');
-    } finally {
-      Object.defineProperty(window, 'location', {
-        configurable: true,
-        writable: true,
-        value: originalLocation,
-      });
-    }
+    const form = document.querySelector('form[action="/user/logout"]');
+    expect(form?.getAttribute('method')).toBe('post');
+    expect(submit).toHaveBeenCalledOnce();
+    form?.remove();
   });
 
   it('startSessionTimer registers click and keydown listeners that record activity', async () => {

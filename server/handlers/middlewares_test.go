@@ -313,6 +313,18 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 			wantStatus: http.StatusNoContent,
 		},
 		{
+			name:       "headerless GET login remains allowed",
+			method:     http.MethodGet,
+			target:     "http://localhost:9081/user/login?provider=Local",
+			wantStatus: http.StatusNoContent,
+		},
+		{
+			name:       "headerless GET API remains allowed",
+			method:     http.MethodGet,
+			target:     "http://localhost:9081/api/system/database?provider=Local",
+			wantStatus: http.StatusNoContent,
+		},
+		{
 			name:       "request without Origin or Referer is rejected",
 			method:     http.MethodGet,
 			target:     "http://localhost:9081/user/logout?provider=Local",
@@ -323,6 +335,12 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 			name:       "request without browser origin metadata is rejected",
 			method:     http.MethodGet,
 			target:     "http://localhost:9081/user/logout?provider=Local",
+			wantStatus: http.StatusForbidden,
+		},
+		{
+			name:       "headerless POST is rejected",
+			method:     http.MethodPost,
+			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
 			wantStatus: http.StatusForbidden,
 		},
 	}

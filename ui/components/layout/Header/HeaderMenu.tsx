@@ -10,6 +10,7 @@ import { IconButtonMenu } from './Header.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateExtensionType, updateUser } from '@/store/slices/mesheryUi';
 import { useRegistryModal } from '@/utils/hooks/useRegistryModal';
+import { submitLogout } from '@/lib/logout';
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -47,7 +48,7 @@ const HeaderMenu = () => {
   const [triggerGetToken, { isError: isTokenError, error: tokenError }] = useLazyGetTokenQuery();
 
   const handleLogout = () => {
-    window.location.href = '/user/logout';
+    submitLogout();
     handleClose();
   };
 
