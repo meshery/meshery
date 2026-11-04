@@ -1060,8 +1060,11 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		}
 
 		if artifactHubPkgFile != nil {
-			_, err = artifactHubPkgFile.Write(data)
+			_, writeErr := artifactHubPkgFile.Write(data)
 			_ = artifactHubPkgFile.Close()
+			if writeErr != nil {
+				err = writeErr
+			}
 		}
 		if err != nil {
 			err = ErrWritingIntoFile(err, "artifacthub-pkg.yml")
@@ -1149,7 +1152,6 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			_ = ociTarFile.Close()
 		}()
 		content, err := io.ReadAll(ociTarFile)
-		_ = ociTarFile.Close()
 		if err != nil {
 			h.log.Error(ErrIOReader(err))
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
