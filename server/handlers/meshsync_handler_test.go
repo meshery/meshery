@@ -393,6 +393,40 @@ func TestGetMeshSyncResources_OrderBy(t *testing.T) {
 	if respAsc.Resources[0].ID != idA || respAsc.Resources[1].ID != idB {
 		t.Errorf("expected [alpha, beta] for name asc, got [%s, %s]", respAsc.Resources[0].ID, respAsc.Resources[1].ID)
 	}
+
+	// Test 3: No order param (exercises empty-guard behavior)
+	reqNoOrder := httptest.NewRequest(http.MethodGet, `/api/system/meshsync/resources?clusterIds=["test-cluster"]`, nil)
+	recNoOrder := httptest.NewRecorder()
+	h.GetMeshSyncResources(recNoOrder, reqNoOrder, nil, nil, provider)
+
+	if recNoOrder.Code != http.StatusOK {
+		t.Fatalf("expected status 200 for no-order query, got %d (body=%q)", recNoOrder.Code, recNoOrder.Body.String())
+	}
+
+	var respNoOrder models.MeshSyncResourcesAPIResponse
+	if err := json.Unmarshal(recNoOrder.Body.Bytes(), &respNoOrder); err != nil {
+		t.Fatalf("failed to unmarshal no-order response: %v (body=%q)", err, recNoOrder.Body.String())
+	}
+	if len(respNoOrder.Resources) != 2 {
+		t.Fatalf("expected 2 resources, got %d", len(respNoOrder.Resources))
+	}
+
+	// Test 4: Bare order param (exercises empty-guard behavior with bare order=)
+	reqBareOrder := httptest.NewRequest(http.MethodGet, `/api/system/meshsync/resources?clusterIds=["test-cluster"]&order=`, nil)
+	recBareOrder := httptest.NewRecorder()
+	h.GetMeshSyncResources(recBareOrder, reqBareOrder, nil, nil, provider)
+
+	if recBareOrder.Code != http.StatusOK {
+		t.Fatalf("expected status 200 for bare-order query, got %d (body=%q)", recBareOrder.Code, recBareOrder.Body.String())
+	}
+
+	var respBareOrder models.MeshSyncResourcesAPIResponse
+	if err := json.Unmarshal(recBareOrder.Body.Bytes(), &respBareOrder); err != nil {
+		t.Fatalf("failed to unmarshal bare-order response: %v (body=%q)", err, recBareOrder.Body.String())
+	}
+	if len(respBareOrder.Resources) != 2 {
+		t.Fatalf("expected 2 resources, got %d", len(respBareOrder.Resources))
+	}
 }
 
 // TestMeshSyncResources_OrderInputSanitization verifies that allowed sorting columns
