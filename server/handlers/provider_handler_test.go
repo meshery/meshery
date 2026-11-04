@@ -41,8 +41,8 @@ func TestProviderHandler_LocalRedirectsThroughLogin(t *testing.T) {
 	providers := map[string]models.Provider{local.Name(): local}
 	h := newTestHandler(t, providers, "")
 
-	req := httptest.NewRequest(http.MethodGet, "/api/provider?provider=Local", nil)
-	req.Header.Set("Origin", "http://example.com")
+	req := httptest.NewRequest(http.MethodGet, "http://localhost:9081/api/provider?provider=Local", nil)
+	req.Header.Set("Origin", "http://localhost:9081")
 	rec := httptest.NewRecorder()
 
 	h.ProviderHandler(rec, req)
@@ -86,8 +86,8 @@ func TestProviderHandler_NoneAliasResolvesToLocal(t *testing.T) {
 	providers := map[string]models.Provider{local.Name(): local}
 	h := newTestHandler(t, providers, "")
 
-	req := httptest.NewRequest(http.MethodGet, "/api/provider?provider=None", nil)
-	req.Header.Set("Origin", "http://example.com")
+	req := httptest.NewRequest(http.MethodGet, "http://localhost:9081/api/provider?provider=None", nil)
+	req.Header.Set("Origin", "http://localhost:9081")
 	rec := httptest.NewRecorder()
 
 	h.ProviderHandler(rec, req)
