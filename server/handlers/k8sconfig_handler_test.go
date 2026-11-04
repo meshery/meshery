@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"strings"
 	"testing"
 
 	meshkiterrors "github.com/meshery/meshkit/errors"
@@ -125,6 +126,9 @@ func TestErrNilClusterContext(t *testing.T) {
 			}
 			if code := meshkiterrors.GetCode(res); code != ErrNilClusterContextCode {
 				t.Fatalf("expected error code %s, got %s", ErrNilClusterContextCode, code)
+			}
+			if tc.err != nil && !strings.Contains(res.Error(), tc.err.Error()) {
+				t.Fatalf("expected error to contain %q, got %q", tc.err.Error(), res.Error())
 			}
 		})
 	}
