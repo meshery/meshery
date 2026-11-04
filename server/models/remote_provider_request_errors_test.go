@@ -41,3 +41,12 @@ func TestRemotePatternFile_InvalidRemoteProviderURL(t *testing.T) {
 		return provider.RemotePatternFile(req, "https://example.com/design.yaml", "", true)
 	})
 }
+
+func TestSaveMesheryFilter_InvalidRemoteProviderURL(t *testing.T) {
+	provider := newTestRemoteProvider(t, invalidRemoteProviderURL)
+	provider.Capabilities = Capabilities{{Feature: PersistMesheryFilters, Endpoint: "/api/content/filters"}}
+
+	expectRequestBuildError(t, "SaveMesheryFilter", func() ([]byte, error) {
+		return provider.SaveMesheryFilter("test-token", &MesheryFilter{})
+	})
+}
