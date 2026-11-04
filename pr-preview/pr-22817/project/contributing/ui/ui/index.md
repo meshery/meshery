@@ -175,6 +175,8 @@ Refer to [Contributing to Meshery Server](/pr-preview/pr-22817/project/contribut
 
 > Make sure to have Meshery Server configured, up and running on the default port `http://localhost:9081` and choose a provider to login with (visit `http://localhost:9081`) before proceeding to access and work on the UI server at `http://localhost:3000`.
 
+When using the Local Provider, allow the UI development server as an explicit browser origin so its requests to the API pass the Local Provider's CSRF check. Start the server with `MESHERY_UI_ORIGINS=http://localhost:3000 make server-local` (or set `MESHERY_UI_ORIGINS` in the shell before running `make server-local`). For a named server host or TLS-terminating reverse proxy, configure the exact browser-facing UI origin; the server does not trust `X-Forwarded-Proto` or an arbitrary `Host` value for this check.
+
 Any UI changes made now will _automatically_ be rebuilt and served in your browser.
 
 ### Running end-to-end integration tests

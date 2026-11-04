@@ -12179,6 +12179,8 @@ It leaves out test-only variables, such as `RUN_INTEGRATION_TESTS` and `PATH_TO_
 
 `LOG_LEVEL` values are `0=panic`, `1=fatal`, `2=error`, `3=warn`, `4=info`, `5=debug`, and `6=trace`.
 
+For an Nginx reverse proxy, preserve the browser-facing host when forwarding requests with `proxy_set_header Host $host;`. If the proxy rewrites `Host`, configure `MESHERY_UI_ORIGINS` with the exact browser-facing UI origin. The Local Provider origin check does not trust `X-Forwarded-Proto` or an arbitrary `Host` value.
+
 ## Provider and authentication configuration
 
 | Variable | Default | Description | Example |
@@ -12186,7 +12188,7 @@ It leaves out test-only variables, such as `RUN_INTEGRATION_TESTS` and `PATH_TO_
 | `PROVIDER` | unset | Hard-enforces a single provider at server boot. When set to a remote name, Local is not registered and cannot be selected. If the value does not resolve, the server refuses to start. Accepts `Local` (legacy alias `None`) or a registered remote name such as `Meshery`. | `PROVIDER=Meshery` |
 | `PROVIDER_BASE_URLS` | Canonical remote-provider list from `install/providers.env` | Comma-separated list of remote provider base URLs that Meshery registers at startup. | `PROVIDER_BASE_URLS=https://cloud.meshery.io` |
 | `MESHERY_SERVER_CALLBACK_URL` | `http://<request-host>/api/user/token` | Overrides the OAuth callback URL used when Meshery is behind an ingress, reverse proxy, or load balancer. Its host is also the origin an absolute post-login [deep-link `ref`](/pr-preview/pr-22817/reference/extensibility/providers/#deep-link-preservation) must match. | `MESHERY_SERVER_CALLBACK_URL=https://playground.meshery.io/api/user/token` |
-| `MESHERY_UI_ORIGINS` | unset | Comma-separated exact HTTP(S) origins allowed to make browser requests to the Local Provider. Include the scheme, host, and optional port; paths and wildcard hosts are not accepted. When Local is selected, unsafe requests and `GET /user/logout` require an `Origin` or `Referer` matching the server or an allowed UI origin. Other cross-site sources are rejected. | `MESHERY_UI_ORIGINS=http://localhost:3000` |
+| `MESHERY_UI_ORIGINS` | unset | Comma-separated exact HTTP(S) origins allowed to make browser requests to the Local Provider. Include the scheme, host, and optional port; paths and wildcard hosts are not accepted. When Local is selected, state-changing requests require an `Origin` or `Referer` matching the server or an allowed UI origin. Configure the browser-facing UI origin when the UI uses a different port, Meshery is accessed by a named host, or a TLS-terminating reverse proxy is in front of the server. `X-Forwarded-Proto` is not trusted for this security check. | `MESHERY_UI_ORIGINS=http://localhost:3000` |
 | `PROVIDER_CAPABILITIES_FILEPATH` | unset | Loads provider capabilities from a local JSON file instead of from the remote provider's `/capabilities` endpoint. Useful for offline development and deterministic testing. | `PROVIDER_CAPABILITIES_FILEPATH=/path/to/capabilities.json` |
 | `SKIP_DOWNLOAD_EXTENSIONS` | `false` | Skips downloading or refreshing remote provider extension packages. Existing local packages can still be used. | `SKIP_DOWNLOAD_EXTENSIONS=true make server` |
 | `PLAYGROUND` | `false` | Enables playground-specific behavior, including provider preselection flows and playground-oriented post-login redirects. | `PLAYGROUND=true PROVIDER=Meshery make server-local` |
@@ -64998,6 +65000,8 @@ If you want to work on the UI, it will be a good idea to use the included UI dev
 Refer to [Contributing to Meshery Server](/pr-preview/pr-22817/project/contributing/contributing-server/), if needed.
 
 > Make sure to have Meshery Server configured, up and running on the default port `http://localhost:9081` and choose a provider to login with (visit `http://localhost:9081`) before proceeding to access and work on the UI server at `http://localhost:3000`.
+
+When using the Local Provider, allow the UI development server as an explicit browser origin so its requests to the API pass the Local Provider's CSRF check. Start the server with `MESHERY_UI_ORIGINS=http://localhost:3000 make server-local` (or set `MESHERY_UI_ORIGINS` in the shell before running `make server-local`). For a named server host or TLS-terminating reverse proxy, configure the exact browser-facing UI origin; the server does not trust `X-Forwarded-Proto` or an arbitrary `Host` value for this check.
 
 Any UI changes made now will _automatically_ be rebuilt and served in your browser.
 
