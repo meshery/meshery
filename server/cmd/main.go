@@ -161,10 +161,10 @@ func main() {
 
 	log.Infof("MESHSYNC_DEFAULT_DEPLOYMENT_MODE is %s", viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"))
 
-	home, err := os.UserHomeDir()
+	home, homeErr := os.UserHomeDir()
 	if viper.GetString("USER_DATA_FOLDER") == "" {
-		if err != nil {
-			log.Error(ErrRetrievingUserHomeDirectory(err))
+		if homeErr != nil {
+			log.Error(ErrRetrievingUserHomeDirectory(homeErr))
 			os.Exit(1)
 		}
 		viper.SetDefault("USER_DATA_FOLDER", path.Join(home, ".meshery", "config"))
@@ -196,8 +196,8 @@ func main() {
 
 	log.Info("Meshery Database is at: ", viper.GetString("USER_DATA_FOLDER"))
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
-		if err != nil {
-			log.Error(ErrRetrievingUserHomeDirectory(err))
+		if homeErr != nil {
+			log.Error(ErrRetrievingUserHomeDirectory(homeErr))
 			os.Exit(1)
 		}
 		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
