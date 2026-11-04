@@ -106,7 +106,7 @@ func processDesignData(data *models.PatternsAPIResponse) ([][]string, int64) {
 	for _, v := range data.Patterns {
 		designId := v.ID.String()
 
-		designName := strings.TrimSuffix(v.Name, filepath.Ext(v.Name))
+		designName := utils.TrimFileExtension(v.Name)
 		createdAt := formatTimeToString(v.CreatedAt, verbose)
 		updatedAt := formatTimeToString(v.UpdatedAt, verbose)
 
