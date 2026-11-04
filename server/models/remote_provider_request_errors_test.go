@@ -69,3 +69,12 @@ func TestSavePerformanceProfile_InvalidRemoteProviderURL(t *testing.T) {
 		return provider.SavePerformanceProfile("test-token", &PerformanceProfile{})
 	})
 }
+
+func TestSaveSchedule_InvalidRemoteProviderURL(t *testing.T) {
+	provider := newTestRemoteProvider(t, invalidRemoteProviderURL)
+	provider.Capabilities = Capabilities{{Feature: PersistSchedules, Endpoint: "/api/user/schedules"}}
+
+	expectRequestBuildError(t, "SaveSchedule", func() ([]byte, error) {
+		return provider.SaveSchedule("test-token", &Schedule{})
+	})
+}

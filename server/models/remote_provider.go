@@ -3964,11 +3964,13 @@ func (l *RemoteProvider) SaveSchedule(tokenString string, s *Schedule) ([]byte, 
 	l.Log.Info("attempting to save schedule to remote provider")
 	bf := bytes.NewBuffer(data)
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-
+	remoteProviderURL, err := url.Parse(l.RemoteProviderURL + ep)
 	if err != nil {
-		return nil, err
+		return nil, ErrUrlParse(err)
+	}
+	cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	if err != nil {
+		return nil, ErrDoRequest(err, http.MethodPost, remoteProviderURL.String())
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
