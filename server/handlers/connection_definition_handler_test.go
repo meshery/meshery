@@ -35,6 +35,7 @@ func TestDeleteConnectionDefinition_NotFound(t *testing.T) {
 	h.DeleteConnectionDefinition(rw, req, nil, nil, nil)
 
 	resp := rw.Result()
+	defer resp.Body.Close()
 	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 }
 
@@ -83,5 +84,6 @@ func TestDeleteConnectionDefinition_Success(t *testing.T) {
 	h.DeleteConnectionDefinition(rw, req, nil, nil, nil)
 
 	resp := rw.Result()
+	defer resp.Body.Close()
 	assert.Equal(t, http.StatusNoContent, resp.StatusCode)
 }
