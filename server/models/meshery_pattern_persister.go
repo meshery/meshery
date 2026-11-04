@@ -254,6 +254,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 		exists = count > 0
 	}
 
+	updated := exists
 	if exists {
 		err = mpp.updateSavedColumns(pattern)
 	} else {
@@ -269,7 +270,20 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 			// A concurrent save inserted this ID first: update it like any
 			// existing row, without the insert-only visibility default.
 			pattern.Visibility = suppliedVisibility
+			updated = true
 			err = mpp.updateSavedColumns(pattern)
+		}
+	}
+
+	// The saved struct holds only what the request carried; respond with the
+	// stored row so the response shows the columns the update preserved.
+	if updated && err == nil {
+		var stored MesheryPattern
+		if err = mpp.DB.First(&stored, "id = ?", *pattern.ID).Error; err != nil {
+			err = ErrDBRead(err)
+		} else {
+			stampLocalProviderOwner(&stored)
+			pattern = &stored
 		}
 	}
 

@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"encoding/json"
 	"testing"
 	"time"
 
@@ -382,5 +383,34 @@ func TestSaveMesheryPattern_DeletedDuringSaveIsError(t *testing.T) {
 	}
 	if n := countPatterns(t, db); n != 0 {
 		t.Errorf("rows = %d, want the deleted design to stay deleted", n)
+	}
+}
+
+// The save response must show the stored row, not the sparse request.
+func TestSaveMesheryPattern_ResponseShowsStoredRow(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	id, seed := seedImportedPattern(t, db)
+
+	resp, err := mpp.SaveMesheryPattern(postStylePattern(id))
+	if err != nil {
+		t.Fatalf("save: %v", err)
+	}
+
+	var saved []MesheryPattern
+	if err := json.Unmarshal(resp, &saved); err != nil || len(saved) != 1 {
+		t.Fatalf("decode response %s: %v", resp, err)
+	}
+	got := saved[0]
+	if string(got.SourceContent) != string(seed.SourceContent) || got.Type != seed.Type {
+		t.Errorf("response type/source = %+v/%q, want the stored values", got.Type, got.SourceContent)
+	}
+	if got.CreatedAt == nil || !got.CreatedAt.Equal(persisterTestCreatedAt) {
+		t.Errorf("response createdAt = %v, want %v", got.CreatedAt, persisterTestCreatedAt)
+	}
+	if got.Visibility != seed.Visibility || got.ViewCount != seed.ViewCount {
+		t.Errorf("response visibility/viewCount = %q/%d, want %q/%d", got.Visibility, got.ViewCount, seed.Visibility, seed.ViewCount)
+	}
+	if got.UserID == nil {
+		t.Errorf("response is missing the stamped owner")
 	}
 }
