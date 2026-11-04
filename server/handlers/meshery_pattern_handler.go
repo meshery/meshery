@@ -1061,9 +1061,11 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 		if artifactHubPkgFile != nil {
 			_, writeErr := artifactHubPkgFile.Write(data)
-			_ = artifactHubPkgFile.Close()
+			closeErr := artifactHubPkgFile.Close()
 			if writeErr != nil {
 				err = writeErr
+			} else if closeErr != nil {
+				err = closeErr
 			}
 		}
 		if err != nil {
