@@ -1,0 +1,190 @@
+name: Meshery Server Integration Tests
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "server/**"
+      - "Makefile"
+      - ".github/workflows/server-integration-tests.yml"
+      - "install/kubernetes/helm/meshery-operator/**"
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "server/**"
+      - "Makefile"
+      - ".github/workflows/server-integration-tests.yml"
+      - "install/kubernetes/helm/meshery-operator/**"
+
+jobs:
+  server-integration-test-with-meshsync:
+    name: Integration test with meshsync
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+        # inspired by .github/workflows/build-ui-and-server.yml
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache
+
+      - name: file system info 00
+        run: df -h
+
+        # TODO  think about if we could reuse image build from ui-and-server build workflow?
+      - name: Build meshery image
+        run: make docker-build
+
+      - name: file system info 01
+        run: df -h
+
+      - name: Remove dangling images, stopped containers
+        run: docker system prune -f
+
+      - name: file system info 02
+        run: df -h
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+
+      - name: Integration tests set up (cluster)
+        run: make server-integration-tests-meshsync-setup-cluster
+
+      - name: file system info 03
+        run: df -h
+
+      - name: Integration tests set up (connection)
+        run: make server-integration-tests-meshsync-setup-connection
+
+      - name: Integration tests run
+        id: integration-tests-run
+        run: make server-integration-tests-meshsync-run
+
+      - name: Capture integration test result
+        if: always()
+        run: |
+          K8S_VERSION=$(kubectl version -o json 2>/dev/null | jq -r '.serverVersion.gitVersion // "unknown"'); K8S_VERSION=${K8S_VERSION:-unknown}
+          TEST_OUTCOME="${{ steps.integration-tests-run.outcome }}"
+          printf '{"k8s_version": "%s", "test_outcome": "%s"}\n' "$K8S_VERSION" "$TEST_OUTCOME" > meshsync-integration-result.json
+          cat meshsync-integration-result.json
+
+      - name: Upload integration test result
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: meshsync-integration-test-result
+          path: meshsync-integration-result.json
+          if-no-files-found: warn
+
+      - name: Upload sqlite file
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: meshery-integration-test-meshsync-mesherydb-file
+          path: meshery-integration-test-meshsync-mesherydb.sql
+          if-no-files-found: warn
+
+      - name: Integration tests clean up
+        run: make server-integration-tests-meshsync-cleanup
+
+  publish-integration-test-results:
+    name: Publish integration test results
+    needs: server-integration-test-with-meshsync
+    if: always() && github.event_name != 'pull_request' && needs.server-integration-test-with-meshsync.result != 'skipped'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check publish token
+        id: token
+        run: |
+          if [ -z "${{ secrets.GH_ACCESS_TOKEN }}" ]; then
+            echo "GH_ACCESS_TOKEN is not set; skipping docs publish."
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v6
+        if: steps.token.outputs.available == 'true'
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          fetch-depth: 0
+      - name: Sync to latest master tip
+        if: steps.token.outputs.available == 'true'
+        run: |
+          git fetch origin master
+          git checkout -B master origin/master
+      - name: Download integration test result
+        if: steps.token.outputs.available == 'true'
+        continue-on-error: true
+        uses: actions/download-artifact@v6
+        with:
+          name: meshsync-integration-test-result
+      - name: Write integration test result page
+        if: steps.token.outputs.available == 'true'
+        run: |
+          if [ ! -f meshsync-integration-result.json ]; then
+            echo "No integration test result artifact found (test job may have failed before capture); skipping docs publish."
+            exit 0
+          fi
+          K8S_VERSION=$(jq -r '.k8s_version // "unknown"' meshsync-integration-result.json)
+          TEST_OUTCOME=$(jq -r '.test_outcome // "failure"' meshsync-integration-result.json)
+          if [ "$TEST_OUTCOME" = "skipped" ] || [ "$TEST_OUTCOME" = "cancelled" ]; then
+            echo "Integration tests were $TEST_OUTCOME, not run; skipping docs publish so a skipped test is not reported as failed."
+            exit 0
+          fi
+          if [ "$TEST_OUTCOME" = "success" ]; then
+            OVERALL_STATUS="passing"
+            TEST_STATUS="Running"
+          else
+            OVERALL_STATUS="failing"
+            TEST_STATUS="Failed"
+          fi
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC %a")
+          FILENAME=$(date -u +"%m-%d-%Y-%H-%M")_${GITHUB_SHA::8}
+          mkdir -p docs/content/en/project/compatibility/meshery-server
+          cat > "docs/content/en/project/compatibility/meshery-server/${FILENAME}.md" <<EOF
+          ---
+          timestamp: $TIMESTAMP
+          meshery-component: meshery-server
+          meshery-component-version: edge
+          meshery-server-version: edge
+          k8s-distro: kind
+          k8s-version: $K8S_VERSION
+          service-mesh: meshsync
+          service-mesh-version: ""
+          tests:
+            meshsync-integration: $TEST_STATUS
+          overall-status: $OVERALL_STATUS
+          ---
+          EOF
+          cat "docs/content/en/project/compatibility/meshery-server/${FILENAME}.md"
+      - name: Commit and push integration test results
+        if: steps.token.outputs.available == 'true'
+        run: |
+          git config user.name "l5io"
+          git config user.email "ci@layer5.io"
+          git add docs/content/en/project/compatibility/meshery-server
+          if git diff --cached --quiet; then
+            echo "No integration test result changes to commit."
+            exit 0
+          fi
+          git commit -s -m "[Docs] MeshSync integration test status"
+          for attempt in 1 2 3; do
+            if git push origin master; then
+              echo "Pushed integration test result."
+              exit 0
+            fi
+            echo "Push rejected (master likely advanced); rebasing onto latest master (attempt $attempt)..."
+            git fetch origin master
+            if ! git pull --rebase origin master; then
+              git rebase --abort || true
+            fi
+          done
+          echo "Failed to push integration test result after 3 attempts." >&2
+          exit 1
