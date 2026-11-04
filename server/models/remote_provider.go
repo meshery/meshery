@@ -2054,6 +2054,10 @@ func (l *RemoteProvider) BulkDeleteEvent(token string, eventIDs []*core.Uuid) er
 	if err != nil {
 		return ErrUnreachableRemoteProvider(err)
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		l.Log.Error(ErrPost(fmt.Errorf("error bulk delete events with the remote provider"), "event status", resp.StatusCode))

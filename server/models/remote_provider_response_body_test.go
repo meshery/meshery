@@ -122,3 +122,11 @@ func TestDeleteEvent_ClosesResponseBody(t *testing.T) {
 		_ = provider.DeleteEvent("test-token", core.Uuid{})
 	})
 }
+
+func TestBulkDeleteEvent_ClosesResponseBody(t *testing.T) {
+	provider := newResponseBodyTestProvider(t, PersistEvents, "/api/events")
+
+	expectResponseBodiesClosed(t, func() {
+		_ = provider.BulkDeleteEvent("test-token", []*core.Uuid{{}})
+	})
+}
