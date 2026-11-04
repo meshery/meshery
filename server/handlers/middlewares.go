@@ -78,11 +78,6 @@ func resolveProviderName(req *http.Request, cookieName, enforcedProvider string)
 // provider has no authenticated session, so it cannot rely on the provider's
 // normal session checks to prevent CSRF.
 func localProviderRequestAllowed(req *http.Request) bool {
-	switch req.Method {
-	case http.MethodGet, http.MethodHead, http.MethodOptions, http.MethodTrace:
-		return true
-	}
-
 	// Fetch Metadata is independent of Referer policy and reliably identifies
 	// cross-site form submissions in modern browsers.
 	if strings.EqualFold(req.Header.Get("Sec-Fetch-Site"), "cross-site") {

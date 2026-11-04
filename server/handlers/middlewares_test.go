@@ -270,11 +270,19 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 			wantStatus: http.StatusNoContent,
 		},
 		{
-			name:       "safe GET is not rejected based on cross-origin headers",
+			name:       "cross-site GET to logout is rejected",
 			method:     http.MethodGet,
-			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
+			target:     "http://localhost:9081/user/logout?provider=Local",
 			origin:     "http://attacker.example",
 			fetchSite:  "cross-site",
+			wantStatus: http.StatusForbidden,
+		},
+		{
+			name:       "same-origin GET remains allowed",
+			method:     http.MethodGet,
+			target:     "http://localhost:9081/user/logout?provider=Local",
+			origin:     "http://localhost:9081",
+			fetchSite:  "same-origin",
 			wantStatus: http.StatusNoContent,
 		},
 		{
