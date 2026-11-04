@@ -1,7 +1,7 @@
 ---
 title: Cloud Custodian
 subtitle: Collaborative and visual infrastructure as design for Cloud Custodian
-image: /extensions/models/cloud-custodian/icons/color/cloud-custodian-color.svg
+image: extensions/models/cloud-custodian/icons/color/cloud-custodian-color.svg
 aliases: /extensibility/integrations/cloud-custodian
 docURL: https://docs.meshery.io/extensibility/integrations/cloud-custodian
 description: 

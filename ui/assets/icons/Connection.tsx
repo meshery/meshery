@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useId } from "react";
 
-const ConnectionIcon = ({ width, height, fill="#ccc", primaryFill="#00B39F", secondaryFill="#00D3A9", style = {} }) => (
-  <svg
-    style={style}
-    xmlns="http://www.w3.org/2000/svg"
-    height={height}
-    viewBox="0 0 18 19"
-    width={width}
-    fill={fill}
-  >
-    <g clipPath="url(#clip0_11326_34264)">
+const ConnectionIcon = ({ width, height, fill="#ccc", primaryFill="#00B39F", secondaryFill="#00D3A9", style = {} }) => {
+  const clipPathId = useId();
+
+  return (
+    <svg
+      style={style}
+      xmlns="http://www.w3.org/2000/svg"
+      height={height}
+      viewBox="0 0 18 19"
+      width={width}
+      fill={fill}
+    >
+      <g clipPath={`url(#${clipPathId})`}>
       <path
         d="M14.6169 9.82553C14.7759 10.5484 15.4121 11.0978 16.1928 11.0978C17.0747 11.0978 17.7976 10.3749 17.7976 9.493C17.7976 8.61108 17.0747 7.88818 16.1928 7.88818C15.4121 7.88818 14.7759 8.43758 14.6169 9.16047H13.1494C13.1581 9.27324 13.1639 9.38602 13.1639 9.50023C13.1639 9.61445 13.1581 9.71855 13.1494 9.82553H14.6169Z"
         fill={fill}
@@ -111,13 +114,14 @@ const ConnectionIcon = ({ width, height, fill="#ccc", primaryFill="#00B39F", sec
         d="M6.80293 10.4729V8.52686L5.11426 9.49553L6.80293 10.4729Z"
         fill={secondaryFill}
       />
-    </g>
-    <defs>
-      <clipPath id="clip0_11326_34264">
-        <rect width="18" height="18" fill="white" transform="translate(0 0.5)" />
-      </clipPath>
-    </defs>
-  </svg>
-);
+      </g>
+      <defs>
+        <clipPath id={clipPathId}>
+          <rect width="18" height="18" fill="white" transform="translate(0 0.5)" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+};
 
 export default ConnectionIcon;

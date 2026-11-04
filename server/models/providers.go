@@ -1,9 +1,13 @@
 package models
 
 import (
+	"context"
 	"net/http"
+	"net/url"
+	"strings"
+	"sync"
+	"time"
 
-	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
@@ -11,8 +15,9 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/core"
-	"github.com/meshery/schemas/models/v1beta1/environment"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
+	"github.com/meshery/schemas/models/v1beta3/environment"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
+	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 )
 
 // ContextKey is a custom type for setting context key
@@ -26,7 +31,7 @@ type ExtensionInput struct {
 	BrokerConn      broker.Handler
 }
 
-// Router
+// Router describes the HTTP handler and path used to serve a plugin's endpoint.
 type Router struct {
 	HTTPHandler http.Handler
 	Path        string
@@ -42,12 +47,12 @@ type ProviderType string
 
 // ProviderProperties represents the structure of properties that a provider has
 type ProviderProperties struct {
-	ProviderType        ProviderType      `json:"provider_type,omitempty"`
-	PackageVersion      string            `json:"package_version,omitempty"`
-	PackageURL          string            `json:"package_url,omitempty"`
-	ProviderName        string            `json:"provider_name,omitempty"`
-	ProviderDescription []string          `json:"provider_description,omitempty"`
-	ProviderURL         string            `json:"provider_url,omitempty"`
+	ProviderType        ProviderType      `json:"providerType,omitempty"`
+	PackageVersion      string            `json:"packageVersion,omitempty"`
+	PackageURL          string            `json:"packageUrl,omitempty"`
+	ProviderName        string            `json:"providerName,omitempty"`
+	ProviderDescription []string          `json:"providerDescription,omitempty"`
+	ProviderURL         string            `json:"providerUrl,omitempty"`
 	Extensions          Extensions        `json:"extensions,omitempty"`
 	Capabilities        Capabilities      `json:"capabilities,omitempty"`
 	RestrictedAccess    RestrictedAccess  `json:"restrictedAccess,omitempty"`
@@ -96,14 +101,14 @@ type MesheryUICapabilities struct {
 }
 
 type RestrictedAccess struct {
-	IsMesheryUIRestricted bool                  `json:"isMesheryUiRestricted"`
+	IsMesheryUIRestricted bool                  `json:"isMesheryUIRestricted"`
 	AllowedComponents     MesheryUICapabilities `json:"allowedComponents,omitempty"`
 }
 
 // Extensions defines the UI extension points
 type Extensions struct {
 	Navigator    NavigatorExtensions    `json:"navigator,omitempty"`
-	UserPrefs    UserPrefsExtensions    `json:"user_prefs,omitempty"`
+	UserPrefs    UserPrefsExtensions    `json:"userPrefs,omitempty"`
 	GraphQL      GraphQLExtensions      `json:"graphql,omitempty"`
 	Acccount     AccountExtensions      `json:"account,omitempty"`
 	Collaborator CollaboratorExtensions `json:"collaborator,omitempty"`
@@ -118,10 +123,10 @@ type UserPrefsExtensions []UserPrefsExtension
 // GraphQLExtensions is a collection of GraphQLExtension endpoints
 type GraphQLExtensions []GraphQLExtension
 
-// NavigatorExtensions is a collection of AccountExtension
+// AccountExtensions is a collection of AccountExtension
 type AccountExtensions []AccountExtension
 
-// CollaboratorExtension describes the Collaborator extension point in the UI
+// CollaboratorExtensions is a collection of CollaboratorExtension
 type CollaboratorExtensions []CollaboratorExtension
 
 // GraphQLExtension describes the graphql server extension point in the backend
@@ -151,7 +156,7 @@ type MeshMapComponentSet struct {
 // NavigatorExtension describes the Navigator extension point in the UI
 type NavigatorExtension struct {
 	Title           string              `json:"title,omitempty"`
-	OnClickCallback int                 `json:"on_click_callback,omitempty"`
+	OnClickCallback int                 `json:"onClickCallback,omitempty"`
 	Href            Href                `json:"href,omitempty"`
 	Component       string              `json:"component,omitempty"`
 	Icon            string              `json:"icon,omitempty"`
@@ -166,7 +171,7 @@ type NavigatorExtension struct {
 // AccountExtension describes the Account extension point in the UI
 type AccountExtension struct {
 	Title           string            `json:"title,omitempty"`
-	OnClickCallback int               `json:"on_click_callback,omitempty"`
+	OnClickCallback int               `json:"onClickCallback,omitempty"`
 	Href            Href              `json:"href,omitempty"`
 	Component       string            `json:"component,omitempty"`
 	Link            *bool             `json:"link,omitempty"`
@@ -181,7 +186,7 @@ type UserPrefsExtension struct {
 	Type      string `json:"type,omitempty"`
 }
 
-// CollaboratorsExtension is the struct for collaborators extension
+// CollaboratorExtension is the struct for collaborators extension
 type CollaboratorExtension struct {
 	Component string `json:"component,omitempty"`
 	Type      string `json:"type,omitempty"`
@@ -202,15 +207,15 @@ type Capability struct {
 	Endpoint string  `json:"endpoint,omitempty"`
 }
 
-// K8sContextResponse - struct of response sent by provider when requested to persist k8s config
+// K8sContextPersistResponse - struct of response sent by provider when requested to persist k8s config
 type K8sContextPersistResponse struct {
-	K8sContext K8sContext `json:"k8s_context,omitempty"`
+	K8sContext K8sContext `json:"k8sContext,omitempty"`
 	Inserted   bool       `json:"inserted,omitempty"`
 }
 
 type ExtensionProxyResponse struct {
 	Body       []byte `json:"body,omitempty"`
-	StatusCode int    `json:"status_code,omitempty"`
+	StatusCode int    `json:"statusCode,omitempty"`
 }
 
 // Feature is a type to store the features of the provider
@@ -279,6 +284,36 @@ const (
 	PersistAnonymousUser Feature = "persist-anonymous-user"
 )
 
+// ProviderStatusKind reports the availability of a provider as observed by
+// the server-side availability checker. It is emitted as the `status` field of
+// ProviderStatusEvent on the /api/providers/stream SSE channel so the UI can
+// distinguish "probe in flight" from "remote is unreachable".
+type ProviderStatusKind string
+
+const (
+	// ProviderStatusChecking - availability probe is in flight; the UI should
+	// render the entry but defer interaction until a terminal status arrives.
+	ProviderStatusChecking ProviderStatusKind = "checking"
+	// ProviderStatusOnline - the provider responded successfully to its
+	// capability probe (or, for the local provider, is implicitly available).
+	ProviderStatusOnline ProviderStatusKind = "online"
+	// ProviderStatusOffline - the provider's capability probe failed after
+	// the bounded retries; the entry should render in the offline section.
+	ProviderStatusOffline ProviderStatusKind = "offline"
+)
+
+// ProviderStatusEvent is the per-provider availability snapshot broadcast by
+// ProviderTracker. It carries the same ProviderProperties shape the legacy
+// /api/providers endpoint returns so existing UI fields keep working, plus
+// the registration Key and the new Status / Error markers required for the
+// streaming chooser.
+type ProviderStatusEvent struct {
+	Key        string             `json:"key"`
+	Status     ProviderStatusKind `json:"status"`
+	Properties ProviderProperties `json:"properties"`
+	Error      string             `json:"error,omitempty"`
+}
+
 const (
 	// LocalProviderType - represents local providers
 	LocalProviderType ProviderType = "local"
@@ -304,8 +339,14 @@ const (
 	KubeClustersKey   ContextKey = "kubeclusters"
 	AllKubeClusterKey ContextKey = "allkubeclusters"
 
-	MesheryControllerHandlersKey ContextKey = "mesherycontrollerhandlerskey"
-	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
+	// MesheryControllerHandlersKey is retired. Nothing ever populated it, so the
+	// one reader - the changeOperatorStatus resolver - always read a nil map and
+	// called Deploy/Undeploy on a nil controller interface. Operator lifecycle
+	// now goes through the connection's MesheryControllersHelper, which is what
+	// holds the resolved Helm chart version; a context key that looks like a
+	// handler source but is never filled is how that was missed. Do not
+	// reintroduce it.
+	MeshSyncDataHandlersKey ContextKey = "meshsyncdatahandlerskey"
 
 	RegistryManagerKey ContextKey = "registrymanagerkey"
 
@@ -341,13 +382,195 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 	return "", false
 }
 
-func VerifyMesheryProvider(provider string, supportedProviders map[string]Provider) bool {
-	for prov := range supportedProviders {
-		if prov == provider {
+// NormalizeProviderName collapses casing variants of the built-in local
+// provider to its canonical name. Both the canonical name ("Local") and the
+// legacy alias ("None") are matched case-insensitively, so "local", "LOCAL",
+// "none", "NONE", and stale "None" cookies all resolve to "Local". Any other
+// input — including remote provider names like "Meshery" or "Digital Ocean", whose
+// canonical casing originates from the remote /capabilities response — is
+// returned unchanged. This is the single source of truth for the rename;
+// call it once at the request edge (resolveProviderName) rather than
+// scattering equivalent checks across handlers.
+func NormalizeProviderName(name string) string {
+	if strings.EqualFold(name, LocalProviderName) ||
+		strings.EqualFold(name, LocalProviderLegacyAlias) {
+		return LocalProviderName
+	}
+	return name
+}
+
+func matchesProviderAddress(candidate string, addresses ...string) bool {
+	// Normalize away surrounding whitespace and a trailing slash so a
+	// configured "https://cloud.meshery.io/" still matches a stored
+	// ProviderURL of "https://cloud.meshery.io" (and vice versa).
+	candidate = strings.TrimRight(strings.TrimSpace(candidate), "/")
+	if candidate == "" {
+		return false
+	}
+	for _, address := range addresses {
+		address = strings.TrimRight(strings.TrimSpace(address), "/")
+		if address == "" {
+			continue
+		}
+		if strings.EqualFold(candidate, address) {
+			return true
+		}
+		parsed, err := url.Parse(address)
+		if err == nil && parsed.Host != "" && strings.EqualFold(candidate, parsed.Host) {
 			return true
 		}
 	}
 	return false
+}
+
+// RestrictToEnforcedProvider drops every registration except the given map
+// key. Used at boot when PROVIDER is set so the Local Provider and any other
+// remotes are not addressable. No-op when enforcedKey is empty or is not in
+// the map (the caller is expected to fail closed in that case).
+func RestrictToEnforcedProvider(provs map[string]Provider, enforcedKey string) {
+	if enforcedKey == "" {
+		return
+	}
+	if _, ok := provs[enforcedKey]; !ok {
+		return
+	}
+	for key := range provs {
+		if key != enforcedKey {
+			delete(provs, key)
+		}
+	}
+}
+
+// ResolveProviderKey maps a caller-facing provider identifier to the
+// registration-map key Meshery uses internally for routing. It accepts the
+// canonical local name/legacy alias, an existing map key, a remote
+// providerName published from /capabilities, or the remote URL/host.
+func ResolveProviderKey(provider string, supportedProviders map[string]Provider) (string, bool) {
+	provider = NormalizeProviderName(strings.TrimSpace(provider))
+	if provider == "" {
+		return "", false
+	}
+	if _, ok := supportedProviders[provider]; ok {
+		return provider, true
+	}
+	for key, p := range supportedProviders {
+		if strings.EqualFold(provider, key) {
+			return key, true
+		}
+		props := p.GetProviderProperties()
+		if strings.EqualFold(provider, props.ProviderName) ||
+			strings.EqualFold(provider, p.Name()) ||
+			matchesProviderAddress(provider, props.ProviderURL, p.GetProviderURL()) {
+			return key, true
+		}
+	}
+	return "", false
+}
+
+// ResolveProviderKeyWithProbe is the boot-time recovery path for canonical
+// remote names such as "Meshery". Remotes are registered under a stable
+// internal key (usually URL host) before their /capabilities probe lands, so
+// a configured PROVIDER may need one bounded probe round to discover which key
+// currently publishes the requested providerName.
+//
+// It first tries the probe-less ResolveProviderKey and only fans out when that
+// misses, so the common case (the tracker has already published properties)
+// returns immediately and never probes. When a probe is required, every
+// registered remote is probed in parallel with a per-remote 15s timeout, so
+// this adds at most ~15s of startup latency before the server starts serving
+// — e.g. when a configured remote is unreachable in an air-gapped deployment.
+// The boot caller (main) logs when this probe meaningfully delays startup.
+func ResolveProviderKeyWithProbe(ctx context.Context, provider string, supportedProviders map[string]Provider) (string, bool) {
+	if key, ok := ResolveProviderKey(provider, supportedProviders); ok {
+		return key, true
+	}
+
+	provider = NormalizeProviderName(strings.TrimSpace(provider))
+	if provider == "" {
+		return "", false
+	}
+
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	type result struct {
+		key   string
+		props ProviderProperties
+		err   error
+	}
+
+	results := make(chan result, len(supportedProviders))
+	var wg sync.WaitGroup
+	launched := 0
+
+	for key, p := range supportedProviders {
+		// A non-nil interface can still wrap a typed nil pointer; guard
+		// against it so the probe goroutine cannot panic on rp.VerifyAvailability.
+		rp, ok := p.(*RemoteProvider)
+		if !ok || rp == nil {
+			continue
+		}
+		launched++
+		wg.Add(1)
+		go func(key string, rp *RemoteProvider) {
+			defer wg.Done()
+			probeCtx, probeCancel := context.WithTimeout(ctx, 15*time.Second)
+			defer probeCancel()
+			props, err := rp.VerifyAvailability(probeCtx)
+			select {
+			case results <- result{key: key, props: props, err: err}:
+			case <-ctx.Done():
+			}
+		}(key, rp)
+	}
+
+	if launched == 0 {
+		return "", false
+	}
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	for res := range results {
+		if res.err != nil {
+			continue
+		}
+		if strings.EqualFold(provider, res.props.ProviderName) ||
+			matchesProviderAddress(provider, res.props.ProviderURL) {
+			cancel()
+			return res.key, true
+		}
+	}
+
+	return "", false
+}
+
+func VerifyMesheryProvider(provider string, supportedProviders map[string]Provider) bool {
+	_, ok := ResolveProviderKey(provider, supportedProviders)
+	return ok
+}
+
+// SystemEventPersister persists a system-initiated event - one raised outside
+// any user request, such as the registrant summaries and registration failures
+// emitted while models are seeded at boot.
+//
+// It exists so that boot-time code does not have to reach into
+// HandlerConfig.Providers for a sink. Providers are a request-routing table:
+// which one a request is served by depends on the meshery-provider cookie, and
+// since PROVIDER enforcement (RestrictToEnforcedProvider) the table may hold a
+// single remote and no Local entry at all. System events are not
+// request-scoped, so binding them to that table was always a category error -
+// it is what made a pinned deployment panic while seeding models
+// (meshery/meshery#21584).
+//
+// Every Provider satisfies this interface, and so does *EventsPersister; all of
+// them write to the same local `events` table, so nothing about where these
+// events land changes with the provider a deployment is pinned to.
+type SystemEventPersister interface {
+	// PersistSystemEvent persists a system-initiated event to the local database.
+	PersistSystemEvent(event events.Event) error
 }
 
 // Provider - interface for providers
@@ -407,14 +630,11 @@ type Provider interface {
 
 	SaveK8sContext(token string, k8sContext K8sContext, metadata map[string]any) (connections.Connection, error)
 	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)
-	DeleteK8sContext(token, id string) (K8sContext, error)
 	GetK8sContext(token, connectionID string) (K8sContext, error)
 	LoadAllK8sContext(token string) ([]*K8sContext, error)
-	// SetCurrentContext(token, id string) (K8sContext, error)
-	// GetCurrentContext(token string) (K8sContext, error)
 
-	SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error)
-	SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error)
+	SMPTestConfigStore(req *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error)
+	SMPTestConfigGet(req *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error)
 	SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	SMPTestConfigDelete(req *http.Request, testUUID string) error
 
@@ -451,8 +671,6 @@ type Provider interface {
 	GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error)
 	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool, resource string) ([]byte, error)
 
-	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)
-	SaveApplicationSourceContent(token string, applicationID string, sourceContent []byte) error
 	GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplications(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
@@ -480,6 +698,10 @@ type Provider interface {
 	UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
 	DeleteConnection(req *http.Request, connID core.Uuid) (*connections.Connection, error)
 	DeleteMesheryConnection() error
+	// LogoutMesheryServer revokes the server-cached user session against the
+	// provider. Called at shutdown after DeleteMesheryConnection so that
+	// logout occurs post-deregistration.
+	LogoutMesheryServer() error
 
 	SaveUserCredential(token string, credential *Credential) (*Credential, error)
 	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)

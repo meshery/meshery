@@ -1,5 +1,6 @@
 import { urlEncodeParams } from '@/utils/utils';
 import { api, mesheryApiPath } from './index';
+import { normalizePaginatedCollectionResponse } from './transforms';
 
 const TAGS = {
   MESH_SYNC: 'meshsync',
@@ -33,6 +34,8 @@ const meshSyncApi = api
           },
           method: 'GET',
         }),
+        transformResponse: (response) =>
+          normalizePaginatedCollectionResponse(response, 'resources'),
         providesTags: () => [{ type: TAGS.MESH_SYNC }],
       }),
 

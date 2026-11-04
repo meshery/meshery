@@ -1,7 +1,7 @@
 ---
 title: Apache Cassandra
 subtitle: Collaborative and visual infrastructure as design for Apache Cassandra
-image: /extensions/models/cass-operator/icons/color/cass-operator-color.svg
+image: extensions/models/cass-operator/icons/color/cass-operator-color.svg
 aliases: /extensibility/integrations/cass-operator
 docURL: https://docs.meshery.io/extensibility/integrations/cass-operator
 description: 
@@ -10,16 +10,16 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: cassandra-datacenter
-  colorIcon: content/en/extensions/models/cass-operator/components/cassandra-datacenter/icons/color/cassandra-datacenter-color.svg
-  whiteIcon: content/en/extensions/models/cass-operator/components/cassandra-datacenter/icons/white/cassandra-datacenter-white.svg
+  colorIcon: extensions/models/cass-operator/components/cassandra-datacenter/icons/color/cassandra-datacenter-color.svg
+  whiteIcon: extensions/models/cass-operator/components/cassandra-datacenter/icons/white/cassandra-datacenter-white.svg
   description: 
 - name: cassandra-task
-  colorIcon: content/en/extensions/models/cass-operator/components/cassandra-task/icons/color/cassandra-task-color.svg
-  whiteIcon: content/en/extensions/models/cass-operator/components/cassandra-task/icons/white/cassandra-task-white.svg
+  colorIcon: extensions/models/cass-operator/components/cassandra-task/icons/color/cassandra-task-color.svg
+  whiteIcon: extensions/models/cass-operator/components/cassandra-task/icons/white/cassandra-task-white.svg
   description: 
 - name: scheduled-task
-  colorIcon: content/en/extensions/models/cass-operator/components/scheduled-task/icons/color/scheduled-task-color.svg
-  whiteIcon: content/en/extensions/models/cass-operator/components/scheduled-task/icons/white/scheduled-task-white.svg
+  colorIcon: extensions/models/cass-operator/components/scheduled-task/icons/color/scheduled-task-color.svg
+  whiteIcon: extensions/models/cass-operator/components/scheduled-task/icons/white/scheduled-task-white.svg
   description: 
 components-count: 3
 relationships: 

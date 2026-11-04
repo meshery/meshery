@@ -48,6 +48,11 @@ func TestClosestArgs(t *testing.T) {
 		if min != 1 {
 			t.Errorf("Expected 1, got %d", min)
 		}
+
+		min = minimum(1, 1, 2)
+		if min != 1 {
+			t.Errorf("Expected 1, got %d", min)
+		}
 	})
 
 	t.Run("Test levenshtein", func(t *testing.T) {

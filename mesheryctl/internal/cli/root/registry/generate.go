@@ -59,7 +59,7 @@ var (
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate Models",
-	Long: `Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under "/server/models/<model-name>".
+	Long: `Prerequisite: Execute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components from any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under "models/<model-name>" at the repo root.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/generate`,
 	Example: `
 // Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
@@ -134,6 +134,13 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var wg sync.WaitGroup
 		cwd, _ = os.Getwd()
+		// When the user did not pass --output explicitly, auto-detect the
+		// repo-root models directory so the command works whether it is run
+		// from the repository root (the documented prerequisite) or from a
+		// subdirectory such as mesheryctl/.
+		if !cmd.Flags().Changed("output") {
+			outputLocation = defaultModelsLocation()
+		}
 		registryLocation = filepath.Join(cwd, outputLocation)
 
 		if pathToRegistrantConnDefinition != "" {
@@ -252,7 +259,7 @@ func init() {
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-id", "registrant-def")
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-cred", "registrant-cred")
 	generateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
-	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
+	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "./models", "location to output generated models; when unset, the repo-root models directory is auto-detected (models from the repo root, ../models from a subdirectory)")
 
 	generateCmd.PersistentFlags().StringVarP(&csvDirectory, "directory", "d", "", "Directory containing the Model and Component CSV files")
 

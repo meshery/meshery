@@ -3,6 +3,9 @@ title: mesheryctl-workspace-create
 display_title: false
 command: workspace
 subcommand: create
+categories: [mesheryctl-workspace]
+aliases:
+- /reference/references/mesheryctl/workspace/create/
 ---
 
 # mesheryctl workspace create
@@ -15,8 +18,10 @@ Create a new workspace by providing the name, description, and organization ID
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace create [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +30,10 @@ mesheryctl workspace create [flags]
 Create a new workspace in an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
 
+</div>
 </div>
 </pre> 
 
@@ -46,7 +53,7 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -54,4 +61,4 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

@@ -123,8 +123,8 @@ const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) =
       : designsApi.endpoints.undeployPattern;
 
   const dryRunResults = await initiateQuery(dryRunEndpoint, {
-    pattern_file: encodeDesignFile(design),
-    pattern_id: design.id,
+    patternFile: encodeDesignFile(design),
+    patternId: design.id,
     skipCRD: !includeDependencies,
     selectedK8sContexts: k8sContexts,
     dryRun: true,
@@ -140,8 +140,16 @@ const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) =
       ]
     : [];
   const validationResults = formatDryRunResponse(dryRunResults.data?.dryRunResponse);
+  const matrixEntry = dryRunResults.data?.dryRunResponse
+    ? [
+        {
+          type: 'CompatibilityMatrix',
+          rawDryRunResponse: dryRunResults.data?.dryRunResponse,
+        },
+      ]
+    : [];
   return {
-    validationResults: [...validationResults, ...requestErrors],
+    validationResults: [...validationResults, ...matrixEntry, ...requestErrors],
   };
 });
 
@@ -386,3 +394,10 @@ export const useIsValidatingDesignSchema = (validationMachine) =>
   useIsValidatingDesign(validationMachine, 'schemaValidator');
 export const useIsValidatingDryRun = (validationMachine) =>
   useIsValidatingDesign(validationMachine, 'dryRunValidator');
+
+export const useDryRunRawResponse = (validationMachine) => {
+  const results = useDryRunValidationResults(validationMachine);
+  if (!Array.isArray(results)) return null;
+  const matrixEntry = results.find((r) => r?.type === 'CompatibilityMatrix');
+  return matrixEntry?.rawDryRunResponse || null;
+};

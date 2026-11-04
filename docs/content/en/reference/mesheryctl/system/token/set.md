@@ -3,6 +3,9 @@ title: mesheryctl-system-token-set
 display_title: false
 command: system
 subcommand: token
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/token/set/
 ---
 
 # mesheryctl system token set
@@ -14,8 +17,10 @@ Set token for context
 Set token for current context or context specified with --context flag.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system token set [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -23,8 +28,10 @@ mesheryctl system token set [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system token set [token-name] 
 
+</div>
 </div>
 </pre> 
 
@@ -42,7 +49,7 @@ mesheryctl system token set [token-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
   -y, --yes             (optional) assume yes for user interactive prompts.
 
@@ -51,4 +58,4 @@ mesheryctl system token set [token-name]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

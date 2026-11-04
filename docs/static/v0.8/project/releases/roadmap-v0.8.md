@@ -75,9 +75,9 @@ This post includes the proposed roadmap for Meshery v0.8.0 release. Use this thr
 
 [details="Roadmap v0.9.0 (stretch goal)"]
 Stretch
-  - :warning: Helm Kanvas Snapshot [@Ijeoma.Eti @theBeginner86]
+  - :warning: Helm  Snapshot [@Ijeoma.Eti @theBeginner86]
   - Kubectl Meshsync Snapshot [?]
-  - Kubectl Kanvas Snapshot [?]
+  - Kubectl  Snapshot [?]
 [/details]
 
 ## Adapters & Performance Management [:meshery:@Xin_Huang] [@Kunyue.Xing]

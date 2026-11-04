@@ -33,9 +33,14 @@ jobs:
     steps:
       - name: Notify Slack
         uses: slackapi/slack-github-action@v2.1.1
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload-templated: true
           payload: |
             channel: C019426UBNY
-            text: ":new: Good first issue up for grabs: <${{ github.event.issue.html_url }}|${{ github.event.issue.title }}>"
+            text: ":new: Good first issue up for grabs: <{{env.ISSUE_URL}}|{{env.ISSUE_TITLE}}>"
+

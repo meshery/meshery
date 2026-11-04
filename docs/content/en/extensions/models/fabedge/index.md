@@ -1,7 +1,7 @@
 ---
 title: Fabedge
 subtitle: Collaborative and visual infrastructure as design for Fabedge
-image: /extensions/models/fabedge/icons/color/fabedge-color.svg
+image: extensions/models/fabedge/icons/color/fabedge-color.svg
 aliases: /extensibility/integrations/fabedge
 docURL: https://docs.meshery.io/extensibility/integrations/fabedge
 description: 
@@ -10,16 +10,16 @@ integrations-subcategory: Cloud Native Network
 registrant: GitHub
 components: 
 - name: global-service
-  colorIcon: content/en/extensions/models/fabedge/components/global-service/icons/color/global-service-color.svg
-  whiteIcon: content/en/extensions/models/fabedge/components/global-service/icons/white/global-service-white.svg
+  colorIcon: extensions/models/fabedge/components/global-service/icons/color/global-service-color.svg
+  whiteIcon: extensions/models/fabedge/components/global-service/icons/white/global-service-white.svg
   description: 
 - name: cluster
-  colorIcon: content/en/extensions/models/fabedge/components/cluster/icons/color/cluster-color.svg
-  whiteIcon: content/en/extensions/models/fabedge/components/cluster/icons/white/cluster-white.svg
+  colorIcon: extensions/models/fabedge/components/cluster/icons/color/cluster-color.svg
+  whiteIcon: extensions/models/fabedge/components/cluster/icons/white/cluster-white.svg
   description: 
 - name: community
-  colorIcon: content/en/extensions/models/fabedge/components/community/icons/color/community-color.svg
-  whiteIcon: content/en/extensions/models/fabedge/components/community/icons/white/community-white.svg
+  colorIcon: extensions/models/fabedge/components/community/icons/color/community-color.svg
+  whiteIcon: extensions/models/fabedge/components/community/icons/white/community-white.svg
   description: 
 components-count: 3
 relationships: 

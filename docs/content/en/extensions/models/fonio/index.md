@@ -1,7 +1,7 @@
 ---
 title: Fonio
 subtitle: Collaborative and visual infrastructure as design for Fonio
-image: /extensions/models/fonio/icons/color/fonio-color.svg
+image: extensions/models/fonio/icons/color/fonio-color.svg
 aliases: /extensibility/integrations/fonio
 docURL: https://docs.meshery.io/extensibility/integrations/fonio
 description: 

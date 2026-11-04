@@ -56,15 +56,7 @@ mesheryctl model export [model-name] --discard-components --discard-relationship
 mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(exportModelFlagsProvided)
-		if err != nil {
-			return utils.ErrFlagsInvalid(err)
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &exportModelFlagsProvided)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model export [model-name]\nRun 'mesheryctl model export --help' to see detailed help message"
@@ -77,8 +69,8 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 		modelName := args[0]
 		queryParams := url.Values{}
 		queryParams.Set("name", modelName)
-		queryParams.Set("output_format", exportModelFlagsProvided.OutputFormat)
-		queryParams.Set("file_type", exportModelFlagsProvided.OutputType)
+		queryParams.Set("outputFormat", exportModelFlagsProvided.OutputFormat)
+		queryParams.Set("fileType", exportModelFlagsProvided.OutputType)
 		queryParams.Set("components", fmt.Sprintf("%t", !exportModelFlagsProvided.DiscardComponents))
 		queryParams.Set("relationships", fmt.Sprintf("%t", !exportModelFlagsProvided.DiscardRelationships))
 		queryParams.Set("page", fmt.Sprintf("%d", exportModelFlagsProvided.Page))
@@ -86,7 +78,7 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 			queryParams.Set("version", exportModelFlagsProvided.Version)
 		}
 
-		urlPath := fmt.Sprintf("api/meshmodels/export?%s", queryParams.Encode())
+		urlPath := fmt.Sprintf("api/registry/export?%s", queryParams.Encode())
 
 		output := &outputDetail{
 			Format: exportModelFlagsProvided.OutputFormat,

@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repo 🛎️
-        uses: actions/checkout@master
+        uses: actions/checkout@v6
         with:
           ref: master # Set your default branch
         env:

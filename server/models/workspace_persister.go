@@ -12,10 +12,16 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshkit/database"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta3/environment"
+	// NOTE: workspace_persister uses v1beta3/workspace for the canonical
+	// camelCase wire form (Phase 5 identifier-naming flip). Designs nested
+	// inside workspace pages still ride on v1beta1/pattern because both
+	// v1beta1 and v1beta3 workspace schemas type their Designs field
+	// against v1beta1/pattern.MesheryPattern; retyping that field is an
+	// upstream schemas concern.
 	patternv1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
-	viewv1beta1 "github.com/meshery/schemas/models/v1beta1/view"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
+	viewv1beta2 "github.com/meshery/schemas/models/v1beta2/view"
+	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"gorm.io/gorm"
 )
 
@@ -25,12 +31,17 @@ type WorkspacePersister struct {
 	DB *database.Handler
 }
 
+// uuidPtr returns a pointer to the given core.Uuid. Schemas generated
+// from meshery/schemas v1.0.9+ use `*core.Uuid` for optional UUID
+// fields, so callers building those struct literals need a pointer to
+// a local copy. Extracting this out of the hot loop in GetWorkspaces
+// keeps the struct literal readable.
+func uuidPtr(u core.Uuid) *core.Uuid {
+	return &u
+}
+
 func (wp *WorkspacePersister) fetchUserDetails() *User {
-	return &User{
-		UserId:    "meshery",
-		FirstName: "Meshery",
-		LastName:  "Meshery",
-	}
+	return LocalProviderUser()
 }
 
 // GetWorkspaces returns all of the workspaces
@@ -97,8 +108,8 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 			Description:    ws.Description,
 			ID:             ws.ID,
 			Name:           ws.Name,
-			OrganizationId: core.Uuid(ws.OrganizationID),
-			OwnerId:        ws.Owner,
+			OrganizationID: uuidPtr(ws.OrganizationID),
+			OwnerID:        ws.Owner,
 			UpdatedAt:      ws.UpdatedAt,
 		}
 		availableWorkspaces = append(availableWorkspaces, aw)
@@ -151,7 +162,7 @@ func (wp *WorkspacePersister) DeleteWorkspace(workspace *workspace.Workspace) ([
 	}
 	err = wp.DB.Delete(workspace).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	// Marshal the workspace to JSON
@@ -179,7 +190,7 @@ func (wp *WorkspacePersister) UpdateWorkspaceByID(selectedWorkspace *workspace.W
 	return selectedWorkspace, nil
 }
 
-// Get workspace by ID
+// GetWorkspace returns a workspace by ID
 func (wp *WorkspacePersister) GetWorkspace(id core.Uuid) (*workspace.Workspace, error) {
 	workspace := workspace.Workspace{}
 	query := wp.DB.Where("id = ?", id)
@@ -202,7 +213,7 @@ func (wp *WorkspacePersister) GetWorkspaceByID(workspaceID core.Uuid) ([]byte, e
 	return wsJSON, nil
 }
 
-// UpdateWorkspaceByID updates a single workspace by ID
+// UpdateWorkspace updates a workspace's fields from the given payload and persists the change
 func (wp *WorkspacePersister) UpdateWorkspace(workspaceID core.Uuid, payload *workspace.WorkspaceUpdatePayload) (*workspace.Workspace, error) {
 	ws, err := wp.GetWorkspace(workspaceID)
 	if err != nil {
@@ -236,8 +247,8 @@ func (wp *WorkspacePersister) DeleteWorkspaceByID(workspaceID core.Uuid) ([]byte
 // AddEnvironmentToWorkspace adds an environment to a workspace
 func (wp *WorkspacePersister) AddEnvironmentToWorkspace(workspaceID, environmentID core.Uuid) ([]byte, error) {
 	wsEnvMapping := workspace.WorkspacesEnvironmentsMapping{
-		EnvironmentId: environmentID,
-		WorkspaceId:   workspaceID,
+		EnvironmentID: environmentID,
+		WorkspaceID:   workspaceID,
 		CreatedAt:     time.Now(),
 		UpdatedAt:     time.Now(),
 	}
@@ -368,7 +379,7 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 
 	// Delete the environment mapping
 	if err := wp.DB.Delete(&wsEnvMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	wsJSON, err := json.Marshal(wsEnvMapping)
@@ -389,8 +400,8 @@ func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID core.Uu
 	}
 
 	wsDesignMapping := workspace.WorkspacesDesignsMapping{
-		DesignId:    designID,
-		WorkspaceId: workspaceID,
+		DesignID:    designID,
+		WorkspaceID: workspaceID,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
@@ -427,7 +438,7 @@ func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID co
 
 	// Delete the design mapping
 	if err := wp.DB.Delete(&wsDesignMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	wsJSON, err := json.Marshal(wsDesignMapping)
@@ -506,6 +517,10 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&designsFetched)
 	}
 
+	for _, d := range designsFetched {
+		stampLocalProviderOwner(d)
+	}
+
 	schemaDesigns, err := schemaMesheryPatterns(designsFetched)
 	if err != nil {
 		return nil, err
@@ -537,13 +552,25 @@ func schemaMesheryPatterns(patterns []*MesheryPattern) ([]patternv1beta1.Meshery
 		return nil, err
 	}
 
+	// The two contracts spell the owner differently - MesheryPattern emits
+	// "userId" (schemas v1beta3 design.MesheryPattern) while the v1beta1
+	// workspace design page declares "user_id" - so the round-trip above cannot
+	// carry it. Copy it across the version boundary explicitly, otherwise every
+	// workspace design listing reports the nil UUID as its owner.
+	for i := range decoded {
+		if i >= len(patterns) || patterns[i] == nil || patterns[i].UserID == nil {
+			continue
+		}
+		decoded[i].UserId = *patterns[i].UserID
+	}
+
 	return decoded, nil
 }
 
 func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID core.Uuid) ([]byte, error) {
 	wsViewMapping := workspace.WorkspacesViewsMapping{
-		ViewId:      viewID,
-		WorkspaceId: workspaceID,
+		ViewID:      viewID,
+		WorkspaceID: workspaceID,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
@@ -577,7 +604,7 @@ func (wp *WorkspacePersister) DeleteViewFromWorkspace(workspaceID, viewID core.U
 	}
 
 	if err := wp.DB.Delete(&wsViewMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	wsJSON, err := json.Marshal(wsViewMapping)
@@ -637,7 +664,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 		pageSize = "10"
 	}
 
-	viewsFetched := []workspace.MesheryView{}
+	viewsFetched := []viewv1beta2.MesheryViewWithLocation{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
@@ -653,7 +680,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&viewsFetched)
 	}
 
-	viewsPage := &viewv1beta1.MesheryViewPage{
+	viewsPage := &viewv1beta2.MesheryViewPage{
 		Page:       int(pageUint),
 		PageSize:   len(viewsFetched),
 		TotalCount: int(count),
@@ -670,8 +697,8 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 
 func (wp *WorkspacePersister) AddTeamToWorkspace(workspaceID, teamID core.Uuid) ([]byte, error) {
 	wsTeamMapping := workspace.WorkspacesTeamsMapping{
-		TeamId:      teamID,
-		WorkspaceId: workspaceID,
+		TeamID:      teamID,
+		WorkspaceID: workspaceID,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
@@ -705,7 +732,7 @@ func (wp *WorkspacePersister) DeleteTeamFromWorkspace(workspaceID, teamID core.U
 	}
 
 	if err := wp.DB.Delete(&wsTeamMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	wsJSON, err := json.Marshal(wsTeamMapping)
@@ -768,9 +795,9 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 	type Team struct {
 		ID        core.Uuid  `json:"id" db:"id"`
 		Name      string     `json:"name" db:"name"`
-		CreatedAt time.Time  `json:"created_at" db:"created_at"`
-		UpdatedAt time.Time  `json:"updated_at" db:"updated_at"`
-		DeletedAt *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
+		CreatedAt time.Time  `json:"createdAt" db:"created_at"`
+		UpdatedAt time.Time  `json:"updatedAt" db:"updated_at"`
+		DeletedAt *time.Time `json:"deletedAt,omitempty" db:"deleted_at"`
 	}
 
 	teamsFetched := []Team{}
@@ -791,8 +818,8 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 
 	type TeamPage struct {
 		Page       int    `json:"page"`
-		PageSize   int    `json:"page_size"`
-		TotalCount int    `json:"total_count"`
+		PageSize   int    `json:"pageSize"`
+		TotalCount int    `json:"totalCount"`
 		Teams      []Team `json:"teams"`
 	}
 

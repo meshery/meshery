@@ -12,7 +12,8 @@ import (
 var deleteConnectionCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a connection",
-	Long:  `Delete a connection`,
+	Long: `Delete a connection.
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/connection/delete`,
 
 	Example: `
 // Delete a connection
@@ -32,7 +33,7 @@ mesheryctl connection delete [connection_id]
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		_, err := api.Delete(fmt.Sprintf("%s/%s", connectionApiPath, args[0]))
+		resp, err := api.Delete(fmt.Sprintf("%s/%s", connectionApiPath, args[0]))
 		if err != nil {
 			if errors.GetCode(err) == utils.ErrNotFoundCode {
 				utils.Log.Warnf("No connection with ID \"%s\" found", args[0])
@@ -41,6 +42,7 @@ mesheryctl connection delete [connection_id]
 
 			return err
 		}
+		defer utils.SafeClose(resp.Body)
 
 		utils.Log.Infof("Connection with ID: %q is deleted", args[0])
 		return nil

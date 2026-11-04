@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
@@ -11,15 +12,18 @@ import (
 // EventsPersister assists with persisting events in local SQLite DB
 type EventsPersister struct {
 	DB *database.Handler
+	// Log receives the warning raised when an event's metadata is reduced
+	// by GuardEventMetadataSize. Optional.
+	Log logger.Handler
 }
 
 type EventsResponse struct {
 	Events               []*events.Event         `json:"events"`
 	Page                 int                     `json:"page"`
-	PageSize             int                     `json:"page_size"`
-	CountBySeverityLevel []*CountBySeverityLevel `json:"count_by_severity_level"`
-	TotalCount           int64                   `json:"total_count"`
-	ReadCount            int64                   `json:"read_count"`
+	PageSize             int                     `json:"pageSize"`
+	CountBySeverityLevel []*CountBySeverityLevel `json:"countBySeverityLevel"`
+	TotalCount           int64                   `json:"totalCount"`
+	ReadCount            int64                   `json:"readCount"`
 }
 
 type CountBySeverityLevel struct {
@@ -38,7 +42,7 @@ func (e *EventsPersister) getCountBySeverity(userID core.Uuid, eventStatus event
 	eventsBySeverity := []*CountBySeverityLevel{}
 	err := e.DB.Model(&events.Event{}).
 		Select("severity, count(severity) as count").
-		Where("status = ? AND (user_id = ? OR user_id = ?)", eventStatus, userID, sysID).
+		Where("status = ? AND (owner = ? OR owner = ?)", eventStatus, userID, sysID).
 		Group("severity").
 		Find(&eventsBySeverity).Error
 

@@ -10,7 +10,11 @@ source ./setup_suite.bash
 # Uncomment the following line to enable junit format output
 FORMATTER="--formatter tap"
 
-bats $FORMATTER *-*/*.bats
+# --print-output-on-failure makes BATS emit each failing test's captured $output
+# / $stderr as TAP `#` diagnostics. bats-to-allure.js turns those into the
+# Allure failure trace + a text attachment, so a failed test is debuggable in
+# the Connection Lifecycle report instead of showing only the assertion line.
+bats $FORMATTER --print-output-on-failure *-*/*.bats
 
 test_result=$?  # Capture the exit code of bats
 

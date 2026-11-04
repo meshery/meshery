@@ -1,7 +1,7 @@
 ---
 title: Pixie
 subtitle: Collaborative and visual infrastructure as design for Pixie
-image: /extensions/models/pixie/icons/color/pixie-color.svg
+image: extensions/models/pixie/icons/color/pixie-color.svg
 aliases: /extensibility/integrations/pixie
 docURL: https://docs.meshery.io/extensibility/integrations/pixie
 description: 

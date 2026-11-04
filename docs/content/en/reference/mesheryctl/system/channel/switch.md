@@ -3,11 +3,14 @@ title: mesheryctl-system-channel-switch
 display_title: false
 command: system
 subcommand: channel
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/channel/switch/
 ---
 
 # mesheryctl system channel switch
 
-switch release channel and version
+Switch release channel and version
 
 ## Synopsis
 
@@ -15,8 +18,10 @@ Switch release channel and version of context in focus
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel switch [stable|stable-version|edge|edge-version] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +30,10 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version] [flag
 Switch between release channels
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
+</div>
 </div>
 </pre> 
 
@@ -43,7 +50,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -53,4 +60,4 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

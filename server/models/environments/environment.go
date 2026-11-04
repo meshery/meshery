@@ -1,7 +1,7 @@
 package environments
 
 import (
-	schemasEnvironment "github.com/meshery/schemas/models/v1beta1/environment"
+	schemasEnvironment "github.com/meshery/schemas/models/v1beta3/environment"
 )
 
 type EnvironmentData = schemasEnvironment.Environment

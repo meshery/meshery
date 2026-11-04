@@ -64,9 +64,11 @@ func CreateK8sResource(
 		Resource: resource,
 	}
 
-	// Create namespace
-	if err := CreateNamespace(client, obj.GetNamespace()); err != nil {
-		return err
+	// Create namespace (skip for cluster-scoped resources)
+	if namespace := obj.GetNamespace(); namespace != "" {
+		if err := CreateNamespace(client, namespace); err != nil {
+			return err
+		}
 	}
 
 	if _, err := client.
@@ -139,7 +141,7 @@ func CreateK8sResource(
 	return nil
 }
 
-// DeleteK8sResouce deletes the given kubernetes resource
+// DeleteK8sResource deletes the given kubernetes resource
 func DeleteK8sResource(
 	client dynamic.Interface,
 	group,

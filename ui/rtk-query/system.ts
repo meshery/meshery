@@ -1,4 +1,5 @@
 import { api, mesheryApiPath } from './index';
+import { normalizeKubernetesContextsResponse } from './transforms';
 
 const TAGS = {
   SYSTEM: 'system',
@@ -56,6 +57,13 @@ const systemApi = api.injectEndpoints({
       providesTags: [TAGS.SYNC],
     }),
 
+    /**
+     * @deprecated The k8s-context API is being retired — everything is now
+     * connection-driven. Prefer the connections API (kind=kubernetes) via
+     * `useGetConnectionsQuery` + `connectionsToK8sContexts`. This endpoint
+     * remains only for the search-as-you-type context lookup and is slated
+     * for removal.
+     */
     getKubernetesContexts: builder.query({
       query: (queryArg) => ({
         url: mesheryApiPath('system/kubernetes/contexts'),
@@ -65,6 +73,7 @@ const systemApi = api.injectEndpoints({
         },
         method: 'GET',
       }),
+      transformResponse: normalizeKubernetesContextsResponse,
       providesTags: [TAGS.SYSTEM],
     }),
 

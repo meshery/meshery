@@ -1,8 +1,10 @@
 package policies
 
 import (
+	"sort"
 	"strings"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -33,9 +35,6 @@ func (p *EdgeBindingPolicy) IdentifyRelationship(relDef *relationship.Relationsh
 }
 
 func (p *EdgeBindingPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
-	if getRelStatus(rel) == StatusDeleted {
-		return nil
-	}
 	actions := patchMutatorsAction(rel, design)
 	if len(actions) > 0 {
 		return actions
@@ -45,10 +44,14 @@ func (p *EdgeBindingPolicy) SideEffects(rel *relationship.RelationshipDefinition
 
 // patchBindingMatchFields patches the binding component's configuration
 // using values from the match fields of the binding relationship selectors.
+// When the relationship is in StatusDeleted, it emits reverse patches (schema
+// default when declared, otherwise remove) so deletion restores the
+// pre-mutation state.
 func patchBindingMatchFields(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
 	if rel.Selectors == nil {
 		return nil
 	}
+	reverse := getRelStatus(rel) == StatusDeleted
 	var actions []PolicyAction
 
 	for _, ss := range *rel.Selectors {
@@ -66,14 +69,16 @@ func patchBindingMatchFields(rel *relationship.RelationshipDefinition, design *p
 				continue
 			}
 
-			actions = append(actions, patchBindingMatchFieldsForSelector(sel.Match, comp, design)...)
+			actions = append(actions, patchBindingMatchFieldsForSelector(sel.Match, comp, design, reverse)...)
 		}
 	}
 	return actions
 }
 
 // patchBindingMatchFieldsForSelector processes match fields for a single selector.
-func patchBindingMatchFieldsForSelector(match *relationship.MatchSelector, _ *component.ComponentDefinition, design *pattern.PatternFile) []PolicyAction {
+// If reverse is true, emits cleanup patches (schema default or remove) for fields
+// that still hold the mutator's value.
+func patchBindingMatchFieldsForSelector(match *relationship.MatchSelector, _ *component.ComponentDefinition, design *pattern.PatternFile, reverse bool) []PolicyAction {
 	var actions []PolicyAction
 
 	type matchSide struct {
@@ -118,7 +123,17 @@ func patchBindingMatchFieldsForSelector(match *relationship.MatchSelector, _ *co
 			mutatorValue := configurationForComponentAtPath(mutatorPath, matchComp, design)
 			oldValue := configurationForComponentAtPath(mutatedPath, otherComp, design)
 
-			if deepEqual(mutatorValue, oldValue) || mutatorValue == nil {
+			if mutatorValue == nil {
+				continue
+			}
+			if reverse {
+				if !deepEqual(mutatorValue, oldValue) {
+					continue
+				}
+				actions = append(actions, cleanupActionForPath(otherComp.ID.String(), mutatedPath, otherComp))
+				continue
+			}
+			if deepEqual(mutatorValue, oldValue) {
 				continue
 			}
 			actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedPath), otherComp.ID.String(), mutatedPath, mutatorValue))
@@ -154,10 +169,44 @@ func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, d
 		fromComps := filterComponentsByKindSetTyped(design.Components, fromSelByKind)
 		toComps := filterComponentsByToSelectorsTyped(design.Components, ss.Allow.To)
 
-		for bindingKind := range bindingKinds {
+		// Iterate kinds in sorted order so identification output (and thus
+		// generated relationship IDs) does not depend on map iteration randomness.
+		sortedBindingKinds := make([]string, 0, len(bindingKinds))
+		for k := range bindingKinds {
+			sortedBindingKinds = append(sortedBindingKinds, k)
+		}
+		sort.Strings(sortedBindingKinds)
+		for _, bindingKind := range sortedBindingKinds {
 			bindingDecls := filterComponentsByKindTyped(design.Components, bindingKind)
 			if len(bindingDecls) == 0 {
 				continue
+			}
+
+			// Precompute, per bindingDecl, the toDecls whose (kind, mutated value)
+			// validate against this binding. Each (bindingDecl, toDecl) pair is
+			// checked exactly once here instead of once per matching fromDecl in
+			// the loop below, which drops the dominating O(N³) work to O(N²).
+			// Lists are appended in design order so output stays deterministic.
+			type toMatch struct {
+				decl *component.ComponentDefinition
+				sel  relationship.SelectorItem
+			}
+			validToDecls := make(map[uuid.UUID][]toMatch, len(bindingDecls))
+			for _, bindingDecl := range bindingDecls {
+				for _, toDecl := range toComps {
+					if toDecl.ID == bindingDecl.ID {
+						continue
+					}
+					toKind := toDecl.Component.Kind
+					toSel, exists := toSelByPair[toKind+"#"+bindingKind]
+					if !exists {
+						continue
+					}
+					if !isValidBindingTyped(bindingDecl, toDecl, toSel, design) {
+						continue
+					}
+					validToDecls[bindingDecl.ID] = append(validToDecls[bindingDecl.ID], toMatch{decl: toDecl, sel: toSel})
+				}
 			}
 
 			for _, fromDecl := range fromComps {
@@ -175,20 +224,10 @@ func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, d
 						continue
 					}
 
-					for _, toDecl := range toComps {
-						if toDecl.ID == bindingDecl.ID {
-							continue
-						}
-						toKind := toDecl.Component.Kind
-						toSel, exists := toSelByPair[toKind+"#"+bindingKind]
-						if !exists {
-							continue
-						}
+					for _, tm := range validToDecls[bindingDecl.ID] {
+						toDecl, toSel := tm.decl, tm.sel
 
 						if ss.Deny != nil && isRelationshipDenied(fromDecl, toDecl, ss.Deny) {
-							continue
-						}
-						if !isValidBindingTyped(bindingDecl, toDecl, toSel, design) {
 							continue
 						}
 

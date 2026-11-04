@@ -26,6 +26,21 @@ type Action interface {
 	ExecuteOnExit(context context.Context, machinectx interface{}, data interface{}) (EventType, *events.Event, error)
 }
 
+// DefaultAction does nothing on entry, execution or exit.
+type DefaultAction struct{}
+
+func (da *DefaultAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+
+func (da *DefaultAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+
+func (da *DefaultAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+
 type DefaultConnectAction struct{}
 
 func (da *DefaultConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
@@ -40,7 +55,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
@@ -55,7 +70,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 		credName, _ := payload.CredentialSecret["name"].(string)
 		credential, err = provider.SaveUserCredential(token, &models.Credential{
 			Name:   credName,
-			UserId: &userUUID,
+			UserId: userUUID,
 			Type:   payload.Kind,
 			Secret: payload.CredentialSecret,
 		})
@@ -88,7 +103,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 		}
 		credentialID = &parsed
 	} else {
-		credentialID = credential.ID
+		credentialID = &credential.ID
 	}
 
 	connection, err := provider.SaveConnection(&connections.ConnectionPayload{

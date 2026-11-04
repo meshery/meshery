@@ -11,15 +11,22 @@ create_meshery_config_folder() {
 
 # Generate auth file to communicate with meshery server
 create_auth_file() {
-    echo "start: authentication configuration" 
-    echo '{ "meshery-provider": "Layer5", "token": null }' | jq -c '.token = "'$MESHERY_PROVIDER_TOKEN'"' > "$MESHERY_AUTH_FILE"
+    echo "start: authentication configuration"
+    # Build the token in with jq --arg so the value is passed as data, never
+    # spliced into the jq program. The previous form,
+    # jq '.token = "'$MESHERY_PROVIDER_TOKEN'"', interpolated the token into the
+    # filter text: any '"' or '\' in the token would break the JSON, and an
+    # unset var would silently yield an empty token. --arg is injection-safe for
+    # any token shape.
+    jq -cn --arg token "$MESHERY_PROVIDER_TOKEN" \
+        '{ "meshery-provider": "Meshery", token: $token }' > "$MESHERY_AUTH_FILE"
     echo "done: authentication configuration"
 }
 
-set_context_to_layer5() {
-    echo "start: set context to Layer5"
-    yq -i '.contexts.local.provider = "Layer5"' "$MESHERY_CONFIG_FILE_PATH"
-    echo "done: set context to Layer5"
+set_context_to_meshery() {
+    echo "start: set context to Meshery"
+    yq -i '.contexts.local.provider = "Meshery"' "$MESHERY_CONFIG_FILE_PATH"
+    echo "done: set context to Meshery"
 }
 
 
@@ -38,8 +45,8 @@ main() {
     export TEMP_DATA_DIR=$TEMP_DATA_DIR
 
     create_meshery_config_folder
-    create_auth_file 
-    set_context_to_layer5
+    create_auth_file
+    set_context_to_meshery
 
     echo -e "### done: Test environment setup ###\n"
 }

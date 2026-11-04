@@ -3,19 +3,24 @@ title: mesheryctl-adapter-remove
 display_title: false
 command: adapter
 subcommand: remove
+categories: [mesheryctl-adapter]
+aliases:
+- /reference/references/mesheryctl/adapter/remove/
 ---
 
 # mesheryctl adapter remove
 
-remove cloud and cloud native infrastructure
+Remove cloud and cloud native infrastructure
 
 ## Synopsis
 
-remove cloud and cloud native infrastructure
+Remove cloud and cloud native infrastructure
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter remove [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,23 +29,20 @@ mesheryctl adapter remove [flags]
 Remove Linkerd deployment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter remove linkerd
 
+</div>
 </div>
 </pre> 
 
 Remove a Linkerd control plane found under a specific namespace (linkerd-ns)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter remove linkerd --namespace linkerd-ns
 
 </div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-		
-
 </div>
 </pre> 
 
@@ -58,7 +60,7 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token for authenticating to Meshery API
   -v, --verbose         verbose output
 
@@ -67,4 +69,4 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

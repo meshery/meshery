@@ -1,7 +1,7 @@
 ---
 title: Superedge
 subtitle: Collaborative and visual infrastructure as design for Superedge
-image: /extensions/models/superedge/icons/color/superedge-color.svg
+image: extensions/models/superedge/icons/color/superedge-color.svg
 aliases: /extensibility/integrations/superedge
 docURL: https://docs.meshery.io/extensibility/integrations/superedge
 description: 

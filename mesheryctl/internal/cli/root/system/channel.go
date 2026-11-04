@@ -42,9 +42,39 @@ func IsBetaOrStable(str string) bool {
 	return str == "edge" || str == "stable"
 }
 
+// validateChannelArgs validates the channel and version arguments upfront
+// before any PreRunE health checks or confirmation prompts are executed.
+func validateChannelArgs(subcommand string) func(cmd *cobra.Command, args []string) error {
+	return func(_ *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", subcommand)))
+		}
+
+		channelVersion := args[0]
+		channelNameSeparated := strings.SplitN(channelVersion, "-", 2)
+
+		if !IsBetaOrStable(channelNameSeparated[0]) {
+			return ErrSystemSetInvalidReleaseChannel(channelNameSeparated[0])
+		}
+
+		if len(channelNameSeparated) > 1 {
+			switch channelNameSeparated[0] {
+			case "edge":
+				if channelNameSeparated[1] != "latest" {
+					return ErrSystemSetInvalidEdgeRelease(channelNameSeparated[1])
+				}
+			case "stable":
+				// valid stable channel
+			}
+		}
+
+		return nil
+	}
+}
+
 var viewCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view release channel and version",
+	Short: "View release channel and version",
 	Long: `View release channel and version of context in focus
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/view`,
 	Example: `
@@ -98,19 +128,14 @@ mesheryctl system channel view --all
 
 var setCmd = &cobra.Command{
 	Use:   "set [stable|stable-version|edge|edge-version]",
-	Short: "set release channel and version",
+	Short: "Set release channel and version",
 	Long: `Set release channel and version of context in focus
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/set`,
 	Example: `
 // Subscribe to release channel or version
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 	`,
-	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", "set")))
-		}
-		return nil
-	},
+	Args: validateChannelArgs("set"),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -125,27 +150,24 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 		channelVersion := args[0]
 
-		channelNameSeperated := strings.SplitN(channelVersion, "-", 2)
+		channelNameSeparated := strings.SplitN(channelVersion, "-", 2)
 
-		if !IsBetaOrStable(channelNameSeperated[0]) {
-			return ErrSystemSetInvalidReleaseChannel(channelNameSeperated[0])
+		if !IsBetaOrStable(channelNameSeparated[0]) {
+			return ErrSystemSetInvalidReleaseChannel(channelNameSeparated[0])
 		}
 
 		version := "latest"
 
-		if len(channelNameSeperated) > 1 {
-			switch channelNameSeperated[0] {
+		if len(channelNameSeparated) > 1 {
+			switch channelNameSeparated[0] {
 			case "edge":
-				if channelNameSeperated[1] != "latest" {
-					return ErrSystemSetInvalidEdgeRelease(channelNameSeperated[1])
+				if channelNameSeparated[1] != "latest" {
+					return ErrSystemSetInvalidEdgeRelease(channelNameSeparated[1])
 				}
 			case "stable":
-				if channelNameSeperated[1] != "latest" {
-					currCtx := mctlCfg.Contexts[focusedContext]
-					currCtx.Version = channelNameSeperated[1]
-				}
+				// version is set after the switch block
 			}
-			version = channelNameSeperated[1]
+			version = channelNameSeparated[1]
 		}
 
 		ContextContent, ok := mctlCfg.Contexts[focusedContext]
@@ -154,12 +176,11 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 		}
 
 		ContextContent.Version = version
-		ContextContent.Channel = channelNameSeperated[0]
+		ContextContent.Channel = channelNameSeparated[0]
 
 		err = ContextContent.ValidateVersion()
 		if err != nil {
-			// TODO: Move to proper meshkit error
-			return err
+			return ErrValidateVersion(err)
 		}
 
 		mctlCfg.Contexts[focusedContext] = ContextContent
@@ -175,7 +196,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 var switchCmd = &cobra.Command{
 	Use:   "switch [stable|stable-version|edge|edge-version]",
-	Short: "switch release channel and version",
+	Short: "Switch release channel and version",
 	Long: `Switch release channel and version of context in focus
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/switch`,
 	Example: `
@@ -195,12 +216,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 		}
 		return hc.RunPreflightHealthChecks()
 	},
-	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", "switch")))
-		}
-		return nil
-	},
+	Args: validateChannelArgs("switch"),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		userResponse := false
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())

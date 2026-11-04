@@ -38,6 +38,8 @@ const (
 	ErrInvalidCommandCode             = "mesheryctl-1191"
 	ErrDesignNameOrIDNotSpecifiedCode = "mesheryctl-1192"
 	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
+	ErrEvaluateDesignCode             = "mesheryctl-1247"
+	ErrEvaluateDesignResponseCode     = "mesheryctl-1248"
 )
 
 const (
@@ -81,7 +83,8 @@ func ErrDesignManifest() error {
 		[]string{"No file path detected"},
 		[]string{"No manifest file path detected"},
 		[]string{"Manifest path not provided"},
-		[]string{"Provide the path to the design manifest. \n\n%v", errPatternMsg})
+		[]string{"Provide the path to the design manifest.", `Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`})
 }
 
 func ErrDesignFileNotProvided() error {
@@ -89,7 +92,8 @@ func ErrDesignFileNotProvided() error {
 		[]string{"Design file path not provided"},
 		[]string{"Design [File | File Path | URL] isn't specified"},
 		[]string{"[File | File Path | URL] not detected. The '-f' flag is missing or empty in the 'mesheryctl design import' command"},
-		[]string{"Provide the path to the design file using the '-f' flag. Ensure that the file path or URL is correctly specified and accessible. \n\n%v", errPatternMsg})
+		[]string{"Provide the path to the design file using the '-f' flag. Ensure that the file path or URL is correctly specified and accessible.", `Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`})
 }
 
 func ErrDeployDesign() error {
@@ -106,7 +110,8 @@ func ErrDesignSourceType() error {
 		[]string{"Source type for the design to import not specified"},
 		[]string{"Empty  source type detected"},
 		[]string{"Design source type not provided"},
-		[]string{"Provide one of the supported source type for the design to import. \n\n%v", errPatternMsg})
+		[]string{"Provide one of the supported source type for the design to import.", `Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`})
 }
 
 func ErrViewDesignFlag() error {
@@ -122,7 +127,9 @@ func ErrUndeployDesign(err error) error {
 		[]string{"Undeploying design failed"},
 		[]string{"Unable to undeploy design due to empty path"},
 		[]string{"File path or design name not provided."},
-		[]string{"Provide a file path/design name. \n\n%v", errUndeployMsg})
+		[]string{"Provide a file path/design name.", `Usage: mesheryctl design undeploy -f [filepath]
+Example: mesheryctl design undeploy -f ./pattern.yml
+Description: Undeploy design`})
 }
 
 func ErrParseDesignFile(err error) error {
@@ -171,4 +178,20 @@ func ErrDesignInvalidApiResponse(message string) error {
 		[]string{message},
 		[]string{"The API response is missing expected fields or has an unexpected format"},
 		[]string{"Ensure the Meshery server is running a compatible version", "Check for any issues with the Meshery server that may cause it to return malformed responses"})
+}
+
+func ErrEvaluateDesign() error {
+	return errors.New(ErrEvaluateDesignCode, errors.Alert,
+		[]string{"Design not specified for evaluation"},
+		[]string{"Exactly one of a design file path (-f) or a design ID must be provided, not both"},
+		[]string{"A design must be specified either by file path (-f) or by ID as an argument, but not both simultaneously"},
+		[]string{"Provide a design file using '-f' flag or pass a design ID as an argument (not both).\n\nUsage: mesheryctl design evaluate [ID] -o [output-file]\n       mesheryctl design evaluate -f [file] -o [output-file]"})
+}
+
+func ErrEvaluateDesignResponse(err error) error {
+	return errors.New(ErrEvaluateDesignResponseCode, errors.Alert,
+		[]string{"Failed to evaluate design"},
+		[]string{err.Error()},
+		[]string{"The Meshery server returned an error while evaluating the design", "The design file may be invalid or the server may be experiencing issues"},
+		[]string{"Ensure the design file is valid", "Check that the Meshery server is running and accessible", "Verify that the server has the required policies loaded"})
 }

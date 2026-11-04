@@ -1,0 +1,20 @@
+version: 0.0.225
+name: aws-eks-gpu-inference-infrastructure
+displayName: AWS EKS GPU Inference Infrastructure
+createdAt: "2026-08-16T17:35:25Z"
+description: A simple AWS infrastructure design using Route 53, API Gateway, EKS, EC2, and S3
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/095d53c9-c852-4231-a83c-11457456e8b9/0.0.225/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a conceptual design and may require additional configuration for production use, including appropriate networking, security, IAM, and resource settings based on the deployment environment. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 8089c268-a91b-4980-8ee6-4ae03a71a177
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

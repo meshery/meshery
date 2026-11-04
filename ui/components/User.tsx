@@ -1,12 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Avatar, Button } from '@sistent/sistent';
-import NoSsr from '@mui/material/NoSsr';
+import { Avatar, Button, NoSsr } from '@sistent/sistent';
 import Link from 'next/link';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
-import { IconButtonAvatar } from './Header.styles';
+import { IconButtonAvatar } from './layout/Header/Header.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUser } from '@/store/slices/mesheryUi';
 /**
@@ -19,7 +18,7 @@ const User = (props) => {
   const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
   const dispatch = useDispatch();
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
   const {
     data: userData,
     isSuccess: isGetUserSuccess,
@@ -34,13 +33,19 @@ const User = (props) => {
   const goToProfile = () => {
     const profileUrl = getProfileUrl();
     if (profileUrl) {
-      window.location = profileUrl;
+      window.open(profileUrl, '_blank', 'noopener,noreferrer');
       return;
     }
+    notify({
+      message: 'Please log in to access this profile',
+      event_type: EVENT_TYPES.WARNING,
+    });
   };
 
   useEffect(() => {
     if (!userLoaded && isGetUserSuccess) {
+      // userData is normalized by getLoggedInUser's transformResponse
+      // (userId backfilled from id for the v1beta3 Cloud response).
       dispatch(updateUser({ user: userData }));
       setUserLoaded(true);
     } else if (isGetUserError) {
@@ -53,22 +58,35 @@ const User = (props) => {
   }, [userData, isGetUserSuccess, isGetUserError]);
 
   useEffect(() => {
-    if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
+    if (!capabilitiesLoadedRef.current && providerCapabilities) {
       capabilitiesLoadedRef.current = true;
       setAccount(
-        ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account),
+        ExtensionPointSchemaValidator('account')(providerCapabilities?.extensions?.account),
       );
     }
-  }, [capabilitiesRegistry]);
+  }, [providerCapabilities]);
 
   const { color } = props;
 
   const source = new URL('/api/user/token', window.location.origin);
   const sourceURL = btoa(source.toString());
-  const refURL = btoa(window.location.href);
+  // Relative ref keeps search and hash (including mode=design). An absolute
+  // href is a same-origin URL the server used to reject, dropping the user
+  // on /extension/meshmap with the query stripped.
+  const refURL = btoa(
+    `${window.location.pathname}${window.location.search}${window.location.hash}`,
+  );
 
   if (userData?.status == 'anonymous') {
-    const url = `${capabilitiesRegistry?.provider_url}?anonymousUserID=${userData?.id}&source=${sourceURL}&ref=${refURL}`;
+    // btoa emits standard base64, whose '+' decodes back to a space in a query
+    // value. URLSearchParams percent-encodes every value, so the server reads
+    // the ref and source it was sent.
+    const params = new URLSearchParams({
+      anonymousUserID: userData?.id ?? '',
+      source: sourceURL,
+      ref: refURL,
+    });
+    const url = `${providerCapabilities?.providerUrl}?${params.toString()}`;
 
     return (
       <Link href={url}>
@@ -86,7 +104,7 @@ const User = (props) => {
           <IconButtonAvatar color={color} aria-haspopup="true" onClick={goToProfile}>
             <Avatar
               sx={{ height: 36, width: 36 }}
-              src={isGetUserSuccess ? userData?.avatar_url : null}
+              src={isGetUserSuccess ? userData?.avatarUrl : null}
               imgProps={{ referrerPolicy: 'no-referrer' }}
             />
           </IconButtonAvatar>

@@ -37,7 +37,7 @@ type Operation struct {
 var spec string
 
 var linkDocMeshValidate = map[string]string{
-	"link":    "![mesh-validate-usage](/reference/images/mesh-validate.png)",
+	"link":    "![mesh-validate-usage](../../../images/mesh-validate.png)",
 	"caption": "Usage of mesheryctl adapter validate",
 }
 
@@ -47,7 +47,7 @@ var validateCmd = &cobra.Command{
 	Short: "Validate conformance to predefined standards",
 	Example: `
 // Validate conformance to predefined standards
-mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --token [path to token for authentication] --spec [specification to be used for conformance test]
 
 // Validate Istio to predefined standards
 mesheryctl adapter validate istio --adapter meshery-istio --spec smi

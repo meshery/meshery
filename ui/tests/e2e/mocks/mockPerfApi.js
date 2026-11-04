@@ -40,7 +40,7 @@ export async function mockPerfApis(page, requestData) {
                   duration: requestData.duration,
                   created_at: timestamp,
                   updated_at: timestamp,
-                  last_run: timestamp,
+                  lastRun: timestamp,
                   total_results: 1,
                   user_id: USER_ID,
                   metadata: { additional_options: [''], ca_certificate: {} },

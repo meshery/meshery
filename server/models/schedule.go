@@ -1,6 +1,6 @@
 package models
 
-import "github.com/meshery/schemas/models/v1beta1/schedule"
+import "github.com/meshery/schemas/models/v1beta2/schedule"
 
 type Schedule = schedule.Schedule
 

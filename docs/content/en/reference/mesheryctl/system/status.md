@@ -3,6 +3,9 @@ title: mesheryctl-system-status
 display_title: false
 command: system
 subcommand: status
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/status/
 ---
 
 # mesheryctl system status
@@ -12,10 +15,13 @@ Check Meshery status
 ## Synopsis
 
 Check status of Meshery and Meshery components.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system status [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,16 +30,20 @@ mesheryctl system status [flags]
 Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system status
 
+</div>
 </div>
 </pre> 
 
 (optional) Extra data in status table
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system status --verbose
 
+</div>
 </div>
 </pre> 
 
@@ -51,7 +61,7 @@ mesheryctl system status --verbose
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -y, --yes              (optional) assume yes for user interactive prompts.
 
@@ -61,8 +71,8 @@ mesheryctl system status --verbose
 ## Screenshots
 
 Usage of mesheryctl system status
-![status-usage](/reference/images/status.png)
+![status-usage](../../../images/status.png)
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

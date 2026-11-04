@@ -1,95 +1,123 @@
 ---
 title: GitOps with Meshery
-description: Integrating your CI/CD pipelines with Meshery's GitHub Actions
+description: Add Meshery's GitHub Actions to your pipelines to render a visual snapshot of your infrastructure on each pull request and to catch performance regressions before you merge.
 categories: [infrastructure]
 ---
 
-## <img style="height: 4rem; width: 4rem;" src="./images/kanvas-icon-color.svg" /> Kanvas Snapshot GitHub Action
+Meshery publishes two GitHub Actions that you can add to any workflow:
 
-- See your deployment before you merge
-- Connect Kanvas to your GitHub repo and see changes pull request-to-pull request
-- Get snapshots of your infrastructure directly in your PRs
+- **Kanvas Snapshot** renders your Kubernetes manifests, Helm chart, or Docker Compose file as a Meshery Design and comments the image on pull requests that change those files, so reviewers see the change before it merges.
+- **Performance Testing with Meshery** deploys Meshery in the runner, runs a performance test against your service, and records the results, so you catch latency and throughput regressions before they ship.
 
-<h3>Using Meshery's SnapShot GitHub Action</h3>
-See your deployment before you merge. Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.
+## Render a snapshot on pull requests
 
-See [Extension: Kanvas Snapshot](/extensions/snapshot) for more details.
+The [Kanvas Snapshot action](https://github.com/layer5labs/kanvas-snapshot) needs a Layer5 Cloud API token and a GitHub token that can comment on pull requests. Store the Layer5 Cloud token as a repository secret, for example `MESHERY_TOKEN`.
 
-## <img src="./images/smp-dark-text-side.svg" className="image-left-no-shadow" alt="Infrastructure fperformance logo" style="width: 60%; max-width: 200px;vertical-align:middle" /> Meshery Performance Analysis GitHub Action
-
-- See your performance regressions before you merge
-- Connect Performance Management to your GitHub repo and see changes pull request-to-pull request
-- Red light performance regressions
-- Baseline and analyze the performance of your services is key to efficient operation of any application
-  - Meshery is the canonical implementation of the Cloud Native Performance specification
-- Define your performance profiles upfront. See statistical analysis with microservice latency and throughput quartiles
-- Meshery includes your choice of load generator, so that you can meausure your way
-- Meshery packages all these features into an easy-to-use GitHub Action
-
-Measuring and managing the performance of your infrastructure is key to efficient operation. You can choose from multiple load generators and use a highly configurable set of load profiles with variable tunable facets to run a performance test. Meshery packages all these features into an easy-to-use GitHub Action.
-
-<h3>Using Meshery's Performance Analysis GitHub Action</h3>
-
-The <a href="https://github.com/marketplace/actions/performance-testing-with-meshery">Meshery Performance Analysis GitHub Action</a> is available in the GitHub Marketplace. You can create your own performance profiles to run repeatable tests with Meshery. You can configure this action to trigger with each of your releases, on every pull request or any GitHub workflow trigger event. A sample configuration of the action is shown below.
+The action runs helper scripts from its own repository, so the workflow checks that repository out into an `action` folder next to yours. The workflow below runs on pull requests that change files under `deploy/`:
 
 ```yaml
-name: Meshery SMP Action
+name: Kanvas Snapshot
+on:
+  pull_request:
+    paths:
+      - "deploy/**"
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    # Pull requests from forks get no repository secrets, so skip them.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: layer5labs/kanvas-snapshot
+          path: action
+      - name: Render snapshot
+        uses: layer5labs/kanvas-snapshot@master
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          mesheryToken: ${{ secrets.MESHERY_TOKEN }}
+          prNumber: ${{ github.event.pull_request.number }}
+          application_type: "Kubernetes Manifest"
+          filePath: "deploy"
+```
+
+Set `application_type` to `Kubernetes Manifest`, `Helm Chart`, or `Docker Compose` to match what `filePath` points at. When `filePath` is a folder, the action merges only the `.yaml` and `.yml` files directly inside it and skips subfolders, so point it at the folder that holds your manifests.
+
+GitHub does not pass repository secrets to workflows that pull requests from forks trigger, so the `if` condition skips those runs instead of letting them fail. To render a design that already exists in Meshery, pass its ID as `designID` instead. To snapshot a Helm chart from your terminal instead of a workflow, see the [Helm Snapshot plugin]({{< ref "extensions/extensions/helm-snapshot/index.md" >}}).
+
+Both examples reference the actions' `master` branch. To keep a later change to an action from changing your pipeline, pin each `uses:` line to a commit SHA you have tested.
+
+## Run a performance test in your pipeline
+
+<img src="./images/smp-dark-text-side.svg" alt="Cloud Native Performance logo" style="width: 60%; max-width: 200px; vertical-align: middle" />
+
+The [Performance Testing with Meshery action](https://github.com/marketplace/actions/performance-testing-with-meshery) starts Meshery in the runner, runs your test, and records the result in your Meshery account. Trigger it on releases, on every pull request, or on any other workflow event.
+
+1. Get a provider token. In Meshery UI, open the avatar menu and choose **Get Token**, then copy the value of the `token` key from the downloaded `auth.json`. Store it as a repository secret named `PROVIDER_TOKEN`.
+2. Commit a test configuration file in [Cloud Native Performance](https://smp-spec.io) (SMP) format to your repository's `.github` folder, as shown below, and pass its file name as `profile_filename`.
+3. Add the action to a workflow:
+
+```yaml
+name: Performance Test
 on:
   push:
     branches:
-      'master'
+      - master
 
 jobs:
   performance-test:
-    name: Performance Test
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
-        uses: actions/checkout@v2
-        with:
-          ref: 'perf'
-
-      - name: Deploy k8s-minikube
-        uses: manusa/actions-setup-minikube@v2.4.1
-        with:
-          minikube version: 'v1.21.0'
-          kubernetes version: 'v1.20.7'
-          driver: docker
-
-      - name: Run Performance Test
-        uses: layer5io/meshery-smp-action@master
+      - uses: actions/checkout@v4
+      - name: Run performance test
+        uses: layer5io/meshery-performance-action@master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: docker
-          profile_name: soak-test
+          profile_filename: perf-config.yaml
 ```
 
-You can also define your test configuration in an SMP compatible configuration file as shown below.
+The action passes a test configuration file to `mesheryctl perf apply --file`, so the file uses the same structure and camelCase keys as `mesheryctl`. See [Use a test configuration file]({{< ref "guides/performance-management/performance-management/index.md#use-a-test-configuration-file" >}}):
 
 ```yaml
-smp_version: v0.0.1
-id:
-name: Istio Performance Test
-labels: {}
-clients:
-- internal: false
-  load_generator: fortio
-  protocol: 1
-  connections: 2
-  rps: 10
-  headers: {}
-  cookies: {}
-  body: ""
-  content_type: ""
-  endpoint_urls:
-  - http://localhost:2323/productpage
-duration: "30m"
+test:
+  smpVersion: v0.0.1
+  name: Istio Performance Test
+  clients:
+    - loadGenerator: fortio
+      protocol: http
+      connections: 2
+      rps: 10
+      endpointUrls:
+        - https://staging.example.com/
+  duration: 30m
+mesh: istio
 ```
 
-See this sample GitHub workflow (<a href="https://github.com/layer5io/meshery-smp-action/blob/master/action.yml">action.yml</a>) for more configuration details.
+Replace `https://staging.example.com/` with the URL of the service to test. The runner must be able to reach it, so use a public or staging URL, or deploy the service in an earlier step of the same job. To set the URL per run instead, pass `endpoint_url`.
 
-<a href="./images/service-mesh-performance-profile-test-results.png"><img src="./images/service-mesh-performance-profile-test-results.png" className="image-center" alt="performance management dashboard" /></a>
+The action accepts these inputs:
 
-The results from the tests are updated on the Performance Management dashboard in Meshery. To learn more about interpreting the test results, check out <a href="/guides/performance-management/interpreting-performance-test-results">this guide</a>. You can always checkout the <a href="/guides">Meshery User Guides</a> to dive deep into these features.
+| Input | Required | Purpose |
+|---|---|---|
+| `provider_token` | Yes | The `token` value from your `auth.json`. |
+| `platform` | No | Where to deploy Meshery in the runner: `docker` (default) or `kubernetes`. |
+| `profile_filename` | One of these two | Name of an SMP test configuration file in `.github`. |
+| `profile_name` | One of these two | Name of a performance profile saved in Meshery. See the note below. |
+| `endpoint_url` | No | Overrides the endpoint in the test configuration, for example the URL of the service your workflow just deployed. |
+| `service_mesh` | No | Overrides the service mesh named in the test configuration. |
+| `test_name` | No | Overrides the test name. |
+| `load_generator` | No | Overrides the load generator. Meshery runs tests with `fortio`. |
 
-<a href="https://smp-spec.io">Cloud Native Performance</a> standardizes infrastructure measurement, characterizing any deployment's performance by capturing the details of infrastructure capacity, configuration and workload metadata.
+{{% alert color="warning" title="Prefer profile_filename" %}}
+When you pass `profile_name`, the action looks the profile up with `mesheryctl perf view`, a command that current releases of `mesheryctl` no longer have, so the step fails. Use `profile_filename` until the action is updated.
+{{% /alert %}}
+
+<a href="./images/service-mesh-performance-profile-test-results.png"><img src="./images/service-mesh-performance-profile-test-results.png" alt="Performance test results in Meshery" /></a>
+
+Meshery shows each run's results under **Performance → Profiles**. To read them, see [Interpreting Performance Test Results]({{< ref "guides/performance-management/interpreting-performance-test-results/index.md" >}}).

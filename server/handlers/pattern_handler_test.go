@@ -202,7 +202,7 @@ package handlers
 // 	t.Run("TestPatternFileConversionFromV1Alpha1ToV1Beta1", func(t *testing.T) {
 // 		// var beta1PatternFileStr string
 // 		var err error
-// 		v1beta1PatternFile, _, err = handler.convertV1alpha2ToV1beta1(testPatternFile, uuid.Nil)
+// 		v1beta1PatternFile, _, err = handler.convertV1alpha2ToV1beta3(testPatternFile, uuid.Nil)
 // 		if err != nil {
 // 			fmt.Println(err)
 // 			t.Fatal(err)

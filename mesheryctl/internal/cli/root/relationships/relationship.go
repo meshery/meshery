@@ -29,7 +29,7 @@ import (
 
 var (
 	availableSubcommands = []*cobra.Command{viewCmd, generateCmd, listCmd, searchCmd}
-	relationshipApiPath  = "api/meshmodels/relationships"
+	relationshipApiPath  = "api/registry/relationships"
 )
 
 type MeshmodelRelationshipsAPIResponse struct {
@@ -84,7 +84,7 @@ mesheryctl relationship view [model-name]
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl relationship --help' to display usage guide.\n", args[0]), "relationship"))
+			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [%s]. Use 'mesheryctl relationship --help' to display usage guide.\n", args[0], utils.SubcommandNames(availableSubcommands)), "relationship"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

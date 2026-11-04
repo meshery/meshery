@@ -83,13 +83,13 @@
 }
 .alert-secondary {
   border-style: solid;
-  border-color: #9FA6B2;
-  background-color: #d8dbe0;
+  border-color: var(--color-secondary-medium);
+  background-color: var(--color-grey-dark-alpha);
   border-width: 0 0 0 4px;
   font-size: 1rem;
   & .alert-heading > *,
   & .alert-heading {
-    color: #9FA6B2;
+    color: var(--color-secondary-dark);
     margin: 0;
     margin-bottom: 1rem;
   }

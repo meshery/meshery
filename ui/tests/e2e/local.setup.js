@@ -4,12 +4,12 @@ import { waitForAuthRedirection } from './pages/LoginPage';
 import { ENV } from './env';
 
 const PROVIDERS = {
-  LOCAL: 'None',
-  MESHERY: 'Layer5',
+  LOCAL: 'Local',
+  MESHERY: 'Meshery',
 };
 
-// if project is none provider then only select the none provider and save the auth state
-setup('authenticate as None provider', async ({ page, provider }) => {
+// Authenticate as the built-in Local provider and persist the auth state.
+setup('authenticate as Local provider', async ({ page, provider }) => {
   console.log(`Provider in auth setup: ${provider}`);
 
   // Perform authentication steps. Replace these actions with your own.

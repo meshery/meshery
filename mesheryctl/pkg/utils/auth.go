@@ -22,8 +22,33 @@ import (
 )
 
 type Provider struct {
-	ProviderURL  string `json:"provider_url,omitempty"`
-	ProviderName string `json:"provider_name,omitempty"`
+	ProviderURL  string `json:"providerUrl,omitempty"`
+	ProviderName string `json:"providerName,omitempty"`
+}
+
+func (p *Provider) UnmarshalJSON(data []byte) error {
+	type providerAlias Provider
+	aux := struct {
+		providerAlias
+		ProviderURLLegacy  string `json:"provider_url,omitempty"`
+		ProviderNameLegacy string `json:"provider_name,omitempty"`
+	}{}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return ErrUnmarshal(err)
+	}
+
+	p.ProviderURL = aux.ProviderURL
+	if p.ProviderURL == "" {
+		p.ProviderURL = aux.ProviderURLLegacy
+	}
+
+	p.ProviderName = aux.ProviderName
+	if p.ProviderName == "" {
+		p.ProviderName = aux.ProviderNameLegacy
+	}
+
+	return nil
 }
 
 // NewRequest creates *http.Request and handles adding authentication for Meshery itself
@@ -60,26 +85,30 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	return req, nil
 }
 
-// Function returns a new http response given a http request
-// Function will test the response and return any errors associated with it
+// MakeRequest sends an HTTP request, validates the response, and returns the response or an error.
 func MakeRequest(req *http.Request) (*http.Response, error) {
 	client := &http.Client{}
 
 	// check status code from request, checks for issues with auth token
 	resp, err := client.Do(req)
 
-	if err != nil && resp == nil {
+	if err != nil {
+		if resp != nil && resp.Body != nil {
+			SafeClose(resp.Body)
+		}
 		return nil, ErrFailRequest(err)
 	}
 
 	// If statuscode = 302, then we either have an expired or invalid token
 	// We return the response and correct error message
 	if resp.StatusCode == 302 {
+		SafeClose(resp.Body)
 		return nil, ErrInvalidToken()
 	}
 
 	// failsafe for not being authenticated
 	if ContentTypeIsHTML(resp) {
+		SafeClose(resp.Body)
 		return nil, ErrUnauthenticated()
 	}
 
@@ -119,7 +148,7 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 	return resp, nil
 }
 
-// Function checks the location of token and returns appropriate location of the token
+// GetTokenLocation checks the location of token and returns appropriate location of the token
 func GetTokenLocation(token config.Token) (string, error) {
 	// Find home directory.
 	home, err := os.UserHomeDir()
@@ -208,12 +237,11 @@ func UpdateAuthDetails(filepath string) error {
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
-	defer SafeClose(resp.Body)
-
 	if err != nil {
-		err = errors.Wrap(err, "error dispatching there request: ")
+		err = errors.Wrap(err, "error dispatching the request: ")
 		return err
 	}
+	defer SafeClose(resp.Body)
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {

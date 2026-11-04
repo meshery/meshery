@@ -28,6 +28,7 @@ const (
 	ErrUserPromptCode               = "mesheryctl-1160"
 	ErrConvertConcurrentRequestCode = "mesheryctl-1161"
 	ErrConvertQPSCode               = "mesheryctl-1162"
+	ErrPerfProfileServerCode        = "mesheryctl-1245"
 )
 
 func ErrReadFilepath(err error) error {
@@ -153,7 +154,7 @@ func ErrHealthChecker(err error) error {
 func ErrPerformanceProfileResult(err error) error {
 	return errors.New(ErrPerformanceProfileResultCode, errors.Alert,
 		[]string{"Error displaying performance"},
-		[]string{"Unable to display performance Profile" + err.Error()},
+		[]string{"Unable to display performance Profile: " + err.Error()},
 		[]string{"Failed to fetch results for a specific profile"},
 		[]string{"Check your network connection and ensure Meshery is running .", formatErrorWithReference()})
 }
@@ -180,4 +181,12 @@ func ErrConvertQPS() error {
 		[]string{"Invalid qps value provided"},
 		[]string{"The qps flag value is not a valid integer"},
 		[]string{"Provide a valid integer value for qps", formatErrorWithReference()})
+}
+
+func ErrPerfProfileServer(err error) error {
+	return errors.New(ErrPerfProfileServerCode, errors.Alert,
+		[]string{"Server error while saving performance profile"},
+		[]string{err.Error()},
+		[]string{"Provider Database could be down or not reachable"},
+		[]string{"Make sure provider is up and reachable", formatErrorWithReference()})
 }

@@ -1,7 +1,7 @@
 ---
 title: Fluentbit Skt
 subtitle: Collaborative and visual infrastructure as design for Fluentbit Skt
-image: /extensions/models/fluentbit-skt/icons/color/fluentbit-skt-color.svg
+image: extensions/models/fluentbit-skt/icons/color/fluentbit-skt-color.svg
 aliases: /extensibility/integrations/fluentbit-skt
 docURL: https://docs.meshery.io/extensibility/integrations/fluentbit-skt
 description: 

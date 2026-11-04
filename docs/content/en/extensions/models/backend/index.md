@@ -1,7 +1,7 @@
 ---
 title: Backend
 subtitle: Collaborative and visual infrastructure as design for Backend
-image: /extensions/models/backend/icons/color/backend-color.svg
+image: extensions/models/backend/icons/color/backend-color.svg
 aliases: /extensibility/integrations/backend
 docURL: https://docs.meshery.io/extensibility/integrations/backend
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Cloud Provider
 registrant: Artifact Hub
 components: 
 - name: rule
-  colorIcon: content/en/extensions/models/backend/components/rule/icons/color/rule-color.svg
-  whiteIcon: content/en/extensions/models/backend/components/rule/icons/white/rule-white.svg
+  colorIcon: extensions/models/backend/components/rule/icons/color/rule-color.svg
+  whiteIcon: extensions/models/backend/components/rule/icons/white/rule-white.svg
   description: 
 components-count: 1
 relationships: 

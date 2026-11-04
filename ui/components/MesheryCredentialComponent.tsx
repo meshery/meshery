@@ -1,23 +1,30 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Chip,
+  CustomColumnVisibilityControl,
+  DeleteIcon,
   IconButton,
-  Tooltip,
+  PROMPT_VARIANTS,
+  ResponsiveDataTable,
+  styled,
   TableCell,
   TableSortLabel,
-  styled,
-  ResponsiveDataTable,
-  CustomColumnVisibilityControl,
+  Tooltip,
+  useHasPermission,
+  useTheme,
 } from '@sistent/sistent';
-import Modal from './Modal';
-import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from './general/error-404/index';
+import Modal from './shared/Modal/Modal';
+import _PromptComponent, { PromptRef } from './general/PromptComponent';
+import { CON_OPS, CoreConnectionKinds } from '../utils/Enum';
 import Moment from 'react-moment';
-import LoadingScreen from './LoadingComponents/LoadingComponent';
-import { useNotification } from '../utils/hooks/useNotification';
+import LoadingScreen from './shared/LoadingState/LoadingComponent';
+import { useNotification, useNotificationHandlers } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
+import { normalizeStaticImagePath } from '../utils/fallback';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   useCreateCredentialMutation,
@@ -27,8 +34,8 @@ import {
 } from '@/rtk-query/credentials';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
-import type { RootState } from '@/store/store';
-import type { MUIDataTableColumn, MUIDataTableMeta } from 'mui-datatables';
+import type { RootState } from '../store';
+import type { MUIDataTableColumn, MUIDataTableMeta } from '@sistent/mui-datatables';
 
 const CredentialIcon = styled('img')({
   width: '24px',
@@ -75,12 +82,16 @@ interface ColumnMeta {
 }
 
 const MesheryCredentialComponent: React.FC = () => {
-  const { data: credentialsData, isLoading } = useGetCredentialsQuery();
+  const canViewCredentials = useHasPermission(Keys.SecurityManagementViewCredentials);
+  const { data: credentialsData, isLoading } = useGetCredentialsQuery(undefined, {
+    skip: !canViewCredentials,
+  });
   const [createCredential] = useCreateCredentialMutation();
   const [updateCredential] = useUpdateCredentialMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
   const { connectionMetadataState } = useSelector((state: RootState) => state.ui);
 
+  const modalRef = useRef<PromptRef>(null);
   const [formData, setFormData] = useState<CredentialFormData>({});
   const [credModal, setCredModal] = useState<CredentialModalState>({
     open: false,
@@ -93,7 +104,9 @@ const MesheryCredentialComponent: React.FC = () => {
   );
   const [credentialName, setCredentialName] = useState<string | null>(null);
   const { notify } = useNotification();
+  const { notifyApiError } = useNotificationHandlers();
   const { width } = useWindowDimensions();
+  const theme = useTheme();
 
   const schemaChangeHandler = (type: CredentialType): void => {
     setCredentialType(type);
@@ -119,29 +132,33 @@ const MesheryCredentialComponent: React.FC = () => {
     });
   };
 
-  const handleError = (error_msg: string): void => {
+  /**
+   * Surface a credential mutation error. Delegates to `notifyApiError` so the
+   * structured MeshKit envelope (when present) renders the server-supplied
+   * message and remediation guidance; otherwise falls back to the supplied
+   * description string.
+   */
+  const handleError = (error: unknown, fallbackMessage: string): void => {
     updateProgress({ showProgress: false });
-    notify({
-      message: `${error_msg}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error_msg.toString(),
-    });
+    notifyApiError(error, fallbackMessage);
   };
 
   const getCredentialsIcon = (type: string): React.ReactNode => {
     switch (type) {
       case 'prometheus':
-        return <CredentialIcon src="/static/img/prometheus_logo_orange_circle.svg" />;
+        return <CredentialIcon src="/static/img/integrations/prometheus_logo_orange_circle.svg" />;
       case 'grafana':
-        return <CredentialIcon src="/static/img/grafana_icon.svg" />;
+        return <CredentialIcon src="/static/img/integrations/grafana_icon.svg" />;
       case 'kubernetes':
         return (
           <CredentialIcon
             src={
-              connectionMetadataState
-                ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
-                : ''
+              normalizeStaticImagePath(
+                connectionMetadataState?.[CoreConnectionKinds.kubernetes]?.icon,
+              ) || undefined
             }
+            alt=""
+            aria-hidden="true"
           />
         );
       default:
@@ -285,18 +302,19 @@ const MesheryCredentialComponent: React.FC = () => {
         },
         customBodyRender: (_: unknown, tableMeta: MUIDataTableMeta) => {
           const credentials = credentialsData?.credentials || [];
-          const rowData = credentials[tableMeta.rowIndex] as { id: string } | undefined;
+          const rowData = credentials[tableMeta.rowIndex] as
+            | { id: string; name?: string; type?: string }
+            | undefined;
           return (
             <ActionContainer>
               <Tooltip key={`delete_credential-${tableMeta.rowIndex}`} title="Delete Credential">
                 <IconButton
                   aria-label="delete"
-                  onClick={() =>
-                    handleSubmit({ type: CON_OPS.DELETE, id: rowData?.id || undefined })
-                  }
+                  onClick={(e) => handleDeleteCredentialConfirm(e, rowData)}
                   size="large"
+                  permissionKey={Keys.SecurityManagementDeleteCredential}
                 >
-                  <DeleteIcon />
+                  <DeleteIcon fill={theme?.palette?.icon?.default} />
                 </IconButton>
               </Tooltip>
             </ActionContainer>
@@ -321,6 +339,29 @@ const MesheryCredentialComponent: React.FC = () => {
     draggableColumns: {
       enabled: true,
     },
+  };
+
+  const handleDeleteCredentialConfirm = async (
+    e: React.MouseEvent,
+    rowData?: { id: string; name?: string; type?: string },
+  ): Promise<void> => {
+    e.stopPropagation();
+    if (!rowData?.id || !modalRef.current) {
+      return;
+    }
+
+    const credentialName = rowData.name || rowData.type || 'this credential';
+
+    const response = await modalRef.current.show({
+      title: `Delete Credential?`,
+      subtitle: `Are you sure you want to delete "${credentialName}"? (This action is irreversible and may break dependent connections)`,
+      primaryOption: 'DELETE',
+      variant: PROMPT_VARIANTS.DANGER,
+    });
+
+    if (response === 'DELETE') {
+      handleSubmit({ type: CON_OPS.DELETE, id: rowData.id });
+    }
   };
 
   // control the entire submit
@@ -370,7 +411,7 @@ const MesheryCredentialComponent: React.FC = () => {
           : type === CON_OPS.CREATE
             ? 'Failed to create credentials.'
             : 'Failed to update credentials.';
-      handleError(errorMessage);
+      handleError(error, errorMessage);
     } finally {
       updateProgress({ showProgress: false });
     }
@@ -392,6 +433,10 @@ const MesheryCredentialComponent: React.FC = () => {
     marginBottom: '0.5rem',
     marginTop: '1rem',
   };
+
+  if (!canViewCredentials) {
+    return <DefaultError permissionKey={Keys.SecurityManagementViewCredentials} />;
+  }
 
   if (isLoading) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Credentials" />;
@@ -433,6 +478,7 @@ const MesheryCredentialComponent: React.FC = () => {
         payload={{ type: credModal.actionType, id: credModal.id }}
         submitBtnText="Save"
       />
+      <_PromptComponent ref={modalRef} />
     </div>
   );
 };

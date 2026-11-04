@@ -1,7 +1,7 @@
 ---
 title: Redis Operator
 subtitle: Collaborative and visual infrastructure as design for Redis Operator
-image: /extensions/models/redis-operator/icons/color/redis-operator-color.svg
+image: extensions/models/redis-operator/icons/color/redis-operator-color.svg
 aliases: /extensibility/integrations/redis-operator
 docURL: https://docs.meshery.io/extensibility/integrations/redis-operator
 description: 
@@ -10,32 +10,32 @@ integrations-subcategory: Database
 registrant: Github
 components: 
 - name: redis-failover
-  colorIcon: content/en/extensions/models/redis-operator/components/redis-failover/icons/color/redis-failover-color.svg
-  whiteIcon: content/en/extensions/models/redis-operator/components/redis-failover/icons/white/redis-failover-white.svg
+  colorIcon: extensions/models/redis-operator/components/redis-failover/icons/color/redis-failover-color.svg
+  whiteIcon: extensions/models/redis-operator/components/redis-failover/icons/white/redis-failover-white.svg
   description: 
 - name: redis-cluster
-  colorIcon: content/en/extensions/models/redis-operator/components/redis-cluster/icons/color/redis-cluster-color.svg
-  whiteIcon: content/en/extensions/models/redis-operator/components/redis-cluster/icons/white/redis-cluster-white.svg
+  colorIcon: extensions/models/redis-operator/components/redis-cluster/icons/color/redis-cluster-color.svg
+  whiteIcon: extensions/models/redis-operator/components/redis-cluster/icons/white/redis-cluster-white.svg
   description: 
 - name: redis
-  colorIcon: content/en/extensions/models/redis-operator/components/redis/icons/color/redis-color.svg
-  whiteIcon: content/en/extensions/models/redis-operator/components/redis/icons/white/redis-white.svg
+  colorIcon: extensions/models/redis-operator/components/redis/icons/color/redis-color.svg
+  whiteIcon: extensions/models/redis-operator/components/redis/icons/white/redis-white.svg
   description: 
 - name: redis-cluster
-  colorIcon: content/en/extensions/models/redis-operator/components/redis-cluster/icons/color/redis-cluster-color.svg
-  whiteIcon: content/en/extensions/models/redis-operator/components/redis-cluster/icons/white/redis-cluster-white.svg
+  colorIcon: extensions/models/redis-operator/components/redis-cluster/icons/color/redis-cluster-color.svg
+  whiteIcon: extensions/models/redis-operator/components/redis-cluster/icons/white/redis-cluster-white.svg
   description: 
 - name: redis-replication
-  colorIcon: content/en/extensions/models/redis-operator/components/redis-replication/icons/color/redis-replication-color.svg
-  whiteIcon: content/en/extensions/models/redis-operator/components/redis-replication/icons/white/redis-replication-white.svg
+  colorIcon: extensions/models/redis-operator/components/redis-replication/icons/color/redis-replication-color.svg
+  whiteIcon: extensions/models/redis-operator/components/redis-replication/icons/white/redis-replication-white.svg
   description: 
 - name: redis-sentinel
-  colorIcon: content/en/extensions/models/redis-operator/components/redis-sentinel/icons/color/redis-sentinel-color.svg
-  whiteIcon: content/en/extensions/models/redis-operator/components/redis-sentinel/icons/white/redis-sentinel-white.svg
+  colorIcon: extensions/models/redis-operator/components/redis-sentinel/icons/color/redis-sentinel-color.svg
+  whiteIcon: extensions/models/redis-operator/components/redis-sentinel/icons/white/redis-sentinel-white.svg
   description: 
 - name: redis
-  colorIcon: content/en/extensions/models/redis-operator/components/redis/icons/color/redis-color.svg
-  whiteIcon: content/en/extensions/models/redis-operator/components/redis/icons/white/redis-white.svg
+  colorIcon: extensions/models/redis-operator/components/redis/icons/color/redis-color.svg
+  whiteIcon: extensions/models/redis-operator/components/redis/icons/white/redis-white.svg
   description: 
 components-count: 7
 relationships: 

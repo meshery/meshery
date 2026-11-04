@@ -1,1 +1,0 @@
-Rishikesh Maddhesiya

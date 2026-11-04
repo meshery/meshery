@@ -95,6 +95,10 @@ a > strong:hover {
     --col-gap: -30rem;
     padding: 0;
   }
+  // Hide the redundant hero logo on mobile; the navbar logo already brands the page.
+  .home-hero-logo {
+    display: none;
+  }
 }
 
 @media (max-width: 320px) {

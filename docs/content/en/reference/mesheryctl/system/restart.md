@@ -3,6 +3,9 @@ title: mesheryctl-system-restart
 display_title: false
 command: system
 subcommand: restart
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/restart/
 ---
 
 # mesheryctl system restart
@@ -15,8 +18,10 @@ Restart all Meshery containers / pods.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system restart [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,16 +30,20 @@ mesheryctl system restart [flags]
 Restart all Meshery containers, their instances and their connected volumes
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system restart
 
+</div>
 </div>
 </pre> 
 
 (optional) skip checking for new updates available in Meshery.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system restart --skip-update
 
+</div>
 </div>
 </pre> 
 
@@ -53,7 +62,7 @@ mesheryctl system restart --skip-update
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -63,4 +72,4 @@ mesheryctl system restart --skip-update
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

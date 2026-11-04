@@ -1,7 +1,7 @@
 ---
 title: Devstream
 subtitle: Collaborative and visual infrastructure as design for Devstream
-image: /extensions/models/devstream/icons/color/devstream-color.svg
+image: extensions/models/devstream/icons/color/devstream-color.svg
 aliases: /extensibility/integrations/devstream
 docURL: https://docs.meshery.io/extensibility/integrations/devstream
 description: 

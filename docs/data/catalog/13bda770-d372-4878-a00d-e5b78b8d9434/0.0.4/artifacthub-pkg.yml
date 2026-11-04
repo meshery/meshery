@@ -1,0 +1,20 @@
+version: 0.0.4
+name: simple-badge-design
+displayName: Simple Badge Design
+createdAt: "2026-10-13T16:59:17Z"
+description: A simple badge design configuration built in Meshery Kanvas to easily deploy and visualize badge components.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/13bda770-d372-4878-a00d-e5b78b8d9434/0.0.4/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Requires an active Kubernetes cluster connection and appropriate permissions in your workspace. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 86bd7d32-2bb8-4dc8-97f0-f6ea7b0b2e89
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,7 +1,7 @@
 ---
 title: kube-rs
 subtitle: Collaborative and visual infrastructure as design for kube-rs
-image: /extensions/models/kube-rs/icons/color/kube-rs-color.svg
+image: extensions/models/kube-rs/icons/color/kube-rs-color.svg
 aliases: /extensibility/integrations/kube-rs
 docURL: https://docs.meshery.io/extensibility/integrations/kube-rs
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Scheduling & Orchestration
 registrant: Github
 components: 
 - name: document
-  colorIcon: content/en/extensions/models/kube-rs/components/document/icons/color/document-color.svg
-  whiteIcon: content/en/extensions/models/kube-rs/components/document/icons/white/document-white.svg
+  colorIcon: extensions/models/kube-rs/components/document/icons/color/document-color.svg
+  whiteIcon: extensions/models/kube-rs/components/document/icons/white/document-white.svg
   description: 
 components-count: 1
 relationships: 

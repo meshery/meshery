@@ -30,7 +30,7 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/model/vie
 // View a specific model from current provider by using [model-name] or [model-id] in default format yaml
 mesheryctl model view [model-name]
 
-// View a specific model in specifed format
+// View a specific model in specified format
 mesheryctl model view [model-name] --output-format [json|yaml]
 
 // View a specific model in specified format and save it as a file

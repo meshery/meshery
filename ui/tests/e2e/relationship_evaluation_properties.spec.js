@@ -100,6 +100,10 @@ function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
+function isIdempotentCleanupAction(action) {
+  return action?.op === 'delete_relationship' && action?.value?.relationship?.status === 'deleted';
+}
+
 // Delete the value at the given path in an object.
 // Returns true if something was deleted.
 function deleteAtPath(obj, pathSegments) {
@@ -116,15 +120,12 @@ function deleteAtPath(obj, pathSegments) {
 }
 
 async function evaluateDesign(request, design) {
-  const resp = await request.post(
-    `${ENV.MESHERY_SERVER_URL}/api/meshmodels/relationships/evaluate`,
-    {
-      data: {
-        design: { ...design, relationships: [] },
-        options: { returnDiffOnly: false, trace: false },
-      },
+  const resp = await request.post(`${ENV.MESHERY_SERVER_URL}/api/registry/relationships/evaluate`, {
+    data: {
+      design: { ...design, relationships: [] },
+      options: { returnDiffOnly: false, enableTrace: false },
     },
-  );
+  });
   expect(resp.ok()).toBeTruthy();
   return resp.json();
 }
@@ -174,14 +175,14 @@ test.describe('Relationship Evaluation Properties', { tag: '@relationship' }, ()
         if (!aliases || Object.keys(aliases).length === 0) return;
 
         for (const [aliasId, alias] of Object.entries(aliases)) {
-          const parent = findComponent(design, alias.resolved_parent_id);
+          const parent = findComponent(design, alias.resolvedParentId);
           expect(
             parent,
-            `parent ${alias.resolved_parent_id} missing for alias ${aliasId}`,
+            `parent ${alias.resolvedParentId} missing for alias ${aliasId}`,
           ).toBeDefined();
 
-          const val = getAtPath(parent, alias.resolved_ref_field_path);
-          const pathStr = alias.resolved_ref_field_path.join('.');
+          const val = getAtPath(parent, alias.resolvedRefFieldPath);
+          const pathStr = alias.resolvedRefFieldPath.join('.');
           expect(
             val,
             `alias ${aliasId} path ${pathStr} not found on parent ${parent.component?.kind}`,
@@ -233,11 +234,11 @@ test.describe('Relationship Evaluation Properties', { tag: '@relationship' }, ()
 
         // Step 4: Re-evaluate WITH relationships so the engine patches values back
         const resp = await request.post(
-          `${ENV.MESHERY_SERVER_URL}/api/meshmodels/relationships/evaluate`,
+          `${ENV.MESHERY_SERVER_URL}/api/registry/relationships/evaluate`,
           {
             data: {
               design: tampered,
-              options: { returnDiffOnly: false, trace: false },
+              options: { returnDiffOnly: false, enableTrace: false },
             },
           },
         );
@@ -264,11 +265,11 @@ test.describe('Relationship Evaluation Properties', { tag: '@relationship' }, ()
 
         // Pass design WITH relationships intact for re-evaluation
         const resp = await request.post(
-          `${ENV.MESHERY_SERVER_URL}/api/meshmodels/relationships/evaluate`,
+          `${ENV.MESHERY_SERVER_URL}/api/registry/relationships/evaluate`,
           {
             data: {
               design,
-              options: { returnDiffOnly: false, trace: false },
+              options: { returnDiffOnly: false, enableTrace: false },
             },
           },
         );
@@ -276,7 +277,7 @@ test.describe('Relationship Evaluation Properties', { tag: '@relationship' }, ()
         const secondResponse = await resp.json();
 
         const meaningfulActions = (secondResponse.actions ?? []).filter(
-          (a) => a.op !== 'update_relationship',
+          (action) => action.op !== 'update_relationship' && !isIdempotentCleanupAction(action),
         );
         expect(
           meaningfulActions,

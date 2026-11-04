@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -20,6 +21,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/meshery/meshery/server/models/pattern/patterns/k8s"
+	"github.com/meshery/meshery/server/models/pattern/planner"
 	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 
 	"github.com/meshery/meshery/server/models/pattern/stages"
@@ -28,11 +30,13 @@ import (
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
 	meshkube "github.com/meshery/meshkit/utils/kubernetes"
-	"github.com/meshery/schemas/models/v1beta1/component"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/component"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/pkg/errors"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
+	meta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/restmapper"
 
 	patternHelpers "github.com/meshery/meshkit/models/patterns"
 )
@@ -48,8 +52,9 @@ func (h *Handler) PatternFileHandler(
 	userID := user.ID
 	token, ok := r.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
-		h.log.Error(ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token")))
-		http.Error(rw, ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token")).Error(), http.StatusInternalServerError)
+		tokenErr := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
+		h.log.Error(tokenErr)
+		writeMeshkitError(rw, tokenErr, http.StatusInternalServerError)
 		return
 	}
 	var payload models.MesheryPatternFileDeployPayload
@@ -59,23 +64,13 @@ func (h *Handler) PatternFileHandler(
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
-
-		rw.WriteHeader(http.StatusBadRequest)
-		if _, writeErr := fmt.Fprintf(rw, "failed to read request body: %s", err); writeErr != nil {
-			h.log.Error(writeErr)
-		}
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
 	if err := json.Unmarshal(body, &payload); err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
-
-		rw.WriteHeader(http.StatusBadRequest)
-		if _, writeErr := fmt.Fprintf(rw, "failed to unmarshal request body: %s", err); writeErr != nil {
-			h.log.Error(writeErr)
-		}
+		writeMeshkitError(rw, ErrDecoding(err, "design engine request"), http.StatusBadRequest)
 		return
 	}
 
@@ -97,18 +92,18 @@ func (h *Handler) PatternFileHandler(
 	isDesignInAlpha2Format, err := patternutils.IsDesignInAlpha2Format(payload.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
-		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
+		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(patternErrorEventMetadata(r, payload.PatternID, "", "", err)).Build()
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, err, http.StatusInternalServerError)
 		return
 	}
 
 	if isDesignInAlpha2Format {
-		eventBuilder := events.NewEvent().ActedUpon(patternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
+		eventBuilder := events.NewEvent().ActedUpon(patternID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("convert")
 
-		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(&models.MesheryPattern{
+		_, patternFileStr, err := h.convertV1alpha2ToV1beta3(&models.MesheryPattern{
 			ID:          &patternID,
 			PatternFile: payload.PatternFile,
 		}, eventBuilder)
@@ -119,7 +114,7 @@ func (h *Handler) PatternFileHandler(
 
 		if err != nil {
 			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(rw, err, http.StatusInternalServerError)
 			return
 		}
 		patternFileByte = []byte(patternFileStr)
@@ -128,7 +123,7 @@ func (h *Handler) PatternFileHandler(
 	patternFile, err := patterncore.NewPatternFile(patternFileByte)
 	if err != nil {
 		h.log.Error(ErrPatternFile(err))
-		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPatternFile(err), http.StatusBadRequest)
 		return
 	}
 
@@ -172,34 +167,25 @@ func (h *Handler) PatternFileHandler(
 	}
 	response, err := _processPattern(opts)
 
-	eventBuilder := events.NewEvent().ActedUpon(patternID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
+	eventBuilder := events.NewEvent().ActedUpon(patternID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
 
 	if err != nil {
 		err := ErrPatternDeploy(err, patternFile.Name)
-		metadata := map[string]interface{}{
-			"error": err,
-		}
+		metadata := patternErrorEventMetadata(r, patternID, patternFile.Name, string(patternFile.Version), err)
 
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to %s design '%s'.", action, patternFile.Name)).WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, err, http.StatusInternalServerError)
 		return
 	}
 
-	metadata := map[string]interface{}{
-		"summary": response,
-	}
-
-	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
-
-	viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&design_id=%s", serverURL, patternID)
+	// The raw response embeds every component, so the event carries only its
+	// status and per-component errors.
+	metadata := buildPatternProcessEventMetadata(response, models.ServerURLFromRequest(r), patternID, patternFile.Name, string(patternFile.Version))
 	description = fmt.Sprintf("%s.", description)
-	metadata["view_link"] = viewLink
-	metadata["design_name"] = patternFile.Name
-	metadata["design_id"] = patternID
 
 	var event *events.Event
 	if action == "deploy" || action == "dry-run" {
@@ -216,6 +202,15 @@ func (h *Handler) PatternFileHandler(
 
 	ec := json.NewEncoder(rw)
 	_ = ec.Encode(response)
+}
+
+// patternErrorEventMetadata builds the metadata of a failed pattern event:
+// the design's identity and the MeshKit error, never the design or the
+// request payload.
+func patternErrorEventMetadata(r *http.Request, designID core.Uuid, name, version string, err error) map[string]interface{} {
+	metadata := models.DesignEventIdentity(models.ServerURLFromRequest(r), designID, name, version)
+	metadata["error"] = err
+	return metadata
 }
 
 func _processPattern(opts *patterncore.ProcessPatternOptions) (map[string]interface{}, error) {
@@ -376,35 +371,75 @@ func (sap *serviceActionProvider) Terminate(err error) {
 func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
 	//TODO: externalize these mutation rules with policies.
 	//1. Enforce the deployment of CRDs before other resources
-	for _, component := range p.Components {
-		if component.Component.Kind == "CustomResourceDefinition" {
-			for _, comp := range p.Components {
-				if comp.Component.Kind != "CustomResourceDefinition" {
-					dependsOnSlice, err := utils.Cast[[]string](comp.Metadata.AdditionalProperties["dependsOn"])
-					if err != nil {
-						err = errors.Wrapf(err, "Failed to cast 'dependsOn' to []string for component %s", comp.DisplayName)
-						sap.log.Error(err)
-						sap.Terminate(err)
-					}
-					dependsOnSlice = append(dependsOnSlice, comp.ID.String())
-					comp.Metadata.AdditionalProperties["dependsOn"] = dependsOnSlice
-				}
+	//
+	// A dependency names another component of the same design by its name, so
+	// each non-CRD component is made to depend on the CRD's name. A component
+	// never depends on itself.
+	for _, crd := range p.Components {
+		if crd.Component.Kind != "CustomResourceDefinition" {
+			continue
+		}
+
+		for _, comp := range p.Components {
+			if comp.Component.Kind == "CustomResourceDefinition" {
+				continue
 			}
+
+			dependsOn, err := planner.DeclaredDependencies(p.Name, comp)
+			if err != nil {
+				sap.log.Error(err)
+				sap.Terminate(err)
+				return
+			}
+
+			if slices.Contains(dependsOn, crd.DisplayName) {
+				continue
+			}
+
+			if comp.Metadata.AdditionalProperties == nil {
+				comp.Metadata.AdditionalProperties = map[string]interface{}{}
+			}
+
+			comp.Metadata.AdditionalProperties["dependsOn"] = append(dependsOn, crd.DisplayName)
 		}
 	}
 }
 
-// v1.StatusApplyConfiguration has deprecated, needed to find a different option to do this
-// NOTE: Currently tied to kubernetes
-// Returns ComponentName->ContextID->Response
+// DryRun executes server-side dry-run validation of the specified components across all target Kubernetes contexts.
+// It pre-scans declared namespaces in the design to handle dependencies and initializes discovery RESTMappers per cluster.
+// Returns ComponentName -> ContextID -> Response.
 func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition) (resp map[string]map[string]patterncore.DryRunResponseWrapper, err error) {
-	for _, cmp := range comps {
-		for ctxID, kc := range sap.ctxTokubeconfig {
-			cl, err := meshkube.New([]byte(kc))
-			if err != nil {
-				return resp, err
+	// 1. Scan all components in the design/pattern and collect declared namespaces
+	declaredNamespaces := collectDeclaredNamespaces(comps)
+
+	// 2. Initialize meshkube.Client and DiscoveryRESTMapper ONCE per target cluster before looping over components
+	type clusterContext struct {
+		client *meshkube.Client
+		mapper meta.RESTMapper
+	}
+	clusters := make(map[string]clusterContext, len(sap.ctxTokubeconfig))
+	for ctxID, kc := range sap.ctxTokubeconfig {
+		cl, err := meshkube.New([]byte(kc))
+		if err != nil {
+			return resp, err
+		}
+		var mapper meta.RESTMapper
+		if cl.KubeClient != nil {
+			gr, err := restmapper.GetAPIGroupResources(cl.KubeClient.Discovery())
+			if len(gr) > 0 {
+				mapper = restmapper.NewDiscoveryRESTMapper(gr)
 			}
-			dResp, err := dryRunComponent(cl, cmp, sap.opIsDelete)
+			if err != nil && sap.log != nil {
+				sap.log.Warn(fmt.Errorf("discovery RESTMapper failed on context %s, falling back to default mapping: %w", ctxID, err))
+			}
+		}
+		clusters[ctxID] = clusterContext{client: cl, mapper: mapper}
+	}
+
+	// 3. Loop over components and dry-run them across initialized clusters
+	for _, cmp := range comps {
+		for ctxID, cluster := range clusters {
+			dResp, err := dryRunComponent(cluster.client, cmp, sap.opIsDelete, cluster.mapper, declaredNamespaces)
 			if err != nil {
 				return resp, err
 			}
@@ -420,12 +455,44 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
 	return
 }
 
-func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition, isDelete bool) (patterncore.DryRunResponseWrapper, error) {
-	st, ok, err := k8s.DryRunHelper(cl, *cmd, isDelete)
-	dResp := patterncore.DryRunResponseWrapper{Success: ok, Component: cmd}
+// collectDeclaredNamespaces returns the names of the Namespace components declared in the design.
+func collectDeclaredNamespaces(comps []*component.ComponentDefinition) map[string]bool {
+	declaredNamespaces := make(map[string]bool)
+	for _, cmp := range comps {
+		if cmp == nil || !strings.EqualFold(cmp.Component.Kind, "Namespace") {
+			continue
+		}
+		if nsName := getNamespaceNameFromComponent(cmp); nsName != "" {
+			declaredNamespaces[nsName] = true
+		}
+	}
+	return declaredNamespaces
+}
+
+// getNamespaceNameFromComponent returns the name a Namespace component is created with on deploy.
+// meshkit's converter.CreateK8sResourceStructure sets metadata.name to the component's DisplayName and
+// ignores metadata.name in the configuration, so DisplayName is the only name dry-run may register.
+func getNamespaceNameFromComponent(cmp *component.ComponentDefinition) string {
+	if cmp == nil {
+		return ""
+	}
+	return cmp.DisplayName
+}
+
+// dryRunComponent executes dry-run validation for a single component against a Kubernetes cluster client,
+// applying discovery REST mapping and in-design declared namespace suppression options.
+func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition, isDelete bool, mapper meta.RESTMapper, declaredNamespaces map[string]bool) (patterncore.DryRunResponseWrapper, error) {
+	st, ok, err := k8s.DryRunHelper(cl, *cmd, isDelete, k8s.DryRunOptions{
+		RESTMapper:         mapper,
+		DeclaredNamespaces: declaredNamespaces,
+	})
+	cmpCopy := *cmd
+	dResp := patterncore.DryRunResponseWrapper{Success: ok, Component: &cmpCopy}
 	if ok {
-		dResp.Component.Configuration = filterConfiguration(st)
-	} else if err != nil {
+		if !isDelete {
+			dResp.Component.Configuration = filterConfiguration(st)
+		}
+	} else if err != nil && (len(st) == 0 || st["status"] != "Failure") {
 		dResp.Error = &patterncore.DryRunResponse{Status: err.Error()}
 	} else {
 		dResp.Error = parseDryRunFailure(st, cmd.DisplayName)
@@ -523,7 +590,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 	msgs := []patterns.DeploymentMessagePerContext{}
 	for _, host := range ccp.Hosts {
 		// Hack until adapters fix the concurrent client
-		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
+		// creation issue: https://github.com/meshery/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
 		sap.log.Debug("Execute operations on: ", host.Kind)
 
@@ -593,7 +660,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			KubeConfigs:  kconfigs,
 			Declarations: []string{compStr},
 		})
-		sucess := err == nil
+		success := err == nil
 		msgs = append(msgs, patterns.DeploymentMessagePerContext{
 			SystemName: hostName,
 			Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
@@ -603,7 +670,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 					Model:      ccp.Component.Model.Name,
 					CompName:   ccp.Component.DisplayName,
 					DesignName: sap.patternName,
-					Success:    sucess,
+					Success:    success,
 					Message:    resp.GetMessage(),
 					Error:      err,
 				},

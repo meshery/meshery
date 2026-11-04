@@ -3,6 +3,9 @@ title: mesheryctl-perf-result
 display_title: false
 command: perf
 subcommand: result
+categories: [mesheryctl-perf]
+aliases:
+- /reference/references/mesheryctl/perf/result/
 ---
 
 # mesheryctl perf result
@@ -11,11 +14,14 @@ List performance test results
 
 ## Synopsis
 
-List all the available test results of a performance profile
+List all the available test results of a performance profile.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl perf result [profile-name] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,24 +30,30 @@ mesheryctl perf result [profile-name] [flags]
 List Test results (maximum 25 results)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl perf result saturday-profile
 
+</div>
 </div>
 </pre> 
 
 View other set of performance results with --page (maximum 25 results)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl perf result saturday-profile --page 2
 
+</div>
 </div>
 </pre> 
 
 View single performance result with detailed information
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl perf result saturday-profile --view
 
+</div>
 </div>
 </pre> 
 
@@ -60,7 +72,7 @@ mesheryctl perf result saturday-profile --view
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string          path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string          path to config file (default "~/.meshery/config.yaml")
   -o, --output-format string   (optional) format to display in [json|yaml]
   -t, --token string           (required) Path to meshery auth config
   -v, --verbose                verbose output
@@ -72,8 +84,8 @@ mesheryctl perf result saturday-profile --view
 ## Screenshots
 
 Usage of mesheryctl perf result
-![perf-result-usage](/reference/images/perf-result.png)
+![perf-result-usage](../../../images/perf-result.png)
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

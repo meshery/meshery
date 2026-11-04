@@ -3,6 +3,9 @@ title: mesheryctl-environment-view
 display_title: false
 command: environment
 subcommand: view
+categories: [mesheryctl-environment]
+aliases:
+- /reference/references/mesheryctl/environment/view/
 ---
 
 # mesheryctl environment view
@@ -15,8 +18,10 @@ View details of an environment registered in Meshery Server for a specific organ
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment view [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +30,10 @@ mesheryctl environment view [flags]
 View details of a specific environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment view --orgId [orgId]
 
+</div>
 </div>
 </pre> 
 
@@ -46,7 +53,7 @@ mesheryctl environment view --orgId [orgId]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -54,4 +61,4 @@ mesheryctl environment view --orgId [orgId]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

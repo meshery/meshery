@@ -52,7 +52,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.25"
+          go-version-file: go.mod
 
       - name: Integration tests set up (cluster)
         run: make server-integration-tests-meshsync-setup-cluster

@@ -1,7 +1,7 @@
 ---
 title: Postgres Operator
 subtitle: Collaborative and visual infrastructure as design for Postgres Operator
-image: /extensions/models/postgres-operator/icons/color/postgres-operator-color.svg
+image: extensions/models/postgres-operator/icons/color/postgres-operator-color.svg
 aliases: /extensibility/integrations/postgres-operator
 docURL: https://docs.meshery.io/extensibility/integrations/postgres-operator
 description: 
@@ -10,16 +10,16 @@ integrations-subcategory: App Definition and Development
 registrant: Artifact Hub
 components: 
 - name: operator-configuration
-  colorIcon: content/en/extensions/models/postgres-operator/components/operator-configuration/icons/color/operator-configuration-color.svg
-  whiteIcon: content/en/extensions/models/postgres-operator/components/operator-configuration/icons/white/operator-configuration-white.svg
+  colorIcon: extensions/models/postgres-operator/components/operator-configuration/icons/color/operator-configuration-color.svg
+  whiteIcon: extensions/models/postgres-operator/components/operator-configuration/icons/white/operator-configuration-white.svg
   description: 
 - name: postgresql
-  colorIcon: content/en/extensions/models/postgres-operator/components/postgresql/icons/color/postgresql-color.svg
-  whiteIcon: content/en/extensions/models/postgres-operator/components/postgresql/icons/white/postgresql-white.svg
+  colorIcon: extensions/models/postgres-operator/components/postgresql/icons/color/postgresql-color.svg
+  whiteIcon: extensions/models/postgres-operator/components/postgresql/icons/white/postgresql-white.svg
   description: 
 - name: postgres-team
-  colorIcon: content/en/extensions/models/postgres-operator/components/postgres-team/icons/color/postgres-team-color.svg
-  whiteIcon: content/en/extensions/models/postgres-operator/components/postgres-team/icons/white/postgres-team-white.svg
+  colorIcon: extensions/models/postgres-operator/components/postgres-team/icons/color/postgres-team-color.svg
+  whiteIcon: extensions/models/postgres-operator/components/postgres-team/icons/white/postgres-team-white.svg
   description: 
 components-count: 3
 relationships: 

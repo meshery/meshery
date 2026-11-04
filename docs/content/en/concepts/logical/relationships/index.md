@@ -5,7 +5,7 @@ aliases:
 - /concepts/relationships/
 ---
 
-Meshery Relationships characterize how [components](./components) are connected and interact with each other. Relationships are defined within [models](./models) to aid in structuring the interrelationships between one or more components in a [design](./designs) to further in comprehending the overall structure and dependencies within managed systems.
+Meshery Relationships characterize how [components]({{< ref "components.md" >}}) are connected and interact with each other. Relationships are defined within [models]({{< ref "models/index.md" >}}) to aid in structuring the interrelationships between one or more components in a [design]({{< ref "designs.md" >}}) to further in comprehending the overall structure and dependencies within managed systems.
 
 Meshery recognizes that relationships exist in various forms and that the existence of a relationship might be interdependent upon the existence (or absence) of another relationship. To support this complexity, Meshery relationships are highly expressive, characterizing the nature of interaction of interconnected components no matter their genealogy.
 
@@ -17,7 +17,7 @@ Meshery recognizes that relationships exist in various forms and that the existe
 - **Increased Flexibility:** The use of selectors, actions, and operators provides flexibility in defining and managing relationships.
 
 {{% alert color="dark" title="Contributor Guide to Meshery Relationships" %}}
-If you want to create a new relationship definition or modify existing relationship definitions, see the [Contributing to Meshery Relationships](/project/contributing/contributing-relationships) guide.
+If you want to create a new relationship definition or modify existing relationship definitions, see the [Contributing to Meshery Relationships]({{< ref "project/contributing/models/relationships" >}}) guide.
 {{% /alert %}}
 
 ## Types of Relationships
@@ -26,10 +26,10 @@ Meshery supports different types of relationships to cater to various use cases:
 
 - **Hierarchical Relationships:** These represent parent-child relationships between components, where one component is a dependency of another. Parent-child relationships show clear lineage, similar to a family tree (child, parent, grandparent, etc.).
 - **Sibling Relationships:** These represent relationships between components that are not directly dependent on each other but may still interact or influence each other's behavior; they describe components that share a common origin but operate independently (siblings, cousins, etc.).
-- **Edge Relationships:** These represent relationships that are visually depicted as edges connecting components in MeshMap. Edge relationships are used to define how components interact with each other, such as network connections, bindings, or permissions. They are also used to identify interdependencies between components.
+- **Edge Relationships:** These represent relationships that are visually depicted as edges connecting components in Meshery. Edge relationships are used to define how components interact with each other, such as network connections, bindings, or permissions. They are also used to identify interdependencies between components.
 - **TagSets Relationships:** These represent relationships between components of same Labels or Annotations key/value pairs. Labels and Annotations are two different types of Tags. Labels are often used to identify components and are visible on the design canvas. Annotations are often used to provide additional information about components.
  
-Relationships are categorized into different kinds, types, and subtypes, so that they can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpreted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of ways in which relationships are represented in Meshery.
+Relationships are categorized into different kinds, types, and subtypes, so that they can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpreted by Meshery UI (or other [extensions]({{< ref "extensions/_index.md" >}})) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of ways in which relationships are represented in Meshery.
 
 
 <!-- Broadly, here is a list of the different types of relationships that Meshery supports:
@@ -81,11 +81,32 @@ The `isAnnotation` attribute of a Relationship or Component determines whether t
 
 The combination of `kind`, `type`, and `subType` uniquely determines the visual paradigm for a given relationship; i.e., relationships with the same `kind`, `type`, and `subType` will share an identical visual representation regardless of the specific components involved in the relationship.
 
+`kind` is a schema enum (`hierarchical`, `edge`, `sibling`). `type` and `subType` are open strings. Established combinations:
+
+| kind | type | subType | Meaning |
+|---|---|---|---|
+| `edge` | `non-binding` | `network` | Documented network selection (Service → Deployment) |
+| `edge` | `binding` | `network` | Connecting provisions or rewrites network identity (rare) |
+| `edge` | `binding` | `mount` | Storage or device attachment (PVC → Pod) |
+| `edge` | `binding` | `permission` | Assigns identities (Role → ServiceAccount) |
+| `edge` | `non-binding` | `permission` | Mentions a role or identity without binding it |
+| `edge` | `non-binding` | `firewall` | Policy that allows or denies traffic (NetworkPolicy → Pod) |
+| `edge` | `non-binding` | `reference` | Logical name/id pointer (Deployment → ConfigMap) |
+| `edge` | `non-binding` | `annotation` | Designer-only connection (`metadata.isAnnotation: true`) |
+| `edge` | `non-binding` | `alias` | Named stand-in, not nested ownership |
+| `edge` | `non-binding` | `inventory` | Rare peer index; prefer hierarchical parent inventory for containment |
+| `hierarchical` | `parent` | `inventory` | Parent contains/scopes children; the parent's identity is patched onto each child (Namespace onto namespaced resources) |
+| `hierarchical` | `parent` | `wallet` | Child configuration is patched into the parent (WASMFilter → EnvoyFilter) |
+| `hierarchical` | `parent` | `alias` | Child is a nested object inside the parent (Container → Pod) |
+| `hierarchical` | `sibling` | `matchlabels` | In-tree tagsets encoding (shared labels). Schema also allows `kind: sibling`. |
+
+The schema lives in [meshery/schemas](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta3/relationship) (`relationships.meshery.io/v1beta3`). In-tree definitions under `models/**/relationships/` are still mostly `v1beta2`; the version shapes are compatible, and Meshery Server bridges registered definitions to the `v1beta2` shape for its policy engine. Registration on current releases accepts `v1beta2`/`v1alpha3` documents, with `v1beta3` acceptance arriving via [meshkit#1096](https://github.com/meshery/meshkit/pull/1096). See [Contributing to Relationships]({{< ref "project/contributing/models/relationships" >}}) for how to author definitions, including `mutatorRef` and `mutatedRef`.
+
 ### 1. Edge - Network
 
 This Relationship type configures the networking between one or more components.
 
-**Examples**: An edge-network relationship between a Service and a Deployment or an edge-binding relationship between an Ingress and a Service.
+**Examples**: An `edge` / `non-binding` / `network` relationship between a Service and a Deployment, or between an Ingress and a Service.
 
 - Example 1) Service --> Deployment
 - Example 2) IngressController --> Ingress --> Service
@@ -163,7 +184,7 @@ Logical or declarative links between components where one component refers to an
         <p>The <strong>Edge-Reference</strong> relationship type represents a <strong>logical or declarative link</strong> between two components, where one component <strong>refers to another by name, identifier, type, or scope</strong>. This relationship allows components to dynamically locate, associate with, or depend on other components without being tightly coupled to them. It forms the basis for indirect communication, configuration reuse, ownership tracking, and dependency resolution in distributed systems.</p>
         <p>This type of relationship does <strong>not directly provide communication, access, or permission</strong>, but <strong>enables such interactions by declaring intent or pointing to another component</strong>.</p>
         <br>
-           <figure><figcaption>Edge - Reference: Pod to ConfigMap and Secret<a target="_blank" href="https://kanvas.new/extension/meshmap?mode=design&design=8288ffad-c406-4129-94b1-86f044ef1ccb"> (open in playground)</a></figcaption>
+           <figure><figcaption>Edge - Reference: Pod to ConfigMap and Secret<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=8288ffad-c406-4129-94b1-86f044ef1ccb"> (open in playground)</a></figcaption>
            </figure>
 <div id="embedded-design-8288ffad-c406-4129-94b1-86f044ef1ccb" style="height:30rem;width:100%;"></div>
 <script src="./images/embedded-design-edge-reference.js" type="module" ></script>
@@ -198,7 +219,7 @@ Logical or declarative links between components where one component refers to an
 
 ### 8. Match - Labels (Tagsets)
 
-This relationship type defines the associations between components based on shared Labels or Annotations.
+This relationship type defines the associations between components based on shared Labels or Annotations. In-tree Kubernetes models encode it as `kind: hierarchical`, `type: sibling`, `subType: matchlabels`. The schema `kind` enum also includes `sibling`; do not mix the two encodings in the same model.
 
 **Example**: A label-based tag-set relationship between a NodePort service and an application. 
 
@@ -222,89 +243,87 @@ This relationship depicts connections between components without conveying speci
 <script src="./images/embedded-design-edge-annotation-relationship.js" type="module" ></script>
 </details>
 
+## Actions: mutatorRef and mutatedRef
+
+When a relationship is semantic, matching components can copy values from one to the other.
+
+- `mutatorRef` is the **source**: a nested array of path segments from which the value is read.
+- `mutatedRef` is the **sink**: a nested array of path segments to patch.
+- The two sequences must be the same length. Index `i` of `mutatorRef` is copied onto index `i` of `mutatedRef`.
+- `patchStrategy` controls how the copy is applied (`merge`, `strategic`, `add`, `remove`, `replace`, `copy`, `move`, `test`). The in-tree corpus uses `replace` exclusively.
+
+For hierarchical relationships, `from` is the child and `to` is the parent. Inventory patches parent identity onto the child. Alias and wallet patch child configuration into the parent.
+
+See [Contributing to Relationships]({{< ref "project/contributing/models/relationships" >}}) for path rules and examples.
+
 ## Selectors in Relationships
 
-In Meshery, a selector is a way to specify which set of components a certain other component should affect or interact with. Selectors provide a flexible and powerful way to manage and orchestrate resources under Meshery's management.
+In Meshery, a selector specifies which components participate in a relationship. The field name is `selectors` (an array of selector-set items). Items in the array are OR; inside one item, every `from` entry relates to every `to` entry - a cross-product.
 
-Selectors can be applied to various components, enabling a wide range of relationship definitions. Here are some examples:
+Here are examples of pairs that share a visual paradigm. The ConfigMap pairs are **edge / non-binding / reference**. The WASMFilter pair is **hierarchical / parent / wallet**, not inventory.
 
 <table class="table table-dark table-active">
     <tr>
         <th>Model Component</th>
-        <th>Relationship Kind</th>
-        <th>Relationship SubType</th>
+        <th>Kind / Type / SubType</th>
         <th>Model Component</th>
     </tr>
     <tr>
         <td>Kubernetes ConfigMap</td>
-        <td>Hierarchical</td>
-        <td>Inventory</td>
+        <td>edge / non-binding / reference</td>
         <td>Kubernetes Pod</td>
     </tr>
     <tr>
         <td>Kubernetes ConfigMap</td>
-        <td>Hierarchical</td>
-        <td>Inventory</td>
+        <td>edge / non-binding / reference</td>
         <td>Kubernetes Deployment</td>
     </tr>
     <tr>
         <td>Meshery WASMFilter</td>
-        <td>Hierarchical</td>
-        <td>Inventory</td>
+        <td>hierarchical / parent / wallet</td>
         <td>Istio EnvoyFilter</td>
     </tr>
 </table>
 
-The above relationships pairs have hierarchical inventory relationships, and visual paradigm remain consistent across different components. A snippet of the selector backing this relationship is listed below.
+A snippet of the selector backing the ConfigMap → Pod reference is listed below.
 <details>
 <summary>Example Relationship Selector</summary>
 <code><pre>
-"selector": {
+"selectors": [
+  {
     "allow": {
-        "from": [
-          {
-            "kind": "ConfigMap",
-            "model": "kubernetes",
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "name"
-                ]
-              ],
-              "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
-            }
+      "from": [
+        {
+          "kind": "ConfigMap",
+          "model": { "name": "kubernetes" },
+          "patch": {
+            "patchStrategy": "replace",
+            "mutatorRef": [
+              ["configuration", "metadata", "name"]
+            ]
           }
-        ],
-        "to": [
-          {
-            "kind": "Pod",
-            "model": "kubernetes",
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "settings",
-                  "spec",
-                  "containers",
-                  "_",
-                  "envFrom",
-                  "0",
-                  "configMapRef",
-                  "name"
-                ]
-              ],
-              "description": "ConfigMaps can be referenced in the Pod specification to inject configuration data into the Pod's environment.\n\nThe keys from the ConfigMap will be exposed as environment variables to the container within the Pod."
-            }
+        }
+      ],
+      "to": [
+        {
+          "kind": "Pod",
+          "model": { "name": "kubernetes" },
+          "patch": {
+            "patchStrategy": "replace",
+            "mutatedRef": [
+              ["configuration", "spec", "containers", "_", "envFrom", "0", "configMapRef", "name"]
+            ]
           }
-        ]
+        }
+      ]
     }
-}
+  }
+]
 </pre></code>
 
 </details>
 
-The above snippet defines a selector configuration for allowing relationships between `Kubernetes ConfigMap` and `Kubernetes Pod`.
+The snippet allows an edge-reference relationship from a Kubernetes ConfigMap to a Kubernetes Pod: the ConfigMap name (mutator) is written into the Pod's `envFrom.configMapRef.name` (mutated).
 
  <!-- add images -->
 
@@ -331,7 +350,7 @@ Beyond this automatic filtering, relationship evaluation can also be selectively
 
 ### How Relationships are formed?
 
-1. You can create relationships manually by using the edge handles, bringing related components to close proximity or dragging a component inside other component. It may happen that, you created a relationship from the UI, but the <a href='/concepts/logical/policies'>Policy Engine</a> rejected or overrode the decision if all the constraints for a particular relationship are not satisfied.
+1. You can create relationships manually by using the edge handles, bringing related components to close proximity or dragging a component inside other component. It may happen that, you created a relationship from the UI, but the <a href='{{< ref "concepts/logical/policies/index.md" >}}'>Policy Engine</a> rejected or overrode the decision if all the constraints for a particular relationship are not satisfied.
 
 2. Relationships are automatically created when a component's configuration is modified in a way that relationship criteria is satisfied.
 
@@ -341,12 +360,12 @@ To explore an example of this behavior, see the [Example Edge-Permission Relatio
 
 When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specifics of patching refer [Patch Strategies](#patch-strategies).
 
-Designs are evaluated by the [Policy Engine](/concepts/logical/policies) for potential relationships.
+Designs are evaluated by the [Policy Engine]({{< ref "concepts/logical/policies/index.md" >}}) for potential relationships.
 
 <!-- Explain how and what configs get patched when relationships are created -->
 <!-- Explain real time evaluation of relationships on -->
 <!-- 1. Import -->
-<!-- 2. When compoennt config is update and it satisfied the condition for the relationship -->
+<!-- 2. When component config is update and it satisfied the condition for the relationship -->
 
 ### Patch Strategies
 

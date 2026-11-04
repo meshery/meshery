@@ -16,6 +16,10 @@ spec:
     metadata:
       labels:
         {{- include "meshery-operator.selectorLabels" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -24,53 +28,64 @@ spec:
       serviceAccountName: {{ include "meshery-operator.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      terminationGracePeriodSeconds: 10
       containers:
-        - name: {{ .Values.mesheryOperator.name }}
+        - name: manager
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          # TODO: Need to confirm the meshery-operator image version
-          image: "{{ .Values.mesheryOperator.image.repository }}"
-          imagePullPolicy: {{ .Values.mesheryOperator.image.pullPolicy }}
+          command:
+            - /manager
+          args:
+            {{- if .Values.leaderElection.enabled }}
+            - --enable-leader-election
+            {{- end }}
+            - --metrics-addr=:8443
+            - --health-probe-bind-address=:8081
+          env:
+            - name: ENABLE_WEBHOOKS
+              value: {{ .Values.webhook.enabled | quote }}
+          {{- range $key, $val := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+          {{- end }}
           ports:
+            - containerPort: 8443
+              name: https-metrics
+            - containerPort: 8081
+              name: health
+            {{- if .Values.webhook.enabled }}
             - containerPort: 9443
-              # hostPort: 9443
-              name: server
-            - containerPort: 8080
-              # TODO it's not a good idea we take account to the 8080 port, is there we need communicate through the physical ports
-              # hostPort: 8080
-              name: metrics
-          {{- if .Values.probe.livenessProbe.enabled }}
+              name: webhook-server
+            {{- end }}
           livenessProbe:
             httpGet:
-              path: /
-              port: http
-          {{- end }}
-          {{- if .Values.probe.readinessProbe.enabled }}
+              path: /healthz
+              port: health
+            initialDelaySeconds: 15
+            periodSeconds: 20
           readinessProbe:
             httpGet:
-              path: /
-              port: http
-          {{- end }}
-          env:
-          {{- if .Values.env }}
-          {{- range $key, $val := .Values.env }}
-          - name: {{ $key }}
-            value: {{ $val }}
-          {{- end }}
-          {{- end }}
-          args: {{- toYaml .Values.mesheryOperator.args | nindent 12}}
+              path: /readyz
+              port: health
+            initialDelaySeconds: 5
+            periodSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          command: {{- toYaml .Values.mesheryOperator.command | nindent 12 }}
-        - name: {{ .Values.kubeRbac.name }}
-          image: {{ .Values.kubeRbac.image.repository }}
-          imagePullPolicy: {{ .Values.kubeRbac.image.pullPolicy }}
-          ports:
-          - name: https
-            containerPort: 8443
-          args: {{- toYaml .Values.kubeRbac.args | nindent 12}}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.webhook.enabled }}
+          volumeMounts:
+            # controller-runtime's default serving-cert location.
+            - name: webhook-certs
+              mountPath: /tmp/k8s-webhook-server/serving-certs
+              readOnly: true
+          {{- end }}
+      {{- if .Values.webhook.enabled }}
+      volumes:
+        - name: webhook-certs
+          secret:
+            secretName: meshery-operator-webhook-cert
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

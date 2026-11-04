@@ -3,6 +3,9 @@ title: mesheryctl-component
 display_title: false
 command: component
 subcommand: nil
+categories: [mesheryctl-component]
+aliases:
+- /reference/references/mesheryctl/component/
 ---
 
 # mesheryctl component
@@ -11,12 +14,14 @@ Manage Meshery components
 
 ## Synopsis
 
-List, search and view component(s) and detailed informations
+List, search and view component(s) and detailed information
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl component [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,32 +30,40 @@ mesheryctl component [flags]
 Display number of available components in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl component --count
 
+</div>
 </div>
 </pre> 
 
 List available component(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl component list
 
+</div>
 </div>
 </pre> 
 
 Search for component(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl component search [component-name]
 
+</div>
 </div>
 </pre> 
 
 View a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl component view [component-name | component-id]
 
+</div>
 </div>
 </pre> 
 
@@ -68,7 +81,7 @@ mesheryctl component view [component-name | component-id]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -76,4 +89,4 @@ mesheryctl component view [component-name | component-id]
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

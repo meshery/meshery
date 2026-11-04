@@ -3,6 +3,9 @@ title: mesheryctl-system-context
 display_title: false
 command: system
 subcommand: context
+categories: [mesheryctl-system]
+aliases:
+- /reference/references/mesheryctl/system/context/
 ---
 
 # mesheryctl system context
@@ -15,8 +18,10 @@ Configure and switch between different named Meshery server and component versio
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context [command] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +30,10 @@ mesheryctl system context [command] [flags]
 Base command
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context
 
+</div>
 </div>
 </pre> 
 
@@ -44,7 +51,7 @@ mesheryctl system context
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
   -y, --yes             (optional) assume yes for user interactive prompts.
 
@@ -53,4 +60,4 @@ mesheryctl system context
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

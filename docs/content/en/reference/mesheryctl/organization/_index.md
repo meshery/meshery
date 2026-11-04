@@ -3,6 +3,9 @@ title: mesheryctl-organization
 display_title: false
 command: organization
 subcommand: nil
+categories: [mesheryctl-organization]
+aliases:
+- /reference/references/mesheryctl/organization/
 ---
 
 # mesheryctl organization
@@ -15,8 +18,10 @@ Interact with registered organizations to display detailed information
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl organization [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,16 +30,20 @@ mesheryctl organization [flags]
 Number of  registered orgs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl organization --count
 
+</div>
 </div>
 </pre> 
 
 List registerd orgs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl organization list
 
+</div>
 </div>
 </pre> 
 
@@ -52,7 +61,7 @@ mesheryctl organization list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -60,4 +69,4 @@ mesheryctl organization list
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

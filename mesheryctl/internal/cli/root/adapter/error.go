@@ -14,7 +14,11 @@
 
 package adapter
 
-import "github.com/meshery/meshkit/errors"
+import (
+	"fmt"
+
+	"github.com/meshery/meshkit/errors"
+)
 
 // Please reference the following before contributing an error code:
 // https://docs.meshery.io/project/contributing/contributing-error
@@ -65,10 +69,10 @@ var (
 		[]string{"Network error or wrong environment configurations"},
 		[]string{"Ensure your have a strong connection and the right environment configuration"})
 
-	ErrSMIConformanceTestsFailed = errors.New(ErrSMIConformanceTestsFailedCode, errors.Fatal, []string{"SMI conformance tests failed"}, []string{"SMI conformance tests failed"}, []string{}, []string{"Join https://layer5io.slack.com/archives/C010H0HE2E6"})
+	ErrSMIConformanceTestsFailed = errors.New(ErrSMIConformanceTestsFailedCode, errors.Fatal, []string{"SMI conformance tests failed"}, []string{"SMI conformance tests failed"}, []string{}, []string{"Join https://mesheryio.slack.com/archives/C010H0HE2E6"})
 )
 
-// When unable to get release data
+// ErrGettingSessionData is returned when the CLI is unable to fetch session data from the Meshery server.
 func ErrGettingSessionData(err error) error {
 	return errors.New(ErrGettingSessionDataCode, errors.Fatal,
 		[]string{"Unable to fetch session data"},
@@ -155,7 +159,7 @@ func ErrValidMeshName(meshName string) error {
 	return errors.New(ErrValidMeshNameCode, errors.Alert,
 		[]string{"Invalid mesh name"},
 		[]string{"Unable to validate mesh name"},
-		[]string{"%s is not a valid mesh name or is unsupported", meshName},
+		[]string{"The provided mesh name is not valid or is unsupported", fmt.Sprintf("Mesh name: %s", meshName)},
 		[]string{"Enter a valid mesh name"})
 }
 

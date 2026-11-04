@@ -14,17 +14,42 @@ jobs:
     cncf-playground-rollout:
         name: Update Meshery on CNCF playground
         if: github.repository == 'meshery/meshery'
-        runs-on: ubuntu-24.04 
+        runs-on: ubuntu-24.04
         steps:
-        - name: Pull latest images and restart containers
+        - name: Reconcile env from manifest, then roll image forward
           uses: appleboy/ssh-action@master
+          env:
+              MANIFEST_REF: ${{ github.sha }}
           with:
               host: ${{ secrets.OCI_BASTION_HOST }}
               username: ${{ secrets.OCI_BASTION_USERNAME }}
               key: ${{ secrets.OCI_BASTION_KEY }}
+              envs: MANIFEST_REF
               script: |
+                set -euo pipefail
                 kubectl config use-context prod
+                # Fetch the canonical Deployment spec at the exact commit being
+                # deployed, so the env applied to the cluster always matches the
+                # release. Pinning to ${MANIFEST_REF} (github.sha) keeps replays
+                # of an older release reproducible too.
+                MANIFEST_URL="https://raw.githubusercontent.com/meshery/meshery/${MANIFEST_REF}/install/playground/kubernetes/playground-deployment.yaml"
+                MANIFEST_FILE="$(mktemp)"
+                trap 'rm -f "$MANIFEST_FILE"' EXIT
+                curl -fsSL "$MANIFEST_URL" -o "$MANIFEST_FILE"
+                # Reconcile the spec (env vars, probes, volumes) from the canonical
+                # manifest before rolling the image. Without this, every release
+                # inherits whatever was last hand-edited on the cluster - which is
+                # how the live pod lost PROVIDER=Meshery and stopped pre-selecting
+                # the provider on playground.meshery.io after the server-side
+                # auto-select gate was tightened.
+                kubectl -n meshery apply -f "$MANIFEST_FILE"
+                # set image runs after apply so the release tag wins over the
+                # bootstrap tag pinned in the manifest. Both updates land in the
+                # same rollout because the controller coalesces consecutive spec
+                # changes before the new ReplicaSet is fully scaled.
                 kubectl -n meshery set image deployment/playground meshery=${{ inputs.image }}
+                kubectl -n meshery rollout status deployment/playground --timeout=5m
 
 # Verify
-# kubectl get deployment playground -n meshery-o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image --no-headers
+# kubectl get deployment playground -n meshery -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image --no-headers
+# kubectl get deployment playground -n meshery -o jsonpath='{.spec.template.spec.containers[?(@.name=="meshery")].env}' | jq

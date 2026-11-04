@@ -14,7 +14,7 @@ We are very grateful to the security researchers and users that report
 back Meshery security vulnerabilities. We investigate every report thoroughly.
 
 To make a report, send an email to the private
-[security@meshery.dev](mailto:security@meshery.dev)
+[security@meshery.io](mailto:security@meshery.io)
 mailing list with the vulnerability details. For normal product bugs
 unrelated to latent security vulnerabilities, please head to
 the appropriate repository and submit a [new issue](https://github.com/meshery/meshery/issues/new/choose).
@@ -70,7 +70,7 @@ branches.
 - Meshery team ensures all necessary binaries are promptly built and published.
 
 - Once the binaries are available, an announcement is sent out on the following channels:
-  - The [Meshery blog](https://meshery.io/blog/)
+  - The [Meshery blog](https://meshery.io/blog)
   - The [Meshery X feed](https://x.com/mesheryio)
   - The [#announcements](https://mesheryio.slack.com/archives/CSF3PSZT9) channel on community [Slack](https://slack.meshery.io/)
 

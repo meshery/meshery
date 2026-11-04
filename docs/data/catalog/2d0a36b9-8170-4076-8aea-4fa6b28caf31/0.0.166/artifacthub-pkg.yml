@@ -14,11 +14,7 @@ links:
 readme: "1. Ensure that labels are consistently applied across related Kubernetes components. Inconsistent or misspelled labels can lead to unexpected behavior and make it difficult to manage or identify related resources.\n\n2. Use clear and descriptive labels that convey the purpose or role of the component. This helps with understanding the architecture and functionality of your application, making it easier to manage and troubleshoot.\n\n3. Consider how label relationships will affect scaling and updating strategies. Changes to labels or the addition of new components may require adjustments to selectors and configurations to maintain proper functionality and resource management across your Kubernetes environment. \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
-    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+    name: cf6aabe7-a397-444a-a087-eebad74c58cc
 screenshots:
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2d0a36b9-8170-4076-8aea-4fa6b28caf31-light.png
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2d0a36b9-8170-4076-8aea-4fa6b28caf31-dark.png
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

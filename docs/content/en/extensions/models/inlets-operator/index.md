@@ -1,7 +1,7 @@
 ---
 title: Inlets Operator
 subtitle: Collaborative and visual infrastructure as design for Inlets Operator
-image: /extensions/models/inlets-operator/icons/color/inlets-operator-color.svg
+image: extensions/models/inlets-operator/icons/color/inlets-operator-color.svg
 aliases: /extensibility/integrations/inlets-operator
 docURL: https://docs.meshery.io/extensibility/integrations/inlets-operator
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Uncategorized
 registrant: Artifact Hub
 components: 
 - name: tunnel
-  colorIcon: content/en/extensions/models/inlets-operator/components/tunnel/icons/color/tunnel-color.svg
-  whiteIcon: content/en/extensions/models/inlets-operator/components/tunnel/icons/white/tunnel-white.svg
+  colorIcon: extensions/models/inlets-operator/components/tunnel/icons/color/tunnel-color.svg
+  whiteIcon: extensions/models/inlets-operator/components/tunnel/icons/white/tunnel-white.svg
   description: 
 components-count: 1
 relationships: 

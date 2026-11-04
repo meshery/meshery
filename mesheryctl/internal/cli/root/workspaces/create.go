@@ -19,12 +19,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	googleUUID "github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	mErrors "github.com/meshery/meshkit/errors"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
+	"github.com/meshery/schemas/models/v1beta3/workspace"
 
 	"github.com/spf13/cobra"
 )
@@ -50,7 +50,7 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceCreateFlags)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		organizationID, err := googleUUID.Parse(workspaceCreateFlags.OrganizationID)
+		organizationID, err := uuid.FromString(workspaceCreateFlags.OrganizationID)
 		if err != nil {
 			return err
 		}
@@ -62,16 +62,17 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 		}
 		payloadBytes, err := json.Marshal(workspaceCreatePayload)
 		if err != nil {
-			return utils.ErrUnmarshal(err)
+			return utils.ErrMarshal(err)
 		}
 
-		_, err = api.Add(workspacesApiPath, bytes.NewBuffer(payloadBytes), nil)
+		resp, err := api.Add(workspacesApiPath, bytes.NewBuffer(payloadBytes), nil)
 		if err != nil {
 			if mErrors.GetCode(err) == utils.ErrNotFoundCode {
 				return returnFailedCreateWorkspaceError(workspaceCreateFlags.Name, workspaceCreateFlags.OrganizationID)
 			}
 			return err
 		}
+		defer utils.SafeClose(resp.Body)
 
 		utils.Log.Infof("Workspace %s created in organization %s", workspaceCreateFlags.Name, workspaceCreateFlags.OrganizationID)
 		return nil

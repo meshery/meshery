@@ -92,6 +92,9 @@ export const notificationCenterApi = api
             params: {
               ...parsedFilters,
               page: page,
+              // `sort` here is the SQL column name, not a JSON field — the
+              // server passes it through to GORM via SanitizeOrderInput which
+              // whitelists DB column names (created_at, updated_at, name).
               sort: 'created_at',
               order: 'desc',
               pagesize: 15,
@@ -114,9 +117,9 @@ export const notificationCenterApi = api
         },
         transformResponse: (response) => {
           return {
-            count_by_severity_level: response.count_by_severity_level,
-            total_count: response.total_count,
-            read_count: response.read_count || 0,
+            countBySeverityLevel: response.countBySeverityLevel,
+            totalCount: response.totalCount,
+            readCount: response.readCount || 0,
           };
         },
         providesTags: [PROVIDER_TAGS.EVENT],
@@ -205,8 +208,8 @@ export const notificationCenterApi = api
           method: 'GET',
         }),
         transformResponse: (response) => ({
-          logLevel: response.event_log_level,
-          availableLevels: response.available_levels,
+          logLevel: response.eventLogLevel,
+          availableLevels: response.availableLevels,
         }),
         providesTags: [PROVIDER_TAGS.EVENT],
       }),
@@ -216,7 +219,7 @@ export const notificationCenterApi = api
           url: `/api/system/events/config`,
           method: 'PUT',
           body: {
-            event_log_level: logLevel,
+            eventLogLevel: logLevel,
           },
         }),
         onQueryStarted: async (logLevel, { dispatch, queryFulfilled }) => {
@@ -226,7 +229,19 @@ export const notificationCenterApi = api
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),
     }),
-    overrideExisting: false,
+    // `deleteEvent` is the one endpoint name here that @meshery/schemas also
+    // defines, and schemas points it at `/api/events/{eventId}` - the path
+    // Meshery Server is *going* to serve. Today it serves `/api/system/events/{id}`
+    // (see the comment beside that route in server/router/server.go, and
+    // meshery/schemas#1134).
+    //
+    // With `overrideExisting: false` the local definition was silently dropped
+    // and the schemas one served every call, so deleting a notification issued
+    // `DELETE /api/events/undefined` - wrong path, and `undefined` because
+    // callers pass `{ id }` while the schemas endpoint reads `eventId`.
+    // Overriding is deliberate and temporary: drop it, and this whole module's
+    // `/api/system/events` endpoints, once the server moves to `/api/events`.
+    overrideExisting: true,
   });
 
 export const {

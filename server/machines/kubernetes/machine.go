@@ -33,8 +33,9 @@ func Discovered() machines.State {
 func Registered() machines.State {
 	return machines.State{
 		Events: machines.Events{
-			machines.Connect: machines.CONNECTED,
-			machines.Ignore:  machines.IGNORED,
+			machines.Connect:  machines.CONNECTED,
+			machines.NotFound: machines.NOTFOUND,
+			machines.Ignore:   machines.IGNORED,
 		},
 		Action: &RegisterAction{},
 	}
@@ -154,16 +155,21 @@ func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Ha
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	userUUID := user.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromOwner(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
 		return nil, eventBuilder.Build(), err
 	}
+	// Attach the logger before any action that may log on an error path.
+	// AssignClientSetToContext threads machinectx.log into GenerateK8sClientSet,
+	// which log.Warn()s when the kube handler cannot be constructed (e.g. the
+	// persisted context's API server is unreachable from this machine). A nil
+	// logger.Handler there causes an interface-method-on-nil panic.
+	machinectx.log = log
 	err = AssignClientSetToContext(machinectx, eventBuilder)
 	if err != nil {
 		return nil, eventBuilder.Build(), err
 	}
-	machinectx.log = log
 	AssignControllerHandlers(machinectx, sysID, provider)
 	return machinectx, nil, nil
 }

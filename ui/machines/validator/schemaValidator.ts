@@ -121,7 +121,7 @@ const SchemaValidateDesignActor = fromPromise(async ({ input }) => {
     };
   }
 
-  throw new Error('Invalid validation payload type', validationPayloadType);
+  throw new Error(`Invalid validation payload type: ${validationPayloadType}`);
 });
 
 export const schemaValidatorMachine = dataValidatorMachine.provide({

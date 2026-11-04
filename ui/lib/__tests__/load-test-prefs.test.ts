@@ -13,14 +13,31 @@ describe('normalizeLoadTestPrefs', () => {
         c: '12',
         qps: 25,
         t: '5m',
-        gen: 'nighthawk',
+        gen: 'fortio',
       }),
     ).toEqual({
       c: 12,
       qps: 25,
       t: '5m',
-      gen: 'nighthawk',
+      gen: 'fortio',
     });
+  });
+
+  it('coerces the removed wrk2 generator to fortio', () => {
+    expect(
+      normalizeLoadTestPrefs({
+        c: 1,
+        qps: 1,
+        t: '5m',
+        gen: 'wrk2',
+      }),
+    ).toEqual({
+      c: 1,
+      qps: 1,
+      t: '5m',
+      gen: 'fortio',
+    });
+    expect(normalizeLoadTestPrefs({ gen: ' wrk2 ' }).gen).toBe('fortio');
   });
 
   it('falls back when duration or generator values are invalid', () => {

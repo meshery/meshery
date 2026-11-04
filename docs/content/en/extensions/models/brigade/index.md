@@ -1,7 +1,7 @@
 ---
 title: Brigade
 subtitle: Collaborative and visual infrastructure as design for Brigade
-image: /extensions/models/brigade/icons/color/brigade-color.svg
+image: extensions/models/brigade/icons/color/brigade-color.svg
 aliases: /extensibility/integrations/brigade
 docURL: https://docs.meshery.io/extensibility/integrations/brigade
 description: 

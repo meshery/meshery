@@ -2,16 +2,21 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/meshery/meshkit/logger"
+	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 )
 
@@ -39,6 +44,106 @@ func encodeTestToken(t *testing.T, token oauth2.Token) string {
 	}
 
 	return base64.RawStdEncoding.EncodeToString(data)
+}
+
+func setViperKeyForRemoteAuthTest(t *testing.T, key string, value any) {
+	t.Helper()
+
+	hadPrevious := viper.IsSet(key)
+	previous := viper.Get(key)
+	viper.Set(key, value)
+
+	t.Cleanup(func() {
+		if hadPrevious {
+			viper.Set(key, previous)
+			return
+		}
+		viper.Set(key, nil)
+	})
+}
+
+func newRemoteLoginRequest(t *testing.T, rawURL string) *http.Request {
+	t.Helper()
+
+	req := httptest.NewRequest(http.MethodGet, rawURL, nil)
+	ctx := context.WithValue(req.Context(), MesheryServerCallbackURL, "http://localhost:9081/api/user/token")
+	return req.WithContext(ctx)
+}
+
+func redirectQuery(t *testing.T, location string) url.Values {
+	t.Helper()
+
+	redirectURL, err := url.Parse(location)
+	if err != nil {
+		t.Fatalf("parse redirect location %q: %v", location, err)
+	}
+
+	return redirectURL.Query()
+}
+
+func TestRemoteProviderInitiateLogin_OmitsPlaceholderVersions(t *testing.T) {
+	provider := newTestRemoteProvider(t, "http://localhost:9876")
+	provider.RefCookieName = "localhost:9876_ref"
+	provider.LoginCookieDuration = time.Hour
+	provider.ProviderVersion = "Not Set"
+
+	setViperKeyForRemoteAuthTest(t, "BUILD", "Not Set")
+
+	req := newRemoteLoginRequest(t, "http://localhost:9081/user/login")
+	rec := httptest.NewRecorder()
+
+	provider.InitiateLogin(rec, req, false)
+
+	resp := rec.Result()
+	t.Cleanup(func() {
+		_ = resp.Body.Close()
+	})
+
+	if resp.StatusCode != http.StatusFound {
+		t.Fatalf("expected %d, got %d", http.StatusFound, resp.StatusCode)
+	}
+
+	query := redirectQuery(t, resp.Header.Get("Location"))
+	if got := query.Get("meshery_version"); got != "" {
+		t.Fatalf("expected meshery_version to be omitted, got %q", got)
+	}
+	if got := query.Get("provider_version"); got != "" {
+		t.Fatalf("expected provider_version to be omitted, got %q", got)
+	}
+	if got := query.Get("source"); got == "" {
+		t.Fatal("expected source to be present")
+	}
+}
+
+func TestRemoteProviderInitiateLogin_PropagatesKnownVersions(t *testing.T) {
+	provider := newTestRemoteProvider(t, "http://localhost:9876")
+	provider.RefCookieName = "localhost:9876_ref"
+	provider.LoginCookieDuration = time.Hour
+	provider.ProviderVersion = "v0.8.0"
+
+	setViperKeyForRemoteAuthTest(t, "BUILD", "v0.8.0")
+
+	req := newRemoteLoginRequest(t, "http://localhost:9081/user/login")
+	rec := httptest.NewRecorder()
+
+	provider.InitiateLogin(rec, req, false)
+
+	resp := rec.Result()
+	t.Cleanup(func() {
+		_ = resp.Body.Close()
+	})
+
+	if resp.StatusCode != http.StatusFound {
+		t.Fatalf("expected %d, got %d", http.StatusFound, resp.StatusCode)
+	}
+
+	query := redirectQuery(t, resp.Header.Get("Location"))
+	if got := query.Get("meshery_version"); got != "v0.8.0" {
+		t.Fatalf("expected meshery_version %q, got %q", "v0.8.0", got)
+	}
+	if got := query.Get("provider_version"); got != "v0.8.0" {
+		t.Fatalf("expected provider_version %q, got %q", "v0.8.0", got)
+	}
 }
 
 func TestRemoteProviderDoRequest_DoesNotRefreshAnonymousToken(t *testing.T) {
@@ -262,5 +367,230 @@ func TestRemoteProviderDoRequest_RetriesWithFreshBodyAfterRefresh(t *testing.T) 
 
 	if got := atomic.LoadInt32(&refreshCalls); got != 1 {
 		t.Fatalf("expected exactly one refresh request, got %d", got)
+	}
+}
+
+// TestRemoteProviderDoRequest_XAPIKeyAnonymousOnly guards the anonymous
+// passphrase contract: X-API-Key MUST only be set when the outbound request
+// is being made with the global anonymous token, never with a real user JWT.
+// Setting X-API-Key with a user JWT pollutes the cloud's static-token
+// fallback path and broke anonymous flows. The test also
+// covers the defensive Del path: a caller-supplied X-API-Key on a
+// non-anonymous outbound request must be stripped before reaching cloud.
+func TestRemoteProviderDoRequest_XAPIKeyAnonymousOnly(t *testing.T) {
+	var (
+		mu      sync.Mutex
+		headers = map[string]string{}
+	)
+	record := func(label, value string) {
+		mu.Lock()
+		defer mu.Unlock()
+		headers[label] = value
+	}
+	read := func(label string) string {
+		mu.Lock()
+		defer mu.Unlock()
+		return headers[label]
+	}
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/anon":
+			record("anon", r.Header.Get("X-API-Key"))
+			w.WriteHeader(http.StatusOK)
+		case "/user":
+			record("user", r.Header.Get("X-API-Key"))
+			w.WriteHeader(http.StatusOK)
+		case "/user-with-stale-api-key":
+			record("stale", r.Header.Get("X-API-Key"))
+			w.WriteHeader(http.StatusOK)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+
+	assertOK := func(resp *http.Response, label string) {
+		t.Helper()
+		defer func() {
+			if cerr := resp.Body.Close(); cerr != nil {
+				t.Logf("%s: error closing response body: %v", label, cerr)
+			}
+		}()
+		if resp.StatusCode != http.StatusOK {
+			body, _ := io.ReadAll(resp.Body)
+			t.Fatalf("%s: status %d, body: %s", label, resp.StatusCode, strings.TrimSpace(string(body)))
+		}
+	}
+
+	anonReq, err := http.NewRequest(http.MethodGet, server.URL+"/anon", nil)
+	if err != nil {
+		t.Fatalf("failed to build anonymous request: %v", err)
+	}
+	resp, err := provider.DoRequest(anonReq, GlobalTokenForAnonymousResults)
+	if err != nil {
+		t.Fatalf("anon request failed: %v", err)
+	}
+	assertOK(resp, "anon request")
+
+	userToken := encodeTestToken(t, oauth2.Token{AccessToken: "real-user-jwt", TokenType: "Bearer"})
+	userReq, err := http.NewRequest(http.MethodGet, server.URL+"/user", nil)
+	if err != nil {
+		t.Fatalf("failed to build user request: %v", err)
+	}
+	resp, err = provider.DoRequest(userReq, userToken)
+	if err != nil {
+		t.Fatalf("user request failed: %v", err)
+	}
+	assertOK(resp, "user request")
+
+	// Inbound proxy header that should be stripped, not forwarded.
+	staleReq, err := http.NewRequest(http.MethodGet, server.URL+"/user-with-stale-api-key", nil)
+	if err != nil {
+		t.Fatalf("failed to build stale request: %v", err)
+	}
+	staleReq.Header.Set("X-API-Key", "leaked-from-inbound-request")
+	resp, err = provider.DoRequest(staleReq, userToken)
+	if err != nil {
+		t.Fatalf("stale request failed: %v", err)
+	}
+	assertOK(resp, "stale request")
+
+	if got := read("anon"); got != GlobalTokenForAnonymousResults {
+		t.Fatalf("anonymous request must carry X-API-Key=%q, got %q", GlobalTokenForAnonymousResults, got)
+	}
+	if got := read("user"); got != "" {
+		t.Fatalf("authenticated request must NOT set X-API-Key, got %q", got)
+	}
+	if got := read("stale"); got != "" {
+		t.Fatalf("authenticated request with inbound X-API-Key must strip it, got %q", got)
+	}
+}
+
+func refCookie(rec *httptest.ResponseRecorder, name string) *http.Cookie {
+	for _, c := range rec.Result().Cookies() {
+		if c.Name == name {
+			return c
+		}
+	}
+	return nil
+}
+
+// The ref cookie is the post-login destination Meshery owns on its own domain,
+// and TokenHandler prefers it over the ?ref= a provider sends back. Only the
+// Cloud-bound exit returns through TokenHandler to redeem and clear it, so only
+// that exit writes one - carrying this attempt's ref, or deleted when there is
+// none. The anonymous exit resolves its destination from the request itself and
+// leaves nothing behind. A cookie that outlives its attempt shadows the ?ref= a
+// later Sign In carries for the whole LoginCookieDuration, whether it was
+// written empty or written with an abandoned attempt's destination, and that is
+// how mode=design was dropped from the return address.
+func TestRemoteProviderInitiateLogin_RefCookieCarriesOnlyThisAttemptsDestination(t *testing.T) {
+	const refCookieName = "cloud.layer5.io_ref"
+	refValue := base64.RawURLEncoding.EncodeToString([]byte("/extension/meshmap?mode=design"))
+	staleValue := base64.RawURLEncoding.EncodeToString([]byte("/extension/meshmap?mode=abandoned"))
+
+	// l.ProviderProperties is replaced at runtime by TokenHandler, so one
+	// deployment does cross between these two shapes from one login to the next
+	// - which is why the anonymous exit has to delete a cookie it never writes.
+	shapes := []struct {
+		name        string
+		newProvider func(*testing.T) *RemoteProvider
+		keepsRef    bool
+	}{
+		{
+			name: "cloud-bound login",
+			newProvider: func(t *testing.T) *RemoteProvider {
+				return newTestRemoteProvider(t, "http://localhost:9876")
+			},
+			keepsRef: true,
+		},
+		{
+			name:        "anonymous session",
+			newProvider: newAnonymousSessionProvider,
+		},
+	}
+
+	tests := []struct {
+		name        string
+		requestURL  string
+		staleCookie string
+		expected    string
+	}{
+		{
+			name:       "no ref query deletes the ref cookie",
+			requestURL: "http://localhost:9081/user/login",
+		},
+		{
+			name:       "empty ref query deletes the ref cookie",
+			requestURL: "http://localhost:9081/user/login?ref=",
+		},
+		{
+			name:        "a login with no ref deletes a stale ref cookie",
+			requestURL:  "http://localhost:9081/user/login",
+			staleCookie: staleValue,
+		},
+		{
+			name:       "ref query is captured in the cookie",
+			requestURL: "http://localhost:9081/user/login?ref=" + refValue,
+			expected:   refValue,
+		},
+		{
+			name:        "ref query overwrites a stale ref cookie",
+			requestURL:  "http://localhost:9081/user/login?ref=" + refValue,
+			staleCookie: staleValue,
+			expected:    refValue,
+		},
+	}
+
+	for _, shape := range shapes {
+		shape := shape
+		t.Run(shape.name, func(t *testing.T) {
+			for _, tc := range tests {
+				tc := tc
+				t.Run(tc.name, func(t *testing.T) {
+					provider := shape.newProvider(t)
+					provider.RefCookieName = refCookieName
+					provider.LoginCookieDuration = time.Hour
+
+					req := newRemoteLoginRequest(t, tc.requestURL)
+					req = req.WithContext(context.WithValue(req.Context(), MesheryServerURL, "http://localhost:9081"))
+					if tc.staleCookie != "" {
+						req.AddCookie(&http.Cookie{Name: refCookieName, Value: tc.staleCookie})
+					}
+
+					rec := httptest.NewRecorder()
+					provider.InitiateLogin(rec, req, false)
+
+					if rec.Code != http.StatusFound {
+						t.Fatalf("status = %d, want %d", rec.Code, http.StatusFound)
+					}
+
+					want := tc.expected
+					if !shape.keepsRef {
+						want = ""
+					}
+
+					ck := refCookie(rec, refCookieName)
+					if ck == nil {
+						t.Fatal("expected a ref cookie header, got none")
+					}
+					if want == "" {
+						if ck.Value != "" || ck.MaxAge >= 0 {
+							t.Fatalf("expected the ref cookie to be deleted, got value %q with MaxAge %d", ck.Value, ck.MaxAge)
+						}
+						return
+					}
+					if ck.Value != want {
+						t.Fatalf("ref cookie = %q, want %q", ck.Value, want)
+					}
+					if ck.MaxAge < 0 {
+						t.Fatalf("ref cookie carrying %q was emitted as a deletion", ck.Value)
+					}
+				})
+			}
+		})
 	}
 }

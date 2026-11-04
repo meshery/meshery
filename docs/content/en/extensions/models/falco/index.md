@@ -1,7 +1,7 @@
 ---
 title: Falco
 subtitle: Collaborative and visual infrastructure as design for Falco
-image: /extensions/models/falco/icons/color/falco-color.svg
+image: extensions/models/falco/icons/color/falco-color.svg
 aliases: /extensibility/integrations/falco
 docURL: https://docs.meshery.io/extensibility/integrations/falco
 description: 

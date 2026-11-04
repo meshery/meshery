@@ -1,7 +1,7 @@
 ---
 title: Kubegems
 subtitle: Collaborative and visual infrastructure as design for Kubegems
-image: /extensions/models/kubegems/icons/color/kubegems-color.svg
+image: extensions/models/kubegems/icons/color/kubegems-color.svg
 aliases: /extensibility/integrations/kubegems
 docURL: https://docs.meshery.io/extensibility/integrations/kubegems
 description: 
@@ -10,16 +10,16 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: application
-  colorIcon: content/en/extensions/models/kubegems/components/application/icons/color/application-color.svg
-  whiteIcon: content/en/extensions/models/kubegems/components/application/icons/white/application-white.svg
+  colorIcon: extensions/models/kubegems/components/application/icons/color/application-color.svg
+  whiteIcon: extensions/models/kubegems/components/application/icons/white/application-white.svg
   description: 
 - name: application-set
-  colorIcon: content/en/extensions/models/kubegems/components/application-set/icons/color/application-set-color.svg
-  whiteIcon: content/en/extensions/models/kubegems/components/application-set/icons/white/application-set-white.svg
+  colorIcon: extensions/models/kubegems/components/application-set/icons/color/application-set-color.svg
+  whiteIcon: extensions/models/kubegems/components/application-set/icons/white/application-set-white.svg
   description: 
 - name: app-project
-  colorIcon: content/en/extensions/models/kubegems/components/app-project/icons/color/app-project-color.svg
-  whiteIcon: content/en/extensions/models/kubegems/components/app-project/icons/white/app-project-white.svg
+  colorIcon: extensions/models/kubegems/components/app-project/icons/color/app-project-color.svg
+  whiteIcon: extensions/models/kubegems/components/app-project/icons/white/app-project-white.svg
   description: 
 components-count: 3
 relationships: 

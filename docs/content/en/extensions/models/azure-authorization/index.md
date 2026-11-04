@@ -1,7 +1,7 @@
 ---
 title: Azure Authorization
 subtitle: Collaborative and visual infrastructure as design for Azure Authorization
-image: /extensions/models/azure-authorization/icons/color/azure-authorization-color.svg
+image: extensions/models/azure-authorization/icons/color/azure-authorization-color.svg
 aliases: /extensibility/integrations/azure-authorization
 docURL: https://docs.meshery.io/extensibility/integrations/azure-authorization
 description: 
@@ -10,12 +10,12 @@ integrations-subcategory: Security Identity Compliance
 registrant: GitHub
 components: 
 - name: role-assignment
-  colorIcon: content/en/extensions/models/azure-authorization/components/role-assignment/icons/color/role-assignment-color.svg
-  whiteIcon: content/en/extensions/models/azure-authorization/components/role-assignment/icons/white/role-assignment-white.svg
+  colorIcon: extensions/models/azure-authorization/components/role-assignment/icons/color/role-assignment-color.svg
+  whiteIcon: extensions/models/azure-authorization/components/role-assignment/icons/white/role-assignment-white.svg
   description: 
 - name: role-definition
-  colorIcon: content/en/extensions/models/azure-authorization/components/role-definition/icons/color/role-definition-color.svg
-  whiteIcon: content/en/extensions/models/azure-authorization/components/role-definition/icons/white/role-definition-white.svg
+  colorIcon: extensions/models/azure-authorization/components/role-definition/icons/color/role-definition-color.svg
+  whiteIcon: extensions/models/azure-authorization/components/role-definition/icons/white/role-definition-white.svg
   description: 
 components-count: 2
 relationships: 

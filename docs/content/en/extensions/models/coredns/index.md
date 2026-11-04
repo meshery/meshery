@@ -1,7 +1,7 @@
 ---
 title: Coredns
 subtitle: Collaborative and visual infrastructure as design for Coredns
-image: /extensions/models/coredns/icons/color/coredns-color.svg
+image: extensions/models/coredns/icons/color/coredns-color.svg
 aliases: /extensibility/integrations/coredns
 docURL: https://docs.meshery.io/extensibility/integrations/coredns
 description: 
