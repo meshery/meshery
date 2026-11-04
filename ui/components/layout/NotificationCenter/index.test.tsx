@@ -370,6 +370,12 @@ describe('NotificationCenterProvider', () => {
 });
 
 describe('NotificationCenter – "Mark all as read" button', () => {
+  beforeEach(() => {
+    summaryQuery.data = {
+      countBySeverityLevel: [{ severity: 'informational', count: 1 }],
+      readCount: 0,
+    };
+  });
   const MARK_ALL_TITLE = 'Mark all notifications as read';
 
   const findMarkAllButton = () => {
@@ -437,5 +443,19 @@ describe('NotificationCenter – "Mark all as read" button', () => {
     expect(dispatchMock.mock.calls.some(([action]) => action?.type === 'events/loadEvents')).toBe(
       false,
     );
+  });
+
+  it('stays available when the filtered list is empty but unread notifications exist', () => {
+    sliceState.events = [];
+    render(<NotificationCenter />);
+    expect(screen.queryByTestId('bulk-checkbox')).not.toBeInTheDocument();
+    expect(findMarkAllButton()).toBeInTheDocument();
+  });
+
+  it('is not shown when there are no unread notifications at all', () => {
+    sliceState.events = [];
+    summaryQuery.data = { countBySeverityLevel: [], readCount: 0 };
+    render(<NotificationCenter />);
+    expect(findMarkAllButton()).not.toBeInTheDocument();
   });
 });

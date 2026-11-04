@@ -270,6 +270,11 @@ const BulkActions = () => {
   const [fetchEvents] = useLazyGetEventsQuery();
   const currentFilters = useSelector((state) => state.events?.current_view?.filters);
   const latestFilters = useRef(currentFilters);
+  const { data: summary } = useGetEventsSummaryQuery({ status: STATUS.UNREAD });
+  const unreadCount = (summary?.countBySeverityLevel || []).reduce(
+    (total, item) => total + (item.count || 0),
+    0,
+  );
   useEffect(() => {
     latestFilters.current = currentFilters;
   }, [currentFilters]);
@@ -338,7 +343,10 @@ const BulkActions = () => {
     );
   };
 
-  if (noEventsPresent) {
+  const isReadView = currentFilters?.status === STATUS.READ;
+  const showMarkAll = !isReadView && unreadCount > 0;
+
+  if (noEventsPresent && !showMarkAll) {
     return null;
   }
 
@@ -351,36 +359,40 @@ const BulkActions = () => {
         padding: '0.15rem',
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
-        <Typography variant="body2">
-          {areAllEventsChecked ? `Selected ${checkedEvents.length} notifications` : 'Select All'}
-        </Typography>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <Collapse in={checkedEvents.length > 0}>
-          <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            <BulkActionButton
-              tooltip="Delete selected notifications"
-              Icon={DeleteIcon}
-              isLoading={isDeleting}
-              onClick={handleDelete}
-            />
-            <BulkActionButton
-              tooltip="Mark selected notifications as read"
-              Icon={ReadIcon}
-              isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.READ}
-              onClick={() => handleChangeStatus(STATUS.READ)}
-            />
-            <BulkActionButton
-              tooltip="Mark selected notifications as unread"
-              Icon={UnreadIcon}
-              isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.UNREAD}
-              onClick={() => handleChangeStatus(STATUS.UNREAD)}
-            />
-          </Box>
-        </Collapse>
-        {currentFilters?.status !== STATUS.READ && (
+      {!noEventsPresent && (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
+          <Typography variant="body2">
+            {areAllEventsChecked ? `Selected ${checkedEvents.length} notifications` : 'Select All'}
+          </Typography>
+        </Box>
+      )}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: 'auto' }}>
+        {!noEventsPresent && (
+          <Collapse in={checkedEvents.length > 0}>
+            <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <BulkActionButton
+                tooltip="Delete selected notifications"
+                Icon={DeleteIcon}
+                isLoading={isDeleting}
+                onClick={handleDelete}
+              />
+              <BulkActionButton
+                tooltip="Mark selected notifications as read"
+                Icon={ReadIcon}
+                isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.READ}
+                onClick={() => handleChangeStatus(STATUS.READ)}
+              />
+              <BulkActionButton
+                tooltip="Mark selected notifications as unread"
+                Icon={UnreadIcon}
+                isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.UNREAD}
+                onClick={() => handleChangeStatus(STATUS.UNREAD)}
+              />
+            </Box>
+          </Collapse>
+        )}
+        {showMarkAll && (
           <BulkActionButton
             tooltip="Mark all notifications as read"
             Icon={DoneIcon}
