@@ -5312,6 +5312,8 @@ You can now design and manage any infrastructure that Meshery supports. For the 
     
   
     
+  
+    
       
     
   
@@ -25545,6 +25547,134 @@ description: General commonly asked questions and answers about Meshery.
 
 
 <!--Add other questions-->
+
+
+--------------------------------------------------------------------------------
+title: "v1.0.75"
+url: /pr-preview/pr-22782/project/releases/v1.0.75/index.md
+date: "2026-11-03"
+--------------------------------------------------------------------------------
+
+## What's New
+## 🔤 General
+- \[Server\] Default namespace for namespaced kinds in resolveResourcePath @rudrakshSoni-dev (#22566)
+- \[server\] Prevent nil pointer dereference on invalid load test URL @Supersaiyan101 (#22736)
+- \[Server\] Allow GitHub and Artifact Hub connections to register @Karman580 (#22711)
+- \[Agents\] Add pre-landing-review and migration-risk-analyzer skills (#22372) @VimalN2005 (#22718)
+- \[Server\] Isolate ExportModel working directory with per-request temp dir (#22609) @VimalN2005 (#22742)
+- \[Server\] Fix race in MeshSync deployment mode notifications @Karman580 (#22733)
+- \[Server\] Remove unused SetOverrideValues from graphql/model @RameshwariS (#22737)
+- \[Server\] Return 404 for missing resources and validate UUID in MeshSync handlers @Amansingh0807 (#22695)
+- \[Server\] Name the declared namespace on a Forbidden from the default fallback dry-run @rudrakshSoni-dev (#22661)
+- chore: make CLAUDE.md a symlink to AGENTS.md @ritzorama (#22606)
+- docs(agents): require treehouse worktrees and no-mistakes landing @CodeAhmedJamil (#22605)
+- Fix(server): resolve dry-run GVR discovery and in-design namespaces @rudrakshSoni-dev (#22464)
+
+## ⌨️ Meshery CLI
+
+- \[mesheryctl\] fix command help examples using unaccepted flags @Fazlul105 (#22707)
+- \[mesheryctl\] return errors from system token list and view @Fazlul105 (#22706)
+- \[mesheryctl\] validate channel argument upfront on system channel switch @Fazlul105 (#22703)
+- \[mesheryctl\] system start / system reset delete a "manifests" folder in the current directory @ayushgade06 (#22700)
+- \[mesheryctl\] Fix nil pointer dereference panic in design export on non-200 responses @Supersaiyan101 (#22705)
+- \[Docs\]fix CLI reference anchor @shatrughantwt (#22721)
+- \[mesheryctl\] Add missing delimiter between error message and cause @kkm121 (#22715)
+- fix(mesheryctl): close unclosed HTTP response bodies across api.Delete and api.Add callers @The-AnkitPatel (#22724)
+- \[mesheryctl\] Fix HTTP response body and connection leaks in IsMesheryRunning and MakeRequest @muskan-creates352 (#22727)
+- \[Server/mesheryctl\] Interpolate format args in MeshKit error construc… @barbierajput378-pixel (#22735)
+- fix/CLI reference docs should not include /home/runner/... @Aravind226 (#22746)
+- \[mesheryctl\] Print model list flag validation errors once @adityacosmos24 (#22604)
+- \[mesheryctl\] Fix grammar in component and model command descriptions @Ultronious (#22622)
+- \[mesheryctl\] Fix continuous HTTP response body leak in system dashboard @muskan-creates352 (#22627)
+- \[mesheryctl\] Fix HTTP response body descriptor leaks in system check @muskan-creates352 (#22583)
+- \[mesheryctl\] model: fix double-wrapped export flag validation error and add tests @somaz94 (#19866)
+- \[mesheryctl\] Re-enable unit tests and fix query URL in environment list_test.go @AliRana30 (#22589)
+- fix(mesheryctl): golangci-lint errors in mesheryctl @banana-three-join (#22580)
+- \[mesheryctl\] Reject --page values below 1 in perf profile and perf result @Raghavcommercialwinner (#22248)
+
+## 🖥 Meshery UI
+
+- fix(server): stop embedding design contents in event metadata @yi-nuo426 (#22769)
+- Fix Responsiveness of Cancel, Save, Reset Action Buttons @Katotodan (#21312)
+- \[UI\] Fix form fields overlapping the sticky Settings bar @NerfedAce (#22683)
+- Fix preservation of saved performance profile metadata @aryan105825 (#22702)
+- \[UI\] Reset MeshSync table to first page on search and filter @harshiltewari2004 (#22710)
+- \[CI\] Replace legacy setInterval polling in waitFor.ts with Playwright expect.poll @Rohith-Saran (#22713)
+- \[UI\] Make provider dialog close button hover visible @Saidkhusayn (#22728)
+- feat(ui): enhance cross-cluster design validation with unified compatibility analysis @ThakurUjjwal1706 (#22739)
+- \[UI\] Fix Design Configurator "+" for key/value fields after RJSF v6 upgrade @HelanaNady (#22744)
+- fix(ui): manage blob URL lifecycle and prevent memory leak in DataToF… @Ayush-AM (#22570)
+- \[UI\] Fix inert adapter selection and variable shadowing in MesheryPlayComponent @Ayush-AM (#22349)
+- \[UI\] Fix schema dropdown rendering condition and HTML nesting in LegacyRJSFModal @Ayush-AM (#22350)
+- \[UI\] Replace waitForTimeout in user preference e2e spec with a web-first assertion @nguyenvanlinh14 (#22619)
+- fix(ui): upgrade Next.js to address security vulnerabilities @SajanBisht (#22550)
+
+## 🧰 Maintenance
+
+- \[mesheryctl\] return errors from system token list and view @Fazlul105 (#22706)
+- \[CI\] Replace legacy setInterval polling in waitFor.ts with Playwright expect.poll @Rohith-Saran (#22713)
+- Fix broken DCO documentation link in PR welcome comment @motalib6 (#22745)
+- \[UI\] Replace waitForTimeout in user preference e2e spec with a web-first assertion @nguyenvanlinh14 (#22619)
+- \[Docs\] Fix two stale links in GOVERNANCE.md @ayanasarkar (#22453)
+
+## 📖 Documentation
+
+- fix(server): stop embedding design contents in event metadata @yi-nuo426 (#22769)
+- \[Docs\] Update outdated Playwright E2E testing guide references @muskan-creates352 (#22226)
+- \[mesheryctl\] fix command help examples using unaccepted flags @Fazlul105 (#22707)
+- \[Server\] Document performance result endpoint and correct stale error route (#22240) @VimalN2005 (#22697)
+- \[Docs\] Add air-gapped Kubernetes installation guide @rahmanaisha (#22714)
+- \[Docs\]fix CLI reference anchor @shatrughantwt (#22721)
+- \[Docs\] Serve the main docs font as WOFF2 and preload it @ayushgade06 (#22738)
+- fix/CLI reference docs should not include /home/runner/... @Aravind226 (#22746)
+- \[Docs\] Clarify Docker startup delay and local site URL @peremunoz (#22652)
+- \[mesheryctl\] Fix grammar in component and model command descriptions @Ultronious (#22622)
+- \[Docs\] Fix broken in-page anchor links across docs @ayanasarkar (#22441)
+- Docs(meeting): add Shukria Sultani's introduction @shukria-sultani (#22696)
+- chore: prashanth - introduction for week-of-10-29-2026 @knocBack (#22673)
+- Yoshita dwivedi patch 2 @Yoshita-Dwivedi (#22676)
+- My introduction @merytpeters (#22678)
+- Aravind's Attendance @Aravind226 (#22677)
+- Add Harpal's introduction to meetings documentation @Hpsingh26 (#22680)
+- Create introduction for Emmanuel Wilson Dismas. Computer engineer. @dismasdev (#22679)
+- docs: add Arpan Dasgupta's community introduction @Ultronious (#22672)
+- \[Docs\] Add Aman Singh to newcomers meeting attendance for week-of-10-29-2026 @Amansingh0807 (#22671)
+- Aryan Patel - Introduction @aryanap07 (#22670)
+- Add Maanvi's introduction to community document @Maanvi212006 (#22669)
+- \[Docs\] Introduction - Abhinav Deval @abhinavkdeval08-design (#22662)
+- Add Maanvi Chetwani's introduction to meeting notes @Maanvi212006 (#22658)
+- \[Docs\] Fix Helm Snapshot install URL and plugin usage @CyberRik (#22574)
+- \[Docs\] Add "View as Markdown" links, per-page Markdown output and llms.txt @Katotodan (#22375)
+- docs: add Paul Anyebe introduction @cutewizzy11 (#22594)
+- Introduction - Muskan Kumari @muskan-creates352 (#22579)
+- Introduction - Shatrughan Mishra @shatrughantwt (#22576)
+- \[Docs\] Fix typos, missing words, and duplicate tokens in Workspaces and Operator CRDs guides @Paramveersingh-S (#22300)
+- docs: add Tristan Brian introduction @TristanBrian (#22560)
+- \[Docs\] Introduction - AryaBhatt @AryaBhatt45 (#22558)
+- introduction- Pranav Gupta @sabertooth-123 (#22557)
+- Create Dipansu Mishra.md with personal details @dipansumishra9797-sudo (#22548)
+- Update introduction in Prince-Kumar.md @Princekr267 (#22546)
+- Add YashPawar.md with Introduction. @yashspidey (#22533)
+- Introduction - Sajan Bisht @SajanBisht (#22545)
+- Create Jaikishan_Nayak.md with personal introduction @jaikishan1234 (#22544)
+- Add introduction for Prayas Pal in markdown @Prayas-35 (#22542)
+- DishanSamuel.md for community profile @DishanSamuel (#22538)
+- Introduction - Sarah Ogunlalu @Aden1ke (#22537)
+- Okoko Jerry @OkokoJerry (#22536)
+- Update Ashutosh's introduction with additional details @Ashuvis (#22541)
+- Okoko Jerry @OkokoJerry (#22540)
+- Add introduction for Bhaumik in meetings documentation @BHAUMIK0711 (#22539)
+- Introduction - Onunwa Goodness @Noble-47 (#22535)
+- Introduction - Shivam Singh @Th-Shivam (#22534)
+- Add introduction for Abhay Pratap Yadav @QUBITABHAY (#22532)
+- Add maanvi.md with introduction @Maanvi212006 (#22531)
+- \[Newcomer's Meet\]: Add maanvi-chetwani.md with introduction @Maanvi212006 (#22528)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@Aden1ke, @AliRana30, @Amansingh0807, @Aravind226, @AryaBhatt45, @Ashuvis, @Ayush-AM, @BHAUMIK0711, @CodeAhmedJamil, @CyberRik, @DishanSamuel, @Fazlul105, @HelanaNady, @Hpsingh26, @Karman580, @Katotodan, @Maanvi212006, @NerfedAce, @Noble-47, @OkokoJerry, @Paramveersingh-S, @Prayas-35, @Princekr267, @QUBITABHAY, @Raghavcommercialwinner, @RameshwariS, @Rohith-Saran, @Saidkhusayn, @SajanBisht, @Supersaiyan101, @Th-Shivam, @ThakurUjjwal1706, @The-AnkitPatel, @TristanBrian, @Ultronious, @VimalN2005, @Yoshita-Dwivedi, @abhinavkdeval08-design, @adityacosmos24, @alexquincy, @arjunmehta-git, @aryan105825, @aryanap07, @ayanasarkar, @ayushgade06, @banana-three-join, @barbierajput378-pixel, @cutewizzy11, @dipansumishra9797-sudo, @dismasdev, @fitzergerald, @harshiltewari2004, @hiyach28, @ianrwhitney, @jaikishan1234, @kkm121, @knocBack, @l5io, @leecalcote, @lekaf974, @merytpeters, @meshery-ci, @motalib6, @muskan-creates352, @nguyenvanlinh14, @peremunoz, @pontusringblom, @rahmanaisha, @ritzorama, @rudrakshSoni-dev, @sabertooth-123, @shatrughantwt, @shukria-sultani, @somaz94, @winkletinkle, @yashspidey, @yi-nuo426 and pontusringblom
+
 
 
 --------------------------------------------------------------------------------
@@ -64560,6 +64690,23 @@ _Note: In certain conditions you must add some fields with specific keys:_
     <img src="images/events-table.png" alt="Event Schema" style="width:50%;">
 </a>
 
+### Design Event Metadata
+
+An event about a design carries the design's identity and a bounded summary, never the design itself - no `design` contents, `designFile`, `patternFile`, `components`, `relationships`, `trace`, `evaluationResponse` or raw process `summary` ([#22764](https://github.com/meshery/meshery/issues/22764)). Build the identity with `models.DesignEventIdentity` (`server/models/event_metadata.go`) and add the event's own fields. `designLink` is always the designer URL (`models.DesignLink`, `/extension/meshmap?mode=design&design=<id>`); only `viewLink` points at the operator view.
+
+| Event | Metadata |
+|---|---|
+| any design event | `designId`, `designName`, `designVersion` (when set), `designLink` (designer URL) |
+| `pattern/create`, `pattern/update` (design saved) | identity, plus `design` as exactly `{id, name}` - the Notification Center's "Saved design" link reads it - `historyTitle` and `doclink` |
+| `relationship/evaluation` | identity, `historyTitle`, `relationshipsAdded`, `relationshipsRemoved`, `relationshipsUpdated`, `evaluationStatus`, `evaluationDurationMs`, `evaluatedAt` |
+| `pattern/deploy`, `pattern/undeploy`, `pattern/dry-run` | identity, `viewLink` set to the operator view URL (`models.DesignOperatorViewLink`, `/extension/meshmap?mode=operator&type=view&design_id=<id>`), `status`, `errorCount`, `errors[]` of at most 20 `{code, componentId}`, `truncated` |
+| `pattern/validate` | identity, `status`, `errorCount`, `errors[]` of at most 20 `{code, componentId}`, `truncated` - no `viewLink`. Meshery server does not emit this event; Meshery UI's `SchemaValidationFormatter` reads it in this shape |
+| a failed design event | identity and `error` (the MeshKit error) |
+
+`errorCount` is always the full count; `truncated` marks that `errors[]` was capped. `design` is allowed only as the two-field identity object - `models.IsDesignIdentityObject` is the check. Persisted metadata larger than 16 KB (`models.MaxEventMetadataBytes`) is reduced by `models.GuardEventMetadataSize` to the identity fields, `historyTitle` and that `design` object.
+
+Readers must tolerate older rows: events stored earlier, and rows Meshery Cloud rewrote to this shape, may spell the identity in snake_case (`design_id`, `design_name`, `view_link`) and may lack `evaluationStatus`, `evaluationDurationMs` and `designLink`. A rewritten validate error's `code` is the JSON-schema keyword (`required`, `type`), not a MeshKit code. Meshery UI reads all of this through `ui/components/layout/NotificationCenter/formatters/design_event_metadata.ts`.
+
 ## Event Persistence in Meshery
 
 Events in Meshery are persisted through two distinct mechanisms to ensure reliable event management. [Read more about providers](/pr-preview/pr-22782/reference/extensibility/providers/).
@@ -65894,6 +66041,8 @@ This directory houses reusable formatter components dedicated to specific types 
 - **error.tsx**: Defines `ErrorMetadataFormatter` for displaying structured error details.
 - **model_registration.tsx**: Contains formatters for model import/registration events (`ModelImportMessages`, `ModelImportedSection`).
 - **pattern_dryrun.tsx**: Defines `DryRunResponse` and `SchemaValidationFormatter`, which delegate to the design lifecycle components.
+- **design_event_metadata.ts**: The single reader of design event metadata. `getDesignEventIdentity` returns `designId`, `designName`, `designVersion`, `designLink` and `viewLink`, falling back to the legacy `design_id`, `design_name` and `view_link` only when the camelCase key is absent; `getDesignEventErrorSummary` reads `status`, `errorCount`, `errors[]` and `truncated`; `isMeshkitErrorCode` tells a MeshKit code (`meshery-server-1480`) from a JSON-schema keyword or Kubernetes cause type. Never index these metadata keys directly in a formatter.
+- **design_event_errors.tsx**: Defines `DesignEventErrorsFormatter`, which renders an error summary for validate, deploy, undeploy and dry-run events and links only MeshKit codes to the error code reference.
 - **relationship_evaluation.tsx**: Defines `RelationshipEvaluationEventFormatter`, responsible for rendering notifications related to the evaluation of relationships between components in a design.
 - **meshsync_events.tsx**: Defines `MeshSyncPropertyFormatters` for connection and MeshSync deployment fields.
 - **academy_events.tsx**: Defines `AcademyEventsFormatter` for quiz evaluation results.
@@ -65951,7 +66100,7 @@ The core logic for rendering metadata is handled by the `FormattedMetadata` comp
    If the event has no metadata, or the metadata is empty at all depths, `EmptyState` renders the event description on its own.
 
 3. **Fallback to Property-Based Formatting**
-   Otherwise, `FormattedMetadata` reorders the metadata into a stable display order, strips out properties that are rendered elsewhere (links, `id`, `kind`), and hands the result to `FormatStructuredData` along with:
+   Otherwise, `FormattedMetadata` reorders the metadata into a stable display order, strips out properties that are rendered elsewhere (links, `id`, `kind`, and - when a design-saved event's `design` {id, name} link names the design - the design identity keys), and hands the result to `FormatStructuredData` along with:
 
    - `PropertyFormatters` – for structured or specialized visual formats.
    - `PropertyLinkFormatters` – consumed separately by the ellipsis menu in `notification.tsx` to render actionable links (e.g. file downloads, log views).
@@ -66063,18 +66212,16 @@ The **Relationship Evaluation Formatter** is responsible for rendering notificat
 #### Key Components
 
 1. **RelationshipEvaluationEventFormatter**:
-   The main formatter component that renders the event description and invokes the `RelationshipEvaluationTraceFormatter` to display detailed traces.
+   The main formatter component. It renders the event description and the evaluation summary: the relationship change counts, `evaluationStatus`, `evaluationDurationMs` and an "Open design" link from `designLink`, the designer URL (falling back to `viewLink` on older rows). Each of the last three is rendered only when present - rows Meshery Cloud rewrote to this shape lack them. Only an event without the summary fields falls back to `RelationshipEvaluationTraceFormatter`.
 
 **Props:**
 
 - `event` (object): Contains:
   - **description**: A description of the evaluation process.
-  - **metadata.evaluationResponse** (or `metadata.evaluation_response`): The evaluation result, containing:
-    - `actions` (Array): The list of changes produced by the evaluation.
-    - `design` (Object): The evaluated design, used to resolve components and relationships by ID.
+  - **metadata**: `relationshipsAdded`, `relationshipsRemoved`, `relationshipsUpdated`, `evaluationStatus`, `evaluationDurationMs`, `historyTitle`, `evaluatedAt` and the design identity. Events stored before [#22764](https://github.com/meshery/meshery/issues/22764) instead carry `evaluationResponse` (or `evaluation_response`) with the `actions` and the evaluated `design`.
 
 2. **RelationshipEvaluationTraceFormatter**:
-   Takes `actions` and `design` and derives the displayed categories by filtering actions on their `op` field:
+   Renders a legacy `evaluationResponse`. Takes `actions` and `design` and derives the displayed categories by filtering actions on their `op` field:
 
    - Components: `add_component`, `delete_component`, `update_component` / `update_component_configuration`
    - Relationships: `add_relationship`, `delete_relationship`, `update_relationship`
@@ -66089,17 +66236,22 @@ The **Relationship Evaluation Formatter** is specifically designed to handle not
 
 1. When a notification involves the evaluation of relationships between components in a design.
 2. When you need to display categorized changes in components and relationships.
-3. When the event metadata includes an `evaluationResponse` object containing the actions and the evaluated design.
+3. When the event is a `relationship/evaluation` event; the formatter handles both the summary and the legacy `evaluationResponse` shape.
 
 #### User Experience: Relationship Evaluation Notification
 
 1. **Evaluation Summary**:
    The notification starts with a summary of the evaluation process.
    Example:
-   `"Relationship evaluation completed for design 'Deploy Meshery using Meshery-X' at version '0.0.11'"`
+   `"Relationship evaluation complete: 3 changes in 'Deploy Meshery using Meshery-X' at version '0.0.11'"`
    This gives the user context about which design and version were evaluated.
 
-2. **Detailed Changes**:
+2. **Change Counts**:
+   The number of relationships added, removed and updated, followed by the evaluation status, its duration and an "Open design" link, each only when present. If no relationship changed, an empty state is shown instead.
+
+The remaining items apply only to a legacy event stored before [#22764](https://github.com/meshery/meshery/issues/22764), rendered by `RelationshipEvaluationTraceFormatter`:
+
+3. **Detailed Changes**:
    The notification breaks down the changes into collapsible categories:
 
    - **Components**:
@@ -66113,10 +66265,10 @@ The **Relationship Evaluation Formatter** is specifically designed to handle not
 
    If the evaluation produced no actions at all, an empty state is shown instead.
 
-3. **Component Details**:
+4. **Component Details**:
    For each component, the notification displays its icon, kind, name, and the model and version it belongs to.
 
-4. **Relationship Details**:
+5. **Relationship Details**:
    For each relationship, the notification displays its type, the source and target components involved, and the associated model and version.
 
 ### Dry Run and Schema Validation Formatters
@@ -66131,7 +66283,7 @@ The **Dry Run Formatter** is responsible for rendering notifications related to 
 #### Key Components
 
 1. **DryRunResponse**:
-   The property formatter registered for the `dryRunResponse` metadata field. It normalizes the raw response and hands it to `FormatDryRunResponse`.
+   The property formatter registered for the `dryRunResponse` metadata field, also used by `DeploymentSummaryFormatter` for a legacy dry-run event's `summary.dryRunResponse`. It normalizes the raw response and hands it to `FormatDryRunResponse`. A `pattern/dry-run` event in the current shape is rendered by the Deployment Summary Formatter.
 
    **Props:**
 
@@ -66152,7 +66304,7 @@ The **Dry Run Formatter** is responsible for rendering notifications related to 
    - **currentComponentName** (string): The name of the component currently being validated.
 
 3. **SchemaValidationFormatter**:
-   The event specific formatter registered for design validation events. It reads `metadata.validationResult`, `metadata.design_name`, `metadata.total_components`, and `metadata.configurable_components`, totals the errors across services, and renders `ValidationResults`.
+   The event specific formatter registered for `pattern/validate` events. It renders the design name and, through `DesignEventErrorsFormatter`, `status`, `errorCount`, `errors[]` of `{code, componentId}` and `truncated`. An error's `code` is the JSON-schema validator keyword (`required`, `type`, ...) and is shown as-is. Only an event without that summary that still holds a legacy `validationResult` is rendered through `ValidationResults`, with `totalComponents`, `configurableComponents` and `totalErrors`, falling back to the snake_case `total_components`, `configurable_components` and `total_errors`, and for `totalErrors` finally to counting the `validationResult` errors.
 
    **Props:**
 
@@ -66179,28 +66331,29 @@ The **Deployment Summary Formatter** is responsible for rendering notifications 
 1. **DeploymentSummaryFormatter**:
    This component is used to display:
    - **Event Description**: A brief description of the deployment event.
-   - **Errors**: Any errors encountered during the deployment process, rendered through `ErrorMetadataFormatter`.
-   - **Component Details**: A list of components with their deployment status and metadata, flattened out of the per-context summary.
-   - **Open In Operator**: A shortcut to the deployed design, shown only when the Meshery Operator is enabled and the action is not a registration.
+   - **Errors**: The MeshKit `error` of a failed event, rendered through `ErrorMetadataFormatter`.
+   - **Error Summary**: `status`, `errorCount`, `errors[]` and `truncated`, rendered through `DesignEventErrorsFormatter`. A rewritten deploy error may carry a `code` but no `componentId`.
+   - **Component Details**: For an event stored before [#22764](https://github.com/meshery/meshery/issues/22764) without an error summary, the components flattened out of the legacy per-context `summary`, or its `dryRunResponse`.
+   - **Open In Operator**: A shortcut to the deployed design, shown only when the Meshery Operator is enabled and the action is neither a registration nor a dry-run - a dry-run deploys nothing to view.
 
 **Props:**
 
 - **event** (object): Contains:
   - **description**: A brief description of the deployment event.
-  - **action**: The type of action performed (e.g., `deploy`, `undeploy`).
+  - **action**: The type of action performed (`deploy`, `undeploy` or `dry-run`).
   - **severity**: The severity level of the event, used to colour the summary.
   - **metadata**:
-    - **summary**: A detailed summary of the deployment process, including component details per context.
-    - **error**: Any errors encountered during the deployment process.
-    - **design_name**: The name of the design being deployed.
-    - **design_id**: The ID of the design being deployed.
+    - **status**, **errorCount**, **errors**, **truncated**: The outcome and up to 20 `{code, componentId}` errors.
+    - **error**: The MeshKit error of a failed event.
+    - **designName** and **designId** (legacy `design_name` and `design_id`): The design opened by **Open In Operator**, read through `getDesignEventIdentity`.
+    - **summary**: Legacy only - the raw process response of an event stored before #22764.
 
 #### When to Use
 
 The **Deployment Summary Formatter** should be used in the following scenarios:
 
-1. **Deployment or Undeployment Events**:
-   When the `event.action` is either `deploy` or `undeploy` and the `event.metadata` includes `design_name`.
+1. **Deployment, Undeployment or Dry-Run Events**:
+   It is registered for `pattern/deploy`, `pattern/undeploy` and `pattern/dry-run`.
 2. When a notification involves the deployment or undeployment of a design.
 
 ### MeshSync Events Formatter
@@ -67789,7 +67942,7 @@ description: Return only the latest release of Meshery version information
 
 
 
-<h2>v1.0.74</h2>
+<h2>v1.0.75</h2>
 
 
 
@@ -70282,7 +70435,7 @@ Takes no parameters and no body.
 
 
 
-<h2>v1.0.74</h2>
+<h2>v1.0.75</h2>
 
 
 
