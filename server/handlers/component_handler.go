@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -1541,6 +1542,16 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 	return meshkitutils.ErrInvalidSchemaVersion
 }
 
+// DeleteModel deletes a model and its associated components, relationships, policies,
+// and registry entries by UUID. Returns HTTP 404 if no matching model exists.
+//
+// swagger:route DELETE /api/meshmodels/models/{id} DeleteModel
+// responses:
+//
+//	204:
+//	400:
+//	404:
+//	500:
 func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	modelID := mux.Vars(r)["id"]
 	modelUUID, err := uuid.FromString(modelID)
@@ -1597,11 +1608,18 @@ func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models
 		}
 
 		// Delete the model itself
-		return tx.Where("id = ?", modelUUID).Delete(&_model.ModelDefinition{}).Error
+		res := tx.Where("id = ?", modelUUID).Delete(&_model.ModelDefinition{})
+		if res.Error != nil {
+			return res.Error
+		}
+		if res.RowsAffected == 0 {
+			return gorm.ErrRecordNotFound
+		}
+		return nil
 	})
 
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			writeJSONError(rw, fmt.Sprintf("model with id %s not found", modelID), http.StatusNotFound)
 			return
 		}
