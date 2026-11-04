@@ -30,6 +30,8 @@ It leaves out test-only variables, such as `RUN_INTEGRATION_TESTS` and `PATH_TO_
 
 `LOG_LEVEL` values are `0=panic`, `1=fatal`, `2=error`, `3=warn`, `4=info`, `5=debug`, and `6=trace`.
 
+For an Nginx reverse proxy, preserve the browser-facing host when forwarding requests with `proxy_set_header Host $host;`. If the proxy rewrites `Host`, configure `MESHERY_UI_ORIGINS` with the exact browser-facing UI origin. The Local Provider origin check does not trust `X-Forwarded-Proto` or an arbitrary `Host` value.
+
 ## Provider and authentication configuration
 
 | Variable | Default | Description | Example |
