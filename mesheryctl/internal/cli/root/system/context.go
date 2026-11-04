@@ -151,7 +151,9 @@ mesheryctl system context delete [context name]
 
 		if viper.GetString("current-context") == contextName {
 			if len(configuration.Contexts) <= 1 {
-				return utils.ErrInvalidArgument(errors.New("cannot delete the only context; create another with `mesheryctl system context create` and try again"))
+				err := utils.ErrInvalidArgument(errors.New("cannot delete the only context; create another with `mesheryctl system context create` and try again"))
+				utils.Log.Error(err)
+				return err
 			}
 
 			var res bool
