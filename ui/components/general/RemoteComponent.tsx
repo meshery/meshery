@@ -4,7 +4,7 @@ import {
   getDependencies,
   createRequires,
 } from '@paciolan/remote-component';
-import { useTheme } from '@sistent/sistent';
+import { Button, styled } from '@sistent/sistent';
 import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import Troubleshoot from '../TroubleshootingComponent';
 import { useNotification } from '@/utils/hooks/useNotification';
@@ -25,13 +25,21 @@ interface RemoteComponentProps {
   [key: string]: unknown;
 }
 
-const DASHBOARD_REDIRECT_DELAY_MS = 5000;
+const ErrorDetail = styled('div')(({ theme }) => ({
+  backgroundColor: theme.palette.background.code ?? theme.palette.background.default,
+  color: theme.palette.text.primary,
+  padding: '.85rem',
+  borderRadius: '.2rem',
+}));
+
+const ErrorAction = styled('div')({
+  marginTop: '1rem',
+});
 
 const RemoteComponent: React.FC<RemoteComponentProps> = ({ url, loaderType, ...props }) => {
   const [loading, err, RemoteComponentInstance] = useRemoteComponent(url.url);
   const { notify } = useNotification();
   const router = useRouter();
-  const theme = useTheme();
   const isFullPage = loaderType !== 'circular';
 
   useEffect(() => {
@@ -41,13 +49,7 @@ const RemoteComponent: React.FC<RemoteComponentProps> = ({ url, loaderType, ...p
       message: `Failed to load extension: ${err.toString()}`,
       event_type: EVENT_TYPES.ERROR,
     });
-
-    const timer = setTimeout(() => {
-      router.push('/');
-    }, DASHBOARD_REDIRECT_DELAY_MS);
-
-    return () => clearTimeout(timer);
-  }, [err, notify, router, isFullPage]);
+  }, [err, notify, isFullPage]);
 
   if (loading) {
     if (!isFullPage) {
@@ -67,22 +69,17 @@ const RemoteComponent: React.FC<RemoteComponentProps> = ({ url, loaderType, ...p
     return (
       <div role="alert">
         <h2>Uh-oh! Please pardon our mesh.</h2>
-        <div
-          style={{
-            backgroundColor: theme.palette.background.code ?? theme.palette.background.default,
-            color: theme.palette.text.primary,
-            padding: '.85rem',
-            borderRadius: '.2rem',
-          }}
-        >
+        <ErrorDetail>
           <code>{err.toString()}</code>
-        </div>
-        <p style={{ marginTop: '1rem', color: theme.palette.text.secondary }}>
-          Redirecting to dashboard in a few seconds...
-        </p>
-        <div style={{ marginTop: '1rem' }}>
+        </ErrorDetail>
+        <ErrorAction>
+          <Button variant="outlined" onClick={() => router.push('/')}>
+            Go to dashboard
+          </Button>
+        </ErrorAction>
+        <ErrorAction>
           <Troubleshoot showDesignerButton={false} />
-        </div>
+        </ErrorAction>
       </div>
     );
   }
