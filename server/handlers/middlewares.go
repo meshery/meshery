@@ -246,7 +246,10 @@ func localProviderRequestAllowed(req *http.Request, allowedUIOrigins string) boo
 	}
 
 	if source == "" {
-		return false
+		if strings.EqualFold(req.Header.Get("Sec-Fetch-Site"), "cross-site") {
+			return false
+		}
+		return !localRequestRequiresOrigin(req)
 	}
 
 	sourceURL, err := url.Parse(source)
@@ -284,6 +287,18 @@ func localProviderRequestAllowed(req *http.Request, allowedUIOrigins string) boo
 		return false
 	}
 	return sameOrigin(sourceURL, targetURL)
+}
+
+func localRequestRequiresOrigin(req *http.Request) bool {
+	if req.Method == http.MethodGet && req.URL != nil && req.URL.Path == "/user/logout" {
+		return true
+	}
+	switch req.Method {
+	case http.MethodGet, http.MethodHead, http.MethodOptions, http.MethodTrace:
+		return false
+	default:
+		return true
+	}
 }
 
 func isHTTPOrigin(origin *url.URL) bool {

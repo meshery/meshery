@@ -25,7 +25,7 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request, p models.
 
 // LogoutHandler destroys the session and redirects to home.
 func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *models.User, p models.Provider) {
-	if req.Method != http.MethodGet {
+	if req.Method != http.MethodGet && req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
