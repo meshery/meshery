@@ -10,6 +10,7 @@ setup() {
 }
 
 # Record the original channel/version once, so every test can be reverted to it.
+# Exported variables are visible to every test and to teardown.
 setup_file() {
     run "$MESHERYCTL_BIN" system channel view
     if [ "$status" -ne 0 ]; then
@@ -26,8 +27,6 @@ setup_file() {
         return 1
     fi
 
-    echo "$ORIGINAL_CHANNEL-$ORIGINAL_VERSION" > "$BATS_FILE_TMPDIR/original_channel"
-
     _save_deployment_env || return 1
 }
 
@@ -36,12 +35,53 @@ setup_file() {
 # Helm release and drops them, so they are recorded here and re-applied after each redeploy.
 DEPLOYMENT_ENV_NAMES="PROVIDER_BASE_URLS MESHSYNC_DEFAULT_DEPLOYMENT_MODE MESHERY_MANAGED_BROKER_PORTFORWARD"
 
-_save_deployment_env() {
-    : > "$BATS_FILE_TMPDIR/deployment_env"
-    command -v kubectl >/dev/null 2>&1 || return 0
+# Platform of the current mesheryctl context, read from the meshconfig.
+# Requires mikefarah yq v4 (the Python yq cannot parse these expressions).
+_current_platform() {
+    local config="${MESHERY_CONFIG_FILE_PATH:-$HOME/.meshery/config.yaml}"
 
-    # Absent deployment (e.g. Docker platform): nothing to preserve. Present: capture must succeed.
-    kubectl -n meshery get deployment/meshery >/dev/null 2>&1 || return 0
+    if ! yq --version 2>&1 | grep -q mikefarah; then
+        echo "# setup_file: mikefarah yq v4 is required (found: $(yq --version 2>&1))" >&3
+        return 1
+    fi
+
+    # Read the context name first: indexing .contexts with a missing current-context does not
+    # yield null, it silently returns another context's platform.
+    local context
+    context=$(yq '.current-context' "$config") || return 1
+    if [ -z "$context" ] || [ "$context" = "null" ]; then
+        echo "# setup_file: no current-context set in $config" >&3
+        return 1
+    fi
+
+    CTX="$context" yq '.contexts[strenv(CTX)].platform' "$config"
+}
+
+_save_deployment_env() {
+    local platform
+    if ! platform=$(_current_platform) || [ -z "$platform" ] || [ "$platform" = "null" ]; then
+        echo "# setup_file: could not determine the platform of the current context" >&3
+        return 1
+    fi
+
+    # Only a Kubernetes deployment carries settings to preserve; Docker has no cluster to query.
+    [ "$platform" = "kubernetes" ] || return 0
+
+    if ! command -v kubectl >/dev/null 2>&1; then
+        echo "# setup_file: platform is kubernetes but kubectl is not installed" >&3
+        return 1
+    fi
+
+    # Only NotFound means the deployment is absent. Timeouts, authorization failures and
+    # unreachable clusters must fail setup rather than silently capture nothing.
+    local get_err
+    if ! get_err=$(kubectl -n meshery get deployment/meshery 2>&1 >/dev/null); then
+        if echo "$get_err" | grep -q "NotFound"; then
+            return 0
+        fi
+        echo "# setup_file: could not look up deployment/meshery: $get_err" >&3
+        return 1
+    fi
 
     local env_list name
     if ! env_list=$(kubectl -n meshery set env deployment/meshery --list); then
@@ -53,7 +93,8 @@ _save_deployment_env() {
     done
 }
 
-# Re-apply the recorded settings and wait for the rollout. A no-op when none were recorded.
+# Re-apply the recorded settings and wait for the rollout. A no-op when none were recorded
+# (the file is missing or empty).
 _restore_deployment_env() {
     [ -s "$BATS_FILE_TMPDIR/deployment_env" ] || return 0
 
@@ -82,7 +123,8 @@ _redeploy_original() {
             "$MESHERYCTL_BIN" system dashboard --skip-browser
             return
         fi
-        sleep 10
+        # Wait before the next attempt only; nothing follows the last one.
+        [ "$attempt" -lt 3 ] && sleep 10
     done
     return 1
 }
@@ -91,9 +133,7 @@ _redeploy_original() {
 # switched channels, redeploy Meshery. Any failure fails the test, and the "switched" marker is
 # only removed once the redeploy succeeds, so the next teardown retries the recovery.
 teardown() {
-    local original
-    original=$(cat "$BATS_FILE_TMPDIR/original_channel" 2>/dev/null)
-    [ -n "$original" ] || return 0
+    local original="$ORIGINAL_CHANNEL-$ORIGINAL_VERSION"
 
     if ! "$MESHERYCTL_BIN" system channel set "$original"; then
         echo "# teardown: could not restore channel to $original" >&3
@@ -117,8 +157,6 @@ teardown() {
     assert_line "Channel: $ORIGINAL_CHANNEL"
     assert_line "Version: $ORIGINAL_VERSION"
 }
-
-
 
 # bats test_tags=system:channel
 @test "[cut=System][tg=System Channel] given the edge channel when running mesheryctl system channel set edge then the current context is set to edge" {
