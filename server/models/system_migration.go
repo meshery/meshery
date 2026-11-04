@@ -67,5 +67,8 @@ func SystemDatabaseModels() []interface{} {
 // than migrating an inline list, so no path can ever again drop all tables and
 // re-migrate only a subset.
 func AutoMigrateSystemTables(db *database.Handler) error {
-	return db.AutoMigrate(SystemDatabaseModels()...)
+	if err := db.AutoMigrate(SystemDatabaseModels()...); err != nil {
+		return err
+	}
+	return db.Exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_env_conn_unique ON environment_connection_mappings (environment_id, connection_id)").Error
 }

@@ -1,4 +1,5 @@
 import {
+  mesheryApi,
   useAddConnectionToEnvironmentMutation as useSchemasAddConnectionToEnvironmentMutation,
   useCreateEnvironmentMutation as useSchemasCreateEnvironmentMutation,
   useDeleteEnvironmentMutation as useSchemasDeleteEnvironmentMutation,
@@ -7,6 +8,20 @@ import {
   useRemoveConnectionFromEnvironmentMutation as useSchemasRemoveConnectionFromEnvironmentMutation,
   useUpdateEnvironmentMutation as useSchemasUpdateEnvironmentMutation,
 } from '@meshery/schemas/mesheryApi';
+import { appendInvalidatesTags } from './utils';
+
+mesheryApi.enhanceEndpoints({
+  endpoints: {
+    addConnectionToEnvironment: appendInvalidatesTags(
+      'addConnectionToEnvironment',
+      'Environment_environments',
+    ),
+    removeConnectionFromEnvironment: appendInvalidatesTags(
+      'removeConnectionFromEnvironment',
+      'Environment_environments',
+    ),
+  },
+});
 
 export const useGetEnvironmentsQuery = (queryArg, options) =>
   useSchemasGetEnvironmentsQuery(

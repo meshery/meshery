@@ -160,12 +160,25 @@ const Environments = () => {
     : [];
 
   useEffect(() => {
-    setConnectionsData((prevData) => [...prevData, ...connectionsDataRtk]);
-  }, [connections]);
+    if (!assignConnectionModal) return;
+    setConnectionsData((prev) =>
+      connectionsPage === 0
+        ? connectionsDataRtk
+        : [...prev, ...connectionsDataRtk.filter((item) => !prev.some((p) => p.id === item.id))],
+    );
+  }, [connections, connectionsPage, assignConnectionModal]);
 
   useEffect(() => {
-    setEnvironmentConnectionsData((prevData) => [...prevData, ...environmentConnectionsDataRtk]);
-  }, [environmentConnections]);
+    if (!assignConnectionModal) return;
+    setEnvironmentConnectionsData((prev) =>
+      connectionsOfEnvironmentPage === 0
+        ? environmentConnectionsDataRtk
+        : [
+            ...prev,
+            ...environmentConnectionsDataRtk.filter((item) => !prev.some((p) => p.id === item.id)),
+          ],
+    );
+  }, [environmentConnections, connectionsOfEnvironmentPage, assignConnectionModal]);
 
   useEffect(() => {
     if (isEnvironmentsError) {
@@ -403,10 +416,12 @@ const Environments = () => {
   const handleonAssignConnectionModalOpen = (e, environment) => {
     e.stopPropagation();
     setAssignConnectionModal(true);
-    if (connectionAssignEnv.id !== environment.id) {
-      setConnectionsData([]);
-      setEnvironmentConnectionsData([]);
-    }
+    setConnectionsData([]);
+    setEnvironmentConnectionsData([]);
+    setAssignedConnections([]);
+    setDisableTranferButton(true);
+    setConnectionsPage(0);
+    setConnectionsOfEnvironmentPage(0);
     setConnectionAssignEnv(environment);
     setSkip(false);
   };
@@ -414,6 +429,13 @@ const Environments = () => {
   const handleonAssignConnectionModalClose = () => {
     setAssignConnectionModal(false);
     setSkip(true);
+    setConnectionsData([]);
+    setEnvironmentConnectionsData([]);
+    setAssignedConnections([]);
+    setDisableTranferButton(true);
+    setConnectionsPage(0);
+    setConnectionsOfEnvironmentPage(0);
+    setConnectionAssignEnv({});
   };
 
   const handleAssignConnectionData = (updatedAssignedData) => {
