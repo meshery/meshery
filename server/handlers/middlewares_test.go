@@ -206,6 +206,7 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 		origin     string
 		referer    string
 		fetchSite  string
+		headers    http.Header
 		uiOrigins  string
 		wantStatus int
 	}{
@@ -280,9 +281,10 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 		{
 			name:       "spoofed X-Forwarded-Proto cannot change the target origin",
 			method:     http.MethodPost,
-			target:     "http://meshery.example.com:9081/api/system/database/reset?provider=Local",
-			origin:     "https://meshery.example.com:9081",
+			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
+			origin:     "https://localhost:9081",
 			fetchSite:  "same-origin",
+			headers:    http.Header{"X-Forwarded-Proto": []string{"https"}},
 			wantStatus: http.StatusForbidden,
 		},
 		{
@@ -393,8 +395,10 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 			if tc.fetchSite != "" {
 				req.Header.Set("Sec-Fetch-Site", tc.fetchSite)
 			}
-			if tc.name == "spoofed X-Forwarded-Proto cannot change the target origin" {
-				req.Header.Set("X-Forwarded-Proto", "https")
+			for name, values := range tc.headers {
+				for _, value := range values {
+					req.Header.Add(name, value)
+				}
 			}
 
 			nextCalled := false
