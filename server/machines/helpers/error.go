@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
 )
 
@@ -12,10 +11,6 @@ var (
 
 func ErrAutoRegister(err error, connType string) error {
 	return errors.New(ErrAutoRegisterCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
-}
-
-func IsConnectionUpdateErr(err error) bool {
-	return errors.GetCode(err) == models.ErrUpdateConnectionStatusCode
 }
 
 func ErrResyncResources(err error) error {

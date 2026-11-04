@@ -85,17 +85,18 @@ func TestGetMachineCoversEveryDefinitionKind(t *testing.T) {
 
 	tests := []struct {
 		kind string
-		// Kinds with a reachability probe run their own action on entry to
-		// REGISTERED; the rest keep the default machine's no-op action.
-		wantRegisterAction machines.Action
+		// Every non-Kubernetes kind persists on register through
+		// WithPersistence, wrapping the kind's own register action (nil when
+		// the kind has none).
+		wantInner machines.Action
 	}{
 		{kind: "kubernetes"},
-		{kind: "grafana", wantRegisterAction: &grafana.RegisterAction{}},
-		{kind: "prometheus", wantRegisterAction: &prometheus.RegisterAction{}},
-		{kind: "artifacthub", wantRegisterAction: &machines.DefaultAction{}},
-		{kind: "github", wantRegisterAction: &machines.DefaultAction{}},
+		{kind: "grafana", wantInner: &grafana.RegisterAction{}},
+		{kind: "prometheus", wantInner: &prometheus.RegisterAction{}},
+		{kind: "artifacthub"},
+		{kind: "github"},
 		// Any other definition-backed kind must resolve too, not error.
-		{kind: "some-future-kind", wantRegisterAction: &machines.DefaultAction{}},
+		{kind: "some-future-kind"},
 	}
 
 	for _, tt := range tests {
@@ -113,14 +114,15 @@ func TestGetMachineCoversEveryDefinitionKind(t *testing.T) {
 				return
 			}
 
-			got := reflect.TypeOf(mch.States[machines.REGISTERED].Action)
-			if want := reflect.TypeOf(tt.wantRegisterAction); got != want {
-				t.Fatalf("getMachine(%q) REGISTERED action = %v, want %v", tt.kind, got, want)
+			register, ok := mch.States[machines.REGISTERED].Action.(*machines.PersistingAction)
+			if !ok {
+				t.Fatalf("getMachine(%q) REGISTERED action = %T, want *machines.PersistingAction", tt.kind, mch.States[machines.REGISTERED].Action)
 			}
-			// Every non-Kubernetes kind persists the connection and its
-			// credential on connect.
-			if mch.States[machines.CONNECTED].Action == nil {
-				t.Fatalf("getMachine(%q) has no CONNECTED action; the connection would never be persisted", tt.kind)
+			if got, want := reflect.TypeOf(register.Inner()), reflect.TypeOf(tt.wantInner); got != want {
+				t.Fatalf("getMachine(%q) REGISTERED inner action = %v, want %v", tt.kind, got, want)
+			}
+			if _, ok := mch.States[machines.CONNECTED].Action.(*machines.DefaultConnectAction); !ok {
+				t.Fatalf("getMachine(%q) CONNECTED action = %T, want *machines.DefaultConnectAction", tt.kind, mch.States[machines.CONNECTED].Action)
 			}
 		})
 	}

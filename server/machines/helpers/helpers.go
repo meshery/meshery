@@ -65,10 +65,10 @@ func getMachine(initialState machines.StateType, mtype, id string, userID core.U
 		return mch, err
 	}
 
-	if action := registerActionForKind(mtype); action != nil {
-		register := mch.States[machines.REGISTERED]
-		mch.States[machines.REGISTERED] = *register.RegisterAction(action)
-	}
+	// Every kind persists its connection on register, after its own register
+	// action (if any) succeeds.
+	register := mch.States[machines.REGISTERED]
+	mch.States[machines.REGISTERED] = *register.RegisterAction(machines.WithPersistence(registerActionForKind(mtype)))
 
 	connect := mch.States[machines.CONNECTED]
 	mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
@@ -76,8 +76,8 @@ func getMachine(initialState machines.StateType, mtype, id string, userID core.U
 	return mch, nil
 }
 
-// registerActionForKind returns the kind-specific action run on entry to the
-// REGISTERED state, or nil when the kind has no verification step.
+// registerActionForKind returns the kind-specific action run when the machine
+// enters REGISTERED, or nil when the kind has none.
 func registerActionForKind(mtype string) machines.Action {
 	switch mtype {
 	case "grafana":

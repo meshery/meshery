@@ -149,8 +149,13 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 // CancelConnectionRegister discards the in-progress registration state machine
 // tracked by the {registrationId} path parameter
 // (DELETE /api/integrations/connections/register/{registrationId}). Idempotent:
-// unknown ids are ignored. Nothing is persisted for the abandoned process.
-func (h *Handler) CancelConnectionRegister(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
+// unknown ids are ignored.
+//
+// Register persists the connection as REGISTERED before connect runs, so a
+// process abandoned between the two leaves that row behind; it is deleted
+// here. A row in any other status belongs to a completed registration (or to
+// an unrelated connection) and is kept.
+func (h *Handler) CancelConnectionRegister(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	registrationID, err := uuid.FromString(mux.Vars(req)["registrationId"])
 	if err != nil {
 		invalidIDErr := models.ErrInvalidUUID(err)
@@ -160,6 +165,25 @@ func (h *Handler) CancelConnectionRegister(w http.ResponseWriter, req *http.Requ
 	}
 
 	h.ConnectionToStateMachineInstanceTracker.Remove(registrationID)
+
+	token, err := provider.GetProviderToken(req)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
+		return
+	}
+
+	// A lookup failure means no row was persisted for this process.
+	connection, _, err := provider.GetConnectionByID(token, registrationID)
+	if err == nil && connection != nil && connection.Status == connections.REGISTERED {
+		if _, err := provider.DeleteConnection(req, registrationID); err != nil {
+			_err := ErrFailToDelete(err, "connection")
+			h.log.Error(_err)
+			writeMeshkitError(w, _err, http.StatusInternalServerError)
+			return
+		}
+	}
+
 	w.WriteHeader(http.StatusNoContent)
 }
 

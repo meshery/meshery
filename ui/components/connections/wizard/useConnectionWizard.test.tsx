@@ -23,6 +23,7 @@ vi.mock('@/rtk-query/connection', () => {
   const noopMutation = () => [vi.fn(() => ({ unwrap: () => Promise.resolve({}) }))];
   return {
     useAddKubernetesConfigMutation: noopMutation,
+    useCancelConnectionRegisterMutation: noopMutation,
     useDiscoverKubernetesContextsMutation: noopMutation,
     useGetCredentialsQuery: () => ({ data: { credentials: [] } }),
     usePerformConnectionActionMutation: noopMutation,

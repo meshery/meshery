@@ -2,6 +2,7 @@ import { createRef, useCallback, useEffect, useMemo, useRef, useState } from 're
 import { useNotification } from '@/utils/hooks/useNotification';
 import {
   useAddKubernetesConfigMutation,
+  useCancelConnectionRegisterMutation,
   useDiscoverKubernetesContextsMutation,
   useGetCredentialsQuery,
   usePerformConnectionActionMutation,
@@ -64,6 +65,7 @@ const makeInitialData = (params: UseConnectionWizardParams): WizardData => ({
   skipCredentialVerification: false,
   kubeconfigFile: null,
   registrationId: null,
+  registered: null,
   registrationResult: params.initialRegistrationResult ?? null,
   registrationError: null,
   postConfig: {},
@@ -76,6 +78,7 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
   // schemas-generated state-machine endpoint; the event's `status` field is
   // what advances the registration.
   const [processConnectionRegistration] = useProcessConnectionRegistrationMutation();
+  const [cancelConnectionRegister] = useCancelConnectionRegisterMutation();
   const [addKubernetesConfig] = useAddKubernetesConfigMutation();
   const [discoverKubernetesContexts] = useDiscoverKubernetesContextsMutation();
   const [updateConnectionById] = useUpdateConnectionByIdMutation();
@@ -214,6 +217,9 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
         processConnectionRegistration({ body: body as RegistrationEventBody }).unwrap(),
       connectConnection: (body) =>
         processConnectionRegistration({ body: body as RegistrationEventBody }).unwrap(),
+      cancelRegistration: async (registrationId) => {
+        await cancelConnectionRegister({ registrationId }).unwrap();
+      },
       discoverKubeContexts: async (file) => {
         const formData = new FormData();
         formData.append('k8sfile', file);
