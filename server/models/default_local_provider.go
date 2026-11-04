@@ -1264,7 +1264,7 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfi
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
-func (l *DefaultLocalProvider) GetPerformanceProfiles(_, page, pageSize, _, _ string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetPerformanceProfiles(_, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -1282,7 +1282,7 @@ func (l *DefaultLocalProvider) GetPerformanceProfiles(_, page, pageSize, _, _ st
 		return nil, ErrPageSize(err)
 	}
 
-	return l.PerformanceProfilesPersister.GetPerformanceProfiles("", "", "", pg, pgs)
+	return l.PerformanceProfilesPersister.GetPerformanceProfiles("", search, order, pg, pgs)
 }
 
 // GetPerformanceProfile gets performance profile for the given performance profileID
