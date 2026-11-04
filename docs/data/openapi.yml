@@ -83805,8 +83805,10 @@ paths:
                       `summary` or `validationResult`. Meshery Server applies a 16 KB guard that drops oversized
                       metadata down to the identity fields (`designId`, `designName`, `designVersion`, `designLink`,
                       `viewLink`). On an error event, `metadata.error` holds only the MeshKit error, never the design or
-                      the request that failed. Older Meshery Cloud rows may carry the legacy `design_name` and
-                      `view_link` keys; readers should fall back to them when `designName` and `viewLink` are absent.
+                      the request that failed; a design validation event whose operation did not complete (`status`
+                      `error`) carries it as a DesignEventOperationError. Older Meshery Cloud rows may carry the legacy
+                      `design_name` and `view_link` keys; readers should fall back to them when `designName` and
+                      `viewLink` are absent.
                     additionalProperties: true
                     nullable: true
                     x-go-type: core.Map
@@ -84005,8 +84007,10 @@ paths:
                       `summary` or `validationResult`. Meshery Server applies a 16 KB guard that drops oversized
                       metadata down to the identity fields (`designId`, `designName`, `designVersion`, `designLink`,
                       `viewLink`). On an error event, `metadata.error` holds only the MeshKit error, never the design or
-                      the request that failed. Older Meshery Cloud rows may carry the legacy `design_name` and
-                      `view_link` keys; readers should fall back to them when `designName` and `viewLink` are absent.
+                      the request that failed; a design validation event whose operation did not complete (`status`
+                      `error`) carries it as a DesignEventOperationError. Older Meshery Cloud rows may carry the legacy
+                      `design_name` and `view_link` keys; readers should fall back to them when `designName` and
+                      `viewLink` are absent.
                     additionalProperties: true
                     nullable: true
                     x-go-type: core.Map
