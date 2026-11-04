@@ -155,3 +155,11 @@ func TestShareDesign_ClosesResponseBody(t *testing.T) {
 		_, _ = provider.ShareDesign(newShareRequest())
 	})
 }
+
+func TestShareFilter_ClosesResponseBody(t *testing.T) {
+	provider := newResponseBodyTestProvider(t, ShareFilters, "/api/content/filter/share")
+
+	expectResponseBodiesClosed(t, func() {
+		_, _ = provider.ShareFilter(newShareRequest())
+	})
+}
