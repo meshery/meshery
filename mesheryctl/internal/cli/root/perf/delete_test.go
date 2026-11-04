@@ -1,10 +1,12 @@
 package perf
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -65,6 +67,15 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectedError: ErrNoProfileFound(),
 		},
 		{
+			Name: "given only a substring match when delete with yes then throw no profile found error",
+			Args: []string{"delete", "istio", "--yes"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: "profile.delete.single.response.golden", ResponseCode: 200},
+			},
+			ExpectError:   true,
+			ExpectedError: ErrNoProfileFound(),
+		},
+		{
 			Name: "given server error when delete then throw error",
 			Args: []string{"delete", "istio-test", "--yes"},
 			URLs: []utils.MockURL{
@@ -78,4 +89,28 @@ func TestDeleteCmd(t *testing.T) {
 
 	utils.RunMesheryctlMultiURLTests(t, update, PerfCmd, listTests, currDir, "perf", resetVariables)
 	utils.RunMesheryctlMultiURLTests(t, update, PerfCmd, errorTests, currDir, "perf", resetVariables)
+}
+
+func TestFetchAllPerformanceProfilesPagesThroughResults(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	utils.TokenFlag = utils.GetToken(t)
+
+	defer func(old int) { pageSize = old }(pageSize)
+	pageSize = 1
+
+	profileURL := testContext.BaseURL + "/api/performance/profiles"
+	ids := []string{"a947dff3-1415-4ca6-8922-e35b3232bd78", "f331c784-aba0-4944-8d7d-ae264221bcbf"}
+	for page, id := range ids {
+		body := fmt.Sprintf(`{"page":%d,"pageSize":1,"totalCount":2,"profiles":[{"id":"%s","name":"istio-%d"}]}`, page, id, page)
+		httpmock.RegisterResponderWithQuery("GET", profileURL, fmt.Sprintf("pagesize=1&page=%d&search=istio", page),
+			httpmock.NewStringResponder(200, body))
+	}
+
+	got, err := fetchAllPerformanceProfiles(testContext.BaseURL, "istio")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(got) != 2 || got[0].Name != "istio-0" || got[1].Name != "istio-1" {
+		t.Fatalf("expected both pages to be returned, got %+v", got)
+	}
 }

@@ -15,10 +15,12 @@
 package perf
 
 import (
+	"encoding/json"
 	"net/url"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -49,7 +51,7 @@ mesheryctl perf delete test-3 --yes
 		}
 		baseURL := mctlCfg.GetBaseMesheryURL()
 
-		profiles, _, err := fetchPerformanceProfiles(baseURL, url.QueryEscape(args[0]), pageSize, 0)
+		profiles, err := fetchAllPerformanceProfiles(baseURL, url.QueryEscape(args[0]))
 		if err != nil {
 			return err
 		}
@@ -61,7 +63,8 @@ mesheryctl perf delete test-3 --yes
 				matches = append(matches, p)
 			}
 		}
-		if len(matches) == 0 {
+		// --yes only authorizes the profile named, never a similarly named one.
+		if len(matches) == 0 && !utils.SilentFlag {
 			matches = profiles
 		}
 		if len(matches) == 0 {
@@ -78,6 +81,7 @@ mesheryctl perf delete test-3 --yes
 		profile := matches[index]
 
 		if !utils.SilentFlag && !utils.AskForConfirmation("Performance profile '"+profile.Name+"' ("+profile.ID.String()+") will be deleted. Are you sure you want to continue") {
+			utils.Log.Info("Delete aborted.")
 			return nil
 		}
 
@@ -94,4 +98,24 @@ mesheryctl perf delete test-3 --yes
 		utils.Log.Infof("Performance profile '%s' (%s) deleted", profile.Name, profile.ID.String())
 		return nil
 	},
+}
+
+// fetchAllPerformanceProfiles returns every profile matching searchString, across all pages.
+func fetchAllPerformanceProfiles(baseURL, searchString string) ([]perfprofile.PerformanceProfile, error) {
+	var all []perfprofile.PerformanceProfile
+	for page := 0; ; page++ {
+		profiles, body, err := fetchPerformanceProfiles(baseURL, searchString, pageSize, page)
+		if err != nil {
+			return nil, err
+		}
+		all = append(all, profiles...)
+
+		var res perfprofile.PerformanceProfilePage
+		if err := json.Unmarshal(body, &res); err != nil {
+			return nil, ErrFailUnmarshal(err)
+		}
+		if len(profiles) == 0 || len(all) >= res.TotalCount {
+			return all, nil
+		}
+	}
 }
