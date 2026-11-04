@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -73,10 +74,10 @@ func resolveProviderName(req *http.Request, cookieName, enforcedProvider string)
 	return models.NormalizeProviderName(name), usedLegacyAlias
 }
 
-// localProviderRequestAllowed rejects browser requests that clearly originate
-// outside Meshery before they can reach a Local provider handler. The Local
-// provider has no authenticated session, so it cannot rely on the provider's
-// normal session checks to prevent CSRF.
+// localProviderRequestAllowed rejects requests without browser-origin proof
+// or from an origin outside loopback and configured UI origins before they
+// can reach a Local provider handler. The Local provider has no authenticated
+// session, so it cannot rely on normal provider session checks to prevent CSRF.
 func localProviderRequestAllowed(req *http.Request, allowedUIOrigins string) bool {
 	originValues := req.Header.Values("Origin")
 	if len(originValues) > 1 {
@@ -118,10 +119,6 @@ func localProviderRequestAllowed(req *http.Request, allowedUIOrigins string) boo
 	targetScheme := "http"
 	if req.TLS != nil {
 		targetScheme = "https"
-	} else if forwardedProto := strings.TrimSpace(strings.Split(req.Header.Get("X-Forwarded-Proto"), ",")[0]); forwardedProto == "http" || forwardedProto == "https" {
-		// TLS commonly terminates at the reverse proxy in containerized
-		// deployments. X-Forwarded-Proto preserves the browser-facing scheme.
-		targetScheme = forwardedProto
 	} else if req.URL != nil && (req.URL.Scheme == "http" || req.URL.Scheme == "https") {
 		targetScheme = req.URL.Scheme
 	}
@@ -136,12 +133,21 @@ func localProviderRequestAllowed(req *http.Request, allowedUIOrigins string) boo
 	if strings.EqualFold(req.Header.Get("Sec-Fetch-Site"), "cross-site") {
 		return false
 	}
-	return sameOrigin(sourceURL, targetURL)
+	// Host is supplied by the request and can be attacker-controlled during a
+	// DNS-rebinding attack. Implicit same-origin trust is safe for loopback
+	// Meshery installs; named deployments must configure their browser origin.
+	return isLoopbackHost(targetURL.Hostname()) && sameOrigin(sourceURL, targetURL)
 }
 
+// localRequestRequiresOrigin marks safe-verb endpoints that still perform an
+// action, along with every unsafe HTTP method, as requiring origin metadata.
 func localRequestRequiresOrigin(req *http.Request) bool {
-	if req.Method == http.MethodGet && req.URL != nil && req.URL.Path == "/user/logout" {
-		return true
+	if req.Method == http.MethodGet && req.URL != nil {
+		path := req.URL.Path
+		if path == "/user/logout" || path == "/api/provider" || path == "/api/system/sync" || path == "/api/perf/profile" ||
+			(strings.HasPrefix(path, "/api/user/performance/profiles/") && strings.HasSuffix(path, "/run")) {
+			return true
+		}
 	}
 	switch req.Method {
 	case http.MethodGet, http.MethodHead, http.MethodOptions, http.MethodTrace:
@@ -151,16 +157,19 @@ func localRequestRequiresOrigin(req *http.Request) bool {
 	}
 }
 
+// isHTTPOrigin validates an HTTP(S) URL for use as an origin candidate.
 func isHTTPOrigin(origin *url.URL) bool {
 	return origin != nil && (strings.EqualFold(origin.Scheme, "http") || strings.EqualFold(origin.Scheme, "https")) && origin.User == nil && origin.Opaque == "" && origin.Hostname() != "" && !strings.Contains(origin.Hostname(), "*")
 }
 
+// sameOrigin compares scheme, normalized hostname, and effective port.
 func sameOrigin(first, second *url.URL) bool {
 	firstHost := strings.TrimSuffix(strings.ToLower(first.Hostname()), ".")
 	secondHost := strings.TrimSuffix(strings.ToLower(second.Hostname()), ".")
 	return strings.EqualFold(first.Scheme, second.Scheme) && firstHost == secondHost && effectiveOriginPort(first) == effectiveOriginPort(second)
 }
 
+// effectiveOriginPort returns an explicit port or the scheme's standard port.
 func effectiveOriginPort(origin *url.URL) string {
 	if port := origin.Port(); port != "" {
 		return port
@@ -169,6 +178,16 @@ func effectiveOriginPort(origin *url.URL) string {
 		return "443"
 	}
 	return "80"
+}
+
+// isLoopbackHost limits implicit same-origin trust to local-only hostnames and
+// IP addresses, avoiding trust in an attacker-controlled Host header.
+func isLoopbackHost(host string) bool {
+	if strings.EqualFold(strings.TrimSuffix(host, "."), "localhost") {
+		return true
+	}
+	ip := net.ParseIP(host)
+	return ip != nil && ip.IsLoopback()
 }
 
 // ProviderMiddleware is a middleware to validate if a provider is set

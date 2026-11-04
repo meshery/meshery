@@ -42,6 +42,7 @@ func TestProviderHandler_LocalRedirectsThroughLogin(t *testing.T) {
 	h := newTestHandler(t, providers, "")
 
 	req := httptest.NewRequest(http.MethodGet, "/api/provider?provider=Local", nil)
+	req.Header.Set("Origin", "http://example.com")
 	rec := httptest.NewRecorder()
 
 	h.ProviderHandler(rec, req)
@@ -86,6 +87,7 @@ func TestProviderHandler_NoneAliasResolvesToLocal(t *testing.T) {
 	h := newTestHandler(t, providers, "")
 
 	req := httptest.NewRequest(http.MethodGet, "/api/provider?provider=None", nil)
+	req.Header.Set("Origin", "http://example.com")
 	rec := httptest.NewRecorder()
 
 	h.ProviderHandler(rec, req)
@@ -106,6 +108,25 @@ func TestProviderHandler_NoneAliasResolvesToLocal(t *testing.T) {
 		}
 	}
 	t.Error("expected meshery-provider cookie to be set when sending legacy None alias")
+}
+
+func TestProviderHandler_RejectsCrossOriginLocalSelection(t *testing.T) {
+	local := &models.DefaultLocalProvider{}
+	local.Initialize()
+	h := newTestHandler(t, map[string]models.Provider{local.Name(): local}, "")
+
+	req := httptest.NewRequest(http.MethodGet, "/api/provider?provider=Local", nil)
+	req.Header.Set("Origin", "http://attacker.example")
+	rec := httptest.NewRecorder()
+
+	h.ProviderHandler(rec, req)
+
+	if rec.Code != http.StatusForbidden {
+		t.Fatalf("expected cross-origin Local selection to be rejected with 403, got %d", rec.Code)
+	}
+	if cookies := rec.Result().Cookies(); len(cookies) != 0 {
+		t.Fatalf("cross-origin Local selection set cookies: %#v", cookies)
+	}
 }
 
 func TestProviderUIHandler_LocalEnvVarRedirectsThroughLogin(t *testing.T) {

@@ -206,7 +206,6 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 		origin     string
 		referer    string
 		fetchSite  string
-		forwarded  string
 		uiOrigins  string
 		wantStatus int
 	}{
@@ -256,6 +255,14 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 			wantStatus: http.StatusForbidden,
 		},
 		{
+			name:       "unconfigured named host is not trusted as the server origin",
+			method:     http.MethodPost,
+			target:     "http://attacker.example:9081/api/system/database/reset?provider=Local",
+			origin:     "http://attacker.example:9081",
+			fetchSite:  "same-origin",
+			wantStatus: http.StatusForbidden,
+		},
+		{
 			name:       "non-loopback origin must match the full host and port",
 			method:     http.MethodPost,
 			target:     "http://meshery.example.com:9081/api/system/database/reset?provider=Local",
@@ -263,12 +270,20 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 			wantStatus: http.StatusForbidden,
 		},
 		{
-			name:       "same-origin request behind a TLS reverse proxy is allowed",
+			name:       "TLS reverse proxy origin is allowed when explicitly configured",
+			method:     http.MethodPost,
+			target:     "http://meshery.example.com:9081/api/system/database/reset?provider=Local",
+			origin:     "https://ui.meshery.example.com",
+			uiOrigins:  "https://ui.meshery.example.com",
+			wantStatus: http.StatusNoContent,
+		},
+		{
+			name:       "spoofed X-Forwarded-Proto cannot change the target origin",
 			method:     http.MethodPost,
 			target:     "http://meshery.example.com:9081/api/system/database/reset?provider=Local",
 			origin:     "https://meshery.example.com:9081",
-			forwarded:  "https",
-			wantStatus: http.StatusNoContent,
+			fetchSite:  "same-origin",
+			wantStatus: http.StatusForbidden,
 		},
 		{
 			name:       "cross-site GET to logout is rejected",
@@ -325,6 +340,26 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 			wantStatus: http.StatusNoContent,
 		},
 		{
+			name:       "state-changing session sync GET requires origin metadata",
+			method:     http.MethodGet,
+			target:     "http://localhost:9081/api/system/sync?provider=Local",
+			wantStatus: http.StatusForbidden,
+		},
+		{
+			name:       "state-changing performance run GET rejects a foreign origin",
+			method:     http.MethodGet,
+			target:     "http://localhost:9081/api/user/performance/profiles/123/run?provider=Local",
+			origin:     "http://attacker.example",
+			wantStatus: http.StatusForbidden,
+		},
+		{
+			name:       "profile execution GET accepts same-origin UI request",
+			method:     http.MethodGet,
+			target:     "http://localhost:9081/api/perf/profile?provider=Local",
+			origin:     "http://localhost:9081",
+			wantStatus: http.StatusNoContent,
+		},
+		{
 			name:       "request without Origin or Referer is rejected",
 			method:     http.MethodGet,
 			target:     "http://localhost:9081/user/logout?provider=Local",
@@ -358,8 +393,8 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 			if tc.fetchSite != "" {
 				req.Header.Set("Sec-Fetch-Site", tc.fetchSite)
 			}
-			if tc.forwarded != "" {
-				req.Header.Set("X-Forwarded-Proto", tc.forwarded)
+			if tc.name == "spoofed X-Forwarded-Proto cannot change the target origin" {
+				req.Header.Set("X-Forwarded-Proto", "https")
 			}
 
 			nextCalled := false
