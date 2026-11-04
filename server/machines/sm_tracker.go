@@ -24,6 +24,20 @@ func (smt *ConnectionToStateMachineInstanceTracker) Remove(id core.Uuid) {
 	delete(smt.ConnectToInstanceMap, id)
 }
 
+// RemoveIfMatch removes the entry for id only while it still holds inst, and
+// reports whether it did. Cleanup that finishes after its machine was replaced
+// - a connection deleted and re-imported under the same deterministic id -
+// must not drop the newer machine, which a bare Remove(id) would.
+func (smt *ConnectionToStateMachineInstanceTracker) RemoveIfMatch(id core.Uuid, inst *StateMachine) bool {
+	smt.mx.Lock()
+	defer smt.mx.Unlock()
+	if cur, ok := smt.ConnectToInstanceMap[id]; ok && cur == inst {
+		delete(smt.ConnectToInstanceMap, id)
+		return true
+	}
+	return false
+}
+
 func (smt *ConnectionToStateMachineInstanceTracker) Add(id core.Uuid, inst *StateMachine) {
 	smt.mx.Lock()
 	defer smt.mx.Unlock()
