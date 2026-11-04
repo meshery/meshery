@@ -19,6 +19,10 @@ import (
 // to workload controllers (Deployment, Pod, etc.) via hierarchical-parent-alias relationships.
 // Flagging Container as an annotation causes Kanvas to incorrectly hide containers when
 // the annotations layer is toggled off (issue #22780).
+//
+// Note: this guards the component-level metadata.isAnnotation. The same file also
+// carries model.metadata.isAnnotation (the embedded parent-model metadata), which is a
+// separate path and is already false.
 func TestMesheryCoreContainerComponent_NotAnnotation(t *testing.T) {
 	containerPath := filepath.Join(mesheryCoreModelDir(t), "components", "Container.json")
 
