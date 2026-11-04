@@ -319,3 +319,68 @@ func TestSaveMesheryPattern_DatabaseErrorIsMeshKitError(t *testing.T) {
 		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBReadCode, err)
 	}
 }
+
+// A concurrent first save can insert the same ID between the existence check
+// and the insert. The losing save must then update the winner's row like any
+// existing row: no zero-valued overwrite and no visibility default.
+func TestSaveMesheryPattern_ConcurrentFirstSaveKeepsWinnerFields(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	id := uuid.Must(uuid.NewV4())
+	source := "apiVersion: v1\nkind: Namespace\n"
+
+	fired := false
+	if err := db.Callback().Create().Before("gorm:create").Register("test:concurrent_insert", func(tx *gorm.DB) {
+		if fired {
+			return
+		}
+		fired = true
+		tx.Session(&gorm.Session{NewDB: true}).Exec(
+			"INSERT INTO meshery_patterns (id, name, pattern_file, visibility, type, source_content, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+			id, "winner", persisterTestDesign, Public, string(K8sManifest), []byte(source), persisterTestCreatedAt)
+	}); err != nil {
+		t.Fatalf("register callback: %v", err)
+	}
+
+	if _, err := mpp.SaveMesheryPattern(postStylePattern(id)); err != nil {
+		t.Fatalf("save: %v", err)
+	}
+	if !fired {
+		t.Fatalf("insert path was not taken")
+	}
+
+	got := loadPattern(t, db, id)
+	if got.Name != "persister-test" {
+		t.Errorf("name = %q, want the losing save's name applied", got.Name)
+	}
+	if got.Visibility != Public {
+		t.Errorf("visibility = %q, want %q", got.Visibility, Public)
+	}
+	if string(got.SourceContent) != source || got.Type.String != string(K8sManifest) {
+		t.Errorf("type/source = %q/%q, want the winner's values", got.Type.String, got.SourceContent)
+	}
+	if got.CreatedAt == nil || !got.CreatedAt.Equal(persisterTestCreatedAt) {
+		t.Errorf("created_at = %v, want %v", got.CreatedAt, persisterTestCreatedAt)
+	}
+	if n := countPatterns(t, db); n != 1 {
+		t.Errorf("rows = %d, want 1", n)
+	}
+}
+
+func TestSaveMesheryPattern_DeletedDuringSaveIsError(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	id, _ := seedImportedPattern(t, db)
+
+	if err := db.Callback().Update().Before("gorm:update").Register("test:concurrent_delete", func(tx *gorm.DB) {
+		tx.Session(&gorm.Session{NewDB: true}).Exec("DELETE FROM meshery_patterns WHERE id = ?", id)
+	}); err != nil {
+		t.Fatalf("register callback: %v", err)
+	}
+
+	_, err := mpp.SaveMesheryPattern(postStylePattern(id))
+	if code := mkerrors.GetCode(err); code != ErrDBPutCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBPutCode, err)
+	}
+	if n := countPatterns(t, db); n != 0 {
+		t.Errorf("rows = %d, want the deleted design to stay deleted", n)
+	}
+}

@@ -255,34 +255,45 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 	}
 
 	if exists {
-		// A save carries only some columns - POST /api/pattern builds the
-		// record from DesignPostPayload, which has no source content, type or
-		// creation time. Updates skips zero-valued fields, so columns the save
-		// did not carry keep their stored values. created_at and the usage
-		// counters are never written by a save.
-		res := mpp.DB.Model(pattern).
-			Omit("created_at", "view_count", "share_count", "download_count", "clone_count", "deployment_count").
-			Updates(pattern)
-		// updated_at always changes, so no affected row means the design was
-		// deleted after the existence check.
-		if res.Error == nil && res.RowsAffected == 0 {
-			res.Error = fmt.Errorf("design %s was deleted while saving", pattern.ID)
-		}
-		if res.Error != nil {
-			return marshalMesheryPatterns([]MesheryPattern{*pattern}), ErrDBPut(res.Error)
-		}
+		err = mpp.updateSavedColumns(pattern)
 	} else {
+		suppliedVisibility := pattern.Visibility
 		if pattern.Visibility == "" {
 			pattern.Visibility = Private
 		}
-		// Two first saves of the same client-supplied ID can race; the loser
-		// updates the winner's row, as gorm's Save did before.
-		if err := mpp.DB.Clauses(clause.OnConflict{UpdateAll: true}).Create(pattern).Error; err != nil {
-			return marshalMesheryPatterns([]MesheryPattern{*pattern}), ErrDBCreate(err)
+		res := mpp.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(pattern)
+		if res.Error != nil {
+			return marshalMesheryPatterns([]MesheryPattern{*pattern}), ErrDBCreate(res.Error)
+		}
+		if res.RowsAffected == 0 {
+			// A concurrent save inserted this ID first: update it like any
+			// existing row, without the insert-only visibility default.
+			pattern.Visibility = suppliedVisibility
+			err = mpp.updateSavedColumns(pattern)
 		}
 	}
 
-	return marshalMesheryPatterns([]MesheryPattern{*pattern}), nil
+	return marshalMesheryPatterns([]MesheryPattern{*pattern}), err
+}
+
+// updateSavedColumns updates an existing design with the columns the save
+// carries. A save carries only some of them - POST /api/pattern builds the
+// record from DesignPostPayload, which has no source content, type or creation
+// time - so Updates skips zero-valued fields and those columns keep their
+// stored values. created_at and the usage counters are never written by a save.
+func (mpp *MesheryPatternPersister) updateSavedColumns(pattern *MesheryPattern) error {
+	res := mpp.DB.Model(pattern).
+		Omit("created_at", "view_count", "share_count", "download_count", "clone_count", "deployment_count").
+		Updates(pattern)
+	// updated_at always changes, so no affected row means the design was
+	// deleted after the existence check.
+	if res.Error == nil && res.RowsAffected == 0 {
+		res.Error = fmt.Errorf("design %s was deleted while saving", pattern.ID)
+	}
+	if res.Error != nil {
+		return ErrDBPut(res.Error)
+	}
+	return nil
 }
 
 // SaveMesheryPatterns batch inserts the given patterns
