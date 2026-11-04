@@ -203,7 +203,7 @@ describe('HeaderMenu', () => {
     fireEvent.click(screen.getByTestId('menu-button'));
     fireEvent.click(screen.getByTestId('nav-item-logout'));
     const form = document.querySelector('form[action="/user/logout"]');
-    expect(form?.getAttribute('method')).toBe('post');
+    expect(form?.getAttribute('method')).toBe('POST');
     expect(submit).toHaveBeenCalledOnce();
     form?.remove();
     submit.mockRestore();

@@ -102,7 +102,7 @@ describe('sessionTimer', () => {
     logoutBtn.click();
 
     const form = document.querySelector('form[action="/user/logout"]');
-    expect(form?.getAttribute('method')).toBe('post');
+    expect(form?.getAttribute('method')).toBe('POST');
     expect(submit).toHaveBeenCalledOnce();
     form?.remove();
   });

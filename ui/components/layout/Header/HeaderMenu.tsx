@@ -10,7 +10,7 @@ import { IconButtonMenu } from './Header.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateExtensionType, updateUser } from '@/store/slices/mesheryUi';
 import { useRegistryModal } from '@/utils/hooks/useRegistryModal';
-import { submitLogout } from '@/lib/logout';
+import { submitLogout } from 'lib/logout';
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
