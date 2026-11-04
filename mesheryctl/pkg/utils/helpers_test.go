@@ -738,3 +738,28 @@ func TestSubcommandNames(t *testing.T) {
 		})
 	}
 }
+
+// TestTrimFileExtension checks that only the final extension is removed.
+// Regression test: strings.Trim(name, ext) strips a character set from both
+// ends, turning "my-app.yaml" into "-app". Use strings.TrimSuffix instead.
+func TestTrimFileExtension(t *testing.T) {
+	tests := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{"leading chars match extension", "my-app.yaml", "my-app"},
+		{"mostly extension letters", "mail.yaml", "mail"},
+		{"json extension", "sample.json", "sample"},
+		{"multiple dots", "app.v2.yaml", "app.v2"},
+		{"no extension", "Test Design", "Test Design"},
+		{"empty name", "", ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := TrimFileExtension(tt.in); got != tt.want {
+				t.Errorf("TrimFileExtension(%q) = %q, want %q", tt.in, got, tt.want)
+			}
+		})
+	}
+}
