@@ -3,6 +3,7 @@ package models
 import (
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -92,6 +93,13 @@ func newResponseBodyTestProvider(t *testing.T, feature Feature, endpoint string)
 	return provider
 }
 
+// newShareRequest returns an inbound share request that carries a token cookie.
+func newShareRequest() *http.Request {
+	req := httptest.NewRequest(http.MethodPost, "/api/share", strings.NewReader(`{}`))
+	req.AddCookie(&http.Cookie{Name: TokenCookieName, Value: "test-token"})
+	return req
+}
+
 func TestExecutePrefSync_ClosesResponseBody(t *testing.T) {
 	provider := newResponseBodyTestProvider(t, SyncPrefs, "/user/preferences")
 
@@ -137,5 +145,13 @@ func TestUpdateConnectionStatusByID_ClosesResponseBody(t *testing.T) {
 
 	expectResponseBodiesClosed(t, func() {
 		_, _, _ = provider.UpdateConnectionStatusByID("test-token", core.Uuid{}, connections.CONNECTED)
+	})
+}
+
+func TestShareDesign_ClosesResponseBody(t *testing.T) {
+	provider := newResponseBodyTestProvider(t, ShareDesigns, "/api/content/design/share")
+
+	expectResponseBodiesClosed(t, func() {
+		_, _ = provider.ShareDesign(newShareRequest())
 	})
 }

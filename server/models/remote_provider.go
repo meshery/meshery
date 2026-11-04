@@ -3767,6 +3767,10 @@ func (l *RemoteProvider) ShareDesign(req *http.Request) (int, error) {
 		}
 		return http.StatusInternalServerError, ErrShareDesign(err)
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return resp.StatusCode, ErrShareDesign(fmt.Errorf("unable to share design"))
