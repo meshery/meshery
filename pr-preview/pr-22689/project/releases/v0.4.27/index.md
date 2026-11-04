@@ -1,0 +1,17 @@
+# v0.4.27
+
+LLMS index: [llms.txt](/pr-preview/pr-22689/llms.txt)
+
+---
+
+## What's New
+
+## 🔤 General
+- Bump ini from 1.3.5 to 1.3.7 in /provider-ui @dependabot (#2077)
+- Made first row selectable in the Results section @dhruv0000 (#2074)
+- feat: add channel switch in mesheryctl @kushthedude (#1990)
+
+## 🧰 Maintenance
+
+- [Security] Bump ini from 1.3.5 to 1.3.7 in /provider-ui @dependabot-preview (#2075)
+- [Security] Bump ini from 1.3.5 to 1.3.7 in /ui @dependabot-preview (#2076)
