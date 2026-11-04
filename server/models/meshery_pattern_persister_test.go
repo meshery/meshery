@@ -8,6 +8,7 @@ import (
 	"github.com/gofrs/uuid"
 	isql "github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/database"
+	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -301,5 +302,20 @@ func TestReplaceSeededPatterns_InsertsSeededDesigns(t *testing.T) {
 
 	if n := countPatterns(t, db); n != 2 {
 		t.Errorf("rows = %d, want 2", n)
+	}
+}
+
+func TestSaveMesheryPattern_DatabaseErrorIsMeshKitError(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	id, _ := seedImportedPattern(t, db)
+	sqlDB, err := db.DB()
+	if err != nil {
+		t.Fatalf("get sql.DB: %v", err)
+	}
+	_ = sqlDB.Close()
+
+	_, err = mpp.SaveMesheryPattern(postStylePattern(id))
+	if code := mkerrors.GetCode(err); code != ErrDBReadCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBReadCode, err)
 	}
 }

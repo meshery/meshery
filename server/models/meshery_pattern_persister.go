@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/meshery/schemas/models/core"
 
@@ -206,6 +207,8 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 	return marshalMesheryPatterns(deletedMaptterns), nil
 }
 
+// SaveMesheryPattern inserts a new design, or updates an existing one with only
+// the non-zero fields of pattern, and bumps the design file's version.
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
 	pf, err := patterns.GetPatternFormat(pattern.PatternFile)
 	if err != nil {
@@ -246,7 +249,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 	if !isNew {
 		var count int64
 		if err := mpp.DB.Model(&MesheryPattern{}).Where("id = ?", *pattern.ID).Count(&count).Error; err != nil {
-			return nil, err
+			return nil, ErrDBRead(err)
 		}
 		exists = count > 0
 	}
@@ -257,17 +260,29 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 		// creation time. Updates skips zero-valued fields, so columns the save
 		// did not carry keep their stored values. created_at and the usage
 		// counters are never written by a save.
-		err = mpp.DB.Model(pattern).
+		res := mpp.DB.Model(pattern).
 			Omit("created_at", "view_count", "share_count", "download_count", "clone_count", "deployment_count").
-			Updates(pattern).Error
+			Updates(pattern)
+		// updated_at always changes, so no affected row means the design was
+		// deleted after the existence check.
+		if res.Error == nil && res.RowsAffected == 0 {
+			res.Error = fmt.Errorf("design %s was deleted while saving", pattern.ID)
+		}
+		if res.Error != nil {
+			return marshalMesheryPatterns([]MesheryPattern{*pattern}), ErrDBPut(res.Error)
+		}
 	} else {
 		if pattern.Visibility == "" {
 			pattern.Visibility = Private
 		}
-		err = mpp.DB.Create(pattern).Error
+		// Two first saves of the same client-supplied ID can race; the loser
+		// updates the winner's row, as gorm's Save did before.
+		if err := mpp.DB.Clauses(clause.OnConflict{UpdateAll: true}).Create(pattern).Error; err != nil {
+			return marshalMesheryPatterns([]MesheryPattern{*pattern}), ErrDBCreate(err)
+		}
 	}
 
-	return marshalMesheryPatterns([]MesheryPattern{*pattern}), err
+	return marshalMesheryPatterns([]MesheryPattern{*pattern}), nil
 }
 
 // SaveMesheryPatterns batch inserts the given patterns
