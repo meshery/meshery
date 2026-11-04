@@ -517,6 +517,10 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 		l.Log.Error(ErrPost(err, "user preference data", 0))
 		return
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 	if resp.StatusCode != http.StatusCreated {
 		err = ErrPost(fmt.Errorf("status code: %d. ", resp.StatusCode), "user preference data", resp.StatusCode)
 		l.Log.Error(err)
