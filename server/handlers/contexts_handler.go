@@ -151,7 +151,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 				return
 			}
 
-			smInstanceTracker.Remove(connectionUUID)
+			smInstanceTracker.RemoveIfMatch(connectionUUID, inst)
 		}(inst)
 	}
 

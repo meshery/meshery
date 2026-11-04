@@ -570,7 +570,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 			}
 
 			if status == connections.DELETED {
-				smInstanceTracker.Remove(inst.ID)
+				smInstanceTracker.RemoveIfMatch(inst.ID, inst)
 			}
 
 			_ = provider.PersistEvent(*event, token)
@@ -592,6 +592,12 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		return
 	}
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+
+	// Retire the connection's state machine before its row goes: the Delete
+	// transition persists its status through the row, and a machine left in the
+	// tracker would be handed back to a re-import of the same (deterministic)
+	// id in its old state.
+	teardownErr := h.retireConnectionMachine(req.Context(), user, connectionID)
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
@@ -639,13 +645,59 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		deletedName = deletedConnection.Name
 	}
 	description := fmt.Sprintf("Connection %s deleted.", deletedName)
-	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
+	eventBuilder = eventBuilder.WithSeverity(events.Informational).WithDescription(description)
+	if teardownErr != nil {
+		eventBuilder = eventBuilder.WithSeverity(events.Warning).WithMetadata(map[string]interface{}{
+			"teardownError": teardownErr,
+		})
+	}
+	event := eventBuilder.Build()
 
 	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	h.log.Info("connection deleted.")
 	w.WriteHeader(http.StatusOK)
+}
+
+// retireConnectionMachine drives the tracked state machine for connectionID
+// through Delete and drops it from the tracker. It never creates a machine: a
+// connection nothing is tracking has nothing to tear down.
+//
+// SendEvent is synchronous, so the transition and its status write-back finish
+// before this returns - the caller deletes the row only afterwards. The cluster
+// side of kubernetes.DeleteAction still runs in its own goroutines, bound to
+// this machine's MesheryControllersHelper; a machine built for a later
+// re-import gets its own helper, so that work cannot reach it.
+//
+// The entry is dropped even when the transition fails: a machine that cannot
+// be driven (no assigned Context, or a state without a delete edge) would
+// otherwise outlive its connection. RemoveIfMatch keeps that from dropping a
+// newer machine registered under the same id in the meantime.
+func (h *Handler) retireConnectionMachine(ctx context.Context, user *models.User, connectionID core.Uuid) error {
+	tracker := h.ConnectionToStateMachineInstanceTracker
+	if tracker == nil {
+		return nil
+	}
+	inst, ok := tracker.Get(connectionID)
+	if !ok {
+		return nil
+	}
+	defer tracker.RemoveIfMatch(connectionID, inst)
+
+	if !helpers.HasMachineContext(inst) {
+		return nil
+	}
+	// DeleteAction hands ctx to goroutines that outlive this request. SendEvent
+	// and the actions dereference the user and system id from ctx, so set them
+	// from what this handler holds rather than rely on middleware order.
+	ctx = context.WithValue(context.WithoutCancel(ctx), models.UserCtxKey, user)
+	ctx = context.WithValue(ctx, models.SystemIDKey, h.SystemID)
+	if _, err := inst.SendEvent(ctx, machines.Delete, nil); err != nil {
+		h.log.Warnf("state machine for connection %s did not complete the delete transition: %v", connectionID, err)
+		return err
+	}
+	return nil
 }
 
 // handleMeshSyncDeploymentModeChange retrieves existing connection, compares meshsync deployment modes
