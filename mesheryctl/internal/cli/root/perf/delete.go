@@ -16,6 +16,7 @@ package perf
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -69,6 +70,9 @@ mesheryctl perf delete test-3 --yes
 		}
 		if len(matches) == 0 {
 			return ErrNoProfileFound()
+		}
+		if len(matches) > 1 && utils.SilentFlag {
+			return utils.ErrFlagsInvalid(fmt.Errorf("%d profiles are named '%s'; run without --yes to choose one", len(matches), args[0]))
 		}
 
 		index := 0

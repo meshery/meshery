@@ -76,6 +76,15 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectedError: ErrNoProfileFound(),
 		},
 		{
+			Name: "given several profiles with the exact name when delete with yes then throw error",
+			Args: []string{"delete", "istio-test", "--yes"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: "profile.delete.duplicate.response.golden", ResponseCode: 200},
+			},
+			ExpectError:   true,
+			ExpectedError: utils.ErrFlagsInvalid(fmt.Errorf("2 profiles are named 'istio-test'; run without --yes to choose one")),
+		},
+		{
 			Name: "given server error when delete then throw error",
 			Args: []string{"delete", "istio-test", "--yes"},
 			URLs: []utils.MockURL{
