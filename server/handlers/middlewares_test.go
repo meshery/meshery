@@ -247,12 +247,12 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 			wantStatus: http.StatusNoContent,
 		},
 		{
-			name:       "localhost UI development port can call localhost API",
+			name:       "localhost UI development port cannot mutate localhost API",
 			method:     http.MethodPost,
 			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
 			origin:     "http://localhost:3000",
 			fetchSite:  "same-site",
-			wantStatus: http.StatusNoContent,
+			wantStatus: http.StatusForbidden,
 		},
 		{
 			name:       "non-loopback origin must match the full host and port",
