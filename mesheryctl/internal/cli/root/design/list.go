@@ -15,8 +15,6 @@
 package design
 
 import (
-	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
