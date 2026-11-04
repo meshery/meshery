@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -1597,11 +1598,18 @@ func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models
 		}
 
 		// Delete the model itself
-		return tx.Where("id = ?", modelUUID).Delete(&_model.ModelDefinition{}).Error
+		res := tx.Where("id = ?", modelUUID).Delete(&_model.ModelDefinition{})
+		if res.Error != nil {
+			return res.Error
+		}
+		if res.RowsAffected == 0 {
+			return gorm.ErrRecordNotFound
+		}
+		return nil
 	})
 
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			writeJSONError(rw, fmt.Sprintf("model with id %s not found", modelID), http.StatusNotFound)
 			return
 		}
