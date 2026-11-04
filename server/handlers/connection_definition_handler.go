@@ -199,10 +199,19 @@ func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Req
 // DeleteConnectionDefinition removes a connection definition and its registry
 // entry. Mirrors the registry-cleanup approach used by DeleteModel.
 //
+// Status codes:
+//   - 204: successfully deleted
+//   - 400: invalid UUID
+//   - 404: connection definition not found
+//   - 500: failed to delete from database
+//
 // swagger:route DELETE /api/registry/connections/{connectionDefinitionId} DeleteConnectionDefinition
 // responses:
 //
 //	204:
+//	400:
+//	404:
+//	500:
 func (h *Handler) DeleteConnectionDefinition(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	connectionDefinitionID := mux.Vars(r)["connectionDefinitionId"]
 	id, err := uuid.FromString(connectionDefinitionID)
