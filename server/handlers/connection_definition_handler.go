@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -216,9 +217,20 @@ func (h *Handler) DeleteConnectionDefinition(rw http.ResponseWriter, r *http.Req
 			Delete(&registry.Registry{}).Error; err != nil {
 			return err
 		}
-		return tx.Delete(&connectionv1beta3.ConnectionDefinition{}, "id = ?", id).Error
+		res := tx.Delete(&connectionv1beta3.ConnectionDefinition{}, "id = ?", id)
+		if res.Error != nil {
+			return res.Error
+		}
+		if res.RowsAffected == 0 {
+			return gorm.ErrRecordNotFound
+		}
+		return nil
 	})
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			writeJSONError(rw, fmt.Sprintf("connection definition with id %s not found", connectionDefinitionID), http.StatusNotFound)
+			return
+		}
 		_err := ErrFailToDelete(err, "connection definition")
 		h.log.Error(_err)
 		writeMeshkitError(rw, _err, http.StatusInternalServerError)
