@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -295,21 +294,7 @@ func localProviderRequestAllowed(req *http.Request) bool {
 		return false
 	}
 
-	// The UI development server commonly runs on localhost:3000 while the API
-	// runs on localhost:9081. Permit that split only on loopback hosts; other
-	// deployments must match the complete origin, including port.
-	if isLoopbackHost(targetHost) {
-		return true
-	}
 	return sourceURL.Port() == targetURL.Port()
-}
-
-func isLoopbackHost(host string) bool {
-	if host == "localhost" || strings.HasSuffix(host, ".localhost") {
-		return true
-	}
-	ip := net.ParseIP(host)
-	return ip != nil && ip.IsLoopback()
 }
 
 // ProviderMiddleware is a middleware to validate if a provider is set
