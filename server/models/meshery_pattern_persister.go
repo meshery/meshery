@@ -212,10 +212,8 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 		return nil, err
 	}
 
-	if pattern.Visibility == "" {
-		pattern.Visibility = Private
-	}
-	if pattern.ID == nil {
+	isNew := pattern.ID == nil
+	if isNew {
 		id, err := uuid.NewV4()
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
@@ -242,7 +240,34 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 	// response shaping only - nothing extra is persisted.
 	stampLocalProviderOwner(pattern)
 
-	return marshalMesheryPatterns([]MesheryPattern{*pattern}), mpp.DB.Save(pattern).Error
+	// An ID does not mean the row exists: clone and seeding save new rows
+	// under IDs they minted themselves.
+	exists := false
+	if !isNew {
+		var count int64
+		if err := mpp.DB.Model(&MesheryPattern{}).Where("id = ?", *pattern.ID).Count(&count).Error; err != nil {
+			return nil, err
+		}
+		exists = count > 0
+	}
+
+	if exists {
+		// A save carries only some columns - POST /api/pattern builds the
+		// record from DesignPostPayload, which has no source content, type or
+		// creation time. Updates skips zero-valued fields, so columns the save
+		// did not carry keep their stored values. created_at and the usage
+		// counters are never written by a save.
+		err = mpp.DB.Model(pattern).
+			Omit("created_at", "view_count", "share_count", "download_count", "clone_count", "deployment_count").
+			Updates(pattern).Error
+	} else {
+		if pattern.Visibility == "" {
+			pattern.Visibility = Private
+		}
+		err = mpp.DB.Create(pattern).Error
+	}
+
+	return marshalMesheryPatterns([]MesheryPattern{*pattern}), err
 }
 
 // SaveMesheryPatterns batch inserts the given patterns
