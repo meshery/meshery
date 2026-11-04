@@ -22,6 +22,18 @@ type ConnectionPersister struct {
 	DB *database.Handler
 }
 
+// userFacingConnections narrows a `connections` query to the rows a user would
+// recognise as a Connection.
+//
+// Registering a Model creates a registrant row in the same table (for example
+// the `kubernetes` host that RegisterK8sMeshModelComponents registers components
+// under). Such a row carries no connection type, name or status, so listed beside
+// the real connection it reads as a second copy of the same cluster. A
+// connection a user can act on always has at least one of the three.
+func userFacingConnections(db *gorm.DB) *gorm.DB {
+	return db.Where("NOT (COALESCE(connection_type, '') = '' AND COALESCE(name, '') = '' AND COALESCE(status, '') = '')")
+}
+
 // GetConnections returns all of the connections
 func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSize int, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
@@ -30,7 +42,7 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 		order = defaultOrderUpdatedAtDesc
 	}
 
-	query := cp.DB.Model(&connections.Connection{})
+	query := userFacingConnections(cp.DB.Model(&connections.Connection{}))
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
@@ -131,7 +143,7 @@ func (cp *ConnectionPersister) getConnectionsStatusSummary() (*map[schemasConnec
 		Count  int    `gorm:"column:count"`
 	}
 
-	err := cp.DB.Model(&connections.Connection{}).
+	err := userFacingConnections(cp.DB.Model(&connections.Connection{})).
 		Select("status, COUNT(*) as count").
 		Group("status").
 		Scan(&statusCounts).Error
