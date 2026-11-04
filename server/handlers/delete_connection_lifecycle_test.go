@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -319,13 +320,58 @@ func TestDeleteConnectionTeardownFailure(t *testing.T) {
 			if len(persisted) != 1 {
 				t.Fatalf("persisted %d delete events, want 1", len(persisted))
 			}
-			_, hasTeardownErr := persisted[0].Metadata["teardownError"]
-			gotWarn := persisted[0].Severity == events.Warning && hasTeardownErr
+			// Read back from the database: the reason must survive JSON.
+			teardownErr, _ := persisted[0].Metadata["teardownError"].(string)
+			gotWarn := persisted[0].Severity == events.Warning && teardownErr != ""
 			if gotWarn != tc.wantWarn {
-				t.Errorf("delete event severity = %q, teardownError present = %v; want warning = %v",
-					persisted[0].Severity, hasTeardownErr, tc.wantWarn)
+				t.Errorf("delete event severity = %q, teardownError = %q; want warning = %v",
+					persisted[0].Severity, teardownErr, tc.wantWarn)
+			}
+			if tc.probeErr != nil && !strings.Contains(teardownErr, tc.probeErr.Error()) {
+				t.Errorf("persisted teardownError = %q, want it to carry %q", teardownErr, tc.probeErr)
 			}
 		})
+	}
+}
+
+// refusingProvider fails the row delete the way a remote provider refusing
+// it would, after the machine has already been retired.
+type refusingProvider struct{ *models.DefaultLocalProvider }
+
+func (refusingProvider) DeleteConnection(*http.Request, core.Uuid) (*connections.Connection, error) {
+	return nil, errors.New("provider refused the delete")
+}
+
+// The machine cannot be restored once retired, so a refused row delete must
+// say the connection was already taken down.
+func TestDeleteConnectionProviderRefusalAfterRetirement(t *testing.T) {
+	f := newLifecycleFixture(t)
+	id := k8sConnectionID(t)
+	f.saveRow(t, id, connections.CONNECTED)
+	probe := &probeAction{provider: f.provider, id: id}
+	f.trackMachine(t, id, machines.CONNECTED, &kubernetes.MachineCtx{}, probe)
+
+	rec := deleteConnection(t, f.h, refusingProvider{f.provider}, id)
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want 500. body: %s", rec.Code, rec.Body.String())
+	}
+	if status, ok := f.rowStatus(id); !ok || status != connections.DELETED {
+		t.Errorf("row = (%q, present %v), want it kept with status %q", status, ok, connections.DELETED)
+	}
+	if _, ok := f.tracker.Get(id); ok {
+		t.Error("tracker still holds the retired machine")
+	}
+
+	var persisted []events.Event
+	if err := f.provider.EventsPersister.DB.Where("action = ?", "delete").Find(&persisted).Error; err != nil {
+		t.Fatal(err)
+	}
+	if len(persisted) != 1 {
+		t.Fatalf("persisted %d delete events, want 1", len(persisted))
+	}
+	if retired, _ := persisted[0].Metadata["connectionRetired"].(bool); !retired || persisted[0].Severity != events.Error {
+		t.Errorf("failure event = (%q, %q, connectionRetired %v); want an error that reports the retirement",
+			persisted[0].Severity, persisted[0].Description, persisted[0].Metadata["connectionRetired"])
 	}
 }
 

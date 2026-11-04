@@ -651,7 +651,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	// transition persists its status through the row, and a machine left in the
 	// tracker would be handed back to a re-import of the same (deterministic)
 	// id in its old state.
-	teardownErr := h.retireConnectionMachine(req.Context(), user, connectionID)
+	retired, teardownErr := h.retireConnectionMachine(req.Context(), user, connectionID)
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
@@ -679,7 +679,14 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		metadata := map[string]interface{}{
 			"error": _err,
 		}
-		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error deleting connection").WithMetadata(metadata).Build()
+		description := "Error deleting connection"
+		if retired {
+			// The machine cannot be put back: its teardown has started and the
+			// row was left in the "deleted" state by the transition.
+			description = "Error deleting connection; it was already disconnected and marked deleted"
+			metadata["connectionRetired"] = true
+		}
+		event := eventBuilder.WithSeverity(events.Error).WithDescription(description).WithMetadata(metadata).Build()
 		h.persistAndPublish(provider, token, userID, event)
 
 		h.log.Error(_err)
@@ -707,7 +714,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	eventBuilder = eventBuilder.WithDescription(description)
 	if teardownErr != nil {
 		eventBuilder = eventBuilder.WithSeverity(events.Warning).WithMetadata(map[string]interface{}{
-			"teardownError": teardownErr,
+			"teardownError": teardownErr.Error(), // an error value marshals to {}
 		})
 	}
 	event := eventBuilder.Build()
@@ -732,19 +739,22 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 // be driven (no assigned Context, or a state without a delete edge) would
 // otherwise outlive its connection. RemoveIfMatch keeps that from dropping a
 // newer machine registered under the same id in the meantime.
-func (h *Handler) retireConnectionMachine(ctx context.Context, user *models.User, connectionID core.Uuid) error {
+//
+// The bool reports that the Delete transition completed, i.e. teardown has
+// started and the row now reads "deleted".
+func (h *Handler) retireConnectionMachine(ctx context.Context, user *models.User, connectionID core.Uuid) (bool, error) {
 	tracker := h.ConnectionToStateMachineInstanceTracker
 	if tracker == nil {
-		return nil
+		return false, nil
 	}
 	inst, ok := tracker.Get(connectionID)
 	if !ok {
-		return nil
+		return false, nil
 	}
 	defer tracker.RemoveIfMatch(connectionID, inst)
 
 	if !helpers.HasMachineContext(inst) {
-		return nil
+		return false, nil
 	}
 	// DeleteAction hands ctx to goroutines that outlive this request. SendEvent
 	// and the actions dereference the user and system id from ctx, so set them
@@ -753,9 +763,9 @@ func (h *Handler) retireConnectionMachine(ctx context.Context, user *models.User
 	ctx = context.WithValue(ctx, models.SystemIDKey, h.SystemID)
 	if _, err := inst.SendEvent(ctx, machines.Delete, nil); err != nil {
 		h.log.Warnf("state machine for connection %s did not complete the delete transition: %v", connectionID, err)
-		return err
+		return false, err
 	}
-	return nil
+	return true, nil
 }
 
 // handleMeshSyncDeploymentModeChange retrieves existing connection, compares meshsync deployment modes
