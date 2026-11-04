@@ -36,6 +36,10 @@ var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete design file",
 	Long: `delete design file will trigger deletion of the design file.
+	When a positional target is passed, it is resolved with the following precedence:
+	1. Existing local file path
+	2. Remote URL
+	3. Design ID or name lookup
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/design/delete`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if cmd.Flags().Changed("file") && strings.TrimSpace(file) == "" {
@@ -75,14 +79,15 @@ mesheryctl design delete -f [file | URL]
 			return err
 		}
 
+		targetFile := file
 		pattern := ""
 		isID := false
 		if len(args) > 0 {
 			target := args[0]
 			if _, statErr := os.Stat(target); statErr == nil {
-				file = target
+				targetFile = target
 			} else if utils.IsValidUrl(target) {
-				file = target
+				targetFile = target
 			} else {
 				pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), target, "pattern")
 				if err != nil {
@@ -92,9 +97,9 @@ mesheryctl design delete -f [file | URL]
 					// If the server is unreachable or another network error occurs,
 					// fall through to treat target as a file path so the descriptive
 					// file-read error is surfaced instead of an obscure ID error.
-					file = target
+					targetFile = target
 				} else if !isID {
-					file = target
+					targetFile = target
 				}
 			}
 		}
@@ -116,18 +121,18 @@ mesheryctl design delete -f [file | URL]
 
 		var patternFileByt []byte
 		// If file path not a valid URL, treat it like a local file path
-		if !utils.IsValidUrl(file) {
-			content, err := os.ReadFile(file)
+		if !utils.IsValidUrl(targetFile) {
+			content, err := os.ReadFile(targetFile)
 			if err != nil {
-				return utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, file))
+				return utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, targetFile))
 			}
 
 			patternFileByt = content
 		} else {
 			// Else treat it like a URL
-			url, path, err := utils.ParseURLGithub(file)
+			url, path, err := utils.ParseURLGithub(targetFile)
 			if err != nil {
-				return utils.ErrParseGithubFile(err, file)
+				return utils.ErrParseGithubFile(err, targetFile)
 			}
 
 			utils.Log.Debug(url)
@@ -174,7 +179,7 @@ mesheryctl design delete -f [file | URL]
 			}
 
 			if len(response) == 0 {
-				return ErrDesignNotFound("design at " + file)
+				return ErrDesignNotFound("design at " + targetFile)
 			}
 
 			patternFileByt, err = yaml.Marshal(response[0].PatternFile)
