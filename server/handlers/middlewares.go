@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -73,6 +74,94 @@ func resolveProviderName(req *http.Request, cookieName, enforcedProvider string)
 	return models.NormalizeProviderName(name), usedLegacyAlias
 }
 
+// localProviderRequestAllowed rejects browser requests that clearly originate
+// outside Meshery before they can reach a Local provider handler. The Local
+// provider has no authenticated session, so it cannot rely on the provider's
+// normal session checks to prevent CSRF.
+func localProviderRequestAllowed(req *http.Request) bool {
+	switch req.Method {
+	case http.MethodGet, http.MethodHead, http.MethodOptions, http.MethodTrace:
+		return true
+	}
+
+	// Fetch Metadata is independent of Referer policy and reliably identifies
+	// cross-site form submissions in modern browsers.
+	if strings.EqualFold(req.Header.Get("Sec-Fetch-Site"), "cross-site") {
+		return false
+	}
+
+	originValues := req.Header.Values("Origin")
+	if len(originValues) > 1 {
+		return false
+	}
+	source := ""
+	if len(originValues) == 1 && originValues[0] != "" {
+		source = originValues[0]
+	} else {
+		refererValues := req.Header.Values("Referer")
+		if len(refererValues) > 1 {
+			return false
+		}
+		if len(refererValues) == 1 {
+			source = refererValues[0]
+		}
+	}
+
+	// Requests from command-line clients and other non-browser API consumers
+	// commonly have neither header. Keep those working; browsers send Origin
+	// on unsafe cross-origin requests even when the page suppresses Referer.
+	if source == "" {
+		return true
+	}
+
+	sourceURL, err := url.Parse(source)
+	if err != nil || sourceURL.User != nil || sourceURL.Opaque != "" || sourceURL.Hostname() == "" {
+		return false
+	}
+	if sourceURL.Scheme != "http" && sourceURL.Scheme != "https" {
+		return false
+	}
+
+	if len(originValues) == 1 && originValues[0] != "" &&
+		(sourceURL.Path != "" && sourceURL.Path != "/" || sourceURL.RawQuery != "" || sourceURL.Fragment != "") {
+		return false
+	}
+
+	targetScheme := "http"
+	if req.TLS != nil {
+		targetScheme = "https"
+	} else if forwardedProto := strings.TrimSpace(strings.Split(req.Header.Get("X-Forwarded-Proto"), ",")[0]); forwardedProto == "http" || forwardedProto == "https" {
+		// TLS commonly terminates at the reverse proxy in containerized
+		// deployments. X-Forwarded-Proto preserves the browser-facing scheme.
+		targetScheme = forwardedProto
+	} else if req.URL != nil && (req.URL.Scheme == "http" || req.URL.Scheme == "https") {
+		targetScheme = req.URL.Scheme
+	}
+	targetURL := &url.URL{Scheme: targetScheme, Host: req.Host}
+
+	sourceHost := strings.TrimSuffix(strings.ToLower(sourceURL.Hostname()), ".")
+	targetHost := strings.TrimSuffix(strings.ToLower(targetURL.Hostname()), ".")
+	if sourceURL.Scheme != targetURL.Scheme || sourceHost != targetHost {
+		return false
+	}
+
+	// The UI development server commonly runs on localhost:3000 while the API
+	// runs on localhost:9081. Permit that split only on loopback hosts; other
+	// deployments must match the complete origin, including port.
+	if isLoopbackHost(targetHost) {
+		return true
+	}
+	return sourceURL.Port() == targetURL.Port()
+}
+
+func isLoopbackHost(host string) bool {
+	if host == "localhost" || strings.HasSuffix(host, ".localhost") {
+		return true
+	}
+	ip := net.ParseIP(host)
+	return ip != nil && ip.IsLoopback()
+}
+
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
@@ -90,6 +179,10 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			if provider == nil && h.Provider != "" && providerName == models.NormalizeProviderName(h.Provider) {
 				h.log.Errorf("enforced provider %q is not registered in h.config.Providers; ProviderUIHandler will degrade to serving the provider-selection UI instead of auto-login. Register %q in PROVIDERS or unset PROVIDER on this deployment.", h.Provider, h.Provider)
 			}
+		}
+		if provider != nil && provider.GetProviderType() == models.LocalProviderType && !localProviderRequestAllowed(req) {
+			writeJSONError(w, "cross-origin request is not allowed for the Local provider", http.StatusForbidden)
+			return
 		}
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
 

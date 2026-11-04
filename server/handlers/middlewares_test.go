@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/meshery/meshery/server/models"
 )
 
 // TestResolveProviderName covers the precedence rules for picking the
@@ -178,6 +180,143 @@ func TestResolveProviderName_ReturnsLegacyAliasFlag(t *testing.T) {
 			_, got := resolveProviderName(mkReq(c.cookie), cookieName, "")
 			if got != c.wantFlag {
 				t.Errorf("usedLegacyAlias = %v, want %v", got, c.wantFlag)
+			}
+		})
+	}
+}
+
+func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
+	localProvider := &models.DefaultLocalProvider{
+		ProviderProperties: models.ProviderProperties{
+			ProviderName: models.LocalProviderName,
+			ProviderType: models.LocalProviderType,
+		},
+	}
+	h := &Handler{
+		config: &models.HandlerConfig{
+			ProviderCookieName: "meshery-provider",
+			Providers:          map[string]models.Provider{models.LocalProviderName: localProvider},
+		},
+	}
+
+	tests := []struct {
+		name       string
+		method     string
+		target     string
+		origin     string
+		referer    string
+		fetchSite  string
+		forwarded  string
+		wantStatus int
+	}{
+		{
+			name:       "cross-site form submission with Local query selector is rejected",
+			method:     http.MethodPost,
+			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
+			origin:     "http://attacker.example",
+			fetchSite:  "cross-site",
+			wantStatus: http.StatusForbidden,
+		},
+		{
+			name:       "mismatched Origin is rejected without Fetch Metadata",
+			method:     http.MethodPost,
+			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
+			origin:     "http://attacker.example",
+			wantStatus: http.StatusForbidden,
+		},
+		{
+			name:       "mismatched Referer is rejected when Origin is absent",
+			method:     http.MethodDelete,
+			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
+			referer:    "http://attacker.example/submit",
+			wantStatus: http.StatusForbidden,
+		},
+		{
+			name:       "opaque Origin is rejected",
+			method:     http.MethodPost,
+			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
+			origin:     "null",
+			wantStatus: http.StatusForbidden,
+		},
+		{
+			name:       "same-origin mutation is allowed",
+			method:     http.MethodPost,
+			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
+			origin:     "http://localhost:9081",
+			fetchSite:  "same-origin",
+			wantStatus: http.StatusNoContent,
+		},
+		{
+			name:       "localhost UI development port can call localhost API",
+			method:     http.MethodPost,
+			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
+			origin:     "http://localhost:3000",
+			fetchSite:  "same-site",
+			wantStatus: http.StatusNoContent,
+		},
+		{
+			name:       "non-loopback origin must match the full host and port",
+			method:     http.MethodPost,
+			target:     "http://meshery.example.com:9081/api/system/database/reset?provider=Local",
+			origin:     "http://meshery.example.com:3000",
+			wantStatus: http.StatusForbidden,
+		},
+		{
+			name:       "same-origin request behind a TLS reverse proxy is allowed",
+			method:     http.MethodPost,
+			target:     "http://meshery.example.com:9081/api/system/database/reset?provider=Local",
+			origin:     "https://meshery.example.com:9081",
+			forwarded:  "https",
+			wantStatus: http.StatusNoContent,
+		},
+		{
+			name:       "safe GET is not rejected based on cross-origin headers",
+			method:     http.MethodGet,
+			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
+			origin:     "http://attacker.example",
+			fetchSite:  "cross-site",
+			wantStatus: http.StatusNoContent,
+		},
+		{
+			name:       "headerless non-browser API client remains supported",
+			method:     http.MethodPost,
+			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
+			wantStatus: http.StatusNoContent,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			req := httptest.NewRequest(tc.method, tc.target, nil)
+			if tc.origin != "" {
+				req.Header.Set("Origin", tc.origin)
+			}
+			if tc.referer != "" {
+				req.Header.Set("Referer", tc.referer)
+			}
+			if tc.fetchSite != "" {
+				req.Header.Set("Sec-Fetch-Site", tc.fetchSite)
+			}
+			if tc.forwarded != "" {
+				req.Header.Set("X-Forwarded-Proto", tc.forwarded)
+			}
+
+			nextCalled := false
+			next := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				nextCalled = true
+				w.WriteHeader(http.StatusNoContent)
+			})
+			response := httptest.NewRecorder()
+			h.ProviderMiddleware(next).ServeHTTP(response, req)
+
+			if response.Code != tc.wantStatus {
+				t.Fatalf("status = %d, want %d; body = %q", response.Code, tc.wantStatus, response.Body.String())
+			}
+			if tc.wantStatus == http.StatusForbidden && response.Header().Get("Content-Type") != "application/json; charset=utf-8" {
+				t.Errorf("Content-Type = %q, want application/json; charset=utf-8", response.Header().Get("Content-Type"))
+			}
+			if got := nextCalled; got != (tc.wantStatus == http.StatusNoContent) {
+				t.Errorf("nextCalled = %v, want %v", got, tc.wantStatus == http.StatusNoContent)
 			}
 		})
 	}
