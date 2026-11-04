@@ -206,7 +206,7 @@
     "configurationUISchema": "",
     "genealogy": "",
     "instanceDetails": null,
-    "isAnnotation": true,
+    "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
