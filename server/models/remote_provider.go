@@ -4740,6 +4740,9 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID c
 		l.Log.Error(err)
 		return nil, http.StatusInternalServerError, ErrUpdateConnectionStatus(err, http.StatusInternalServerError)
 	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, http.StatusInternalServerError, ErrDataRead(err, "Update Connection")

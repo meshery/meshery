@@ -8,6 +8,7 @@ import (
 	"sync/atomic"
 	"testing"
 
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/schemas/models/core"
 )
 
@@ -128,5 +129,13 @@ func TestBulkDeleteEvent_ClosesResponseBody(t *testing.T) {
 
 	expectResponseBodiesClosed(t, func() {
 		_ = provider.BulkDeleteEvent("test-token", []*core.Uuid{{}})
+	})
+}
+
+func TestUpdateConnectionStatusByID_ClosesResponseBody(t *testing.T) {
+	provider := newResponseBodyTestProvider(t, PersistConnection, "/api/integrations/connections")
+
+	expectResponseBodiesClosed(t, func() {
+		_, _, _ = provider.UpdateConnectionStatusByID("test-token", core.Uuid{}, connections.CONNECTED)
 	})
 }
