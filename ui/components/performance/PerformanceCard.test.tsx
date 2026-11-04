@@ -127,7 +127,7 @@ describe('PerformanceCard', () => {
     expect(screen.getByTestId('avatar').closest('a')).toBeNull();
   });
 
-  const additionalOptionRow = (additional_options: string[]) => {
+  const additionalOptionRow = (additional_options: string | string[]) => {
     render(
       <PerformanceCard
         {...baseProps}
@@ -143,6 +143,10 @@ describe('PerformanceCard', () => {
 
   it('shows additional options that are not valid JSON as text instead of crashing', () => {
     expect(additionalOptionRow(['abc'])).toHaveTextContent('"abc"');
+  });
+
+  it('shows options stored as a plain string by mesheryctl', () => {
+    expect(additionalOptionRow('{"keepalive":true}')).toHaveTextContent('{"keepalive":true}');
   });
 
   it('renders an empty additional options list', () => {

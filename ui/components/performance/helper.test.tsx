@@ -4,7 +4,12 @@ vi.mock('uuid', () => ({
   v4: () => 'mocked-uuid-value',
 }));
 
-import { buildPerformanceRunUrl, generateTestName, generateUUID } from './helper';
+import {
+  buildPerformanceRunUrl,
+  generateTestName,
+  generateUUID,
+  getStoredAdditionalOptions,
+} from './helper';
 
 describe('generateTestName', () => {
   it('returns the original name when one is supplied', () => {
@@ -35,6 +40,21 @@ describe('generateTestName', () => {
 describe('generateUUID', () => {
   it('proxies to the uuid v4 implementation', () => {
     expect(generateUUID()).toBe('mocked-uuid-value');
+  });
+});
+
+describe('getStoredAdditionalOptions', () => {
+  it('reads the first entry of options saved from the UI', () => {
+    expect(getStoredAdditionalOptions(['{"keepalive":true}'])).toBe('{"keepalive":true}');
+  });
+
+  it('keeps options stored as a plain string by mesheryctl', () => {
+    expect(getStoredAdditionalOptions('{"keepalive":true}')).toBe('{"keepalive":true}');
+  });
+
+  it('returns an empty string when nothing is stored', () => {
+    expect(getStoredAdditionalOptions(undefined)).toBe('');
+    expect(getStoredAdditionalOptions([])).toBe('');
   });
 });
 

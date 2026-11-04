@@ -20,6 +20,16 @@ export function generateUUID(): string {
 }
 
 /**
+ * Returns a profile's stored additional options as text. Profiles saved from
+ * the UI hold a one-element array, while `mesheryctl perf apply` stores a
+ * plain string.
+ */
+export function getStoredAdditionalOptions(additionalOptions?: string | string[]): string {
+  if (typeof additionalOptions === 'string') return additionalOptions;
+  return additionalOptions?.[0] || '';
+}
+
+/**
  * Constructs the SSE run URL for a performance profile, properly joining
  * query parameters whether or not Kubernetes contexts are selected.
  */

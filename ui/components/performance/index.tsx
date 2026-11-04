@@ -7,7 +7,12 @@ import fetchControlPlanes from '@/graphql/queries/ControlPlanesQuery';
 import { getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { buildPerformanceRunUrl, generateTestName, generateUUID } from './helper';
+import {
+  buildPerformanceRunUrl,
+  generateTestName,
+  generateUUID,
+  getStoredAdditionalOptions,
+} from './helper';
 
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '@/components/general/error-404/index';
@@ -65,7 +70,7 @@ const MesheryPerformanceComponent_ = (props) => {
   const [tValueState, setTValue] = useState(t);
   const [loadGeneratorState, setLoadGenerator] = useState(loadGenerator || 'fortio');
   const [additionalOptionsState, setAdditionalOptions] = useState(
-    additional_options || metadata?.additional_options?.[0] || '',
+    additional_options || getStoredAdditionalOptions(metadata?.additional_options),
   );
   const [testResult, setTestResult] = useState();
   const [testResultsOpen, setTestResultsOpen] = useState(false);
@@ -146,6 +151,13 @@ const MesheryPerformanceComponent_ = (props) => {
   const handleSubmit = () => {
     if (urlState === '') {
       setUrlError(true);
+      return;
+    }
+
+    // Run Test on mount calls this directly, so the disabled buttons are not
+    // enough to keep invalid options from being sent.
+    if (additionalOptionsState !== '' && !isValidJSON(additionalOptionsState)) {
+      setJsonError(true);
       return;
     }
 
