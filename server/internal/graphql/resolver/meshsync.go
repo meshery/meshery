@@ -4,9 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
-	"os"
-	"path"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/handlers"
@@ -14,7 +11,6 @@ import (
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
-	"github.com/meshery/meshkit/utils"
 	"github.com/spf13/viper"
 )
 
@@ -36,45 +32,6 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 		// copies the contents .meshery/config/mesherydb.sql to .meshery/config/.archive/mesherydb.sql
 		// then drops all the DB table and then migrate/create tables, missing foreign keys, constraints, columns and indexes.
 		if actions.HardReset == "true" {
-			mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
-			err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
-			if err != nil && !os.IsExist(err) {
-				return "", err
-			}
-
-			src := path.Join(mesherydbPath, "mesherydb.sql")
-			dst := path.Join(mesherydbPath, ".archive/mesherydb.sql")
-
-			fin, err := os.Open(src)
-			if err != nil {
-				return "", err
-			}
-
-			fout, err := os.Create(dst)
-			if err != nil {
-				if closeErr := fin.Close(); closeErr != nil {
-					return "", errors.Join(err, closeErr)
-				}
-				return "", err
-			}
-
-			_, err = io.Copy(fout, fin)
-			if err != nil {
-				if closeErr := errors.Join(fin.Close(), fout.Close()); closeErr != nil {
-					return "", errors.Join(err, closeErr)
-				}
-				return "", err
-			}
-			if err := fin.Close(); err != nil {
-				if closeErr := fout.Close(); closeErr != nil {
-					return "", errors.Join(err, closeErr)
-				}
-				return "", err
-			}
-			if err := fout.Close(); err != nil {
-				return "", err
-			}
-
 			dbHandler := provider.GetGenericPersister()
 			if dbHandler == nil {
 				return "", model.ErrEmptyHandler
@@ -98,6 +55,11 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 
 			dbHandler.Lock()
 			defer dbHandler.Unlock()
+
+			if _, err := models.BackupSystemDatabase(dbHandler); err != nil {
+				r.Log.Error(err)
+				return "", err
+			}
 
 			r.Log.Info("Dropping Meshery Database")
 			tables, err := dbHandler.Migrator().GetTables()
