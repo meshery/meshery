@@ -113,7 +113,7 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", models.ErrDoRequest(err, resp.Request.Method, patternUrl)
+		return "", fmt.Errorf("failed to fetch design %q by name: %w", patternName, utils.ErrResponseStatus(resp.StatusCode))
 	}
 	buf, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -163,7 +163,7 @@ func exportDesign(baseUrl, design, designType string) error {
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return models.ErrDoRequest(err, resp.Request.Method, url)
+		return fmt.Errorf("failed to export design %q: %w", design, utils.ErrResponseStatus(resp.StatusCode))
 	}
 
 	buf := new(bytes.Buffer)
@@ -190,7 +190,7 @@ func fetchPatternData(dataURL string) (*models.MesheryPattern, error) {
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, models.ErrDoRequest(err, resp.Request.Method, dataURL)
+		return nil, fmt.Errorf("failed to fetch design data: %w", utils.ErrResponseStatus(resp.StatusCode))
 	}
 
 	buf := new(bytes.Buffer)
@@ -253,7 +253,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 	}
 	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
-		return "", models.ErrDoRequest(err, resp.Request.Method, url)
+		return "", fmt.Errorf("failed to fetch owner profile for %q: %w", ownerID, utils.ErrResponseStatus(resp.StatusCode))
 	}
 
 	var userProfile models.User

@@ -77,7 +77,11 @@ components:
   colorIcon: extensions/models/datadog-operator/components/datadog-instrumentation/icons/color/datadog-instrumentation-color.svg
   whiteIcon: extensions/models/datadog-operator/components/datadog-instrumentation/icons/white/datadog-instrumentation-white.svg
   description: 
-components-count: 17
+- name: datadog-byoc-cluster
+  colorIcon: extensions/models/datadog-operator/components/datadog-byoc-cluster/icons/color/datadog-byoc-cluster-color.svg
+  whiteIcon: extensions/models/datadog-operator/components/datadog-byoc-cluster/icons/white/datadog-byoc-cluster-white.svg
+  description: 
+components-count: 18
 relationships: 
 relationship-count: 0
 featureList: [

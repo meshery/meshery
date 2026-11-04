@@ -45,7 +45,11 @@ components:
   colorIcon: extensions/models/aws-cloudwatchlogs-controller/components/delivery/icons/color/delivery-color.svg
   whiteIcon: extensions/models/aws-cloudwatchlogs-controller/components/delivery/icons/white/delivery-white.svg
   description: 
-components-count: 9
+- name: delivery-destination-policy
+  colorIcon: extensions/models/aws-cloudwatchlogs-controller/components/delivery-destination-policy/icons/color/delivery-destination-policy-color.svg
+  whiteIcon: extensions/models/aws-cloudwatchlogs-controller/components/delivery-destination-policy/icons/white/delivery-destination-policy-white.svg
+  description: 
+components-count: 10
 relationships: 
 - type: "non-binding"
   kind: "edge"

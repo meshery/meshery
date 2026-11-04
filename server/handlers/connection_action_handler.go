@@ -185,10 +185,15 @@ func (h *Handler) setMeshsyncDeploymentModeAction(
 	// controller-status SSE stream reflects the deploy/undeploy progress.
 	// Detach from the request lifecycle but keep context values (token, etc.).
 	detachedCtx := context.WithoutCancel(req.Context())
+	// The goroutine builds its failure event from its own copy of the builder:
+	// Build() returns a pointer into the builder, so sharing eventBuilder would
+	// let the failure event overwrite the success event built below. The copy
+	// keeps the operation's OperationID.
+	failureBuilder := *eventBuilder
 	go func() {
 		if rerr := h.reconcileMeshsyncDeploymentMode(detachedCtx, connectionID, newMode, merged, userID, provider); rerr != nil {
 			h.log.Error(rerr)
-			event := eventBuilder.WithSeverity(events.Error).
+			event := failureBuilder.WithSeverity(events.Error).
 				WithDescription(fmt.Sprintf("MeshSync mode saved as '%s' but redeploy failed for connection %s", newMode, updated.Name)).
 				WithMetadata(map[string]any{"error": rerr, "connectionId": connectionID}).Build()
 			_ = provider.PersistEvent(*event, token)
