@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -254,17 +255,20 @@ func TestAskForConfirmation(t *testing.T) {
 }
 
 func TestCreateConfigFile(t *testing.T) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		t.Error(err, "failed to get users home directory")
-	}
+	tempDir := t.TempDir()
 	originalDefaultConfigPath := DefaultConfigPath
 	defer func() { DefaultConfigPath = originalDefaultConfigPath }()
-	DefaultConfigPath = filepath.Join(home, "config.yaml")
-	err = CreateConfigFile()
+	DefaultConfigPath = filepath.Join(tempDir, "config.yaml")
+	err := CreateConfigFile()
 	if err != nil {
 		t.Errorf("CreateConfigFile error = %v", err)
 	}
+
+	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
+		t.Errorf("expected config file to exist at %s", DefaultConfigPath)
+	}
+
+	assertFileDescriptorClosed(t, DefaultConfigPath)
 }
 
 func TestValidateURL(t *testing.T) {
@@ -765,5 +769,92 @@ func TestSubcommandNames(t *testing.T) {
 				t.Errorf("SubcommandNames() = %q, want %q", got, tt.expected)
 			}
 		})
+	}
+}
+
+func TestUploadFileWithParams(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	oldToken := TokenFlag
+	TokenFlag = GetToken(t)
+	t.Cleanup(func() { TokenFlag = oldToken })
+
+	t.Run("success builds request and closes file handle", func(t *testing.T) {
+		tempDir := t.TempDir()
+		tempFile := filepath.Join(tempDir, "upload-test.txt")
+		err := os.WriteFile(tempFile, []byte("test content for upload"), 0600)
+		if err != nil {
+			t.Fatalf("failed to create temp file: %v", err)
+		}
+
+		params := map[string]string{
+			"param1": "value1",
+		}
+		req, err := UploadFileWithParams("http://localhost:9081/api/upload", params, "file", tempFile)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if req == nil {
+			t.Fatal("expected non-nil request")
+		}
+		if req.Method != http.MethodPost {
+			t.Errorf("expected POST method, got %s", req.Method)
+		}
+		if !strings.HasPrefix(req.Header.Get("Content-Type"), "multipart/form-data") {
+			t.Errorf("expected multipart/form-data content type, got %s", req.Header.Get("Content-Type"))
+		}
+
+		uploaded, _, formErr := req.FormFile("file")
+		if formErr != nil {
+			t.Fatalf("expected file part: %v", formErr)
+		}
+		defer func() { _ = uploaded.Close() }()
+		content, readErr := io.ReadAll(uploaded)
+		if readErr != nil {
+			t.Fatalf("failed to read file part: %v", readErr)
+		}
+		if string(content) != "test content for upload" {
+			t.Errorf("unexpected file content: %q", content)
+		}
+		if got := req.FormValue("param1"); got != "value1" {
+			t.Errorf("unexpected param1 value: %q", got)
+		}
+
+		// Ensure file descriptor is closed across Linux and Windows
+		assertFileDescriptorClosed(t, tempFile)
+	})
+
+	t.Run("returns error when file does not exist", func(t *testing.T) {
+		_, err := UploadFileWithParams("http://localhost:9081/api/upload", nil, "file", filepath.Join(t.TempDir(), "nonexistent.txt"))
+		if err == nil {
+			t.Fatal("expected error for nonexistent file, got nil")
+		}
+	})
+}
+
+func assertFileDescriptorClosed(t *testing.T, path string) {
+	t.Helper()
+	// On Linux, verify that no open file descriptor in /proc/self/fd points to the path.
+	if runtime.GOOS == "linux" {
+		fds, err := os.ReadDir("/proc/self/fd")
+		if err != nil {
+			t.Fatalf("cannot inspect /proc/self/fd: %v", err)
+		}
+		targetInfo, err := os.Stat(path)
+		if err != nil {
+			t.Fatalf("cannot stat path %s: %v", path, err)
+		}
+		for _, fd := range fds {
+			fdPath := filepath.Join("/proc/self/fd", fd.Name())
+			fdInfo, err := os.Stat(fdPath)
+			if err == nil && os.SameFile(targetInfo, fdInfo) {
+				t.Fatalf("expected file descriptor for %s to be closed, but found open fd /proc/self/fd/%s", path, fd.Name())
+			}
+		}
+	}
+	// On Windows, removing an open file fails with sharing violation / permission denied,
+	// verifying descriptor closure.
+	if err := os.Remove(path); err != nil {
+		t.Fatalf("expected file descriptor to be closed so file can be removed, got error: %v", err)
 	}
 }
