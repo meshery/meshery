@@ -115,7 +115,6 @@ describe('HeaderMenu', () => {
     tokenState.isError = false;
     tokenState.error = null;
     extensionPointResult.items = [];
-
   });
 
   it('renders the menu button and opens the popover on click', () => {

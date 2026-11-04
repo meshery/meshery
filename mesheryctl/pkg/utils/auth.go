@@ -60,6 +60,7 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	if err != nil {
 		return nil, ErrCreatingRequest(err)
 	}
+	setRequestOrigin(req)
 
 	// Grab token from the flag --token
 	tokenPath := TokenFlag
@@ -89,6 +90,16 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 // maxRedirects is the limit net/http's default redirect policy applies, kept
 // because MakeRequest replaces that policy.
 const maxRedirects = 10
+
+// setRequestOrigin gives mesheryctl requests browser-origin metadata based on
+// their destination, allowing legitimate CLI calls to Local-provider routes
+// that require Origin or Referer validation.
+func setRequestOrigin(req *http.Request) {
+	if req == nil || req.URL == nil || req.URL.Host == "" || (req.URL.Scheme != "http" && req.URL.Scheme != "https") {
+		return
+	}
+	req.Header.Set("Origin", req.URL.Scheme+"://"+req.URL.Host)
+}
 
 // MakeRequest sends an HTTP request, validates the response, and returns the response or an error.
 func MakeRequest(req *http.Request) (*http.Response, error) {
