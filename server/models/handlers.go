@@ -291,6 +291,7 @@ type HandlerConfig struct {
 	ProviderTracker        *ProviderTracker
 	ProviderCookieName     string
 	ProviderCookieDuration time.Duration
+	AllowedUIOrigins       string
 
 	// SystemEventPersister is the sink for events raised outside any user
 	// request - registry seeding summaries, registration failures. It is

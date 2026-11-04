@@ -281,6 +281,7 @@ func main() {
 		Providers:              provs,
 		ProviderCookieName:     "meshery-provider",
 		ProviderCookieDuration: 30 * 24 * time.Hour,
+		AllowedUIOrigins:       viper.GetString("MESHERY_UI_ORIGINS"),
 		// ProviderTracker is set below, once provider registration is
 		// complete and the tracker has been built around the final
 		// `provs` map. The handlers must not access it before that

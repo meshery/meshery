@@ -77,13 +77,7 @@ func resolveProviderName(req *http.Request, cookieName, enforcedProvider string)
 // outside Meshery before they can reach a Local provider handler. The Local
 // provider has no authenticated session, so it cannot rely on the provider's
 // normal session checks to prevent CSRF.
-func localProviderRequestAllowed(req *http.Request) bool {
-	// Fetch Metadata is independent of Referer policy and reliably identifies
-	// cross-site form submissions in modern browsers.
-	if strings.EqualFold(req.Header.Get("Sec-Fetch-Site"), "cross-site") {
-		return false
-	}
-
+func localProviderRequestAllowed(req *http.Request, allowedUIOrigins string) bool {
 	originValues := req.Header.Values("Origin")
 	if len(originValues) > 1 {
 		return false
@@ -101,18 +95,15 @@ func localProviderRequestAllowed(req *http.Request) bool {
 		}
 	}
 
-	// Requests from command-line clients and other non-browser API consumers
-	// commonly have neither header. Keep those working; browsers send Origin
-	// on unsafe cross-origin requests even when the page suppresses Referer.
 	if source == "" {
-		return true
+		return false
 	}
 
 	sourceURL, err := url.Parse(source)
 	if err != nil || sourceURL.User != nil || sourceURL.Opaque != "" || sourceURL.Hostname() == "" {
 		return false
 	}
-	if sourceURL.Scheme != "http" && sourceURL.Scheme != "https" {
+	if !isHTTPOrigin(sourceURL) {
 		return false
 	}
 
@@ -132,14 +123,37 @@ func localProviderRequestAllowed(req *http.Request) bool {
 		targetScheme = req.URL.Scheme
 	}
 	targetURL := &url.URL{Scheme: targetScheme, Host: req.Host}
-
-	sourceHost := strings.TrimSuffix(strings.ToLower(sourceURL.Hostname()), ".")
-	targetHost := strings.TrimSuffix(strings.ToLower(targetURL.Hostname()), ".")
-	if sourceURL.Scheme != targetURL.Scheme || sourceHost != targetHost {
-		return false
+	for _, rawUIOrigin := range strings.Split(allowedUIOrigins, ",") {
+		uiOrigin, err := url.Parse(strings.TrimSpace(rawUIOrigin))
+		if err == nil && isHTTPOrigin(uiOrigin) && (uiOrigin.Path == "" || uiOrigin.Path == "/") && uiOrigin.RawQuery == "" && uiOrigin.Fragment == "" && sameOrigin(sourceURL, uiOrigin) {
+			return true
+		}
 	}
 
-	return sourceURL.Port() == targetURL.Port()
+	if strings.EqualFold(req.Header.Get("Sec-Fetch-Site"), "cross-site") {
+		return false
+	}
+	return sameOrigin(sourceURL, targetURL)
+}
+
+func isHTTPOrigin(origin *url.URL) bool {
+	return origin != nil && (strings.EqualFold(origin.Scheme, "http") || strings.EqualFold(origin.Scheme, "https")) && origin.User == nil && origin.Opaque == "" && origin.Hostname() != "" && !strings.Contains(origin.Hostname(), "*")
+}
+
+func sameOrigin(first, second *url.URL) bool {
+	firstHost := strings.TrimSuffix(strings.ToLower(first.Hostname()), ".")
+	secondHost := strings.TrimSuffix(strings.ToLower(second.Hostname()), ".")
+	return strings.EqualFold(first.Scheme, second.Scheme) && firstHost == secondHost && effectiveOriginPort(first) == effectiveOriginPort(second)
+}
+
+func effectiveOriginPort(origin *url.URL) string {
+	if port := origin.Port(); port != "" {
+		return port
+	}
+	if strings.EqualFold(origin.Scheme, "https") {
+		return "443"
+	}
+	return "80"
 }
 
 // ProviderMiddleware is a middleware to validate if a provider is set
@@ -160,7 +174,7 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 				h.log.Errorf("enforced provider %q is not registered in h.config.Providers; ProviderUIHandler will degrade to serving the provider-selection UI instead of auto-login. Register %q in PROVIDERS or unset PROVIDER on this deployment.", h.Provider, h.Provider)
 			}
 		}
-		if provider != nil && provider.GetProviderType() == models.LocalProviderType && !localProviderRequestAllowed(req) {
+		if provider != nil && provider.GetProviderType() == models.LocalProviderType && !localProviderRequestAllowed(req, h.config.AllowedUIOrigins) {
 			writeJSONError(w, "cross-origin request is not allowed for the Local provider", http.StatusForbidden)
 			return
 		}

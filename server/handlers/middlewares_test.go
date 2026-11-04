@@ -207,6 +207,7 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 		referer    string
 		fetchSite  string
 		forwarded  string
+		uiOrigins  string
 		wantStatus int
 	}{
 		{
@@ -247,7 +248,7 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 			wantStatus: http.StatusNoContent,
 		},
 		{
-			name:       "localhost UI development port cannot mutate localhost API",
+			name:       "unconfigured localhost UI port cannot mutate localhost API",
 			method:     http.MethodPost,
 			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
 			origin:     "http://localhost:3000",
@@ -278,6 +279,32 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 			wantStatus: http.StatusForbidden,
 		},
 		{
+			name:       "configured localhost UI origin can mutate localhost API",
+			method:     http.MethodPost,
+			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
+			origin:     "http://localhost:3000",
+			fetchSite:  "same-site",
+			uiOrigins:  "http://localhost:3000",
+			wantStatus: http.StatusNoContent,
+		},
+		{
+			name:       "configured UI origin is allowed with cross-site metadata",
+			method:     http.MethodPost,
+			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
+			origin:     "https://ui.example.com",
+			fetchSite:  "cross-site",
+			uiOrigins:  "https://ui.example.com",
+			wantStatus: http.StatusNoContent,
+		},
+		{
+			name:       "wildcard UI origin does not allow a different host",
+			method:     http.MethodPost,
+			target:     "http://meshery.example.com:9081/api/system/database/reset?provider=Local",
+			origin:     "http://ui.example.com",
+			uiOrigins:  "http://*.example.com",
+			wantStatus: http.StatusForbidden,
+		},
+		{
 			name:       "same-origin GET remains allowed",
 			method:     http.MethodGet,
 			target:     "http://localhost:9081/user/logout?provider=Local",
@@ -286,15 +313,23 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 			wantStatus: http.StatusNoContent,
 		},
 		{
-			name:       "headerless non-browser API client remains supported",
-			method:     http.MethodPost,
-			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
-			wantStatus: http.StatusNoContent,
+			name:       "request without Origin or Referer is rejected",
+			method:     http.MethodGet,
+			target:     "http://localhost:9081/user/logout?provider=Local",
+			fetchSite:  "same-site",
+			wantStatus: http.StatusForbidden,
+		},
+		{
+			name:       "request without browser origin metadata is rejected",
+			method:     http.MethodGet,
+			target:     "http://localhost:9081/user/logout?provider=Local",
+			wantStatus: http.StatusForbidden,
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			h.config.AllowedUIOrigins = tc.uiOrigins
 			req := httptest.NewRequest(tc.method, tc.target, nil)
 			if tc.origin != "" {
 				req.Header.Set("Origin", tc.origin)
