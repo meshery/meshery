@@ -2,11 +2,13 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/meshery/meshery/server/machines"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
@@ -327,8 +329,12 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			// has still been persisted in the discovered state; just skip the
 			// event. See mhelpers.HasMachineContext.
 			if mhelpers.HasMachineContext(inst) {
+				// detach from the http request lifecycle with a bounded timeout so that the goroutine isn't cancelled when
+				// the handler returns, while preventing goroutine leaks if downstream calls hang.
+				detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), 2*time.Minute)
 				go func(inst *machines.StateMachine) {
-					event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
+					defer cancel()
+					event, err := inst.SendEvent(detachedCtx, machines.EventType(mhelpers.StatusToEvent(status)), nil)
 					if err != nil {
 						_ = provider.PersistEvent(*event, token)
 						go h.config.EventBroadcaster.Publish(userID, event)
