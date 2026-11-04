@@ -1,6 +1,7 @@
 package system
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -153,73 +154,142 @@ func TestContextDeleteCmd(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	utils.SetupCustomContextEnv(t, currDir+"/testdata/context/ExpectedDelete.yaml")
-	tests := []utils.CmdTestInput{
+	configPath := filepath.Join(currDir, "testdata/context/ExpectedDelete.yaml")
+	fixturePath := filepath.Join(currDir, "fixtures/.meshery/TestContext.yaml")
+
+	t.Cleanup(func() {
+		_ = utils.Populate(fixturePath, configPath)
+	})
+
+	tests := []struct {
+		name               string
+		args               []string
+		setupConfig        func(t *testing.T, path string)
+		expectError        bool
+		expectedError      error
+		expectedResponse   string
+		expectedSubstr     string
+		expectedCurrentCtx string
+		expectedDeletedCtx string
+	}{
 		{
-			Name:             "delete given context",
-			Args:             []string{"context", "delete", "local2"},
-			ExpectedResponse: "delete.context.golden",
+			name:               "delete given context",
+			args:               []string{"context", "delete", "local2"},
+			expectedResponse:   "delete.context.golden",
+			expectedCurrentCtx: "local",
+			expectedDeletedCtx: "local2",
+		},
+		{
+			name:               "delete current context with --set flag",
+			args:               []string{"context", "delete", "local", "-y", "--set", "local2"},
+			expectedSubstr:     "deleted context local",
+			expectedCurrentCtx: "local2",
+			expectedDeletedCtx: "local",
+		},
+		{
+			name:               "delete current context with mixed-case --set flag",
+			args:               []string{"context", "delete", "local", "-y", "--set", "Local2"},
+			expectedSubstr:     "deleted context local",
+			expectedCurrentCtx: "local2",
+			expectedDeletedCtx: "local",
+		},
+		{
+			name: "error when deleting the only context",
+			args: []string{"context", "delete", "local", "-y"},
+			setupConfig: func(t *testing.T, path string) {
+				singleCtx := `contexts:
+  local:
+    endpoint: http://localhost:9081
+    token: default
+    platform: kubernetes
+current-context: local
+`
+				if err := os.WriteFile(path, []byte(singleCtx), 0644); err != nil {
+					t.Fatal(err)
+				}
+			},
+			expectError:   true,
+			expectedError: utils.ErrInvalidArgument(errors.New("cannot delete the only context; create another with `mesheryctl system context create` and try again")),
 		},
 	}
 
 	mesheryctlflags.InitValidators(SystemCmd)
 	for _, tt := range tests {
-		t.Run(tt.Name, func(t *testing.T) {
+		t.Run(tt.name, func(t *testing.T) {
+			// Always start with fresh fixture
+			if err := utils.Populate(fixturePath, configPath); err != nil {
+				t.Fatal(err)
+			}
+			if tt.setupConfig != nil {
+				tt.setupConfig(t, configPath)
+			}
+			utils.SetupCustomContextEnv(t, configPath)
+
+			// Reset flags to prevent bleed-over between tests
+			contextDeleteFlags = cmdContextDeleteFlags{}
+			utils.SilentFlag = false
+
 			buf := utils.SetupMeshkitLoggerTesting(t, false)
 			defer buf.Reset()
 
 			SystemCmd.SetOut(buf)
 			SystemCmd.SetErr(buf)
-			SystemCmd.SetArgs(tt.Args)
+			SystemCmd.SetArgs(tt.args)
 			err := SystemCmd.Execute()
+
+			if tt.expectError {
+				if err == nil {
+					t.Fatalf("expected error, got nil")
+				}
+				utils.AssertMeshkitErrorsEqual(t, err, tt.expectedError)
+				return
+			}
+
 			if err != nil {
-				t.Error(err)
+				t.Fatalf("unexpected error: %v", err)
 			}
 
 			actualResponse := buf.String()
-			// Expected response
-			testdataDir := filepath.Join(currDir, "testdata/context")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-			if *update {
-				golden.Write(actualResponse)
+			if tt.expectedResponse != "" {
+				testdataDir := filepath.Join(currDir, "testdata/context")
+				golden := utils.NewGoldenFile(t, tt.expectedResponse, testdataDir)
+				if *update {
+					golden.Write(actualResponse)
+				}
+				expectedResponse := golden.Load()
+				assert.Equal(t, expectedResponse, actualResponse)
 			}
-			expectedResponse := golden.Load()
 
-			if expectedResponse != actualResponse {
-				t.Error("Expected response not obtained")
-				t.Errorf("Expected: %v", expectedResponse)
-				t.Errorf("Actual: %v", actualResponse)
+			if tt.expectedSubstr != "" {
+				assert.Contains(t, actualResponse, tt.expectedSubstr)
 			}
-			path, err := os.Getwd()
-			if err != nil {
-				t.Error("unable to locate meshery directory")
-			}
-			filepath := path + "/testdata/context/ExpectedDelete.yaml"
 
-			content, err := os.ReadFile(filepath)
+			content, err := os.ReadFile(configPath)
 			if err != nil {
+				t.Fatal(err)
+			}
+
+			var data map[string]interface{}
+			if err := yaml.Unmarshal(content, &data); err != nil {
+				t.Fatal(err)
+			}
+
+			if tt.expectedCurrentCtx != "" {
+				assert.Equal(t, tt.expectedCurrentCtx, data["current-context"])
+			}
+
+			if tt.expectedDeletedCtx != "" {
+				if contexts, ok := data["contexts"].(map[string]interface{}); ok {
+					_, exists := contexts[tt.expectedDeletedCtx]
+					assert.False(t, exists, "deleted context should not exist in contexts")
+				}
+			}
+
+			// Repopulating Expected yaml for cleanup
+			if err := utils.Populate(fixturePath, configPath); err != nil {
 				t.Error(err)
 			}
-			actualResponse = string(content)
-			golden = utils.NewGoldenFile(t, "deleteExpected.golden", testdataDir)
-			if *update {
-				golden.Write(actualResponse)
-			}
-			deleteExpected := golden.Load()
-			if actualResponse != deleteExpected {
-				t.Error("Contexts are mismatched")
-				t.Error("Expected:")
-				t.Errorf("%v", deleteExpected)
-				t.Error("Actual:")
-				t.Errorf("%v", actualResponse)
-			}
-
-			//Repopulating Expected yaml
-			if err := utils.Populate(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
-				t.Error(err, "Could not complete test. Unable to configure delete test file")
-			}
 		})
-		t.Log("DeleteContextCmd test Passed")
 	}
 }
 

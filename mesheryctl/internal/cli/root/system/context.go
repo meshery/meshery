@@ -136,6 +136,7 @@ mesheryctl system context delete [context name]
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextDeleteUsageMsg))
 		}
+		configuration = &config.MesheryCtlConfig{}
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
 			return ErrUnmarshallConfig(err)
@@ -149,6 +150,10 @@ mesheryctl system context delete [context name]
 		}
 
 		if viper.GetString("current-context") == contextName {
+			if len(configuration.Contexts) <= 1 {
+				return utils.ErrInvalidArgument(errors.New("cannot delete the only context; create another with `mesheryctl system context create` and try again"))
+			}
+
 			var res bool
 			if utils.SilentFlag {
 				res = true
@@ -164,22 +169,27 @@ mesheryctl system context delete [context name]
 			var newContext string
 
 			if contextDeleteFlags.Set != "" {
-				_, exists := configuration.Contexts[contextDeleteFlags.Set]
+				setContext := strings.ToLower(contextDeleteFlags.Set)
+				_, exists := configuration.Contexts[setContext]
 				if !exists {
 					return ErrSetCurrentContext(fmt.Errorf("new context wrongly set"))
 				}
 
-				if contextDeleteFlags.Set == contextName {
+				if setContext == contextName {
 					return ErrSetCurrentContext(fmt.Errorf("choose a new context other than the context being deleted"))
 				}
 
-				newContext = contextDeleteFlags.Set
+				newContext = setContext
 			} else {
 				var listContexts []string
 				for context := range configuration.Contexts {
 					if context != contextName {
 						listContexts = append(listContexts, context)
 					}
+				}
+
+				if len(listContexts) == 0 {
+					return utils.ErrInvalidArgument(errors.New("cannot delete the only context; create another with `mesheryctl system context create` and try again"))
 				}
 
 				prompt := promptui.Select{
