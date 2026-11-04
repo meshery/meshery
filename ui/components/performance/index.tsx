@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ModalBody, ModalFooter, NoSsr, useHasPermission } from '@sistent/sistent';
 import { URLValidator } from '../../utils/URLValidator';
 import { isValidJSON } from '../../utils/validators';
@@ -98,6 +98,7 @@ const MesheryPerformanceComponent_ = (props) => {
     ...metadata,
     ca_certificate: metadata?.ca_certificate || {},
   });
+  const autoRunAttemptedRef = useRef(false);
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const { data: userData, isSuccess: isUserDataFetched } =
@@ -379,7 +380,12 @@ const MesheryPerformanceComponent_ = (props) => {
     scanForMeshes();
     getLoadTestPrefs();
     getSMPMeshes();
-    if (props.runTestOnMount) handleSubmit();
+    // This effect reruns as user data and meshes load. Run only once, so a run
+    // blocked by invalid options does not start later while they are edited.
+    if (props.runTestOnMount && !autoRunAttemptedRef.current) {
+      autoRunAttemptedRef.current = true;
+      handleSubmit();
+    }
   }, [userData, isUserDataFetched, smpMeshes]);
 
   const getLoadTestPrefs = () => {
