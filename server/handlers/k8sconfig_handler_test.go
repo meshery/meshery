@@ -3,6 +3,8 @@ package handlers
 import (
 	"errors"
 	"testing"
+
+	meshkiterrors "github.com/meshery/meshkit/errors"
 )
 
 // TestK8sEventMetadataHasError guards the decision that raises a Kubernetes
@@ -71,6 +73,16 @@ func TestK8sEventMetadataHasError(t *testing.T) {
 			want: true,
 		},
 		{
+			name: "in-cluster nil context error reports an error",
+			eventMetadata: map[string]interface{}{
+				"in-cluster": map[string]interface{}{
+					"description": "No contexts detected in the in-cluster kubeconfig.",
+					"error":       ErrNilClusterContext(nil),
+				},
+			},
+			want: true,
+		},
+		{
 			name: "non-map entries are ignored",
 			eventMetadata: map[string]interface{}{
 				"weird": "not a metadata map",
@@ -83,6 +95,36 @@ func TestK8sEventMetadataHasError(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := k8sEventMetadataHasError(tt.eventMetadata); got != tt.want {
 				t.Errorf("k8sEventMetadataHasError() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+// TestErrNilClusterContext verifies that ErrNilClusterContext handles a nil error gracefully
+// without panicking on err.Error(), and includes appropriate error code.
+func TestErrNilClusterContext(t *testing.T) {
+	testCases := []struct {
+		name string
+		err  error
+	}{
+		{
+			name: "nil error",
+			err:  nil,
+		},
+		{
+			name: "non-nil error",
+			err:  errors.New("in-cluster context not found"),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			res := ErrNilClusterContext(tc.err)
+			if res == nil {
+				t.Fatal("expected non-nil error, got nil")
+			}
+			if code := meshkiterrors.GetCode(res); code != ErrNilClusterContextCode {
+				t.Fatalf("expected error code %s, got %s", ErrNilClusterContextCode, code)
 			}
 		})
 	}

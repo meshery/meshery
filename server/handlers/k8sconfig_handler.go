@@ -563,9 +563,10 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		}
 		if cc == nil {
 			metadata["description"] = "No contexts detected in the in-cluster kubeconfig."
-
-			h.log.Warn(ErrNilClusterContext(err))
-			return contexts, err
+			nilContextErr := ErrNilClusterContext(nil)
+			metadata["error"] = nilContextErr
+			h.log.Warn(nilContextErr)
+			return contexts, nilContextErr
 		}
 		cc.DeploymentType = "in_cluster"
 		conn, err := prov.SaveK8sContext(token, *cc, nil)
