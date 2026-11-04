@@ -12,6 +12,7 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/gorilla/mux"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -190,4 +191,71 @@ func TestExportModel_Concurrent(t *testing.T) {
 	for err := range errs {
 		assert.NoError(t, err)
 	}
+}
+
+func TestDeleteModel_NotFound(t *testing.T) {
+	rm, db := newTestRegistryDB(t)
+	log, err := logger.New("component_handler_test", logger.Options{})
+	require.NoError(t, err)
+
+	h := &Handler{
+		registryManager: rm,
+		dbHandler:       db,
+		log:             log,
+	}
+
+	nonExistentID := "00000000-0000-0000-0000-000000000000"
+	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/api/meshmodels/models/%s", nonExistentID), nil)
+	req = mux.SetURLVars(req, map[string]string{"id": nonExistentID})
+	rw := httptest.NewRecorder()
+
+	h.DeleteModel(rw, req, nil, nil, nil)
+
+	resp := rw.Result()
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
+}
+
+func TestDeleteModel_Success(t *testing.T) {
+	rm, db := newTestRegistryDB(t)
+	modelName := "test-delete-success-model"
+	conn := connection.Connection{
+		Name:    "test-registrant",
+		Kind:    modelName,
+		Type:    "platform",
+		SubType: "orchestration",
+		Status:  connection.ConnectionStatusConnected,
+	}
+	m := &model.ModelDefinition{
+		Name:          modelName,
+		DisplayName:   "Test Model",
+		SchemaVersion: "models.meshery.io/v1beta1",
+		Version:       "v1.0.0",
+		Model:         model.Model{Version: "v1.0.0"},
+		Category:      category.CategoryDefinition{Name: "Orchestration"},
+		Status:        model.Enabled,
+		Metadata:      &model.ModelDefinition_Metadata{},
+	}
+	id, err := m.GenerateID()
+	require.NoError(t, err)
+	m.ID = id
+	_, _, err = rm.RegisterEntity(registry.RegistrantHostToV1beta3(conn), m)
+	require.NoError(t, err, "RegisterEntity failed")
+
+	log, err := logger.New("component_handler_test", logger.Options{})
+	require.NoError(t, err)
+
+	h := &Handler{
+		registryManager: rm,
+		dbHandler:       db,
+		log:             log,
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/api/meshmodels/models/%s", m.ID.String()), nil)
+	req = mux.SetURLVars(req, map[string]string{"id": m.ID.String()})
+	rw := httptest.NewRecorder()
+
+	h.DeleteModel(rw, req, nil, nil, nil)
+
+	resp := rw.Result()
+	assert.Equal(t, http.StatusNoContent, resp.StatusCode)
 }
