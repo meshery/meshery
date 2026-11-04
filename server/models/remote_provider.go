@@ -3464,11 +3464,13 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 	l.Log.Info("attempting to save filter to remote provider")
 	bf := bytes.NewBuffer(data)
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-
+	remoteProviderURL, err := url.Parse(l.RemoteProviderURL + ep)
 	if err != nil {
-		return nil, err
+		return nil, ErrUrlParse(err)
+	}
+	cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	if err != nil {
+		return nil, ErrDoRequest(err, http.MethodPost, remoteProviderURL.String())
 	}
 
 	tokenString, err := l.GetToken(req)

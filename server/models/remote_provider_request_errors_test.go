@@ -50,3 +50,13 @@ func TestSaveMesheryFilter_InvalidRemoteProviderURL(t *testing.T) {
 		return provider.SaveMesheryFilter("test-token", &MesheryFilter{})
 	})
 }
+
+func TestRemoteFilterFile_InvalidRemoteProviderURL(t *testing.T) {
+	provider := newTestRemoteProvider(t, invalidRemoteProviderURL)
+	provider.Capabilities = Capabilities{{Feature: PersistMesheryFilters, Endpoint: "/api/content/filters"}}
+	req := httptest.NewRequest(http.MethodPost, "/api/filter", nil)
+
+	expectRequestBuildError(t, "RemoteFilterFile", func() ([]byte, error) {
+		return provider.RemoteFilterFile(req, "https://example.com/filter.wasm", "", true, "")
+	})
+}
