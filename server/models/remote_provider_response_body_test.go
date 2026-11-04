@@ -106,3 +106,11 @@ func TestUpdateEventStatus_ClosesResponseBody(t *testing.T) {
 		_ = provider.UpdateEventStatus("test-token", core.Uuid{}, "read")
 	})
 }
+
+func TestBulkUpdateEventStatus_ClosesResponseBody(t *testing.T) {
+	provider := newResponseBodyTestProvider(t, PersistEvents, "/api/events")
+
+	expectResponseBodiesClosed(t, func() {
+		_ = provider.BulkUpdateEventStatus("test-token", []*core.Uuid{{}}, "read")
+	})
+}

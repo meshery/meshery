@@ -1989,6 +1989,10 @@ func (l *RemoteProvider) BulkUpdateEventStatus(token string, eventIDs []*core.Uu
 	if err != nil {
 		return ErrUnreachableRemoteProvider(err)
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		l.Log.Error(ErrPost(fmt.Errorf("error bulk updating event status with the remote provider"), "event status", resp.StatusCode))
