@@ -164,9 +164,7 @@ func loadK8sMeshModelMetadata(path string) (ModelTemplate, error) {
 	if err != nil {
 		return ModelTemplate{}, err
 	}
-	defer func() {
-		_ = f.Close()
-	}()
+	defer f.Close()
 
 	byt, err := io.ReadAll(f)
 	if err != nil {
