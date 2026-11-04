@@ -4,9 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
-	"path/filepath"
 	"sync"
 
 	"github.com/meshery/schemas/models/core"
@@ -160,13 +158,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 // loadK8sMeshModelMetadata reads and unmarshals the Kubernetes mesh model template from the specified path,
 // ensuring the file descriptor is closed across all return paths.
 func loadK8sMeshModelMetadata(path string) (ModelTemplate, error) {
-	f, err := os.Open(filepath.Join(path))
-	if err != nil {
-		return ModelTemplate{}, err
-	}
-	defer f.Close()
-
-	byt, err := io.ReadAll(f)
+	byt, err := os.ReadFile(path)
 	if err != nil {
 		return ModelTemplate{}, err
 	}
