@@ -60,3 +60,12 @@ func TestRemoteFilterFile_InvalidRemoteProviderURL(t *testing.T) {
 		return provider.RemoteFilterFile(req, "https://example.com/filter.wasm", "", true, "")
 	})
 }
+
+func TestSavePerformanceProfile_InvalidRemoteProviderURL(t *testing.T) {
+	provider := newTestRemoteProvider(t, invalidRemoteProviderURL)
+	provider.Capabilities = Capabilities{{Feature: PersistPerformanceProfiles, Endpoint: "/api/performance/profiles"}}
+
+	expectRequestBuildError(t, "SavePerformanceProfile", func() ([]byte, error) {
+		return provider.SavePerformanceProfile("test-token", &PerformanceProfile{})
+	})
+}
