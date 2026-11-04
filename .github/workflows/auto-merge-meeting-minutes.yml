@@ -101,74 +101,91 @@ jobs:
             core.setOutput('pr_number', prNumber);
             
             try {
-              // Fetch PR metadata to capture authoritative head SHA prior to file enumeration
+              // Fetch PR metadata to capture authoritative base and head commit SHAs
               const { data: pr } = await github.rest.pulls.get({
                 owner,
                 repo,
                 pull_number: prNumber
               });
 
-              const validatedHeadSha = pr.head?.sha;
-              if (!validatedHeadSha) {
-                core.setFailed(`Could not retrieve head commit SHA for PR #${prNumber}.`);
+              const baseSha = pr.base?.sha;
+              const headSha = pr.head?.sha;
+              if (!baseSha || !headSha) {
+                core.setFailed(`Missing base (${baseSha}) or head (${headSha}) commit SHA for PR #${prNumber}.`);
+                core.setOutput('is_valid', 'false');
                 return;
               }
-              core.info(`Captured PR #${prNumber} head commit SHA: ${validatedHeadSha}`);
+              core.info(`Captured PR #${prNumber} base commit: ${baseSha}, head commit: ${headSha}`);
 
-              // Fetch all files changed in this PR
-              const { data: files } = await github.rest.pulls.listFiles({
+              // Compare commits to inspect the exact changed files between immutable commits
+              const { data: comparison } = await github.rest.repos.compareCommits({
                 owner,
                 repo,
-                pull_number: prNumber,
-                per_page: 100
+                base: baseSha,
+                head: headSha
               });
-              
-              core.info(`Found ${files.length} changed file(s) in PR #${prNumber}`);
-              
+
+              const files = comparison.files || [];
+              core.info(`Found ${files.length} changed file(s) between base ${baseSha} and head ${headSha}`);
+
+              if (files.length === 0) {
+                core.setFailed(`No changed files found between base ${baseSha} and head ${headSha}. Nothing to merge.`);
+                core.setOutput('is_valid', 'false');
+                return;
+              }
+
+              if (files.length >= 300) {
+                core.setFailed(`PR #${prNumber} changes ${files.length} files (>= 300), which reaches the compareCommits details limit. Cannot safely validate all files.`);
+                core.setOutput('is_valid', 'false');
+                return;
+              }
+
               // Define the allowed directory pattern
               // Files MUST start with 'docs/meetings/' to be auto-merged
               const allowedPathPrefix = 'docs/meetings/';
-              
+
               // Track validation results
               let allFilesValid = true;
               const invalidFiles = [];
               const validFiles = [];
-              
-              // Validate each file
+
+              // Validate each file, including rename origin if applicable
               for (const file of files) {
                 const filePath = file.filename;
-                const isValid = filePath.startsWith(allowedPathPrefix);
-                
-                if (isValid) {
+                const isPathValid = filePath.startsWith(allowedPathPrefix);
+                const isRenameValid = !file.previous_filename || file.previous_filename.startsWith(allowedPathPrefix);
+
+                if (isPathValid && isRenameValid) {
                   validFiles.push(filePath);
                   core.info(`✅ Valid: ${filePath}`);
                 } else {
-                  invalidFiles.push(filePath);
-                  core.warning(`❌ Invalid: ${filePath} - not in ${allowedPathPrefix}`);
                   allFilesValid = false;
+                  if (!isPathValid) {
+                    invalidFiles.push(filePath);
+                    core.warning(`❌ Invalid: ${filePath} - not in ${allowedPathPrefix}`);
+                  }
+                  if (!isRenameValid) {
+                    invalidFiles.push(`${file.previous_filename} (renamed to ${filePath})`);
+                    core.warning(`❌ Invalid rename source: ${file.previous_filename} - not in ${allowedPathPrefix}`);
+                  }
                 }
               }
-              
+
               // Set outputs for subsequent steps
               core.setOutput('files_count', files.length);
               core.setOutput('valid_files', JSON.stringify(validFiles));
               core.setOutput('invalid_files', JSON.stringify(invalidFiles));
               core.setOutput('is_valid', allFilesValid.toString());
-              core.setOutput('validated_head_sha', validatedHeadSha);
-              
+              core.setOutput('validated_head_sha', headSha);
+
               if (!allFilesValid) {
                 core.setFailed(`PR #${prNumber} contains files outside of ${allowedPathPrefix}. Found ${invalidFiles.length} invalid file(s): ${invalidFiles.join(', ')}`);
                 return;
               }
-              
-              if (files.length === 0) {
-                core.setFailed('PR contains no files. Nothing to merge.');
-                return;
-              }
-              
-              core.info(`✅ All ${files.length} file(s) are within ${allowedPathPrefix}. PR is eligible for auto-merge.`);
-              
+
+              core.info(`✅ All ${files.length} file(s) between base ${baseSha} and head ${headSha} are within ${allowedPathPrefix}. PR is eligible for auto-merge.`);
             } catch (error) {
+              core.setOutput('is_valid', 'false');
               core.setFailed(`Failed to validate PR files: ${error.message}`);
             }
 
