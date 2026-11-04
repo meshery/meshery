@@ -3,13 +3,20 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/meshes"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
 	_events "github.com/meshery/meshkit/utils/events"
 )
 
@@ -391,6 +398,69 @@ func TestListenForCoreEvents_UnsubscribesOnExit(t *testing.T) {
 	case payload := <-subscribedChannel:
 		t.Fatalf("unsubscribed channel unexpectedly received payload: %#v", payload)
 	case <-time.After(100 * time.Millisecond):
+	}
+}
+
+// newGetAllEventsFixture wires GetAllEvents the way the router does, over an
+// in-memory database, mirroring the DefaultLocalProvider fixture pattern used
+// in delete_connection_test.go.
+func newGetAllEventsFixture(t *testing.T) (*Handler, *models.DefaultLocalProvider) {
+	t.Helper()
+
+	db, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
+	if err != nil {
+		t.Fatalf("open database: %v", err)
+	}
+	if err := db.AutoMigrate(events.Event{}); err != nil {
+		t.Fatalf("migrate tables: %v", err)
+	}
+
+	systemID := uuid.Must(uuid.NewV4())
+	h := &Handler{
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+	provider := &models.DefaultLocalProvider{
+		EventsPersister: &models.EventsPersister{DB: &db},
+	}
+	return h, provider
+}
+
+func getAllEvents(t *testing.T, h *Handler, provider models.Provider, query url.Values) *httptest.ResponseRecorder {
+	t.Helper()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/system/events", nil)
+	req.URL.RawQuery = query.Encode()
+	rec := httptest.NewRecorder()
+
+	h.GetAllEvents(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
+	return rec
+}
+
+// TestGetAllEventsMalformedFilterReturnsBadRequest is the regression guard for
+// a bug where a malformed (non-JSON) event filter query parameter, such as
+// category=not-json, was only logged by getEventFilter's caller and the
+// request went on to query the provider anyway - potentially returning 200 OK
+// for input that should have been rejected outright.
+func TestGetAllEventsMalformedFilterReturnsBadRequest(t *testing.T) {
+	h, provider := newGetAllEventsFixture(t)
+
+	rec := getAllEvents(t, h, provider, url.Values{"category": {"not-json"}})
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusBadRequest, rec.Body.String())
+	}
+}
+
+// TestGetAllEventsValidFilterSucceeds pins the non-error path so the fix above
+// cannot regress into rejecting well-formed requests.
+func TestGetAllEventsValidFilterSucceeds(t *testing.T) {
+	h, provider := newGetAllEventsFixture(t)
+
+	rec := getAllEvents(t, h, provider, url.Values{"category": {`["kubernetes"]`}})
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusOK, rec.Body.String())
 	}
 }
 
