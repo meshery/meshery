@@ -76,6 +76,15 @@ func TestUndeployCmd(t *testing.T) {
 			ExpectedError:    utils.ErrFileRead(expectedFileReadErr),
 		},
 		{
+			Name:             "given URL when design undeploy then error is thrown",
+			Args:             []string{"undeploy", "-f", "https://raw.githubusercontent.com/meshery/meshery/master/samples/test.yaml"},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("URLs are not currently supported")),
+		},
+		{
 			Name:             "given no args when design undeploy then usage error is returned",
 			Args:             []string{"undeploy"},
 			ExpectedResponse: "",

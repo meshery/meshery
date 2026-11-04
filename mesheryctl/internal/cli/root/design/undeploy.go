@@ -94,8 +94,7 @@ mesheryctl design undeploy -f [filepath]
 			}
 			designFile = string(content)
 		} else {
-			utils.Log.Info("URLs are not currently supported")
-			return nil
+			return utils.ErrInvalidArgument(fmt.Errorf("URLs are not currently supported"))
 		}
 
 		jsonValues, _ := json.Marshal(map[string]interface{}{
