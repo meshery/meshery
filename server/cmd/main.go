@@ -178,7 +178,7 @@ func main() {
 	logDir := path.Join(home, ".meshery", "logs", "registry")
 	errDir = os.MkdirAll(logDir, 0755)
 	if errDir != nil {
-		logrus.Fatalf("Error creating user data directory: %v", err)
+		logrus.Fatalf("Error creating registry log directory %s: %v", logDir, errDir)
 	}
 
 	// Create or open the log file
