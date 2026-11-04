@@ -7,6 +7,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"testing"
+
+	"github.com/meshery/schemas/models/core"
 )
 
 // responseBodyTestHost is the remote provider host in these tests. Only
@@ -94,5 +96,13 @@ func TestExecutePrefSync_ClosesResponseBody(t *testing.T) {
 
 	expectResponseBodiesClosed(t, func() {
 		provider.executePrefSync("test-token", &Preference{})
+	})
+}
+
+func TestUpdateEventStatus_ClosesResponseBody(t *testing.T) {
+	provider := newResponseBodyTestProvider(t, PersistEvents, "/api/events")
+
+	expectResponseBodiesClosed(t, func() {
+		_ = provider.UpdateEventStatus("test-token", core.Uuid{}, "read")
 	})
 }

@@ -1950,6 +1950,10 @@ func (l *RemoteProvider) UpdateEventStatus(token string, eventID core.Uuid, stat
 	if err != nil {
 		return ErrUnreachableRemoteProvider(err)
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		l.Log.Error(ErrPost(fmt.Errorf("error updating event status with the remote provider"), "event status", resp.StatusCode))
