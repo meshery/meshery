@@ -2017,6 +2017,10 @@ func (l *RemoteProvider) DeleteEvent(token string, eventID core.Uuid) error {
 	if err != nil {
 		return ErrUnreachableRemoteProvider(err)
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		l.Log.Error(ErrPost(fmt.Errorf("error deleting event with the remote provider"), "event status", resp.StatusCode))
