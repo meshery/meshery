@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
 
@@ -32,14 +31,6 @@ import (
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
-
-func isURL(s string) bool {
-	u, err := url.ParseRequestURI(s)
-	if err != nil || u.Scheme == "" || u.Host == "" {
-		return false
-	}
-	return u.Scheme == "http" || u.Scheme == "https"
-}
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
@@ -90,7 +81,7 @@ mesheryctl design delete -f [file | URL]
 			target := args[0]
 			if _, statErr := os.Stat(target); statErr == nil {
 				file = target
-			} else if isURL(target) {
+			} else if utils.IsValidUrl(target) {
 				file = target
 			} else {
 				pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), target, "pattern")
@@ -125,7 +116,7 @@ mesheryctl design delete -f [file | URL]
 
 		var patternFileByt []byte
 		// If file path not a valid URL, treat it like a local file path
-		if !isURL(file) {
+		if !utils.IsValidUrl(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
 				return utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, file))
