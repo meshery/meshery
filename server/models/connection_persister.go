@@ -42,7 +42,7 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 		order = defaultOrderUpdatedAtDesc
 	}
 
-	query := userFacingConnections(cp.DB.Model(&connections.Connection{}))
+	query := cp.DB.Model(&connections.Connection{}).Scopes(userFacingConnections)
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
@@ -143,7 +143,8 @@ func (cp *ConnectionPersister) getConnectionsStatusSummary() (*map[schemasConnec
 		Count  int    `gorm:"column:count"`
 	}
 
-	err := userFacingConnections(cp.DB.Model(&connections.Connection{})).
+	err := cp.DB.Model(&connections.Connection{}).
+		Scopes(userFacingConnections).
 		Select("status, COUNT(*) as count").
 		Group("status").
 		Scan(&statusCounts).Error
