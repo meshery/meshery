@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	meshkiterrors "github.com/meshery/meshkit/errors"
 )
 
 // invalidRemoteProviderURL does not parse as a URL: the IPv6 host is never
@@ -11,9 +13,10 @@ import (
 const invalidRemoteProviderURL = "http://[::1"
 
 // expectRequestBuildError calls save and fails the test when it panics or
-// returns no error. While the errors from url.Parse and http.NewRequest were
-// discarded, a remote provider URL that did not parse left the parsed URL nil,
-// and calling its String method panicked before any request was sent.
+// does not return ErrUrlParse. While the errors from url.Parse and
+// http.NewRequest were discarded, a remote provider URL that did not parse left
+// the parsed URL nil, and calling its String method panicked before any request
+// was sent.
 func expectRequestBuildError(t *testing.T, name string, save func() ([]byte, error)) {
 	t.Helper()
 
@@ -26,6 +29,9 @@ func expectRequestBuildError(t *testing.T, name string, save func() ([]byte, err
 	body, err := save()
 	if err == nil {
 		t.Fatalf("%s returned no error for a remote provider URL that does not parse", name)
+	}
+	if code := meshkiterrors.GetCode(err); code != ErrUrlParseCode {
+		t.Errorf("%s returned error code %q, want %q (ErrUrlParse): %v", name, code, ErrUrlParseCode, err)
 	}
 	if body != nil {
 		t.Errorf("%s returned a body alongside the error: %q", name, body)
