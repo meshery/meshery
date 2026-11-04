@@ -322,7 +322,9 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 
 	order = models.SanitizeOrderInput(order, []string{"creation_timestamp", "name", "kind", "model", "api_version", "namespace"})
-	query.Order(order)
+	if order != "" {
+		query = query.Order(order)
+	}
 
 	err := query.Find(&resources).Error
 	if err != nil {

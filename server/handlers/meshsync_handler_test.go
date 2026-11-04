@@ -308,3 +308,120 @@ func TestDeleteMeshSyncResource_Base64ID_Success(t *testing.T) {
 		t.Errorf("expected deleted to be true, got false")
 	}
 }
+
+// TestGetMeshSyncResources_OrderBy verifies that the order query parameter properly
+// applies ORDER BY sorting to the returned resources.
+func TestGetMeshSyncResources_OrderBy(t *testing.T) {
+	h, provider, db := newMeshSyncTestFixture(t)
+
+	idA := uuid.Must(uuid.NewV4()).String()
+	metaA := model.KubernetesResourceObjectMeta{
+		ID:   idA,
+		Name: "alpha-resource",
+		UID:  idA,
+	}
+	if err := db.Create(&metaA).Error; err != nil {
+		t.Fatalf("failed to seed metaA: %v", err)
+	}
+	resA := model.KubernetesResource{
+		ID:        idA,
+		ClusterID: "test-cluster",
+		ComponentMetadata: map[string]interface{}{
+			"name": "alpha-resource",
+		},
+	}
+	if err := db.Table("kubernetes_resources").Create(&resA).Error; err != nil {
+		t.Fatalf("failed to seed resA: %v", err)
+	}
+
+	idB := uuid.Must(uuid.NewV4()).String()
+	metaB := model.KubernetesResourceObjectMeta{
+		ID:   idB,
+		Name: "beta-resource",
+		UID:  idB,
+	}
+	if err := db.Create(&metaB).Error; err != nil {
+		t.Fatalf("failed to seed metaB: %v", err)
+	}
+	resB := model.KubernetesResource{
+		ID:        idB,
+		ClusterID: "test-cluster",
+		ComponentMetadata: map[string]interface{}{
+			"name": "beta-resource",
+		},
+	}
+	if err := db.Table("kubernetes_resources").Create(&resB).Error; err != nil {
+		t.Fatalf("failed to seed resB: %v", err)
+	}
+
+	// Test 1: Order by name descending (beta should come before alpha)
+	reqDesc := httptest.NewRequest(http.MethodGet, `/api/system/meshsync/resources?clusterIds=["test-cluster"]&order=name%20desc`, nil)
+	recDesc := httptest.NewRecorder()
+	h.GetMeshSyncResources(recDesc, reqDesc, nil, nil, provider)
+
+	if recDesc.Code != http.StatusOK {
+		t.Fatalf("expected status 200 for desc query, got %d (body=%q)", recDesc.Code, recDesc.Body.String())
+	}
+
+	var respDesc models.MeshSyncResourcesAPIResponse
+	if err := json.Unmarshal(recDesc.Body.Bytes(), &respDesc); err != nil {
+		t.Fatalf("failed to unmarshal desc response: %v (body=%q)", err, recDesc.Body.String())
+	}
+	if len(respDesc.Resources) != 2 {
+		t.Fatalf("expected 2 resources, got %d", len(respDesc.Resources))
+	}
+	if respDesc.Resources[0].ID != idB || respDesc.Resources[1].ID != idA {
+		t.Errorf("expected [beta, alpha] for name desc, got [%s, %s]", respDesc.Resources[0].ID, respDesc.Resources[1].ID)
+	}
+
+	// Test 2: Order by name ascending (alpha should come before beta)
+	reqAsc := httptest.NewRequest(http.MethodGet, `/api/system/meshsync/resources?clusterIds=["test-cluster"]&order=name%20asc`, nil)
+	recAsc := httptest.NewRecorder()
+	h.GetMeshSyncResources(recAsc, reqAsc, nil, nil, provider)
+
+	if recAsc.Code != http.StatusOK {
+		t.Fatalf("expected status 200 for asc query, got %d (body=%q)", recAsc.Code, recAsc.Body.String())
+	}
+
+	var respAsc models.MeshSyncResourcesAPIResponse
+	if err := json.Unmarshal(recAsc.Body.Bytes(), &respAsc); err != nil {
+		t.Fatalf("failed to unmarshal asc response: %v (body=%q)", err, recAsc.Body.String())
+	}
+	if len(respAsc.Resources) != 2 {
+		t.Fatalf("expected 2 resources, got %d", len(respAsc.Resources))
+	}
+	if respAsc.Resources[0].ID != idA || respAsc.Resources[1].ID != idB {
+		t.Errorf("expected [alpha, beta] for name asc, got [%s, %s]", respAsc.Resources[0].ID, respAsc.Resources[1].ID)
+	}
+}
+
+// TestMeshSyncResources_OrderInputSanitization verifies that allowed sorting columns
+// are safely translated to snake_case while invalid columns and injection attempts are rejected.
+func TestMeshSyncResources_OrderInputSanitization(t *testing.T) {
+	validColumns := []string{"creation_timestamp", "name", "kind", "model", "api_version", "namespace"}
+
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"name desc", "name desc"},
+		{"name asc", "name asc"},
+		{"creationTimestamp desc", "creation_timestamp desc"},
+		{"apiVersion asc", "api_version asc"},
+		{"kind desc", "kind desc"},
+		{"model asc", "model asc"},
+		{"namespace desc", "namespace desc"},
+		{"invalidColumn asc", ""},
+		{"name; DROP TABLE kubernetes_resources; -- desc", ""},
+		{"", ""},
+		{"singleword", ""},
+		{"three words here", ""},
+	}
+
+	for _, tc := range tests {
+		got := models.SanitizeOrderInput(tc.input, validColumns)
+		if got != tc.expected {
+			t.Errorf("SanitizeOrderInput(%q) = %q, want %q", tc.input, got, tc.expected)
+		}
+	}
+}
