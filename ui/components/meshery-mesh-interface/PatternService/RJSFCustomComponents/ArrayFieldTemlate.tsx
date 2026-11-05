@@ -98,6 +98,7 @@ const DefaultArrayItem = ({ heading, item }: { heading: string; item: React.Reac
 };
 
 const DefaultFixedArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
+  const theme = useTheme();
   const safeId = props.fieldPathId?.$id ?? 'array-field';
 
   return (
@@ -113,6 +114,25 @@ const DefaultFixedArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
       )}
 
       <ArrayFieldTitle title={getTitle(props)} />
+
+      {(props.rawErrors?.length ?? 0) > 0 && (
+        <CustomTextTooltip
+          bgColor={theme.palette.error.main}
+          interactive={true}
+          title={safeStringTitle(
+            Array.isArray(props.rawErrors) ? props.rawErrors.join('  ') : props.rawErrors,
+          )}
+        >
+          <IconButton component="span" size="small" disableTouchRipple="true" disableRipple="true">
+            <ErrorOutlineIcon
+              width="16px"
+              height="16px"
+              fill={theme.palette.mode === 'dark' ? '#F91313' : '#B32700'}
+              style={{ marginLeft: '4px', verticalAlign: 'middle', ...iconSmall }}
+            />
+          </IconButton>
+        </CustomTextTooltip>
+      )}
 
       {(props.uiSchema?.['ui:description'] ?? props.schema?.description) != null && (
         <div className="field-description" key={`field-description-${safeId}`}>

@@ -144,6 +144,46 @@ describe('ArrayFieldTemplate', () => {
     expect(screen.getByTestId('error-icon')).toBeInTheDocument();
   });
 
+  it('shows an error tooltip in the fixed template when rawErrors are present', () => {
+    // The fixed route renders its own title and fieldset, so it needs the
+    // same rawErrors indicator as the normal route: a tuple can fail
+    // minItems / uniqueItems validation, and no other template renders
+    // the error at the array title.
+    render(
+      <ArrayFieldTemplate
+        {...(baseProps as any)}
+        schema={{
+          title: 'Items',
+          type: 'array',
+          items: [{ type: 'string' }, { type: 'string' }],
+        }}
+        rawErrors={['oops']}
+      />,
+    );
+    expect(screen.getByTestId('error-icon')).toBeInTheDocument();
+  });
+
+  it('renders a non-required tuple that is allowed to be empty', () => {
+    // A tuple with no `required` and no minItems may legitimately hold
+    // zero items; the fixed template must render the empty fieldset
+    // without an error indicator and without crashing.
+    const { container } = render(
+      <ArrayFieldTemplate
+        {...(baseProps as any)}
+        schema={{
+          title: 'Items',
+          type: 'array',
+          items: [{ type: 'string' }, { type: 'string' }],
+        }}
+        items={[]}
+        rawErrors={[]}
+      />,
+    );
+    expect(container.querySelector('fieldset')).toBeInTheDocument();
+    expect(screen.queryByTestId('error-icon')).not.toBeInTheDocument();
+    expect(screen.queryAllByTestId('accordion')).toHaveLength(0);
+  });
+
   it('renders the fixed template variant for a tuple-items (fixed) array', () => {
     // RJSF routes a multi-select array to its own widget before the template
     // runs, so only a tuple `items` reaches the template as a fixed array.
