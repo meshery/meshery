@@ -73,9 +73,11 @@ func TestMesheryDesignFromParsedFile_UnexpectedType(t *testing.T) {
 		t.Errorf("design = %#v, want the zero value", design)
 	}
 
-	wrapped := ErrConvertToDesign(err)
-	if got, want := meshkiterrors.GetCode(wrapped), ErrConvertToDesignCode; got != want {
+	if got, want := meshkiterrors.GetCode(err), ErrConvertToDesignCode; got != want {
 		t.Errorf("structured error code = %q, want %q", got, want)
+	}
+	if !strings.Contains(err.Error(), "got string") {
+		t.Errorf("error %q does not identify the unexpected parsed-file type", err)
 	}
 }
 
