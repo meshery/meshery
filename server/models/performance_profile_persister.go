@@ -46,9 +46,9 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 		// saved before the schema-native PerformanceProfile introduced owner.
 		Select(`
 			id, name, COALESCE(owner, ?) as owner, load_generators,
-			endpoints, qps, service_mesh,
+			endpoints, service_mesh, concurrent_request, qps,
 			duration, request_headers, request_cookies,
-			request_body, content_type, created_at,
+			request_body, content_type, metadata, created_at,
 			updated_at, (?) as last_run, (?) as total_results`,
 			nilUUIDString,
 			ppp.DB.Table("meshery_results").Select("DATETIME(MAX(meshery_results.test_start_time))").Where("performance_profile = performance_profiles.id"),

@@ -89,6 +89,18 @@ tags:
     description: Operations related to invitation
   - name: Ledger_ledgers
     description: Operations related to organization ledgers and their entries.
+  - name: MediaAsset_mediaAssets
+    description: Operations related to media assets.
+  - name: MentionAlias_mentionAliases
+    description: Operations related to mention aliases.
+  - name: OauthConsent_oauthConsents
+    description: Operations related to the OAuth consents of the signed-in user.
+  - name: OauthConsentRequest_oauthConsentRequests
+    description: Reads of the pending OAuth consent requests of the signed-in user.
+  - name: OauthConsentRequest_oauthConsentDecisions
+    description: >-
+      Allow and deny decisions on a pending OAuth consent request. A separate tag from the read, so a decision does not
+      refetch the request it just consumed: the challenge is single use, and that refetch would answer 404.
   - name: PatternResource_patternResources
     description: Operations related to Meshery pattern resources.
   - name: Performance_Profile_performance
@@ -4524,15 +4536,15 @@ paths:
                                                 yaml: owner
                                               x-order: 6
                                             created_at:
+                                              x-oapi-codegen-extra-tags:
+                                                db: created_at
+                                                yaml: created_at
                                               x-order: 7
                                               description: Timestamp when the resource was created.
                                               x-go-type: time.Time
                                               type: string
                                               format: date-time
                                               x-go-name: CreatedAt
-                                              x-oapi-codegen-extra-tags:
-                                                db: created_at
-                                                yaml: created_at
                                               x-go-type-skip-optional-pointer: true
                                             metadata:
                                               description: Additional metadata associated with the environment.
@@ -4544,15 +4556,15 @@ paths:
                                               x-go-type-skip-optional-pointer: true
                                               type: object
                                             updated_at:
+                                              x-oapi-codegen-extra-tags:
+                                                db: updated_at
+                                                yaml: updated_at
                                               x-order: 9
                                               description: Timestamp when the resource was updated.
                                               x-go-type: time.Time
                                               type: string
                                               format: date-time
                                               x-go-name: UpdatedAt
-                                              x-oapi-codegen-extra-tags:
-                                                db: updated_at
-                                                yaml: updated_at
                                               x-go-type-skip-optional-pointer: true
                                             deleted_at:
                                               description: >-
@@ -5153,26 +5165,26 @@ paths:
                                     default: 0
                                     minimum: 0
                                   created_at:
+                                    x-oapi-codegen-extra-tags:
+                                      db: created_at
+                                      yaml: created_at
                                     x-order: 14
                                     description: Timestamp when the resource was created.
                                     x-go-type: time.Time
                                     type: string
                                     format: date-time
                                     x-go-name: CreatedAt
-                                    x-oapi-codegen-extra-tags:
-                                      db: created_at
-                                      yaml: created_at
                                     x-go-type-skip-optional-pointer: true
                                   updated_at:
+                                    x-oapi-codegen-extra-tags:
+                                      db: updated_at
+                                      yaml: updated_at
                                     x-order: 15
                                     description: Timestamp when the resource was updated.
                                     x-go-type: time.Time
                                     type: string
                                     format: date-time
                                     x-go-name: UpdatedAt
-                                    x-oapi-codegen-extra-tags:
-                                      db: updated_at
-                                      yaml: updated_at
                                     x-go-type-skip-optional-pointer: true
                                 required:
                                   - id
@@ -6046,26 +6058,26 @@ paths:
                                   - kind
                                   - schema
                               created_at:
+                                x-oapi-codegen-extra-tags:
+                                  db: created_at
+                                  yaml: created_at
                                 x-order: 14
                                 description: Timestamp when the resource was created.
                                 x-go-type: time.Time
                                 type: string
                                 format: date-time
                                 x-go-name: CreatedAt
-                                x-oapi-codegen-extra-tags:
-                                  db: created_at
-                                  yaml: created_at
                                 x-go-type-skip-optional-pointer: true
                               updated_at:
+                                x-oapi-codegen-extra-tags:
+                                  db: updated_at
+                                  yaml: updated_at
                                 x-order: 15
                                 description: Timestamp when the resource was updated.
                                 x-go-type: time.Time
                                 type: string
                                 format: date-time
                                 x-go-name: UpdatedAt
-                                x-oapi-codegen-extra-tags:
-                                  db: updated_at
-                                  yaml: updated_at
                                 x-go-type-skip-optional-pointer: true
                             required:
                               - id
@@ -8853,15 +8865,15 @@ paths:
                                                   yaml: owner
                                                 x-order: 6
                                               created_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: created_at
+                                                  yaml: created_at
                                                 x-order: 7
                                                 description: Timestamp when the resource was created.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: CreatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: created_at
-                                                  yaml: created_at
                                                 x-go-type-skip-optional-pointer: true
                                               metadata:
                                                 description: Additional metadata associated with the environment.
@@ -8873,15 +8885,15 @@ paths:
                                                 x-go-type-skip-optional-pointer: true
                                                 type: object
                                               updated_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: updated_at
+                                                  yaml: updated_at
                                                 x-order: 9
                                                 description: Timestamp when the resource was updated.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: UpdatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: updated_at
-                                                  yaml: updated_at
                                                 x-go-type-skip-optional-pointer: true
                                               deleted_at:
                                                 description: >-
@@ -9484,26 +9496,26 @@ paths:
                                       default: 0
                                       minimum: 0
                                     created_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: created_at
+                                        yaml: created_at
                                       x-order: 14
                                       description: Timestamp when the resource was created.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: CreatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: created_at
-                                        yaml: created_at
                                       x-go-type-skip-optional-pointer: true
                                     updated_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: updated_at
+                                        yaml: updated_at
                                       x-order: 15
                                       description: Timestamp when the resource was updated.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: UpdatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: updated_at
-                                        yaml: updated_at
                                       x-go-type-skip-optional-pointer: true
                                   required:
                                     - id
@@ -10383,26 +10395,26 @@ paths:
                                     - kind
                                     - schema
                                 created_at:
+                                  x-oapi-codegen-extra-tags:
+                                    db: created_at
+                                    yaml: created_at
                                   x-order: 14
                                   description: Timestamp when the resource was created.
                                   x-go-type: time.Time
                                   type: string
                                   format: date-time
                                   x-go-name: CreatedAt
-                                  x-oapi-codegen-extra-tags:
-                                    db: created_at
-                                    yaml: created_at
                                   x-go-type-skip-optional-pointer: true
                                 updated_at:
+                                  x-oapi-codegen-extra-tags:
+                                    db: updated_at
+                                    yaml: updated_at
                                   x-order: 15
                                   description: Timestamp when the resource was updated.
                                   x-go-type: time.Time
                                   type: string
                                   format: date-time
                                   x-go-name: UpdatedAt
-                                  x-oapi-codegen-extra-tags:
-                                    db: updated_at
-                                    yaml: updated_at
                                   x-go-type-skip-optional-pointer: true
                               required:
                                 - id
@@ -13118,15 +13130,15 @@ paths:
                                             x-go-type-import:
                                               path: github.com/gofrs/uuid
                                           created_at:
+                                            x-oapi-codegen-extra-tags:
+                                              db: created_at
+                                              yaml: created_at
                                             x-order: 7
                                             description: Timestamp when the resource was created.
                                             x-go-type: time.Time
                                             type: string
                                             format: date-time
                                             x-go-name: CreatedAt
-                                            x-oapi-codegen-extra-tags:
-                                              db: created_at
-                                              yaml: created_at
                                             x-go-type-skip-optional-pointer: true
                                           metadata:
                                             description: Additional metadata associated with the environment.
@@ -13138,15 +13150,15 @@ paths:
                                             x-go-type-skip-optional-pointer: true
                                             type: object
                                           updated_at:
+                                            x-oapi-codegen-extra-tags:
+                                              db: updated_at
+                                              yaml: updated_at
                                             x-order: 9
                                             description: Timestamp when the resource was updated.
                                             x-go-type: time.Time
                                             type: string
                                             format: date-time
                                             x-go-name: UpdatedAt
-                                            x-oapi-codegen-extra-tags:
-                                              db: updated_at
-                                              yaml: updated_at
                                             x-go-type-skip-optional-pointer: true
                                           deleted_at:
                                             description: >-
@@ -14277,15 +14289,15 @@ paths:
                                             x-go-type-import:
                                               path: github.com/gofrs/uuid
                                           created_at:
+                                            x-oapi-codegen-extra-tags:
+                                              db: created_at
+                                              yaml: created_at
                                             x-order: 7
                                             description: Timestamp when the resource was created.
                                             x-go-type: time.Time
                                             type: string
                                             format: date-time
                                             x-go-name: CreatedAt
-                                            x-oapi-codegen-extra-tags:
-                                              db: created_at
-                                              yaml: created_at
                                             x-go-type-skip-optional-pointer: true
                                           metadata:
                                             description: Additional metadata associated with the environment.
@@ -14297,15 +14309,15 @@ paths:
                                             x-go-type-skip-optional-pointer: true
                                             type: object
                                           updated_at:
+                                            x-oapi-codegen-extra-tags:
+                                              db: updated_at
+                                              yaml: updated_at
                                             x-order: 9
                                             description: Timestamp when the resource was updated.
                                             x-go-type: time.Time
                                             type: string
                                             format: date-time
                                             x-go-name: UpdatedAt
-                                            x-oapi-codegen-extra-tags:
-                                              db: updated_at
-                                              yaml: updated_at
                                             x-go-type-skip-optional-pointer: true
                                           deleted_at:
                                             description: >-
@@ -15562,15 +15574,15 @@ paths:
                                                 x-go-type-import:
                                                   path: github.com/gofrs/uuid
                                               created_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: created_at
+                                                  yaml: created_at
                                                 x-order: 7
                                                 description: Timestamp when the resource was created.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: CreatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: created_at
-                                                  yaml: created_at
                                                 x-go-type-skip-optional-pointer: true
                                               metadata:
                                                 description: Additional metadata associated with the environment.
@@ -15582,15 +15594,15 @@ paths:
                                                 x-go-type-skip-optional-pointer: true
                                                 type: object
                                               updated_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: updated_at
+                                                  yaml: updated_at
                                                 x-order: 9
                                                 description: Timestamp when the resource was updated.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: UpdatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: updated_at
-                                                  yaml: updated_at
                                                 x-go-type-skip-optional-pointer: true
                                               deleted_at:
                                                 description: >-
@@ -16189,26 +16201,26 @@ paths:
                                       default: 0
                                       minimum: 0
                                     created_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: created_at
+                                        yaml: created_at
                                       x-order: 14
                                       description: Timestamp when the resource was created.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: CreatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: created_at
-                                        yaml: created_at
                                       x-go-type-skip-optional-pointer: true
                                     updated_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: updated_at
+                                        yaml: updated_at
                                       x-order: 15
                                       description: Timestamp when the resource was updated.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: UpdatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: updated_at
-                                        yaml: updated_at
                                       x-go-type-skip-optional-pointer: true
                                   required:
                                     - id
@@ -17831,15 +17843,15 @@ paths:
                                                 x-go-type-import:
                                                   path: github.com/gofrs/uuid
                                               created_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: created_at
+                                                  yaml: created_at
                                                 x-order: 7
                                                 description: Timestamp when the resource was created.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: CreatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: created_at
-                                                  yaml: created_at
                                                 x-go-type-skip-optional-pointer: true
                                               metadata:
                                                 description: Additional metadata associated with the environment.
@@ -17851,15 +17863,15 @@ paths:
                                                 x-go-type-skip-optional-pointer: true
                                                 type: object
                                               updated_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: updated_at
+                                                  yaml: updated_at
                                                 x-order: 9
                                                 description: Timestamp when the resource was updated.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: UpdatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: updated_at
-                                                  yaml: updated_at
                                                 x-go-type-skip-optional-pointer: true
                                               deleted_at:
                                                 description: >-
@@ -18458,26 +18470,26 @@ paths:
                                       default: 0
                                       minimum: 0
                                     created_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: created_at
+                                        yaml: created_at
                                       x-order: 14
                                       description: Timestamp when the resource was created.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: CreatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: created_at
-                                        yaml: created_at
                                       x-go-type-skip-optional-pointer: true
                                     updated_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: updated_at
+                                        yaml: updated_at
                                       x-order: 15
                                       description: Timestamp when the resource was updated.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: UpdatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: updated_at
-                                        yaml: updated_at
                                       x-go-type-skip-optional-pointer: true
                                   required:
                                     - id
@@ -34394,15 +34406,15 @@ paths:
                                             x-go-type-import:
                                               path: github.com/gofrs/uuid
                                           created_at:
+                                            x-oapi-codegen-extra-tags:
+                                              db: created_at
+                                              yaml: created_at
                                             x-order: 7
                                             description: Timestamp when the resource was created.
                                             x-go-type: time.Time
                                             type: string
                                             format: date-time
                                             x-go-name: CreatedAt
-                                            x-oapi-codegen-extra-tags:
-                                              db: created_at
-                                              yaml: created_at
                                             x-go-type-skip-optional-pointer: true
                                           metadata:
                                             description: Additional metadata associated with the environment.
@@ -34414,15 +34426,15 @@ paths:
                                             x-go-type-skip-optional-pointer: true
                                             type: object
                                           updated_at:
+                                            x-oapi-codegen-extra-tags:
+                                              db: updated_at
+                                              yaml: updated_at
                                             x-order: 9
                                             description: Timestamp when the resource was updated.
                                             x-go-type: time.Time
                                             type: string
                                             format: date-time
                                             x-go-name: UpdatedAt
-                                            x-oapi-codegen-extra-tags:
-                                              db: updated_at
-                                              yaml: updated_at
                                             x-go-type-skip-optional-pointer: true
                                           deleted_at:
                                             description: >-
@@ -35557,15 +35569,15 @@ paths:
                                             x-go-type-import:
                                               path: github.com/gofrs/uuid
                                           created_at:
+                                            x-oapi-codegen-extra-tags:
+                                              db: created_at
+                                              yaml: created_at
                                             x-order: 7
                                             description: Timestamp when the resource was created.
                                             x-go-type: time.Time
                                             type: string
                                             format: date-time
                                             x-go-name: CreatedAt
-                                            x-oapi-codegen-extra-tags:
-                                              db: created_at
-                                              yaml: created_at
                                             x-go-type-skip-optional-pointer: true
                                           metadata:
                                             description: Additional metadata associated with the environment.
@@ -35577,15 +35589,15 @@ paths:
                                             x-go-type-skip-optional-pointer: true
                                             type: object
                                           updated_at:
+                                            x-oapi-codegen-extra-tags:
+                                              db: updated_at
+                                              yaml: updated_at
                                             x-order: 9
                                             description: Timestamp when the resource was updated.
                                             x-go-type: time.Time
                                             type: string
                                             format: date-time
                                             x-go-name: UpdatedAt
-                                            x-oapi-codegen-extra-tags:
-                                              db: updated_at
-                                              yaml: updated_at
                                             x-go-type-skip-optional-pointer: true
                                           deleted_at:
                                             description: >-
@@ -36822,15 +36834,15 @@ paths:
                                                 x-go-type-import:
                                                   path: github.com/gofrs/uuid
                                               created_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: created_at
+                                                  yaml: created_at
                                                 x-order: 7
                                                 description: Timestamp when the resource was created.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: CreatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: created_at
-                                                  yaml: created_at
                                                 x-go-type-skip-optional-pointer: true
                                               metadata:
                                                 description: Additional metadata associated with the environment.
@@ -36842,15 +36854,15 @@ paths:
                                                 x-go-type-skip-optional-pointer: true
                                                 type: object
                                               updated_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: updated_at
+                                                  yaml: updated_at
                                                 x-order: 9
                                                 description: Timestamp when the resource was updated.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: UpdatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: updated_at
-                                                  yaml: updated_at
                                                 x-go-type-skip-optional-pointer: true
                                               deleted_at:
                                                 description: >-
@@ -37449,26 +37461,26 @@ paths:
                                       default: 0
                                       minimum: 0
                                     created_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: created_at
+                                        yaml: created_at
                                       x-order: 14
                                       description: Timestamp when the resource was created.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: CreatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: created_at
-                                        yaml: created_at
                                       x-go-type-skip-optional-pointer: true
                                     updated_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: updated_at
+                                        yaml: updated_at
                                       x-order: 15
                                       description: Timestamp when the resource was updated.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: UpdatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: updated_at
-                                        yaml: updated_at
                                       x-go-type-skip-optional-pointer: true
                                   required:
                                     - id
@@ -39098,15 +39110,15 @@ paths:
                                                 x-go-type-import:
                                                   path: github.com/gofrs/uuid
                                               created_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: created_at
+                                                  yaml: created_at
                                                 x-order: 7
                                                 description: Timestamp when the resource was created.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: CreatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: created_at
-                                                  yaml: created_at
                                                 x-go-type-skip-optional-pointer: true
                                               metadata:
                                                 description: Additional metadata associated with the environment.
@@ -39118,15 +39130,15 @@ paths:
                                                 x-go-type-skip-optional-pointer: true
                                                 type: object
                                               updated_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: updated_at
+                                                  yaml: updated_at
                                                 x-order: 9
                                                 description: Timestamp when the resource was updated.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: UpdatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: updated_at
-                                                  yaml: updated_at
                                                 x-go-type-skip-optional-pointer: true
                                               deleted_at:
                                                 description: >-
@@ -39725,26 +39737,26 @@ paths:
                                       default: 0
                                       minimum: 0
                                     created_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: created_at
+                                        yaml: created_at
                                       x-order: 14
                                       description: Timestamp when the resource was created.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: CreatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: created_at
-                                        yaml: created_at
                                       x-go-type-skip-optional-pointer: true
                                     updated_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: updated_at
+                                        yaml: updated_at
                                       x-order: 15
                                       description: Timestamp when the resource was updated.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: UpdatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: updated_at
-                                        yaml: updated_at
                                       x-go-type-skip-optional-pointer: true
                                   required:
                                     - id
@@ -41360,15 +41372,15 @@ paths:
                                                 x-go-type-import:
                                                   path: github.com/gofrs/uuid
                                               created_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: created_at
+                                                  yaml: created_at
                                                 x-order: 7
                                                 description: Timestamp when the resource was created.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: CreatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: created_at
-                                                  yaml: created_at
                                                 x-go-type-skip-optional-pointer: true
                                               metadata:
                                                 description: Additional metadata associated with the environment.
@@ -41380,15 +41392,15 @@ paths:
                                                 x-go-type-skip-optional-pointer: true
                                                 type: object
                                               updated_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: updated_at
+                                                  yaml: updated_at
                                                 x-order: 9
                                                 description: Timestamp when the resource was updated.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: UpdatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: updated_at
-                                                  yaml: updated_at
                                                 x-go-type-skip-optional-pointer: true
                                               deleted_at:
                                                 description: >-
@@ -41987,26 +41999,26 @@ paths:
                                       default: 0
                                       minimum: 0
                                     created_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: created_at
+                                        yaml: created_at
                                       x-order: 14
                                       description: Timestamp when the resource was created.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: CreatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: created_at
-                                        yaml: created_at
                                       x-go-type-skip-optional-pointer: true
                                     updated_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: updated_at
+                                        yaml: updated_at
                                       x-order: 15
                                       description: Timestamp when the resource was updated.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: UpdatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: updated_at
-                                        yaml: updated_at
                                       x-go-type-skip-optional-pointer: true
                                   required:
                                     - id
@@ -43629,15 +43641,15 @@ paths:
                                                 x-go-type-import:
                                                   path: github.com/gofrs/uuid
                                               created_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: created_at
+                                                  yaml: created_at
                                                 x-order: 7
                                                 description: Timestamp when the resource was created.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: CreatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: created_at
-                                                  yaml: created_at
                                                 x-go-type-skip-optional-pointer: true
                                               metadata:
                                                 description: Additional metadata associated with the environment.
@@ -43649,15 +43661,15 @@ paths:
                                                 x-go-type-skip-optional-pointer: true
                                                 type: object
                                               updated_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: updated_at
+                                                  yaml: updated_at
                                                 x-order: 9
                                                 description: Timestamp when the resource was updated.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: UpdatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: updated_at
-                                                  yaml: updated_at
                                                 x-go-type-skip-optional-pointer: true
                                               deleted_at:
                                                 description: >-
@@ -44256,26 +44268,26 @@ paths:
                                       default: 0
                                       minimum: 0
                                     created_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: created_at
+                                        yaml: created_at
                                       x-order: 14
                                       description: Timestamp when the resource was created.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: CreatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: created_at
-                                        yaml: created_at
                                       x-go-type-skip-optional-pointer: true
                                     updated_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: updated_at
+                                        yaml: updated_at
                                       x-order: 15
                                       description: Timestamp when the resource was updated.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: UpdatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: updated_at
-                                        yaml: updated_at
                                       x-go-type-skip-optional-pointer: true
                                   required:
                                     - id
@@ -45887,15 +45899,15 @@ paths:
                                                 x-go-type-import:
                                                   path: github.com/gofrs/uuid
                                               created_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: created_at
+                                                  yaml: created_at
                                                 x-order: 7
                                                 description: Timestamp when the resource was created.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: CreatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: created_at
-                                                  yaml: created_at
                                                 x-go-type-skip-optional-pointer: true
                                               metadata:
                                                 description: Additional metadata associated with the environment.
@@ -45907,15 +45919,15 @@ paths:
                                                 x-go-type-skip-optional-pointer: true
                                                 type: object
                                               updated_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: updated_at
+                                                  yaml: updated_at
                                                 x-order: 9
                                                 description: Timestamp when the resource was updated.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: UpdatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: updated_at
-                                                  yaml: updated_at
                                                 x-go-type-skip-optional-pointer: true
                                               deleted_at:
                                                 description: >-
@@ -46514,26 +46526,26 @@ paths:
                                       default: 0
                                       minimum: 0
                                     created_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: created_at
+                                        yaml: created_at
                                       x-order: 14
                                       description: Timestamp when the resource was created.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: CreatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: created_at
-                                        yaml: created_at
                                       x-go-type-skip-optional-pointer: true
                                     updated_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: updated_at
+                                        yaml: updated_at
                                       x-order: 15
                                       description: Timestamp when the resource was updated.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: UpdatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: updated_at
-                                        yaml: updated_at
                                       x-go-type-skip-optional-pointer: true
                                   required:
                                     - id
@@ -49163,15 +49175,15 @@ paths:
                                                 x-go-type-import:
                                                   path: github.com/gofrs/uuid
                                               created_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: created_at
+                                                  yaml: created_at
                                                 x-order: 7
                                                 description: Timestamp when the resource was created.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: CreatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: created_at
-                                                  yaml: created_at
                                                 x-go-type-skip-optional-pointer: true
                                               metadata:
                                                 description: Additional metadata associated with the environment.
@@ -49183,15 +49195,15 @@ paths:
                                                 x-go-type-skip-optional-pointer: true
                                                 type: object
                                               updated_at:
+                                                x-oapi-codegen-extra-tags:
+                                                  db: updated_at
+                                                  yaml: updated_at
                                                 x-order: 9
                                                 description: Timestamp when the resource was updated.
                                                 x-go-type: time.Time
                                                 type: string
                                                 format: date-time
                                                 x-go-name: UpdatedAt
-                                                x-oapi-codegen-extra-tags:
-                                                  db: updated_at
-                                                  yaml: updated_at
                                                 x-go-type-skip-optional-pointer: true
                                               deleted_at:
                                                 description: >-
@@ -49790,26 +49802,26 @@ paths:
                                       default: 0
                                       minimum: 0
                                     created_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: created_at
+                                        yaml: created_at
                                       x-order: 14
                                       description: Timestamp when the resource was created.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: CreatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: created_at
-                                        yaml: created_at
                                       x-go-type-skip-optional-pointer: true
                                     updated_at:
+                                      x-oapi-codegen-extra-tags:
+                                        db: updated_at
+                                        yaml: updated_at
                                       x-order: 15
                                       description: Timestamp when the resource was updated.
                                       x-go-type: time.Time
                                       type: string
                                       format: date-time
                                       x-go-name: UpdatedAt
-                                      x-oapi-codegen-extra-tags:
-                                        db: updated_at
-                                        yaml: updated_at
                                       x-go-type-skip-optional-pointer: true
                                   required:
                                     - id
@@ -59130,15 +59142,15 @@ paths:
                                         x-go-type-import:
                                           path: github.com/gofrs/uuid
                                       created_at:
+                                        x-oapi-codegen-extra-tags:
+                                          db: created_at
+                                          yaml: created_at
                                         x-order: 7
                                         description: Timestamp when the resource was created.
                                         x-go-type: time.Time
                                         type: string
                                         format: date-time
                                         x-go-name: CreatedAt
-                                        x-oapi-codegen-extra-tags:
-                                          db: created_at
-                                          yaml: created_at
                                         x-go-type-skip-optional-pointer: true
                                       metadata:
                                         description: Additional metadata associated with the environment.
@@ -59150,15 +59162,15 @@ paths:
                                         x-go-type-skip-optional-pointer: true
                                         type: object
                                       updated_at:
+                                        x-oapi-codegen-extra-tags:
+                                          db: updated_at
+                                          yaml: updated_at
                                         x-order: 9
                                         description: Timestamp when the resource was updated.
                                         x-go-type: time.Time
                                         type: string
                                         format: date-time
                                         x-go-name: UpdatedAt
-                                        x-oapi-codegen-extra-tags:
-                                          db: updated_at
-                                          yaml: updated_at
                                         x-go-type-skip-optional-pointer: true
                                       deleted_at:
                                         description: >-
@@ -59970,15 +59982,15 @@ paths:
                                           x-go-type-import:
                                             path: github.com/gofrs/uuid
                                         created_at:
+                                          x-oapi-codegen-extra-tags:
+                                            db: created_at
+                                            yaml: created_at
                                           x-order: 7
                                           description: Timestamp when the resource was created.
                                           x-go-type: time.Time
                                           type: string
                                           format: date-time
                                           x-go-name: CreatedAt
-                                          x-oapi-codegen-extra-tags:
-                                            db: created_at
-                                            yaml: created_at
                                           x-go-type-skip-optional-pointer: true
                                         metadata:
                                           description: Additional metadata associated with the environment.
@@ -59990,15 +60002,15 @@ paths:
                                           x-go-type-skip-optional-pointer: true
                                           type: object
                                         updated_at:
+                                          x-oapi-codegen-extra-tags:
+                                            db: updated_at
+                                            yaml: updated_at
                                           x-order: 9
                                           description: Timestamp when the resource was updated.
                                           x-go-type: time.Time
                                           type: string
                                           format: date-time
                                           x-go-name: UpdatedAt
-                                          x-oapi-codegen-extra-tags:
-                                            db: updated_at
-                                            yaml: updated_at
                                           x-go-type-skip-optional-pointer: true
                                         deleted_at:
                                           description: >-
@@ -60588,26 +60600,26 @@ paths:
                                 default: 0
                                 minimum: 0
                               created_at:
+                                x-oapi-codegen-extra-tags:
+                                  db: created_at
+                                  yaml: created_at
                                 x-order: 14
                                 description: Timestamp when the resource was created.
                                 x-go-type: time.Time
                                 type: string
                                 format: date-time
                                 x-go-name: CreatedAt
-                                x-oapi-codegen-extra-tags:
-                                  db: created_at
-                                  yaml: created_at
                                 x-go-type-skip-optional-pointer: true
                               updated_at:
+                                x-oapi-codegen-extra-tags:
+                                  db: updated_at
+                                  yaml: updated_at
                                 x-order: 15
                                 description: Timestamp when the resource was updated.
                                 x-go-type: time.Time
                                 type: string
                                 format: date-time
                                 x-go-name: UpdatedAt
-                                x-oapi-codegen-extra-tags:
-                                  db: updated_at
-                                  yaml: updated_at
                                 x-go-type-skip-optional-pointer: true
                             required:
                               - id
@@ -83664,7 +83676,7 @@ paths:
           application/json:
             schema:
               type: object
-              description: Payload for creating a new event.
+              description: Payload for creating a new event. If visibility is absent, the event is private.
               additionalProperties: true
               properties:
                 owner:
@@ -83682,6 +83694,18 @@ paths:
                   type: string
                   description: The category of the event.
                   maxLength: 500
+                visibility:
+                  description: >-
+                    Who can see the event. `private` is the default; clients may set `public` for events eligible for
+                    the unauthenticated feed.
+                  x-oapi-codegen-extra-tags:
+                    json: visibility,omitempty
+                  type: string
+                  enum:
+                    - private
+                    - public
+                  default: private
+                  x-go-name: EventVisibility
                 action:
                   type: string
                   description: The action of the event.
@@ -83736,6 +83760,7 @@ paths:
                   - organizationId
                   - createdAt
                   - updatedAt
+                  - visibility
                 properties:
                   id:
                     description: Event ID.
@@ -83784,7 +83809,19 @@ paths:
                     type: object
                     description: >
                       Event-specific details; the structure varies by event kind. `null` when the producer attached
-                      none.
+                      none. It stays a free-form map; design events fill it with a named shape:
+                      RelationshipEvaluationEventMetadata (category `relationship`, action `evaluation`),
+                      DesignValidationEventMetadata (category `pattern`, actions `validate`, `deploy`, `undeploy`,
+                      `dry-run`) and DesignSavedEventMetadata (category `pattern`, actions `create`, `update`);
+                      ScheduleCompletedEventMetadata (category `schedule`, action `completed`); DesignEventIdentity
+                      names the design. Never put design contents into event metadata - no `designFile`, `patternFile`,
+                      `components`, `relationships`, `trace`, `evaluationResponse`, the raw `summary` or
+                      `validationResult`. Meshery Server applies a 16 KB guard that drops oversized metadata down to the
+                      identity fields (`designId`, `designName`, `designVersion`, `designLink`, `viewLink`). On an error
+                      event, `metadata.error` holds only the MeshKit error, never the design or the request that failed;
+                      a design validation event whose operation did not complete (`status` `error`) carries it as a
+                      DesignEventOperationError. Older Meshery Cloud rows may carry the legacy `design_name` and
+                      `view_link` keys; readers should fall back to them when `designName` and `viewLink` are absent.
                     additionalProperties: true
                     nullable: true
                     x-go-type: core.Map
@@ -83888,6 +83925,18 @@ paths:
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
+                  visibility:
+                    description: Who can see the event. Defaults to `private`.
+                    x-oapi-codegen-extra-tags:
+                      db: visibility
+                      json: visibility
+                    x-order: 16
+                    type: string
+                    enum:
+                      - private
+                      - public
+                    default: private
+                    x-go-name: EventVisibility
                   deletedAt:
                     description: Timestamp when the event was soft-deleted; omitted when it was not.
                     x-oapi-codegen-extra-tags:
@@ -83926,6 +83975,7 @@ paths:
                   - organizationId
                   - createdAt
                   - updatedAt
+                  - visibility
                 properties:
                   id:
                     description: Event ID.
@@ -83974,7 +84024,19 @@ paths:
                     type: object
                     description: >
                       Event-specific details; the structure varies by event kind. `null` when the producer attached
-                      none.
+                      none. It stays a free-form map; design events fill it with a named shape:
+                      RelationshipEvaluationEventMetadata (category `relationship`, action `evaluation`),
+                      DesignValidationEventMetadata (category `pattern`, actions `validate`, `deploy`, `undeploy`,
+                      `dry-run`) and DesignSavedEventMetadata (category `pattern`, actions `create`, `update`);
+                      ScheduleCompletedEventMetadata (category `schedule`, action `completed`); DesignEventIdentity
+                      names the design. Never put design contents into event metadata - no `designFile`, `patternFile`,
+                      `components`, `relationships`, `trace`, `evaluationResponse`, the raw `summary` or
+                      `validationResult`. Meshery Server applies a 16 KB guard that drops oversized metadata down to the
+                      identity fields (`designId`, `designName`, `designVersion`, `designLink`, `viewLink`). On an error
+                      event, `metadata.error` holds only the MeshKit error, never the design or the request that failed;
+                      a design validation event whose operation did not complete (`status` `error`) carries it as a
+                      DesignEventOperationError. Older Meshery Cloud rows may carry the legacy `design_name` and
+                      `view_link` keys; readers should fall back to them when `designName` and `viewLink` are absent.
                     additionalProperties: true
                     nullable: true
                     x-go-type: core.Map
@@ -84078,6 +84140,18 @@ paths:
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
+                  visibility:
+                    description: Who can see the event. Defaults to `private`.
+                    x-oapi-codegen-extra-tags:
+                      db: visibility
+                      json: visibility
+                    x-order: 16
+                    type: string
+                    enum:
+                      - private
+                      - public
+                    default: private
+                    x-go-name: EventVisibility
                   deletedAt:
                     description: Timestamp when the event was soft-deleted; omitted when it was not.
                     x-oapi-codegen-extra-tags:
@@ -89211,15 +89285,15 @@ paths:
                                                         yaml: owner
                                                       x-order: 6
                                                     created_at:
+                                                      x-oapi-codegen-extra-tags:
+                                                        db: created_at
+                                                        yaml: created_at
                                                       x-order: 7
                                                       description: Timestamp when the resource was created.
                                                       x-go-type: time.Time
                                                       type: string
                                                       format: date-time
                                                       x-go-name: CreatedAt
-                                                      x-oapi-codegen-extra-tags:
-                                                        db: created_at
-                                                        yaml: created_at
                                                       x-go-type-skip-optional-pointer: true
                                                     metadata:
                                                       description: Additional metadata associated with the environment.
@@ -89231,15 +89305,15 @@ paths:
                                                       x-go-type-skip-optional-pointer: true
                                                       type: object
                                                     updated_at:
+                                                      x-oapi-codegen-extra-tags:
+                                                        db: updated_at
+                                                        yaml: updated_at
                                                       x-order: 9
                                                       description: Timestamp when the resource was updated.
                                                       x-go-type: time.Time
                                                       type: string
                                                       format: date-time
                                                       x-go-name: UpdatedAt
-                                                      x-oapi-codegen-extra-tags:
-                                                        db: updated_at
-                                                        yaml: updated_at
                                                       x-go-type-skip-optional-pointer: true
                                                     deleted_at:
                                                       description: >-
@@ -89853,26 +89927,26 @@ paths:
                                             default: 0
                                             minimum: 0
                                           created_at:
+                                            x-oapi-codegen-extra-tags:
+                                              db: created_at
+                                              yaml: created_at
                                             x-order: 14
                                             description: Timestamp when the resource was created.
                                             x-go-type: time.Time
                                             type: string
                                             format: date-time
                                             x-go-name: CreatedAt
-                                            x-oapi-codegen-extra-tags:
-                                              db: created_at
-                                              yaml: created_at
                                             x-go-type-skip-optional-pointer: true
                                           updated_at:
+                                            x-oapi-codegen-extra-tags:
+                                              db: updated_at
+                                              yaml: updated_at
                                             x-order: 15
                                             description: Timestamp when the resource was updated.
                                             x-go-type: time.Time
                                             type: string
                                             format: date-time
                                             x-go-name: UpdatedAt
-                                            x-oapi-codegen-extra-tags:
-                                              db: updated_at
-                                              yaml: updated_at
                                             x-go-type-skip-optional-pointer: true
                                         required:
                                           - id
@@ -90772,26 +90846,26 @@ paths:
                                           - kind
                                           - schema
                                       created_at:
+                                        x-oapi-codegen-extra-tags:
+                                          db: created_at
+                                          yaml: created_at
                                         x-order: 14
                                         description: Timestamp when the resource was created.
                                         x-go-type: time.Time
                                         type: string
                                         format: date-time
                                         x-go-name: CreatedAt
-                                        x-oapi-codegen-extra-tags:
-                                          db: created_at
-                                          yaml: created_at
                                         x-go-type-skip-optional-pointer: true
                                       updated_at:
+                                        x-oapi-codegen-extra-tags:
+                                          db: updated_at
+                                          yaml: updated_at
                                         x-order: 15
                                         description: Timestamp when the resource was updated.
                                         x-go-type: time.Time
                                         type: string
                                         format: date-time
                                         x-go-name: UpdatedAt
-                                        x-oapi-codegen-extra-tags:
-                                          db: updated_at
-                                          yaml: updated_at
                                         x-go-type-skip-optional-pointer: true
                                     required:
                                       - id
