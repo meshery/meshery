@@ -288,21 +288,46 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 		relationshipMap := make(map[string][][]string)
 
 		for _, rel := range response.EntityTypeSummary.SuccessfulRelationships {
-			kind := rel["Kind"].(string)
-			subtype := rel["Subtype"].(string)
-			relationshipType := rel["RelationshipType"].(string)
-			modelName := rel["Model"].(string)
+			kind, okKind := rel["Kind"].(string)
+			subtype, okSubtype := rel["Subtype"].(string)
+			relationshipType, okRelType := rel["RelationshipType"].(string)
+			modelName, okModel := rel["Model"].(string)
+			if !okKind || !okSubtype || !okRelType || !okModel {
+				continue
+			}
 			if modelName != model {
 				continue
 			}
-			selectors := rel["Selectors"].([]interface{})
+			selectors, ok := rel["Selectors"].([]interface{})
+			if !ok {
+				continue
+			}
 			for _, selector := range selectors {
-				selectorMap := selector.(map[string]interface{})
-				allow := selectorMap["allow"].(map[string]interface{})
-				from := allow["from"].([]interface{})
-				to := allow["to"].([]interface{})
-				fromComponent := fmt.Sprintf("%s", from[0].(map[string]interface{})["kind"])
-				toComponent := fmt.Sprintf("%s", to[0].(map[string]interface{})["kind"])
+				selectorMap, ok := selector.(map[string]interface{})
+				if !ok {
+					continue
+				}
+				allow, ok := selectorMap["allow"].(map[string]interface{})
+				if !ok {
+					continue
+				}
+				from, okFrom := allow["from"].([]interface{})
+				to, okTo := allow["to"].([]interface{})
+				if !okFrom || len(from) == 0 || !okTo || len(to) == 0 {
+					continue
+				}
+				fromMap, okFromMap := from[0].(map[string]interface{})
+				toMap, okToMap := to[0].(map[string]interface{})
+				if !okFromMap || !okToMap {
+					continue
+				}
+				fromKind, _ := fromMap["kind"].(string)
+				toKind, _ := toMap["kind"].(string)
+				fromComponent := strings.TrimSpace(fromKind)
+				toComponent := strings.TrimSpace(toKind)
+				if fromComponent == "" || toComponent == "" {
+					continue
+				}
 				key := fmt.Sprintf("%s/%s/%s", kind, subtype, relationshipType)
 				if seen[key+fromComponent+toComponent] {
 					continue
@@ -319,7 +344,17 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 					boldRelationships = utils.BoldString("RELATIONSHIPS:")
 				}
 				parts := strings.Split(key, "/")
-				utils.Log.Infof("  %s Kind of %s, sub type %s and type %s", boldRelationships, parts[0], parts[1], parts[2])
+				var k, st, rt string
+				if len(parts) > 0 {
+					k = parts[0]
+				}
+				if len(parts) > 1 {
+					st = parts[1]
+				}
+				if len(parts) > 2 {
+					rt = parts[2]
+				}
+				utils.Log.Infof("  %s Kind of %s, sub type %s and type %s", boldRelationships, k, st, rt)
 				utils.PrintToTable(header, rows, nil)
 			}
 		}
@@ -413,10 +448,16 @@ func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, prob
 	for i, name := range names {
 		entityType := ""
 		if i < len(entityTypes) {
-			entityType = entityTypes[i].(string)
+			if et, ok := entityTypes[i].(string); ok {
+				entityType = et
+			}
+		}
+		nameStr, ok := name.(string)
+		if !ok {
+			continue
 		}
 		if modelName != "" {
-			if modelName != name.(string) {
+			if modelName != nameStr {
 				continue
 			}
 		} else if modelName == "" {
@@ -426,7 +467,7 @@ func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, prob
 		}
 		switch entityType {
 		case "unknown":
-			utils.Log.Infof("\n%s: Error encountered while importing model %s: \n    %s\n\n    Ensure that you are importing an existing model.\n    Create a new model to import or find an existing model in the Meshery \x1b]8;;https://meshery.io/catalog/models\x1b\\catalog\x1b]8;;\x1b\\.", utils.BoldString("ERROR"), name.(string), longDescription)
+			utils.Log.Infof("\n%s: Error encountered while importing model %s: \n    %s\n\n    Ensure that you are importing an existing model.\n    Create a new model to import or find an existing model in the Meshery \x1b]8;;https://meshery.io/catalog/models\x1b\\catalog\x1b]8;;\x1b\\.", utils.BoldString("ERROR"), nameStr, longDescription)
 			if probableCause != "" {
 				utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("PROBABLE CAUSE"), probableCause)
 			}
