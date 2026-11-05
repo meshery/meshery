@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -141,17 +143,24 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	// the tracker entry for a connection the user just deleted - so drop the
 	// entry directly instead. See mhelpers.HasMachineContext.
 	if !mhelpers.HasMachineContext(inst) {
-		smInstanceTracker.Remove(connectionUUID)
+		if smInstanceTracker != nil {
+			smInstanceTracker.Remove(connectionUUID)
+		}
 	} else {
+		// detach from the http request lifecycle with a bounded timeout so that the goroutine isn't cancelled when
+		// the handler returns, while preventing goroutine leaks if downstream calls hang.
+		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), 2*time.Minute)
 		go func(inst *machines.StateMachine) {
-			event, err := inst.SendEvent(req.Context(), machines.Delete, nil)
+			defer cancel()
+			if smInstanceTracker != nil {
+				defer smInstanceTracker.Remove(connectionUUID)
+			}
+			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
 			if err != nil {
 				h.log.Error(err)
 				h.log.Debug(event)
 				return
 			}
-
-			smInstanceTracker.Remove(connectionUUID)
 		}(inst)
 	}
 
