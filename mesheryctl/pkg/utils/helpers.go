@@ -1365,3 +1365,8 @@ func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 	}
 	return config.CurrentContext, nil
 }
+
+// TrimFileExtension returns name with its final file extension removed
+func TrimFileExtension(name string) string {
+	return strings.TrimSuffix(name, filepath.Ext(name))
+}
