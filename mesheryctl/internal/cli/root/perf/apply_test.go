@@ -154,8 +154,11 @@
 package perf
 
 import (
+	"encoding/json"
 	"net/http"
+	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"strings"
 	"testing"
@@ -163,6 +166,7 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	"github.com/spf13/viper"
 )
 
@@ -220,6 +224,8 @@ func resetVariables() {
 	outputFormatFlag = ""
 	viewSingleProfile = false
 	viewSingleResult = false
+	additionalOptions = ""
+	certPath = ""
 }
 
 func TestCreatePerformanceProfile_ServerErrors(t *testing.T) {
@@ -322,6 +328,215 @@ func TestCreatePerformanceProfile_RejectsInvalidDuration(t *testing.T) {
 	}
 	if calls := httpmock.GetCallCountInfo()["POST "+profileURL]; calls != 0 {
 		t.Errorf("expected no profile to be created, got %d request(s)", calls)
+	}
+}
+
+// TestProfileMetadataFromFlags verifies the metadata built from --options and
+// --cert-path, and that invalid values are rejected.
+func TestProfileMetadataFromFlags(t *testing.T) {
+	dir := t.TempDir()
+	optionsFile := filepath.Join(dir, "options.json")
+	certFile := filepath.Join(dir, "ca.pem")
+	if err := os.WriteFile(optionsFile, []byte(`{"MethodOverride":"POST"}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(certFile, []byte("certificate data"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	certificate := map[string]interface{}{"name": "ca.pem", "file": "certificate data"}
+
+	tests := []struct {
+		name     string
+		options  string
+		cert     string
+		expected map[string]interface{}
+		wantErr  bool
+	}{
+		{name: "no flags", expected: map[string]interface{}{}},
+		{
+			name:     "options as a json string",
+			options:  `{"MethodOverride":"PUT"}`,
+			expected: map[string]interface{}{"additional_options": `{"MethodOverride":"PUT"}`},
+		},
+		{
+			name:     "options from a file",
+			options:  optionsFile,
+			expected: map[string]interface{}{"additional_options": `{"MethodOverride":"POST"}`},
+		},
+		{name: "options that are not json", options: "not-json", wantErr: true},
+		{
+			name:     "certificate stored under the keys the server reads",
+			cert:     certFile,
+			expected: map[string]interface{}{"ca_certificate": certificate},
+		},
+		{name: "certificate file that does not exist", cert: filepath.Join(dir, "missing.pem"), wantErr: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resetVariables()
+			defer resetVariables()
+			additionalOptions = tt.options
+			certPath = tt.cert
+
+			metadata, err := profileMetadataFromFlags()
+			if tt.wantErr {
+				if err == nil {
+					t.Fatalf("expected an error, got metadata %v", metadata)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if !reflect.DeepEqual(metadata, tt.expected) {
+				t.Errorf("expected metadata %v, got %v", tt.expected, metadata)
+			}
+		})
+	}
+}
+
+// TestCreatePerformanceProfile_RejectsMissingCertificate verifies that no profile
+// is created when the --cert-path file can't be read.
+func TestCreatePerformanceProfile_RejectsMissingCertificate(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatalf("failed to get mesheryctl config: %v", err)
+	}
+
+	profileURL := testContext.BaseURL + "/api/performance/profiles"
+	httpmock.RegisterResponder("POST", profileURL, httpmock.NewStringResponder(http.StatusOK, `{}`))
+
+	resetVariables()
+	defer resetVariables()
+	profileName = "test-profile"
+	testURL = "https://meshery.io"
+	certPath = filepath.Join(t.TempDir(), "missing.pem")
+
+	if _, _, err := createPerformanceProfile(mctlCfg); err == nil {
+		t.Fatal("expected a missing certificate file to be rejected")
+	}
+	if calls := httpmock.GetCallCountInfo()["POST "+profileURL]; calls != 0 {
+		t.Errorf("expected no profile to be created, got %d request(s)", calls)
+	}
+}
+
+// existingProfileSchedule is the schedule stored on the mocked existing profile.
+const existingProfileSchedule = "2c1f0a3e-5d4b-4c6e-9a7f-3b8d2e1f4a60"
+
+// existingProfileRequests records the requests perf apply sends for an existing
+// profile, and the profile it saved.
+type existingProfileRequests struct {
+	order []string
+	saved perfprofile.PerformanceProfile
+}
+
+// mockExistingProfile serves an existing profile. As on the server, the profile
+// list leaves out the schedule, which only the single-profile read returns.
+func mockExistingProfile(t *testing.T, baseURL string, profileID string) *existingProfileRequests {
+	t.Helper()
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	origToken := utils.TokenFlag
+	utils.TokenFlag = filepath.Join(filepath.Dir(filename), "fixtures", "auth.json")
+	t.Cleanup(func() { utils.TokenFlag = origToken })
+
+	fields := `"id":"` + profileID + `","name":"existing","qps":7,"duration":"30s",` +
+		`"endpoints":["https://meshery.io"],"loadGenerators":["fortio"],` +
+		`"metadata":{"additional_options":"{\"old\":true}","kept":"value"}`
+	listedProfile := `{` + fields + `}`
+	fullProfile := `{` + fields + `,"schedule":"` + existingProfileSchedule + `"}`
+
+	requests := &existingProfileRequests{}
+	profilesURL := baseURL + "/api/performance/profiles"
+	httpmock.RegisterResponder("GET", profilesURL,
+		httpmock.NewStringResponder(http.StatusOK, `{"profiles":[`+listedProfile+`],"totalCount":1}`))
+	httpmock.RegisterResponder("GET", profilesURL+"/"+profileID, func(*http.Request) (*http.Response, error) {
+		requests.order = append(requests.order, "fetch")
+		return httpmock.NewStringResponse(http.StatusOK, fullProfile), nil
+	})
+	httpmock.RegisterResponder("POST", profilesURL, func(req *http.Request) (*http.Response, error) {
+		requests.order = append(requests.order, "save")
+		if err := json.NewDecoder(req.Body).Decode(&requests.saved); err != nil {
+			return nil, err
+		}
+		return httpmock.NewStringResponse(http.StatusOK, fullProfile), nil
+	})
+	httpmock.RegisterResponder("GET", baseURL+"/api/user/performance/profiles/"+profileID+"/run",
+		func(*http.Request) (*http.Response, error) {
+			requests.order = append(requests.order, "run")
+			return httpmock.NewStringResponse(http.StatusOK, `{}`), nil
+		})
+
+	return requests
+}
+
+// TestApplyUpdatesExistingProfileBeforeRun verifies that --options reaches an
+// existing profile before the test starts, because the server reads it from the
+// saved profile, and that the rest of the stored profile is kept.
+func TestApplyUpdatesExistingProfileBeforeRun(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	const profileID = "906f8876-33b5-4a97-906e-7a409d3b8ae9"
+	requests := mockExistingProfile(t, testContext.BaseURL, profileID)
+
+	resetVariables()
+	defer resetVariables()
+	testURL = "https://meshery.io"
+	additionalOptions = `{"MethodOverride":"POST"}`
+
+	if err := applyCmd.RunE(applyCmd, []string{"existing"}); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if !reflect.DeepEqual(requests.order, []string{"fetch", "save", "run"}) {
+		t.Fatalf("expected the full profile to be fetched and saved before the run, got requests %v", requests.order)
+	}
+	saved := requests.saved
+	if saved.ID.String() != profileID || saved.QPS != 7 {
+		t.Errorf("expected the existing profile to be updated, got id=%s qps=%d", saved.ID, saved.QPS)
+	}
+	if saved.Schedule == nil || saved.Schedule.String() != existingProfileSchedule {
+		t.Errorf("expected the stored schedule to be kept, got %v", saved.Schedule)
+	}
+	if got := saved.Metadata["additional_options"]; got != additionalOptions {
+		t.Errorf("expected --options to replace the saved options, got %v", got)
+	}
+	if got := saved.Metadata["kept"]; got != "value" {
+		t.Errorf("expected other metadata to be kept, got %v", got)
+	}
+}
+
+// TestApplyDoesNotUpdateProfileWhenValidationFails verifies that a command that
+// fails on its own inputs leaves the saved profile unchanged.
+func TestApplyDoesNotUpdateProfileWhenValidationFails(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	requests := mockExistingProfile(t, testContext.BaseURL, "906f8876-33b5-4a97-906e-7a409d3b8ae9")
+
+	resetVariables()
+	defer resetVariables()
+	testURL = "https://meshery.io"
+	additionalOptions = `{"MethodOverride":"POST"}`
+	testDuration = "500ms"
+
+	if err := applyCmd.RunE(applyCmd, []string{"existing"}); err == nil {
+		t.Fatal("expected an invalid duration to fail the command")
+	}
+	if len(requests.order) != 0 {
+		t.Errorf("expected no profile update or run, got requests %v", requests.order)
 	}
 }
 
