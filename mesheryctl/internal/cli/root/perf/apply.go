@@ -17,6 +17,7 @@ package perf
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -223,7 +224,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				userResponse = true
 			} else {
 				// ask user for confirmation
-				userResponse = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
+				userResponse, err = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
+				if err != nil {
+					return err
+				}
 			}
 
 			if userResponse {
@@ -453,12 +457,13 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		certData := string(certFile)
 		certName := fileInfo.Name()
 
-		// check if values["metadata"] is nil
-		if values["metadata"] == nil {
-			values["metadata"] = map[string]interface{}{}
+		metadata, ok := values["metadata"].(map[string]interface{})
+		if !ok || metadata == nil {
+			metadata = map[string]interface{}{}
+			values["metadata"] = metadata
 		}
 
-		values["metadata"].(map[string]interface{})["ca_certificate"] = map[string]interface{}{
+		metadata["ca_certificate"] = map[string]interface{}{
 			"name":     certName,
 			"certName": certData,
 		}
@@ -475,7 +480,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return "", "", ErrPerfProfileServer(errors.New("failed to save performance profile on server"))
+		return "", "", ErrPerfProfileServer(err)
 	}
 
 	var response *perfprofile.PerformanceProfile
@@ -485,10 +490,23 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	if err != nil {
 		return "", "", utils.ErrReadResponseBody(err)
 	}
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		serverErrMsg := strings.TrimSpace(string(body))
+		if serverErrMsg == "" {
+			serverErrMsg = fmt.Sprintf("server returned status: %s", resp.Status)
+		}
+		return "", "", ErrPerfProfileServer(errors.New(serverErrMsg))
+	}
+
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return "", "", ErrFailUnmarshal(err)
 	}
+
+	if response == nil {
+		return "", "", ErrPerfProfileServer(errors.New("server returned empty performance profile"))
+	}
+
 	profileID = response.ID.String()
 	profileName = response.Name
 

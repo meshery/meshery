@@ -80,6 +80,7 @@ describe('NotificationCenter constants', () => {
       category: 'pattern',
       action: 'validate',
     });
+    expect(EVENT_TYPE.DRY_RUN_DESIGN).toEqual({ category: 'pattern', action: 'dry-run' });
     expect(EVENT_TYPE.EVALUATE_DESIGN).toEqual({ category: 'relationship', action: 'evaluation' });
     expect(EVENT_TYPE.REGISTRANT_SUMMARY).toEqual({ category: 'entity', action: 'get_summary' });
     expect(EVENT_TYPE.ACADEMY_QUIZ_EVALUATION).toEqual({

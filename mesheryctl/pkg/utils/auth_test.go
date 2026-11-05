@@ -168,4 +168,29 @@ func TestMakeRequest_Status302AndHTMLResponseHandling(t *testing.T) {
 			t.Fatal("expected response body to be closed on HTML content-type response")
 		}
 	})
+
+	t.Run("MakeRequest returns ErrMesheryServerInternalError on HTML 500 response", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = fmt.Fprint(w, "<html><body>500 Internal Server Error</body></html>")
+		}))
+		defer server.Close()
+
+		req, err := http.NewRequest(http.MethodGet, server.URL, nil)
+		if err != nil {
+			t.Fatalf("unexpected error creating request: %v", err)
+		}
+
+		resp, err := MakeRequest(req)
+		if resp != nil {
+			t.Errorf("expected nil response on 500, got %v", resp)
+		}
+		if err == nil {
+			t.Fatal("expected error on 500, got nil")
+		}
+		if errors.GetCode(err) != ErrMesheryServerInternalErrorCode {
+			t.Errorf("expected error code %s, got %s", ErrMesheryServerInternalErrorCode, errors.GetCode(err))
+		}
+	})
 }
