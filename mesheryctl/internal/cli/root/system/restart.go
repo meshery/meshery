@@ -127,7 +127,10 @@ func restart() error {
 				userResponse = true
 			} else {
 				// ask user for confirmation
-				userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+				userResponse, err = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+				if err != nil {
+					return err
+				}
 			}
 			if !userResponse {
 				utils.Log.Info("Restart aborted.")
