@@ -4,7 +4,7 @@ import AddIcon from '../../../../assets/icons/AddIcon';
 import SimpleAccordion from './Accordion';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
-import { isFixedItems, type ArrayFieldTemplateProps } from '@rjsf/utils';
+import { getUiOptions, isFixedItems, type ArrayFieldTemplateProps } from '@rjsf/utils';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { iconSmall } from '../../../../css/icons.styles';
 import pluralize from 'pluralize';
@@ -16,6 +16,22 @@ function getTitleForItem(props: ArrayFieldTemplateProps) {
 
 function getTitle(props: ArrayFieldTemplateProps): string {
   return safeStringTitle(props.uiSchema?.['ui:title'] ?? props.title) || 'Unknown';
+}
+
+// Whether this array's errors must be hidden. RJSF's ArrayField passes
+// rawErrors to this template even when the array hides its errors, and it
+// does not forward hideError to the template at all (@rjsf/core 6.6.2,
+// ArrayField.js: hideError reaches only the item props, never arrayProps),
+// so the template cannot rely on props.hideError alone. The effective
+// value is resolved the same way SchemaField resolves it: the uiSchema
+// option wins (getUiOptions merges ui:options.hideError and the bare
+// ui:hideError, plus the registry's global UI options), falling back to
+// the inherited hideError prop when the uiSchema sets nothing.
+function isErrorHidden(props: ArrayFieldTemplateProps): boolean {
+  const uiOptions = getUiOptions(props.uiSchema, props.registry?.globalUiOptions);
+  return uiOptions.hideError === undefined
+    ? Boolean(props.hideError)
+    : Boolean(uiOptions.hideError);
 }
 
 const ArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
@@ -100,6 +116,7 @@ const DefaultArrayItem = ({ heading, item }: { heading: string; item: React.Reac
 const DefaultFixedArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
   const theme = useTheme();
   const safeId = props.fieldPathId?.$id ?? 'array-field';
+  const hideError = isErrorHidden(props);
 
   return (
     <fieldset className={props.className}>
@@ -115,7 +132,7 @@ const DefaultFixedArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
 
       <ArrayFieldTitle title={getTitle(props)} />
 
-      {(props.rawErrors?.length ?? 0) > 0 && (
+      {!hideError && (props.rawErrors?.length ?? 0) > 0 && (
         <CustomTextTooltip
           bgColor={theme.palette.error.main}
           interactive={true}
@@ -159,6 +176,7 @@ const DefaultFixedArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
 const DefaultNormalArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
   const theme = useTheme();
   const safeId = props.fieldPathId?.$id ?? 'array-field';
+  const hideError = isErrorHidden(props);
 
   return (
     <Paper elevation={0}>
@@ -188,7 +206,7 @@ const DefaultNormalArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
                 </IconButton>
               </CustomTextTooltip>
             )}
-            {(props.rawErrors?.length ?? 0) > 0 && (
+            {!hideError && (props.rawErrors?.length ?? 0) > 0 && (
               <CustomTextTooltip
                 bgColor={theme.palette.error.main}
                 interactive={true}

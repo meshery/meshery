@@ -184,6 +184,39 @@ describe('ArrayFieldTemplate', () => {
     expect(screen.queryAllByTestId('accordion')).toHaveLength(0);
   });
 
+  it('hides the error tooltip in the fixed template when hideError is true', () => {
+    // ui:options.hideError must hide the indicator even though RJSF still
+    // passes rawErrors to the template: the caller asked for no error to
+    // be shown. RJSF's ArrayField does not forward hideError to the
+    // template, so the template reads it from the effective UI options.
+    render(
+      <ArrayFieldTemplate
+        {...(baseProps as any)}
+        schema={{
+          title: 'Items',
+          type: 'array',
+          items: [{ type: 'string' }, { type: 'string' }],
+        }}
+        uiSchema={{ 'ui:options': { hideError: true } }}
+        rawErrors={['oops']}
+      />,
+    );
+    expect(screen.queryByTestId('error-icon')).not.toBeInTheDocument();
+  });
+
+  it('hides the error tooltip in the normal template when hideError is true', () => {
+    // The normal route's rawErrors block was unconditional too, so it gets
+    // the same guard as the fixed route.
+    render(
+      <ArrayFieldTemplate
+        {...(baseProps as any)}
+        uiSchema={{ 'ui:options': { hideError: true } }}
+        rawErrors={['oops']}
+      />,
+    );
+    expect(screen.queryByTestId('error-icon')).not.toBeInTheDocument();
+  });
+
   it('renders the fixed template variant for a tuple-items (fixed) array', () => {
     // RJSF routes a multi-select array to its own widget before the template
     // runs, so only a tuple `items` reaches the template as a fixed array.
