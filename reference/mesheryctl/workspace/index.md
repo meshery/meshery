@@ -47,8 +47,7 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --count   total number of registered workspaces
-  -h, --help    help for workspace
+  -h, --help   help for workspace
 
 </div>
 </pre>
