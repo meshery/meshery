@@ -125,7 +125,7 @@ func ErrViewDesignFlag() error {
 // ErrUndeployDesign returns an error indicating failure to undeploy a design.
 func ErrUndeployDesign(err error) error {
 	detail := "Unable to undeploy design due to empty path"
-	if err != nil {
+	if err != nil && err.Error() != "" {
 		detail = err.Error()
 	}
 	return errors.New(ErrUndeployDesignCode, errors.Alert,
