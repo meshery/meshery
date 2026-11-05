@@ -3,6 +3,7 @@ title: mesheryctl-environment-create
 display_title: false
 command: environment
 subcommand: create
+categories: [mesheryctl-environment]
 ---
 
 # mesheryctl environment create
@@ -15,8 +16,10 @@ Create a new environment by providing the name and description of the environmen
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment create [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +28,10 @@ mesheryctl environment create [flags]
 Create a new environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment create --orgId [orgId] --name [name] --description [description]
 
+</div>
 </div>
 </pre> 
 

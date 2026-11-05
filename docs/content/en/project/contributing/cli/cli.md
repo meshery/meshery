@@ -144,8 +144,6 @@ Unit tests and integration tests are essential to make each mesheryctl release r
 
 Unit test code coverage reports can be found in the [CodeCov logs](https://app.codecov.io/gh/meshery/meshery/). _Note: GitHub login may be required for access._
 
-This format should reference an external file where your manual changes are stored. These files should be present at the folder path (`_includes/mesheryctl/`). Any content added using this method will not be altered during the documentation generation process, but instead will be included post-auto doc generation. When making new changes or additions, understand that these additional details are positioned at the end their given CLI reference page, so bear this in mind as you organize and present your additional command details.
-
 ### Integration Tests
 
 **Marking integration tests under unit tests**

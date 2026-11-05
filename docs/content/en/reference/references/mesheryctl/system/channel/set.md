@@ -3,11 +3,12 @@ title: mesheryctl-system-channel-set
 display_title: false
 command: system
 subcommand: channel
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system channel set
 
-set release channel and version
+Set release channel and version
 
 ## Synopsis
 
@@ -15,8 +16,10 @@ Set release channel and version of context in focus
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel set [stable|stable-version|edge|edge-version] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +28,10 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version] [flags]
 Subscribe to release channel or version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
+</div>
 </div>
 </pre> 
 

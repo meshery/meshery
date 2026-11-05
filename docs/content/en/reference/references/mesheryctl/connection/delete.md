@@ -3,6 +3,7 @@ title: mesheryctl-connection-delete
 display_title: false
 command: connection
 subcommand: delete
+categories: [mesheryctl-connection]
 ---
 
 # mesheryctl connection delete
@@ -15,8 +16,10 @@ Delete a connection.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection delete [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +28,10 @@ mesheryctl connection delete [flags]
 Delete a connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl connection delete [connection_id]
 
+</div>
 </div>
 </pre> 
 

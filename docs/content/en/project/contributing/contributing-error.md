@@ -88,7 +88,7 @@ how to choose the status code.
 There already exists an [interface for logger](https://github.com/meshery/meshkit/blob/master/logger/logger.go) in MeshKit.<br><br>
 
 {{% alert color="warning" title="WARNING" %}}
-To enforce the use of meshkit errors, meshkit logger was designed such that it only works with meshkit errors. If a non-meshkit error is logged through the logger, it would panic and kill the process. See: [meshkit#119](https://github.com/meshery/meshkit/pull/119) for more insight.
+To enforce the use of meshkit errors, the meshkit logger reads its structured fields - code, severity, probable cause, suggested remediation - straight off a meshkit error. A plain Go error still logs, but every one of those fields renders as `None`, leaving the operator a bare message with no code to look up and no remediation to follow. Wrap an error in a meshkit error before logging it. See: [meshkit#119](https://github.com/meshery/meshkit/pull/119) for more insight.
 {{% /alert %}}
 
 #### Defining a Logger

@@ -3,6 +3,7 @@ title: mesheryctl-system-restart
 display_title: false
 command: system
 subcommand: restart
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system restart
@@ -15,8 +16,10 @@ Restart all Meshery containers / pods.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system restart [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,16 +28,20 @@ mesheryctl system restart [flags]
 Restart all Meshery containers, their instances and their connected volumes
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system restart
 
+</div>
 </div>
 </pre> 
 
 (optional) skip checking for new updates available in Meshery.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system restart --skip-update
 
+</div>
 </div>
 </pre> 
 

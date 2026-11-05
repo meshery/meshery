@@ -49,7 +49,7 @@ Using the Meshery dashboard, you can get a copy of your authentication token by 
 
 2. Navigate to your user's avatar in the upper righthand corner and select "Get Token" from the dropdown of profile section:
 
-<a href="images/MesheryTokenUI.png"><img alt="Meshery Dashboard" src="images/MesheryTokenUI.png" width="680" height="400"/></a>
+<a href="images/MesheryTokenUI.png"><img class="content-image" alt="Meshery Dashboard" src="images/MesheryTokenUI.png" /></a>
 <br/>
 
 </details>
@@ -89,6 +89,9 @@ Using curl, you can access Meshery's REST API by executing this command:
 
 </details>
 
+#### Troubleshooting Authentication
+
+If the request returns an authentication or authorization error (e.g. 401 Unauthorized or 403 Forbidden), verify that a valid Meshery token is included in both the token header and the token= value inside the Cookie header, as shown in the curl example above. See the [Meshery token documentation]({{< ref "reference/extensibility/api.md#how-to-get-your-token" >}}) for instructions on obtaining a token.
 ## Endpoints
 
 See the published Meshery OpenAPI bundles in [meshery/schemas](https://github.com/meshery/schemas) for the authoritative REST API definitions.

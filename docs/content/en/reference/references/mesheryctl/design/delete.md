@@ -3,6 +3,7 @@ title: mesheryctl-design-delete
 display_title: false
 command: design
 subcommand: delete
+categories: [mesheryctl-design]
 ---
 
 # mesheryctl design delete
@@ -15,8 +16,10 @@ delete design file will trigger deletion of the design file.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design delete [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +28,10 @@ mesheryctl design delete [flags]
 delete a design file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design delete [file | URL]
 
+</div>
 </div>
 </pre> 
 

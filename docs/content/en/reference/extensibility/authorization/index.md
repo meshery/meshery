@@ -76,6 +76,28 @@ The local database seeds are populated via `server/permissions/keys.csv` in the 
 
 On startup, Meshery Server's [`SeedKeys`](https://github.com/meshery/meshery/blob/master/server/models/keys_helper.go) seeds these keys into the database.
 
+{{% alert color="warning" title="The `Local Provider` header selects every seeded row" %}}
+`SeedKeys` decides what to seed by looking up the **`Local Provider`** column by
+name in the header row of `keys.csv` (or of the file `KEYS_PATH` points at). If
+that header is renamed or dropped, the lookup matches nothing, **no** row is
+selected, and nothing is seeded from the file - not just for the key you were
+adding. On a fresh or reset database the Key table is left empty on every boot;
+previously seeded keys are not cleared and keep working. `SeedKeys` reports this
+once per seeding run - at boot, and again after a database reset - as
+[`meshery-server-1486`]({{< ref "reference/references/error-codes.md" >}});
+restore the header and restart the server to seed again.
+
+An empty Key table is fail-closed, and its effect is confined to Meshery UI. The
+CASL `ability` in [`ui/utils/can.ts`](https://github.com/meshery/meshery/blob/master/ui/utils/can.ts)
+starts with no rules, so zero keys means every gate evaluates to `false` and
+every gated control hides or disables - the same direction as one absent row,
+never "unrestricted". It gates nothing server-side: the Key table is read only
+by `GetUsersKeys`, which serves `GET /api/identity/orgs/{orgId}/users/keys`, and
+no server endpoint consults a key to authorize a request. So an empty table
+hides the affordance without blocking the matching API call. Pinned by
+`TestSeedKeysMissingRegisterColumnIsLoud` in `server/models`.
+{{% /alert %}}
+
 ---
 
 #### Phase 3: Wire Key in the UI
@@ -201,6 +223,8 @@ If the key is missing from `Keys` altogether, it has not made it through the spr
 ##### 5. Local Provider: confirm database seeding
 The key must be in [`server/permissions/keys.csv`](https://github.com/meshery/meshery/blob/master/server/permissions/keys.csv) with **`Local Provider = TRUE`**. Restart Meshery Server (or reset the local DB) after the CSV updates.
 
+If *no* key gates correctly rather than just this one, check the server log for [`meshery-server-1486`]({{< ref "reference/references/error-codes.md" >}}): the CSV's `Local Provider` header itself is missing, so `SeedKeys` seeded nothing at all.
+
 ##### 6. Remote Provider: confirm role assignment
 Keys come from roles assigned in the Remote Provider admin UI. An empty API response usually means a role/keychain issue—not a missing entry in the generated `Keys` alone.
 
@@ -216,6 +240,7 @@ Verify that the `token` cookie is set and not expired:
 |---------|----------------|
 | Button never appears | User lacks the key; the key is missing from the generated `Keys`; or the gate is not wired |
 | New key not visible after merge | Stale `sessionStorage.keys`; missing Local Provider seed row; or only schemas PR merged |
+| *Every* gated control is hidden or disabled | The Key table seeded empty - check the server log for `meshery-server-1486`, which means the `Local Provider` header is missing from `keys.csv` |
 | Works in one org, not another | Keys are org-scoped—check `currentOrg` and refetch keys |
 | API returns `401` or `403` when fetching keys | Expired or missing `token` cookie; verify browser cookie store |
 

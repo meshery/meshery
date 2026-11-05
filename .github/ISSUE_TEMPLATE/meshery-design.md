@@ -38,7 +38,7 @@ meshery/hacktoberfest_contributions/<design-name>/<design.yaml>
 - Create a pull request (PR) with your design to the Meshery repository.
 
 ---
-- 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)
+- 🙋🏾🙋🏼 Questions: [Discussion Forum](https://discuss.meshery.io) and [Community Slack](https://slack.meshery.io)
 
 ### Additonal resources
 

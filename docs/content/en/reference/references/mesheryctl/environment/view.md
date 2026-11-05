@@ -3,6 +3,7 @@ title: mesheryctl-environment-view
 display_title: false
 command: environment
 subcommand: view
+categories: [mesheryctl-environment]
 ---
 
 # mesheryctl environment view
@@ -15,8 +16,10 @@ View details of an environment registered in Meshery Server for a specific organ
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment view [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +28,10 @@ mesheryctl environment view [flags]
 View details of a specific environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment view --orgId [orgId]
 
+</div>
 </div>
 </pre> 
 

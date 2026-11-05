@@ -3,6 +3,7 @@ title: mesheryctl-system-token-view
 display_title: false
 command: system
 subcommand: token
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system token view
@@ -14,8 +15,10 @@ View token
 View a specific token in meshery config
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system token view [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -23,15 +26,19 @@ mesheryctl system token view [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system token view [token-name]
 
+</div>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system token view (show token of current context)
 
+</div>
 </div>
 </pre> 
 

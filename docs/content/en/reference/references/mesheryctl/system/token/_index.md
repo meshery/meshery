@@ -3,6 +3,7 @@ title: mesheryctl-system-token
 display_title: false
 command: system
 subcommand: token
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system token
@@ -15,8 +16,10 @@ Manage Meshery user tokens
 	Manipulate user tokens and their context assignments in your meshconfig
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system token [flags]
 
+</div>
 </div>
 </pre> 
 
