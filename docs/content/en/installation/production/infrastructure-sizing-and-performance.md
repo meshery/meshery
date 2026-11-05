@@ -60,7 +60,7 @@ Storage:
 - **Meshery Server / Database.** Provision disk for the on-disk cache under the
   Server's data folder. The database grows with discovery scope and registry
   size. Because it is a cache (not a system of record), size for working-set
-  performance rather than long-term retention—durable data lives with the
+  performance rather than long-term retention - durable data lives with the
   [Remote Provider]({{< ref "installation/production/authentication-and-identity.md" >}}).
 - **Meshery Broker.** No persistent volume is required; the Broker holds
   messages in memory until consumed. Size **memory**, not disk, for the Broker.
@@ -69,7 +69,7 @@ Storage:
 Because MeshSync's working snapshot is held in the Server's database and partly
 in memory, an undersized memory limit on Meshery Server can lead to restarts
 under large or churny clusters. Give the Server generous memory headroom and
-alert on its utilization—see
+alert on its utilization - see
 [Monitoring, Observability & Health KPIs]({{< ref "installation/production/monitoring-observability-and-kpis.md" >}}).
 {{% /alert %}}
 
@@ -127,7 +127,7 @@ data and events between each cluster and the Server. Production guidance:
   [High Availability & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}}).
 - **Static UI assets** are served by the Server with release-scoped cache
   headers, so a CDN or caching reverse proxy in front of Meshery can offload
-  virtually all repeat static-asset requests—worthwhile when serving many
+  virtually all repeat static-asset requests - worthwhile when serving many
   concurrent UI users. See
   [Networking & Connectivity]({{< ref "installation/production/networking-and-connectivity.md" >}}).
 - **Registry and models** are held to serve design and relationship operations;
@@ -173,7 +173,7 @@ data and events between each cluster and the Server. Production guidance:
 4. Blacklist resource types you do not need; re-measure.
 5. Set requests/limits with headroom (especially Server memory) and configure
    autoscaling where appropriate.
-6. Add the resulting thresholds to your alerting—see
+6. Add the resulting thresholds to your alerting - see
    [Monitoring, Observability & Health KPIs]({{< ref "installation/production/monitoring-observability-and-kpis.md" >}}).
 
 {{< related-discussions tag="meshery" >}}

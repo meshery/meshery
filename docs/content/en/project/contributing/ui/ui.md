@@ -39,11 +39,11 @@ The [API overview]({{< ref "reference/extensibility/api.md" >}}) in the Extensib
 
 ### REST API
 
-Meshery provides a REST API available through the default port of `9081/tcp` at `<hostname>:<port>/api/`. See the [REST API Reference]({{< ref "reference/references/rest-apis/_index.md" >}}) for a complete list of endpoints available with short description of their purpose and example code.
+Meshery provides a REST API available through the default port of `9081/tcp` at `<hostname>:<port>/api/`. See the [REST API Reference]({{< ref "reference/rest-apis/_index.md" >}}) for a complete list of endpoints available with short description of their purpose and example code.
 
 ### GraphQL API
 
-Meshery provides a GraphQl API available through the default port of `9081/tcp` at `<hostname>:<port>/api/graphql/query`. See the [GraphQL API Reference]({{< ref "reference/references/graphql-apis.md" >}}) [Relay](https://relay.dev) is the client used.
+Meshery provides a GraphQl API available through the default port of `9081/tcp` at `<hostname>:<port>/api/graphql/query`. See the [GraphQL API Reference]({{< ref "reference/graphql-apis.md" >}}) [Relay](https://relay.dev) is the client used.
 
 ## Design
 
