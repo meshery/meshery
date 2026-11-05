@@ -294,11 +294,14 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 // carries. A save carries only some of them - POST /api/pattern builds the
 // record from DesignPostPayload, which has no source content, type or creation
 // time - so Updates skips zero-valued fields and those columns keep their
-// stored values. created_at and the usage counters are never written by a save.
+// stored values. created_at and the usage counters are never written by a save,
+// and pattern_file is not written when the request carried no design file.
 func (mpp *MesheryPatternPersister) updateSavedColumns(pattern *MesheryPattern) error {
-	res := mpp.DB.Model(pattern).
-		Omit("created_at", "view_count", "share_count", "download_count", "clone_count", "deployment_count").
-		Updates(pattern)
+	omit := []string{"created_at", "view_count", "share_count", "download_count", "clone_count", "deployment_count"}
+	if pattern.PatternFileOmitted {
+		omit = append(omit, "pattern_file")
+	}
+	res := mpp.DB.Model(pattern).Omit(omit...).Updates(pattern)
 	// updated_at always changes, so no affected row means the design was
 	// deleted after the existence check.
 	if res.Error == nil && res.RowsAffected == 0 {
