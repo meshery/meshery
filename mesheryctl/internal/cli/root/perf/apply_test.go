@@ -166,35 +166,43 @@ import (
 	"github.com/spf13/viper"
 )
 
-func TestSplitTestDurationDefaultsEmptyDuration(t *testing.T) {
-	value, unit := splitTestDuration("")
+func TestSplitTestDuration(t *testing.T) {
+	tests := []struct {
+		name     string
+		duration string
+		value    string
+	}{
+		{name: "empty duration defaults to 30s", duration: "", value: "30"},
+		{name: "number without a unit means seconds", duration: "30", value: "30"},
+		{name: "seconds", duration: "10s", value: "10"},
+		{name: "surrounding spaces are trimmed", duration: " 5m ", value: "300"},
+		{name: "hours", duration: "2h", value: "7200"},
+		{name: "uppercase unit", duration: "5M", value: "300"},
+		{name: "combined units", duration: "1h30m", value: "5400"},
+		{name: "fractional value that is a whole number of seconds", duration: "1.5m", value: "90"},
+		{name: "milliseconds that are a whole number of seconds", duration: "2000ms", value: "2"},
+	}
 
-	if value != "30" || unit != "s" {
-		t.Fatalf("expected empty duration to default to 30s, got value=%q unit=%q", value, unit)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			value, unit, err := splitTestDuration(tt.duration)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if value != tt.value || unit != "s" {
+				t.Fatalf("expected %q to be sent as %ss, got value=%q unit=%q", tt.duration, tt.value, value, unit)
+			}
+		})
 	}
 }
 
-func TestSplitTestDurationTrimsDuration(t *testing.T) {
-	value, unit := splitTestDuration(" 5m ")
-
-	if value != "5" || unit != "m" {
-		t.Fatalf("expected trimmed duration to split into 5 and m, got value=%q unit=%q", value, unit)
-	}
-}
-
-func TestSplitTestDurationDefaultsUnitlessDuration(t *testing.T) {
-	value, unit := splitTestDuration("30")
-
-	if value != "30" || unit != "s" {
-		t.Fatalf("expected unitless duration to default to seconds, got value=%q unit=%q", value, unit)
-	}
-}
-
-func TestSplitTestDurationSupportsMultiCharacterUnit(t *testing.T) {
-	value, unit := splitTestDuration("500ms")
-
-	if value != "500" || unit != "ms" {
-		t.Fatalf("expected multi-character unit to be preserved, got value=%q unit=%q", value, unit)
+func TestSplitTestDurationRejectsInvalidDuration(t *testing.T) {
+	for _, duration := range []string{"500ms", "1500ms", "1.5", "0s", "0", "-5s", "abc", "s", "5x"} {
+		t.Run(duration, func(t *testing.T) {
+			if value, unit, err := splitTestDuration(duration); err == nil {
+				t.Fatalf("expected %q to be rejected, got value=%q unit=%q", duration, value, unit)
+			}
+		})
 	}
 }
 
@@ -287,6 +295,33 @@ func TestCreatePerformanceProfile_ServerErrors(t *testing.T) {
 				t.Errorf("expected empty profile ID and name on error, got id=%q, name=%q", id, name)
 			}
 		})
+	}
+}
+
+func TestCreatePerformanceProfile_RejectsInvalidDuration(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatalf("failed to get mesheryctl config: %v", err)
+	}
+
+	profileURL := testContext.BaseURL + "/api/performance/profiles"
+	httpmock.RegisterResponder("POST", profileURL, httpmock.NewStringResponder(http.StatusOK, `{}`))
+
+	resetVariables()
+	defer resetVariables()
+	profileName = "test-profile"
+	testURL = "https://meshery.io"
+	testDuration = "500ms"
+
+	if _, _, err := createPerformanceProfile(mctlCfg); err == nil {
+		t.Fatal("expected an invalid duration to be rejected")
+	}
+	if calls := httpmock.GetCallCountInfo()["POST "+profileURL]; calls != 0 {
+		t.Errorf("expected no profile to be created, got %d request(s)", calls)
 	}
 }
 
