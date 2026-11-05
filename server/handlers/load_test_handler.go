@@ -146,7 +146,10 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 	return &headers
 }
 
-// LoadTestHandler runs the load test with the given parameters
+// LoadTestHandler executes a performance load test with the provided parameters.
+// It parses query parameters and performance profile metadata, safely writes temporary
+// CA certificate files when cert=true, ensures their file descriptors are closed and
+// unlinked upon exit, and invokes the underlying load generator.
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	cleanUpFiles := make([]string, 0)
 
@@ -220,8 +223,20 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 					writeMeshkitError(w, ErrCreateFile(err, certificateName), http.StatusInternalServerError)
 					return
 				}
+				defer func() {
+					if err := file.Close(); err != nil && err != os.ErrClosed {
+						h.log.Error(fmt.Errorf("failed to close temp certificate file %s: %w", file.Name(), err))
+					}
+				}()
 				cleanUpFiles = append(cleanUpFiles, file.Name())
-				certificateData := caCertificate["file"].(string)
+
+				certificateData, ok := caCertificate["file"].(string)
+				if !ok {
+					createErr := ErrCreateFile(fmt.Errorf("certificate file data is invalid or missing"), certificateName)
+					h.log.Error(createErr)
+					writeMeshkitError(w, createErr, http.StatusBadRequest)
+					return
+				}
 
 				_, err = file.Write([]byte(certificateData))
 				if err != nil {
