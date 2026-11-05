@@ -31,7 +31,7 @@ type OutputFormatterSaverFactory[T any] struct {
 }
 
 func (o *OutputFormatterFactory[T]) New(format string, data T) (OutputFormatter[T], error) {
-	switch format {
+	switch strings.ToLower(format) {
 	case "json":
 		return NewJSONOutputFormatter(data), nil
 	case "yaml":
@@ -42,7 +42,7 @@ func (o *OutputFormatterFactory[T]) New(format string, data T) (OutputFormatter[
 }
 
 func (o *OutputFormatterSaverFactory[T]) New(format string, outputFormatter OutputFormatter[T]) (OutputFormatterSaver[T], error) {
-	switch format {
+	switch strings.ToLower(format) {
 	case "json":
 		jsonFormatter, ok := outputFormatter.(*JSONOutputFormatter[T])
 		if !ok {
