@@ -4,35 +4,36 @@ import AddIcon from '../../../../assets/icons/AddIcon';
 import SimpleAccordion from './Accordion';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
-import { isMultiSelect, getDefaultFormState } from '@rjsf/utils';
+import { isFixedItems, type ArrayFieldTemplateProps } from '@rjsf/utils';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { iconSmall } from '../../../../css/icons.styles';
 import pluralize from 'pluralize';
 import { safeDisplayValue, safeStringTitle } from '../helper';
 
-function getTitleForItem(props) {
-  const title = getTitle(props);
-  return pluralize.singular(typeof title === 'string' ? title : String(title ?? ''));
+function getTitleForItem(props: ArrayFieldTemplateProps) {
+  return pluralize.singular(getTitle(props));
 }
 
-function getTitle(props) {
-  if (!props) return 'Unknown';
-  return safeStringTitle(props.uiSchema['ui:title'] ?? props.title) || 'Unknown';
+function getTitle(props: ArrayFieldTemplateProps): string {
+  return safeStringTitle(props.uiSchema?.['ui:title'] ?? props.title) || 'Unknown';
 }
 
-const ArrayFieldTemplate = (props) => {
-  const { schema, registry = getDefaultFormState(), classes } = props;
-  const safeId = props.idSchema?.$id ?? 'array-field';
-  const safeProps = { ...props, idSchema: props.idSchema ?? { $id: safeId } };
-  // TODO: update types so we don't have to cast registry as any
-  if (isMultiSelect(schema, registry.rootSchema)) {
-    return <DefaultFixedArrayFieldTemplate {...safeProps} />;
+const ArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
+  // RJSF's own ArrayField routes a multi-select array to its multi-select widget
+  // before ever calling this template, so `isMultiSelect` would always be false
+  // here. A tuple `items` is the only shape that reaches the template as a fixed
+  // array, and `isFixedItems` is the very test RJSF's ArrayField uses to pick it.
+  // `registry` is required by RJSFBaseProps, so there is no fallback to default
+  // and no cast to make — and `getDefaultRegistry()` could not serve as one
+  // anyway: it lives in @rjsf/core and omits `schemaUtils`.
+  if (isFixedItems(props.schema)) {
+    return <DefaultFixedArrayFieldTemplate {...props} />;
   } else {
-    return <DefaultNormalArrayFieldTemplate {...safeProps} />;
+    return <DefaultNormalArrayFieldTemplate {...props} />;
   }
 };
 
-const ArrayFieldTitle = ({ title, classes }) => {
+const ArrayFieldTitle = ({ title }: { title?: string }) => {
   const safeTitle = safeStringTitle(title);
   if (!safeTitle) return null;
 
@@ -47,59 +48,30 @@ const ArrayFieldTitle = ({ title, classes }) => {
 };
 
 // Used in the two templates
-const DefaultArrayItem = (props) => {
-  const btnStyle = {
-    flex: 1,
-    paddingLeft: 0,
-    paddingRight: 6,
-    fontWeight: 'bold',
-  };
-
+// RJSF hands each entry of `items` as a ready-to-render element for one array
+// item (keyed by a stable item key), so the item is rendered as-is and only
+// wrapped in the Meshery accordion chrome; its fields and its own toolbar come
+// from rendering the element. Spreading the element into props used to pass
+// `{ key, type, props }` instead of the item's props, so its content and
+// toolbar were lost.
+const DefaultArrayItem = ({ heading, item }: { heading: string; item: React.ReactElement }) => {
   return (
-    <SimpleAccordion heading={props.heading} childProps={props}>
-      <Grid2 container={true} key={props.key} alignItems="center" size="grow">
+    <SimpleAccordion heading={heading} childProps={item.props}>
+      <Grid2 container={true} alignItems="center" size="grow">
         <Grid2 size={{ xs: 12 }}>
           <Box mb={2} style={{ border: '0.5px solid black' }}>
             <Paper elevation={0}>
-              <Box p={2}>{props.children}</Box>
+              <Box p={2}>{item}</Box>
             </Paper>
           </Box>
         </Grid2>
-
-        {props.hasToolbar && (
-          <Grid2>
-            {(props.hasMoveUp || props.hasMoveDown) && (
-              <IconButton
-                icon="arrow-up"
-                className="array-item-move-up"
-                tabIndex={-1}
-                style={btnStyle}
-                iconProps={{ fontSize: 'small' }}
-                disabled={props.disabled || props.readonly || !props.hasMoveUp}
-                onClick={props.onReorderClick(props.index, props.index - 1)}
-              />
-            )}
-
-            {(props.hasMoveUp || props.hasMoveDown) && (
-              <IconButton
-                icon="arrow-down"
-                tabIndex={-1}
-                style={btnStyle}
-                iconProps={{ fontSize: 'small' }}
-                disabled={props.disabled || props.readonly || !props.hasMoveDown}
-                onClick={props.onReorderClick(props.index, props.index + 1)}
-              />
-            )}
-          </Grid2>
-        )}
       </Grid2>
     </SimpleAccordion>
   );
 };
 
-const DefaultFixedArrayFieldTemplate = (props) => {
-  const { classes } = props;
-  const safeId = props.idSchema?.$id ?? 'array-field';
+const DefaultFixedArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
+  const safeId = props.fieldPathId?.$id ?? 'array-field';
 
   return (
     <fieldset className={props.className}>
@@ -113,18 +85,11 @@ const DefaultFixedArrayFieldTemplate = (props) => {
         </Button>
       )}
 
-      <ArrayFieldTitle
-        key={`array-field-title-${safeId}`}
-        TitleField={props.TitleField}
-        idSchema={props.idSchema}
-        title={getTitle(props)}
-        required={props.required}
-        classes={classes}
-      />
+      <ArrayFieldTitle title={getTitle(props)} />
 
-      {(props.uiSchema['ui:description'] ?? props.schema?.description) != null && (
+      {(props.uiSchema?.['ui:description'] ?? props.schema?.description) != null && (
         <div className="field-description" key={`field-description-${safeId}`}>
-          {safeDisplayValue(props.uiSchema['ui:description'] ?? props.schema?.description)}
+          {safeDisplayValue(props.uiSchema?.['ui:description'] ?? props.schema?.description)}
         </div>
       )}
 
@@ -133,9 +98,9 @@ const DefaultFixedArrayFieldTemplate = (props) => {
           props.items.map((item, idx) => {
             return (
               <DefaultArrayItem
-                key={`${getTitle(props)}-${idx}`}
+                key={item.key ?? `${getTitle(props)}-${idx}`}
                 heading={`${getTitleForItem(props)} (${idx})`}
-                {...item}
+                item={item}
               />
             );
           })}
@@ -144,10 +109,9 @@ const DefaultFixedArrayFieldTemplate = (props) => {
   );
 };
 
-const DefaultNormalArrayFieldTemplate = (props) => {
+const DefaultNormalArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
   const theme = useTheme();
-  const { classes } = props;
-  const safeId = props.idSchema?.$id ?? 'array-field';
+  const safeId = props.fieldPathId?.$id ?? 'array-field';
 
   return (
     <Paper elevation={0}>
@@ -159,19 +123,12 @@ const DefaultNormalArrayFieldTemplate = (props) => {
           size="grow"
         >
           <Grid2 size={{ xs: 4 }}>
-            <ArrayFieldTitle
-              key={`array-field-title-${safeId}`}
-              TitleField={props.TitleField}
-              idSchema={props.idSchema}
-              title={getTitle(props)}
-              required={props.required}
-              classes={classes}
-            />
+            <ArrayFieldTitle title={getTitle(props)} />
 
-            {(props.uiSchema['ui:description'] ?? props.schema?.description) != null && (
+            {(props.uiSchema?.['ui:description'] ?? props.schema?.description) != null && (
               <CustomTextTooltip
                 title={safeStringTitle(
-                  props.uiSchema['ui:description'] ?? props.schema?.description,
+                  props.uiSchema?.['ui:description'] ?? props.schema?.description,
                 )}
               >
                 <IconButton disableTouchRipple="true" disableRipple="true">
@@ -184,7 +141,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                 </IconButton>
               </CustomTextTooltip>
             )}
-            {props.rawErrors?.length > 0 && (
+            {(props.rawErrors?.length ?? 0) > 0 && (
               <CustomTextTooltip
                 bgColor={theme.palette.error.main}
                 interactive={true}
@@ -234,9 +191,9 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             props.items.map((item, idx) => {
               return (
                 <DefaultArrayItem
-                  key={`${getTitle(props)}-${idx}`}
+                  key={item.key ?? `${getTitle(props)}-${idx}`}
                   heading={`${getTitleForItem(props)} (${idx})`}
-                  {...item}
+                  item={item}
                 />
               );
             })}

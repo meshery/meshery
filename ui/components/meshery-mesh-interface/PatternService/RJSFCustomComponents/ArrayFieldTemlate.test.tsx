@@ -52,11 +52,6 @@ vi.mock('../../../../assets/icons/ErrorOutlineIcon', () => ({
   default: () => <svg data-testid="error-icon" />,
 }));
 
-vi.mock('@rjsf/utils', () => ({
-  isMultiSelect: (schema: any) => !!schema?.uniqueItems && Array.isArray(schema.items?.enum),
-  getDefaultFormState: () => ({ rootSchema: {} }),
-}));
-
 vi.mock('../../../../css/icons.styles', () => ({ iconSmall: {} }));
 
 vi.mock('pluralize', () => ({
@@ -70,31 +65,22 @@ vi.mock('../helper', () => ({
 
 import ArrayFieldTemplate from './ArrayFieldTemlate';
 
+// A stand-in for the element RJSF builds per array item: a keyed element carrying the item's
+// props and rendering its own content, exactly like `ArrayFieldItem` does.
+const ArrayItem = (props: any) => <div data-testid={props.itemKey}>{props.children}</div>;
+
+const makeArrayItem = (key: string, index: number) => (
+  <ArrayItem key={key} itemKey={key} index={index} disabled={false} readonly={false}>
+    <span>{`item ${key}`}</span>
+  </ArrayItem>
+);
+
 describe('ArrayFieldTemplate', () => {
   const baseProps = {
     schema: { items: { type: 'string' } },
     uiSchema: {},
-    idSchema: { $id: 'array1' },
-    items: [
-      {
-        key: 'a',
-        children: <div>item-a</div>,
-        index: 0,
-        hasMoveUp: false,
-        hasMoveDown: true,
-        hasToolbar: false,
-        onReorderClick: () => vi.fn(),
-      },
-      {
-        key: 'b',
-        children: <div>item-b</div>,
-        index: 1,
-        hasMoveUp: true,
-        hasMoveDown: false,
-        hasToolbar: false,
-        onReorderClick: () => vi.fn(),
-      },
-    ],
+    fieldPathId: { $id: 'array1', path: ['array1'] },
+    items: [makeArrayItem('a', 0), makeArrayItem('b', 1)],
     canAdd: true,
     onAddClick: vi.fn(),
     title: 'Items',
@@ -106,6 +92,14 @@ describe('ArrayFieldTemplate', () => {
     expect(screen.getByText('Items')).toBeInTheDocument();
     const accordions = screen.getAllByTestId('accordion');
     expect(accordions).toHaveLength(2);
+  });
+
+  it('renders the content of each item element', () => {
+    render(<ArrayFieldTemplate {...(baseProps as any)} />);
+
+    // Each entry of `items` is rendered as an element, so its own content shows up.
+    expect(screen.getByText('item a')).toBeInTheDocument();
+    expect(screen.getByText('item b')).toBeInTheDocument();
   });
 
   it('renders an Add icon button when canAdd is true', () => {
@@ -125,14 +119,42 @@ describe('ArrayFieldTemplate', () => {
     expect(screen.getByTestId('error-icon')).toBeInTheDocument();
   });
 
-  it('renders the fixed template variant when isMultiSelect returns true', () => {
-    render(
+  it('renders the fixed template variant for a tuple-items (fixed) array', () => {
+    // RJSF routes a multi-select array to its own widget before the template
+    // runs, so only a tuple `items` reaches the template as a fixed array.
+    const { container } = render(
       <ArrayFieldTemplate
         {...(baseProps as any)}
-        schema={{ uniqueItems: true, items: { enum: ['a', 'b'] } }}
+        schema={{
+          title: 'Items',
+          type: 'array',
+          description: 'pick some',
+          items: [{ type: 'string' }, { type: 'string' }],
+        }}
       />,
     );
-    expect(screen.getByTestId('array-item-add')).toBeInTheDocument();
+    // The fixed variant inlines the description and wraps items in a fieldset;
+    // the normal variant shows it behind a help tooltip instead.
+    expect(container.querySelector('fieldset')).toBeInTheDocument();
+    expect(container.querySelector('.field-description')).toHaveTextContent('pick some');
+    expect(screen.queryByTestId('help-icon')).not.toBeInTheDocument();
+  });
+
+  it('renders the normal template variant for a single-item schema', () => {
+    const { container } = render(
+      <ArrayFieldTemplate
+        {...(baseProps as any)}
+        schema={{
+          title: 'Items',
+          type: 'array',
+          description: 'pick some',
+          items: { type: 'string' },
+        }}
+      />,
+    );
+    expect(screen.getByTestId('help-icon')).toBeInTheDocument();
+    expect(container.querySelector('.field-description')).not.toBeInTheDocument();
+    expect(container.querySelector('fieldset')).not.toBeInTheDocument();
   });
 
   it('shows the help tooltip when description is provided via uiSchema', () => {
