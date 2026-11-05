@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -96,6 +97,55 @@ func TestExportModel_OCI(t *testing.T) {
 	}
 
 	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/meshmodels/models/export?name=%s&fileType=oci", modelName), nil)
+	rw := httptest.NewRecorder()
+
+	h.ExportModel(rw, req)
+
+	resp := rw.Result()
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "application/x-tar", resp.Header.Get("Content-Type"))
+	assert.NotEmpty(t, rw.Body.Bytes())
+}
+
+func TestOCIRepositoryName(t *testing.T) {
+	tests := []struct {
+		name     string
+		expected string
+	}{
+		{"istio-base", "istio-base"},
+		{"aws-api-gateway-operator", "aws-api-gateway-operator"},
+		{"cert_manager.v1", "cert_manager.v1"},
+		{"confidential containers", "confidential-containers"},
+		{"container network interface (cni)", "container-network-interface-cni"},
+		{"open policy agent (opa)", "open-policy-agent-opa"},
+		{"Piraeus Datastore", "piraeus-datastore"},
+		{"open cluster management", "open-cluster-management"},
+		{"(!)", "model"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ociRepositoryName(tt.name)
+			assert.Equal(t, tt.expected, got)
+			assert.Regexp(t, ociRepositoryNamePattern, got)
+		})
+	}
+}
+
+func TestExportModel_OCINameWithSpaces(t *testing.T) {
+	rm, _ := newTestRegistryDB(t)
+	modelName := "container network interface (cni)"
+	seedTestExportModel(t, rm, modelName)
+
+	log, err := logger.New("component_handler_test", logger.Options{})
+	require.NoError(t, err)
+
+	h := &Handler{
+		registryManager: rm,
+		log:             log,
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/meshmodels/models/export?fileType=oci&name="+url.QueryEscape(modelName), nil)
 	rw := httptest.NewRecorder()
 
 	h.ExportModel(rw, req)
