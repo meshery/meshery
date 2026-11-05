@@ -260,7 +260,7 @@ const Loading = () => {
   );
 };
 
-const BulkActions = () => {
+const BulkActions = ({ isFilterLoading = false }) => {
   const checkedEvents = useSelector(selectCheckedEvents);
   const noEventsPresent = useSelector((state) => selectEvents(state).length === 0);
   const [deleteEvents, { isLoading: isDeleting }] = useDeleteEventsMutation();
@@ -347,7 +347,7 @@ const BulkActions = () => {
   };
 
   const isReadView = currentFilters?.status === STATUS.READ;
-  const showMarkAll = !isReadView && unreadCount > 0;
+  const showMarkAll = !isReadView && !isFilterLoading && unreadCount > 0;
 
   if (noEventsPresent && !showMarkAll) {
     return null;
@@ -553,7 +553,7 @@ const NotificationCenterDrawer = () => {
                 <Divider light />
                 <Container>
                   <Filter handleFilter={handleFilter}></Filter>
-                  <BulkActions />
+                  <BulkActions isFilterLoading={isLoadingFilters} />
 
                   {isLoadingFilters ? (
                     <Loading />
