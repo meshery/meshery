@@ -92,7 +92,7 @@ func (h *Handler) PatternFileHandler(
 	isDesignInAlpha2Format, err := patternutils.IsDesignInAlpha2Format(payload.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
-		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
+		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(patternErrorEventMetadata(r, payload.PatternID, "", "", err)).Build()
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		h.log.Error(err)
@@ -171,9 +171,7 @@ func (h *Handler) PatternFileHandler(
 
 	if err != nil {
 		err := ErrPatternDeploy(err, patternFile.Name)
-		metadata := map[string]interface{}{
-			"error": err,
-		}
+		metadata := patternErrorEventMetadata(r, patternID, patternFile.Name, string(patternFile.Version), err)
 
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to %s design '%s'.", action, patternFile.Name)).WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(*event, token)
@@ -184,22 +182,10 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
-	metadata := map[string]interface{}{
-		"summary": response,
-	}
-
-	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
-
-	// NOTE: design_id (snake_case) in this URL is the meshmap extension's URL
-	// query-param contract; flipping it requires a coordinated meshmap-side
-	// change. The metadata map keys below are flipped to canonical camelCase
-	// (event_trackers.metadata wire) but the URL is left as-is until the
-	// extension contract is migrated.
-	viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&design_id=%s", serverURL, patternID)
+	// The raw response embeds every component, so the event carries only its
+	// status and per-component errors.
+	metadata := buildPatternProcessEventMetadata(response, models.ServerURLFromRequest(r), patternID, patternFile.Name, string(patternFile.Version))
 	description = fmt.Sprintf("%s.", description)
-	metadata["viewLink"] = viewLink
-	metadata["designName"] = patternFile.Name
-	metadata["designId"] = patternID
 
 	var event *events.Event
 	if action == "deploy" || action == "dry-run" {
@@ -216,6 +202,15 @@ func (h *Handler) PatternFileHandler(
 
 	ec := json.NewEncoder(rw)
 	_ = ec.Encode(response)
+}
+
+// patternErrorEventMetadata builds the metadata of a failed pattern event:
+// the design's identity and the MeshKit error, never the design or the
+// request payload.
+func patternErrorEventMetadata(r *http.Request, designID core.Uuid, name, version string, err error) map[string]interface{} {
+	metadata := models.DesignEventIdentity(models.ServerURLFromRequest(r), designID, name, version)
+	metadata["error"] = err
+	return metadata
 }
 
 func _processPattern(opts *patterncore.ProcessPatternOptions) (map[string]interface{}, error) {
@@ -632,58 +627,68 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			return nil, fmt.Errorf("error execute operation on %v: %v", host, err)
 		}
 
-		addr := hostName
-		if hostPort != 0 {
-			addr += ":" + strconv.Itoa(hostPort)
-		}
-		// Create mesh client
-		mClient, err := meshes.CreateClient(
-			context.TODO(),
-			addr,
-		)
+		msg, err := sap.provisionOnAdapter(hostName, hostPort, ccp.Component)
 		if err != nil {
-			return nil, fmt.Errorf("error creating a mesh client: %v", err)
-		}
-		defer func() {
-			_ = mClient.Close()
-		}()
-
-		// Else it is an  adapter call
-		//TODO: Accommodate gRPC calls to use context mapping with kubeconfig
-		var kconfigs []string
-		for _, v := range sap.ctxTokubeconfig {
-			kconfigs = append(kconfigs, v)
-		}
-		compStr, err := utils.Marshal(ccp.Component)
-		if err != nil {
-			err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", ccp.Component.DisplayName, ccp.Component.Component.Kind)
 			return nil, err
 		}
-		resp, err := mClient.MClient.Provision(context.TODO(), &meshes.ProvisionRequest{
-			Username:     sap.userID,
-			DeleteOp:     sap.opIsDelete,
-			KubeConfigs:  kconfigs,
-			Declarations: []string{compStr},
-		})
-		success := err == nil
-		msgs = append(msgs, patterns.DeploymentMessagePerContext{
-			SystemName: hostName,
-			Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
-			Summary: []patterns.DeploymentMessagePerComp{
-				{
-					Kind:       ccp.Component.Component.Kind,
-					Model:      ccp.Component.Model.Name,
-					CompName:   ccp.Component.DisplayName,
-					DesignName: sap.patternName,
-					Success:    success,
-					Message:    resp.GetMessage(),
-					Error:      err,
-				},
-			},
-		})
+		msgs = append(msgs, msg)
 	}
 
 	return msgs, nil
+}
+
+// provisionOnAdapter provisions comp through one gRPC adapter, closing its client
+// on return so hosts do not hold connections open until Provision ends.
+func (sap *serviceActionProvider) provisionOnAdapter(hostName string, hostPort int, comp component.ComponentDefinition) (patterns.DeploymentMessagePerContext, error) {
+	addr := hostName
+	if hostPort != 0 {
+		addr += ":" + strconv.Itoa(hostPort)
+	}
+	// Create mesh client
+	mClient, err := meshes.CreateClient(
+		context.TODO(),
+		addr,
+	)
+	if err != nil {
+		return patterns.DeploymentMessagePerContext{}, fmt.Errorf("error creating a mesh client: %v", err)
+	}
+	defer func() {
+		_ = mClient.Close()
+	}()
+
+	// Else it is an  adapter call
+	//TODO: Accommodate gRPC calls to use context mapping with kubeconfig
+	var kconfigs []string
+	for _, v := range sap.ctxTokubeconfig {
+		kconfigs = append(kconfigs, v)
+	}
+	compStr, err := utils.Marshal(comp)
+	if err != nil {
+		err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", comp.DisplayName, comp.Component.Kind)
+		return patterns.DeploymentMessagePerContext{}, err
+	}
+	resp, err := mClient.MClient.Provision(context.TODO(), &meshes.ProvisionRequest{
+		Username:     sap.userID,
+		DeleteOp:     sap.opIsDelete,
+		KubeConfigs:  kconfigs,
+		Declarations: []string{compStr},
+	})
+	success := err == nil
+	return patterns.DeploymentMessagePerContext{
+		SystemName: hostName,
+		Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
+		Summary: []patterns.DeploymentMessagePerComp{
+			{
+				Kind:       comp.Component.Kind,
+				Model:      comp.Model.Name,
+				CompName:   comp.DisplayName,
+				DesignName: sap.patternName,
+				Success:    success,
+				Message:    resp.GetMessage(),
+				Error:      err,
+			},
+		},
+	}, nil
 }
 
 // func (sap *serviceActionProvider) Persist(name string, svc patterncore.Service, isUpdate bool) error {

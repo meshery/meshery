@@ -618,15 +618,17 @@ func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) 
 		Relationships: make([]*relationship.RelationshipDefinition, 5),
 	}
 
-	metadata := buildDesignSavedEventMetadata(df)
+	metadata := buildDesignSavedEventMetadata(df, "http://meshery.test")
 
 	// Canonical camelCase keys MUST be present.
 	require.Contains(t, metadata, "historyTitle")
 	require.Contains(t, metadata, "design")
 	require.Contains(t, metadata, "doclink")
+	assert.Equal(t, "http://meshery.test/extension/meshmap?mode=design&design="+id.String(), metadata["designLink"])
 
 	// Legacy snake_case key MUST NOT be present.
 	require.NotContains(t, metadata, "history_title")
+	assertNoBannedDesignEventMetadataKeys(t, metadata)
 
 	// historyTitle reflects version + counts so future contributors
 	// don't repurpose the helper without keeping the user-visible label
@@ -635,10 +637,14 @@ func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) 
 	assert.Contains(t, metadata["historyTitle"], "3 components")
 	assert.Contains(t, metadata["historyTitle"], "5 relationships")
 
-	// `design` sub-object carries the design's id and name (single-word
-	// keys, exempt from the camelCase contract).
+	// The design is identified, never embedded.
+	assert.Equal(t, id, metadata["designId"])
+	assert.Equal(t, "test-design", metadata["designName"])
+	assert.Equal(t, "0.0.1", metadata["designVersion"])
+
+	// `design` sub-object carries only the design's id and name: the
+	// notification center's "Saved design" link reads it.
 	designSub, ok := metadata["design"].(map[string]interface{})
 	require.True(t, ok, "design field should be a map")
-	assert.Equal(t, "test-design", designSub["name"])
-	assert.Equal(t, id.String(), designSub["id"])
+	assert.Equal(t, map[string]interface{}{"name": "test-design", "id": id.String()}, designSub)
 }

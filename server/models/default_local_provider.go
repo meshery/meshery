@@ -2085,6 +2085,11 @@ func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
 	// "invalid value, should be pointer to struct or slice" and dropped every
 	// system event silently — including the controller-emitted events that
 	// flow through PersistSystemEvent.
+	//
+	// Every locally persisted event - local provider, system events and the
+	// remote provider's fallback - is written here, so this is where the
+	// metadata size guard applies.
+	event = GuardEventMetadataSize(event, e.Log)
 	err := e.DB.Save(&event).Error
 	if err != nil {
 		return ErrPersistEvent(err)
