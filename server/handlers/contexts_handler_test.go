@@ -11,6 +11,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
 )
@@ -164,5 +165,52 @@ func TestDeleteContext_GetK8sContextError_WithNameFallback(t *testing.T) {
 	expectedDesc := "Failed to delete connection for production-cluster"
 	if ev.Description != expectedDesc {
 		t.Fatalf("expected event description %q, got %q", expectedDesc, ev.Description)
+	}
+}
+
+func TestDeleteContext_NilStateMachineDoesNotPanic(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	userID := uuid.Must(uuid.NewV4())
+	contextID := uuid.Must(uuid.NewV4())
+
+	// Tracker without an instance simulates a cluster where initialization fails or returns nil
+	tracker := &machines.ConnectionToStateMachineInstanceTracker{}
+
+	h := &Handler{
+		config:                                  &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:                                     newTestLogger(t),
+		SystemID:                                &systemID,
+		ConnectionToStateMachineInstanceTracker: tracker,
+	}
+
+	provider := &mockContextsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		getK8sContextFn: func(token, id string) (models.K8sContext, error) {
+			return models.K8sContext{
+				ID:   id,
+				Name: "unreachable-cluster",
+			}, nil
+		},
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+contextID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+	ctx := context.WithValue(req.Context(), models.TokenCtxKey, "test-token")
+	ctx = context.WithValue(ctx, models.UserCtxKey, &models.User{ID: userID})
+	ctx = context.WithValue(ctx, models.SystemIDKey, &systemID)
+	req = req.WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	// Must not panic even if machine instance fails initialization or is nil (#20817)
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("DeleteContext panicked on nil state machine: %v", r)
+		}
+	}()
+
+	h.DeleteContext(rec, req, nil, &models.User{ID: userID}, provider)
+
+	if _, ok := tracker.Get(contextID); ok {
+		t.Fatalf("expected connection %s to be cleaned up from tracker", contextID)
 	}
 }
