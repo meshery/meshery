@@ -36,9 +36,10 @@ describe('initiateQuery', () => {
     const variables = { id: 'abc' };
     const options = { forceRefetch: true };
 
-    await initiateQuery({ initiate }, variables, options);
+    const result = await initiateQuery({ initiate }, variables, options);
 
     expect(initiate).toHaveBeenCalledWith(variables, options);
+    expect(result).toEqual({ data: { ok: true } });
   });
 
   it('returns the awaited dispatch result on success', async () => {
