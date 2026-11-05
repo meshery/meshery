@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"archive/tar"
+	"bytes"
 	"compress/gzip"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -161,6 +163,22 @@ func TestExportModel_OCINameNotValidRepository(t *testing.T) {
 			assert.Equal(t, http.StatusOK, resp.StatusCode)
 			assert.Equal(t, "application/x-tar", resp.Header.Get("Content-Type"))
 			assert.NotEmpty(t, rw.Body.Bytes())
+
+			// The tar must carry the sanitized name, not just any valid reference.
+			var manifest []struct {
+				RepoTags []string `json:"RepoTags"`
+			}
+			tr := tar.NewReader(bytes.NewReader(rw.Body.Bytes()))
+			for {
+				header, err := tr.Next()
+				require.NoError(t, err)
+				if header.Name == "manifest.json" {
+					require.NoError(t, json.NewDecoder(tr).Decode(&manifest))
+					break
+				}
+			}
+			require.Len(t, manifest, 1)
+			assert.Equal(t, []string{ociRepositoryName(modelName) + ":latest"}, manifest[0].RepoTags)
 		})
 	}
 }
