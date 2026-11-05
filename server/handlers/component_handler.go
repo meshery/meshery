@@ -1358,9 +1358,31 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.log.Error(err)
 	}
+	// The model name is interpolated into filesystem paths below. Reject anything
+	// that is not a single path component so a hostile name cannot escape the
+	// per-request temp directory (CWE-22).
+	if model.Name == "." || model.Name == ".." || filepath.Base(model.Name) != model.Name {
+		err := fmt.Errorf("invalid model name %q: must be a single path component", model.Name)
+		writeMeshkitError(rw, ErrExportModel(err, "model name validation"), http.StatusBadRequest)
+		return
+	}
 	// 2. Convert it to oci
-	temp := os.TempDir()
-	modelDir := filepath.Join(temp, model.Name)
+	// Fixed pattern: the model name is already preserved in modelDir inside the
+	// temp root, and embedding it here risks exceeding filesystem name limits.
+	tempDir, err := os.MkdirTemp("", "meshery-model-export-*")
+	if err != nil {
+		err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
+		h.log.Error(err)
+		writeMeshkitError(rw, ErrExportModel(err, "temp directory creation"), http.StatusInternalServerError)
+		return
+	}
+	defer func() {
+		if err := os.RemoveAll(tempDir); err != nil {
+			h.log.Error(ErrExportModel(err, "temp directory cleanup"))
+		}
+	}()
+
+	modelDir := filepath.Join(tempDir, model.Name)
 	versionDir := filepath.Join(modelDir, model.Model.Version, model.Version)
 
 	// Create necessary directories: {modelName}/v1.0.0/1.0.0/{components, relationships}
@@ -1379,11 +1401,6 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	defer func() {
-		if err := os.RemoveAll(modelDir); err != nil {
-			h.log.Error(err)
-		}
-	}()
 
 	components := []component.ComponentDefinition{}
 	// Components can be nil if hasComponents is false

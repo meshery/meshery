@@ -30,7 +30,7 @@ After defining our audience, we introduce the **overall structure** of Meshery�
 
 1. [Overview and Installation (User Persona)](#overview-and-installation-user-persona)
 2. [Tasks & Operations (User Guide)](#tasks--operations-user-guide)
-3. [Administrator’s Guide (Advanced Topics)](#administrators-guide-advanced-topics)
+3. [Administrator’s Guide (Advanced Topics)](#administrators-guide-platform-engineer--operator-persona-advanced-topics)
 4. [Integrations and Extensions (All Personas)](#integrations-and-extensions-all-personas)
 5. [Tutorials (All Personas)](#tutorials-all-personas)
 6. [Reference & Resources (All Personas)](#reference--resources-all-personas)

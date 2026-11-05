@@ -65,13 +65,14 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 			return utils.ErrMarshal(err)
 		}
 
-		_, err = api.Add(workspacesApiPath, bytes.NewBuffer(payloadBytes), nil)
+		resp, err := api.Add(workspacesApiPath, bytes.NewBuffer(payloadBytes), nil)
 		if err != nil {
 			if mErrors.GetCode(err) == utils.ErrNotFoundCode {
 				return returnFailedCreateWorkspaceError(workspaceCreateFlags.Name, workspaceCreateFlags.OrganizationID)
 			}
 			return err
 		}
+		defer utils.SafeClose(resp.Body)
 
 		utils.Log.Infof("Workspace %s created in organization %s", workspaceCreateFlags.Name, workspaceCreateFlags.OrganizationID)
 		return nil

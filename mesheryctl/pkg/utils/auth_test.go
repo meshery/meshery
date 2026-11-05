@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshkit/errors"
 )
 
 // testcases for auth.go
@@ -95,6 +96,101 @@ func TestProviderUnmarshalJSON(t *testing.T) {
 		}
 		if provider.ProviderURL != "https://cloud.meshery.io" {
 			t.Fatalf("expected provider URL https://cloud.meshery.io, got %q", provider.ProviderURL)
+		}
+	})
+}
+
+func TestMakeRequest_Status302AndHTMLResponseHandling(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	t.Run("MakeRequest returns ErrInvalidToken on 302 redirect and closes body", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusFound)
+		}))
+		defer server.Close()
+
+		transport := &trackingTransport{base: http.DefaultTransport}
+		previousTransport := http.DefaultTransport
+		http.DefaultTransport = transport
+		t.Cleanup(func() { http.DefaultTransport = previousTransport })
+
+		req, err := http.NewRequest(http.MethodGet, server.URL, nil)
+		if err != nil {
+			t.Fatalf("unexpected error creating request: %v", err)
+		}
+
+		resp, err := MakeRequest(req)
+		if resp != nil {
+			t.Errorf("expected nil response on 302, got %v", resp)
+		}
+		if err == nil {
+			t.Fatal("expected error on 302, got nil")
+		}
+		expectedErr := ErrInvalidToken()
+		if errors.GetCode(err) != errors.GetCode(expectedErr) {
+			t.Errorf("expected error code %s, got %s", errors.GetCode(expectedErr), errors.GetCode(err))
+		}
+		if transport.body == nil || !transport.body.closed {
+			t.Fatal("expected response body to be closed on 302 redirect")
+		}
+	})
+
+	t.Run("MakeRequest returns ErrUnauthenticated on HTML Content-Type and closes body", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.WriteHeader(http.StatusOK)
+			_, _ = fmt.Fprint(w, "<html><body>Login</body></html>")
+		}))
+		defer server.Close()
+
+		transport := &trackingTransport{base: http.DefaultTransport}
+		previousTransport := http.DefaultTransport
+		http.DefaultTransport = transport
+		t.Cleanup(func() { http.DefaultTransport = previousTransport })
+
+		req, err := http.NewRequest(http.MethodGet, server.URL, nil)
+		if err != nil {
+			t.Fatalf("unexpected error creating request: %v", err)
+		}
+
+		resp, err := MakeRequest(req)
+		if resp != nil {
+			t.Errorf("expected nil response on HTML content, got %v", resp)
+		}
+		if err == nil {
+			t.Fatal("expected error on HTML response, got nil")
+		}
+		expectedErr := ErrUnauthenticated()
+		if errors.GetCode(err) != errors.GetCode(expectedErr) {
+			t.Errorf("expected error code %s, got %s", errors.GetCode(expectedErr), errors.GetCode(err))
+		}
+		if transport.body == nil || !transport.body.closed {
+			t.Fatal("expected response body to be closed on HTML content-type response")
+		}
+	})
+
+	t.Run("MakeRequest returns ErrMesheryServerInternalError on HTML 500 response", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = fmt.Fprint(w, "<html><body>500 Internal Server Error</body></html>")
+		}))
+		defer server.Close()
+
+		req, err := http.NewRequest(http.MethodGet, server.URL, nil)
+		if err != nil {
+			t.Fatalf("unexpected error creating request: %v", err)
+		}
+
+		resp, err := MakeRequest(req)
+		if resp != nil {
+			t.Errorf("expected nil response on 500, got %v", resp)
+		}
+		if err == nil {
+			t.Fatal("expected error on 500, got nil")
+		}
+		if errors.GetCode(err) != ErrMesheryServerInternalErrorCode {
+			t.Errorf("expected error code %s, got %s", ErrMesheryServerInternalErrorCode, errors.GetCode(err))
 		}
 	})
 }

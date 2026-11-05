@@ -14,7 +14,11 @@
 
 package adapter
 
-import "github.com/meshery/meshkit/errors"
+import (
+	"fmt"
+
+	"github.com/meshery/meshkit/errors"
+)
 
 // Please reference the following before contributing an error code:
 // https://docs.meshery.io/project/contributing/contributing-error
@@ -155,7 +159,7 @@ func ErrValidMeshName(meshName string) error {
 	return errors.New(ErrValidMeshNameCode, errors.Alert,
 		[]string{"Invalid mesh name"},
 		[]string{"Unable to validate mesh name"},
-		[]string{"%s is not a valid mesh name or is unsupported", meshName},
+		[]string{"The provided mesh name is not valid or is unsupported", fmt.Sprintf("Mesh name: %s", meshName)},
 		[]string{"Enter a valid mesh name"})
 }
 

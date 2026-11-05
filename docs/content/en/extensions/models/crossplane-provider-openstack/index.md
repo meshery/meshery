@@ -381,7 +381,11 @@ components:
   colorIcon: extensions/models/crossplane-provider-openstack/components/cluster-provider-config/icons/color/cluster-provider-config-color.svg
   whiteIcon: extensions/models/crossplane-provider-openstack/components/cluster-provider-config/icons/white/cluster-provider-config-white.svg
   description: 
-components-count: 93
+- name: cluster-provider-config
+  colorIcon: extensions/models/crossplane-provider-openstack/components/cluster-provider-config/icons/color/cluster-provider-config-color.svg
+  whiteIcon: extensions/models/crossplane-provider-openstack/components/cluster-provider-config/icons/white/cluster-provider-config-white.svg
+  description: 
+components-count: 94
 relationships: 
 relationship-count: 0
 featureList: [

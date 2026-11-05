@@ -92,18 +92,32 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 	// check status code from request, checks for issues with auth token
 	resp, err := client.Do(req)
 
-	if err != nil && resp == nil {
+	if err != nil {
+		if resp != nil && resp.Body != nil {
+			SafeClose(resp.Body)
+		}
 		return nil, ErrFailRequest(err)
 	}
 
 	// If statuscode = 302, then we either have an expired or invalid token
 	// We return the response and correct error message
 	if resp.StatusCode == 302 {
+		SafeClose(resp.Body)
 		return nil, ErrInvalidToken()
+	}
+
+	if resp.StatusCode == http.StatusInternalServerError {
+		defer func() { _ = resp.Body.Close() }()
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, ErrReadResponseBody(err)
+		}
+		return nil, ErrMesheryServerInternalError(errors.New(string(bodyBytes)))
 	}
 
 	// failsafe for not being authenticated
 	if ContentTypeIsHTML(resp) {
+		SafeClose(resp.Body)
 		return nil, ErrUnauthenticated()
 	}
 
@@ -116,15 +130,6 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		}
 		Log.Debugf("Response body for 404 Not Found: %s", string(bodyBytes))
 		return nil, ErrNotFound(errors.New(string(bodyBytes)))
-	}
-
-	if resp.StatusCode == http.StatusInternalServerError {
-		defer func() { _ = resp.Body.Close() }()
-		bodyBytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, ErrReadResponseBody(err)
-		}
-		return nil, ErrMesheryServerInternalError(errors.New(string(bodyBytes)))
 	}
 
 	// failsafe for bad api call

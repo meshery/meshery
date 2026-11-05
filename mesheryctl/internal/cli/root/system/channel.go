@@ -42,6 +42,36 @@ func IsBetaOrStable(str string) bool {
 	return str == "edge" || str == "stable"
 }
 
+// validateChannelArgs validates the channel and version arguments upfront
+// before any PreRunE health checks or confirmation prompts are executed.
+func validateChannelArgs(subcommand string) func(cmd *cobra.Command, args []string) error {
+	return func(_ *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", subcommand)))
+		}
+
+		channelVersion := args[0]
+		channelNameSeparated := strings.SplitN(channelVersion, "-", 2)
+
+		if !IsBetaOrStable(channelNameSeparated[0]) {
+			return ErrSystemSetInvalidReleaseChannel(channelNameSeparated[0])
+		}
+
+		if len(channelNameSeparated) > 1 {
+			switch channelNameSeparated[0] {
+			case "edge":
+				if channelNameSeparated[1] != "latest" {
+					return ErrSystemSetInvalidEdgeRelease(channelNameSeparated[1])
+				}
+			case "stable":
+				// valid stable channel
+			}
+		}
+
+		return nil
+	}
+}
+
 var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View release channel and version",
@@ -105,12 +135,7 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/system/ch
 // Subscribe to release channel or version
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 	`,
-	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", "set")))
-		}
-		return nil
-	},
+	Args: validateChannelArgs("set"),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -191,12 +216,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 		}
 		return hc.RunPreflightHealthChecks()
 	},
-	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", "switch")))
-		}
-		return nil
-	},
+	Args: validateChannelArgs("switch"),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		userResponse := false
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())

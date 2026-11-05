@@ -81,12 +81,12 @@ describe('ObjectFieldTemplate', () => {
   });
 
   it('renders an Add button when canExpand is true', () => {
-    const onAddClick = vi.fn(() => vi.fn());
+    const onAddProperty = vi.fn(() => vi.fn());
     render(
       <ObjectFieldTemplate
         {...(baseProps as any)}
         schema={{ canExpand: true, properties: { name: { type: 'string' } } }}
-        onAddClick={onAddClick}
+        onAddProperty={onAddProperty}
       />,
     );
     expect(screen.getByTestId('object-property-expand')).toBeInTheDocument();

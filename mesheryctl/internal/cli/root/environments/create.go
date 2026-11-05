@@ -62,13 +62,14 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 			return utils.ErrMarshal(err)
 		}
 
-		_, err = api.Add(environmentApiPath, bytes.NewBuffer(payloadBytes), nil)
+		resp, err := api.Add(environmentApiPath, bytes.NewBuffer(payloadBytes), nil)
 		if err != nil {
 			if mErrors.GetCode(err) == utils.ErrFailReqStatusCode {
 				return errCreateEnvironment(createEnvironmentFlags.Name, createEnvironmentFlags.OrganizationID)
 			}
 			return err
 		}
+		defer utils.SafeClose(resp.Body)
 
 		utils.Log.Infof("Environment named %s created in organization id %s", createEnvironmentFlags.Name, createEnvironmentFlags.OrganizationID)
 		return nil

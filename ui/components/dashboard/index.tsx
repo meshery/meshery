@@ -267,6 +267,7 @@ const Dashboard = () => {
       action: toggleEditMode,
       description: 'Configure dashboard layout for the current organization',
       isShown: !isEditMode,
+      alwaysShowLabel: true,
     },
     CANCEL_EDIT: {
       label: 'Cancel',

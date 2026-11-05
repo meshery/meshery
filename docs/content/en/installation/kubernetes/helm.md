@@ -37,6 +37,10 @@ By default, Meshery Server looks for Kubernetes configuration in the `/home/appu
 
 A custom location helps when you give a Meshery deployment a predefined Kubernetes context or mount kubeconfig files from a custom volume.
 
+## Installing in an Air-Gapped Environment
+
+If your cluster has no internet access, the chart and every image must be brought in from a private registry or loaded onto the nodes directly, and the operator-managed MeshSync and Broker images need special handling. See [Air-Gapped Installation]({{< ref "installation/kubernetes/air-gapped.md" >}}) for the full image list and procedure.
+
 ## Upgrading Meshery with Helm
 
 To upgrade an existing Meshery deployment:
