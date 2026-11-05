@@ -138,9 +138,11 @@ func InitializeMachineWithContext(
 	mtype string,
 	initFunc connections.InitFunc,
 ) (*machines.StateMachine, error) {
-	inst, ok := smInstanceTracker.Get(ID)
-	if ok {
-		return inst, nil
+	if smInstanceTracker != nil {
+		inst, ok := smInstanceTracker.Get(ID)
+		if ok {
+			return inst, nil
+		}
 	}
 
 	inst, err := getMachine(initialState, mtype, ID.String(), userID, log, provider.GetGenericPersister())
@@ -150,7 +152,9 @@ func InitializeMachineWithContext(
 	}
 	inst.Provider = provider
 	_, err = inst.Start(ctx, machineCtx, log, initFunc)
-	smInstanceTracker.Add(ID, inst)
+	if smInstanceTracker != nil {
+		smInstanceTracker.Add(ID, inst)
+	}
 	if err != nil {
 		return nil, err
 	}

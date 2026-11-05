@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/meshery/schemas/models/core"
 	connectionv1beta3 "github.com/meshery/schemas/models/v1beta3/connection"
@@ -560,7 +559,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 
 		// detach from the http request lifecycle with a bounded timeout so that the goroutine isn't cancelled when
 		// the handler returns, while preventing goroutine leaks if downstream calls hang.
-		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 2*time.Minute)
+		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), stateMachineEventTimeout)
 		go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
 			defer cancel()
 			event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(status)), nil)

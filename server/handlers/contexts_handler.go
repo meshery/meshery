@@ -16,6 +16,8 @@ import (
 	"github.com/meshery/meshkit/models/events"
 )
 
+const stateMachineEventTimeout = 2 * time.Minute
+
 // Deprecated: GetAllContexts (GET /api/system/kubernetes/contexts) is being
 // retired in favor of the connections API (kind=kubernetes) — everything is now
 // connection-driven. The UI derives its k8s context list from connections; this
@@ -149,17 +151,18 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	} else {
 		// detach from the http request lifecycle with a bounded timeout so that the goroutine isn't cancelled when
 		// the handler returns, while preventing goroutine leaks if downstream calls hang.
-		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), 2*time.Minute)
+		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), stateMachineEventTimeout)
 		go func(inst *machines.StateMachine) {
 			defer cancel()
-			if smInstanceTracker != nil {
-				defer smInstanceTracker.Remove(connectionUUID)
-			}
 			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
 			if err != nil {
 				h.log.Error(err)
 				h.log.Debug(event)
 				return
+			}
+
+			if smInstanceTracker != nil {
+				smInstanceTracker.Remove(connectionUUID)
 			}
 		}(inst)
 	}

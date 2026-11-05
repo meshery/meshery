@@ -11,13 +11,6 @@ type ConnectionToStateMachineInstanceTracker struct {
 	mx                   sync.RWMutex
 }
 
-// NewConnectionToStateMachineInstanceTracker initializes an empty tracker.
-func NewConnectionToStateMachineInstanceTracker() *ConnectionToStateMachineInstanceTracker {
-	return &ConnectionToStateMachineInstanceTracker{
-		ConnectToInstanceMap: make(map[core.Uuid]*StateMachine),
-	}
-}
-
 func (smt *ConnectionToStateMachineInstanceTracker) Get(id core.Uuid) (*StateMachine, bool) {
 	smt.mx.Lock()
 	defer smt.mx.Unlock()
