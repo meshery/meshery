@@ -17,13 +17,26 @@ import (
 // requests to it reach the tracking transport; it is never dialed.
 const responseBodyTestHost = "remote-provider.invalid"
 
-// trackedBody is a response body that records whether it was closed.
+// responseBodyTestPayload is the body of every response in these tests.
+const responseBodyTestPayload = "{}"
+
+// trackedBody is a response body that records whether it was closed and how
+// many bytes had been read from it when it was closed.
 type trackedBody struct {
-	io.Reader
-	closed atomic.Bool
+	reader      io.Reader
+	read        atomic.Int64
+	closed      atomic.Bool
+	readAtClose atomic.Int64
+}
+
+func (b *trackedBody) Read(p []byte) (int, error) {
+	n, err := b.reader.Read(p)
+	b.read.Add(int64(n))
+	return n, err
 }
 
 func (b *trackedBody) Close() error {
+	b.readAtClose.Store(b.read.Load())
 	b.closed.Store(true)
 	return nil
 }
@@ -45,7 +58,7 @@ func (rt *bodyTrackingTransport) RoundTrip(req *http.Request) (*http.Response, e
 	if req.Body != nil {
 		_ = req.Body.Close()
 	}
-	body := &trackedBody{Reader: strings.NewReader("{}")}
+	body := &trackedBody{reader: strings.NewReader(responseBodyTestPayload)}
 	rt.mu.Lock()
 	rt.bodies = append(rt.bodies, body)
 	rt.mu.Unlock()
@@ -60,8 +73,10 @@ func (rt *bodyTrackingTransport) RoundTrip(req *http.Request) (*http.Response, e
 // expectResponseBodiesClosed runs call once for each response status the
 // remote provider might send, with http.DefaultTransport (which the remote
 // provider's HTTP client uses) replaced by a bodyTrackingTransport. It fails if
-// a response body is left open. An unclosed body keeps its connection out of
-// the idle pool, so every call that leaks one leaks a connection.
+// a response body is left open, or is closed before it was read to the end.
+// An unclosed body keeps its connection out of the idle pool, so every call
+// that leaks one leaks a connection; a body closed before it is drained ends
+// its connection instead of returning it to the pool for reuse.
 func expectResponseBodiesClosed(t *testing.T, call func()) {
 	t.Helper()
 	for _, status := range []int{http.StatusOK, http.StatusCreated, http.StatusInternalServerError} {
@@ -80,6 +95,11 @@ func expectResponseBodiesClosed(t *testing.T, call func()) {
 			for i, body := range rt.bodies {
 				if !body.closed.Load() {
 					t.Errorf("response body %d of %d was not closed", i+1, len(rt.bodies))
+					continue
+				}
+				if got, want := body.readAtClose.Load(), int64(len(responseBodyTestPayload)); got != want {
+					t.Errorf("response body %d of %d was closed after %d of %d bytes were read; drain it before closing",
+						i+1, len(rt.bodies), got, want)
 				}
 			}
 		})
