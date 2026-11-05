@@ -1,0 +1,133 @@
+# Default values for meshery-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: meshery/meshery-operator
+  # Pinned operator release; stamped by meshery/meshery-operator's
+  # sync-downstream workflow on every operator release. Kept explicit (not
+  # derived from appVersion) because helm-chart-releaser re-stamps appVersion
+  # with the *Meshery Server* tag when it republishes charts at server
+  # releases — an appVersion-derived tag would then point at a nonexistent
+  # operator image. Empty falls back to the chart appVersion.
+  tag: "1.0.6"
+  pullPolicy: IfNotPresent
+
+# Extra environment variables for the manager container (name: value).
+env: {}
+
+crds:
+  # Helm only applies the crds/ directory on first install and never on
+  # upgrade. This pre-install/pre-upgrade hook Job server-side-applies
+  # files/crds.yaml on every install AND upgrade, so CRD schema updates
+  # actually reach live clusters.
+  updateJob:
+    enabled: true
+    image:
+      repository: alpine/k8s
+      tag: 1.35.6
+      pullPolicy: IfNotPresent
+
+webhook:
+  # Serve v1alpha1<->v1alpha2 CRD conversion through the operator's webhook
+  # (port 9443). NOT required today: the shipped CRDs use conversion strategy
+  # None, which is exact while the v1alpha1 and v1alpha2 schemas are
+  # field-identical. Enable when the schemas diverge (see
+  # api/v1alpha1/conversion.go in meshery/meshery-operator).
+  enabled: false
+  certManager:
+    # Issue the webhook serving certificate with cert-manager
+    # (cert-manager.io/v1) and inject the CA via cainjector, instead of the
+    # chart-generated self-signed certificate. Requires cert-manager in the
+    # cluster.
+    enabled: false
+
+leaderElection:
+  enabled: true
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "meshery-operator"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  # If not set and create is false, a name is generated using the fullname template
+  name: meshery-operator
+
+podAnnotations: {}
+annotations: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+# Exposes the manager's TLS metrics endpoint (authn/authz-filtered; scrapers
+# need a token bound to the meshery-metrics-reader ClusterRole).
+service:
+  type: ClusterIP
+  port: 8443
+  annotations: {}
+
+ingress:
+  enabled: false
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "false"
+
+  hosts:
+    - host: chart-example.local
+      ## Paths to use for ingress rules
+      paths: []
+
+      ## For Kubernetes >= 1.18 you should specify the pathType (determines how Ingress paths should be matched)
+      ## See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#better-path-matching-with-path-types
+      # pathType: ImplementationSpecific
+
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+# Parity with the operator's own config/manager/manager.yaml.
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 64Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# By default, the adapters need to have the same cluster role as the meshery to have permissions for performing necessary operations
+
+# If need to use a different service accounts for the adapters, modify the serviceAccountNameOverride for the corresponding adapters here,
+# or set the serviceAccountNameOverride to empty while setting the serviceAccount information in the sub-chart accordingly
+
+meshery-broker:
+  enabled: true
+  fullnameOverride: meshery-broker
+  serviceAccountNameOverride: meshery-server
+
+meshery-meshsync:
+  enabled: true
+  fullnameOverride: meshery-meshsync
+  serviceAccountNameOverride: meshery-server

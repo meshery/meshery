@@ -1,0 +1,73 @@
+package handlers
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/utils"
+	system "github.com/meshery/schemas/models/v1beta1/system"
+	"github.com/spf13/viper"
+)
+
+// ServerVersionHandler handles the version api request for the server
+func (h *Handler) ServerVersionHandler(w http.ResponseWriter, _ *http.Request) {
+	build := viper.GetString("BUILD")
+	commitSHA := viper.GetString("COMMITSHA")
+	releaseChannel := viper.GetString("RELEASE_CHANNEL")
+
+	version := &system.SystemVersion{}
+	if build != "" {
+		version.Build = &build
+	}
+	if commitSHA != "" {
+		version.Commitsha = &commitSHA
+	}
+	if releaseChannel != "" {
+		version.ReleaseChannel = &releaseChannel
+	}
+
+	// compare the server build with the target build
+	isOutdated, latestVersion, err := CheckLatestVersion(build)
+	if err != nil {
+		h.log.Error(err)
+	} else {
+		// Add "Latest" and "Outdated" fields to the response
+		if latestVersion != "" {
+			version.Latest = &latestVersion
+		}
+		version.Outdated = isOutdated
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	err = json.NewEncoder(w).Encode(version)
+	if err != nil {
+		h.log.Error(models.ErrEncoding(err, "server-version"))
+		writeMeshkitError(w, models.ErrEncoding(err, "server-version"), http.StatusNotFound)
+	}
+}
+
+// CheckLatestVersion takes in the current server version compares it with the target
+// and returns the (isOutdated, latestVersion, error)
+func CheckLatestVersion(serverVersion string) (*bool, string, error) {
+	// Inform user of the latest release version
+	latestVersions, err := utils.GetLatestReleaseTagsSorted(constants.GetMesheryGitHubOrg(), constants.GetMesheryGitHubRepo())
+	isOutdated := false
+	if err != nil {
+		return nil, "", ErrGetLatestVersion(err)
+	}
+	if len(latestVersions) == 0 {
+		return &isOutdated, "", fmt.Errorf("no versions found")
+	}
+	latestVersion := latestVersions[len(latestVersions)-1]
+	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
+	if latestVersion != serverVersion {
+		isOutdated = true
+		return &isOutdated, latestVersion, nil
+	}
+
+	return &isOutdated, latestVersion, nil
+}

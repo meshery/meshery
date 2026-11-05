@@ -1,0 +1,20 @@
+version: 0.0.1
+name: pod-readiness
+displayName: Pod Readiness
+createdAt: "2024-01-17T05:17:06Z"
+description: Pod readiness in Kubernetes indicates when a Pod is prepared to handle requests and execute its intended tasks. It hinges on the successful initialization of its containers and the positive response from readiness probes, which verify the health and operational readiness of the Pod's components. This readiness status is crucial for ensuring that services can safely direct traffic to the Pod without encountering errors or delays caused by incomplete initialization or unavailability. Managing Pod readiness effectively enhances application reliability and performance by enabling Kubernetes to efficiently distribute Pods across nodes while ensuring they are capable of fulfilling their roles. Regular monitoring and adjustment of readiness probes and configurations are essential for maintaining optimal application responsiveness and resilience in dynamic Kubernetes environments.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/0194ff83-0a43-4b83-9c75-b8f0f32da6b7/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "No caveats \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

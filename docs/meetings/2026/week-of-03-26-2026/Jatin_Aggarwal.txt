@@ -1,0 +1,5 @@
+Hi there, Myself Jatin Aggarwal.
+My interest is in distributed systems and ai infrastructure.
+Though I also have a basic understanding of general programmming languages, including Go.
+
+Thank you, looking forward to contribute :)

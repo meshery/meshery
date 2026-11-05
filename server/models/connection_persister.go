@@ -1,0 +1,276 @@
+package models
+
+import (
+	"errors"
+	"fmt"
+	"strings"
+
+	"github.com/meshery/schemas/models/core"
+
+	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshery/server/models/environments"
+	"github.com/meshery/meshkit/database"
+	schemasConnection "github.com/meshery/schemas/models/v1beta3/connection"
+	"gorm.io/gorm"
+)
+
+// ConnectionPersister is the persister for persisting
+// connections on the database
+type ConnectionPersister struct {
+	DB *database.Handler
+}
+
+// GetConnections returns all of the connections
+func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSize int, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+
+	if order == "" {
+		order = defaultOrderUpdatedAtDesc
+	}
+
+	query := cp.DB.Model(&connections.Connection{})
+
+	if search != "" {
+		like := "%" + strings.ToLower(search) + "%"
+		query = query.Where("lower(name) like ?", like)
+	}
+
+	if name != "" {
+		like := "%" + strings.ToLower(name) + "%"
+		query = query.Where("lower(name) like ?", like)
+	}
+
+	if len(status) != 0 {
+		query = query.Where("status IN (?)", status)
+	}
+
+	if len(kind) != 0 {
+		query = query.Where("kind IN (?)", kind)
+	}
+
+	if len(connType) != 0 {
+		query = query.Where("type IN (?)", connType)
+	}
+
+	dynamicKeys := []string{"type", "sub_type"}
+
+	// Apply filters using the utility function
+	query = utils.ApplyFilters(query, filter, dynamicKeys)
+
+	query = query.Order(order)
+	count := int64(0)
+
+	connectionsFetched := []*connections.Connection{}
+	query.Table("connections").Count(&count)
+	Paginate(uint(page), uint(pageSize))(query).Find(&connectionsFetched)
+
+	// Batch-load environments for all connections on the page in a single
+	// query rather than issuing one query per connection (N+1 problem).
+	if len(connectionsFetched) > 0 {
+		connectionIDs := make([]core.Uuid, len(connectionsFetched))
+		for i, conn := range connectionsFetched {
+			connectionIDs[i] = conn.ID
+		}
+
+		// envWithConnID augments EnvironmentData with the join-table's
+		// connection_id so we can group results after scanning.
+		type envWithConnID struct {
+			environments.EnvironmentData
+			ConnectionID core.Uuid `gorm:"column:connection_id"`
+		}
+
+		var envMappings []envWithConnID
+		if err := cp.DB.Table("environment_connection_mappings").
+			Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").
+			Select("environments.*, environment_connection_mappings.connection_id").
+			Where("environment_connection_mappings.connection_id IN ?", connectionIDs).
+			Find(&envMappings).Error; err != nil {
+			return nil, fmt.Errorf("error fetching environments for connections: %v", err)
+		}
+
+		envsByConnID := make(map[core.Uuid][]*environments.EnvironmentData)
+		for i := range envMappings {
+			connID := envMappings[i].ConnectionID
+			envsByConnID[connID] = append(envsByConnID[connID], &envMappings[i].EnvironmentData)
+		}
+
+		for _, conn := range connectionsFetched {
+			conn.Environments = envsByConnID[conn.ID]
+			if conn.Environments == nil {
+				conn.Environments = []*environments.EnvironmentData{}
+			}
+		}
+	}
+	statusSummary, err := cp.getConnectionsStatusSummary()
+	if err != nil {
+		return nil, err
+	}
+
+	connectionsPage := &connections.ConnectionPage{
+		Page:          page,
+		PageSize:      pageSize,
+		TotalCount:    int(count),
+		Connections:   connectionsFetched,
+		StatusSummary: statusSummary,
+	}
+
+	return connectionsPage, nil
+}
+
+// getConnectionsStatusSummary returns a map of connection status to count.
+// The v1beta3 connection schema narrowed ConnectionPage.StatusSummary from
+// map[ConnectionStatus]int to map[ConnectionStatusValue]int (the two types
+// carry the same canonical values but ConnectionStatusValue is the one the
+// paginated list envelope now speaks), so build the summary against the
+// page-side type directly.
+func (cp *ConnectionPersister) getConnectionsStatusSummary() (*map[schemasConnection.ConnectionStatusValue]int, error) {
+	var statusCounts []struct {
+		Status string `gorm:"column:status"`
+		Count  int    `gorm:"column:count"`
+	}
+
+	err := cp.DB.Model(&connections.Connection{}).
+		Select("status, COUNT(*) as count").
+		Group("status").
+		Scan(&statusCounts).Error
+
+	if err != nil {
+		return nil, fmt.Errorf("error fetching connection status summary: %v", err)
+	}
+
+	summary := make(map[schemasConnection.ConnectionStatusValue]int)
+	for _, sc := range statusCounts {
+		summary[schemasConnection.ConnectionStatusValue(sc.Status)] = sc.Count
+	}
+
+	return &summary, nil
+}
+
+func (cp *ConnectionPersister) SaveConnection(connection *connections.Connection) (*connections.Connection, error) {
+	if connection.ID == uuid.Nil {
+		id, err := uuid.NewV4()
+		if err != nil {
+			return nil, ErrGenerateUUID(err)
+		}
+		connection.ID = id
+	}
+
+	err := cp.DB.Transaction(func(tx *gorm.DB) error {
+		existingConnection := connections.Connection{}
+
+		// A kubernetes context's connection ID is deterministic, so re-importing
+		// the same cluster collides here. Preserve the existing connection (its
+		// current status and metadata) and return *that* record, rather than
+		// leaving the caller's transient payload — which previously surfaced a
+		// stale/empty status on re-import.
+		if err := tx.First(&existingConnection, "id = ?", connection.ID).Error; err == nil {
+			// Safety net: if the persisted row is missing identity fields (e.g. a
+			// kind wiped by an earlier partial update), heal them from the incoming
+			// payload so a re-import can repair an otherwise permanently malformed
+			// row. Live status/metadata are still preserved.
+			healed := false
+			if existingConnection.Kind == "" && connection.Kind != "" {
+				existingConnection.Kind = connection.Kind
+				healed = true
+			}
+			if existingConnection.Name == "" && connection.Name != "" {
+				existingConnection.Name = connection.Name
+				healed = true
+			}
+			if existingConnection.ConnectionType == "" && connection.ConnectionType != "" {
+				existingConnection.ConnectionType = connection.ConnectionType
+				healed = true
+			}
+			if existingConnection.SubType == "" && connection.SubType != "" {
+				existingConnection.SubType = connection.SubType
+				healed = true
+			}
+			if existingConnection.Status == "" && connection.Status != "" {
+				existingConnection.Status = connection.Status
+				healed = true
+			}
+			if existingConnection.Metadata == nil && connection.Metadata != nil {
+				existingConnection.Metadata = connection.Metadata
+				healed = true
+			}
+			if healed {
+				if err := tx.Save(&existingConnection).Error; err != nil {
+					return err
+				}
+			}
+			*connection = existingConnection
+			return nil
+		}
+
+		return tx.Save(connection).Error
+	})
+
+	return connection, err
+}
+
+func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*connections.Connection, error) {
+	connection := connections.Connection{}
+	err := cp.DB.Where("id = ?", connectionID).First(&connection).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
+		// Any other read failure left `connection` zero-valued and fell through
+		// to Delete, which then issued an unscoped DELETE against a struct with
+		// no primary key. Report the read failure instead of acting on a row we
+		// never loaded.
+		return nil, ErrDBRead(err)
+	}
+	err = cp.DB.Delete(connection).Error
+	if err != nil {
+		return nil, ErrDBDelete(err, cp.fetchUserDetails().ID.String())
+	}
+
+	return &connection, nil
+}
+
+func (cp *ConnectionPersister) fetchUserDetails() *User {
+	return LocalProviderUser()
+}
+
+func (cp *ConnectionPersister) UpdateConnectionStatusByID(connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, error) {
+	err := cp.DB.Model(&connections.Connection{}).Where("id = ?", connectionID).UpdateColumn("status", connectionStatus).Error
+	if err != nil {
+		return nil, fmt.Errorf("error updating connection status: %v", err)
+	}
+
+	updatedConnection := connections.Connection{}
+	err = cp.DB.Model(&updatedConnection).Where("id = ?", connectionID).First(&updatedConnection).Error
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving updated connection: %v", err)
+	}
+
+	return &updatedConnection, nil
+}
+
+func (cp *ConnectionPersister) UpdateConnectionByID(connection *connections.Connection) (*connections.Connection, error) {
+	err := cp.DB.Save(connection).Error
+	if err != nil {
+		return nil, ErrDBPut(err)
+	}
+
+	updatedConnection := connections.Connection{}
+	err = cp.DB.Model(&updatedConnection).Where("id = ?", connection.ID).First(&updatedConnection).Error
+	if err != nil {
+		return nil, ErrDBRead(err)
+	}
+	return connection, nil
+}
+
+// GetConnection gets a connection by ID. If kind is provided, it also filters by kind.
+func (cp *ConnectionPersister) GetConnection(id core.Uuid, kind string) (*connections.Connection, error) {
+	connection := connections.Connection{}
+	query := cp.DB.Where("id = ?", id)
+	if kind != "" {
+		query = query.Where("kind = ?", kind)
+	}
+	err := query.First(&connection).Error
+	return &connection, err
+}

@@ -1,0 +1,20 @@
+version: 0.0.1
+name: my-sql-with-cinder-vol-plugin
+displayName: my-sql-with-cinder-vol-plugin
+createdAt: "2023-09-26T00:15:37Z"
+description: Cinder is a Block Storage service for OpenStack. This example shows how it can be used as an attachment mounted to a pod in Kubernetes. Start kubelet with cloud provider as openstack with a valid cloud config Sample cloud_config [Global] auth-url=https://os-identity.vip.foo.bar.com:5443/v2.0 username=user password=pass region=region1 tenant-id=0c331a1df18571594d49fe68asa4e Create a cinder volume Ex cinder create --display-name=test-repo 2Use the id of the cinder volume created to create a pod definition Create a new pod with the definition cluster/kubectl.sh create -f examples/mysql-cinder-pd/mysql.yaml This should now 1. Attach the specified volume to the kubelet's host machine\\\\n2. Format the volume if required (only if the volume specified is not already formatted to the fstype specified) 3. Mount it on the kubelet's host machine 4. Spin up a container with this volume mounted to the path specified in the pod definition
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2512c0cb-385d-40de-b1f5-bc4a67131538/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Currently the cinder volume plugin is designed to work only on linux hosts and offers ext4 and ext3 as supported fs types Make sure that kubelet host machine has the following executables.\\\\\\\\nEnsure cinder is installed and configured properly in the region in which kubelet is spun up \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a550f4d6-d3bd-44f1-9b4c-167114452062
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

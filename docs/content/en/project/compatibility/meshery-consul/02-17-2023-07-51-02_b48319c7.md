@@ -1,0 +1,14 @@
+---
+timestamp: "2023-02-17 07:51:04 UTC Fri"
+meshery-component: meshery-consul
+meshery-component-version: edge
+meshery-server-version: "v0.6.51"
+k8s-distro: minikube
+k8s-version: "v1.24.7"
+service-mesh: Consul
+service-mesh-version: "v1.0.4"
+tests:
+  consul-client: null
+  consul-server:  null
+overall-status: "failing"
+---

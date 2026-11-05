@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mesheryctl-registry on Documentation</title>
+    <link>/v0.9/reference/mesheryctl/registry/</link>
+    <description>Recent content in mesheryctl-registry on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/reference/mesheryctl/registry/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>mesheryctl-registry-generate</title>
+      <link>/v0.9/reference/mesheryctl/registry/generate/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/reference/mesheryctl/registry/generate/</guid>
+      <description>&lt;h1 id=&#34;mesheryctl-registry-generate&#34;&gt;&#xA;&#x9;mesheryctl registry generate&#xA;&lt;/h1&gt;&#xA;&lt;p&gt;Generate Models&lt;/p&gt;&#xA;&lt;h2 id=&#34;synopsis&#34;&gt;&#xA;&#x9;Synopsis&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under &amp;ldquo;/server/models/&lt;model-name&gt;&amp;rdquo;.&lt;/p&gt;&#xA;&lt;pre class=&#39;codeblock-pre&#39;&gt;&#xA;&lt;div class=&#39;codeblock&#39;&gt;&#xA;mesheryctl registry generate [flags]&#xA;&#xA;&lt;/div&gt;&#xA;&lt;/pre&gt; &#xA;&lt;h2 id=&#34;examples&#34;&gt;&#xA;&#x9;Examples&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Generate Meshery Models from a Google Spreadsheet (i.e. &amp;ldquo;Meshery Integrations&amp;rdquo; spreadsheet).&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>mesheryctl-registry-publish</title>
+      <link>/v0.9/reference/mesheryctl/registry/publish/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/reference/mesheryctl/registry/publish/</guid>
+      <description>&lt;h1 id=&#34;mesheryctl-registry-publish&#34;&gt;&#xA;&#x9;mesheryctl registry publish&#xA;&lt;/h1&gt;&#xA;&lt;p&gt;Publish Meshery Models to Websites, Remote Provider, Meshery Server&lt;/p&gt;&#xA;&lt;h2 id=&#34;synopsis&#34;&gt;&#xA;&#x9;Synopsis&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery Server, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.&lt;/p&gt;&#xA;&lt;pre class=&#39;codeblock-pre&#39;&gt;&#xA;&lt;div class=&#39;codeblock&#39;&gt;&#xA;mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] [flags]&#xA;&#xA;&lt;/div&gt;&#xA;&lt;/pre&gt; &#xA;&lt;h2 id=&#34;examples&#34;&gt;&#xA;&#x9;Examples&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Publish To System&lt;/p&gt;&#xA;&lt;pre class=&#39;codeblock-pre&#39;&gt;&#xA;&lt;div class=&#39;codeblock&#39;&gt;&#xA;mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]&#xA;&#xA;&lt;/div&gt;&#xA;&lt;/pre&gt; &#xA;&lt;p&gt;Publish To Meshery&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>mesheryctl-registry-update</title>
+      <link>/v0.9/reference/mesheryctl/registry/update/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/reference/mesheryctl/registry/update/</guid>
+      <description>&lt;h1 id=&#34;mesheryctl-registry-update&#34;&gt;&#xA;&#x9;mesheryctl registry update&#xA;&lt;/h1&gt;&#xA;&lt;p&gt;Update the registry with latest data.&lt;/p&gt;&#xA;&lt;h2 id=&#34;synopsis&#34;&gt;&#xA;&#x9;Synopsis&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.&lt;/p&gt;&#xA;&lt;pre class=&#39;codeblock-pre&#39;&gt;&#xA;&lt;div class=&#39;codeblock&#39;&gt;&#xA;mesheryctl registry update [flags]&#xA;&#xA;&lt;/div&gt;&#xA;&lt;/pre&gt; &#xA;&lt;h2 id=&#34;examples&#34;&gt;&#xA;&#x9;Examples&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Update models from Meshery Integration Spreadsheet&lt;/p&gt;&#xA;&lt;pre class=&#39;codeblock-pre&#39;&gt;&#xA;&lt;div class=&#39;codeblock&#39;&gt;&#xA;mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred &#34;$CRED&#34; -i [path to the directory containing models].&#xA;&#xA;&lt;/div&gt;&#xA;&lt;/pre&gt; &#xA;&lt;p&gt;Updating models in the meshery/meshery repository based on the spreadsheet&lt;/p&gt;&#xA;&lt;pre class=&#39;codeblock-pre&#39;&gt;&#xA;&lt;div class=&#39;codeblock&#39;&gt;&#xA;mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred &#34;$CRED&#34;&#xA;&#xA;&lt;/div&gt;&#xA;&lt;/pre&gt; &#xA;&lt;p&gt;Updating models in the meshery/meshery repository based on flag&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

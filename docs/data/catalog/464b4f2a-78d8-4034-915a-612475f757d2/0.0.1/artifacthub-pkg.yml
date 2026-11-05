@@ -1,0 +1,20 @@
+version: 0.0.1
+name: thanos-query-design
+displayName: Thanos Query Design
+createdAt: "2024-01-12T19:08:41Z"
+description: This is sample app for testing k8s deployment and thanos
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/464b4f2a-78d8-4034-915a-612475f757d2/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure networking is setup properly and correct annotation are applied to each resource \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 878488d5-c394-4b04-91b4-fd2f9e67ffaf
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

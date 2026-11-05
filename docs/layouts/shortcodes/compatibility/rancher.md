@@ -1,0 +1,1 @@
+{{ partial "compatibility/rancher.md" . }}

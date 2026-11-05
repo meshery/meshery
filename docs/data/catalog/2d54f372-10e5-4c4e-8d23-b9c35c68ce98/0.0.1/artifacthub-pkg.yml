@@ -1,0 +1,20 @@
+version: 0.0.1
+name: robot-shop-sample-app
+displayName: Robot Shop Sample App
+createdAt: "2023-05-07T10:12:22Z"
+description: Stans Robot Shop is a sample microservice application you can use as a sandbox to test and learn containerised application orchestration and monitoring techniques. It is not intended to be a comprehensive reference example of how to write a microservices application, although you will better understand some of those concepts by playing with Stans Robot Shop. To be clear, the error handling is patchy and there is not any security built into the application.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2d54f372-10e5-4c4e-8d23-b9c35c68ce98/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This sample microservice application has been built using these technologies: NodeJS (Express), Java (Spring Boot), Python (Flask), Golang, PHP (Apache), MongoDB, Redis, MySQL (Maxmind data), RabbitMQ, Nginx, AngularJS (1.x) \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 79089163-7195-4727-9be4-7254a673ed46
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

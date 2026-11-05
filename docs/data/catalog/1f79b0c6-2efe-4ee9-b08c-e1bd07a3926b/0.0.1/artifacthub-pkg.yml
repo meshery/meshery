@@ -1,0 +1,20 @@
+version: 0.0.1
+name: example-edge-network-relationship-
+displayName: 'Example Edge-Network Relationship '
+createdAt: "2024-05-01T02:35:04Z"
+description: "The design showcases the operational dynamics of the Edge-Network Relationship. There are two ways you can use this design in your architecture design.\n1. Cloning this design by clicking the clone button.\n2. Start from scratch by creating an edge-network relationship on your own.\n\n<strong>How to create an Edge-Network relationship on your own?</strong>\n\n1. Navigate to MeshMap.\n2. Click on the Kubernetes icon inside the dock it will open a Kubernetes drawer from where you can select any component that Kubernetes supports.\n3. Search for the Ingress and Service component from the search bar provided in the drawer.\n4. Drag-n-drop both the components on the canvas.\n5. Hover over the Ingress component, Some handlebars will show up on four sides of the component. \n6. Move the cursor close to either of the handlebars, an arrow will show up, click on that arrow. This will open up two options:\n    1. <strong> Question mark: </strong>  Opens the Help Center\n    2. <strong>Arrow (Edge handle): </strong> This edge handle is used for creating the edge relationship\n7. Click on the Edge handle and move your cursor close to the Service component. An edge will appear going from the Ingress to Service component which represents the edge relationship between the two components.\n8. Congratulations! You just created a relationship between Ingress and Service."
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/1f79b0c6-2efe-4ee9-b08c-e1bd07a3926b/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "No Caveats or Considerations \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 79089163-7195-4727-9be4-7254a673ed46
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

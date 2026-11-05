@@ -1,0 +1,20 @@
+version: 0.0.34
+name: registry-grounded-ai-application-infrastructure
+displayName: Registry-Grounded AI Application Infrastructure
+createdAt: "2026-09-21T07:43:43Z"
+description: A Kubernetes-based AI application infrastructure architecture for building registry-grounded AI and RAG applications. The design includes an AI API, LLM Router, Ollama inference, RAG and embedding services, vector database, Redis cache, persistent storage, and Kubernetes configuration resources. It provides a structured foundation for deploying and connecting AI services in a cloud-native environment.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/b046745b-215d-4e21-80c8-00ada44f73f8/0.0.34/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This design is an architectural reference and may require configuration changes based on the target Kubernetes environment, AI providers, models, storage backend, and resource requirements. Ollama and other AI services require appropriate compute resources. Secrets and credentials should be supplied securely at deployment time and should not contain real credentials in the design. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 48a6d883-c48d-4343-9a25-044ab0e18fa3
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

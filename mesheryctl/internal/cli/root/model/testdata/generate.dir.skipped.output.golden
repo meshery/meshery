@@ -1,0 +1,6 @@
+Generating model from URL: https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml
+SUMMARY: Imported model couchbase (1 component and 1 relationship)
+
+MODEL: couchbase
+  RELATIONSHIP: Kind of edge, sub type firewall and type binding
+Model can be accessed from .meshery/models

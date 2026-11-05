@@ -1,0 +1,758 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ResponsiveDataTable } from '@sistent/sistent';
+import LoadingScreen from '../shared/LoadingState/LoadingComponent';
+import { EVENT_TYPES } from '../../lib/event-types';
+import ConnectionStateTransitionModal from './ConnectionStateTransitionModal';
+import type { ConnectionStateTransitionModalRef } from './ConnectionStateTransitionModal';
+
+import { CONNECTION_STATES } from '../../utils/Enum';
+import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
+import useGrafanaPingHook from '@/utils/hooks/useGrafanaPingHook';
+import usePrometheusPingHook from '@/utils/hooks/usePrometheusPingHook';
+import useMesheryPingHook from '@/utils/hooks/useMesheryPingHook';
+import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
+import { useWindowDimensions } from '../../utils/dimension';
+import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
+import { useGetConnectionsQuery } from '@/rtk-query/connection';
+import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
+import { useTableUrlState } from '@/utils/hooks/useTableUrlState';
+import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibilityPreference';
+
+import { useSelector } from 'react-redux';
+
+import type {
+  ConnectionTableProps,
+  ConnectionRow,
+  EnvironmentOption,
+  ExpansionFlags,
+  RowData,
+  SelectedFilters,
+  SelectedRows,
+} from './ConnectionTable.types';
+import {
+  ACTION_TYPES,
+  CONNECTION_DOCS_URL,
+  ENVIRONMENT_DOCS_URL,
+  getErrorMessage,
+  toServerSortOrder,
+  toUiSortOrder,
+} from './ConnectionTable.constants';
+import type { ConnectionTransitionMap } from './ConnectionTable.constants';
+import { useConnectionActions } from './ConnectionTable.hooks';
+import { useConnectionColumns } from './ConnectionTable.columns';
+import { useConnectionTableOptions } from './ConnectionTable.options';
+import { ConnectionActionMenu } from './ConnectionActionMenu';
+import { ConnectionTableToolbar } from './ConnectionTableToolbar';
+import dynamic from 'next/dynamic';
+import type { ConfigurableConnection } from './ConnectionConfigureModal';
+
+// Lazy-loaded: it pulls in the RJSF/theme chain, which we keep out of the
+// table's static import graph (smaller bundle + avoids eager theme init).
+const ConnectionConfigureModal = dynamic(() => import('./ConnectionConfigureModal'), {
+  ssr: false,
+});
+
+// Lazy-loaded for the same reason: only mounted for Kubernetes connections
+// when the controllers configuration action is invoked.
+const ConnectionControllersConfigModal = dynamic(
+  () => import('./ConnectionControllersConfigModal'),
+  { ssr: false },
+);
+
+const ConnectionTable = ({
+  selectedFilter,
+  selectedConnectionId,
+  updateUrlWithConnectionId,
+  tabs,
+}: ConnectionTableProps) => {
+  const {
+    organization,
+    connectionMetadataState,
+    controllerState: meshsyncControllerState,
+  } = useSelector(
+    (state: {
+      ui: {
+        organization?: { id?: string };
+        // `null` matches the Redux initial state (see
+        // `store/slices/mesheryUi.ts`). The slice is only populated after
+        // `_app.tsx`'s async `loadMeshModelComponent` resolves, which can
+        // race the first render of this page.
+        connectionMetadataState: Record<
+          string,
+          { transitions?: string[]; icon?: string; transitionMap?: ConnectionTransitionMap }
+        > | null;
+        controllerState: unknown;
+      };
+    }) => state.ui,
+  );
+  const ping = useKubernetesHook();
+  const pingGrafana = useGrafanaPingHook();
+  const pingPrometheus = usePrometheusPingHook();
+  const pingMeshery = useMesheryPingHook();
+  const { width } = useWindowDimensions();
+
+  const { tableState, updateTableState, copyRowDeepLink } = useTableUrlState({
+    tableKey: 'con',
+    // Row deeplinks reuse the existing `connectionId` param so the parent's
+    // expansion logic keeps working without changes.
+    rowParam: 'connectionId',
+    defaults: {
+      page: 0,
+      pageSize: 10,
+      sortOrder: 'createdAt desc',
+      search: '',
+      filters: { status: '', kind: '' },
+    },
+  });
+
+  const { page, pageSize, sortOrder, search } = tableState;
+  const setPage = useCallback((p: number) => updateTableState({ page: p }), [updateTableState]);
+  const setPageSize = useCallback(
+    (ps: number) => updateTableState({ pageSize: ps }),
+    [updateTableState],
+  );
+  const setSortOrder = useCallback(
+    (so: string) => updateTableState({ sortOrder: so }),
+    [updateTableState],
+  );
+  const setSearch = useCallback(
+    (s: string) => updateTableState({ search: s, page: 0 }),
+    [updateTableState],
+  );
+
+  // Applied filters come from URL state so they survive navigation.
+  const statusFilter = tableState.filters.status || null;
+  const kindFilter = tableState.filters.kind || null;
+
+  const [rowData, setRowData] = useState<RowData | null>(null);
+  const [rowsExpanded, setRowsExpanded] = useState<number[]>([]);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>(() => ({
+    status: tableState.filters.status || 'All',
+    kind: tableState.filters.kind || 'All',
+  }));
+  const {
+    notify,
+    updateConnectionByIdMutator,
+    addConnectionToEnvironment,
+    removeConnectionFromEnvironment,
+    saveEnvironment,
+    updateConnectionStatus,
+  } = useConnectionActions({ organizationId: organization?.id });
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [configureConnection, setConfigureConnection] = useState<ConfigurableConnection | null>(
+    null,
+  );
+  const [controllersConfigConnection, setControllersConfigConnection] =
+    useState<ConfigurableConnection | null>(null);
+  const open = Boolean(anchorEl);
+  const modalRef = useRef<ConnectionStateTransitionModalRef | null>(null);
+  const lastNotifiedErrorsRef = useRef<{ environments: string; connections: string }>({
+    environments: '',
+    connections: '',
+  });
+
+  // The set of connection kinds is fetched from the registry rather than
+  // hardcoded, so the Kind filter reflects whatever connections are registered.
+  const { data: connectionDefinitionsResponse } = useListConnectionDefinitionsQuery({});
+  const kindFilterOptions = useMemo(() => {
+    const seen = new Set<string>();
+    return (connectionDefinitionsResponse?.connectionDefinitions || []).reduce<
+      { label: string; value: string }[]
+    >((options, definition) => {
+      const kind = definition?.kind;
+      if (!kind || seen.has(kind)) {
+        return options;
+      }
+      seen.add(kind);
+      options.push({ label: definition?.name || kind, value: kind });
+      return options;
+    }, []);
+  }, [connectionDefinitionsResponse?.connectionDefinitions]);
+
+  const filters = useMemo(
+    () => ({
+      status: {
+        name: 'Status',
+        options: [
+          { label: 'Connected', value: 'connected' },
+          { label: 'Registered', value: 'registered' },
+          { label: 'Discovered', value: 'discovered' },
+          { label: 'Ignored', value: 'ignored' },
+          { label: 'Deleted', value: 'deleted' },
+          { label: 'Maintenance', value: 'maintenance' },
+          { label: 'Disconnected', value: 'disconnected' },
+          { label: 'Not Found', value: 'not found' },
+        ],
+      },
+      kind: {
+        name: 'Kind',
+        options: kindFilterOptions,
+      },
+    }),
+    [kindFilterOptions],
+  );
+
+  const handleApplyFilter = () => {
+    updateTableState({
+      filters: {
+        status: selectedFilters.status === 'All' ? '' : selectedFilters.status,
+        kind: selectedFilters.kind === 'All' ? '' : selectedFilters.kind,
+      },
+      page: 0,
+    });
+  };
+  // lock for not allowing multiple updates at the same time
+  // needs to be a ref because it needs to be shared between renders
+  // and useState loses reactivity when down table custom cells
+  const updatingConnection = useRef(false);
+
+  const {
+    data: connectionData,
+    isError: isConnectionError,
+    error: connectionError,
+    refetch: getConnections,
+    isLoading: isConnectionLoading,
+  } = useGetConnectionsQuery(
+    {
+      page: page,
+      pageSize: pageSize,
+      search: search,
+      order: toServerSortOrder(sortOrder),
+      // Repeated query params (?status=connected, ?kind=kubernetes) — no JSON.
+      status: statusFilter || undefined,
+      kind: selectedFilter || kindFilter || undefined,
+    },
+    undefined,
+  );
+  const {
+    data: environmentsResponse,
+    isSuccess: isEnvironmentsSuccess,
+    isError: isEnvironmentsError,
+    error: environmentsError,
+  } = useGetEnvironmentsQuery(
+    { orgId: organization?.id },
+    {
+      skip: !organization?.id,
+    },
+  );
+
+  const environmentOptions = useMemo(
+    () =>
+      (environmentsResponse?.environments || []).map((env) => ({
+        label: env.name,
+        value: env.id,
+      })),
+    [environmentsResponse?.environments],
+  );
+
+  useEffect(() => {
+    // RTK Query's `error` objects can change identity across renders while
+    // remaining semantically the same (e.g. a failed request that stays in
+    // error state). Emitting a snackbar on every such render can create a
+    // feedback loop (snackbar state update -> re-render -> effect re-fire).
+    // De-duplicate notifications by their rendered message.
+    //
+    // Note: this is intentionally local state (a ref) so it doesn't add
+    // another state update into the render cycle.
+    const last = lastNotifiedErrorsRef.current;
+
+    if (isEnvironmentsError) {
+      const message = `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${getErrorMessage(environmentsError)}`;
+      if (last.environments !== message) {
+        notify({
+          message,
+          event_type: EVENT_TYPES.ERROR,
+        });
+        last.environments = message;
+      }
+    } else {
+      last.environments = '';
+    }
+
+    if (isConnectionError) {
+      const message = `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${getErrorMessage(connectionError)}`;
+      if (last.connections !== message) {
+        notify({
+          message,
+          event_type: EVENT_TYPES.ERROR,
+        });
+        last.connections = message;
+      }
+    } else {
+      last.connections = '';
+    }
+  }, [connectionError, environmentsError, isConnectionError, isEnvironmentsError, notify]);
+
+  const enhancedConnections = useMemo(() => {
+    if (!connectionData?.connections) return [];
+
+    // `connectionMetadataState` is `null` in the Redux initial state and is
+    // only populated after `_app.tsx`'s async `loadMeshModelComponent`
+    // completes. The pages-router routes to /management/connections before
+    // that promise resolves, so this memo must tolerate a null map.
+    // Render every connection the API returns — the columns already fall back
+    // for missing fields (the Name column uses `metadata.name`/kind, etc.).
+    // Do NOT drop connections for a missing name/kind/status: that wrongly hid
+    // real connections. The only guard is against null/undefined array entries.
+    // Columns read the v1beta3 camelCase wire shape (createdAt, updatedAt,
+    // subType). Sort clicks map to DB snake_case via toServerSortOrder.
+    return connectionData.connections.filter(Boolean).map((connection) => ({
+      ...connection,
+      nextStatus: connection.nextStatus || connectionMetadataState?.[connection.kind]?.transitions,
+      kindLogo: connection.kindLogo || connectionMetadataState?.[connection.kind]?.icon,
+    }));
+  }, [connectionData?.connections, connectionMetadataState]) as ConnectionRow[];
+
+  const filteredConnections = useMemo(
+    () =>
+      enhancedConnections.filter(({ status, kind }) => {
+        const statusMatch = selectedFilters.status === 'All' || status === selectedFilters.status;
+        const kindMatch = selectedFilters.kind === 'All' || kind === selectedFilters.kind;
+        return statusMatch && kindMatch;
+      }),
+    [enhancedConnections, selectedFilters],
+  );
+
+  const colViews = useMemo(
+    () => [
+      ['name', 'xs'],
+      ['environments', 'm'],
+      ['kind', 'm'],
+      ['type', 's'],
+      // subType stays hidden by default, as it was before; users can enable it
+      // from the column-visibility control.
+      ['subType', 'na'],
+      // Discovered At visible by default at every breakpoint (master: 'xs').
+      ['createdAt', 'xs'],
+      ['status', 'xs'],
+      ['Actions', 'xs'],
+      ['transitionMap', 'xs'],
+      ['ConnectionID', 'na'],
+    ],
+    [],
+  );
+  const handleDeleteConnection = useCallback(
+    async (connectionId: string) => {
+      if (!connectionId || !modalRef.current) {
+        return;
+      }
+
+      const connection = filteredConnections.find((conn) => conn.id === connectionId);
+      const confirmed = await modalRef.current.show({
+        targetStatus: CONNECTION_STATES.DELETED,
+        currentStatus: connection?.status,
+        kind: connection?.kind,
+        connections: [{ id: connectionId, name: connection?.name, status: connection?.status }],
+      });
+
+      if (confirmed) {
+        await updateConnectionStatus(connectionId, CONNECTION_STATES.DELETED);
+      }
+    },
+    [filteredConnections, updateConnectionStatus],
+  );
+
+  const handleDeleteConnections = useCallback(
+    async (selected: SelectedRows) => {
+      if (!selected?.data?.length || !modalRef.current) {
+        return;
+      }
+
+      // Capture the connection IDs up front. The user has to acknowledge the
+      // confirmation modal before delete fires, and `filteredConnections` can
+      // be invalidated/reordered by an in-flight refetch in that window — using
+      // the index after-the-fact dereferenced stale rows and silently no-op'd
+      // (no PUT, no notification), which surfaced as a hung e2e snackbar wait.
+      const selectedConnections = selected.data
+        .map(({ index }) => filteredConnections[index])
+        .filter(Boolean);
+
+      if (selectedConnections.length === 0) {
+        return;
+      }
+
+      // Kind-specific ramifications only apply when the whole selection is of
+      // one kind; a mixed selection gets the generic copy. Per-connection
+      // status lets the modal resolve the definition-authored description when
+      // the selection's current states agree.
+      const kinds = new Set(selectedConnections.map((connection) => connection.kind));
+      const confirmed = await modalRef.current.show({
+        targetStatus: CONNECTION_STATES.DELETED,
+        kind: kinds.size === 1 ? selectedConnections[0].kind : undefined,
+        connections: selectedConnections.map(({ id, name, status }) => ({ id, name, status })),
+      });
+
+      if (confirmed) {
+        // Use the raw mutator here so Promise.allSettled can handle
+        // success and failure for each deletion. Keep updateConnectionStatus
+        // unchanged for single-connection actions.
+        const results = await Promise.allSettled(
+          selectedConnections.map(({ id }) =>
+            updateConnectionByIdMutator({
+              connectionId: id,
+              body: { status: CONNECTION_STATES.DELETED },
+            }).unwrap(),
+          ),
+        );
+
+        const successCount = results.filter((r) => r.status === 'fulfilled').length;
+        const failureCount = results.filter((r) => r.status === 'rejected').length;
+
+        if (successCount > 0) {
+          notify({
+            message: `${successCount} Connection${successCount > 1 ? 's' : ''} deleted`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+        }
+        if (failureCount > 0) {
+          notify({
+            message: `Failed to delete ${failureCount} Connection${failureCount > 1 ? 's' : ''}`,
+            event_type: EVENT_TYPES.ERROR,
+          });
+        }
+      }
+    },
+    [filteredConnections, updateConnectionByIdMutator, notify],
+  );
+  const handleActionMenuClose = useCallback(() => {
+    setAnchorEl(null);
+    setRowData(null);
+  }, []);
+
+  const getConnectionAtRowIndex = useCallback(
+    (rowIndex?: number | null) => {
+      if (rowIndex == null) {
+        return null;
+      }
+
+      return filteredConnections[rowIndex] ?? null;
+    },
+    [filteredConnections],
+  );
+
+  const handleConfigureConnection = useCallback(() => {
+    const connection = getConnectionAtRowIndex(rowData?.rowIndex);
+    handleActionMenuClose();
+    if (connection) {
+      setConfigureConnection(connection as ConfigurableConnection);
+    }
+  }, [getConnectionAtRowIndex, handleActionMenuClose, rowData?.rowIndex]);
+
+  const handleConfigureControllers = useCallback(() => {
+    const connection = getConnectionAtRowIndex(rowData?.rowIndex);
+    handleActionMenuClose();
+    // Operator / MeshSync / Broker configuration applies to Kubernetes
+    // connections only.
+    if (connection && (connection as ConfigurableConnection).kind === 'kubernetes') {
+      setControllersConfigConnection(connection as ConfigurableConnection);
+    }
+  }, [getConnectionAtRowIndex, handleActionMenuClose, rowData?.rowIndex]);
+
+  const handleEnvironmentSelect = useCallback(
+    async (
+      connectionId: string,
+      connName: string,
+      assignedEnvironments: EnvironmentOption[],
+      selectedEnvironments: EnvironmentOption[],
+      unSelectedEnvironments: EnvironmentOption[],
+    ) => {
+      if (updatingConnection.current) {
+        return;
+      }
+
+      updatingConnection.current = true;
+
+      try {
+        const newlySelectedEnvironments = selectedEnvironments.filter((environment) => {
+          return !assignedEnvironments.some(
+            (assignedEnvironment) => assignedEnvironment.value === environment.value,
+          );
+        });
+
+        const selectedExistingEnvironments = newlySelectedEnvironments.filter(
+          (environment) => !environment.__isNew__,
+        );
+        const selectedNewEnvironments = newlySelectedEnvironments.filter(
+          (environment) => environment.__isNew__,
+        );
+
+        await Promise.all([
+          ...selectedExistingEnvironments.map((environment) =>
+            addConnectionToEnvironment(
+              environment.value || '',
+              environment.label,
+              connectionId,
+              connName,
+            ),
+          ),
+          ...selectedNewEnvironments.map((environment) =>
+            saveEnvironment(connectionId, connName, environment.label),
+          ),
+          ...unSelectedEnvironments.map((environment) =>
+            removeConnectionFromEnvironment(
+              environment.value || '',
+              environment.label,
+              connectionId,
+              connName,
+            ),
+          ),
+        ]);
+      } finally {
+        getConnections();
+        updatingConnection.current = false;
+      }
+    },
+    [addConnectionToEnvironment, getConnections, removeConnectionFromEnvironment, saveEnvironment],
+  );
+
+  const handleStatusChange = useCallback(
+    async (
+      status: string,
+      connectionId: string,
+      connectionKind: string,
+      connectionStatus: string,
+    ) => {
+      if (!modalRef.current) {
+        return;
+      }
+
+      const connection = filteredConnections.find((conn) => conn.id === connectionId);
+      // The modal resolves the definition-authored description for this
+      // transition itself (kind + currentStatus → connectionMetadataState).
+      const confirmed = await modalRef.current.show({
+        targetStatus: status.toLowerCase(),
+        currentStatus: connectionStatus,
+        kind: connectionKind,
+        connections: [{ id: connectionId, name: connection?.name }],
+      });
+
+      if (confirmed) {
+        await updateConnectionStatus(connectionId, status);
+      }
+    },
+    [filteredConnections, updateConnectionStatus],
+  );
+
+  const handleActionMenuOpen = useCallback((event, tableMeta: RowData) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+    setRowData(tableMeta);
+  }, []);
+
+  // Consolidate multiple useRef hooks into a single object
+  const expansionFlags = useRef<ExpansionFlags>({
+    isHandlingExpansion: false,
+    isInitialLoad: true,
+    isUrlExpansion: false,
+    lastProcessedId: null,
+  });
+
+  // `filteredConnections` is accessed via a ref so RTK Query's identity
+  // churn on every cache hit doesn't re-fire this effect. The effect re-fires
+  // through `filteredConnectionsKey` (a primitive snapshot of the visible id
+  // set), which only changes when the *content* of the visible page changes
+  // — which is exactly the condition under which a previously-missing deep
+  // link could now succeed (data finished loading, user paginated, filter
+  // changed). Same-data refetches produce the same key string, so they bail
+  // out of the effect via `Object.is` equality on the dep.
+  const filteredConnectionsRef = useRef(filteredConnections);
+  filteredConnectionsRef.current = filteredConnections;
+
+  const filteredConnectionsKey = useMemo(
+    () => filteredConnections.map((conn) => conn.id).join('|'),
+    [filteredConnections],
+  );
+
+  useEffect(() => {
+    if (!selectedConnectionId || expansionFlags.current.isHandlingExpansion) return;
+    if (expansionFlags.current.lastProcessedId === selectedConnectionId) return;
+
+    const connections = filteredConnectionsRef.current;
+    if (!connections || connections.length === 0) {
+      // Data not loaded yet. The effect will re-fire as soon as
+      // `filteredConnectionsKey` flips on first arrival.
+      return;
+    }
+
+    const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
+    if (index === -1) {
+      // The deep-linked connection isn't on the current page. Do not mark
+      // `lastProcessedId` — that would lock the effect out for the rest of
+      // the session. If the user paginates or filters into a page that does
+      // include this id, `filteredConnectionsKey` will change and the effect
+      // re-runs to expand the row. Intentionally do NOT clear the URL: the
+      // pre-fix code pushed `connectionId=""` here, which kicked off a
+      // URL-push → re-render → effect-re-fire loop that surfaced as React
+      // error #185.
+      return;
+    }
+
+    expansionFlags.current.isUrlExpansion = true;
+    expansionFlags.current.lastProcessedId = selectedConnectionId;
+    setRowsExpanded([index]);
+    expansionFlags.current.isUrlExpansion = false;
+    expansionFlags.current.isInitialLoad = false;
+  }, [selectedConnectionId, filteredConnectionsKey]);
+
+  // Project the per-kind connection definitions down to just their state
+  // machines for the status-transition dropdown.
+  const transitionMapByKind = useMemo(() => {
+    if (!connectionMetadataState) return null;
+    return Object.fromEntries(
+      Object.entries(connectionMetadataState).map(([kind, meta]) => [kind, meta?.transitionMap]),
+    );
+  }, [connectionMetadataState]);
+
+  const columns = useConnectionColumns({
+    url: CONNECTION_DOCS_URL,
+    envUrl: ENVIRONMENT_DOCS_URL,
+    environmentOptions,
+    isEnvironmentsSuccess,
+    updatingConnection,
+    handleDeleteConnection,
+    handleEnvironmentSelect,
+    handleStatusChange,
+    handleActionMenuOpen,
+    ping,
+    pingGrafana,
+    pingPrometheus,
+    pingMeshery,
+    transitionMapByKind,
+  });
+  const columnNames = useMemo(
+    () => columns.map((column) => column.name),
+    [columns, isEnvironmentsSuccess],
+  );
+
+  const options = useConnectionTableOptions({
+    totalCount: connectionData?.totalCount,
+    page,
+    pageSize,
+    setPage,
+    setPageSize,
+    // Normalized to column names: a bookmarked snake_case param would not
+    // match any column, dropping the active-sort indicator. The server query
+    // above translates the other way, via toServerSortOrder.
+    sortOrder: toUiSortOrder(sortOrder),
+    setSortOrder,
+    rowsExpanded,
+    setRowsExpanded,
+    columns,
+    filteredConnections,
+    meshsyncControllerState,
+    selectedConnectionId,
+    updateUrlWithConnectionId,
+    expansionFlags,
+    handleDeleteConnections,
+  });
+
+  const [tableCols, setTableCols] = useState(columns);
+
+  // Keep the latest `columns` in a ref so the sync effect below can read them
+  // without depending on `columns` identity — `columns` is rebuilt on most
+  // renders (not all of its inputs are referentially stable), so a `[columns]`
+  // dependency would setState every render and loop infinitely.
+  const columnsRef = useRef(columns);
+  columnsRef.current = columns;
+
+  // ResponsiveDataTable renders cells from this `tableCols` snapshot and only
+  // re-syncs it on columnVisibility identity changes, so a cell whose
+  // `customBodyRender` closes over async data (the environments select is gated
+  // on `isEnvironmentsSuccess`) would stay frozen at its first-render output.
+  // Re-push the freshly built columns once those inputs settle — keyed on the
+  // settling signals (not `columns`) so it runs only when the rendered output
+  // can actually change.
+  useEffect(() => {
+    setTableCols(columnsRef.current);
+  }, [isEnvironmentsSuccess, environmentOptions]);
+
+  const { columnVisibility, setColumnVisibilityByUser, setColumnVisibilityByResponsive } =
+    useColumnVisibilityPreference(
+      'connections',
+      getResponsiveColumnVisibility(columnNames, colViews, width),
+    );
+
+  useEffect(() => {
+    const next = getResponsiveColumnVisibility(columnNames, colViews, width);
+
+    // Only apply responsive update when the computed layout actually changed so
+    // we avoid flushing user-preference overrides on every unrelated re-render.
+    setColumnVisibilityByResponsive(next);
+  }, [colViews, columnNames, width, setColumnVisibilityByResponsive]);
+
+  if (isConnectionLoading) {
+    return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Connections" />;
+  }
+
+  return (
+    <>
+      {tabs}
+
+      <ConnectionTableToolbar
+        isSearchExpanded={isSearchExpanded}
+        setIsSearchExpanded={setIsSearchExpanded}
+        onSearch={setSearch}
+        filters={filters}
+        selectedFilters={selectedFilters}
+        setSelectedFilters={setSelectedFilters}
+        handleApplyFilter={handleApplyFilter}
+        columns={columns}
+        columnVisibility={columnVisibility}
+        setColumnVisibility={setColumnVisibilityByUser}
+      />
+
+      <ResponsiveDataTable
+        data={filteredConnections}
+        columns={columns}
+        options={options}
+        tableCols={tableCols}
+        updateCols={setTableCols}
+        columnVisibility={columnVisibility}
+      />
+
+      <ConnectionStateTransitionModal ref={modalRef} />
+      <ConnectionActionMenu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleActionMenuClose}
+        onConfigure={handleConfigureConnection}
+        onConfigureControllers={
+          rowData?.rowIndex != null &&
+          (getConnectionAtRowIndex(rowData.rowIndex) as ConfigurableConnection | null)?.kind ===
+            'kubernetes'
+            ? handleConfigureControllers
+            : undefined
+        }
+        onCopyLink={
+          rowData?.rowIndex != null
+            ? () => {
+                const connection = filteredConnections[rowData.rowIndex];
+                if (connection?.id) copyRowDeepLink(connection.id);
+              }
+            : undefined
+        }
+      />
+
+      {/* Only mount (and thus load) the configure modal once a row is chosen. */}
+      {configureConnection && (
+        <ConnectionConfigureModal
+          isOpen={Boolean(configureConnection)}
+          connection={configureConnection}
+          onClose={() => setConfigureConnection(null)}
+        />
+      )}
+
+      {controllersConfigConnection?.id && (
+        <ConnectionControllersConfigModal
+          isOpen={Boolean(controllersConfigConnection)}
+          connectionId={String(controllersConfigConnection.id)}
+          connectionName={controllersConfigConnection.name}
+          onClose={() => setControllersConfigConnection(null)}
+        />
+      )}
+    </>
+  );
+};
+
+export default ConnectionTable;

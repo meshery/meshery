@@ -1,0 +1,89 @@
+package eval
+
+import rego.v1
+
+import data.core_utils
+import data.feasibility_evaluation_utils
+
+import data.core_utils.component_alias
+import data.core_utils.component_declaration_by_id
+import data.core_utils.from_component_id
+import data.core_utils.get_array_aware_configuration_for_component_at_path
+import data.core_utils.get_component_configuration
+import data.core_utils.new_uuid
+import data.core_utils.object_get_nested
+import data.core_utils.pop_first
+import data.core_utils.to_component_id
+import data.feasibility_evaluation_utils.is_relationship_feasible_from
+import data.feasibility_evaluation_utils.is_relationship_feasible_to
+import data.core_utils.truncate_set
+
+# Module:
+# Purpose:
+# Example:
+# Process Flow:
+#
+# 1. Validation
+#    Valid relationships require:
+
+#
+# 2. Identification
+#
+#
+# 3. Actions
+#    New  Relationships:
+#
+#    Approved Relationships:
+#    Deleted Relationships:
+
+
+	relationship_policy_identifier :={
+		"kind": "hierarchical",
+		"type": "parent",
+		"subtype": "alias",
+	}
+
+
+identify_relationships(design_file, relationships_in_scope, relationship_policy_identifier) := eval_results if {
+	is_policy_identifier(relationship_policy_identifier)
+
+
+
+}
+
+
+## Validate
+validate_relationship(relationship, design_file) := relationship if {
+	is_<local>_relationship_valid(relationship, design_file)
+}
+
+validate_relationship(relationship, design_file) := updated_relationship if {
+
+}
+
+# validate all relationships in the design file ( use partial rule so it doesnt conflict with other policies)
+validate_relationships_phase(design_file, relationship_policy_identifier) := result if {
+	is_<local>_policy_identifier(relationship_policy_identifier)
+
+	result := {validated |
+		some rel in design_file.relationships
+		validated := validate_relationship(rel, design_file)
+	}
+}
+
+## Action Phase
+
+
+# action response {
+#   components_added :      list of components added
+#   components_deleted :    list of components deleted
+#   components_updated :    list of components updated
+#   relationships_added :   list of relationships added
+#   relationships_deleted : list of relationships deleted
+#   relationships_updated : list of relationships updated
+# }
+action_phase(design_file, relationship_policy_identifier) := result if {
+	is_<local>_policy_identifier(relationship_policy_identifier)
+
+	result := ((components_to_add | components_to_delete) | relationships_to_add) | relationships_to_delete
+}

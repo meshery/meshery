@@ -1,0 +1,44 @@
+{{ $ctx := . }}
+{{ $currentPage := $ctx.currentPage }}
+
+{{ if ne $ctx.section_title "false" }}
+
+    {{ if $currentPage }}
+        {{ $category := index $currentPage.Params "integrations-category" }}
+        {{ if $category }}
+            <h2>Related Models in <b>{{ $category }}</b></h2>
+        {{ else }}
+            <h2>{{ $ctx.h2_text | default "Related Models" }}</h2>
+        {{ end }}
+    {{ else }}
+
+        {{ $h2Text := $ctx.h2_text | default "Suggested Reading" }}
+
+        {{ if $ctx.display_suggested_reading }}
+            <h2>{{ $h2Text }}</h2>
+        {{ end }}
+
+    {{ end }}
+
+{{ end }}
+
+{{ $reading := $ctx.reading | default site.Pages }}
+
+<ul>
+{{ range $reading }}
+
+    {{ if ne .RelPermalink $ctx.url }}
+
+        <li>
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+
+            {{ with .Params.abstract }}
+                - {{ . }}
+            {{ end }}
+
+        </li>
+
+    {{ end }}
+
+{{ end }}
+</ul>

@@ -1,0 +1,5 @@
+{
+  "verbose": true,
+  "ignore": ["node_modules", ".next", "ui_dev_server.js"],
+  "ext": "js json"
+}

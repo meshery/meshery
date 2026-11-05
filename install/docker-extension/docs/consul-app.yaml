@@ -1,0 +1,363 @@
+name: consul-service-compose.yaml
+services:
+  api-claim0-bdaix:
+    name: api-claim0
+    type: PersistentVolumeClaim.K8s
+    namespace: "default"
+    settings:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Mi
+    traits:
+      meshmap:
+        edges: []
+        id: 32de9a15-4ad8-4955-940a-46dfe579f0e5
+        label: api-claim0
+        position:
+          posX: 19
+          posY: 88
+  consul-claim0-bgzpx:
+    name: consul-claim0
+    type: PersistentVolumeClaim.K8s
+    namespace: "default"
+    settings:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Mi
+    traits:
+      meshmap:
+        edges: []
+        id: 7177dff2-b075-41c2-a6fb-dc309c3cef8d
+        label: consul-claim0
+        position:
+          posX: 53
+          posY: 24
+  web-buuva:
+    name: web
+    type: Service.K8s
+    namespace: "default"
+    settings:
+      spec:
+        ports:
+        - name: "9090"
+          port: 9090
+          targetPort: 9090
+        selector:
+          io.kompose.service: web
+    traits:
+      meshmap:
+        edges: []
+        id: 91612575-9cec-4fd2-b5cd-89e1fd7e30d3
+        label: web
+        position:
+          posX: -24.400373078997806
+          posY: 199.43385793340903
+  default-doqsu:
+    name: default
+    namespace: "default"
+    traits:
+      meshmap:
+        position:
+          posX: -205.54779048261767
+          posY: 196.9951264020016
+  consul-heqzu:
+    name: consul
+    type: Service.K8s
+    namespace: "default"
+    settings:
+      spec:
+        ports:
+        - name: "8500"
+          port: 8500
+          targetPort: 8500
+        selector:
+          io.kompose.service: consul
+    traits:
+      meshmap:
+        edges: []
+        id: e8e49ac0-0da7-4a29-8de0-225179d36a22
+        label: consul
+        position:
+          posX: 92
+          posY: 76
+  web-claim0-iaxvt:
+    name: web-claim0
+    type: PersistentVolumeClaim.K8s
+    namespace: "default"
+    settings:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Mi
+    traits:
+      meshmap:
+        edges: []
+        id: 59d1ca29-89dc-4ef6-811a-19094f40d302
+        label: web-claim0
+        position:
+          posX: 43
+          posY: 96
+  consul-idrip:
+    name: consul
+    type: Deployment.K8s
+    namespace: "default"
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            io.kompose.service: consul
+        strategy:
+          type: Recreate
+        template:
+          metadata:
+            annotations:
+              kompose.cmd: /var/folders/jn/qfb6lgmj7yq32km_vjbln42h0000gn/T/go-build3701193554/b001/exe/main
+              kompose.version: 1.26.1 (HEAD)
+            creationTimestamp: null
+            labels:
+              io.kompose.network/vpcbr: "true"
+              io.kompose.service: consul
+          spec:
+            containers:
+            - args:
+              - consul
+              - agent
+              - -config-file=/config/config.hcl
+              - -config-dir=/config
+              image: consul:1.6.1
+              name: consul
+              ports:
+              - containerPort: 8500
+              resources: {}
+              volumeMounts:
+              - mountPath: /config
+                name: consul-claim0
+            restartPolicy: Always
+            volumes:
+            - name: consul-claim0
+              persistentVolumeClaim:
+                claimName: consul-claim0
+    traits:
+      meshmap:
+        edges: []
+        id: 5df57e90-44c8-4d91-8e7e-dae5ff453c65
+        label: consul
+        position:
+          posX: -95.99326100701255
+          posY: -67.02488046643482
+  default-jnfzr:
+    name: default
+    namespace: "default"
+    traits:
+      meshmap:
+        position:
+          posX: 45.143686613641854
+          posY: 211.11486524670312
+  web-lywli:
+    name: web
+    type: Deployment.K8s
+    namespace: "default"
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            io.kompose.service: web
+        strategy:
+          type: Recreate
+        template:
+          metadata:
+            annotations:
+              kompose.cmd: /var/folders/jn/qfb6lgmj7yq32km_vjbln42h0000gn/T/go-build3701193554/b001/exe/main
+              kompose.version: 1.26.1 (HEAD)
+            creationTimestamp: null
+            labels:
+              io.kompose.network/vpcbr: "true"
+              io.kompose.service: web
+          spec:
+            containers:
+            - env:
+              - name: CENTRAL_CONFIG_DIR
+                value: /central
+              - name: CONSUL_DATACENTER
+                value: dc1
+              - name: CONSUL_SERVER
+                value: 10.5.0.2
+              - name: LISTEN_ADDR
+                value: 0.0.0.0:9090
+              - name: MESSAGE
+                value: Hello World
+              - name: NAME
+                value: web
+              - name: SERVER_TYPE
+                value: http
+              - name: SERVICE_ID
+                value: web-v1
+              - name: UPSTREAM_URIS
+                value: http://localhost:9091
+              image: nicholasjackson/fake-service:vm-v0.7.7
+              name: web
+              ports:
+              - containerPort: 9090
+              resources: {}
+              volumeMounts:
+              - mountPath: /config/web_v1.hcl
+                name: web-claim0
+              - mountPath: /central
+                name: web-claim1
+            restartPolicy: Always
+            volumes:
+            - name: web-claim0
+              persistentVolumeClaim:
+                claimName: web-claim0
+            - name: web-claim1
+              persistentVolumeClaim:
+                claimName: web-claim1
+    traits:
+      meshmap:
+        edges: []
+        id: 6ea61b9f-869f-4320-9236-b0ae27e57d7e
+        label: web
+        position:
+          posX: -181.19438024400594
+          posY: 46.00860438797644
+  vpcbr-mniis:
+    name: vpcbr
+    type: NetworkPolicy.K8s
+    namespace: "default"
+    settings:
+      ingress:
+      - from:
+        - podSelector:
+            matchLabels:
+              io.kompose.network/vpcbr: "true"
+      podSelector:
+        matchLabels:
+          io.kompose.network/vpcbr: "true"
+    traits:
+      meshmap:
+        edges: []
+        id: c341cf1f-2e12-4dc4-a38c-83ccf1589ecb
+        label: vpcbr
+        position:
+          posX: 4
+          posY: 92
+  default-mtdst:
+    name: default
+    namespace: "default"
+    traits:
+      meshmap:
+        position:
+          posX: 57.04789553788059
+          posY: -83.74424623213855
+  web-claim1-mztae:
+    name: web-claim1
+    type: PersistentVolumeClaim.K8s
+    namespace: "default"
+    settings:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Mi
+    traits:
+      meshmap:
+        edges: []
+        id: f7ac6911-d5a8-4ea3-8029-9aa163ad98f4
+        label: web-claim1
+        position:
+          posX: -89.92141770019164
+          posY: 114.313186391213
+  api-rgbxo:
+    name: api
+    type: Deployment.K8s
+    namespace: "default"
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            io.kompose.service: api
+        strategy:
+          type: Recreate
+        template:
+          metadata:
+            annotations:
+              kompose.cmd: /var/folders/jn/qfb6lgmj7yq32km_vjbln42h0000gn/T/go-build3701193554/b001/exe/main
+              kompose.version: 1.26.1 (HEAD)
+            creationTimestamp: null
+            labels:
+              io.kompose.network/vpcbr: "true"
+              io.kompose.service: api
+          spec:
+            containers:
+            - env:
+              - name: CONSUL_DATACENTER
+                value: dc1
+              - name: CONSUL_SERVER
+                value: 10.5.0.2
+              - name: DATACENTER
+                value: dc1
+              - name: LISTEN_ADDR
+                value: 0.0.0.0:9090
+              - name: MESSAGE
+                value: Hello World
+              - name: NAME
+                value: api
+              - name: SERVER_TYPE
+                value: http
+              - name: SERVICE_ID
+                value: api-v1
+              image: nicholasjackson/fake-service:vm-v0.7.7
+              name: api
+              resources: {}
+              volumeMounts:
+              - mountPath: /config/api_v1.hcl
+                name: api-claim0
+            restartPolicy: Always
+            volumes:
+            - name: api-claim0
+              persistentVolumeClaim:
+                claimName: api-claim0
+    traits:
+      meshmap:
+        edges: []
+        id: ab9b96b4-a12c-4f74-9d8b-1a6dc105d876
+        label: api
+        position:
+          posX: -15.90420892423878
+          posY: -99.96931323807226
+  default:
+    name: default
+    namespace: "default"
+    traits:
+      meshmap:
+        position:
+          posX: -170.23178359836564
+          posY: -121.48114796279182
+  default-mmxoe:
+    name: default
+    type: Namespace.K8s
+    namespace: default
+    settings:
+      name: default
+      namespace: default
+    traits:
+      meshmap:
+        edges: []
+        id: b08c95e2-36be-437b-9e20-4c143ffad9a1
+        label: default
+        position:
+          posX: -235.23178359836564
+          posY: -56.48114796279182
+

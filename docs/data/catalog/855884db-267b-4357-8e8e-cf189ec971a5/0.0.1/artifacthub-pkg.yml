@@ -1,0 +1,20 @@
+version: 0.0.1
+name: redis-master-deployment
+displayName: Redis master deployment
+createdAt: "2024-01-13T05:13:17Z"
+description: In this design, the Redis master node is configured for high availability and reliability, crucial for applications requiring fast data access and storage. It leverages Kubernetes' capabilities to manage Redis master pods, ensuring fault tolerance through replication and monitoring. This design typically involves setting up persistent storage for data durability, defining resource requests and limits to optimize performance, and configuring appropriate networking for seamless communication within the cluster.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/855884db-267b-4357-8e8e-cf189ec971a5/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Careful consideration is given to security practices, such as access controls and encryption, to safeguard sensitive data stored in Redis. \n\nContinuous monitoring and scaling strategies are implemented to maintain optimal performance and availability as workload demands fluctuate. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

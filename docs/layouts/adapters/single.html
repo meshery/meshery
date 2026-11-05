@@ -1,0 +1,7 @@
+{{ define "main" }}
+<article>
+{{ partial "compatibility/adapter-status.html" . }}
+  {{ .Content }}  
+  {{ partial "compatibility/lifecycle-management.html" . }}
+</article>
+{{ end }}

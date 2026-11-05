@@ -1,0 +1,20 @@
+version: 0.0.6
+name: cloud-native-distributed-job-scheduler
+displayName: Cloud-Native Distributed Job Scheduler
+createdAt: "2026-09-02T19:31:18Z"
+description: A highly available, Kubernetes-based distributed job scheduler architecture that separates job submission, scheduling, coordination, durable queueing, execution, persistence, retry handling, dead-letter processing, autoscaling, and observability.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/d55ca969-a0c9-4bbf-a975-e4fca1dc4fca/0.0.6/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This design represents a reference architecture for a cloud-native distributed job scheduler and is intended for architectural demonstration and experimentation.\n\nThe design assumes highly available deployments of the scheduler and worker components, durable job storage, distributed coordination, asynchronous job delivery, retry handling, dead-letter processing, autoscaling, and observability.\n\nFor production use, Redis, Kafka, and PostgreSQL should be deployed using production-grade configurations with persistent storage, authentication, encryption, backups, replication, and appropriate resource limits. Scheduler leader election, job idempotency, duplicate execution handling, failure recovery, queue partitioning, and workload-specific security policies should also be implemented according to operational requirements.\n\nThe Kubernetes resources shown are architectural representations and may require environment-specific configuration before deployment.\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 32840ed7-7bfa-44e1-af2a-ba67c7651b2f
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

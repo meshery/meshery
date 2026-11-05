@@ -1,0 +1,20 @@
+version: 0.0.1
+name: pod-liveness
+displayName: Pod Liveness
+createdAt: "2024-01-17T05:11:52Z"
+description: Continuous availability and health of Kubernetes Pods. It defines liveness probes that periodically check the state of application instances within Pods. These probes determine if Pods are responsive and functioning correctly based on configured criteria, such as HTTP requests or custom executable scripts. By automatically restarting Pods that fail these checks, this design enhances application reliability and uptime, ensuring seamless operation and minimal disruption to services in Kubernetes environments.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/fe3bf101-18ec-4a7e-86bb-3f69a53b1e5f/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "No caveats \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

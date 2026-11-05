@@ -1,0 +1,164 @@
+package connections
+
+import (
+	"context"
+
+	"github.com/meshery/meshkit/models/events"
+	"github.com/spf13/viper"
+
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/core"
+	schemasConnection "github.com/meshery/schemas/models/v1beta3/connection"
+)
+
+type ConnectionStatus = schemasConnection.ConnectionStatus
+
+type InitFunc func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
+
+// TODO
+// Caps lock values are left for compatibility for now,
+// update later on to Pascal case everywhere
+const (
+	DISCOVERED   ConnectionStatus = schemasConnection.ConnectionStatusDiscovered
+	REGISTERED   ConnectionStatus = schemasConnection.ConnectionStatusRegistered
+	CONNECTED    ConnectionStatus = schemasConnection.ConnectionStatusConnected
+	IGNORED      ConnectionStatus = schemasConnection.ConnectionStatusIgnored
+	MAINTENANCE  ConnectionStatus = schemasConnection.ConnectionStatusMaintenance
+	DISCONNECTED ConnectionStatus = schemasConnection.ConnectionStatusDisconnected
+	DELETED      ConnectionStatus = schemasConnection.ConnectionStatusDeleted
+	NOTFOUND     ConnectionStatus = schemasConnection.ConnectionStatusNotFound
+)
+
+type ConnectionRegisterPayload struct {
+	EventType string
+	// It is different from connection id, this is used to track the registration process for the connection.
+	// Connection ID is generated after the registration process is completed.
+	ID    core.Uuid
+	Model string
+	// The concrete type depends on the type of connection and the corresponding connection definition.
+	Connection struct {
+		ConnMetadata interface{}
+		CredMetadata interface{}
+	}
+}
+
+type PromConn struct {
+	URL  string `json:"url,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
+type PromCred struct {
+	Name string `json:"name,omitempty"`
+	// If Basic then it should be formatted as username:password
+	APIKeyOrBasicAuth string `json:"secret,omitempty"`
+}
+
+type GrafanaConn struct {
+	URL  string `json:"url,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
+type GrafanaCred struct {
+	Name string `json:"name,omitempty"`
+	// If Basic then it should be formatted as username:password
+	APIKeyOrBasicAuth string `json:"secret,omitempty"`
+}
+
+type Connection = schemasConnection.Connection
+
+var validConnectionStatusToManage = []ConnectionStatus{
+	DISCOVERED, REGISTERED, CONNECTED,
+	// If the connection has status as NotFound we try to discover it again as the NotFound status indicates, connection was available previously.
+	NOTFOUND,
+}
+
+// ShouldConnectionBeManaged checks whether the Connection should be managed.
+// Connections with status as Discovered, Registered, Connected, or NotFound should only be managed.
+// Eg: If the status is set as Maintenance or Ignore do not try to manage it, not even during greedy import of K8sConnection from KubeConfig.
+func ShouldConnectionBeManaged(c Connection) bool {
+	for _, validStatus := range validConnectionStatusToManage {
+		if validStatus == c.Status {
+			return true
+		}
+	}
+	return false
+}
+
+type ConnectionPage = schemasConnection.ConnectionPage
+
+// MergePayloadOntoExisting backfills fields the caller left empty in payload
+// with the values from the persisted connection. UpdateConnectionById persists
+// via a full-row write (GORM Save() locally, a full PUT remotely), so a partial
+// payload — e.g. the UI's connect action sending only {status}, or an FSM status
+// transition sending only {kind, metadata, status} — would otherwise zero every
+// field it omits. Wiping a kubernetes connection's kind to "" in particular
+// later trips the FSM's "connection is not of kind kubernetes" guard on connect.
+// It never overwrites a field the caller explicitly set, so intentional changes
+// still apply.
+func MergePayloadOntoExisting(payload *ConnectionPayload, existing *Connection) {
+	if payload == nil || existing == nil {
+		return
+	}
+	if payload.Kind == "" {
+		payload.Kind = existing.Kind
+	}
+	if payload.Name == "" {
+		payload.Name = existing.Name
+	}
+	if payload.Type == "" {
+		payload.Type = existing.ConnectionType
+	}
+	if payload.SubType == "" {
+		payload.SubType = existing.SubType
+	}
+	if payload.Status == "" {
+		payload.Status = existing.Status
+	}
+	if payload.MetaData == nil {
+		payload.MetaData = existing.Metadata
+	}
+	if payload.CredentialID == nil {
+		payload.CredentialID = existing.CredentialID
+	}
+}
+
+// ConnectionStatusInfo is the element type of the status-per-kind response
+// wrapper (ConnectionsStatusPage) surfaced on a few integrations endpoints.
+// Both are the canonical v1beta3 connection constructs rather than local stubs:
+// the local copy of the page had dropped `page`, `pageSize` and `totalCount`,
+// so the swagger definition generated from it (server/handlers/doc.go)
+// under-described the response it documents.
+type ConnectionStatusInfo = schemasConnection.ConnectionStatusInfo
+
+type ConnectionsStatusPage = schemasConnection.ConnectionsStatusPage
+
+type ConnectionPayload struct {
+	ID                         core.Uuid              `json:"id,omitempty"`
+	Kind                       string                 `json:"kind,omitempty"`
+	SubType                    string                 `json:"subType,omitempty"`
+	Type                       string                 `json:"type,omitempty"`
+	MetaData                   map[string]interface{} `json:"metadata,omitempty"`
+	Status                     ConnectionStatus       `json:"status,omitempty"`
+	CredentialSecret           map[string]interface{} `json:"credentialSecret,omitempty"`
+	Name                       string                 `json:"name,omitempty"`
+	CredentialID               *core.Uuid             `json:"credentialId,omitempty"`
+	Model                      string                 `json:"model,omitempty"`
+	SkipCredentialVerification bool                   `json:"skipCredentialVerification"`
+}
+
+func BuildMesheryConnectionPayload(serverURL string, credential map[string]interface{}) *ConnectionPayload {
+	metadata := map[string]interface{}{
+		"serverId":       viper.GetString("INSTANCE_ID"),
+		"serverVersion":  viper.GetString("BUILD"),
+		"serverBuildSha": viper.GetString("COMMITSHA"),
+		"serverLocation": serverURL,
+	}
+	return &ConnectionPayload{
+		Kind:             "meshery",
+		Type:             "platform",
+		SubType:          "management",
+		MetaData:         metadata,
+		Status:           CONNECTED,
+		CredentialSecret: credential,
+	}
+}

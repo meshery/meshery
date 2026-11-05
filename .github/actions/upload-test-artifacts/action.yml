@@ -1,0 +1,47 @@
+name: "Upload Test Artifacts"
+description: "Upload test reports, allure results, traces, and HTML report"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Save PR Metadata
+      if: ${{ github.event_name == 'pull_request' }}
+      shell: bash
+      run: |
+        mkdir -p ./pr
+        echo "${{ github.event.number }}" > ./pr/number
+        echo "${{ github.event.pull_request.head.sha }}" > ./pr/sha
+
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v6
+      with:
+        name: e2e-test-report
+        path: |
+          ui/test-report.md
+          ${{ github.event_name == 'pull_request' && 'pr/' || '' }}
+        retention-days: 14
+        if-no-files-found: ignore
+
+    - name: Upload Allure Results
+      uses: actions/upload-artifact@v6
+      with:
+        name: allure-results
+        path: ui/allure-results/
+        retention-days: 14
+        if-no-files-found: ignore
+
+    - name: Upload Playwright Traces
+      uses: actions/upload-artifact@v6
+      with:
+        name: playwright-traces
+        path: ui/test-results/
+        retention-days: 14
+        if-no-files-found: ignore
+
+    - name: Upload Playwright HTML Report
+      uses: actions/upload-artifact@v6
+      with:
+        name: playwright-report
+        path: ui/playwright-report/
+        retention-days: 14
+        if-no-files-found: ignore

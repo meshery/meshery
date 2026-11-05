@@ -1,0 +1,15 @@
+*.svg
+*.ico
+*.css
+
+*/.DS_Store
+assets/**
+.next
+package.json
+package-lock.json
+public
+node_modules
+next-env.d.ts
+next.config.js
+.eslintrc.js
+**/__generated__/**

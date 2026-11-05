@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Adapters on Documentation</title>
+    <link>/v0.9/extensions/adapters/</link>
+    <description>Recent content in Adapters on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/extensions/adapters/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Meshery Adapter for App Mesh</title>
+      <link>/v0.9/extensions/adapters/app-mesh/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/adapters/app-mesh/</guid>
+      <description>&lt;h3 id=&#34;features&#34;&gt;&#xA;&#x9;Features&#xA;&lt;/h3&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;Lifecycle management of App Mesh&lt;/li&gt;&#xA;&lt;li&gt;Lifecycle management of sample applications&lt;/li&gt;&#xA;&lt;li&gt;Performance testing&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;h3 id=&#34;sample-applications&#34;&gt;&#xA;&#x9;Sample Applications&#xA;&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/#emojivoto&#34;&gt;Emojivoto&lt;/a&gt;&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/#bookinfo&#34;&gt;Bookinfo&lt;/a&gt;&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/#httpbin&#34;&gt;Httpbin&lt;/a&gt;&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Httpbin is a simple HTTP request and response service.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;performance-management&#34;&gt;&#xA;&#x9;Performance Management&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;Identify overhead involved in running the App Mesh, various App Mesh configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Meshery Adapter for Cilium Service Mesh</title>
+      <link>/v0.9/extensions/adapters/cilium/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/adapters/cilium/</guid>
+      <description>&lt;p&gt;The Meshery Adapter for Cilium Service Mesh is currently under construction (stable state), which means that the adapter is not functional and cannot be interacted with through the &lt;a href=&#34;/v0.9/installation#6-you-will-now-be-directed-to-the-meshery-ui&#34;&gt; Meshery UI &lt;/a&gt;at the moment. Check back here to see updates.&lt;/p&gt;&#xA;&lt;p&gt;Want to contribute? Check our &lt;a href=&#34;https://github.com/meshery/meshery-cilium&#34;&gt;progress&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Meshery Adapter for Consul</title>
+      <link>/v0.9/extensions/adapters/consul/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/adapters/consul/</guid>
+      <description>&lt;h3 id=&#34;features&#34;&gt;&#xA;&#x9;Features&#xA;&lt;/h3&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;Lifecycle management of Consul&lt;/li&gt;&#xA;&lt;li&gt;Lifecycle management of sample applications&lt;/li&gt;&#xA;&lt;li&gt;Performance management of Consul and it workloads&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Prometheus and Grafana integration&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;Configuration management and best practices of Consul&lt;/li&gt;&#xA;&lt;li&gt;Custom configuration&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;h3 id=&#34;sample-applications&#34;&gt;&#xA;&#x9;Sample Applications&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;Meshery supports the deployment of a variety of sample applications on Meshery Adapter for Consul. Use Meshery to deploy any of these sample applications.&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/#httpbin&#34;&gt;httpbin&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Httpbin is a simple HTTP request and response service.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/#bookinfo&#34;&gt;Bookinfo&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/#imagehub&#34;&gt;Image Hub&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;performance-management-of-consul-and-it-workloads&#34;&gt;&#xA;&#x9;Performance management of Consul and it workloads&#xA;&lt;/h3&gt;&#xA;&lt;h4 id=&#34;prometheus-and-grafana-integration&#34;&gt;&#xA;&#x9;Prometheus and Grafana integration&#xA;&lt;/h4&gt;&#xA;&lt;p&gt;The Meshery Adapter for Consul will connect to Meshery Adapter for Consul&amp;rsquo;s Prometheus and Grafana instances running in the control plane (typically found in a separate namespace) or other instances to which Meshery has network reachability.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Meshery Adapter for Istio</title>
+      <link>/v0.9/extensions/adapters/istio/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/adapters/istio/</guid>
+      <description>&lt;h2 id=&#34;features&#34;&gt;&#xA;&#x9;Features&#xA;&lt;/h2&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;Istio Lifecycle Management&lt;/li&gt;&#xA;&lt;li&gt;Workload Lifecycle Management&lt;/li&gt;&#xA;&lt;li&gt;Cloud Native Performance (SMP)&#xA;&lt;ol&gt;&#xA;&lt;li&gt;Prometheus and Grafana connections&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;Configuration Analysis, Patterns, and Best Practices&#xA;&lt;ol&gt;&#xA;&lt;li&gt;Custom Configuration&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;h3 id=&#34;workload-management&#34;&gt;&#xA;&#x9;Workload Management&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;The Meshery Adapter for Istio includes a handful of sample applications. Use Meshery to deploy any of these sample applications:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/#bookinfo&#34;&gt;Bookinfo&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/#httpbin&#34;&gt;Httpbin&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Httpbin is a simple HTTP request and response service.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/#online-boutique&#34;&gt;Online Boutique&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Online Boutique Application is a web-based, e-commerce demo application from the Google Cloud Platform.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/#imagehub&#34;&gt;Image Hub&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;using-cloud-native-standards&#34;&gt;&#xA;&#x9;Using Cloud Native Standards&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Meshery&amp;rsquo;s powerful performance management functionality is accomplished through implementation of &lt;a href=&#34;https://smp-spec.io&#34;&gt;Cloud Native Performance&lt;/a&gt;. Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of infrastructure and workloads and incorporates the collection and display of metrics from applications using Prometheus and Grafana integrations.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Meshery Adapter for Kuma</title>
+      <link>/v0.9/extensions/adapters/kuma/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/adapters/kuma/</guid>
+      <description>&lt;h2 id=&#34;workload-management&#34;&gt;&#xA;&#x9;Workload Management&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;The following sample applications are available in this adapter.&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/#bookinfo&#34;&gt;Bookinfo&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
+    </item>
+    <item>
+      <title>Meshery Adapter for Linkerd</title>
+      <link>/v0.9/extensions/adapters/linkerd/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/adapters/linkerd/</guid>
+      <description>&lt;h3 id=&#34;features&#34;&gt;&#xA;&#x9;Features&#xA;&lt;/h3&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;Lifecycle management of Linkerd&lt;/li&gt;&#xA;&lt;li&gt;Lifecycle management of sample applications&lt;/li&gt;&#xA;&lt;li&gt;Performance testing&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;h3 id=&#34;sample-applications&#34;&gt;&#xA;&#x9;Sample Applications&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;The Meshery Adapter for Linkerd includes the ability to deploy a variety of sample applications. Use Meshery to deploy any of these sample applications:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/&#34;&gt;Emojivoto&lt;/a&gt;&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/&#34;&gt;Bookinfo&lt;/a&gt;&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/&#34;&gt;Linkerd Books&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Meshery Adapter for Network Service Mesh</title>
+      <link>/v0.9/extensions/adapters/nsm/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/adapters/nsm/</guid>
+      <description>&lt;h2 id=&#34;sample-applications&#34;&gt;&#xA;&#x9;Sample Applications&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;The Meshery Adapter for Network Service Mesh includes a handful of sample applications. These applications represent different network services orchestrated by Network Service Mesh. Use Meshery to deploy any of these sample applications:&lt;/p&gt;&#xA;&lt;h3 id=&#34;1-hello-nsm-application&#34;&gt;&#xA;&#x9;1. Hello NSM Application&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;Watch this presentation to see the Hello NSM Application in-action:&lt;/p&gt;&#xA;&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/4xKixsDTtdM&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;&lt;/iframe&gt;&#xA;&lt;p&gt;See on YouTube: &lt;a href=&#34;https://www.youtube.com/watch?v=4xKixsDTtdM&amp;amp;list=PL3A-A6hPO2IOpTbdH89qR-4AE0ON13Zie&#34;&gt;Adopting Network Service Mesh with Meshery&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h4 id=&#34;2-vpp-icmp-application&#34;&gt;&#xA;&#x9;2. VPP-ICMP Application&#xA;&lt;/h4&gt;&#xA;&lt;p&gt;&lt;em&gt;A simple example that connects a vpp based Pod to a Network Service using memif.&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Meshery Adapter for NGINX Service Mesh</title>
+      <link>/v0.9/extensions/adapters/nginx-sm/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/adapters/nginx-sm/</guid>
+      <description>&lt;p&gt;The Meshery Adapter for NGINX Service Mesh is currently under construction (stable state). Want to contribute? Check our &lt;a href=&#34;https://github.com/meshery/meshery-nginx-sm&#34;&gt;progress&lt;/a&gt;.&lt;/p&gt;&#xA;&lt;h3 id=&#34;features&#34;&gt;&#xA;&#x9;Features&#xA;&lt;/h3&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;Lifecycle management of NGINX Service Mesh&lt;/li&gt;&#xA;&lt;li&gt;Lifecycle management of sample applications&lt;/li&gt;&#xA;&lt;li&gt;Performance testing&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;h3 id=&#34;sample-applications&#34;&gt;&#xA;&#x9;Sample Applications&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;The Meshery Adapter for NGINX Service Mesh includes a handful of sample applications. Use Meshery to deploy any of these sample applications.&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/&#34;&gt;Emojivoto&lt;/a&gt;&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/&#34;&gt;Bookinfo&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Meshery Adapter for Nighthawk</title>
+      <link>/v0.9/extensions/adapters/nighthawk/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/adapters/nighthawk/</guid>
+      <description>&lt;h3 id=&#34;features&#34;&gt;&#xA;&#x9;Features&#xA;&lt;/h3&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;Lifecycle management of Nighthawk&lt;/li&gt;&#xA;&lt;li&gt;Performance characterization&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;h2 id=&#34;performance-characterization&#34;&gt;&#xA;&#x9;Performance characterization&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Identify overhead involved in running Nighthawk, various Nighthawk configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;Prometheus integration&lt;/li&gt;&#xA;&lt;li&gt;Grafana integration&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;!-- ### Performance tests --&gt;</description>
+    </item>
+    <item>
+      <title>Meshery Adapter for Tanzu Service Mesh</title>
+      <link>/v0.9/extensions/adapters/tanzu-sm/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/adapters/tanzu-sm/</guid>
+      <description>&lt;h3 id=&#34;suggested-reading&#34;&gt;&#xA;&#x9;Suggested Reading&#xA;&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Examine &lt;a href=&#34;/v0.9/concepts/architecture/&#34;&gt;Meshery&amp;rsquo;s architecture&lt;/a&gt; and how adapters fit in as a component.&lt;/li&gt;&#xA;&lt;li&gt;Learn more about &lt;a href=&#34;/v0.9/concepts/architecture/adapters/&#34;&gt;Meshery Adapters&lt;/a&gt;.&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
+    </item>
+    <item>
+      <title>Meshery Adapter for Traefik Mesh</title>
+      <link>/v0.9/extensions/adapters/traefik-mesh/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/adapters/traefik-mesh/</guid>
+      <description>&lt;h3 id=&#34;sample-applications&#34;&gt;&#xA;&#x9;Sample Applications&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;The Meshery Adapter for Traefik Mesh includes some sample applications operations. Meshery can be used to deploy any of these sample applications.&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/&#34;&gt;Bookinfo&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/guides/infrastructure-management/sample-apps/&#34;&gt;Httpbin&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Httpbin is a simple HTTP request and response service.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;suggested-topics&#34;&gt;&#xA;&#x9;Suggested Topics&#xA;&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Examine &lt;a href=&#34;/v0.9/concepts/architecture/&#34;&gt;Meshery&amp;rsquo;s architecture&lt;/a&gt; and how adapters fit in as a component.&lt;/li&gt;&#xA;&lt;li&gt;Learn more about &lt;a href=&#34;/v0.9/concepts/architecture/adapters/&#34;&gt;Meshery Adapters&lt;/a&gt;.&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
+    </item>
+  </channel>
+</rss>

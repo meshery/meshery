@@ -1,0 +1,20 @@
+version: 0.0.1
+name: pod-service-account-token
+displayName: Pod Service Account Token
+createdAt: "2024-01-17T05:44:03Z"
+description: "Kubernetes Service Account tokens used by Pods. It emphasizes the importance of limiting token permissions to minimize the risk of unauthorized access to Kubernetes API resources. \n\nThis design advocates for regular rotation of Service Account tokens to mitigate potential security vulnerabilities, ensuring that compromised tokens have a limited lifespan."
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e2d3f5c8-3ff8-4756-8848-0c9b5797bec2/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Administrators must carefully manage Service Account token lifecycles to avoid disruptions in Pod functionality caused by expired tokens. Additionally, strict adherence to least privilege principles is essential when assigning permissions to Service Accounts, as overly permissive tokens can increase the attack surface and compromise cluster security. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

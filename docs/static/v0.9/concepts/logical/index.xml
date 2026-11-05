@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Logical on Documentation</title>
+    <link>/v0.9/concepts/logical/</link>
+    <description>Recent content in Logical on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/concepts/logical/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Components</title>
+      <link>/v0.9/concepts/logical/components/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/concepts/logical/components/</guid>
+      <description>&lt;p&gt;In Meshery, a &lt;strong&gt;Component&lt;/strong&gt; is a fundamental building block used to represent and define the infrastructure under management. Each component provides granular and specific support for your infrastructure and applications. Each component represents a distinct capability or feature, like a specific service, protocol, or configuration element. Components can be semantically meaningful (orchestratable) or non-semantically meaningful (an annotation).&lt;/p&gt;&#xA;&lt;h2 id=&#34;components-as-building-blocks&#34;&gt;&#xA;&#x9;Components as building blocks&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Meshery Models and their packaged Components represent a standardized and reusable collection of building blocks used to describe both the desired and actual configuration of infrastructure pre and post-deployment. More than this Components are using to describe non-infrastructure concepts, for example, a component might capture a comment or a visual element that you&amp;rsquo;ve placed into a Meshery Design. To aid in distinguishing between types of Components, they are categorized into two groups: Semantic and Non-Semantic components. A component is considered semantically meaningful when it behaves as a direct representation of an aspect of your infrastructure. A component is considered non-semantically meaningful when it behaves as an annotation to aid in the comprehension of your designs.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Connections</title>
+      <link>/v0.9/concepts/logical/connections/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/concepts/logical/connections/</guid>
+      <description>&lt;p&gt;Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are tracked by Meshery. Connections can be assigned as resources to an Environment.&lt;/p&gt;&#xA;&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;&lt;div class=&#34;h4 alert-heading&#34; role=&#34;heading&#34;&gt;Connections as resources in Environments&lt;/div&gt;&#xA;&lt;p&gt;Meshery Environments allow you to logically group related &lt;a href=&#34;/v0.9/concepts/logical/connections/&#34;&gt;Connections&lt;/a&gt; and their associated &lt;a href=&#34;/v0.9/concepts/logical/credentials/&#34;&gt;Credentials&lt;/a&gt;. Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Credentials</title>
+      <link>/v0.9/concepts/logical/credentials/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/concepts/logical/credentials/</guid>
+      <description>&lt;p&gt;Meshery uses one or more Credentials when authenticating to a managed or unmanaged Connection. Credentials are based on the Meshery&amp;rsquo;s &lt;a href=&#34;https://github.com/meshery/schemas/blob/master/schemas/constructs/openapi/credentials.yml&#34;&gt;Credential Schema&lt;/a&gt; with defined attributes.&lt;/p&gt;&#xA;&lt;h2 id=&#34;understanding-credentials-in-meshery&#34;&gt;&#xA;&#x9;Understanding Credentials in Meshery&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Credentials in Meshery provide secure authentication to your infrastructure and cloud native services. They are a foundational component that enables Meshery to establish and maintain secure connections with your resources.&lt;/p&gt;&#xA;&lt;h3 id=&#34;types-of-credentials&#34;&gt;&#xA;&#x9;Types of Credentials&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;Meshery supports several types of credentials:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Designs</title>
+      <link>/v0.9/concepts/logical/designs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/concepts/logical/designs/</guid>
+      <description>&lt;p&gt;Like a Google Doc, Designs are your primary tool for collaborative authorship of your infrastructure and services. A Design describes all the resources and their properties that you want for a single deployment based on Meshery’s declarative syntax (see &lt;a href=&#34;https://github.com/meshery/schemas&#34;&gt;Meshery Schemas repo&lt;/a&gt;). By default, Designs are stored in your user account, but can be manually exported, programmatically snapshotted, or automatically synchronized to any OCI-compatible registry (e.g. Docker Hub, AWS ECR, and so on), or Git-based repositories (coming in v0.8). You can share designs and collaborate in real-time on their creation. Designs can be imported, exported, versioned, forked, merged, snapshotted, published, shared, embedded, templatized, and more.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Environments</title>
+      <link>/v0.9/concepts/logical/environments/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/concepts/logical/environments/</guid>
+      <description>&lt;p&gt;Meshery Environments allow you to logically group related &lt;a href=&#34;/v0.9/concepts/logical/environments/#connections&#34;&gt;Connections&lt;/a&gt; and their associated &lt;a href=&#34;/v0.9/concepts/logical/environments/#credentials&#34;&gt;Credentials&lt;/a&gt;. Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.&lt;/p&gt;&#xA;&lt;h3 id=&#34;assigning-resources-to-an-environment&#34;&gt;&#xA;&#x9;Assigning Resources to an Environment&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;Assign any number of Connections to an environment whether that Connection is managed or unmanaged (see &lt;a href=&#34;/v0.9/concepts/architecture/meshsync/&#34;&gt;MeshSync&lt;/a&gt; to learn more about managed and unmanaged Connections). In-turn, assign any number of Environments to one or more &lt;a href=&#34;/v0.9/concepts/logical/workspaces/&#34;&gt;Workspaces&lt;/a&gt;. Connections (and any associated Credentials) that are assigned to an Environment become immediately available for use in any associated Workspace.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Models</title>
+      <link>/v0.9/concepts/logical/models/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/concepts/logical/models/</guid>
+      <description>&lt;p&gt;Models are units of packaging for definitions of Meshery&amp;rsquo;s logical object representations. Each model is versioned and encompasses a collection of components, relationships, policies, connections, and credentials. Meshery&amp;rsquo;s internal object model provides a consistent and extensible way of capturing and characterizing the resources (applications, services, and infrastructure) under Meshery&amp;rsquo;s management. Each model is versioned and bundles definitions of any number of components, relationships, policies, connections and credentials. Additionally, models can be exported as OCI-compatible images, defining the managed infrastructure, their interrelationships, and specific management details.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Patterns</title>
+      <link>/v0.9/concepts/logical/patterns/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/concepts/logical/patterns/</guid>
+      <description>&lt;p&gt;A Pattern is a templated design. Patterns promote reuse. Patterns are higher level abstractions of designs, in which a complex design is represented as a single component, promoting consistent infrastructure management practices as it hides the complexity of it&amp;rsquo;s underlying design. Patterns enable you to establish best practices and propagate the use of these practices in a simple consumable single component. Once created, a pattern becomes available for use alongside other components.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Policies</title>
+      <link>/v0.9/concepts/logical/policies/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/concepts/logical/policies/</guid>
+      <description>&lt;p&gt;Policies offer an evaluation algorithm to ensure desired behavior enforcement. Policies can be applied to components and relationships, defining rules and actions based on predefined conditions.&lt;/p&gt;&#xA;&lt;h2 id=&#34;policy-evaluation&#34;&gt;&#xA;&#x9;Policy Evaluation&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;The relationships are a powerful way to design your infrastructure and each of them are backed by one or more policies. Policies evaluate the designs for potential relationships and the decide whether to create/delete/update the relationships.&lt;/p&gt;&#xA;&lt;p&gt;&lt;a href=&#34;/v0.9/concepts/logical/policies/images/meshery-models-policy-evaluation.svg&#34;&gt;&lt;img class=&#34;content-image&#34; src=&#34;./images/meshery-models-policy-evaluation.svg&#34; alt=&#34;Meshery Models Policy Evaluation&#34;  /&gt;&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Registry</title>
+      <link>/v0.9/concepts/logical/registry/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/concepts/logical/registry/</guid>
+      <description>&lt;h1 id=&#34;meshery-registry-a-central-hub-for-capabilities&#34;&gt;&#xA;&#x9;Meshery Registry: A Central Hub for Capabilities&#xA;&lt;/h1&gt;&#xA;&lt;p&gt;The Meshery Registry is a vital component within Meshery, serving as a centralized repository for managing a diverse range of cloud and cloud native resources. It stores and organizes crucial information such as models, categories, components, and relationships, enabling efficient interaction and utilization of these resources within the Meshery ecosystem. You can conveniently &lt;a href=&#34;/v0.9/concepts/logical/registry/#interacting-with-the-meshery-registry&#34;&gt;access and manage registry data&lt;/a&gt; through Meshery UI, and through Meshery CLI (&lt;a href=&#34;/v0.9/reference/mesheryctl/registry/&#34;&gt;mesheryctl registry&lt;/a&gt;).&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Relationships</title>
+      <link>/v0.9/concepts/logical/relationships/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/concepts/logical/relationships/</guid>
+      <description>&lt;p&gt;Meshery Relationships characterize how &lt;a href=&#34;/v0.9/concepts/logical/components/&#34;&gt;components&lt;/a&gt; are connected and interact with each other. Relationships are defined within &lt;a href=&#34;/v0.9/concepts/logical/models/&#34;&gt;models&lt;/a&gt; to aid in structuring the interrelationships between one or more components in a &lt;a href=&#34;/v0.9/concepts/logical/designs/&#34;&gt;design&lt;/a&gt; to further in comprehending the overall structure and dependencies within managed systems.&lt;/p&gt;&#xA;&lt;p&gt;Meshery recognizes that relationships exist in various forms and that the existence of a relationship might be interdependent upon the existence (or absence) of another relationship. To support this complexity, Meshery relationships are highly expressive, characterizing the nature of interaction of interconnected components no matter their genealogy.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Workspaces</title>
+      <link>/v0.9/concepts/logical/workspaces/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/concepts/logical/workspaces/</guid>
+      <description>&lt;p&gt;Like a Google Drive, Meshery Workspaces serve as a virtual space for your team-based work. Create a Workspace to organize your work and to serve as the central point of collaboration for you and your teams and a central point of access control to Environments and their resources.&lt;/p&gt;&#xA;&lt;p&gt;You may create Workspaces to organize project-based work or to create domains of responsibility for your teams or segregate Designs and Environments and track team activity.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,20 @@
+version: 0.0.1
+name: gke-online-serving-single-gpu
+displayName: gke-online-serving-single-gpu
+createdAt: "2024-03-01T14:39:35Z"
+description: This design outlines a Kubernetes architecture tailored for online serving workloads that require GPU acceleration. This design is optimized for Google Kubernetes Engine (GKE), leveraging a single GPU instance to enhance computational performance for machine learning inference, real-time analytics, or other GPU-intensive tasks.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/c0db1f13-46e8-481f-b5b5-27b6d2e0b74d/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Continuous monitoring and optimization of GPU utilization and workload distribution are necessary to maintain optimal performance and avoid resource contention among Pods sharing GPU resources. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 62b081a5-1273-4c58-807f-b6be539275d0
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

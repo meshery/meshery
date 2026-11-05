@@ -1,0 +1,2 @@
+no command specified. Usage: mesheryctl relationship [subcommand]
+Run 'mesheryctl relationship --help' to see detailed help message | Short Description: Invalid Argument | Probable Cause: Invalid Argument | Suggested Remediation: Please check the arguments passed

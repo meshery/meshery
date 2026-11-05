@@ -1,0 +1,726 @@
+package models
+
+import (
+	"context"
+	"crypto/md5"
+	"encoding/base64"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"net"
+	"os"
+	"time"
+
+	"github.com/meshery/schemas/models/core"
+
+	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/internal/sql"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/utils/kubernetes"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
+	"gopkg.in/yaml.v2"
+	"gorm.io/gorm"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
+type K8sContext struct {
+	ID                 string     `json:"id,omitempty" yaml:"id,omitempty"`
+	Name               string     `json:"name,omitempty" yaml:"name,omitempty"`
+	Auth               sql.Map    `json:"auth,omitempty" yaml:"auth,omitempty"`
+	Cluster            sql.Map    `json:"cluster,omitempty" yaml:"cluster,omitempty"`
+	Server             string     `json:"server,omitempty" yaml:"server,omitempty"`
+	Owner              *core.Uuid `json:"owner,omitempty" gorm:"-" yaml:"owner,omitempty"`
+	CreatedBy          *core.Uuid `json:"createdBy,omitempty" gorm:"-" yaml:"createdBy,omitempty"`
+	MesheryInstanceID  *core.Uuid `json:"mesheryInstanceId,omitempty" yaml:"mesheryInstanceId,omitempty"`
+	KubernetesServerID *core.Uuid `json:"kubernetesServerId,omitempty" yaml:"kubernetesServerId,omitempty"`
+	DeploymentType     string     `json:"deploymentType,omitempty" yaml:"deploymentType,omitempty" default:"out_cluster"`
+	Version            string     `json:"version,omitempty" yaml:"version,omitempty"`
+	UpdatedAt          *time.Time `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
+	CreatedAt          *time.Time `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
+	ConnectionID       string     `json:"connectionId,omitempty" yaml:"connectionId,omitempty"`
+	// Reachable reports whether the cluster's API server responded while the
+	// context was being processed. It is transient (never persisted): it is set
+	// during discovery so callers can surface reachability and gate the
+	// transition to the connected state. An unreachable context can still be
+	// registered as a (discovered) connection.
+	Reachable bool `json:"reachable" yaml:"-" gorm:"-"`
+}
+
+// K8sContextFromConnection converts a kubernetes connection into a K8sContext.
+// Remote providers now return connections directly, but Meshery still expects K8sContext shapes in a few APIs.
+// token is the user auth token
+func K8sContextFromConnection(provider Provider, token string, connection *connections.Connection) (K8sContext, error) {
+	ctx := K8sContext{}
+	if connection == nil {
+		return ctx, fmt.Errorf("failed to convert connection to k8s context: connection is nil")
+	}
+
+	if connection.CredentialID == nil {
+		return ctx, fmt.Errorf("failed to convert connection to k8s context: missing credential_id")
+	}
+
+	credential, _, err := provider.GetCredentialByID(token, *connection.CredentialID)
+	if err != nil {
+		return ctx, fmt.Errorf("failed to convert connection to k8s context: failed to fetch credential: %w", err)
+	}
+
+	data, err := json.Marshal(connection.Metadata)
+	if err != nil {
+		return ctx, fmt.Errorf("failed to convert connection to k8s context: %w", err)
+	}
+	if err := json.Unmarshal(data, &ctx); err != nil {
+		return ctx, fmt.Errorf("failed to convert connection to k8s context: %w", err)
+	}
+
+	ctx.ConnectionID = connection.ID.String()
+	// Kubernetes credentials are persisted with the secret map as the payload
+	// ({auth, cluster}), while the credential form writes a double-nested wrapper
+	// one level up. CredentialPayload unwraps both to the payload. The form's
+	// payload then names the cluster with clusterName/clusterServerURL rather
+	// than a `cluster` block, so it yields auth but no cluster - see
+	// https://github.com/meshery/meshery/issues/21336.
+	credentialPayload := CredentialPayload(credential.Secret)
+	ctx.Auth, _ = credentialPayload["auth"].(map[string]interface{})
+	ctx.Cluster, _ = credentialPayload["cluster"].(map[string]interface{})
+	ctx.CreatedAt = &connection.CreatedAt
+	ctx.UpdatedAt = &connection.UpdatedAt
+
+	return ctx, nil
+}
+
+type InternalKubeConfig struct {
+	APIVersion     string                   `json:"apiVersion,omitempty" yaml:"apiVersion,omitempty"`
+	Kind           string                   `json:"kind,omitempty" yaml:"kind,omitempty"`
+	Clusters       []map[string]interface{} `json:"clusters,omitempty" yaml:"clusters,omitempty"`
+	Contexts       []map[string]interface{} `json:"contexts,omitempty" yaml:"contexts,omitempty"`
+	CurrentContext string                   `json:"current-context,omitempty" yaml:"current-context,omitempty"`
+	Preferences    map[string]interface{}   `json:"preferences,omitempty" yaml:"preferences,omitempty"`
+	Users          []map[string]interface{} `json:"users,omitempty" yaml:"users,omitempty"`
+}
+
+func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *core.Uuid, log logger.Handler) (K8sContext, string) {
+	cluster := map[string]interface{}{}
+	user := map[string]interface{}{}
+	context := map[string]interface{}{}
+
+	// Find context data
+	for _, ctx := range kcfg.Contexts {
+		ctx = utils.RecursiveCastMapStringInterfaceToMapStringInterface(ctx)
+		if ctx["name"] == name {
+			context = ctx
+			break
+		}
+	}
+
+	ctxInfo, _ := context["context"].(map[string]interface{})
+
+	// Find cluster data associated with the context
+	clusterName := ctxInfo["cluster"]
+	for _, cl := range kcfg.Clusters {
+		cl = utils.RecursiveCastMapStringInterfaceToMapStringInterface(cl)
+		if cl["name"] == clusterName {
+			cluster = cl
+			break
+		}
+	}
+
+	clusterInfo, _ := cluster["cluster"].(map[string]interface{})
+	server, _ := clusterInfo["server"].(string)
+
+	// Find Auth data associated with the context
+	userName := ctxInfo["user"]
+	for _, u := range kcfg.Users {
+		u = utils.RecursiveCastMapStringInterfaceToMapStringInterface(u)
+		if u["name"] == userName {
+			user = u
+			break
+		}
+	}
+
+	return NewK8sContext(
+		name,
+		cluster,
+		user,
+		server,
+		instanceID,
+		log,
+	)
+}
+
+func NewK8sContextWithServerID(
+	contextName string,
+	clusters map[string]interface{},
+	users map[string]interface{},
+	server string,
+	instanceID *core.Uuid,
+	log logger.Handler,
+) (*K8sContext, error) {
+	ctx, _ := NewK8sContext(contextName, clusters, users, server, instanceID, log)
+
+	// Perform Ping test on the cluster
+	if err := ctx.PingTest(); err != nil {
+		return nil, err
+	}
+
+	// Get a kubernetes handler
+	handler, err := ctx.GenerateKubeHandler()
+	if err != nil {
+		return nil, err
+	}
+
+	err = ctx.AssignVersion(handler)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
+	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
+	if err != nil {
+		return nil, err
+	}
+	uid := ksns.GetUID()
+	ksUUID := uuid.FromStringOrNil(string(uid))
+
+	ctx.KubernetesServerID = &ksUUID
+
+	return &ctx, nil
+}
+
+// K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
+// kubernetes contexts from it
+func K8sContextsFromKubeconfig(provider Provider, userID string, broadcast *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler) []*K8sContext {
+	return K8sContextsFromKubeconfigWithOptions(provider, userID, broadcast, kubeconfig, instanceID, eventMetadata, log, false)
+}
+
+// K8sContextsFromKubeconfigWithOptions parses the kubeconfig into per-context
+// K8sContexts. When includeUnreachable is false (the default behaviour used by
+// component registration and startup discovery) contexts whose API server is
+// unreachable are skipped. When it is true, unreachable contexts are still
+// returned with Reachable=false so callers (the connection wizard's discover &
+// import flow) can register them as discovered connections and let the user
+// decide; reachability only gates the transition to the connected state.
+func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, includeUnreachable bool) []*K8sContext {
+	kcs := []*K8sContext{}
+
+	userUUID := uuid.FromStringOrNil(userID)
+
+	// Enumerate contexts from the raw kubeconfig rather than via
+	// kubernetes.ProcessConfig: ProcessConfig runs clientcmd MinifyConfig, which
+	// prunes every context except current-context. Driving the loop from its
+	// output therefore discovered only the current context and dropped the rest.
+	// The import wizard needs *every* context in the file, so enumerate them from
+	// the un-minified config here; each context is still validated individually
+	// below when its kube handler is built (unreachable ones are surfaced or
+	// skipped per includeUnreachable).
+	kcfg := InternalKubeConfig{}
+	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
+		return kcs
+	}
+
+	for _, ctxEntry := range kcfg.Contexts {
+		ctxEntry = utils.RecursiveCastMapStringInterfaceToMapStringInterface(ctxEntry)
+		name, _ := ctxEntry["name"].(string)
+		if name == "" {
+			continue
+		}
+		metadata := map[string]interface{}{}
+		kc, _ := kcfg.K8sContext(name, instanceID, log)
+		eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(kc.ConnectionID)).WithCategory("connection").WithAction("register").FromSystem(*instanceID).FromOwner(userUUID)
+
+		metadata["context"] = RedactCredentialsForContext(&kc)
+
+		handler, err := kc.GenerateKubeHandler()
+		if err != nil {
+			err = ErrUnreachableKubeAPI(err, kc.Server)
+
+			_ = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error connecting with kubernetes context at %s, skipping %s", kc.Server, kc.Name)).WithMetadata(map[string]interface{}{
+				"error": err,
+			}).Build()
+			metadata["error"] = err
+			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
+			eventMetadata[name] = metadata
+
+			// 	// Preventing the publishing of event as the event details would be present in the reciept.
+			// 	// Publishing again would lead to duplicate events and confusion to the user.
+			// 	// _ = provider.PersistEvent(token,*event)
+			// 	// eventChan.Publish(userUUID, event)
+			log.Warn(ErrGenerateK8sHandler(err, kc.Name))
+			// The kube handler could not even be constructed from the context's
+			// credentials, so there is nothing reachable to register; skip it
+			// regardless of includeUnreachable.
+			continue
+		}
+
+		if err := kc.AssignServerID(handler); err != nil {
+
+			_ = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Could not assign server id, skipping context %s", kc.Name)).WithMetadata(map[string]interface{}{
+				"error": err,
+			}).Build()
+
+			metadata["error"] = err
+			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
+			eventMetadata[name] = metadata
+
+			// 	// Preventing the publishing of event as the event details would be present in the reciept.
+			// 	// Publishing again would lead to duplicate events and confusion to the user.
+			// 	// _ = provider.PersistEvent(token,*event)
+			// 	// eventChan.Publish(userUUID, event)
+			log.Warn(ErrRetrieveK8sClusterID(err, kc.Name))
+			// Failing to read the kube-system namespace UID means the API server
+			// is unreachable. Historically the context was dropped; when the
+			// caller opts in we instead return it flagged unreachable so it can be
+			// registered as a discovered connection (without a server ID/version).
+			if includeUnreachable {
+				kc.Reachable = false
+				kcs = append(kcs, &kc)
+			}
+			continue
+		}
+
+		// The API server responded to the kube-system namespace lookup, so the
+		// context is reachable even if a later (non-fatal) version lookup fails.
+		kc.Reachable = true
+
+		err = kc.AssignVersion(handler)
+		if err != nil {
+			_ = eventBuilder.WithSeverity(events.Warning).WithDescription(fmt.Sprintf("Could not retrieve Kubernetes version for %s", kc.Name)).WithMetadata(map[string]interface{}{
+				"error": err,
+			}).Build()
+
+			// Preventing the publishing of event as the event details would be present in the reciept.
+			// Publishing again would lead to duplicate events and confusion to the user.
+			// _ = provider.PersistEvent(token,*event)
+			// eventChan.Publish(userUUID, event)
+			metadata["error"] = err
+			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
+			eventMetadata[name] = metadata
+			log.Warn(ErrRetrieveK8sClusterID(err, kc.Name))
+			kcs = append(kcs, &kc)
+			continue
+		}
+
+		kcs = append(kcs, &kc)
+	}
+
+	return kcs
+}
+
+func NewK8sContextFromInClusterConfig(contextName string, instanceID *core.Uuid, log logger.Handler) (*K8sContext, error) {
+	const (
+		tokenFile  = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+		rootCAFile = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+	)
+	host, port := os.Getenv("KUBERNETES_SERVICE_HOST"), os.Getenv("KUBERNETES_SERVICE_PORT")
+	if len(host) == 0 || len(port) == 0 {
+		return nil, ErrMesheryNotInCluster
+	}
+
+	token, err := os.ReadFile(tokenFile)
+	if err != nil {
+		return nil, err
+	}
+
+	server := "https://" + net.JoinHostPort(host, port)
+
+	caData, err := os.ReadFile(rootCAFile)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewK8sContextWithServerID(
+		contextName,
+		map[string]interface{}{
+			"cluster": map[string]interface{}{
+				"certificate-authority-data": base64.StdEncoding.EncodeToString(caData),
+				"server":                     server,
+			},
+			"name": contextName,
+		},
+		map[string]interface{}{
+			"user": map[string]interface{}{
+				"token": string(token),
+			},
+			"name": contextName,
+		},
+		server,
+		instanceID,
+		log,
+	)
+}
+
+// NewK8sContext takes in name of the context, cluster info of the contexts,
+// auth info, server address and meshery instance ID and will return a K8sContext from it
+//
+// This function does NOT assigns kubernetes server ID to the context, either the ID
+// can be assigned manually by invoking `AssignServerID` method or instead use
+// `NewK8sContextWithServerID` to create a context
+func NewK8sContext(
+	contextName string,
+	cluster map[string]interface{},
+	user map[string]interface{},
+	server string,
+	instanceID *core.Uuid,
+	log logger.Handler,
+) (K8sContext, string) {
+	ctx := K8sContext{
+		Name:              contextName,
+		Cluster:           cluster,
+		Auth:              user,
+		Server:            server,
+		MesheryInstanceID: instanceID,
+	}
+
+	ID, err := K8sContextGenerateID(ctx)
+	if err != nil {
+		return ctx, ""
+	}
+
+	ctx.ID = ID
+	msg := fmt.Sprintf("Generated context: %s\n", ctx.Name)
+
+	log.Info(msg)
+
+	return ctx, msg
+}
+
+// K8sContextGenerateID takes in a kubernetes context and generates an ID for it
+//
+// If the context remains the same, it is guaranteed that the ID will be same
+func K8sContextGenerateID(kc K8sContext) (string, error) {
+	data := map[string]interface{}{
+		"cluster": kc.Cluster,
+		"auth":    kc.Auth,
+		"meshery": kc.MesheryInstanceID.String(),
+		"name":    kc.Name,
+	}
+
+	byt, err := json.Marshal(data)
+	if err != nil {
+		return "", err
+	}
+
+	hash := md5.Sum(byt)
+
+	return hex.EncodeToString(hash[:]), nil
+}
+
+// GenerateKubeConfig will generate a kubeconfig from the context object
+// and will set the "current-context" to the current context's name
+func (kc K8sContext) GenerateKubeConfig() ([]byte, error) {
+	cfg := map[string]interface{}{
+		"apiVersion": "v1",
+		"clusters": []map[string]interface{}{
+			kc.Cluster,
+		},
+		"contexts": []map[string]interface{}{
+			{
+				"context": map[string]interface{}{
+					"cluster": kc.Cluster["name"],
+					"user":    kc.Auth["name"],
+				},
+				"name": kc.Name,
+			},
+		},
+		"current-context": kc.Name,
+		"kind":            "Config",
+		"users": []map[string]interface{}{
+			kc.Auth,
+		},
+	}
+
+	data, err := yaml.Marshal(cfg)
+	if err != nil {
+		return []byte{}, ErrMarshal(err, "kube config")
+	}
+	return data, nil
+}
+
+func (kc *K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
+	cfg, err := kc.GenerateKubeConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return kubernetes.New(cfg)
+}
+
+func (kc *K8sContext) AssignVersion(handler *kubernetes.Client) error {
+	res, err := handler.KubeClient.ServerVersion()
+	if err != nil {
+		return ErrUnreachableKubeAPI(err, kc.Server)
+	}
+
+	kc.Version = res.GitVersion
+	return nil
+}
+
+// PingTest uses the k8scontext to to "ping" the kubernetes cluster
+// if the return value is nil then the succeeds or else it has failed
+func (kc K8sContext) PingTest() error {
+	h, err := kc.GenerateKubeHandler()
+	if err != nil {
+		return err
+	}
+
+	res := h.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Timeout(1 * time.Second).Do(context.TODO())
+	if res.Error() != nil {
+		return ErrUnreachableKubeAPI(res.Error(), kc.Server)
+	}
+
+	return nil
+}
+
+// AssignServerID will attempt to assign kubernetes
+// server ID to the kubernetes context
+func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
+	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
+	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
+	if err != nil {
+		return ErrUnreachableKubeAPI(err, kc.Server)
+	}
+	uid := ksns.GetUID()
+	ksUUID := uuid.FromStringOrNil(string(uid))
+
+	kc.KubernetesServerID = &ksUUID
+
+	return nil
+}
+
+// ReconcileK8sContextServerID keeps an already-persisted kubernetes connection's
+// metadata.kubernetesServerId in step with the server ID freshly resolved from
+// the reachable cluster (its kube-system namespace UID, as assigned by
+// AssignServerID). It self-heals a connection whose persisted server ID is empty
+// or stale - one registered while its cluster was unreachable, or migrated from a
+// Meshery build that predated storing it - which matters because the dashboard
+// filters MeshSync resources by that persisted ID against each row's cluster_id.
+// A mismatch there leaves a live stream invisible.
+//
+// The persisted record it reads is the schemas connection model
+// (connections.Connection = github.com/meshery/schemas/.../v1beta1/connection.Connection).
+// The write goes through the token-string provider API UpdateConnectionById - the
+// same path the connection state machine's own status update uses - which takes
+// the server's ConnectionPayload; there is no token-string, schemas-native
+// connection writer (UpdateConnection is request-scoped, and an FSM action has no
+// *http.Request).
+//
+// It is a no-op when the persisted value already matches, so the FSM re-running
+// discovery on every request corrects a broken connection exactly once and adds
+// no write on the steady state.
+func ReconcileK8sContextServerID(provider Provider, token string, k8sContext K8sContext) error {
+	if k8sContext.KubernetesServerID == nil || *k8sContext.KubernetesServerID == uuid.Nil {
+		return nil
+	}
+	serverID := k8sContext.KubernetesServerID.String()
+
+	connectionID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+	if connectionID == uuid.Nil {
+		return nil
+	}
+
+	connection, _, err := provider.GetConnectionByID(token, connectionID)
+	if err != nil {
+		return ErrReconcileServerID(err)
+	}
+	if connection == nil {
+		return nil
+	}
+
+	metadata := connection.Metadata
+	if metadata == nil {
+		metadata = map[string]interface{}{}
+	}
+	if persisted, _ := metadata["kubernetesServerId"].(string); persisted == serverID {
+		// Already correct - nothing to write.
+		return nil
+	}
+	metadata["kubernetesServerId"] = serverID
+
+	payload := &connections.ConnectionPayload{
+		ID:       connectionID,
+		Kind:     connection.Kind,
+		MetaData: metadata,
+		Status:   connection.Status,
+	}
+	if _, err := provider.UpdateConnectionById(token, payload, connectionID.String()); err != nil {
+		return ErrReconcileServerID(err)
+	}
+	return nil
+}
+
+// FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID
+func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Provider, eventsChan *Broadcast, userID string, mesheryInstanceID *core.Uuid, log logger.Handler) {
+	ctxID := k8sContext.ID
+	ctxUUID := uuid.FromStringOrNil(ctxID)
+	userUUID, err := uuid.FromString(userID)
+	if err != nil {
+		// A nil user key would persist and broadcast events under no owner; bail
+		// rather than attribute the flush to uuid.Nil.
+		log.Error(ErrInvalidUUID(fmt.Errorf("invalid user id %q: %w", userID, err)))
+		return
+	}
+	// Gets all the available kubernetes contexts
+
+	ctxName := k8sContext.Name
+	serverURL := k8sContext.Server
+	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]*K8sContext)
+	if !ok || len(k8sctxs) == 0 {
+		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher").FromOwner(userUUID).Build()
+		err := provider.PersistSystemEvent(*event)
+		if err != nil {
+			err = ErrPersistEvent(err)
+			log.Error(err)
+		}
+
+		eventsChan.Publish(userUUID, event)
+		return
+	}
+	var sid string
+	var refCount int
+	// Gets the serverID for the passed contextID
+	for _, k8ctx := range k8sctxs {
+		if k8ctx == nil {
+			continue
+		}
+		if k8ctx.ID == ctxID && k8ctx.KubernetesServerID != nil {
+			sid = k8ctx.KubernetesServerID.String()
+			break
+		}
+	}
+	// Counts the reference of the serverID
+	// As multiple context can have same serverID
+	for _, k8ctx := range k8sctxs {
+		if k8ctx == nil {
+			continue
+		}
+		if k8ctx.KubernetesServerID != nil && k8ctx.KubernetesServerID.String() == sid {
+			refCount++
+		}
+	}
+	// If the reference count is 1 then only flush the meshsync data
+	// because this means its the last contextID referring to that Kubernetes Server
+	if refCount == 1 {
+		if provider.GetGenericPersister() == nil {
+
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromOwner(userUUID).WithMetadata(map[string]interface{}{
+				"error": ErrEmptyMeshSyncHandler(),
+			}).Build()
+			err := provider.PersistSystemEvent(*event)
+			if err != nil {
+				err = ErrPersistEvent(err)
+				log.Error(err)
+			}
+			eventsChan.Publish(userUUID, event)
+			return
+		}
+
+		if err := FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), sid); err != nil {
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromOwner(userUUID).WithMetadata(map[string]interface{}{
+				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
+			}).Build()
+			if perr := provider.PersistSystemEvent(*event); perr != nil {
+				log.Error(ErrPersistEvent(perr))
+			}
+
+			eventsChan.Publish(userUUID, event)
+			return
+		}
+
+		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Informational).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("MeshSync data flushed for context %s", ctxName)).FromOwner(userUUID).Build()
+		// Also add context name, as id is not helpful
+		err = provider.PersistSystemEvent(*event)
+		if err != nil {
+			err = ErrPersistEvent(err)
+			log.Error(err)
+		}
+		eventsChan.Publish(userUUID, event)
+	}
+}
+
+// FlushMeshSyncResourcesForCluster removes every MeshSync-discovered Kubernetes
+// resource that belongs to the given cluster (Kubernetes server) ID, together with
+// its child spec, status, object-meta, and key-value rows.
+//
+// Every child row shares its `id` primary key with the parent KubernetesResource.
+// The spec, status, and key-value children carry no cluster_id column of their own
+// (only the resource and its object-meta do), so all children are scoped uniformly
+// by a single subquery over the resource IDs owned by the cluster. Children are
+// deleted before the parent rows so that subquery still resolves to the IDs being
+// removed.
+//
+// Every table name is derived from the GORM models (via Model/Delete) rather than
+// hard-coded strings, so a future model rename or naming-strategy change cannot
+// silently orphan child rows - the defect this function was extracted to fix, where
+// the subqueries referenced a stale "objects" table that no longer existed and left
+// child rows behind on every cluster deletion.
+func FlushMeshSyncResourcesForCluster(db *database.Handler, clusterID string) error {
+	// The embedded *gorm.DB can be nil even when the handler is not, in which case
+	// the db.Transaction call below would panic; guard both.
+	if db == nil || db.DB == nil {
+		return ErrEmptyMeshSyncHandler()
+	}
+
+	// Run all deletes in one transaction so a mid-way failure rolls back rather than
+	// leaving the cluster partially flushed (e.g. children gone but parents kept).
+	return db.Transaction(func(tx *gorm.DB) error {
+		// The IDs of the resources being removed; reused as the scoping subquery for
+		// every child delete since each child row shares the parent resource's id.
+		resourceIDs := tx.Model(&meshsyncmodel.KubernetesResource{}).
+			Select("id").
+			Where("cluster_id = ?", clusterID)
+
+		// Child rows keyed by the parent resource's id, deleted before the parent so
+		// the subquery still resolves.
+		childModels := []any{
+			&meshsyncmodel.KubernetesKeyValue{},
+			&meshsyncmodel.KubernetesResourceSpec{},
+			&meshsyncmodel.KubernetesResourceStatus{},
+			&meshsyncmodel.KubernetesResourceObjectMeta{},
+		}
+		for _, child := range childModels {
+			if err := tx.Where("id IN (?)", resourceIDs).Delete(child).Error; err != nil {
+				return err
+			}
+		}
+
+		// Finally remove the parent resources for the cluster.
+		return tx.Where("cluster_id = ?", clusterID).Delete(&meshsyncmodel.KubernetesResource{}).Error
+	})
+}
+
+func RedactCredentialsForContext(ctx *K8sContext) (redactedContext K8sContext) {
+	redactedContext = *ctx
+	redactedContext.Auth = sql.Map{}
+	redactedContext.Cluster = sql.Map{}
+	redactedContext.DeploymentType = ""
+	redactedContext.ID = ""
+	redactedContext.Name = ""
+	redactedContext.Server = ""
+	redactedContext.ConnectionID = ""
+	redactedContext.KubernetesServerID = nil
+	redactedContext.MesheryInstanceID = nil
+	return
+}
+
+func GenerateK8sClientSet(context *K8sContext, eb *events.EventBuilder, eventMetadata map[string]interface{}, log logger.Handler) (*kubernetes.Client, error) {
+	metadata := map[string]interface{}{}
+
+	handler, err := context.GenerateKubeHandler()
+	if err != nil {
+		eb.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error connecting with kubernetes context at %s, skipping %s", context.Server, context.Name)).WithMetadata(map[string]interface{}{
+			"error": err,
+		})
+		log.Warn(ErrGenerateK8sHandler(err, context.Name))
+		return nil, err
+	}
+
+	metadata["error"] = err
+	metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", context.Name, context.Server)
+
+	eventMetadata[context.Name] = metadata
+
+	return handler, nil
+}

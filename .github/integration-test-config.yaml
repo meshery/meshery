@@ -1,0 +1,28 @@
+# Test configuration file for running performance benchmarks
+# See: https://docs.meshery.io/guides/performance-management#running-performance-benchmarks-through-mesheryctl
+test:
+  smp_version: v0.0.1
+  
+  # The name of the test
+  name: Performance Profile for Meshery's Nightly Integration Testing
+  labels: {}
+  
+  # Test configuration to be defined here
+  clients:
+    - internal: false
+      load_generator: fortio
+      protocol: 1
+      connections: 2
+      rps: 10
+      headers: {}
+      cookies: {}
+      body: ''
+      content_type: ''
+      endpoint_urls:
+        - 'https://meshery.io'
+  duration: 2s
+
+# Service mesh under test in Service Mesh Performance Spec format
+# See: https://github.com/service-mesh-performance/service-mesh-performance/blob/master/protos/service_mesh.proto
+mesh:
+  type: 3
