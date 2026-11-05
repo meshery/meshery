@@ -54,6 +54,7 @@ import UnreadIcon from '../../../assets/icons/UnreadIcon';
 import { FormattedLinkMetadata, FormattedMetadata, PropertyLinkFormatters } from './metadata';
 import { truncate } from 'lodash';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
+import { getDesignEventErrorSummary, isMeshkitErrorCode } from './formatters/design_event_metadata';
 import { useDispatch } from 'react-redux';
 
 export const eventPreventDefault = (e) => {
@@ -265,6 +266,12 @@ export const getErrorCodesFromEvent = (event) => {
       errorCodes.add(event.metadata.error.Code);
     }
   }
+
+  // Pattern events list {code, componentId} errors (#22764); only a MeshKit
+  // code has an error code reference entry.
+  getDesignEventErrorSummary(event.metadata)?.errors.forEach(({ code }) => {
+    if (isMeshkitErrorCode(code)) errorCodes.add(code);
+  });
 
   if (event.metadata.ModelDetails) {
     Object.values(event.metadata.ModelDetails).forEach((detail) => {

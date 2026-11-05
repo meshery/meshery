@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -1282,6 +1283,38 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 
 }
 
+var (
+	ociRepositoryNamePattern = regexp.MustCompile(`^[a-z0-9]+(?:(?:[._]|__|-+)[a-z0-9]+)*$`)
+	ociRepositoryNameInvalid = regexp.MustCompile(`[^a-z0-9]+`)
+)
+
+const (
+	ociRepositoryNameMinLength = 2
+	ociRepositoryNameMaxLength = 255
+)
+
+// ociRepositoryName maps a model name to a valid OCI repository name. The
+// mapping is lossy: distinct names can sanitize to the same repository name
+// (for example "foo bar" and "foo-bar"), so callers pushing to a shared
+// registry should be aware of possible collisions.
+func ociRepositoryName(modelName string) string {
+	if len(modelName) >= ociRepositoryNameMinLength && len(modelName) <= ociRepositoryNameMaxLength &&
+		ociRepositoryNamePattern.MatchString(modelName) {
+		return modelName
+	}
+	sanitized := strings.Trim(ociRepositoryNameInvalid.ReplaceAllString(strings.ToLower(modelName), "-"), "-")
+	if len(sanitized) > ociRepositoryNameMaxLength {
+		sanitized = strings.TrimRight(sanitized[:ociRepositoryNameMaxLength], "-")
+	}
+	switch {
+	case sanitized == "":
+		return "model"
+	case len(sanitized) < ociRepositoryNameMinLength:
+		return sanitized + "-model"
+	}
+	return sanitized
+}
+
 func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	modelId := r.URL.Query().Get("id")
 	name := r.URL.Query().Get("name")
@@ -1358,9 +1391,31 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.log.Error(err)
 	}
+	// The model name is interpolated into filesystem paths below. Reject anything
+	// that is not a single path component so a hostile name cannot escape the
+	// per-request temp directory (CWE-22).
+	if model.Name == "." || model.Name == ".." || filepath.Base(model.Name) != model.Name {
+		err := fmt.Errorf("invalid model name %q: must be a single path component", model.Name)
+		writeMeshkitError(rw, ErrExportModel(err, "model name validation"), http.StatusBadRequest)
+		return
+	}
 	// 2. Convert it to oci
-	temp := os.TempDir()
-	modelDir := filepath.Join(temp, model.Name)
+	// Fixed pattern: the model name is already preserved in modelDir inside the
+	// temp root, and embedding it here risks exceeding filesystem name limits.
+	tempDir, err := os.MkdirTemp("", "meshery-model-export-*")
+	if err != nil {
+		err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
+		h.log.Error(err)
+		writeMeshkitError(rw, ErrExportModel(err, "temp directory creation"), http.StatusInternalServerError)
+		return
+	}
+	defer func() {
+		if err := os.RemoveAll(tempDir); err != nil {
+			h.log.Error(ErrExportModel(err, "temp directory cleanup"))
+		}
+	}()
+
+	modelDir := filepath.Join(tempDir, model.Name)
 	versionDir := filepath.Join(modelDir, model.Model.Version, model.Version)
 
 	// Create necessary directories: {modelName}/v1.0.0/1.0.0/{components, relationships}
@@ -1379,11 +1434,6 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	defer func() {
-		if err := os.RemoveAll(modelDir); err != nil {
-			h.log.Error(err)
-		}
-	}()
 
 	components := []component.ComponentDefinition{}
 	// Components can be nil if hasComponents is false
@@ -1447,7 +1497,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 		// Save OCI artifact into a tar file
 		tarfileName := filepath.Join(modelDir, "model.tar")
-		err = meshkitOci.SaveOCIArtifact(img, tarfileName, model.Name)
+		err = meshkitOci.SaveOCIArtifact(img, tarfileName, ociRepositoryName(model.Name))
 		if err != nil {
 			h.log.Error(err)
 			writeMeshkitError(rw, ErrExportModel(err, "OCI artifact save"), http.StatusInternalServerError)
