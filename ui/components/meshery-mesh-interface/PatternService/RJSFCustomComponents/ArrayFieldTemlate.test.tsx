@@ -67,10 +67,23 @@ import ArrayFieldTemplate from './ArrayFieldTemlate';
 
 // A stand-in for the element RJSF builds per array item: a keyed element carrying the item's
 // props and rendering its own content, exactly like `ArrayFieldItem` does.
+// In RJSF v6 the element is an `ArrayFieldItem` element, whose props carry
+// `handleRemoveItem(event, index)`, `canRemove` and the array's `uiOptions` —
+// that is what the template builds the accordion's `hasRemove` /
+// `onRemoveItem` from. `buttonsProps` is built inside `ArrayFieldItemInner`
+// and is NOT on the element's props, so the stand-in does not carry it.
 const ArrayItem = (props: any) => <div data-testid={props.itemKey}>{props.children}</div>;
 
 const makeArrayItem = (key: string, index: number) => (
-  <ArrayItem key={key} itemKey={key} index={index} disabled={false} readonly={false}>
+  <ArrayItem
+    key={key}
+    itemKey={key}
+    index={index}
+    disabled={false}
+    readonly={false}
+    handleRemoveItem={vi.fn()}
+    uiOptions={{}}
+  >
     <span>{`item ${key}`}</span>
   </ArrayItem>
 );
@@ -100,6 +113,18 @@ describe('ArrayFieldTemplate', () => {
     // Each entry of `items` is rendered as an element, so its own content shows up.
     expect(screen.getByText('item a')).toBeInTheDocument();
     expect(screen.getByText('item b')).toBeInTheDocument();
+  });
+
+  it('passes remove props to the accordion so its delete icon can show', () => {
+    render(<ArrayFieldTemplate {...(baseProps as any)} />);
+    // The mocked accordion exposes hasRemove from the childProps it receives;
+    // the template derives it from the item's handleRemoveItem / canRemove /
+    // uiOptions, the same inputs RJSF uses for buttonsProps.hasRemove.
+    const accordions = screen.getAllByTestId('accordion');
+    expect(accordions).toHaveLength(2);
+    accordions.forEach((accordion) => {
+      expect(accordion).toHaveAttribute('data-has-remove', 'true');
+    });
   });
 
   it('renders an Add icon button when canAdd is true', () => {
