@@ -383,9 +383,7 @@ func TestBuildEntityTypeLine_PanicGuards(t *testing.T) {
 				}
 			}()
 			line := buildEntityTypeLine(tt.names, tt.entityTypes, "desc", "cause", "remediation", tt.modelName)
-			if tt.expected != "" {
-				assert.Equal(t, tt.expected, line)
-			}
+			assert.Equal(t, tt.expected, line)
 		})
 	}
 }
