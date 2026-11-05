@@ -161,12 +161,15 @@ func main() {
 
 	log.Infof("MESHSYNC_DEFAULT_DEPLOYMENT_MODE is %s", viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"))
 
+	// The registry log directory below is always under the home directory, so
+	// the home directory is needed even when USER_DATA_FOLDER and
+	// KUBECONFIG_FOLDER are set.
 	home, homeErr := os.UserHomeDir()
+	if homeErr != nil {
+		log.Error(ErrRetrievingUserHomeDirectory(homeErr))
+		os.Exit(1)
+	}
 	if viper.GetString("USER_DATA_FOLDER") == "" {
-		if homeErr != nil {
-			log.Error(ErrRetrievingUserHomeDirectory(homeErr))
-			os.Exit(1)
-		}
 		viper.SetDefault("USER_DATA_FOLDER", path.Join(home, ".meshery", "config"))
 	}
 
@@ -196,10 +199,6 @@ func main() {
 
 	log.Info("Meshery Database is at: ", viper.GetString("USER_DATA_FOLDER"))
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
-		if homeErr != nil {
-			log.Error(ErrRetrievingUserHomeDirectory(homeErr))
-			os.Exit(1)
-		}
 		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
 	}
 	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
