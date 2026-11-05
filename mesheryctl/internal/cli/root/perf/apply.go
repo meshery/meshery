@@ -29,6 +29,7 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/ghodss/yaml"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	servermodels "github.com/meshery/meshery/server/models"
@@ -127,7 +128,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 	Annotations: linkDocPerfApply,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		userResponse := false
-		var selectedProfile *perfprofile.PerformanceProfile
+		isExistingProfile := false
 
 		// setting up for error formatting
 		cmdUsed = cmd.Name()
@@ -257,7 +258,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				}
 				profileID = profiles[index].ID.String()
 			}
-			selectedProfile = &profiles[index]
+			isExistingProfile = true
 			// what if user passed profile-name but didn't passed the url
 			// we use url from performance profile
 			if testURL == "" {
@@ -307,12 +308,6 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			return ErrNotValidURL()
 		}
 
-		if selectedProfile != nil {
-			if err := applyMetadataFlagsToProfile(mctlCfg, *selectedProfile); err != nil {
-				return err
-			}
-		}
-
 		req, err = utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
 		if err != nil {
 			return utils.ErrCreatingRequest(err)
@@ -341,6 +336,14 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			q.Add("mesh", testMesh)
 		}
 		req.URL.RawQuery = q.Encode()
+
+		// Update the saved profile last, so a command that fails validation
+		// leaves it unchanged.
+		if isExistingProfile {
+			if err := applyMetadataFlagsToProfile(mctlCfg, profileID); err != nil {
+				return err
+			}
+		}
 
 		utils.Log.Info("Initiating Performance test ...")
 
@@ -376,6 +379,8 @@ func init() {
 	applyCmd.Flags().BoolVar(&disableCert, "disable-cert", false, "(optional) Do not use certificate present in the profile")
 }
 
+// createPerformanceProfile saves a new profile from the flag values, filling in
+// defaults for the ones that are not set, and returns its ID and name.
 func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string, error) {
 	utils.Log.Debug("Creating new performance profile inside function")
 
@@ -519,13 +524,20 @@ func profileMetadataFromFlags() (map[string]interface{}, error) {
 // applyMetadataFlagsToProfile saves --options and --cert-path to an existing
 // profile. The server reads both from the saved profile when a test runs, so
 // they have no effect unless the profile is updated first.
-func applyMetadataFlagsToProfile(mctlCfg *config.MesheryCtlConfig, profile perfprofile.PerformanceProfile) error {
+func applyMetadataFlagsToProfile(mctlCfg *config.MesheryCtlConfig, profileID string) error {
 	metadata, err := profileMetadataFromFlags()
 	if err != nil {
 		return err
 	}
 	if len(metadata) == 0 {
 		return nil
+	}
+
+	// Saving replaces the whole profile and the profile list leaves out fields
+	// such as the schedule, so start from the full profile.
+	profile, err := api.Fetch[perfprofile.PerformanceProfile]("api/performance/profiles/" + profileID)
+	if err != nil {
+		return err
 	}
 
 	updatedMetadata := make(map[string]any, len(profile.Metadata)+len(metadata))

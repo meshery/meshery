@@ -331,6 +331,8 @@ func TestCreatePerformanceProfile_RejectsInvalidDuration(t *testing.T) {
 	}
 }
 
+// TestProfileMetadataFromFlags verifies the metadata built from --options and
+// --cert-path, and that invalid values are rejected.
 func TestProfileMetadataFromFlags(t *testing.T) {
 	dir := t.TempDir()
 	optionsFile := filepath.Join(dir, "options.json")
@@ -395,6 +397,8 @@ func TestProfileMetadataFromFlags(t *testing.T) {
 	}
 }
 
+// TestCreatePerformanceProfile_RejectsMissingCertificate verifies that no profile
+// is created when the --cert-path file can't be read.
 func TestCreatePerformanceProfile_RejectsMissingCertificate(t *testing.T) {
 	testContext := utils.InitTestEnvironment(t)
 	defer utils.StopMockery(t)
@@ -422,13 +426,20 @@ func TestCreatePerformanceProfile_RejectsMissingCertificate(t *testing.T) {
 	}
 }
 
-// TestApplyUpdatesExistingProfileBeforeRun verifies that --options reaches an
-// existing profile before the test starts, because the server reads it from the
-// saved profile, and that the rest of the profile is kept.
-func TestApplyUpdatesExistingProfileBeforeRun(t *testing.T) {
-	testContext := utils.InitTestEnvironment(t)
-	defer utils.StopMockery(t)
-	_ = utils.SetupMeshkitLoggerTesting(t, false)
+// existingProfileSchedule is the schedule stored on the mocked existing profile.
+const existingProfileSchedule = "2c1f0a3e-5d4b-4c6e-9a7f-3b8d2e1f4a60"
+
+// existingProfileRequests records the requests perf apply sends for an existing
+// profile, and the profile it saved.
+type existingProfileRequests struct {
+	order []string
+	saved perfprofile.PerformanceProfile
+}
+
+// mockExistingProfile serves an existing profile. As on the server, the profile
+// list leaves out the schedule, which only the single-profile read returns.
+func mockExistingProfile(t *testing.T, baseURL string, profileID string) *existingProfileRequests {
+	t.Helper()
 
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -436,31 +447,48 @@ func TestApplyUpdatesExistingProfileBeforeRun(t *testing.T) {
 	}
 	origToken := utils.TokenFlag
 	utils.TokenFlag = filepath.Join(filepath.Dir(filename), "fixtures", "auth.json")
-	defer func() { utils.TokenFlag = origToken }()
+	t.Cleanup(func() { utils.TokenFlag = origToken })
 
-	const profileID = "906f8876-33b5-4a97-906e-7a409d3b8ae9"
-	existingProfile := `{"id":"` + profileID + `","name":"existing","qps":7,"duration":"30s",` +
+	fields := `"id":"` + profileID + `","name":"existing","qps":7,"duration":"30s",` +
 		`"endpoints":["https://meshery.io"],"loadGenerators":["fortio"],` +
-		`"metadata":{"additional_options":"{\"old\":true}","kept":"value"}}`
+		`"metadata":{"additional_options":"{\"old\":true}","kept":"value"}`
+	listedProfile := `{` + fields + `}`
+	fullProfile := `{` + fields + `,"schedule":"` + existingProfileSchedule + `"}`
 
-	profilesURL := testContext.BaseURL + "/api/performance/profiles"
+	requests := &existingProfileRequests{}
+	profilesURL := baseURL + "/api/performance/profiles"
 	httpmock.RegisterResponder("GET", profilesURL,
-		httpmock.NewStringResponder(http.StatusOK, `{"profiles":[`+existingProfile+`],"totalCount":1}`))
-
-	var requests []string
-	var saved perfprofile.PerformanceProfile
+		httpmock.NewStringResponder(http.StatusOK, `{"profiles":[`+listedProfile+`],"totalCount":1}`))
+	httpmock.RegisterResponder("GET", profilesURL+"/"+profileID, func(*http.Request) (*http.Response, error) {
+		requests.order = append(requests.order, "fetch")
+		return httpmock.NewStringResponse(http.StatusOK, fullProfile), nil
+	})
 	httpmock.RegisterResponder("POST", profilesURL, func(req *http.Request) (*http.Response, error) {
-		requests = append(requests, "save")
-		if err := json.NewDecoder(req.Body).Decode(&saved); err != nil {
+		requests.order = append(requests.order, "save")
+		if err := json.NewDecoder(req.Body).Decode(&requests.saved); err != nil {
 			return nil, err
 		}
-		return httpmock.NewStringResponse(http.StatusOK, existingProfile), nil
+		return httpmock.NewStringResponse(http.StatusOK, fullProfile), nil
 	})
-	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/user/performance/profiles/"+profileID+"/run",
+	httpmock.RegisterResponder("GET", baseURL+"/api/user/performance/profiles/"+profileID+"/run",
 		func(*http.Request) (*http.Response, error) {
-			requests = append(requests, "run")
+			requests.order = append(requests.order, "run")
 			return httpmock.NewStringResponse(http.StatusOK, `{}`), nil
 		})
+
+	return requests
+}
+
+// TestApplyUpdatesExistingProfileBeforeRun verifies that --options reaches an
+// existing profile before the test starts, because the server reads it from the
+// saved profile, and that the rest of the stored profile is kept.
+func TestApplyUpdatesExistingProfileBeforeRun(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	const profileID = "906f8876-33b5-4a97-906e-7a409d3b8ae9"
+	requests := mockExistingProfile(t, testContext.BaseURL, profileID)
 
 	resetVariables()
 	defer resetVariables()
@@ -471,17 +499,44 @@ func TestApplyUpdatesExistingProfileBeforeRun(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if !reflect.DeepEqual(requests, []string{"save", "run"}) {
-		t.Fatalf("expected the profile to be saved before the run, got requests %v", requests)
+	if !reflect.DeepEqual(requests.order, []string{"fetch", "save", "run"}) {
+		t.Fatalf("expected the full profile to be fetched and saved before the run, got requests %v", requests.order)
 	}
+	saved := requests.saved
 	if saved.ID.String() != profileID || saved.QPS != 7 {
 		t.Errorf("expected the existing profile to be updated, got id=%s qps=%d", saved.ID, saved.QPS)
+	}
+	if saved.Schedule == nil || saved.Schedule.String() != existingProfileSchedule {
+		t.Errorf("expected the stored schedule to be kept, got %v", saved.Schedule)
 	}
 	if got := saved.Metadata["additional_options"]; got != additionalOptions {
 		t.Errorf("expected --options to replace the saved options, got %v", got)
 	}
 	if got := saved.Metadata["kept"]; got != "value" {
 		t.Errorf("expected other metadata to be kept, got %v", got)
+	}
+}
+
+// TestApplyDoesNotUpdateProfileWhenValidationFails verifies that a command that
+// fails on its own inputs leaves the saved profile unchanged.
+func TestApplyDoesNotUpdateProfileWhenValidationFails(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	requests := mockExistingProfile(t, testContext.BaseURL, "906f8876-33b5-4a97-906e-7a409d3b8ae9")
+
+	resetVariables()
+	defer resetVariables()
+	testURL = "https://meshery.io"
+	additionalOptions = `{"MethodOverride":"POST"}`
+	testDuration = "500ms"
+
+	if err := applyCmd.RunE(applyCmd, []string{"existing"}); err == nil {
+		t.Fatal("expected an invalid duration to fail the command")
+	}
+	if len(requests.order) != 0 {
+		t.Errorf("expected no profile update or run, got requests %v", requests.order)
 	}
 }
 
