@@ -18,15 +18,19 @@ function getTitle(props: ArrayFieldTemplateProps): string {
   return safeStringTitle(props.uiSchema?.['ui:title'] ?? props.title) || 'Unknown';
 }
 
-// Whether this array's errors must be hidden. RJSF's ArrayField passes
-// rawErrors to this template even when the array hides its errors, and it
-// does not forward hideError to the template at all (@rjsf/core 6.6.2,
-// ArrayField.js: hideError reaches only the item props, never arrayProps),
-// so the template cannot rely on props.hideError alone. The effective
-// value is resolved the same way SchemaField resolves it: the uiSchema
-// option wins (getUiOptions merges ui:options.hideError and the bare
-// ui:hideError, plus the registry's global UI options), falling back to
-// the inherited hideError prop when the uiSchema sets nothing.
+/**
+ * Resolve whether this array's errors must be hidden.
+ * RJSF's ArrayField passes rawErrors to this template even when the array
+ * hides its errors, and it does not forward hideError to the template at all
+ * (@rjsf/core 6.6.2, ArrayField.js: hideError reaches only the item props,
+ * never arrayProps), so the template cannot rely on props.hideError alone.
+ * The effective value is resolved the same way SchemaField resolves it: the
+ * uiSchema option wins (getUiOptions merges ui:options.hideError and the bare
+ * ui:hideError, plus the registry's global UI options), falling back to the
+ * inherited hideError prop when the uiSchema sets nothing.
+ * @param props the array field template props.
+ * @returns true when the error indicator must not be rendered.
+ */
 function isErrorHidden(props: ArrayFieldTemplateProps): boolean {
   const uiOptions = getUiOptions(props.uiSchema, props.registry?.globalUiOptions);
   return uiOptions.hideError === undefined

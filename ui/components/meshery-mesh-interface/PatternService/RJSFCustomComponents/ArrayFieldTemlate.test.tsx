@@ -74,13 +74,14 @@ import ArrayFieldTemplate from './ArrayFieldTemlate';
 // and is NOT on the element's props, so the stand-in does not carry it.
 const ArrayItem = (props: any) => <div data-testid={props.itemKey}>{props.children}</div>;
 
-const makeArrayItem = (key: string, index: number) => (
+const makeArrayItem = (key: string, index: number, canRemove?: boolean) => (
   <ArrayItem
     key={key}
     itemKey={key}
     index={index}
     disabled={false}
     readonly={false}
+    canRemove={canRemove}
     handleRemoveItem={vi.fn()}
     uiOptions={{}}
   >
@@ -124,6 +125,28 @@ describe('ArrayFieldTemplate', () => {
     expect(accordions).toHaveLength(2);
     accordions.forEach((accordion) => {
       expect(accordion).toHaveAttribute('data-has-remove', 'true');
+    });
+  });
+
+  it('hides the accordion delete icon for fixed tuple items that cannot be removed', () => {
+    // RJSF's FixedArray sets canRemove false for tuple items (only
+    // additional items can be removed), so hasRemove is false and the
+    // accordion must not show a delete icon for them.
+    render(
+      <ArrayFieldTemplate
+        {...(baseProps as any)}
+        schema={{
+          title: 'Items',
+          type: 'array',
+          items: [{ type: 'string' }, { type: 'string' }],
+        }}
+        items={[makeArrayItem('a', 0, false), makeArrayItem('b', 1, false)]}
+      />,
+    );
+    const accordions = screen.getAllByTestId('accordion');
+    expect(accordions).toHaveLength(2);
+    accordions.forEach((accordion) => {
+      expect(accordion).toHaveAttribute('data-has-remove', 'false');
     });
   });
 
