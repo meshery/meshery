@@ -209,19 +209,21 @@ vi.mock('@/rtk-query/user', () => ({
       isError: false,
     }),
   ),
-  getSystemVersion: vi.fn(() =>
-    Promise.resolve({
-      data: {
-        build: '1.0.0',
-        latest: '1.0.0',
-        outdated: false,
-        commitsha: 'abc',
-        release_channel: 'stable',
-      },
-      isSuccess: true,
-      isError: false,
-    }),
-  ),
+}));
+
+vi.mock('@meshery/schemas/mesheryApi', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@meshery/schemas/mesheryApi')>()),
+  useGetSystemVersionQuery: vi.fn(() => ({
+    data: {
+      build: '1.0.0',
+      latest: '1.0.0',
+      outdated: false,
+      commitsha: 'abc',
+      release_channel: 'stable',
+    },
+    isSuccess: true,
+    isError: false,
+  })),
 }));
 
 vi.mock('@/store/slices/mesheryUi', () => ({

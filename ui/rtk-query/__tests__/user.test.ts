@@ -123,7 +123,7 @@ describe('user endpoints', () => {
     expect(mod.useHandleFeedbackFormSubmissionMutation).toBeTypeOf('function');
     expect(mod.useGetAllUsersQuery).toBeTypeOf('function');
     expect(mod.useRemoveUserFromTeamMutation).toBeTypeOf('function');
-    expect(mod.useGetSystemVersionQuery).toBeTypeOf('function');
+
     expect(mod.useInstallProviderExtensionMutation).toBeTypeOf('function');
     expect(mod.useRemoveProviderExtensionMutation).toBeTypeOf('function');
     expect(mod.useGetUserProfileSummaryByIdQuery).toBeTypeOf('function');
@@ -135,7 +135,7 @@ describe('user endpoints', () => {
     expect(mod.getProviderCapabilities).toBeTypeOf('function');
     expect(mod.getUserAccessToken).toBeTypeOf('function');
     expect(mod.getUserProfile).toBeTypeOf('function');
-    expect(mod.getSystemVersion).toBeTypeOf('function');
+
     expect(mod.getAllUsers).toBeTypeOf('function');
   });
 
@@ -365,14 +365,6 @@ describe('user endpoints', () => {
     expect(res.data).toEqual([]);
   });
 
-  it('getSystemVersion GETs /api/system/version', async () => {
-    fetchMock.mockResolvedValue(okResponse({ build: '0.0.1' }));
-    const { api, store } = await setupStore();
-    await store.dispatch(api.endpoints.getSystemVersion.initiate({}));
-    const req = fetchMock.mock.calls[0][0] as Request;
-    expect(req.url).toContain('/api/system/version');
-  });
-
   it('installProviderExtension POSTs /api/provider/extension/install with the extension payload', async () => {
     fetchMock.mockResolvedValue(okResponse({}));
     const { api, store } = await setupStore();
@@ -545,14 +537,6 @@ describe('user endpoints', () => {
     (utilsMod.initiateQuery as ReturnType<typeof vi.fn>).mockClear();
     await userMod.getUserProfile();
     expect(utilsMod.initiateQuery).toHaveBeenCalledWith(userMod.userApi.endpoints.getLoggedInUser);
-  });
-
-  it('getSystemVersion helper delegates to initiateQuery with the getSystemVersion endpoint', async () => {
-    const utilsMod = await import('../utils');
-    const userMod = await import('../user');
-    (utilsMod.initiateQuery as ReturnType<typeof vi.fn>).mockClear();
-    await userMod.getSystemVersion();
-    expect(utilsMod.initiateQuery).toHaveBeenCalledWith(userMod.userApi.endpoints.getSystemVersion);
   });
 
   it('getAllUsers helper delegates to initiateQuery with skip when search is empty', async () => {
