@@ -23,6 +23,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/ghodss/yaml"
@@ -59,23 +60,27 @@ var linkDocPerfApply = map[string]string{
 	"caption": "Usage of mesheryctl perf apply",
 }
 
-func splitTestDuration(duration string) (string, string) {
-	duration = strings.TrimSpace(duration)
-	if duration == "" {
-		return "30", "s"
+// splitTestDuration converts a Go duration into the value and unit query
+// params of a test run. The server only reads a whole number of hours, minutes
+// or seconds, so the duration is always sent in seconds, and one that can't be
+// expressed that way is rejected rather than run for a different length.
+func splitTestDuration(duration string) (string, string, error) {
+	normalized := strings.ToLower(strings.TrimSpace(duration))
+	if normalized == "" {
+		return "30", "s", nil
 	}
 
-	unitStart := strings.IndexFunc(duration, func(r rune) bool {
-		return (r < '0' || r > '9') && r != '.'
-	})
-	if unitStart == -1 {
-		return duration, "s"
-	}
-	if unitStart == 0 {
-		return "30", strings.ToLower(strings.TrimSpace(duration))
+	// A number without a unit means seconds.
+	if _, err := strconv.Atoi(normalized); err == nil {
+		normalized += "s"
 	}
 
-	return strings.TrimSpace(duration[:unitStart]), strings.ToLower(strings.TrimSpace(duration[unitStart:]))
+	parsed, err := time.ParseDuration(normalized)
+	if err != nil || parsed < time.Second || parsed%time.Second != 0 {
+		return "", "", utils.ErrFlagsInvalid(fmt.Errorf("invalid test duration %q: use a whole number of seconds of at least 1s, such as 30s, 5m or 1h30m", duration))
+	}
+
+	return strconv.FormatInt(int64(parsed/time.Second), 10), "s", nil
 }
 
 var applyCmd = &cobra.Command{
@@ -315,7 +320,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		q.Add("qps", qps)
 		q.Add("reqBody", loadTestBody)
 
-		testDurationValue, testDurationUnit := splitTestDuration(testDuration)
+		testDurationValue, testDurationUnit, err := splitTestDuration(testDuration)
+		if err != nil {
+			return err
+		}
 		q.Add("dur", testDurationUnit)
 		q.Add("t", testDurationValue)
 
@@ -389,6 +397,11 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 
 	if testDuration == "" {
 		testDuration = "30s"
+	}
+
+	// Reject an invalid duration before it is saved in the profile.
+	if _, _, err := splitTestDuration(testDuration); err != nil {
+		return "", "", err
 	}
 
 	if loadGenerator == "" {
