@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/server/models"
@@ -13,11 +16,15 @@ import (
 
 type fakeLoadTestProvider struct {
 	*models.DefaultLocalProvider
+	profile *models.PerformanceProfile
 }
 
 func (f *fakeLoadTestProvider) GetPerformanceProfile(req *http.Request, profileID string) ([]byte, error) {
 	profile := models.PerformanceProfile{
 		Metadata: map[string]interface{}{},
+	}
+	if f.profile != nil {
+		profile = *f.profile
 	}
 	return json.Marshal(profile)
 }
@@ -162,5 +169,209 @@ func TestLoadTestUsingSMPHandlerInvalidURL(t *testing.T) {
 				t.Fatalf("expected error code %s, got %s", ErrInvalidLTURLCode, body.Code)
 			}
 		})
+	}
+}
+
+// TestLoadTestHandlerSSLCertificateTypeAssertion verifies that LoadTestHandler does not panic
+// when ca_certificate in performance profile metadata has missing or invalid types for name or file.
+func TestLoadTestHandlerSSLCertificateTypeAssertion(t *testing.T) {
+	testCases := []struct {
+		name     string
+		metadata map[string]interface{}
+	}{
+		{
+			name: "Missing file field in ca_certificate",
+			metadata: map[string]interface{}{
+				"ca_certificate": map[string]interface{}{
+					"name": "ca.crt",
+				},
+			},
+		},
+		{
+			name: "Nil file field in ca_certificate",
+			metadata: map[string]interface{}{
+				"ca_certificate": map[string]interface{}{
+					"name": "ca.crt",
+					"file": nil,
+				},
+			},
+		},
+		{
+			name: "Non-string file field in ca_certificate",
+			metadata: map[string]interface{}{
+				"ca_certificate": map[string]interface{}{
+					"name": "ca.crt",
+					"file": 12345,
+				},
+			},
+		},
+		{
+			name: "Nil name field in ca_certificate",
+			metadata: map[string]interface{}{
+				"ca_certificate": map[string]interface{}{
+					"name": nil,
+					"file": "some-cert-data",
+				},
+			},
+		},
+		{
+			name: "Non-map ca_certificate",
+			metadata: map[string]interface{}{
+				"ca_certificate": "invalid-cert-structure",
+			},
+		},
+		{
+			name: "Valid ca_certificate with name and file",
+			metadata: map[string]interface{}{
+				"ca_certificate": map[string]interface{}{
+					"name": "ca.crt",
+					"file": "-----BEGIN CERTIFICATE-----\nMIIB...\n-----END CERTIFICATE-----",
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := &Handler{
+				log: newTestLogger(t),
+			}
+
+			provider := &fakeLoadTestProvider{
+				DefaultLocalProvider: &models.DefaultLocalProvider{},
+				profile: &models.PerformanceProfile{
+					Metadata: tc.metadata,
+				},
+			}
+
+			req := httptest.NewRequest(http.MethodGet, "/api/perf/profile/run?cert=true&name=test-test&url=example.com", nil)
+			rec := httptest.NewRecorder()
+
+			defer func() {
+				if r := recover(); r != nil {
+					t.Fatalf("LoadTestHandler panicked on %q: %v", tc.name, r)
+				}
+			}()
+
+			h.LoadTestHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected status 400 Bad Request, got %d. Body: %s", rec.Code, rec.Body.String())
+			}
+
+			var body struct {
+				Code  string `json:"code"`
+				Error string `json:"error"`
+			}
+			if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+				t.Fatalf("failed to decode response JSON: %v", err)
+			}
+
+			if body.Code != ErrInvalidLTURLCode {
+				t.Fatalf("expected error code %s, got %s", ErrInvalidLTURLCode, body.Code)
+			}
+		})
+	}
+}
+
+// certObservingRecorder wraps httptest.ResponseRecorder to inspect the temp directory
+// during response write, before LoadTestHandler's deferred cleanUpFiles loop deletes the file.
+type certObservingRecorder struct {
+	*httptest.ResponseRecorder
+	tempDir         string
+	certObserved    bool
+	observedContent string
+	observedPath    string
+}
+
+func (r *certObservingRecorder) WriteHeader(code int) {
+	r.inspectDir()
+	r.ResponseRecorder.WriteHeader(code)
+}
+
+func (r *certObservingRecorder) Write(b []byte) (int, error) {
+	r.inspectDir()
+	return r.ResponseRecorder.Write(b)
+}
+
+func (r *certObservingRecorder) inspectDir() {
+	if r.certObserved {
+		return
+	}
+	entries, err := os.ReadDir(r.tempDir)
+	if err != nil {
+		return
+	}
+	for _, entry := range entries {
+		if strings.HasPrefix(entry.Name(), "ca-") && strings.HasSuffix(entry.Name(), ".crt") {
+			fullPath := filepath.Join(r.tempDir, entry.Name())
+			data, err := os.ReadFile(fullPath)
+			if err == nil {
+				r.certObserved = true
+				r.observedContent = string(data)
+				r.observedPath = fullPath
+			}
+		}
+	}
+}
+
+// TestLoadTestHandlerSSLCertificateHappyPath verifies that a valid ca_certificate in performance
+// profile metadata is written to disk with the expected contents, flushed/closed, and cleaned up
+// on handler completion.
+func TestLoadTestHandlerSSLCertificateHappyPath(t *testing.T) {
+	tempDir := t.TempDir()
+	t.Setenv("TMPDIR", tempDir)
+
+	expectedCert := "-----BEGIN CERTIFICATE-----\nMIIB_TEST_CERT_DATA\n-----END CERTIFICATE-----"
+	profile := &models.PerformanceProfile{
+		Metadata: map[string]interface{}{
+			"ca_certificate": map[string]interface{}{
+				"name": "ca.crt",
+				"file": expectedCert,
+			},
+		},
+	}
+
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+
+	provider := &fakeLoadTestProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		profile:              profile,
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/perf/profile/run?cert=true&name=test-test&url=example.com", nil)
+	rec := &certObservingRecorder{
+		ResponseRecorder: httptest.NewRecorder(),
+		tempDir:          tempDir,
+	}
+
+	h.LoadTestHandler(rec, req, nil, nil, provider)
+
+	// 1. Verify that the certificate file was written to disk before handler exit
+	if !rec.certObserved {
+		t.Fatal("expected certificate file matching ca-*.crt to be written to disk in temp directory, but none was observed")
+	}
+
+	// 2. Verify that the file content matches the certificate data
+	if rec.observedContent != expectedCert {
+		t.Fatalf("expected written certificate content %q, got %q", expectedCert, rec.observedContent)
+	}
+
+	// 3. Verify that cleanUpFiles deferred cleanup removed the temp file upon handler exit
+	if _, err := os.Stat(rec.observedPath); !os.IsNotExist(err) {
+		t.Fatalf("expected certificate temp file %s to be cleaned up on handler exit, but it still exists", rec.observedPath)
+	}
+}
+
+// TestAssignCertificatePath verifies that assignCertificatePath properly wires the certificate
+// file path into the CACert field of LoadTestOptions.
+func TestAssignCertificatePath(t *testing.T) {
+	opts := &models.LoadTestOptions{}
+	testPath := "/tmp/ca-12345.crt"
+	assignCertificatePath("ca_certificate", testPath, opts)
+	if opts.CACert != testPath {
+		t.Fatalf("expected CACert to be %q, got %q", testPath, opts.CACert)
 	}
 }
