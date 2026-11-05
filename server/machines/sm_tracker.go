@@ -11,6 +11,13 @@ type ConnectionToStateMachineInstanceTracker struct {
 	mx                   sync.RWMutex
 }
 
+// NewConnectionToStateMachineInstanceTracker initializes an empty tracker.
+func NewConnectionToStateMachineInstanceTracker() *ConnectionToStateMachineInstanceTracker {
+	return &ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: make(map[core.Uuid]*StateMachine),
+	}
+}
+
 func (smt *ConnectionToStateMachineInstanceTracker) Get(id core.Uuid) (*StateMachine, bool) {
 	smt.mx.Lock()
 	defer smt.mx.Unlock()
@@ -40,6 +47,9 @@ func (smt *ConnectionToStateMachineInstanceTracker) CompareAndDelete(id core.Uui
 func (smt *ConnectionToStateMachineInstanceTracker) Add(id core.Uuid, inst *StateMachine) {
 	smt.mx.Lock()
 	defer smt.mx.Unlock()
+	if smt.ConnectToInstanceMap == nil {
+		smt.ConnectToInstanceMap = make(map[core.Uuid]*StateMachine)
+	}
 	smt.ConnectToInstanceMap[id] = inst
 }
 
