@@ -15,7 +15,7 @@ Delete a performance profile
 ## Synopsis
 
 Delete a performance profile by its name.
-	
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
