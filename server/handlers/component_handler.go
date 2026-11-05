@@ -1288,13 +1288,29 @@ var (
 	ociRepositoryNameInvalid = regexp.MustCompile(`[^a-z0-9]+`)
 )
 
+const (
+	ociRepositoryNameMinLength = 2
+	ociRepositoryNameMaxLength = 255
+)
+
+// ociRepositoryName maps a model name to a valid OCI repository name. The
+// mapping is lossy: distinct names can sanitize to the same repository name
+// (for example "foo bar" and "foo-bar"), so callers pushing to a shared
+// registry should be aware of possible collisions.
 func ociRepositoryName(modelName string) string {
-	if ociRepositoryNamePattern.MatchString(modelName) {
+	if len(modelName) >= ociRepositoryNameMinLength && len(modelName) <= ociRepositoryNameMaxLength &&
+		ociRepositoryNamePattern.MatchString(modelName) {
 		return modelName
 	}
 	sanitized := strings.Trim(ociRepositoryNameInvalid.ReplaceAllString(strings.ToLower(modelName), "-"), "-")
-	if sanitized == "" {
+	if len(sanitized) > ociRepositoryNameMaxLength {
+		sanitized = strings.TrimRight(sanitized[:ociRepositoryNameMaxLength], "-")
+	}
+	switch {
+	case sanitized == "":
 		return "model"
+	case len(sanitized) < ociRepositoryNameMinLength:
+		return sanitized + "-model"
 	}
 	return sanitized
 }
