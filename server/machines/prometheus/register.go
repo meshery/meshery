@@ -63,14 +63,17 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
+	if connPayload.SkipCredentialVerification {
+		return machines.NoOp, nil, nil
+	}
+
 	promClient := prometheustelemetry.New(promConn.URL, promCred.APIKeyOrBasicAuth, log)
-
-	_, err = promClient.Health(ctx)
-
-	if err != nil && !connPayload.SkipCredentialVerification {
+	if _, err = promClient.Health(ctx); err != nil {
 		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrPrometheusScan(err)}).Build(), models.ErrPrometheusScan(err)
 	}
-	return machines.Exit, nil, nil
+	// Persisting is not this action's job: machines.WithPersistence saves the
+	// connection once this returns without an error.
+	return machines.NoOp, nil, nil
 }
 
 func (ra *RegisterAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {

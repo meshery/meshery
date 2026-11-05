@@ -110,10 +110,12 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 							continue
 						}
 
-						_, err = machineInst.SendEvent(ctx, machines.Register, connectionPayload)
-
-						// If connection does not exist, transition to next states because in the "connect" event the connection will get created.
-						if err != nil && !IsConnectionUpdateErr(err) {
+						// Register verifies the endpoint and persists the connection as
+						// REGISTERED. A failure here (unreachable endpoint, or a machine
+						// already past REGISTERED on re-discovery) means there is nothing
+						// to connect.
+						if _, err = machineInst.SendEvent(ctx, machines.Register, connectionPayload); err != nil {
+							arh.log.Debug(fmt.Sprintf("skipping auto registration of %q connection at %v: %v", connectionName, url, err))
 							continue
 						}
 						event, err := machineInst.SendEvent(ctx, machines.Connect, connectionPayload)

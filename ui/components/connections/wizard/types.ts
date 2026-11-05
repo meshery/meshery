@@ -44,6 +44,13 @@ export type WizardData = {
 
   // registration outcome
   registrationId: string | null;
+  /**
+   * The registration whose `register` event succeeded, with the payload it
+   * persisted. Register saves the connection as REGISTERED, so a retry after a
+   * failed `connect` sends `connect` only when the form is unchanged; edited
+   * fields restart the registration so they are verified and persisted.
+   */
+  registered: { id: string; payload: GenericRecord } | null;
   registrationResult: GenericRecord | null;
   registrationError: unknown;
 
@@ -87,6 +94,11 @@ export type WizardServices = {
   registerConnection: (body: GenericRecord) => Promise<GenericRecord>;
   /** POST /integrations/connections/register (status: connect). */
   connectConnection: (body: GenericRecord) => Promise<GenericRecord>;
+  /**
+   * DELETE /integrations/connections/register/{registrationId}: drops the
+   * tracked state machine and the connection row if it is still REGISTERED.
+   */
+  cancelRegistration: (registrationId: string) => Promise<void>;
   /** POST /system/kubernetes/contexts — parse contexts without persisting. */
   discoverKubeContexts: (file: File) => Promise<DiscoveredKubeContext[]>;
   /** POST /system/kubernetes — persist the selected contexts as connections. */

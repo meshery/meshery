@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { v4 as uuidv4 } from 'uuid';
+import _ from 'lodash';
 import {
   Alert,
   Box,
@@ -60,6 +61,7 @@ const SelectStepBody = ({ ctx }: { ctx: WizardContext }) => {
           skipCredentialVerification: false,
           kubeconfigFile: null,
           registrationId: null,
+          registered: null,
           registrationResult: null,
           registrationError: null,
           postConfig: {},
@@ -267,13 +269,29 @@ export const genericRegisterStep: WizardStep = {
       // looks up a `{Kind}Connection` component that no longer exists — is
       // skipped. The registration id is just a process tracker, so mint it
       // client-side; register/connect initialize the state machine themselves.
-      const registrationId = ctx.data.registrationId || uuidv4();
+      const fields = _.omit(buildGenericPayload(ctx), 'id');
+      const { registered } = ctx.data;
+      let registrationId = ctx.data.registrationId || uuidv4();
+
+      // Register verifies the endpoint and persists the connection as
+      // REGISTERED; connect only completes it. A retry after a failed connect
+      // whose form was edited would otherwise connect the stale row with the
+      // edits unverified and unsaved, so discard that registration (deleting
+      // its REGISTERED row) and register the edited values under a new id.
+      if (registered?.id === registrationId && !_.isEqual(registered.payload, fields)) {
+        await ctx.services.cancelRegistration(registrationId);
+        ctx.patch({ registered: null });
+        registrationId = uuidv4();
+      }
       if (registrationId !== ctx.data.registrationId) {
         ctx.patch({ registrationId });
       }
 
-      const basePayload = { ...buildGenericPayload(ctx), id: registrationId };
-      await ctx.services.registerConnection({ ...basePayload, status: 'register' });
+      const basePayload = { ...fields, id: registrationId };
+      if (registered?.id !== registrationId) {
+        await ctx.services.registerConnection({ ...basePayload, status: 'register' });
+        ctx.patch({ registered: { id: registrationId, payload: _.cloneDeep(fields) } });
+      }
       const result = await ctx.services.connectConnection({ ...basePayload, status: 'connect' });
 
       ctx.patch({ registrationResult: result ?? basePayload });

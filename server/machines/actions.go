@@ -11,7 +11,6 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils"
-	"github.com/sirupsen/logrus"
 )
 
 // Action to be executed in a given state.
@@ -41,6 +40,67 @@ func (da *DefaultAction) ExecuteOnExit(ctx context.Context, machineCtx interface
 	return NoOp, nil, nil
 }
 
+// WithPersistence wraps the REGISTERED state's action so that registering a
+// connection persists it. It runs inner (the kind's register action, e.g. the
+// Grafana/Prometheus reachability check; nil for kinds without one) and, only
+// when inner succeeds, saves the connection and its credential with status
+// REGISTERED.
+//
+// Persisting on register keeps the invariant SendEvent relies on: once a
+// transition completes there is a connection row whose status it can update.
+// Without it, the status write after the register transition fails with
+// "record not found" (#20983).
+func WithPersistence(inner Action) Action {
+	return &PersistingAction{inner: inner}
+}
+
+// PersistingAction is the Action returned by WithPersistence.
+type PersistingAction struct {
+	inner Action
+}
+
+// Inner returns the wrapped action, or nil when there is none.
+func (pa *PersistingAction) Inner() Action {
+	return pa.inner
+}
+
+func (pa *PersistingAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+	if pa.inner == nil {
+		return NoOp, nil, nil
+	}
+	return pa.inner.ExecuteOnEntry(ctx, machineCtx, data)
+}
+
+func (pa *PersistingAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+	next := NoOp
+	var event *events.Event
+	if pa.inner != nil {
+		var err error
+		next, event, err = pa.inner.Execute(ctx, machineCtx, data)
+		if err != nil {
+			// Nothing is persisted: the machine halts in its previous state with
+			// no row and no credential written.
+			return next, event, err
+		}
+	}
+
+	// An existing row (re-registration, or a connection auto-registered
+	// earlier) is kept as-is; SendEvent updates its status.
+	if !connectionPersisted(ctx, data) {
+		if _, saveEvent, err := saveConnection(ctx, data, connections.REGISTERED); err != nil {
+			return NoOp, saveEvent, err
+		}
+	}
+	return next, event, nil
+}
+
+func (pa *PersistingAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+	if pa.inner == nil {
+		return NoOp, nil, nil
+	}
+	return pa.inner.ExecuteOnExit(ctx, machineCtx, data)
+}
+
 type DefaultConnectAction struct{}
 
 func (da *DefaultConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
@@ -48,7 +108,39 @@ func (da *DefaultConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx i
 }
 
 func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+	// Register already persisted the row and its credential; SendEvent moves it
+	// to CONNECTED. Saving again would create a second, unattached credential,
+	// because SaveConnection returns an existing row without setting its
+	// CredentialID.
+	if connectionPersisted(ctx, data) {
+		return NoOp, nil, nil
+	}
+	return saveConnection(ctx, data, connections.CONNECTED)
+}
 
+func (da *DefaultConnectAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+
+// connectionPersisted reports whether the payload's connection already has a
+// row. A payload that cannot be read reports false, so saveConnection surfaces
+// the error.
+func connectionPersisted(ctx context.Context, data interface{}) bool {
+	payload, err := utils.Cast[connections.ConnectionPayload](data)
+	if err != nil || payload.ID == uuid.Nil {
+		return false
+	}
+	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	token, _ := ctx.Value(models.TokenCtxKey).(string)
+	existing, _, err := provider.GetConnectionByID(token, payload.ID)
+	return err == nil && existing != nil
+}
+
+// saveConnection creates the connection's credential (unless the payload
+// references an existing one) and the connection row with the given status.
+// This is DefaultConnectAction's original persistence logic, shared with
+// WithPersistence.
+func saveConnection(ctx context.Context, data interface{}, status connections.ConnectionStatus) (EventType, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	userUUID := user.ID
@@ -63,6 +155,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 	if err != nil {
 		return NoOp, eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
+
 	existingCredID, ok := payload.CredentialSecret["id"]
 	credential := &models.Credential{}
 	// If existing credential is used do not persist again
@@ -106,24 +199,19 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 		credentialID = &credential.ID
 	}
 
-	connection, err := provider.SaveConnection(&connections.ConnectionPayload{
+	_, err = provider.SaveConnection(&connections.ConnectionPayload{
 		ID:           payload.ID,
 		Kind:         payload.Kind,
 		Type:         payload.Type,
 		SubType:      payload.SubType,
-		Status:       connections.CONNECTED,
+		Status:       status,
 		Name:         payload.Name,
 		MetaData:     payload.MetaData,
 		CredentialID: credentialID,
 	}, token, false)
 	if err != nil {
 		_err := models.ErrPersistConnection(err)
-		return NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to perisit the \"%s\" connection details", payload.Name)).WithMetadata(map[string]interface{}{"error": _err}).Build(), _err
+		return NoOp, eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to persist the \"%s\" connection details", payload.Name)).WithMetadata(map[string]interface{}{"error": _err}).Build(), _err
 	}
-	logrus.Debug(connection, "grafana connected connection")
-	return NoOp, nil, nil
-}
-
-func (da *DefaultConnectAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
 	return NoOp, nil, nil
 }
