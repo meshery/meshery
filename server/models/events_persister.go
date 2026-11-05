@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
@@ -11,6 +12,9 @@ import (
 // EventsPersister assists with persisting events in local SQLite DB
 type EventsPersister struct {
 	DB *database.Handler
+	// Log receives the warning raised when an event's metadata is reduced
+	// by GuardEventMetadataSize. Optional.
+	Log logger.Handler
 }
 
 type EventsResponse struct {
