@@ -35,7 +35,69 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com"
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;Execute a Performance test creating a new performance profile and pass certificate to be used&lt;/p&gt;</description></item><item><title>mesheryctl-perf-profile</title><link>/reference/mesheryctl/perf/profile/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/perf/profile/</guid><description>&lt;h1 id="mesheryctl-perf-profile"&gt;
+&lt;p&gt;Execute a Performance test creating a new performance profile and pass certificate to be used&lt;/p&gt;</description></item><item><title>mesheryctl-perf-delete</title><link>/reference/mesheryctl/perf/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/perf/delete/</guid><description>&lt;h1 id="mesheryctl-perf-delete"&gt;
+	mesheryctl perf delete
+&lt;/h1&gt;
+&lt;p&gt;Delete a performance profile&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Delete a performance profile by its name.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
+mesheryctl perf delete [profile-name] [flags]
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Delete a performance profile (asks for confirmation)&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
+mesheryctl perf delete test-3
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Delete a performance profile without confirmation&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
+mesheryctl perf delete test-3 --yes
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for delete
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "~/.meshery/config.yaml")
+ -o, --output-format string (optional) format to display in [json|yaml]
+ -t, --token string (required) Path to meshery auth config
+ -v, --verbose verbose output
+ -y, --yes (optional) assume yes for user interactive prompts.
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-perf-profile</title><link>/reference/mesheryctl/perf/profile/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/perf/profile/</guid><description>&lt;h1 id="mesheryctl-perf-profile"&gt;
 	mesheryctl perf profile
 &lt;/h1&gt;
 &lt;p&gt;List performance profiles&lt;/p&gt;

@@ -103,5 +103,6 @@ Go back to [command reference index](/reference/mesheryctl/), if you want to add
 Section pages:
 
 - [mesheryctl-perf-apply](/reference/mesheryctl/perf/apply/)
+- [mesheryctl-perf-delete](/reference/mesheryctl/perf/delete/)
 - [mesheryctl-perf-profile](/reference/mesheryctl/perf/profile/)
 - [mesheryctl-perf-result](/reference/mesheryctl/perf/result/)
