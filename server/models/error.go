@@ -633,7 +633,11 @@ func ErrInitializeDBHandler(err error) error {
 }
 
 func ErrDoRequest(err error, method, endpoint string) error {
-	return errors.New(ErrDoRequestCode, errors.Alert, []string{fmt.Sprintf("unable to make %s request to %s", method, endpoint)}, []string{err.Error()}, []string{"Requested resource is not reachable.", "Unable to instantiate TCP connection"}, []string{"Ensure correct URL is specified", "Ensure network connectivity to the resource from your network"})
+	cause := ""
+	if err != nil {
+		cause = err.Error()
+	}
+	return errors.New(ErrDoRequestCode, errors.Alert, []string{fmt.Sprintf("unable to make %s request to %s", method, endpoint)}, []string{cause}, []string{"Requested resource is not reachable.", "Unable to instantiate TCP connection"}, []string{"Ensure correct URL is specified", "Ensure network connectivity to the resource from your network"})
 }
 
 func ErrMarshalYAML(err error, obj string) error {
