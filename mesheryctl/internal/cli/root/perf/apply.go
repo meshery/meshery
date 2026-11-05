@@ -17,11 +17,13 @@ package perf
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/ghodss/yaml"
@@ -58,23 +60,27 @@ var linkDocPerfApply = map[string]string{
 	"caption": "Usage of mesheryctl perf apply",
 }
 
-func splitTestDuration(duration string) (string, string) {
-	duration = strings.TrimSpace(duration)
-	if duration == "" {
-		return "30", "s"
+// splitTestDuration converts a Go duration into the value and unit query
+// params of a test run. The server only reads a whole number of hours, minutes
+// or seconds, so the duration is always sent in seconds, and one that can't be
+// expressed that way is rejected rather than run for a different length.
+func splitTestDuration(duration string) (string, string, error) {
+	normalized := strings.ToLower(strings.TrimSpace(duration))
+	if normalized == "" {
+		return "30", "s", nil
 	}
 
-	unitStart := strings.IndexFunc(duration, func(r rune) bool {
-		return (r < '0' || r > '9') && r != '.'
-	})
-	if unitStart == -1 {
-		return duration, "s"
-	}
-	if unitStart == 0 {
-		return "30", strings.ToLower(strings.TrimSpace(duration))
+	// A number without a unit means seconds.
+	if _, err := strconv.Atoi(normalized); err == nil {
+		normalized += "s"
 	}
 
-	return strings.TrimSpace(duration[:unitStart]), strings.ToLower(strings.TrimSpace(duration[unitStart:]))
+	parsed, err := time.ParseDuration(normalized)
+	if err != nil || parsed < time.Second || parsed%time.Second != 0 {
+		return "", "", utils.ErrFlagsInvalid(fmt.Errorf("invalid test duration %q: use a whole number of seconds of at least 1s, such as 30s, 5m or 1h30m", duration))
+	}
+
+	return strconv.FormatInt(int64(parsed/time.Second), 10), "s", nil
 }
 
 var applyCmd = &cobra.Command{
@@ -223,7 +229,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				userResponse = true
 			} else {
 				// ask user for confirmation
-				userResponse = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
+				userResponse, err = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
+				if err != nil {
+					return err
+				}
 			}
 
 			if userResponse {
@@ -311,7 +320,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		q.Add("qps", qps)
 		q.Add("reqBody", loadTestBody)
 
-		testDurationValue, testDurationUnit := splitTestDuration(testDuration)
+		testDurationValue, testDurationUnit, err := splitTestDuration(testDuration)
+		if err != nil {
+			return err
+		}
 		q.Add("dur", testDurationUnit)
 		q.Add("t", testDurationValue)
 
@@ -387,6 +399,11 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		testDuration = "30s"
 	}
 
+	// Reject an invalid duration before it is saved in the profile.
+	if _, _, err := splitTestDuration(testDuration); err != nil {
+		return "", "", err
+	}
+
 	if loadGenerator == "" {
 		loadGenerator = "fortio"
 	}
@@ -453,12 +470,13 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		certData := string(certFile)
 		certName := fileInfo.Name()
 
-		// check if values["metadata"] is nil
-		if values["metadata"] == nil {
-			values["metadata"] = map[string]interface{}{}
+		metadata, ok := values["metadata"].(map[string]interface{})
+		if !ok || metadata == nil {
+			metadata = map[string]interface{}{}
+			values["metadata"] = metadata
 		}
 
-		values["metadata"].(map[string]interface{})["ca_certificate"] = map[string]interface{}{
+		metadata["ca_certificate"] = map[string]interface{}{
 			"name":     certName,
 			"certName": certData,
 		}
@@ -475,7 +493,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return "", "", ErrPerfProfileServer(errors.New("failed to save performance profile on server"))
+		return "", "", ErrPerfProfileServer(err)
 	}
 
 	var response *perfprofile.PerformanceProfile
@@ -485,10 +503,23 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	if err != nil {
 		return "", "", utils.ErrReadResponseBody(err)
 	}
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		serverErrMsg := strings.TrimSpace(string(body))
+		if serverErrMsg == "" {
+			serverErrMsg = fmt.Sprintf("server returned status: %s", resp.Status)
+		}
+		return "", "", ErrPerfProfileServer(errors.New(serverErrMsg))
+	}
+
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return "", "", ErrFailUnmarshal(err)
 	}
+
+	if response == nil {
+		return "", "", ErrPerfProfileServer(errors.New("server returned empty performance profile"))
+	}
+
 	profileID = response.ID.String()
 	profileName = response.Name
 
