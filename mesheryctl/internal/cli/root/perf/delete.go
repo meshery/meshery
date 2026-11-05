@@ -84,9 +84,15 @@ mesheryctl perf delete test-3 --yes
 		}
 		profile := matches[index]
 
-		if !utils.SilentFlag && !utils.AskForConfirmation("Performance profile '"+profile.Name+"' ("+profile.ID.String()+") will be deleted. Are you sure you want to continue") {
-			utils.Log.Info("Delete aborted.")
-			return nil
+		if !utils.SilentFlag {
+			confirmed, err := utils.AskForConfirmation("Performance profile '" + profile.Name + "' (" + profile.ID.String() + ") will be deleted. Are you sure you want to continue")
+			if err != nil {
+				return err
+			}
+			if !confirmed {
+				utils.Log.Info("Delete aborted.")
+				return nil
+			}
 		}
 
 		req, err := utils.NewRequest("DELETE", baseURL+"/api/performance/profiles/"+profile.ID.String(), nil)
