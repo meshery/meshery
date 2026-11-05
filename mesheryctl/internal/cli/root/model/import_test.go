@@ -1,7 +1,10 @@
 package model
 
 import (
+	"bytes"
 	"errors"
+	"io"
+	"os"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
@@ -70,9 +73,11 @@ func TestDisplaySuccessfulRelationships_PanicGuards(t *testing.T) {
 	_ = utils.SetupMeshkitLoggerTesting(t, false)
 
 	tests := []struct {
-		name     string
-		response *models.RegistryAPIResponse
-		model    string
+		name              string
+		response          *models.RegistryAPIResponse
+		model             string
+		expectedStrings   []string
+		unexpectedStrings []string
 	}{
 		{
 			name: "valid relationship with from and to",
@@ -100,7 +105,8 @@ func TestDisplaySuccessfulRelationships_PanicGuards(t *testing.T) {
 					},
 				},
 			},
-			model: "kubernetes",
+			model:           "kubernetes",
+			expectedStrings: []string{"Namespace", "Pod"},
 		},
 		{
 			name: "empty from slice does not panic",
@@ -229,16 +235,109 @@ func TestDisplaySuccessfulRelationships_PanicGuards(t *testing.T) {
 			},
 			model: "kubernetes",
 		},
+		{
+			name: "missing or non-string Kind, Subtype, RelationshipType, or Model is skipped without panic",
+			response: &models.RegistryAPIResponse{
+				EntityTypeSummary: models.EntityTypeSummary{
+					SuccessfulRelationships: []map[string]interface{}{
+						{
+							"Kind":             nil,
+							"Subtype":          "inventory",
+							"RelationshipType": "parent",
+							"Model":            "kubernetes",
+							"Selectors": []interface{}{
+								map[string]interface{}{
+									"allow": map[string]interface{}{
+										"from": []interface{}{map[string]interface{}{"kind": "InvalidKindNode"}},
+										"to":   []interface{}{map[string]interface{}{"kind": "TargetNode"}},
+									},
+								},
+							},
+						},
+						{
+							"Kind":             "hierarchical",
+							"Subtype":          123,
+							"RelationshipType": "parent",
+							"Model":            "kubernetes",
+							"Selectors": []interface{}{
+								map[string]interface{}{
+									"allow": map[string]interface{}{
+										"from": []interface{}{map[string]interface{}{"kind": "InvalidSubtypeNode"}},
+										"to":   []interface{}{map[string]interface{}{"kind": "TargetNode"}},
+									},
+								},
+							},
+						},
+						{
+							"Kind":             "hierarchical",
+							"Subtype":          "inventory",
+							"RelationshipType": false,
+							"Model":            "kubernetes",
+							"Selectors": []interface{}{
+								map[string]interface{}{
+									"allow": map[string]interface{}{
+										"from": []interface{}{map[string]interface{}{"kind": "InvalidRelTypeNode"}},
+										"to":   []interface{}{map[string]interface{}{"kind": "TargetNode"}},
+									},
+								},
+							},
+						},
+						{
+							"Kind":             "hierarchical",
+							"Subtype":          "inventory",
+							"RelationshipType": "parent",
+							"Model":            nil,
+							"Selectors": []interface{}{
+								map[string]interface{}{
+									"allow": map[string]interface{}{
+										"from": []interface{}{map[string]interface{}{"kind": "InvalidModelNode"}},
+										"to":   []interface{}{map[string]interface{}{"kind": "TargetNode"}},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			model:             "kubernetes",
+			unexpectedStrings: []string{"InvalidKindNode", "InvalidSubtypeNode", "InvalidRelTypeNode", "InvalidModelNode"},
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			rescueStdout := os.Stdout
+			r, w, err := os.Pipe()
+			if err != nil {
+				t.Fatalf("failed to create pipe: %v", err)
+			}
+			os.Stdout = w
+
 			defer func() {
-				if r := recover(); r != nil {
-					t.Fatalf("displaySuccessfulRelationships panicked on %s: %v", tt.name, r)
+				_ = w.Close()
+				_ = r.Close()
+				os.Stdout = rescueStdout
+			}()
+
+			defer func() {
+				if rVal := recover(); rVal != nil {
+					t.Fatalf("displaySuccessfulRelationships panicked on %s: %v", tt.name, rVal)
 				}
 			}()
+
 			displaySuccessfulRelationships(tt.response, tt.model)
+
+			_ = w.Close()
+			var buf bytes.Buffer
+			_, _ = io.Copy(&buf, r)
+			output := buf.String()
+
+			for _, expected := range tt.expectedStrings {
+				assert.Contains(t, output, expected)
+			}
+			for _, unexpected := range tt.unexpectedStrings {
+				assert.NotContains(t, output, unexpected)
+			}
 		})
 	}
 }

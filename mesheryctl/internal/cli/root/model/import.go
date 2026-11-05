@@ -288,10 +288,13 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 		relationshipMap := make(map[string][][]string)
 
 		for _, rel := range response.EntityTypeSummary.SuccessfulRelationships {
-			kind, _ := rel["Kind"].(string)
-			subtype, _ := rel["Subtype"].(string)
-			relationshipType, _ := rel["RelationshipType"].(string)
-			modelName, _ := rel["Model"].(string)
+			kind, okKind := rel["Kind"].(string)
+			subtype, okSubtype := rel["Subtype"].(string)
+			relationshipType, okRelType := rel["RelationshipType"].(string)
+			modelName, okModel := rel["Model"].(string)
+			if !okKind || !okSubtype || !okRelType || !okModel {
+				continue
+			}
 			if modelName != model {
 				continue
 			}
