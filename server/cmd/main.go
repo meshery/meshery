@@ -161,10 +161,10 @@ func main() {
 
 	log.Infof("MESHSYNC_DEFAULT_DEPLOYMENT_MODE is %s", viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"))
 
-	home, err := os.UserHomeDir()
+	home, homeErr := os.UserHomeDir()
 	if viper.GetString("USER_DATA_FOLDER") == "" {
-		if err != nil {
-			log.Error(ErrRetrievingUserHomeDirectory(err))
+		if homeErr != nil {
+			log.Error(ErrRetrievingUserHomeDirectory(homeErr))
 			os.Exit(1)
 		}
 		viper.SetDefault("USER_DATA_FOLDER", path.Join(home, ".meshery", "config"))
@@ -178,7 +178,7 @@ func main() {
 	logDir := path.Join(home, ".meshery", "logs", "registry")
 	errDir = os.MkdirAll(logDir, 0755)
 	if errDir != nil {
-		logrus.Fatalf("Error creating user data directory: %v", err)
+		logrus.Fatalf("Error creating registry log directory %s: %v", logDir, errDir)
 	}
 
 	// Create or open the log file
@@ -196,11 +196,12 @@ func main() {
 
 	log.Info("Meshery Database is at: ", viper.GetString("USER_DATA_FOLDER"))
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
+		kubeconfigFolder, err := defaultKubeconfigFolder(home, homeErr)
 		if err != nil {
-			log.Error(ErrRetrievingUserHomeDirectory(err))
+			log.Error(err)
 			os.Exit(1)
 		}
-		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
+		viper.SetDefault("KUBECONFIG_FOLDER", kubeconfigFolder)
 	}
 	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
 	log.Info("Log level: ", log.GetLevel())
@@ -559,4 +560,13 @@ func main() {
 	}
 
 	log.Info("Shutting down Meshery Server...")
+}
+
+// defaultKubeconfigFolder returns the default KUBECONFIG_FOLDER under the user's
+// home directory, or ErrRetrievingUserHomeDirectory when the home directory lookup failed.
+func defaultKubeconfigFolder(home string, homeErr error) (string, error) {
+	if homeErr != nil {
+		return "", ErrRetrievingUserHomeDirectory(homeErr)
+	}
+	return path.Join(home, ".kube"), nil
 }
