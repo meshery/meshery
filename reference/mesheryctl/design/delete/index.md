@@ -11,6 +11,10 @@ Delete design file
 ## Synopsis
 
 delete design file will trigger deletion of the design file.
+	When a positional target is passed, it is resolved with the following precedence:
+	1. Existing local file path
+	2. Remote URL
+	3. Design ID or name lookup
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -28,6 +32,26 @@ delete a design file
 <div class='codeblock'>
 <div class='clipboardjs'>
 mesheryctl design delete [file | URL]
+
+</div>
+</div>
+</pre> 
+
+delete a design by ID
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design delete [ID]
+
+</div>
+</div>
+</pre> 
+
+delete a design using --file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design delete -f [file | URL]
 
 </div>
 </div>

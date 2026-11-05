@@ -68,7 +68,11 @@ mesheryctl design apply [design-name]
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;delete design file will trigger deletion of the design file.&lt;/p&gt;
+&lt;p&gt;delete design file will trigger deletion of the design file.
+When a positional target is passed, it is resolved with the following precedence:
+1. Existing local file path
+2. Remote URL
+3. Design ID or name lookup&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
@@ -89,31 +93,7 @@ mesheryctl design delete [file | URL]
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;h2 id="options"&gt;
-	Options
-&lt;/h2&gt;
-&lt;pre class='codeblock-pre'&gt;
-&lt;div class='codeblock'&gt;
- -f, --file string Path to design file
- -h, --help help for delete
-
-&lt;/div&gt;
-&lt;/pre&gt;
-&lt;h2 id="options-inherited-from-parent-commands"&gt;
-	Options inherited from parent commands
-&lt;/h2&gt;
-&lt;pre class='codeblock-pre'&gt;
-&lt;div class='codeblock'&gt;
- --config string path to config file (default "~/.meshery/config.yaml")
- -t, --token string Path to token file default from current context
- -v, --verbose verbose output
-
-&lt;/div&gt;
-&lt;/pre&gt;
-&lt;h2 id="see-also"&gt;
-	See Also
-&lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#documenting"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-design-deploy</title><link>/reference/mesheryctl/design/deploy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/deploy/</guid><description>&lt;h1 id="mesheryctl-design-deploy"&gt;
+&lt;p&gt;delete a design by ID&lt;/p&gt;</description></item><item><title>mesheryctl-design-deploy</title><link>/reference/mesheryctl/design/deploy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/deploy/</guid><description>&lt;h1 id="mesheryctl-design-deploy"&gt;
 	mesheryctl design deploy
 &lt;/h1&gt;
 &lt;p&gt;Deploy design&lt;/p&gt;
