@@ -154,8 +154,11 @@
 package perf
 
 import (
+	"encoding/json"
 	"net/http"
+	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"strings"
 	"testing"
@@ -163,6 +166,7 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	"github.com/spf13/viper"
 )
 
@@ -220,6 +224,8 @@ func resetVariables() {
 	outputFormatFlag = ""
 	viewSingleProfile = false
 	viewSingleResult = false
+	additionalOptions = ""
+	certPath = ""
 }
 
 func TestCreatePerformanceProfile_ServerErrors(t *testing.T) {
@@ -322,6 +328,160 @@ func TestCreatePerformanceProfile_RejectsInvalidDuration(t *testing.T) {
 	}
 	if calls := httpmock.GetCallCountInfo()["POST "+profileURL]; calls != 0 {
 		t.Errorf("expected no profile to be created, got %d request(s)", calls)
+	}
+}
+
+func TestProfileMetadataFromFlags(t *testing.T) {
+	dir := t.TempDir()
+	optionsFile := filepath.Join(dir, "options.json")
+	certFile := filepath.Join(dir, "ca.pem")
+	if err := os.WriteFile(optionsFile, []byte(`{"MethodOverride":"POST"}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(certFile, []byte("certificate data"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	certificate := map[string]interface{}{"name": "ca.pem", "file": "certificate data"}
+
+	tests := []struct {
+		name     string
+		options  string
+		cert     string
+		expected map[string]interface{}
+		wantErr  bool
+	}{
+		{name: "no flags", expected: map[string]interface{}{}},
+		{
+			name:     "options as a json string",
+			options:  `{"MethodOverride":"PUT"}`,
+			expected: map[string]interface{}{"additional_options": `{"MethodOverride":"PUT"}`},
+		},
+		{
+			name:     "options from a file",
+			options:  optionsFile,
+			expected: map[string]interface{}{"additional_options": `{"MethodOverride":"POST"}`},
+		},
+		{name: "options that are not json", options: "not-json", wantErr: true},
+		{
+			name:     "certificate stored under the keys the server reads",
+			cert:     certFile,
+			expected: map[string]interface{}{"ca_certificate": certificate},
+		},
+		{name: "certificate file that does not exist", cert: filepath.Join(dir, "missing.pem"), wantErr: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resetVariables()
+			defer resetVariables()
+			additionalOptions = tt.options
+			certPath = tt.cert
+
+			metadata, err := profileMetadataFromFlags()
+			if tt.wantErr {
+				if err == nil {
+					t.Fatalf("expected an error, got metadata %v", metadata)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if !reflect.DeepEqual(metadata, tt.expected) {
+				t.Errorf("expected metadata %v, got %v", tt.expected, metadata)
+			}
+		})
+	}
+}
+
+func TestCreatePerformanceProfile_RejectsMissingCertificate(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatalf("failed to get mesheryctl config: %v", err)
+	}
+
+	profileURL := testContext.BaseURL + "/api/performance/profiles"
+	httpmock.RegisterResponder("POST", profileURL, httpmock.NewStringResponder(http.StatusOK, `{}`))
+
+	resetVariables()
+	defer resetVariables()
+	profileName = "test-profile"
+	testURL = "https://meshery.io"
+	certPath = filepath.Join(t.TempDir(), "missing.pem")
+
+	if _, _, err := createPerformanceProfile(mctlCfg); err == nil {
+		t.Fatal("expected a missing certificate file to be rejected")
+	}
+	if calls := httpmock.GetCallCountInfo()["POST "+profileURL]; calls != 0 {
+		t.Errorf("expected no profile to be created, got %d request(s)", calls)
+	}
+}
+
+// TestApplyUpdatesExistingProfileBeforeRun verifies that --options reaches an
+// existing profile before the test starts, because the server reads it from the
+// saved profile, and that the rest of the profile is kept.
+func TestApplyUpdatesExistingProfileBeforeRun(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	origToken := utils.TokenFlag
+	utils.TokenFlag = filepath.Join(filepath.Dir(filename), "fixtures", "auth.json")
+	defer func() { utils.TokenFlag = origToken }()
+
+	const profileID = "906f8876-33b5-4a97-906e-7a409d3b8ae9"
+	existingProfile := `{"id":"` + profileID + `","name":"existing","qps":7,"duration":"30s",` +
+		`"endpoints":["https://meshery.io"],"loadGenerators":["fortio"],` +
+		`"metadata":{"additional_options":"{\"old\":true}","kept":"value"}}`
+
+	profilesURL := testContext.BaseURL + "/api/performance/profiles"
+	httpmock.RegisterResponder("GET", profilesURL,
+		httpmock.NewStringResponder(http.StatusOK, `{"profiles":[`+existingProfile+`],"totalCount":1}`))
+
+	var requests []string
+	var saved perfprofile.PerformanceProfile
+	httpmock.RegisterResponder("POST", profilesURL, func(req *http.Request) (*http.Response, error) {
+		requests = append(requests, "save")
+		if err := json.NewDecoder(req.Body).Decode(&saved); err != nil {
+			return nil, err
+		}
+		return httpmock.NewStringResponse(http.StatusOK, existingProfile), nil
+	})
+	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/user/performance/profiles/"+profileID+"/run",
+		func(*http.Request) (*http.Response, error) {
+			requests = append(requests, "run")
+			return httpmock.NewStringResponse(http.StatusOK, `{}`), nil
+		})
+
+	resetVariables()
+	defer resetVariables()
+	testURL = "https://meshery.io"
+	additionalOptions = `{"MethodOverride":"POST"}`
+
+	if err := applyCmd.RunE(applyCmd, []string{"existing"}); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if !reflect.DeepEqual(requests, []string{"save", "run"}) {
+		t.Fatalf("expected the profile to be saved before the run, got requests %v", requests)
+	}
+	if saved.ID.String() != profileID || saved.QPS != 7 {
+		t.Errorf("expected the existing profile to be updated, got id=%s qps=%d", saved.ID, saved.QPS)
+	}
+	if got := saved.Metadata["additional_options"]; got != additionalOptions {
+		t.Errorf("expected --options to replace the saved options, got %v", got)
+	}
+	if got := saved.Metadata["kept"]; got != "value" {
+		t.Errorf("expected other metadata to be kept, got %v", got)
 	}
 }
 
