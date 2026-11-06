@@ -62,6 +62,5 @@ func returnInvalidArgumentProvidedError() error {
 }
 
 func init() {
-	WorkSpaceCmd.Flags().BoolP("count", "", false, "total number of registered workspaces")
 	WorkSpaceCmd.AddCommand(availableSubcommands...)
 }

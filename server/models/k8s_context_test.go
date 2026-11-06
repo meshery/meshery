@@ -10,6 +10,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/core"
 	"gorm.io/driver/sqlite"
@@ -34,6 +35,50 @@ func TestFlushMeshSyncDataNilKubernetesServerIDNoPanic(t *testing.T) {
 	// Should complete without panic. If the guard is missing this will panic with a
 	// nil dereference on KubernetesServerID.String() inside the refcount loop.
 	FlushMeshSyncData(ctx, k8sCtx, nil, nil, "00000000-0000-0000-0000-000000000000", nil, nil)
+}
+
+type flushFakeProvider struct {
+	Provider
+	persistedEvents []events.Event
+}
+
+func (f *flushFakeProvider) PersistSystemEvent(event events.Event) error {
+	f.persistedEvents = append(f.persistedEvents, event)
+	return nil
+}
+
+// TestFlushMeshSyncDataEmptyUserIDAndNilMesheryInstanceID verifies that FlushMeshSyncData
+// does not panic when userID is empty or mesheryInstanceID is nil, and handles event persistence safely.
+func TestFlushMeshSyncDataEmptyUserIDAndNilMesheryInstanceID(t *testing.T) {
+	k8sCtx := K8sContext{ID: "ctx-1", Name: "cluster-a", Server: "https://k8s.example.com"}
+
+	t.Run("empty context list and empty user ID persists event without owner", func(t *testing.T) {
+		fp := &flushFakeProvider{}
+		FlushMeshSyncData(context.Background(), k8sCtx, fp, nil, "", nil, nil)
+		if len(fp.persistedEvents) != 1 {
+			t.Fatalf("expected 1 persisted event, got %d", len(fp.persistedEvents))
+		}
+		if fp.persistedEvents[0].Category != "meshsync" || fp.persistedEvents[0].Action != "flush" {
+			t.Errorf("unexpected event category/action: %s/%s", fp.persistedEvents[0].Category, fp.persistedEvents[0].Action)
+		}
+	})
+
+	t.Run("valid user ID and nil mesheryInstanceID with cluster list", func(t *testing.T) {
+		k8sctxs := []*K8sContext{
+			{ID: "ctx-1", Name: "cluster-a", KubernetesServerID: nil},
+		}
+		ctx := context.WithValue(context.Background(), AllKubeClusterKey, k8sctxs)
+		fp := &flushFakeProvider{}
+		validUser := uuid.Must(uuid.NewV4()).String()
+		FlushMeshSyncData(ctx, k8sCtx, fp, nil, validUser, nil, nil)
+		if len(fp.persistedEvents) != 0 {
+			t.Fatalf("expected no persisted events, got %d", len(fp.persistedEvents))
+		}
+	})
+
+	t.Run("nil provider does not panic", func(t *testing.T) {
+		FlushMeshSyncData(context.Background(), k8sCtx, nil, nil, "", nil, nil)
+	})
 }
 
 // TestFlushMeshSyncDataMixedNilAndPopulatedServerIDs verifies that the refcount loop

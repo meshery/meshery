@@ -21,8 +21,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -43,15 +43,15 @@ mesheryctl design undeploy -f [filepath]
 	`,
 
 	Args: func(cmd *cobra.Command, args []string) error {
+		if cmd.Flags().Changed("file") && strings.TrimSpace(file) == "" {
+			errMsg := `Usage: mesheryctl design undeploy -f [filepath]`
+			return ErrUndeployDesign(fmt.Errorf("%s", errMsg))
+		}
+
 		if len(args) == 0 && file == "" {
 			return ErrUndeployDesign(
 				fmt.Errorf("provide either a design ID or -f [filepath]"),
 			)
-		}
-
-		if cmd.Flags().Changed("file") && file == "" {
-			errMsg := `Usage: mesheryctl design undeploy -f [filepath]`
-			return ErrUndeployDesign(fmt.Errorf("%s", errMsg))
 		}
 
 		return nil
@@ -87,14 +87,14 @@ mesheryctl design undeploy -f [filepath]
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
 
-		if !govalidator.IsURL(file) {
+		if !utils.IsValidUrl(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
 				return utils.ErrFileRead(err)
 			}
 			designFile = string(content)
 		} else {
-			utils.Log.Info("URLs are not currently supported")
+			return utils.ErrInvalidArgument(fmt.Errorf("URLs are not currently supported"))
 		}
 
 		jsonValues, _ := json.Marshal(map[string]interface{}{
