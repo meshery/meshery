@@ -63,7 +63,7 @@ const Adapters: React.FC = () => {
           setAvailableAdapters(currentAdaptersList);
         }
       })
-      .catch(() => handleError('Unable to fetch list of adapters.'));
+      .catch((error) => handleError('Unable to fetch list of adapters.')(error));
   };
 
   const handleAdapterDeployment = (
@@ -78,12 +78,13 @@ const Adapters: React.FC = () => {
       updateProgress({ showProgress: false });
 
       if (!isNil(errors)) {
-        // Toggle the switch to its previous state if the request fails.
-        setAvailableAdapters({
-          ...availableAdapters,
-          [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled },
-        });
-        handleError(msg);
+        // Put the switch back to where it was before the toggle. selectedAdapter
+        // still holds that original state.
+        setAvailableAdapters((prev) => ({
+          ...prev,
+          [adapterId]: { ...prev[adapterId], enabled: selectedAdapter.enabled },
+        }));
+        handleError(msg)(errors);
       } else {
         const actionText = payload.status.toLowerCase();
         notify({
@@ -96,9 +97,13 @@ const Adapters: React.FC = () => {
 
   const handleError =
     (msg: string) =>
-    (error?: Error): void => {
+    (error?: unknown): void => {
       updateProgress({ showProgress: false });
-      notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: error?.toString() });
+      notify({
+        message: msg,
+        event_type: EVENT_TYPES.ERROR,
+        details: isNil(error) ? undefined : String(error),
+      });
     };
 
   const handleToggle = (selectedAdapter: AdaptersListType[string], adapterId: string): void => {

@@ -125,9 +125,15 @@ describe('Adapters component', () => {
       await Promise.resolve();
     });
 
-    // The handler doesn't notify directly (handleError is curried); just verify the
-    // initial render still produced cards and didn't crash.
     expect(screen.getAllByText(/Meshery Adapter for Istio/i).length).toBeGreaterThan(0);
+    expect(notifyMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Unable to fetch list of adapters.',
+        event_type: 'error',
+        details: 'Error: boom',
+      }),
+    );
+    expect(updateProgressMock).toHaveBeenLastCalledWith({ showProgress: false });
   });
 
   it('marks adapters returned by system sync as enabled', async () => {
@@ -170,5 +176,10 @@ describe('Adapters component', () => {
     const payload = changeAdapterStateMock.mock.calls[0][1];
     expect(payload.adapter).toBe('meshery-istio');
     expect(payload.status).toBe('ENABLED');
+
+    // the failure is reported and the switch goes back to off
+    expect(notifyMock).toHaveBeenCalledWith(expect.objectContaining({ event_type: 'error' }));
+    expect(notifyMock).not.toHaveBeenCalledWith(expect.objectContaining({ event_type: 'success' }));
+    expect(screen.getAllByTestId('switch-OperatorSwitch')[0]).not.toBeChecked();
   });
 });
