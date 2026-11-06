@@ -1,11 +1,15 @@
 import React from 'react';
 import { Typography, Grid2, Box, List, ListItem, RenderMarkdown } from '@sistent/sistent';
 import { FormatStructuredData } from '../../../data-formatter';
+import { TitleLink, formatErrorCode } from './common';
+import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 
 type ErrorMetadata = {
   LongDescription?: string[];
   ProbableCause?: string[];
   SuggestedRemediation?: string[];
+  Code?: string;
+  code?: string;
 };
 
 export const ErrorMetadataFormatter = ({
@@ -13,11 +17,15 @@ export const ErrorMetadataFormatter = ({
   event,
 }: {
   metadata: ErrorMetadata;
-  event: { description?: unknown };
+  event: { description?: unknown; category?: string };
 }) => {
   const longDescription = metadata?.LongDescription || [];
   const probableCause = metadata?.ProbableCause || [];
   const suggestedRemediation = metadata?.SuggestedRemediation || [];
+  const rawCode = metadata?.Code || metadata?.code;
+  const formattedCode = rawCode
+    ? formatErrorCode(rawCode, event?.category || 'meshery-server')
+    : null;
   const ErrorDetailsObjectFormatter = ({
     heading,
     value,
@@ -63,6 +71,17 @@ export const ErrorMetadataFormatter = ({
     <Grid2 size="grow">
       {' '}
       <div>
+        {formattedCode && (
+          <Box sx={{ mb: 1 }}>
+            <TitleLink
+              href={`${MESHERY_DOCS_URL}/reference/error-codes#${formattedCode}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {formattedCode}
+            </TitleLink>
+          </Box>
+        )}
         {event?.description && <FormatStructuredData data={event.description} />}
         <div style={{ marginTop: '1rem' }}>
           <FormatStructuredData

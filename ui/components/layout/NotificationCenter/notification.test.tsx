@@ -188,7 +188,36 @@ import {
   DeleteEvent,
   ChangeStatus,
   getErrorCodesFromEvent,
+  formatErrorCode,
 } from './notification';
+
+describe('formatErrorCode', () => {
+  it('returns empty string for null, undefined, or empty values', () => {
+    expect(formatErrorCode(null)).toBe('');
+    expect(formatErrorCode(undefined)).toBe('');
+    expect(formatErrorCode('')).toBe('');
+  });
+
+  it('prefixes bare numeric half-codes with default meshery-server component', () => {
+    expect(formatErrorCode('1562')).toBe('meshery-server-1562');
+    expect(formatErrorCode(1133 as any)).toBe('meshery-server-1133');
+  });
+
+  it('prefixes bare numeric half-codes with specific component when provided', () => {
+    expect(formatErrorCode('1001', 'meshkit')).toBe('meshkit-1001');
+    expect(formatErrorCode('2001', 'meshery_adapter_cilium')).toBe('meshery-adapter-cilium-2001');
+  });
+
+  it('preserves codes that already contain a mnemonic hyphen', () => {
+    expect(formatErrorCode('meshery-server-1133')).toBe('meshery-server-1133');
+    expect(formatErrorCode('meshkit-11180')).toBe('meshkit-11180');
+  });
+
+  it('preserves non-numeric custom error codes for backward compatibility', () => {
+    expect(formatErrorCode('E1')).toBe('E1');
+    expect(formatErrorCode('ERR_UNKNOWN')).toBe('ERR_UNKNOWN');
+  });
+});
 
 describe('helpers', () => {
   it('canTruncateDescription returns true when over max length', () => {
@@ -217,6 +246,29 @@ describe('getErrorCodesFromEvent', () => {
 
   it('collects codes from a single metadata.error object', () => {
     expect(getErrorCodesFromEvent({ metadata: { error: { Code: 'E1' } } } as any)).toEqual(['E1']);
+  });
+
+  it('formats numeric half-codes into full universal mnemonics', () => {
+    expect(getErrorCodesFromEvent({ metadata: { error: { Code: '1562' } } } as any)).toEqual([
+      'meshery-server-1562',
+    ]);
+  });
+
+  it('uses event category as component moniker when available', () => {
+    expect(
+      getErrorCodesFromEvent({
+        category: 'meshsync',
+        metadata: { error: { Code: '1001' } },
+      } as any),
+    ).toEqual(['meshsync-1001']);
+  });
+
+  it('preserves full mnemonic error codes from metadata.error', () => {
+    expect(
+      getErrorCodesFromEvent({
+        metadata: { error: { Code: 'meshery-server-1133' } },
+      } as any),
+    ).toEqual(['meshery-server-1133']);
   });
 
   it('collects codes from an array metadata.error and ModelDetails errors', () => {
