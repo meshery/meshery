@@ -241,6 +241,7 @@ const MeshAdapterConfigComponent = () => {
     }
 
     const adapterLabel = selectedAvailableAdapter.label.replace(/^meshery-/, '').toUpperCase();
+    const stateBeforeDeploy = adapterStates[adapterLabel];
     setAdapterStates((prevState) => ({
       ...prevState,
       [adapterLabel]: STATUS.DEPLOYING,
@@ -267,7 +268,7 @@ const MeshAdapterConfigComponent = () => {
         handleError('Unable to deploy adapter')(errors);
         setAdapterStates((prevState) => ({
           ...prevState,
-          [adapterLabel]: STATUS.UNDEPLOYED,
+          [adapterLabel]: stateBeforeDeploy,
         }));
         return;
       }
@@ -321,6 +322,7 @@ const MeshAdapterConfigComponent = () => {
       .replace(/^meshery-/, '')
       .toUpperCase();
 
+    const stateBeforeUndeploy = adapterStates[adapterLabel];
     setAdapterStates((prevState) => ({
       ...prevState,
       [adapterLabel]: STATUS.UNDEPLOYING,
@@ -339,7 +341,7 @@ const MeshAdapterConfigComponent = () => {
         handleError('Unable to undeploy adapter')(errors);
         setAdapterStates((prevState) => ({
           ...prevState,
-          [adapterLabel]: STATUS.DEPLOYED,
+          [adapterLabel]: stateBeforeUndeploy,
         }));
         return;
       }

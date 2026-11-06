@@ -10,8 +10,14 @@ const updateProgressMock = vi.fn();
 
 vi.mock('@sistent/sistent', () => ({
   Grid2: ({ children }: any) => <div data-testid="grid">{children}</div>,
-  Switch: ({ checked, onChange, name }: any) => (
-    <input data-testid={`switch-${name}`} type="checkbox" checked={!!checked} onChange={onChange} />
+  Switch: ({ checked, onChange, name, disabled }: any) => (
+    <input
+      data-testid={`switch-${name}`}
+      type="checkbox"
+      checked={!!checked}
+      disabled={!!disabled}
+      onChange={onChange}
+    />
   ),
   Typography: ({ children }: any) => <div>{children}</div>,
   useTheme: () => ({
@@ -181,5 +187,33 @@ describe('Adapters component', () => {
     expect(notifyMock).toHaveBeenCalledWith(expect.objectContaining({ event_type: 'error' }));
     expect(notifyMock).not.toHaveBeenCalledWith(expect.objectContaining({ event_type: 'success' }));
     expect(screen.getAllByTestId('switch-OperatorSwitch')[0]).not.toBeChecked();
+  });
+
+  it('ignores further toggles of an adapter while its request is pending', async () => {
+    let finish: (response: unknown, errors: unknown) => void = () => {};
+    changeAdapterStateMock.mockImplementation((cb: any) => {
+      finish = cb;
+    });
+
+    await act(async () => {
+      render(<Adapters />);
+    });
+
+    const istioSwitch = screen.getAllByTestId('switch-OperatorSwitch')[0];
+    await act(async () => {
+      fireEvent.click(istioSwitch);
+    });
+
+    expect(istioSwitch).toBeDisabled();
+    await act(async () => {
+      fireEvent.click(istioSwitch);
+    });
+    expect(changeAdapterStateMock).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      finish({}, null);
+    });
+    expect(istioSwitch).not.toBeDisabled();
+    expect(istioSwitch).toBeChecked();
   });
 });
