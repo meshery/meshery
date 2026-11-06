@@ -84,7 +84,7 @@ Each error code has a stable page. Its URL follows this pattern:
 /reference/error-codes/<component-type>-<component-name>/<event-moniker>-<code>/
 ```
 
-The [machine-readable error code index](/reference/error-codes/index.json)
+The [machine-readable error code index](./index.json)
 contains one record per code, including its component, severity, descriptions,
 probable cause, suggested remediation, and reference URL.
 

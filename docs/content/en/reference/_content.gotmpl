@@ -25,7 +25,7 @@
     {{- end -}}
     {{- $identities.Set $identity true -}}
     {{- $paths.Set $path true -}}
-    {{- $url := printf "%s%s" (strings.TrimSuffix "/" site.BaseURL) (relURL (printf "/reference/%s/" $path)) -}}
+    {{- $url := printf "reference/%s/" $path | absURL -}}
     {{- $record := dict
       "componentType" $component.component_type
       "componentName" $component.component_name
@@ -57,7 +57,7 @@
 {{- if eq (len $records) 0 -}}
   {{- errorf "no error codes found in docs/data/errorref" -}}
 {{- end -}}
-{{- $index := dict "schemaVersion" 1 "errors" $records -}}
+{{- $index := dict "schemaVersion" 1 "errors" (sort $records "referenceUrl") -}}
 {{- $resource := dict
   "content" (dict "mediaType" "application/json" "value" ($index | jsonify))
   "path" "error-codes/index.json"
