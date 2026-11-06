@@ -8,19 +8,6 @@
 name: Auto-Merge Meeting Minutes
 
 on:
-  # Manual trigger for testing and operations
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: 'Pull Request number to process (required)'
-        required: true
-        type: string
-      debug_mode:
-        description: 'Enable debug logging'
-        required: false
-        default: 'false'
-        type: boolean
-
   # Trigger on PR events targeting master branch
   pull_request_target:
     types: [opened, synchronize, reopened]
@@ -39,33 +26,37 @@ jobs:
     runs-on: ubuntu-24.04
     # Only run in the main repository, not forks
     if: github.repository == 'meshery/meshery'
-    
+
     steps:
-      # Debug step: Print all inputs and context for introspection
-      # Note: Untrusted inputs are passed via env variables to prevent script injection
-      - name: 🔍 Introspect Inputs and Context
+      # Debug step: Print context for introspection
+      # Note: Untrusted inputs are passed via env variables and sanitized before logging to prevent workflow command injection
+      - name: 🔍 Introspect Context
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
         run: |
-          echo "::group::Workflow Inputs"
-          echo "Debug Mode: ${{ inputs.debug_mode }}"
-          echo "Manual PR Number: ${{ inputs.pr_number }}"
-          echo "::endgroup::"
-          
           echo "::group::GitHub Context"
           echo "Actor: ${{ github.actor }}"
           echo "Event Name: ${{ github.event_name }}"
           echo "Repository: ${{ github.repository }}"
           echo "Ref: $GITHUB_REF"
           echo "::endgroup::"
-          
+
+          # Sanitize untrusted variables before printing to log to prevent workflow command injection:
+          # Strip control characters, line breaks, and replace '::' so GitHub Actions runner cannot interpret lines as workflow commands.
+          SAFE_TITLE=$(printf '%s' "$PR_TITLE" | tr -d '\r\n' | sed 's/::/;/g' | cut -c 1-200)
+          SAFE_HEAD_REF=$(printf '%s' "$PR_HEAD_REF" | tr -d '\r\n' | sed 's/::/;/g' | cut -c 1-100)
+          SAFE_BASE_REF=$(printf '%s' "$PR_BASE_REF" | tr -d '\r\n' | sed 's/::/;/g' | cut -c 1-100)
+          SAFE_AUTHOR=$(printf '%s' "$PR_AUTHOR" | tr -d '\r\n' | sed 's/::/;/g' | cut -c 1-100)
+
           echo "::group::Pull Request Context"
           echo "PR Number: ${{ github.event.pull_request.number }}"
-          echo "PR Title: $PR_TITLE"
-          echo "PR Author: ${{ github.event.pull_request.user.login }}"
-          echo "Base Branch: ${{ github.event.pull_request.base.ref }}"
-          echo "Head Branch: $PR_HEAD_REF"
+          echo "PR Title: $SAFE_TITLE"
+          echo "PR Author: $SAFE_AUTHOR"
+          echo "Base Branch: $SAFE_BASE_REF"
+          echo "Head Branch: $SAFE_HEAD_REF"
           echo "Head SHA: ${{ github.event.pull_request.head.sha }}"
           echo "::endgroup::"
 
@@ -84,29 +75,40 @@ jobs:
         with:
           github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
           script: |
+            const path = require('path');
+            const workspaceDir = process.env.GITHUB_WORKSPACE || process.cwd();
+            const {
+              validateFiles,
+              ALLOWED_PATH_PREFIX
+            } = require(path.join(workspaceDir, '.github', 'scripts', 'validate-meeting-minutes.js'));
+
             const { owner, repo } = context.repo;
-            
-            // Determine PR number from event or manual input
-            let prNumber = context.payload.pull_request?.number;
-            if (!prNumber && '${{ inputs.pr_number }}') {
-              prNumber = parseInt('${{ inputs.pr_number }}', 10);
-            }
-            
-            if (!prNumber) {
-              core.setFailed('No PR number found. This workflow must be triggered by a pull_request event or with a pr_number input.');
+            const safeLog = (str) => String(str || '').replace(/[\r\n]/g, ' ').replace(/::/g, ';');
+
+            // Determine PR number from pull_request event payload
+            const prNumber = context.payload.pull_request?.number;
+
+            if (!prNumber || !Number.isInteger(prNumber) || prNumber <= 0) {
+              core.setFailed('No valid PR number found in pull_request event payload.');
               return;
             }
-            
+
             core.info(`Validating PR #${prNumber} for ${owner}/${repo}`);
             core.setOutput('pr_number', prNumber);
-            
+
             try {
-              // Fetch PR metadata to capture authoritative base and head commit SHAs
+              // Fetch PR metadata to capture authoritative base branch and commit SHAs
               const { data: pr } = await github.rest.pulls.get({
                 owner,
                 repo,
                 pull_number: prNumber
               });
+
+              if (pr.base?.ref !== 'master') {
+                core.setFailed(`PR #${prNumber} target branch is '${safeLog(pr.base?.ref)}', expected 'master'. Aborting auto-merge.`);
+                core.setOutput('is_valid', 'false');
+                return;
+              }
 
               const baseSha = pr.base?.sha;
               const headSha = pr.head?.sha;
@@ -115,7 +117,7 @@ jobs:
                 core.setOutput('is_valid', 'false');
                 return;
               }
-              core.info(`Captured PR #${prNumber} base commit: ${baseSha}, head commit: ${headSha}`);
+              core.info(`Captured PR #${prNumber} target: ${pr.base.ref}, base commit: ${baseSha}, head commit: ${headSha}`);
 
               // Compare commits to inspect the exact changed files between immutable commits
               const { data: comparison } = await github.rest.repos.compareCommits({
@@ -140,53 +142,31 @@ jobs:
                 return;
               }
 
-              // Define the allowed directory pattern
-              // Files MUST start with 'docs/meetings/' to be auto-merged
-              const allowedPathPrefix = 'docs/meetings/';
-
-              // Track validation results
-              let allFilesValid = true;
-              const invalidFiles = [];
-              const validFiles = [];
-
-              // Validate each file, including rename origin if applicable
-              for (const file of files) {
-                const filePath = file.filename;
-                const isPathValid = filePath.startsWith(allowedPathPrefix);
-                const isRenameValid = !file.previous_filename || file.previous_filename.startsWith(allowedPathPrefix);
-
-                if (isPathValid && isRenameValid) {
-                  validFiles.push(filePath);
-                  core.info(`✅ Valid: ${filePath}`);
-                } else {
-                  allFilesValid = false;
-                  if (!isPathValid) {
-                    invalidFiles.push(filePath);
-                    core.warning(`❌ Invalid: ${filePath} - not in ${allowedPathPrefix}`);
-                  }
-                  if (!isRenameValid) {
-                    invalidFiles.push(`${file.previous_filename} (renamed to ${filePath})`);
-                    core.warning(`❌ Invalid rename source: ${file.previous_filename} - not in ${allowedPathPrefix}`);
-                  }
-                }
+              // Validate files using helper (validates both filename and previous_filename)
+              const result = validateFiles(files);
+              for (const filePath of result.validFiles) {
+                core.info(`✅ Valid: ${safeLog(filePath)}`);
+              }
+              for (const filePath of result.invalidFiles) {
+                core.warning(`❌ Invalid: ${safeLog(filePath)} - not in ${ALLOWED_PATH_PREFIX}`);
               }
 
               // Set outputs for subsequent steps
-              core.setOutput('files_count', files.length);
-              core.setOutput('valid_files', JSON.stringify(validFiles));
-              core.setOutput('invalid_files', JSON.stringify(invalidFiles));
-              core.setOutput('is_valid', allFilesValid.toString());
+              core.setOutput('files_count', result.filesCount);
+              core.setOutput('valid_files', JSON.stringify(result.validFiles));
+              core.setOutput('invalid_files', JSON.stringify(result.invalidFiles));
+              core.setOutput('is_valid', result.isValid.toString());
               core.setOutput('validated_head_sha', headSha);
 
-              if (!allFilesValid) {
-                core.setFailed(`PR #${prNumber} contains files outside of ${allowedPathPrefix}. Found ${invalidFiles.length} invalid file(s): ${invalidFiles.join(', ')}`);
+              if (!result.isValid) {
+                core.setFailed(`PR #${prNumber} contains files outside of ${ALLOWED_PATH_PREFIX}. Found ${result.invalidFiles.length} invalid file(s): ${result.invalidFiles.map(safeLog).join(', ')}`);
                 return;
               }
 
-              core.info(`✅ All ${files.length} file(s) between base ${baseSha} and head ${headSha} are within ${allowedPathPrefix}. PR is eligible for auto-merge.`);
+              core.info(`✅ All ${result.filesCount} file(s) between base ${baseSha} and head ${headSha} are within ${ALLOWED_PATH_PREFIX}. PR is eligible for auto-merge.`);
             } catch (error) {
               core.setOutput('is_valid', 'false');
-              core.setFailed(`Failed to validate PR files: ${error.message}`);
+              core.setFailed(`Failed to validate PR files: ${safeLog(error.message)}`);
             }
 
       # Approve the PR using the community manager token
@@ -200,25 +180,67 @@ jobs:
           github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
+            const safeLog = (str) => String(str || '').replace(/[\r\n]/g, ' ').replace(/::/g, ';');
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const expectedHeadSha = process.env.VALIDATED_HEAD_SHA;
 
-            core.info(`Approving PR #${prNumber} at commit ${expectedHeadSha}`);
+            if (!prNumber || isNaN(prNumber) || prNumber <= 0) {
+              core.setFailed(`Invalid PR number: ${process.env.PR_NUMBER}`);
+              return;
+            }
+
+            if (!expectedHeadSha) {
+              core.setFailed('Missing validated head SHA output from validation step.');
+              return;
+            }
+
+            core.info(`Approving PR #${prNumber} bound to validated commit ${expectedHeadSha}`);
 
             try {
-              await github.rest.pulls.createReview({
+              // Fetch current PR metadata before approval
+              const { data: pr } = await github.rest.pulls.get({
                 owner,
                 repo,
-                pull_number: prNumber,
-                commit_id: expectedHeadSha,
-                event: 'APPROVE',
-                body: '✅ Auto-approved: This PR contains only meeting minutes updates in `docs/meetings/`.'
+                pull_number: prNumber
               });
-              
-              core.info(`Successfully approved PR #${prNumber}`);
+
+              if (pr.merged) {
+                core.info(`PR #${prNumber} is already merged.`);
+                return;
+              }
+
+              if (pr.state !== 'open') {
+                core.setFailed(`PR #${prNumber} is not open (state: ${safeLog(pr.state)}). Aborting approval.`);
+                return;
+              }
+
+              if (pr.base?.ref !== 'master') {
+                core.setFailed(`PR #${prNumber} target branch is '${safeLog(pr.base?.ref)}', expected 'master'. Aborting approval.`);
+                return;
+              }
+
+              if (pr.head?.sha !== expectedHeadSha) {
+                core.setFailed(`PR #${prNumber} head commit changed from ${expectedHeadSha} to ${safeLog(pr.head?.sha)}. Aborting approval.`);
+                return;
+              }
+
+              try {
+                await github.rest.pulls.createReview({
+                  owner,
+                  repo,
+                  pull_number: prNumber,
+                  commit_id: expectedHeadSha,
+                  event: 'APPROVE',
+                  body: '✅ Auto-approved: This PR contains only meeting minutes updates in `docs/meetings/`.'
+                });
+
+                core.info(`Successfully approved PR #${prNumber} at commit ${expectedHeadSha}`);
+              } catch (error) {
+                core.warning(`Failed to approve PR #${prNumber}: ${safeLog(error.message)}`);
+                // Non-blocking: merge step will independently re-verify safety checks
+              }
             } catch (error) {
-              core.warning(`Failed to approve PR: ${error.message}`);
-              // Don't fail the workflow if approval fails, still try to merge
+              core.setFailed(`Failed to inspect PR #${prNumber} before approval: ${safeLog(error.message)}`);
             }
 
       # Merge the PR using merge commit
@@ -232,8 +254,14 @@ jobs:
           github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
+            const safeLog = (str) => String(str || '').replace(/[\r\n]/g, ' ').replace(/::/g, ';');
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const expectedHeadSha = process.env.VALIDATED_HEAD_SHA;
+
+            if (!prNumber || isNaN(prNumber) || prNumber <= 0) {
+              core.setFailed(`Invalid PR number: ${process.env.PR_NUMBER}`);
+              return;
+            }
 
             if (!expectedHeadSha) {
               core.setFailed('Missing validated head SHA output from validation step.');
@@ -249,19 +277,24 @@ jobs:
                 repo,
                 pull_number: prNumber
               });
-              
+
               if (pr.merged) {
                 core.info(`PR #${prNumber} is already merged.`);
                 return;
               }
-              
+
               if (pr.state !== 'open') {
-                core.setFailed(`PR #${prNumber} is not open (state: ${pr.state}).`);
+                core.setFailed(`PR #${prNumber} is not open (state: ${safeLog(pr.state)}). Aborting merge.`);
                 return;
               }
-              
-              if (pr.head.sha !== expectedHeadSha) {
-                core.setFailed(`PR #${prNumber} head commit changed from ${expectedHeadSha} to ${pr.head.sha}. Aborting merge.`);
+
+              if (pr.base?.ref !== 'master') {
+                core.setFailed(`PR #${prNumber} target branch is '${safeLog(pr.base?.ref)}', expected 'master'. Aborting merge.`);
+                return;
+              }
+
+              if (pr.head?.sha !== expectedHeadSha) {
+                core.setFailed(`PR #${prNumber} head commit changed from ${expectedHeadSha} to ${safeLog(pr.head?.sha)}. Aborting merge.`);
                 return;
               }
 
@@ -275,35 +308,45 @@ jobs:
                 commit_title: `[Docs] Auto-merge meeting minutes (#${prNumber})`,
                 commit_message: `Auto-merged meeting minutes update.\n\nThis PR contained only changes to \`docs/meetings/\` and was auto-merged by the community manager workflow.`
               });
-              
+
               core.info(`Successfully merged PR #${prNumber}`);
               core.info(`Merge SHA: ${result.data.sha}`);
-              
+
             } catch (error) {
-              core.setFailed(`Failed to merge PR: ${error.message}`);
+              core.setFailed(`Failed to merge PR: ${safeLog(error.message)}`);
             }
 
       # Post status comment on successful merge
       - name: 📢 Post Success Comment
         if: steps.validate.outputs.is_valid == 'true' && success()
+        env:
+          PR_NUMBER: ${{ steps.validate.outputs.pr_number }}
+          FILES_COUNT: ${{ steps.validate.outputs.files_count }}
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
-            const prNumber = ${{ steps.validate.outputs.pr_number }};
-            const filesCount = ${{ steps.validate.outputs.files_count }};
-            
-            const body = `### ✅ Meeting Minutes Auto-Merged 🗓️
-            
-            This pull request has been automatically merged because it contains **only** changes to meeting minutes in \`docs/meetings/\`.
-            
-            **Summary:**
-            - Files modified: ${filesCount}
-            - Merged by: @meshery-ci (Community Manager Bot)
-            
-            Thank you for keeping our meeting records up to date! 📝`;
-            
+            const prNumber = parseInt(process.env.PR_NUMBER, 10);
+            const filesCount = parseInt(process.env.FILES_COUNT, 10) || 0;
+
+            if (!prNumber || isNaN(prNumber) || prNumber <= 0) {
+              core.warning(`Invalid PR number for success comment: ${process.env.PR_NUMBER}`);
+              return;
+            }
+
+            const body = [
+              '### ✅ Meeting Minutes Auto-Merged 🗓️',
+              '',
+              'This pull request has been automatically merged because it contains **only** changes to meeting minutes in `docs/meetings/`.',
+              '',
+              '**Summary:**',
+              `- Files modified: ${filesCount}`,
+              '- Merged by: @meshery-ci (Community Manager Bot)',
+              '',
+              'Thank you for keeping our meeting records up to date! 📝'
+            ].join('\n');
+
             try {
               await github.rest.issues.createComment({
                 owner,
@@ -318,44 +361,97 @@ jobs:
       # Post rejection comment if validation failed
       - name: 📢 Post Rejection Comment
         if: steps.validate.outputs.is_valid != 'true' && failure()
+        env:
+          PR_NUMBER: ${{ steps.validate.outputs.pr_number }}
+          INVALID_FILES: ${{ steps.validate.outputs.invalid_files }}
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
-            const prNumber = '${{ steps.validate.outputs.pr_number }}' || context.payload.pull_request?.number;
-            
-            if (!prNumber) {
-              core.warning('No PR number available to post rejection comment');
+            const prNumber = parseInt(process.env.PR_NUMBER, 10) || context.payload.pull_request?.number;
+
+            if (!prNumber || isNaN(prNumber) || prNumber <= 0) {
+              core.warning('No valid PR number available to post rejection comment');
               return;
             }
-            
-            const invalidFiles = '${{ steps.validate.outputs.invalid_files }}' || '[]';
+
+            const rawInvalidFiles = process.env.INVALID_FILES || '[]';
             let parsedInvalidFiles = [];
             try {
-              parsedInvalidFiles = JSON.parse(invalidFiles);
+              const parsed = JSON.parse(rawInvalidFiles);
+              if (Array.isArray(parsed)) {
+                parsedInvalidFiles = parsed.filter(f => typeof f === 'string');
+              }
             } catch (e) {
               parsedInvalidFiles = [];
             }
-            
-            const body = `### ⚠️ Auto-Merge Not Possible
-            
-            This pull request **cannot** be auto-merged because it contains files outside of the \`docs/meetings/\` directory.
-            
-            **Files outside allowed directory:**
-            ${parsedInvalidFiles.map(f => `- \`${f}\``).join('\n') || '- Unable to determine invalid files'}
-            
-            **What to do:**
-            - If this PR should only update meeting minutes, please remove the files that are not in \`docs/meetings/\`
-            - If this PR intentionally includes other changes, it will need manual review and approval
-            
-            The auto-merge workflow is designed **strictly** for meeting minutes updates only.`;
-            
+
+            const sanitizeFilename = (filename) => {
+              if (typeof filename !== 'string') return '';
+              // 1. Remove control characters (C0, C1, DEL) and line breaks/tabs
+              // 2. Remove Unicode bidi control characters that could cause visual spoofing:
+              //    U+061C, U+200E, U+200F, U+202A-U+202E, U+2066-U+2069
+              const cleaned = filename
+                .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
+                .replace(/[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, '')
+                .trim();
+
+              // 3. HTML-escape characters to prevent HTML/Markdown tag or link injection:
+              return cleaned
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;')
+                .replace(/\[/g, '&#91;')
+                .replace(/\]/g, '&#93;')
+                .replace(/`/g, '&#96;')
+                .replace(/\\/g, '&#92;');
+            };
+
+            let body;
+            if (parsedInvalidFiles.length > 0) {
+              const formattedFiles = parsedInvalidFiles
+                .map(f => `- <code>${sanitizeFilename(f)}</code>`)
+                .join('\n');
+
+              body = [
+                '### ⚠️ Meeting Minutes Auto-Merge Not Possible',
+                '',
+                'This pull request could not be automatically merged because it contains changes to files outside the `docs/meetings/` directory.',
+                '',
+                '**Files outside allowed directory:**',
+                formattedFiles,
+                '',
+                '**What to do:**',
+                '- If this PR should only update meeting minutes, please remove any files outside `docs/meetings/`.',
+                '- If this PR intentionally includes other changes, it will need manual review and approval by a maintainer.',
+                '',
+                'The auto-merge workflow is designed **strictly** for meeting minutes updates only.'
+              ].join('\n');
+            } else {
+              body = [
+                '### ⚠️ Meeting Minutes Auto-Merge Not Possible',
+                '',
+                'This pull request could not be automatically validated or merged.',
+                '',
+                'Automatic merging is only performed for pull requests that meet all of the following criteria:',
+                '- Target the `master` branch.',
+                '- Contain verified changes exclusively within the `docs/meetings/` directory.',
+                '- Pass all automated safety, branch, and commit validation checks.',
+                '',
+                '**What to do:**',
+                '- Verify that your pull request targets the `master` branch.',
+                '- If this PR requires maintainer attention or contains other intentional changes, it will need to be reviewed and merged manually by a maintainer.'
+              ].join('\n');
+            }
+
             try {
               await github.rest.issues.createComment({
                 owner,
                 repo,
-                issue_number: parseInt(prNumber, 10),
+                issue_number: prNumber,
                 body
               });
             } catch (error) {
