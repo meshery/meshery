@@ -18,6 +18,7 @@ import (
 	// "bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"path/filepath"
 
@@ -86,7 +87,10 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 			return err
 		}
 		resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
-		if err != nil || resp.HTTPStatusCode != 200 {
+		if err == nil && resp.HTTPStatusCode != http.StatusOK {
+			err = fmt.Errorf("unexpected status code %d", resp.HTTPStatusCode)
+		}
+		if err != nil {
 			utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
 			return err
 		}
@@ -96,7 +100,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		err = InvokeCompUpdate()
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		return nil
@@ -139,7 +143,7 @@ func InvokeCompUpdate() error {
 	if err != nil {
 		err = ErrUpdateRegistry(err, modelLocation)
 		utils.Log.Error(err)
-		return nil
+		return err
 	}
 
 	utils.Log.Info("Total Registrants: ", len(componentCSVHelper.Components))
