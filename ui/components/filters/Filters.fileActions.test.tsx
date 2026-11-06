@@ -46,6 +46,8 @@ import {
   createHandlePublish,
   createHandleClone,
   createDeleteFilter,
+  createErrorHandler,
+  createFetchSchemaData,
 } from './Filters.fileActions';
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -533,6 +535,74 @@ describe('createDeleteFilter', () => {
     expect(notify).toHaveBeenCalledWith({
       message: 'Filter deleted',
       event_type: 'SUCCESS',
+    });
+  });
+});
+
+describe('createFetchSchemaData', () => {
+  it('passes the fetched models to onModels', async () => {
+    const models = [{ displayName: 'istio' }];
+    const onModels = vi.fn();
+    const handleError = vi.fn(() => vi.fn());
+    const fetchSchemaData = createFetchSchemaData({
+      getMeshModels: vi.fn().mockResolvedValue({ models }),
+      onModels,
+      handleError,
+    });
+
+    await fetchSchemaData();
+
+    expect(onModels).toHaveBeenCalledWith(models);
+    expect(handleError).not.toHaveBeenCalled();
+  });
+
+  it('reports a failed model fetch through the error handler', async () => {
+    const errorHandler = vi.fn();
+    const handleError = vi.fn(() => errorHandler);
+    const onModels = vi.fn();
+    const fetchSchemaData = createFetchSchemaData({
+      getMeshModels: vi.fn().mockRejectedValue(new Error('boom')),
+      onModels,
+      handleError,
+    });
+
+    await fetchSchemaData();
+
+    expect(onModels).not.toHaveBeenCalled();
+    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'SCHEMA_FETCH' }));
+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
+  });
+});
+
+describe('createErrorHandler', () => {
+  it('shows an error notification when a delete is rejected', async () => {
+    const notify = vi.fn();
+    const handleSubmit = createHandleSubmit({
+      notify,
+      handleError: createErrorHandler({ notify }),
+      showmodal: vi.fn().mockResolvedValueOnce('Delete'),
+      resetSelectedRowData: vi.fn(() => vi.fn()),
+      deleteFilterFile: vi.fn(() => ({
+        unwrap: () => Promise.reject({ status: 403, data: { message: 'not allowed' } }),
+      })),
+      uploadFilterFile: vi.fn(),
+      updateFilterFile: vi.fn(),
+    });
+
+    await handleSubmit({ data: '', name: 'foo', id: 'i-1', type: 'DELETE' });
+    await flush();
+
+    expect(notify).toHaveBeenCalledTimes(1);
+    expect(notify).toHaveBeenCalledWith({ message: 'not allowed', event_type: 'ERROR' });
+    expect(updateProgress).toHaveBeenCalledWith({ showProgress: false });
+  });
+
+  it('falls back to the action message when the error has none', () => {
+    const notify = vi.fn();
+    createErrorHandler({ notify })({ error_msg: 'Failed to delete filter file' })({});
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Failed to delete filter file',
+      event_type: 'ERROR',
     });
   });
 });

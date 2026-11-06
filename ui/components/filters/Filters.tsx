@@ -13,7 +13,6 @@ import { modifyRJSFSchema } from '../../utils/utils';
 import { getMeshModels } from '../../api/meshmodel';
 import _ from 'lodash';
 import { useNotification } from '../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../lib/event-types';
 import {
   CustomColumnVisibilityControl,
   ResponsiveDataTable,
@@ -44,17 +43,17 @@ import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { isLocalProvider } from '@/utils/provider';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useSelector } from 'react-redux';
-import { updateProgress } from '@/store/slices/mesheryUi';
 import { CreateButton, ViewSwitchButton, BtnText } from './Filters.styled';
 import YAMLEditor from './YAMLEditor';
 import ImportModal from './ImportModal';
 import PublishModal from './PublishModal';
-import { formatApiError } from '../../utils/helpers/meshkitError';
-import { ACTION_TYPES, COLUMN_VIEWS } from './Filters.constants';
+import { COLUMN_VIEWS } from './Filters.constants';
 import { buildFiltersColumns } from './Filters.columns';
 import { buildFiltersTableOptions } from './Filters.tableOptions';
 import {
   createDeleteFilter,
+  createErrorHandler,
+  createFetchSchemaData,
   createHandleClone,
   createHandleDownload,
   createHandleImportFilter,
@@ -158,17 +157,7 @@ function MesheryFilters() {
   const [updateFilterFile] = useUpdateFilterFileMutation();
   const [uploadFilterFile] = useUploadFilterFileMutation();
 
-  // Curried: call sites pass the action, then the raw error -
-  // `handleError(ACTION_TYPES.X)(error)`. The error is an RTK Query rejection
-  // object, so it goes through formatApiError instead of being stringified.
-  const handleError = (action: { error_msg: string }) => (error: unknown) => {
-    updateProgress({ showProgress: false });
-    const { message } = formatApiError(error, action.error_msg);
-    notify({
-      message,
-      event_type: EVENT_TYPES.ERROR,
-    });
-  };
+  const handleError = createErrorHandler({ notify });
 
   const handleSetFilters = (filters: any[] | undefined) => {
     if (filters != undefined) {
@@ -305,9 +294,10 @@ function MesheryFilters() {
    * publish filter capability and setting the canPublishFilter state accordingly
    */
   useEffect(() => {
-    const fetchSchemaData = async () => {
-      try {
-        const { models } = await getMeshModels();
+    const fetchSchemaData = createFetchSchemaData({
+      getMeshModels,
+      handleError,
+      onModels: (models) => {
         const modelNames = _.uniq(models?.map((model) => model.displayName));
         modelNames.sort();
 
@@ -319,10 +309,8 @@ function MesheryFilters() {
         );
         setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
         setMeshModels(models);
-      } catch (error) {
-        handleError(ACTION_TYPES.SCHEMA_FETCH)(error);
-      }
-    };
+      },
+    });
 
     if (capabilitiesData) {
       // `capabilitiesData.capabilities` is the provider-declared feature list.

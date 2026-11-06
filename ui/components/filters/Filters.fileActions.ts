@@ -6,11 +6,24 @@ import { getUnit8ArrayDecodedFile } from '../../utils/utils';
 import { trueRandom } from '../../lib/trueRandom';
 import downloadContent from '../../utils/fileDownloader';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { formatApiError } from '../../utils/helpers/meshkitError';
 import { ACTION_TYPES } from './Filters.constants';
 
 type Notify = (_args: { message: string; event_type: string; details?: string }) => void;
 
 type ErrorHandler = (_action: { error_msg: string }) => (_error: unknown) => void;
+
+// Curried: call sites pass the action, then the raw error -
+// `handleError(ACTION_TYPES.X)(error)`. The error is usually an RTK Query
+// rejection object, so it goes through formatApiError instead of being
+// stringified (which would show "[object Object]").
+export function createErrorHandler({ notify }: { notify: Notify }): ErrorHandler {
+  return (action) => (error) => {
+    updateProgress({ showProgress: false });
+    const { message } = formatApiError(error, action.error_msg);
+    notify({ message, event_type: EVENT_TYPES.ERROR });
+  };
+}
 
 type SubmitArgs = {
   data: any;
@@ -368,5 +381,28 @@ export function createDeleteFilter({
         updateProgress({ showProgress: false });
         handleError(ACTION_TYPES.DELETE_FILTERS)(error);
       });
+  };
+}
+
+type CreateFetchSchemaDataArgs = {
+  getMeshModels: () => Promise<{ models?: any[] }>;
+  onModels: (_models: any[] | undefined) => void;
+  handleError: ErrorHandler;
+};
+
+// Loads the mesh models used to build the publish schema. Errors from the
+// fetch or from building the schema are reported as SCHEMA_FETCH failures.
+export function createFetchSchemaData({
+  getMeshModels,
+  onModels,
+  handleError,
+}: CreateFetchSchemaDataArgs) {
+  return async function fetchSchemaData() {
+    try {
+      const { models } = await getMeshModels();
+      onModels(models);
+    } catch (error) {
+      handleError(ACTION_TYPES.SCHEMA_FETCH)(error);
+    }
   };
 }
