@@ -1811,6 +1811,24 @@
         "short_description": "Could not list a root that is a symbolic link",
         "probable_cause": "The configured root names a committed symbolic link rather than a directory or a file",
         "suggested_remediation": "Walk or WalkContext the same configuration instead, which clones the repository and reads through the link\nConfigure the root the link points at rather than the link itself"
+      },
+      "11335": {
+        "name": "ErrGetPolicyDefinitionsCode",
+        "code": "11335",
+        "severity": "Alert",
+        "long_description": "The policy registry query failed",
+        "short_description": "Failed to retrieve policy definitions from the registry",
+        "probable_cause": "The registry database query failed",
+        "suggested_remediation": "Check the registry database connection and retry the request"
+      },
+      "11336": {
+        "name": "ErrInvalidPolicyPaginationCode",
+        "code": "11336",
+        "severity": "Alert",
+        "long_description": "The policy filter contains a negative pagination value",
+        "short_description": "Policy limit and offset must be non-negative",
+        "probable_cause": "Limit and offset values must be zero or positive",
+        "suggested_remediation": "Set limit and offset to zero or a positive value"
       }
     }
   }
