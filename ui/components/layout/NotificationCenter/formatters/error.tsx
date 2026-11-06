@@ -11,6 +11,7 @@ import {
 } from '@sistent/sistent';
 import { FormatStructuredData } from '../../../data-formatter';
 import { canTruncateDescription } from '../notification';
+import { TitleLink } from './common';
 import { normalizeEventError } from './event_error';
 import type { ErrorCause, ErrorRemediation } from './event_error';
 
@@ -76,20 +77,29 @@ const RemediationItem = ({ remediation }: { remediation: ErrorRemediation }) => 
   const policyLabel =
     ACTION_POLICY_LABEL[remediation.actionPolicy as keyof typeof ACTION_POLICY_LABEL];
   return (
-    <ListItem
-      data-testid="error-remediation"
-      sx={{ display: 'list-item', padding: 0, pb: 0.5, '& p': { margin: 0 } }}
-    >
-      <RenderMarkdown content={remediation.description} />
-      {policyLabel && (
-        <Chip
-          size="small"
-          variant="outlined"
-          label={policyLabel}
-          title={remediation.action}
-          sx={{ ml: 1, height: 20 }}
-        />
-      )}
+    <ListItem data-testid="error-remediation" sx={{ display: 'list-item', padding: 0, pb: 1 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: 1,
+          '& p': { margin: 0, lineHeight: '1.2rem' },
+        }}
+      >
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <RenderMarkdown content={remediation.description} />
+        </Box>
+        {policyLabel && (
+          <Chip
+            size="small"
+            variant="outlined"
+            label={policyLabel}
+            title={remediation.action}
+            sx={{ flexShrink: 0, height: 20 }}
+          />
+        )}
+      </Box>
     </ListItem>
   );
 };
@@ -196,11 +206,11 @@ export const ErrorMetadataFormatter = ({
         </Grid2>
       )}
       {referenceUrl && (
-        <Typography variant="body2" sx={{ mt: 1 }}>
-          <a href={referenceUrl} target="_blank" rel="noopener noreferrer">
+        <Box sx={{ mt: 1 }}>
+          <TitleLink href={referenceUrl}>
             {code ? `${code} reference` : 'Error reference'}
-          </a>
-        </Typography>
+          </TitleLink>
+        </Box>
       )}
     </Grid2>
   );
