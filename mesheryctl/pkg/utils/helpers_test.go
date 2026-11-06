@@ -867,3 +867,41 @@ func TestTrimFileExtension(t *testing.T) {
 		})
 	}
 }
+
+func TestUploadFileWithParams(t *testing.T) {
+	origToken := TokenFlag
+	defer func() { TokenFlag = origToken }()
+	TokenFlag = GetToken(t)
+
+	tmpDir := t.TempDir()
+	sampleFile := filepath.Join(tmpDir, "sample.txt")
+	err := os.WriteFile(sampleFile, []byte("sample content for upload"), 0o600)
+	if err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
+
+	params := map[string]string{
+		"token": "valid-token",
+		"org":   "meshery",
+	}
+
+	req, err := UploadFileWithParams("http://localhost:9081/api/upload", params, "file", sampleFile)
+	if err != nil {
+		t.Fatalf("UploadFileWithParams returned unexpected error: %v", err)
+	}
+	if req == nil {
+		t.Fatal("UploadFileWithParams returned nil request")
+	}
+	if req.Method != http.MethodPost {
+		t.Errorf("expected POST method, got %s", req.Method)
+	}
+	if !strings.HasPrefix(req.Header.Get("Content-Type"), "multipart/form-data") {
+		t.Errorf("expected multipart/form-data content type, got %s", req.Header.Get("Content-Type"))
+	}
+
+	nonExistent := filepath.Join(tmpDir, "does-not-exist.txt")
+	_, err = UploadFileWithParams("http://localhost:9081/api/upload", params, "file", nonExistent)
+	if err == nil {
+		t.Error("expected error for non-existent file, got nil")
+	}
+}
