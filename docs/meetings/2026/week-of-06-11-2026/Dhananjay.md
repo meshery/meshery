@@ -12,4 +12,4 @@ Cloud-native tooling, Kubernetes policy and security, and contributing to open s
 
 ## Links
 - LinkedIn: [LinkedIn](https://www.linkedin.com/in/dhananjaykumarsharma)
-- GitHub: [github>](https://github.com/dhananjaysharma2004)
+- GitHub: [GitHub](https://github.com/dhananjaysharma2004)
