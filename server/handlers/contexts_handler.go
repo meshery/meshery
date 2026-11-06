@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -13,6 +15,8 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
 )
+
+const stateMachineEventTimeout = 2 * time.Minute
 
 // Deprecated: GetAllContexts (GET /api/system/kubernetes/contexts) is being
 // retired in favor of the connections API (kind=kubernetes) — everything is now
@@ -141,17 +145,25 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	// the tracker entry for a connection the user just deleted - so drop the
 	// entry directly instead. See mhelpers.HasMachineContext.
 	if !mhelpers.HasMachineContext(inst) {
-		smInstanceTracker.Remove(connectionUUID)
+		if smInstanceTracker != nil {
+			smInstanceTracker.Remove(connectionUUID)
+		}
 	} else {
+		// detach from the http request lifecycle with a bounded timeout so that the goroutine isn't cancelled when
+		// the handler returns, while preventing goroutine leaks if downstream calls hang.
+		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), stateMachineEventTimeout)
 		go func(inst *machines.StateMachine) {
-			event, err := inst.SendEvent(req.Context(), machines.Delete, nil)
+			defer cancel()
+			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
 			if err != nil {
 				h.log.Error(err)
 				h.log.Debug(event)
 				return
 			}
 
-			smInstanceTracker.Remove(connectionUUID)
+			if smInstanceTracker != nil {
+				smInstanceTracker.Remove(connectionUUID)
+			}
 		}(inst)
 	}
 
