@@ -57,11 +57,11 @@ mesheryctl perf result sam-test
 </div>
 </pre> 
 
-Display Perf profile in JSON or YAML:
+Display performance profiles in JSON or YAML:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl perf result -o json
+mesheryctl perf profile sam-test -o json
 
 </div>
 </div>
@@ -70,7 +70,7 @@ mesheryctl perf result -o json
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl perf result -o yaml
+mesheryctl perf profile sam-test -o yaml
 
 </div>
 </div>
