@@ -551,16 +551,29 @@ func ReconcileK8sContextServerID(provider Provider, token string, k8sContext K8s
 	return nil
 }
 
-// FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID
+// FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID.
+// Resource deletion proceeds even when no active user ID is present in context,
+// preventing stale cluster resources from leaking on background or unauthenticated deletions.
 func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Provider, eventsChan *Broadcast, userID string, mesheryInstanceID *core.Uuid, log logger.Handler) {
+	persist := func(e events.Event) {
+		if provider == nil {
+			return
+		}
+		if perr := provider.PersistSystemEvent(e); perr != nil {
+			if log != nil {
+				log.Error(ErrPersistEvent(perr))
+			}
+		}
+	}
+	var mesheryInstanceUUID core.Uuid
+	if mesheryInstanceID != nil {
+		mesheryInstanceUUID = *mesheryInstanceID
+	}
 	ctxID := k8sContext.ID
 	ctxUUID := uuid.FromStringOrNil(ctxID)
-	userUUID, err := uuid.FromString(userID)
-	if err != nil {
-		// A nil user key would persist and broadcast events under no owner; bail
-		// rather than attribute the flush to uuid.Nil.
-		log.Error(ErrInvalidUUID(fmt.Errorf("invalid user id %q: %w", userID, err)))
-		return
+	var userUUID uuid.UUID
+	if parsed, err := uuid.FromString(userID); err == nil {
+		userUUID = parsed
 	}
 	// Gets all the available kubernetes contexts
 
@@ -568,14 +581,16 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	serverURL := k8sContext.Server
 	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]*K8sContext)
 	if !ok || len(k8sctxs) == 0 {
-		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher").FromOwner(userUUID).Build()
-		err := provider.PersistSystemEvent(*event)
-		if err != nil {
-			err = ErrPersistEvent(err)
-			log.Error(err)
+		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher")
+		if userUUID != uuid.Nil {
+			event = event.FromOwner(userUUID)
 		}
+		builtEvent := event.Build()
+		persist(*builtEvent)
 
-		eventsChan.Publish(userUUID, event)
+		if eventsChan != nil && userUUID != uuid.Nil {
+			eventsChan.Publish(userUUID, builtEvent)
+		}
 		return
 	}
 	var sid string
@@ -603,40 +618,47 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	// If the reference count is 1 then only flush the meshsync data
 	// because this means its the last contextID referring to that Kubernetes Server
 	if refCount == 1 {
-		if provider.GetGenericPersister() == nil {
-
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromOwner(userUUID).WithMetadata(map[string]interface{}{
+		if provider == nil || provider.GetGenericPersister() == nil {
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).WithMetadata(map[string]interface{}{
 				"error": ErrEmptyMeshSyncHandler(),
-			}).Build()
-			err := provider.PersistSystemEvent(*event)
-			if err != nil {
-				err = ErrPersistEvent(err)
-				log.Error(err)
+			})
+			if userUUID != uuid.Nil {
+				event = event.FromOwner(userUUID)
 			}
-			eventsChan.Publish(userUUID, event)
+			builtEvent := event.Build()
+			persist(*builtEvent)
+			if eventsChan != nil && userUUID != uuid.Nil {
+				eventsChan.Publish(userUUID, builtEvent)
+			}
 			return
 		}
 
 		if err := FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), sid); err != nil {
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromOwner(userUUID).WithMetadata(map[string]interface{}{
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
-			}).Build()
-			if perr := provider.PersistSystemEvent(*event); perr != nil {
-				log.Error(ErrPersistEvent(perr))
+			})
+			if userUUID != uuid.Nil {
+				event = event.FromOwner(userUUID)
 			}
+			builtEvent := event.Build()
+			persist(*builtEvent)
 
-			eventsChan.Publish(userUUID, event)
+			if eventsChan != nil && userUUID != uuid.Nil {
+				eventsChan.Publish(userUUID, builtEvent)
+			}
 			return
 		}
 
-		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Informational).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("MeshSync data flushed for context %s", ctxName)).FromOwner(userUUID).Build()
-		// Also add context name, as id is not helpful
-		err = provider.PersistSystemEvent(*event)
-		if err != nil {
-			err = ErrPersistEvent(err)
-			log.Error(err)
+		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Informational).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("MeshSync data flushed for context %s", ctxName))
+		if userUUID != uuid.Nil {
+			event = event.FromOwner(userUUID)
 		}
-		eventsChan.Publish(userUUID, event)
+		builtEvent := event.Build()
+		// Also add context name, as id is not helpful
+		persist(*builtEvent)
+		if eventsChan != nil && userUUID != uuid.Nil {
+			eventsChan.Publish(userUUID, builtEvent)
+		}
 	}
 }
 
