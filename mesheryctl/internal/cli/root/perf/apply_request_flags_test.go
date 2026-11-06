@@ -148,3 +148,37 @@ func TestApplyRejectsMalformedRequestFlags(t *testing.T) {
 		})
 	}
 }
+
+// TestApplyRejectsDuplicateRequestFlags verifies that a repeated name stops the
+// command before it sends anything, instead of silently keeping the last value.
+func TestApplyRejectsDuplicateRequestFlags(t *testing.T) {
+	tests := []struct {
+		name   string
+		flag   string
+		first  string
+		second string
+	}{
+		{name: "duplicate header", flag: "header", first: "X-Trace: 1", second: "X-Trace: 2"},
+		{name: "duplicate cookie", flag: "cookie", first: "session=abc", second: "session=def"},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			_ = utils.InitTestEnvironment(t)
+			defer utils.StopMockery(t)
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+			resetVariables()
+			defer resetVariables()
+			require.NoError(t, applyCmd.Flags().Set(tc.flag, tc.first))
+			require.NoError(t, applyCmd.Flags().Set(tc.flag, tc.second))
+
+			err := applyCmd.RunE(applyCmd, []string{"existing"})
+
+			require.Error(t, err)
+			assert.Contains(t, err.Error(), "--"+tc.flag)
+			assert.Contains(t, err.Error(), "duplicate")
+			assert.Zero(t, httpmock.GetTotalCallCount(), "nothing may be sent for a duplicate value")
+		})
+	}
+}

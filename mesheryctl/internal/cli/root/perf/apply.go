@@ -429,6 +429,9 @@ func flagValuesToJSON(flag, separator string, flagValues []string) (string, erro
 		if !found || name == "" {
 			return "", utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --%s: expected name%svalue", flag, separator))
 		}
+		if _, exists := encoded[name]; exists {
+			return "", utils.ErrFlagsInvalid(fmt.Errorf("duplicate value for --%s: %q", flag, name))
+		}
 		encoded[name] = strings.TrimSpace(value)
 	}
 
