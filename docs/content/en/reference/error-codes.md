@@ -78,6 +78,16 @@ td {
 
 Meshery and its components use a common framework (defined within MeshKit) to generate and document an event with a unique error code identifier as the combination of `[component type]-[component name]-[event moniker]-[numeric code]`. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
 
+Each error code has a stable page. Its URL follows this pattern:
+
+```text
+/reference/error-codes/<component-type>-<component-name>/<event-moniker>-<code>/
+```
+
+The [machine-readable error code index](./index.json)
+contains one record per code, including its component, severity, descriptions,
+probable cause, suggested remediation, and reference URL.
+
 {{% alert color="info" title="Error codes are combination of component type, component name, event moniker and numberic code" %}}Error codes are a hyphenated collection of details that include:
 
 <ul>
