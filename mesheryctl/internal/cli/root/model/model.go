@@ -142,7 +142,7 @@ func generateModelDataToDisplay(modelsResponse *model.MeshModelModelsPage) ([][]
 	}
 
 	if modelsResponse.Models == nil {
-		return rows, int64(0)
+		return rows, count
 	}
 
 	var models []model.ModelDefinition
