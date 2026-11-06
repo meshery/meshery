@@ -49,7 +49,8 @@
 &lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;Open &lt;a href="https://shapes.meshery.io"&gt;Shape Builder&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Draw at least three points, then select &lt;strong&gt;Close Shape&lt;/strong&gt;. Copy the coordinates displayed below the canvas.&lt;/li&gt;
+&lt;li&gt;Draw at least three points, then select &lt;strong&gt;Close Shape&lt;/strong&gt;.
+Check that each coordinate is between -1 and 1, including after scaling. If an x-coordinate exceeds 1, redraw the vertices within the leftmost 520 pixels of the canvas and check again. After your final redraw or scaling change, copy the checked coordinates displayed below the canvas.&lt;/li&gt;
 &lt;li&gt;In your Meshery component, set &lt;code&gt;styles.shape&lt;/code&gt; to &lt;code&gt;polygon&lt;/code&gt; and put the coordinates in &lt;code&gt;styles.shape-polygon-points&lt;/code&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;Polygon coordinates range from -1 to 1. For example, these styles describe a plus shape:&lt;/p&gt;</description></item></channel></rss>
