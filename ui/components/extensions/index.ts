@@ -1,2 +1,4 @@
 export * from './adapters';
 export { VisualDesignerExtension } from './installableExtensions';
+export { ResponsiveImage } from './ResponsiveImage';
+export type { ResponsiveImageProps } from './ResponsiveImage';
