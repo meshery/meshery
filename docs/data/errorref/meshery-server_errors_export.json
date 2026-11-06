@@ -2826,8 +2826,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Nil context generated from in cluster config",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "No contexts detected in the in-cluster kubeconfig.",
+        "suggested_remediation": "Ensure Meshery is deployed with a valid service account in a Kubernetes cluster."
       },
       "1327": {
         "name": "ErrFailToSaveContextCode",
