@@ -77,8 +77,11 @@ func (e *EventsPersister) getCountBySeverity(userID core.Uuid, eventStatus event
 //     lastSeenAt, else now, and lastSeenAt the event's lastSeenAt, else
 //     firstSeenAt.
 //   - An event with a correlationKey and a resolvedAt is a resolution. It
-//     closes the owner's open event with that key, recording nothing new; with
-//     none open it is recorded as an already resolved event.
+//     closes the owner's open event with that key, recording nothing new: the
+//     open event takes the resolvedAt, its lastSeenAt becomes the later of its
+//     own and the resolution's (its lastSeenAt, else resolvedAt), and its
+//     severity and description become the resolution's, which say what
+//     cleared. With none open it is recorded as an already resolved event.
 //
 // An owner has at most one open event per key. The partial unique index
 // AutoMigrateSystemTables creates enforces it, and a create that loses the race
@@ -152,10 +155,29 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) error {
 		// The update runs on the stored row, whose status is valid, so the
 		// event's BeforeUpdate status check passes.
 		if event.ResolvedAt != nil {
-			return tx.Model(&open).Updates(map[string]interface{}{
-				"resolved_at": event.ResolvedAt.UTC(),
-				"updated_at":  now,
-			}).Error
+			resolvedAt := event.ResolvedAt.UTC()
+			// The resolution is the condition's latest observation, and it
+			// says what cleared: the closed event takes its time, severity and
+			// description (for example success, "Connection restored").
+			lastSeen := resolvedAt
+			if event.LastSeenAt != nil {
+				lastSeen = event.LastSeenAt.UTC()
+			}
+			if open.LastSeenAt != nil && open.LastSeenAt.After(lastSeen) {
+				lastSeen = open.LastSeenAt.UTC()
+			}
+			updates := map[string]interface{}{
+				"resolved_at":  resolvedAt,
+				"last_seen_at": lastSeen,
+				"updated_at":   now,
+			}
+			if event.Severity != "" {
+				updates["severity"] = event.Severity
+			}
+			if event.Description != "" {
+				updates["description"] = event.Description
+			}
+			return tx.Model(&open).Updates(updates).Error
 		}
 
 		increment := 1
