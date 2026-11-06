@@ -1731,10 +1731,18 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 
 // PersistEvent persists a user-initiated event to the remote provider.
 // When the token is empty or remote persistence fails, it falls back to local persistence.
+//
+// The event is sent with every field it carries, including the optional
+// condition correlation (correlationKey, occurrenceCount, firstSeenAt,
+// lastSeenAt, resolvedAt), source, type, specversion and trace context
+// (traceId, parentId). The remote provider applies the createEvent
+// correlation contract to them; the local fallback, EventsPersister, applies
+// the same contract, so an event behaves alike on both paths.
 func (l *RemoteProvider) PersistEvent(event events.Event, token string) error {
-	// The remote path bypasses EventsPersister, so the metadata size guard
-	// is applied here too; the local fallback re-checks an already bounded map.
-	event = GuardEventMetadataSize(event, l.Log)
+	// The remote path bypasses EventsPersister, so the event is prepared here
+	// too; the local fallback re-prepares an already prepared event, which
+	// changes nothing.
+	event = PrepareEventForPersistence(event, l.Log)
 	if strings.TrimSpace(token) == "" {
 		return l.EventsPersister.PersistEvent(event, "")
 	}
@@ -1778,8 +1786,16 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 		_ = resp.Body.Close()
 	}()
 
-	if resp.StatusCode != http.StatusOK {
+	// createEvent answers 201 when it records a new event and 200 when it
+	// recorded nothing new: a replayed idempotencyKey, or an occurrence counted
+	// on (or a resolution of) an open condition. Both mean the remote provider
+	// has the event, so neither may fall back to the local database, which would
+	// store a second copy.
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
 		return ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
+	}
+	if disposition := resp.Header.Get(EventDispositionHeader); disposition != "" {
+		l.Log.Debugf("remote provider recorded event (%s: %s)", EventDispositionHeader, disposition)
 	}
 	return nil
 }
