@@ -135,6 +135,12 @@ func init() {
 func generateModelDataToDisplay(modelsResponse *model.MeshModelModelsPage) ([][]string, int64) {
 	rows := [][]string{}
 
+	count := int64(0)
+
+	if modelsResponse.TotalCount != nil {
+		count = int64(*modelsResponse.TotalCount)
+	}
+
 	if modelsResponse.Models == nil {
 		return rows, int64(0)
 	}
@@ -151,7 +157,6 @@ func generateModelDataToDisplay(modelsResponse *model.MeshModelModelsPage) ([][]
 		rows = append(rows, []string{model.ID.String(), modelName, string(model.Category.Name), model.Version})
 	}
 
-	count := int64(0)
 	if modelsResponse.TotalCount != nil {
 		count = int64(*modelsResponse.TotalCount)
 	}
