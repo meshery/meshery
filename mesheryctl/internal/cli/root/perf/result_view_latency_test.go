@@ -17,6 +17,36 @@ import (
 // TestResultViewPrintsLatenciesInMilliseconds runs `perf result --view` against a
 // result as fortio reports it, in seconds, and checks the line the user reads.
 func TestResultViewPrintsLatenciesInMilliseconds(t *testing.T) {
+	output := runResultViewWithPercentiles(t, `[
+		{"Percentile": 50, "Value": 0.0015},
+		{"Percentile": 75, "Value": 0.002},
+		{"Percentile": 90, "Value": 0.003},
+		{"Percentile": 99, "Value": 0.008},
+		{"Percentile": 99.9, "Value": 0.0095}
+	]`)
+	assert.Contains(t, output, "Latencies _ms: Avg: 2, Max: 10, Min: 1, P50: 1.5, P90: 3, P99: 8")
+}
+
+// TestResultViewMatchesPercentilesByField runs `perf result --view` against a
+// result whose percentile list is out of order and carries an extra 99.99
+// entry, and checks the percentiles are still matched by their Percentile
+// field rather than by slice position.
+func TestResultViewMatchesPercentilesByField(t *testing.T) {
+	output := runResultViewWithPercentiles(t, `[
+		{"Percentile": 99, "Value": 0.008},
+		{"Percentile": 99.99, "Value": 0.0099},
+		{"Percentile": 50, "Value": 0.0015},
+		{"Percentile": 90, "Value": 0.003},
+		{"Percentile": 99.9, "Value": 0.0095}
+	]`)
+	assert.Contains(t, output, "Latencies _ms: Avg: 2, Max: 10, Min: 1, P50: 1.5, P90: 3, P99: 8")
+}
+
+// runResultViewWithPercentiles runs `perf result --view` against a single
+// mocked result whose DurationHistogram carries the given percentile list,
+// and returns the captured stdout.
+func runResultViewWithPercentiles(t *testing.T, percentilesJSON string) string {
+	t.Helper()
 	testContext := utils.InitTestEnvironment(t)
 	defer utils.StopMockery(t)
 	_ = utils.SetupMeshkitLoggerTesting(t, false)
@@ -38,13 +68,7 @@ func TestResultViewPrintsLatenciesInMilliseconds(t *testing.T) {
 			"runnerResults": {
 				"DurationHistogram": {
 					"Avg": 0.002, "Max": 0.01, "Min": 0.001,
-					"Percentiles": [
-						{"Percentile": 50, "Value": 0.0015},
-						{"Percentile": 75, "Value": 0.002},
-						{"Percentile": 90, "Value": 0.003},
-						{"Percentile": 99, "Value": 0.008},
-						{"Percentile": 99.9, "Value": 0.0095}
-					]
+					"Percentiles": `+percentilesJSON+`
 				}
 			}
 		}]}`))
@@ -68,5 +92,5 @@ func TestResultViewPrintsLatenciesInMilliseconds(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, runErr)
 
-	assert.Contains(t, string(output), "Latencies _ms: Avg: 2, Max: 10, Min: 1, P50: 1.5, P90: 3, P99: 8")
+	return string(output)
 }

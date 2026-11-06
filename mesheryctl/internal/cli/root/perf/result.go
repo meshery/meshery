@@ -161,7 +161,7 @@ mesheryctl perf result saturday-profile --view
 				return err
 			}
 		} else if !viewSingleResult { // print all results
-			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data, nil)
+			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50 (MS)", "P99.9 (MS)", "START-TIME"}, data, nil)
 		} else {
 			index := 0
 			// if more than one result exist ask for index
@@ -233,17 +233,36 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 		}
 		qps := fmt.Sprintf("%d", int(result.RunnerResults.QPS))
 		duration := result.RunnerResults.RequestedDuration
-		if len(result.RunnerResults.DurationHistogram.Percentiles) > 0 {
-			p50 = fmt.Sprintf("%.8f", result.RunnerResults.DurationHistogram.Percentiles[0].Value)
-			p99_9 = fmt.Sprintf("%.8f", result.RunnerResults.DurationHistogram.Percentiles[len(result.RunnerResults.DurationHistogram.Percentiles)-1].Value)
+		percentiles := result.RunnerResults.DurationHistogram.Percentiles
+		// percentileValue looks a percentile up by its Percentile field
+		// instead of by slice position, so a list in any order (or with
+		// extra entries such as wrk2's 99.99/99.999) still maps each value
+		// to the right percentile.
+		percentileValue := func(want float64) (float64, bool) {
+			for _, p := range percentiles {
+				if p.Percentile == want {
+					return p.Value, true
+				}
+			}
+			return 0, false
+		}
+		if v, ok := percentileValue(50); ok {
+			p50 = fmt.Sprintf("%.8f", v*millisecondsPerSecond)
+		}
+		if v, ok := percentileValue(99.9); ok {
+			p99_9 = fmt.Sprintf("%.8f", v*millisecondsPerSecond)
 		}
 		startTime := result.TestStartTime.Format("2006-01-02 15:04:05")
 		data = append(data, []string{result.Name, serviceMesh, qps, duration, p50, p99_9, startTime})
 
-		if len(result.RunnerResults.DurationHistogram.Percentiles) > 3 {
-			P50 = result.RunnerResults.DurationHistogram.Percentiles[0].Value
-			P90 = result.RunnerResults.DurationHistogram.Percentiles[2].Value
-			P99 = result.RunnerResults.DurationHistogram.Percentiles[3].Value
+		if v, ok := percentileValue(50); ok {
+			P50 = v
+		}
+		if v, ok := percentileValue(90); ok {
+			P90 = v
+		}
+		if v, ok := percentileValue(99); ok {
+			P99 = v
 		}
 
 		// append data for extended output
