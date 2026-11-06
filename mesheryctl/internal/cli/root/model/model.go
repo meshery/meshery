@@ -21,8 +21,8 @@ import (
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas/models/v1beta1/model"
 
-	"github.com/meshery/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -96,13 +96,13 @@ mesheryctl model build [model-name]/[model-version]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")
 		if countFlag {
-			models, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s?page=1", modelsApiPath))
+			models, err := api.Fetch[model.MeshModelModelsPage](fmt.Sprintf("%s?page=1", modelsApiPath))
 
 			if err != nil {
 				return err
 			}
 
-			utils.DisplayCount("models", models.TotalCount)
+			utils.DisplayCount("models", int64(*models.TotalCount))
 
 			return nil
 		}
@@ -128,10 +128,10 @@ func init() {
 	ModelCmd.Flags().BoolVarP(&modelFlags.Count, "count", "", false, "(optional) Get the number of models in total")
 }
 
-func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([][]string, int64) {
+func generateModelDataToDisplay(modelsResponse *model.MeshModelModelsPage) ([][]string, int64) {
 	rows := [][]string{}
 
-	for _, model := range modelsResponse.Models {
+	for _, model := range *modelsResponse.Models {
 		modelName := model.Name
 		if modelName == "" {
 			modelName = "N/A"
@@ -139,5 +139,5 @@ func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([
 		rows = append(rows, []string{model.ID.String(), modelName, string(model.Category.Name), model.Version})
 	}
 
-	return rows, modelsResponse.TotalCount
+	return rows, int64(*modelsResponse.TotalCount)
 }
