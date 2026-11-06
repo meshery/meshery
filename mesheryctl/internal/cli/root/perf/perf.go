@@ -47,8 +47,8 @@ mesheryctl perf profile sam-test
 mesheryctl perf result sam-test
 
 // Display Perf profile in JSON or YAML:
-mesheryctl perf result -o json
-mesheryctl perf result -o yaml
+mesheryctl perf profile -o json
+mesheryctl perf profile -o yaml
 `,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
