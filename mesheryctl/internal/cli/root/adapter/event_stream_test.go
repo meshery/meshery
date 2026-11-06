@@ -100,7 +100,7 @@ func TestWaitForResponseOnEventStream(t *testing.T) {
 				mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 				require.NoError(t, err)
 
-				httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/events?client="+command.query,
+				httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/system/adapter/events?client="+command.query,
 					eventStreamResponder(tt.status, tt.contentType, tt.body))
 
 				err = waitWithDeadline(t, func() error {

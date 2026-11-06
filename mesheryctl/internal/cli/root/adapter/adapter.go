@@ -233,7 +233,7 @@ func checkEventStream(res *http.Response) error {
 // waitForDeployResponse waits on the event stream for the result of an adapter
 // operation whose event details contain query.
 func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_deploy"
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/events?client=cli_deploy"
 	method := "GET"
 	client := &http.Client{}
 	req, err := utils.NewRequest(method, path, nil)
@@ -291,7 +291,7 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 // waitForValidateResponse waits on the event stream for the result of a
 // validation whose event summary contains query.
 func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_validate"
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/events?client=cli_validate"
 	method := "GET"
 	client := &http.Client{}
 	req, err := utils.NewRequest(method, path, nil)

@@ -136,6 +136,12 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/system/adapter/manage", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.MeshAdapterConfigHandler)), models.ProviderAuth)))
 	gMux.Handle("/api/system/adapter/operation", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.MeshOpsHandler)), models.ProviderAuth))).
 		Methods("POST")
+	// SSE stream of adapter operation events, read by mesheryctl adapter deploy
+	// and validate. Adapter events are only collected while this stream is open,
+	// and it also publishes them to the event broadcaster. It stays off /api/events,
+	// which is reserved for /api/system/events once the UI migration finishes.
+	gMux.Handle("/api/system/adapter/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.EventStreamHandler), models.ProviderAuth))).
+		Methods("GET")
 	gMux.Handle("/api/system/adapters", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AdaptersHandler), models.ProviderAuth)))
 	gMux.Handle("/api/system/availableAdapters", http.HandlerFunc(h.AvailableAdaptersHandler)).
 		Methods("GET")
@@ -143,11 +149,6 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("POST")
 		// This will be changed to /api/events once the UI is compeltely updated to use new events and SSE is tunred off, otherwise existing events will break.
 	gMux.Handle("/api/system/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetAllEvents), models.ProviderAuth))).
-		Methods("GET")
-	// SSE stream of adapter operation events, read by mesheryctl adapter deploy
-	// and validate. Adapter events are only collected while this stream is open,
-	// and it also publishes them to the event broadcaster.
-	gMux.Handle("/api/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.EventStreamHandler), models.ProviderAuth))).
 		Methods("GET")
 	// SSE stream of live events; replaces the subscribeEvents GraphQL subscription.
 	gMux.Handle("/api/system/events/subscribe", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SubscribeEventsHandler), models.ProviderAuth))).
