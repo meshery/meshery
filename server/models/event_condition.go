@@ -25,6 +25,38 @@ const EventDispositionHeader = "Event-Disposition"
 // instance.
 const EventSourceServer = "meshery-server"
 
+// EventSourceUnknownClient is the `source` of an event a client sent to
+// POST /api/events without saying which surface it is. The server records the
+// event on the client's behalf, so it is never attributed to EventSourceServer.
+const EventSourceUnknownClient = "unknown-client"
+
+// ApplyClientEventFields copies the optional correlation, provenance and trace
+// fields of an event a client sent (the schemas EventPayload) onto the event
+// the server records for it, so a condition a client reports correlates as it
+// would on the remote provider. The client's operationId groups the event with
+// the rest of its operation when it sent one. Check the result with
+// events.Event.Validate.
+func ApplyClientEventFields(event *events.Event, sent events.Event) {
+	event.CorrelationKey = sent.CorrelationKey
+	event.OccurrenceCount = sent.OccurrenceCount
+	event.FirstSeenAt = sent.FirstSeenAt
+	event.LastSeenAt = sent.LastSeenAt
+	event.ResolvedAt = sent.ResolvedAt
+	event.Type = sent.Type
+	event.SpecVersion = sent.SpecVersion
+	event.TraceID = sent.TraceID
+	event.ParentID = sent.ParentID
+	if !sent.OperationID.IsNil() {
+		event.OperationID = sent.OperationID
+	}
+	if sent.Source != nil && *sent.Source != "" {
+		event.Source = sent.Source
+	} else {
+		source := EventSourceUnknownClient
+		event.Source = &source
+	}
+}
+
 // NewServerEvent starts an event Meshery Server emits on behalf of the
 // operation ctx belongs to. It carries source EventSourceServer and, when ctx
 // carries a valid OpenTelemetry span, that span's trace context: the router's

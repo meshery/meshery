@@ -240,6 +240,7 @@ const (
 	ErrGetUsersKeysCode          = "meshery-server-1461"
 	ErrFetchProfilesCode         = "meshery-server-1464"
 	ErrResetInProgressCode       = "meshery-server-1481"
+	ErrInvalidClientEventCode    = "meshery-server-1489"
 )
 
 var (
@@ -1252,5 +1253,16 @@ func ErrModelNotFound(modelName string) error {
 		[]string{fmt.Sprintf("Model %q was not found in the provided CSV input", modelName)},
 		[]string{"The requested model is not present in the CSV input"},
 		[]string{"Verify that the requested model exists in the CSV input"},
+	)
+}
+
+func ErrInvalidClientEvent(err error) error {
+	return errors.New(
+		ErrInvalidClientEventCode,
+		errors.Alert,
+		[]string{"The event's correlation, provenance or trace fields are not valid"},
+		[]string{err.Error()},
+		[]string{"A field breaks the meshery/schemas event contract: a correlationKey, source or type outside 1 to 255 characters, an occurrenceCount below 1, a lastSeenAt before firstSeenAt, a specversion other than 1.0, or a traceId or parentId that is not W3C Trace Context hex"},
+		[]string{"Send the fields as the schemas EventPayload defines them, or omit the ones the client does not set"},
 	)
 }
