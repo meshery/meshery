@@ -28,6 +28,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	core "github.com/meshery/schemas/models/core"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -109,8 +110,9 @@ mesheryctl perf result saturday-profile --view
 		// Merge args to get profile-name
 		searchString = strings.Join(args, "%20")
 
-		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
+		profiles, err := fetchAllPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString)
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 
@@ -184,6 +186,37 @@ mesheryctl perf result saturday-profile --view
 		}
 		return nil
 	},
+}
+
+func fetchAllPerformanceProfiles(baseURL, searchString string) ([]perfprofile.PerformanceProfile, error) {
+	var profiles []perfprofile.PerformanceProfile
+	seen := make(map[core.Uuid]struct{})
+	expectedTotal := 0
+	for page := 0; ; page++ {
+		pageProfiles, total, err := fetchPerformanceProfiles(baseURL, searchString, pageSize, page)
+		if err != nil {
+			return nil, err
+		}
+		if page == 0 {
+			expectedTotal = total
+		}
+		if total < 0 || total != expectedTotal || len(pageProfiles) > expectedTotal-len(profiles) {
+			return nil, ErrProfileTraversal()
+		}
+		for _, profile := range pageProfiles {
+			if _, exists := seen[profile.ID]; exists {
+				return nil, ErrProfileTraversal()
+			}
+			seen[profile.ID] = struct{}{}
+		}
+		profiles = append(profiles, pageProfiles...)
+		if len(profiles) == expectedTotal {
+			return profiles, nil
+		}
+		if len(pageProfiles) == 0 {
+			return nil, ErrProfileTraversal()
+		}
+	}
 }
 
 // Fetch results for a specific profile
