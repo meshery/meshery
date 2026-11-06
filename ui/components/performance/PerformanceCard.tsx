@@ -24,6 +24,20 @@ import { Keys } from '@meshery/schemas/permissions';
 import { useResourceOwner } from '@/utils/hooks/useResourceOwner';
 import useTestIDsGenerator from '@/utils/hooks/useTestIDs';
 import { BottomPart, CardButton, ResultContainer } from './style';
+import { getStoredAdditionalOptions } from './helper';
+
+// Profiles saved before the form blocked invalid JSON can still hold plain text,
+// and a throw here would take down every card on the page.
+const parseAdditionalOptions = (additionalOptions?: string | string[]) => {
+  const options = getStoredAdditionalOptions(additionalOptions);
+  if (!options) return '';
+
+  try {
+    return JSON.parse(options);
+  } catch {
+    return options;
+  }
+};
 
 function PerformanceCard({
   profile,
@@ -68,10 +82,7 @@ function PerformanceCard({
     },
     {
       name: 'Additional Option',
-      value:
-        metadata?.additional_options && metadata?.additional_options[0] !== ''
-          ? JSON.parse(metadata?.additional_options[0])
-          : '',
+      value: parseAdditionalOptions(metadata?.additional_options),
     },
     {
       name: 'Certifcate Name',
