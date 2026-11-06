@@ -563,7 +563,9 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	if err != nil {
 		// A nil user key would persist and broadcast events under no owner; bail
 		// rather than attribute the flush to uuid.Nil.
-		log.Error(ErrInvalidUUID(fmt.Errorf("invalid user id %q: %w", userID, err)))
+		if log != nil {
+			log.Error(ErrInvalidUUID(fmt.Errorf("invalid user id %q: %w", userID, err)))
+		}
 		return
 	}
 	// Gets all the available kubernetes contexts

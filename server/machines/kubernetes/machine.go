@@ -151,7 +151,6 @@ func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachin
 
 func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
 	userUUID, systemID := machines.ResolveUserAndSystemID(ctx)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(systemID).FromOwner(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
@@ -169,6 +168,6 @@ func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Ha
 	if err != nil {
 		return nil, eventBuilder.Build(), err
 	}
-	AssignControllerHandlers(machinectx, sysID, provider)
+	AssignControllerHandlers(machinectx, &systemID, provider)
 	return machinectx, nil, nil
 }

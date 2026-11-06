@@ -8,7 +8,6 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
-	"github.com/meshery/schemas/models/core"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -33,7 +32,6 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		return machines.NoOp, nil, models.ErrInitLogger(err)
 	}
 	userUUID, systemID := machines.ResolveUserAndSystemID(ctx)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(systemID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
@@ -62,11 +60,7 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		// machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker)
 	})
 
-	var userIDStr string
-	if user, ok := ctx.Value(models.UserCtxKey).(*models.User); ok && user != nil {
-		userIDStr = user.ID.String()
-	}
-	go models.FlushMeshSyncData(ctx, machinectx.K8sContext, provider, machinectx.EventBroadcaster, userIDStr, sysID, log)
+	go models.FlushMeshSyncData(ctx, machinectx.K8sContext, provider, machinectx.EventBroadcaster, userUUID.String(), &systemID, log)
 
 	return machines.NoOp, nil, nil
 }
