@@ -627,58 +627,68 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			return nil, fmt.Errorf("error execute operation on %v: %v", host, err)
 		}
 
-		addr := hostName
-		if hostPort != 0 {
-			addr += ":" + strconv.Itoa(hostPort)
-		}
-		// Create mesh client
-		mClient, err := meshes.CreateClient(
-			context.TODO(),
-			addr,
-		)
+		msg, err := sap.provisionOnAdapter(hostName, hostPort, ccp.Component)
 		if err != nil {
-			return nil, fmt.Errorf("error creating a mesh client: %v", err)
-		}
-		defer func() {
-			_ = mClient.Close()
-		}()
-
-		// Else it is an  adapter call
-		//TODO: Accommodate gRPC calls to use context mapping with kubeconfig
-		var kconfigs []string
-		for _, v := range sap.ctxTokubeconfig {
-			kconfigs = append(kconfigs, v)
-		}
-		compStr, err := utils.Marshal(ccp.Component)
-		if err != nil {
-			err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", ccp.Component.DisplayName, ccp.Component.Component.Kind)
 			return nil, err
 		}
-		resp, err := mClient.MClient.Provision(context.TODO(), &meshes.ProvisionRequest{
-			Username:     sap.userID,
-			DeleteOp:     sap.opIsDelete,
-			KubeConfigs:  kconfigs,
-			Declarations: []string{compStr},
-		})
-		success := err == nil
-		msgs = append(msgs, patterns.DeploymentMessagePerContext{
-			SystemName: hostName,
-			Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
-			Summary: []patterns.DeploymentMessagePerComp{
-				{
-					Kind:       ccp.Component.Component.Kind,
-					Model:      ccp.Component.Model.Name,
-					CompName:   ccp.Component.DisplayName,
-					DesignName: sap.patternName,
-					Success:    success,
-					Message:    resp.GetMessage(),
-					Error:      err,
-				},
-			},
-		})
+		msgs = append(msgs, msg)
 	}
 
 	return msgs, nil
+}
+
+// provisionOnAdapter provisions comp through one gRPC adapter, closing its client
+// on return so hosts do not hold connections open until Provision ends.
+func (sap *serviceActionProvider) provisionOnAdapter(hostName string, hostPort int, comp component.ComponentDefinition) (patterns.DeploymentMessagePerContext, error) {
+	addr := hostName
+	if hostPort != 0 {
+		addr += ":" + strconv.Itoa(hostPort)
+	}
+	// Create mesh client
+	mClient, err := meshes.CreateClient(
+		context.TODO(),
+		addr,
+	)
+	if err != nil {
+		return patterns.DeploymentMessagePerContext{}, fmt.Errorf("error creating a mesh client: %v", err)
+	}
+	defer func() {
+		_ = mClient.Close()
+	}()
+
+	// Else it is an  adapter call
+	//TODO: Accommodate gRPC calls to use context mapping with kubeconfig
+	var kconfigs []string
+	for _, v := range sap.ctxTokubeconfig {
+		kconfigs = append(kconfigs, v)
+	}
+	compStr, err := utils.Marshal(comp)
+	if err != nil {
+		err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", comp.DisplayName, comp.Component.Kind)
+		return patterns.DeploymentMessagePerContext{}, err
+	}
+	resp, err := mClient.MClient.Provision(context.TODO(), &meshes.ProvisionRequest{
+		Username:     sap.userID,
+		DeleteOp:     sap.opIsDelete,
+		KubeConfigs:  kconfigs,
+		Declarations: []string{compStr},
+	})
+	success := err == nil
+	return patterns.DeploymentMessagePerContext{
+		SystemName: hostName,
+		Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
+		Summary: []patterns.DeploymentMessagePerComp{
+			{
+				Kind:       comp.Component.Kind,
+				Model:      comp.Model.Name,
+				CompName:   comp.DisplayName,
+				DesignName: sap.patternName,
+				Success:    success,
+				Message:    resp.GetMessage(),
+				Error:      err,
+			},
+		},
+	}, nil
 }
 
 // func (sap *serviceActionProvider) Persist(name string, svc patterncore.Service, isUpdate bool) error {
