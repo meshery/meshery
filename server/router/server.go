@@ -144,6 +144,11 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		// This will be changed to /api/events once the UI is compeltely updated to use new events and SSE is tunred off, otherwise existing events will break.
 	gMux.Handle("/api/system/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetAllEvents), models.ProviderAuth))).
 		Methods("GET")
+	// SSE stream of adapter operation events, read by mesheryctl adapter deploy
+	// and validate. Adapter events are only collected while this stream is open,
+	// and it also publishes them to the event broadcaster.
+	gMux.Handle("/api/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.EventStreamHandler), models.ProviderAuth))).
+		Methods("GET")
 	// SSE stream of live events; replaces the subscribeEvents GraphQL subscription.
 	gMux.Handle("/api/system/events/subscribe", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SubscribeEventsHandler), models.ProviderAuth))).
 		Methods("GET")
