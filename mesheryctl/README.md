@@ -22,7 +22,7 @@ Refer to the [Meshery CLI Commands and Documentation](https://docs.google.com/do
 
 ## `mesheryctl` command reference
 
-Detailed documentation of the `mesheryctl` commands is available in the [Meshery Docs](https://docs.meshery.io/reference/references/mesheryctl).
+Detailed documentation of the `mesheryctl` commands is available in the [Meshery Docs](https://docs.meshery.io/reference/mesheryctl).
 
 ## General guidelines and resources
 
