@@ -308,13 +308,13 @@ const BulkActions = ({ isFilterLoading = false }) => {
   const handleMarkAllAsRead = async () => {
     try {
       await markAllAsRead().unwrap();
-      resetSelection();
-      // The server decides which events were marked, so refresh from it
-      dispatch(loadEvents(fetchEvents, 0, latestFilters.current));
     } catch {
-      // Failures are already reported to the user by the g
-      // lobal rtkErrorMiddleware
+      // Reported to the user by the global rtkErrorMiddleware
+      return;
     }
+    resetSelection();
+    // The server decides which events were marked, so refresh from it
+    dispatch(loadEvents(fetchEvents, 0, latestFilters.current));
   };
 
   const BulkActionButton = ({ isLoading, isDisabled, tooltip, Icon, onClick }) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // jsdom does not implement IntersectionObserver; EventsView constructs one
@@ -18,6 +18,7 @@ class IntersectionObserverPolyfill {
   (globalThis as any).IntersectionObserver || IntersectionObserverPolyfill;
 
 // Hoisted store-ish state we can swap between tests.
+const markAllState = { isLoading: false };
 const dispatchMock = vi.fn();
 const fetchEventsMock = vi.fn();
 const deleteEventsMutation = vi.fn();
@@ -75,7 +76,7 @@ vi.mock('../../../rtk-query/notificationCenter', () => ({
   useGetEventsSummaryQuery: () => summaryQuery,
   useLazyGetEventsQuery: () => [fetchEventsMock, { isFetching: false }],
   useUpdateEventsMutation: () => [updateEventsMutation, { isLoading: false }],
-  useMarkAllEventsReadMutation: () => [markAllEventsReadMutation, { isLoading: false }],
+  useMarkAllEventsReadMutation: () => [markAllEventsReadMutation, markAllState],
 }));
 
 vi.mock('@xstate/react', () => ({
@@ -250,6 +251,7 @@ beforeEach(() => {
   deleteEventsMutation.mockReset();
   updateEventsMutation.mockReset();
   markAllEventsReadMutation.mockClear();
+  markAllState.isLoading = false;
   summaryQuery.data = { countBySeverityLevel: [], readCount: 0 };
   summaryQuery.error = null;
   summaryQuery.isLoading = false;
@@ -434,12 +436,11 @@ describe('NotificationCenter – "Mark all as read" button', () => {
     render(<NotificationCenter />);
     dispatchMock.mockClear();
 
-    const button = findMarkAllButton();
-    expect(button).not.toBeNull();
-    fireEvent.click(button as HTMLElement);
+    await act(async () => {
+      fireEvent.click(findMarkAllButton() as HTMLElement);
+    });
 
-    await waitFor(() => expect(markAllEventsReadMutation).toHaveBeenCalledTimes(1));
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(markAllEventsReadMutation).toHaveBeenCalledTimes(1);
     expect(dispatchMock.mock.calls.some(([action]) => action?.type === 'events/loadEvents')).toBe(
       false,
     );
@@ -457,5 +458,61 @@ describe('NotificationCenter – "Mark all as read" button', () => {
     summaryQuery.data = { countBySeverityLevel: [], readCount: 0 };
     render(<NotificationCenter />);
     expect(findMarkAllButton()).not.toBeInTheDocument();
+  });
+
+  it('is hidden while a filter request is pending', async () => {
+    let release: () => void = () => {};
+    const pending = new Promise<void>((resolve) => {
+      release = () => resolve();
+    });
+    dispatchMock.mockImplementation((action: any) =>
+      action?.type === 'events/loadEvents' ? pending : undefined,
+    );
+    render(<NotificationCenter />);
+    expect(findMarkAllButton()).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('filter-button'));
+    expect(findMarkAllButton()).not.toBeInTheDocument();
+
+    await act(async () => {
+      release();
+    });
+    expect(findMarkAllButton()).toBeInTheDocument();
+  });
+
+  it('shows a spinner and disables the other bulk actions while the request is pending', () => {
+    markAllState.isLoading = true;
+    sliceState.checkedEvents = [{ id: 'e1' }] as any;
+    render(<NotificationCenter />);
+
+    expect(findMarkAllButton()).not.toBeInTheDocument();
+    expect(screen.getAllByTestId('loading').length).toBeGreaterThan(0);
+    expect(screen.getByTestId('delete-icon').closest('button')).toBeDisabled();
+  });
+
+  it('reloads with the filters that are current when the request finishes', async () => {
+    let finish: () => void = () => {};
+    markAllEventsReadMutation.mockImplementationOnce(() => ({
+      unwrap: () =>
+        new Promise<any>((resolve) => {
+          finish = () => resolve({});
+        }),
+    }));
+    sliceState.filters = { status: 'unread' };
+    const { rerender } = render(<NotificationCenter />);
+    fireEvent.click(findMarkAllButton() as HTMLElement);
+
+    sliceState.filters = { status: 'unread', severity: ['error'] };
+    rerender(<NotificationCenter />);
+    dispatchMock.mockClear();
+
+    await act(async () => {
+      finish();
+    });
+
+    expect(dispatchMock).toHaveBeenCalledWith({
+      type: 'events/loadEvents',
+      args: [fetchEventsMock, 0, { status: 'unread', severity: ['error'] }],
+    });
   });
 });
