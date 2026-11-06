@@ -83676,7 +83676,7 @@ paths:
           application/json:
             schema:
               type: object
-              description: Payload for creating a new event.
+              description: Payload for creating a new event. If visibility is absent, the event is private.
               additionalProperties: true
               properties:
                 owner:
@@ -83694,6 +83694,18 @@ paths:
                   type: string
                   description: The category of the event.
                   maxLength: 500
+                visibility:
+                  description: >-
+                    Who can see the event. `private` is the default; clients may set `public` for events eligible for
+                    the unauthenticated feed.
+                  x-oapi-codegen-extra-tags:
+                    json: visibility,omitempty
+                  type: string
+                  enum:
+                    - private
+                    - public
+                  default: private
+                  x-go-name: EventVisibility
                 action:
                   type: string
                   description: The action of the event.
@@ -83748,6 +83760,7 @@ paths:
                   - organizationId
                   - createdAt
                   - updatedAt
+                  - visibility
                 properties:
                   id:
                     description: Event ID.
@@ -83800,12 +83813,14 @@ paths:
                       RelationshipEvaluationEventMetadata (category `relationship`, action `evaluation`),
                       DesignValidationEventMetadata (category `pattern`, actions `validate`, `deploy`, `undeploy`,
                       `dry-run`) and DesignSavedEventMetadata (category `pattern`, actions `create`, `update`);
-                      DesignEventIdentity names the design. Never put design contents into event metadata - no
-                      `designFile`, `patternFile`, `components`, `relationships`, `trace`, `evaluationResponse`, the raw
-                      `summary` or `validationResult`. Meshery Server applies a 16 KB guard that drops oversized
-                      metadata down to the identity fields (`designId`, `designName`, `designVersion`, `designLink`,
-                      `viewLink`). On an error event, `metadata.error` holds only the MeshKit error, never the design or
-                      the request that failed. Older Meshery Cloud rows may carry the legacy `design_name` and
+                      ScheduleCompletedEventMetadata (category `schedule`, action `completed`); DesignEventIdentity
+                      names the design. Never put design contents into event metadata - no `designFile`, `patternFile`,
+                      `components`, `relationships`, `trace`, `evaluationResponse`, the raw `summary` or
+                      `validationResult`. Meshery Server applies a 16 KB guard that drops oversized metadata down to the
+                      identity fields (`designId`, `designName`, `designVersion`, `designLink`, `viewLink`). On an error
+                      event, `metadata.error` holds only the MeshKit error, never the design or the request that failed;
+                      a design validation event whose operation did not complete (`status` `error`) carries it as a
+                      DesignEventOperationError. Older Meshery Cloud rows may carry the legacy `design_name` and
                       `view_link` keys; readers should fall back to them when `designName` and `viewLink` are absent.
                     additionalProperties: true
                     nullable: true
@@ -83910,6 +83925,18 @@ paths:
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
+                  visibility:
+                    description: Who can see the event. Defaults to `private`.
+                    x-oapi-codegen-extra-tags:
+                      db: visibility
+                      json: visibility
+                    x-order: 16
+                    type: string
+                    enum:
+                      - private
+                      - public
+                    default: private
+                    x-go-name: EventVisibility
                   deletedAt:
                     description: Timestamp when the event was soft-deleted; omitted when it was not.
                     x-oapi-codegen-extra-tags:
@@ -83948,6 +83975,7 @@ paths:
                   - organizationId
                   - createdAt
                   - updatedAt
+                  - visibility
                 properties:
                   id:
                     description: Event ID.
@@ -84000,12 +84028,14 @@ paths:
                       RelationshipEvaluationEventMetadata (category `relationship`, action `evaluation`),
                       DesignValidationEventMetadata (category `pattern`, actions `validate`, `deploy`, `undeploy`,
                       `dry-run`) and DesignSavedEventMetadata (category `pattern`, actions `create`, `update`);
-                      DesignEventIdentity names the design. Never put design contents into event metadata - no
-                      `designFile`, `patternFile`, `components`, `relationships`, `trace`, `evaluationResponse`, the raw
-                      `summary` or `validationResult`. Meshery Server applies a 16 KB guard that drops oversized
-                      metadata down to the identity fields (`designId`, `designName`, `designVersion`, `designLink`,
-                      `viewLink`). On an error event, `metadata.error` holds only the MeshKit error, never the design or
-                      the request that failed. Older Meshery Cloud rows may carry the legacy `design_name` and
+                      ScheduleCompletedEventMetadata (category `schedule`, action `completed`); DesignEventIdentity
+                      names the design. Never put design contents into event metadata - no `designFile`, `patternFile`,
+                      `components`, `relationships`, `trace`, `evaluationResponse`, the raw `summary` or
+                      `validationResult`. Meshery Server applies a 16 KB guard that drops oversized metadata down to the
+                      identity fields (`designId`, `designName`, `designVersion`, `designLink`, `viewLink`). On an error
+                      event, `metadata.error` holds only the MeshKit error, never the design or the request that failed;
+                      a design validation event whose operation did not complete (`status` `error`) carries it as a
+                      DesignEventOperationError. Older Meshery Cloud rows may carry the legacy `design_name` and
                       `view_link` keys; readers should fall back to them when `designName` and `viewLink` are absent.
                     additionalProperties: true
                     nullable: true
@@ -84110,6 +84140,18 @@ paths:
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
+                  visibility:
+                    description: Who can see the event. Defaults to `private`.
+                    x-oapi-codegen-extra-tags:
+                      db: visibility
+                      json: visibility
+                    x-order: 16
+                    type: string
+                    enum:
+                      - private
+                      - public
+                    default: private
+                    x-go-name: EventVisibility
                   deletedAt:
                     description: Timestamp when the event was soft-deleted; omitted when it was not.
                     x-oapi-codegen-extra-tags:
