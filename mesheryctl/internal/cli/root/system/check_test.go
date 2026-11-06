@@ -3,9 +3,12 @@ package system
 import (
 	"flag"
 	"path/filepath"
+	"reflect"
 	"runtime"
+	"strings"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -69,5 +72,25 @@ func TestPreflightCmdIntegration(t *testing.T) {
 			assert.Equal(t, expectedResponse, actualResponse)
 		})
 		t.Log("PreflightCmdIntegration Test Passed")
+	}
+}
+
+// TestSystemCheckFlagValidation verifies that each flag struct tag matches a registered Cobra flag on checkCmd.
+func TestSystemCheckFlagValidation(t *testing.T) {
+	mesheryctlflags.InitValidators(checkCmd)
+
+	// Verify valid flags pass validation
+	err := mesheryctlflags.ValidateCmdFlags(checkCmd, &systemCheckFlags)
+	assert.NoError(t, err)
+
+	// Verify each flag struct tag matches a registered Cobra flag on checkCmd
+	structType := reflect.TypeOf(systemCheckFlags)
+	for i := 0; i < structType.NumField(); i++ {
+		field := structType.Field(i)
+		tag := field.Tag.Get("json")
+		if tag != "" && tag != "-" {
+			flagName := strings.SplitN(tag, ",", 2)[0]
+			assert.NotNil(t, checkCmd.Flags().Lookup(flagName), "expected flag --%s to be registered on checkCmd", flagName)
+		}
 	}
 }
