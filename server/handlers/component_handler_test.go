@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -217,6 +218,80 @@ func TestExportModel_OCI_Success(t *testing.T) {
 	}
 	assert.True(t, foundManifestJSON, "manifest.json should be present in OCI archive")
 	assert.True(t, foundLayerTarGz, "layer tar.gz should be present in OCI archive")
+}
+
+func TestOCIRepositoryName(t *testing.T) {
+	tests := []struct {
+		name     string
+		expected string
+	}{
+		{"istio-base", "istio-base"},
+		{"aws-api-gateway-operator", "aws-api-gateway-operator"},
+		{"cert_manager.v1", "cert_manager.v1"},
+		{"confidential containers", "confidential-containers"},
+		{"container network interface (cni)", "container-network-interface-cni"},
+		{"open policy agent (opa)", "open-policy-agent-opa"},
+		{"Piraeus Datastore", "piraeus-datastore"},
+		{"open cluster management", "open-cluster-management"},
+		{"(!)", "model"},
+		{" (istio) ", "istio"},
+		{"Istio.Base", "istio-base"},
+		{"A", "a-model"},
+		{strings.Repeat("a", 300), strings.Repeat("a", 255)},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ociRepositoryName(tt.name)
+			assert.Equal(t, tt.expected, got)
+			assert.Regexp(t, ociRepositoryNamePattern, got)
+			assert.GreaterOrEqual(t, len(got), ociRepositoryNameMinLength)
+			assert.LessOrEqual(t, len(got), ociRepositoryNameMaxLength)
+		})
+	}
+}
+
+func TestExportModel_OCINameNotValidRepository(t *testing.T) {
+	for _, modelName := range []string{"container network interface (cni)", "A"} {
+		t.Run(modelName, func(t *testing.T) {
+			rm, _ := newTestRegistryDB(t)
+			seedTestExportModel(t, rm, modelName)
+
+			log, err := logger.New("component_handler_test", logger.Options{})
+			require.NoError(t, err)
+
+			h := &Handler{
+				registryManager: rm,
+				log:             log,
+			}
+
+			req := httptest.NewRequest(http.MethodGet, "/api/meshmodels/models/export?fileType=oci&name="+url.QueryEscape(modelName), nil)
+			rw := httptest.NewRecorder()
+
+			h.ExportModel(rw, req)
+
+			resp := rw.Result()
+			assert.Equal(t, http.StatusOK, resp.StatusCode)
+			assert.Equal(t, "application/x-tar", resp.Header.Get("Content-Type"))
+			assert.NotEmpty(t, rw.Body.Bytes())
+
+			// The tar must carry the sanitized name, not just any valid reference.
+			var manifest []struct {
+				RepoTags []string `json:"RepoTags"`
+			}
+			tr := tar.NewReader(bytes.NewReader(rw.Body.Bytes()))
+			for {
+				header, err := tr.Next()
+				require.NoError(t, err)
+				if header.Name == "manifest.json" {
+					require.NoError(t, json.NewDecoder(tr).Decode(&manifest))
+					break
+				}
+			}
+			require.Len(t, manifest, 1)
+			assert.Equal(t, []string{ociRepositoryName(modelName) + ":latest"}, manifest[0].RepoTags)
+		})
+	}
 }
 
 func TestExportModel_Concurrent(t *testing.T) {
