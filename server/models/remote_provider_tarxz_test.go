@@ -13,9 +13,7 @@ import (
 )
 
 func TestTarXZ_ExtractsArchiveAndCloses(t *testing.T) {
-	tmpDir, err := os.MkdirTemp("", "tarxz-test-*")
-	require.NoError(t, err)
-	defer os.RemoveAll(tmpDir)
+	tmpDir := t.TempDir()
 
 	var buf bytes.Buffer
 	gw := gzip.NewWriter(&buf)
@@ -24,12 +22,12 @@ func TestTarXZ_ExtractsArchiveAndCloses(t *testing.T) {
 	fileContent := []byte("hello meshery remote provider")
 	header := &tar.Header{
 		Name:     "test-file.txt",
-		Mode:     0600,
+		Mode:     0o600,
 		Size:     int64(len(fileContent)),
 		Typeflag: tar.TypeReg,
 	}
 	require.NoError(t, tw.WriteHeader(header))
-	_, err = tw.Write(fileContent)
+	_, err := tw.Write(fileContent)
 	require.NoError(t, err)
 
 	require.NoError(t, tw.Close())
@@ -47,11 +45,9 @@ func TestTarXZ_ExtractsArchiveAndCloses(t *testing.T) {
 }
 
 func TestTarXZ_InvalidGzipStream(t *testing.T) {
-	tmpDir, err := os.MkdirTemp("", "tarxz-invalid-*")
-	require.NoError(t, err)
-	defer os.RemoveAll(tmpDir)
+	tmpDir := t.TempDir()
 
 	invalidData := bytes.NewReader([]byte("invalid-non-gzip-stream"))
-	err = TarXZ(invalidData, tmpDir)
+	err := TarXZ(invalidData, tmpDir)
 	assert.Error(t, err)
 }
