@@ -103,6 +103,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 		err = InvokeCompUpdate()
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 
@@ -153,9 +154,6 @@ func InvokeCompUpdate() error {
 	err = componentCSVHelper.ParseComponentsSheet(modelName)
 	if err != nil {
 		err = ErrUpdateRegistry(err, modelLocation)
-		if utils.Log != nil {
-			utils.Log.Error(err)
-		}
 		return err
 	}
 

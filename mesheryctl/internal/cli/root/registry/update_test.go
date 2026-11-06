@@ -2,6 +2,7 @@ package registry
 
 import (
 	"fmt"
+	"path/filepath"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -28,10 +29,11 @@ func TestInvokeCompUpdate_ComponentsSheetError(t *testing.T) {
 		logFile = origLogFile
 	}()
 
-	// Point to an invalid spreadsheet URL so downloading/parsing the components sheet fails
+	// Use a missing local file so the components sheet read fails without
+	// making a network request to Google Sheets.
 	spreadsheeetID = "invalid-spreadsheet-id"
 	sheetGID = 0
-	componentCSVFilePath = ""
+	componentCSVFilePath = filepath.Join(t.TempDir(), "missing-components.csv")
 	modelName = ""
 	modelLocation = "./models"
 	logFile = nil
