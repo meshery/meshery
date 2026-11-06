@@ -1,6 +1,7 @@
 package design
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -39,4 +40,30 @@ func TestDesignRemediationFormat(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestErrUndeployDesignDetail(t *testing.T) {
+	const defaultDetail = "Unable to undeploy design due to empty path"
+
+	t.Run("nil error uses default empty path detail", func(t *testing.T) {
+		err := ErrUndeployDesign(nil)
+		if got := meshkiterrors.GetLDescription(err); got != defaultDetail {
+			t.Errorf("expected default detail %q, got %q", defaultDetail, got)
+		}
+	})
+
+	t.Run("empty error string uses default empty path detail", func(t *testing.T) {
+		err := ErrUndeployDesign(errors.New(""))
+		if got := meshkiterrors.GetLDescription(err); got != defaultDetail {
+			t.Errorf("expected default detail %q for empty error, got %q", defaultDetail, got)
+		}
+	})
+
+	t.Run("non-nil error threads custom error message as detail", func(t *testing.T) {
+		customMsg := "Usage: mesheryctl design undeploy -f [filepath]"
+		err := ErrUndeployDesign(errors.New(customMsg))
+		if got := meshkiterrors.GetLDescription(err); got != customMsg {
+			t.Errorf("expected custom detail %q, got %q", customMsg, got)
+		}
+	})
 }
