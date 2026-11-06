@@ -1,0 +1,11 @@
+schemaVersion: designs.meshery.io/v1beta3
+name: first-document
+components:
+  - component:
+      kind: Deployment
+      version: apps/v1
+    model:
+      name: kubernetes
+    configuration: {}
+---
+apiToken: must-not-be-ignored
