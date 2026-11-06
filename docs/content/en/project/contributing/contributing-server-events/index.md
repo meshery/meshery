@@ -94,8 +94,8 @@ Creating an event with a key follows the schemas `createEvent` contract ([event 
 | no `correlationKey`, or no owner | - | a new event, as before |
 | a key, no `resolvedAt` | has an open event with that key | no new event; the open event's `occurrenceCount` grows (by the payload's count, else 1) and its `lastSeenAt` moves to the later time |
 | a key, no `resolvedAt` | has none open | a new event that opens the condition (`occurrenceCount` 1, `firstSeenAt` and `lastSeenAt` set) |
-| a key and `resolvedAt` | has an open event with that key | no new event; the open event takes the `resolvedAt`, the later `lastSeenAt`, and the resolution's severity and description |
-| a key and `resolvedAt` | has none open | a new, already resolved event |
+| a key and `resolvedAt` | has an open event with that key | no new event; the open event takes the `resolvedAt`, the later `lastSeenAt`, and the resolution's severity and description. A resolution is a close, not an occurrence: `occurrenceCount` is unchanged |
+| a key and `resolvedAt` | has none open | a new, already resolved event, with `occurrenceCount` 1 unless sent, and `firstSeenAt` and `lastSeenAt` from the payload, else `resolvedAt` |
 
 Close a condition with `builder.Resolves(key, time)` under the condition's category, with a severity and description that say what cleared (for example `success`, "Connection restored"). Send a resolution only when the condition changes from present to cleared, never on every healthy check.
 
