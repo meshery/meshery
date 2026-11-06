@@ -86,8 +86,16 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 			return err
 		}
 		resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
-		if err != nil || resp.HTTPStatusCode != 200 {
-			utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
+		if err != nil || resp == nil || resp.HTTPStatusCode != 200 {
+			if err == nil {
+				if resp != nil {
+					err = fmt.Errorf("request to Google Spreadsheet returned HTTP status %d", resp.HTTPStatusCode)
+				} else {
+					err = fmt.Errorf("request to Google Spreadsheet returned empty response")
+				}
+			}
+			err = ErrUpdateRegistry(err, modelLocation)
+			utils.Log.Error(err)
 			return err
 		}
 
@@ -95,8 +103,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 		err = InvokeCompUpdate()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		return nil
@@ -113,15 +120,23 @@ type compUpdateTracker struct {
 }
 
 func InvokeCompUpdate() error {
-	utils.Log.UpdateLogOutput(logFile)
+	if logFile != nil && utils.Log != nil {
+		utils.Log.UpdateLogOutput(logFile)
+	}
 
 	defer func() {
-		_ = logFile.Close()
-		utils.Log.UpdateLogOutput(os.Stdout)
+		if logFile != nil {
+			_ = logFile.Close()
+			if utils.Log != nil {
+				utils.Log.UpdateLogOutput(os.Stdout)
+			}
+		}
 
-		// Additionally log the summary to the terminal
-		utils.Log.Info(fmt.Sprintf("Updated %d models and %d components", totalAggregateModel, totalAggregateComponents))
-		utils.Log.Info("refer ", logDirPath, " for detailed registry update logs")
+		if utils.Log != nil {
+			// Additionally log the summary to the terminal
+			utils.Log.Info(fmt.Sprintf("Updated %d models and %d components", totalAggregateModel, totalAggregateComponents))
+			utils.Log.Info("refer ", logDirPath, " for detailed registry update logs")
+		}
 
 		totalAggregateModel = 0
 		totalAggregateComponents = 0
@@ -138,11 +153,15 @@ func InvokeCompUpdate() error {
 	err = componentCSVHelper.ParseComponentsSheet(modelName)
 	if err != nil {
 		err = ErrUpdateRegistry(err, modelLocation)
-		utils.Log.Error(err)
-		return nil
+		if utils.Log != nil {
+			utils.Log.Error(err)
+		}
+		return err
 	}
 
-	utils.Log.Info("Total Registrants: ", len(componentCSVHelper.Components))
+	if utils.Log != nil {
+		utils.Log.Info("Total Registrants: ", len(componentCSVHelper.Components))
+	}
 
 	// Since component update doesn't take long skip doing it concurrently
 	// weightedSem := semaphore.NewWeighted(20)
