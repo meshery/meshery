@@ -167,6 +167,10 @@ type DesignPostPayload struct {
 	UserID      *core.Uuid           `json:"userId,omitempty"`
 	Visibility  string               `json:"visibility"`
 	CatalogData v1alpha1.CatalogData `json:"catalogData,omitempty"`
+
+	// designFilePresent records whether the request carried any design-file
+	// key. A zero DesignFile cannot tell an omitted key from an empty design.
+	designFilePresent bool
 }
 
 // MarshalJSON emits both the canonical (`designFile`) and legacy
@@ -220,6 +224,8 @@ func (p *DesignPostPayload) UnmarshalJSON(data []byte) error {
 	// precedence-winning spelling below. Reset first so a reused receiver
 	// zeros cleanly when all four spellings are absent.
 	p.DesignFile = design.PatternFile{}
+	p.designFilePresent = aux.DesignFileCanonical != nil || aux.PatternFileCanonical != nil ||
+		aux.DesignFileLegacy != nil || aux.PatternFileLegacy != nil
 	switch {
 	case aux.DesignFileCanonical != nil:
 		p.DesignFile = *aux.DesignFileCanonical
@@ -388,6 +394,9 @@ func (h *Handler) handlePatternPOST(
 		Name:        requestPayload.Name,
 		Visibility:  requestPayload.Visibility,
 		CatalogData: requestPayload.CatalogData,
+		// An existing design keeps its stored design file when the request
+		// carried none; a new design still stores the empty one.
+		PatternFileOmitted: !requestPayload.designFilePresent,
 	}
 
 	savedDesignByt, err := provider.SaveMesheryPattern(token, &mesheryPatternRecord)
