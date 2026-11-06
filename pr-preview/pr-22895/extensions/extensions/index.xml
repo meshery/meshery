@@ -43,15 +43,13 @@
 &lt;h3 id="usage"&gt;
 	Usage
 &lt;/h3&gt;
-&lt;p&gt;Run it directly with &lt;code&gt;npx&lt;/code&gt; - no global install required:&lt;/p&gt;</description></item><item><title>Shape Builder</title><link>/pr-preview/pr-22895/extensions/extensions/shape-builder/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22895/extensions/extensions/shape-builder/</guid><description>&lt;p&gt;Shape Builder is a visual tool for creating custom polygon shapes for Meshery components. It exports coordinates in the format Kanvas uses to render a polygon.&lt;/p&gt;
+&lt;p&gt;Run it directly with &lt;code&gt;npx&lt;/code&gt; - no global install required:&lt;/p&gt;</description></item><item><title>Shape Builder</title><link>/pr-preview/pr-22895/extensions/extensions/shape-builder/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-22895/extensions/extensions/shape-builder/</guid><description>&lt;p&gt;Shape Builder is a visual tool for creating custom polygon shapes for Meshery components. It displays coordinates in the format Kanvas uses to render a polygon.&lt;/p&gt;
 &lt;h2 id="create-a-shape"&gt;
 	Create a shape
 &lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;Open &lt;a href="https://shapes.meshery.io"&gt;Shape Builder&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Draw a polygon and export its matrix notation.&lt;/li&gt;
-&lt;li&gt;Use the exported coordinates in a &lt;code&gt;polygon&lt;/code&gt; shape in your Meshery component.&lt;/li&gt;
+&lt;li&gt;Draw at least three points, then select &lt;strong&gt;Close Shape&lt;/strong&gt;. Copy the coordinates displayed below the canvas.&lt;/li&gt;
+&lt;li&gt;In your Meshery component, set &lt;code&gt;styles.shape&lt;/code&gt; to &lt;code&gt;polygon&lt;/code&gt; and put the coordinates in &lt;code&gt;styles.shape-polygon-points&lt;/code&gt;.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;Polygon coordinates range from -1 to 1. For example, this coordinate sequence describes a plus shape:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;-0.33 -1 0.33 -1 0.33 -0.33 1 -0.33 1 0.33 0.33 0.33 0.33 1 -0.33 1 -0.33 0.33 -1 0.33 -1 -0.33 -0.33 -0.33
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;See &lt;a href="/pr-preview/pr-22895/guides/configuration-management/identifying-components/"&gt;Identifying Meshery Components&lt;/a&gt; for an overview of component visuals and built-in shapes. Visit the &lt;a href="https://github.com/meshery-extensions/shape-builder"&gt;Shape Builder repository&lt;/a&gt; for more information.&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;Polygon coordinates range from -1 to 1. For example, these styles describe a plus shape:&lt;/p&gt;</description></item></channel></rss>
