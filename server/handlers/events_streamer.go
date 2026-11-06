@@ -572,6 +572,12 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		WithDescription(evt.Description).WithMetadata(evt.Metadata).ActedUpon(evt.ActedUpon)
 
 	event := eventBuilder.Build()
+	models.ApplyClientEventFields(event, evt)
+	if verr := event.Validate(); verr != nil {
+		h.log.Error(ErrInvalidClientEvent(verr))
+		writeMeshkitError(w, ErrInvalidClientEvent(verr), http.StatusBadRequest)
+		return
+	}
 	err = provider.PersistEvent(*event, token)
 	if err != nil {
 		h.log.Error(models.ErrPersistEvent(err))

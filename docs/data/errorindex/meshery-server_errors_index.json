@@ -7601,6 +7601,23 @@
         "Report the error the event reports as a MeshKit error with a code",
         "Fix the probable causes of the MeshKit error, or the matched cause ids its producer names, so they satisfy the EventError contract"
       ]
+    },
+    {
+      "code": "meshery-server-1489",
+      "moniker": "ErrInvalidClientEventCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1489",
+      "severity": "alert",
+      "shortDescription": "The event's correlation, provenance or trace fields are not valid",
+      "probableCause": [
+        "A field breaks the meshery/schemas event contract: a correlationKey, source or type outside 1 to 255 characters, an occurrenceCount below 1, a lastSeenAt before firstSeenAt, a specversion other than 1.0, or a traceId or parentId that is not W3C Trace Context hex"
+      ],
+      "suggestedRemediation": [
+        "Send the fields as the schemas EventPayload defines them, or omit the ones the client does not set"
+      ]
     }
   ],
   "schemaVersion": 2
