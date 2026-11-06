@@ -665,3 +665,82 @@ func TestSendEvent_NilContextKeysDoNotPanic(t *testing.T) {
 		t.Errorf("expected CurrentState DISCOVERED, got %v", sm.CurrentState)
 	}
 }
+
+// The unreachable condition (meshery/schemas event correlation contract): a
+// background Discovery failure that moves the connection to NOTFOUND reports
+// it, the de-duplication of repeats is unchanged, and the Discovery that later
+// moves the connection out of NOTFOUND resolves it.
+func TestSendEvent_DiscoveryFailureReportsUnreachableCondition(t *testing.T) {
+	provider := &fakeProvider{status: connections.CONNECTED}
+	failing := &stubAction{
+		execNext:  NotFound,
+		execEvent: events.NewEvent().WithSeverity(events.Error).WithDescription("cluster down").Build(),
+		execErr:   errors.New("dial tcp: connection refused"),
+	}
+	sm := newTestMachine(t, provider, failing)
+	sm.ConditionComponent = "k8s-connection"
+	ctx := newTestContext(t)
+
+	event, err := sm.SendEvent(ctx, Discovery, nil)
+	if err == nil || event == nil {
+		t.Fatalf("got event %v, err %v; want the failure", event, err)
+	}
+	want := models.ConditionKey("k8s-connection", sm.ID.String(), ConditionUnreachable)
+	if event.CorrelationKey == nil || *event.CorrelationKey != want {
+		t.Fatalf("correlationKey = %v, want %q", event.CorrelationKey, want)
+	}
+	if event.ResolvedAt != nil {
+		t.Fatalf("a failure carries resolvedAt %v", event.ResolvedAt)
+	}
+
+	// The connection is NOTFOUND now; the same failure again changes nothing,
+	// so it is still suppressed (issue #20818).
+	sm.ResetState()
+	failing.execEvent = events.NewEvent().WithSeverity(events.Error).WithDescription("cluster down").Build()
+	event, err = sm.SendEvent(ctx, Discovery, nil)
+	if event != nil || err != nil {
+		t.Fatalf("repeat failure surfaced (event %v, err %v); de-duplication must be unchanged", event, err)
+	}
+
+	// The cluster answers again: the Discovery that leaves NOTFOUND resolves the
+	// condition, under its key, with a success severity.
+	sm.ResetState()
+	failing.execNext, failing.execEvent, failing.execErr = NoOp, nil, nil
+	event, err = sm.SendEvent(ctx, Discovery, nil)
+	if err != nil || event == nil {
+		t.Fatalf("got event %v, err %v; want the resolution", event, err)
+	}
+	if event.CorrelationKey == nil || *event.CorrelationKey != want || event.ResolvedAt == nil {
+		t.Fatalf("got key %v resolvedAt %v; want a resolution of %q", event.CorrelationKey, event.ResolvedAt, want)
+	}
+	if event.Severity != events.Success || event.Category != "connection" {
+		t.Fatalf("resolution severity %q category %q, want success and connection", event.Severity, event.Category)
+	}
+
+	// A healthy Discovery afterwards is routine: no second resolution.
+	sm.ResetState()
+	event, err = sm.SendEvent(ctx, Discovery, nil)
+	if err != nil || event == nil {
+		t.Fatalf("got event %v, err %v", event, err)
+	}
+	if event.ResolvedAt != nil || event.CorrelationKey != nil {
+		t.Fatalf("a routine Discovery carries key %v resolvedAt %v", event.CorrelationKey, event.ResolvedAt)
+	}
+}
+
+// A machine that does not opt in keeps its events uncorrelated.
+func TestSendEvent_WithoutConditionComponentReportsNoCondition(t *testing.T) {
+	provider := &fakeProvider{status: connections.CONNECTED}
+	sm := newTestMachine(t, provider, &stubAction{
+		execNext:  NotFound,
+		execEvent: events.NewEvent().WithSeverity(events.Error).Build(),
+		execErr:   errors.New("down"),
+	})
+	event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err == nil || event == nil {
+		t.Fatalf("got event %v, err %v; want the failure", event, err)
+	}
+	if event.CorrelationKey != nil {
+		t.Fatalf("correlationKey = %q on a machine without ConditionComponent", *event.CorrelationKey)
+	}
+}

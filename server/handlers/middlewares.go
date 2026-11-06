@@ -15,8 +15,10 @@ import (
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshsync/pkg/model"
+	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
 )
 
@@ -374,13 +376,25 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
-			if err != nil {
-				_ = provider.PersistEvent(*event, token)
-				go h.config.EventBroadcaster.Publish(userUUID, event)
-			}
+			h.reportBackgroundDiscovery(provider, token, userUUID, event, err)
 		}(inst)
 	}
 	return ctx, nil
+}
+
+// reportBackgroundDiscovery persists and broadcasts what a background
+// Discovery of a connection has to tell the user: its failure (SendEvent
+// already suppressed the repeats that did not change the connection's status),
+// or the resolution of the connection's unreachable condition when it became
+// reachable again. A routine successful Discovery reports nothing.
+func (h *Handler) reportBackgroundDiscovery(provider models.Provider, token string, userUUID core.Uuid, event *events.Event, err error) {
+	if event == nil || (err == nil && event.ResolvedAt == nil) {
+		return
+	}
+	if persistErr := provider.PersistEvent(*event, token); persistErr != nil {
+		h.log.Error(persistErr)
+	}
+	go h.config.EventBroadcaster.Publish(userUUID, event)
 }
 
 func (h *Handler) K8sFSMMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
@@ -439,10 +453,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
-			if err != nil {
-				_ = provider.PersistEvent(*event, token)
-				go h.config.EventBroadcaster.Publish(userUUID, event)
-			}
+			h.reportBackgroundDiscovery(provider, token, userUUID, event, err)
 		}(inst)
 		kubernesMachineCtx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
 		if err != nil {
