@@ -102,7 +102,11 @@ mesheryctl model build [model-name]/[model-version]
 				return err
 			}
 
-			utils.DisplayCount("models", int64(*models.TotalCount))
+			count := int64(0)
+			if models.TotalCount != nil {
+				count = int64(*models.TotalCount)
+			}
+			utils.DisplayCount("models", count)
 
 			return nil
 		}
@@ -131,6 +135,10 @@ func init() {
 func generateModelDataToDisplay(modelsResponse *model.MeshModelModelsPage) ([][]string, int64) {
 	rows := [][]string{}
 
+	if modelsResponse.Models == nil {
+		return rows, int64(*modelsResponse.TotalCount)
+	}
+
 	for _, model := range *modelsResponse.Models {
 		modelName := model.Name
 		if modelName == "" {
@@ -139,5 +147,9 @@ func generateModelDataToDisplay(modelsResponse *model.MeshModelModelsPage) ([][]
 		rows = append(rows, []string{model.ID.String(), modelName, string(model.Category.Name), model.Version})
 	}
 
-	return rows, int64(*modelsResponse.TotalCount)
+	count := int64(0)
+	if modelsResponse.TotalCount != nil {
+		count = int64(*modelsResponse.TotalCount)
+	}
+	return rows, count
 }

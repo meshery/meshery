@@ -20,7 +20,14 @@ func promptModelSelection(modelSearchTerm string, apiPath string) (*model.ModelD
 		},
 		formatLabel,
 		func(data *model.MeshModelModelsPage) ([]model.ModelDefinition, int64) {
-			return *data.Models, int64(*data.TotalCount)
+			if data == nil || data.Models == nil {
+				return nil, 0
+			}
+			total := int64(0)
+			if data.TotalCount != nil {
+				total = int64(*data.TotalCount)
+			}
+			return *data.Models, total
 		},
 		selectedModel,
 	)
