@@ -138,67 +138,11 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			return err
 		}
 
-		// Importing SMP Configuration from the file
-		// TODO: Refactor: Move checks to a single location and consolidate for file, flags and performance profile
+		// Validate SMP configuration file early if provided
 		if filePath != "" {
-			// Read the test configuration file
-			smpConfig, err := os.ReadFile(filePath)
-			if err != nil {
-				return ErrReadFilepath(errors.Wrap(err, "Unable to read test configuration file. \n"))
+			if _, err := parseSMPConfigFile(filePath); err != nil {
+				return err
 			}
-
-			testConfig := servermodels.PerformanceTestConfigFile{}
-
-			err = yaml.Unmarshal(smpConfig, &testConfig)
-			if err != nil {
-				return ErrFailUnmarshalFile(err)
-			}
-
-			if testConfig.Config == nil || len(testConfig.Config.Clients) == 0 {
-				return ErrInvalidTestConfigFile()
-			}
-
-			testClient := testConfig.Config.Clients[0]
-
-			// Override values from configuration if passed on as flags
-			if testName == "" {
-				testName = testConfig.Config.Name
-			}
-
-			if testURL == "" {
-				testURL = firstString(testClient.EndpointUrls)
-			}
-
-			if testMesh == "" {
-				testMesh = testConfig.ServiceMesh
-			}
-
-			if qps == "" {
-				qps = strconv.Itoa(testClient.Rps)
-			}
-
-			if concurrentRequests == "" {
-				concurrentRequests = strconv.Itoa(testClient.Connections)
-			}
-
-			if testDuration == "" {
-				testDuration = testConfig.Config.Duration
-			}
-
-			if loadGenerator == "" {
-				loadGenerator = testClient.LoadGenerator
-			}
-
-			if loadTestBody == "" {
-				loadTestBody = testClient.Body
-			}
-		}
-
-		// Run test based on flags
-		if testName == "" {
-			utils.Log.Debug("Test Name not provided")
-			testName = utils.StringWithCharset(8)
-			utils.Log.Debug("Using random test name: ", testName)
 		}
 
 		// Throw error if a profile name is not provided
@@ -258,55 +202,17 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				}
 				profileID = profiles[index].ID.String()
 			}
-			isExistingProfile = true
-			// what if user passed profile-name but didn't passed the url
-			// we use url from performance profile
-			if testURL == "" {
-				testURL = firstString(profiles[index].Endpoints)
+
+			params, err := resolvePerformanceParams(currentFlagParams(), filePath, &profiles[index], false)
+			if err != nil {
+				return err
 			}
-
-			// reset profile name without %20
-			// pull test configuration from the profile only if a test configuration is not provided and flag is not set
-			if filePath == "" {
-				profileName = profiles[index].Name
-
-				if loadGenerator == "" {
-					loadGenerator = firstString(profiles[index].LoadGenerators)
-				}
-
-				if concurrentRequests == "" {
-					concurrentRequests = strconv.Itoa(profiles[index].ConcurrentRequest)
-				}
-
-				if qps == "" {
-					qps = strconv.Itoa(profiles[index].QPS)
-				}
-
-				if testDuration == "" {
-					testDuration = profiles[index].Duration
-				}
-
-				if testMesh == "" {
-					testMesh = profiles[index].ServiceMesh
-				}
-
-				if loadTestBody == "" {
-					loadTestBody = profiles[index].RequestBody
-				}
-			}
-		}
-
-		if testURL == "" {
-			return ErrNoTestURL()
+			params.ApplyToGlobals()
+			profileName = profiles[index].Name
 		}
 
 		utils.Log.Debugf("performance profile is: %s", profileName)
 		utils.Log.Debugf("test-url set to %s", testURL)
-
-		// Method to check if the entered Test URL is valid or not
-		if validURL := govalidator.IsURL(testURL); !validURL {
-			return ErrNotValidURL()
-		}
 
 		req, err = utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
 		if err != nil {
@@ -379,8 +285,8 @@ func init() {
 	applyCmd.Flags().BoolVar(&disableCert, "disable-cert", false, "(optional) Do not use certificate present in the profile")
 }
 
-// createPerformanceProfile saves a new profile from the flag values, filling in
-// defaults for the ones that are not set, and returns its ID and name.
+// createPerformanceProfile creates a new performance profile on the Meshery server
+// using resolved and validated parameters.
 func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string, error) {
 	utils.Log.Debug("Creating new performance profile inside function")
 
@@ -388,61 +294,15 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		return "", "", ErrNoProfileName()
 	}
 
-	// ask for test url first
-	if testURL == "" {
-		return "", "", ErrNoTestURL()
-	}
-
-	// Method to check if the entered Test URL is valid or not
-	if validURL := govalidator.IsURL(testURL); !validURL {
-		return "", "", ErrNotValidURL()
-	}
-
-	if testMesh == "" {
-		testMesh = "None"
-	}
-
-	if qps == "" {
-		qps = "0"
-	}
-
-	if concurrentRequests == "" {
-		concurrentRequests = "1"
-	}
-
-	if testDuration == "" {
-		testDuration = "30s"
-	}
-
-	// Reject an invalid duration before it is saved in the profile.
-	if _, _, err := splitTestDuration(testDuration); err != nil {
+	params, err := resolvePerformanceParams(currentFlagParams(), filePath, nil, true)
+	if err != nil {
 		return "", "", err
 	}
+	params.ApplyToGlobals()
 
-	if loadGenerator == "" {
-		loadGenerator = "fortio"
-	}
+	convReq, _ := strconv.Atoi(concurrentRequests)
+	convQPS, _ := strconv.Atoi(qps)
 
-	if loadTestBody != "" {
-		// Check if the loadTestBody is a filepath or a string
-		if _, err := os.Stat(loadTestBody); err == nil {
-			utils.Log.Info("Reading test body from file")
-			bodyFile, err := os.ReadFile(loadTestBody)
-			if err != nil {
-				return "", "", ErrReadFilepath(err)
-			}
-			loadTestBody = string(bodyFile)
-		}
-	}
-
-	convReq, err := strconv.Atoi(concurrentRequests)
-	if err != nil {
-		return "", "", ErrConvertConcurrentRequest()
-	}
-	convQPS, err := strconv.Atoi(qps)
-	if err != nil {
-		return "", "", ErrConvertQPS()
-	}
 	values := map[string]interface{}{
 		"concurrentRequest": convReq,
 		"duration":          testDuration,
@@ -596,4 +456,201 @@ func savePerformanceProfile(mctlCfg *config.MesheryCtlConfig, payload []byte) (*
 	}
 
 	return response, nil
+}
+
+// PerformanceTestParams holds the consolidated performance test parameters
+// resolved across CLI flags, configuration files, and performance profiles.
+type PerformanceTestParams struct {
+	Name               string
+	URL                string
+	Mesh               string
+	QPS                string
+	ConcurrentRequests string
+	Duration           string
+	LoadGenerator      string
+	Body               string
+}
+
+// FallbackWith populates unset fields in p with non-empty values from fallback.
+func (p *PerformanceTestParams) FallbackWith(fallback PerformanceTestParams) {
+	if p.Name == "" {
+		p.Name = fallback.Name
+	}
+	if p.URL == "" {
+		p.URL = fallback.URL
+	}
+	if p.Mesh == "" {
+		p.Mesh = fallback.Mesh
+	}
+	if p.QPS == "" {
+		p.QPS = fallback.QPS
+	}
+	if p.ConcurrentRequests == "" {
+		p.ConcurrentRequests = fallback.ConcurrentRequests
+	}
+	if p.Duration == "" {
+		p.Duration = fallback.Duration
+	}
+	if p.LoadGenerator == "" {
+		p.LoadGenerator = fallback.LoadGenerator
+	}
+	if p.Body == "" {
+		p.Body = fallback.Body
+	}
+}
+
+// Validate validates the parameters: URL must be non-empty and valid,
+// QPS and ConcurrentRequests must be valid integers, and Body if pointing
+// to an existing file on disk is loaded into memory.
+func (p *PerformanceTestParams) Validate() error {
+	if p.URL == "" {
+		return ErrNoTestURL()
+	}
+	if !govalidator.IsURL(p.URL) {
+		return ErrNotValidURL()
+	}
+	if p.QPS != "" {
+		if _, err := strconv.Atoi(p.QPS); err != nil {
+			return ErrConvertQPS()
+		}
+	}
+	if p.ConcurrentRequests != "" {
+		if _, err := strconv.Atoi(p.ConcurrentRequests); err != nil {
+			return ErrConvertConcurrentRequest()
+		}
+	}
+	if p.Body != "" {
+		if _, err := os.Stat(p.Body); err == nil {
+			utils.Log.Info("Reading test body from file")
+			bodyFile, err := os.ReadFile(p.Body)
+			if err != nil {
+				return ErrReadFilepath(err)
+			}
+			p.Body = string(bodyFile)
+		}
+	}
+	return nil
+}
+
+// ApplyToGlobals updates the package-level variables with the values in p.
+func (p *PerformanceTestParams) ApplyToGlobals() {
+	testName = p.Name
+	testURL = p.URL
+	testMesh = p.Mesh
+	qps = p.QPS
+	concurrentRequests = p.ConcurrentRequests
+	testDuration = p.Duration
+	loadGenerator = p.LoadGenerator
+	loadTestBody = p.Body
+}
+
+// currentFlagParams returns the parameters currently set by command-line flags.
+func currentFlagParams() PerformanceTestParams {
+	return PerformanceTestParams{
+		Name:               testName,
+		URL:                testURL,
+		Mesh:               testMesh,
+		QPS:                qps,
+		ConcurrentRequests: concurrentRequests,
+		Duration:           testDuration,
+		LoadGenerator:      loadGenerator,
+		Body:               loadTestBody,
+	}
+}
+
+// defaultProfileParams returns standard default parameters used for performance tests.
+func defaultProfileParams() PerformanceTestParams {
+	return PerformanceTestParams{
+		Mesh:               "None",
+		QPS:                "0",
+		ConcurrentRequests: "1",
+		Duration:           "30s",
+		LoadGenerator:      "fortio",
+	}
+}
+
+// parseSMPConfigFile reads and parses an SMP test configuration file into PerformanceTestParams.
+func parseSMPConfigFile(path string) (PerformanceTestParams, error) {
+	smpConfig, err := os.ReadFile(path)
+	if err != nil {
+		return PerformanceTestParams{}, ErrReadFilepath(errors.Wrap(err, "Unable to read test configuration file. \n"))
+	}
+
+	testConfig := servermodels.PerformanceTestConfigFile{}
+	if err = yaml.Unmarshal(smpConfig, &testConfig); err != nil {
+		return PerformanceTestParams{}, ErrFailUnmarshalFile(err)
+	}
+
+	if testConfig.Config == nil || len(testConfig.Config.Clients) == 0 {
+		return PerformanceTestParams{}, ErrInvalidTestConfigFile()
+	}
+
+	client := testConfig.Config.Clients[0]
+	return PerformanceTestParams{
+		Name:               testConfig.Config.Name,
+		URL:                firstString(client.EndpointUrls),
+		Mesh:               testConfig.ServiceMesh,
+		QPS:                strconv.Itoa(client.Rps),
+		ConcurrentRequests: strconv.Itoa(client.Connections),
+		Duration:           testConfig.Config.Duration,
+		LoadGenerator:      client.LoadGenerator,
+		Body:               client.Body,
+	}, nil
+}
+
+// extractProfileParams converts a PerformanceProfile into PerformanceTestParams.
+func extractProfileParams(p perfprofile.PerformanceProfile) PerformanceTestParams {
+	return PerformanceTestParams{
+		URL:                firstString(p.Endpoints),
+		Mesh:               p.ServiceMesh,
+		QPS:                strconv.Itoa(p.QPS),
+		ConcurrentRequests: strconv.Itoa(p.ConcurrentRequest),
+		Duration:           p.Duration,
+		LoadGenerator:      firstString(p.LoadGenerators),
+		Body:               p.RequestBody,
+	}
+}
+
+// resolvePerformanceParams consolidates performance test parameters across CLI flags,
+// an optional SMP configuration file, an optional performance profile, and defaults.
+// Precedence: Flags > File > Profile > Defaults.
+func resolvePerformanceParams(flags PerformanceTestParams, smpFilePath string, profile *perfprofile.PerformanceProfile, applyDefaults bool) (PerformanceTestParams, error) {
+	resolved := flags
+
+	if smpFilePath != "" {
+		fileParams, err := parseSMPConfigFile(smpFilePath)
+		if err != nil {
+			return PerformanceTestParams{}, err
+		}
+		resolved.FallbackWith(fileParams)
+	}
+
+	if profile != nil {
+		profileParams := extractProfileParams(*profile)
+		// If an SMP file was provided, profile only fills URL if still unset;
+		// otherwise, profile fills all unset parameters.
+		if smpFilePath != "" {
+			if resolved.URL == "" {
+				resolved.URL = profileParams.URL
+			}
+		} else {
+			resolved.FallbackWith(profileParams)
+		}
+	}
+
+	if applyDefaults {
+		resolved.FallbackWith(defaultProfileParams())
+	}
+
+	if resolved.Name == "" {
+		utils.Log.Debug("Test Name not provided")
+		resolved.Name = utils.StringWithCharset(8)
+		utils.Log.Debug("Using random test name: ", resolved.Name)
+	}
+
+	if err := resolved.Validate(); err != nil {
+		return PerformanceTestParams{}, err
+	}
+
+	return resolved, nil
 }
