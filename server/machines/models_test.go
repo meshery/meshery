@@ -582,3 +582,86 @@ func TestSendEvent_ExitActionFailureHaltsWithoutTransition(t *testing.T) {
 		t.Fatalf("expected persisted status to remain CONNECTED, got %q", provider.status)
 	}
 }
+
+func TestResolveUserAndSystemID(t *testing.T) {
+	t.Run("empty context returns nil uuids", func(t *testing.T) {
+		userUUID, sysUUID := ResolveUserAndSystemID(context.Background())
+		if userUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected userUUID to be Nil, got %v", userUUID)
+		}
+		if sysUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected sysUUID to be Nil, got %v", sysUUID)
+		}
+	})
+
+	t.Run("populated context returns correct uuids", func(t *testing.T) {
+		expectedUser := core.Uuid(uuid.Must(uuid.NewV4()))
+		expectedSys := core.Uuid(uuid.Must(uuid.NewV4()))
+		ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: expectedUser})
+		ctx = context.WithValue(ctx, models.SystemIDKey, &expectedSys)
+
+		userUUID, sysUUID := ResolveUserAndSystemID(ctx)
+		if userUUID != expectedUser {
+			t.Errorf("expected userUUID %v, got %v", expectedUser, userUUID)
+		}
+		if sysUUID != expectedSys {
+			t.Errorf("expected sysUUID %v, got %v", expectedSys, sysUUID)
+		}
+	})
+
+	t.Run("typed nil pointers in context return nil uuids without panic", func(t *testing.T) {
+		var nilUser *models.User
+		var nilSys *core.Uuid
+		ctx := context.WithValue(context.Background(), models.UserCtxKey, nilUser)
+		ctx = context.WithValue(ctx, models.SystemIDKey, nilSys)
+
+		userUUID, sysUUID := ResolveUserAndSystemID(ctx)
+		if userUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected userUUID to be Nil, got %v", userUUID)
+		}
+		if sysUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected sysUUID to be Nil, got %v", sysUUID)
+		}
+	})
+
+	t.Run("invalid types in context return nil uuids without panic", func(t *testing.T) {
+		ctx := context.WithValue(context.Background(), models.UserCtxKey, "not-a-user")
+		ctx = context.WithValue(ctx, models.SystemIDKey, 12345)
+
+		userUUID, sysUUID := ResolveUserAndSystemID(ctx)
+		if userUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected userUUID to be Nil, got %v", userUUID)
+		}
+		if sysUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected sysUUID to be Nil, got %v", sysUUID)
+		}
+	})
+}
+
+func TestSendEvent_NilContextKeysDoNotPanic(t *testing.T) {
+	provider := &fakeProvider{status: connections.CONNECTED}
+	sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+
+	// 1. Invalid transition with context.Background() (no user or sysID)
+	// Triggers invalidTransitionEvent which previously dereferenced *sysID and user.ID
+	event, err := sm.SendEvent(context.Background(), Delete, nil)
+	if err == nil {
+		t.Fatal("expected error on invalid transition Delete from InitialState, got nil")
+	}
+	if event == nil {
+		t.Fatal("expected non-nil event on invalid transition")
+	}
+	if event.Severity != events.Error {
+		t.Errorf("expected Error severity, got %v", event.Severity)
+	}
+
+	// 2. Valid transition with context.Background()
+	// Advances InitialState -> DISCOVERED, triggering status update event
+	_, err = sm.SendEvent(context.Background(), Discovery, nil)
+	if err != nil {
+		t.Fatalf("expected nil error on valid transition, got %v", err)
+	}
+	if sm.CurrentState != DISCOVERED {
+		t.Errorf("expected CurrentState DISCOVERED, got %v", sm.CurrentState)
+	}
+}
