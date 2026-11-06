@@ -1732,6 +1732,9 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 // PersistEvent persists a user-initiated event to the remote provider.
 // When the token is empty or remote persistence fails, it falls back to local persistence.
 func (l *RemoteProvider) PersistEvent(event events.Event, token string) error {
+	// The remote path bypasses EventsPersister, so the metadata size guard
+	// is applied here too; the local fallback re-checks an already bounded map.
+	event = GuardEventMetadataSize(event, l.Log)
 	if strings.TrimSpace(token) == "" {
 		return l.EventsPersister.PersistEvent(event, "")
 	}
