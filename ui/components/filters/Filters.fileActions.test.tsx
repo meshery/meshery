@@ -89,6 +89,29 @@ describe('createHandleSubmit', () => {
     });
   });
 
+  it('reports a failed delete through the error handler', async () => {
+    const errorHandler = vi.fn();
+    const handleError = vi.fn(() => errorHandler);
+    const notify = vi.fn();
+
+    const handleSubmit = createHandleSubmit({
+      notify,
+      handleError,
+      showmodal: vi.fn().mockResolvedValueOnce('Delete'),
+      resetSelectedRowData: vi.fn(() => vi.fn()),
+      deleteFilterFile: vi.fn(() => reject()),
+      uploadFilterFile: vi.fn(),
+      updateFilterFile: vi.fn(),
+    });
+
+    await handleSubmit({ data: '', name: 'foo', id: 'i-1', type: 'DELETE' });
+    await flush();
+
+    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'DELETE_FILTERS' }));
+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
+    expect(notify).not.toHaveBeenCalled();
+  });
+
   it('aborts when modal cancels the delete', async () => {
     const deleteFilterFile = vi.fn(() => wrap());
     const showmodal = vi.fn().mockResolvedValueOnce('Cancel');
@@ -321,6 +344,7 @@ describe('createHandleImportFilter', () => {
     await flush();
 
     expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'UPLOAD_FILTERS' }));
+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
   });
 });
 
@@ -443,7 +467,37 @@ describe('createHandleClone', () => {
   });
 });
 
+describe('createHandleClone errors', () => {
+  it('reports a failed clone through the error handler', async () => {
+    const errorHandler = vi.fn();
+    const handleError = vi.fn(() => errorHandler);
+    const clone = createHandleClone({
+      cloneFilter: vi.fn(() => reject()),
+      notify: vi.fn(),
+      handleError,
+    });
+    clone('f-1', 'flt');
+    await flush();
+    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'CLONE_FILTER' }));
+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
+  });
+});
+
 describe('createDeleteFilter', () => {
+  it('reports a failed delete through the error handler', async () => {
+    const errorHandler = vi.fn();
+    const handleError = vi.fn(() => errorHandler);
+    const del = createDeleteFilter({
+      deleteFilterFile: vi.fn(() => reject()),
+      notify: vi.fn(),
+      handleError,
+    });
+    del('f-1');
+    await flush();
+    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'DELETE_FILTERS' }));
+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
+  });
+
   it('deletes a filter and notifies on success', async () => {
     const deleteFilterFile = vi.fn(() => wrap());
     const notify = vi.fn();

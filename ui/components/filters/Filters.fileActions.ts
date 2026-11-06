@@ -10,7 +10,7 @@ import { ACTION_TYPES } from './Filters.constants';
 
 type Notify = (_args: { message: string; event_type: string; details?: string }) => void;
 
-type ErrorHandler = (_action: { error_msg: string }) => (_error: Error | string) => void;
+type ErrorHandler = (_action: { error_msg: string }) => (_error: unknown) => void;
 
 type SubmitArgs = {
   data: any;
@@ -59,9 +59,9 @@ export function createHandleSubmit({
           notify({ message: `"${name}" filter deleted`, event_type: EVENT_TYPES.SUCCESS });
           resetSelectedRowData()();
         })
-        .catch(() => {
+        .catch((error) => {
           updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.DELETE_FILTERS);
+          handleError(ACTION_TYPES.DELETE_FILTERS)(error);
         });
     }
 
@@ -83,9 +83,9 @@ export function createHandleSubmit({
         .then(() => {
           updateProgress({ showProgress: false });
         })
-        .catch(() => {
+        .catch((error) => {
           updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.UPLOAD_FILTERS);
+          handleError(ACTION_TYPES.UPLOAD_FILTERS)(error);
         });
     }
 
@@ -101,9 +101,9 @@ export function createHandleSubmit({
         .then(() => {
           updateProgress({ showProgress: false });
         })
-        .catch(() => {
+        .catch((error) => {
           updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.UPLOAD_FILTERS);
+          handleError(ACTION_TYPES.UPLOAD_FILTERS)(error);
         });
     }
   };
@@ -212,9 +212,9 @@ export function createHandleImportFilter({
         });
         getFilters();
       })
-      .catch(() => {
+      .catch((error) => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.UPLOAD_FILTERS);
+        handleError(ACTION_TYPES.UPLOAD_FILTERS)(error);
       });
   };
 }
@@ -254,9 +254,9 @@ export function createHandleUnpublishModal({
                 event_type: EVENT_TYPES.SUCCESS,
               });
             })
-            .catch(() => {
+            .catch((error) => {
               updateProgress({ showProgress: false });
-              handleError(ACTION_TYPES.UNPUBLISH_CATALOG);
+              handleError(ACTION_TYPES.UNPUBLISH_CATALOG)(error);
             });
         }
       };
@@ -314,9 +314,9 @@ export function createHandlePublish({
           });
         }
       })
-      .catch(() => {
+      .catch((error) => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.PUBLISH_CATALOG);
+        handleError(ACTION_TYPES.PUBLISH_CATALOG)(error);
       });
   };
 }
@@ -339,9 +339,9 @@ export function createHandleClone({ cloneFilter, notify, handleError }: CreateHa
         updateProgress({ showProgress: false });
         notify({ message: `"${name}" filter cloned`, event_type: EVENT_TYPES.SUCCESS });
       })
-      .catch(() => {
+      .catch((error) => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.CLONE_FILTERS);
+        handleError(ACTION_TYPES.CLONE_FILTERS)(error);
       });
   };
 }
@@ -364,9 +364,9 @@ export function createDeleteFilter({
         updateProgress({ showProgress: false });
         notify({ message: `Filter deleted`, event_type: EVENT_TYPES.SUCCESS });
       })
-      .catch(() => {
+      .catch((error) => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.DELETE_FILTERS);
+        handleError(ACTION_TYPES.DELETE_FILTERS)(error);
       });
   };
 }

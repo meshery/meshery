@@ -49,6 +49,7 @@ import { CreateButton, ViewSwitchButton, BtnText } from './Filters.styled';
 import YAMLEditor from './YAMLEditor';
 import ImportModal from './ImportModal';
 import PublishModal from './PublishModal';
+import { formatApiError } from '../../utils/helpers/meshkitError';
 import { ACTION_TYPES, COLUMN_VIEWS } from './Filters.constants';
 import { buildFiltersColumns } from './Filters.columns';
 import { buildFiltersTableOptions } from './Filters.tableOptions';
@@ -157,12 +158,15 @@ function MesheryFilters() {
   const [updateFilterFile] = useUpdateFilterFileMutation();
   const [uploadFilterFile] = useUploadFilterFileMutation();
 
-  const handleError = (action: { error_msg: string }) => (error: Error | string) => {
+  // Curried: call sites pass the action, then the raw error -
+  // `handleError(ACTION_TYPES.X)(error)`. The error is an RTK Query rejection
+  // object, so it goes through formatApiError instead of being stringified.
+  const handleError = (action: { error_msg: string }) => (error: unknown) => {
     updateProgress({ showProgress: false });
+    const { message } = formatApiError(error, action.error_msg);
     notify({
-      message: `${action.error_msg}: ${error}`,
+      message,
       event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
     });
   };
 
@@ -315,8 +319,8 @@ function MesheryFilters() {
         );
         setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
         setMeshModels(models);
-      } catch {
-        handleError(ACTION_TYPES.SCHEMA_FETCH);
+      } catch (error) {
+        handleError(ACTION_TYPES.SCHEMA_FETCH)(error);
       }
     };
 
