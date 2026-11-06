@@ -205,9 +205,18 @@ func ErrOpeningFile(err error) error {
 
 Name each constant `<BuilderFuncName>Code` - `errorutil` keys the export off that pairing. Adding a constant longer than the block's current widest name makes `gofmt` realign the entire `error.go` const block, so prefer a shorter name over a 300-line whitespace diff.
 
+### Pairing causes with remediations
+
+`errors.New` takes probable causes and suggested remediations as two flat lists, which readers cannot pair. When an error has more than one cause, declare it with `errors.NewV3`: each `errors.Cause` carries an `ID`, a `Description` and the `Remediations` that address it, and each `errors.Remediation` carries an `ID`, a `Description` and, optionally, a machine-readable `Action` with an `ActionPolicy` (`errors.Manual`, the default, `errors.RequiresApproval` or `errors.Automatic`). A remediation that answers several causes is declared once as a package-level variable and repeated under each cause. Ids are lowercase words joined by hyphens and are stable once published: events name them in `metadata.error.matchedCauses` and each code's reference page anchors them. The flat lists are derived from the nesting, so older readers keep working. `ErrUnreachableKubeAPI` in `server/models/error.go` is the example; the [error definition contract](https://github.com/meshery/schemas/blob/master/docs/error-definition-contract.md) holds the full rules.
+
 ### Regenerating the docs reference
 
-`server/helpers/errorutil_errors_export.json` is gitignored, but the reference data at `docs/data/errorref/meshery-server_errors_export.json` is tracked. Regenerate it with the `jq --slurpfile` wrapper the workflow uses, or the published error reference silently omits the new codes.
+`server/helpers/errorutil_errors_export.json` and `errorutil_errors_index.json` are gitignored, but the reference data built from them is tracked:
+
+- `docs/data/errorref/meshery-server_errors_export.json`, the flat export. Regenerate it with the `jq --slurpfile` wrapper the workflow uses, or the published error reference silently omits the new codes.
+- `docs/data/errorindex/meshery-server_errors_index.json`, the nested export (`jq . server/helpers/errorutil_errors_index.json`), which carries each cause with its own remediations. The docs build takes a code's causes from it when it is present and falls back to the flat export otherwise.
+
+The workflow regenerates both. The docs build publishes every component's codes as `reference/error-codes/index.json`, a schemas `ErrorReferenceIndex` (`schemaVersion` 2).
 
 ### Rendering errors to the user
 

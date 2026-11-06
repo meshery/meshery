@@ -128,6 +128,8 @@ This directory houses reusable formatter components dedicated to specific types 
 
 - **common.tsx**: Contains shared components like `TitleLink`, `DataToFileLink`, and `EmptyState`.
 - **error.tsx**: Defines `ErrorMetadataFormatter` for displaying structured error details.
+- **event_error.ts**: The single reader of `metadata.error`. `normalizeEventError` reads the schemas `EventError` (nested causes, `matchedCauses`, `referenceUrl`), the legacy MeshKit error stored with Go field names, and a design event's `{code, message}` into one view model; `eventErrorCode` and `eventErrorReferenceUrl` read the code and reference page of either shape. Never index `metadata.error` keys directly in a formatter.
+- **condition.tsx**: `getEventCondition` reads an event's condition fields (`correlationKey`, `occurrenceCount`, `firstSeenAt`, `lastSeenAt`, `resolvedAt`); `ConditionBadges` renders the summary row's occurrence count and "Resolved" badge, and `ConditionSummary` the detail panel's condition line. An event without these fields renders as before.
 - **model_registration.tsx**: Contains formatters for model import/registration events (`ModelImportMessages`, `ModelImportedSection`).
 - **pattern_dryrun.tsx**: Defines `DryRunResponse` and `SchemaValidationFormatter`, which delegate to the design lifecycle components.
 - **design_event_metadata.ts**: The single reader of design event metadata. `getDesignEventIdentity` returns `designId`, `designName`, `designVersion`, `designLink` and `viewLink`, falling back to the legacy `design_id`, `design_name` and `view_link` only when the camelCase key is absent; `getDesignEventErrorSummary` reads `status`, `errorCount`, `errors[]` and `truncated`; `isMeshkitErrorCode` tells a MeshKit code (`meshery-server-1480`) from a JSON-schema keyword or Kubernetes cause type. Never index these metadata keys directly in a formatter.
@@ -227,20 +229,19 @@ The following reusable components standardize how notification links, empty stat
 
 ### Error Formatter
 
-The `ErrorMetadataFormatter` is used for formatting error-related notifications in the Meshery UI Notification Center. It structures error details, probable causes, and suggested remediations in a readable format. Each entry is rendered as Markdown, so bullets and inline formatting supplied by the server are preserved.
+The `ErrorMetadataFormatter` renders an error event's `metadata.error`. It reads every shape the field is stored in through `normalizeEventError` (`formatters/event_error.ts`):
 
-- **Details**: A comprehensive explanation of the error, often broken into multiple points or steps.
-- **Probable Cause**: A list of potential reasons why the error occurred, helping the user understand the root cause.
-- **Suggested Remediation**: Actionable steps or recommendations to resolve the issue.
-- Inside the ellipse menu, the user can find the error code docs link for further explanation of the error. The code is extracted by `getErrorCodesFromEvent`, which looks at both `metadata.error` and errors nested inside `metadata.ModelDetails`.
+- **Details**: the long description rendered for this occurrence.
+- **Probable Causes**, when the producer paired each cause with its remediations (a schemas `EventError` with `probableCauses`, from a MeshKit `errors.NewV3` error): one card per cause, listing the remediations that address it. The causes named in `matchedCauses` come first, marked "Likely cause" (with the producer's confidence when it gave one). A remediation whose `actionPolicy` is `automatic` or `requiresApproval` carries a label saying so; the Notification Center runs no action. A remediation shared by several causes is listed under each.
+- **Probable Cause** and **Suggested Remediation**, for an unpaired error: MeshKit's flat lists, including every row recorded before the pairing existed (Go field names `LongDescription`, `ProbableCause`, `SuggestedRemediation`). The two lists are never paired by position.
+- A link to the code's reference page when `metadata.error.referenceUrl` is set.
+
+Each entry is rendered as Markdown. The event's full description is shown above the details only when the summary row had to truncate it. Inside the ellipsis menu, **Error Docs** opens the code's `referenceUrl`, else the code's anchor on the error code reference; `getErrorCodesFromEvent` reads the code from `metadata.error` (`code` or legacy `Code`), design event errors and `metadata.ModelDetails`.
 
 **Props:**
 
-- `metadata` (object): Contains error metadata fields, each an array of strings:
-  - `LongDescription`: Provides details about the error.
-  - `ProbableCause`: Lists possible reasons for the error.
-  - `SuggestedRemediation`: Suggests solutions to fix the error.
-- `event` (object, optional): Contains the notification event data. Only `description` is read.
+- `metadata` (unknown): the event's `metadata.error`, in any shape.
+- `event` (object, optional): the notification event. Only `description` is read. `FormattedMetadata` passes the notification's event.
 
 **Path:** `ui/components/layout/NotificationCenter/formatters/error.tsx`
 
@@ -249,11 +250,18 @@ The `ErrorMetadataFormatter` is used for formatting error-related notifications 
 ```tsx
 <ErrorMetadataFormatter
   metadata={{
-    LongDescription: ['An unexpected error occurred while deploying the design.'],
-    ProbableCause: ['Misconfigured Kubernetes cluster.'],
-    SuggestedRemediation: ['Check your kubeconfig file and retry deployment.'],
+    code: 'meshery-server-1304',
+    longDescription: 'dial tcp 10.0.0.1:6443: connect: connection refused',
+    probableCauses: [
+      {
+        id: 'api-server-unreachable',
+        description: 'The Kubernetes API server is not reachable.',
+        remediations: [{ id: 'check-network', description: 'Verify network connectivity.' }],
+      },
+    ],
+    matchedCauses: [{ causeId: 'api-server-unreachable' }],
   }}
-  event={{ description: 'Design deployment failed' }}
+  event={{ description: 'Could not assign server id, skipping context prod' }}
 />
 ```
 
@@ -261,7 +269,11 @@ The `ErrorMetadataFormatter` is used for formatting error-related notifications 
 
 **When to Use:**
 
-The `ErrorMetadataFormatter` is used when dealing with structured error events that follow a pattern (description, cause, remediation). A new formatter should be created only if the error metadata deviates significantly from the `ErrorMetadataFormatter` metadata structure.
+The `ErrorMetadataFormatter` is used for every `metadata.error`. A new formatter should be created only if an event's error metadata deviates from the schemas `EventError` and the legacy MeshKit shape.
+
+### Conditions
+
+An event that reports an ongoing condition counts its repeats instead of recording a notification each ([server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})). When its `occurrenceCount` is above one, the summary row shows the count and the time it was last seen; a resolved condition shows a "Resolved" badge. The expanded notification lists how often it occurred, when it was first and last seen, and when it was resolved.
 
 ### Model Registration Formatter
 
