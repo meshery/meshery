@@ -45,6 +45,14 @@ vi.mock('../../../data-formatter', () => ({
   },
 }));
 
+vi.mock('./common', () => ({
+  TitleLink: ({ href, children }: any) => (
+    <a href={href} target="_blank" rel="noopener noreferrer">
+      {children}
+    </a>
+  ),
+}));
+
 vi.mock('../notification', () => ({
   canTruncateDescription: (description: string) => description.length > 62,
 }));
