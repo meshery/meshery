@@ -485,6 +485,24 @@ perf:
           description: (required/optional) URL of the endpoint send load to during testing.
           usage: mesheryctl perf apply [profile-name] --url [URL]
           example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage
+        header:
+          name: --header
+          arg: apply
+          description: 'Request header to send during the test, as "Name: value". Can be used more than once.'
+          usage: 'mesheryctl perf apply [profile-name] --url [URL] --header "Name: value"'
+          example: 'mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --header "Authorization: Bearer token"'
+        cookie:
+          name: --cookie
+          arg: apply
+          description: 'Request cookie to send during the test, as "name=value". Can be used more than once.'
+          usage: mesheryctl perf apply [profile-name] --url [URL] --cookie "name=value"
+          example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --cookie "session=abc"
+        content-type:
+          name: --content-type
+          arg: apply
+          description: Content type of the load test body.
+          usage: mesheryctl perf apply [profile-name] --url [URL] --content-type [type]
+          example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --content-type application/json
         cert-path:
           name: --cert-path
           arg: apply
