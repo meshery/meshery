@@ -37,21 +37,11 @@ mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [model
 </div>
 </pre> 
 
-Publish To Meshery
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-<div class='clipboardjs'>
-mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/models
-
-</div>
-</div>
-</pre> 
-
 Publish To Remote Provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels
+mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/models [repo]/ui/public/static/img/meshmodels
 
 </div>
 </div>
@@ -61,7 +51,7 @@ Publish To Website
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels
+mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/static/img/meshmodels -o [output-format]
 
 </div>
 </div>

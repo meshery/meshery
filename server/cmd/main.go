@@ -309,7 +309,7 @@ func main() {
 		log.Error(ErrInitializingKeysRegistration(err))
 		os.Exit(1)
 	}
-	//seed the local meshmodel components
+	// Initialize policy engine and seed registry entities
 	rego := policies.Rego{}
 
 	// Seeding runs off the request path, in its own goroutine, so a fault in
@@ -322,11 +322,11 @@ func main() {
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		})
 
-		// This is where models are seeded from meshmodel directory to registry
+		// This is where models, components, and relationships are seeded from the models directory into the registry
 		models.RunSeedStage(log, "models", func() {
 			models.SeedComponents(log, hc, regManager, dbHandler)
 		})
-		// Rego is intialized for passing of policy if the policies are made to be per model base this needs to be removed.
+		// Rego is initialized for evaluating policies across models and relationships
 		models.RunSeedStage(log, "policies", func() {
 			r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
 			if err != nil {
