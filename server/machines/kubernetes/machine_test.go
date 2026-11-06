@@ -105,3 +105,86 @@ func TestRegisteredState_HasNotFoundTransition(t *testing.T) {
 		t.Fatalf("expected NotFound transition to go to %q, got %q", machines.NOTFOUND, next)
 	}
 }
+
+func TestAssignInitialCtx_WithNilUserAndSystemID(t *testing.T) {
+	log, err := logger.New("meshery-test", logger.Options{Format: logger.SyslogLogFormat})
+	if err != nil {
+		t.Fatalf("failed to construct logger: %v", err)
+	}
+
+	machinectx := &MachineCtx{
+		K8sContext: models.K8sContext{
+			Name:         "unreachable-test-context",
+			Server:       "https://127.0.0.1:1",
+			ConnectionID: uuid.Must(uuid.NewV4()).String(),
+		},
+	}
+
+	// Must not panic when UserCtxKey and SystemIDKey are omitted (e.g. background reconciler)
+	result, _, err := AssignInitialCtx(context.Background(), machinectx, log)
+	if err == nil {
+		t.Fatal("expected AssignInitialCtx to fail for an unreachable context, got nil error")
+	}
+	if result != nil {
+		t.Fatalf("expected nil result, got %#v", result)
+	}
+}
+
+func TestActions_WithNilUserAndSystemID(t *testing.T) {
+	log, err := logger.New("meshery-test", logger.Options{Format: logger.SyslogLogFormat})
+	if err != nil {
+		t.Fatalf("failed to construct logger: %v", err)
+	}
+
+	machinectx := &MachineCtx{
+		log: log,
+		K8sContext: models.K8sContext{
+			Name:         "test-context",
+			Server:       "https://127.0.0.1:1",
+			ConnectionID: uuid.Must(uuid.NewV4()).String(),
+		},
+	}
+
+	ctx := context.Background()
+
+	t.Run("ConnectAction", func(t *testing.T) {
+		ca := &ConnectAction{}
+		_, event, err := ca.Execute(ctx, machinectx, nil)
+		if err == nil {
+			t.Fatal("expected error due to missing provider/token, got nil")
+		}
+		if event == nil {
+			t.Fatal("expected non-nil event, got nil")
+		}
+	})
+
+	t.Run("DisconnectAction", func(t *testing.T) {
+		da := &DisconnectAction{}
+		_, _, err := da.Execute(ctx, machinectx, nil)
+		if err != nil {
+			t.Fatalf("expected nil error, got %v", err)
+		}
+	})
+
+	t.Run("DiscoverAction", func(t *testing.T) {
+		da := &DiscoverAction{}
+		_, event, err := da.Execute(ctx, machinectx, nil)
+		if err == nil {
+			t.Fatal("expected error due to nil clientset, got nil")
+		}
+		if event == nil {
+			t.Fatal("expected non-nil event, got nil")
+		}
+	})
+
+	t.Run("RegisterAction", func(t *testing.T) {
+		ra := &RegisterAction{}
+		_, event, err := ra.Execute(ctx, machinectx, nil)
+		if err == nil {
+			t.Fatal("expected error due to invalid ping test, got nil")
+		}
+		if event == nil {
+			t.Fatal("expected non-nil event, got nil")
+		}
+	})
+}

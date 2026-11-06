@@ -582,3 +582,70 @@ func TestSendEvent_ExitActionFailureHaltsWithoutTransition(t *testing.T) {
 		t.Fatalf("expected persisted status to remain CONNECTED, got %q", provider.status)
 	}
 }
+
+func TestResolveUserAndSystemID(t *testing.T) {
+	testUserID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate user UUID: %v", err)
+	}
+	testSysID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate system UUID: %v", err)
+	}
+
+	t.Run("valid user and system ID in context", func(t *testing.T) {
+		ctx := context.Background()
+		ctx = context.WithValue(ctx, models.UserCtxKey, &models.User{ID: core.Uuid(testUserID)})
+		sID := core.Uuid(testSysID)
+		ctx = context.WithValue(ctx, models.SystemIDKey, &sID)
+
+		userUUID, systemID := ResolveUserAndSystemID(ctx)
+		if userUUID != core.Uuid(testUserID) {
+			t.Fatalf("expected userUUID %v, got %v", testUserID, userUUID)
+		}
+		if systemID != core.Uuid(testSysID) {
+			t.Fatalf("expected systemID %v, got %v", testSysID, systemID)
+		}
+	})
+
+	t.Run("empty context (context.Background)", func(t *testing.T) {
+		userUUID, systemID := ResolveUserAndSystemID(context.Background())
+		if userUUID != core.Uuid(uuid.Nil) {
+			t.Fatalf("expected userUUID uuid.Nil, got %v", userUUID)
+		}
+		if systemID != core.Uuid(uuid.Nil) {
+			t.Fatalf("expected systemID uuid.Nil, got %v", systemID)
+		}
+	})
+
+	t.Run("typed nil pointers in context", func(t *testing.T) {
+		ctx := context.Background()
+		ctx = context.WithValue(ctx, models.UserCtxKey, (*models.User)(nil))
+		ctx = context.WithValue(ctx, models.SystemIDKey, (*core.Uuid)(nil))
+
+		userUUID, systemID := ResolveUserAndSystemID(ctx)
+		if userUUID != core.Uuid(uuid.Nil) {
+			t.Fatalf("expected userUUID uuid.Nil, got %v", userUUID)
+		}
+		if systemID != core.Uuid(uuid.Nil) {
+			t.Fatalf("expected systemID uuid.Nil, got %v", systemID)
+		}
+	})
+}
+
+func TestSendEvent_WithoutUserAndSystemIDInContext(t *testing.T) {
+	provider := &fakeProvider{status: connections.CONNECTED}
+	sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+
+	// Dispatch an event using context.Background() (no UserCtxKey or SystemIDKey)
+	event, err := sm.SendEvent(context.Background(), Discovery, nil)
+	if err != nil {
+		t.Fatalf("expected no error when executing with background context, got %v", err)
+	}
+	if event == nil {
+		t.Fatal("expected non-nil event returned, got nil")
+	}
+	if sm.CurrentState != DISCOVERED {
+		t.Fatalf("expected machine state to transition to DISCOVERED, got %q", sm.CurrentState)
+	}
+}
