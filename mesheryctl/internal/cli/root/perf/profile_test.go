@@ -117,11 +117,13 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedError: func() error {
 				cmdUsed = "profile"
 
-				// Replicate the exact JSON unmarshal error using the schema type.
-				// Body matches the canonical camelCase wire form in the
-				// `profile.invalidJSON.response.golden` fixture so the inner
-				// json.Unmarshal error references `pageSize`, not `page_size`.
-				var response perfprofile.PerformanceProfilePage
+				// Replicate the exact JSON unmarshal error by decoding the way
+				// fetchPerformanceProfiles does: into a pointer to the schema
+				// type. encoding/json names the struct in its message, so a
+				// value target drifts from what the command prints. Body matches
+				// the camelCase wire form in the
+				// `profile.invalidJSON.response.golden` fixture.
+				var response *perfprofile.PerformanceProfilePage
 				innerErr := json.Unmarshal([]byte(`{"pageSize": "25"}`), &response)
 
 				return utils.ErrLoadConfig(ErrFailUnmarshal(innerErr))
