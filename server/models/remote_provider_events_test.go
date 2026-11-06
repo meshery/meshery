@@ -145,3 +145,35 @@ func TestRemoteProviderPersistEventFallbackCorrelates(t *testing.T) {
 		t.Fatalf("got %+v, want one local event counting 3 occurrences", rows)
 	}
 }
+
+// Every 2xx answer means the remote provider has the event; anything else
+// falls back to the local database.
+func TestRemoteProviderPersistEventAcceptsAny2xx(t *testing.T) {
+	cases := []struct {
+		status    int
+		wantLocal int64
+	}{
+		{http.StatusOK, 0},
+		{http.StatusCreated, 0},
+		{http.StatusAccepted, 0},
+		{http.StatusNoContent, 0},
+		{http.StatusMultipleChoices, 1},
+		{http.StatusBadRequest, 1},
+		{http.StatusInternalServerError, 1},
+	}
+	for _, c := range cases {
+		status := c.status
+		provider := newEventsRemoteProvider(t, func(w http.ResponseWriter, _ *http.Request) {
+			w.Header().Set(EventDispositionHeader, "incremented")
+			w.WriteHeader(status)
+		})
+		event := events.NewEvent().FromOwner(mustUUID(t)).WithCategory("connection").WithAction("update").
+			WithSeverity(events.Error).Build()
+		if err := provider.PersistEvent(*event, "token"); err != nil {
+			t.Fatalf("status %d: PersistEvent: %v", status, err)
+		}
+		if n := localEventCount(t, provider); n != c.wantLocal {
+			t.Errorf("status %d: %d local rows, want %d", status, n, c.wantLocal)
+		}
+	}
+}
