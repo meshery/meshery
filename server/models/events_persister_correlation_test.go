@@ -180,7 +180,7 @@ func TestPersistEventResolutionClosesTheOpenCondition(t *testing.T) {
 	key := "meshery-server/k8s-connection/b/unreachable"
 
 	mustPersist(t, p, conditionEvent(owner, key, "unreachable").Build())
-	resolvedAt := time.Now().UTC().Truncate(time.Second)
+	resolvedAt := time.Now().UTC().Add(time.Minute).Truncate(time.Second)
 	mustPersist(t, p, events.NewEvent().FromOwner(owner).WithCategory("connection").WithAction("update").
 		WithSeverity(events.Success).WithDescription("reachable again").Resolves(key, resolvedAt).Build())
 
@@ -191,12 +191,40 @@ func TestPersistEventResolutionClosesTheOpenCondition(t *testing.T) {
 	if rows[0].ResolvedAt == nil || !rows[0].ResolvedAt.Equal(resolvedAt) {
 		t.Fatalf("resolvedAt = %v, want %v", rows[0].ResolvedAt, resolvedAt)
 	}
+	// The closed event says what cleared and when it was last seen.
+	if rows[0].Severity != events.Success || rows[0].Description != "reachable again" {
+		t.Fatalf("closed event severity %q description %q, want the resolution's", rows[0].Severity, rows[0].Description)
+	}
+	if !timeOf(rows[0].LastSeenAt).Equal(resolvedAt) {
+		t.Fatalf("lastSeenAt = %v, want the resolution time %v", rows[0].LastSeenAt, resolvedAt)
+	}
+	if rows[0].Category != "connection" || count(rows[0].OccurrenceCount) != 1 {
+		t.Fatalf("a resolution changed fields it must keep: %+v", rows[0])
+	}
 
 	// Once closed, the next occurrence opens a new condition.
 	mustPersist(t, p, conditionEvent(owner, key, "unreachable again").Build())
 	rows = storedEvents(t, p, owner)
 	if len(rows) != 2 || rows[1].ResolvedAt != nil || count(rows[1].OccurrenceCount) != 1 || rows[1].Description != "unreachable again" {
 		t.Fatalf("got %+v, want a second, open event with one occurrence", rows)
+	}
+}
+
+// A resolution reported as seen before the condition's latest occurrence
+// leaves lastSeenAt at the later time.
+func TestPersistEventResolutionKeepsTheLaterLastSeenAt(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+	key := "meshery-server/k8s-connection/h/unreachable"
+
+	latest := time.Now().UTC().Add(time.Hour).Truncate(time.Second)
+	mustPersist(t, p, conditionEvent(owner, key, "unreachable").WithLastSeenAt(latest).Build())
+	mustPersist(t, p, events.NewEvent().FromOwner(owner).WithCategory("connection").WithAction("update").
+		WithSeverity(events.Success).WithDescription("restored").Resolves(key, latest.Add(-time.Minute)).Build())
+
+	rows := storedEvents(t, p, owner)
+	if len(rows) != 1 || !timeOf(rows[0].LastSeenAt).Equal(latest) {
+		t.Fatalf("got %+v, want lastSeenAt kept at %v", rows, latest)
 	}
 }
 
