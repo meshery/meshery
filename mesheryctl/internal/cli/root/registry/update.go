@@ -120,7 +120,7 @@ type compUpdateTracker struct {
 	version           string
 }
 
-func InvokeCompUpdate() error {
+func InvokeCompUpdate() (err error) {
 	if logFile != nil && utils.Log != nil {
 		utils.Log.UpdateLogOutput(logFile)
 	}
@@ -133,7 +133,7 @@ func InvokeCompUpdate() error {
 			}
 		}
 
-		if utils.Log != nil {
+		if err == nil && utils.Log != nil {
 			// Additionally log the summary to the terminal
 			utils.Log.Info(fmt.Sprintf("Updated %d models and %d components", totalAggregateModel, totalAggregateComponents))
 			utils.Log.Info("refer ", logDirPath, " for detailed registry update logs")

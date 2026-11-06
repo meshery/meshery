@@ -1,11 +1,10 @@
 package registry
 
 import (
-	"fmt"
 	"testing"
 
-	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/api/sheets/v4"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
@@ -40,10 +39,17 @@ func TestWebsiteSystem_WriteFailure(t *testing.T) {
 	assert.Error(t, err, "websiteSystem must return an error when data.js cannot be written")
 }
 
-func TestPublish_Non200StatusError(t *testing.T) {
-	statusErr := fmt.Errorf("HTTP status 403")
-	errMsg := fmt.Sprintf("Request to Google Spreadsheet did not succeed.\n\nReturned error: %s", statusErr.Error())
-	pubErr := errors.New(utils.RegistryError(errMsg, "publish"))
-	assert.NotNil(t, pubErr)
-	assert.Contains(t, pubErr.Error(), "403")
+func TestSpreadsheetRequestError_Non200Status(t *testing.T) {
+	resp := &sheets.Spreadsheet{}
+	resp.HTTPStatusCode = 403
+
+	errMsg := spreadsheetRequestError(resp, nil)
+	assert.Contains(t, errMsg, "did not succeed")
+	assert.Contains(t, errMsg, "403")
+}
+
+func TestSpreadsheetRequestError_EmptyResponse(t *testing.T) {
+	errMsg := spreadsheetRequestError(nil, nil)
+	assert.Contains(t, errMsg, "did not succeed")
+	assert.Contains(t, errMsg, "empty response")
 }

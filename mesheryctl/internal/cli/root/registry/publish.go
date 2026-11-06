@@ -22,6 +22,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"google.golang.org/api/sheets/v4"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
@@ -101,15 +102,7 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		}
 		resp, err := srv.Spreadsheets.Get(sheetID).Fields().Do()
 		if err != nil || resp == nil || resp.HTTPStatusCode != 200 {
-			if err == nil {
-				if resp != nil {
-					err = fmt.Errorf("HTTP status %d", resp.HTTPStatusCode)
-				} else {
-					err = fmt.Errorf("empty response")
-				}
-			}
-			errMsg := fmt.Sprintf("Request to Google Spreadsheet did not succeed.\n\nReturned error: %s", err.Error())
-			return errors.New(utils.RegistryError(errMsg, "publish"))
+			return errors.New(utils.RegistryError(spreadsheetRequestError(resp, err), "publish"))
 		}
 
 		modelCSVHelper := &meshkitRegistryUtils.ModelCSVHelper{}
@@ -195,6 +188,19 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 		return nil
 	},
+}
+
+// spreadsheetRequestError builds the error reported when a request to the
+// Google Spreadsheet API does not succeed, preserving the underlying cause.
+func spreadsheetRequestError(resp *sheets.Spreadsheet, err error) string {
+	if err == nil {
+		if resp != nil {
+			err = fmt.Errorf("HTTP status %d", resp.HTTPStatusCode)
+		} else {
+			err = fmt.Errorf("empty response")
+		}
+	}
+	return fmt.Sprintf("Request to Google Spreadsheet did not succeed.\n\nReturned error: %s", err.Error())
 }
 
 // TODO
