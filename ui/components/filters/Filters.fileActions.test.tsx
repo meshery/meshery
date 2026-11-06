@@ -188,6 +188,27 @@ describe('createHandleSubmit', () => {
     });
   });
 
+  it('reports a failed UPDATE as an update error, not an upload error', async () => {
+    const errorHandler = vi.fn();
+    const handleError = vi.fn(() => errorHandler);
+
+    const handleSubmit = createHandleSubmit({
+      notify: vi.fn(),
+      handleError,
+      showmodal: vi.fn(),
+      resetSelectedRowData: vi.fn(() => vi.fn()),
+      deleteFilterFile: vi.fn(),
+      uploadFilterFile: vi.fn(),
+      updateFilterFile: vi.fn(() => reject()),
+    });
+
+    await handleSubmit({ data: 'cfg', name: 'n', id: 'i-1', type: 'UPDATE' });
+    await flush();
+
+    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'UPDATE_FILTERS' }));
+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
+  });
+
   it('handles an UPDATE with the filter id, name and catalogData', async () => {
     const updateFilterFile = vi.fn(() => wrap());
     const handleSubmit = createHandleSubmit({

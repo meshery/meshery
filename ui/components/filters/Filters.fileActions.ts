@@ -103,7 +103,7 @@ export function createHandleSubmit({
         })
         .catch((error) => {
           updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.UPLOAD_FILTERS)(error);
+          handleError(ACTION_TYPES.UPDATE_FILTERS)(error);
         });
     }
   };
