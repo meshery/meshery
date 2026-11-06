@@ -27329,6 +27329,56 @@ Configure the root the link points at rather than the link itself</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrGetPolicyDefinitionsCode-11335" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetPolicyDefinitionsCode-more-info" onclick="toggle_visibility('meshkit-ErrGetPolicyDefinitionsCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11335" class="error-name-code">
+              <a href="/pr-preview/pr-22817/reference/error-codes/library-meshkit/errgetpolicydefinitionscode-11335/"><code>ErrGetPolicyDefinitionsCode-11335</code></a>
+            </td>
+            <td>Failed to retrieve policy definitions from the registry</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrGetPolicyDefinitionsCode-11335" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrGetPolicyDefinitionsCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">The policy registry query failed</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The registry database query failed</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Check the registry database connection and retry the request</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInvalidPolicyPaginationCode-11336" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidPolicyPaginationCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidPolicyPaginationCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11336" class="error-name-code">
+              <a href="/pr-preview/pr-22817/reference/error-codes/library-meshkit/errinvalidpolicypaginationcode-11336/"><code>ErrInvalidPolicyPaginationCode-11336</code></a>
+            </td>
+            <td>Policy limit and offset must be non-negative</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInvalidPolicyPaginationCode-11336" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrInvalidPolicyPaginationCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">The policy filter contains a negative pagination value</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Limit and offset values must be zero or positive</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Set limit and offset to zero or a positive value</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
