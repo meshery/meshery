@@ -79,6 +79,16 @@ td {
 
 Meshery and its components use a common framework (defined within MeshKit) to generate and document an event with a unique error code identifier as the combination of `[component type]-[component name]-[event moniker]-[numeric code]`. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
 
+Each error code has a stable page. Its URL follows this pattern:
+
+```text
+/reference/error-codes/<component-type>-<component-name>/<event-moniker>-<code>/
+```
+
+The [machine-readable error code index](./index.json)
+contains one record per code, including its component, severity, descriptions,
+probable cause, suggested remediation, and reference URL.
+
 <div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Error codes are combination of component type, component name, event moniker and numberic code</div>
 
 Error codes are a hyphenated collection of details that include:
@@ -282,12 +292,14 @@ Troubleshooting guides to using Meshery's various features and components.
         
           
           
+          
+          
             
           
           <tr id="ErrInstallCiliumCode-1000" class="tbl-body-row hover-effect" data-details-id="cilium-ErrInstallCiliumCode-more-info" onclick="toggle_visibility('cilium-ErrInstallCiliumCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1000" class="error-name-code">
-              <code>ErrInstallCiliumCode-1000</code>
+              <a href="/reference/error-codes/adapter-cilium/errinstallciliumcode-1000/"><code>ErrInstallCiliumCode-1000</code></a>
             </td>
             <td>Error with Cilium operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInstallCiliumCode-1000" target="_blank">search forum</a></td>
@@ -305,12 +317,14 @@ Troubleshooting guides to using Meshery's various features and components.
         
           
           
+          
+          
             
           
           <tr id="ErrTarXZFCode-1001" class="tbl-body-row hover-effect" data-details-id="cilium-ErrTarXZFCode-more-info" onclick="toggle_visibility('cilium-ErrTarXZFCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1001" class="error-name-code">
-              <code>ErrTarXZFCode-1001</code>
+              <a href="/reference/error-codes/adapter-cilium/errtarxzfcode-1001/"><code>ErrTarXZFCode-1001</code></a>
             </td>
             <td>Error while extracting file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTarXZFCode-1001" target="_blank">search forum</a></td>
@@ -328,12 +342,14 @@ Troubleshooting guides to using Meshery's various features and components.
         
           
           
+          
+          
             
           
           <tr id="ErrMeshConfigCode-1002" class="tbl-body-row hover-effect" data-details-id="cilium-ErrMeshConfigCode-more-info" onclick="toggle_visibility('cilium-ErrMeshConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1002" class="error-name-code">
-              <code>ErrMeshConfigCode-1002</code>
+              <a href="/reference/error-codes/adapter-cilium/errmeshconfigcode-1002/"><code>ErrMeshConfigCode-1002</code></a>
             </td>
             <td>Error configuration mesh</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshConfigCode-1002" target="_blank">search forum</a></td>
@@ -351,12 +367,14 @@ Troubleshooting guides to using Meshery's various features and components.
         
           
           
+          
+          
             
           
           <tr id="ErrRunCiliumCmdCode-1003" class="tbl-body-row hover-effect" data-details-id="cilium-ErrRunCiliumCmdCode-more-info" onclick="toggle_visibility('cilium-ErrRunCiliumCmdCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1003" class="error-name-code">
-              <code>ErrRunCiliumCmdCode-1003</code>
+              <a href="/reference/error-codes/adapter-cilium/errrunciliumcmdcode-1003/"><code>ErrRunCiliumCmdCode-1003</code></a>
             </td>
             <td>Error running cilium command</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRunCiliumCmdCode-1003" target="_blank">search forum</a></td>
@@ -375,12 +393,14 @@ Command might be invalid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDownloadBinaryCode-1004" class="tbl-body-row hover-effect" data-details-id="cilium-ErrDownloadBinaryCode-more-info" onclick="toggle_visibility('cilium-ErrDownloadBinaryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1004" class="error-name-code">
-              <code>ErrDownloadBinaryCode-1004</code>
+              <a href="/reference/error-codes/adapter-cilium/errdownloadbinarycode-1004/"><code>ErrDownloadBinaryCode-1004</code></a>
             </td>
             <td>Error downloading Cilium binary</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDownloadBinaryCode-1004" target="_blank">search forum</a></td>
@@ -398,12 +418,14 @@ Command might be invalid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInstallBinaryCode-1005" class="tbl-body-row hover-effect" data-details-id="cilium-ErrInstallBinaryCode-more-info" onclick="toggle_visibility('cilium-ErrInstallBinaryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1005" class="error-name-code">
-              <code>ErrInstallBinaryCode-1005</code>
+              <a href="/reference/error-codes/adapter-cilium/errinstallbinarycode-1005/"><code>ErrInstallBinaryCode-1005</code></a>
             </td>
             <td>Error installing Cilium binary</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInstallBinaryCode-1005" target="_blank">search forum</a></td>
@@ -422,12 +444,14 @@ Invalid installation location</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSampleAppCode-1006" class="tbl-body-row hover-effect" data-details-id="cilium-ErrSampleAppCode-more-info" onclick="toggle_visibility('cilium-ErrSampleAppCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1006" class="error-name-code">
-              <code>ErrSampleAppCode-1006</code>
+              <a href="/reference/error-codes/adapter-cilium/errsampleappcode-1006/"><code>ErrSampleAppCode-1006</code></a>
             </td>
             <td>Error with sample app operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSampleAppCode-1006" target="_blank">search forum</a></td>
@@ -446,12 +470,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCustomOperationCode-1007" class="tbl-body-row hover-effect" data-details-id="cilium-ErrCustomOperationCode-more-info" onclick="toggle_visibility('cilium-ErrCustomOperationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1007" class="error-name-code">
-              <code>ErrCustomOperationCode-1007</code>
+              <a href="/reference/error-codes/adapter-cilium/errcustomoperationcode-1007/"><code>ErrCustomOperationCode-1007</code></a>
             </td>
             <td>Error with custom operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCustomOperationCode-1007" target="_blank">search forum</a></td>
@@ -470,12 +496,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingNSCode-1008" class="tbl-body-row hover-effect" data-details-id="cilium-ErrCreatingNSCode-more-info" onclick="toggle_visibility('cilium-ErrCreatingNSCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1008" class="error-name-code">
-              <code>ErrCreatingNSCode-1008</code>
+              <a href="/reference/error-codes/adapter-cilium/errcreatingnscode-1008/"><code>ErrCreatingNSCode-1008</code></a>
             </td>
             <td>Error creating namespace</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingNSCode-1008" target="_blank">search forum</a></td>
@@ -494,12 +522,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRunExecutableCode-1009" class="tbl-body-row hover-effect" data-details-id="cilium-ErrRunExecutableCode-more-info" onclick="toggle_visibility('cilium-ErrRunExecutableCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1009" class="error-name-code">
-              <code>ErrRunExecutableCode-1009</code>
+              <a href="/reference/error-codes/adapter-cilium/errrunexecutablecode-1009/"><code>ErrRunExecutableCode-1009</code></a>
             </td>
             <td>Error running executable</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRunExecutableCode-1009" target="_blank">search forum</a></td>
@@ -518,10 +548,12 @@ Invalid operation</p>
         
           
           
+          
+          
           <tr id="ErrSidecarInjectionCode-1010" class="tbl-body-row hover-effect" data-details-id="cilium-ErrSidecarInjectionCode-more-info" onclick="toggle_visibility('cilium-ErrSidecarInjectionCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -1010" class="error-name-code">
-              <code>ErrSidecarInjectionCode-1010</code>
+              <a href="/reference/error-codes/adapter-cilium/errsidecarinjectioncode-1010/"><code>ErrSidecarInjectionCode-1010</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSidecarInjectionCode-1010" target="_blank">search forum</a></td>
@@ -539,12 +571,14 @@ Invalid operation</p>
         
           
           
+          
+          
             
           
           <tr id="ErrOpInvalidCode-1011" class="tbl-body-row hover-effect" data-details-id="cilium-ErrOpInvalidCode-more-info" onclick="toggle_visibility('cilium-ErrOpInvalidCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1011" class="error-name-code">
-              <code>ErrOpInvalidCode-1011</code>
+              <a href="/reference/error-codes/adapter-cilium/erropinvalidcode-1011/"><code>ErrOpInvalidCode-1011</code></a>
             </td>
             <td>Invalid operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOpInvalidCode-1011" target="_blank">search forum</a></td>
@@ -563,12 +597,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyHelmChartCode-1012" class="tbl-body-row hover-effect" data-details-id="cilium-ErrApplyHelmChartCode-more-info" onclick="toggle_visibility('cilium-ErrApplyHelmChartCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1012" class="error-name-code">
-              <code>ErrApplyHelmChartCode-1012</code>
+              <a href="/reference/error-codes/adapter-cilium/errapplyhelmchartcode-1012/"><code>ErrApplyHelmChartCode-1012</code></a>
             </td>
             <td>Error occurred while applying Helm Chart</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyHelmChartCode-1012" target="_blank">search forum</a></td>
@@ -586,12 +622,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNilClientCode-1013" class="tbl-body-row hover-effect" data-details-id="cilium-ErrNilClientCode-more-info" onclick="toggle_visibility('cilium-ErrNilClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1013" class="error-name-code">
-              <code>ErrNilClientCode-1013</code>
+              <a href="/reference/error-codes/adapter-cilium/errnilclientcode-1013/"><code>ErrNilClientCode-1013</code></a>
             </td>
             <td>kubernetes client not initialized</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNilClientCode-1013" target="_blank">search forum</a></td>
@@ -609,12 +647,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidOAMComponentTypeCode-1014" class="tbl-body-row hover-effect" data-details-id="cilium-ErrInvalidOAMComponentTypeCode-more-info" onclick="toggle_visibility('cilium-ErrInvalidOAMComponentTypeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1014" class="error-name-code">
-              <code>ErrInvalidOAMComponentTypeCode-1014</code>
+              <a href="/reference/error-codes/adapter-cilium/errinvalidoamcomponenttypecode-1014/"><code>ErrInvalidOAMComponentTypeCode-1014</code></a>
             </td>
             <td>invalid OAM component name: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidOAMComponentTypeCode-1014" target="_blank">search forum</a></td>
@@ -632,12 +672,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCiliumCoreComponentFailCode-1015" class="tbl-body-row hover-effect" data-details-id="cilium-ErrCiliumCoreComponentFailCode-more-info" onclick="toggle_visibility('cilium-ErrCiliumCoreComponentFailCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1015" class="error-name-code">
-              <code>ErrCiliumCoreComponentFailCode-1015</code>
+              <a href="/reference/error-codes/adapter-cilium/errciliumcorecomponentfailcode-1015/"><code>ErrCiliumCoreComponentFailCode-1015</code></a>
             </td>
             <td>error in Cilium core component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCiliumCoreComponentFailCode-1015" target="_blank">search forum</a></td>
@@ -655,12 +697,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrProcessOAMCode-1016" class="tbl-body-row hover-effect" data-details-id="cilium-ErrProcessOAMCode-more-info" onclick="toggle_visibility('cilium-ErrProcessOAMCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1016" class="error-name-code">
-              <code>ErrProcessOAMCode-1016</code>
+              <a href="/reference/error-codes/adapter-cilium/errprocessoamcode-1016/"><code>ErrProcessOAMCode-1016</code></a>
             </td>
             <td>error performing OAM operations</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrProcessOAMCode-1016" target="_blank">search forum</a></td>
@@ -678,12 +722,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseCiliumCoreComponentCode-1017" class="tbl-body-row hover-effect" data-details-id="cilium-ErrParseCiliumCoreComponentCode-more-info" onclick="toggle_visibility('cilium-ErrParseCiliumCoreComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1017" class="error-name-code">
-              <code>ErrParseCiliumCoreComponentCode-1017</code>
+              <a href="/reference/error-codes/adapter-cilium/errparseciliumcorecomponentcode-1017/"><code>ErrParseCiliumCoreComponentCode-1017</code></a>
             </td>
             <td>Cilium core component manifest parsing failing</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseCiliumCoreComponentCode-1017" target="_blank">search forum</a></td>
@@ -701,12 +747,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseOAMComponentCode-1018" class="tbl-body-row hover-effect" data-details-id="cilium-ErrParseOAMComponentCode-more-info" onclick="toggle_visibility('cilium-ErrParseOAMComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1018" class="error-name-code">
-              <code>ErrParseOAMComponentCode-1018</code>
+              <a href="/reference/error-codes/adapter-cilium/errparseoamcomponentcode-1018/"><code>ErrParseOAMComponentCode-1018</code></a>
             </td>
             <td>error parsing the component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseOAMComponentCode-1018" target="_blank">search forum</a></td>
@@ -724,12 +772,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseOAMConfigCode-1019" class="tbl-body-row hover-effect" data-details-id="cilium-ErrParseOAMConfigCode-more-info" onclick="toggle_visibility('cilium-ErrParseOAMConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1019" class="error-name-code">
-              <code>ErrParseOAMConfigCode-1019</code>
+              <a href="/reference/error-codes/adapter-cilium/errparseoamconfigcode-1019/"><code>ErrParseOAMConfigCode-1019</code></a>
             </td>
             <td>error parsing the configuration</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseOAMConfigCode-1019" target="_blank">search forum</a></td>
@@ -747,12 +797,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleaseCode-1020" class="tbl-body-row hover-effect" data-details-id="cilium-ErrGetLatestReleaseCode-more-info" onclick="toggle_visibility('cilium-ErrGetLatestReleaseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1020" class="error-name-code">
-              <code>ErrGetLatestReleaseCode-1020</code>
+              <a href="/reference/error-codes/adapter-cilium/errgetlatestreleasecode-1020/"><code>ErrGetLatestReleaseCode-1020</code></a>
             </td>
             <td>Could not get latest version</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleaseCode-1020" target="_blank">search forum</a></td>
@@ -770,12 +822,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyConfigCode-1021" class="tbl-body-row hover-effect" data-details-id="cilium-ErrEmptyConfigCode-more-info" onclick="toggle_visibility('cilium-ErrEmptyConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1021" class="error-name-code">
-              <code>ErrEmptyConfigCode-1021</code>
+              <a href="/reference/error-codes/adapter-cilium/erremptyconfigcode-1021/"><code>ErrEmptyConfigCode-1021</code></a>
             </td>
             <td>Config is empty</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyConfigCode-1021" target="_blank">search forum</a></td>
@@ -793,12 +847,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleasesCode-1022" class="tbl-body-row hover-effect" data-details-id="cilium-ErrGetLatestReleasesCode-more-info" onclick="toggle_visibility('cilium-ErrGetLatestReleasesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1022" class="error-name-code">
-              <code>ErrGetLatestReleasesCode-1022</code>
+              <a href="/reference/error-codes/adapter-cilium/errgetlatestreleasescode-1022/"><code>ErrGetLatestReleasesCode-1022</code></a>
             </td>
             <td>Unable to fetch release info</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleasesCode-1022" target="_blank">search forum</a></td>
@@ -816,12 +872,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleaseNamesCode-1023" class="tbl-body-row hover-effect" data-details-id="cilium-ErrGetLatestReleaseNamesCode-more-info" onclick="toggle_visibility('cilium-ErrGetLatestReleaseNamesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1023" class="error-name-code">
-              <code>ErrGetLatestReleaseNamesCode-1023</code>
+              <a href="/reference/error-codes/adapter-cilium/errgetlatestreleasenamescode-1023/"><code>ErrGetLatestReleaseNamesCode-1023</code></a>
             </td>
             <td>Failed to extract release names</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleaseNamesCode-1023" target="_blank">search forum</a></td>
@@ -839,12 +897,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetManifestNamesCode-1024" class="tbl-body-row hover-effect" data-details-id="cilium-ErrGetManifestNamesCode-more-info" onclick="toggle_visibility('cilium-ErrGetManifestNamesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1024" class="error-name-code">
-              <code>ErrGetManifestNamesCode-1024</code>
+              <a href="/reference/error-codes/adapter-cilium/errgetmanifestnamescode-1024/"><code>ErrGetManifestNamesCode-1024</code></a>
             </td>
             <td>Unable to fetch manifest names from github</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetManifestNamesCode-1024" target="_blank">search forum</a></td>
@@ -862,12 +922,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMakingBinExecutableCode-1025" class="tbl-body-row hover-effect" data-details-id="cilium-ErrMakingBinExecutableCode-more-info" onclick="toggle_visibility('cilium-ErrMakingBinExecutableCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1025" class="error-name-code">
-              <code>ErrMakingBinExecutableCode-1025</code>
+              <a href="/reference/error-codes/adapter-cilium/errmakingbinexecutablecode-1025/"><code>ErrMakingBinExecutableCode-1025</code></a>
             </td>
             <td>Error while making cilium cli an executable</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMakingBinExecutableCode-1025" target="_blank">search forum</a></td>
@@ -885,12 +947,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrLoadNamespaceCode-1026" class="tbl-body-row hover-effect" data-details-id="cilium-ErrLoadNamespaceCode-more-info" onclick="toggle_visibility('cilium-ErrLoadNamespaceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1026" class="error-name-code">
-              <code>ErrLoadNamespaceCode-1026</code>
+              <a href="/reference/error-codes/adapter-cilium/errloadnamespacecode-1026/"><code>ErrLoadNamespaceCode-1026</code></a>
             </td>
             <td>Error occurred while applying namespace </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLoadNamespaceCode-1026" target="_blank">search forum</a></td>
@@ -908,12 +972,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnpackingTarCode-1027" class="tbl-body-row hover-effect" data-details-id="cilium-ErrUnpackingTarCode-more-info" onclick="toggle_visibility('cilium-ErrUnpackingTarCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1027" class="error-name-code">
-              <code>ErrUnpackingTarCode-1027</code>
+              <a href="/reference/error-codes/adapter-cilium/errunpackingtarcode-1027/"><code>ErrUnpackingTarCode-1027</code></a>
             </td>
             <td>Error occurred while unpacking tar</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnpackingTarCode-1027" target="_blank">search forum</a></td>
@@ -931,12 +997,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnzipFileCode-1028" class="tbl-body-row hover-effect" data-details-id="cilium-ErrUnzipFileCode-more-info" onclick="toggle_visibility('cilium-ErrUnzipFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1028" class="error-name-code">
-              <code>ErrUnzipFileCode-1028</code>
+              <a href="/reference/error-codes/adapter-cilium/errunzipfilecode-1028/"><code>ErrUnzipFileCode-1028</code></a>
             </td>
             <td>Error while unzipping</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnzipFileCode-1028" target="_blank">search forum</a></td>
@@ -954,12 +1022,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDownloadingTarCode-1029" class="tbl-body-row hover-effect" data-details-id="cilium-ErrDownloadingTarCode-more-info" onclick="toggle_visibility('cilium-ErrDownloadingTarCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1029" class="error-name-code">
-              <code>ErrDownloadingTarCode-1029</code>
+              <a href="/reference/error-codes/adapter-cilium/errdownloadingtarcode-1029/"><code>ErrDownloadingTarCode-1029</code></a>
             </td>
             <td>Error occurred while downloading Cilium tar</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDownloadingTarCode-1029" target="_blank">search forum</a></td>
@@ -977,12 +1047,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGettingReleaseCode-1030" class="tbl-body-row hover-effect" data-details-id="cilium-ErrGettingReleaseCode-more-info" onclick="toggle_visibility('cilium-ErrGettingReleaseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1030" class="error-name-code">
-              <code>ErrGettingReleaseCode-1030</code>
+              <a href="/reference/error-codes/adapter-cilium/errgettingreleasecode-1030/"><code>ErrGettingReleaseCode-1030</code></a>
             </td>
             <td>Could not get latest version</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGettingReleaseCode-1030" target="_blank">search forum</a></td>
@@ -1002,12 +1074,14 @@ Try retrying the operation.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchCiliumVersionsCode-1031" class="tbl-body-row hover-effect" data-details-id="cilium-ErrFetchCiliumVersionsCode-more-info" onclick="toggle_visibility('cilium-ErrFetchCiliumVersionsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1031" class="error-name-code">
-              <code>ErrFetchCiliumVersionsCode-1031</code>
+              <a href="/reference/error-codes/adapter-cilium/errfetchciliumversionscode-1031/"><code>ErrFetchCiliumVersionsCode-1031</code></a>
             </td>
             <td>could not get any cilium versions</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchCiliumVersionsCode-1031" target="_blank">search forum</a></td>
@@ -1051,12 +1125,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyOperationCode-1000" class="tbl-body-row hover-effect" data-details-id="meshery-consul-ErrApplyOperationCode-more-info" onclick="toggle_visibility('meshery-consul-ErrApplyOperationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1000" class="error-name-code">
-              <code>ErrApplyOperationCode-1000</code>
+              <a href="/reference/error-codes/adapter-meshery-consul/errapplyoperationcode-1000/"><code>ErrApplyOperationCode-1000</code></a>
             </td>
             <td>Error applying operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyOperationCode-1000" target="_blank">search forum</a></td>
@@ -1074,12 +1150,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseOAMComponentCode-1001" class="tbl-body-row hover-effect" data-details-id="meshery-consul-ErrParseOAMComponentCode-more-info" onclick="toggle_visibility('meshery-consul-ErrParseOAMComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1001" class="error-name-code">
-              <code>ErrParseOAMComponentCode-1001</code>
+              <a href="/reference/error-codes/adapter-meshery-consul/errparseoamcomponentcode-1001/"><code>ErrParseOAMComponentCode-1001</code></a>
             </td>
             <td>error parsing the component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseOAMComponentCode-1001" target="_blank">search forum</a></td>
@@ -1097,12 +1175,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseOAMConfigCode-1002" class="tbl-body-row hover-effect" data-details-id="meshery-consul-ErrParseOAMConfigCode-more-info" onclick="toggle_visibility('meshery-consul-ErrParseOAMConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1002" class="error-name-code">
-              <code>ErrParseOAMConfigCode-1002</code>
+              <a href="/reference/error-codes/adapter-meshery-consul/errparseoamconfigcode-1002/"><code>ErrParseOAMConfigCode-1002</code></a>
             </td>
             <td>error parsing the configuration</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseOAMConfigCode-1002" target="_blank">search forum</a></td>
@@ -1120,12 +1200,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrProcessOAMCode-1003" class="tbl-body-row hover-effect" data-details-id="meshery-consul-ErrProcessOAMCode-more-info" onclick="toggle_visibility('meshery-consul-ErrProcessOAMCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1003" class="error-name-code">
-              <code>ErrProcessOAMCode-1003</code>
+              <a href="/reference/error-codes/adapter-meshery-consul/errprocessoamcode-1003/"><code>ErrProcessOAMCode-1003</code></a>
             </td>
             <td>error performing OAM operations</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrProcessOAMCode-1003" target="_blank">search forum</a></td>
@@ -1143,12 +1225,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyHelmChartCode-1004" class="tbl-body-row hover-effect" data-details-id="meshery-consul-ErrApplyHelmChartCode-more-info" onclick="toggle_visibility('meshery-consul-ErrApplyHelmChartCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1004" class="error-name-code">
-              <code>ErrApplyHelmChartCode-1004</code>
+              <a href="/reference/error-codes/adapter-meshery-consul/errapplyhelmchartcode-1004/"><code>ErrApplyHelmChartCode-1004</code></a>
             </td>
             <td>Error applying helm chart</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyHelmChartCode-1004" target="_blank">search forum</a></td>
@@ -1166,12 +1250,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMeshConfigCode-1005" class="tbl-body-row hover-effect" data-details-id="meshery-consul-ErrMeshConfigCode-more-info" onclick="toggle_visibility('meshery-consul-ErrMeshConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1005" class="error-name-code">
-              <code>ErrMeshConfigCode-1005</code>
+              <a href="/reference/error-codes/adapter-meshery-consul/errmeshconfigcode-1005/"><code>ErrMeshConfigCode-1005</code></a>
             </td>
             <td>Error configuration mesh</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshConfigCode-1005" target="_blank">search forum</a></td>
@@ -1189,12 +1275,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrConsulCoreComponentFailCode-1006" class="tbl-body-row hover-effect" data-details-id="meshery-consul-ErrConsulCoreComponentFailCode-more-info" onclick="toggle_visibility('meshery-consul-ErrConsulCoreComponentFailCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1006" class="error-name-code">
-              <code>ErrConsulCoreComponentFailCode-1006</code>
+              <a href="/reference/error-codes/adapter-meshery-consul/errconsulcorecomponentfailcode-1006/"><code>ErrConsulCoreComponentFailCode-1006</code></a>
             </td>
             <td>error in Consul core component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConsulCoreComponentFailCode-1006" target="_blank">search forum</a></td>
@@ -1212,12 +1300,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseConsulCoreComponentCode-1007" class="tbl-body-row hover-effect" data-details-id="meshery-consul-ErrParseConsulCoreComponentCode-more-info" onclick="toggle_visibility('meshery-consul-ErrParseConsulCoreComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1007" class="error-name-code">
-              <code>ErrParseConsulCoreComponentCode-1007</code>
+              <a href="/reference/error-codes/adapter-meshery-consul/errparseconsulcorecomponentcode-1007/"><code>ErrParseConsulCoreComponentCode-1007</code></a>
             </td>
             <td>Consul core component manifest parsing failing</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseConsulCoreComponentCode-1007" target="_blank">search forum</a></td>
@@ -1235,12 +1325,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleasesCode-1008" class="tbl-body-row hover-effect" data-details-id="meshery-consul-ErrGetLatestReleasesCode-more-info" onclick="toggle_visibility('meshery-consul-ErrGetLatestReleasesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1008" class="error-name-code">
-              <code>ErrGetLatestReleasesCode-1008</code>
+              <a href="/reference/error-codes/adapter-meshery-consul/errgetlatestreleasescode-1008/"><code>ErrGetLatestReleasesCode-1008</code></a>
             </td>
             <td>Unable to fetch release info</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleasesCode-1008" target="_blank">search forum</a></td>
@@ -1258,12 +1350,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetManifestNamesCode-1009" class="tbl-body-row hover-effect" data-details-id="meshery-consul-ErrGetManifestNamesCode-more-info" onclick="toggle_visibility('meshery-consul-ErrGetManifestNamesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1009" class="error-name-code">
-              <code>ErrGetManifestNamesCode-1009</code>
+              <a href="/reference/error-codes/adapter-meshery-consul/errgetmanifestnamescode-1009/"><code>ErrGetManifestNamesCode-1009</code></a>
             </td>
             <td>Unable to fetch manifest names from github</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetManifestNamesCode-1009" target="_blank">search forum</a></td>
@@ -1281,12 +1375,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyConfigCode-1010" class="tbl-body-row hover-effect" data-details-id="meshery-consul-ErrEmptyConfigCode-more-info" onclick="toggle_visibility('meshery-consul-ErrEmptyConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1010" class="error-name-code">
-              <code>ErrEmptyConfigCode-1010</code>
+              <a href="/reference/error-codes/adapter-meshery-consul/erremptyconfigcode-1010/"><code>ErrEmptyConfigCode-1010</code></a>
             </td>
             <td>Config is empty</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyConfigCode-1010" target="_blank">search forum</a></td>
@@ -1304,12 +1400,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrLoadingPathsetCode-1011" class="tbl-body-row hover-effect" data-details-id="meshery-consul-ErrLoadingPathsetCode-more-info" onclick="toggle_visibility('meshery-consul-ErrLoadingPathsetCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1011" class="error-name-code">
-              <code>ErrLoadingPathsetCode-1011</code>
+              <a href="/reference/error-codes/adapter-meshery-consul/errloadingpathsetcode-1011/"><code>ErrLoadingPathsetCode-1011</code></a>
             </td>
             <td>Could not create a pathset for static component generation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLoadingPathsetCode-1011" target="_blank">search forum</a></td>
@@ -1352,12 +1450,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyConfigCode-1000" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrEmptyConfigCode-more-info" onclick="toggle_visibility('meshery-istio-ErrEmptyConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1000" class="error-name-code">
-              <code>ErrEmptyConfigCode-1000</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/erremptyconfigcode-1000/"><code>ErrEmptyConfigCode-1000</code></a>
             </td>
             <td>Config is empty</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyConfigCode-1000" target="_blank">search forum</a></td>
@@ -1375,12 +1475,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleasesCode-1001" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrGetLatestReleasesCode-more-info" onclick="toggle_visibility('meshery-istio-ErrGetLatestReleasesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1001" class="error-name-code">
-              <code>ErrGetLatestReleasesCode-1001</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errgetlatestreleasescode-1001/"><code>ErrGetLatestReleasesCode-1001</code></a>
             </td>
             <td>unable to fetch release info</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleasesCode-1001" target="_blank">search forum</a></td>
@@ -1398,12 +1500,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleaseNamesCode-1002" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrGetLatestReleaseNamesCode-more-info" onclick="toggle_visibility('meshery-istio-ErrGetLatestReleaseNamesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1002" class="error-name-code">
-              <code>ErrGetLatestReleaseNamesCode-1002</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errgetlatestreleasenamescode-1002/"><code>ErrGetLatestReleaseNamesCode-1002</code></a>
             </td>
             <td>failed to extract release names</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleaseNamesCode-1002" target="_blank">search forum</a></td>
@@ -1421,12 +1525,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInstallUsingIstioctlCode-1003" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrInstallUsingIstioctlCode-more-info" onclick="toggle_visibility('meshery-istio-ErrInstallUsingIstioctlCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1003" class="error-name-code">
-              <code>ErrInstallUsingIstioctlCode-1003</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errinstallusingistioctlcode-1003/"><code>ErrInstallUsingIstioctlCode-1003</code></a>
             </td>
             <td>Error with istio operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInstallUsingIstioctlCode-1003" target="_blank">search forum</a></td>
@@ -1444,12 +1550,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnzipFileCode-1004" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrUnzipFileCode-more-info" onclick="toggle_visibility('meshery-istio-ErrUnzipFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1004" class="error-name-code">
-              <code>ErrUnzipFileCode-1004</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errunzipfilecode-1004/"><code>ErrUnzipFileCode-1004</code></a>
             </td>
             <td>Error while unzipping</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnzipFileCode-1004" target="_blank">search forum</a></td>
@@ -1467,12 +1575,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTarXZFCode-1005" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrTarXZFCode-more-info" onclick="toggle_visibility('meshery-istio-ErrTarXZFCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1005" class="error-name-code">
-              <code>ErrTarXZFCode-1005</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errtarxzfcode-1005/"><code>ErrTarXZFCode-1005</code></a>
             </td>
             <td>Error while extracting file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTarXZFCode-1005" target="_blank">search forum</a></td>
@@ -1490,12 +1600,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMeshConfigCode-1006" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrMeshConfigCode-more-info" onclick="toggle_visibility('meshery-istio-ErrMeshConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1006" class="error-name-code">
-              <code>ErrMeshConfigCode-1006</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errmeshconfigcode-1006/"><code>ErrMeshConfigCode-1006</code></a>
             </td>
             <td>Error configuration mesh</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshConfigCode-1006" target="_blank">search forum</a></td>
@@ -1513,12 +1625,14 @@ no versions could be fetched from cilium release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRunIstioCtlCmdCode-1007" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrRunIstioCtlCmdCode-more-info" onclick="toggle_visibility('meshery-istio-ErrRunIstioCtlCmdCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1007" class="error-name-code">
-              <code>ErrRunIstioCtlCmdCode-1007</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errrunistioctlcmdcode-1007/"><code>ErrRunIstioCtlCmdCode-1007</code></a>
             </td>
             <td>Error running istioctl command</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRunIstioCtlCmdCode-1007" target="_blank">search forum</a></td>
@@ -1537,12 +1651,14 @@ Command might be invalid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSampleAppCode-1008" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrSampleAppCode-more-info" onclick="toggle_visibility('meshery-istio-ErrSampleAppCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1008" class="error-name-code">
-              <code>ErrSampleAppCode-1008</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errsampleappcode-1008/"><code>ErrSampleAppCode-1008</code></a>
             </td>
             <td>Error with sample app operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSampleAppCode-1008" target="_blank">search forum</a></td>
@@ -1561,12 +1677,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEnvoyFilterCode-1009" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrEnvoyFilterCode-more-info" onclick="toggle_visibility('meshery-istio-ErrEnvoyFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1009" class="error-name-code">
-              <code>ErrEnvoyFilterCode-1009</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errenvoyfiltercode-1009/"><code>ErrEnvoyFilterCode-1009</code></a>
             </td>
             <td>Error with envoy filter operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEnvoyFilterCode-1009" target="_blank">search forum</a></td>
@@ -1584,12 +1702,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyPolicyCode-1010" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrApplyPolicyCode-more-info" onclick="toggle_visibility('meshery-istio-ErrApplyPolicyCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1010" class="error-name-code">
-              <code>ErrApplyPolicyCode-1010</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errapplypolicycode-1010/"><code>ErrApplyPolicyCode-1010</code></a>
             </td>
             <td>Error with apply policy operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyPolicyCode-1010" target="_blank">search forum</a></td>
@@ -1608,12 +1728,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCustomOperationCode-1011" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrCustomOperationCode-more-info" onclick="toggle_visibility('meshery-istio-ErrCustomOperationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1011" class="error-name-code">
-              <code>ErrCustomOperationCode-1011</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errcustomoperationcode-1011/"><code>ErrCustomOperationCode-1011</code></a>
             </td>
             <td>Error with custom operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCustomOperationCode-1011" target="_blank">search forum</a></td>
@@ -1632,12 +1754,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrAddonFromTemplateCode-1012" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrAddonFromTemplateCode-more-info" onclick="toggle_visibility('meshery-istio-ErrAddonFromTemplateCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1012" class="error-name-code">
-              <code>ErrAddonFromTemplateCode-1012</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/erraddonfromtemplatecode-1012/"><code>ErrAddonFromTemplateCode-1012</code></a>
             </td>
             <td>Error with addon install operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAddonFromTemplateCode-1012" target="_blank">search forum</a></td>
@@ -1655,12 +1779,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidInstallationProfileCode-1013" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrInvalidInstallationProfileCode-more-info" onclick="toggle_visibility('meshery-istio-ErrInvalidInstallationProfileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1013" class="error-name-code">
-              <code>ErrInvalidInstallationProfileCode-1013</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errinvalidinstallationprofilecode-1013/"><code>ErrInvalidInstallationProfileCode-1013</code></a>
             </td>
             <td>Error while installing istio due to wrong profile</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidInstallationProfileCode-1013" target="_blank">search forum</a></td>
@@ -1678,12 +1804,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingIstioClientCode-1014" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrCreatingIstioClientCode-more-info" onclick="toggle_visibility('meshery-istio-ErrCreatingIstioClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1014" class="error-name-code">
-              <code>ErrCreatingIstioClientCode-1014</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errcreatingistioclientcode-1014/"><code>ErrCreatingIstioClientCode-1014</code></a>
             </td>
             <td>Unable to create a new istio client</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingIstioClientCode-1014" target="_blank">search forum</a></td>
@@ -1701,12 +1829,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrIstioVetSyncCode-1015" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrIstioVetSyncCode-more-info" onclick="toggle_visibility('meshery-istio-ErrIstioVetSyncCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1015" class="error-name-code">
-              <code>ErrIstioVetSyncCode-1015</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/erristiovetsynccode-1015/"><code>ErrIstioVetSyncCode-1015</code></a>
             </td>
             <td>Failed to sync</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrIstioVetSyncCode-1015" target="_blank">search forum</a></td>
@@ -1724,12 +1854,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrIstioVetCode-1016" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrIstioVetCode-more-info" onclick="toggle_visibility('meshery-istio-ErrIstioVetCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1016" class="error-name-code">
-              <code>ErrIstioVetCode-1016</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/erristiovetcode-1016/"><code>ErrIstioVetCode-1016</code></a>
             </td>
             <td>error while running Istio vet command</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrIstioVetCode-1016" target="_blank">search forum</a></td>
@@ -1747,12 +1879,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseOAMComponentCode-1017" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrParseOAMComponentCode-more-info" onclick="toggle_visibility('meshery-istio-ErrParseOAMComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1017" class="error-name-code">
-              <code>ErrParseOAMComponentCode-1017</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errparseoamcomponentcode-1017/"><code>ErrParseOAMComponentCode-1017</code></a>
             </td>
             <td>error parsing the component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseOAMComponentCode-1017" target="_blank">search forum</a></td>
@@ -1770,12 +1904,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseOAMConfigCode-1018" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrParseOAMConfigCode-more-info" onclick="toggle_visibility('meshery-istio-ErrParseOAMConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1018" class="error-name-code">
-              <code>ErrParseOAMConfigCode-1018</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errparseoamconfigcode-1018/"><code>ErrParseOAMConfigCode-1018</code></a>
             </td>
             <td>error parsing the configuration</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseOAMConfigCode-1018" target="_blank">search forum</a></td>
@@ -1793,12 +1929,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNilClientCode-1019" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrNilClientCode-more-info" onclick="toggle_visibility('meshery-istio-ErrNilClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1019" class="error-name-code">
-              <code>ErrNilClientCode-1019</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errnilclientcode-1019/"><code>ErrNilClientCode-1019</code></a>
             </td>
             <td>kubernetes client not initialized</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNilClientCode-1019" target="_blank">search forum</a></td>
@@ -1816,12 +1954,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseIstioCoreComponentCode-1020" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrParseIstioCoreComponentCode-more-info" onclick="toggle_visibility('meshery-istio-ErrParseIstioCoreComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1020" class="error-name-code">
-              <code>ErrParseIstioCoreComponentCode-1020</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errparseistiocorecomponentcode-1020/"><code>ErrParseIstioCoreComponentCode-1020</code></a>
             </td>
             <td>istio core component manifest parsing failing</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseIstioCoreComponentCode-1020" target="_blank">search forum</a></td>
@@ -1839,12 +1979,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidOAMComponentTypeCode-1021" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrInvalidOAMComponentTypeCode-more-info" onclick="toggle_visibility('meshery-istio-ErrInvalidOAMComponentTypeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1021" class="error-name-code">
-              <code>ErrInvalidOAMComponentTypeCode-1021</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errinvalidoamcomponenttypecode-1021/"><code>ErrInvalidOAMComponentTypeCode-1021</code></a>
             </td>
             <td>invalid OAM component name: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidOAMComponentTypeCode-1021" target="_blank">search forum</a></td>
@@ -1862,12 +2004,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrOpInvalidCode-1022" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrOpInvalidCode-more-info" onclick="toggle_visibility('meshery-istio-ErrOpInvalidCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1022" class="error-name-code">
-              <code>ErrOpInvalidCode-1022</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/erropinvalidcode-1022/"><code>ErrOpInvalidCode-1022</code></a>
             </td>
             <td>Invalid operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOpInvalidCode-1022" target="_blank">search forum</a></td>
@@ -1886,12 +2030,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrIstioCoreComponentFailCode-1023" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrIstioCoreComponentFailCode-more-info" onclick="toggle_visibility('meshery-istio-ErrIstioCoreComponentFailCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1023" class="error-name-code">
-              <code>ErrIstioCoreComponentFailCode-1023</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/erristiocorecomponentfailcode-1023/"><code>ErrIstioCoreComponentFailCode-1023</code></a>
             </td>
             <td>error in istio core component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrIstioCoreComponentFailCode-1023" target="_blank">search forum</a></td>
@@ -1909,12 +2055,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrProcessOAMCode-1024" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrProcessOAMCode-more-info" onclick="toggle_visibility('meshery-istio-ErrProcessOAMCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1024" class="error-name-code">
-              <code>ErrProcessOAMCode-1024</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errprocessoamcode-1024/"><code>ErrProcessOAMCode-1024</code></a>
             </td>
             <td>error performing OAM operations</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrProcessOAMCode-1024" target="_blank">search forum</a></td>
@@ -1932,12 +2080,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyHelmChartCode-1025" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrApplyHelmChartCode-more-info" onclick="toggle_visibility('meshery-istio-ErrApplyHelmChartCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1025" class="error-name-code">
-              <code>ErrApplyHelmChartCode-1025</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errapplyhelmchartcode-1025/"><code>ErrApplyHelmChartCode-1025</code></a>
             </td>
             <td>Error occurred while applying Helm Chart</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyHelmChartCode-1025" target="_blank">search forum</a></td>
@@ -1955,12 +2105,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGettingIstioReleaseCode-1026" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrGettingIstioReleaseCode-more-info" onclick="toggle_visibility('meshery-istio-ErrGettingIstioReleaseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1026" class="error-name-code">
-              <code>ErrGettingIstioReleaseCode-1026</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errgettingistioreleasecode-1026/"><code>ErrGettingIstioReleaseCode-1026</code></a>
             </td>
             <td>Error occurred while fetching Istio release artifacts</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGettingIstioReleaseCode-1026" target="_blank">search forum</a></td>
@@ -1978,12 +2130,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnsupportedPlatformCode-1027" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrUnsupportedPlatformCode-more-info" onclick="toggle_visibility('meshery-istio-ErrUnsupportedPlatformCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1027" class="error-name-code">
-              <code>ErrUnsupportedPlatformCode-1027</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errunsupportedplatformcode-1027/"><code>ErrUnsupportedPlatformCode-1027</code></a>
             </td>
             <td>requested platform is not supported by Istio</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnsupportedPlatformCode-1027" target="_blank">search forum</a></td>
@@ -2001,12 +2155,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrIstioctlNotFoundCode-1028" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrIstioctlNotFoundCode-more-info" onclick="toggle_visibility('meshery-istio-ErrIstioctlNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1028" class="error-name-code">
-              <code>ErrIstioctlNotFoundCode-1028</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/erristioctlnotfoundcode-1028/"><code>ErrIstioctlNotFoundCode-1028</code></a>
             </td>
             <td>Unable to find Istioctl</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrIstioctlNotFoundCode-1028" target="_blank">search forum</a></td>
@@ -2024,12 +2180,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDownloadingTarCode-1029" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrDownloadingTarCode-more-info" onclick="toggle_visibility('meshery-istio-ErrDownloadingTarCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1029" class="error-name-code">
-              <code>ErrDownloadingTarCode-1029</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errdownloadingtarcode-1029/"><code>ErrDownloadingTarCode-1029</code></a>
             </td>
             <td>Error occurred while downloading Istio tar</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDownloadingTarCode-1029" target="_blank">search forum</a></td>
@@ -2047,12 +2205,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnpackingTarCode-1030" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrUnpackingTarCode-more-info" onclick="toggle_visibility('meshery-istio-ErrUnpackingTarCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1030" class="error-name-code">
-              <code>ErrUnpackingTarCode-1030</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errunpackingtarcode-1030/"><code>ErrUnpackingTarCode-1030</code></a>
             </td>
             <td>Error occurred while unpacking tar</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnpackingTarCode-1030" target="_blank">search forum</a></td>
@@ -2070,12 +2230,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMakingBinExecutableCode-1031" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrMakingBinExecutableCode-more-info" onclick="toggle_visibility('meshery-istio-ErrMakingBinExecutableCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1031" class="error-name-code">
-              <code>ErrMakingBinExecutableCode-1031</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errmakingbinexecutablecode-1031/"><code>ErrMakingBinExecutableCode-1031</code></a>
             </td>
             <td>Error while making istioctl an executable</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMakingBinExecutableCode-1031" target="_blank">search forum</a></td>
@@ -2093,12 +2255,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrLoadNamespaceCode-1032" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrLoadNamespaceCode-more-info" onclick="toggle_visibility('meshery-istio-ErrLoadNamespaceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1032" class="error-name-code">
-              <code>ErrLoadNamespaceCode-1032</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errloadnamespacecode-1032/"><code>ErrLoadNamespaceCode-1032</code></a>
             </td>
             <td>Error while labeling namespace:</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLoadNamespaceCode-1032" target="_blank">search forum</a></td>
@@ -2116,12 +2280,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchIstioVersionsCode-1033" class="tbl-body-row hover-effect" data-details-id="meshery-istio-ErrFetchIstioVersionsCode-more-info" onclick="toggle_visibility('meshery-istio-ErrFetchIstioVersionsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1033" class="error-name-code">
-              <code>ErrFetchIstioVersionsCode-1033</code>
+              <a href="/reference/error-codes/adapter-meshery-istio/errfetchistioversionscode-1033/"><code>ErrFetchIstioVersionsCode-1033</code></a>
             </td>
             <td>could not get any istio versions</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchIstioVersionsCode-1033" target="_blank">search forum</a></td>
@@ -2165,12 +2331,14 @@ no versions could be fetched from istio release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleasesCode-1000" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrGetLatestReleasesCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrGetLatestReleasesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1000" class="error-name-code">
-              <code>ErrGetLatestReleasesCode-1000</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errgetlatestreleasescode-1000/"><code>ErrGetLatestReleasesCode-1000</code></a>
             </td>
             <td>unable to fetch release info</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleasesCode-1000" target="_blank">search forum</a></td>
@@ -2188,12 +2356,14 @@ no versions could be fetched from istio release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleaseNamesCode-1001" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrGetLatestReleaseNamesCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrGetLatestReleaseNamesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1001" class="error-name-code">
-              <code>ErrGetLatestReleaseNamesCode-1001</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errgetlatestreleasenamescode-1001/"><code>ErrGetLatestReleaseNamesCode-1001</code></a>
             </td>
             <td>failed to extract release names</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleaseNamesCode-1001" target="_blank">search forum</a></td>
@@ -2211,12 +2381,14 @@ no versions could be fetched from istio release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrOpInvalidCode-1002" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrOpInvalidCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrOpInvalidCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1002" class="error-name-code">
-              <code>ErrOpInvalidCode-1002</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/erropinvalidcode-1002/"><code>ErrOpInvalidCode-1002</code></a>
             </td>
             <td>Invalid operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOpInvalidCode-1002" target="_blank">search forum</a></td>
@@ -2235,12 +2407,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInstallKumaCode-1003" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrInstallKumaCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrInstallKumaCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1003" class="error-name-code">
-              <code>ErrInstallKumaCode-1003</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errinstallkumacode-1003/"><code>ErrInstallKumaCode-1003</code></a>
             </td>
             <td>Error with kuma operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInstallKumaCode-1003" target="_blank">search forum</a></td>
@@ -2258,12 +2432,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMeshConfigCode-1004" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrMeshConfigCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrMeshConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1004" class="error-name-code">
-              <code>ErrMeshConfigCode-1004</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errmeshconfigcode-1004/"><code>ErrMeshConfigCode-1004</code></a>
             </td>
             <td>Error configuration mesh</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshConfigCode-1004" target="_blank">search forum</a></td>
@@ -2281,12 +2457,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchManifestCode-1005" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrFetchManifestCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrFetchManifestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1005" class="error-name-code">
-              <code>ErrFetchManifestCode-1005</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errfetchmanifestcode-1005/"><code>ErrFetchManifestCode-1005</code></a>
             </td>
             <td>Error occurred while fetching the manifest</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchManifestCode-1005" target="_blank">search forum</a></td>
@@ -2304,12 +2482,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrClientConfigCode-1006" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrClientConfigCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrClientConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1006" class="error-name-code">
-              <code>ErrClientConfigCode-1006</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errclientconfigcode-1006/"><code>ErrClientConfigCode-1006</code></a>
             </td>
             <td>Error occurred while setting client config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrClientConfigCode-1006" target="_blank">search forum</a></td>
@@ -2327,12 +2507,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrClientSetCode-1007" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrClientSetCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrClientSetCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1007" class="error-name-code">
-              <code>ErrClientSetCode-1007</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errclientsetcode-1007/"><code>ErrClientSetCode-1007</code></a>
             </td>
             <td>Error occurred while setting clientset</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrClientSetCode-1007" target="_blank">search forum</a></td>
@@ -2350,12 +2532,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrStreamEventCode-1008" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrStreamEventCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrStreamEventCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1008" class="error-name-code">
-              <code>ErrStreamEventCode-1008</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errstreameventcode-1008/"><code>ErrStreamEventCode-1008</code></a>
             </td>
             <td>Error occurred while streaming events</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrStreamEventCode-1008" target="_blank">search forum</a></td>
@@ -2373,12 +2557,14 @@ Invalid operation name</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSampleAppCode-1009" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrSampleAppCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrSampleAppCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1009" class="error-name-code">
-              <code>ErrSampleAppCode-1009</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errsampleappcode-1009/"><code>ErrSampleAppCode-1009</code></a>
             </td>
             <td>Error with sample app operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSampleAppCode-1009" target="_blank">search forum</a></td>
@@ -2397,12 +2583,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetKumactlCode-1010" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrGetKumactlCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrGetKumactlCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1010" class="error-name-code">
-              <code>ErrGetKumactlCode-1010</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errgetkumactlcode-1010/"><code>ErrGetKumactlCode-1010</code></a>
             </td>
             <td>Error getting kumactl comamndline</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetKumactlCode-1010" target="_blank">search forum</a></td>
@@ -2420,12 +2608,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDownloadBinaryCode-1011" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrDownloadBinaryCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrDownloadBinaryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1011" class="error-name-code">
-              <code>ErrDownloadBinaryCode-1011</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errdownloadbinarycode-1011/"><code>ErrDownloadBinaryCode-1011</code></a>
             </td>
             <td>Error downloading kuma binary</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDownloadBinaryCode-1011" target="_blank">search forum</a></td>
@@ -2443,12 +2633,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInstallBinaryCode-1012" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrInstallBinaryCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrInstallBinaryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1012" class="error-name-code">
-              <code>ErrInstallBinaryCode-1012</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errinstallbinarycode-1012/"><code>ErrInstallBinaryCode-1012</code></a>
             </td>
             <td>Error installing kumactl</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInstallBinaryCode-1012" target="_blank">search forum</a></td>
@@ -2466,12 +2658,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUntarCode-1013" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrUntarCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrUntarCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1013" class="error-name-code">
-              <code>ErrUntarCode-1013</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/erruntarcode-1013/"><code>ErrUntarCode-1013</code></a>
             </td>
             <td>Error while extracting file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUntarCode-1013" target="_blank">search forum</a></td>
@@ -2489,12 +2683,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUntarDefaultCode-1014" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrUntarDefaultCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrUntarDefaultCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1014" class="error-name-code">
-              <code>ErrUntarDefaultCode-1014</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/erruntardefaultcode-1014/"><code>ErrUntarDefaultCode-1014</code></a>
             </td>
             <td>Error untaring opeartion default</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUntarDefaultCode-1014" target="_blank">search forum</a></td>
@@ -2512,12 +2708,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMoveBinaryCode-1015" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrMoveBinaryCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrMoveBinaryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1015" class="error-name-code">
-              <code>ErrMoveBinaryCode-1015</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errmovebinarycode-1015/"><code>ErrMoveBinaryCode-1015</code></a>
             </td>
             <td>Error occurred while moving the kumactl binary</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMoveBinaryCode-1015" target="_blank">search forum</a></td>
@@ -2535,12 +2733,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCustomOperationCode-1016" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrCustomOperationCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrCustomOperationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1016" class="error-name-code">
-              <code>ErrCustomOperationCode-1016</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errcustomoperationcode-1016/"><code>ErrCustomOperationCode-1016</code></a>
             </td>
             <td>Error with custom operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCustomOperationCode-1016" target="_blank">search forum</a></td>
@@ -2559,12 +2759,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNilClientCode-1017" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrNilClientCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrNilClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1017" class="error-name-code">
-              <code>ErrNilClientCode-1017</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errnilclientcode-1017/"><code>ErrNilClientCode-1017</code></a>
             </td>
             <td>Kubernetes client not initialized</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNilClientCode-1017" target="_blank">search forum</a></td>
@@ -2582,12 +2784,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyHelmChartCode-1018" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrApplyHelmChartCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrApplyHelmChartCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1018" class="error-name-code">
-              <code>ErrApplyHelmChartCode-1018</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errapplyhelmchartcode-1018/"><code>ErrApplyHelmChartCode-1018</code></a>
             </td>
             <td>Error with helm chart operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyHelmChartCode-1018" target="_blank">search forum</a></td>
@@ -2605,12 +2809,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleaseCode-1019" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrGetLatestReleaseCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrGetLatestReleaseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1019" class="error-name-code">
-              <code>ErrGetLatestReleaseCode-1019</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errgetlatestreleasecode-1019/"><code>ErrGetLatestReleaseCode-1019</code></a>
             </td>
             <td>Could not get latest version</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleaseCode-1019" target="_blank">search forum</a></td>
@@ -2628,12 +2834,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidOAMComponentTypeCode-1021" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrInvalidOAMComponentTypeCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrInvalidOAMComponentTypeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1021" class="error-name-code">
-              <code>ErrInvalidOAMComponentTypeCode-1021</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errinvalidoamcomponenttypecode-1021/"><code>ErrInvalidOAMComponentTypeCode-1021</code></a>
             </td>
             <td>invalid OAM component name: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidOAMComponentTypeCode-1021" target="_blank">search forum</a></td>
@@ -2651,12 +2859,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrKumaCoreComponentFailCode-1022" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrKumaCoreComponentFailCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrKumaCoreComponentFailCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1022" class="error-name-code">
-              <code>ErrKumaCoreComponentFailCode-1022</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errkumacorecomponentfailcode-1022/"><code>ErrKumaCoreComponentFailCode-1022</code></a>
             </td>
             <td>error in kuma core component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrKumaCoreComponentFailCode-1022" target="_blank">search forum</a></td>
@@ -2674,12 +2884,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrProcessOAMCode-1023" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrProcessOAMCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrProcessOAMCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1023" class="error-name-code">
-              <code>ErrProcessOAMCode-1023</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errprocessoamcode-1023/"><code>ErrProcessOAMCode-1023</code></a>
             </td>
             <td>error performing OAM operations</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrProcessOAMCode-1023" target="_blank">search forum</a></td>
@@ -2697,12 +2909,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseKumaCoreComponentCode-1024" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrParseKumaCoreComponentCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrParseKumaCoreComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1024" class="error-name-code">
-              <code>ErrParseKumaCoreComponentCode-1024</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errparsekumacorecomponentcode-1024/"><code>ErrParseKumaCoreComponentCode-1024</code></a>
             </td>
             <td>kuma core component manifest parsing failing</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseKumaCoreComponentCode-1024" target="_blank">search forum</a></td>
@@ -2720,12 +2934,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseOAMComponentCode-1025" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrParseOAMComponentCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrParseOAMComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1025" class="error-name-code">
-              <code>ErrParseOAMComponentCode-1025</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errparseoamcomponentcode-1025/"><code>ErrParseOAMComponentCode-1025</code></a>
             </td>
             <td>error parsing the component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseOAMComponentCode-1025" target="_blank">search forum</a></td>
@@ -2743,12 +2959,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseOAMConfigCode-1026" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrParseOAMConfigCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrParseOAMConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1026" class="error-name-code">
-              <code>ErrParseOAMConfigCode-1026</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errparseoamconfigcode-1026/"><code>ErrParseOAMConfigCode-1026</code></a>
             </td>
             <td>error parsing the configuration</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseOAMConfigCode-1026" target="_blank">search forum</a></td>
@@ -2766,12 +2984,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyConfigCode-1027" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrEmptyConfigCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrEmptyConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1027" class="error-name-code">
-              <code>ErrEmptyConfigCode-1027</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/erremptyconfigcode-1027/"><code>ErrEmptyConfigCode-1027</code></a>
             </td>
             <td>Config is empty</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyConfigCode-1027" target="_blank">search forum</a></td>
@@ -2789,12 +3009,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrLoadNamespaceCode-1028" class="tbl-body-row hover-effect" data-details-id="meshery-kuma-ErrLoadNamespaceCode-more-info" onclick="toggle_visibility('meshery-kuma-ErrLoadNamespaceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1028" class="error-name-code">
-              <code>ErrLoadNamespaceCode-1028</code>
+              <a href="/reference/error-codes/adapter-meshery-kuma/errloadnamespacecode-1028/"><code>ErrLoadNamespaceCode-1028</code></a>
             </td>
             <td>Error occurred while applying namespace </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLoadNamespaceCode-1028" target="_blank">search forum</a></td>
@@ -2837,12 +3059,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyConfigCode-1000" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrEmptyConfigCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrEmptyConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1000" class="error-name-code">
-              <code>ErrEmptyConfigCode-1000</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/erremptyconfigcode-1000/"><code>ErrEmptyConfigCode-1000</code></a>
             </td>
             <td>Config is empty</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyConfigCode-1000" target="_blank">search forum</a></td>
@@ -2860,12 +3084,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleasesCode-1001" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrGetLatestReleasesCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrGetLatestReleasesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1001" class="error-name-code">
-              <code>ErrGetLatestReleasesCode-1001</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errgetlatestreleasescode-1001/"><code>ErrGetLatestReleasesCode-1001</code></a>
             </td>
             <td>unable to fetch release info</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleasesCode-1001" target="_blank">search forum</a></td>
@@ -2883,12 +3109,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleaseNamesCode-1002" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrGetLatestReleaseNamesCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrGetLatestReleaseNamesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1002" class="error-name-code">
-              <code>ErrGetLatestReleaseNamesCode-1002</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errgetlatestreleasenamescode-1002/"><code>ErrGetLatestReleaseNamesCode-1002</code></a>
             </td>
             <td>failed to extract release names</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleaseNamesCode-1002" target="_blank">search forum</a></td>
@@ -2906,12 +3134,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInstallLinkerdCode-1003" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrInstallLinkerdCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrInstallLinkerdCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1003" class="error-name-code">
-              <code>ErrInstallLinkerdCode-1003</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errinstalllinkerdcode-1003/"><code>ErrInstallLinkerdCode-1003</code></a>
             </td>
             <td>Error with Linkerd operation: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInstallLinkerdCode-1003" target="_blank">search forum</a></td>
@@ -2929,12 +3159,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMeshConfigCode-1004" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrMeshConfigCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrMeshConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1004" class="error-name-code">
-              <code>ErrMeshConfigCode-1004</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errmeshconfigcode-1004/"><code>ErrMeshConfigCode-1004</code></a>
             </td>
             <td>Error configuration mesh: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshConfigCode-1004" target="_blank">search forum</a></td>
@@ -2952,12 +3184,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchManifestCode-1005" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrFetchManifestCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrFetchManifestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1005" class="error-name-code">
-              <code>ErrFetchManifestCode-1005</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errfetchmanifestcode-1005/"><code>ErrFetchManifestCode-1005</code></a>
             </td>
             <td>Error fetching mesh manifest: %s</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchManifestCode-1005" target="_blank">search forum</a></td>
@@ -2975,12 +3209,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDownloadBinaryCode-1006" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrDownloadBinaryCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrDownloadBinaryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1006" class="error-name-code">
-              <code>ErrDownloadBinaryCode-1006</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errdownloadbinarycode-1006/"><code>ErrDownloadBinaryCode-1006</code></a>
             </td>
             <td>Error downloading Linkerd binary: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDownloadBinaryCode-1006" target="_blank">search forum</a></td>
@@ -2998,12 +3234,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInstallBinaryCode-1007" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrInstallBinaryCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrInstallBinaryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1007" class="error-name-code">
-              <code>ErrInstallBinaryCode-1007</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errinstallbinarycode-1007/"><code>ErrInstallBinaryCode-1007</code></a>
             </td>
             <td>Error installing Linkerd binary: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInstallBinaryCode-1007" target="_blank">search forum</a></td>
@@ -3021,12 +3259,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrClientConfigCode-1008" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrClientConfigCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrClientConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1008" class="error-name-code">
-              <code>ErrClientConfigCode-1008</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errclientconfigcode-1008/"><code>ErrClientConfigCode-1008</code></a>
             </td>
             <td>Error setting client config: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrClientConfigCode-1008" target="_blank">search forum</a></td>
@@ -3044,12 +3284,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrClientSetCode-1009" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrClientSetCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrClientSetCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1009" class="error-name-code">
-              <code>ErrClientSetCode-1009</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errclientsetcode-1009/"><code>ErrClientSetCode-1009</code></a>
             </td>
             <td>Error setting clientset: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrClientSetCode-1009" target="_blank">search forum</a></td>
@@ -3067,12 +3309,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSampleAppCode-1011" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrSampleAppCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrSampleAppCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1011" class="error-name-code">
-              <code>ErrSampleAppCode-1011</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errsampleappcode-1011/"><code>ErrSampleAppCode-1011</code></a>
             </td>
             <td>Error with sample app operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSampleAppCode-1011" target="_blank">search forum</a></td>
@@ -3091,12 +3335,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCustomOperationCode-1012" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrCustomOperationCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrCustomOperationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1012" class="error-name-code">
-              <code>ErrCustomOperationCode-1012</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errcustomoperationcode-1012/"><code>ErrCustomOperationCode-1012</code></a>
             </td>
             <td>Error with custom operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCustomOperationCode-1012" target="_blank">search forum</a></td>
@@ -3115,12 +3361,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrOpInvalidCode-1013" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrOpInvalidCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrOpInvalidCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1013" class="error-name-code">
-              <code>ErrOpInvalidCode-1013</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/erropinvalidcode-1013/"><code>ErrOpInvalidCode-1013</code></a>
             </td>
             <td>Invalid operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOpInvalidCode-1013" target="_blank">search forum</a></td>
@@ -3138,12 +3386,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidOAMComponentTypeCode-1014" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrInvalidOAMComponentTypeCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrInvalidOAMComponentTypeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1014" class="error-name-code">
-              <code>ErrInvalidOAMComponentTypeCode-1014</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errinvalidoamcomponenttypecode-1014/"><code>ErrInvalidOAMComponentTypeCode-1014</code></a>
             </td>
             <td>invalid OAM component name: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidOAMComponentTypeCode-1014" target="_blank">search forum</a></td>
@@ -3161,12 +3411,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrLinkerdCoreComponentFailCode-1015" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrLinkerdCoreComponentFailCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrLinkerdCoreComponentFailCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1015" class="error-name-code">
-              <code>ErrLinkerdCoreComponentFailCode-1015</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errlinkerdcorecomponentfailcode-1015/"><code>ErrLinkerdCoreComponentFailCode-1015</code></a>
             </td>
             <td>error in linkerd core component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLinkerdCoreComponentFailCode-1015" target="_blank">search forum</a></td>
@@ -3184,12 +3436,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrProcessOAMCode-1016" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrProcessOAMCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrProcessOAMCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1016" class="error-name-code">
-              <code>ErrProcessOAMCode-1016</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errprocessoamcode-1016/"><code>ErrProcessOAMCode-1016</code></a>
             </td>
             <td>error performing OAM operations</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrProcessOAMCode-1016" target="_blank">search forum</a></td>
@@ -3207,12 +3461,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseLinkerdCoreComponentCode-1017" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrParseLinkerdCoreComponentCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrParseLinkerdCoreComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1017" class="error-name-code">
-              <code>ErrParseLinkerdCoreComponentCode-1017</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errparselinkerdcorecomponentcode-1017/"><code>ErrParseLinkerdCoreComponentCode-1017</code></a>
             </td>
             <td>linkerd core component manifest parsing failing</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseLinkerdCoreComponentCode-1017" target="_blank">search forum</a></td>
@@ -3230,12 +3486,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseOAMComponentCode-1018" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrParseOAMComponentCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrParseOAMComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1018" class="error-name-code">
-              <code>ErrParseOAMComponentCode-1018</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errparseoamcomponentcode-1018/"><code>ErrParseOAMComponentCode-1018</code></a>
             </td>
             <td>error parsing the component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseOAMComponentCode-1018" target="_blank">search forum</a></td>
@@ -3253,12 +3511,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseOAMConfigCode-1019" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrParseOAMConfigCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrParseOAMConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1019" class="error-name-code">
-              <code>ErrParseOAMConfigCode-1019</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errparseoamconfigcode-1019/"><code>ErrParseOAMConfigCode-1019</code></a>
             </td>
             <td>error parsing the configuration</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseOAMConfigCode-1019" target="_blank">search forum</a></td>
@@ -3276,12 +3536,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyHelmChartCode-1020" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrApplyHelmChartCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrApplyHelmChartCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1020" class="error-name-code">
-              <code>ErrApplyHelmChartCode-1020</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errapplyhelmchartcode-1020/"><code>ErrApplyHelmChartCode-1020</code></a>
             </td>
             <td>error applying helm chart</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyHelmChartCode-1020" target="_blank">search forum</a></td>
@@ -3299,12 +3561,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNilClientCode-1021" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrNilClientCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrNilClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1021" class="error-name-code">
-              <code>ErrNilClientCode-1021</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errnilclientcode-1021/"><code>ErrNilClientCode-1021</code></a>
             </td>
             <td>Kubernetes client not initialized</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNilClientCode-1021" target="_blank">search forum</a></td>
@@ -3322,12 +3586,14 @@ Invalid manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrAddonFromHelmCode-1022" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrAddonFromHelmCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrAddonFromHelmCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1022" class="error-name-code">
-              <code>ErrAddonFromHelmCode-1022</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/erraddonfromhelmcode-1022/"><code>ErrAddonFromHelmCode-1022</code></a>
             </td>
             <td>Error with addon install operation by helm chart</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAddonFromHelmCode-1022" target="_blank">search forum</a></td>
@@ -3346,12 +3612,14 @@ Could not apply service patch file for the given addon</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidVersionForMeshInstallationCode-1023" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrInvalidVersionForMeshInstallationCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrInvalidVersionForMeshInstallationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1023" class="error-name-code">
-              <code>ErrInvalidVersionForMeshInstallationCode-1023</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errinvalidversionformeshinstallationcode-1023/"><code>ErrInvalidVersionForMeshInstallationCode-1023</code></a>
             </td>
             <td>Invalid version passed for helm based installation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidVersionForMeshInstallationCode-1023" target="_blank">search forum</a></td>
@@ -3370,12 +3638,14 @@ Version might be empty</p>
         
           
           
+          
+          
             
           
           <tr id="ErrAnnotatingNamespaceCode-1024" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrAnnotatingNamespaceCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrAnnotatingNamespaceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1024" class="error-name-code">
-              <code>ErrAnnotatingNamespaceCode-1024</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errannotatingnamespacecode-1024/"><code>ErrAnnotatingNamespaceCode-1024</code></a>
             </td>
             <td>Error with annotating namespace</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAnnotatingNamespaceCode-1024" target="_blank">search forum</a></td>
@@ -3394,12 +3664,14 @@ Could not update namespace in cluster</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchLinkerdVersionsCode-1033" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrFetchLinkerdVersionsCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrFetchLinkerdVersionsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1033" class="error-name-code">
-              <code>ErrFetchLinkerdVersionsCode-1033</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errfetchlinkerdversionscode-1033/"><code>ErrFetchLinkerdVersionsCode-1033</code></a>
             </td>
             <td>could not get any linkerd versions</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchLinkerdVersionsCode-1033" target="_blank">search forum</a></td>
@@ -3418,12 +3690,14 @@ no versions could be fetched from linkerd release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCertEncodeCode-1101" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrCertEncodeCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrCertEncodeCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1101" class="error-name-code">
-              <code>ErrCertEncodeCode-1101</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errcertencodecode-1101/"><code>ErrCertEncodeCode-1101</code></a>
             </td>
             <td>Failed to encode: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCertEncodeCode-1101" target="_blank">search forum</a></td>
@@ -3441,12 +3715,14 @@ no versions could be fetched from linkerd release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEncodeCertificatesPEMCode-1102" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrEncodeCertificatesPEMCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrEncodeCertificatesPEMCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1102" class="error-name-code">
-              <code>ErrEncodeCertificatesPEMCode-1102</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errencodecertificatespemcode-1102/"><code>ErrEncodeCertificatesPEMCode-1102</code></a>
             </td>
             <td>Failed to encode certificate PEM: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEncodeCertificatesPEMCode-1102" target="_blank">search forum</a></td>
@@ -3464,12 +3740,14 @@ no versions could be fetched from linkerd release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEncodePrivateKeyPEMCode-1103" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrEncodePrivateKeyPEMCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrEncodePrivateKeyPEMCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1103" class="error-name-code">
-              <code>ErrEncodePrivateKeyPEMCode-1103</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errencodeprivatekeypemcode-1103/"><code>ErrEncodePrivateKeyPEMCode-1103</code></a>
             </td>
             <td>Failed to encode private key PEM: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEncodePrivateKeyPEMCode-1103" target="_blank">search forum</a></td>
@@ -3487,12 +3765,14 @@ no versions could be fetched from linkerd release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreateRootCACode-1104" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrCreateRootCACode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrCreateRootCACode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1104" class="error-name-code">
-              <code>ErrCreateRootCACode-1104</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errcreaterootcacode-1104/"><code>ErrCreateRootCACode-1104</code></a>
             </td>
             <td>Failed to create Root CA: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateRootCACode-1104" target="_blank">search forum</a></td>
@@ -3510,12 +3790,14 @@ no versions could be fetched from linkerd release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGeneratePKCode-1105" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrGeneratePKCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrGeneratePKCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1105" class="error-name-code">
-              <code>ErrGeneratePKCode-1105</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errgeneratepkcode-1105/"><code>ErrGeneratePKCode-1105</code></a>
             </td>
             <td>Failed to create Private Key: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGeneratePKCode-1105" target="_blank">search forum</a></td>
@@ -3533,12 +3815,14 @@ no versions could be fetched from linkerd release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGenerateDefaultRootCACode-1106" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrGenerateDefaultRootCACode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrGenerateDefaultRootCACode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1106" class="error-name-code">
-              <code>ErrGenerateDefaultRootCACode-1106</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errgeneratedefaultrootcacode-1106/"><code>ErrGenerateDefaultRootCACode-1106</code></a>
             </td>
             <td>Failed to create default Root CA: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGenerateDefaultRootCACode-1106" target="_blank">search forum</a></td>
@@ -3556,12 +3840,14 @@ no versions could be fetched from linkerd release page</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetFileNamesCode-1107" class="tbl-body-row hover-effect" data-details-id="meshery-linkerd-ErrGetFileNamesCode-more-info" onclick="toggle_visibility('meshery-linkerd-ErrGetFileNamesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1107" class="error-name-code">
-              <code>ErrGetFileNamesCode-1107</code>
+              <a href="/reference/error-codes/adapter-meshery-linkerd/errgetfilenamescode-1107/"><code>ErrGetFileNamesCode-1107</code></a>
             </td>
             <td>failed to get filenames for dynamic component generation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetFileNamesCode-1107" target="_blank">search forum</a></td>
@@ -3606,12 +3892,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingUUIDInstanceCode-1001" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCreatingUUIDInstanceCode-more-info" onclick="toggle_visibility('meshery-server-ErrCreatingUUIDInstanceCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1001" class="error-name-code">
-              <code>ErrCreatingUUIDInstanceCode-1001</code>
+              <a href="/reference/error-codes/component-meshery-server/errcreatinguuidinstancecode-1001/"><code>ErrCreatingUUIDInstanceCode-1001</code></a>
             </td>
             <td>Unable to create UUID instance</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingUUIDInstanceCode-1001" target="_blank">search forum</a></td>
@@ -3629,12 +3917,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRegisteringMesheryOAMTraitsCode-1002" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRegisteringMesheryOAMTraitsCode-more-info" onclick="toggle_visibility('meshery-server-ErrRegisteringMesheryOAMTraitsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1002" class="error-name-code">
-              <code>ErrRegisteringMesheryOAMTraitsCode-1002</code>
+              <a href="/reference/error-codes/component-meshery-server/errregisteringmesheryoamtraitscode-1002/"><code>ErrRegisteringMesheryOAMTraitsCode-1002</code></a>
             </td>
             <td>Error registering local OAM traits</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRegisteringMesheryOAMTraitsCode-1002" target="_blank">search forum</a></td>
@@ -3652,12 +3942,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRegisteringMesheryOAMWorkloadsCode-1003" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRegisteringMesheryOAMWorkloadsCode-more-info" onclick="toggle_visibility('meshery-server-ErrRegisteringMesheryOAMWorkloadsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1003" class="error-name-code">
-              <code>ErrRegisteringMesheryOAMWorkloadsCode-1003</code>
+              <a href="/reference/error-codes/component-meshery-server/errregisteringmesheryoamworkloadscode-1003/"><code>ErrRegisteringMesheryOAMWorkloadsCode-1003</code></a>
             </td>
             <td>Error registering local OAM workloads</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRegisteringMesheryOAMWorkloadsCode-1003" target="_blank">search forum</a></td>
@@ -3675,12 +3967,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRetrievingUserHomeDirectoryCode-1004" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRetrievingUserHomeDirectoryCode-more-info" onclick="toggle_visibility('meshery-server-ErrRetrievingUserHomeDirectoryCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1004" class="error-name-code">
-              <code>ErrRetrievingUserHomeDirectoryCode-1004</code>
+              <a href="/reference/error-codes/component-meshery-server/errretrievinguserhomedirectorycode-1004/"><code>ErrRetrievingUserHomeDirectoryCode-1004</code></a>
             </td>
             <td>Unable to retrieve the user&#39;s home directory</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRetrievingUserHomeDirectoryCode-1004" target="_blank">search forum</a></td>
@@ -3698,12 +3992,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingUserDataDirectoryCode-1005" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCreatingUserDataDirectoryCode-more-info" onclick="toggle_visibility('meshery-server-ErrCreatingUserDataDirectoryCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1005" class="error-name-code">
-              <code>ErrCreatingUserDataDirectoryCode-1005</code>
+              <a href="/reference/error-codes/component-meshery-server/errcreatinguserdatadirectorycode-1005/"><code>ErrCreatingUserDataDirectoryCode-1005</code></a>
             </td>
             <td>Unable to create the directory for storing user data at: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingUserDataDirectoryCode-1005" target="_blank">search forum</a></td>
@@ -3721,12 +4017,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingMapPreferencePersisterInstanceCode-1006" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCreatingMapPreferencePersisterInstanceCode-more-info" onclick="toggle_visibility('meshery-server-ErrCreatingMapPreferencePersisterInstanceCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1006" class="error-name-code">
-              <code>ErrCreatingMapPreferencePersisterInstanceCode-1006</code>
+              <a href="/reference/error-codes/component-meshery-server/errcreatingmappreferencepersisterinstancecode-1006/"><code>ErrCreatingMapPreferencePersisterInstanceCode-1006</code></a>
             </td>
             <td>Unable to create a new MapPreferencePersister instance</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingMapPreferencePersisterInstanceCode-1006" target="_blank">search forum</a></td>
@@ -3744,12 +4042,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDatabaseAutoMigrationCode-1007" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDatabaseAutoMigrationCode-more-info" onclick="toggle_visibility('meshery-server-ErrDatabaseAutoMigrationCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1007" class="error-name-code">
-              <code>ErrDatabaseAutoMigrationCode-1007</code>
+              <a href="/reference/error-codes/component-meshery-server/errdatabaseautomigrationcode-1007/"><code>ErrDatabaseAutoMigrationCode-1007</code></a>
             </td>
             <td>Unable to auto migrate to database</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDatabaseAutoMigrationCode-1007" target="_blank">search forum</a></td>
@@ -3767,12 +4067,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidURLSkippingProviderCode-1008" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidURLSkippingProviderCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidURLSkippingProviderCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1008" class="error-name-code">
-              <code>ErrInvalidURLSkippingProviderCode-1008</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidurlskippingprovidercode-1008/"><code>ErrInvalidURLSkippingProviderCode-1008</code></a>
             </td>
             <td> is invalid url skipping provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidURLSkippingProviderCode-1008" target="_blank">search forum</a></td>
@@ -3790,12 +4092,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrListenAndServeCode-1009" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrListenAndServeCode-more-info" onclick="toggle_visibility('meshery-server-ErrListenAndServeCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1009" class="error-name-code">
-              <code>ErrListenAndServeCode-1009</code>
+              <a href="/reference/error-codes/component-meshery-server/errlistenandservecode-1009/"><code>ErrListenAndServeCode-1009</code></a>
             </td>
             <td>ListenAndServe Error</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrListenAndServeCode-1009" target="_blank">search forum</a></td>
@@ -3813,12 +4117,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCleaningUpLocalProviderCode-1010" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCleaningUpLocalProviderCode-more-info" onclick="toggle_visibility('meshery-server-ErrCleaningUpLocalProviderCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1010" class="error-name-code">
-              <code>ErrCleaningUpLocalProviderCode-1010</code>
+              <a href="/reference/error-codes/component-meshery-server/errcleaninguplocalprovidercode-1010/"><code>ErrCleaningUpLocalProviderCode-1010</code></a>
             </td>
             <td>Error cleaning up local provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCleaningUpLocalProviderCode-1010" target="_blank">search forum</a></td>
@@ -3836,12 +4142,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrClosingDatabaseInstanceCode-1011" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrClosingDatabaseInstanceCode-more-info" onclick="toggle_visibility('meshery-server-ErrClosingDatabaseInstanceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1011" class="error-name-code">
-              <code>ErrClosingDatabaseInstanceCode-1011</code>
+              <a href="/reference/error-codes/component-meshery-server/errclosingdatabaseinstancecode-1011/"><code>ErrClosingDatabaseInstanceCode-1011</code></a>
             </td>
             <td>Error closing database instance</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrClosingDatabaseInstanceCode-1011" target="_blank">search forum</a></td>
@@ -3859,12 +4167,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInitializingRegistryManagerCode-1012" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInitializingRegistryManagerCode-more-info" onclick="toggle_visibility('meshery-server-ErrInitializingRegistryManagerCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1012" class="error-name-code">
-              <code>ErrInitializingRegistryManagerCode-1012</code>
+              <a href="/reference/error-codes/component-meshery-server/errinitializingregistrymanagercode-1012/"><code>ErrInitializingRegistryManagerCode-1012</code></a>
             </td>
             <td>could not initialize registry manager</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInitializingRegistryManagerCode-1012" target="_blank">search forum</a></td>
@@ -3882,12 +4192,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInitializingKeysRegistrationCode-1013" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInitializingKeysRegistrationCode-more-info" onclick="toggle_visibility('meshery-server-ErrInitializingKeysRegistrationCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1013" class="error-name-code">
-              <code>ErrInitializingKeysRegistrationCode-1013</code>
+              <a href="/reference/error-codes/component-meshery-server/errinitializingkeysregistrationcode-1013/"><code>ErrInitializingKeysRegistrationCode-1013</code></a>
             </td>
             <td>could not initialize keys registry manager</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInitializingKeysRegistrationCode-1013" target="_blank">search forum</a></td>
@@ -3905,12 +4217,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidK8SConfigNilCode-1014" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidK8SConfigNilCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidK8SConfigNilCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1014" class="error-name-code">
-              <code>ErrInvalidK8SConfigNilCode-1014</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidk8sconfignilcode-1014/"><code>ErrInvalidK8SConfigNilCode-1014</code></a>
             </td>
             <td>No valid Kubernetes config found. Make sure to pass contextIDs in query parameters.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidK8SConfigNilCode-1014" target="_blank">search forum</a></td>
@@ -3928,12 +4242,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNilClientCode-1015" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNilClientCode-more-info" onclick="toggle_visibility('meshery-server-ErrNilClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1015" class="error-name-code">
-              <code>ErrNilClientCode-1015</code>
+              <a href="/reference/error-codes/component-meshery-server/errnilclientcode-1015/"><code>ErrNilClientCode-1015</code></a>
             </td>
             <td>Kubernetes client not initialized</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNilClientCode-1015" target="_blank">search forum</a></td>
@@ -3951,12 +4267,14 @@ Could not reach the remote git repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRecordPreferencesCode-1016" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRecordPreferencesCode-more-info" onclick="toggle_visibility('meshery-server-ErrRecordPreferencesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1016" class="error-name-code">
-              <code>ErrRecordPreferencesCode-1016</code>
+              <a href="/reference/error-codes/component-meshery-server/errrecordpreferencescode-1016/"><code>ErrRecordPreferencesCode-1016</code></a>
             </td>
             <td>unable to save user config data</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRecordPreferencesCode-1016" target="_blank">search forum</a></td>
@@ -3975,12 +4293,14 @@ db might be corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGrafanaConfigCode-1017" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGrafanaConfigCode-more-info" onclick="toggle_visibility('meshery-server-ErrGrafanaConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1017" class="error-name-code">
-              <code>ErrGrafanaConfigCode-1017</code>
+              <a href="/reference/error-codes/component-meshery-server/errgrafanaconfigcode-1017/"><code>ErrGrafanaConfigCode-1017</code></a>
             </td>
             <td>Grafana endpoint not configured</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGrafanaConfigCode-1017" target="_blank">search forum</a></td>
@@ -3998,12 +4318,14 @@ db might be corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPrometheusConfigCode-1018" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPrometheusConfigCode-more-info" onclick="toggle_visibility('meshery-server-ErrPrometheusConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1018" class="error-name-code">
-              <code>ErrPrometheusConfigCode-1018</code>
+              <a href="/reference/error-codes/component-meshery-server/errprometheusconfigcode-1018/"><code>ErrPrometheusConfigCode-1018</code></a>
             </td>
             <td>Prometheus endpoint not configured</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPrometheusConfigCode-1018" target="_blank">search forum</a></td>
@@ -4021,12 +4343,14 @@ db might be corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGrafanaQueryCode-1019" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGrafanaQueryCode-more-info" onclick="toggle_visibility('meshery-server-ErrGrafanaQueryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1019" class="error-name-code">
-              <code>ErrGrafanaQueryCode-1019</code>
+              <a href="/reference/error-codes/component-meshery-server/errgrafanaquerycode-1019/"><code>ErrGrafanaQueryCode-1019</code></a>
             </td>
             <td>Unable to query Grafana</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGrafanaQueryCode-1019" target="_blank">search forum</a></td>
@@ -4046,12 +4370,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPrometheusQueryCode-1020" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPrometheusQueryCode-more-info" onclick="toggle_visibility('meshery-server-ErrPrometheusQueryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1020" class="error-name-code">
-              <code>ErrPrometheusQueryCode-1020</code>
+              <a href="/reference/error-codes/component-meshery-server/errprometheusquerycode-1020/"><code>ErrPrometheusQueryCode-1020</code></a>
             </td>
             <td>Unable to query prometheus</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPrometheusQueryCode-1020" target="_blank">search forum</a></td>
@@ -4071,12 +4397,14 @@ Connect to Prometheus and Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPrometheusBoardsCode-1021" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPrometheusBoardsCode-more-info" onclick="toggle_visibility('meshery-server-ErrPrometheusBoardsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1021" class="error-name-code">
-              <code>ErrPrometheusBoardsCode-1021</code>
+              <a href="/reference/error-codes/component-meshery-server/errprometheusboardscode-1021/"><code>ErrPrometheusBoardsCode-1021</code></a>
             </td>
             <td>unable to get Prometheus boards</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPrometheusBoardsCode-1021" target="_blank">search forum</a></td>
@@ -4096,12 +4424,14 @@ Connect to Prometheus from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrStaticBoardsCode-1022" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrStaticBoardsCode-more-info" onclick="toggle_visibility('meshery-server-ErrStaticBoardsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1022" class="error-name-code">
-              <code>ErrStaticBoardsCode-1022</code>
+              <a href="/reference/error-codes/component-meshery-server/errstaticboardscode-1022/"><code>ErrStaticBoardsCode-1022</code></a>
             </td>
             <td>unable to get static board</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrStaticBoardsCode-1022" target="_blank">search forum</a></td>
@@ -4119,12 +4449,14 @@ Connect to Prometheus from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRequestBodyCode-1023" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRequestBodyCode-more-info" onclick="toggle_visibility('meshery-server-ErrRequestBodyCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1023" class="error-name-code">
-              <code>ErrRequestBodyCode-1023</code>
+              <a href="/reference/error-codes/component-meshery-server/errrequestbodycode-1023/"><code>ErrRequestBodyCode-1023</code></a>
             </td>
             <td>unable to read the request body</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRequestBodyCode-1023" target="_blank">search forum</a></td>
@@ -4142,12 +4474,14 @@ Connect to Prometheus from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseBoolCode-1024" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrParseBoolCode-more-info" onclick="toggle_visibility('meshery-server-ErrParseBoolCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1024" class="error-name-code">
-              <code>ErrParseBoolCode-1024</code>
+              <a href="/reference/error-codes/component-meshery-server/errparseboolcode-1024/"><code>ErrParseBoolCode-1024</code></a>
             </td>
             <td>unable to parse : </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseBoolCode-1024" target="_blank">search forum</a></td>
@@ -4165,12 +4499,14 @@ Connect to Prometheus from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrStreamEventsCode-1025" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrStreamEventsCode-more-info" onclick="toggle_visibility('meshery-server-ErrStreamEventsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1025" class="error-name-code">
-              <code>ErrStreamEventsCode-1025</code>
+              <a href="/reference/error-codes/component-meshery-server/errstreameventscode-1025/"><code>ErrStreamEventsCode-1025</code></a>
             </td>
             <td>There was an error connecting to the backend to get events</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrStreamEventsCode-1025" target="_blank">search forum</a></td>
@@ -4189,12 +4525,14 @@ Meshery UI is not able to reach the Meshery server</p>
         
           
           
+          
+          
             
           
           <tr id="ErrStreamClientCode-1026" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrStreamClientCode-more-info" onclick="toggle_visibility('meshery-server-ErrStreamClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1026" class="error-name-code">
-              <code>ErrStreamClientCode-1026</code>
+              <a href="/reference/error-codes/component-meshery-server/errstreamclientcode-1026/"><code>ErrStreamClientCode-1026</code></a>
             </td>
             <td>Event streaming ended</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrStreamClientCode-1026" target="_blank">search forum</a></td>
@@ -4213,12 +4551,14 @@ Meshery UI is not able to reach the Meshery server</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPublishSmiResultsCode-1027" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPublishSmiResultsCode-more-info" onclick="toggle_visibility('meshery-server-ErrPublishSmiResultsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1027" class="error-name-code">
-              <code>ErrPublishSmiResultsCode-1027</code>
+              <a href="/reference/error-codes/component-meshery-server/errpublishsmiresultscode-1027/"><code>ErrPublishSmiResultsCode-1027</code></a>
             </td>
             <td>Error publishing SMI results</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPublishSmiResultsCode-1027" target="_blank">search forum</a></td>
@@ -4236,12 +4576,14 @@ Meshery UI is not able to reach the Meshery server</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPluginOpenCode-1028" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPluginOpenCode-more-info" onclick="toggle_visibility('meshery-server-ErrPluginOpenCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1028" class="error-name-code">
-              <code>ErrPluginOpenCode-1028</code>
+              <a href="/reference/error-codes/component-meshery-server/errpluginopencode-1028/"><code>ErrPluginOpenCode-1028</code></a>
             </td>
             <td>Error opening the plugin</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPluginOpenCode-1028" target="_blank">search forum</a></td>
@@ -4260,12 +4602,14 @@ plugin does not match with Meshery version</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPluginLookupCode-1029" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPluginLookupCode-more-info" onclick="toggle_visibility('meshery-server-ErrPluginLookupCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1029" class="error-name-code">
-              <code>ErrPluginLookupCode-1029</code>
+              <a href="/reference/error-codes/component-meshery-server/errpluginlookupcode-1029/"><code>ErrPluginLookupCode-1029</code></a>
             </td>
             <td>Error performing a plugin lookup</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPluginLookupCode-1029" target="_blank">search forum</a></td>
@@ -4283,12 +4627,14 @@ plugin does not match with Meshery version</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPluginRunCode-1030" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPluginRunCode-more-info" onclick="toggle_visibility('meshery-server-ErrPluginRunCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1030" class="error-name-code">
-              <code>ErrPluginRunCode-1030</code>
+              <a href="/reference/error-codes/component-meshery-server/errpluginruncode-1030/"><code>ErrPluginRunCode-1030</code></a>
             </td>
             <td>Error running Meshery plugin</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPluginRunCode-1030" target="_blank">search forum</a></td>
@@ -4306,12 +4652,14 @@ plugin does not match with Meshery version</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseFormCode-1031" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrParseFormCode-more-info" onclick="toggle_visibility('meshery-server-ErrParseFormCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1031" class="error-name-code">
-              <code>ErrParseFormCode-1031</code>
+              <a href="/reference/error-codes/component-meshery-server/errparseformcode-1031/"><code>ErrParseFormCode-1031</code></a>
             </td>
             <td>unable to parse form</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseFormCode-1031" target="_blank">search forum</a></td>
@@ -4329,12 +4677,14 @@ plugin does not match with Meshery version</p>
         
           
           
+          
+          
             
           
           <tr id="ErrQueryGetCode-1032" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrQueryGetCode-more-info" onclick="toggle_visibility('meshery-server-ErrQueryGetCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1032" class="error-name-code">
-              <code>ErrQueryGetCode-1032</code>
+              <a href="/reference/error-codes/component-meshery-server/errquerygetcode-1032/"><code>ErrQueryGetCode-1032</code></a>
             </td>
             <td>unable to get: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrQueryGetCode-1032" target="_blank">search forum</a></td>
@@ -4352,12 +4702,14 @@ plugin does not match with Meshery version</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetResultCode-1033" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetResultCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetResultCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1033" class="error-name-code">
-              <code>ErrGetResultCode-1033</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetresultcode-1033/"><code>ErrGetResultCode-1033</code></a>
             </td>
             <td>unable to get result</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetResultCode-1033" target="_blank">search forum</a></td>
@@ -4376,12 +4728,14 @@ Result did not persist in the database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrConvertToSpecCode-1034" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrConvertToSpecCode-more-info" onclick="toggle_visibility('meshery-server-ErrConvertToSpecCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1034" class="error-name-code">
-              <code>ErrConvertToSpecCode-1034</code>
+              <a href="/reference/error-codes/component-meshery-server/errconverttospeccode-1034/"><code>ErrConvertToSpecCode-1034</code></a>
             </td>
             <td>unable to convert to spec</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConvertToSpecCode-1034" target="_blank">search forum</a></td>
@@ -4399,12 +4753,14 @@ Result did not persist in the database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchSMIResultsCode-1035" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchSMIResultsCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchSMIResultsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1035" class="error-name-code">
-              <code>ErrFetchSMIResultsCode-1035</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchsmiresultscode-1035/"><code>ErrFetchSMIResultsCode-1035</code></a>
             </td>
             <td>unable to fetch SMI results</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchSMIResultsCode-1035" target="_blank">search forum</a></td>
@@ -4423,12 +4779,14 @@ Result identifier is invalid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFormFileCode-1036" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFormFileCode-more-info" onclick="toggle_visibility('meshery-server-ErrFormFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1036" class="error-name-code">
-              <code>ErrFormFileCode-1036</code>
+              <a href="/reference/error-codes/component-meshery-server/errformfilecode-1036/"><code>ErrFormFileCode-1036</code></a>
             </td>
             <td>error getting kubeconfig file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFormFileCode-1036" target="_blank">search forum</a></td>
@@ -4446,12 +4804,14 @@ Result identifier is invalid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrReadConfigCode-1037" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrReadConfigCode-more-info" onclick="toggle_visibility('meshery-server-ErrReadConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1037" class="error-name-code">
-              <code>ErrReadConfigCode-1037</code>
+              <a href="/reference/error-codes/component-meshery-server/errreadconfigcode-1037/"><code>ErrReadConfigCode-1037</code></a>
             </td>
             <td>error reading config.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadConfigCode-1037" target="_blank">search forum</a></td>
@@ -4469,12 +4829,14 @@ Result identifier is invalid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrLoadConfigCode-1038" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrLoadConfigCode-more-info" onclick="toggle_visibility('meshery-server-ErrLoadConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1038" class="error-name-code">
-              <code>ErrLoadConfigCode-1038</code>
+              <a href="/reference/error-codes/component-meshery-server/errloadconfigcode-1038/"><code>ErrLoadConfigCode-1038</code></a>
             </td>
             <td>unable to load Kubernetes config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLoadConfigCode-1038" target="_blank">search forum</a></td>
@@ -4492,12 +4854,14 @@ Result identifier is invalid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrOpenFileCode-1039" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrOpenFileCode-more-info" onclick="toggle_visibility('meshery-server-ErrOpenFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1039" class="error-name-code">
-              <code>ErrOpenFileCode-1039</code>
+              <a href="/reference/error-codes/component-meshery-server/erropenfilecode-1039/"><code>ErrOpenFileCode-1039</code></a>
             </td>
             <td>Unable to open file: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOpenFileCode-1039" target="_blank">search forum</a></td>
@@ -4515,12 +4879,14 @@ Result identifier is invalid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrKubeVersionCode-1040" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrKubeVersionCode-more-info" onclick="toggle_visibility('meshery-server-ErrKubeVersionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1040" class="error-name-code">
-              <code>ErrKubeVersionCode-1040</code>
+              <a href="/reference/error-codes/component-meshery-server/errkubeversioncode-1040/"><code>ErrKubeVersionCode-1040</code></a>
             </td>
             <td>Unable to get Kubernetes version.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrKubeVersionCode-1040" target="_blank">search forum</a></td>
@@ -4538,12 +4904,14 @@ Result identifier is invalid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrAddAdapterCode-1041" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrAddAdapterCode-more-info" onclick="toggle_visibility('meshery-server-ErrAddAdapterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1041" class="error-name-code">
-              <code>ErrAddAdapterCode-1041</code>
+              <a href="/reference/error-codes/component-meshery-server/erraddadaptercode-1041/"><code>ErrAddAdapterCode-1041</code></a>
             </td>
             <td>meshLocationURL is empty</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAddAdapterCode-1041" target="_blank">search forum</a></td>
@@ -4561,12 +4929,14 @@ Result identifier is invalid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRetrieveDataCode-1042" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRetrieveDataCode-more-info" onclick="toggle_visibility('meshery-server-ErrRetrieveDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1042" class="error-name-code">
-              <code>ErrRetrieveDataCode-1042</code>
+              <a href="/reference/error-codes/component-meshery-server/errretrievedatacode-1042/"><code>ErrRetrieveDataCode-1042</code></a>
             </td>
             <td>Unable to retrieve the requested data</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRetrieveDataCode-1042" target="_blank">search forum</a></td>
@@ -4584,12 +4954,14 @@ Result identifier is invalid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrValidAdapterCode-1043" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrValidAdapterCode-more-info" onclick="toggle_visibility('meshery-server-ErrValidAdapterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1043" class="error-name-code">
-              <code>ErrValidAdapterCode-1043</code>
+              <a href="/reference/error-codes/component-meshery-server/errvalidadaptercode-1043/"><code>ErrValidAdapterCode-1043</code></a>
             </td>
             <td>Unable to find valid Adapter URL</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrValidAdapterCode-1043" target="_blank">search forum</a></td>
@@ -4607,12 +4979,14 @@ Result identifier is invalid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrOperationIDCode-1044" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrOperationIDCode-more-info" onclick="toggle_visibility('meshery-server-ErrOperationIDCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1044" class="error-name-code">
-              <code>ErrOperationIDCode-1044</code>
+              <a href="/reference/error-codes/component-meshery-server/erroperationidcode-1044/"><code>ErrOperationIDCode-1044</code></a>
             </td>
             <td>Error generating the operation Id</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOperationIDCode-1044" target="_blank">search forum</a></td>
@@ -4630,12 +5004,14 @@ Result identifier is invalid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMeshClientCode-1045" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMeshClientCode-more-info" onclick="toggle_visibility('meshery-server-ErrMeshClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1045" class="error-name-code">
-              <code>ErrMeshClientCode-1045</code>
+              <a href="/reference/error-codes/component-meshery-server/errmeshclientcode-1045/"><code>ErrMeshClientCode-1045</code></a>
             </td>
             <td>Error creating a mesh client
 Error pinging the mesh adapter</td>
@@ -4655,12 +5031,14 @@ Unable to ping the mesh adapter</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyChangeCode-1046" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrApplyChangeCode-more-info" onclick="toggle_visibility('meshery-server-ErrApplyChangeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1046" class="error-name-code">
-              <code>ErrApplyChangeCode-1046</code>
+              <a href="/reference/error-codes/component-meshery-server/errapplychangecode-1046/"><code>ErrApplyChangeCode-1046</code></a>
             </td>
             <td>Error applying the change</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyChangeCode-1046" target="_blank">search forum</a></td>
@@ -4678,12 +5056,14 @@ Unable to ping the mesh adapter</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRetrieveMeshDataCode-1047" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRetrieveMeshDataCode-more-info" onclick="toggle_visibility('meshery-server-ErrRetrieveMeshDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1047" class="error-name-code">
-              <code>ErrRetrieveMeshDataCode-1047</code>
+              <a href="/reference/error-codes/component-meshery-server/errretrievemeshdatacode-1047/"><code>ErrRetrieveMeshDataCode-1047</code></a>
             </td>
             <td>Error getting operations for the adapter.
 Error getting component name.</td>
@@ -4702,12 +5082,14 @@ Error getting component name.</td>
         
           
           
+          
+          
             
           
           <tr id="ErrApplicationFailureCode-1048" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrApplicationFailureCode-more-info" onclick="toggle_visibility('meshery-server-ErrApplicationFailureCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1048" class="error-name-code">
-              <code>ErrApplicationFailureCode-1048</code>
+              <a href="/reference/error-codes/component-meshery-server/errapplicationfailurecode-1048/"><code>ErrApplicationFailureCode-1048</code></a>
             </td>
             <td>failed to 
 the application</td>
@@ -4728,12 +5110,14 @@ Make sure the uploaded application source content is valid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDecodingCode-1049" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDecodingCode-more-info" onclick="toggle_visibility('meshery-server-ErrDecodingCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1049" class="error-name-code">
-              <code>ErrDecodingCode-1049</code>
+              <a href="/reference/error-codes/component-meshery-server/errdecodingcode-1049/"><code>ErrDecodingCode-1049</code></a>
             </td>
             <td>Error decoding the : </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDecodingCode-1049" target="_blank">search forum</a></td>
@@ -4751,12 +5135,14 @@ Make sure the uploaded application source content is valid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRetrieveUserTokenCode-1050" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRetrieveUserTokenCode-more-info" onclick="toggle_visibility('meshery-server-ErrRetrieveUserTokenCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1050" class="error-name-code">
-              <code>ErrRetrieveUserTokenCode-1050</code>
+              <a href="/reference/error-codes/component-meshery-server/errretrieveusertokencode-1050/"><code>ErrRetrieveUserTokenCode-1050</code></a>
             </td>
             <td>Failed to get the user token</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRetrieveUserTokenCode-1050" target="_blank">search forum</a></td>
@@ -4774,12 +5160,14 @@ Make sure the uploaded application source content is valid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFailToSaveCode-1051" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFailToSaveCode-more-info" onclick="toggle_visibility('meshery-server-ErrFailToSaveCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1051" class="error-name-code">
-              <code>ErrFailToSaveCode-1051</code>
+              <a href="/reference/error-codes/component-meshery-server/errfailtosavecode-1051/"><code>ErrFailToSaveCode-1051</code></a>
             </td>
             <td>Failed to Save: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailToSaveCode-1051" target="_blank">search forum</a></td>
@@ -4797,12 +5185,14 @@ Make sure the uploaded application source content is valid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFailToDeleteCode-1052" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFailToDeleteCode-more-info" onclick="toggle_visibility('meshery-server-ErrFailToDeleteCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1052" class="error-name-code">
-              <code>ErrFailToDeleteCode-1052</code>
+              <a href="/reference/error-codes/component-meshery-server/errfailtodeletecode-1052/"><code>ErrFailToDeleteCode-1052</code></a>
             </td>
             <td>Failed to Delete: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailToDeleteCode-1052" target="_blank">search forum</a></td>
@@ -4820,12 +5210,14 @@ Make sure the uploaded application source content is valid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrWriteResponseCode-1053" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrWriteResponseCode-more-info" onclick="toggle_visibility('meshery-server-ErrWriteResponseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1053" class="error-name-code">
-              <code>ErrWriteResponseCode-1053</code>
+              <a href="/reference/error-codes/component-meshery-server/errwriteresponsecode-1053/"><code>ErrWriteResponseCode-1053</code></a>
             </td>
             <td>Error writing response</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWriteResponseCode-1053" target="_blank">search forum</a></td>
@@ -4843,12 +5235,14 @@ Make sure the uploaded application source content is valid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTestConfigsCode-1054" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTestConfigsCode-more-info" onclick="toggle_visibility('meshery-server-ErrTestConfigsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1054" class="error-name-code">
-              <code>ErrTestConfigsCode-1054</code>
+              <a href="/reference/error-codes/component-meshery-server/errtestconfigscode-1054/"><code>ErrTestConfigsCode-1054</code></a>
             </td>
             <td>Error fetching test configs</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTestConfigsCode-1054" target="_blank">search forum</a></td>
@@ -4866,12 +5260,14 @@ Make sure the uploaded application source content is valid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidGenValueCode-1055" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidGenValueCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidGenValueCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1055" class="error-name-code">
-              <code>ErrInvalidGenValueCode-1055</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidgenvaluecode-1055/"><code>ErrInvalidGenValueCode-1055</code></a>
             </td>
             <td>Invalid value for gen</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidGenValueCode-1055" target="_blank">search forum</a></td>
@@ -4889,12 +5285,14 @@ Make sure the uploaded application source content is valid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFailToLoadExtensionsCode-1056" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFailToLoadExtensionsCode-more-info" onclick="toggle_visibility('meshery-server-ErrFailToLoadExtensionsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1056" class="error-name-code">
-              <code>ErrFailToLoadExtensionsCode-1056</code>
+              <a href="/reference/error-codes/component-meshery-server/errfailtoloadextensionscode-1056/"><code>ErrFailToLoadExtensionsCode-1056</code></a>
             </td>
             <td>Failed to Load Extensions from Package.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailToLoadExtensionsCode-1056" target="_blank">search forum</a></td>
@@ -4913,12 +5311,14 @@ Plugin does not match with Meshery version.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrConversionCode-1057" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrConversionCode-more-info" onclick="toggle_visibility('meshery-server-ErrConversionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1057" class="error-name-code">
-              <code>ErrConversionCode-1057</code>
+              <a href="/reference/error-codes/component-meshery-server/errconversioncode-1057/"><code>ErrConversionCode-1057</code></a>
             </td>
             <td>unable to convert YAML to JSON</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConversionCode-1057" target="_blank">search forum</a></td>
@@ -4936,12 +5336,14 @@ Plugin does not match with Meshery version.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseDurationCode-1058" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrParseDurationCode-more-info" onclick="toggle_visibility('meshery-server-ErrParseDurationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1058" class="error-name-code">
-              <code>ErrParseDurationCode-1058</code>
+              <a href="/reference/error-codes/component-meshery-server/errparsedurationcode-1058/"><code>ErrParseDurationCode-1058</code></a>
             </td>
             <td>error parsing test duration</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseDurationCode-1058" target="_blank">search forum</a></td>
@@ -4959,12 +5361,14 @@ Plugin does not match with Meshery version.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrLoadTestCode-1059" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrLoadTestCode-more-info" onclick="toggle_visibility('meshery-server-ErrLoadTestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1059" class="error-name-code">
-              <code>ErrLoadTestCode-1059</code>
+              <a href="/reference/error-codes/component-meshery-server/errloadtestcode-1059/"><code>ErrLoadTestCode-1059</code></a>
             </td>
             <td>Load test error: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLoadTestCode-1059" target="_blank">search forum</a></td>
@@ -4982,12 +5386,14 @@ Plugin does not match with Meshery version.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchKubernetesCode-1060" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchKubernetesCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchKubernetesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1060" class="error-name-code">
-              <code>ErrFetchKubernetesCode-1060</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchkubernetescode-1060/"><code>ErrFetchKubernetesCode-1060</code></a>
             </td>
             <td>Unable to ping Kubernetes.
 Unable to run a discovery scan for Kubernetes cluster.</td>
@@ -5006,12 +5412,14 @@ Unable to run a discovery scan for Kubernetes cluster.</td>
         
           
           
+          
+          
             
           
           <tr id="ErrPanicRecoveryCode-1061" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPanicRecoveryCode-more-info" onclick="toggle_visibility('meshery-server-ErrPanicRecoveryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1061" class="error-name-code">
-              <code>ErrPanicRecoveryCode-1061</code>
+              <a href="/reference/error-codes/component-meshery-server/errpanicrecoverycode-1061/"><code>ErrPanicRecoveryCode-1061</code></a>
             </td>
             <td>Recovered from panic.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPanicRecoveryCode-1061" target="_blank">search forum</a></td>
@@ -5029,12 +5437,14 @@ Unable to run a discovery scan for Kubernetes cluster.</td>
         
           
           
+          
+          
             
           
           <tr id="ErrBlankNameCode-1062" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrBlankNameCode-more-info" onclick="toggle_visibility('meshery-server-ErrBlankNameCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1062" class="error-name-code">
-              <code>ErrBlankNameCode-1062</code>
+              <a href="/reference/error-codes/component-meshery-server/errblanknamecode-1062/"><code>ErrBlankNameCode-1062</code></a>
             </td>
             <td>Error: name field is blank.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrBlankNameCode-1062" target="_blank">search forum</a></td>
@@ -5052,12 +5462,14 @@ Unable to run a discovery scan for Kubernetes cluster.</td>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidLTURLCode-1063" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidLTURLCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidLTURLCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1063" class="error-name-code">
-              <code>ErrInvalidLTURLCode-1063</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidlturlcode-1063/"><code>ErrInvalidLTURLCode-1063</code></a>
             </td>
             <td>invalid load test url: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidLTURLCode-1063" target="_blank">search forum</a></td>
@@ -5075,12 +5487,14 @@ Unable to run a discovery scan for Kubernetes cluster.</td>
         
           
           
+          
+          
             
           
           <tr id="ErrVersionCompareCode-1064" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrVersionCompareCode-more-info" onclick="toggle_visibility('meshery-server-ErrVersionCompareCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1064" class="error-name-code">
-              <code>ErrVersionCompareCode-1064</code>
+              <a href="/reference/error-codes/component-meshery-server/errversioncomparecode-1064/"><code>ErrVersionCompareCode-1064</code></a>
             </td>
             <td>failed to compare latest and current version of Meshery.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrVersionCompareCode-1064" target="_blank">search forum</a></td>
@@ -5098,12 +5512,14 @@ Unable to run a discovery scan for Kubernetes cluster.</td>
         
           
           
+          
+          
             
           
           <tr id="ErrSaveSessionCode-1065" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSaveSessionCode-more-info" onclick="toggle_visibility('meshery-server-ErrSaveSessionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1065" class="error-name-code">
-              <code>ErrSaveSessionCode-1065</code>
+              <a href="/reference/error-codes/component-meshery-server/errsavesessioncode-1065/"><code>ErrSaveSessionCode-1065</code></a>
             </td>
             <td>unable to save session.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSaveSessionCode-1065" target="_blank">search forum</a></td>
@@ -5121,12 +5537,14 @@ Unable to run a discovery scan for Kubernetes cluster.</td>
         
           
           
+          
+          
             
           
           <tr id="ErrKubeClientCode-1066" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrKubeClientCode-more-info" onclick="toggle_visibility('meshery-server-ErrKubeClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1066" class="error-name-code">
-              <code>ErrKubeClientCode-1066</code>
+              <a href="/reference/error-codes/component-meshery-server/errkubeclientcode-1066/"><code>ErrKubeClientCode-1066</code></a>
             </td>
             <td>Failed to Create Kube Client</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrKubeClientCode-1066" target="_blank">search forum</a></td>
@@ -5145,12 +5563,14 @@ Ensure Meshery is able to reach the Kubernetes cluster</p>
         
           
           
+          
+          
             
           
           <tr id="ErrWorkloadDefinitionCode-1067" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrWorkloadDefinitionCode-more-info" onclick="toggle_visibility('meshery-server-ErrWorkloadDefinitionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1067" class="error-name-code">
-              <code>ErrWorkloadDefinitionCode-1067</code>
+              <a href="/reference/error-codes/component-meshery-server/errworkloaddefinitioncode-1067/"><code>ErrWorkloadDefinitionCode-1067</code></a>
             </td>
             <td>Failed to load Workload Definition</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWorkloadDefinitionCode-1067" target="_blank">search forum</a></td>
@@ -5168,12 +5588,14 @@ Ensure Meshery is able to reach the Kubernetes cluster</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTraitDefinitionCode-1068" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTraitDefinitionCode-more-info" onclick="toggle_visibility('meshery-server-ErrTraitDefinitionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1068" class="error-name-code">
-              <code>ErrTraitDefinitionCode-1068</code>
+              <a href="/reference/error-codes/component-meshery-server/errtraitdefinitioncode-1068/"><code>ErrTraitDefinitionCode-1068</code></a>
             </td>
             <td>Failed to Encode Trait Definition</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTraitDefinitionCode-1068" target="_blank">search forum</a></td>
@@ -5191,12 +5613,14 @@ Ensure Meshery is able to reach the Kubernetes cluster</p>
         
           
           
+          
+          
             
           
           <tr id="ErrScopeDefinitionCode-1069" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrScopeDefinitionCode-more-info" onclick="toggle_visibility('meshery-server-ErrScopeDefinitionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1069" class="error-name-code">
-              <code>ErrScopeDefinitionCode-1069</code>
+              <a href="/reference/error-codes/component-meshery-server/errscopedefinitioncode-1069/"><code>ErrScopeDefinitionCode-1069</code></a>
             </td>
             <td>Failed to Encode Scope Definition</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrScopeDefinitionCode-1069" target="_blank">search forum</a></td>
@@ -5214,12 +5638,14 @@ Ensure Meshery is able to reach the Kubernetes cluster</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPatternFileCode-1070" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPatternFileCode-more-info" onclick="toggle_visibility('meshery-server-ErrPatternFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1070" class="error-name-code">
-              <code>ErrPatternFileCode-1070</code>
+              <a href="/reference/error-codes/component-meshery-server/errpatternfilecode-1070/"><code>ErrPatternFileCode-1070</code></a>
             </td>
             <td>Failed to Parse design File</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPatternFileCode-1070" target="_blank">search forum</a></td>
@@ -5237,12 +5663,14 @@ Ensure Meshery is able to reach the Kubernetes cluster</p>
         
           
           
+          
+          
             
           
           <tr id="ErrExecutionPlanCode-1071" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrExecutionPlanCode-more-info" onclick="toggle_visibility('meshery-server-ErrExecutionPlanCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1071" class="error-name-code">
-              <code>ErrExecutionPlanCode-1071</code>
+              <a href="/reference/error-codes/component-meshery-server/errexecutionplancode-1071/"><code>ErrExecutionPlanCode-1071</code></a>
             </td>
             <td>Failed to Create Execution Plan</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrExecutionPlanCode-1071" target="_blank">search forum</a></td>
@@ -5260,12 +5688,14 @@ Ensure Meshery is able to reach the Kubernetes cluster</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidPatternCode-1072" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidPatternCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidPatternCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1072" class="error-name-code">
-              <code>ErrInvalidPatternCode-1072</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidpatterncode-1072/"><code>ErrInvalidPatternCode-1072</code></a>
             </td>
             <td>Invalid design, execution is infeasible</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidPatternCode-1072" target="_blank">search forum</a></td>
@@ -5283,12 +5713,14 @@ Ensure Meshery is able to reach the Kubernetes cluster</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPatternDeployCode-1073" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPatternDeployCode-more-info" onclick="toggle_visibility('meshery-server-ErrPatternDeployCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1073" class="error-name-code">
-              <code>ErrPatternDeployCode-1073</code>
+              <a href="/reference/error-codes/component-meshery-server/errpatterndeploycode-1073/"><code>ErrPatternDeployCode-1073</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPatternDeployCode-1073" target="_blank">search forum</a></td>
@@ -5308,12 +5740,14 @@ Assign the current Kubernetes connection to the selected environment.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreateDirCode-1074" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCreateDirCode-more-info" onclick="toggle_visibility('meshery-server-ErrCreateDirCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1074" class="error-name-code">
-              <code>ErrCreateDirCode-1074</code>
+              <a href="/reference/error-codes/component-meshery-server/errcreatedircode-1074/"><code>ErrCreateDirCode-1074</code></a>
             </td>
             <td>Error creating directory </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateDirCode-1074" target="_blank">search forum</a></td>
@@ -5333,12 +5767,14 @@ check if sufficient storage is available to create dir</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidRequestObjectCode-1075" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidRequestObjectCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidRequestObjectCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1075" class="error-name-code">
-              <code>ErrInvalidRequestObjectCode-1075</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidrequestobjectcode-1075/"><code>ErrInvalidRequestObjectCode-1075</code></a>
             </td>
             <td>Error invalid request object:</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidRequestObjectCode-1075" target="_blank">search forum</a></td>
@@ -5356,12 +5792,14 @@ check if sufficient storage is available to create dir</p>
         
           
           
+          
+          
             
           
           <tr id="ErrChangeK8sContextCode-1076" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrChangeK8sContextCode-more-info" onclick="toggle_visibility('meshery-server-ErrChangeK8sContextCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1076" class="error-name-code">
-              <code>ErrChangeK8sContextCode-1076</code>
+              <a href="/reference/error-codes/component-meshery-server/errchangek8scontextcode-1076/"><code>ErrChangeK8sContextCode-1076</code></a>
             </td>
             <td>Error changing context</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrChangeK8sContextCode-1076" target="_blank">search forum</a></td>
@@ -5379,12 +5817,14 @@ check if sufficient storage is available to create dir</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSavingUserPreferenceCode-1077" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSavingUserPreferenceCode-more-info" onclick="toggle_visibility('meshery-server-ErrSavingUserPreferenceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1077" class="error-name-code">
-              <code>ErrSavingUserPreferenceCode-1077</code>
+              <a href="/reference/error-codes/component-meshery-server/errsavinguserpreferencecode-1077/"><code>ErrSavingUserPreferenceCode-1077</code></a>
             </td>
             <td>Error saving user preference.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSavingUserPreferenceCode-1077" target="_blank">search forum</a></td>
@@ -5406,12 +5846,14 @@ Make sure extension provides these preferences</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetFilterCode-1078" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetFilterCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1078" class="error-name-code">
-              <code>ErrGetFilterCode-1078</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetfiltercode-1078/"><code>ErrGetFilterCode-1078</code></a>
             </td>
             <td>Error failed to get filter</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetFilterCode-1078" target="_blank">search forum</a></td>
@@ -5429,12 +5871,14 @@ Make sure extension provides these preferences</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSaveFilterCode-1079" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSaveFilterCode-more-info" onclick="toggle_visibility('meshery-server-ErrSaveFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1079" class="error-name-code">
-              <code>ErrSaveFilterCode-1079</code>
+              <a href="/reference/error-codes/component-meshery-server/errsavefiltercode-1079/"><code>ErrSaveFilterCode-1079</code></a>
             </td>
             <td>Error failed to save filter</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSaveFilterCode-1079" target="_blank">search forum</a></td>
@@ -5454,12 +5898,14 @@ Try uploading a different filter</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDecodeFilterCode-1080" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDecodeFilterCode-more-info" onclick="toggle_visibility('meshery-server-ErrDecodeFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1080" class="error-name-code">
-              <code>ErrDecodeFilterCode-1080</code>
+              <a href="/reference/error-codes/component-meshery-server/errdecodefiltercode-1080/"><code>ErrDecodeFilterCode-1080</code></a>
             </td>
             <td>Error failed to decode filters data into go slice</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDecodeFilterCode-1080" target="_blank">search forum</a></td>
@@ -5477,12 +5923,14 @@ Try uploading a different filter</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEncodeFilterCode-1081" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEncodeFilterCode-more-info" onclick="toggle_visibility('meshery-server-ErrEncodeFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1081" class="error-name-code">
-              <code>ErrEncodeFilterCode-1081</code>
+              <a href="/reference/error-codes/component-meshery-server/errencodefiltercode-1081/"><code>ErrEncodeFilterCode-1081</code></a>
             </td>
             <td>Error failed to encode filter</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEncodeFilterCode-1081" target="_blank">search forum</a></td>
@@ -5500,12 +5948,14 @@ Try uploading a different filter</p>
         
           
           
+          
+          
             
           
           <tr id="ErrImportFilterCode-1082" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrImportFilterCode-more-info" onclick="toggle_visibility('meshery-server-ErrImportFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1082" class="error-name-code">
-              <code>ErrImportFilterCode-1082</code>
+              <a href="/reference/error-codes/component-meshery-server/errimportfiltercode-1082/"><code>ErrImportFilterCode-1082</code></a>
             </td>
             <td>Error failed to import filter</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrImportFilterCode-1082" target="_blank">search forum</a></td>
@@ -5523,12 +5973,14 @@ Try uploading a different filter</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchFilterCode-1083" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchFilterCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1083" class="error-name-code">
-              <code>ErrFetchFilterCode-1083</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchfiltercode-1083/"><code>ErrFetchFilterCode-1083</code></a>
             </td>
             <td>Error failed to fetch filter.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchFilterCode-1083" target="_blank">search forum</a></td>
@@ -5546,12 +5998,14 @@ Try uploading a different filter</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeleteFilterCode-1084" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeleteFilterCode-more-info" onclick="toggle_visibility('meshery-server-ErrDeleteFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1084" class="error-name-code">
-              <code>ErrDeleteFilterCode-1084</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeletefiltercode-1084/"><code>ErrDeleteFilterCode-1084</code></a>
             </td>
             <td>Error failed to delete filter.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeleteFilterCode-1084" target="_blank">search forum</a></td>
@@ -5569,12 +6023,14 @@ Try uploading a different filter</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSavePatternCode-1085" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSavePatternCode-more-info" onclick="toggle_visibility('meshery-server-ErrSavePatternCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1085" class="error-name-code">
-              <code>ErrSavePatternCode-1085</code>
+              <a href="/reference/error-codes/component-meshery-server/errsavepatterncode-1085/"><code>ErrSavePatternCode-1085</code></a>
             </td>
             <td>Error failed to save design.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSavePatternCode-1085" target="_blank">search forum</a></td>
@@ -5594,12 +6050,14 @@ Try reducing the size of the design file by removing the number of images, using
         
           
           
+          
+          
             
           
           <tr id="ErrSaveApplicationCode-1086" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSaveApplicationCode-more-info" onclick="toggle_visibility('meshery-server-ErrSaveApplicationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1086" class="error-name-code">
-              <code>ErrSaveApplicationCode-1086</code>
+              <a href="/reference/error-codes/component-meshery-server/errsaveapplicationcode-1086/"><code>ErrSaveApplicationCode-1086</code></a>
             </td>
             <td>Error failed to save application.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSaveApplicationCode-1086" target="_blank">search forum</a></td>
@@ -5617,12 +6075,14 @@ Try reducing the size of the design file by removing the number of images, using
         
           
           
+          
+          
             
           
           <tr id="ErrGetPatternCode-1087" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetPatternCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetPatternCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1087" class="error-name-code">
-              <code>ErrGetPatternCode-1087</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetpatterncode-1087/"><code>ErrGetPatternCode-1087</code></a>
             </td>
             <td>Unable to open this design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetPatternCode-1087" target="_blank">search forum</a></td>
@@ -5645,12 +6105,14 @@ Sign out and sign back in to refresh your session, then retry.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeletePatternCode-1088" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeletePatternCode-more-info" onclick="toggle_visibility('meshery-server-ErrDeletePatternCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1088" class="error-name-code">
-              <code>ErrDeletePatternCode-1088</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeletepatterncode-1088/"><code>ErrDeletePatternCode-1088</code></a>
             </td>
             <td>Unable to delete this design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeletePatternCode-1088" target="_blank">search forum</a></td>
@@ -5672,12 +6134,14 @@ Sign out and sign back in to refresh your session, then retry.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchPatternCode-1089" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchPatternCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchPatternCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1089" class="error-name-code">
-              <code>ErrFetchPatternCode-1089</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchpatterncode-1089/"><code>ErrFetchPatternCode-1089</code></a>
             </td>
             <td>Unable to load your designs</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchPatternCode-1089" target="_blank">search forum</a></td>
@@ -5699,12 +6163,14 @@ Confirm that the configured remote provider is online.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrImportPatternCode-1090" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrImportPatternCode-more-info" onclick="toggle_visibility('meshery-server-ErrImportPatternCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1090" class="error-name-code">
-              <code>ErrImportPatternCode-1090</code>
+              <a href="/reference/error-codes/component-meshery-server/errimportpatterncode-1090/"><code>ErrImportPatternCode-1090</code></a>
             </td>
             <td>Error failed to import design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrImportPatternCode-1090" target="_blank">search forum</a></td>
@@ -5722,12 +6188,14 @@ Confirm that the configured remote provider is online.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEncodePatternCode-1091" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEncodePatternCode-more-info" onclick="toggle_visibility('meshery-server-ErrEncodePatternCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1091" class="error-name-code">
-              <code>ErrEncodePatternCode-1091</code>
+              <a href="/reference/error-codes/component-meshery-server/errencodepatterncode-1091/"><code>ErrEncodePatternCode-1091</code></a>
             </td>
             <td>Error failed to encode design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEncodePatternCode-1091" target="_blank">search forum</a></td>
@@ -5745,12 +6213,14 @@ Confirm that the configured remote provider is online.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDecodePatternCode-1092" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDecodePatternCode-more-info" onclick="toggle_visibility('meshery-server-ErrDecodePatternCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1092" class="error-name-code">
-              <code>ErrDecodePatternCode-1092</code>
+              <a href="/reference/error-codes/component-meshery-server/errdecodepatterncode-1092/"><code>ErrDecodePatternCode-1092</code></a>
             </td>
             <td>Error failed to decode design data into go slice</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDecodePatternCode-1092" target="_blank">search forum</a></td>
@@ -5768,12 +6238,14 @@ Confirm that the configured remote provider is online.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParsePatternCode-1093" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrParsePatternCode-more-info" onclick="toggle_visibility('meshery-server-ErrParsePatternCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1093" class="error-name-code">
-              <code>ErrParsePatternCode-1093</code>
+              <a href="/reference/error-codes/component-meshery-server/errparsepatterncode-1093/"><code>ErrParsePatternCode-1093</code></a>
             </td>
             <td>Error failed to parse pattern file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParsePatternCode-1093" target="_blank">search forum</a></td>
@@ -5791,12 +6263,14 @@ Confirm that the configured remote provider is online.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrConvertPatternCode-1094" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrConvertPatternCode-more-info" onclick="toggle_visibility('meshery-server-ErrConvertPatternCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1094" class="error-name-code">
-              <code>ErrConvertPatternCode-1094</code>
+              <a href="/reference/error-codes/component-meshery-server/errconvertpatterncode-1094/"><code>ErrConvertPatternCode-1094</code></a>
             </td>
             <td>Failed to migrate design to current schema version</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConvertPatternCode-1094" target="_blank">search forum</a></td>
@@ -5815,12 +6289,14 @@ A field present in the older schema has no clean mapping to the current v1beta3 
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidKubeConfigCode-1095" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidKubeConfigCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidKubeConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1095" class="error-name-code">
-              <code>ErrInvalidKubeConfigCode-1095</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidkubeconfigcode-1095/"><code>ErrInvalidKubeConfigCode-1095</code></a>
             </td>
             <td>Invalid Kube Config </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidKubeConfigCode-1095" target="_blank">search forum</a></td>
@@ -5838,12 +6314,14 @@ A field present in the older schema has no clean mapping to the current v1beta3 
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidKubeHandlerCode-1096" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidKubeHandlerCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidKubeHandlerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1096" class="error-name-code">
-              <code>ErrInvalidKubeHandlerCode-1096</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidkubehandlercode-1096/"><code>ErrInvalidKubeHandlerCode-1096</code></a>
             </td>
             <td>Kubernetes cluster is unavailable for </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidKubeHandlerCode-1096" target="_blank">search forum</a></td>
@@ -5863,12 +6341,14 @@ Verify that the Meshery server has valid and updated credentials to access the K
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidKubeContextCode-1097" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidKubeContextCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidKubeContextCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1097" class="error-name-code">
-              <code>ErrInvalidKubeContextCode-1097</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidkubecontextcode-1097/"><code>ErrInvalidKubeContextCode-1097</code></a>
             </td>
             <td>Invalid Kube Context</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidKubeContextCode-1097" target="_blank">search forum</a></td>
@@ -5886,12 +6366,14 @@ Verify that the Meshery server has valid and updated credentials to access the K
         
           
           
+          
+          
             
           
           <tr id="ErrValidateCode-1098" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrValidateCode-more-info" onclick="toggle_visibility('meshery-server-ErrValidateCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1098" class="error-name-code">
-              <code>ErrValidateCode-1098</code>
+              <a href="/reference/error-codes/component-meshery-server/errvalidatecode-1098/"><code>ErrValidateCode-1098</code></a>
             </td>
             <td>failed to validate the given value against the schema</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrValidateCode-1098" target="_blank">search forum</a></td>
@@ -5912,12 +6394,14 @@ Make sure appropriate value types are sent</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplicationContentCode-1099" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrApplicationContentCode-more-info" onclick="toggle_visibility('meshery-server-ErrApplicationContentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1099" class="error-name-code">
-              <code>ErrApplicationContentCode-1099</code>
+              <a href="/reference/error-codes/component-meshery-server/errapplicationcontentcode-1099/"><code>ErrApplicationContentCode-1099</code></a>
             </td>
             <td>failed to 
 the application content</td>
@@ -5937,12 +6421,14 @@ Remote provider doesn&#39;t support this capability</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRemoteApplicationURLCode-1100" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRemoteApplicationURLCode-more-info" onclick="toggle_visibility('meshery-server-ErrRemoteApplicationURLCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1100" class="error-name-code">
-              <code>ErrRemoteApplicationURLCode-1100</code>
+              <a href="/reference/error-codes/component-meshery-server/errremoteapplicationurlcode-1100/"><code>ErrRemoteApplicationURLCode-1100</code></a>
             </td>
             <td>Error failed to persist remote application</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRemoteApplicationURLCode-1100" target="_blank">search forum</a></td>
@@ -5960,12 +6446,14 @@ Remote provider doesn&#39;t support this capability</p>
         
           
           
+          
+          
             
           
           <tr id="ErrClonePatternCode-1101" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrClonePatternCode-more-info" onclick="toggle_visibility('meshery-server-ErrClonePatternCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1101" class="error-name-code">
-              <code>ErrClonePatternCode-1101</code>
+              <a href="/reference/error-codes/component-meshery-server/errclonepatterncode-1101/"><code>ErrClonePatternCode-1101</code></a>
             </td>
             <td>Error failed to clone design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrClonePatternCode-1101" target="_blank">search forum</a></td>
@@ -5983,12 +6471,14 @@ Remote provider doesn&#39;t support this capability</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCloneFilterCode-1102" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCloneFilterCode-more-info" onclick="toggle_visibility('meshery-server-ErrCloneFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1102" class="error-name-code">
-              <code>ErrCloneFilterCode-1102</code>
+              <a href="/reference/error-codes/component-meshery-server/errclonefiltercode-1102/"><code>ErrCloneFilterCode-1102</code></a>
             </td>
             <td>Error failed to clone filter</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCloneFilterCode-1102" target="_blank">search forum</a></td>
@@ -6006,12 +6496,14 @@ Remote provider doesn&#39;t support this capability</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGenerateComponentsCode-1103" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGenerateComponentsCode-more-info" onclick="toggle_visibility('meshery-server-ErrGenerateComponentsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1103" class="error-name-code">
-              <code>ErrGenerateComponentsCode-1103</code>
+              <a href="/reference/error-codes/component-meshery-server/errgeneratecomponentscode-1103/"><code>ErrGenerateComponentsCode-1103</code></a>
             </td>
             <td>failed to generate components for the given payload</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGenerateComponentsCode-1103" target="_blank">search forum</a></td>
@@ -6029,12 +6521,14 @@ Remote provider doesn&#39;t support this capability</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPublishCatalogPatternCode-1104" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPublishCatalogPatternCode-more-info" onclick="toggle_visibility('meshery-server-ErrPublishCatalogPatternCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1104" class="error-name-code">
-              <code>ErrPublishCatalogPatternCode-1104</code>
+              <a href="/reference/error-codes/component-meshery-server/errpublishcatalogpatterncode-1104/"><code>ErrPublishCatalogPatternCode-1104</code></a>
             </td>
             <td>Error failed to publish catalog design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPublishCatalogPatternCode-1104" target="_blank">search forum</a></td>
@@ -6052,12 +6546,14 @@ Remote provider doesn&#39;t support this capability</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPublishCatalogFilterCode-1105" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPublishCatalogFilterCode-more-info" onclick="toggle_visibility('meshery-server-ErrPublishCatalogFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1105" class="error-name-code">
-              <code>ErrPublishCatalogFilterCode-1105</code>
+              <a href="/reference/error-codes/component-meshery-server/errpublishcatalogfiltercode-1105/"><code>ErrPublishCatalogFilterCode-1105</code></a>
             </td>
             <td>Error failed to publish catalog filter</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPublishCatalogFilterCode-1105" target="_blank">search forum</a></td>
@@ -6075,12 +6571,14 @@ Remote provider doesn&#39;t support this capability</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetMeshModelsCode-1106" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetMeshModelsCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetMeshModelsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1106" class="error-name-code">
-              <code>ErrGetMeshModelsCode-1106</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetmeshmodelscode-1106/"><code>ErrGetMeshModelsCode-1106</code></a>
             </td>
             <td>could not get meshmodel entities</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetMeshModelsCode-1106" target="_blank">search forum</a></td>
@@ -6100,12 +6598,14 @@ drop the Meshmodel tables and restart Meshery server</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetUserDetailsCode-1107" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetUserDetailsCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetUserDetailsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1107" class="error-name-code">
-              <code>ErrGetUserDetailsCode-1107</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetuserdetailscode-1107/"><code>ErrGetUserDetailsCode-1107</code></a>
             </td>
             <td>could not get user details</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetUserDetailsCode-1107" target="_blank">search forum</a></td>
@@ -6127,12 +6627,14 @@ Make sure you are using a valid token</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResolvingRelationshipCode-1108" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResolvingRelationshipCode-more-info" onclick="toggle_visibility('meshery-server-ErrResolvingRelationshipCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1108" class="error-name-code">
-              <code>ErrResolvingRelationshipCode-1108</code>
+              <a href="/reference/error-codes/component-meshery-server/errresolvingrelationshipcode-1108/"><code>ErrResolvingRelationshipCode-1108</code></a>
             </td>
             <td>could not resolve rego relationship</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResolvingRelationshipCode-1108" target="_blank">search forum</a></td>
@@ -6155,12 +6657,14 @@ Make sure the server is evaluating the query correctly, add some logs</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestVersionCode-1109" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetLatestVersionCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetLatestVersionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1109" class="error-name-code">
-              <code>ErrGetLatestVersionCode-1109</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetlatestversioncode-1109/"><code>ErrGetLatestVersionCode-1109</code></a>
             </td>
             <td>failed to get latest version of Meshery.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestVersionCode-1109" target="_blank">search forum</a></td>
@@ -6178,12 +6682,14 @@ Make sure the server is evaluating the query correctly, add some logs</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreateFileCode-1110" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCreateFileCode-more-info" onclick="toggle_visibility('meshery-server-ErrCreateFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1110" class="error-name-code">
-              <code>ErrCreateFileCode-1110</code>
+              <a href="/reference/error-codes/component-meshery-server/errcreatefilecode-1110/"><code>ErrCreateFileCode-1110</code></a>
             </td>
             <td>Could not create file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateFileCode-1110" target="_blank">search forum</a></td>
@@ -6203,12 +6709,14 @@ check if sufficient storage is available to create file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrLoadCertificateCode-1111" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrLoadCertificateCode-more-info" onclick="toggle_visibility('meshery-server-ErrLoadCertificateCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1111" class="error-name-code">
-              <code>ErrLoadCertificateCode-1111</code>
+              <a href="/reference/error-codes/component-meshery-server/errloadcertificatecode-1111/"><code>ErrLoadCertificateCode-1111</code></a>
             </td>
             <td>Could not load certificates associated with performance profile</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLoadCertificateCode-1111" target="_blank">search forum</a></td>
@@ -6226,12 +6734,14 @@ check if sufficient storage is available to create file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCleanupCertificateCode-1112" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCleanupCertificateCode-more-info" onclick="toggle_visibility('meshery-server-ErrCleanupCertificateCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1112" class="error-name-code">
-              <code>ErrCleanupCertificateCode-1112</code>
+              <a href="/reference/error-codes/component-meshery-server/errcleanupcertificatecode-1112/"><code>ErrCleanupCertificateCode-1112</code></a>
             </td>
             <td>Could not delete certificates from </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCleanupCertificateCode-1112" target="_blank">search forum</a></td>
@@ -6250,12 +6760,14 @@ file was deleted manually</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDownlaodWASMFileCode-1113" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDownlaodWASMFileCode-more-info" onclick="toggle_visibility('meshery-server-ErrDownlaodWASMFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1113" class="error-name-code">
-              <code>ErrDownlaodWASMFileCode-1113</code>
+              <a href="/reference/error-codes/component-meshery-server/errdownlaodwasmfilecode-1113/"><code>ErrDownlaodWASMFileCode-1113</code></a>
             </td>
             <td>failed to 
 the WASM file</td>
@@ -6276,12 +6788,14 @@ Ensure Meshery Server is working properly and connected to remote provider</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchProfileCode-1114" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchProfileCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchProfileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1114" class="error-name-code">
-              <code>ErrFetchProfileCode-1114</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchprofilecode-1114/"><code>ErrFetchProfileCode-1114</code></a>
             </td>
             <td>Error failed to fetch profile</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchProfileCode-1114" target="_blank">search forum</a></td>
@@ -6299,12 +6813,14 @@ Ensure Meshery Server is working properly and connected to remote provider</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPerformanceTestCode-1115" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPerformanceTestCode-more-info" onclick="toggle_visibility('meshery-server-ErrPerformanceTestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1115" class="error-name-code">
-              <code>ErrPerformanceTestCode-1115</code>
+              <a href="/reference/error-codes/component-meshery-server/errperformancetestcode-1115/"><code>ErrPerformanceTestCode-1115</code></a>
             </td>
             <td>Load test error</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPerformanceTestCode-1115" target="_blank">search forum</a></td>
@@ -6322,12 +6838,14 @@ Ensure Meshery Server is working properly and connected to remote provider</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchApplicationCode-1116" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchApplicationCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchApplicationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1116" class="error-name-code">
-              <code>ErrFetchApplicationCode-1116</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchapplicationcode-1116/"><code>ErrFetchApplicationCode-1116</code></a>
             </td>
             <td>Error failed to fetch applications</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchApplicationCode-1116" target="_blank">search forum</a></td>
@@ -6346,12 +6864,14 @@ Token might have expired.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeleteApplicationCode-1117" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeleteApplicationCode-more-info" onclick="toggle_visibility('meshery-server-ErrDeleteApplicationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1117" class="error-name-code">
-              <code>ErrDeleteApplicationCode-1117</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeleteapplicationcode-1117/"><code>ErrDeleteApplicationCode-1117</code></a>
             </td>
             <td>Error failed to delete application</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeleteApplicationCode-1117" target="_blank">search forum</a></td>
@@ -6370,12 +6890,14 @@ You might not have enough permissions to perform the operation.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetEventsCode-1118" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetEventsCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetEventsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1118" class="error-name-code">
-              <code>ErrGetEventsCode-1118</code>
+              <a href="/reference/error-codes/component-meshery-server/errgeteventscode-1118/"><code>ErrGetEventsCode-1118</code></a>
             </td>
             <td>Could not retrieve events</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetEventsCode-1118" target="_blank">search forum</a></td>
@@ -6394,12 +6916,14 @@ Database is not reachable or corrupt.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateEventCode-1119" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUpdateEventCode-more-info" onclick="toggle_visibility('meshery-server-ErrUpdateEventCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1119" class="error-name-code">
-              <code>ErrUpdateEventCode-1119</code>
+              <a href="/reference/error-codes/component-meshery-server/errupdateeventcode-1119/"><code>ErrUpdateEventCode-1119</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateEventCode-1119" target="_blank">search forum</a></td>
@@ -6420,12 +6944,14 @@ Reset database.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeleteEventCode-1120" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeleteEventCode-more-info" onclick="toggle_visibility('meshery-server-ErrDeleteEventCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1120" class="error-name-code">
-              <code>ErrDeleteEventCode-1120</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeleteeventcode-1120/"><code>ErrDeleteEventCode-1120</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeleteEventCode-1120" target="_blank">search forum</a></td>
@@ -6445,12 +6971,14 @@ Reset database.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnsupportedEventStatusCode-1121" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnsupportedEventStatusCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnsupportedEventStatusCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1121" class="error-name-code">
-              <code>ErrUnsupportedEventStatusCode-1121</code>
+              <a href="/reference/error-codes/component-meshery-server/errunsupportedeventstatuscode-1121/"><code>ErrUnsupportedEventStatusCode-1121</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnsupportedEventStatusCode-1121" target="_blank">search forum</a></td>
@@ -6469,12 +6997,14 @@ Check for availability of a new version of Meshery Server. Try upgrading to the 
         
           
           
+          
+          
             
           
           <tr id="ErrBulkUpdateEventCode-1122" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrBulkUpdateEventCode-more-info" onclick="toggle_visibility('meshery-server-ErrBulkUpdateEventCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1122" class="error-name-code">
-              <code>ErrBulkUpdateEventCode-1122</code>
+              <a href="/reference/error-codes/component-meshery-server/errbulkupdateeventcode-1122/"><code>ErrBulkUpdateEventCode-1122</code></a>
             </td>
             <td>Could not update status for one or more events.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrBulkUpdateEventCode-1122" target="_blank">search forum</a></td>
@@ -6496,12 +7026,14 @@ Visit Settings and reset the Meshery database.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrBulkDeleteEventCode-1123" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrBulkDeleteEventCode-more-info" onclick="toggle_visibility('meshery-server-ErrBulkDeleteEventCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1123" class="error-name-code">
-              <code>ErrBulkDeleteEventCode-1123</code>
+              <a href="/reference/error-codes/component-meshery-server/errbulkdeleteeventcode-1123/"><code>ErrBulkDeleteEventCode-1123</code></a>
             </td>
             <td>Could not delete one or more events.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrBulkDeleteEventCode-1123" target="_blank">search forum</a></td>
@@ -6521,12 +7053,14 @@ Visit Settings and reset the Meshery database.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchMeshSyncResourcesCode-1124" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchMeshSyncResourcesCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchMeshSyncResourcesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1124" class="error-name-code">
-              <code>ErrFetchMeshSyncResourcesCode-1124</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchmeshsyncresourcescode-1124/"><code>ErrFetchMeshSyncResourcesCode-1124</code></a>
             </td>
             <td>Error fetching MeshSync resources
 DB might be corrupted</td>
@@ -6546,12 +7080,14 @@ Try restarting Meshery server</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDesignSourceContentCode-1125" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDesignSourceContentCode-more-info" onclick="toggle_visibility('meshery-server-ErrDesignSourceContentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1125" class="error-name-code">
-              <code>ErrDesignSourceContentCode-1125</code>
+              <a href="/reference/error-codes/component-meshery-server/errdesignsourcecontentcode-1125/"><code>ErrDesignSourceContentCode-1125</code></a>
             </td>
             <td>failed to 
 the design content</td>
@@ -6571,12 +7107,14 @@ Remote provider doesn&#39;t support this capability.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetConnectionsCode-1126" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetConnectionsCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetConnectionsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1126" class="error-name-code">
-              <code>ErrGetConnectionsCode-1126</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetconnectionscode-1126/"><code>ErrGetConnectionsCode-1126</code></a>
             </td>
             <td>Failed to retrieve connections</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetConnectionsCode-1126" target="_blank">search forum</a></td>
@@ -6594,12 +7132,14 @@ Remote provider doesn&#39;t support this capability.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrWritingIntoFileCode-1127" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrWritingIntoFileCode-more-info" onclick="toggle_visibility('meshery-server-ErrWritingIntoFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1127" class="error-name-code">
-              <code>ErrWritingIntoFileCode-1127</code>
+              <a href="/reference/error-codes/component-meshery-server/errwritingintofilecode-1127/"><code>ErrWritingIntoFileCode-1127</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWritingIntoFileCode-1127" target="_blank">search forum</a></td>
@@ -6619,12 +7159,14 @@ check if the file is corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrBuildOCIImgCode-1128" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrBuildOCIImgCode-more-info" onclick="toggle_visibility('meshery-server-ErrBuildOCIImgCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1128" class="error-name-code">
-              <code>ErrBuildOCIImgCode-1128</code>
+              <a href="/reference/error-codes/component-meshery-server/errbuildociimgcode-1128/"><code>ErrBuildOCIImgCode-1128</code></a>
             </td>
             <td>Failed to build OCI image</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrBuildOCIImgCode-1128" target="_blank">search forum</a></td>
@@ -6644,12 +7186,14 @@ check if the source directory is not corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSaveOCIArtifactCode-1129" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSaveOCIArtifactCode-more-info" onclick="toggle_visibility('meshery-server-ErrSaveOCIArtifactCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1129" class="error-name-code">
-              <code>ErrSaveOCIArtifactCode-1129</code>
+              <a href="/reference/error-codes/component-meshery-server/errsaveociartifactcode-1129/"><code>ErrSaveOCIArtifactCode-1129</code></a>
             </td>
             <td>Failed to persist OCI artifact</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSaveOCIArtifactCode-1129" target="_blank">search forum</a></td>
@@ -6673,12 +7217,14 @@ check if the OCI img is not corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrIOReaderCode-1130" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrIOReaderCode-more-info" onclick="toggle_visibility('meshery-server-ErrIOReaderCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1130" class="error-name-code">
-              <code>ErrIOReaderCode-1130</code>
+              <a href="/reference/error-codes/component-meshery-server/errioreadercode-1130/"><code>ErrIOReaderCode-1130</code></a>
             </td>
             <td>Failed to read from io.Reader</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrIOReaderCode-1130" target="_blank">search forum</a></td>
@@ -6696,12 +7242,14 @@ check if the OCI img is not corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnCompressOCIArtifactCode-1131" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnCompressOCIArtifactCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnCompressOCIArtifactCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1131" class="error-name-code">
-              <code>ErrUnCompressOCIArtifactCode-1131</code>
+              <a href="/reference/error-codes/component-meshery-server/erruncompressociartifactcode-1131/"><code>ErrUnCompressOCIArtifactCode-1131</code></a>
             </td>
             <td>Failed to uncompress OCI artifact</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnCompressOCIArtifactCode-1131" target="_blank">search forum</a></td>
@@ -6720,12 +7268,14 @@ OCI artifact may be corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrWalkingLocalDirectoryCode-1132" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrWalkingLocalDirectoryCode-more-info" onclick="toggle_visibility('meshery-server-ErrWalkingLocalDirectoryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1132" class="error-name-code">
-              <code>ErrWalkingLocalDirectoryCode-1132</code>
+              <a href="/reference/error-codes/component-meshery-server/errwalkinglocaldirectorycode-1132/"><code>ErrWalkingLocalDirectoryCode-1132</code></a>
             </td>
             <td>Failed to walk local directory: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWalkingLocalDirectoryCode-1132" target="_blank">search forum</a></td>
@@ -6744,12 +7294,14 @@ local directory may be corrupted or inaccessible</p>
         
           
           
+          
+          
             
           
           <tr id="ErrConvertingK8sManifestToDesignCode-1133" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrConvertingK8sManifestToDesignCode-more-info" onclick="toggle_visibility('meshery-server-ErrConvertingK8sManifestToDesignCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1133" class="error-name-code">
-              <code>ErrConvertingK8sManifestToDesignCode-1133</code>
+              <a href="/reference/error-codes/component-meshery-server/errconvertingk8smanifesttodesigncode-1133/"><code>ErrConvertingK8sManifestToDesignCode-1133</code></a>
             </td>
             <td>Failed to convert k8s manifest to design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConvertingK8sManifestToDesignCode-1133" target="_blank">search forum</a></td>
@@ -6770,12 +7322,14 @@ check if the source type selected is Kubernetes Manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrConvertingDockerComposeToDesignCode-1134" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrConvertingDockerComposeToDesignCode-more-info" onclick="toggle_visibility('meshery-server-ErrConvertingDockerComposeToDesignCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1134" class="error-name-code">
-              <code>ErrConvertingDockerComposeToDesignCode-1134</code>
+              <a href="/reference/error-codes/component-meshery-server/errconvertingdockercomposetodesigncode-1134/"><code>ErrConvertingDockerComposeToDesignCode-1134</code></a>
             </td>
             <td>Failed to convert docker compose to design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConvertingDockerComposeToDesignCode-1134" target="_blank">search forum</a></td>
@@ -6796,12 +7350,14 @@ check if the source type selected is Docker Compose</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMarshallingDesignIntoYAMLCode-1135" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMarshallingDesignIntoYAMLCode-more-info" onclick="toggle_visibility('meshery-server-ErrMarshallingDesignIntoYAMLCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1135" class="error-name-code">
-              <code>ErrMarshallingDesignIntoYAMLCode-1135</code>
+              <a href="/reference/error-codes/component-meshery-server/errmarshallingdesignintoyamlcode-1135/"><code>ErrMarshallingDesignIntoYAMLCode-1135</code></a>
             </td>
             <td>Failed to marshal design into YAML</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMarshallingDesignIntoYAMLCode-1135" target="_blank">search forum</a></td>
@@ -6820,12 +7376,14 @@ design may be corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrConvertingHelmChartToDesignCode-1136" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrConvertingHelmChartToDesignCode-more-info" onclick="toggle_visibility('meshery-server-ErrConvertingHelmChartToDesignCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1136" class="error-name-code">
-              <code>ErrConvertingHelmChartToDesignCode-1136</code>
+              <a href="/reference/error-codes/component-meshery-server/errconvertinghelmcharttodesigncode-1136/"><code>ErrConvertingHelmChartToDesignCode-1136</code></a>
             </td>
             <td>Failed to convert helm chart to design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConvertingHelmChartToDesignCode-1136" target="_blank">search forum</a></td>
@@ -6846,12 +7404,14 @@ check if the source type selected is Helm Chart</p>
         
           
           
+          
+          
             
           
           <tr id="ErrErrNewDynamicClientGeneratorCode-1138" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrErrNewDynamicClientGeneratorCode-more-info" onclick="toggle_visibility('meshery-server-ErrErrNewDynamicClientGeneratorCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1138" class="error-name-code">
-              <code>ErrErrNewDynamicClientGeneratorCode-1138</code>
+              <a href="/reference/error-codes/component-meshery-server/errerrnewdynamicclientgeneratorcode-1138/"><code>ErrErrNewDynamicClientGeneratorCode-1138</code></a>
             </td>
             <td>Unable to generate the dynamic client generator</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrErrNewDynamicClientGeneratorCode-1138" target="_blank">search forum</a></td>
@@ -6869,12 +7429,14 @@ check if the source type selected is Helm Chart</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidK8SConfigCode-1139" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidK8SConfigCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidK8SConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1139" class="error-name-code">
-              <code>ErrInvalidK8SConfigCode-1139</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidk8sconfigcode-1139/"><code>ErrInvalidK8SConfigCode-1139</code></a>
             </td>
             <td>No valid kubernetes config found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidK8SConfigCode-1139" target="_blank">search forum</a></td>
@@ -6892,12 +7454,14 @@ check if the source type selected is Helm Chart</p>
         
           
           
+          
+          
             
           
           <tr id="ErrClientConfigCode-1140" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrClientConfigCode-more-info" onclick="toggle_visibility('meshery-server-ErrClientConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1140" class="error-name-code">
-              <code>ErrClientConfigCode-1140</code>
+              <a href="/reference/error-codes/component-meshery-server/errclientconfigcode-1140/"><code>ErrClientConfigCode-1140</code></a>
             </td>
             <td>Unable to create client config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrClientConfigCode-1140" target="_blank">search forum</a></td>
@@ -6915,12 +7479,14 @@ check if the source type selected is Helm Chart</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchKubernetesNodesCode-1141" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchKubernetesNodesCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchKubernetesNodesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1141" class="error-name-code">
-              <code>ErrFetchKubernetesNodesCode-1141</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchkubernetesnodescode-1141/"><code>ErrFetchKubernetesNodesCode-1141</code></a>
             </td>
             <td>Unable to fetch kubernetes nodes</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchKubernetesNodesCode-1141" target="_blank">search forum</a></td>
@@ -6938,12 +7504,14 @@ check if the source type selected is Helm Chart</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchNodesCode-1142" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchNodesCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchNodesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1142" class="error-name-code">
-              <code>ErrFetchNodesCode-1142</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchnodescode-1142/"><code>ErrFetchNodesCode-1142</code></a>
             </td>
             <td>Unable to get the list of nodes</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchNodesCode-1142" target="_blank">search forum</a></td>
@@ -6961,12 +7529,14 @@ check if the source type selected is Helm Chart</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchKubernetesVersionCode-1143" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchKubernetesVersionCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchKubernetesVersionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1143" class="error-name-code">
-              <code>ErrFetchKubernetesVersionCode-1143</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchkubernetesversioncode-1143/"><code>ErrFetchKubernetesVersionCode-1143</code></a>
             </td>
             <td>Unable to fetch kubernetes version</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchKubernetesVersionCode-1143" target="_blank">search forum</a></td>
@@ -6984,12 +7554,14 @@ check if the source type selected is Helm Chart</p>
         
           
           
+          
+          
             
           
           <tr id="ErrScanKubernetesCode-1144" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrScanKubernetesCode-more-info" onclick="toggle_visibility('meshery-server-ErrScanKubernetesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1144" class="error-name-code">
-              <code>ErrScanKubernetesCode-1144</code>
+              <a href="/reference/error-codes/component-meshery-server/errscankubernetescode-1144/"><code>ErrScanKubernetesCode-1144</code></a>
             </td>
             <td>Unable to scan kubernetes</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrScanKubernetesCode-1144" target="_blank">search forum</a></td>
@@ -7007,12 +7579,14 @@ check if the source type selected is Helm Chart</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRetrievePodListCode-1145" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRetrievePodListCode-more-info" onclick="toggle_visibility('meshery-server-ErrRetrievePodListCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1145" class="error-name-code">
-              <code>ErrRetrievePodListCode-1145</code>
+              <a href="/reference/error-codes/component-meshery-server/errretrievepodlistcode-1145/"><code>ErrRetrievePodListCode-1145</code></a>
             </td>
             <td>Unable to retrieve pod list</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRetrievePodListCode-1145" target="_blank">search forum</a></td>
@@ -7032,12 +7606,14 @@ Make sure you are requesting for a valid resource</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDetectServiceForDeploymentImageCode-1146" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDetectServiceForDeploymentImageCode-more-info" onclick="toggle_visibility('meshery-server-ErrDetectServiceForDeploymentImageCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1146" class="error-name-code">
-              <code>ErrDetectServiceForDeploymentImageCode-1146</code>
+              <a href="/reference/error-codes/component-meshery-server/errdetectservicefordeploymentimagecode-1146/"><code>ErrDetectServiceForDeploymentImageCode-1146</code></a>
             </td>
             <td>Unable to detect service for deployment image</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDetectServiceForDeploymentImageCode-1146" target="_blank">search forum</a></td>
@@ -7057,12 +7633,14 @@ Make sure you are requesting for a valid resource</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRetrieveNamespacesListCode-1147" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRetrieveNamespacesListCode-more-info" onclick="toggle_visibility('meshery-server-ErrRetrieveNamespacesListCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1147" class="error-name-code">
-              <code>ErrRetrieveNamespacesListCode-1147</code>
+              <a href="/reference/error-codes/component-meshery-server/errretrievenamespaceslistcode-1147/"><code>ErrRetrieveNamespacesListCode-1147</code></a>
             </td>
             <td>Unable to get the list of namespaces</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRetrieveNamespacesListCode-1147" target="_blank">search forum</a></td>
@@ -7082,12 +7660,14 @@ Make sure you are requesting for a valid resource</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetNamespaceDeploymentsCode-1148" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetNamespaceDeploymentsCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetNamespaceDeploymentsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1148" class="error-name-code">
-              <code>ErrGetNamespaceDeploymentsCode-1148</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetnamespacedeploymentscode-1148/"><code>ErrGetNamespaceDeploymentsCode-1148</code></a>
             </td>
             <td>Unable to get deployments in the 
 namespace</td>
@@ -7108,12 +7688,14 @@ Make sure you are requesting for a valid resource</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDetectServiceWithNameCode-1149" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDetectServiceWithNameCode-more-info" onclick="toggle_visibility('meshery-server-ErrDetectServiceWithNameCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1149" class="error-name-code">
-              <code>ErrDetectServiceWithNameCode-1149</code>
+              <a href="/reference/error-codes/component-meshery-server/errdetectservicewithnamecode-1149/"><code>ErrDetectServiceWithNameCode-1149</code></a>
             </td>
             <td>Unable to get services from the cluster with the name given in names parameter</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDetectServiceWithNameCode-1149" target="_blank">search forum</a></td>
@@ -7133,12 +7715,14 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
             
           
           <tr id="ErrGeneratingLoadTestCode-1150" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGeneratingLoadTestCode-more-info" onclick="toggle_visibility('meshery-server-ErrGeneratingLoadTestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1150" class="error-name-code">
-              <code>ErrGeneratingLoadTestCode-1150</code>
+              <a href="/reference/error-codes/component-meshery-server/errgeneratingloadtestcode-1150/"><code>ErrGeneratingLoadTestCode-1150</code></a>
             </td>
             <td>Unable to generate load test</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGeneratingLoadTestCode-1150" target="_blank">search forum</a></td>
@@ -7156,12 +7740,14 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
             
           
           <tr id="ErrRunningTestCode-1151" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRunningTestCode-more-info" onclick="toggle_visibility('meshery-server-ErrRunningTestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1151" class="error-name-code">
-              <code>ErrRunningTestCode-1151</code>
+              <a href="/reference/error-codes/component-meshery-server/errrunningtestcode-1151/"><code>ErrRunningTestCode-1151</code></a>
             </td>
             <td>Unable to run test</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRunningTestCode-1151" target="_blank">search forum</a></td>
@@ -7179,12 +7765,14 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
             
           
           <tr id="ErrConvertingResultToMapCode-1152" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrConvertingResultToMapCode-more-info" onclick="toggle_visibility('meshery-server-ErrConvertingResultToMapCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1152" class="error-name-code">
-              <code>ErrConvertingResultToMapCode-1152</code>
+              <a href="/reference/error-codes/component-meshery-server/errconvertingresulttomapcode-1152/"><code>ErrConvertingResultToMapCode-1152</code></a>
             </td>
             <td>Unable to convert from the result to map</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConvertingResultToMapCode-1152" target="_blank">search forum</a></td>
@@ -7202,12 +7790,14 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
             
           
           <tr id="ErrGrpcSupportCode-1153" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGrpcSupportCode-more-info" onclick="toggle_visibility('meshery-server-ErrGrpcSupportCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1153" class="error-name-code">
-              <code>ErrGrpcSupportCode-1153</code>
+              <a href="/reference/error-codes/component-meshery-server/errgrpcsupportcode-1153/"><code>ErrGrpcSupportCode-1153</code></a>
             </td>
             <td> does not support gRPC load testing</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGrpcSupportCode-1153" target="_blank">search forum</a></td>
@@ -7225,12 +7815,14 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
             
           
           <tr id="ErrTransformingDataCode-1155" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTransformingDataCode-more-info" onclick="toggle_visibility('meshery-server-ErrTransformingDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1155" class="error-name-code">
-              <code>ErrTransformingDataCode-1155</code>
+              <a href="/reference/error-codes/component-meshery-server/errtransformingdatacode-1155/"><code>ErrTransformingDataCode-1155</code></a>
             </td>
             <td>Error while transforming data</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTransformingDataCode-1155" target="_blank">search forum</a></td>
@@ -7248,12 +7840,14 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
             
           
           <tr id="ErrAddAndValidateExtraHeaderCode-1157" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrAddAndValidateExtraHeaderCode-more-info" onclick="toggle_visibility('meshery-server-ErrAddAndValidateExtraHeaderCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1157" class="error-name-code">
-              <code>ErrAddAndValidateExtraHeaderCode-1157</code>
+              <a href="/reference/error-codes/component-meshery-server/erraddandvalidateextraheadercode-1157/"><code>ErrAddAndValidateExtraHeaderCode-1157</code></a>
             </td>
             <td>Unable to add and validate extra header</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAddAndValidateExtraHeaderCode-1157" target="_blank">search forum</a></td>
@@ -7271,12 +7865,14 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
             
           
           <tr id="ErrInClusterConfigCode-1158" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInClusterConfigCode-more-info" onclick="toggle_visibility('meshery-server-ErrInClusterConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1158" class="error-name-code">
-              <code>ErrInClusterConfigCode-1158</code>
+              <a href="/reference/error-codes/component-meshery-server/errinclusterconfigcode-1158/"><code>ErrInClusterConfigCode-1158</code></a>
             </td>
             <td>Unable to load in-cluster kubeconfig</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInClusterConfigCode-1158" target="_blank">search forum</a></td>
@@ -7294,12 +7890,14 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
             
           
           <tr id="ErrNewKubeClientGeneratorCode-1159" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNewKubeClientGeneratorCode-more-info" onclick="toggle_visibility('meshery-server-ErrNewKubeClientGeneratorCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1159" class="error-name-code">
-              <code>ErrNewKubeClientGeneratorCode-1159</code>
+              <a href="/reference/error-codes/component-meshery-server/errnewkubeclientgeneratorcode-1159/"><code>ErrNewKubeClientGeneratorCode-1159</code></a>
             </td>
             <td>Unable to generate new kube dynamic client</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNewKubeClientGeneratorCode-1159" target="_blank">search forum</a></td>
@@ -7317,12 +7915,14 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
             
           
           <tr id="ErrRestConfigFromKubeConfigCode-1160" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRestConfigFromKubeConfigCode-more-info" onclick="toggle_visibility('meshery-server-ErrRestConfigFromKubeConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1160" class="error-name-code">
-              <code>ErrRestConfigFromKubeConfigCode-1160</code>
+              <a href="/reference/error-codes/component-meshery-server/errrestconfigfromkubeconfigcode-1160/"><code>ErrRestConfigFromKubeConfigCode-1160</code></a>
             </td>
             <td>Unable to create rest config from kube congif</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRestConfigFromKubeConfigCode-1160" target="_blank">search forum</a></td>
@@ -7340,12 +7940,14 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
             
           
           <tr id="ErrNewKubeClientCode-1161" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNewKubeClientCode-more-info" onclick="toggle_visibility('meshery-server-ErrNewKubeClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1161" class="error-name-code">
-              <code>ErrNewKubeClientCode-1161</code>
+              <a href="/reference/error-codes/component-meshery-server/errnewkubeclientcode-1161/"><code>ErrNewKubeClientCode-1161</code></a>
             </td>
             <td>Unable to create new kube client</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNewKubeClientCode-1161" target="_blank">search forum</a></td>
@@ -7363,10 +7965,12 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
           <tr id="ErrAdapterInsufficientInformationCode-1162" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrAdapterInsufficientInformationCode-more-info" onclick="toggle_visibility('meshery-server-ErrAdapterInsufficientInformationCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -1162" class="error-name-code">
-              <code>ErrAdapterInsufficientInformationCode-1162</code>
+              <a href="/reference/error-codes/component-meshery-server/erradapterinsufficientinformationcode-1162/"><code>ErrAdapterInsufficientInformationCode-1162</code></a>
             </td>
             <td>Unable to process adapter request, incomplete request</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAdapterInsufficientInformationCode-1162" target="_blank">search forum</a></td>
@@ -7384,10 +7988,12 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
           <tr id="ErrDeployingAdapterInK8sEnvCode-1163" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeployingAdapterInK8sEnvCode-more-info" onclick="toggle_visibility('meshery-server-ErrDeployingAdapterInK8sEnvCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -1163" class="error-name-code">
-              <code>ErrDeployingAdapterInK8sEnvCode-1163</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeployingadapterink8senvcode-1163/"><code>ErrDeployingAdapterInK8sEnvCode-1163</code></a>
             </td>
             <td>Unable to deploy adapter in k8s env</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeployingAdapterInK8sEnvCode-1163" target="_blank">search forum</a></td>
@@ -7405,10 +8011,12 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
           <tr id="ErrUnDeployingAdapterInK8sEnvCode-1164" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnDeployingAdapterInK8sEnvCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnDeployingAdapterInK8sEnvCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -1164" class="error-name-code">
-              <code>ErrUnDeployingAdapterInK8sEnvCode-1164</code>
+              <a href="/reference/error-codes/component-meshery-server/errundeployingadapterink8senvcode-1164/"><code>ErrUnDeployingAdapterInK8sEnvCode-1164</code></a>
             </td>
             <td>Unable to undeploy adapter in k8s env</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnDeployingAdapterInK8sEnvCode-1164" target="_blank">search forum</a></td>
@@ -7426,10 +8034,12 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
           <tr id="ErrDeployingAdapterInDockerEnvCode-1165" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeployingAdapterInDockerEnvCode-more-info" onclick="toggle_visibility('meshery-server-ErrDeployingAdapterInDockerEnvCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -1165" class="error-name-code">
-              <code>ErrDeployingAdapterInDockerEnvCode-1165</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeployingadapterindockerenvcode-1165/"><code>ErrDeployingAdapterInDockerEnvCode-1165</code></a>
             </td>
             <td>Unable to deploy adapter in k8s env</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeployingAdapterInDockerEnvCode-1165" target="_blank">search forum</a></td>
@@ -7447,10 +8057,12 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
           <tr id="ErrUnDeployingAdapterInDockerEnvCode-1166" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnDeployingAdapterInDockerEnvCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnDeployingAdapterInDockerEnvCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -1166" class="error-name-code">
-              <code>ErrUnDeployingAdapterInDockerEnvCode-1166</code>
+              <a href="/reference/error-codes/component-meshery-server/errundeployingadapterindockerenvcode-1166/"><code>ErrUnDeployingAdapterInDockerEnvCode-1166</code></a>
             </td>
             <td>Unable to undeploy Meshery Adapter in Kubernetes environment</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnDeployingAdapterInDockerEnvCode-1166" target="_blank">search forum</a></td>
@@ -7468,10 +8080,12 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
           <tr id="ErrDeployingAdapterCode-1167" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeployingAdapterCode-more-info" onclick="toggle_visibility('meshery-server-ErrDeployingAdapterCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -1167" class="error-name-code">
-              <code>ErrDeployingAdapterCode-1167</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeployingadaptercode-1167/"><code>ErrDeployingAdapterCode-1167</code></a>
             </td>
             <td>Unable to deploy Meshery Adapter in the current environment</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeployingAdapterCode-1167" target="_blank">search forum</a></td>
@@ -7489,10 +8103,12 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
           <tr id="ErrUnDeployingAdapterCode-1168" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnDeployingAdapterCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnDeployingAdapterCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -1168" class="error-name-code">
-              <code>ErrUnDeployingAdapterCode-1168</code>
+              <a href="/reference/error-codes/component-meshery-server/errundeployingadaptercode-1168/"><code>ErrUnDeployingAdapterCode-1168</code></a>
             </td>
             <td>Unable to undeploy Meshery Adapter in the current environment</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnDeployingAdapterCode-1168" target="_blank">search forum</a></td>
@@ -7510,12 +8126,14 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
             
           
           <tr id="ErrClientSetCode-1169" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrClientSetCode-more-info" onclick="toggle_visibility('meshery-server-ErrClientSetCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1169" class="error-name-code">
-              <code>ErrClientSetCode-1169</code>
+              <a href="/reference/error-codes/component-meshery-server/errclientsetcode-1169/"><code>ErrClientSetCode-1169</code></a>
             </td>
             <td>Unable to create client set</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrClientSetCode-1169" target="_blank">search forum</a></td>
@@ -7533,12 +8151,14 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
             
           
           <tr id="ErrNilClientCode-1170" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNilClientCode-more-info" onclick="toggle_visibility('meshery-server-ErrNilClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1170" class="error-name-code">
-              <code>ErrNilClientCode-1170</code>
+              <a href="/reference/error-codes/component-meshery-server/errnilclientcode-1170/"><code>ErrNilClientCode-1170</code></a>
             </td>
             <td>Kubernetes client not initialized</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNilClientCode-1170" target="_blank">search forum</a></td>
@@ -7556,12 +8176,14 @@ Make sure the network connectivity is up between meshery server and the service 
         
           
           
+          
+          
             
           
           <tr id="ErrCreateDataCode-1171" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCreateDataCode-more-info" onclick="toggle_visibility('meshery-server-ErrCreateDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1171" class="error-name-code">
-              <code>ErrCreateDataCode-1171</code>
+              <a href="/reference/error-codes/component-meshery-server/errcreatedatacode-1171/"><code>ErrCreateDataCode-1171</code></a>
             </td>
             <td>Error while writing meshsync data</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateDataCode-1171" target="_blank">search forum</a></td>
@@ -7580,12 +8202,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrQueryCode-1172" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrQueryCode-more-info" onclick="toggle_visibility('meshery-server-ErrQueryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1172" class="error-name-code">
-              <code>ErrQueryCode-1172</code>
+              <a href="/reference/error-codes/component-meshery-server/errquerycode-1172/"><code>ErrQueryCode-1172</code></a>
             </td>
             <td>Error while querying data</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrQueryCode-1172" target="_blank">search forum</a></td>
@@ -7603,12 +8227,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMeshsyncSubscriptionCode-1173" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMeshsyncSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrMeshsyncSubscriptionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1173" class="error-name-code">
-              <code>ErrMeshsyncSubscriptionCode-1173</code>
+              <a href="/reference/error-codes/component-meshery-server/errmeshsyncsubscriptioncode-1173/"><code>ErrMeshsyncSubscriptionCode-1173</code></a>
             </td>
             <td>MeshSync Subscription failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshsyncSubscriptionCode-1173" target="_blank">search forum</a></td>
@@ -7626,12 +8252,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMesheryClientCode-1174" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMesheryClientCode-more-info" onclick="toggle_visibility('meshery-server-ErrMesheryClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1174" class="error-name-code">
-              <code>ErrMesheryClientCode-1174</code>
+              <a href="/reference/error-codes/component-meshery-server/errmesheryclientcode-1174/"><code>ErrMesheryClientCode-1174</code></a>
             </td>
             <td>Meshery kubernetes client not initialized</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMesheryClientCode-1174" target="_blank">search forum</a></td>
@@ -7649,12 +8277,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSubscribeChannelCode-1175" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSubscribeChannelCode-more-info" onclick="toggle_visibility('meshery-server-ErrSubscribeChannelCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1175" class="error-name-code">
-              <code>ErrSubscribeChannelCode-1175</code>
+              <a href="/reference/error-codes/component-meshery-server/errsubscribechannelcode-1175/"><code>ErrSubscribeChannelCode-1175</code></a>
             </td>
             <td>Unable to subscribe to channel</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSubscribeChannelCode-1175" target="_blank">search forum</a></td>
@@ -7674,12 +8304,14 @@ Check if Meshery Broker is up and running inside the configured cluster</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPublishBrokerCode-1176" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPublishBrokerCode-more-info" onclick="toggle_visibility('meshery-server-ErrPublishBrokerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1176" class="error-name-code">
-              <code>ErrPublishBrokerCode-1176</code>
+              <a href="/reference/error-codes/component-meshery-server/errpublishbrokercode-1176/"><code>ErrPublishBrokerCode-1176</code></a>
             </td>
             <td>Unable to publish to broker</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPublishBrokerCode-1176" target="_blank">search forum</a></td>
@@ -7699,12 +8331,14 @@ Check if Meshery Broker is up and running inside the configured cluster</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyHandlerCode-1177" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEmptyHandlerCode-more-info" onclick="toggle_visibility('meshery-server-ErrEmptyHandlerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1177" class="error-name-code">
-              <code>ErrEmptyHandlerCode-1177</code>
+              <a href="/reference/error-codes/component-meshery-server/erremptyhandlercode-1177/"><code>ErrEmptyHandlerCode-1177</code></a>
             </td>
             <td>Database handler not initialized</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyHandlerCode-1177" target="_blank">search forum</a></td>
@@ -7723,12 +8357,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyHelmChartCode-1178" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrApplyHelmChartCode-more-info" onclick="toggle_visibility('meshery-server-ErrApplyHelmChartCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1178" class="error-name-code">
-              <code>ErrApplyHelmChartCode-1178</code>
+              <a href="/reference/error-codes/component-meshery-server/errapplyhelmchartcode-1178/"><code>ErrApplyHelmChartCode-1178</code></a>
             </td>
             <td>Error occurred while applying Helm Chart</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyHelmChartCode-1178" target="_blank">search forum</a></td>
@@ -7749,10 +8385,12 @@ Clean up artifacts from preinstalled helm release manually</p>
         
           
           
+          
+          
           <tr id="ErrMesheryControllersStatusSubscriptionCode-1179" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMesheryControllersStatusSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrMesheryControllersStatusSubscriptionCode-more-info');">
             <td class="tbl-severity-info">None</td>
             <td id=" -1179" class="error-name-code">
-              <code>ErrMesheryControllersStatusSubscriptionCode-1179</code>
+              <a href="/reference/error-codes/component-meshery-server/errmesherycontrollersstatussubscriptioncode-1179/"><code>ErrMesheryControllersStatusSubscriptionCode-1179</code></a>
             </td>
             <td>Could not create meshery controllers status subscription</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMesheryControllersStatusSubscriptionCode-1179" target="_blank">search forum</a></td>
@@ -7770,10 +8408,12 @@ Clean up artifacts from preinstalled helm release manually</p>
         
           
           
+          
+          
           <tr id="ErrMeshSyncEventsSubscriptionCode-1180" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMeshSyncEventsSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrMeshSyncEventsSubscriptionCode-more-info');">
             <td class="tbl-severity-info">None</td>
             <td id=" -1180" class="error-name-code">
-              <code>ErrMeshSyncEventsSubscriptionCode-1180</code>
+              <a href="/reference/error-codes/component-meshery-server/errmeshsynceventssubscriptioncode-1180/"><code>ErrMeshSyncEventsSubscriptionCode-1180</code></a>
             </td>
             <td>Could not create MeshSync events subscription</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshSyncEventsSubscriptionCode-1180" target="_blank">search forum</a></td>
@@ -7791,12 +8431,14 @@ Clean up artifacts from preinstalled helm release manually</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMesheryClientNilCode-1181" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMesheryClientNilCode-more-info" onclick="toggle_visibility('meshery-server-ErrMesheryClientNilCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1181" class="error-name-code">
-              <code>ErrMesheryClientNilCode-1181</code>
+              <a href="/reference/error-codes/component-meshery-server/errmesheryclientnilcode-1181/"><code>ErrMesheryClientNilCode-1181</code></a>
             </td>
             <td>Meshery kubernetes client not initialized</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMesheryClientNilCode-1181" target="_blank">search forum</a></td>
@@ -7814,12 +8456,14 @@ Clean up artifacts from preinstalled helm release manually</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateDataCode-1182" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUpdateDataCode-more-info" onclick="toggle_visibility('meshery-server-ErrUpdateDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1182" class="error-name-code">
-              <code>ErrUpdateDataCode-1182</code>
+              <a href="/reference/error-codes/component-meshery-server/errupdatedatacode-1182/"><code>ErrUpdateDataCode-1182</code></a>
             </td>
             <td>Error while updating meshsync data</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateDataCode-1182" target="_blank">search forum</a></td>
@@ -7838,12 +8482,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeleteDataCode-1183" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeleteDataCode-more-info" onclick="toggle_visibility('meshery-server-ErrDeleteDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1183" class="error-name-code">
-              <code>ErrDeleteDataCode-1183</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeletedatacode-1183/"><code>ErrDeleteDataCode-1183</code></a>
             </td>
             <td>Error while deleting meshsync data</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeleteDataCode-1183" target="_blank">search forum</a></td>
@@ -7862,12 +8508,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResolverInvalidRequestCode-1184" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResolverInvalidRequestCode-more-info" onclick="toggle_visibility('meshery-server-ErrResolverInvalidRequestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1184" class="error-name-code">
-              <code>ErrResolverInvalidRequestCode-1184</code>
+              <a href="/reference/error-codes/component-meshery-server/errresolverinvalidrequestcode-1184/"><code>ErrResolverInvalidRequestCode-1184</code></a>
             </td>
             <td>Invalid query, please check syntax</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResolverInvalidRequestCode-1184" target="_blank">search forum</a></td>
@@ -7885,12 +8533,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResolverNilClientCode-1185" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResolverNilClientCode-more-info" onclick="toggle_visibility('meshery-server-ErrResolverNilClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1185" class="error-name-code">
-              <code>ErrResolverNilClientCode-1185</code>
+              <a href="/reference/error-codes/component-meshery-server/errresolvernilclientcode-1185/"><code>ErrResolverNilClientCode-1185</code></a>
             </td>
             <td>Kubernetes client not initialized</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResolverNilClientCode-1185" target="_blank">search forum</a></td>
@@ -7908,12 +8558,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResolverMeshsyncSubscriptionCode-1186" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResolverMeshsyncSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrResolverMeshsyncSubscriptionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1186" class="error-name-code">
-              <code>ErrResolverMeshsyncSubscriptionCode-1186</code>
+              <a href="/reference/error-codes/component-meshery-server/errresolvermeshsyncsubscriptioncode-1186/"><code>ErrResolverMeshsyncSubscriptionCode-1186</code></a>
             </td>
             <td>MeshSync Subscription failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResolverMeshsyncSubscriptionCode-1186" target="_blank">search forum</a></td>
@@ -7931,12 +8583,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResolverOperatorSubscriptionCode-1187" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResolverOperatorSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrResolverOperatorSubscriptionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1187" class="error-name-code">
-              <code>ErrResolverOperatorSubscriptionCode-1187</code>
+              <a href="/reference/error-codes/component-meshery-server/errresolveroperatorsubscriptioncode-1187/"><code>ErrResolverOperatorSubscriptionCode-1187</code></a>
             </td>
             <td>Operator Subscription failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResolverOperatorSubscriptionCode-1187" target="_blank">search forum</a></td>
@@ -7954,12 +8608,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrAddonSubscriptionCode-1188" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrAddonSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrAddonSubscriptionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1188" class="error-name-code">
-              <code>ErrAddonSubscriptionCode-1188</code>
+              <a href="/reference/error-codes/component-meshery-server/erraddonsubscriptioncode-1188/"><code>ErrAddonSubscriptionCode-1188</code></a>
             </td>
             <td>Addons Subscription failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAddonSubscriptionCode-1188" target="_blank">search forum</a></td>
@@ -7977,12 +8633,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResolverControlPlaneSubscriptionCode-1189" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResolverControlPlaneSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrResolverControlPlaneSubscriptionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1189" class="error-name-code">
-              <code>ErrResolverControlPlaneSubscriptionCode-1189</code>
+              <a href="/reference/error-codes/component-meshery-server/errresolvercontrolplanesubscriptioncode-1189/"><code>ErrResolverControlPlaneSubscriptionCode-1189</code></a>
             </td>
             <td>Control Plane Subscription failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResolverControlPlaneSubscriptionCode-1189" target="_blank">search forum</a></td>
@@ -8000,12 +8658,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMesheryClientCode-1190" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMesheryClientCode-more-info" onclick="toggle_visibility('meshery-server-ErrMesheryClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1190" class="error-name-code">
-              <code>ErrMesheryClientCode-1190</code>
+              <a href="/reference/error-codes/component-meshery-server/errmesheryclientcode-1190/"><code>ErrMesheryClientCode-1190</code></a>
             </td>
             <td>Meshery kubernetes client not initialized</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMesheryClientCode-1190" target="_blank">search forum</a></td>
@@ -8023,12 +8683,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResolverPublishBrokerCode-1191" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResolverPublishBrokerCode-more-info" onclick="toggle_visibility('meshery-server-ErrResolverPublishBrokerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1191" class="error-name-code">
-              <code>ErrResolverPublishBrokerCode-1191</code>
+              <a href="/reference/error-codes/component-meshery-server/errresolverpublishbrokercode-1191/"><code>ErrResolverPublishBrokerCode-1191</code></a>
             </td>
             <td>Unable to publish to broker</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResolverPublishBrokerCode-1191" target="_blank">search forum</a></td>
@@ -8048,12 +8710,14 @@ Check if Meshery Broker is up and running inside the configured cluster</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNoMeshSyncCode-1192" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNoMeshSyncCode-more-info" onclick="toggle_visibility('meshery-server-ErrNoMeshSyncCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1192" class="error-name-code">
-              <code>ErrNoMeshSyncCode-1192</code>
+              <a href="/reference/error-codes/component-meshery-server/errnomeshsynccode-1192/"><code>ErrNoMeshSyncCode-1192</code></a>
             </td>
             <td>MeshSync disabled</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoMeshSyncCode-1192" target="_blank">search forum</a></td>
@@ -8072,12 +8736,14 @@ Check for logs in the meshery-operator pods from inside the application for more
         
           
           
+          
+          
             
           
           <tr id="ErrDataPlaneSubscriptionCode-1193" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDataPlaneSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrDataPlaneSubscriptionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1193" class="error-name-code">
-              <code>ErrDataPlaneSubscriptionCode-1193</code>
+              <a href="/reference/error-codes/component-meshery-server/errdataplanesubscriptioncode-1193/"><code>ErrDataPlaneSubscriptionCode-1193</code></a>
             </td>
             <td>Data Plane Subscription failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDataPlaneSubscriptionCode-1193" target="_blank">search forum</a></td>
@@ -8095,12 +8761,14 @@ Check for logs in the meshery-operator pods from inside the application for more
         
           
           
+          
+          
             
           
           <tr id="ErrBrokerNotConnectedCode-1194" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrBrokerNotConnectedCode-more-info" onclick="toggle_visibility('meshery-server-ErrBrokerNotConnectedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1194" class="error-name-code">
-              <code>ErrBrokerNotConnectedCode-1194</code>
+              <a href="/reference/error-codes/component-meshery-server/errbrokernotconnectedcode-1194/"><code>ErrBrokerNotConnectedCode-1194</code></a>
             </td>
             <td>Broker not connected</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrBrokerNotConnectedCode-1194" target="_blank">search forum</a></td>
@@ -8119,12 +8787,14 @@ Please check if Meshery server has access to the Broker</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGettingNamespaceCode-1195" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGettingNamespaceCode-more-info" onclick="toggle_visibility('meshery-server-ErrGettingNamespaceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1195" class="error-name-code">
-              <code>ErrGettingNamespaceCode-1195</code>
+              <a href="/reference/error-codes/component-meshery-server/errgettingnamespacecode-1195/"><code>ErrGettingNamespaceCode-1195</code></a>
             </td>
             <td>Cannot get available namespaces</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGettingNamespaceCode-1195" target="_blank">search forum</a></td>
@@ -8142,12 +8812,14 @@ Please check if Meshery server has access to the Broker</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchingPatternsCode-1196" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchingPatternsCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchingPatternsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1196" class="error-name-code">
-              <code>ErrFetchingPatternsCode-1196</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchingpatternscode-1196/"><code>ErrFetchingPatternsCode-1196</code></a>
             </td>
             <td>Cannot fetch designs</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchingPatternsCode-1196" target="_blank">search forum</a></td>
@@ -8165,12 +8837,14 @@ Please check if Meshery server has access to the Broker</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidOAMTypeCode-1197" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidOAMTypeCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidOAMTypeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1197" class="error-name-code">
-              <code>ErrInvalidOAMTypeCode-1197</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidoamtypecode-1197/"><code>ErrInvalidOAMTypeCode-1197</code></a>
             </td>
             <td>invalid oam type is requested</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidOAMTypeCode-1197" target="_blank">search forum</a></td>
@@ -8188,12 +8862,14 @@ Please check if Meshery server has access to the Broker</p>
         
           
           
+          
+          
             
           
           <tr id="ErrKubectlDescribeCode-1198" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrKubectlDescribeCode-more-info" onclick="toggle_visibility('meshery-server-ErrKubectlDescribeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1198" class="error-name-code">
-              <code>ErrKubectlDescribeCode-1198</code>
+              <a href="/reference/error-codes/component-meshery-server/errkubectldescribecode-1198/"><code>ErrKubectlDescribeCode-1198</code></a>
             </td>
             <td>failed to find the resource
 invalid resource type
@@ -8213,12 +8889,14 @@ resource doens&#39;t exists</td>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyCurrentK8sContextCode-1199" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEmptyCurrentK8sContextCode-more-info" onclick="toggle_visibility('meshery-server-ErrEmptyCurrentK8sContextCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1199" class="error-name-code">
-              <code>ErrEmptyCurrentK8sContextCode-1199</code>
+              <a href="/reference/error-codes/component-meshery-server/erremptycurrentk8scontextcode-1199/"><code>ErrEmptyCurrentK8sContextCode-1199</code></a>
             </td>
             <td>Current kubernetes context is empty</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyCurrentK8sContextCode-1199" target="_blank">search forum</a></td>
@@ -8237,12 +8915,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrK8sContextCode-1203" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrK8sContextCode-more-info" onclick="toggle_visibility('meshery-server-ErrK8sContextCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1203" class="error-name-code">
-              <code>ErrK8sContextCode-1203</code>
+              <a href="/reference/error-codes/component-meshery-server/errk8scontextcode-1203/"><code>ErrK8sContextCode-1203</code></a>
             </td>
             <td>Failed to get k8s context from remote provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrK8sContextCode-1203" target="_blank">search forum</a></td>
@@ -8260,12 +8940,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGettingMeshModelSummaryCode-1207" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGettingMeshModelSummaryCode-more-info" onclick="toggle_visibility('meshery-server-ErrGettingMeshModelSummaryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1207" class="error-name-code">
-              <code>ErrGettingMeshModelSummaryCode-1207</code>
+              <a href="/reference/error-codes/component-meshery-server/errgettingmeshmodelsummarycode-1207/"><code>ErrGettingMeshModelSummaryCode-1207</code></a>
             </td>
             <td>Unable to retrieve MeshModel Summary</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGettingMeshModelSummaryCode-1207" target="_blank">search forum</a></td>
@@ -8283,12 +8965,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGettingRegistryManagerCode-1208" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGettingRegistryManagerCode-more-info" onclick="toggle_visibility('meshery-server-ErrGettingRegistryManagerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1208" class="error-name-code">
-              <code>ErrGettingRegistryManagerCode-1208</code>
+              <a href="/reference/error-codes/component-meshery-server/errgettingregistrymanagercode-1208/"><code>ErrGettingRegistryManagerCode-1208</code></a>
             </td>
             <td>Unable to retrieve Registry Manager</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGettingRegistryManagerCode-1208" target="_blank">search forum</a></td>
@@ -8306,12 +8990,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGettingTelemetryComponentsCode-1209" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGettingTelemetryComponentsCode-more-info" onclick="toggle_visibility('meshery-server-ErrGettingTelemetryComponentsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1209" class="error-name-code">
-              <code>ErrGettingTelemetryComponentsCode-1209</code>
+              <a href="/reference/error-codes/component-meshery-server/errgettingtelemetrycomponentscode-1209/"><code>ErrGettingTelemetryComponentsCode-1209</code></a>
             </td>
             <td>unable to retrieve telemetry components</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGettingTelemetryComponentsCode-1209" target="_blank">search forum</a></td>
@@ -8329,10 +9015,12 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
           <tr id="ErrAdapterInsufficientInformationCode-1210" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrAdapterInsufficientInformationCode-more-info" onclick="toggle_visibility('meshery-server-ErrAdapterInsufficientInformationCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -1210" class="error-name-code">
-              <code>ErrAdapterInsufficientInformationCode-1210</code>
+              <a href="/reference/error-codes/component-meshery-server/erradapterinsufficientinformationcode-1210/"><code>ErrAdapterInsufficientInformationCode-1210</code></a>
             </td>
             <td>Unable to process adapter request, incomplete request</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAdapterInsufficientInformationCode-1210" target="_blank">search forum</a></td>
@@ -8350,12 +9038,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGormDatabaseCode-1213" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGormDatabaseCode-more-info" onclick="toggle_visibility('meshery-server-ErrGormDatabaseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1213" class="error-name-code">
-              <code>ErrGormDatabaseCode-1213</code>
+              <a href="/reference/error-codes/component-meshery-server/errgormdatabasecode-1213/"><code>ErrGormDatabaseCode-1213</code></a>
             </td>
             <td>Database operation failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGormDatabaseCode-1213" target="_blank">search forum</a></td>
@@ -8373,12 +9063,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidTransitionCode-1214" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidTransitionCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidTransitionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1214" class="error-name-code">
-              <code>ErrInvalidTransitionCode-1214</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidtransitioncode-1214/"><code>ErrInvalidTransitionCode-1214</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidTransitionCode-1214" target="_blank">search forum</a></td>
@@ -8396,12 +9088,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidTransitionEventCode-1215" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidTransitionEventCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidTransitionEventCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1215" class="error-name-code">
-              <code>ErrInvalidTransitionEventCode-1215</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidtransitioneventcode-1215/"><code>ErrInvalidTransitionEventCode-1215</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidTransitionEventCode-1215" target="_blank">search forum</a></td>
@@ -8419,12 +9113,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInititalizeK8sMachineCode-1216" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInititalizeK8sMachineCode-more-info" onclick="toggle_visibility('meshery-server-ErrInititalizeK8sMachineCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1216" class="error-name-code">
-              <code>ErrInititalizeK8sMachineCode-1216</code>
+              <a href="/reference/error-codes/component-meshery-server/errinititalizek8smachinecode-1216/"><code>ErrInititalizeK8sMachineCode-1216</code></a>
             </td>
             <td>Provided connection id is invalid</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInititalizeK8sMachineCode-1216" target="_blank">search forum</a></td>
@@ -8442,12 +9138,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrAssetMachineCtxCode-1217" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrAssetMachineCtxCode-more-info" onclick="toggle_visibility('meshery-server-ErrAssetMachineCtxCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1217" class="error-name-code">
-              <code>ErrAssetMachineCtxCode-1217</code>
+              <a href="/reference/error-codes/component-meshery-server/errassetmachinectxcode-1217/"><code>ErrAssetMachineCtxCode-1217</code></a>
             </td>
             <td>type assertion of context to *kubernetes.MachineCtx failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAssetMachineCtxCode-1217" target="_blank">search forum</a></td>
@@ -8465,12 +9163,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidTypeCode-1218" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidTypeCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidTypeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1218" class="error-name-code">
-              <code>ErrInvalidTypeCode-1218</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidtypecode-1218/"><code>ErrInvalidTypeCode-1218</code></a>
             </td>
             <td>Provided connection id is invalid</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidTypeCode-1218" target="_blank">search forum</a></td>
@@ -8488,12 +9188,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrAutoRegisterCode-1219" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrAutoRegisterCode-more-info" onclick="toggle_visibility('meshery-server-ErrAutoRegisterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1219" class="error-name-code">
-              <code>ErrAutoRegisterCode-1219</code>
+              <a href="/reference/error-codes/component-meshery-server/errautoregistercode-1219/"><code>ErrAutoRegisterCode-1219</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAutoRegisterCode-1219" target="_blank">search forum</a></td>
@@ -8511,12 +9213,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGrafanaClientCode-1220" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGrafanaClientCode-more-info" onclick="toggle_visibility('meshery-server-ErrGrafanaClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1220" class="error-name-code">
-              <code>ErrGrafanaClientCode-1220</code>
+              <a href="/reference/error-codes/component-meshery-server/errgrafanaclientcode-1220/"><code>ErrGrafanaClientCode-1220</code></a>
             </td>
             <td>Unable to initialize Grafana Client</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGrafanaClientCode-1220" target="_blank">search forum</a></td>
@@ -8534,12 +9238,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPageSizeCode-1221" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPageSizeCode-more-info" onclick="toggle_visibility('meshery-server-ErrPageSizeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1221" class="error-name-code">
-              <code>ErrPageSizeCode-1221</code>
+              <a href="/reference/error-codes/component-meshery-server/errpagesizecode-1221/"><code>ErrPageSizeCode-1221</code></a>
             </td>
             <td>Unable to prase the Page Size</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPageSizeCode-1221" target="_blank">search forum</a></td>
@@ -8557,12 +9263,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPageNumberCode-1222" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPageNumberCode-more-info" onclick="toggle_visibility('meshery-server-ErrPageNumberCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1222" class="error-name-code">
-              <code>ErrPageNumberCode-1222</code>
+              <a href="/reference/error-codes/component-meshery-server/errpagenumbercode-1222/"><code>ErrPageNumberCode-1222</code></a>
             </td>
             <td>Unable to prase the Page Numer</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPageNumberCode-1222" target="_blank">search forum</a></td>
@@ -8580,12 +9288,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResultIDCode-1223" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResultIDCode-more-info" onclick="toggle_visibility('meshery-server-ErrResultIDCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1223" class="error-name-code">
-              <code>ErrResultIDCode-1223</code>
+              <a href="/reference/error-codes/component-meshery-server/errresultidcode-1223/"><code>ErrResultIDCode-1223</code></a>
             </td>
             <td>Given resultID is not valid</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResultIDCode-1223" target="_blank">search forum</a></td>
@@ -8603,12 +9313,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPerfIDCode-1224" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPerfIDCode-more-info" onclick="toggle_visibility('meshery-server-ErrPerfIDCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1224" class="error-name-code">
-              <code>ErrPerfIDCode-1224</code>
+              <a href="/reference/error-codes/component-meshery-server/errperfidcode-1224/"><code>ErrPerfIDCode-1224</code></a>
             </td>
             <td>Invalid peformance profile ID</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPerfIDCode-1224" target="_blank">search forum</a></td>
@@ -8626,12 +9338,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMarshalCode-1225" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMarshalCode-more-info" onclick="toggle_visibility('meshery-server-ErrMarshalCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1225" class="error-name-code">
-              <code>ErrMarshalCode-1225</code>
+              <a href="/reference/error-codes/component-meshery-server/errmarshalcode-1225/"><code>ErrMarshalCode-1225</code></a>
             </td>
             <td>Unable to marshal the : </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMarshalCode-1225" target="_blank">search forum</a></td>
@@ -8649,12 +9363,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnmarshalCode-1226" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnmarshalCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnmarshalCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1226" class="error-name-code">
-              <code>ErrUnmarshalCode-1226</code>
+              <a href="/reference/error-codes/component-meshery-server/errunmarshalcode-1226/"><code>ErrUnmarshalCode-1226</code></a>
             </td>
             <td>Unable to unmarshal the : </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnmarshalCode-1226" target="_blank">search forum</a></td>
@@ -8672,12 +9388,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGenerateUUIDCode-1227" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGenerateUUIDCode-more-info" onclick="toggle_visibility('meshery-server-ErrGenerateUUIDCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1227" class="error-name-code">
-              <code>ErrGenerateUUIDCode-1227</code>
+              <a href="/reference/error-codes/component-meshery-server/errgenerateuuidcode-1227/"><code>ErrGenerateUUIDCode-1227</code></a>
             </td>
             <td>Unable to generate a new UUID</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGenerateUUIDCode-1227" target="_blank">search forum</a></td>
@@ -8695,12 +9413,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrLocalProviderSupportCode-1228" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrLocalProviderSupportCode-more-info" onclick="toggle_visibility('meshery-server-ErrLocalProviderSupportCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1228" class="error-name-code">
-              <code>ErrLocalProviderSupportCode-1228</code>
+              <a href="/reference/error-codes/component-meshery-server/errlocalprovidersupportcode-1228/"><code>ErrLocalProviderSupportCode-1228</code></a>
             </td>
             <td>Method not supported by local provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLocalProviderSupportCode-1228" target="_blank">search forum</a></td>
@@ -8718,12 +9438,14 @@ Please check if Meshery server is accessible to the Database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGrafanaOrgCode-1229" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGrafanaOrgCode-more-info" onclick="toggle_visibility('meshery-server-ErrGrafanaOrgCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1229" class="error-name-code">
-              <code>ErrGrafanaOrgCode-1229</code>
+              <a href="/reference/error-codes/component-meshery-server/errgrafanaorgcode-1229/"><code>ErrGrafanaOrgCode-1229</code></a>
             </td>
             <td>Failed to get Org data from Grafana</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGrafanaOrgCode-1229" target="_blank">search forum</a></td>
@@ -8742,12 +9464,14 @@ Invalid API-Key</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGrafanaBoardsCode-1230" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGrafanaBoardsCode-more-info" onclick="toggle_visibility('meshery-server-ErrGrafanaBoardsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1230" class="error-name-code">
-              <code>ErrGrafanaBoardsCode-1230</code>
+              <a href="/reference/error-codes/component-meshery-server/errgrafanaboardscode-1230/"><code>ErrGrafanaBoardsCode-1230</code></a>
             </td>
             <td>Unable to get Grafana Boards</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGrafanaBoardsCode-1230" target="_blank">search forum</a></td>
@@ -8767,12 +9491,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGrafanaDashboardCode-1231" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGrafanaDashboardCode-more-info" onclick="toggle_visibility('meshery-server-ErrGrafanaDashboardCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1231" class="error-name-code">
-              <code>ErrGrafanaDashboardCode-1231</code>
+              <a href="/reference/error-codes/component-meshery-server/errgrafanadashboardcode-1231/"><code>ErrGrafanaDashboardCode-1231</code></a>
             </td>
             <td>Error getting grafana dashboard from UID</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGrafanaDashboardCode-1231" target="_blank">search forum</a></td>
@@ -8790,12 +9516,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGrafanaDataSourceCode-1232" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGrafanaDataSourceCode-more-info" onclick="toggle_visibility('meshery-server-ErrGrafanaDataSourceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1232" class="error-name-code">
-              <code>ErrGrafanaDataSourceCode-1232</code>
+              <a href="/reference/error-codes/component-meshery-server/errgrafanadatasourcecode-1232/"><code>ErrGrafanaDataSourceCode-1232</code></a>
             </td>
             <td>Error getting Grafana Board&#39;s Datasource</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGrafanaDataSourceCode-1232" target="_blank">search forum</a></td>
@@ -8813,12 +9541,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNilQueryCode-1233" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNilQueryCode-more-info" onclick="toggle_visibility('meshery-server-ErrNilQueryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1233" class="error-name-code">
-              <code>ErrNilQueryCode-1233</code>
+              <a href="/reference/error-codes/component-meshery-server/errnilquerycode-1233/"><code>ErrNilQueryCode-1233</code></a>
             </td>
             <td>Query data passed is nil</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNilQueryCode-1233" target="_blank">search forum</a></td>
@@ -8836,12 +9566,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGrafanaDataCode-1234" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGrafanaDataCode-more-info" onclick="toggle_visibility('meshery-server-ErrGrafanaDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1234" class="error-name-code">
-              <code>ErrGrafanaDataCode-1234</code>
+              <a href="/reference/error-codes/component-meshery-server/errgrafanadatacode-1234/"><code>ErrGrafanaDataCode-1234</code></a>
             </td>
             <td>Error getting data from Grafana API</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGrafanaDataCode-1234" target="_blank">search forum</a></td>
@@ -8859,12 +9591,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplicationFileNameCode-1235" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrApplicationFileNameCode-more-info" onclick="toggle_visibility('meshery-server-ErrApplicationFileNameCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1235" class="error-name-code">
-              <code>ErrApplicationFileNameCode-1235</code>
+              <a href="/reference/error-codes/component-meshery-server/errapplicationfilenamecode-1235/"><code>ErrApplicationFileNameCode-1235</code></a>
             </td>
             <td>Invalid Applicationfile</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplicationFileNameCode-1235" target="_blank">search forum</a></td>
@@ -8882,12 +9616,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFilterFileNameCode-1236" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFilterFileNameCode-more-info" onclick="toggle_visibility('meshery-server-ErrFilterFileNameCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1236" class="error-name-code">
-              <code>ErrFilterFileNameCode-1236</code>
+              <a href="/reference/error-codes/component-meshery-server/errfilterfilenamecode-1236/"><code>ErrFilterFileNameCode-1236</code></a>
             </td>
             <td>Invalid Filterfile</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFilterFileNameCode-1236" target="_blank">search forum</a></td>
@@ -8905,12 +9641,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPatternFileNameCode-1237" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPatternFileNameCode-more-info" onclick="toggle_visibility('meshery-server-ErrPatternFileNameCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1237" class="error-name-code">
-              <code>ErrPatternFileNameCode-1237</code>
+              <a href="/reference/error-codes/component-meshery-server/errpatternfilenamecode-1237/"><code>ErrPatternFileNameCode-1237</code></a>
             </td>
             <td>Invalid Patternfile</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPatternFileNameCode-1237" target="_blank">search forum</a></td>
@@ -8928,12 +9666,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMakeDirCode-1238" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMakeDirCode-more-info" onclick="toggle_visibility('meshery-server-ErrMakeDirCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1238" class="error-name-code">
-              <code>ErrMakeDirCode-1238</code>
+              <a href="/reference/error-codes/component-meshery-server/errmakedircode-1238/"><code>ErrMakeDirCode-1238</code></a>
             </td>
             <td>Unable to create directory/folder</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMakeDirCode-1238" target="_blank">search forum</a></td>
@@ -8951,12 +9691,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFolderStatCode-1239" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFolderStatCode-more-info" onclick="toggle_visibility('meshery-server-ErrFolderStatCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1239" class="error-name-code">
-              <code>ErrFolderStatCode-1239</code>
+              <a href="/reference/error-codes/component-meshery-server/errfolderstatcode-1239/"><code>ErrFolderStatCode-1239</code></a>
             </td>
             <td>Unable to find (os.stat) the folder</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFolderStatCode-1239" target="_blank">search forum</a></td>
@@ -8974,12 +9716,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUserIDCode-1240" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUserIDCode-more-info" onclick="toggle_visibility('meshery-server-ErrUserIDCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1240" class="error-name-code">
-              <code>ErrUserIDCode-1240</code>
+              <a href="/reference/error-codes/component-meshery-server/erruseridcode-1240/"><code>ErrUserIDCode-1240</code></a>
             </td>
             <td>User ID is empty</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUserIDCode-1240" target="_blank">search forum</a></td>
@@ -8997,12 +9741,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDBConnectionCode-1241" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDBConnectionCode-more-info" onclick="toggle_visibility('meshery-server-ErrDBConnectionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1241" class="error-name-code">
-              <code>ErrDBConnectionCode-1241</code>
+              <a href="/reference/error-codes/component-meshery-server/errdbconnectioncode-1241/"><code>ErrDBConnectionCode-1241</code></a>
             </td>
             <td>Connection to database does not exist</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDBConnectionCode-1241" target="_blank">search forum</a></td>
@@ -9020,12 +9766,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNilConfigDataCode-1242" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNilConfigDataCode-more-info" onclick="toggle_visibility('meshery-server-ErrNilConfigDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1242" class="error-name-code">
-              <code>ErrNilConfigDataCode-1242</code>
+              <a href="/reference/error-codes/component-meshery-server/errnilconfigdatacode-1242/"><code>ErrNilConfigDataCode-1242</code></a>
             </td>
             <td>Given config data is nil</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNilConfigDataCode-1242" target="_blank">search forum</a></td>
@@ -9043,12 +9791,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDBOpenCode-1243" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDBOpenCode-more-info" onclick="toggle_visibility('meshery-server-ErrDBOpenCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1243" class="error-name-code">
-              <code>ErrDBOpenCode-1243</code>
+              <a href="/reference/error-codes/component-meshery-server/errdbopencode-1243/"><code>ErrDBOpenCode-1243</code></a>
             </td>
             <td>Unable to open the database</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDBOpenCode-1243" target="_blank">search forum</a></td>
@@ -9066,12 +9816,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDBRLockCode-1244" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDBRLockCode-more-info" onclick="toggle_visibility('meshery-server-ErrDBRLockCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1244" class="error-name-code">
-              <code>ErrDBRLockCode-1244</code>
+              <a href="/reference/error-codes/component-meshery-server/errdbrlockcode-1244/"><code>ErrDBRLockCode-1244</code></a>
             </td>
             <td>Unable to obtain read lock from bitcask store</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDBRLockCode-1244" target="_blank">search forum</a></td>
@@ -9089,12 +9841,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDBLockCode-1245" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDBLockCode-more-info" onclick="toggle_visibility('meshery-server-ErrDBLockCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1245" class="error-name-code">
-              <code>ErrDBLockCode-1245</code>
+              <a href="/reference/error-codes/component-meshery-server/errdblockcode-1245/"><code>ErrDBLockCode-1245</code></a>
             </td>
             <td>Unable to obtain write lock from bitcask store</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDBLockCode-1245" target="_blank">search forum</a></td>
@@ -9112,12 +9866,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDBReadCode-1246" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDBReadCode-more-info" onclick="toggle_visibility('meshery-server-ErrDBReadCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1246" class="error-name-code">
-              <code>ErrDBReadCode-1246</code>
+              <a href="/reference/error-codes/component-meshery-server/errdbreadcode-1246/"><code>ErrDBReadCode-1246</code></a>
             </td>
             <td>Unable to read data from bitcast store</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDBReadCode-1246" target="_blank">search forum</a></td>
@@ -9135,12 +9891,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDBDeleteCode-1247" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDBDeleteCode-more-info" onclick="toggle_visibility('meshery-server-ErrDBDeleteCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1247" class="error-name-code">
-              <code>ErrDBDeleteCode-1247</code>
+              <a href="/reference/error-codes/component-meshery-server/errdbdeletecode-1247/"><code>ErrDBDeleteCode-1247</code></a>
             </td>
             <td>Unable to delete config data for the user</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDBDeleteCode-1247" target="_blank">search forum</a></td>
@@ -9158,12 +9916,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCopyCode-1248" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCopyCode-more-info" onclick="toggle_visibility('meshery-server-ErrCopyCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1248" class="error-name-code">
-              <code>ErrCopyCode-1248</code>
+              <a href="/reference/error-codes/component-meshery-server/errcopycode-1248/"><code>ErrCopyCode-1248</code></a>
             </td>
             <td>Error occurred while copying</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCopyCode-1248" target="_blank">search forum</a></td>
@@ -9181,12 +9941,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDBPutCode-1249" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDBPutCode-more-info" onclick="toggle_visibility('meshery-server-ErrDBPutCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1249" class="error-name-code">
-              <code>ErrDBPutCode-1249</code>
+              <a href="/reference/error-codes/component-meshery-server/errdbputcode-1249/"><code>ErrDBPutCode-1249</code></a>
             </td>
             <td>Unable to Persist config data.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDBPutCode-1249" target="_blank">search forum</a></td>
@@ -9204,12 +9966,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPrometheusGetNodesCode-1250" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPrometheusGetNodesCode-more-info" onclick="toggle_visibility('meshery-server-ErrPrometheusGetNodesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1250" class="error-name-code">
-              <code>ErrPrometheusGetNodesCode-1250</code>
+              <a href="/reference/error-codes/component-meshery-server/errprometheusgetnodescode-1250/"><code>ErrPrometheusGetNodesCode-1250</code></a>
             </td>
             <td>Prometheus Client unable to get all nodes</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPrometheusGetNodesCode-1250" target="_blank">search forum</a></td>
@@ -9227,12 +9991,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPrometheusLabelSeriesCode-1251" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPrometheusLabelSeriesCode-more-info" onclick="toggle_visibility('meshery-server-ErrPrometheusLabelSeriesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1251" class="error-name-code">
-              <code>ErrPrometheusLabelSeriesCode-1251</code>
+              <a href="/reference/error-codes/component-meshery-server/errprometheuslabelseriescode-1251/"><code>ErrPrometheusLabelSeriesCode-1251</code></a>
             </td>
             <td>Unable to get the label set series</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPrometheusLabelSeriesCode-1251" target="_blank">search forum</a></td>
@@ -9250,12 +10016,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPrometheusQueryRangeCode-1252" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPrometheusQueryRangeCode-more-info" onclick="toggle_visibility('meshery-server-ErrPrometheusQueryRangeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1252" class="error-name-code">
-              <code>ErrPrometheusQueryRangeCode-1252</code>
+              <a href="/reference/error-codes/component-meshery-server/errprometheusqueryrangecode-1252/"><code>ErrPrometheusQueryRangeCode-1252</code></a>
             </td>
             <td>Unable to fetch data for the query</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPrometheusQueryRangeCode-1252" target="_blank">search forum</a></td>
@@ -9273,12 +10041,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPrometheusStaticBoardCode-1253" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPrometheusStaticBoardCode-more-info" onclick="toggle_visibility('meshery-server-ErrPrometheusStaticBoardCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1253" class="error-name-code">
-              <code>ErrPrometheusStaticBoardCode-1253</code>
+              <a href="/reference/error-codes/component-meshery-server/errprometheusstaticboardcode-1253/"><code>ErrPrometheusStaticBoardCode-1253</code></a>
             </td>
             <td>Unbale to get Static Boards</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPrometheusStaticBoardCode-1253" target="_blank">search forum</a></td>
@@ -9296,12 +10066,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTokenRefreshCode-1254" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTokenRefreshCode-more-info" onclick="toggle_visibility('meshery-server-ErrTokenRefreshCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1254" class="error-name-code">
-              <code>ErrTokenRefreshCode-1254</code>
+              <a href="/reference/error-codes/component-meshery-server/errtokenrefreshcode-1254/"><code>ErrTokenRefreshCode-1254</code></a>
             </td>
             <td>Error occurred while Refresing the token</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTokenRefreshCode-1254" target="_blank">search forum</a></td>
@@ -9319,12 +10091,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetTokenCode-1255" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetTokenCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetTokenCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1255" class="error-name-code">
-              <code>ErrGetTokenCode-1255</code>
+              <a href="/reference/error-codes/component-meshery-server/errgettokencode-1255/"><code>ErrGetTokenCode-1255</code></a>
             </td>
             <td>Error occurred while getting token from the Browser Cookie</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetTokenCode-1255" target="_blank">search forum</a></td>
@@ -9342,12 +10116,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDataReadCode-1256" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDataReadCode-more-info" onclick="toggle_visibility('meshery-server-ErrDataReadCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1256" class="error-name-code">
-              <code>ErrDataReadCode-1256</code>
+              <a href="/reference/error-codes/component-meshery-server/errdatareadcode-1256/"><code>ErrDataReadCode-1256</code></a>
             </td>
             <td>Error occurred while reading from the Reader</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDataReadCode-1256" target="_blank">search forum</a></td>
@@ -9365,12 +10141,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTokenDecodeCode-1257" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTokenDecodeCode-more-info" onclick="toggle_visibility('meshery-server-ErrTokenDecodeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1257" class="error-name-code">
-              <code>ErrTokenDecodeCode-1257</code>
+              <a href="/reference/error-codes/component-meshery-server/errtokendecodecode-1257/"><code>ErrTokenDecodeCode-1257</code></a>
             </td>
             <td>Error occurred while Decoding Token Data</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTokenDecodeCode-1257" target="_blank">search forum</a></td>
@@ -9388,12 +10166,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNilJWKsCode-1258" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNilJWKsCode-more-info" onclick="toggle_visibility('meshery-server-ErrNilJWKsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1258" class="error-name-code">
-              <code>ErrNilJWKsCode-1258</code>
+              <a href="/reference/error-codes/component-meshery-server/errniljwkscode-1258/"><code>ErrNilJWKsCode-1258</code></a>
             </td>
             <td>Invalid JWks</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNilJWKsCode-1258" target="_blank">search forum</a></td>
@@ -9411,12 +10191,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNilKeysCode-1259" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNilKeysCode-more-info" onclick="toggle_visibility('meshery-server-ErrNilKeysCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1259" class="error-name-code">
-              <code>ErrNilKeysCode-1259</code>
+              <a href="/reference/error-codes/component-meshery-server/errnilkeyscode-1259/"><code>ErrNilKeysCode-1259</code></a>
             </td>
             <td>Key not found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNilKeysCode-1259" target="_blank">search forum</a></td>
@@ -9434,12 +10216,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTokenExpiredCode-1260" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTokenExpiredCode-more-info" onclick="toggle_visibility('meshery-server-ErrTokenExpiredCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1260" class="error-name-code">
-              <code>ErrTokenExpiredCode-1260</code>
+              <a href="/reference/error-codes/component-meshery-server/errtokenexpiredcode-1260/"><code>ErrTokenExpiredCode-1260</code></a>
             </td>
             <td>Token has expired</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTokenExpiredCode-1260" target="_blank">search forum</a></td>
@@ -9457,12 +10241,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTokenClaimsCode-1261" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTokenClaimsCode-more-info" onclick="toggle_visibility('meshery-server-ErrTokenClaimsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1261" class="error-name-code">
-              <code>ErrTokenClaimsCode-1261</code>
+              <a href="/reference/error-codes/component-meshery-server/errtokenclaimscode-1261/"><code>ErrTokenClaimsCode-1261</code></a>
             </td>
             <td>Error occurred while parsing JWT claims</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTokenClaimsCode-1261" target="_blank">search forum</a></td>
@@ -9480,12 +10266,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTokenClientCheckCode-1262" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTokenClientCheckCode-more-info" onclick="toggle_visibility('meshery-server-ErrTokenClientCheckCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1262" class="error-name-code">
-              <code>ErrTokenClientCheckCode-1262</code>
+              <a href="/reference/error-codes/component-meshery-server/errtokenclientcheckcode-1262/"><code>ErrTokenClientCheckCode-1262</code></a>
             </td>
             <td>Error occurred while performing token check HTTP request</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTokenClientCheckCode-1262" target="_blank">search forum</a></td>
@@ -9503,12 +10291,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTokenPraseCode-1263" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTokenPraseCode-more-info" onclick="toggle_visibility('meshery-server-ErrTokenPraseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1263" class="error-name-code">
-              <code>ErrTokenPraseCode-1263</code>
+              <a href="/reference/error-codes/component-meshery-server/errtokenprasecode-1263/"><code>ErrTokenPraseCode-1263</code></a>
             </td>
             <td>Error occurred while Prasing and validating the token</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTokenPraseCode-1263" target="_blank">search forum</a></td>
@@ -9526,12 +10316,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrJWKsKeysCode-1264" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrJWKsKeysCode-more-info" onclick="toggle_visibility('meshery-server-ErrJWKsKeysCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1264" class="error-name-code">
-              <code>ErrJWKsKeysCode-1264</code>
+              <a href="/reference/error-codes/component-meshery-server/errjwkskeyscode-1264/"><code>ErrJWKsKeysCode-1264</code></a>
             </td>
             <td>Unable to fetch JWKs keys from the remote provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrJWKsKeysCode-1264" target="_blank">search forum</a></td>
@@ -9549,12 +10341,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDecodeBase64Code-1265" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDecodeBase64Code-more-info" onclick="toggle_visibility('meshery-server-ErrDecodeBase64Code-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1265" class="error-name-code">
-              <code>ErrDecodeBase64Code-1265</code>
+              <a href="/reference/error-codes/component-meshery-server/errdecodebase64code-1265/"><code>ErrDecodeBase64Code-1265</code></a>
             </td>
             <td>Error occurred while decoding base65 string</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDecodeBase64Code-1265" target="_blank">search forum</a></td>
@@ -9572,12 +10366,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMarshalPKIXCode-1266" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMarshalPKIXCode-more-info" onclick="toggle_visibility('meshery-server-ErrMarshalPKIXCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1266" class="error-name-code">
-              <code>ErrMarshalPKIXCode-1266</code>
+              <a href="/reference/error-codes/component-meshery-server/errmarshalpkixcode-1266/"><code>ErrMarshalPKIXCode-1266</code></a>
             </td>
             <td>Error occurred while marshaling PKIX</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMarshalPKIXCode-1266" target="_blank">search forum</a></td>
@@ -9595,12 +10391,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEncodingPEMCode-1267" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEncodingPEMCode-more-info" onclick="toggle_visibility('meshery-server-ErrEncodingPEMCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1267" class="error-name-code">
-              <code>ErrEncodingPEMCode-1267</code>
+              <a href="/reference/error-codes/component-meshery-server/errencodingpemcode-1267/"><code>ErrEncodingPEMCode-1267</code></a>
             </td>
             <td>Error occurred while encoding jwk to pem</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEncodingPEMCode-1267" target="_blank">search forum</a></td>
@@ -9618,12 +10416,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPraseUnverifiedCode-1268" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPraseUnverifiedCode-more-info" onclick="toggle_visibility('meshery-server-ErrPraseUnverifiedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1268" class="error-name-code">
-              <code>ErrPraseUnverifiedCode-1268</code>
+              <a href="/reference/error-codes/component-meshery-server/errpraseunverifiedcode-1268/"><code>ErrPraseUnverifiedCode-1268</code></a>
             </td>
             <td>Error occurred while prasing tokens (unverified)</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPraseUnverifiedCode-1268" target="_blank">search forum</a></td>
@@ -9641,12 +10441,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEncodingCode-1269" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEncodingCode-more-info" onclick="toggle_visibility('meshery-server-ErrEncodingCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1269" class="error-name-code">
-              <code>ErrEncodingCode-1269</code>
+              <a href="/reference/error-codes/component-meshery-server/errencodingcode-1269/"><code>ErrEncodingCode-1269</code></a>
             </td>
             <td>Error encoding the : </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEncodingCode-1269" target="_blank">search forum</a></td>
@@ -9664,12 +10466,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchCode-1270" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1270" class="error-name-code">
-              <code>ErrFetchCode-1270</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchcode-1270/"><code>ErrFetchCode-1270</code></a>
             </td>
             <td>Unable to fetch data from the Provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchCode-1270" target="_blank">search forum</a></td>
@@ -9687,12 +10491,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPostCode-1271" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPostCode-more-info" onclick="toggle_visibility('meshery-server-ErrPostCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1271" class="error-name-code">
-              <code>ErrPostCode-1271</code>
+              <a href="/reference/error-codes/component-meshery-server/errpostcode-1271/"><code>ErrPostCode-1271</code></a>
             </td>
             <td>Unable to post data to the Provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPostCode-1271" target="_blank">search forum</a></td>
@@ -9710,12 +10516,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeleteCode-1272" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeleteCode-more-info" onclick="toggle_visibility('meshery-server-ErrDeleteCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1272" class="error-name-code">
-              <code>ErrDeleteCode-1272</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeletecode-1272/"><code>ErrDeleteCode-1272</code></a>
             </td>
             <td>Unable to de-register Meshery Server from Remote Provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeleteCode-1272" target="_blank">search forum</a></td>
@@ -9733,12 +10541,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidCapabilityCode-1273" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidCapabilityCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidCapabilityCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1273" class="error-name-code">
-              <code>ErrInvalidCapabilityCode-1273</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidcapabilitycode-1273/"><code>ErrInvalidCapabilityCode-1273</code></a>
             </td>
             <td>Capability is not supported by your Provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidCapabilityCode-1273" target="_blank">search forum</a></td>
@@ -9757,12 +10567,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResultDataCode-1274" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResultDataCode-more-info" onclick="toggle_visibility('meshery-server-ErrResultDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1274" class="error-name-code">
-              <code>ErrResultDataCode-1274</code>
+              <a href="/reference/error-codes/component-meshery-server/errresultdatacode-1274/"><code>ErrResultDataCode-1274</code></a>
             </td>
             <td>given result data is nil</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResultDataCode-1274" target="_blank">search forum</a></td>
@@ -9780,12 +10592,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnableToPersistsResultCode-1275" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnableToPersistsResultCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnableToPersistsResultCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1275" class="error-name-code">
-              <code>ErrUnableToPersistsResultCode-1275</code>
+              <a href="/reference/error-codes/component-meshery-server/errunabletopersistsresultcode-1275/"><code>ErrUnableToPersistsResultCode-1275</code></a>
             </td>
             <td>unable to persists the result data</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnableToPersistsResultCode-1275" target="_blank">search forum</a></td>
@@ -9803,12 +10617,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrValidURLCode-1276" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrValidURLCode-more-info" onclick="toggle_visibility('meshery-server-ErrValidURLCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1276" class="error-name-code">
-              <code>ErrValidURLCode-1276</code>
+              <a href="/reference/error-codes/component-meshery-server/errvalidurlcode-1276/"><code>ErrValidURLCode-1276</code></a>
             </td>
             <td>Enter valid URLs</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrValidURLCode-1276" target="_blank">search forum</a></td>
@@ -9826,12 +10642,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTestEndpointCode-1277" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTestEndpointCode-more-info" onclick="toggle_visibility('meshery-server-ErrTestEndpointCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1277" class="error-name-code">
-              <code>ErrTestEndpointCode-1277</code>
+              <a href="/reference/error-codes/component-meshery-server/errtestendpointcode-1277/"><code>ErrTestEndpointCode-1277</code></a>
             </td>
             <td>Minimum one test endpoint needs to be specified</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTestEndpointCode-1277" target="_blank">search forum</a></td>
@@ -9849,12 +10667,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrLoadgeneratorCode-1278" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrLoadgeneratorCode-more-info" onclick="toggle_visibility('meshery-server-ErrLoadgeneratorCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1278" class="error-name-code">
-              <code>ErrLoadgeneratorCode-1278</code>
+              <a href="/reference/error-codes/component-meshery-server/errloadgeneratorcode-1278/"><code>ErrLoadgeneratorCode-1278</code></a>
             </td>
             <td>specify valid load generator</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLoadgeneratorCode-1278" target="_blank">search forum</a></td>
@@ -9872,12 +10692,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrProtocolCode-1279" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrProtocolCode-more-info" onclick="toggle_visibility('meshery-server-ErrProtocolCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1279" class="error-name-code">
-              <code>ErrProtocolCode-1279</code>
+              <a href="/reference/error-codes/component-meshery-server/errprotocolcode-1279/"><code>ErrProtocolCode-1279</code></a>
             </td>
             <td>specify the Protocol for all clients</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrProtocolCode-1279" target="_blank">search forum</a></td>
@@ -9895,12 +10717,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTestClientCode-1280" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTestClientCode-more-info" onclick="toggle_visibility('meshery-server-ErrTestClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1280" class="error-name-code">
-              <code>ErrTestClientCode-1280</code>
+              <a href="/reference/error-codes/component-meshery-server/errtestclientcode-1280/"><code>ErrTestClientCode-1280</code></a>
             </td>
             <td>minimum one test client needs to be specified</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTestClientCode-1280" target="_blank">search forum</a></td>
@@ -9918,12 +10742,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParsingTestCode-1281" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrParsingTestCode-more-info" onclick="toggle_visibility('meshery-server-ErrParsingTestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1281" class="error-name-code">
-              <code>ErrParsingTestCode-1281</code>
+              <a href="/reference/error-codes/component-meshery-server/errparsingtestcode-1281/"><code>ErrParsingTestCode-1281</code></a>
             </td>
             <td>error parsing test duration, please refer to: https://docs.meshery.io/guides/mesheryctl#performance-management</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParsingTestCode-1281" target="_blank">search forum</a></td>
@@ -9941,12 +10767,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFieldCode-1282" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFieldCode-more-info" onclick="toggle_visibility('meshery-server-ErrFieldCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1282" class="error-name-code">
-              <code>ErrFieldCode-1282</code>
+              <a href="/reference/error-codes/component-meshery-server/errfieldcode-1282/"><code>ErrFieldCode-1282</code></a>
             </td>
             <td>Error: name field is blank</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFieldCode-1282" target="_blank">search forum</a></td>
@@ -9964,12 +10792,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchDataCode-1283" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchDataCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1283" class="error-name-code">
-              <code>ErrFetchDataCode-1283</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchdatacode-1283/"><code>ErrFetchDataCode-1283</code></a>
             </td>
             <td>unable to fetch result data</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchDataCode-1283" target="_blank">search forum</a></td>
@@ -9987,12 +10817,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrIndexOutOfRangeCode-1284" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrIndexOutOfRangeCode-more-info" onclick="toggle_visibility('meshery-server-ErrIndexOutOfRangeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1284" class="error-name-code">
-              <code>ErrIndexOutOfRangeCode-1284</code>
+              <a href="/reference/error-codes/component-meshery-server/errindexoutofrangecode-1284/"><code>ErrIndexOutOfRangeCode-1284</code></a>
             </td>
             <td>Error: index out of range</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrIndexOutOfRangeCode-1284" target="_blank">search forum</a></td>
@@ -10010,12 +10842,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSessionCopyCode-1285" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSessionCopyCode-more-info" onclick="toggle_visibility('meshery-server-ErrSessionCopyCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1285" class="error-name-code">
-              <code>ErrSessionCopyCode-1285</code>
+              <a href="/reference/error-codes/component-meshery-server/errsessioncopycode-1285/"><code>ErrSessionCopyCode-1285</code></a>
             </td>
             <td>Error: session copy error</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSessionCopyCode-1285" target="_blank">search forum</a></td>
@@ -10033,12 +10867,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSavingSeededComponentsCode-1286" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSavingSeededComponentsCode-more-info" onclick="toggle_visibility('meshery-server-ErrSavingSeededComponentsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1286" class="error-name-code">
-              <code>ErrSavingSeededComponentsCode-1286</code>
+              <a href="/reference/error-codes/component-meshery-server/errsavingseededcomponentscode-1286/"><code>ErrSavingSeededComponentsCode-1286</code></a>
             </td>
             <td>Error while saving sample </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSavingSeededComponentsCode-1286" target="_blank">search forum</a></td>
@@ -10056,12 +10892,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGettingSeededComponentsCode-1287" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGettingSeededComponentsCode-more-info" onclick="toggle_visibility('meshery-server-ErrGettingSeededComponentsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1287" class="error-name-code">
-              <code>ErrGettingSeededComponentsCode-1287</code>
+              <a href="/reference/error-codes/component-meshery-server/errgettingseededcomponentscode-1287/"><code>ErrGettingSeededComponentsCode-1287</code></a>
             </td>
             <td>Error while getting 
  from sample content</td>
@@ -10080,12 +10918,14 @@ Ask the Provider Adim for access</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDownloadingSeededComponentsCode-1288" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDownloadingSeededComponentsCode-more-info" onclick="toggle_visibility('meshery-server-ErrDownloadingSeededComponentsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1288" class="error-name-code">
-              <code>ErrDownloadingSeededComponentsCode-1288</code>
+              <a href="/reference/error-codes/component-meshery-server/errdownloadingseededcomponentscode-1288/"><code>ErrDownloadingSeededComponentsCode-1288</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDownloadingSeededComponentsCode-1288" target="_blank">search forum</a></td>
@@ -10105,12 +10945,14 @@ Make sure that Github is reachable and the http requests are not failing</p>
         
           
           
+          
+          
             
           
           <tr id="ErrContextIDCode-1289" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrContextIDCode-more-info" onclick="toggle_visibility('meshery-server-ErrContextIDCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1289" class="error-name-code">
-              <code>ErrContextIDCode-1289</code>
+              <a href="/reference/error-codes/component-meshery-server/errcontextidcode-1289/"><code>ErrContextIDCode-1289</code></a>
             </td>
             <td>Error: Context ID is empty</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrContextIDCode-1289" target="_blank">search forum</a></td>
@@ -10128,12 +10970,14 @@ Make sure that Github is reachable and the http requests are not failing</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMesheryInstanceIDCode-1290" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMesheryInstanceIDCode-more-info" onclick="toggle_visibility('meshery-server-ErrMesheryInstanceIDCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1290" class="error-name-code">
-              <code>ErrMesheryInstanceIDCode-1290</code>
+              <a href="/reference/error-codes/component-meshery-server/errmesheryinstanceidcode-1290/"><code>ErrMesheryInstanceIDCode-1290</code></a>
             </td>
             <td>Error: Meshery Instance ID is empty or is invalid</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMesheryInstanceIDCode-1290" target="_blank">search forum</a></td>
@@ -10151,12 +10995,14 @@ Make sure that Github is reachable and the http requests are not failing</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMesheryNotInClusterCode-1291" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMesheryNotInClusterCode-more-info" onclick="toggle_visibility('meshery-server-ErrMesheryNotInClusterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1291" class="error-name-code">
-              <code>ErrMesheryNotInClusterCode-1291</code>
+              <a href="/reference/error-codes/component-meshery-server/errmesherynotinclustercode-1291/"><code>ErrMesheryNotInClusterCode-1291</code></a>
             </td>
             <td>Error: Meshery is not running inside a cluster</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMesheryNotInClusterCode-1291" target="_blank">search forum</a></td>
@@ -10174,12 +11020,14 @@ Make sure that Github is reachable and the http requests are not failing</p>
         
           
           
+          
+          
             
           
           <tr id="ErrBrokerNotFoundCode-1292" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrBrokerNotFoundCode-more-info" onclick="toggle_visibility('meshery-server-ErrBrokerNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1292" class="error-name-code">
-              <code>ErrBrokerNotFoundCode-1292</code>
+              <a href="/reference/error-codes/component-meshery-server/errbrokernotfoundcode-1292/"><code>ErrBrokerNotFoundCode-1292</code></a>
             </td>
             <td>Meshery broker not found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrBrokerNotFoundCode-1292" target="_blank">search forum</a></td>
@@ -10197,12 +11045,14 @@ Make sure that Github is reachable and the http requests are not failing</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreateOperatorDeploymentConfigCode-1293" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCreateOperatorDeploymentConfigCode-more-info" onclick="toggle_visibility('meshery-server-ErrCreateOperatorDeploymentConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1293" class="error-name-code">
-              <code>ErrCreateOperatorDeploymentConfigCode-1293</code>
+              <a href="/reference/error-codes/component-meshery-server/errcreateoperatordeploymentconfigcode-1293/"><code>ErrCreateOperatorDeploymentConfigCode-1293</code></a>
             </td>
             <td>Operator deployment configuration could not be created.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateOperatorDeploymentConfigCode-1293" target="_blank">search forum</a></td>
@@ -10220,12 +11070,14 @@ Make sure that Github is reachable and the http requests are not failing</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRequestMeshsyncStoreCode-1294" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRequestMeshsyncStoreCode-more-info" onclick="toggle_visibility('meshery-server-ErrRequestMeshsyncStoreCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1294" class="error-name-code">
-              <code>ErrRequestMeshsyncStoreCode-1294</code>
+              <a href="/reference/error-codes/component-meshery-server/errrequestmeshsyncstorecode-1294/"><code>ErrRequestMeshsyncStoreCode-1294</code></a>
             </td>
             <td>Meshsync store request could not be issued</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRequestMeshsyncStoreCode-1294" target="_blank">search forum</a></td>
@@ -10243,12 +11095,14 @@ Make sure that Github is reachable and the http requests are not failing</p>
         
           
           
+          
+          
             
           
           <tr id="ErrBrokerSubscriptionCode-1295" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrBrokerSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrBrokerSubscriptionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1295" class="error-name-code">
-              <code>ErrBrokerSubscriptionCode-1295</code>
+              <a href="/reference/error-codes/component-meshery-server/errbrokersubscriptioncode-1295/"><code>ErrBrokerSubscriptionCode-1295</code></a>
             </td>
             <td>Could not subscribe to the broker subject</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrBrokerSubscriptionCode-1295" target="_blank">search forum</a></td>
@@ -10266,12 +11120,14 @@ Make sure that Github is reachable and the http requests are not failing</p>
         
           
           
+          
+          
             
           
           <tr id="ErrContextAlreadyPersistedCode-1296" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrContextAlreadyPersistedCode-more-info" onclick="toggle_visibility('meshery-server-ErrContextAlreadyPersistedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1296" class="error-name-code">
-              <code>ErrContextAlreadyPersistedCode-1296</code>
+              <a href="/reference/error-codes/component-meshery-server/errcontextalreadypersistedcode-1296/"><code>ErrContextAlreadyPersistedCode-1296</code></a>
             </td>
             <td>kubernetes context already persisted with provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrContextAlreadyPersistedCode-1296" target="_blank">search forum</a></td>
@@ -10289,12 +11145,14 @@ Make sure that Github is reachable and the http requests are not failing</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetPackageCode-1297" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetPackageCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetPackageCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1297" class="error-name-code">
-              <code>ErrGetPackageCode-1297</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetpackagecode-1297/"><code>ErrGetPackageCode-1297</code></a>
             </td>
             <td>Could not get the package</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetPackageCode-1297" target="_blank">search forum</a></td>
@@ -10312,12 +11170,14 @@ Make sure that Github is reachable and the http requests are not failing</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTokenRevokeCode-1298" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTokenRevokeCode-more-info" onclick="toggle_visibility('meshery-server-ErrTokenRevokeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1298" class="error-name-code">
-              <code>ErrTokenRevokeCode-1298</code>
+              <a href="/reference/error-codes/component-meshery-server/errtokenrevokecode-1298/"><code>ErrTokenRevokeCode-1298</code></a>
             </td>
             <td>Error occurred while revoking the token</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTokenRevokeCode-1298" target="_blank">search forum</a></td>
@@ -10335,12 +11195,14 @@ Make sure that Github is reachable and the http requests are not failing</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTokenIntrospectCode-1299" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTokenIntrospectCode-more-info" onclick="toggle_visibility('meshery-server-ErrTokenIntrospectCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1299" class="error-name-code">
-              <code>ErrTokenIntrospectCode-1299</code>
+              <a href="/reference/error-codes/component-meshery-server/errtokenintrospectcode-1299/"><code>ErrTokenIntrospectCode-1299</code></a>
             </td>
             <td>token introspection failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTokenIntrospectCode-1299" target="_blank">search forum</a></td>
@@ -10358,12 +11220,14 @@ Make sure that Github is reachable and the http requests are not failing</p>
         
           
           
+          
+          
             
           
           <tr id="ErrShareDesignCode-1300" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrShareDesignCode-more-info" onclick="toggle_visibility('meshery-server-ErrShareDesignCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1300" class="error-name-code">
-              <code>ErrShareDesignCode-1300</code>
+              <a href="/reference/error-codes/component-meshery-server/errsharedesigncode-1300/"><code>ErrShareDesignCode-1300</code></a>
             </td>
             <td>cannot make design public</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrShareDesignCode-1300" target="_blank">search forum</a></td>
@@ -10384,12 +11248,14 @@ Try using an alternate email address</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnreachableRemoteProviderCode-1301" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnreachableRemoteProviderCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnreachableRemoteProviderCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1301" class="error-name-code">
-              <code>ErrUnreachableRemoteProviderCode-1301</code>
+              <a href="/reference/error-codes/component-meshery-server/errunreachableremoteprovidercode-1301/"><code>ErrUnreachableRemoteProviderCode-1301</code></a>
             </td>
             <td>Could not reach remote provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnreachableRemoteProviderCode-1301" target="_blank">search forum</a></td>
@@ -10407,12 +11273,14 @@ Try using an alternate email address</p>
         
           
           
+          
+          
             
           
           <tr id="ErrShareFilterCode-1302" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrShareFilterCode-more-info" onclick="toggle_visibility('meshery-server-ErrShareFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1302" class="error-name-code">
-              <code>ErrShareFilterCode-1302</code>
+              <a href="/reference/error-codes/component-meshery-server/errsharefiltercode-1302/"><code>ErrShareFilterCode-1302</code></a>
             </td>
             <td>Cannot make filter public</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrShareFilterCode-1302" target="_blank">search forum</a></td>
@@ -10433,12 +11301,14 @@ Ensure that you are the owner of the filter you are sharing or have sharing perm
         
           
           
+          
+          
             
           
           <tr id="ErrPersistEventCode-1303" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPersistEventCode-more-info" onclick="toggle_visibility('meshery-server-ErrPersistEventCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1303" class="error-name-code">
-              <code>ErrPersistEventCode-1303</code>
+              <a href="/reference/error-codes/component-meshery-server/errpersisteventcode-1303/"><code>ErrPersistEventCode-1303</code></a>
             </td>
             <td>Could not persist event</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPersistEventCode-1303" target="_blank">search forum</a></td>
@@ -10457,12 +11327,14 @@ Meshery Database handler is not accessible to perform operations</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnreachableKubeAPICode-1304" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnreachableKubeAPICode-more-info" onclick="toggle_visibility('meshery-server-ErrUnreachableKubeAPICode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1304" class="error-name-code">
-              <code>ErrUnreachableKubeAPICode-1304</code>
+              <a href="/reference/error-codes/component-meshery-server/errunreachablekubeapicode-1304/"><code>ErrUnreachableKubeAPICode-1304</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnreachableKubeAPICode-1304" target="_blank">search forum</a></td>
@@ -10483,12 +11355,14 @@ Remove the cluster credential and enable &#39;insecure-skip-tls-verify&#39;.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFlushMeshSyncDataCode-1305" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFlushMeshSyncDataCode-more-info" onclick="toggle_visibility('meshery-server-ErrFlushMeshSyncDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1305" class="error-name-code">
-              <code>ErrFlushMeshSyncDataCode-1305</code>
+              <a href="/reference/error-codes/component-meshery-server/errflushmeshsyncdatacode-1305/"><code>ErrFlushMeshSyncDataCode-1305</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFlushMeshSyncDataCode-1305" target="_blank">search forum</a></td>
@@ -10506,12 +11380,14 @@ Remove the cluster credential and enable &#39;insecure-skip-tls-verify&#39;.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateConnectionStatusCode-1306" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUpdateConnectionStatusCode-more-info" onclick="toggle_visibility('meshery-server-ErrUpdateConnectionStatusCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1306" class="error-name-code">
-              <code>ErrUpdateConnectionStatusCode-1306</code>
+              <a href="/reference/error-codes/component-meshery-server/errupdateconnectionstatuscode-1306/"><code>ErrUpdateConnectionStatusCode-1306</code></a>
             </td>
             <td>Unable to update connection status</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateConnectionStatusCode-1306" target="_blank">search forum</a></td>
@@ -10531,12 +11407,14 @@ Check if the user has necessary privileges</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResultNotFoundCode-1307" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResultNotFoundCode-more-info" onclick="toggle_visibility('meshery-server-ErrResultNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1307" class="error-name-code">
-              <code>ErrResultNotFoundCode-1307</code>
+              <a href="/reference/error-codes/component-meshery-server/errresultnotfoundcode-1307/"><code>ErrResultNotFoundCode-1307</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResultNotFoundCode-1307" target="_blank">search forum</a></td>
@@ -10554,12 +11432,14 @@ Check if the user has necessary privileges</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPersistCredentialCode-1308" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPersistCredentialCode-more-info" onclick="toggle_visibility('meshery-server-ErrPersistCredentialCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1308" class="error-name-code">
-              <code>ErrPersistCredentialCode-1308</code>
+              <a href="/reference/error-codes/component-meshery-server/errpersistcredentialcode-1308/"><code>ErrPersistCredentialCode-1308</code></a>
             </td>
             <td>unable to persist credential details</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPersistCredentialCode-1308" target="_blank">search forum</a></td>
@@ -10577,12 +11457,14 @@ Check if the user has necessary privileges</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPersistConnectionCode-1309" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPersistConnectionCode-more-info" onclick="toggle_visibility('meshery-server-ErrPersistConnectionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1309" class="error-name-code">
-              <code>ErrPersistConnectionCode-1309</code>
+              <a href="/reference/error-codes/component-meshery-server/errpersistconnectioncode-1309/"><code>ErrPersistConnectionCode-1309</code></a>
             </td>
             <td>unable to persist connection details</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPersistConnectionCode-1309" target="_blank">search forum</a></td>
@@ -10600,12 +11482,14 @@ Check if the user has necessary privileges</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPrometheusScanCode-1310" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPrometheusScanCode-more-info" onclick="toggle_visibility('meshery-server-ErrPrometheusScanCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1310" class="error-name-code">
-              <code>ErrPrometheusScanCode-1310</code>
+              <a href="/reference/error-codes/component-meshery-server/errprometheusscancode-1310/"><code>ErrPrometheusScanCode-1310</code></a>
             </td>
             <td>Unable to connect to prometheus</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPrometheusScanCode-1310" target="_blank">search forum</a></td>
@@ -10625,12 +11509,14 @@ Connect to Prometheus from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGrafanaScanCode-1311" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGrafanaScanCode-more-info" onclick="toggle_visibility('meshery-server-ErrGrafanaScanCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1311" class="error-name-code">
-              <code>ErrGrafanaScanCode-1311</code>
+              <a href="/reference/error-codes/component-meshery-server/errgrafanascancode-1311/"><code>ErrGrafanaScanCode-1311</code></a>
             </td>
             <td>Unable to connect to grafana</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGrafanaScanCode-1311" target="_blank">search forum</a></td>
@@ -10650,12 +11536,14 @@ Connect to Grafana from the settings page in the UI</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDBCreateCode-1312" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDBCreateCode-more-info" onclick="toggle_visibility('meshery-server-ErrDBCreateCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1312" class="error-name-code">
-              <code>ErrDBCreateCode-1312</code>
+              <a href="/reference/error-codes/component-meshery-server/errdbcreatecode-1312/"><code>ErrDBCreateCode-1312</code></a>
             </td>
             <td>Unable to create record</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDBCreateCode-1312" target="_blank">search forum</a></td>
@@ -10675,12 +11563,14 @@ Rest the database connection</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingKubernetesComponentsCode-1313" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCreatingKubernetesComponentsCode-more-info" onclick="toggle_visibility('meshery-server-ErrCreatingKubernetesComponentsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1313" class="error-name-code">
-              <code>ErrCreatingKubernetesComponentsCode-1313</code>
+              <a href="/reference/error-codes/component-meshery-server/errcreatingkubernetescomponentscode-1313/"><code>ErrCreatingKubernetesComponentsCode-1313</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingKubernetesComponentsCode-1313" target="_blank">search forum</a></td>
@@ -10702,12 +11592,14 @@ Make sure that the configuration filters passed are in accordance with output fr
         
           
           
+          
+          
             
           
           <tr id="ErrGetK8sComponentsCode-1314" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetK8sComponentsCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetK8sComponentsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1314" class="error-name-code">
-              <code>ErrGetK8sComponentsCode-1314</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetk8scomponentscode-1314/"><code>ErrGetK8sComponentsCode-1314</code></a>
             </td>
             <td>Could not get K8s components for registration</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetK8sComponentsCode-1314" target="_blank">search forum</a></td>
@@ -10727,12 +11619,14 @@ Could not fetch API resources from Kubernetes server</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseK8sManifestCode-1315" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrParseK8sManifestCode-more-info" onclick="toggle_visibility('meshery-server-ErrParseK8sManifestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1315" class="error-name-code">
-              <code>ErrParseK8sManifestCode-1315</code>
+              <a href="/reference/error-codes/component-meshery-server/errparsek8smanifestcode-1315/"><code>ErrParseK8sManifestCode-1315</code></a>
             </td>
             <td>Failed to parse manifest into JSON</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseK8sManifestCode-1315" target="_blank">search forum</a></td>
@@ -10750,12 +11644,14 @@ Could not fetch API resources from Kubernetes server</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatePatternServiceCode-1316" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCreatePatternServiceCode-more-info" onclick="toggle_visibility('meshery-server-ErrCreatePatternServiceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1316" class="error-name-code">
-              <code>ErrCreatePatternServiceCode-1316</code>
+              <a href="/reference/error-codes/component-meshery-server/errcreatepatternservicecode-1316/"><code>ErrCreatePatternServiceCode-1316</code></a>
             </td>
             <td>Failed to create design service from Manifest</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatePatternServiceCode-1316" target="_blank">search forum</a></td>
@@ -10775,12 +11671,14 @@ Check if Meshery has identified and registered Kubernetes components</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPatternFromCytoscapeCode-1317" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPatternFromCytoscapeCode-more-info" onclick="toggle_visibility('meshery-server-ErrPatternFromCytoscapeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1317" class="error-name-code">
-              <code>ErrPatternFromCytoscapeCode-1317</code>
+              <a href="/reference/error-codes/component-meshery-server/errpatternfromcytoscapecode-1317/"><code>ErrPatternFromCytoscapeCode-1317</code></a>
             </td>
             <td>Could not create design file from given cytoscape</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPatternFromCytoscapeCode-1317" target="_blank">search forum</a></td>
@@ -10802,12 +11700,14 @@ Make sure _data field has \&#34;settings\&#34; field</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDryRunCode-1318" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDryRunCode-more-info" onclick="toggle_visibility('meshery-server-ErrDryRunCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1318" class="error-name-code">
-              <code>ErrDryRunCode-1318</code>
+              <a href="/reference/error-codes/component-meshery-server/errdryruncode-1318/"><code>ErrDryRunCode-1318</code></a>
             </td>
             <td>error performing a dry run on the design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDryRunCode-1318" target="_blank">search forum</a></td>
@@ -10825,12 +11725,14 @@ Make sure _data field has \&#34;settings\&#34; field</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRegisterEntityCode-1319" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRegisterEntityCode-more-info" onclick="toggle_visibility('meshery-server-ErrRegisterEntityCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1319" class="error-name-code">
-              <code>ErrRegisterEntityCode-1319</code>
+              <a href="/reference/error-codes/component-meshery-server/errregisterentitycode-1319/"><code>ErrRegisterEntityCode-1319</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRegisterEntityCode-1319" target="_blank">search forum</a></td>
@@ -10848,12 +11750,14 @@ Make sure _data field has \&#34;settings\&#34; field</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPersistEventToRemoteProviderCode-1320" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPersistEventToRemoteProviderCode-more-info" onclick="toggle_visibility('meshery-server-ErrPersistEventToRemoteProviderCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1320" class="error-name-code">
-              <code>ErrPersistEventToRemoteProviderCode-1320</code>
+              <a href="/reference/error-codes/component-meshery-server/errpersisteventtoremoteprovidercode-1320/"><code>ErrPersistEventToRemoteProviderCode-1320</code></a>
             </td>
             <td>failed to persist event to remote provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPersistEventToRemoteProviderCode-1320" target="_blank">search forum</a></td>
@@ -10873,12 +11777,14 @@ Verify remote provider for its reachability or availability.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDoRequestCode-1321" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDoRequestCode-more-info" onclick="toggle_visibility('meshery-server-ErrDoRequestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1321" class="error-name-code">
-              <code>ErrDoRequestCode-1321</code>
+              <a href="/reference/error-codes/component-meshery-server/errdorequestcode-1321/"><code>ErrDoRequestCode-1321</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDoRequestCode-1321" target="_blank">search forum</a></td>
@@ -10898,12 +11804,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMarshalYAMLCode-1322" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMarshalYAMLCode-more-info" onclick="toggle_visibility('meshery-server-ErrMarshalYAMLCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1322" class="error-name-code">
-              <code>ErrMarshalYAMLCode-1322</code>
+              <a href="/reference/error-codes/component-meshery-server/errmarshalyamlcode-1322/"><code>ErrMarshalYAMLCode-1322</code></a>
             </td>
             <td>Unable to marshal yaml</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMarshalYAMLCode-1322" target="_blank">search forum</a></td>
@@ -10921,12 +11829,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEventStreamingNotSupportedCode-1324" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEventStreamingNotSupportedCode-more-info" onclick="toggle_visibility('meshery-server-ErrEventStreamingNotSupportedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1324" class="error-name-code">
-              <code>ErrEventStreamingNotSupportedCode-1324</code>
+              <a href="/reference/error-codes/component-meshery-server/erreventstreamingnotsupportedcode-1324/"><code>ErrEventStreamingNotSupportedCode-1324</code></a>
             </td>
             <td>Live events stream not supported.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEventStreamingNotSupportedCode-1324" target="_blank">search forum</a></td>
@@ -10944,12 +11854,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGenerateClusterContextCode-1325" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGenerateClusterContextCode-more-info" onclick="toggle_visibility('meshery-server-ErrGenerateClusterContextCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1325" class="error-name-code">
-              <code>ErrGenerateClusterContextCode-1325</code>
+              <a href="/reference/error-codes/component-meshery-server/errgenerateclustercontextcode-1325/"><code>ErrGenerateClusterContextCode-1325</code></a>
             </td>
             <td>Failed to generate in cluster context.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGenerateClusterContextCode-1325" target="_blank">search forum</a></td>
@@ -10967,12 +11879,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNilClusterContextCode-1326" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNilClusterContextCode-more-info" onclick="toggle_visibility('meshery-server-ErrNilClusterContextCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1326" class="error-name-code">
-              <code>ErrNilClusterContextCode-1326</code>
+              <a href="/reference/error-codes/component-meshery-server/errnilclustercontextcode-1326/"><code>ErrNilClusterContextCode-1326</code></a>
             </td>
             <td>Nil context generated from in cluster config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNilClusterContextCode-1326" target="_blank">search forum</a></td>
@@ -10990,12 +11904,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFailToSaveContextCode-1327" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFailToSaveContextCode-more-info" onclick="toggle_visibility('meshery-server-ErrFailToSaveContextCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1327" class="error-name-code">
-              <code>ErrFailToSaveContextCode-1327</code>
+              <a href="/reference/error-codes/component-meshery-server/errfailtosavecontextcode-1327/"><code>ErrFailToSaveContextCode-1327</code></a>
             </td>
             <td>Failed to save the context</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailToSaveContextCode-1327" target="_blank">search forum</a></td>
@@ -11013,12 +11929,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParsingCallBackUrlCode-1328" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrParsingCallBackUrlCode-more-info" onclick="toggle_visibility('meshery-server-ErrParsingCallBackUrlCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1328" class="error-name-code">
-              <code>ErrParsingCallBackUrlCode-1328</code>
+              <a href="/reference/error-codes/component-meshery-server/errparsingcallbackurlcode-1328/"><code>ErrParsingCallBackUrlCode-1328</code></a>
             </td>
             <td>Failed to parse the callback URL</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParsingCallBackUrlCode-1328" target="_blank">search forum</a></td>
@@ -11036,12 +11954,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrReadSessionPersistorCode-1329" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrReadSessionPersistorCode-more-info" onclick="toggle_visibility('meshery-server-ErrReadSessionPersistorCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1329" class="error-name-code">
-              <code>ErrReadSessionPersistorCode-1329</code>
+              <a href="/reference/error-codes/component-meshery-server/errreadsessionpersistorcode-1329/"><code>ErrReadSessionPersistorCode-1329</code></a>
             </td>
             <td>Unable to read session from the session persister, starting with a new one</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadSessionPersistorCode-1329" target="_blank">search forum</a></td>
@@ -11059,12 +11979,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFailToGetK8SContextCode-1330" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFailToGetK8SContextCode-more-info" onclick="toggle_visibility('meshery-server-ErrFailToGetK8SContextCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1330" class="error-name-code">
-              <code>ErrFailToGetK8SContextCode-1330</code>
+              <a href="/reference/error-codes/component-meshery-server/errfailtogetk8scontextcode-1330/"><code>ErrFailToGetK8SContextCode-1330</code></a>
             </td>
             <td>Failed to get Kubernetes context</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailToGetK8SContextCode-1330" target="_blank">search forum</a></td>
@@ -11082,12 +12004,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFailToLoadK8sContextCode-1331" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFailToLoadK8sContextCode-more-info" onclick="toggle_visibility('meshery-server-ErrFailToLoadK8sContextCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1331" class="error-name-code">
-              <code>ErrFailToLoadK8sContextCode-1331</code>
+              <a href="/reference/error-codes/component-meshery-server/errfailtoloadk8scontextcode-1331/"><code>ErrFailToLoadK8sContextCode-1331</code></a>
             </td>
             <td>Failed to load Kubernetes context</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailToLoadK8sContextCode-1331" target="_blank">search forum</a></td>
@@ -11105,12 +12029,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSessionNotReadIntactCode-1332" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSessionNotReadIntactCode-more-info" onclick="toggle_visibility('meshery-server-ErrSessionNotReadIntactCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1332" class="error-name-code">
-              <code>ErrSessionNotReadIntactCode-1332</code>
+              <a href="/reference/error-codes/component-meshery-server/errsessionnotreadintactcode-1332/"><code>ErrSessionNotReadIntactCode-1332</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSessionNotReadIntactCode-1332" target="_blank">search forum</a></td>
@@ -11128,12 +12054,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSessionNotFoundCode-1333" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSessionNotFoundCode-more-info" onclick="toggle_visibility('meshery-server-ErrSessionNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1333" class="error-name-code">
-              <code>ErrSessionNotFoundCode-1333</code>
+              <a href="/reference/error-codes/component-meshery-server/errsessionnotfoundcode-1333/"><code>ErrSessionNotFoundCode-1333</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSessionNotFoundCode-1333" target="_blank">search forum</a></td>
@@ -11151,12 +12079,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTokenRetryCode-1334" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTokenRetryCode-more-info" onclick="toggle_visibility('meshery-server-ErrTokenRetryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1334" class="error-name-code">
-              <code>ErrTokenRetryCode-1334</code>
+              <a href="/reference/error-codes/component-meshery-server/errtokenretrycode-1334/"><code>ErrTokenRetryCode-1334</code></a>
             </td>
             <td>Error occurred, retrying after refresh to fetch token</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTokenRetryCode-1334" target="_blank">search forum</a></td>
@@ -11174,12 +12104,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUrlParseCode-1335" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUrlParseCode-more-info" onclick="toggle_visibility('meshery-server-ErrUrlParseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1335" class="error-name-code">
-              <code>ErrUrlParseCode-1335</code>
+              <a href="/reference/error-codes/component-meshery-server/errurlparsecode-1335/"><code>ErrUrlParseCode-1335</code></a>
             </td>
             <td>Error parsing the URL</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUrlParseCode-1335" target="_blank">search forum</a></td>
@@ -11197,12 +12129,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCloseIoReaderCode-1336" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCloseIoReaderCode-more-info" onclick="toggle_visibility('meshery-server-ErrCloseIoReaderCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1336" class="error-name-code">
-              <code>ErrCloseIoReaderCode-1336</code>
+              <a href="/reference/error-codes/component-meshery-server/errcloseioreadercode-1336/"><code>ErrCloseIoReaderCode-1336</code></a>
             </td>
             <td>Error closing response body reader.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCloseIoReaderCode-1336" target="_blank">search forum</a></td>
@@ -11220,12 +12154,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDownloadPackageCode-1337" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDownloadPackageCode-more-info" onclick="toggle_visibility('meshery-server-ErrDownloadPackageCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1337" class="error-name-code">
-              <code>ErrDownloadPackageCode-1337</code>
+              <a href="/reference/error-codes/component-meshery-server/errdownloadpackagecode-1337/"><code>ErrDownloadPackageCode-1337</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDownloadPackageCode-1337" target="_blank">search forum</a></td>
@@ -11243,12 +12179,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrOperationNotAvailableCode-1338" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrOperationNotAvailableCode-more-info" onclick="toggle_visibility('meshery-server-ErrOperationNotAvailableCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1338" class="error-name-code">
-              <code>ErrOperationNotAvailableCode-1338</code>
+              <a href="/reference/error-codes/component-meshery-server/erroperationnotavailablecode-1338/"><code>ErrOperationNotAvailableCode-1338</code></a>
             </td>
             <td>Operation not available</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOperationNotAvailableCode-1338" target="_blank">search forum</a></td>
@@ -11266,12 +12204,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTokenVerifyCode-1339" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTokenVerifyCode-more-info" onclick="toggle_visibility('meshery-server-ErrTokenVerifyCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1339" class="error-name-code">
-              <code>ErrTokenVerifyCode-1339</code>
+              <a href="/reference/error-codes/component-meshery-server/errtokenverifycode-1339/"><code>ErrTokenVerifyCode-1339</code></a>
             </td>
             <td>Validation of refreshed token failed.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTokenVerifyCode-1339" target="_blank">search forum</a></td>
@@ -11289,12 +12229,14 @@ Ensure network connectivity to the resource from your network</p>
         
           
           
+          
+          
             
           
           <tr id="ErrLogoutCode-1340" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrLogoutCode-more-info" onclick="toggle_visibility('meshery-server-ErrLogoutCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1340" class="error-name-code">
-              <code>ErrLogoutCode-1340</code>
+              <a href="/reference/error-codes/component-meshery-server/errlogoutcode-1340/"><code>ErrLogoutCode-1340</code></a>
             </td>
             <td>Unable to perform logout</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLogoutCode-1340" target="_blank">search forum</a></td>
@@ -11313,12 +12255,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetSessionCookieCode-1341" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetSessionCookieCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetSessionCookieCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1341" class="error-name-code">
-              <code>ErrGetSessionCookieCode-1341</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetsessioncookiecode-1341/"><code>ErrGetSessionCookieCode-1341</code></a>
             </td>
             <td>Error occurred while getting session cookie</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetSessionCookieCode-1341" target="_blank">search forum</a></td>
@@ -11336,12 +12280,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCloneCode-1342" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCloneCode-more-info" onclick="toggle_visibility('meshery-server-ErrCloneCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1342" class="error-name-code">
-              <code>ErrCloneCode-1342</code>
+              <a href="/reference/error-codes/component-meshery-server/errclonecode-1342/"><code>ErrCloneCode-1342</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCloneCode-1342" target="_blank">search forum</a></td>
@@ -11359,12 +12305,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPublishCode-1343" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPublishCode-more-info" onclick="toggle_visibility('meshery-server-ErrPublishCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1343" class="error-name-code">
-              <code>ErrPublishCode-1343</code>
+              <a href="/reference/error-codes/component-meshery-server/errpublishcode-1343/"><code>ErrPublishCode-1343</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPublishCode-1343" target="_blank">search forum</a></td>
@@ -11382,12 +12330,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnPublishCode-1344" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnPublishCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnPublishCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1344" class="error-name-code">
-              <code>ErrUnPublishCode-1344</code>
+              <a href="/reference/error-codes/component-meshery-server/errunpublishcode-1344/"><code>ErrUnPublishCode-1344</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnPublishCode-1344" target="_blank">search forum</a></td>
@@ -11405,12 +12355,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSaveConnectionCode-1345" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSaveConnectionCode-more-info" onclick="toggle_visibility('meshery-server-ErrSaveConnectionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1345" class="error-name-code">
-              <code>ErrSaveConnectionCode-1345</code>
+              <a href="/reference/error-codes/component-meshery-server/errsaveconnectioncode-1345/"><code>ErrSaveConnectionCode-1345</code></a>
             </td>
             <td>Unable to save Meshery connection</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSaveConnectionCode-1345" target="_blank">search forum</a></td>
@@ -11428,12 +12380,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGenerateK8sHandlerCode-1346" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGenerateK8sHandlerCode-more-info" onclick="toggle_visibility('meshery-server-ErrGenerateK8sHandlerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1346" class="error-name-code">
-              <code>ErrGenerateK8sHandlerCode-1346</code>
+              <a href="/reference/error-codes/component-meshery-server/errgeneratek8shandlercode-1346/"><code>ErrGenerateK8sHandlerCode-1346</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGenerateK8sHandlerCode-1346" target="_blank">search forum</a></td>
@@ -11451,12 +12405,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRetrieveK8sClusterIDCode-1347" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRetrieveK8sClusterIDCode-more-info" onclick="toggle_visibility('meshery-server-ErrRetrieveK8sClusterIDCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1347" class="error-name-code">
-              <code>ErrRetrieveK8sClusterIDCode-1347</code>
+              <a href="/reference/error-codes/component-meshery-server/errretrievek8sclusteridcode-1347/"><code>ErrRetrieveK8sClusterIDCode-1347</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRetrieveK8sClusterIDCode-1347" target="_blank">search forum</a></td>
@@ -11474,12 +12430,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreateResourceEntryCode-1348" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCreateResourceEntryCode-more-info" onclick="toggle_visibility('meshery-server-ErrCreateResourceEntryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1348" class="error-name-code">
-              <code>ErrCreateResourceEntryCode-1348</code>
+              <a href="/reference/error-codes/component-meshery-server/errcreateresourceentrycode-1348/"><code>ErrCreateResourceEntryCode-1348</code></a>
             </td>
             <td>Failed to create resource entry</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateResourceEntryCode-1348" target="_blank">search forum</a></td>
@@ -11497,12 +12455,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInitializeDBHandlerCode-1349" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInitializeDBHandlerCode-more-info" onclick="toggle_visibility('meshery-server-ErrInitializeDBHandlerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1349" class="error-name-code">
-              <code>ErrInitializeDBHandlerCode-1349</code>
+              <a href="/reference/error-codes/component-meshery-server/errinitializedbhandlercode-1349/"><code>ErrInitializeDBHandlerCode-1349</code></a>
             </td>
             <td>Unable to initialize database handler</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInitializeDBHandlerCode-1349" target="_blank">search forum</a></td>
@@ -11520,12 +12480,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeleteK8sResourceCode-1350" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeleteK8sResourceCode-more-info" onclick="toggle_visibility('meshery-server-ErrDeleteK8sResourceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1350" class="error-name-code">
-              <code>ErrDeleteK8sResourceCode-1350</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeletek8sresourcecode-1350/"><code>ErrDeleteK8sResourceCode-1350</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeleteK8sResourceCode-1350" target="_blank">search forum</a></td>
@@ -11543,12 +12505,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreateK8sResourceCode-1351" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCreateK8sResourceCode-more-info" onclick="toggle_visibility('meshery-server-ErrCreateK8sResourceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1351" class="error-name-code">
-              <code>ErrCreateK8sResourceCode-1351</code>
+              <a href="/reference/error-codes/component-meshery-server/errcreatek8sresourcecode-1351/"><code>ErrCreateK8sResourceCode-1351</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateK8sResourceCode-1351" target="_blank">search forum</a></td>
@@ -11566,12 +12530,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetResourceCode-1352" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetResourceCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetResourceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1352" class="error-name-code">
-              <code>ErrGetResourceCode-1352</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetresourcecode-1352/"><code>ErrGetResourceCode-1352</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetResourceCode-1352" target="_blank">search forum</a></td>
@@ -11589,12 +12555,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeleteResourceCode-1353" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeleteResourceCode-more-info" onclick="toggle_visibility('meshery-server-ErrDeleteResourceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1353" class="error-name-code">
-              <code>ErrDeleteResourceCode-1353</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeleteresourcecode-1353/"><code>ErrDeleteResourceCode-1353</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeleteResourceCode-1353" target="_blank">search forum</a></td>
@@ -11612,12 +12580,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRecreateResourceCode-1354" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRecreateResourceCode-more-info" onclick="toggle_visibility('meshery-server-ErrRecreateResourceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1354" class="error-name-code">
-              <code>ErrRecreateResourceCode-1354</code>
+              <a href="/reference/error-codes/component-meshery-server/errrecreateresourcecode-1354/"><code>ErrRecreateResourceCode-1354</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRecreateResourceCode-1354" target="_blank">search forum</a></td>
@@ -11635,12 +12605,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateResourceCode-1355" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUpdateResourceCode-more-info" onclick="toggle_visibility('meshery-server-ErrUpdateResourceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1355" class="error-name-code">
-              <code>ErrUpdateResourceCode-1355</code>
+              <a href="/reference/error-codes/component-meshery-server/errupdateresourcecode-1355/"><code>ErrUpdateResourceCode-1355</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateResourceCode-1355" target="_blank">search forum</a></td>
@@ -11658,12 +12630,14 @@ Remote provider is not able to complete the request</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptySessionCode-1356" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEmptySessionCode-more-info" onclick="toggle_visibility('meshery-server-ErrEmptySessionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1356" class="error-name-code">
-              <code>ErrEmptySessionCode-1356</code>
+              <a href="/reference/error-codes/component-meshery-server/erremptysessioncode-1356/"><code>ErrEmptySessionCode-1356</code></a>
             </td>
             <td>No session found in the request</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptySessionCode-1356" target="_blank">search forum</a></td>
@@ -11683,12 +12657,14 @@ Verify that your browser settings allow cookies.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidEventDataCode-1357" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidEventDataCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidEventDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1357" class="error-name-code">
-              <code>ErrInvalidEventDataCode-1357</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalideventdatacode-1357/"><code>ErrInvalidEventDataCode-1357</code></a>
             </td>
             <td>The event provided is not valid</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidEventDataCode-1357" target="_blank">search forum</a></td>
@@ -11706,12 +12682,14 @@ Verify that your browser settings allow cookies.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSeedingComponentsCode-1358" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSeedingComponentsCode-more-info" onclick="toggle_visibility('meshery-server-ErrSeedingComponentsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1358" class="error-name-code">
-              <code>ErrSeedingComponentsCode-1358</code>
+              <a href="/reference/error-codes/component-meshery-server/errseedingcomponentscode-1358/"><code>ErrSeedingComponentsCode-1358</code></a>
             </td>
             <td>Failed to register the given models into meshery&#39;s registry</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSeedingComponentsCode-1358" target="_blank">search forum</a></td>
@@ -11731,12 +12709,14 @@ If it is an internal error, please try again after some time</p>
         
           
           
+          
+          
             
           
           <tr id="ErrImportFailureCode-1359" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrImportFailureCode-more-info" onclick="toggle_visibility('meshery-server-ErrImportFailureCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1359" class="error-name-code">
-              <code>ErrImportFailureCode-1359</code>
+              <a href="/reference/error-codes/component-meshery-server/errimportfailurecode-1359/"><code>ErrImportFailureCode-1359</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrImportFailureCode-1359" target="_blank">search forum</a></td>
@@ -11755,12 +12735,14 @@ Entity version might not be supported by Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyOCIImageCode-1360" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEmptyOCIImageCode-more-info" onclick="toggle_visibility('meshery-server-ErrEmptyOCIImageCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1360" class="error-name-code">
-              <code>ErrEmptyOCIImageCode-1360</code>
+              <a href="/reference/error-codes/component-meshery-server/erremptyociimagecode-1360/"><code>ErrEmptyOCIImageCode-1360</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyOCIImageCode-1360" target="_blank">search forum</a></td>
@@ -11778,12 +12760,14 @@ Entity version might not be supported by Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResolveReferenceCode-1361" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResolveReferenceCode-more-info" onclick="toggle_visibility('meshery-server-ErrResolveReferenceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1361" class="error-name-code">
-              <code>ErrResolveReferenceCode-1361</code>
+              <a href="/reference/error-codes/component-meshery-server/errresolvereferencecode-1361/"><code>ErrResolveReferenceCode-1361</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResolveReferenceCode-1361" target="_blank">search forum</a></td>
@@ -11801,12 +12785,14 @@ Entity version might not be supported by Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetComponentDefinitionCode-1362" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetComponentDefinitionCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetComponentDefinitionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1362" class="error-name-code">
-              <code>ErrGetComponentDefinitionCode-1362</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetcomponentdefinitioncode-1362/"><code>ErrGetComponentDefinitionCode-1362</code></a>
             </td>
             <td>component definition not found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetComponentDefinitionCode-1362" target="_blank">search forum</a></td>
@@ -11826,12 +12812,14 @@ Import the model and try again.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetCapabilitiesCode-1363" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetCapabilitiesCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetCapabilitiesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1363" class="error-name-code">
-              <code>ErrGetCapabilitiesCode-1363</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetcapabilitiescode-1363/"><code>ErrGetCapabilitiesCode-1363</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetCapabilitiesCode-1363" target="_blank">search forum</a></td>
@@ -11849,12 +12837,14 @@ Import the model and try again.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrExportPatternInFormatCode-1364" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrExportPatternInFormatCode-more-info" onclick="toggle_visibility('meshery-server-ErrExportPatternInFormatCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1364" class="error-name-code">
-              <code>ErrExportPatternInFormatCode-1364</code>
+              <a href="/reference/error-codes/component-meshery-server/errexportpatterninformatcode-1364/"><code>ErrExportPatternInFormatCode-1364</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrExportPatternInFormatCode-1364" target="_blank">search forum</a></td>
@@ -11872,12 +12862,14 @@ Import the model and try again.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNoTarInsideOCiCode-1365" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNoTarInsideOCiCode-more-info" onclick="toggle_visibility('meshery-server-ErrNoTarInsideOCiCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1365" class="error-name-code">
-              <code>ErrNoTarInsideOCiCode-1365</code>
+              <a href="/reference/error-codes/component-meshery-server/errnotarinsideocicode-1365/"><code>ErrNoTarInsideOCiCode-1365</code></a>
             </td>
             <td>No tar file found inside OCI image</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoTarInsideOCiCode-1365" target="_blank">search forum</a></td>
@@ -11895,12 +12887,14 @@ Import the model and try again.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFileTypeCode-1366" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFileTypeCode-more-info" onclick="toggle_visibility('meshery-server-ErrFileTypeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1366" class="error-name-code">
-              <code>ErrFileTypeCode-1366</code>
+              <a href="/reference/error-codes/component-meshery-server/errfiletypecode-1366/"><code>ErrFileTypeCode-1366</code></a>
             </td>
             <td>Error: 
  is not a valid file type</td>
@@ -11919,12 +12913,14 @@ Import the model and try again.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingOPAInstanceCode-1367" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCreatingOPAInstanceCode-more-info" onclick="toggle_visibility('meshery-server-ErrCreatingOPAInstanceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1367" class="error-name-code">
-              <code>ErrCreatingOPAInstanceCode-1367</code>
+              <a href="/reference/error-codes/component-meshery-server/errcreatingopainstancecode-1367/"><code>ErrCreatingOPAInstanceCode-1367</code></a>
             </td>
             <td>Error creating OPA Instance.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingOPAInstanceCode-1367" target="_blank">search forum</a></td>
@@ -11942,12 +12938,14 @@ Import the model and try again.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrStatusCodeCode-1368" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrStatusCodeCode-more-info" onclick="toggle_visibility('meshery-server-ErrStatusCodeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1368" class="error-name-code">
-              <code>ErrStatusCodeCode-1368</code>
+              <a href="/reference/error-codes/component-meshery-server/errstatuscodecode-1368/"><code>ErrStatusCodeCode-1368</code></a>
             </td>
             <td>Request was not successful</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrStatusCodeCode-1368" target="_blank">search forum</a></td>
@@ -11969,12 +12967,14 @@ Confirm the API endpoint is correct and functional.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResyncClusterCode-1369" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResyncClusterCode-more-info" onclick="toggle_visibility('meshery-server-ErrResyncClusterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1369" class="error-name-code">
-              <code>ErrResyncClusterCode-1369</code>
+              <a href="/reference/error-codes/component-meshery-server/errresyncclustercode-1369/"><code>ErrResyncClusterCode-1369</code></a>
             </td>
             <td>Unable to process resync cluster request</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResyncClusterCode-1369" target="_blank">search forum</a></td>
@@ -11992,12 +12992,14 @@ Confirm the API endpoint is correct and functional.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMeshsyncDataHandlerCode-1370" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMeshsyncDataHandlerCode-more-info" onclick="toggle_visibility('meshery-server-ErrMeshsyncDataHandlerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1370" class="error-name-code">
-              <code>ErrMeshsyncDataHandlerCode-1370</code>
+              <a href="/reference/error-codes/component-meshery-server/errmeshsyncdatahandlercode-1370/"><code>ErrMeshsyncDataHandlerCode-1370</code></a>
             </td>
             <td>Error in meshsync data hadler</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshsyncDataHandlerCode-1370" target="_blank">search forum</a></td>
@@ -12017,10 +13019,12 @@ check that server can establish connection to broker</p>
         
           
           
+          
+          
           <tr id="ErrResyncResourcesCode-1371" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResyncResourcesCode-more-info" onclick="toggle_visibility('meshery-server-ErrResyncResourcesCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -1371" class="error-name-code">
-              <code>ErrResyncResourcesCode-1371</code>
+              <a href="/reference/error-codes/component-meshery-server/errresyncresourcescode-1371/"><code>ErrResyncResourcesCode-1371</code></a>
             </td>
             <td>Error resync resources</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResyncResourcesCode-1371" target="_blank">search forum</a></td>
@@ -12038,10 +13042,12 @@ check that server can establish connection to broker</p>
         
           
           
+          
+          
           <tr id="ErrResyncK8SResourcesCode-1372" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResyncK8SResourcesCode-more-info" onclick="toggle_visibility('meshery-server-ErrResyncK8SResourcesCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -1372" class="error-name-code">
-              <code>ErrResyncK8SResourcesCode-1372</code>
+              <a href="/reference/error-codes/component-meshery-server/errresynck8sresourcescode-1372/"><code>ErrResyncK8SResourcesCode-1372</code></a>
             </td>
             <td>Error resync resources</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResyncK8SResourcesCode-1372" target="_blank">search forum</a></td>
@@ -12060,10 +13066,12 @@ Check if machine context contains a reference to MesheryControllersHelper</p>
         
           
           
+          
+          
           <tr id="ErrConnectActionCode-1373" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrConnectActionCode-more-info" onclick="toggle_visibility('meshery-server-ErrConnectActionCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -1373" class="error-name-code">
-              <code>ErrConnectActionCode-1373</code>
+              <a href="/reference/error-codes/component-meshery-server/errconnectactioncode-1373/"><code>ErrConnectActionCode-1373</code></a>
             </td>
             <td>Error connect action</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConnectActionCode-1373" target="_blank">search forum</a></td>
@@ -12082,12 +13090,14 @@ Check if there is connection data stored in database for this kubernetes machine
         
           
           
+          
+          
             
           
           <tr id="ErrEncodeResponseCode-1374" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEncodeResponseCode-more-info" onclick="toggle_visibility('meshery-server-ErrEncodeResponseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1374" class="error-name-code">
-              <code>ErrEncodeResponseCode-1374</code>
+              <a href="/reference/error-codes/component-meshery-server/errencoderesponsecode-1374/"><code>ErrEncodeResponseCode-1374</code></a>
             </td>
             <td>failed to encode and write response</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEncodeResponseCode-1374" target="_blank">search forum</a></td>
@@ -12106,12 +13116,14 @@ Response data could not be serialized to JSON</p>
         
           
           
+          
+          
             
           
           <tr id="ErrWorkspaceMissingInputCode-1375" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrWorkspaceMissingInputCode-more-info" onclick="toggle_visibility('meshery-server-ErrWorkspaceMissingInputCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1375" class="error-name-code">
-              <code>ErrWorkspaceMissingInputCode-1375</code>
+              <a href="/reference/error-codes/component-meshery-server/errworkspacemissinginputcode-1375/"><code>ErrWorkspaceMissingInputCode-1375</code></a>
             </td>
             <td>Invalid input for workspace operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWorkspaceMissingInputCode-1375" target="_blank">search forum</a></td>
@@ -12129,12 +13141,14 @@ Response data could not be serialized to JSON</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyPatchCode-1376" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrApplyPatchCode-more-info" onclick="toggle_visibility('meshery-server-ErrApplyPatchCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1376" class="error-name-code">
-              <code>ErrApplyPatchCode-1376</code>
+              <a href="/reference/error-codes/component-meshery-server/errapplypatchcode-1376/"><code>ErrApplyPatchCode-1376</code></a>
             </td>
             <td>failed to apply configuration patches</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyPatchCode-1376" target="_blank">search forum</a></td>
@@ -12152,12 +13166,14 @@ Response data could not be serialized to JSON</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParsePayloadCode-1377" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrParsePayloadCode-more-info" onclick="toggle_visibility('meshery-server-ErrParsePayloadCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1377" class="error-name-code">
-              <code>ErrParsePayloadCode-1377</code>
+              <a href="/reference/error-codes/component-meshery-server/errparsepayloadcode-1377/"><code>ErrParsePayloadCode-1377</code></a>
             </td>
             <td>failed to parse action payload</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParsePayloadCode-1377" target="_blank">search forum</a></td>
@@ -12175,12 +13191,14 @@ Response data could not be serialized to JSON</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTransientProviderCode-1378" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTransientProviderCode-more-info" onclick="toggle_visibility('meshery-server-ErrTransientProviderCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1378" class="error-name-code">
-              <code>ErrTransientProviderCode-1378</code>
+              <a href="/reference/error-codes/component-meshery-server/errtransientprovidercode-1378/"><code>ErrTransientProviderCode-1378</code></a>
             </td>
             <td>Remote provider temporarily unavailable</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTransientProviderCode-1378" target="_blank">search forum</a></td>
@@ -12198,12 +13216,14 @@ Response data could not be serialized to JSON</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMeshsyncEventCode-1379" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMeshsyncEventCode-more-info" onclick="toggle_visibility('meshery-server-ErrMeshsyncEventCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1379" class="error-name-code">
-              <code>ErrMeshsyncEventCode-1379</code>
+              <a href="/reference/error-codes/component-meshery-server/errmeshsynceventcode-1379/"><code>ErrMeshsyncEventCode-1379</code></a>
             </td>
             <td>Error processing MeshSync event</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshsyncEventCode-1379" target="_blank">search forum</a></td>
@@ -12221,12 +13241,14 @@ Response data could not be serialized to JSON</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMeshsyncStoreUpdatesCode-1380" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMeshsyncStoreUpdatesCode-more-info" onclick="toggle_visibility('meshery-server-ErrMeshsyncStoreUpdatesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1380" class="error-name-code">
-              <code>ErrMeshsyncStoreUpdatesCode-1380</code>
+              <a href="/reference/error-codes/component-meshery-server/errmeshsyncstoreupdatescode-1380/"><code>ErrMeshsyncStoreUpdatesCode-1380</code></a>
             </td>
             <td>Error processing MeshSync store update</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshsyncStoreUpdatesCode-1380" target="_blank">search forum</a></td>
@@ -12244,12 +13266,14 @@ Response data could not be serialized to JSON</p>
         
           
           
+          
+          
             
           
           <tr id="ErrServeSchemaCode-1381" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrServeSchemaCode-more-info" onclick="toggle_visibility('meshery-server-ErrServeSchemaCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1381" class="error-name-code">
-              <code>ErrServeSchemaCode-1381</code>
+              <a href="/reference/error-codes/component-meshery-server/errserveschemacode-1381/"><code>ErrServeSchemaCode-1381</code></a>
             </td>
             <td>Failed to serve the requested schema</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrServeSchemaCode-1381" target="_blank">search forum</a></td>
@@ -12267,12 +13291,14 @@ Response data could not be serialized to JSON</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidFileRequestCode-1382" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidFileRequestCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidFileRequestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1382" class="error-name-code">
-              <code>ErrInvalidFileRequestCode-1382</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidfilerequestcode-1382/"><code>ErrInvalidFileRequestCode-1382</code></a>
             </td>
             <td>Invalid file request</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidFileRequestCode-1382" target="_blank">search forum</a></td>
@@ -12290,12 +13316,14 @@ Response data could not be serialized to JSON</p>
         
           
           
+          
+          
             
           
           <tr id="ErrReadFileContentCode-1383" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrReadFileContentCode-more-info" onclick="toggle_visibility('meshery-server-ErrReadFileContentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1383" class="error-name-code">
-              <code>ErrReadFileContentCode-1383</code>
+              <a href="/reference/error-codes/component-meshery-server/errreadfilecontentcode-1383/"><code>ErrReadFileContentCode-1383</code></a>
             </td>
             <td>Failed to read file content</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadFileContentCode-1383" target="_blank">search forum</a></td>
@@ -12313,12 +13341,14 @@ Response data could not be serialized to JSON</p>
         
           
           
+          
+          
             
           
           <tr id="ErrExtensionEndpointNotRegisteredCode-1384" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrExtensionEndpointNotRegisteredCode-more-info" onclick="toggle_visibility('meshery-server-ErrExtensionEndpointNotRegisteredCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1384" class="error-name-code">
-              <code>ErrExtensionEndpointNotRegisteredCode-1384</code>
+              <a href="/reference/error-codes/component-meshery-server/errextensionendpointnotregisteredcode-1384/"><code>ErrExtensionEndpointNotRegisteredCode-1384</code></a>
             </td>
             <td>No extension is registered for endpoint: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrExtensionEndpointNotRegisteredCode-1384" target="_blank">search forum</a></td>
@@ -12336,12 +13366,14 @@ Response data could not be serialized to JSON</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUserNotFoundCode-1385" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUserNotFoundCode-more-info" onclick="toggle_visibility('meshery-server-ErrUserNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1385" class="error-name-code">
-              <code>ErrUserNotFoundCode-1385</code>
+              <a href="/reference/error-codes/component-meshery-server/errusernotfoundcode-1385/"><code>ErrUserNotFoundCode-1385</code></a>
             </td>
             <td>User not found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUserNotFoundCode-1385" target="_blank">search forum</a></td>
@@ -12359,12 +13391,14 @@ Response data could not be serialized to JSON</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchTokenCode-1386" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchTokenCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchTokenCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1386" class="error-name-code">
-              <code>ErrFetchTokenCode-1386</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchtokencode-1386/"><code>ErrFetchTokenCode-1386</code></a>
             </td>
             <td>Failed to obtain authentication token from request context</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchTokenCode-1386" target="_blank">search forum</a></td>
@@ -12382,12 +13416,14 @@ Response data could not be serialized to JSON</p>
         
           
           
+          
+          
             
           
           <tr id="ErrHandlerShareDesignCode-1387" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrHandlerShareDesignCode-more-info" onclick="toggle_visibility('meshery-server-ErrHandlerShareDesignCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1387" class="error-name-code">
-              <code>ErrHandlerShareDesignCode-1387</code>
+              <a href="/reference/error-codes/component-meshery-server/errhandlersharedesigncode-1387/"><code>ErrHandlerShareDesignCode-1387</code></a>
             </td>
             <td>Failed to share design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrHandlerShareDesignCode-1387" target="_blank">search forum</a></td>
@@ -12407,12 +13443,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrHandlerShareFilterCode-1388" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrHandlerShareFilterCode-more-info" onclick="toggle_visibility('meshery-server-ErrHandlerShareFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1388" class="error-name-code">
-              <code>ErrHandlerShareFilterCode-1388</code>
+              <a href="/reference/error-codes/component-meshery-server/errhandlersharefiltercode-1388/"><code>ErrHandlerShareFilterCode-1388</code></a>
             </td>
             <td>Failed to share filter</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrHandlerShareFilterCode-1388" target="_blank">search forum</a></td>
@@ -12432,12 +13470,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetUserCredentialCode-1389" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetUserCredentialCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetUserCredentialCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1389" class="error-name-code">
-              <code>ErrGetUserCredentialCode-1389</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetusercredentialcode-1389/"><code>ErrGetUserCredentialCode-1389</code></a>
             </td>
             <td>Failed to get user credential</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetUserCredentialCode-1389" target="_blank">search forum</a></td>
@@ -12455,12 +13495,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSaveUserCredentialCode-1390" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSaveUserCredentialCode-more-info" onclick="toggle_visibility('meshery-server-ErrSaveUserCredentialCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1390" class="error-name-code">
-              <code>ErrSaveUserCredentialCode-1390</code>
+              <a href="/reference/error-codes/component-meshery-server/errsaveusercredentialcode-1390/"><code>ErrSaveUserCredentialCode-1390</code></a>
             </td>
             <td>Failed to save user credential</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSaveUserCredentialCode-1390" target="_blank">search forum</a></td>
@@ -12478,12 +13520,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateUserCredentialCode-1391" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUpdateUserCredentialCode-more-info" onclick="toggle_visibility('meshery-server-ErrUpdateUserCredentialCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1391" class="error-name-code">
-              <code>ErrUpdateUserCredentialCode-1391</code>
+              <a href="/reference/error-codes/component-meshery-server/errupdateusercredentialcode-1391/"><code>ErrUpdateUserCredentialCode-1391</code></a>
             </td>
             <td>Failed to update user credential</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateUserCredentialCode-1391" target="_blank">search forum</a></td>
@@ -12501,12 +13545,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeleteUserCredentialCode-1392" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeleteUserCredentialCode-more-info" onclick="toggle_visibility('meshery-server-ErrDeleteUserCredentialCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1392" class="error-name-code">
-              <code>ErrDeleteUserCredentialCode-1392</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeleteusercredentialcode-1392/"><code>ErrDeleteUserCredentialCode-1392</code></a>
             </td>
             <td>Failed to delete user credential</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeleteUserCredentialCode-1392" target="_blank">search forum</a></td>
@@ -12524,12 +13570,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEncodeUserCredentialCode-1393" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEncodeUserCredentialCode-more-info" onclick="toggle_visibility('meshery-server-ErrEncodeUserCredentialCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1393" class="error-name-code">
-              <code>ErrEncodeUserCredentialCode-1393</code>
+              <a href="/reference/error-codes/component-meshery-server/errencodeusercredentialcode-1393/"><code>ErrEncodeUserCredentialCode-1393</code></a>
             </td>
             <td>Failed to encode user credential response</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEncodeUserCredentialCode-1393" target="_blank">search forum</a></td>
@@ -12547,12 +13595,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnknownConnectionKindCode-1394" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnknownConnectionKindCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnknownConnectionKindCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1394" class="error-name-code">
-              <code>ErrUnknownConnectionKindCode-1394</code>
+              <a href="/reference/error-codes/component-meshery-server/errunknownconnectionkindcode-1394/"><code>ErrUnknownConnectionKindCode-1394</code></a>
             </td>
             <td>Unable to register resource as connection</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnknownConnectionKindCode-1394" target="_blank">search forum</a></td>
@@ -12570,12 +13620,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetK8sContextsCode-1395" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetK8sContextsCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetK8sContextsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1395" class="error-name-code">
-              <code>ErrGetK8sContextsCode-1395</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetk8scontextscode-1395/"><code>ErrGetK8sContextsCode-1395</code></a>
             </td>
             <td>Failed to get Kubernetes contexts</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetK8sContextsCode-1395" target="_blank">search forum</a></td>
@@ -12593,12 +13645,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEncodeK8sContextsCode-1396" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEncodeK8sContextsCode-more-info" onclick="toggle_visibility('meshery-server-ErrEncodeK8sContextsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1396" class="error-name-code">
-              <code>ErrEncodeK8sContextsCode-1396</code>
+              <a href="/reference/error-codes/component-meshery-server/errencodek8scontextscode-1396/"><code>ErrEncodeK8sContextsCode-1396</code></a>
             </td>
             <td>Failed to encode Kubernetes context response</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEncodeK8sContextsCode-1396" target="_blank">search forum</a></td>
@@ -12616,12 +13670,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreateDatabaseArchiveDirCode-1397" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCreateDatabaseArchiveDirCode-more-info" onclick="toggle_visibility('meshery-server-ErrCreateDatabaseArchiveDirCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1397" class="error-name-code">
-              <code>ErrCreateDatabaseArchiveDirCode-1397</code>
+              <a href="/reference/error-codes/component-meshery-server/errcreatedatabasearchivedircode-1397/"><code>ErrCreateDatabaseArchiveDirCode-1397</code></a>
             </td>
             <td>Directory could not be created due to a non-existent path</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateDatabaseArchiveDirCode-1397" target="_blank">search forum</a></td>
@@ -12639,12 +13695,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrOpenDatabaseFileCode-1398" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrOpenDatabaseFileCode-more-info" onclick="toggle_visibility('meshery-server-ErrOpenDatabaseFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1398" class="error-name-code">
-              <code>ErrOpenDatabaseFileCode-1398</code>
+              <a href="/reference/error-codes/component-meshery-server/erropendatabasefilecode-1398/"><code>ErrOpenDatabaseFileCode-1398</code></a>
             </td>
             <td>The database does not exist or you don&#39;t have enough permission to access it</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOpenDatabaseFileCode-1398" target="_blank">search forum</a></td>
@@ -12662,12 +13720,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreateDatabaseArchiveFileCode-1399" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCreateDatabaseArchiveFileCode-more-info" onclick="toggle_visibility('meshery-server-ErrCreateDatabaseArchiveFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1399" class="error-name-code">
-              <code>ErrCreateDatabaseArchiveFileCode-1399</code>
+              <a href="/reference/error-codes/component-meshery-server/errcreatedatabasearchivefilecode-1399/"><code>ErrCreateDatabaseArchiveFileCode-1399</code></a>
             </td>
             <td>Destination file can not be created</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateDatabaseArchiveFileCode-1399" target="_blank">search forum</a></td>
@@ -12685,12 +13745,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCopyDatabaseFileCode-1400" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCopyDatabaseFileCode-more-info" onclick="toggle_visibility('meshery-server-ErrCopyDatabaseFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1400" class="error-name-code">
-              <code>ErrCopyDatabaseFileCode-1400</code>
+              <a href="/reference/error-codes/component-meshery-server/errcopydatabasefilecode-1400/"><code>ErrCopyDatabaseFileCode-1400</code></a>
             </td>
             <td>Can not copy file from source to destination</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCopyDatabaseFileCode-1400" target="_blank">search forum</a></td>
@@ -12708,12 +13770,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrObtainDatabaseHandlerCode-1401" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrObtainDatabaseHandlerCode-more-info" onclick="toggle_visibility('meshery-server-ErrObtainDatabaseHandlerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1401" class="error-name-code">
-              <code>ErrObtainDatabaseHandlerCode-1401</code>
+              <a href="/reference/error-codes/component-meshery-server/errobtaindatabasehandlercode-1401/"><code>ErrObtainDatabaseHandlerCode-1401</code></a>
             </td>
             <td>Failed to obtain database handler</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrObtainDatabaseHandlerCode-1401" target="_blank">search forum</a></td>
@@ -12731,12 +13795,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrAccessDatabaseTablesCode-1402" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrAccessDatabaseTablesCode-more-info" onclick="toggle_visibility('meshery-server-ErrAccessDatabaseTablesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1402" class="error-name-code">
-              <code>ErrAccessDatabaseTablesCode-1402</code>
+              <a href="/reference/error-codes/component-meshery-server/erraccessdatabasetablescode-1402/"><code>ErrAccessDatabaseTablesCode-1402</code></a>
             </td>
             <td>Can not access database tables</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAccessDatabaseTablesCode-1402" target="_blank">search forum</a></td>
@@ -12754,12 +13820,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDropDatabaseTableCode-1403" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDropDatabaseTableCode-more-info" onclick="toggle_visibility('meshery-server-ErrDropDatabaseTableCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1403" class="error-name-code">
-              <code>ErrDropDatabaseTableCode-1403</code>
+              <a href="/reference/error-codes/component-meshery-server/errdropdatabasetablecode-1403/"><code>ErrDropDatabaseTableCode-1403</code></a>
             </td>
             <td>Cannot drop table from database</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDropDatabaseTableCode-1403" target="_blank">search forum</a></td>
@@ -12777,12 +13845,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMigrateDatabaseTablesCode-1404" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMigrateDatabaseTablesCode-more-info" onclick="toggle_visibility('meshery-server-ErrMigrateDatabaseTablesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1404" class="error-name-code">
-              <code>ErrMigrateDatabaseTablesCode-1404</code>
+              <a href="/reference/error-codes/component-meshery-server/errmigratedatabasetablescode-1404/"><code>ErrMigrateDatabaseTablesCode-1404</code></a>
             </td>
             <td>Can not migrate tables to database</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMigrateDatabaseTablesCode-1404" target="_blank">search forum</a></td>
@@ -12800,12 +13870,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchResultsCode-1405" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchResultsCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchResultsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1405" class="error-name-code">
-              <code>ErrFetchResultsCode-1405</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchresultscode-1405/"><code>ErrFetchResultsCode-1405</code></a>
             </td>
             <td>Error while getting load test results</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchResultsCode-1405" target="_blank">search forum</a></td>
@@ -12823,12 +13895,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMissingResultIDCode-1406" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMissingResultIDCode-more-info" onclick="toggle_visibility('meshery-server-ErrMissingResultIDCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1406" class="error-name-code">
-              <code>ErrMissingResultIDCode-1406</code>
+              <a href="/reference/error-codes/component-meshery-server/errmissingresultidcode-1406/"><code>ErrMissingResultIDCode-1406</code></a>
             </td>
             <td>Missing result id in request</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMissingResultIDCode-1406" target="_blank">search forum</a></td>
@@ -12846,12 +13920,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrHandlerGenerateUUIDCode-1407" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrHandlerGenerateUUIDCode-more-info" onclick="toggle_visibility('meshery-server-ErrHandlerGenerateUUIDCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1407" class="error-name-code">
-              <code>ErrHandlerGenerateUUIDCode-1407</code>
+              <a href="/reference/error-codes/component-meshery-server/errhandlergenerateuuidcode-1407/"><code>ErrHandlerGenerateUUIDCode-1407</code></a>
             </td>
             <td>Failed to generate a unique identifier</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrHandlerGenerateUUIDCode-1407" target="_blank">search forum</a></td>
@@ -12869,12 +13945,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMethodNotAllowedCode-1408" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMethodNotAllowedCode-more-info" onclick="toggle_visibility('meshery-server-ErrMethodNotAllowedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1408" class="error-name-code">
-              <code>ErrMethodNotAllowedCode-1408</code>
+              <a href="/reference/error-codes/component-meshery-server/errmethodnotallowedcode-1408/"><code>ErrMethodNotAllowedCode-1408</code></a>
             </td>
             <td>HTTP method not allowed for this endpoint</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMethodNotAllowedCode-1408" target="_blank">search forum</a></td>
@@ -12892,12 +13970,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMissingRouteVariableCode-1409" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMissingRouteVariableCode-more-info" onclick="toggle_visibility('meshery-server-ErrMissingRouteVariableCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1409" class="error-name-code">
-              <code>ErrMissingRouteVariableCode-1409</code>
+              <a href="/reference/error-codes/component-meshery-server/errmissingroutevariablecode-1409/"><code>ErrMissingRouteVariableCode-1409</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMissingRouteVariableCode-1409" target="_blank">search forum</a></td>
@@ -12915,12 +13995,14 @@ Invalid payload</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRetrieveEventTypesCode-1410" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRetrieveEventTypesCode-more-info" onclick="toggle_visibility('meshery-server-ErrRetrieveEventTypesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1410" class="error-name-code">
-              <code>ErrRetrieveEventTypesCode-1410</code>
+              <a href="/reference/error-codes/component-meshery-server/errretrieveeventtypescode-1410/"><code>ErrRetrieveEventTypesCode-1410</code></a>
             </td>
             <td>Could not retrieve event categories and actions</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRetrieveEventTypesCode-1410" target="_blank">search forum</a></td>
@@ -12939,12 +14021,14 @@ Remote provider event-type endpoint is unavailable.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeprecatedAPICode-1411" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeprecatedAPICode-more-info" onclick="toggle_visibility('meshery-server-ErrDeprecatedAPICode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1411" class="error-name-code">
-              <code>ErrDeprecatedAPICode-1411</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeprecatedapicode-1411/"><code>ErrDeprecatedAPICode-1411</code></a>
             </td>
             <td>This API is deprecated</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeprecatedAPICode-1411" target="_blank">search forum</a></td>
@@ -12962,12 +14046,14 @@ Remote provider event-type endpoint is unavailable.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidConnectionKindCode-1412" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidConnectionKindCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidConnectionKindCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1412" class="error-name-code">
-              <code>ErrInvalidConnectionKindCode-1412</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidconnectionkindcode-1412/"><code>ErrInvalidConnectionKindCode-1412</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidConnectionKindCode-1412" target="_blank">search forum</a></td>
@@ -12985,12 +14071,14 @@ Remote provider event-type endpoint is unavailable.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateConnectionCode-1413" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUpdateConnectionCode-more-info" onclick="toggle_visibility('meshery-server-ErrUpdateConnectionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1413" class="error-name-code">
-              <code>ErrUpdateConnectionCode-1413</code>
+              <a href="/reference/error-codes/component-meshery-server/errupdateconnectioncode-1413/"><code>ErrUpdateConnectionCode-1413</code></a>
             </td>
             <td>Could not update the connection</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateConnectionCode-1413" target="_blank">search forum</a></td>
@@ -13010,12 +14098,14 @@ Persisted metadata is corrupt.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrExportModelCode-1414" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrExportModelCode-more-info" onclick="toggle_visibility('meshery-server-ErrExportModelCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1414" class="error-name-code">
-              <code>ErrExportModelCode-1414</code>
+              <a href="/reference/error-codes/component-meshery-server/errexportmodelcode-1414/"><code>ErrExportModelCode-1414</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrExportModelCode-1414" target="_blank">search forum</a></td>
@@ -13035,12 +14125,14 @@ OCI/tar tooling produced an invalid artifact.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidContextsConfigCode-1415" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidContextsConfigCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidContextsConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1415" class="error-name-code">
-              <code>ErrInvalidContextsConfigCode-1415</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidcontextsconfigcode-1415/"><code>ErrInvalidContextsConfigCode-1415</code></a>
             </td>
             <td>Invalid contexts configuration</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidContextsConfigCode-1415" target="_blank">search forum</a></td>
@@ -13058,12 +14150,14 @@ OCI/tar tooling produced an invalid artifact.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyConnectionIDCode-1416" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEmptyConnectionIDCode-more-info" onclick="toggle_visibility('meshery-server-ErrEmptyConnectionIDCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1416" class="error-name-code">
-              <code>ErrEmptyConnectionIDCode-1416</code>
+              <a href="/reference/error-codes/component-meshery-server/erremptyconnectionidcode-1416/"><code>ErrEmptyConnectionIDCode-1416</code></a>
             </td>
             <td>Empty connection ID</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyConnectionIDCode-1416" target="_blank">search forum</a></td>
@@ -13082,12 +14176,14 @@ A URL template did not get its parameter substituted.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPolicyEvalTimeoutCode-1417" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPolicyEvalTimeoutCode-more-info" onclick="toggle_visibility('meshery-server-ErrPolicyEvalTimeoutCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1417" class="error-name-code">
-              <code>ErrPolicyEvalTimeoutCode-1417</code>
+              <a href="/reference/error-codes/component-meshery-server/errpolicyevaltimeoutcode-1417/"><code>ErrPolicyEvalTimeoutCode-1417</code></a>
             </td>
             <td>Relationship policy evaluation timed out</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPolicyEvalTimeoutCode-1417" target="_blank">search forum</a></td>
@@ -13106,12 +14202,14 @@ One of the Rego/Go policies under evaluation is in a slow path or infinite loop.
         
           
           
+          
+          
             
           
           <tr id="ErrPolicyEvalCode-1418" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPolicyEvalCode-more-info" onclick="toggle_visibility('meshery-server-ErrPolicyEvalCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1418" class="error-name-code">
-              <code>ErrPolicyEvalCode-1418</code>
+              <a href="/reference/error-codes/component-meshery-server/errpolicyevalcode-1418/"><code>ErrPolicyEvalCode-1418</code></a>
             </td>
             <td>Relationship policy evaluation failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPolicyEvalCode-1418" target="_blank">search forum</a></td>
@@ -13130,12 +14228,14 @@ A cycle or invalid declaration in the design triggered an engine panic recovered
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidBase64DataCode-1419" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidBase64DataCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidBase64DataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1419" class="error-name-code">
-              <code>ErrInvalidBase64DataCode-1419</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidbase64datacode-1419/"><code>ErrInvalidBase64DataCode-1419</code></a>
             </td>
             <td>Invalid base64 data</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidBase64DataCode-1419" target="_blank">search forum</a></td>
@@ -13155,12 +14255,14 @@ If the payload was hand-edited, re-encode it from the source bytes and retry.</p
         
           
           
+          
+          
             
           
           <tr id="ErrRemoteProviderCapabilitiesCode-1420" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRemoteProviderCapabilitiesCode-more-info" onclick="toggle_visibility('meshery-server-ErrRemoteProviderCapabilitiesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1420" class="error-name-code">
-              <code>ErrRemoteProviderCapabilitiesCode-1420</code>
+              <a href="/reference/error-codes/component-meshery-server/errremoteprovidercapabilitiescode-1420/"><code>ErrRemoteProviderCapabilitiesCode-1420</code></a>
             </td>
             <td>Failed to load capabilities from remote provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRemoteProviderCapabilitiesCode-1420" target="_blank">search forum</a></td>
@@ -13178,12 +14280,14 @@ If the payload was hand-edited, re-encode it from the source bytes and retry.</p
         
           
           
+          
+          
             
           
           <tr id="ErrRemoteProviderAuthExhaustedCode-1421" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrRemoteProviderAuthExhaustedCode-more-info" onclick="toggle_visibility('meshery-server-ErrRemoteProviderAuthExhaustedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1421" class="error-name-code">
-              <code>ErrRemoteProviderAuthExhaustedCode-1421</code>
+              <a href="/reference/error-codes/component-meshery-server/errremoteproviderauthexhaustedcode-1421/"><code>ErrRemoteProviderAuthExhaustedCode-1421</code></a>
             </td>
             <td>Authentication failed after multiple attempts</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRemoteProviderAuthExhaustedCode-1421" target="_blank">search forum</a></td>
@@ -13201,12 +14305,14 @@ If the payload was hand-edited, re-encode it from the source bytes and retry.</p
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidImportRequestCode-1422" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidImportRequestCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidImportRequestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1422" class="error-name-code">
-              <code>ErrInvalidImportRequestCode-1422</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvalidimportrequestcode-1422/"><code>ErrInvalidImportRequestCode-1422</code></a>
             </td>
             <td>Invalid design import request</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidImportRequestCode-1422" target="_blank">search forum</a></td>
@@ -13225,12 +14331,14 @@ Both variants were provided, or neither was.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrConvertToDesignCode-1423" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrConvertToDesignCode-more-info" onclick="toggle_visibility('meshery-server-ErrConvertToDesignCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1423" class="error-name-code">
-              <code>ErrConvertToDesignCode-1423</code>
+              <a href="/reference/error-codes/component-meshery-server/errconverttodesigncode-1423/"><code>ErrConvertToDesignCode-1423</code></a>
             </td>
             <td>Failed to convert uploaded file to a design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConvertToDesignCode-1423" target="_blank">search forum</a></td>
@@ -13251,12 +14359,14 @@ If the source is a Kubernetes manifest, ensure each kind it references has a cor
         
           
           
+          
+          
             
           
           <tr id="ErrCompressArtifactCode-1424" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCompressArtifactCode-more-info" onclick="toggle_visibility('meshery-server-ErrCompressArtifactCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1424" class="error-name-code">
-              <code>ErrCompressArtifactCode-1424</code>
+              <a href="/reference/error-codes/component-meshery-server/errcompressartifactcode-1424/"><code>ErrCompressArtifactCode-1424</code></a>
             </td>
             <td>Failed to compress design as OCI artifact</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCompressArtifactCode-1424" target="_blank">search forum</a></td>
@@ -13275,12 +14385,14 @@ Available memory or disk for the in-memory archive buffer was exhausted.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrWriteRegistryLogsCode-1425" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrWriteRegistryLogsCode-more-info" onclick="toggle_visibility('meshery-server-ErrWriteRegistryLogsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1425" class="error-name-code">
-              <code>ErrWriteRegistryLogsCode-1425</code>
+              <a href="/reference/error-codes/component-meshery-server/errwriteregistrylogscode-1425/"><code>ErrWriteRegistryLogsCode-1425</code></a>
             </td>
             <td>Failed to flush registry logs</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWriteRegistryLogsCode-1425" target="_blank">search forum</a></td>
@@ -13299,12 +14411,14 @@ An in-memory log entry could not be marshaled into the on-disk format.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateEntityStatusCode-1426" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUpdateEntityStatusCode-more-info" onclick="toggle_visibility('meshery-server-ErrUpdateEntityStatusCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1426" class="error-name-code">
-              <code>ErrUpdateEntityStatusCode-1426</code>
+              <a href="/reference/error-codes/component-meshery-server/errupdateentitystatuscode-1426/"><code>ErrUpdateEntityStatusCode-1426</code></a>
             </td>
             <td>Failed to update entity status</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateEntityStatusCode-1426" target="_blank">search forum</a></td>
@@ -13323,12 +14437,14 @@ The registry&#39;s persistence layer rejected the status update — typically a 
         
           
           
+          
+          
             
           
           <tr id="ErrExtensionProxyCode-1427" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrExtensionProxyCode-more-info" onclick="toggle_visibility('meshery-server-ErrExtensionProxyCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1427" class="error-name-code">
-              <code>ErrExtensionProxyCode-1427</code>
+              <a href="/reference/error-codes/component-meshery-server/errextensionproxycode-1427/"><code>ErrExtensionProxyCode-1427</code></a>
             </td>
             <td>Extension proxy request failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrExtensionProxyCode-1427" target="_blank">search forum</a></td>
@@ -13349,12 +14465,14 @@ If running against the local provider, switch to a remote provider that exposes 
         
           
           
+          
+          
             
           
           <tr id="ErrInitializeMachineCode-1428" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInitializeMachineCode-more-info" onclick="toggle_visibility('meshery-server-ErrInitializeMachineCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1428" class="error-name-code">
-              <code>ErrInitializeMachineCode-1428</code>
+              <a href="/reference/error-codes/component-meshery-server/errinitializemachinecode-1428/"><code>ErrInitializeMachineCode-1428</code></a>
             </td>
             <td>Failed to initialize connection state machine</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInitializeMachineCode-1428" target="_blank">search forum</a></td>
@@ -13373,12 +14491,14 @@ The state machine&#39;s persister could not write the initial state to the datab
         
           
           
+          
+          
             
           
           <tr id="ErrSendMachineEventCode-1429" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSendMachineEventCode-more-info" onclick="toggle_visibility('meshery-server-ErrSendMachineEventCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1429" class="error-name-code">
-              <code>ErrSendMachineEventCode-1429</code>
+              <a href="/reference/error-codes/component-meshery-server/errsendmachineeventcode-1429/"><code>ErrSendMachineEventCode-1429</code></a>
             </td>
             <td>Failed to advance connection state machine</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSendMachineEventCode-1429" target="_blank">search forum</a></td>
@@ -13397,12 +14517,14 @@ A side-effect action attached to the transition (e.g. provisioning, discovery) r
         
           
           
+          
+          
             
           
           <tr id="ErrTelemetryGrafanaCode-1430" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTelemetryGrafanaCode-more-info" onclick="toggle_visibility('meshery-server-ErrTelemetryGrafanaCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1430" class="error-name-code">
-              <code>ErrTelemetryGrafanaCode-1430</code>
+              <a href="/reference/error-codes/component-meshery-server/errtelemetrygrafanacode-1430/"><code>ErrTelemetryGrafanaCode-1430</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTelemetryGrafanaCode-1430" target="_blank">search forum</a></td>
@@ -13422,12 +14544,14 @@ The connection&#39;s URL is incorrect.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTelemetryPrometheusCode-1431" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTelemetryPrometheusCode-more-info" onclick="toggle_visibility('meshery-server-ErrTelemetryPrometheusCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1431" class="error-name-code">
-              <code>ErrTelemetryPrometheusCode-1431</code>
+              <a href="/reference/error-codes/component-meshery-server/errtelemetryprometheuscode-1431/"><code>ErrTelemetryPrometheusCode-1431</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTelemetryPrometheusCode-1431" target="_blank">search forum</a></td>
@@ -13447,12 +14571,14 @@ The connection&#39;s URL is incorrect.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidUUIDValueCode-1432" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidUUIDValueCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidUUIDValueCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1432" class="error-name-code">
-              <code>ErrInvalidUUIDValueCode-1432</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvaliduuidvaluecode-1432/"><code>ErrInvalidUUIDValueCode-1432</code></a>
             </td>
             <td>Invalid UUID</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidUUIDValueCode-1432" target="_blank">search forum</a></td>
@@ -13470,12 +14596,14 @@ The connection&#39;s URL is incorrect.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTelemetryGrafanaDatasourceCode-1433" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTelemetryGrafanaDatasourceCode-more-info" onclick="toggle_visibility('meshery-server-ErrTelemetryGrafanaDatasourceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1433" class="error-name-code">
-              <code>ErrTelemetryGrafanaDatasourceCode-1433</code>
+              <a href="/reference/error-codes/component-meshery-server/errtelemetrygrafanadatasourcecode-1433/"><code>ErrTelemetryGrafanaDatasourceCode-1433</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTelemetryGrafanaDatasourceCode-1433" target="_blank">search forum</a></td>
@@ -13495,12 +14623,14 @@ The connection&#39;s credential cannot list datasources, so a name could not be 
         
           
           
+          
+          
             
           
           <tr id="ErrTelemetryGrafanaAuthCode-1434" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTelemetryGrafanaAuthCode-more-info" onclick="toggle_visibility('meshery-server-ErrTelemetryGrafanaAuthCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1434" class="error-name-code">
-              <code>ErrTelemetryGrafanaAuthCode-1434</code>
+              <a href="/reference/error-codes/component-meshery-server/errtelemetrygrafanaauthcode-1434/"><code>ErrTelemetryGrafanaAuthCode-1434</code></a>
             </td>
             <td>Grafana rejected the connection&#39;s credential</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTelemetryGrafanaAuthCode-1434" target="_blank">search forum</a></td>
@@ -13519,12 +14649,14 @@ The credential lacks permission for this operation.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTelemetryPrometheusAuthCode-1435" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTelemetryPrometheusAuthCode-more-info" onclick="toggle_visibility('meshery-server-ErrTelemetryPrometheusAuthCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1435" class="error-name-code">
-              <code>ErrTelemetryPrometheusAuthCode-1435</code>
+              <a href="/reference/error-codes/component-meshery-server/errtelemetryprometheusauthcode-1435/"><code>ErrTelemetryPrometheusAuthCode-1435</code></a>
             </td>
             <td>Prometheus rejected the connection&#39;s credential</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTelemetryPrometheusAuthCode-1435" target="_blank">search forum</a></td>
@@ -13543,12 +14675,14 @@ The credential lacks permission for this operation.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrYAMLUnmarshalCode-1436" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrYAMLUnmarshalCode-more-info" onclick="toggle_visibility('meshery-server-ErrYAMLUnmarshalCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1436" class="error-name-code">
-              <code>ErrYAMLUnmarshalCode-1436</code>
+              <a href="/reference/error-codes/component-meshery-server/erryamlunmarshalcode-1436/"><code>ErrYAMLUnmarshalCode-1436</code></a>
             </td>
             <td>failed to parse YAML configuration</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrYAMLUnmarshalCode-1436" target="_blank">search forum</a></td>
@@ -13566,12 +14700,14 @@ The credential lacks permission for this operation.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrControllersConfigInvalidCode-1437" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrControllersConfigInvalidCode-more-info" onclick="toggle_visibility('meshery-server-ErrControllersConfigInvalidCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1437" class="error-name-code">
-              <code>ErrControllersConfigInvalidCode-1437</code>
+              <a href="/reference/error-codes/component-meshery-server/errcontrollersconfiginvalidcode-1437/"><code>ErrControllersConfigInvalidCode-1437</code></a>
             </td>
             <td>Invalid controllers configuration.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrControllersConfigInvalidCode-1437" target="_blank">search forum</a></td>
@@ -13589,12 +14725,14 @@ The credential lacks permission for this operation.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrControllersConfigMetadataCode-1438" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrControllersConfigMetadataCode-more-info" onclick="toggle_visibility('meshery-server-ErrControllersConfigMetadataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1438" class="error-name-code">
-              <code>ErrControllersConfigMetadataCode-1438</code>
+              <a href="/reference/error-codes/component-meshery-server/errcontrollersconfigmetadatacode-1438/"><code>ErrControllersConfigMetadataCode-1438</code></a>
             </td>
             <td>Unable to read or write the connection&#39;s controllers configuration.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrControllersConfigMetadataCode-1438" target="_blank">search forum</a></td>
@@ -13612,12 +14750,14 @@ The credential lacks permission for this operation.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSystemSettingsCode-1439" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSystemSettingsCode-more-info" onclick="toggle_visibility('meshery-server-ErrSystemSettingsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1439" class="error-name-code">
-              <code>ErrSystemSettingsCode-1439</code>
+              <a href="/reference/error-codes/component-meshery-server/errsystemsettingscode-1439/"><code>ErrSystemSettingsCode-1439</code></a>
             </td>
             <td>Error accessing server-wide system settings</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSystemSettingsCode-1439" target="_blank">search forum</a></td>
@@ -13635,12 +14775,14 @@ The credential lacks permission for this operation.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyControllersConfigCode-1440" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrApplyControllersConfigCode-more-info" onclick="toggle_visibility('meshery-server-ErrApplyControllersConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1440" class="error-name-code">
-              <code>ErrApplyControllersConfigCode-1440</code>
+              <a href="/reference/error-codes/component-meshery-server/errapplycontrollersconfigcode-1440/"><code>ErrApplyControllersConfigCode-1440</code></a>
             </td>
             <td>Error applying controllers configuration to the cluster</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyControllersConfigCode-1440" target="_blank">search forum</a></td>
@@ -13660,12 +14802,14 @@ Retry the change; configuration is re-applied whenever the connection reconnects
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyMeshSyncHandlerCode-1441" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEmptyMeshSyncHandlerCode-more-info" onclick="toggle_visibility('meshery-server-ErrEmptyMeshSyncHandlerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1441" class="error-name-code">
-              <code>ErrEmptyMeshSyncHandlerCode-1441</code>
+              <a href="/reference/error-codes/component-meshery-server/erremptymeshsynchandlercode-1441/"><code>ErrEmptyMeshSyncHandlerCode-1441</code></a>
             </td>
             <td>MeshSync data flush skipped: database handler is not usable</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyMeshSyncHandlerCode-1441" target="_blank">search forum</a></td>
@@ -13685,12 +14829,14 @@ Verify that Meshery Server can reach the database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMeshsyncReconcileCode-1442" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMeshsyncReconcileCode-more-info" onclick="toggle_visibility('meshery-server-ErrMeshsyncReconcileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1442" class="error-name-code">
-              <code>ErrMeshsyncReconcileCode-1442</code>
+              <a href="/reference/error-codes/component-meshery-server/errmeshsyncreconcilecode-1442/"><code>ErrMeshsyncReconcileCode-1442</code></a>
             </td>
             <td>Failed to reconcile MeshSync deployment mode</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshsyncReconcileCode-1442" target="_blank">search forum</a></td>
@@ -13708,12 +14854,14 @@ Verify that Meshery Server can reach the database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnsafeFilePathCode-1443" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnsafeFilePathCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnsafeFilePathCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1443" class="error-name-code">
-              <code>ErrUnsafeFilePathCode-1443</code>
+              <a href="/reference/error-codes/component-meshery-server/errunsafefilepathcode-1443/"><code>ErrUnsafeFilePathCode-1443</code></a>
             </td>
             <td>Unsafe file path requested</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnsafeFilePathCode-1443" target="_blank">search forum</a></td>
@@ -13731,12 +14879,14 @@ Verify that Meshery Server can reach the database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrConnectionNotFoundCode-1444" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrConnectionNotFoundCode-more-info" onclick="toggle_visibility('meshery-server-ErrConnectionNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1444" class="error-name-code">
-              <code>ErrConnectionNotFoundCode-1444</code>
+              <a href="/reference/error-codes/component-meshery-server/errconnectionnotfoundcode-1444/"><code>ErrConnectionNotFoundCode-1444</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConnectionNotFoundCode-1444" target="_blank">search forum</a></td>
@@ -13754,10 +14904,12 @@ Verify that Meshery Server can reach the database</p>
         
           
           
+          
+          
           <tr id="ErrReconcileServerIDCode-1445" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrReconcileServerIDCode-more-info" onclick="toggle_visibility('meshery-server-ErrReconcileServerIDCode-more-info');">
             <td class="tbl-severity-info">None</td>
             <td id=" -1445" class="error-name-code">
-              <code>ErrReconcileServerIDCode-1445</code>
+              <a href="/reference/error-codes/component-meshery-server/errreconcileserveridcode-1445/"><code>ErrReconcileServerIDCode-1445</code></a>
             </td>
             <td>Failed to reconcile the persisted Kubernetes server ID for the connection</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReconcileServerIDCode-1445" target="_blank">search forum</a></td>
@@ -13775,12 +14927,14 @@ Verify that Meshery Server can reach the database</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetEnvironmentsCode-1446" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetEnvironmentsCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetEnvironmentsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1446" class="error-name-code">
-              <code>ErrGetEnvironmentsCode-1446</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetenvironmentscode-1446/"><code>ErrGetEnvironmentsCode-1446</code></a>
             </td>
             <td>Unable to fetch environments</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetEnvironmentsCode-1446" target="_blank">search forum</a></td>
@@ -13800,12 +14954,14 @@ The provider could not be reached or returned an error.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetEnvironmentCode-1447" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetEnvironmentCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetEnvironmentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1447" class="error-name-code">
-              <code>ErrGetEnvironmentCode-1447</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetenvironmentcode-1447/"><code>ErrGetEnvironmentCode-1447</code></a>
             </td>
             <td>Unable to fetch the environment</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetEnvironmentCode-1447" target="_blank">search forum</a></td>
@@ -13825,12 +14981,14 @@ The provider could not be reached or returned an error.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSaveEnvironmentCode-1448" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSaveEnvironmentCode-more-info" onclick="toggle_visibility('meshery-server-ErrSaveEnvironmentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1448" class="error-name-code">
-              <code>ErrSaveEnvironmentCode-1448</code>
+              <a href="/reference/error-codes/component-meshery-server/errsaveenvironmentcode-1448/"><code>ErrSaveEnvironmentCode-1448</code></a>
             </td>
             <td>Unable to create the environment</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSaveEnvironmentCode-1448" target="_blank">search forum</a></td>
@@ -13851,12 +15009,14 @@ The provider could not be reached or rejected the request.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateEnvironmentCode-1449" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUpdateEnvironmentCode-more-info" onclick="toggle_visibility('meshery-server-ErrUpdateEnvironmentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1449" class="error-name-code">
-              <code>ErrUpdateEnvironmentCode-1449</code>
+              <a href="/reference/error-codes/component-meshery-server/errupdateenvironmentcode-1449/"><code>ErrUpdateEnvironmentCode-1449</code></a>
             </td>
             <td>Unable to update the environment</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateEnvironmentCode-1449" target="_blank">search forum</a></td>
@@ -13876,12 +15036,14 @@ The provider could not be reached or rejected the request.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeleteEnvironmentCode-1450" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeleteEnvironmentCode-more-info" onclick="toggle_visibility('meshery-server-ErrDeleteEnvironmentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1450" class="error-name-code">
-              <code>ErrDeleteEnvironmentCode-1450</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeleteenvironmentcode-1450/"><code>ErrDeleteEnvironmentCode-1450</code></a>
             </td>
             <td>Unable to delete the environment</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeleteEnvironmentCode-1450" target="_blank">search forum</a></td>
@@ -13901,12 +15063,14 @@ The provider could not be reached or rejected the request.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEnvironmentConnectionCode-1451" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrEnvironmentConnectionCode-more-info" onclick="toggle_visibility('meshery-server-ErrEnvironmentConnectionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1451" class="error-name-code">
-              <code>ErrEnvironmentConnectionCode-1451</code>
+              <a href="/reference/error-codes/component-meshery-server/errenvironmentconnectioncode-1451/"><code>ErrEnvironmentConnectionCode-1451</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEnvironmentConnectionCode-1451" target="_blank">search forum</a></td>
@@ -13925,12 +15089,14 @@ The provider could not be reached or rejected the request.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetWorkspacesCode-1452" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetWorkspacesCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetWorkspacesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1452" class="error-name-code">
-              <code>ErrGetWorkspacesCode-1452</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetworkspacescode-1452/"><code>ErrGetWorkspacesCode-1452</code></a>
             </td>
             <td>Unable to fetch workspaces</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetWorkspacesCode-1452" target="_blank">search forum</a></td>
@@ -13950,12 +15116,14 @@ The provider could not be reached or returned an error.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetWorkspaceCode-1453" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetWorkspaceCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetWorkspaceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1453" class="error-name-code">
-              <code>ErrGetWorkspaceCode-1453</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetworkspacecode-1453/"><code>ErrGetWorkspaceCode-1453</code></a>
             </td>
             <td>Unable to fetch the workspace</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetWorkspaceCode-1453" target="_blank">search forum</a></td>
@@ -13975,12 +15143,14 @@ The provider could not be reached or returned an error.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSaveWorkspaceCode-1454" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSaveWorkspaceCode-more-info" onclick="toggle_visibility('meshery-server-ErrSaveWorkspaceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1454" class="error-name-code">
-              <code>ErrSaveWorkspaceCode-1454</code>
+              <a href="/reference/error-codes/component-meshery-server/errsaveworkspacecode-1454/"><code>ErrSaveWorkspaceCode-1454</code></a>
             </td>
             <td>Unable to create the workspace</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSaveWorkspaceCode-1454" target="_blank">search forum</a></td>
@@ -14001,12 +15171,14 @@ The provider could not be reached or rejected the request.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateWorkspaceCode-1455" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUpdateWorkspaceCode-more-info" onclick="toggle_visibility('meshery-server-ErrUpdateWorkspaceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1455" class="error-name-code">
-              <code>ErrUpdateWorkspaceCode-1455</code>
+              <a href="/reference/error-codes/component-meshery-server/errupdateworkspacecode-1455/"><code>ErrUpdateWorkspaceCode-1455</code></a>
             </td>
             <td>Unable to update the workspace</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateWorkspaceCode-1455" target="_blank">search forum</a></td>
@@ -14026,12 +15198,14 @@ The provider could not be reached or rejected the request.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeleteWorkspaceCode-1456" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDeleteWorkspaceCode-more-info" onclick="toggle_visibility('meshery-server-ErrDeleteWorkspaceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1456" class="error-name-code">
-              <code>ErrDeleteWorkspaceCode-1456</code>
+              <a href="/reference/error-codes/component-meshery-server/errdeleteworkspacecode-1456/"><code>ErrDeleteWorkspaceCode-1456</code></a>
             </td>
             <td>Unable to delete the workspace</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeleteWorkspaceCode-1456" target="_blank">search forum</a></td>
@@ -14051,12 +15225,14 @@ The provider could not be reached or rejected the request.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrWorkspaceResourceCode-1457" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrWorkspaceResourceCode-more-info" onclick="toggle_visibility('meshery-server-ErrWorkspaceResourceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1457" class="error-name-code">
-              <code>ErrWorkspaceResourceCode-1457</code>
+              <a href="/reference/error-codes/component-meshery-server/errworkspaceresourcecode-1457/"><code>ErrWorkspaceResourceCode-1457</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWorkspaceResourceCode-1457" target="_blank">search forum</a></td>
@@ -14075,12 +15251,14 @@ The provider could not be reached or rejected the request.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetOrganizationsCode-1458" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetOrganizationsCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetOrganizationsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1458" class="error-name-code">
-              <code>ErrGetOrganizationsCode-1458</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetorganizationscode-1458/"><code>ErrGetOrganizationsCode-1458</code></a>
             </td>
             <td>Unable to fetch organizations</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetOrganizationsCode-1458" target="_blank">search forum</a></td>
@@ -14099,12 +15277,14 @@ The provider could not be reached or returned an error.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetUsersCode-1459" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetUsersCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetUsersCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1459" class="error-name-code">
-              <code>ErrGetUsersCode-1459</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetuserscode-1459/"><code>ErrGetUsersCode-1459</code></a>
             </td>
             <td>Unable to fetch users</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetUsersCode-1459" target="_blank">search forum</a></td>
@@ -14123,12 +15303,14 @@ The provider could not be reached or returned an error.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetUserCode-1460" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetUserCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetUserCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1460" class="error-name-code">
-              <code>ErrGetUserCode-1460</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetusercode-1460/"><code>ErrGetUserCode-1460</code></a>
             </td>
             <td>Unable to fetch the user</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetUserCode-1460" target="_blank">search forum</a></td>
@@ -14148,12 +15330,14 @@ The provider could not be reached or returned an error.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetUsersKeysCode-1461" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrGetUsersKeysCode-more-info" onclick="toggle_visibility('meshery-server-ErrGetUsersKeysCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1461" class="error-name-code">
-              <code>ErrGetUsersKeysCode-1461</code>
+              <a href="/reference/error-codes/component-meshery-server/errgetuserskeyscode-1461/"><code>ErrGetUsersKeysCode-1461</code></a>
             </td>
             <td>Unable to fetch API keys</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetUsersKeysCode-1461" target="_blank">search forum</a></td>
@@ -14173,12 +15357,14 @@ The provider could not be reached or returned an error.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSeedingConnectionsCode-1462" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSeedingConnectionsCode-more-info" onclick="toggle_visibility('meshery-server-ErrSeedingConnectionsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1462" class="error-name-code">
-              <code>ErrSeedingConnectionsCode-1462</code>
+              <a href="/reference/error-codes/component-meshery-server/errseedingconnectionscode-1462/"><code>ErrSeedingConnectionsCode-1462</code></a>
             </td>
             <td>Failed to seed Meshery&#39;s system-owned connections</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSeedingConnectionsCode-1462" target="_blank">search forum</a></td>
@@ -14197,12 +15383,14 @@ Meshery&#39;s database is unreachable or its connections table could not be quer
         
           
           
+          
+          
             
           
           <tr id="ErrSeedingConnectionKindCode-1463" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSeedingConnectionKindCode-more-info" onclick="toggle_visibility('meshery-server-ErrSeedingConnectionKindCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1463" class="error-name-code">
-              <code>ErrSeedingConnectionKindCode-1463</code>
+              <a href="/reference/error-codes/component-meshery-server/errseedingconnectionkindcode-1463/"><code>ErrSeedingConnectionKindCode-1463</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSeedingConnectionKindCode-1463" target="_blank">search forum</a></td>
@@ -14220,12 +15408,14 @@ Meshery&#39;s database is unreachable or its connections table could not be quer
         
           
           
+          
+          
             
           
           <tr id="ErrFetchProfilesCode-1464" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrFetchProfilesCode-more-info" onclick="toggle_visibility('meshery-server-ErrFetchProfilesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1464" class="error-name-code">
-              <code>ErrFetchProfilesCode-1464</code>
+              <a href="/reference/error-codes/component-meshery-server/errfetchprofilescode-1464/"><code>ErrFetchProfilesCode-1464</code></a>
             </td>
             <td>Error failed to fetch performance profiles</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchProfilesCode-1464" target="_blank">search forum</a></td>
@@ -14245,12 +15435,14 @@ Make sure the Meshery database schema is up to date with the running Meshery Ser
         
           
           
+          
+          
             
           
           <tr id="ErrOperatorHandlerNotAttachedCode-1465" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrOperatorHandlerNotAttachedCode-more-info" onclick="toggle_visibility('meshery-server-ErrOperatorHandlerNotAttachedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1465" class="error-name-code">
-              <code>ErrOperatorHandlerNotAttachedCode-1465</code>
+              <a href="/reference/error-codes/component-meshery-server/erroperatorhandlernotattachedcode-1465/"><code>ErrOperatorHandlerNotAttachedCode-1465</code></a>
             </td>
             <td>No Meshery Operator controller handler is attached</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOperatorHandlerNotAttachedCode-1465" target="_blank">search forum</a></td>
@@ -14268,12 +15460,14 @@ Make sure the Meshery database schema is up to date with the running Meshery Ser
         
           
           
+          
+          
             
           
           <tr id="ErrReconcileOperatorChartVersionCode-1466" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrReconcileOperatorChartVersionCode-more-info" onclick="toggle_visibility('meshery-server-ErrReconcileOperatorChartVersionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1466" class="error-name-code">
-              <code>ErrReconcileOperatorChartVersionCode-1466</code>
+              <a href="/reference/error-codes/component-meshery-server/errreconcileoperatorchartversioncode-1466/"><code>ErrReconcileOperatorChartVersionCode-1466</code></a>
             </td>
             <td>Error deploying Meshery Operator at the configured chart version</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReconcileOperatorChartVersionCode-1466" target="_blank">search forum</a></td>
@@ -14292,12 +15486,14 @@ Confirm the cluster is reachable and the Meshery namespace is writable.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrAnonymousUserIDMissingCode-1467" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrAnonymousUserIDMissingCode-more-info" onclick="toggle_visibility('meshery-server-ErrAnonymousUserIDMissingCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1467" class="error-name-code">
-              <code>ErrAnonymousUserIDMissingCode-1467</code>
+              <a href="/reference/error-codes/component-meshery-server/erranonymoususeridmissingcode-1467/"><code>ErrAnonymousUserIDMissingCode-1467</code></a>
             </td>
             <td>Anonymous user session could not be established</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAnonymousUserIDMissingCode-1467" target="_blank">search forum</a></td>
@@ -14315,12 +15511,14 @@ Confirm the cluster is reachable and the Meshery namespace is writable.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNoOperatorChartPublishedCode-1468" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNoOperatorChartPublishedCode-more-info" onclick="toggle_visibility('meshery-server-ErrNoOperatorChartPublishedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1468" class="error-name-code">
-              <code>ErrNoOperatorChartPublishedCode-1468</code>
+              <a href="/reference/error-codes/component-meshery-server/errnooperatorchartpublishedcode-1468/"><code>ErrNoOperatorChartPublishedCode-1468</code></a>
             </td>
             <td>No Meshery Operator Helm chart is published</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoOperatorChartPublishedCode-1468" target="_blank">search forum</a></td>
@@ -14338,12 +15536,14 @@ Confirm the cluster is reachable and the Meshery namespace is writable.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrOperatorChartNotPinnedCode-1469" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrOperatorChartNotPinnedCode-more-info" onclick="toggle_visibility('meshery-server-ErrOperatorChartNotPinnedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1469" class="error-name-code">
-              <code>ErrOperatorChartNotPinnedCode-1469</code>
+              <a href="/reference/error-codes/component-meshery-server/erroperatorchartnotpinnedcode-1469/"><code>ErrOperatorChartNotPinnedCode-1469</code></a>
             </td>
             <td>Meshery Operator chart version is not a released version</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOperatorChartNotPinnedCode-1469" target="_blank">search forum</a></td>
@@ -14361,12 +15561,14 @@ Confirm the cluster is reachable and the Meshery namespace is writable.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrOperatorChartNotPublishedCode-1470" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrOperatorChartNotPublishedCode-more-info" onclick="toggle_visibility('meshery-server-ErrOperatorChartNotPublishedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1470" class="error-name-code">
-              <code>ErrOperatorChartNotPublishedCode-1470</code>
+              <a href="/reference/error-codes/component-meshery-server/erroperatorchartnotpublishedcode-1470/"><code>ErrOperatorChartNotPublishedCode-1470</code></a>
             </td>
             <td>Meshery Operator chart version is not published</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOperatorChartNotPublishedCode-1470" target="_blank">search forum</a></td>
@@ -14384,12 +15586,14 @@ Confirm the cluster is reachable and the Meshery namespace is writable.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrOperatorChartSubstitutedCode-1471" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrOperatorChartSubstitutedCode-more-info" onclick="toggle_visibility('meshery-server-ErrOperatorChartSubstitutedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1471" class="error-name-code">
-              <code>ErrOperatorChartSubstitutedCode-1471</code>
+              <a href="/reference/error-codes/component-meshery-server/erroperatorchartsubstitutedcode-1471/"><code>ErrOperatorChartSubstitutedCode-1471</code></a>
             </td>
             <td>Meshery Operator was deployed at a different chart version than this server&#39;s release</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOperatorChartSubstitutedCode-1471" target="_blank">search forum</a></td>
@@ -14407,12 +15611,14 @@ Confirm the cluster is reachable and the Meshery namespace is writable.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNoMesheryReleasesFoundCode-1472" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNoMesheryReleasesFoundCode-more-info" onclick="toggle_visibility('meshery-server-ErrNoMesheryReleasesFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1472" class="error-name-code">
-              <code>ErrNoMesheryReleasesFoundCode-1472</code>
+              <a href="/reference/error-codes/component-meshery-server/errnomesheryreleasesfoundcode-1472/"><code>ErrNoMesheryReleasesFoundCode-1472</code></a>
             </td>
             <td>No Meshery releases were found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoMesheryReleasesFoundCode-1472" target="_blank">search forum</a></td>
@@ -14430,12 +15636,14 @@ Confirm the cluster is reachable and the Meshery namespace is writable.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrHelmChartIndexCode-1473" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrHelmChartIndexCode-more-info" onclick="toggle_visibility('meshery-server-ErrHelmChartIndexCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1473" class="error-name-code">
-              <code>ErrHelmChartIndexCode-1473</code>
+              <a href="/reference/error-codes/component-meshery-server/errhelmchartindexcode-1473/"><code>ErrHelmChartIndexCode-1473</code></a>
             </td>
             <td>Unable to read the Helm chart repository index.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrHelmChartIndexCode-1473" target="_blank">search forum</a></td>
@@ -14453,12 +15661,14 @@ Confirm the cluster is reachable and the Meshery namespace is writable.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrOperatorControllersHelperCode-1474" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrOperatorControllersHelperCode-more-info" onclick="toggle_visibility('meshery-server-ErrOperatorControllersHelperCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1474" class="error-name-code">
-              <code>ErrOperatorControllersHelperCode-1474</code>
+              <a href="/reference/error-codes/component-meshery-server/erroperatorcontrollershelpercode-1474/"><code>ErrOperatorControllersHelperCode-1474</code></a>
             </td>
             <td>Unable to reach Meshery Operator lifecycle for this Kubernetes connection</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOperatorControllersHelperCode-1474" target="_blank">search forum</a></td>
@@ -14477,12 +15687,14 @@ If it stays disconnected, check the connection&#39;s diagnostics for why its Kub
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidDependencyCode-1475" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidDependencyCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidDependencyCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1475" class="error-name-code">
-              <code>ErrInvalidDependencyCode-1475</code>
+              <a href="/reference/error-codes/component-meshery-server/errinvaliddependencycode-1475/"><code>ErrInvalidDependencyCode-1475</code></a>
             </td>
             <td>A component declares its dependencies in a form Meshery cannot read</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidDependencyCode-1475" target="_blank">search forum</a></td>
@@ -14500,12 +15712,14 @@ If it stays disconnected, check the connection&#39;s diagnostics for why its Kub
         
           
           
+          
+          
             
           
           <tr id="ErrUnresolvedDependencyCode-1476" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnresolvedDependencyCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnresolvedDependencyCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1476" class="error-name-code">
-              <code>ErrUnresolvedDependencyCode-1476</code>
+              <a href="/reference/error-codes/component-meshery-server/errunresolveddependencycode-1476/"><code>ErrUnresolvedDependencyCode-1476</code></a>
             </td>
             <td>A component depends on something that is not a component of the design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnresolvedDependencyCode-1476" target="_blank">search forum</a></td>
@@ -14523,12 +15737,14 @@ If it stays disconnected, check the connection&#39;s diagnostics for why its Kub
         
           
           
+          
+          
             
           
           <tr id="ErrAmbiguousDependencyCode-1477" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrAmbiguousDependencyCode-more-info" onclick="toggle_visibility('meshery-server-ErrAmbiguousDependencyCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1477" class="error-name-code">
-              <code>ErrAmbiguousDependencyCode-1477</code>
+              <a href="/reference/error-codes/component-meshery-server/errambiguousdependencycode-1477/"><code>ErrAmbiguousDependencyCode-1477</code></a>
             </td>
             <td>A component depends on a name that more than one component of the design carries</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAmbiguousDependencyCode-1477" target="_blank">search forum</a></td>
@@ -14546,12 +15762,14 @@ If it stays disconnected, check the connection&#39;s diagnostics for why its Kub
         
           
           
+          
+          
             
           
           <tr id="ErrUnknownPlanNodeCode-1478" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnknownPlanNodeCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnknownPlanNodeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1478" class="error-name-code">
-              <code>ErrUnknownPlanNodeCode-1478</code>
+              <a href="/reference/error-codes/component-meshery-server/errunknownplannodecode-1478/"><code>ErrUnknownPlanNodeCode-1478</code></a>
             </td>
             <td>The execution plan refers to a component that is not part of it</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnknownPlanNodeCode-1478" target="_blank">search forum</a></td>
@@ -14569,12 +15787,14 @@ If it stays disconnected, check the connection&#39;s diagnostics for why its Kub
         
           
           
+          
+          
             
           
           <tr id="ErrCyclicDependencyCode-1479" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrCyclicDependencyCode-more-info" onclick="toggle_visibility('meshery-server-ErrCyclicDependencyCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1479" class="error-name-code">
-              <code>ErrCyclicDependencyCode-1479</code>
+              <a href="/reference/error-codes/component-meshery-server/errcyclicdependencycode-1479/"><code>ErrCyclicDependencyCode-1479</code></a>
             </td>
             <td>The components of a design depend on each other in a loop</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCyclicDependencyCode-1479" target="_blank">search forum</a></td>
@@ -14592,12 +15812,14 @@ If it stays disconnected, check the connection&#39;s diagnostics for why its Kub
         
           
           
+          
+          
             
           
           <tr id="ErrDependencyNotSatisfiedCode-1480" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDependencyNotSatisfiedCode-more-info" onclick="toggle_visibility('meshery-server-ErrDependencyNotSatisfiedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1480" class="error-name-code">
-              <code>ErrDependencyNotSatisfiedCode-1480</code>
+              <a href="/reference/error-codes/component-meshery-server/errdependencynotsatisfiedcode-1480/"><code>ErrDependencyNotSatisfiedCode-1480</code></a>
             </td>
             <td>A component was withheld because a component it depends on did not succeed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDependencyNotSatisfiedCode-1480" target="_blank">search forum</a></td>
@@ -14615,12 +15837,14 @@ If it stays disconnected, check the connection&#39;s diagnostics for why its Kub
         
           
           
+          
+          
             
           
           <tr id="ErrResetInProgressCode-1481" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResetInProgressCode-more-info" onclick="toggle_visibility('meshery-server-ErrResetInProgressCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1481" class="error-name-code">
-              <code>ErrResetInProgressCode-1481</code>
+              <a href="/reference/error-codes/component-meshery-server/errresetinprogresscode-1481/"><code>ErrResetInProgressCode-1481</code></a>
             </td>
             <td>A database reset is already in progress</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResetInProgressCode-1481" target="_blank">search forum</a></td>
@@ -14638,12 +15862,14 @@ If it stays disconnected, check the connection&#39;s diagnostics for why its Kub
         
           
           
+          
+          
             
           
           <tr id="ErrNoSystemEventSinkCode-1482" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNoSystemEventSinkCode-more-info" onclick="toggle_visibility('meshery-server-ErrNoSystemEventSinkCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1482" class="error-name-code">
-              <code>ErrNoSystemEventSinkCode-1482</code>
+              <a href="/reference/error-codes/component-meshery-server/errnosystemeventsinkcode-1482/"><code>ErrNoSystemEventSinkCode-1482</code></a>
             </td>
             <td>No sink is configured for Meshery&#39;s system events</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoSystemEventSinkCode-1482" target="_blank">search forum</a></td>
@@ -14661,12 +15887,14 @@ If it stays disconnected, check the connection&#39;s diagnostics for why its Kub
         
           
           
+          
+          
             
           
           <tr id="ErrSeedingStagePanicCode-1483" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSeedingStagePanicCode-more-info" onclick="toggle_visibility('meshery-server-ErrSeedingStagePanicCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1483" class="error-name-code">
-              <code>ErrSeedingStagePanicCode-1483</code>
+              <a href="/reference/error-codes/component-meshery-server/errseedingstagepaniccode-1483/"><code>ErrSeedingStagePanicCode-1483</code></a>
             </td>
             <td>Meshery Server recovered from a fault while seeding its registry</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSeedingStagePanicCode-1483" target="_blank">search forum</a></td>
@@ -14684,12 +15912,14 @@ If it stays disconnected, check the connection&#39;s diagnostics for why its Kub
         
           
           
+          
+          
             
           
           <tr id="ErrInitLoggerCode-1484" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInitLoggerCode-more-info" onclick="toggle_visibility('meshery-server-ErrInitLoggerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1484" class="error-name-code">
-              <code>ErrInitLoggerCode-1484</code>
+              <a href="/reference/error-codes/component-meshery-server/errinitloggercode-1484/"><code>ErrInitLoggerCode-1484</code></a>
             </td>
             <td>Unable to initialize logger</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInitLoggerCode-1484" target="_blank">search forum</a></td>
@@ -14709,12 +15939,14 @@ Check your logger configuration settings</p>
         
           
           
+          
+          
             
           
           <tr id="ErrModelNotFoundCode-1485" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrModelNotFoundCode-more-info" onclick="toggle_visibility('meshery-server-ErrModelNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1485" class="error-name-code">
-              <code>ErrModelNotFoundCode-1485</code>
+              <a href="/reference/error-codes/component-meshery-server/errmodelnotfoundcode-1485/"><code>ErrModelNotFoundCode-1485</code></a>
             </td>
             <td>Model not found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrModelNotFoundCode-1485" target="_blank">search forum</a></td>
@@ -14732,12 +15964,14 @@ Check your logger configuration settings</p>
         
           
           
+          
+          
             
           
           <tr id="ErrKeysRegisterColumnMissingCode-1486" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrKeysRegisterColumnMissingCode-more-info" onclick="toggle_visibility('meshery-server-ErrKeysRegisterColumnMissingCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1486" class="error-name-code">
-              <code>ErrKeysRegisterColumnMissingCode-1486</code>
+              <a href="/reference/error-codes/component-meshery-server/errkeysregistercolumnmissingcode-1486/"><code>ErrKeysRegisterColumnMissingCode-1486</code></a>
             </td>
             <td>Meshery Server could not determine which keys to register with the Local Provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrKeysRegisterColumnMissingCode-1486" target="_blank">search forum</a></td>
@@ -14780,12 +16014,14 @@ Check your logger configuration settings</p>
         
           
           
+          
+          
             
           
           <tr id="ErrImportDesignCode-1001" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrImportDesignCode-more-info" onclick="toggle_visibility('mesheryctl-ErrImportDesignCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1001" class="error-name-code">
-              <code>ErrImportDesignCode-1001</code>
+              <a href="/reference/error-codes/client-mesheryctl/errimportdesigncode-1001/"><code>ErrImportDesignCode-1001</code></a>
             </td>
             <td>Unable to import design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrImportDesignCode-1001" target="_blank">search forum</a></td>
@@ -14803,12 +16039,14 @@ Check your logger configuration settings</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInValidSourceCode-1002" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInValidSourceCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInValidSourceCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1002" class="error-name-code">
-              <code>ErrInValidSourceCode-1002</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidsourcecode-1002/"><code>ErrInValidSourceCode-1002</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInValidSourceCode-1002" target="_blank">search forum</a></td>
@@ -14826,12 +16064,14 @@ Check your logger configuration settings</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeployDesignCode-1003" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDeployDesignCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDeployDesignCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1003" class="error-name-code">
-              <code>ErrDeployDesignCode-1003</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdeploydesigncode-1003/"><code>ErrDeployDesignCode-1003</code></a>
             </td>
             <td>Deploying design failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeployDesignCode-1003" target="_blank">search forum</a></td>
@@ -14853,12 +16093,14 @@ Check if the selected target platform is assigned to the current environment.\n<
         
           
           
+          
+          
             
           
           <tr id="ErrUndeployDesignCode-1005" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUndeployDesignCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUndeployDesignCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1005" class="error-name-code">
-              <code>ErrUndeployDesignCode-1005</code>
+              <a href="/reference/error-codes/client-mesheryctl/errundeploydesigncode-1005/"><code>ErrUndeployDesignCode-1005</code></a>
             </td>
             <td>Undeploying design failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUndeployDesignCode-1005" target="_blank">search forum</a></td>
@@ -14879,12 +16121,14 @@ Description: Undeploy design`</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDesignFlagCode-1006" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDesignFlagCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDesignFlagCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1006" class="error-name-code">
-              <code>ErrDesignFlagCode-1006</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdesignflagcode-1006/"><code>ErrDesignFlagCode-1006</code></a>
             </td>
             <td>Invalid command</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDesignFlagCode-1006" target="_blank">search forum</a></td>
@@ -14902,12 +16146,14 @@ Description: Undeploy design`</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDesignManifestCode-1007" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDesignManifestCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDesignManifestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1007" class="error-name-code">
-              <code>ErrDesignManifestCode-1007</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdesignmanifestcode-1007/"><code>ErrDesignManifestCode-1007</code></a>
             </td>
             <td>No file path detected</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDesignManifestCode-1007" target="_blank">search forum</a></td>
@@ -14927,12 +16173,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidMeshConfigCode-1008" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidMeshConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidMeshConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1008" class="error-name-code">
-              <code>ErrInvalidMeshConfigCode-1008</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidmeshconfigcode-1008/"><code>ErrInvalidMeshConfigCode-1008</code></a>
             </td>
             <td>Invalid Meshconfig</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidMeshConfigCode-1008" target="_blank">search forum</a></td>
@@ -14950,12 +16198,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateConfigCode-1009" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUpdateConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUpdateConfigCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1009" class="error-name-code">
-              <code>ErrUpdateConfigCode-1009</code>
+              <a href="/reference/error-codes/client-mesheryctl/errupdateconfigcode-1009/"><code>ErrUpdateConfigCode-1009</code></a>
             </td>
             <td>Error in writing config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateConfigCode-1009" target="_blank">search forum</a></td>
@@ -14973,12 +16223,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrProcessingConfigCode-1010" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrProcessingConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrProcessingConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1010" class="error-name-code">
-              <code>ErrProcessingConfigCode-1010</code>
+              <a href="/reference/error-codes/client-mesheryctl/errprocessingconfigcode-1010/"><code>ErrProcessingConfigCode-1010</code></a>
             </td>
             <td>Error processing config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrProcessingConfigCode-1010" target="_blank">search forum</a></td>
@@ -14996,12 +16248,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingConfigFileCode-1011" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrCreatingConfigFileCode-more-info" onclick="toggle_visibility('mesheryctl-ErrCreatingConfigFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1011" class="error-name-code">
-              <code>ErrCreatingConfigFileCode-1011</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcreatingconfigfilecode-1011/"><code>ErrCreatingConfigFileCode-1011</code></a>
             </td>
             <td>Unable to create config file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingConfigFileCode-1011" target="_blank">search forum</a></td>
@@ -15019,12 +16273,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrAddingTokenToConfigCode-1012" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrAddingTokenToConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrAddingTokenToConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1012" class="error-name-code">
-              <code>ErrAddingTokenToConfigCode-1012</code>
+              <a href="/reference/error-codes/client-mesheryctl/erraddingtokentoconfigcode-1012/"><code>ErrAddingTokenToConfigCode-1012</code></a>
             </td>
             <td>Unable to add token to config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAddingTokenToConfigCode-1012" target="_blank">search forum</a></td>
@@ -15042,12 +16298,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrAddingContextToConfigCode-1013" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrAddingContextToConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrAddingContextToConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1013" class="error-name-code">
-              <code>ErrAddingContextToConfigCode-1013</code>
+              <a href="/reference/error-codes/client-mesheryctl/erraddingcontexttoconfigcode-1013/"><code>ErrAddingContextToConfigCode-1013</code></a>
             </td>
             <td>Unable to add context to config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAddingContextToConfigCode-1013" target="_blank">search forum</a></td>
@@ -15065,12 +16323,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrUnmarshallingConfigFileCode-1014" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUnmarshallingConfigFileCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUnmarshallingConfigFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1014" class="error-name-code">
-              <code>ErrUnmarshallingConfigFileCode-1014</code>
+              <a href="/reference/error-codes/client-mesheryctl/errunmarshallingconfigfilecode-1014/"><code>ErrUnmarshallingConfigFileCode-1014</code></a>
             </td>
             <td>Error processing json in config file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnmarshallingConfigFileCode-1014" target="_blank">search forum</a></td>
@@ -15088,12 +16348,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrGettingRequestContextCode-1015" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrGettingRequestContextCode-more-info" onclick="toggle_visibility('mesheryctl-ErrGettingRequestContextCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1015" class="error-name-code">
-              <code>ErrGettingRequestContextCode-1015</code>
+              <a href="/reference/error-codes/client-mesheryctl/errgettingrequestcontextcode-1015/"><code>ErrGettingRequestContextCode-1015</code></a>
             </td>
             <td>Unable to get request context</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGettingRequestContextCode-1015" target="_blank">search forum</a></td>
@@ -15111,12 +16373,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrUnmarshallingAPIDataCode-1016" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUnmarshallingAPIDataCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUnmarshallingAPIDataCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1016" class="error-name-code">
-              <code>ErrUnmarshallingAPIDataCode-1016</code>
+              <a href="/reference/error-codes/client-mesheryctl/errunmarshallingapidatacode-1016/"><code>ErrUnmarshallingAPIDataCode-1016</code></a>
             </td>
             <td>Error processing json API data</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnmarshallingAPIDataCode-1016" target="_blank">search forum</a></td>
@@ -15134,12 +16398,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrConnectingToServerCode-1017" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrConnectingToServerCode-more-info" onclick="toggle_visibility('mesheryctl-ErrConnectingToServerCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1017" class="error-name-code">
-              <code>ErrConnectingToServerCode-1017</code>
+              <a href="/reference/error-codes/client-mesheryctl/errconnectingtoservercode-1017/"><code>ErrConnectingToServerCode-1017</code></a>
             </td>
             <td>Unable to communicate with Meshery server</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConnectingToServerCode-1017" target="_blank">search forum</a></td>
@@ -15158,12 +16424,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeleteFilterCode-1018" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDeleteFilterCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDeleteFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1018" class="error-name-code">
-              <code>ErrDeleteFilterCode-1018</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdeletefiltercode-1018/"><code>ErrDeleteFilterCode-1018</code></a>
             </td>
             <td>Failed to delete filter</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeleteFilterCode-1018" target="_blank">search forum</a></td>
@@ -15181,12 +16449,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchFilterCode-1019" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFetchFilterCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFetchFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1019" class="error-name-code">
-              <code>ErrFetchFilterCode-1019</code>
+              <a href="/reference/error-codes/client-mesheryctl/errfetchfiltercode-1019/"><code>ErrFetchFilterCode-1019</code></a>
             </td>
             <td>Unable to Fetch Filter</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchFilterCode-1019" target="_blank">search forum</a></td>
@@ -15204,12 +16474,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGettingSessionDataCode-1020" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrGettingSessionDataCode-more-info" onclick="toggle_visibility('mesheryctl-ErrGettingSessionDataCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1020" class="error-name-code">
-              <code>ErrGettingSessionDataCode-1020</code>
+              <a href="/reference/error-codes/client-mesheryctl/errgettingsessiondatacode-1020/"><code>ErrGettingSessionDataCode-1020</code></a>
             </td>
             <td>Unable to fetch session data</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGettingSessionDataCode-1020" target="_blank">search forum</a></td>
@@ -15227,12 +16499,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNoAdaptersCode-1021" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrNoAdaptersCode-more-info" onclick="toggle_visibility('mesheryctl-ErrNoAdaptersCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1021" class="error-name-code">
-              <code>ErrNoAdaptersCode-1021</code>
+              <a href="/reference/error-codes/client-mesheryctl/errnoadapterscode-1021/"><code>ErrNoAdaptersCode-1021</code></a>
             </td>
             <td>Unable to validate adapter</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoAdaptersCode-1021" target="_blank">search forum</a></td>
@@ -15250,12 +16524,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPromptCode-1022" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrPromptCode-more-info" onclick="toggle_visibility('mesheryctl-ErrPromptCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1022" class="error-name-code">
-              <code>ErrPromptCode-1022</code>
+              <a href="/reference/error-codes/client-mesheryctl/errpromptcode-1022/"><code>ErrPromptCode-1022</code></a>
             </td>
             <td>Error while reading selected option</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPromptCode-1022" target="_blank">search forum</a></td>
@@ -15273,12 +16549,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingDeployRequestCode-1023" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrCreatingDeployRequestCode-more-info" onclick="toggle_visibility('mesheryctl-ErrCreatingDeployRequestCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1023" class="error-name-code">
-              <code>ErrCreatingDeployRequestCode-1023</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcreatingdeployrequestcode-1023/"><code>ErrCreatingDeployRequestCode-1023</code></a>
             </td>
             <td>Error sending deploy request</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingDeployRequestCode-1023" target="_blank">search forum</a></td>
@@ -15296,12 +16574,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingDeployResponseRequestCode-1024" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrCreatingDeployResponseRequestCode-more-info" onclick="toggle_visibility('mesheryctl-ErrCreatingDeployResponseRequestCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1024" class="error-name-code">
-              <code>ErrCreatingDeployResponseRequestCode-1024</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcreatingdeployresponserequestcode-1024/"><code>ErrCreatingDeployResponseRequestCode-1024</code></a>
             </td>
             <td>Failed to create a response</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingDeployResponseRequestCode-1024" target="_blank">search forum</a></td>
@@ -15319,12 +16599,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingDeployResponseStreamCode-1025" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrCreatingDeployResponseStreamCode-more-info" onclick="toggle_visibility('mesheryctl-ErrCreatingDeployResponseStreamCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1025" class="error-name-code">
-              <code>ErrCreatingDeployResponseStreamCode-1025</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcreatingdeployresponsestreamcode-1025/"><code>ErrCreatingDeployResponseStreamCode-1025</code></a>
             </td>
             <td>Error creating deploy event response stream</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingDeployResponseStreamCode-1025" target="_blank">search forum</a></td>
@@ -15342,12 +16624,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingValidateResponseStreamCode-1026" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrCreatingValidateResponseStreamCode-more-info" onclick="toggle_visibility('mesheryctl-ErrCreatingValidateResponseStreamCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1026" class="error-name-code">
-              <code>ErrCreatingValidateResponseStreamCode-1026</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcreatingvalidateresponsestreamcode-1026/"><code>ErrCreatingValidateResponseStreamCode-1026</code></a>
             </td>
             <td>Error creating validate event response stream</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingValidateResponseStreamCode-1026" target="_blank">search forum</a></td>
@@ -15365,12 +16649,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTimeoutWaitingForDeployResponseCode-1027" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrTimeoutWaitingForDeployResponseCode-more-info" onclick="toggle_visibility('mesheryctl-ErrTimeoutWaitingForDeployResponseCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1027" class="error-name-code">
-              <code>ErrTimeoutWaitingForDeployResponseCode-1027</code>
+              <a href="/reference/error-codes/client-mesheryctl/errtimeoutwaitingfordeployresponsecode-1027/"><code>ErrTimeoutWaitingForDeployResponseCode-1027</code></a>
             </td>
             <td>Timed out waiting for deploy event</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTimeoutWaitingForDeployResponseCode-1027" target="_blank">search forum</a></td>
@@ -15388,12 +16674,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFailedDeployingMeshCode-1028" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFailedDeployingMeshCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFailedDeployingMeshCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1028" class="error-name-code">
-              <code>ErrFailedDeployingMeshCode-1028</code>
+              <a href="/reference/error-codes/client-mesheryctl/errfaileddeployingmeshcode-1028/"><code>ErrFailedDeployingMeshCode-1028</code></a>
             </td>
             <td>Failed to deploy</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailedDeployingMeshCode-1028" target="_blank">search forum</a></td>
@@ -15411,12 +16699,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingValidateRequestCode-1029" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrCreatingValidateRequestCode-more-info" onclick="toggle_visibility('mesheryctl-ErrCreatingValidateRequestCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1029" class="error-name-code">
-              <code>ErrCreatingValidateRequestCode-1029</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcreatingvalidaterequestcode-1029/"><code>ErrCreatingValidateRequestCode-1029</code></a>
             </td>
             <td>Error sending Validate request</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingValidateRequestCode-1029" target="_blank">search forum</a></td>
@@ -15434,12 +16724,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingValidateResponseRequestCode-1030" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrCreatingValidateResponseRequestCode-more-info" onclick="toggle_visibility('mesheryctl-ErrCreatingValidateResponseRequestCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1030" class="error-name-code">
-              <code>ErrCreatingValidateResponseRequestCode-1030</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcreatingvalidateresponserequestcode-1030/"><code>ErrCreatingValidateResponseRequestCode-1030</code></a>
             </td>
             <td>Error creating request for validate response</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingValidateResponseRequestCode-1030" target="_blank">search forum</a></td>
@@ -15457,12 +16749,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTimeoutWaitingForValidateResponseCode-1031" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrTimeoutWaitingForValidateResponseCode-more-info" onclick="toggle_visibility('mesheryctl-ErrTimeoutWaitingForValidateResponseCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1031" class="error-name-code">
-              <code>ErrTimeoutWaitingForValidateResponseCode-1031</code>
+              <a href="/reference/error-codes/client-mesheryctl/errtimeoutwaitingforvalidateresponsecode-1031/"><code>ErrTimeoutWaitingForValidateResponseCode-1031</code></a>
             </td>
             <td>Timed out waiting for validate response</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTimeoutWaitingForValidateResponseCode-1031" target="_blank">search forum</a></td>
@@ -15480,12 +16774,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSMIConformanceTestsFailedCode-1032" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSMIConformanceTestsFailedCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSMIConformanceTestsFailedCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1032" class="error-name-code">
-              <code>ErrSMIConformanceTestsFailedCode-1032</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsmiconformancetestsfailedcode-1032/"><code>ErrSMIConformanceTestsFailedCode-1032</code></a>
             </td>
             <td>SMI conformance tests failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSMIConformanceTestsFailedCode-1032" target="_blank">search forum</a></td>
@@ -15503,12 +16799,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrValidateAdapterCode-1033" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrValidateAdapterCode-more-info" onclick="toggle_visibility('mesheryctl-ErrValidateAdapterCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1033" class="error-name-code">
-              <code>ErrValidateAdapterCode-1033</code>
+              <a href="/reference/error-codes/client-mesheryctl/errvalidateadaptercode-1033/"><code>ErrValidateAdapterCode-1033</code></a>
             </td>
             <td>Unable to validate adapter</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrValidateAdapterCode-1033" target="_blank">search forum</a></td>
@@ -15526,12 +16824,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSendOperationCode-1034" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSendOperationCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSendOperationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1034" class="error-name-code">
-              <code>ErrSendOperationCode-1034</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsendoperationcode-1034/"><code>ErrSendOperationCode-1034</code></a>
             </td>
             <td>Unable to perform operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSendOperationCode-1034" target="_blank">search forum</a></td>
@@ -15549,12 +16849,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrValidMeshNameCode-1035" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrValidMeshNameCode-more-info" onclick="toggle_visibility('mesheryctl-ErrValidMeshNameCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1035" class="error-name-code">
-              <code>ErrValidMeshNameCode-1035</code>
+              <a href="/reference/error-codes/client-mesheryctl/errvalidmeshnamecode-1035/"><code>ErrValidMeshNameCode-1035</code></a>
             </td>
             <td>Invalid mesh name</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrValidMeshNameCode-1035" target="_blank">search forum</a></td>
@@ -15572,12 +16874,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrWaitValidateResponseCode-1036" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrWaitValidateResponseCode-more-info" onclick="toggle_visibility('mesheryctl-ErrWaitValidateResponseCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1036" class="error-name-code">
-              <code>ErrWaitValidateResponseCode-1036</code>
+              <a href="/reference/error-codes/client-mesheryctl/errwaitvalidateresponsecode-1036/"><code>ErrWaitValidateResponseCode-1036</code></a>
             </td>
             <td>Unable to validate a response</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWaitValidateResponseCode-1036" target="_blank">search forum</a></td>
@@ -15595,12 +16899,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDesignsNotFoundCode-1037" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDesignsNotFoundCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDesignsNotFoundCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1037" class="error-name-code">
-              <code>ErrDesignsNotFoundCode-1037</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdesignsnotfoundcode-1037/"><code>ErrDesignsNotFoundCode-1037</code></a>
             </td>
             <td>Design Not Found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDesignsNotFoundCode-1037" target="_blank">search forum</a></td>
@@ -15618,12 +16924,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidDesignFileCode-1038" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidDesignFileCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidDesignFileCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1038" class="error-name-code">
-              <code>ErrInvalidDesignFileCode-1038</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvaliddesignfilecode-1038/"><code>ErrInvalidDesignFileCode-1038</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidDesignFileCode-1038" target="_blank">search forum</a></td>
@@ -15641,12 +16949,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrReadFilepathCode-1040" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrReadFilepathCode-more-info" onclick="toggle_visibility('mesheryctl-ErrReadFilepathCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1040" class="error-name-code">
-              <code>ErrReadFilepathCode-1040</code>
+              <a href="/reference/error-codes/client-mesheryctl/errreadfilepathcode-1040/"><code>ErrReadFilepathCode-1040</code></a>
             </td>
             <td>Unable to read file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadFilepathCode-1040" target="_blank">search forum</a></td>
@@ -15664,12 +16974,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNoProfileNameCode-1041" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrNoProfileNameCode-more-info" onclick="toggle_visibility('mesheryctl-ErrNoProfileNameCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1041" class="error-name-code">
-              <code>ErrNoProfileNameCode-1041</code>
+              <a href="/reference/error-codes/client-mesheryctl/errnoprofilenamecode-1041/"><code>ErrNoProfileNameCode-1041</code></a>
             </td>
             <td>No profile name</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoProfileNameCode-1041" target="_blank">search forum</a></td>
@@ -15687,12 +16999,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNoTestURLCode-1042" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrNoTestURLCode-more-info" onclick="toggle_visibility('mesheryctl-ErrNoTestURLCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1042" class="error-name-code">
-              <code>ErrNoTestURLCode-1042</code>
+              <a href="/reference/error-codes/client-mesheryctl/errnotesturlcode-1042/"><code>ErrNoTestURLCode-1042</code></a>
             </td>
             <td>No URL</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoTestURLCode-1042" target="_blank">search forum</a></td>
@@ -15710,12 +17024,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNotValidURLCode-1043" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrNotValidURLCode-more-info" onclick="toggle_visibility('mesheryctl-ErrNotValidURLCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1043" class="error-name-code">
-              <code>ErrNotValidURLCode-1043</code>
+              <a href="/reference/error-codes/client-mesheryctl/errnotvalidurlcode-1043/"><code>ErrNotValidURLCode-1043</code></a>
             </td>
             <td>Invalid URL</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNotValidURLCode-1043" target="_blank">search forum</a></td>
@@ -15733,12 +17049,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFailMarshalCode-1044" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFailMarshalCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFailMarshalCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1044" class="error-name-code">
-              <code>ErrFailMarshalCode-1044</code>
+              <a href="/reference/error-codes/client-mesheryctl/errfailmarshalcode-1044/"><code>ErrFailMarshalCode-1044</code></a>
             </td>
             <td>Unable to convert JSON object.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailMarshalCode-1044" target="_blank">search forum</a></td>
@@ -15756,12 +17074,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFailUnmarshalCode-1045" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFailUnmarshalCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFailUnmarshalCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1045" class="error-name-code">
-              <code>ErrFailUnmarshalCode-1045</code>
+              <a href="/reference/error-codes/client-mesheryctl/errfailunmarshalcode-1045/"><code>ErrFailUnmarshalCode-1045</code></a>
             </td>
             <td>Error unmarshalling response</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailUnmarshalCode-1045" target="_blank">search forum</a></td>
@@ -15779,12 +17099,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNoProfileFoundCode-1046" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrNoProfileFoundCode-more-info" onclick="toggle_visibility('mesheryctl-ErrNoProfileFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1046" class="error-name-code">
-              <code>ErrNoProfileFoundCode-1046</code>
+              <a href="/reference/error-codes/client-mesheryctl/errnoprofilefoundcode-1046/"><code>ErrNoProfileFoundCode-1046</code></a>
             </td>
             <td>No profile found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoProfileFoundCode-1046" target="_blank">search forum</a></td>
@@ -15802,12 +17124,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidOutputChoiceCode-1047" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidOutputChoiceCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidOutputChoiceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1047" class="error-name-code">
-              <code>ErrInvalidOutputChoiceCode-1047</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidoutputchoicecode-1047/"><code>ErrInvalidOutputChoiceCode-1047</code></a>
             </td>
             <td>Invalid output format choice</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidOutputChoiceCode-1047" target="_blank">search forum</a></td>
@@ -15825,12 +17149,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnauthenticatedCode-1048" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUnauthenticatedCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUnauthenticatedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1048" class="error-name-code">
-              <code>ErrUnauthenticatedCode-1048</code>
+              <a href="/reference/error-codes/client-mesheryctl/errunauthenticatedcode-1048/"><code>ErrUnauthenticatedCode-1048</code></a>
             </td>
             <td>Unauthenticated User</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnauthenticatedCode-1048" target="_blank">search forum</a></td>
@@ -15848,12 +17174,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFailUnmarshalFileCode-1049" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFailUnmarshalFileCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFailUnmarshalFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1049" class="error-name-code">
-              <code>ErrFailUnmarshalFileCode-1049</code>
+              <a href="/reference/error-codes/client-mesheryctl/errfailunmarshalfilecode-1049/"><code>ErrFailUnmarshalFileCode-1049</code></a>
             </td>
             <td>Failed to unmarshal configuration file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailUnmarshalFileCode-1049" target="_blank">search forum</a></td>
@@ -15871,12 +17199,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidTestConfigFileCode-1050" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidTestConfigFileCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidTestConfigFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1050" class="error-name-code">
-              <code>ErrInvalidTestConfigFileCode-1050</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidtestconfigfilecode-1050/"><code>ErrInvalidTestConfigFileCode-1050</code></a>
             </td>
             <td>Invalid config file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidTestConfigFileCode-1050" target="_blank">search forum</a></td>
@@ -15894,12 +17224,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrArgumentOverflowCode-1051" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrArgumentOverflowCode-more-info" onclick="toggle_visibility('mesheryctl-ErrArgumentOverflowCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1051" class="error-name-code">
-              <code>ErrArgumentOverflowCode-1051</code>
+              <a href="/reference/error-codes/client-mesheryctl/errargumentoverflowcode-1051/"><code>ErrArgumentOverflowCode-1051</code></a>
             </td>
             <td>Invalid arguments</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrArgumentOverflowCode-1051" target="_blank">search forum</a></td>
@@ -15917,12 +17249,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidJSONFileCode-1052" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidJSONFileCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidJSONFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1052" class="error-name-code">
-              <code>ErrInvalidJSONFileCode-1052</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidjsonfilecode-1052/"><code>ErrInvalidJSONFileCode-1052</code></a>
             </td>
             <td>Invalid JSON</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidJSONFileCode-1052" target="_blank">search forum</a></td>
@@ -15940,12 +17274,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrHealthCheckerCode-1053" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrHealthCheckerCode-more-info" onclick="toggle_visibility('mesheryctl-ErrHealthCheckerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1053" class="error-name-code">
-              <code>ErrHealthCheckerCode-1053</code>
+              <a href="/reference/error-codes/client-mesheryctl/errhealthcheckercode-1053/"><code>ErrHealthCheckerCode-1053</code></a>
             </td>
             <td>Healthchecks Failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrHealthCheckerCode-1053" target="_blank">search forum</a></td>
@@ -15963,12 +17299,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPerformanceProfileResultCode-1054" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrPerformanceProfileResultCode-more-info" onclick="toggle_visibility('mesheryctl-ErrPerformanceProfileResultCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1054" class="error-name-code">
-              <code>ErrPerformanceProfileResultCode-1054</code>
+              <a href="/reference/error-codes/client-mesheryctl/errperformanceprofileresultcode-1054/"><code>ErrPerformanceProfileResultCode-1054</code></a>
             </td>
             <td>Error displaying performance</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPerformanceProfileResultCode-1054" target="_blank">search forum</a></td>
@@ -15986,12 +17324,14 @@ See https://docs.meshery.io for help getting started with Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGenerateModelCode-1055" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrGenerateModelCode-more-info" onclick="toggle_visibility('mesheryctl-ErrGenerateModelCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1055" class="error-name-code">
-              <code>ErrGenerateModelCode-1055</code>
+              <a href="/reference/error-codes/client-mesheryctl/errgeneratemodelcode-1055/"><code>ErrGenerateModelCode-1055</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGenerateModelCode-1055" target="_blank">search forum</a></td>
@@ -16013,12 +17353,14 @@ Ensure sufficient permissions to allow creation of model directory.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGenerateComponentCode-1056" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrGenerateComponentCode-more-info" onclick="toggle_visibility('mesheryctl-ErrGenerateComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1056" class="error-name-code">
-              <code>ErrGenerateComponentCode-1056</code>
+              <a href="/reference/error-codes/client-mesheryctl/errgeneratecomponentcode-1056/"><code>ErrGenerateComponentCode-1056</code></a>
             </td>
             <td>Error generating component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGenerateComponentCode-1056" target="_blank">search forum</a></td>
@@ -16036,12 +17378,14 @@ Ensure sufficient permissions to allow creation of model directory.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateModelCode-1057" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUpdateModelCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUpdateModelCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1057" class="error-name-code">
-              <code>ErrUpdateModelCode-1057</code>
+              <a href="/reference/error-codes/client-mesheryctl/errupdatemodelcode-1057/"><code>ErrUpdateModelCode-1057</code></a>
             </td>
             <td>error updating model </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateModelCode-1057" target="_blank">search forum</a></td>
@@ -16059,12 +17403,14 @@ Ensure sufficient permissions to allow creation of model directory.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateComponentCode-1058" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUpdateComponentCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUpdateComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1058" class="error-name-code">
-              <code>ErrUpdateComponentCode-1058</code>
+              <a href="/reference/error-codes/client-mesheryctl/errupdatecomponentcode-1058/"><code>ErrUpdateComponentCode-1058</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateComponentCode-1058" target="_blank">search forum</a></td>
@@ -16084,12 +17430,14 @@ Regenerate corrupted component</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateRegistryCode-1059" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUpdateRegistryCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUpdateRegistryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1059" class="error-name-code">
-              <code>ErrUpdateRegistryCode-1059</code>
+              <a href="/reference/error-codes/client-mesheryctl/errupdateregistrycode-1059/"><code>ErrUpdateRegistryCode-1059</code></a>
             </td>
             <td>error updating registry at </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateRegistryCode-1059" target="_blank">search forum</a></td>
@@ -16109,12 +17457,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrHealthCheckFailedCode-1060" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrHealthCheckFailedCode-more-info" onclick="toggle_visibility('mesheryctl-ErrHealthCheckFailedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1060" class="error-name-code">
-              <code>ErrHealthCheckFailedCode-1060</code>
+              <a href="/reference/error-codes/client-mesheryctl/errhealthcheckfailedcode-1060/"><code>ErrHealthCheckFailedCode-1060</code></a>
             </td>
             <td>Health checks failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrHealthCheckFailedCode-1060" target="_blank">search forum</a></td>
@@ -16132,12 +17482,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrStopMesheryCode-1062" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrStopMesheryCode-more-info" onclick="toggle_visibility('mesheryctl-ErrStopMesheryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1062" class="error-name-code">
-              <code>ErrStopMesheryCode-1062</code>
+              <a href="/reference/error-codes/client-mesheryctl/errstopmesherycode-1062/"><code>ErrStopMesheryCode-1062</code></a>
             </td>
             <td>Error stopping Meshery</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrStopMesheryCode-1062" target="_blank">search forum</a></td>
@@ -16155,12 +17507,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResetMeshconfigCode-1063" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrResetMeshconfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrResetMeshconfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1063" class="error-name-code">
-              <code>ErrResetMeshconfigCode-1063</code>
+              <a href="/reference/error-codes/client-mesheryctl/errresetmeshconfigcode-1063/"><code>ErrResetMeshconfigCode-1063</code></a>
             </td>
             <td>Error resetting meshconfig to default settings</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResetMeshconfigCode-1063" target="_blank">search forum</a></td>
@@ -16178,12 +17532,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyManifestCode-1064" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrApplyManifestCode-more-info" onclick="toggle_visibility('mesheryctl-ErrApplyManifestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1064" class="error-name-code">
-              <code>ErrApplyManifestCode-1064</code>
+              <a href="/reference/error-codes/client-mesheryctl/errapplymanifestcode-1064/"><code>ErrApplyManifestCode-1064</code></a>
             </td>
             <td>Error applying manifest with update: 
  and delete: </td>
@@ -16202,12 +17558,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyOperatorManifestCode-1065" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrApplyOperatorManifestCode-more-info" onclick="toggle_visibility('mesheryctl-ErrApplyOperatorManifestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1065" class="error-name-code">
-              <code>ErrApplyOperatorManifestCode-1065</code>
+              <a href="/reference/error-codes/client-mesheryctl/errapplyoperatormanifestcode-1065/"><code>ErrApplyOperatorManifestCode-1065</code></a>
             </td>
             <td>Error applying operator manifests with update: 
  and delete: </td>
@@ -16226,12 +17584,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreateDirCode-1066" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrCreateDirCode-more-info" onclick="toggle_visibility('mesheryctl-ErrCreateDirCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1066" class="error-name-code">
-              <code>ErrCreateDirCode-1066</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcreatedircode-1066/"><code>ErrCreateDirCode-1066</code></a>
             </td>
             <td>Error creating directory </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateDirCode-1066" target="_blank">search forum</a></td>
@@ -16249,12 +17609,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnsupportedPlatformCode-1067" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUnsupportedPlatformCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUnsupportedPlatformCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1067" class="error-name-code">
-              <code>ErrUnsupportedPlatformCode-1067</code>
+              <a href="/reference/error-codes/client-mesheryctl/errunsupportedplatformcode-1067/"><code>ErrUnsupportedPlatformCode-1067</code></a>
             </td>
             <td>Unsupported platform</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnsupportedPlatformCode-1067" target="_blank">search forum</a></td>
@@ -16274,12 +17636,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRetrievingCurrentContextCode-1068" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrRetrievingCurrentContextCode-more-info" onclick="toggle_visibility('mesheryctl-ErrRetrievingCurrentContextCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1068" class="error-name-code">
-              <code>ErrRetrievingCurrentContextCode-1068</code>
+              <a href="/reference/error-codes/client-mesheryctl/errretrievingcurrentcontextcode-1068/"><code>ErrRetrievingCurrentContextCode-1068</code></a>
             </td>
             <td>Error retrieving current-context</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRetrievingCurrentContextCode-1068" target="_blank">search forum</a></td>
@@ -16297,12 +17661,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSettingDefaultContextToConfigCode-1069" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSettingDefaultContextToConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSettingDefaultContextToConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1069" class="error-name-code">
-              <code>ErrSettingDefaultContextToConfigCode-1069</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsettingdefaultcontexttoconfigcode-1069/"><code>ErrSettingDefaultContextToConfigCode-1069</code></a>
             </td>
             <td>Error setting default context to config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSettingDefaultContextToConfigCode-1069" target="_blank">search forum</a></td>
@@ -16320,12 +17686,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSettingTemporaryContextCode-1070" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSettingTemporaryContextCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSettingTemporaryContextCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1070" class="error-name-code">
-              <code>ErrSettingTemporaryContextCode-1070</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsettingtemporarycontextcode-1070/"><code>ErrSettingTemporaryContextCode-1070</code></a>
             </td>
             <td>Error setting temporary context</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSettingTemporaryContextCode-1070" target="_blank">search forum</a></td>
@@ -16343,12 +17711,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRestartMesheryCode-1072" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrRestartMesheryCode-more-info" onclick="toggle_visibility('mesheryctl-ErrRestartMesheryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1072" class="error-name-code">
-              <code>ErrRestartMesheryCode-1072</code>
+              <a href="/reference/error-codes/client-mesheryctl/errrestartmesherycode-1072/"><code>ErrRestartMesheryCode-1072</code></a>
             </td>
             <td>Error restarting Meshery</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRestartMesheryCode-1072" target="_blank">search forum</a></td>
@@ -16366,12 +17736,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrK8sQueryCode-1073" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrK8sQueryCode-more-info" onclick="toggle_visibility('mesheryctl-ErrK8sQueryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1073" class="error-name-code">
-              <code>ErrK8sQueryCode-1073</code>
+              <a href="/reference/error-codes/client-mesheryctl/errk8squerycode-1073/"><code>ErrK8sQueryCode-1073</code></a>
             </td>
             <td>The Kubernetes cluster is not accessible.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrK8sQueryCode-1073" target="_blank">search forum</a></td>
@@ -16391,12 +17763,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrK8sConfigCode-1074" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrK8sConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrK8sConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1074" class="error-name-code">
-              <code>ErrK8sConfigCode-1074</code>
+              <a href="/reference/error-codes/client-mesheryctl/errk8sconfigcode-1074/"><code>ErrK8sConfigCode-1074</code></a>
             </td>
             <td>The Kubernetes cluster is not accessible.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrK8sConfigCode-1074" target="_blank">search forum</a></td>
@@ -16416,12 +17790,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInitPortForwardCode-1075" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInitPortForwardCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInitPortForwardCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1075" class="error-name-code">
-              <code>ErrInitPortForwardCode-1075</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinitportforwardcode-1075/"><code>ErrInitPortForwardCode-1075</code></a>
             </td>
             <td>Failed to initialize port-forward</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInitPortForwardCode-1075" target="_blank">search forum</a></td>
@@ -16439,12 +17815,14 @@ Ensure correct credential is used</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRunPortForwardCode-1076" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrRunPortForwardCode-more-info" onclick="toggle_visibility('mesheryctl-ErrRunPortForwardCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1076" class="error-name-code">
-              <code>ErrRunPortForwardCode-1076</code>
+              <a href="/reference/error-codes/client-mesheryctl/errrunportforwardcode-1076/"><code>ErrRunPortForwardCode-1076</code></a>
             </td>
             <td>Failed to run port-forward</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRunPortForwardCode-1076" target="_blank">search forum</a></td>
@@ -16464,12 +17842,14 @@ Check if mesheryctl is connected to kubernetes with `mesheryctl system check`</p
         
           
           
+          
+          
             
           
           <tr id="ErrFailedGetEphemeralPortCode-1077" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFailedGetEphemeralPortCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFailedGetEphemeralPortCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1077" class="error-name-code">
-              <code>ErrFailedGetEphemeralPortCode-1077</code>
+              <a href="/reference/error-codes/client-mesheryctl/errfailedgetephemeralportcode-1077/"><code>ErrFailedGetEphemeralPortCode-1077</code></a>
             </td>
             <td>Failed to get a free port</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailedGetEphemeralPortCode-1077" target="_blank">search forum</a></td>
@@ -16488,12 +17868,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrUnmarshalDockerComposeCode-1078" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUnmarshalDockerComposeCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUnmarshalDockerComposeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1078" class="error-name-code">
-              <code>ErrUnmarshalDockerComposeCode-1078</code>
+              <a href="/reference/error-codes/client-mesheryctl/errunmarshaldockercomposecode-1078/"><code>ErrUnmarshalDockerComposeCode-1078</code></a>
             </td>
             <td>Error processing JSON response from Meshery Server</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnmarshalDockerComposeCode-1078" target="_blank">search forum</a></td>
@@ -16511,10 +17893,12 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
           <tr id="ErrCreatingDockerClientCode-1079" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrCreatingDockerClientCode-more-info" onclick="toggle_visibility('mesheryctl-ErrCreatingDockerClientCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -1079" class="error-name-code">
-              <code>ErrCreatingDockerClientCode-1079</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcreatingdockerclientcode-1079/"><code>ErrCreatingDockerClientCode-1079</code></a>
             </td>
             <td>Failed to create Docker client</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingDockerClientCode-1079" target="_blank">search forum</a></td>
@@ -16532,12 +17916,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrWriteConfigCode-1080" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrWriteConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrWriteConfigCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1080" class="error-name-code">
-              <code>ErrWriteConfigCode-1080</code>
+              <a href="/reference/error-codes/client-mesheryctl/errwriteconfigcode-1080/"><code>ErrWriteConfigCode-1080</code></a>
             </td>
             <td>Error in writing config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWriteConfigCode-1080" target="_blank">search forum</a></td>
@@ -16555,12 +17941,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrContextContentCode-1081" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrContextContentCode-more-info" onclick="toggle_visibility('mesheryctl-ErrContextContentCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1081" class="error-name-code">
-              <code>ErrContextContentCode-1081</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcontextcontentcode-1081/"><code>ErrContextContentCode-1081</code></a>
             </td>
             <td>Failed to detect context</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrContextContentCode-1081" target="_blank">search forum</a></td>
@@ -16578,12 +17966,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrSwitchChannelResponseCode-1082" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSwitchChannelResponseCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSwitchChannelResponseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1082" class="error-name-code">
-              <code>ErrSwitchChannelResponseCode-1082</code>
+              <a href="/reference/error-codes/client-mesheryctl/errswitchchannelresponsecode-1082/"><code>ErrSwitchChannelResponseCode-1082</code></a>
             </td>
             <td>Unable to exectute command</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSwitchChannelResponseCode-1082" target="_blank">search forum</a></td>
@@ -16601,12 +17991,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrGetCurrentContextCode-1083" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrGetCurrentContextCode-more-info" onclick="toggle_visibility('mesheryctl-ErrGetCurrentContextCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1083" class="error-name-code">
-              <code>ErrGetCurrentContextCode-1083</code>
+              <a href="/reference/error-codes/client-mesheryctl/errgetcurrentcontextcode-1083/"><code>ErrGetCurrentContextCode-1083</code></a>
             </td>
             <td>Unable to get current-context</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetCurrentContextCode-1083" target="_blank">search forum</a></td>
@@ -16624,12 +18016,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrSetCurrentContextCode-1084" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSetCurrentContextCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSetCurrentContextCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1084" class="error-name-code">
-              <code>ErrSetCurrentContextCode-1084</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsetcurrentcontextcode-1084/"><code>ErrSetCurrentContextCode-1084</code></a>
             </td>
             <td>Unable to set current-context</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSetCurrentContextCode-1084" target="_blank">search forum</a></td>
@@ -16647,12 +18041,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrTokenContextCode-1085" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrTokenContextCode-more-info" onclick="toggle_visibility('mesheryctl-ErrTokenContextCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1085" class="error-name-code">
-              <code>ErrTokenContextCode-1085</code>
+              <a href="/reference/error-codes/client-mesheryctl/errtokencontextcode-1085/"><code>ErrTokenContextCode-1085</code></a>
             </td>
             <td>Unable to get token</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTokenContextCode-1085" target="_blank">search forum</a></td>
@@ -16670,12 +18066,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrProviderInfoCode-1086" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrProviderInfoCode-more-info" onclick="toggle_visibility('mesheryctl-ErrProviderInfoCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1086" class="error-name-code">
-              <code>ErrProviderInfoCode-1086</code>
+              <a href="/reference/error-codes/client-mesheryctl/errproviderinfocode-1086/"><code>ErrProviderInfoCode-1086</code></a>
             </td>
             <td>Unable to verify provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrProviderInfoCode-1086" target="_blank">search forum</a></td>
@@ -16693,12 +18091,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrValidProviderCode-1087" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrValidProviderCode-more-info" onclick="toggle_visibility('mesheryctl-ErrValidProviderCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1087" class="error-name-code">
-              <code>ErrValidProviderCode-1087</code>
+              <a href="/reference/error-codes/client-mesheryctl/errvalidprovidercode-1087/"><code>ErrValidProviderCode-1087</code></a>
             </td>
             <td>Invalid provider</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrValidProviderCode-1087" target="_blank">search forum</a></td>
@@ -16716,12 +18116,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrUnmarshallConfigCode-1088" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUnmarshallConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUnmarshallConfigCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1088" class="error-name-code">
-              <code>ErrUnmarshallConfigCode-1088</code>
+              <a href="/reference/error-codes/client-mesheryctl/errunmarshallconfigcode-1088/"><code>ErrUnmarshallConfigCode-1088</code></a>
             </td>
             <td>Invalid config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnmarshallConfigCode-1088" target="_blank">search forum</a></td>
@@ -16739,12 +18141,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrUploadFileParamsCode-1089" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUploadFileParamsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUploadFileParamsCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1089" class="error-name-code">
-              <code>ErrUploadFileParamsCode-1089</code>
+              <a href="/reference/error-codes/client-mesheryctl/erruploadfileparamscode-1089/"><code>ErrUploadFileParamsCode-1089</code></a>
             </td>
             <td>Unable to upload</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUploadFileParamsCode-1089" target="_blank">search forum</a></td>
@@ -16762,12 +18166,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrFailRequestCode-1090" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFailRequestCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFailRequestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1090" class="error-name-code">
-              <code>ErrFailRequestCode-1090</code>
+              <a href="/reference/error-codes/client-mesheryctl/errfailrequestcode-1090/"><code>ErrFailRequestCode-1090</code></a>
             </td>
             <td>Failed to make a request</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailRequestCode-1090" target="_blank">search forum</a></td>
@@ -16785,12 +18191,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidTokenCode-1091" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidTokenCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidTokenCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1091" class="error-name-code">
-              <code>ErrInvalidTokenCode-1091</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidtokencode-1091/"><code>ErrInvalidTokenCode-1091</code></a>
             </td>
             <td>Invalid authentication Token</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidTokenCode-1091" target="_blank">search forum</a></td>
@@ -16808,12 +18216,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrFailReqStatusCode-1092" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFailReqStatusCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFailReqStatusCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1092" class="error-name-code">
-              <code>ErrFailReqStatusCode-1092</code>
+              <a href="/reference/error-codes/client-mesheryctl/errfailreqstatuscode-1092/"><code>ErrFailReqStatusCode-1092</code></a>
             </td>
             <td>Failed response server error</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailReqStatusCode-1092" target="_blank">search forum</a></td>
@@ -16831,12 +18241,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrAttachAuthTokenCode-1093" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrAttachAuthTokenCode-more-info" onclick="toggle_visibility('mesheryctl-ErrAttachAuthTokenCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1093" class="error-name-code">
-              <code>ErrAttachAuthTokenCode-1093</code>
+              <a href="/reference/error-codes/client-mesheryctl/errattachauthtokencode-1093/"><code>ErrAttachAuthTokenCode-1093</code></a>
             </td>
             <td>Authentication token Not Found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAttachAuthTokenCode-1093" target="_blank">search forum</a></td>
@@ -16854,12 +18266,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrUnmarshalCode-1094" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUnmarshalCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUnmarshalCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1094" class="error-name-code">
-              <code>ErrUnmarshalCode-1094</code>
+              <a href="/reference/error-codes/client-mesheryctl/errunmarshalcode-1094/"><code>ErrUnmarshalCode-1094</code></a>
             </td>
             <td>Error unmarshalling response</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnmarshalCode-1094" target="_blank">search forum</a></td>
@@ -16877,12 +18291,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrFileReadCode-1095" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFileReadCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFileReadCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1095" class="error-name-code">
-              <code>ErrFileReadCode-1095</code>
+              <a href="/reference/error-codes/client-mesheryctl/errfilereadcode-1095/"><code>ErrFileReadCode-1095</code></a>
             </td>
             <td>File read error</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFileReadCode-1095" target="_blank">search forum</a></td>
@@ -16900,12 +18316,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingRequestCode-1096" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrCreatingRequestCode-more-info" onclick="toggle_visibility('mesheryctl-ErrCreatingRequestCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1096" class="error-name-code">
-              <code>ErrCreatingRequestCode-1096</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcreatingrequestcode-1096/"><code>ErrCreatingRequestCode-1096</code></a>
             </td>
             <td>Error occurred while making an HTTP request.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingRequestCode-1096" target="_blank">search forum</a></td>
@@ -16923,12 +18341,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrMarshalCode-1097" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrMarshalCode-more-info" onclick="toggle_visibility('mesheryctl-ErrMarshalCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1097" class="error-name-code">
-              <code>ErrMarshalCode-1097</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmarshalcode-1097/"><code>ErrMarshalCode-1097</code></a>
             </td>
             <td>Error while marshalling the content</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMarshalCode-1097" target="_blank">search forum</a></td>
@@ -16946,12 +18366,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrReadResponseBodyCode-1098" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrReadResponseBodyCode-more-info" onclick="toggle_visibility('mesheryctl-ErrReadResponseBodyCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1098" class="error-name-code">
-              <code>ErrReadResponseBodyCode-1098</code>
+              <a href="/reference/error-codes/client-mesheryctl/errreadresponsebodycode-1098/"><code>ErrReadResponseBodyCode-1098</code></a>
             </td>
             <td>Failed to read response body from request</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadResponseBodyCode-1098" target="_blank">search forum</a></td>
@@ -16969,12 +18391,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrParsingUrlCode-1099" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrParsingUrlCode-more-info" onclick="toggle_visibility('mesheryctl-ErrParsingUrlCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1099" class="error-name-code">
-              <code>ErrParsingUrlCode-1099</code>
+              <a href="/reference/error-codes/client-mesheryctl/errparsingurlcode-1099/"><code>ErrParsingUrlCode-1099</code></a>
             </td>
             <td>Error parsing the URL</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParsingUrlCode-1099" target="_blank">search forum</a></td>
@@ -16992,12 +18416,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrNotFoundCode-1100" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrNotFoundCode-more-info" onclick="toggle_visibility('mesheryctl-ErrNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1100" class="error-name-code">
-              <code>ErrNotFoundCode-1100</code>
+              <a href="/reference/error-codes/client-mesheryctl/errnotfoundcode-1100/"><code>ErrNotFoundCode-1100</code></a>
             </td>
             <td>Item Not Found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNotFoundCode-1100" target="_blank">search forum</a></td>
@@ -17015,12 +18441,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrUnauthenticatedCode-1101" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUnauthenticatedCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUnauthenticatedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1101" class="error-name-code">
-              <code>ErrUnauthenticatedCode-1101</code>
+              <a href="/reference/error-codes/client-mesheryctl/errunauthenticatedcode-1101/"><code>ErrUnauthenticatedCode-1101</code></a>
             </td>
             <td>Unauthenticated User</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnauthenticatedCode-1101" target="_blank">search forum</a></td>
@@ -17038,12 +18466,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidFileCode-1102" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidFileCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidFileCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1102" class="error-name-code">
-              <code>ErrInvalidFileCode-1102</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidfilecode-1102/"><code>ErrInvalidFileCode-1102</code></a>
             </td>
             <td>Invalid File</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidFileCode-1102" target="_blank">search forum</a></td>
@@ -17061,12 +18491,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidNameOrIDCode-1103" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidNameOrIDCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidNameOrIDCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1103" class="error-name-code">
-              <code>ErrInvalidNameOrIDCode-1103</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidnameoridcode-1103/"><code>ErrInvalidNameOrIDCode-1103</code></a>
             </td>
             <td>Invalid Name or ID Provided</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidNameOrIDCode-1103" target="_blank">search forum</a></td>
@@ -17084,12 +18516,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidAPIResponseCode-1104" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidAPIResponseCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidAPIResponseCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1104" class="error-name-code">
-              <code>ErrInvalidAPIResponseCode-1104</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidapiresponsecode-1104/"><code>ErrInvalidAPIResponseCode-1104</code></a>
             </td>
             <td>Invalid API response encountered</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidAPIResponseCode-1104" target="_blank">search forum</a></td>
@@ -17107,12 +18541,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrReadConfigFileCode-1105" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrReadConfigFileCode-more-info" onclick="toggle_visibility('mesheryctl-ErrReadConfigFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1105" class="error-name-code">
-              <code>ErrReadConfigFileCode-1105</code>
+              <a href="/reference/error-codes/client-mesheryctl/errreadconfigfilecode-1105/"><code>ErrReadConfigFileCode-1105</code></a>
             </td>
             <td>Unable to read meshconfig file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadConfigFileCode-1105" target="_blank">search forum</a></td>
@@ -17130,12 +18566,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrMarshalIndentCode-1106" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrMarshalIndentCode-more-info" onclick="toggle_visibility('mesheryctl-ErrMarshalIndentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1106" class="error-name-code">
-              <code>ErrMarshalIndentCode-1106</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmarshalindentcode-1106/"><code>ErrMarshalIndentCode-1106</code></a>
             </td>
             <td>Error indenting JSON body</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMarshalIndentCode-1106" target="_blank">search forum</a></td>
@@ -17153,12 +18591,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrLoadConfigCode-1107" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrLoadConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrLoadConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1107" class="error-name-code">
-              <code>ErrLoadConfigCode-1107</code>
+              <a href="/reference/error-codes/client-mesheryctl/errloadconfigcode-1107/"><code>ErrLoadConfigCode-1107</code></a>
             </td>
             <td>Error processing config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLoadConfigCode-1107" target="_blank">search forum</a></td>
@@ -17176,12 +18616,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrResponseStatusBodyCode-1108" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrResponseStatusBodyCode-more-info" onclick="toggle_visibility('mesheryctl-ErrResponseStatusBodyCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1108" class="error-name-code">
-              <code>ErrResponseStatusBodyCode-1108</code>
+              <a href="/reference/error-codes/client-mesheryctl/errresponsestatusbodycode-1108/"><code>ErrResponseStatusBodyCode-1108</code></a>
             </td>
             <td>Incorrect status code</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResponseStatusBodyCode-1108" target="_blank">search forum</a></td>
@@ -17199,12 +18641,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrResponseStatusCode-1109" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrResponseStatusCode-more-info" onclick="toggle_visibility('mesheryctl-ErrResponseStatusCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1109" class="error-name-code">
-              <code>ErrResponseStatusCode-1109</code>
+              <a href="/reference/error-codes/client-mesheryctl/errresponsestatuscode-1109/"><code>ErrResponseStatusCode-1109</code></a>
             </td>
             <td>Incorrect status code</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResponseStatusCode-1109" target="_blank">search forum</a></td>
@@ -17222,12 +18666,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrJSONToYAMLCode-1110" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrJSONToYAMLCode-more-info" onclick="toggle_visibility('mesheryctl-ErrJSONToYAMLCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1110" class="error-name-code">
-              <code>ErrJSONToYAMLCode-1110</code>
+              <a href="/reference/error-codes/client-mesheryctl/errjsontoyamlcode-1110/"><code>ErrJSONToYAMLCode-1110</code></a>
             </td>
             <td>Failed to convert JSON to YAML</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrJSONToYAMLCode-1110" target="_blank">search forum</a></td>
@@ -17245,12 +18691,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrOutFormatFlagCode-1111" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrOutFormatFlagCode-more-info" onclick="toggle_visibility('mesheryctl-ErrOutFormatFlagCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1111" class="error-name-code">
-              <code>ErrOutFormatFlagCode-1111</code>
+              <a href="/reference/error-codes/client-mesheryctl/erroutformatflagcode-1111/"><code>ErrOutFormatFlagCode-1111</code></a>
             </td>
             <td>Invalid output format choice</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOutFormatFlagCode-1111" target="_blank">search forum</a></td>
@@ -17268,12 +18716,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrParseGithubFileCode-1112" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrParseGithubFileCode-more-info" onclick="toggle_visibility('mesheryctl-ErrParseGithubFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1112" class="error-name-code">
-              <code>ErrParseGithubFileCode-1112</code>
+              <a href="/reference/error-codes/client-mesheryctl/errparsegithubfilecode-1112/"><code>ErrParseGithubFileCode-1112</code></a>
             </td>
             <td>Failed to parse github file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseGithubFileCode-1112" target="_blank">search forum</a></td>
@@ -17291,12 +18741,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrReadTokenCode-1113" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrReadTokenCode-more-info" onclick="toggle_visibility('mesheryctl-ErrReadTokenCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1113" class="error-name-code">
-              <code>ErrReadTokenCode-1113</code>
+              <a href="/reference/error-codes/client-mesheryctl/errreadtokencode-1113/"><code>ErrReadTokenCode-1113</code></a>
             </td>
             <td>Could not read token</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadTokenCode-1113" target="_blank">search forum</a></td>
@@ -17314,12 +18766,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrRequestResponseCode-1114" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrRequestResponseCode-more-info" onclick="toggle_visibility('mesheryctl-ErrRequestResponseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1114" class="error-name-code">
-              <code>ErrRequestResponseCode-1114</code>
+              <a href="/reference/error-codes/client-mesheryctl/errrequestresponsecode-1114/"><code>ErrRequestResponseCode-1114</code></a>
             </td>
             <td>Failed to handle request</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRequestResponseCode-1114" target="_blank">search forum</a></td>
@@ -17337,12 +18791,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrBadRequestCode-1117" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrBadRequestCode-more-info" onclick="toggle_visibility('mesheryctl-ErrBadRequestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1117" class="error-name-code">
-              <code>ErrBadRequestCode-1117</code>
+              <a href="/reference/error-codes/client-mesheryctl/errbadrequestcode-1117/"><code>ErrBadRequestCode-1117</code></a>
             </td>
             <td>Failed to delete the connection</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrBadRequestCode-1117" target="_blank">search forum</a></td>
@@ -17360,12 +18816,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidArgumentCode-1118" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidArgumentCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidArgumentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1118" class="error-name-code">
-              <code>ErrInvalidArgumentCode-1118</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidargumentcode-1118/"><code>ErrInvalidArgumentCode-1118</code></a>
             </td>
             <td>Invalid Argument</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidArgumentCode-1118" target="_blank">search forum</a></td>
@@ -17383,12 +18841,14 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
         
           
           
+          
+          
             
           
           <tr id="ErrGeneratingIconsCode-1119" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrGeneratingIconsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrGeneratingIconsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1119" class="error-name-code">
-              <code>ErrGeneratingIconsCode-1119</code>
+              <a href="/reference/error-codes/client-mesheryctl/errgeneratingiconscode-1119/"><code>ErrGeneratingIconsCode-1119</code></a>
             </td>
             <td>error generating icons at </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGeneratingIconsCode-1119" target="_blank">search forum</a></td>
@@ -17408,12 +18868,14 @@ Ensure model name formatting is correct</p>
         
           
           
+          
+          
             
           
           <tr id="ErrClearLineCode-1120" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrClearLineCode-more-info" onclick="toggle_visibility('mesheryctl-ErrClearLineCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1120" class="error-name-code">
-              <code>ErrClearLineCode-1120</code>
+              <a href="/reference/error-codes/client-mesheryctl/errclearlinecode-1120/"><code>ErrClearLineCode-1120</code></a>
             </td>
             <td>Failed to clear terminal</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrClearLineCode-1120" target="_blank">search forum</a></td>
@@ -17431,12 +18893,14 @@ Ensure model name formatting is correct</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPatternSourceTypeCode-1121" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrPatternSourceTypeCode-more-info" onclick="toggle_visibility('mesheryctl-ErrPatternSourceTypeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1121" class="error-name-code">
-              <code>ErrPatternSourceTypeCode-1121</code>
+              <a href="/reference/error-codes/client-mesheryctl/errpatternsourcetypecode-1121/"><code>ErrPatternSourceTypeCode-1121</code></a>
             </td>
             <td>Source type for the design to import not specified</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPatternSourceTypeCode-1121" target="_blank">search forum</a></td>
@@ -17456,12 +18920,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrCreateFileCode-1123" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrCreateFileCode-more-info" onclick="toggle_visibility('mesheryctl-ErrCreateFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1123" class="error-name-code">
-              <code>ErrCreateFileCode-1123</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcreatefilecode-1123/"><code>ErrCreateFileCode-1123</code></a>
             </td>
             <td>Error creating file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateFileCode-1123" target="_blank">search forum</a></td>
@@ -17483,12 +18949,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrRetrieveHomeDirCode-1124" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrRetrieveHomeDirCode-more-info" onclick="toggle_visibility('mesheryctl-ErrRetrieveHomeDirCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1124" class="error-name-code">
-              <code>ErrRetrieveHomeDirCode-1124</code>
+              <a href="/reference/error-codes/client-mesheryctl/errretrievehomedircode-1124/"><code>ErrRetrieveHomeDirCode-1124</code></a>
             </td>
             <td>Error retrieving user home/root directory</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRetrieveHomeDirCode-1124" target="_blank">search forum</a></td>
@@ -17506,12 +18974,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrReadFromBodyCode-1125" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrReadFromBodyCode-more-info" onclick="toggle_visibility('mesheryctl-ErrReadFromBodyCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1125" class="error-name-code">
-              <code>ErrReadFromBodyCode-1125</code>
+              <a href="/reference/error-codes/client-mesheryctl/errreadfrombodycode-1125/"><code>ErrReadFromBodyCode-1125</code></a>
             </td>
             <td>Unable to read data from the response body</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadFromBodyCode-1125" target="_blank">search forum</a></td>
@@ -17529,12 +18999,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrMarkFlagRequireCode-1126" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrMarkFlagRequireCode-more-info" onclick="toggle_visibility('mesheryctl-ErrMarkFlagRequireCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1126" class="error-name-code">
-              <code>ErrMarkFlagRequireCode-1126</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmarkflagrequirecode-1126/"><code>ErrMarkFlagRequireCode-1126</code></a>
             </td>
             <td>Failed to mark the flag as required</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMarkFlagRequireCode-1126" target="_blank">search forum</a></td>
@@ -17552,12 +19024,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrExportModelCode-1127" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrExportModelCode-more-info" onclick="toggle_visibility('mesheryctl-ErrExportModelCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1127" class="error-name-code">
-              <code>ErrExportModelCode-1127</code>
+              <a href="/reference/error-codes/client-mesheryctl/errexportmodelcode-1127/"><code>ErrExportModelCode-1127</code></a>
             </td>
             <td>Error exporting model</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrExportModelCode-1127" target="_blank">search forum</a></td>
@@ -17575,12 +19049,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrParsingSheetCode-1128" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrParsingSheetCode-more-info" onclick="toggle_visibility('mesheryctl-ErrParsingSheetCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1128" class="error-name-code">
-              <code>ErrParsingSheetCode-1128</code>
+              <a href="/reference/error-codes/client-mesheryctl/errparsingsheetcode-1128/"><code>ErrParsingSheetCode-1128</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParsingSheetCode-1128" target="_blank">search forum</a></td>
@@ -17598,12 +19074,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrGenerationTimeoutCode-1129" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrGenerationTimeoutCode-more-info" onclick="toggle_visibility('mesheryctl-ErrGenerationTimeoutCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1129" class="error-name-code">
-              <code>ErrGenerationTimeoutCode-1129</code>
+              <a href="/reference/error-codes/client-mesheryctl/errgenerationtimeoutcode-1129/"><code>ErrGenerationTimeoutCode-1129</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGenerationTimeoutCode-1129" target="_blank">search forum</a></td>
@@ -17625,12 +19103,14 @@ Review the generation logs for problematic models</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParsingRelationshipCode-1130" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrParsingRelationshipCode-more-info" onclick="toggle_visibility('mesheryctl-ErrParsingRelationshipCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1130" class="error-name-code">
-              <code>ErrParsingRelationshipCode-1130</code>
+              <a href="/reference/error-codes/client-mesheryctl/errparsingrelationshipcode-1130/"><code>ErrParsingRelationshipCode-1130</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParsingRelationshipCode-1130" target="_blank">search forum</a></td>
@@ -17652,12 +19132,14 @@ Validate the selector JSON syntax</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTemplateFileNotPresentCode-1131" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrTemplateFileNotPresentCode-more-info" onclick="toggle_visibility('mesheryctl-ErrTemplateFileNotPresentCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1131" class="error-name-code">
-              <code>ErrTemplateFileNotPresentCode-1131</code>
+              <a href="/reference/error-codes/client-mesheryctl/errtemplatefilenotpresentcode-1131/"><code>ErrTemplateFileNotPresentCode-1131</code></a>
             </td>
             <td>error no template file provided</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTemplateFileNotPresentCode-1131" target="_blank">search forum</a></td>
@@ -17675,12 +19157,14 @@ Validate the selector JSON syntax</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGeneratesModelCode-1132" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrGeneratesModelCode-more-info" onclick="toggle_visibility('mesheryctl-ErrGeneratesModelCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1132" class="error-name-code">
-              <code>ErrGeneratesModelCode-1132</code>
+              <a href="/reference/error-codes/client-mesheryctl/errgeneratesmodelcode-1132/"><code>ErrGeneratesModelCode-1132</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGeneratesModelCode-1132" target="_blank">search forum</a></td>
@@ -17702,12 +19186,14 @@ Ensure sufficient permissions to allow creation of model directory.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateComponentsCode-1134" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUpdateComponentsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUpdateComponentsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1134" class="error-name-code">
-              <code>ErrUpdateComponentsCode-1134</code>
+              <a href="/reference/error-codes/client-mesheryctl/errupdatecomponentscode-1134/"><code>ErrUpdateComponentsCode-1134</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateComponentsCode-1134" target="_blank">search forum</a></td>
@@ -17727,12 +19213,14 @@ Regenerate corrupted component</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMissingCommandsCode-1137" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrMissingCommandsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrMissingCommandsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1137" class="error-name-code">
-              <code>ErrMissingCommandsCode-1137</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmissingcommandscode-1137/"><code>ErrMissingCommandsCode-1137</code></a>
             </td>
             <td>Missing required commands</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMissingCommandsCode-1137" target="_blank">search forum</a></td>
@@ -17750,12 +19238,14 @@ Regenerate corrupted component</p>
         
           
           
+          
+          
             
           
           <tr id="ErrKubernetesConnectivityCode-1138" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrKubernetesConnectivityCode-more-info" onclick="toggle_visibility('mesheryctl-ErrKubernetesConnectivityCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1138" class="error-name-code">
-              <code>ErrKubernetesConnectivityCode-1138</code>
+              <a href="/reference/error-codes/client-mesheryctl/errkubernetesconnectivitycode-1138/"><code>ErrKubernetesConnectivityCode-1138</code></a>
             </td>
             <td>Failed to connect to Kubernetes API server</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrKubernetesConnectivityCode-1138" target="_blank">search forum</a></td>
@@ -17773,12 +19263,14 @@ Regenerate corrupted component</p>
         
           
           
+          
+          
             
           
           <tr id="ErrKubernetesQueryCode-1139" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrKubernetesQueryCode-more-info" onclick="toggle_visibility('mesheryctl-ErrKubernetesQueryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1139" class="error-name-code">
-              <code>ErrKubernetesQueryCode-1139</code>
+              <a href="/reference/error-codes/client-mesheryctl/errkubernetesquerycode-1139/"><code>ErrKubernetesQueryCode-1139</code></a>
             </td>
             <td>Failed to query Kubernetes API</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrKubernetesQueryCode-1139" target="_blank">search forum</a></td>
@@ -17796,12 +19288,14 @@ Regenerate corrupted component</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDesignFileNotProvidedCode-1140" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDesignFileNotProvidedCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDesignFileNotProvidedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1140" class="error-name-code">
-              <code>ErrDesignFileNotProvidedCode-1140</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdesignfilenotprovidedcode-1140/"><code>ErrDesignFileNotProvidedCode-1140</code></a>
             </td>
             <td>Design file path not provided</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDesignFileNotProvidedCode-1140" target="_blank">search forum</a></td>
@@ -17821,12 +19315,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrCreateManifestsFolderCode-1141" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrCreateManifestsFolderCode-more-info" onclick="toggle_visibility('mesheryctl-ErrCreateManifestsFolderCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1141" class="error-name-code">
-              <code>ErrCreateManifestsFolderCode-1141</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcreatemanifestsfoldercode-1141/"><code>ErrCreateManifestsFolderCode-1141</code></a>
             </td>
             <td>Error creating manifest folder</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateManifestsFolderCode-1141" target="_blank">search forum</a></td>
@@ -17844,12 +19340,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrDownloadFileCode-1142" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDownloadFileCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDownloadFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1142" class="error-name-code">
-              <code>ErrDownloadFileCode-1142</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdownloadfilecode-1142/"><code>ErrDownloadFileCode-1142</code></a>
             </td>
             <td>Error downloading file </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDownloadFileCode-1142" target="_blank">search forum</a></td>
@@ -17867,12 +19365,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrNoManifestFilesFoundCode-1143" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrNoManifestFilesFoundCode-more-info" onclick="toggle_visibility('mesheryctl-ErrNoManifestFilesFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1143" class="error-name-code">
-              <code>ErrNoManifestFilesFoundCode-1143</code>
+              <a href="/reference/error-codes/client-mesheryctl/errnomanifestfilesfoundcode-1143/"><code>ErrNoManifestFilesFoundCode-1143</code></a>
             </td>
             <td>No manifest files found in the specified path</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoManifestFilesFoundCode-1143" target="_blank">search forum</a></td>
@@ -17890,12 +19390,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrWalkManifestsCode-1144" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrWalkManifestsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrWalkManifestsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1144" class="error-name-code">
-              <code>ErrWalkManifestsCode-1144</code>
+              <a href="/reference/error-codes/client-mesheryctl/errwalkmanifestscode-1144/"><code>ErrWalkManifestsCode-1144</code></a>
             </td>
             <td>Error walking through manifests</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWalkManifestsCode-1144" target="_blank">search forum</a></td>
@@ -17913,12 +19415,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrGetChannelVersionCode-1145" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrGetChannelVersionCode-more-info" onclick="toggle_visibility('mesheryctl-ErrGetChannelVersionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1145" class="error-name-code">
-              <code>ErrGetChannelVersionCode-1145</code>
+              <a href="/reference/error-codes/client-mesheryctl/errgetchannelversioncode-1145/"><code>ErrGetChannelVersionCode-1145</code></a>
             </td>
             <td>Unable to retrieve release channel and version information.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetChannelVersionCode-1145" target="_blank">search forum</a></td>
@@ -17936,12 +19440,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrModelUnsupportedOutputFormatCode-1146" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrModelUnsupportedOutputFormatCode-more-info" onclick="toggle_visibility('mesheryctl-ErrModelUnsupportedOutputFormatCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1146" class="error-name-code">
-              <code>ErrModelUnsupportedOutputFormatCode-1146</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmodelunsupportedoutputformatcode-1146/"><code>ErrModelUnsupportedOutputFormatCode-1146</code></a>
             </td>
             <td>Error viewing model</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrModelUnsupportedOutputFormatCode-1146" target="_blank">search forum</a></td>
@@ -17959,12 +19465,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrOutputToJsonCode-1147" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrOutputToJsonCode-more-info" onclick="toggle_visibility('mesheryctl-ErrOutputToJsonCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1147" class="error-name-code">
-              <code>ErrOutputToJsonCode-1147</code>
+              <a href="/reference/error-codes/client-mesheryctl/erroutputtojsoncode-1147/"><code>ErrOutputToJsonCode-1147</code></a>
             </td>
             <td>Failed to format output in JSON</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOutputToJsonCode-1147" target="_blank">search forum</a></td>
@@ -17982,12 +19490,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrModelInitCode-1148" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrModelInitCode-more-info" onclick="toggle_visibility('mesheryctl-ErrModelInitCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1148" class="error-name-code">
-              <code>ErrModelInitCode-1148</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmodelinitcode-1148/"><code>ErrModelInitCode-1148</code></a>
             </td>
             <td>Error model init</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrModelInitCode-1148" target="_blank">search forum</a></td>
@@ -18005,12 +19515,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrModelUnsupportedVersionCode-1149" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrModelUnsupportedVersionCode-more-info" onclick="toggle_visibility('mesheryctl-ErrModelUnsupportedVersionCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1149" class="error-name-code">
-              <code>ErrModelUnsupportedVersionCode-1149</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmodelunsupportedversioncode-1149/"><code>ErrModelUnsupportedVersionCode-1149</code></a>
             </td>
             <td>Error in model version format</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrModelUnsupportedVersionCode-1149" target="_blank">search forum</a></td>
@@ -18028,12 +19540,14 @@ Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidModelCode-1150" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidModelCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidModelCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1150" class="error-name-code">
-              <code>ErrInvalidModelCode-1150</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidmodelcode-1150/"><code>ErrInvalidModelCode-1150</code></a>
             </td>
             <td>No valid component or relationship found in the model provided</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidModelCode-1150" target="_blank">search forum</a></td>
@@ -18052,12 +19566,14 @@ Folder structure might be incorrect</p>
         
           
           
+          
+          
             
           
           <tr id="ErrModelBuildCode-1151" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrModelBuildCode-more-info" onclick="toggle_visibility('mesheryctl-ErrModelBuildCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1151" class="error-name-code">
-              <code>ErrModelBuildCode-1151</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmodelbuildcode-1151/"><code>ErrModelBuildCode-1151</code></a>
             </td>
             <td>Error model build</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrModelBuildCode-1151" target="_blank">search forum</a></td>
@@ -18075,12 +19591,14 @@ Folder structure might be incorrect</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidUUIDCode-1152" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidUUIDCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidUUIDCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1152" class="error-name-code">
-              <code>ErrInvalidUUIDCode-1152</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvaliduuidcode-1152/"><code>ErrInvalidUUIDCode-1152</code></a>
             </td>
             <td>Invalid ID format</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidUUIDCode-1152" target="_blank">search forum</a></td>
@@ -18100,12 +19618,14 @@ Check the ID parameter for typos or formatting issues</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchEnvironmentsCode-1153" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFetchEnvironmentsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFetchEnvironmentsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1153" class="error-name-code">
-              <code>ErrFetchEnvironmentsCode-1153</code>
+              <a href="/reference/error-codes/client-mesheryctl/errfetchenvironmentscode-1153/"><code>ErrFetchEnvironmentsCode-1153</code></a>
             </td>
             <td>Failed to fetch environments</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchEnvironmentsCode-1153" target="_blank">search forum</a></td>
@@ -18128,12 +19648,14 @@ Ensure you have proper authentication credentials</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTableRenderCode-1154" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrTableRenderCode-more-info" onclick="toggle_visibility('mesheryctl-ErrTableRenderCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1154" class="error-name-code">
-              <code>ErrTableRenderCode-1154</code>
+              <a href="/reference/error-codes/client-mesheryctl/errtablerendercode-1154/"><code>ErrTableRenderCode-1154</code></a>
             </td>
             <td>Failed to display output in table format</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTableRenderCode-1154" target="_blank">search forum</a></td>
@@ -18151,12 +19673,14 @@ Ensure you have proper authentication credentials</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFlagsInvalidCode-1155" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFlagsInvalidCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFlagsInvalidCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1155" class="error-name-code">
-              <code>ErrFlagsInvalidCode-1155</code>
+              <a href="/reference/error-codes/client-mesheryctl/errflagsinvalidcode-1155/"><code>ErrFlagsInvalidCode-1155</code></a>
             </td>
             <td>Invalid flag(s) provided</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFlagsInvalidCode-1155" target="_blank">search forum</a></td>
@@ -18174,12 +19698,14 @@ Ensure you have proper authentication credentials</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMesheryServerNotRunningCode-1156" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrMesheryServerNotRunningCode-more-info" onclick="toggle_visibility('mesheryctl-ErrMesheryServerNotRunningCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1156" class="error-name-code">
-              <code>ErrMesheryServerNotRunningCode-1156</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmesheryservernotrunningcode-1156/"><code>ErrMesheryServerNotRunningCode-1156</code></a>
             </td>
             <td>Meshery Server is not running</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMesheryServerNotRunningCode-1156" target="_blank">search forum</a></td>
@@ -18201,12 +19727,14 @@ Check your network connection and firewall settings</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPaginationCode-1157" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrPaginationCode-more-info" onclick="toggle_visibility('mesheryctl-ErrPaginationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1157" class="error-name-code">
-              <code>ErrPaginationCode-1157</code>
+              <a href="/reference/error-codes/client-mesheryctl/errpaginationcode-1157/"><code>ErrPaginationCode-1157</code></a>
             </td>
             <td>Failed to fetch paginated data from Meshery server.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPaginationCode-1157" target="_blank">search forum</a></td>
@@ -18224,12 +19752,14 @@ Check your network connection and firewall settings</p>
         
           
           
+          
+          
             
           
           <tr id="ErrOutputToYamlCode-1158" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrOutputToYamlCode-more-info" onclick="toggle_visibility('mesheryctl-ErrOutputToYamlCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1158" class="error-name-code">
-              <code>ErrOutputToYamlCode-1158</code>
+              <a href="/reference/error-codes/client-mesheryctl/erroutputtoyamlcode-1158/"><code>ErrOutputToYamlCode-1158</code></a>
             </td>
             <td>Failed to format output in YAML</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOutputToYamlCode-1158" target="_blank">search forum</a></td>
@@ -18247,12 +19777,14 @@ Check your network connection and firewall settings</p>
         
           
           
+          
+          
             
           
           <tr id="ErrModelGenerationFailedCode-1159" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrModelGenerationFailedCode-more-info" onclick="toggle_visibility('mesheryctl-ErrModelGenerationFailedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1159" class="error-name-code">
-              <code>ErrModelGenerationFailedCode-1159</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmodelgenerationfailedcode-1159/"><code>ErrModelGenerationFailedCode-1159</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrModelGenerationFailedCode-1159" target="_blank">search forum</a></td>
@@ -18274,12 +19806,14 @@ Review network connectivity</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUserPromptCode-1160" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUserPromptCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUserPromptCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1160" class="error-name-code">
-              <code>ErrUserPromptCode-1160</code>
+              <a href="/reference/error-codes/client-mesheryctl/erruserpromptcode-1160/"><code>ErrUserPromptCode-1160</code></a>
             </td>
             <td>Prompt failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUserPromptCode-1160" target="_blank">search forum</a></td>
@@ -18297,12 +19831,14 @@ Review network connectivity</p>
         
           
           
+          
+          
             
           
           <tr id="ErrConvertConcurrentRequestCode-1161" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrConvertConcurrentRequestCode-more-info" onclick="toggle_visibility('mesheryctl-ErrConvertConcurrentRequestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1161" class="error-name-code">
-              <code>ErrConvertConcurrentRequestCode-1161</code>
+              <a href="/reference/error-codes/client-mesheryctl/errconvertconcurrentrequestcode-1161/"><code>ErrConvertConcurrentRequestCode-1161</code></a>
             </td>
             <td>Failed to convert concurrent-request</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConvertConcurrentRequestCode-1161" target="_blank">search forum</a></td>
@@ -18320,12 +19856,14 @@ Review network connectivity</p>
         
           
           
+          
+          
             
           
           <tr id="ErrConvertQPSCode-1162" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrConvertQPSCode-more-info" onclick="toggle_visibility('mesheryctl-ErrConvertQPSCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1162" class="error-name-code">
-              <code>ErrConvertQPSCode-1162</code>
+              <a href="/reference/error-codes/client-mesheryctl/errconvertqpscode-1162/"><code>ErrConvertQPSCode-1162</code></a>
             </td>
             <td>Failed to convert qps</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConvertQPSCode-1162" target="_blank">search forum</a></td>
@@ -18343,12 +19881,14 @@ Review network connectivity</p>
         
           
           
+          
+          
             
           
           <tr id="ErrParseDesignFileCode-1163" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrParseDesignFileCode-more-info" onclick="toggle_visibility('mesheryctl-ErrParseDesignFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1163" class="error-name-code">
-              <code>ErrParseDesignFileCode-1163</code>
+              <a href="/reference/error-codes/client-mesheryctl/errparsedesignfilecode-1163/"><code>ErrParseDesignFileCode-1163</code></a>
             </td>
             <td>Failed to parse design file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseDesignFileCode-1163" target="_blank">search forum</a></td>
@@ -18369,12 +19909,14 @@ Validate the design file structure</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeleteDesignCode-1164" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDeleteDesignCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDeleteDesignCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1164" class="error-name-code">
-              <code>ErrDeleteDesignCode-1164</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdeletedesigncode-1164/"><code>ErrDeleteDesignCode-1164</code></a>
             </td>
             <td>Unable to delete design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeleteDesignCode-1164" target="_blank">search forum</a></td>
@@ -18395,12 +19937,14 @@ Check your network connection and Meshery server status</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetKubernetesContextsCode-1165" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrGetKubernetesContextsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrGetKubernetesContextsCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1165" class="error-name-code">
-              <code>ErrGetKubernetesContextsCode-1165</code>
+              <a href="/reference/error-codes/client-mesheryctl/errgetkubernetescontextscode-1165/"><code>ErrGetKubernetesContextsCode-1165</code></a>
             </td>
             <td>Unable to get kubernetes contexts</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetKubernetesContextsCode-1165" target="_blank">search forum</a></td>
@@ -18418,12 +19962,14 @@ Check your network connection and Meshery server status</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSetKubernetesContextCode-1166" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSetKubernetesContextCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSetKubernetesContextCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1166" class="error-name-code">
-              <code>ErrSetKubernetesContextCode-1166</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsetkubernetescontextcode-1166/"><code>ErrSetKubernetesContextCode-1166</code></a>
             </td>
             <td>Unable to set kubernetes context</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSetKubernetesContextCode-1166" target="_blank">search forum</a></td>
@@ -18441,12 +19987,14 @@ Check your network connection and Meshery server status</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFilterNotFoundCode-1167" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFilterNotFoundCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFilterNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1167" class="error-name-code">
-              <code>ErrFilterNotFoundCode-1167</code>
+              <a href="/reference/error-codes/client-mesheryctl/errfilternotfoundcode-1167/"><code>ErrFilterNotFoundCode-1167</code></a>
             </td>
             <td>Filter not found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFilterNotFoundCode-1167" target="_blank">search forum</a></td>
@@ -18464,12 +20012,14 @@ Check your network connection and Meshery server status</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFilterURIRequiredCode-1168" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFilterURIRequiredCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFilterURIRequiredCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1168" class="error-name-code">
-              <code>ErrFilterURIRequiredCode-1168</code>
+              <a href="/reference/error-codes/client-mesheryctl/errfilterurirequiredcode-1168/"><code>ErrFilterURIRequiredCode-1168</code></a>
             </td>
             <td>URI is required</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFilterURIRequiredCode-1168" target="_blank">search forum</a></td>
@@ -18487,12 +20037,14 @@ Check your network connection and Meshery server status</p>
         
           
           
+          
+          
             
           
           <tr id="ErrViewAllWithNameCode-1169" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrViewAllWithNameCode-more-info" onclick="toggle_visibility('mesheryctl-ErrViewAllWithNameCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1169" class="error-name-code">
-              <code>ErrViewAllWithNameCode-1169</code>
+              <a href="/reference/error-codes/client-mesheryctl/errviewallwithnamecode-1169/"><code>ErrViewAllWithNameCode-1169</code></a>
             </td>
             <td>Invalid flag combination</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrViewAllWithNameCode-1169" target="_blank">search forum</a></td>
@@ -18510,12 +20062,14 @@ Check your network connection and Meshery server status</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMultiWordFilterNameCode-1170" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrMultiWordFilterNameCode-more-info" onclick="toggle_visibility('mesheryctl-ErrMultiWordFilterNameCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1170" class="error-name-code">
-              <code>ErrMultiWordFilterNameCode-1170</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmultiwordfilternamecode-1170/"><code>ErrMultiWordFilterNameCode-1170</code></a>
             </td>
             <td>Invalid filter name format</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMultiWordFilterNameCode-1170" target="_blank">search forum</a></td>
@@ -18533,12 +20087,14 @@ Check your network connection and Meshery server status</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidFilterCommandCode-1171" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidFilterCommandCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidFilterCommandCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1171" class="error-name-code">
-              <code>ErrInvalidFilterCommandCode-1171</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidfiltercommandcode-1171/"><code>ErrInvalidFilterCommandCode-1171</code></a>
             </td>
             <td>Invalid command</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidFilterCommandCode-1171" target="_blank">search forum</a></td>
@@ -18556,12 +20112,14 @@ Check your network connection and Meshery server status</p>
         
           
           
+          
+          
             
           
           <tr id="ErrHandlePaginationCode-1172" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrHandlePaginationCode-more-info" onclick="toggle_visibility('mesheryctl-ErrHandlePaginationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1172" class="error-name-code">
-              <code>ErrHandlePaginationCode-1172</code>
+              <a href="/reference/error-codes/client-mesheryctl/errhandlepaginationcode-1172/"><code>ErrHandlePaginationCode-1172</code></a>
             </td>
             <td>Unable to display paginated results</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrHandlePaginationCode-1172" target="_blank">search forum</a></td>
@@ -18580,12 +20138,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrAwsCliNotFoundCode-1174" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrAwsCliNotFoundCode-more-info" onclick="toggle_visibility('mesheryctl-ErrAwsCliNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1174" class="error-name-code">
-              <code>ErrAwsCliNotFoundCode-1174</code>
+              <a href="/reference/error-codes/client-mesheryctl/errawsclinotfoundcode-1174/"><code>ErrAwsCliNotFoundCode-1174</code></a>
             </td>
             <td>AWS CLI not found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAwsCliNotFoundCode-1174" target="_blank">search forum</a></td>
@@ -18603,12 +20163,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrGcpGKEGetCredentialsCode-1175" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrGcpGKEGetCredentialsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrGcpGKEGetCredentialsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1175" class="error-name-code">
-              <code>ErrGcpGKEGetCredentialsCode-1175</code>
+              <a href="/reference/error-codes/client-mesheryctl/errgcpgkegetcredentialscode-1175/"><code>ErrGcpGKEGetCredentialsCode-1175</code></a>
             </td>
             <td>Unable to get GKE cluster credentials</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGcpGKEGetCredentialsCode-1175" target="_blank">search forum</a></td>
@@ -18626,12 +20188,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrConnectionTypeCode-1182" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrConnectionTypeCode-more-info" onclick="toggle_visibility('mesheryctl-ErrConnectionTypeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1182" class="error-name-code">
-              <code>ErrConnectionTypeCode-1182</code>
+              <a href="/reference/error-codes/client-mesheryctl/errconnectiontypecode-1182/"><code>ErrConnectionTypeCode-1182</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConnectionTypeCode-1182" target="_blank">search forum</a></td>
@@ -18649,12 +20213,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrEncodingDataCode-1183" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrEncodingDataCode-more-info" onclick="toggle_visibility('mesheryctl-ErrEncodingDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1183" class="error-name-code">
-              <code>ErrEncodingDataCode-1183</code>
+              <a href="/reference/error-codes/client-mesheryctl/errencodingdatacode-1183/"><code>ErrEncodingDataCode-1183</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEncodingDataCode-1183" target="_blank">search forum</a></td>
@@ -18672,12 +20238,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrUnsupportedFormatCode-1184" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUnsupportedFormatCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUnsupportedFormatCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1184" class="error-name-code">
-              <code>ErrUnsupportedFormatCode-1184</code>
+              <a href="/reference/error-codes/client-mesheryctl/errunsupportedformatcode-1184/"><code>ErrUnsupportedFormatCode-1184</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnsupportedFormatCode-1184" target="_blank">search forum</a></td>
@@ -18695,12 +20263,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrUploadFileWithParamsCode-1185" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUploadFileWithParamsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUploadFileWithParamsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1185" class="error-name-code">
-              <code>ErrUploadFileWithParamsCode-1185</code>
+              <a href="/reference/error-codes/client-mesheryctl/erruploadfilewithparamscode-1185/"><code>ErrUploadFileWithParamsCode-1185</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUploadFileWithParamsCode-1185" target="_blank">search forum</a></td>
@@ -18718,12 +20288,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrAwsEksGetCredentialsCode-1186" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrAwsEksGetCredentialsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrAwsEksGetCredentialsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1186" class="error-name-code">
-              <code>ErrAwsEksGetCredentialsCode-1186</code>
+              <a href="/reference/error-codes/client-mesheryctl/errawseksgetcredentialscode-1186/"><code>ErrAwsEksGetCredentialsCode-1186</code></a>
             </td>
             <td>Unable to get EKS cluster credentials</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAwsEksGetCredentialsCode-1186" target="_blank">search forum</a></td>
@@ -18741,12 +20313,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrReadKubeConfigCode-1187" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrReadKubeConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrReadKubeConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1187" class="error-name-code">
-              <code>ErrReadKubeConfigCode-1187</code>
+              <a href="/reference/error-codes/client-mesheryctl/errreadkubeconfigcode-1187/"><code>ErrReadKubeConfigCode-1187</code></a>
             </td>
             <td>Unable to read kubeconfig file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadKubeConfigCode-1187" target="_blank">search forum</a></td>
@@ -18764,12 +20338,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrWriteKubeConfigCode-1188" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrWriteKubeConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrWriteKubeConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1188" class="error-name-code">
-              <code>ErrWriteKubeConfigCode-1188</code>
+              <a href="/reference/error-codes/client-mesheryctl/errwritekubeconfigcode-1188/"><code>ErrWriteKubeConfigCode-1188</code></a>
             </td>
             <td>Unable to write kubeconfig file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWriteKubeConfigCode-1188" target="_blank">search forum</a></td>
@@ -18787,12 +20363,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrAzureAksGetCredentialsCode-1189" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrAzureAksGetCredentialsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrAzureAksGetCredentialsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1189" class="error-name-code">
-              <code>ErrAzureAksGetCredentialsCode-1189</code>
+              <a href="/reference/error-codes/client-mesheryctl/errazureaksgetcredentialscode-1189/"><code>ErrAzureAksGetCredentialsCode-1189</code></a>
             </td>
             <td>Unable to get AKS cluster credentials</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAzureAksGetCredentialsCode-1189" target="_blank">search forum</a></td>
@@ -18810,12 +20388,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrAzureCliNotFoundCode-1190" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrAzureCliNotFoundCode-more-info" onclick="toggle_visibility('mesheryctl-ErrAzureCliNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1190" class="error-name-code">
-              <code>ErrAzureCliNotFoundCode-1190</code>
+              <a href="/reference/error-codes/client-mesheryctl/errazureclinotfoundcode-1190/"><code>ErrAzureCliNotFoundCode-1190</code></a>
             </td>
             <td>Azure CLI not found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAzureCliNotFoundCode-1190" target="_blank">search forum</a></td>
@@ -18833,12 +20413,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidCommandCode-1191" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidCommandCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidCommandCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1191" class="error-name-code">
-              <code>ErrInvalidCommandCode-1191</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidcommandcode-1191/"><code>ErrInvalidCommandCode-1191</code></a>
             </td>
             <td>Invalid command</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidCommandCode-1191" target="_blank">search forum</a></td>
@@ -18856,12 +20438,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrDesignNameOrIDNotSpecifiedCode-1192" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDesignNameOrIDNotSpecifiedCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDesignNameOrIDNotSpecifiedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1192" class="error-name-code">
-              <code>ErrDesignNameOrIDNotSpecifiedCode-1192</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdesignnameoridnotspecifiedcode-1192/"><code>ErrDesignNameOrIDNotSpecifiedCode-1192</code></a>
             </td>
             <td>Design name or ID not specified</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDesignNameOrIDNotSpecifiedCode-1192" target="_blank">search forum</a></td>
@@ -18879,12 +20463,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrReadInputCode-1193" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrReadInputCode-more-info" onclick="toggle_visibility('mesheryctl-ErrReadInputCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1193" class="error-name-code">
-              <code>ErrReadInputCode-1193</code>
+              <a href="/reference/error-codes/client-mesheryctl/errreadinputcode-1193/"><code>ErrReadInputCode-1193</code></a>
             </td>
             <td>Unable to read the input</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadInputCode-1193" target="_blank">search forum</a></td>
@@ -18902,12 +20488,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrOutputFileNotSpecifiedCode-1194" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrOutputFileNotSpecifiedCode-more-info" onclick="toggle_visibility('mesheryctl-ErrOutputFileNotSpecifiedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1194" class="error-name-code">
-              <code>ErrOutputFileNotSpecifiedCode-1194</code>
+              <a href="/reference/error-codes/client-mesheryctl/erroutputfilenotspecifiedcode-1194/"><code>ErrOutputFileNotSpecifiedCode-1194</code></a>
             </td>
             <td>Output file path is not specified.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOutputFileNotSpecifiedCode-1194" target="_blank">search forum</a></td>
@@ -18925,12 +20513,14 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
         
           
           
+          
+          
             
           
           <tr id="ErrCreateEnvironmentCode-1195" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrCreateEnvironmentCode-more-info" onclick="toggle_visibility('mesheryctl-ErrCreateEnvironmentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1195" class="error-name-code">
-              <code>ErrCreateEnvironmentCode-1195</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcreateenvironmentcode-1195/"><code>ErrCreateEnvironmentCode-1195</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateEnvironmentCode-1195" target="_blank">search forum</a></td>
@@ -18950,12 +20540,14 @@ Provide a valid organization ID</p>
         
           
           
+          
+          
             
           
           <tr id="ErrContextNotExistsCode-1196" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrContextNotExistsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrContextNotExistsCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1196" class="error-name-code">
-              <code>ErrContextNotExistsCode-1196</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcontextnotexistscode-1196/"><code>ErrContextNotExistsCode-1196</code></a>
             </td>
             <td>Unable to get context details</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrContextNotExistsCode-1196" target="_blank">search forum</a></td>
@@ -18973,12 +20565,14 @@ Provide a valid organization ID</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidOutputFormatCode-1198" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidOutputFormatCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidOutputFormatCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1198" class="error-name-code">
-              <code>ErrInvalidOutputFormatCode-1198</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidoutputformatcode-1198/"><code>ErrInvalidOutputFormatCode-1198</code></a>
             </td>
             <td>Invalid Output Format</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidOutputFormatCode-1198" target="_blank">search forum</a></td>
@@ -18996,12 +20590,14 @@ Provide a valid organization ID</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDesignInvalidApiResponseCode-1199" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDesignInvalidApiResponseCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDesignInvalidApiResponseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1199" class="error-name-code">
-              <code>ErrDesignInvalidApiResponseCode-1199</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdesigninvalidapiresponsecode-1199/"><code>ErrDesignInvalidApiResponseCode-1199</code></a>
             </td>
             <td>Invalid API response</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDesignInvalidApiResponseCode-1199" target="_blank">search forum</a></td>
@@ -19020,12 +20616,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrDeleteModelCode-1200" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDeleteModelCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDeleteModelCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1200" class="error-name-code">
-              <code>ErrDeleteModelCode-1200</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdeletemodelcode-1200/"><code>ErrDeleteModelCode-1200</code></a>
             </td>
             <td>Failed to delete model</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeleteModelCode-1200" target="_blank">search forum</a></td>
@@ -19043,12 +20641,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrCommandContextMissingCode-1201" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrCommandContextMissingCode-more-info" onclick="toggle_visibility('mesheryctl-ErrCommandContextMissingCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1201" class="error-name-code">
-              <code>ErrCommandContextMissingCode-1201</code>
+              <a href="/reference/error-codes/client-mesheryctl/errcommandcontextmissingcode-1201/"><code>ErrCommandContextMissingCode-1201</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCommandContextMissingCode-1201" target="_blank">search forum</a></td>
@@ -19066,12 +20666,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrPromptCancelledCode-1202" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrPromptCancelledCode-more-info" onclick="toggle_visibility('mesheryctl-ErrPromptCancelledCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1202" class="error-name-code">
-              <code>ErrPromptCancelledCode-1202</code>
+              <a href="/reference/error-codes/client-mesheryctl/errpromptcancelledcode-1202/"><code>ErrPromptCancelledCode-1202</code></a>
             </td>
             <td>Selection cancelled</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPromptCancelledCode-1202" target="_blank">search forum</a></td>
@@ -19089,12 +20691,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrMesheryServerInternalErrorCode-1203" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrMesheryServerInternalErrorCode-more-info" onclick="toggle_visibility('mesheryctl-ErrMesheryServerInternalErrorCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1203" class="error-name-code">
-              <code>ErrMesheryServerInternalErrorCode-1203</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmesheryserverinternalerrorcode-1203/"><code>ErrMesheryServerInternalErrorCode-1203</code></a>
             </td>
             <td>Internal Server Error</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMesheryServerInternalErrorCode-1203" target="_blank">search forum</a></td>
@@ -19112,12 +20716,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrEmptySheetDataCode-1204" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrEmptySheetDataCode-more-info" onclick="toggle_visibility('mesheryctl-ErrEmptySheetDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1204" class="error-name-code">
-              <code>ErrEmptySheetDataCode-1204</code>
+              <a href="/reference/error-codes/client-mesheryctl/erremptysheetdatacode-1204/"><code>ErrEmptySheetDataCode-1204</code></a>
             </td>
             <td>Invalid or empty spreadsheet provided</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptySheetDataCode-1204" target="_blank">search forum</a></td>
@@ -19135,12 +20741,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrSystemSetInvalidReleaseChannelCode-1205" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSystemSetInvalidReleaseChannelCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSystemSetInvalidReleaseChannelCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1205" class="error-name-code">
-              <code>ErrSystemSetInvalidReleaseChannelCode-1205</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsystemsetinvalidreleasechannelcode-1205/"><code>ErrSystemSetInvalidReleaseChannelCode-1205</code></a>
             </td>
             <td>Invalid release channel</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSystemSetInvalidReleaseChannelCode-1205" target="_blank">search forum</a></td>
@@ -19158,12 +20766,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrSystemSetInvalidEdgeReleaseCode-1206" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSystemSetInvalidEdgeReleaseCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSystemSetInvalidEdgeReleaseCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1206" class="error-name-code">
-              <code>ErrSystemSetInvalidEdgeReleaseCode-1206</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsystemsetinvalidedgereleasecode-1206/"><code>ErrSystemSetInvalidEdgeReleaseCode-1206</code></a>
             </td>
             <td>Invalid edge release version</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSystemSetInvalidEdgeReleaseCode-1206" target="_blank">search forum</a></td>
@@ -19181,12 +20791,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrSystemCheckInvalidCliVersionCode-1207" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSystemCheckInvalidCliVersionCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSystemCheckInvalidCliVersionCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1207" class="error-name-code">
-              <code>ErrSystemCheckInvalidCliVersionCode-1207</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsystemcheckinvalidcliversioncode-1207/"><code>ErrSystemCheckInvalidCliVersionCode-1207</code></a>
             </td>
             <td>Invalid CLI version</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSystemCheckInvalidCliVersionCode-1207" target="_blank">search forum</a></td>
@@ -19204,12 +20816,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrDockerNotRunningCode-1208" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDockerNotRunningCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDockerNotRunningCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1208" class="error-name-code">
-              <code>ErrDockerNotRunningCode-1208</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdockernotrunningcode-1208/"><code>ErrDockerNotRunningCode-1208</code></a>
             </td>
             <td>Docker is not running</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDockerNotRunningCode-1208" target="_blank">search forum</a></td>
@@ -19227,12 +20841,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrDockerContextCode-1209" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDockerContextCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDockerContextCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1209" class="error-name-code">
-              <code>ErrDockerContextCode-1209</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdockercontextcode-1209/"><code>ErrDockerContextCode-1209</code></a>
             </td>
             <td>Docker context issue</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDockerContextCode-1209" target="_blank">search forum</a></td>
@@ -19250,12 +20866,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrDockerStartCode-1210" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDockerStartCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDockerStartCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1210" class="error-name-code">
-              <code>ErrDockerStartCode-1210</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdockerstartcode-1210/"><code>ErrDockerStartCode-1210</code></a>
             </td>
             <td>Failed to start Docker</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDockerStartCode-1210" target="_blank">search forum</a></td>
@@ -19273,12 +20891,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrDockerUnknownCode-1211" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDockerUnknownCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDockerUnknownCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1211" class="error-name-code">
-              <code>ErrDockerUnknownCode-1211</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdockerunknowncode-1211/"><code>ErrDockerUnknownCode-1211</code></a>
             </td>
             <td>Docker error</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDockerUnknownCode-1211" target="_blank">search forum</a></td>
@@ -19296,12 +20916,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrFailedToConnectAdapterCode-1212" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFailedToConnectAdapterCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFailedToConnectAdapterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1212" class="error-name-code">
-              <code>ErrFailedToConnectAdapterCode-1212</code>
+              <a href="/reference/error-codes/client-mesheryctl/errfailedtoconnectadaptercode-1212/"><code>ErrFailedToConnectAdapterCode-1212</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailedToConnectAdapterCode-1212" target="_blank">search forum</a></td>
@@ -19319,12 +20941,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrAdapterNotReachableCode-1213" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrAdapterNotReachableCode-more-info" onclick="toggle_visibility('mesheryctl-ErrAdapterNotReachableCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1213" class="error-name-code">
-              <code>ErrAdapterNotReachableCode-1213</code>
+              <a href="/reference/error-codes/client-mesheryctl/erradapternotreachablecode-1213/"><code>ErrAdapterNotReachableCode-1213</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAdapterNotReachableCode-1213" target="_blank">search forum</a></td>
@@ -19342,12 +20966,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrListMesheryPodsCode-1214" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrListMesheryPodsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrListMesheryPodsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1214" class="error-name-code">
-              <code>ErrListMesheryPodsCode-1214</code>
+              <a href="/reference/error-codes/client-mesheryctl/errlistmesherypodscode-1214/"><code>ErrListMesheryPodsCode-1214</code></a>
             </td>
             <td>Failed to list Meshery pods</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrListMesheryPodsCode-1214" target="_blank">search forum</a></td>
@@ -19365,12 +20991,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrNoMesheryPodsCode-1215" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrNoMesheryPodsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrNoMesheryPodsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1215" class="error-name-code">
-              <code>ErrNoMesheryPodsCode-1215</code>
+              <a href="/reference/error-codes/client-mesheryctl/errnomesherypodscode-1215/"><code>ErrNoMesheryPodsCode-1215</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoMesheryPodsCode-1215" target="_blank">search forum</a></td>
@@ -19388,12 +21016,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrMissingMesheryPodCode-1216" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrMissingMesheryPodCode-more-info" onclick="toggle_visibility('mesheryctl-ErrMissingMesheryPodCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1216" class="error-name-code">
-              <code>ErrMissingMesheryPodCode-1216</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmissingmesherypodcode-1216/"><code>ErrMissingMesheryPodCode-1216</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMissingMesheryPodCode-1216" target="_blank">search forum</a></td>
@@ -19411,12 +21041,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrK8sVersionInfoCode-1217" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrK8sVersionInfoCode-more-info" onclick="toggle_visibility('mesheryctl-ErrK8sVersionInfoCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1217" class="error-name-code">
-              <code>ErrK8sVersionInfoCode-1217</code>
+              <a href="/reference/error-codes/client-mesheryctl/errk8sversioninfocode-1217/"><code>ErrK8sVersionInfoCode-1217</code></a>
             </td>
             <td>Failed to get Kubernetes version information</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrK8sVersionInfoCode-1217" target="_blank">search forum</a></td>
@@ -19434,12 +21066,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrK8sInvalidVersionFormatCode-1218" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrK8sInvalidVersionFormatCode-more-info" onclick="toggle_visibility('mesheryctl-ErrK8sInvalidVersionFormatCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1218" class="error-name-code">
-              <code>ErrK8sInvalidVersionFormatCode-1218</code>
+              <a href="/reference/error-codes/client-mesheryctl/errk8sinvalidversionformatcode-1218/"><code>ErrK8sInvalidVersionFormatCode-1218</code></a>
             </td>
             <td>Invalid Kubernetes version format</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrK8sInvalidVersionFormatCode-1218" target="_blank">search forum</a></td>
@@ -19457,12 +21091,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrOperatorUnsupportedPlatformCode-1219" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrOperatorUnsupportedPlatformCode-more-info" onclick="toggle_visibility('mesheryctl-ErrOperatorUnsupportedPlatformCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1219" class="error-name-code">
-              <code>ErrOperatorUnsupportedPlatformCode-1219</code>
+              <a href="/reference/error-codes/client-mesheryctl/erroperatorunsupportedplatformcode-1219/"><code>ErrOperatorUnsupportedPlatformCode-1219</code></a>
             </td>
             <td>Operator unsupported platform</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOperatorUnsupportedPlatformCode-1219" target="_blank">search forum</a></td>
@@ -19480,12 +21116,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrReadMesheryConfigCode-1220" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrReadMesheryConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrReadMesheryConfigCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1220" class="error-name-code">
-              <code>ErrReadMesheryConfigCode-1220</code>
+              <a href="/reference/error-codes/client-mesheryctl/errreadmesheryconfigcode-1220/"><code>ErrReadMesheryConfigCode-1220</code></a>
             </td>
             <td>Error in reading config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadMesheryConfigCode-1220" target="_blank">search forum</a></td>
@@ -19503,12 +21141,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrDuplicateContextCode-1221" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDuplicateContextCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDuplicateContextCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1221" class="error-name-code">
-              <code>ErrDuplicateContextCode-1221</code>
+              <a href="/reference/error-codes/client-mesheryctl/errduplicatecontextcode-1221/"><code>ErrDuplicateContextCode-1221</code></a>
             </td>
             <td>Duplicate Context</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDuplicateContextCode-1221" target="_blank">search forum</a></td>
@@ -19526,12 +21166,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrWriteMeshConfigCode-1222" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrWriteMeshConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrWriteMeshConfigCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1222" class="error-name-code">
-              <code>ErrWriteMeshConfigCode-1222</code>
+              <a href="/reference/error-codes/client-mesheryctl/errwritemeshconfigcode-1222/"><code>ErrWriteMeshConfigCode-1222</code></a>
             </td>
             <td>Error in writing config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWriteMeshConfigCode-1222" target="_blank">search forum</a></td>
@@ -19549,12 +21191,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrDockerComposeFileMissingCode-1223" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDockerComposeFileMissingCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDockerComposeFileMissingCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1223" class="error-name-code">
-              <code>ErrDockerComposeFileMissingCode-1223</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdockercomposefilemissingcode-1223/"><code>ErrDockerComposeFileMissingCode-1223</code></a>
             </td>
             <td>Docker Compose file not found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDockerComposeFileMissingCode-1223" target="_blank">search forum</a></td>
@@ -19572,12 +21216,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrDockerComposeClientCode-1224" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDockerComposeClientCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDockerComposeClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1224" class="error-name-code">
-              <code>ErrDockerComposeClientCode-1224</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdockercomposeclientcode-1224/"><code>ErrDockerComposeClientCode-1224</code></a>
             </td>
             <td>Failed to create Docker Compose client</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDockerComposeClientCode-1224" target="_blank">search forum</a></td>
@@ -19595,12 +21241,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrDockerComposeRemoveCode-1225" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDockerComposeRemoveCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDockerComposeRemoveCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1225" class="error-name-code">
-              <code>ErrDockerComposeRemoveCode-1225</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdockercomposeremovecode-1225/"><code>ErrDockerComposeRemoveCode-1225</code></a>
             </td>
             <td>Failed to delete Meshery containers</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDockerComposeRemoveCode-1225" target="_blank">search forum</a></td>
@@ -19618,12 +21266,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrDockerComposeLogsCode-1226" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDockerComposeLogsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDockerComposeLogsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1226" class="error-name-code">
-              <code>ErrDockerComposeLogsCode-1226</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdockercomposelogscode-1226/"><code>ErrDockerComposeLogsCode-1226</code></a>
             </td>
             <td>Failed to fetch logs from Meshery containers</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDockerComposeLogsCode-1226" target="_blank">search forum</a></td>
@@ -19641,12 +21291,14 @@ Check for any issues with the Meshery server that may cause it to return malform
         
           
           
+          
+          
             
           
           <tr id="ErrMesheryCheckRunningStatusCode-1227" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrMesheryCheckRunningStatusCode-more-info" onclick="toggle_visibility('mesheryctl-ErrMesheryCheckRunningStatusCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1227" class="error-name-code">
-              <code>ErrMesheryCheckRunningStatusCode-1227</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmesherycheckrunningstatuscode-1227/"><code>ErrMesheryCheckRunningStatusCode-1227</code></a>
             </td>
             <td>Failed to check if Meshery is running</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMesheryCheckRunningStatusCode-1227" target="_blank">search forum</a></td>
@@ -19667,12 +21319,14 @@ Validate that you are in the correct context. </p>
         
           
           
+          
+          
             
           
           <tr id="ErrDockerComposeStopCode-1228" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrDockerComposeStopCode-more-info" onclick="toggle_visibility('mesheryctl-ErrDockerComposeStopCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1228" class="error-name-code">
-              <code>ErrDockerComposeStopCode-1228</code>
+              <a href="/reference/error-codes/client-mesheryctl/errdockercomposestopcode-1228/"><code>ErrDockerComposeStopCode-1228</code></a>
             </td>
             <td>Failed to stop Meshery containers</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDockerComposeStopCode-1228" target="_blank">search forum</a></td>
@@ -19690,12 +21344,14 @@ Validate that you are in the correct context. </p>
         
           
           
+          
+          
             
           
           <tr id="ErrLogoutCode-1229" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrLogoutCode-more-info" onclick="toggle_visibility('mesheryctl-ErrLogoutCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1229" class="error-name-code">
-              <code>ErrLogoutCode-1229</code>
+              <a href="/reference/error-codes/client-mesheryctl/errlogoutcode-1229/"><code>ErrLogoutCode-1229</code></a>
             </td>
             <td>Logout failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLogoutCode-1229" target="_blank">search forum</a></td>
@@ -19713,12 +21369,14 @@ Validate that you are in the correct context. </p>
         
           
           
+          
+          
             
           
           <tr id="ErrGenerateDataForInvalidResponseCode-1232" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrGenerateDataForInvalidResponseCode-more-info" onclick="toggle_visibility('mesheryctl-ErrGenerateDataForInvalidResponseCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -1232" class="error-name-code">
-              <code>ErrGenerateDataForInvalidResponseCode-1232</code>
+              <a href="/reference/error-codes/client-mesheryctl/errgeneratedataforinvalidresponsecode-1232/"><code>ErrGenerateDataForInvalidResponseCode-1232</code></a>
             </td>
             <td>Invalid response received from Meshery server. 
 The response is nil or does not contain a body.</td>
@@ -19737,12 +21395,14 @@ The response is nil or does not contain a body.</td>
         
           
           
+          
+          
             
           
           <tr id="ErrPublishCode-1233" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrPublishCode-more-info" onclick="toggle_visibility('mesheryctl-ErrPublishCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1233" class="error-name-code">
-              <code>ErrPublishCode-1233</code>
+              <a href="/reference/error-codes/client-mesheryctl/errpublishcode-1233/"><code>ErrPublishCode-1233</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPublishCode-1233" target="_blank">search forum</a></td>
@@ -19762,12 +21422,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSystemAzureAksGetCredentialsCode-1234" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSystemAzureAksGetCredentialsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSystemAzureAksGetCredentialsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1234" class="error-name-code">
-              <code>ErrSystemAzureAksGetCredentialsCode-1234</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsystemazureaksgetcredentialscode-1234/"><code>ErrSystemAzureAksGetCredentialsCode-1234</code></a>
             </td>
             <td>[System] Unable to get AKS cluster credentials</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSystemAzureAksGetCredentialsCode-1234" target="_blank">search forum</a></td>
@@ -19785,12 +21447,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSystemAzureCliNotFoundCode-1235" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSystemAzureCliNotFoundCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSystemAzureCliNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1235" class="error-name-code">
-              <code>ErrSystemAzureCliNotFoundCode-1235</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsystemazureclinotfoundcode-1235/"><code>ErrSystemAzureCliNotFoundCode-1235</code></a>
             </td>
             <td>[System] Azure CLI not found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSystemAzureCliNotFoundCode-1235" target="_blank">search forum</a></td>
@@ -19808,12 +21472,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSystemAwsCliNotFoundCode-1236" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSystemAwsCliNotFoundCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSystemAwsCliNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1236" class="error-name-code">
-              <code>ErrSystemAwsCliNotFoundCode-1236</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsystemawsclinotfoundcode-1236/"><code>ErrSystemAwsCliNotFoundCode-1236</code></a>
             </td>
             <td>[System] AWS CLI not found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSystemAwsCliNotFoundCode-1236" target="_blank">search forum</a></td>
@@ -19831,12 +21497,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSystemGkeGenerateConfigCode-1237" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSystemGkeGenerateConfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSystemGkeGenerateConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1237" class="error-name-code">
-              <code>ErrSystemGkeGenerateConfigCode-1237</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsystemgkegenerateconfigcode-1237/"><code>ErrSystemGkeGenerateConfigCode-1237</code></a>
             </td>
             <td>[System] Failed to generate GKE config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSystemGkeGenerateConfigCode-1237" target="_blank">search forum</a></td>
@@ -19854,12 +21522,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSystemEksGetCredentialsCode-1238" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSystemEksGetCredentialsCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSystemEksGetCredentialsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1238" class="error-name-code">
-              <code>ErrSystemEksGetCredentialsCode-1238</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsystemeksgetcredentialscode-1238/"><code>ErrSystemEksGetCredentialsCode-1238</code></a>
             </td>
             <td>[System] Unable to get EKS cluster credentials</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSystemEksGetCredentialsCode-1238" target="_blank">search forum</a></td>
@@ -19877,12 +21547,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSystemMinikubeKubeconfigCode-1239" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrSystemMinikubeKubeconfigCode-more-info" onclick="toggle_visibility('mesheryctl-ErrSystemMinikubeKubeconfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1239" class="error-name-code">
-              <code>ErrSystemMinikubeKubeconfigCode-1239</code>
+              <a href="/reference/error-codes/client-mesheryctl/errsystemminikubekubeconfigcode-1239/"><code>ErrSystemMinikubeKubeconfigCode-1239</code></a>
             </td>
             <td>[System] Minikube kubeconfig error</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSystemMinikubeKubeconfigCode-1239" target="_blank">search forum</a></td>
@@ -19900,12 +21572,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrValidateVersionCode-1240" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrValidateVersionCode-more-info" onclick="toggle_visibility('mesheryctl-ErrValidateVersionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1240" class="error-name-code">
-              <code>ErrValidateVersionCode-1240</code>
+              <a href="/reference/error-codes/client-mesheryctl/errvalidateversioncode-1240/"><code>ErrValidateVersionCode-1240</code></a>
             </td>
             <td>Error validating Meshery version</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrValidateVersionCode-1240" target="_blank">search forum</a></td>
@@ -19923,12 +21597,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateContainersCode-1241" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUpdateContainersCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUpdateContainersCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1241" class="error-name-code">
-              <code>ErrUpdateContainersCode-1241</code>
+              <a href="/reference/error-codes/client-mesheryctl/errupdatecontainerscode-1241/"><code>ErrUpdateContainersCode-1241</code></a>
             </td>
             <td>Error updating Meshery containers</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateContainersCode-1241" target="_blank">search forum</a></td>
@@ -19946,12 +21622,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFetchContainersCode-1242" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrFetchContainersCode-more-info" onclick="toggle_visibility('mesheryctl-ErrFetchContainersCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1242" class="error-name-code">
-              <code>ErrFetchContainersCode-1242</code>
+              <a href="/reference/error-codes/client-mesheryctl/errfetchcontainerscode-1242/"><code>ErrFetchContainersCode-1242</code></a>
             </td>
             <td>Error fetching container status</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchContainersCode-1242" target="_blank">search forum</a></td>
@@ -19969,12 +21647,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidComponentCode-1243" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrInvalidComponentCode-more-info" onclick="toggle_visibility('mesheryctl-ErrInvalidComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1243" class="error-name-code">
-              <code>ErrInvalidComponentCode-1243</code>
+              <a href="/reference/error-codes/client-mesheryctl/errinvalidcomponentcode-1243/"><code>ErrInvalidComponentCode-1243</code></a>
             </td>
             <td>Invalid component specified</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidComponentCode-1243" target="_blank">search forum</a></td>
@@ -19992,12 +21672,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMesheryEndpointNotAccessibleCode-1244" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrMesheryEndpointNotAccessibleCode-more-info" onclick="toggle_visibility('mesheryctl-ErrMesheryEndpointNotAccessibleCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1244" class="error-name-code">
-              <code>ErrMesheryEndpointNotAccessibleCode-1244</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmesheryendpointnotaccessiblecode-1244/"><code>ErrMesheryEndpointNotAccessibleCode-1244</code></a>
             </td>
             <td>Meshery endpoint is not yet accessible</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMesheryEndpointNotAccessibleCode-1244" target="_blank">search forum</a></td>
@@ -20015,12 +21697,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPerfProfileServerCode-1245" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrPerfProfileServerCode-more-info" onclick="toggle_visibility('mesheryctl-ErrPerfProfileServerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1245" class="error-name-code">
-              <code>ErrPerfProfileServerCode-1245</code>
+              <a href="/reference/error-codes/client-mesheryctl/errperfprofileservercode-1245/"><code>ErrPerfProfileServerCode-1245</code></a>
             </td>
             <td>Server error while saving performance profile</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPerfProfileServerCode-1245" target="_blank">search forum</a></td>
@@ -20038,12 +21722,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyCSVDataCode-1246" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrEmptyCSVDataCode-more-info" onclick="toggle_visibility('mesheryctl-ErrEmptyCSVDataCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1246" class="error-name-code">
-              <code>ErrEmptyCSVDataCode-1246</code>
+              <a href="/reference/error-codes/client-mesheryctl/erremptycsvdatacode-1246/"><code>ErrEmptyCSVDataCode-1246</code></a>
             </td>
             <td>Invalid or empty CSV file provided</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyCSVDataCode-1246" target="_blank">search forum</a></td>
@@ -20061,12 +21747,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEvaluateDesignCode-1247" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrEvaluateDesignCode-more-info" onclick="toggle_visibility('mesheryctl-ErrEvaluateDesignCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1247" class="error-name-code">
-              <code>ErrEvaluateDesignCode-1247</code>
+              <a href="/reference/error-codes/client-mesheryctl/errevaluatedesigncode-1247/"><code>ErrEvaluateDesignCode-1247</code></a>
             </td>
             <td>Design not specified for evaluation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEvaluateDesignCode-1247" target="_blank">search forum</a></td>
@@ -20084,12 +21772,14 @@ Check the publishing configuration and try again</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEvaluateDesignResponseCode-1248" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrEvaluateDesignResponseCode-more-info" onclick="toggle_visibility('mesheryctl-ErrEvaluateDesignResponseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1248" class="error-name-code">
-              <code>ErrEvaluateDesignResponseCode-1248</code>
+              <a href="/reference/error-codes/client-mesheryctl/errevaluatedesignresponsecode-1248/"><code>ErrEvaluateDesignResponseCode-1248</code></a>
             </td>
             <td>Failed to evaluate design</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEvaluateDesignResponseCode-1248" target="_blank">search forum</a></td>
@@ -20110,12 +21800,14 @@ Verify that the server has the required policies loaded</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPurgeInvalidRetainCode-1249" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrPurgeInvalidRetainCode-more-info" onclick="toggle_visibility('mesheryctl-ErrPurgeInvalidRetainCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1249" class="error-name-code">
-              <code>ErrPurgeInvalidRetainCode-1249</code>
+              <a href="/reference/error-codes/client-mesheryctl/errpurgeinvalidretaincode-1249/"><code>ErrPurgeInvalidRetainCode-1249</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPurgeInvalidRetainCode-1249" target="_blank">search forum</a></td>
@@ -20133,12 +21825,14 @@ Verify that the server has the required policies loaded</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPurgeReadModelsDirCode-1250" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrPurgeReadModelsDirCode-more-info" onclick="toggle_visibility('mesheryctl-ErrPurgeReadModelsDirCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1250" class="error-name-code">
-              <code>ErrPurgeReadModelsDirCode-1250</code>
+              <a href="/reference/error-codes/client-mesheryctl/errpurgereadmodelsdircode-1250/"><code>ErrPurgeReadModelsDirCode-1250</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPurgeReadModelsDirCode-1250" target="_blank">search forum</a></td>
@@ -20158,12 +21852,14 @@ Run mesheryctl registry purge from the root of a meshery/meshery fork</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPurgeRemoveCode-1251" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrPurgeRemoveCode-more-info" onclick="toggle_visibility('mesheryctl-ErrPurgeRemoveCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1251" class="error-name-code">
-              <code>ErrPurgeRemoveCode-1251</code>
+              <a href="/reference/error-codes/client-mesheryctl/errpurgeremovecode-1251/"><code>ErrPurgeRemoveCode-1251</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPurgeRemoveCode-1251" target="_blank">search forum</a></td>
@@ -20183,12 +21879,14 @@ Retry the purge after closing any process using the directory</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPurgeUnsafePathCode-1252" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrPurgeUnsafePathCode-more-info" onclick="toggle_visibility('mesheryctl-ErrPurgeUnsafePathCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1252" class="error-name-code">
-              <code>ErrPurgeUnsafePathCode-1252</code>
+              <a href="/reference/error-codes/client-mesheryctl/errpurgeunsafepathcode-1252/"><code>ErrPurgeUnsafePathCode-1252</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPurgeUnsafePathCode-1252" target="_blank">search forum</a></td>
@@ -20208,12 +21906,14 @@ Re-run mesheryctl registry purge from the root of a meshery/meshery fork</p>
         
           
           
+          
+          
             
           
           <tr id="ErrAmbiguousSelectionCode-1253" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrAmbiguousSelectionCode-more-info" onclick="toggle_visibility('mesheryctl-ErrAmbiguousSelectionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1253" class="error-name-code">
-              <code>ErrAmbiguousSelectionCode-1253</code>
+              <a href="/reference/error-codes/client-mesheryctl/errambiguousselectioncode-1253/"><code>ErrAmbiguousSelectionCode-1253</code></a>
             </td>
             <td>Ambiguous match, and no terminal to resolve it on</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAmbiguousSelectionCode-1253" target="_blank">search forum</a></td>
@@ -20232,12 +21932,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrModelNotFoundCode-1254" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrModelNotFoundCode-more-info" onclick="toggle_visibility('mesheryctl-ErrModelNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1254" class="error-name-code">
-              <code>ErrModelNotFoundCode-1254</code>
+              <a href="/reference/error-codes/client-mesheryctl/errmodelnotfoundcode-1254/"><code>ErrModelNotFoundCode-1254</code></a>
             </td>
             <td>Selected model not found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrModelNotFoundCode-1254" target="_blank">search forum</a></td>
@@ -20255,12 +21957,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGitHubAPIResponseCode-1255" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrGitHubAPIResponseCode-more-info" onclick="toggle_visibility('mesheryctl-ErrGitHubAPIResponseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1255" class="error-name-code">
-              <code>ErrGitHubAPIResponseCode-1255</code>
+              <a href="/reference/error-codes/client-mesheryctl/errgithubapiresponsecode-1255/"><code>ErrGitHubAPIResponseCode-1255</code></a>
             </td>
             <td>Unexpected response from GitHub API</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGitHubAPIResponseCode-1255" target="_blank">search forum</a></td>
@@ -20303,10 +22007,12 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
           <tr id="ErrGetNameCode-1000" class="tbl-body-row hover-effect" data-details-id="meshery-adapter-library-ErrGetNameCode-more-info" onclick="toggle_visibility('meshery-adapter-library-ErrGetNameCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -1000" class="error-name-code">
-              <code>ErrGetNameCode-1000</code>
+              <a href="/reference/error-codes/library-meshery-adapter-library/errgetnamecode-1000/"><code>ErrGetNameCode-1000</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetNameCode-1000" target="_blank">search forum</a></td>
@@ -20324,10 +22030,12 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
           <tr id="ErrCreateInstanceCode-1001" class="tbl-body-row hover-effect" data-details-id="meshery-adapter-library-ErrCreateInstanceCode-more-info" onclick="toggle_visibility('meshery-adapter-library-ErrCreateInstanceCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -1001" class="error-name-code">
-              <code>ErrCreateInstanceCode-1001</code>
+              <a href="/reference/error-codes/library-meshery-adapter-library/errcreateinstancecode-1001/"><code>ErrCreateInstanceCode-1001</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateInstanceCode-1001" target="_blank">search forum</a></td>
@@ -20345,10 +22053,12 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
           <tr id="ErrMeshConfigCode-1002" class="tbl-body-row hover-effect" data-details-id="meshery-adapter-library-ErrMeshConfigCode-more-info" onclick="toggle_visibility('meshery-adapter-library-ErrMeshConfigCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -1002" class="error-name-code">
-              <code>ErrMeshConfigCode-1002</code>
+              <a href="/reference/error-codes/library-meshery-adapter-library/errmeshconfigcode-1002/"><code>ErrMeshConfigCode-1002</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshConfigCode-1002" target="_blank">search forum</a></td>
@@ -20366,10 +22076,12 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
           <tr id="ErrValidateKubeconfigCode-1003" class="tbl-body-row hover-effect" data-details-id="meshery-adapter-library-ErrValidateKubeconfigCode-more-info" onclick="toggle_visibility('meshery-adapter-library-ErrValidateKubeconfigCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -1003" class="error-name-code">
-              <code>ErrValidateKubeconfigCode-1003</code>
+              <a href="/reference/error-codes/library-meshery-adapter-library/errvalidatekubeconfigcode-1003/"><code>ErrValidateKubeconfigCode-1003</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrValidateKubeconfigCode-1003" target="_blank">search forum</a></td>
@@ -20387,10 +22099,12 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
           <tr id="ErrClientConfigCode-1004" class="tbl-body-row hover-effect" data-details-id="meshery-adapter-library-ErrClientConfigCode-more-info" onclick="toggle_visibility('meshery-adapter-library-ErrClientConfigCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -1004" class="error-name-code">
-              <code>ErrClientConfigCode-1004</code>
+              <a href="/reference/error-codes/library-meshery-adapter-library/errclientconfigcode-1004/"><code>ErrClientConfigCode-1004</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrClientConfigCode-1004" target="_blank">search forum</a></td>
@@ -20408,10 +22122,12 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
           <tr id="ErrClientSetCode-1005" class="tbl-body-row hover-effect" data-details-id="meshery-adapter-library-ErrClientSetCode-more-info" onclick="toggle_visibility('meshery-adapter-library-ErrClientSetCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -1005" class="error-name-code">
-              <code>ErrClientSetCode-1005</code>
+              <a href="/reference/error-codes/library-meshery-adapter-library/errclientsetcode-1005/"><code>ErrClientSetCode-1005</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrClientSetCode-1005" target="_blank">search forum</a></td>
@@ -20429,10 +22145,12 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
           <tr id="ErrStreamEventCode-1006" class="tbl-body-row hover-effect" data-details-id="meshery-adapter-library-ErrStreamEventCode-more-info" onclick="toggle_visibility('meshery-adapter-library-ErrStreamEventCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -1006" class="error-name-code">
-              <code>ErrStreamEventCode-1006</code>
+              <a href="/reference/error-codes/library-meshery-adapter-library/errstreameventcode-1006/"><code>ErrStreamEventCode-1006</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrStreamEventCode-1006" target="_blank">search forum</a></td>
@@ -20450,10 +22168,12 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
           <tr id="ErrOpInvalidCode-1007" class="tbl-body-row hover-effect" data-details-id="meshery-adapter-library-ErrOpInvalidCode-more-info" onclick="toggle_visibility('meshery-adapter-library-ErrOpInvalidCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -1007" class="error-name-code">
-              <code>ErrOpInvalidCode-1007</code>
+              <a href="/reference/error-codes/library-meshery-adapter-library/erropinvalidcode-1007/"><code>ErrOpInvalidCode-1007</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOpInvalidCode-1007" target="_blank">search forum</a></td>
@@ -20471,10 +22191,12 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
           <tr id="ErrApplyOperationCode-1008" class="tbl-body-row hover-effect" data-details-id="meshery-adapter-library-ErrApplyOperationCode-more-info" onclick="toggle_visibility('meshery-adapter-library-ErrApplyOperationCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -1008" class="error-name-code">
-              <code>ErrApplyOperationCode-1008</code>
+              <a href="/reference/error-codes/library-meshery-adapter-library/errapplyoperationcode-1008/"><code>ErrApplyOperationCode-1008</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyOperationCode-1008" target="_blank">search forum</a></td>
@@ -20492,10 +22214,12 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
           <tr id="ErrListOperationsCode-1009" class="tbl-body-row hover-effect" data-details-id="meshery-adapter-library-ErrListOperationsCode-more-info" onclick="toggle_visibility('meshery-adapter-library-ErrListOperationsCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -1009" class="error-name-code">
-              <code>ErrListOperationsCode-1009</code>
+              <a href="/reference/error-codes/library-meshery-adapter-library/errlistoperationscode-1009/"><code>ErrListOperationsCode-1009</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrListOperationsCode-1009" target="_blank">search forum</a></td>
@@ -20513,10 +22237,12 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
           <tr id="ErrNewSmiCode-1010" class="tbl-body-row hover-effect" data-details-id="meshery-adapter-library-ErrNewSmiCode-more-info" onclick="toggle_visibility('meshery-adapter-library-ErrNewSmiCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -1010" class="error-name-code">
-              <code>ErrNewSmiCode-1010</code>
+              <a href="/reference/error-codes/library-meshery-adapter-library/errnewsmicode-1010/"><code>ErrNewSmiCode-1010</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNewSmiCode-1010" target="_blank">search forum</a></td>
@@ -20534,10 +22260,12 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
           <tr id="ErrRunSmiCode-1011" class="tbl-body-row hover-effect" data-details-id="meshery-adapter-library-ErrRunSmiCode-more-info" onclick="toggle_visibility('meshery-adapter-library-ErrRunSmiCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -1011" class="error-name-code">
-              <code>ErrRunSmiCode-1011</code>
+              <a href="/reference/error-codes/library-meshery-adapter-library/errrunsmicode-1011/"><code>ErrRunSmiCode-1011</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRunSmiCode-1011" target="_blank">search forum</a></td>
@@ -20580,12 +22308,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrControllerCode-11071" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrControllerCode-more-info" onclick="toggle_visibility('meshkit-ErrControllerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11071" class="error-name-code">
-              <code>ErrControllerCode-11071</code>
+              <a href="/reference/error-codes/library-meshkit/errcontrollercode-11071/"><code>ErrControllerCode-11071</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrControllerCode-11071" target="_blank">search forum</a></td>
@@ -20603,12 +22333,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrConnectCode-11118" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrConnectCode-more-info" onclick="toggle_visibility('meshkit-ErrConnectCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11118" class="error-name-code">
-              <code>ErrConnectCode-11118</code>
+              <a href="/reference/error-codes/library-meshkit/errconnectcode-11118/"><code>ErrConnectCode-11118</code></a>
             </td>
             <td>Connection to broker failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConnectCode-11118" target="_blank">search forum</a></td>
@@ -20626,12 +22358,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEncodedConnCode-11119" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrEncodedConnCode-more-info" onclick="toggle_visibility('meshkit-ErrEncodedConnCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11119" class="error-name-code">
-              <code>ErrEncodedConnCode-11119</code>
+              <a href="/reference/error-codes/library-meshkit/errencodedconncode-11119/"><code>ErrEncodedConnCode-11119</code></a>
             </td>
             <td>Encoding connection failed with broker</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEncodedConnCode-11119" target="_blank">search forum</a></td>
@@ -20649,12 +22383,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPublishCode-11120" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrPublishCode-more-info" onclick="toggle_visibility('meshkit-ErrPublishCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11120" class="error-name-code">
-              <code>ErrPublishCode-11120</code>
+              <a href="/reference/error-codes/library-meshkit/errpublishcode-11120/"><code>ErrPublishCode-11120</code></a>
             </td>
             <td>Publish failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPublishCode-11120" target="_blank">search forum</a></td>
@@ -20672,12 +22408,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPublishRequestCode-11121" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrPublishRequestCode-more-info" onclick="toggle_visibility('meshkit-ErrPublishRequestCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11121" class="error-name-code">
-              <code>ErrPublishRequestCode-11121</code>
+              <a href="/reference/error-codes/library-meshkit/errpublishrequestcode-11121/"><code>ErrPublishRequestCode-11121</code></a>
             </td>
             <td>Publish request failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPublishRequestCode-11121" target="_blank">search forum</a></td>
@@ -20695,12 +22433,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrQueueSubscribeCode-11122" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrQueueSubscribeCode-more-info" onclick="toggle_visibility('meshkit-ErrQueueSubscribeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11122" class="error-name-code">
-              <code>ErrQueueSubscribeCode-11122</code>
+              <a href="/reference/error-codes/library-meshkit/errqueuesubscribecode-11122/"><code>ErrQueueSubscribeCode-11122</code></a>
             </td>
             <td>Subscription failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrQueueSubscribeCode-11122" target="_blank">search forum</a></td>
@@ -20718,12 +22458,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyConfigCode-11123" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrEmptyConfigCode-more-info" onclick="toggle_visibility('meshkit-ErrEmptyConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11123" class="error-name-code">
-              <code>ErrEmptyConfigCode-11123</code>
+              <a href="/reference/error-codes/library-meshkit/erremptyconfigcode-11123/"><code>ErrEmptyConfigCode-11123</code></a>
             </td>
             <td>Config not initialized</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyConfigCode-11123" target="_blank">search forum</a></td>
@@ -20741,12 +22483,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrViperCode-11124" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrViperCode-more-info" onclick="toggle_visibility('meshkit-ErrViperCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -11124" class="error-name-code">
-              <code>ErrViperCode-11124</code>
+              <a href="/reference/error-codes/library-meshkit/errvipercode-11124/"><code>ErrViperCode-11124</code></a>
             </td>
             <td>Viper configuration initialization failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrViperCode-11124" target="_blank">search forum</a></td>
@@ -20764,12 +22508,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInMemCode-11125" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInMemCode-more-info" onclick="toggle_visibility('meshkit-ErrInMemCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -11125" class="error-name-code">
-              <code>ErrInMemCode-11125</code>
+              <a href="/reference/error-codes/library-meshkit/errinmemcode-11125/"><code>ErrInMemCode-11125</code></a>
             </td>
             <td>InMem configuration initialization failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInMemCode-11125" target="_blank">search forum</a></td>
@@ -20787,12 +22533,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNoneDatabaseCode-11126" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrNoneDatabaseCode-more-info" onclick="toggle_visibility('meshkit-ErrNoneDatabaseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11126" class="error-name-code">
-              <code>ErrNoneDatabaseCode-11126</code>
+              <a href="/reference/error-codes/library-meshkit/errnonedatabasecode-11126/"><code>ErrNoneDatabaseCode-11126</code></a>
             </td>
             <td>No Database selected</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoneDatabaseCode-11126" target="_blank">search forum</a></td>
@@ -20810,12 +22558,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDatabaseOpenCode-11127" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrDatabaseOpenCode-more-info" onclick="toggle_visibility('meshkit-ErrDatabaseOpenCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11127" class="error-name-code">
-              <code>ErrDatabaseOpenCode-11127</code>
+              <a href="/reference/error-codes/library-meshkit/errdatabaseopencode-11127/"><code>ErrDatabaseOpenCode-11127</code></a>
             </td>
             <td>Unable to open database</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDatabaseOpenCode-11127" target="_blank">search forum</a></td>
@@ -20833,12 +22583,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSQLMapUnmarshalJSONCode-11128" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrSQLMapUnmarshalJSONCode-more-info" onclick="toggle_visibility('meshkit-ErrSQLMapUnmarshalJSONCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11128" class="error-name-code">
-              <code>ErrSQLMapUnmarshalJSONCode-11128</code>
+              <a href="/reference/error-codes/library-meshkit/errsqlmapunmarshaljsoncode-11128/"><code>ErrSQLMapUnmarshalJSONCode-11128</code></a>
             </td>
             <td>failed to unmarshal json</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSQLMapUnmarshalJSONCode-11128" target="_blank">search forum</a></td>
@@ -20856,12 +22608,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSQLMapUnmarshalTextCode-11129" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrSQLMapUnmarshalTextCode-more-info" onclick="toggle_visibility('meshkit-ErrSQLMapUnmarshalTextCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11129" class="error-name-code">
-              <code>ErrSQLMapUnmarshalTextCode-11129</code>
+              <a href="/reference/error-codes/library-meshkit/errsqlmapunmarshaltextcode-11129/"><code>ErrSQLMapUnmarshalTextCode-11129</code></a>
             </td>
             <td>failed to unmarshal text</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSQLMapUnmarshalTextCode-11129" target="_blank">search forum</a></td>
@@ -20879,12 +22633,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSQLMapMarshalValueCode-11130" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrSQLMapMarshalValueCode-more-info" onclick="toggle_visibility('meshkit-ErrSQLMapMarshalValueCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11130" class="error-name-code">
-              <code>ErrSQLMapMarshalValueCode-11130</code>
+              <a href="/reference/error-codes/library-meshkit/errsqlmapmarshalvaluecode-11130/"><code>ErrSQLMapMarshalValueCode-11130</code></a>
             </td>
             <td>failed to marshal value</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSQLMapMarshalValueCode-11130" target="_blank">search forum</a></td>
@@ -20902,12 +22658,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSQLMapUnmarshalScannedCode-11131" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrSQLMapUnmarshalScannedCode-more-info" onclick="toggle_visibility('meshkit-ErrSQLMapUnmarshalScannedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11131" class="error-name-code">
-              <code>ErrSQLMapUnmarshalScannedCode-11131</code>
+              <a href="/reference/error-codes/library-meshkit/errsqlmapunmarshalscannedcode-11131/"><code>ErrSQLMapUnmarshalScannedCode-11131</code></a>
             </td>
             <td>failed to unmarshal scanned data</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSQLMapUnmarshalScannedCode-11131" target="_blank">search forum</a></td>
@@ -20925,12 +22683,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSQLMapInvalidScanCode-11132" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrSQLMapInvalidScanCode-more-info" onclick="toggle_visibility('meshkit-ErrSQLMapInvalidScanCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11132" class="error-name-code">
-              <code>ErrSQLMapInvalidScanCode-11132</code>
+              <a href="/reference/error-codes/library-meshkit/errsqlmapinvalidscancode-11132/"><code>ErrSQLMapInvalidScanCode-11132</code></a>
             </td>
             <td>invalid data type: expected []byte</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSQLMapInvalidScanCode-11132" target="_blank">search forum</a></td>
@@ -20948,12 +22708,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrClosingDatabaseConnectionCode-11133" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrClosingDatabaseConnectionCode-more-info" onclick="toggle_visibility('meshkit-ErrClosingDatabaseConnectionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11133" class="error-name-code">
-              <code>ErrClosingDatabaseConnectionCode-11133</code>
+              <a href="/reference/error-codes/library-meshkit/errclosingdatabaseconnectioncode-11133/"><code>ErrClosingDatabaseConnectionCode-11133</code></a>
             </td>
             <td>failed to close database connection</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrClosingDatabaseConnectionCode-11133" target="_blank">search forum</a></td>
@@ -20971,12 +22733,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetChartUrlCode-11134" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetChartUrlCode-more-info" onclick="toggle_visibility('meshkit-ErrGetChartUrlCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11134" class="error-name-code">
-              <code>ErrGetChartUrlCode-11134</code>
+              <a href="/reference/error-codes/library-meshkit/errgetcharturlcode-11134/"><code>ErrGetChartUrlCode-11134</code></a>
             </td>
             <td>Could not get the chart url for this ArtifactHub package</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetChartUrlCode-11134" target="_blank">search forum</a></td>
@@ -20994,12 +22758,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetAhPackageCode-11135" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetAhPackageCode-more-info" onclick="toggle_visibility('meshkit-ErrGetAhPackageCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11135" class="error-name-code">
-              <code>ErrGetAhPackageCode-11135</code>
+              <a href="/reference/error-codes/library-meshkit/errgetahpackagecode-11135/"><code>ErrGetAhPackageCode-11135</code></a>
             </td>
             <td>Could not get the ArtifactHub package with the given name</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetAhPackageCode-11135" target="_blank">search forum</a></td>
@@ -21017,12 +22783,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrComponentGenerateCode-11136" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrComponentGenerateCode-more-info" onclick="toggle_visibility('meshkit-ErrComponentGenerateCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11136" class="error-name-code">
-              <code>ErrComponentGenerateCode-11136</code>
+              <a href="/reference/error-codes/library-meshkit/errcomponentgeneratecode-11136/"><code>ErrComponentGenerateCode-11136</code></a>
             </td>
             <td>failed to generate components for the package</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrComponentGenerateCode-11136" target="_blank">search forum</a></td>
@@ -21040,12 +22808,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetAllHelmPackagesCode-11137" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetAllHelmPackagesCode-more-info" onclick="toggle_visibility('meshkit-ErrGetAllHelmPackagesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11137" class="error-name-code">
-              <code>ErrGetAllHelmPackagesCode-11137</code>
+              <a href="/reference/error-codes/library-meshkit/errgetallhelmpackagescode-11137/"><code>ErrGetAllHelmPackagesCode-11137</code></a>
             </td>
             <td>Could not get HELM packages from Artifacthub</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetAllHelmPackagesCode-11137" target="_blank">search forum</a></td>
@@ -21063,12 +22833,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnsupportedRegistrantCode-11138" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnsupportedRegistrantCode-more-info" onclick="toggle_visibility('meshkit-ErrUnsupportedRegistrantCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11138" class="error-name-code">
-              <code>ErrUnsupportedRegistrantCode-11138</code>
+              <a href="/reference/error-codes/library-meshkit/errunsupportedregistrantcode-11138/"><code>ErrUnsupportedRegistrantCode-11138</code></a>
             </td>
             <td>unsupported registrant</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnsupportedRegistrantCode-11138" target="_blank">search forum</a></td>
@@ -21086,12 +22858,14 @@ Narrow the search so exactly one item matches</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGenerateGitHubPackageCode-11139" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGenerateGitHubPackageCode-more-info" onclick="toggle_visibility('meshkit-ErrGenerateGitHubPackageCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11139" class="error-name-code">
-              <code>ErrGenerateGitHubPackageCode-11139</code>
+              <a href="/reference/error-codes/library-meshkit/errgenerategithubpackagecode-11139/"><code>ErrGenerateGitHubPackageCode-11139</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGenerateGitHubPackageCode-11139" target="_blank">search forum</a></td>
@@ -21111,12 +22885,14 @@ provide appropriate credentials to clone a private repository</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidGitHubSourceURLCode-11140" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidGitHubSourceURLCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidGitHubSourceURLCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11140" class="error-name-code">
-              <code>ErrInvalidGitHubSourceURLCode-11140</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidgithubsourceurlcode-11140/"><code>ErrInvalidGitHubSourceURLCode-11140</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidGitHubSourceURLCode-11140" target="_blank">search forum</a></td>
@@ -21135,12 +22911,14 @@ provided repo/version tag does not exist</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetControllerStatusCode-11141" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetControllerStatusCode-more-info" onclick="toggle_visibility('meshkit-ErrGetControllerStatusCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11141" class="error-name-code">
-              <code>ErrGetControllerStatusCode-11141</code>
+              <a href="/reference/error-codes/library-meshkit/errgetcontrollerstatuscode-11141/"><code>ErrGetControllerStatusCode-11141</code></a>
             </td>
             <td>Error getting the status of the meshery controller</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetControllerStatusCode-11141" target="_blank">search forum</a></td>
@@ -21158,12 +22936,14 @@ provided repo/version tag does not exist</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDeployControllerCode-11142" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrDeployControllerCode-more-info" onclick="toggle_visibility('meshkit-ErrDeployControllerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11142" class="error-name-code">
-              <code>ErrDeployControllerCode-11142</code>
+              <a href="/reference/error-codes/library-meshkit/errdeploycontrollercode-11142/"><code>ErrDeployControllerCode-11142</code></a>
             </td>
             <td>Error deploying Meshery Operator</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDeployControllerCode-11142" target="_blank">search forum</a></td>
@@ -21182,12 +22962,14 @@ Insufficient file permission to read kubeconfig</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetControllerPublicEndpointCode-11143" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetControllerPublicEndpointCode-more-info" onclick="toggle_visibility('meshkit-ErrGetControllerPublicEndpointCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11143" class="error-name-code">
-              <code>ErrGetControllerPublicEndpointCode-11143</code>
+              <a href="/reference/error-codes/library-meshkit/errgetcontrollerpublicendpointcode-11143/"><code>ErrGetControllerPublicEndpointCode-11143</code></a>
             </td>
             <td>Could not get the public endpoint of the controller</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetControllerPublicEndpointCode-11143" target="_blank">search forum</a></td>
@@ -21205,12 +22987,14 @@ Insufficient file permission to read kubeconfig</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPrepareForEvalCode-11144" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrPrepareForEvalCode-more-info" onclick="toggle_visibility('meshkit-ErrPrepareForEvalCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11144" class="error-name-code">
-              <code>ErrPrepareForEvalCode-11144</code>
+              <a href="/reference/error-codes/library-meshkit/errprepareforevalcode-11144/"><code>ErrPrepareForEvalCode-11144</code></a>
             </td>
             <td>error preparing for evaluation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPrepareForEvalCode-11144" target="_blank">search forum</a></td>
@@ -21230,12 +23014,14 @@ uncommitted transaction</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEvalCode-11145" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrEvalCode-more-info" onclick="toggle_visibility('meshkit-ErrEvalCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11145" class="error-name-code">
-              <code>ErrEvalCode-11145</code>
+              <a href="/reference/error-codes/library-meshkit/errevalcode-11145/"><code>ErrEvalCode-11145</code></a>
             </td>
             <td>error evaluating policy for the given input</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEvalCode-11145" target="_blank">search forum</a></td>
@@ -21253,12 +23039,14 @@ uncommitted transaction</p>
         
           
           
+          
+          
             
           
           <tr id="ErrAppendingLayerCode-11147" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrAppendingLayerCode-more-info" onclick="toggle_visibility('meshkit-ErrAppendingLayerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11147" class="error-name-code">
-              <code>ErrAppendingLayerCode-11147</code>
+              <a href="/reference/error-codes/library-meshkit/errappendinglayercode-11147/"><code>ErrAppendingLayerCode-11147</code></a>
             </td>
             <td>appending content to artifact failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAppendingLayerCode-11147" target="_blank">search forum</a></td>
@@ -21277,12 +23065,14 @@ use a different media type for the layer</p>
         
           
           
+          
+          
             
           
           <tr id="ErrReadingFileCode-11148" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrReadingFileCode-more-info" onclick="toggle_visibility('meshkit-ErrReadingFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11148" class="error-name-code">
-              <code>ErrReadingFileCode-11148</code>
+              <a href="/reference/error-codes/library-meshkit/errreadingfilecode-11148/"><code>ErrReadingFileCode-11148</code></a>
             </td>
             <td>reading file failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadingFileCode-11148" target="_blank">search forum</a></td>
@@ -21302,12 +23092,14 @@ check if appropriate read permissions are given to the file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnSupportedLayerTypeCode-11149" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnSupportedLayerTypeCode-more-info" onclick="toggle_visibility('meshkit-ErrUnSupportedLayerTypeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11149" class="error-name-code">
-              <code>ErrUnSupportedLayerTypeCode-11149</code>
+              <a href="/reference/error-codes/library-meshkit/errunsupportedlayertypecode-11149/"><code>ErrUnSupportedLayerTypeCode-11149</code></a>
             </td>
             <td>unsupported layer type</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnSupportedLayerTypeCode-11149" target="_blank">search forum</a></td>
@@ -21325,12 +23117,14 @@ check if appropriate read permissions are given to the file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGettingLayerCode-11150" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGettingLayerCode-more-info" onclick="toggle_visibility('meshkit-ErrGettingLayerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11150" class="error-name-code">
-              <code>ErrGettingLayerCode-11150</code>
+              <a href="/reference/error-codes/library-meshkit/errgettinglayercode-11150/"><code>ErrGettingLayerCode-11150</code></a>
             </td>
             <td>getting layer failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGettingLayerCode-11150" target="_blank">search forum</a></td>
@@ -21349,12 +23143,14 @@ check if OCI image is not malformed</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCompressingLayerCode-11151" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCompressingLayerCode-more-info" onclick="toggle_visibility('meshkit-ErrCompressingLayerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11151" class="error-name-code">
-              <code>ErrCompressingLayerCode-11151</code>
+              <a href="/reference/error-codes/library-meshkit/errcompressinglayercode-11151/"><code>ErrCompressingLayerCode-11151</code></a>
             </td>
             <td>compressing layer failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCompressingLayerCode-11151" target="_blank">search forum</a></td>
@@ -21373,12 +23169,14 @@ check if layers are compatible with the base image</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnTaringLayerCode-11152" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnTaringLayerCode-more-info" onclick="toggle_visibility('meshkit-ErrUnTaringLayerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11152" class="error-name-code">
-              <code>ErrUnTaringLayerCode-11152</code>
+              <a href="/reference/error-codes/library-meshkit/erruntaringlayercode-11152/"><code>ErrUnTaringLayerCode-11152</code></a>
             </td>
             <td>untaring layer failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnTaringLayerCode-11152" target="_blank">search forum</a></td>
@@ -21397,12 +23195,14 @@ check if image is not malformed</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGettingImageCode-11153" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGettingImageCode-more-info" onclick="toggle_visibility('meshkit-ErrGettingImageCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11153" class="error-name-code">
-              <code>ErrGettingImageCode-11153</code>
+              <a href="/reference/error-codes/library-meshkit/errgettingimagecode-11153/"><code>ErrGettingImageCode-11153</code></a>
             </td>
             <td>getting image failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGettingImageCode-11153" target="_blank">search forum</a></td>
@@ -21421,12 +23221,14 @@ check if image is not malformed</p>
         
           
           
+          
+          
             
           
           <tr id="ErrValidatingImageCode-11154" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrValidatingImageCode-more-info" onclick="toggle_visibility('meshkit-ErrValidatingImageCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11154" class="error-name-code">
-              <code>ErrValidatingImageCode-11154</code>
+              <a href="/reference/error-codes/library-meshkit/errvalidatingimagecode-11154/"><code>ErrValidatingImageCode-11154</code></a>
             </td>
             <td>validating image failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrValidatingImageCode-11154" target="_blank">search forum</a></td>
@@ -21445,12 +23247,14 @@ check if image is not malformed</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCrdGenerateCode-11155" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCrdGenerateCode-more-info" onclick="toggle_visibility('meshkit-ErrCrdGenerateCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11155" class="error-name-code">
-              <code>ErrCrdGenerateCode-11155</code>
+              <a href="/reference/error-codes/library-meshkit/errcrdgeneratecode-11155/"><code>ErrCrdGenerateCode-11155</code></a>
             </td>
             <td>Could not generate component with the given CRD</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCrdGenerateCode-11155" target="_blank">search forum</a></td>
@@ -21468,12 +23272,14 @@ check if image is not malformed</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDefinitionCode-11156" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrDefinitionCode-more-info" onclick="toggle_visibility('meshkit-ErrDefinitionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11156" class="error-name-code">
-              <code>ErrDefinitionCode-11156</code>
+              <a href="/reference/error-codes/library-meshkit/errdefinitioncode-11156/"><code>ErrDefinitionCode-11156</code></a>
             </td>
             <td>Could not get definition for the given CRD</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDefinitionCode-11156" target="_blank">search forum</a></td>
@@ -21491,10 +23297,12 @@ check if image is not malformed</p>
         
           
           
+          
+          
           <tr id="ErrGetSchemaCode-11157" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetSchemaCode-more-info" onclick="toggle_visibility('meshkit-ErrGetSchemaCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11157" class="error-name-code">
-              <code>ErrGetSchemaCode-11157</code>
+              <a href="/reference/error-codes/library-meshkit/errgetschemacode-11157/"><code>ErrGetSchemaCode-11157</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetSchemaCode-11157" target="_blank">search forum</a></td>
@@ -21512,12 +23320,14 @@ check if image is not malformed</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateSchemaCode-11158" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUpdateSchemaCode-more-info" onclick="toggle_visibility('meshkit-ErrUpdateSchemaCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11158" class="error-name-code">
-              <code>ErrUpdateSchemaCode-11158</code>
+              <a href="/reference/error-codes/library-meshkit/errupdateschemacode-11158/"><code>ErrUpdateSchemaCode-11158</code></a>
             </td>
             <td>Failed to update schema properties for </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateSchemaCode-11158" target="_blank">search forum</a></td>
@@ -21539,10 +23349,12 @@ Verify CRD has valid schema</p>
         
           
           
+          
+          
           <tr id="ErrUnmarshalCode-11159" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnmarshalCode-more-info" onclick="toggle_visibility('meshkit-ErrUnmarshalCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11159" class="error-name-code">
-              <code>ErrUnmarshalCode-11159</code>
+              <a href="/reference/error-codes/library-meshkit/errunmarshalcode-11159/"><code>ErrUnmarshalCode-11159</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnmarshalCode-11159" target="_blank">search forum</a></td>
@@ -21560,10 +23372,12 @@ Verify CRD has valid schema</p>
         
           
           
+          
+          
           <tr id="ErrUnmarshalInvalidCode-11160" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnmarshalInvalidCode-more-info" onclick="toggle_visibility('meshkit-ErrUnmarshalInvalidCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11160" class="error-name-code">
-              <code>ErrUnmarshalInvalidCode-11160</code>
+              <a href="/reference/error-codes/library-meshkit/errunmarshalinvalidcode-11160/"><code>ErrUnmarshalInvalidCode-11160</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnmarshalInvalidCode-11160" target="_blank">search forum</a></td>
@@ -21581,10 +23395,12 @@ Verify CRD has valid schema</p>
         
           
           
+          
+          
           <tr id="ErrUnmarshalSyntaxCode-11161" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnmarshalSyntaxCode-more-info" onclick="toggle_visibility('meshkit-ErrUnmarshalSyntaxCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11161" class="error-name-code">
-              <code>ErrUnmarshalSyntaxCode-11161</code>
+              <a href="/reference/error-codes/library-meshkit/errunmarshalsyntaxcode-11161/"><code>ErrUnmarshalSyntaxCode-11161</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnmarshalSyntaxCode-11161" target="_blank">search forum</a></td>
@@ -21602,10 +23418,12 @@ Verify CRD has valid schema</p>
         
           
           
+          
+          
           <tr id="ErrUnmarshalTypeCode-11162" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnmarshalTypeCode-more-info" onclick="toggle_visibility('meshkit-ErrUnmarshalTypeCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11162" class="error-name-code">
-              <code>ErrUnmarshalTypeCode-11162</code>
+              <a href="/reference/error-codes/library-meshkit/errunmarshaltypecode-11162/"><code>ErrUnmarshalTypeCode-11162</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnmarshalTypeCode-11162" target="_blank">search forum</a></td>
@@ -21623,10 +23441,12 @@ Verify CRD has valid schema</p>
         
           
           
+          
+          
           <tr id="ErrUnmarshalUnsupportedTypeCode-11163" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnmarshalUnsupportedTypeCode-more-info" onclick="toggle_visibility('meshkit-ErrUnmarshalUnsupportedTypeCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11163" class="error-name-code">
-              <code>ErrUnmarshalUnsupportedTypeCode-11163</code>
+              <a href="/reference/error-codes/library-meshkit/errunmarshalunsupportedtypecode-11163/"><code>ErrUnmarshalUnsupportedTypeCode-11163</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnmarshalUnsupportedTypeCode-11163" target="_blank">search forum</a></td>
@@ -21644,10 +23464,12 @@ Verify CRD has valid schema</p>
         
           
           
+          
+          
           <tr id="ErrUnmarshalUnsupportedValueCode-11164" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnmarshalUnsupportedValueCode-more-info" onclick="toggle_visibility('meshkit-ErrUnmarshalUnsupportedValueCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11164" class="error-name-code">
-              <code>ErrUnmarshalUnsupportedValueCode-11164</code>
+              <a href="/reference/error-codes/library-meshkit/errunmarshalunsupportedvaluecode-11164/"><code>ErrUnmarshalUnsupportedValueCode-11164</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnmarshalUnsupportedValueCode-11164" target="_blank">search forum</a></td>
@@ -21665,12 +23487,14 @@ Verify CRD has valid schema</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMarshalCode-11165" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrMarshalCode-more-info" onclick="toggle_visibility('meshkit-ErrMarshalCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11165" class="error-name-code">
-              <code>ErrMarshalCode-11165</code>
+              <a href="/reference/error-codes/library-meshkit/errmarshalcode-11165/"><code>ErrMarshalCode-11165</code></a>
             </td>
             <td>Marshal error, Description: %s</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMarshalCode-11165" target="_blank">search forum</a></td>
@@ -21688,12 +23512,14 @@ Verify CRD has valid schema</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetBoolCode-11166" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetBoolCode-more-info" onclick="toggle_visibility('meshkit-ErrGetBoolCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11166" class="error-name-code">
-              <code>ErrGetBoolCode-11166</code>
+              <a href="/reference/error-codes/library-meshkit/errgetboolcode-11166/"><code>ErrGetBoolCode-11166</code></a>
             </td>
             <td>Error while getting Boolean value for key: %s, error: %s</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetBoolCode-11166" target="_blank">search forum</a></td>
@@ -21711,12 +23537,14 @@ Verify CRD has valid schema</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidProtocolCode-11167" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidProtocolCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidProtocolCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11167" class="error-name-code">
-              <code>ErrInvalidProtocolCode-11167</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidprotocolcode-11167/"><code>ErrInvalidProtocolCode-11167</code></a>
             </td>
             <td>invalid protocol: only http, https and file are valid protocols</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidProtocolCode-11167" target="_blank">search forum</a></td>
@@ -21734,12 +23562,14 @@ Verify CRD has valid schema</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRemoteFileNotFoundCode-11168" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrRemoteFileNotFoundCode-more-info" onclick="toggle_visibility('meshkit-ErrRemoteFileNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11168" class="error-name-code">
-              <code>ErrRemoteFileNotFoundCode-11168</code>
+              <a href="/reference/error-codes/library-meshkit/errremotefilenotfoundcode-11168/"><code>ErrRemoteFileNotFoundCode-11168</code></a>
             </td>
             <td>remote file not found at</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRemoteFileNotFoundCode-11168" target="_blank">search forum</a></td>
@@ -21758,12 +23588,14 @@ File name is incorrect</p>
         
           
           
+          
+          
             
           
           <tr id="ErrReadingRemoteFileCode-11169" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrReadingRemoteFileCode-more-info" onclick="toggle_visibility('meshkit-ErrReadingRemoteFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11169" class="error-name-code">
-              <code>ErrReadingRemoteFileCode-11169</code>
+              <a href="/reference/error-codes/library-meshkit/errreadingremotefilecode-11169/"><code>ErrReadingRemoteFileCode-11169</code></a>
             </td>
             <td>error reading remote file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadingRemoteFileCode-11169" target="_blank">search forum</a></td>
@@ -21782,12 +23614,14 @@ File name is incorrect</p>
         
           
           
+          
+          
             
           
           <tr id="ErrReadingLocalFileCode-11170" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrReadingLocalFileCode-more-info" onclick="toggle_visibility('meshkit-ErrReadingLocalFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11170" class="error-name-code">
-              <code>ErrReadingLocalFileCode-11170</code>
+              <a href="/reference/error-codes/library-meshkit/errreadinglocalfilecode-11170/"><code>ErrReadingLocalFileCode-11170</code></a>
             </td>
             <td>error reading local file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadingLocalFileCode-11170" target="_blank">search forum</a></td>
@@ -21807,12 +23641,14 @@ Insufficient permissions to read file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrReadFileCode-11171" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrReadFileCode-more-info" onclick="toggle_visibility('meshkit-ErrReadFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11171" class="error-name-code">
-              <code>ErrReadFileCode-11171</code>
+              <a href="/reference/error-codes/library-meshkit/errreadfilecode-11171/"><code>ErrReadFileCode-11171</code></a>
             </td>
             <td>error reading file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadFileCode-11171" target="_blank">search forum</a></td>
@@ -21831,12 +23667,14 @@ Verify sufficient file permissions.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrWriteFileCode-11172" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrWriteFileCode-more-info" onclick="toggle_visibility('meshkit-ErrWriteFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11172" class="error-name-code">
-              <code>ErrWriteFileCode-11172</code>
+              <a href="/reference/error-codes/library-meshkit/errwritefilecode-11172/"><code>ErrWriteFileCode-11172</code></a>
             </td>
             <td>error writing file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWriteFileCode-11172" target="_blank">search forum</a></td>
@@ -21855,12 +23693,14 @@ Verify sufficient file permissions.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGettingLatestReleaseTagCode-11173" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGettingLatestReleaseTagCode-more-info" onclick="toggle_visibility('meshkit-ErrGettingLatestReleaseTagCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11173" class="error-name-code">
-              <code>ErrGettingLatestReleaseTagCode-11173</code>
+              <a href="/reference/error-codes/library-meshkit/errgettinglatestreleasetagcode-11173/"><code>ErrGettingLatestReleaseTagCode-11173</code></a>
             </td>
             <td>Could not fetch latest stable release from github</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGettingLatestReleaseTagCode-11173" target="_blank">search forum</a></td>
@@ -21880,12 +23720,14 @@ Make sure a valid response is available on github.com/&lt;org&gt;/&lt;repo&gt;/r
         
           
           
+          
+          
             
           
           <tr id="ErrMissingFieldCode-11174" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrMissingFieldCode-more-info" onclick="toggle_visibility('meshkit-ErrMissingFieldCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11174" class="error-name-code">
-              <code>ErrMissingFieldCode-11174</code>
+              <a href="/reference/error-codes/library-meshkit/errmissingfieldcode-11174/"><code>ErrMissingFieldCode-11174</code></a>
             </td>
             <td>Missing field or property with name: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMissingFieldCode-11174" target="_blank">search forum</a></td>
@@ -21903,12 +23745,14 @@ Make sure a valid response is available on github.com/&lt;org&gt;/&lt;repo&gt;/r
         
           
           
+          
+          
             
           
           <tr id="ErrExpectedTypeMismatchCode-11175" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrExpectedTypeMismatchCode-more-info" onclick="toggle_visibility('meshkit-ErrExpectedTypeMismatchCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11175" class="error-name-code">
-              <code>ErrExpectedTypeMismatchCode-11175</code>
+              <a href="/reference/error-codes/library-meshkit/errexpectedtypemismatchcode-11175/"><code>ErrExpectedTypeMismatchCode-11175</code></a>
             </td>
             <td>Expected the type to be: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrExpectedTypeMismatchCode-11175" target="_blank">search forum</a></td>
@@ -21926,12 +23770,14 @@ Make sure a valid response is available on github.com/&lt;org&gt;/&lt;repo&gt;/r
         
           
           
+          
+          
             
           
           <tr id="ErrJsonToCueCode-11176" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrJsonToCueCode-more-info" onclick="toggle_visibility('meshkit-ErrJsonToCueCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11176" class="error-name-code">
-              <code>ErrJsonToCueCode-11176</code>
+              <a href="/reference/error-codes/library-meshkit/errjsontocuecode-11176/"><code>ErrJsonToCueCode-11176</code></a>
             </td>
             <td>Could not convert given json object into a CUE Value</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrJsonToCueCode-11176" target="_blank">search forum</a></td>
@@ -21949,12 +23795,14 @@ Make sure a valid response is available on github.com/&lt;org&gt;/&lt;repo&gt;/r
         
           
           
+          
+          
             
           
           <tr id="ErrYamlToCueCode-11177" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrYamlToCueCode-more-info" onclick="toggle_visibility('meshkit-ErrYamlToCueCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11177" class="error-name-code">
-              <code>ErrYamlToCueCode-11177</code>
+              <a href="/reference/error-codes/library-meshkit/erryamltocuecode-11177/"><code>ErrYamlToCueCode-11177</code></a>
             </td>
             <td>Could not convert given yaml object into a CUE Value</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrYamlToCueCode-11177" target="_blank">search forum</a></td>
@@ -21972,12 +23820,14 @@ Make sure a valid response is available on github.com/&lt;org&gt;/&lt;repo&gt;/r
         
           
           
+          
+          
             
           
           <tr id="ErrJsonSchemaToCueCode-11178" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrJsonSchemaToCueCode-more-info" onclick="toggle_visibility('meshkit-ErrJsonSchemaToCueCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11178" class="error-name-code">
-              <code>ErrJsonSchemaToCueCode-11178</code>
+              <a href="/reference/error-codes/library-meshkit/errjsonschematocuecode-11178/"><code>ErrJsonSchemaToCueCode-11178</code></a>
             </td>
             <td>Could not convert given JsonSchema into a CUE Value</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrJsonSchemaToCueCode-11178" target="_blank">search forum</a></td>
@@ -21995,12 +23845,14 @@ Make sure a valid response is available on github.com/&lt;org&gt;/&lt;repo&gt;/r
         
           
           
+          
+          
             
           
           <tr id="ErrCueLookupCode-11179" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCueLookupCode-more-info" onclick="toggle_visibility('meshkit-ErrCueLookupCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11179" class="error-name-code">
-              <code>ErrCueLookupCode-11179</code>
+              <a href="/reference/error-codes/library-meshkit/errcuelookupcode-11179/"><code>ErrCueLookupCode-11179</code></a>
             </td>
             <td>Could not lookup the given path in the CUE value</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCueLookupCode-11179" target="_blank">search forum</a></td>
@@ -22020,12 +23872,14 @@ make sure that the given root value is correct</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTypeCastCode-11180" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrTypeCastCode-more-info" onclick="toggle_visibility('meshkit-ErrTypeCastCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11180" class="error-name-code">
-              <code>ErrTypeCastCode-11180</code>
+              <a href="/reference/error-codes/library-meshkit/errtypecastcode-11180/"><code>ErrTypeCastCode-11180</code></a>
             </td>
             <td>invaid type assertion requested</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTypeCastCode-11180" target="_blank">search forum</a></td>
@@ -22043,12 +23897,14 @@ make sure that the given root value is correct</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreateFileCode-11181" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCreateFileCode-more-info" onclick="toggle_visibility('meshkit-ErrCreateFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11181" class="error-name-code">
-              <code>ErrCreateFileCode-11181</code>
+              <a href="/reference/error-codes/library-meshkit/errcreatefilecode-11181/"><code>ErrCreateFileCode-11181</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateFileCode-11181" target="_blank">search forum</a></td>
@@ -22069,12 +23925,14 @@ check for sufficient permissions for the user</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreateDirCode-11182" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCreateDirCode-more-info" onclick="toggle_visibility('meshkit-ErrCreateDirCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11182" class="error-name-code">
-              <code>ErrCreateDirCode-11182</code>
+              <a href="/reference/error-codes/library-meshkit/errcreatedircode-11182/"><code>ErrCreateDirCode-11182</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateDirCode-11182" target="_blank">search forum</a></td>
@@ -22095,10 +23953,12 @@ check for sufficient permissions for the user</p>
         
           
           
+          
+          
           <tr id="ErrDecodeYamlCode-11183" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrDecodeYamlCode-more-info" onclick="toggle_visibility('meshkit-ErrDecodeYamlCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11183" class="error-name-code">
-              <code>ErrDecodeYamlCode-11183</code>
+              <a href="/reference/error-codes/library-meshkit/errdecodeyamlcode-11183/"><code>ErrDecodeYamlCode-11183</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDecodeYamlCode-11183" target="_blank">search forum</a></td>
@@ -22116,12 +23976,14 @@ check for sufficient permissions for the user</p>
         
           
           
+          
+          
             
           
           <tr id="ErrExtractTarXZCode-11184" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrExtractTarXZCode-more-info" onclick="toggle_visibility('meshkit-ErrExtractTarXZCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11184" class="error-name-code">
-              <code>ErrExtractTarXZCode-11184</code>
+              <a href="/reference/error-codes/library-meshkit/errextracttarxzcode-11184/"><code>ErrExtractTarXZCode-11184</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrExtractTarXZCode-11184" target="_blank">search forum</a></td>
@@ -22139,12 +24001,14 @@ check for sufficient permissions for the user</p>
         
           
           
+          
+          
             
           
           <tr id="ErrExtractZipCode-11185" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrExtractZipCode-more-info" onclick="toggle_visibility('meshkit-ErrExtractZipCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11185" class="error-name-code">
-              <code>ErrExtractZipCode-11185</code>
+              <a href="/reference/error-codes/library-meshkit/errextractzipcode-11185/"><code>ErrExtractZipCode-11185</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrExtractZipCode-11185" target="_blank">search forum</a></td>
@@ -22162,12 +24026,14 @@ check for sufficient permissions for the user</p>
         
           
           
+          
+          
             
           
           <tr id="ErrReadDirCode-11186" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrReadDirCode-more-info" onclick="toggle_visibility('meshkit-ErrReadDirCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11186" class="error-name-code">
-              <code>ErrReadDirCode-11186</code>
+              <a href="/reference/error-codes/library-meshkit/errreaddircode-11186/"><code>ErrReadDirCode-11186</code></a>
             </td>
             <td>error reading directory</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadDirCode-11186" target="_blank">search forum</a></td>
@@ -22186,12 +24052,14 @@ Verify sufficient directory read permission.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrLoadHelmChartCode-11188" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrLoadHelmChartCode-more-info" onclick="toggle_visibility('meshkit-ErrLoadHelmChartCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11188" class="error-name-code">
-              <code>ErrLoadHelmChartCode-11188</code>
+              <a href="/reference/error-codes/library-meshkit/errloadhelmchartcode-11188/"><code>ErrLoadHelmChartCode-11188</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLoadHelmChartCode-11188" target="_blank">search forum</a></td>
@@ -22211,10 +24079,12 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
           <tr id="ErrGetDescriberFuncCode-11189" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetDescriberFuncCode-more-info" onclick="toggle_visibility('meshkit-ErrGetDescriberFuncCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11189" class="error-name-code">
-              <code>ErrGetDescriberFuncCode-11189</code>
+              <a href="/reference/error-codes/library-meshkit/errgetdescriberfunccode-11189/"><code>ErrGetDescriberFuncCode-11189</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetDescriberFuncCode-11189" target="_blank">search forum</a></td>
@@ -22232,10 +24102,12 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
           <tr id="ErrApplyManifestCode-11190" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrApplyManifestCode-more-info" onclick="toggle_visibility('meshkit-ErrApplyManifestCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11190" class="error-name-code">
-              <code>ErrApplyManifestCode-11190</code>
+              <a href="/reference/error-codes/library-meshkit/errapplymanifestcode-11190/"><code>ErrApplyManifestCode-11190</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyManifestCode-11190" target="_blank">search forum</a></td>
@@ -22253,10 +24125,12 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
           <tr id="ErrServiceDiscoveryCode-11191" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrServiceDiscoveryCode-more-info" onclick="toggle_visibility('meshkit-ErrServiceDiscoveryCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11191" class="error-name-code">
-              <code>ErrServiceDiscoveryCode-11191</code>
+              <a href="/reference/error-codes/library-meshkit/errservicediscoverycode-11191/"><code>ErrServiceDiscoveryCode-11191</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrServiceDiscoveryCode-11191" target="_blank">search forum</a></td>
@@ -22274,10 +24148,12 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
           <tr id="ErrApplyHelmChartCode-11192" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrApplyHelmChartCode-more-info" onclick="toggle_visibility('meshkit-ErrApplyHelmChartCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11192" class="error-name-code">
-              <code>ErrApplyHelmChartCode-11192</code>
+              <a href="/reference/error-codes/library-meshkit/errapplyhelmchartcode-11192/"><code>ErrApplyHelmChartCode-11192</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyHelmChartCode-11192" target="_blank">search forum</a></td>
@@ -22295,10 +24171,12 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
           <tr id="ErrNewKubeClientCode-11193" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrNewKubeClientCode-more-info" onclick="toggle_visibility('meshkit-ErrNewKubeClientCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11193" class="error-name-code">
-              <code>ErrNewKubeClientCode-11193</code>
+              <a href="/reference/error-codes/library-meshkit/errnewkubeclientcode-11193/"><code>ErrNewKubeClientCode-11193</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNewKubeClientCode-11193" target="_blank">search forum</a></td>
@@ -22316,10 +24194,12 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
           <tr id="ErrNewDynClientCode-11194" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrNewDynClientCode-more-info" onclick="toggle_visibility('meshkit-ErrNewDynClientCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11194" class="error-name-code">
-              <code>ErrNewDynClientCode-11194</code>
+              <a href="/reference/error-codes/library-meshkit/errnewdynclientcode-11194/"><code>ErrNewDynClientCode-11194</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNewDynClientCode-11194" target="_blank">search forum</a></td>
@@ -22337,10 +24217,12 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
           <tr id="ErrNewDiscoveryCode-11195" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrNewDiscoveryCode-more-info" onclick="toggle_visibility('meshkit-ErrNewDiscoveryCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11195" class="error-name-code">
-              <code>ErrNewDiscoveryCode-11195</code>
+              <a href="/reference/error-codes/library-meshkit/errnewdiscoverycode-11195/"><code>ErrNewDiscoveryCode-11195</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNewDiscoveryCode-11195" target="_blank">search forum</a></td>
@@ -22358,10 +24240,12 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
           <tr id="ErrNewInformerCode-11196" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrNewInformerCode-more-info" onclick="toggle_visibility('meshkit-ErrNewInformerCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11196" class="error-name-code">
-              <code>ErrNewInformerCode-11196</code>
+              <a href="/reference/error-codes/library-meshkit/errnewinformercode-11196/"><code>ErrNewInformerCode-11196</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNewInformerCode-11196" target="_blank">search forum</a></td>
@@ -22379,12 +24263,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEndpointNotFoundCode-11197" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrEndpointNotFoundCode-more-info" onclick="toggle_visibility('meshkit-ErrEndpointNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11197" class="error-name-code">
-              <code>ErrEndpointNotFoundCode-11197</code>
+              <a href="/reference/error-codes/library-meshkit/errendpointnotfoundcode-11197/"><code>ErrEndpointNotFoundCode-11197</code></a>
             </td>
             <td>Unable to discover an endpoint</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEndpointNotFoundCode-11197" target="_blank">search forum</a></td>
@@ -22402,12 +24288,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidAPIServerCode-11198" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidAPIServerCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidAPIServerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11198" class="error-name-code">
-              <code>ErrInvalidAPIServerCode-11198</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidapiservercode-11198/"><code>ErrInvalidAPIServerCode-11198</code></a>
             </td>
             <td>Invalid API Server URL</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidAPIServerCode-11198" target="_blank">search forum</a></td>
@@ -22425,10 +24313,12 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
           <tr id="ErrLoadConfigCode-11199" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrLoadConfigCode-more-info" onclick="toggle_visibility('meshkit-ErrLoadConfigCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11199" class="error-name-code">
-              <code>ErrLoadConfigCode-11199</code>
+              <a href="/reference/error-codes/library-meshkit/errloadconfigcode-11199/"><code>ErrLoadConfigCode-11199</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLoadConfigCode-11199" target="_blank">search forum</a></td>
@@ -22446,10 +24336,12 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
           <tr id="ErrValidateConfigCode-11200" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrValidateConfigCode-more-info" onclick="toggle_visibility('meshkit-ErrValidateConfigCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11200" class="error-name-code">
-              <code>ErrValidateConfigCode-11200</code>
+              <a href="/reference/error-codes/library-meshkit/errvalidateconfigcode-11200/"><code>ErrValidateConfigCode-11200</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrValidateConfigCode-11200" target="_blank">search forum</a></td>
@@ -22467,12 +24359,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingHelmIndexCode-11201" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCreatingHelmIndexCode-more-info" onclick="toggle_visibility('meshkit-ErrCreatingHelmIndexCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11201" class="error-name-code">
-              <code>ErrCreatingHelmIndexCode-11201</code>
+              <a href="/reference/error-codes/library-meshkit/errcreatinghelmindexcode-11201/"><code>ErrCreatingHelmIndexCode-11201</code></a>
             </td>
             <td>Error while creating Helm Index</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingHelmIndexCode-11201" target="_blank">search forum</a></td>
@@ -22490,12 +24384,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEntryWithAppVersionNotExistsCode-11202" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrEntryWithAppVersionNotExistsCode-more-info" onclick="toggle_visibility('meshkit-ErrEntryWithAppVersionNotExistsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11202" class="error-name-code">
-              <code>ErrEntryWithAppVersionNotExistsCode-11202</code>
+              <a href="/reference/error-codes/library-meshkit/errentrywithappversionnotexistscode-11202/"><code>ErrEntryWithAppVersionNotExistsCode-11202</code></a>
             </td>
             <td>Entry for the app version does not exist</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEntryWithAppVersionNotExistsCode-11202" target="_blank">search forum</a></td>
@@ -22513,12 +24409,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrHelmRepositoryNotFoundCode-11203" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrHelmRepositoryNotFoundCode-more-info" onclick="toggle_visibility('meshkit-ErrHelmRepositoryNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11203" class="error-name-code">
-              <code>ErrHelmRepositoryNotFoundCode-11203</code>
+              <a href="/reference/error-codes/library-meshkit/errhelmrepositorynotfoundcode-11203/"><code>ErrHelmRepositoryNotFoundCode-11203</code></a>
             </td>
             <td>Helm repo not found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrHelmRepositoryNotFoundCode-11203" target="_blank">search forum</a></td>
@@ -22536,12 +24434,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEntryWithChartVersionNotExistsCode-11204" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrEntryWithChartVersionNotExistsCode-more-info" onclick="toggle_visibility('meshkit-ErrEntryWithChartVersionNotExistsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11204" class="error-name-code">
-              <code>ErrEntryWithChartVersionNotExistsCode-11204</code>
+              <a href="/reference/error-codes/library-meshkit/errentrywithchartversionnotexistscode-11204/"><code>ErrEntryWithChartVersionNotExistsCode-11204</code></a>
             </td>
             <td>Entry for the chart version does not exist</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEntryWithChartVersionNotExistsCode-11204" target="_blank">search forum</a></td>
@@ -22559,12 +24459,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGettingResourceCode-11206" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGettingResourceCode-more-info" onclick="toggle_visibility('meshkit-ErrGettingResourceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11206" class="error-name-code">
-              <code>ErrGettingResourceCode-11206</code>
+              <a href="/reference/error-codes/library-meshkit/errgettingresourcecode-11206/"><code>ErrGettingResourceCode-11206</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGettingResourceCode-11206" target="_blank">search forum</a></td>
@@ -22582,12 +24484,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrTraverserCode-11207" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrTraverserCode-more-info" onclick="toggle_visibility('meshkit-ErrTraverserCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11207" class="error-name-code">
-              <code>ErrTraverserCode-11207</code>
+              <a href="/reference/error-codes/library-meshkit/errtraversercode-11207/"><code>ErrTraverserCode-11207</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTraverserCode-11207" target="_blank">search forum</a></td>
@@ -22605,12 +24509,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResourceCannotBeExposedCode-11208" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrResourceCannotBeExposedCode-more-info" onclick="toggle_visibility('meshkit-ErrResourceCannotBeExposedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11208" class="error-name-code">
-              <code>ErrResourceCannotBeExposedCode-11208</code>
+              <a href="/reference/error-codes/library-meshkit/errresourcecannotbeexposedcode-11208/"><code>ErrResourceCannotBeExposedCode-11208</code></a>
             </td>
             <td>resource type %s cannot be exposed: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResourceCannotBeExposedCode-11208" target="_blank">search forum</a></td>
@@ -22628,12 +24534,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSelectorBasedMapCode-11209" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrSelectorBasedMapCode-more-info" onclick="toggle_visibility('meshkit-ErrSelectorBasedMapCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11209" class="error-name-code">
-              <code>ErrSelectorBasedMapCode-11209</code>
+              <a href="/reference/error-codes/library-meshkit/errselectorbasedmapcode-11209/"><code>ErrSelectorBasedMapCode-11209</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSelectorBasedMapCode-11209" target="_blank">search forum</a></td>
@@ -22651,12 +24559,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrProtocolBasedMapCode-11210" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrProtocolBasedMapCode-more-info" onclick="toggle_visibility('meshkit-ErrProtocolBasedMapCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11210" class="error-name-code">
-              <code>ErrProtocolBasedMapCode-11210</code>
+              <a href="/reference/error-codes/library-meshkit/errprotocolbasedmapcode-11210/"><code>ErrProtocolBasedMapCode-11210</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrProtocolBasedMapCode-11210" target="_blank">search forum</a></td>
@@ -22674,12 +24584,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrLableBasedMapCode-11211" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrLableBasedMapCode-more-info" onclick="toggle_visibility('meshkit-ErrLableBasedMapCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11211" class="error-name-code">
-              <code>ErrLableBasedMapCode-11211</code>
+              <a href="/reference/error-codes/library-meshkit/errlablebasedmapcode-11211/"><code>ErrLableBasedMapCode-11211</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLableBasedMapCode-11211" target="_blank">search forum</a></td>
@@ -22697,12 +24609,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPortParsingCode-11212" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrPortParsingCode-more-info" onclick="toggle_visibility('meshkit-ErrPortParsingCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11212" class="error-name-code">
-              <code>ErrPortParsingCode-11212</code>
+              <a href="/reference/error-codes/library-meshkit/errportparsingcode-11212/"><code>ErrPortParsingCode-11212</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPortParsingCode-11212" target="_blank">search forum</a></td>
@@ -22720,12 +24634,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGenerateServiceCode-11213" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGenerateServiceCode-more-info" onclick="toggle_visibility('meshkit-ErrGenerateServiceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11213" class="error-name-code">
-              <code>ErrGenerateServiceCode-11213</code>
+              <a href="/reference/error-codes/library-meshkit/errgenerateservicecode-11213/"><code>ErrGenerateServiceCode-11213</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGenerateServiceCode-11213" target="_blank">search forum</a></td>
@@ -22743,12 +24659,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrConstructingRestHelperCode-11214" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrConstructingRestHelperCode-more-info" onclick="toggle_visibility('meshkit-ErrConstructingRestHelperCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11214" class="error-name-code">
-              <code>ErrConstructingRestHelperCode-11214</code>
+              <a href="/reference/error-codes/library-meshkit/errconstructingresthelpercode-11214/"><code>ErrConstructingRestHelperCode-11214</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConstructingRestHelperCode-11214" target="_blank">search forum</a></td>
@@ -22766,12 +24684,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingServiceCode-11215" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCreatingServiceCode-more-info" onclick="toggle_visibility('meshkit-ErrCreatingServiceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11215" class="error-name-code">
-              <code>ErrCreatingServiceCode-11215</code>
+              <a href="/reference/error-codes/library-meshkit/errcreatingservicecode-11215/"><code>ErrCreatingServiceCode-11215</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingServiceCode-11215" target="_blank">search forum</a></td>
@@ -22789,12 +24709,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrPodHasNoLabelsCode-11216" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrPodHasNoLabelsCode-more-info" onclick="toggle_visibility('meshkit-ErrPodHasNoLabelsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11216" class="error-name-code">
-              <code>ErrPodHasNoLabelsCode-11216</code>
+              <a href="/reference/error-codes/library-meshkit/errpodhasnolabelscode-11216/"><code>ErrPodHasNoLabelsCode-11216</code></a>
             </td>
             <td>the pod has no labels and cannot be exposed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPodHasNoLabelsCode-11216" target="_blank">search forum</a></td>
@@ -22812,12 +24734,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrServiceHasNoSelectorsCode-11217" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrServiceHasNoSelectorsCode-more-info" onclick="toggle_visibility('meshkit-ErrServiceHasNoSelectorsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11217" class="error-name-code">
-              <code>ErrServiceHasNoSelectorsCode-11217</code>
+              <a href="/reference/error-codes/library-meshkit/errservicehasnoselectorscode-11217/"><code>ErrServiceHasNoSelectorsCode-11217</code></a>
             </td>
             <td>the service has no pod selector set</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrServiceHasNoSelectorsCode-11217" target="_blank">search forum</a></td>
@@ -22835,12 +24759,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidDeploymentNoSelectorsLabelsCode-11218" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidDeploymentNoSelectorsLabelsCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidDeploymentNoSelectorsLabelsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11218" class="error-name-code">
-              <code>ErrInvalidDeploymentNoSelectorsLabelsCode-11218</code>
+              <a href="/reference/error-codes/library-meshkit/errinvaliddeploymentnoselectorslabelscode-11218/"><code>ErrInvalidDeploymentNoSelectorsLabelsCode-11218</code></a>
             </td>
             <td>the deployment has no labels or selectors and cannot be exposed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidDeploymentNoSelectorsLabelsCode-11218" target="_blank">search forum</a></td>
@@ -22858,12 +24784,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidDeploymentNoSelectorsCode-11219" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidDeploymentNoSelectorsCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidDeploymentNoSelectorsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11219" class="error-name-code">
-              <code>ErrInvalidDeploymentNoSelectorsCode-11219</code>
+              <a href="/reference/error-codes/library-meshkit/errinvaliddeploymentnoselectorscode-11219/"><code>ErrInvalidDeploymentNoSelectorsCode-11219</code></a>
             </td>
             <td>invalid deployment: no selectors, therefore cannot be exposed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidDeploymentNoSelectorsCode-11219" target="_blank">search forum</a></td>
@@ -22881,12 +24809,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidReplicaNoSelectorsLabelsCode-11220" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidReplicaNoSelectorsLabelsCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidReplicaNoSelectorsLabelsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11220" class="error-name-code">
-              <code>ErrInvalidReplicaNoSelectorsLabelsCode-11220</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidreplicanoselectorslabelscode-11220/"><code>ErrInvalidReplicaNoSelectorsLabelsCode-11220</code></a>
             </td>
             <td>the replica set has no labels or selectors and cannot be exposed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidReplicaNoSelectorsLabelsCode-11220" target="_blank">search forum</a></td>
@@ -22904,12 +24834,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidReplicaSetNoSelectorsCode-11221" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidReplicaSetNoSelectorsCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidReplicaSetNoSelectorsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11221" class="error-name-code">
-              <code>ErrInvalidReplicaSetNoSelectorsCode-11221</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidreplicasetnoselectorscode-11221/"><code>ErrInvalidReplicaSetNoSelectorsCode-11221</code></a>
             </td>
             <td>invalid replicaset: no selectors, therefore cannot be exposed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidReplicaSetNoSelectorsCode-11221" target="_blank">search forum</a></td>
@@ -22927,12 +24859,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNoPortsFoundForHeadlessResourceCode-11222" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrNoPortsFoundForHeadlessResourceCode-more-info" onclick="toggle_visibility('meshkit-ErrNoPortsFoundForHeadlessResourceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11222" class="error-name-code">
-              <code>ErrNoPortsFoundForHeadlessResourceCode-11222</code>
+              <a href="/reference/error-codes/library-meshkit/errnoportsfoundforheadlessresourcecode-11222/"><code>ErrNoPortsFoundForHeadlessResourceCode-11222</code></a>
             </td>
             <td>no ports found for the non headless resource</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoPortsFoundForHeadlessResourceCode-11222" target="_blank">search forum</a></td>
@@ -22950,12 +24884,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnknownSessionAffinityErrCode-11223" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnknownSessionAffinityErrCode-more-info" onclick="toggle_visibility('meshkit-ErrUnknownSessionAffinityErrCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11223" class="error-name-code">
-              <code>ErrUnknownSessionAffinityErrCode-11223</code>
+              <a href="/reference/error-codes/library-meshkit/errunknownsessionaffinityerrcode-11223/"><code>ErrUnknownSessionAffinityErrCode-11223</code></a>
             </td>
             <td>unknown session affinity:</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnknownSessionAffinityErrCode-11223" target="_blank">search forum</a></td>
@@ -22973,12 +24909,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMatchExpressionsConvertionErrCode-11224" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrMatchExpressionsConvertionErrCode-more-info" onclick="toggle_visibility('meshkit-ErrMatchExpressionsConvertionErrCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11224" class="error-name-code">
-              <code>ErrMatchExpressionsConvertionErrCode-11224</code>
+              <a href="/reference/error-codes/library-meshkit/errmatchexpressionsconvertionerrcode-11224/"><code>ErrMatchExpressionsConvertionErrCode-11224</code></a>
             </td>
             <td>couldn&#39;t convert expressions - to map-based selector format</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMatchExpressionsConvertionErrCode-11224" target="_blank">search forum</a></td>
@@ -22996,12 +24934,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFailedToExtractPodSelectorErrCode-11225" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrFailedToExtractPodSelectorErrCode-more-info" onclick="toggle_visibility('meshkit-ErrFailedToExtractPodSelectorErrCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11225" class="error-name-code">
-              <code>ErrFailedToExtractPodSelectorErrCode-11225</code>
+              <a href="/reference/error-codes/library-meshkit/errfailedtoextractpodselectorerrcode-11225/"><code>ErrFailedToExtractPodSelectorErrCode-11225</code></a>
             </td>
             <td>cannot extract pod selector from </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailedToExtractPodSelectorErrCode-11225" target="_blank">search forum</a></td>
@@ -23019,12 +24959,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFailedToExtractPortsCode-11226" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrFailedToExtractPortsCode-more-info" onclick="toggle_visibility('meshkit-ErrFailedToExtractPortsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11226" class="error-name-code">
-              <code>ErrFailedToExtractPortsCode-11226</code>
+              <a href="/reference/error-codes/library-meshkit/errfailedtoextractportscode-11226/"><code>ErrFailedToExtractPortsCode-11226</code></a>
             </td>
             <td>cannot extract ports from </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailedToExtractPortsCode-11226" target="_blank">search forum</a></td>
@@ -23042,12 +24984,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFailedToExtractProtocolsErrCode-11227" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrFailedToExtractProtocolsErrCode-more-info" onclick="toggle_visibility('meshkit-ErrFailedToExtractProtocolsErrCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11227" class="error-name-code">
-              <code>ErrFailedToExtractProtocolsErrCode-11227</code>
+              <a href="/reference/error-codes/library-meshkit/errfailedtoextractprotocolserrcode-11227/"><code>ErrFailedToExtractProtocolsErrCode-11227</code></a>
             </td>
             <td>cannot extract protocols from </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailedToExtractProtocolsErrCode-11227" target="_blank">search forum</a></td>
@@ -23065,12 +25009,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCannotExposeObjectErrCode-11228" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCannotExposeObjectErrCode-more-info" onclick="toggle_visibility('meshkit-ErrCannotExposeObjectErrCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11228" class="error-name-code">
-              <code>ErrCannotExposeObjectErrCode-11228</code>
+              <a href="/reference/error-codes/library-meshkit/errcannotexposeobjecterrcode-11228/"><code>ErrCannotExposeObjectErrCode-11228</code></a>
             </td>
             <td>cannot expose a </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCannotExposeObjectErrCode-11228" target="_blank">search forum</a></td>
@@ -23088,12 +25034,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCvrtKomposeCode-11229" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCvrtKomposeCode-more-info" onclick="toggle_visibility('meshkit-ErrCvrtKomposeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11229" class="error-name-code">
-              <code>ErrCvrtKomposeCode-11229</code>
+              <a href="/reference/error-codes/library-meshkit/errcvrtkomposecode-11229/"><code>ErrCvrtKomposeCode-11229</code></a>
             </td>
             <td>Error converting the docker compose file into kubernetes manifests</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCvrtKomposeCode-11229" target="_blank">search forum</a></td>
@@ -23112,12 +25060,14 @@ ensure sufficient/correct permission to the chart directory/file</p>
         
           
           
+          
+          
             
           
           <tr id="ErrValidateDockerComposeFileCode-11230" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrValidateDockerComposeFileCode-more-info" onclick="toggle_visibility('meshkit-ErrValidateDockerComposeFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11230" class="error-name-code">
-              <code>ErrValidateDockerComposeFileCode-11230</code>
+              <a href="/reference/error-codes/library-meshkit/errvalidatedockercomposefilecode-11230/"><code>ErrValidateDockerComposeFileCode-11230</code></a>
             </td>
             <td>Invalid docker compose file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrValidateDockerComposeFileCode-11230" target="_blank">search forum</a></td>
@@ -23136,12 +25086,14 @@ Make sure that the schema is valid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrIncompatibleVersionCode-11231" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrIncompatibleVersionCode-more-info" onclick="toggle_visibility('meshkit-ErrIncompatibleVersionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11231" class="error-name-code">
-              <code>ErrIncompatibleVersionCode-11231</code>
+              <a href="/reference/error-codes/library-meshkit/errincompatibleversioncode-11231/"><code>ErrIncompatibleVersionCode-11231</code></a>
             </td>
             <td>This version of docker compose file is not compatible.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrIncompatibleVersionCode-11231" target="_blank">search forum</a></td>
@@ -23160,12 +25112,14 @@ Make sure that the schema is valid</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNoVersionCode-11232" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrNoVersionCode-more-info" onclick="toggle_visibility('meshkit-ErrNoVersionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11232" class="error-name-code">
-              <code>ErrNoVersionCode-11232</code>
+              <a href="/reference/error-codes/library-meshkit/errnoversioncode-11232/"><code>ErrNoVersionCode-11232</code></a>
             </td>
             <td>version not found in the docker compose file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoVersionCode-11232" target="_blank">search forum</a></td>
@@ -23184,12 +25138,14 @@ Add any version less than or equal to 3.3 if you cannot get the exact version fr
         
           
           
+          
+          
             
           
           <tr id="ErrGetSchemasCode-11234" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetSchemasCode-more-info" onclick="toggle_visibility('meshkit-ErrGetSchemasCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11234" class="error-name-code">
-              <code>ErrGetSchemasCode-11234</code>
+              <a href="/reference/error-codes/library-meshkit/errgetschemascode-11234/"><code>ErrGetSchemasCode-11234</code></a>
             </td>
             <td>Error getting schemas</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetSchemasCode-11234" target="_blank">search forum</a></td>
@@ -23207,12 +25163,14 @@ Add any version less than or equal to 3.3 if you cannot get the exact version fr
         
           
           
+          
+          
             
           
           <tr id="ErrGetAPIVersionCode-11235" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetAPIVersionCode-more-info" onclick="toggle_visibility('meshkit-ErrGetAPIVersionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11235" class="error-name-code">
-              <code>ErrGetAPIVersionCode-11235</code>
+              <a href="/reference/error-codes/library-meshkit/errgetapiversioncode-11235/"><code>ErrGetAPIVersionCode-11235</code></a>
             </td>
             <td>Error getting api version</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetAPIVersionCode-11235" target="_blank">search forum</a></td>
@@ -23230,12 +25188,14 @@ Add any version less than or equal to 3.3 if you cannot get the exact version fr
         
           
           
+          
+          
             
           
           <tr id="ErrGetAPIGroupCode-11236" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetAPIGroupCode-more-info" onclick="toggle_visibility('meshkit-ErrGetAPIGroupCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11236" class="error-name-code">
-              <code>ErrGetAPIGroupCode-11236</code>
+              <a href="/reference/error-codes/library-meshkit/errgetapigroupcode-11236/"><code>ErrGetAPIGroupCode-11236</code></a>
             </td>
             <td>Error getting api group</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetAPIGroupCode-11236" target="_blank">search forum</a></td>
@@ -23253,12 +25213,14 @@ Add any version less than or equal to 3.3 if you cannot get the exact version fr
         
           
           
+          
+          
             
           
           <tr id="ErrPopulatingYamlCode-11237" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrPopulatingYamlCode-more-info" onclick="toggle_visibility('meshkit-ErrPopulatingYamlCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11237" class="error-name-code">
-              <code>ErrPopulatingYamlCode-11237</code>
+              <a href="/reference/error-codes/library-meshkit/errpopulatingyamlcode-11237/"><code>ErrPopulatingYamlCode-11237</code></a>
             </td>
             <td>Error populating yaml</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPopulatingYamlCode-11237" target="_blank">search forum</a></td>
@@ -23276,12 +25238,14 @@ Add any version less than or equal to 3.3 if you cannot get the exact version fr
         
           
           
+          
+          
             
           
           <tr id="ErrAbsentFilterCode-11238" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrAbsentFilterCode-more-info" onclick="toggle_visibility('meshkit-ErrAbsentFilterCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11238" class="error-name-code">
-              <code>ErrAbsentFilterCode-11238</code>
+              <a href="/reference/error-codes/library-meshkit/errabsentfiltercode-11238/"><code>ErrAbsentFilterCode-11238</code></a>
             </td>
             <td>Error with passed filters</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrAbsentFilterCode-11238" target="_blank">search forum</a></td>
@@ -23299,12 +25263,14 @@ Add any version less than or equal to 3.3 if you cannot get the exact version fr
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingDirectoryCode-11239" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCreatingDirectoryCode-more-info" onclick="toggle_visibility('meshkit-ErrCreatingDirectoryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11239" class="error-name-code">
-              <code>ErrCreatingDirectoryCode-11239</code>
+              <a href="/reference/error-codes/library-meshkit/errcreatingdirectorycode-11239/"><code>ErrCreatingDirectoryCode-11239</code></a>
             </td>
             <td>could not create directory</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingDirectoryCode-11239" target="_blank">search forum</a></td>
@@ -23322,12 +25288,14 @@ Add any version less than or equal to 3.3 if you cannot get the exact version fr
         
           
           
+          
+          
             
           
           <tr id="ErrGetResourceIdentifierCode-11240" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetResourceIdentifierCode-more-info" onclick="toggle_visibility('meshkit-ErrGetResourceIdentifierCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11240" class="error-name-code">
-              <code>ErrGetResourceIdentifierCode-11240</code>
+              <a href="/reference/error-codes/library-meshkit/errgetresourceidentifiercode-11240/"><code>ErrGetResourceIdentifierCode-11240</code></a>
             </td>
             <td>Error extracting the resource identifier name</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetResourceIdentifierCode-11240" target="_blank">search forum</a></td>
@@ -23347,12 +25315,14 @@ Make sure the filters are appropriate for the given manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidSizeFileCode-11241" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidSizeFileCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidSizeFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11241" class="error-name-code">
-              <code>ErrInvalidSizeFileCode-11241</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidsizefilecode-11241/"><code>ErrInvalidSizeFileCode-11241</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidSizeFileCode-11241" target="_blank">search forum</a></td>
@@ -23370,12 +25340,14 @@ Make sure the filters are appropriate for the given manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCloningRepoCode-11242" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCloningRepoCode-more-info" onclick="toggle_visibility('meshkit-ErrCloningRepoCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11242" class="error-name-code">
-              <code>ErrCloningRepoCode-11242</code>
+              <a href="/reference/error-codes/library-meshkit/errcloningrepocode-11242/"><code>ErrCloningRepoCode-11242</code></a>
             </td>
             <td>could not clone the repo</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCloningRepoCode-11242" target="_blank">search forum</a></td>
@@ -23393,12 +25365,14 @@ Make sure the filters are appropriate for the given manifest</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFileNotFoundCode-11244" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrFileNotFoundCode-more-info" onclick="toggle_visibility('meshkit-ErrFileNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11244" class="error-name-code">
-              <code>ErrFileNotFoundCode-11244</code>
+              <a href="/reference/error-codes/library-meshkit/errfilenotfoundcode-11244/"><code>ErrFileNotFoundCode-11244</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFileNotFoundCode-11244" target="_blank">search forum</a></td>
@@ -23417,10 +25391,12 @@ check if file exists</p>
         
           
           
+          
+          
           <tr id="ErrUnmarshalUnsupportedTypeCode-11250" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnmarshalUnsupportedTypeCode-more-info" onclick="toggle_visibility('meshkit-ErrUnmarshalUnsupportedTypeCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11250" class="error-name-code">
-              <code>ErrUnmarshalUnsupportedTypeCode-11250</code>
+              <a href="/reference/error-codes/library-meshkit/errunmarshalunsupportedtypecode-11250/"><code>ErrUnmarshalUnsupportedTypeCode-11250</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnmarshalUnsupportedTypeCode-11250" target="_blank">search forum</a></td>
@@ -23438,10 +25414,12 @@ check if file exists</p>
         
           
           
+          
+          
           <tr id="ErrUnmarshalUnsupportedValueCode-11251" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnmarshalUnsupportedValueCode-more-info" onclick="toggle_visibility('meshkit-ErrUnmarshalUnsupportedValueCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11251" class="error-name-code">
-              <code>ErrUnmarshalUnsupportedValueCode-11251</code>
+              <a href="/reference/error-codes/library-meshkit/errunmarshalunsupportedvaluecode-11251/"><code>ErrUnmarshalUnsupportedValueCode-11251</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnmarshalUnsupportedValueCode-11251" target="_blank">search forum</a></td>
@@ -23459,12 +25437,14 @@ check if file exists</p>
         
           
           
+          
+          
             
           
           <tr id="ErrChartUrlEmptyCode-11252" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrChartUrlEmptyCode-more-info" onclick="toggle_visibility('meshkit-ErrChartUrlEmptyCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11252" class="error-name-code">
-              <code>ErrChartUrlEmptyCode-11252</code>
+              <a href="/reference/error-codes/library-meshkit/errcharturlemptycode-11252/"><code>ErrChartUrlEmptyCode-11252</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrChartUrlEmptyCode-11252" target="_blank">search forum</a></td>
@@ -23482,12 +25462,14 @@ check if file exists</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNoPackageFoundCode-11253" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrNoPackageFoundCode-more-info" onclick="toggle_visibility('meshkit-ErrNoPackageFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11253" class="error-name-code">
-              <code>ErrNoPackageFoundCode-11253</code>
+              <a href="/reference/error-codes/library-meshkit/errnopackagefoundcode-11253/"><code>ErrNoPackageFoundCode-11253</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoPackageFoundCode-11253" target="_blank">search forum</a></td>
@@ -23505,12 +25487,14 @@ check if file exists</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnknownKindCode-11254" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnknownKindCode-more-info" onclick="toggle_visibility('meshkit-ErrUnknownKindCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11254" class="error-name-code">
-              <code>ErrUnknownKindCode-11254</code>
+              <a href="/reference/error-codes/library-meshkit/errunknownkindcode-11254/"><code>ErrUnknownKindCode-11254</code></a>
             </td>
             <td>unsupported connection kind detected</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnknownKindCode-11254" target="_blank">search forum</a></td>
@@ -23528,10 +25512,12 @@ check if file exists</p>
         
           
           
+          
+          
           <tr id="ErrUnknownHostCode-11255" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnknownHostCode-more-info" onclick="toggle_visibility('meshkit-ErrUnknownHostCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11255" class="error-name-code">
-              <code>ErrUnknownHostCode-11255</code>
+              <a href="/reference/error-codes/library-meshkit/errunknownhostcode-11255/"><code>ErrUnknownHostCode-11255</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnknownHostCode-11255" target="_blank">search forum</a></td>
@@ -23549,12 +25535,14 @@ check if file exists</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptySchemaCode-11256" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrEmptySchemaCode-more-info" onclick="toggle_visibility('meshkit-ErrEmptySchemaCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11256" class="error-name-code">
-              <code>ErrEmptySchemaCode-11256</code>
+              <a href="/reference/error-codes/library-meshkit/erremptyschemacode-11256/"><code>ErrEmptySchemaCode-11256</code></a>
             </td>
             <td>Empty schema for the component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptySchemaCode-11256" target="_blank">search forum</a></td>
@@ -23572,12 +25560,14 @@ check if file exists</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMarshalingRegisteryAttemptsCode-11257" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrMarshalingRegisteryAttemptsCode-more-info" onclick="toggle_visibility('meshkit-ErrMarshalingRegisteryAttemptsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11257" class="error-name-code">
-              <code>ErrMarshalingRegisteryAttemptsCode-11257</code>
+              <a href="/reference/error-codes/library-meshkit/errmarshalingregisteryattemptscode-11257/"><code>ErrMarshalingRegisteryAttemptsCode-11257</code></a>
             </td>
             <td>Error marshaling RegisterAttempts to JSON</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMarshalingRegisteryAttemptsCode-11257" target="_blank">search forum</a></td>
@@ -23595,12 +25585,14 @@ check if file exists</p>
         
           
           
+          
+          
             
           
           <tr id="ErrWritingRegisteryAttemptsCode-11258" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrWritingRegisteryAttemptsCode-more-info" onclick="toggle_visibility('meshkit-ErrWritingRegisteryAttemptsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11258" class="error-name-code">
-              <code>ErrWritingRegisteryAttemptsCode-11258</code>
+              <a href="/reference/error-codes/library-meshkit/errwritingregisteryattemptscode-11258/"><code>ErrWritingRegisteryAttemptsCode-11258</code></a>
             </td>
             <td>Error writing RegisteryAttempts JSON data to file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWritingRegisteryAttemptsCode-11258" target="_blank">search forum</a></td>
@@ -23618,12 +25610,14 @@ check if file exists</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRegisteringEntityCode-11259" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrRegisteringEntityCode-more-info" onclick="toggle_visibility('meshkit-ErrRegisteringEntityCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11259" class="error-name-code">
-              <code>ErrRegisteringEntityCode-11259</code>
+              <a href="/reference/error-codes/library-meshkit/errregisteringentitycode-11259/"><code>ErrRegisteringEntityCode-11259</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRegisteringEntityCode-11259" target="_blank">search forum</a></td>
@@ -23641,10 +25635,12 @@ check if file exists</p>
         
           
           
+          
+          
           <tr id="ErrUnknownHostInMapCode-11260" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnknownHostInMapCode-more-info" onclick="toggle_visibility('meshkit-ErrUnknownHostInMapCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11260" class="error-name-code">
-              <code>ErrUnknownHostInMapCode-11260</code>
+              <a href="/reference/error-codes/library-meshkit/errunknownhostinmapcode-11260/"><code>ErrUnknownHostInMapCode-11260</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnknownHostInMapCode-11260" target="_blank">search forum</a></td>
@@ -23662,12 +25658,14 @@ check if file exists</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingUserDataDirectoryCode-11261" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCreatingUserDataDirectoryCode-more-info" onclick="toggle_visibility('meshkit-ErrCreatingUserDataDirectoryCode-more-info');">
             <td class="tbl-severity-fatal">Fatal</td>
             <td id=" -11261" class="error-name-code">
-              <code>ErrCreatingUserDataDirectoryCode-11261</code>
+              <a href="/reference/error-codes/library-meshkit/errcreatinguserdatadirectorycode-11261/"><code>ErrCreatingUserDataDirectoryCode-11261</code></a>
             </td>
             <td>Unable to create the directory for storing user data at: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingUserDataDirectoryCode-11261" target="_blank">search forum</a></td>
@@ -23685,10 +25683,12 @@ check if file exists</p>
         
           
           
+          
+          
           <tr id="ErrGetByIdCode-11262" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetByIdCode-more-info" onclick="toggle_visibility('meshkit-ErrGetByIdCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11262" class="error-name-code">
-              <code>ErrGetByIdCode-11262</code>
+              <a href="/reference/error-codes/library-meshkit/errgetbyidcode-11262/"><code>ErrGetByIdCode-11262</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetByIdCode-11262" target="_blank">search forum</a></td>
@@ -23706,12 +25706,14 @@ check if file exists</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSeekFailedCode-11263" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrSeekFailedCode-more-info" onclick="toggle_visibility('meshkit-ErrSeekFailedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11263" class="error-name-code">
-              <code>ErrSeekFailedCode-11263</code>
+              <a href="/reference/error-codes/library-meshkit/errseekfailedcode-11263/"><code>ErrSeekFailedCode-11263</code></a>
             </td>
             <td>Unable to reset the position within the OCI data.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSeekFailedCode-11263" target="_blank">search forum</a></td>
@@ -23729,12 +25731,14 @@ check if file exists</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreateLayerCode-11264" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCreateLayerCode-more-info" onclick="toggle_visibility('meshkit-ErrCreateLayerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11264" class="error-name-code">
-              <code>ErrCreateLayerCode-11264</code>
+              <a href="/reference/error-codes/library-meshkit/errcreatelayercode-11264/"><code>ErrCreateLayerCode-11264</code></a>
             </td>
             <td>Failed to create layer</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateLayerCode-11264" target="_blank">search forum</a></td>
@@ -23754,12 +25758,14 @@ Check for any underlying IO errors.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSavingImageCode-11265" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrSavingImageCode-more-info" onclick="toggle_visibility('meshkit-ErrSavingImageCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11265" class="error-name-code">
-              <code>ErrSavingImageCode-11265</code>
+              <a href="/reference/error-codes/library-meshkit/errsavingimagecode-11265/"><code>ErrSavingImageCode-11265</code></a>
             </td>
             <td>Failed to save image</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSavingImageCode-11265" target="_blank">search forum</a></td>
@@ -23779,12 +25785,14 @@ Check for any underlying IO errors.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidVersionCode-11266" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidVersionCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidVersionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11266" class="error-name-code">
-              <code>ErrInvalidVersionCode-11266</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidversioncode-11266/"><code>ErrInvalidVersionCode-11266</code></a>
             </td>
             <td>invalid/incompatible semver version</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidVersionCode-11266" target="_blank">search forum</a></td>
@@ -23802,12 +25810,14 @@ Check for any underlying IO errors.</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDirPkgUnitParseFailCode-11267" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrDirPkgUnitParseFailCode-more-info" onclick="toggle_visibility('meshkit-ErrDirPkgUnitParseFailCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11267" class="error-name-code">
-              <code>ErrDirPkgUnitParseFailCode-11267</code>
+              <a href="/reference/error-codes/library-meshkit/errdirpkgunitparsefailcode-11267/"><code>ErrDirPkgUnitParseFailCode-11267</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDirPkgUnitParseFailCode-11267" target="_blank">search forum</a></td>
@@ -23827,12 +25837,14 @@ If there is an internal error, please try again after some time</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetEntityCode-11268" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetEntityCode-more-info" onclick="toggle_visibility('meshkit-ErrGetEntityCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11268" class="error-name-code">
-              <code>ErrGetEntityCode-11268</code>
+              <a href="/reference/error-codes/library-meshkit/errgetentitycode-11268/"><code>ErrGetEntityCode-11268</code></a>
             </td>
             <td>Could not parse the given data into any Meshery entity</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetEntityCode-11268" target="_blank">search forum</a></td>
@@ -23852,12 +25864,14 @@ Ensure that the schemaVersion used is valid and is supported by Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRegisterEntityCode-11269" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrRegisterEntityCode-more-info" onclick="toggle_visibility('meshkit-ErrRegisterEntityCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11269" class="error-name-code">
-              <code>ErrRegisterEntityCode-11269</code>
+              <a href="/reference/error-codes/library-meshkit/errregisterentitycode-11269/"><code>ErrRegisterEntityCode-11269</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRegisterEntityCode-11269" target="_blank">search forum</a></td>
@@ -23875,12 +25889,14 @@ Ensure that the schemaVersion used is valid and is supported by Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrImportFailureCode-11270" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrImportFailureCode-more-info" onclick="toggle_visibility('meshkit-ErrImportFailureCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11270" class="error-name-code">
-              <code>ErrImportFailureCode-11270</code>
+              <a href="/reference/error-codes/library-meshkit/errimportfailurecode-11270/"><code>ErrImportFailureCode-11270</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrImportFailureCode-11270" target="_blank">search forum</a></td>
@@ -23899,12 +25915,14 @@ Entity version might not be supported by Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrMissingRegistrantCode-11271" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrMissingRegistrantCode-more-info" onclick="toggle_visibility('meshkit-ErrMissingRegistrantCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11271" class="error-name-code">
-              <code>ErrMissingRegistrantCode-11271</code>
+              <a href="/reference/error-codes/library-meshkit/errmissingregistrantcode-11271/"><code>ErrMissingRegistrantCode-11271</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMissingRegistrantCode-11271" target="_blank">search forum</a></td>
@@ -23922,12 +25940,14 @@ Entity version might not be supported by Meshery</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSeedingComponentsCode-11272" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrSeedingComponentsCode-more-info" onclick="toggle_visibility('meshkit-ErrSeedingComponentsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11272" class="error-name-code">
-              <code>ErrSeedingComponentsCode-11272</code>
+              <a href="/reference/error-codes/library-meshkit/errseedingcomponentscode-11272/"><code>ErrSeedingComponentsCode-11272</code></a>
             </td>
             <td>Failed to register the given models into meshery&#39;s registry</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSeedingComponentsCode-11272" target="_blank">search forum</a></td>
@@ -23947,10 +25967,12 @@ If it is an internal error, please try again after some time</p>
         
           
           
+          
+          
           <tr id="ErrInvalidSchemaVersionCode-11273" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidSchemaVersionCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidSchemaVersionCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11273" class="error-name-code">
-              <code>ErrInvalidSchemaVersionCode-11273</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidschemaversioncode-11273/"><code>ErrInvalidSchemaVersionCode-11273</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidSchemaVersionCode-11273" target="_blank">search forum</a></td>
@@ -23968,12 +25990,14 @@ If it is an internal error, please try again after some time</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFileWalkDirCode-11274" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrFileWalkDirCode-more-info" onclick="toggle_visibility('meshkit-ErrFileWalkDirCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11274" class="error-name-code">
-              <code>ErrFileWalkDirCode-11274</code>
+              <a href="/reference/error-codes/library-meshkit/errfilewalkdircode-11274/"><code>ErrFileWalkDirCode-11274</code></a>
             </td>
             <td>Error while walking through directory</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFileWalkDirCode-11274" target="_blank">search forum</a></td>
@@ -23991,12 +26015,14 @@ If it is an internal error, please try again after some time</p>
         
           
           
+          
+          
             
           
           <tr id="ErrRelPathCode-11275" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrRelPathCode-more-info" onclick="toggle_visibility('meshkit-ErrRelPathCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11275" class="error-name-code">
-              <code>ErrRelPathCode-11275</code>
+              <a href="/reference/error-codes/library-meshkit/errrelpathcode-11275/"><code>ErrRelPathCode-11275</code></a>
             </td>
             <td>Error determining relative path</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRelPathCode-11275" target="_blank">search forum</a></td>
@@ -24014,12 +26040,14 @@ If it is an internal error, please try again after some time</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCopyFileCode-11276" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCopyFileCode-more-info" onclick="toggle_visibility('meshkit-ErrCopyFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11276" class="error-name-code">
-              <code>ErrCopyFileCode-11276</code>
+              <a href="/reference/error-codes/library-meshkit/errcopyfilecode-11276/"><code>ErrCopyFileCode-11276</code></a>
             </td>
             <td>Error copying file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCopyFileCode-11276" target="_blank">search forum</a></td>
@@ -24037,12 +26065,14 @@ If it is an internal error, please try again after some time</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCloseFileCode-11277" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCloseFileCode-more-info" onclick="toggle_visibility('meshkit-ErrCloseFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11277" class="error-name-code">
-              <code>ErrCloseFileCode-11277</code>
+              <a href="/reference/error-codes/library-meshkit/errclosefilecode-11277/"><code>ErrCloseFileCode-11277</code></a>
             </td>
             <td>Error closing file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCloseFileCode-11277" target="_blank">search forum</a></td>
@@ -24060,12 +26090,14 @@ If it is an internal error, please try again after some time</p>
         
           
           
+          
+          
             
           
           <tr id="ErrOpenFileCode-11278" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrOpenFileCode-more-info" onclick="toggle_visibility('meshkit-ErrOpenFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11278" class="error-name-code">
-              <code>ErrOpenFileCode-11278</code>
+              <a href="/reference/error-codes/library-meshkit/erropenfilecode-11278/"><code>ErrOpenFileCode-11278</code></a>
             </td>
             <td>unable to open file: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOpenFileCode-11278" target="_blank">search forum</a></td>
@@ -24083,12 +26115,14 @@ If it is an internal error, please try again after some time</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGoogleJwtInvalidCode-11279" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGoogleJwtInvalidCode-more-info" onclick="toggle_visibility('meshkit-ErrGoogleJwtInvalidCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11279" class="error-name-code">
-              <code>ErrGoogleJwtInvalidCode-11279</code>
+              <a href="/reference/error-codes/library-meshkit/errgooglejwtinvalidcode-11279/"><code>ErrGoogleJwtInvalidCode-11279</code></a>
             </td>
             <td>Invalid JWT credentials</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGoogleJwtInvalidCode-11279" target="_blank">search forum</a></td>
@@ -24106,12 +26140,14 @@ If it is an internal error, please try again after some time</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGoogleSheetSRVCode-11280" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGoogleSheetSRVCode-more-info" onclick="toggle_visibility('meshkit-ErrGoogleSheetSRVCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11280" class="error-name-code">
-              <code>ErrGoogleSheetSRVCode-11280</code>
+              <a href="/reference/error-codes/library-meshkit/errgooglesheetsrvcode-11280/"><code>ErrGoogleSheetSRVCode-11280</code></a>
             </td>
             <td>Error while creating Google Sheets Service</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGoogleSheetSRVCode-11280" target="_blank">search forum</a></td>
@@ -24129,12 +26165,14 @@ If it is an internal error, please try again after some time</p>
         
           
           
+          
+          
             
           
           <tr id="ErrWritingIntoFileCode-11281" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrWritingIntoFileCode-more-info" onclick="toggle_visibility('meshkit-ErrWritingIntoFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11281" class="error-name-code">
-              <code>ErrWritingIntoFileCode-11281</code>
+              <a href="/reference/error-codes/library-meshkit/errwritingintofilecode-11281/"><code>ErrWritingIntoFileCode-11281</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWritingIntoFileCode-11281" target="_blank">search forum</a></td>
@@ -24154,10 +26192,12 @@ check if the file is corrupted</p>
         
           
           
+          
+          
           <tr id="ErrUnsupportedExtensionCode-11282" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnsupportedExtensionCode-more-info" onclick="toggle_visibility('meshkit-ErrUnsupportedExtensionCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11282" class="error-name-code">
-              <code>ErrUnsupportedExtensionCode-11282</code>
+              <a href="/reference/error-codes/library-meshkit/errunsupportedextensioncode-11282/"><code>ErrUnsupportedExtensionCode-11282</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnsupportedExtensionCode-11282" target="_blank">search forum</a></td>
@@ -24175,10 +26215,12 @@ check if the file is corrupted</p>
         
           
           
+          
+          
           <tr id="ErrUnsupportedExtensionForOperationCode-11283" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnsupportedExtensionForOperationCode-more-info" onclick="toggle_visibility('meshkit-ErrUnsupportedExtensionForOperationCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11283" class="error-name-code">
-              <code>ErrUnsupportedExtensionForOperationCode-11283</code>
+              <a href="/reference/error-codes/library-meshkit/errunsupportedextensionforoperationcode-11283/"><code>ErrUnsupportedExtensionForOperationCode-11283</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnsupportedExtensionForOperationCode-11283" target="_blank">search forum</a></td>
@@ -24196,10 +26238,12 @@ check if the file is corrupted</p>
         
           
           
+          
+          
           <tr id="ErrFailedToIdentifyFileCode-11284" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrFailedToIdentifyFileCode-more-info" onclick="toggle_visibility('meshkit-ErrFailedToIdentifyFileCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11284" class="error-name-code">
-              <code>ErrFailedToIdentifyFileCode-11284</code>
+              <a href="/reference/error-codes/library-meshkit/errfailedtoidentifyfilecode-11284/"><code>ErrFailedToIdentifyFileCode-11284</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailedToIdentifyFileCode-11284" target="_blank">search forum</a></td>
@@ -24217,10 +26261,12 @@ check if the file is corrupted</p>
         
           
           
+          
+          
           <tr id="ErrSanitizingFileCode-11285" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrSanitizingFileCode-more-info" onclick="toggle_visibility('meshkit-ErrSanitizingFileCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11285" class="error-name-code">
-              <code>ErrSanitizingFileCode-11285</code>
+              <a href="/reference/error-codes/library-meshkit/errsanitizingfilecode-11285/"><code>ErrSanitizingFileCode-11285</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSanitizingFileCode-11285" target="_blank">search forum</a></td>
@@ -24238,10 +26284,12 @@ check if the file is corrupted</p>
         
           
           
+          
+          
           <tr id="ErrInvalidYamlCode-11286" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidYamlCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidYamlCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11286" class="error-name-code">
-              <code>ErrInvalidYamlCode-11286</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidyamlcode-11286/"><code>ErrInvalidYamlCode-11286</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidYamlCode-11286" target="_blank">search forum</a></td>
@@ -24259,10 +26307,12 @@ check if the file is corrupted</p>
         
           
           
+          
+          
           <tr id="ErrInvalidJsonCode-11287" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidJsonCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidJsonCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11287" class="error-name-code">
-              <code>ErrInvalidJsonCode-11287</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidjsoncode-11287/"><code>ErrInvalidJsonCode-11287</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidJsonCode-11287" target="_blank">search forum</a></td>
@@ -24280,10 +26330,12 @@ check if the file is corrupted</p>
         
           
           
+          
+          
           <tr id="ErrFailedToExtractTarCode-11288" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrFailedToExtractTarCode-more-info" onclick="toggle_visibility('meshkit-ErrFailedToExtractTarCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11288" class="error-name-code">
-              <code>ErrFailedToExtractTarCode-11288</code>
+              <a href="/reference/error-codes/library-meshkit/errfailedtoextracttarcode-11288/"><code>ErrFailedToExtractTarCode-11288</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFailedToExtractTarCode-11288" target="_blank">search forum</a></td>
@@ -24301,10 +26353,12 @@ check if the file is corrupted</p>
         
           
           
+          
+          
           <tr id="ErrUnsupportedFileTypeCode-11289" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnsupportedFileTypeCode-more-info" onclick="toggle_visibility('meshkit-ErrUnsupportedFileTypeCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11289" class="error-name-code">
-              <code>ErrUnsupportedFileTypeCode-11289</code>
+              <a href="/reference/error-codes/library-meshkit/errunsupportedfiletypecode-11289/"><code>ErrUnsupportedFileTypeCode-11289</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnsupportedFileTypeCode-11289" target="_blank">search forum</a></td>
@@ -24322,10 +26376,12 @@ check if the file is corrupted</p>
         
           
           
+          
+          
           <tr id="ErrInvalidKubernetesManifestCode-11290" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidKubernetesManifestCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidKubernetesManifestCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11290" class="error-name-code">
-              <code>ErrInvalidKubernetesManifestCode-11290</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidkubernetesmanifestcode-11290/"><code>ErrInvalidKubernetesManifestCode-11290</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidKubernetesManifestCode-11290" target="_blank">search forum</a></td>
@@ -24343,10 +26399,12 @@ check if the file is corrupted</p>
         
           
           
+          
+          
           <tr id="ErrInvalidMesheryDesignCode-11291" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidMesheryDesignCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidMesheryDesignCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11291" class="error-name-code">
-              <code>ErrInvalidMesheryDesignCode-11291</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidmesherydesigncode-11291/"><code>ErrInvalidMesheryDesignCode-11291</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidMesheryDesignCode-11291" target="_blank">search forum</a></td>
@@ -24364,10 +26422,12 @@ check if the file is corrupted</p>
         
           
           
+          
+          
           <tr id="ErrInvalidHelmChartCode-11292" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidHelmChartCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidHelmChartCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11292" class="error-name-code">
-              <code>ErrInvalidHelmChartCode-11292</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidhelmchartcode-11292/"><code>ErrInvalidHelmChartCode-11292</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidHelmChartCode-11292" target="_blank">search forum</a></td>
@@ -24385,10 +26445,12 @@ check if the file is corrupted</p>
         
           
           
+          
+          
           <tr id="ErrInvalidDockerComposeCode-11293" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidDockerComposeCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidDockerComposeCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11293" class="error-name-code">
-              <code>ErrInvalidDockerComposeCode-11293</code>
+              <a href="/reference/error-codes/library-meshkit/errinvaliddockercomposecode-11293/"><code>ErrInvalidDockerComposeCode-11293</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidDockerComposeCode-11293" target="_blank">search forum</a></td>
@@ -24406,10 +26468,12 @@ check if the file is corrupted</p>
         
           
           
+          
+          
           <tr id="ErrInvalidKustomizationCode-11294" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidKustomizationCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidKustomizationCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11294" class="error-name-code">
-              <code>ErrInvalidKustomizationCode-11294</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidkustomizationcode-11294/"><code>ErrInvalidKustomizationCode-11294</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidKustomizationCode-11294" target="_blank">search forum</a></td>
@@ -24427,12 +26491,14 @@ check if the file is corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrNoTarInsideOCICode-11295" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrNoTarInsideOCICode-more-info" onclick="toggle_visibility('meshkit-ErrNoTarInsideOCICode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11295" class="error-name-code">
-              <code>ErrNoTarInsideOCICode-11295</code>
+              <a href="/reference/error-codes/library-meshkit/errnotarinsideocicode-11295/"><code>ErrNoTarInsideOCICode-11295</code></a>
             </td>
             <td>No tar file found inside OCI image</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoTarInsideOCICode-11295" target="_blank">search forum</a></td>
@@ -24450,12 +26516,14 @@ check if the file is corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyOCIImageCode-11296" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrEmptyOCIImageCode-more-info" onclick="toggle_visibility('meshkit-ErrEmptyOCIImageCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11296" class="error-name-code">
-              <code>ErrEmptyOCIImageCode-11296</code>
+              <a href="/reference/error-codes/library-meshkit/erremptyociimagecode-11296/"><code>ErrEmptyOCIImageCode-11296</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyOCIImageCode-11296" target="_blank">search forum</a></td>
@@ -24473,12 +26541,14 @@ check if the file is corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUnCompressOCIArtifactCode-11297" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnCompressOCIArtifactCode-more-info" onclick="toggle_visibility('meshkit-ErrUnCompressOCIArtifactCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11297" class="error-name-code">
-              <code>ErrUnCompressOCIArtifactCode-11297</code>
+              <a href="/reference/error-codes/library-meshkit/erruncompressociartifactcode-11297/"><code>ErrUnCompressOCIArtifactCode-11297</code></a>
             </td>
             <td>Failed to uncompress OCI artifact</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnCompressOCIArtifactCode-11297" target="_blank">search forum</a></td>
@@ -24497,12 +26567,14 @@ OCI artifact may be corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrWaklingLocalDirectoryCode-11298" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrWaklingLocalDirectoryCode-more-info" onclick="toggle_visibility('meshkit-ErrWaklingLocalDirectoryCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11298" class="error-name-code">
-              <code>ErrWaklingLocalDirectoryCode-11298</code>
+              <a href="/reference/error-codes/library-meshkit/errwaklinglocaldirectorycode-11298/"><code>ErrWaklingLocalDirectoryCode-11298</code></a>
             </td>
             <td>Failed to walk local directory</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrWaklingLocalDirectoryCode-11298" target="_blank">search forum</a></td>
@@ -24521,12 +26593,14 @@ local directory may be corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDecodePatternCode-11299" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrDecodePatternCode-more-info" onclick="toggle_visibility('meshkit-ErrDecodePatternCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11299" class="error-name-code">
-              <code>ErrDecodePatternCode-11299</code>
+              <a href="/reference/error-codes/library-meshkit/errdecodepatterncode-11299/"><code>ErrDecodePatternCode-11299</code></a>
             </td>
             <td>Error failed to decode design data into go slice</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDecodePatternCode-11299" target="_blank">search forum</a></td>
@@ -24544,10 +26618,12 @@ local directory may be corrupted</p>
         
           
           
+          
+          
           <tr id="ErrFileTypeNotSupportedForDesignConversionCode-11300" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrFileTypeNotSupportedForDesignConversionCode-more-info" onclick="toggle_visibility('meshkit-ErrFileTypeNotSupportedForDesignConversionCode-more-info');">
             <td class="tbl-severity-info"></td>
             <td id=" -11300" class="error-name-code">
-              <code>ErrFileTypeNotSupportedForDesignConversionCode-11300</code>
+              <a href="/reference/error-codes/library-meshkit/errfiletypenotsupportedfordesignconversioncode-11300/"><code>ErrFileTypeNotSupportedForDesignConversionCode-11300</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFileTypeNotSupportedForDesignConversionCode-11300" target="_blank">search forum</a></td>
@@ -24565,12 +26641,14 @@ local directory may be corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrFileReadCode-11304" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrFileReadCode-more-info" onclick="toggle_visibility('meshkit-ErrFileReadCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11304" class="error-name-code">
-              <code>ErrFileReadCode-11304</code>
+              <a href="/reference/error-codes/library-meshkit/errfilereadcode-11304/"><code>ErrFileReadCode-11304</code></a>
             </td>
             <td>File read error</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFileReadCode-11304" target="_blank">search forum</a></td>
@@ -24588,12 +26666,14 @@ local directory may be corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrReadCSVRowCode-11306" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrReadCSVRowCode-more-info" onclick="toggle_visibility('meshkit-ErrReadCSVRowCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11306" class="error-name-code">
-              <code>ErrReadCSVRowCode-11306</code>
+              <a href="/reference/error-codes/library-meshkit/errreadcsvrowcode-11306/"><code>ErrReadCSVRowCode-11306</code></a>
             </td>
             <td>error reading csv </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrReadCSVRowCode-11306" target="_blank">search forum</a></td>
@@ -24611,12 +26691,14 @@ local directory may be corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCSVFileNotFoundCode-11307" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCSVFileNotFoundCode-more-info" onclick="toggle_visibility('meshkit-ErrCSVFileNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11307" class="error-name-code">
-              <code>ErrCSVFileNotFoundCode-11307</code>
+              <a href="/reference/error-codes/library-meshkit/errcsvfilenotfoundcode-11307/"><code>ErrCSVFileNotFoundCode-11307</code></a>
             </td>
             <td>error reading csv file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCSVFileNotFoundCode-11307" target="_blank">search forum</a></td>
@@ -24634,12 +26716,14 @@ local directory may be corrupted</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateComponentsCode-11308" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUpdateComponentsCode-more-info" onclick="toggle_visibility('meshkit-ErrUpdateComponentsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11308" class="error-name-code">
-              <code>ErrUpdateComponentsCode-11308</code>
+              <a href="/reference/error-codes/library-meshkit/errupdatecomponentscode-11308/"><code>ErrUpdateComponentsCode-11308</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateComponentsCode-11308" target="_blank">search forum</a></td>
@@ -24659,12 +26743,14 @@ Regenerate corrupted component</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGeneratesComponentCode-11309" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGeneratesComponentCode-more-info" onclick="toggle_visibility('meshkit-ErrGeneratesComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11309" class="error-name-code">
-              <code>ErrGeneratesComponentCode-11309</code>
+              <a href="/reference/error-codes/library-meshkit/errgeneratescomponentcode-11309/"><code>ErrGeneratesComponentCode-11309</code></a>
             </td>
             <td>error generating comp %s of model %s</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGeneratesComponentCode-11309" target="_blank">search forum</a></td>
@@ -24682,12 +26768,14 @@ Regenerate corrupted component</p>
         
           
           
+          
+          
             
           
           <tr id="ErrUpdateRelationshipFileCode-11310" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUpdateRelationshipFileCode-more-info" onclick="toggle_visibility('meshkit-ErrUpdateRelationshipFileCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11310" class="error-name-code">
-              <code>ErrUpdateRelationshipFileCode-11310</code>
+              <a href="/reference/error-codes/library-meshkit/errupdaterelationshipfilecode-11310/"><code>ErrUpdateRelationshipFileCode-11310</code></a>
             </td>
             <td>error while comparing files</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUpdateRelationshipFileCode-11310" target="_blank">search forum</a></td>
@@ -24705,12 +26793,14 @@ Regenerate corrupted component</p>
         
           
           
+          
+          
             
           
           <tr id="ErrModelTimeoutCode-11311" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrModelTimeoutCode-more-info" onclick="toggle_visibility('meshkit-ErrModelTimeoutCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11311" class="error-name-code">
-              <code>ErrModelTimeoutCode-11311</code>
+              <a href="/reference/error-codes/library-meshkit/errmodeltimeoutcode-11311/"><code>ErrModelTimeoutCode-11311</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrModelTimeoutCode-11311" target="_blank">search forum</a></td>
@@ -24732,12 +26822,14 @@ Review the source URL for the model</p>
         
           
           
+          
+          
             
           
           <tr id="ErrModelSkippedCode-11312" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrModelSkippedCode-more-info" onclick="toggle_visibility('meshkit-ErrModelSkippedCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11312" class="error-name-code">
-              <code>ErrModelSkippedCode-11312</code>
+              <a href="/reference/error-codes/library-meshkit/errmodelskippedcode-11312/"><code>ErrModelSkippedCode-11312</code></a>
             </td>
             <td></td>
             <td><a href="https://discuss.meshery.io/search?q=ErrModelSkippedCode-11312" target="_blank">search forum</a></td>
@@ -24755,10 +26847,12 @@ Review the source URL for the model</p>
         
           
           
+          
+          
           <tr id="ErrLoadPatternCode-11315" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrLoadPatternCode-more-info" onclick="toggle_visibility('meshkit-ErrLoadPatternCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -11315" class="error-name-code">
-              <code>ErrLoadPatternCode-11315</code>
+              <a href="/reference/error-codes/library-meshkit/errloadpatterncode-11315/"><code>ErrLoadPatternCode-11315</code></a>
             </td>
             <td>Failed to load pattern file</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLoadPatternCode-11315" target="_blank">search forum</a></td>
@@ -24776,10 +26870,12 @@ Review the source URL for the model</p>
         
           
           
+          
+          
           <tr id="ErrConvertK8sCode-11316" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrConvertK8sCode-more-info" onclick="toggle_visibility('meshkit-ErrConvertK8sCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -11316" class="error-name-code">
-              <code>ErrConvertK8sCode-11316</code>
+              <a href="/reference/error-codes/library-meshkit/errconvertk8scode-11316/"><code>ErrConvertK8sCode-11316</code></a>
             </td>
             <td>Failed to convert to Kubernetes manifest</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConvertK8sCode-11316" target="_blank">search forum</a></td>
@@ -24797,10 +26893,12 @@ Review the source URL for the model</p>
         
           
           
+          
+          
           <tr id="ErrCreateChartCode-11317" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCreateChartCode-more-info" onclick="toggle_visibility('meshkit-ErrCreateChartCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -11317" class="error-name-code">
-              <code>ErrCreateChartCode-11317</code>
+              <a href="/reference/error-codes/library-meshkit/errcreatechartcode-11317/"><code>ErrCreateChartCode-11317</code></a>
             </td>
             <td>Failed to create Helm chart</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreateChartCode-11317" target="_blank">search forum</a></td>
@@ -24818,10 +26916,12 @@ Review the source URL for the model</p>
         
           
           
+          
+          
           <tr id="ErrHelmPackageCode-11318" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrHelmPackageCode-more-info" onclick="toggle_visibility('meshkit-ErrHelmPackageCode-more-info');">
             <td class="tbl-severity-info">Critical</td>
             <td id=" -11318" class="error-name-code">
-              <code>ErrHelmPackageCode-11318</code>
+              <a href="/reference/error-codes/library-meshkit/errhelmpackagecode-11318/"><code>ErrHelmPackageCode-11318</code></a>
             </td>
             <td>Helm packaging failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrHelmPackageCode-11318" target="_blank">search forum</a></td>
@@ -24839,12 +26939,14 @@ Review the source URL for the model</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetControllerEndpointForPortCode-11319" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetControllerEndpointForPortCode-more-info" onclick="toggle_visibility('meshkit-ErrGetControllerEndpointForPortCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11319" class="error-name-code">
-              <code>ErrGetControllerEndpointForPortCode-11319</code>
+              <a href="/reference/error-codes/library-meshkit/errgetcontrollerendpointforportcode-11319/"><code>ErrGetControllerEndpointForPortCode-11319</code></a>
             </td>
             <td>Could not get endpoint for port of the controller</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetControllerEndpointForPortCode-11319" target="_blank">search forum</a></td>
@@ -24862,12 +26964,14 @@ Review the source URL for the model</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidRegistrationCode-11320" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidRegistrationCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidRegistrationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11320" class="error-name-code">
-              <code>ErrInvalidRegistrationCode-11320</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidregistrationcode-11320/"><code>ErrInvalidRegistrationCode-11320</code></a>
             </td>
             <td>Invalid schema registration</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidRegistrationCode-11320" target="_blank">search forum</a></td>
@@ -24885,12 +26989,14 @@ Review the source URL for the model</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDetectSchemaVersionCode-11321" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrDetectSchemaVersionCode-more-info" onclick="toggle_visibility('meshkit-ErrDetectSchemaVersionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11321" class="error-name-code">
-              <code>ErrDetectSchemaVersionCode-11321</code>
+              <a href="/reference/error-codes/library-meshkit/errdetectschemaversioncode-11321/"><code>ErrDetectSchemaVersionCode-11321</code></a>
             </td>
             <td>Unable to detect schemaVersion</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDetectSchemaVersionCode-11321" target="_blank">search forum</a></td>
@@ -24908,12 +27014,14 @@ Review the source URL for the model</p>
         
           
           
+          
+          
             
           
           <tr id="ErrResolveSchemaCode-11322" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrResolveSchemaCode-more-info" onclick="toggle_visibility('meshkit-ErrResolveSchemaCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11322" class="error-name-code">
-              <code>ErrResolveSchemaCode-11322</code>
+              <a href="/reference/error-codes/library-meshkit/errresolveschemacode-11322/"><code>ErrResolveSchemaCode-11322</code></a>
             </td>
             <td>Unable to resolve schema</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResolveSchemaCode-11322" target="_blank">search forum</a></td>
@@ -24933,12 +27041,14 @@ Register a custom schema location before validating custom document types</p>
         
           
           
+          
+          
             
           
           <tr id="ErrDecodeDocumentCode-11323" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrDecodeDocumentCode-more-info" onclick="toggle_visibility('meshkit-ErrDecodeDocumentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11323" class="error-name-code">
-              <code>ErrDecodeDocumentCode-11323</code>
+              <a href="/reference/error-codes/library-meshkit/errdecodedocumentcode-11323/"><code>ErrDecodeDocumentCode-11323</code></a>
             </td>
             <td>Unable to decode document</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDecodeDocumentCode-11323" target="_blank">search forum</a></td>
@@ -24956,12 +27066,14 @@ Register a custom schema location before validating custom document types</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCompileSchemaCode-11324" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCompileSchemaCode-more-info" onclick="toggle_visibility('meshkit-ErrCompileSchemaCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11324" class="error-name-code">
-              <code>ErrCompileSchemaCode-11324</code>
+              <a href="/reference/error-codes/library-meshkit/errcompileschemacode-11324/"><code>ErrCompileSchemaCode-11324</code></a>
             </td>
             <td>Unable to compile schema</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCompileSchemaCode-11324" target="_blank">search forum</a></td>
@@ -24980,12 +27092,14 @@ Verify that the referenced schema files are available in the embedded schemas mo
         
           
           
+          
+          
             
           
           <tr id="ErrValidateDocumentCode-11325" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrValidateDocumentCode-more-info" onclick="toggle_visibility('meshkit-ErrValidateDocumentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11325" class="error-name-code">
-              <code>ErrValidateDocumentCode-11325</code>
+              <a href="/reference/error-codes/library-meshkit/errvalidatedocumentcode-11325/"><code>ErrValidateDocumentCode-11325</code></a>
             </td>
             <td>Meshery document validation failed</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrValidateDocumentCode-11325" target="_blank">search forum</a></td>
@@ -25003,12 +27117,14 @@ Verify that the referenced schema files are available in the embedded schemas mo
         
           
           
+          
+          
             
           
           <tr id="ErrDecodeTypedDocumentCode-11326" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrDecodeTypedDocumentCode-more-info" onclick="toggle_visibility('meshkit-ErrDecodeTypedDocumentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11326" class="error-name-code">
-              <code>ErrDecodeTypedDocumentCode-11326</code>
+              <a href="/reference/error-codes/library-meshkit/errdecodetypeddocumentcode-11326/"><code>ErrDecodeTypedDocumentCode-11326</code></a>
             </td>
             <td>Unable to decode validated document</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDecodeTypedDocumentCode-11326" target="_blank">search forum</a></td>
@@ -25026,12 +27142,14 @@ Verify that the referenced schema files are available in the embedded schemas mo
         
           
           
+          
+          
             
           
           <tr id="ErrResolvingGitRefCode-11328" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrResolvingGitRefCode-more-info" onclick="toggle_visibility('meshkit-ErrResolvingGitRefCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11328" class="error-name-code">
-              <code>ErrResolvingGitRefCode-11328</code>
+              <a href="/reference/error-codes/library-meshkit/errresolvinggitrefcode-11328/"><code>ErrResolvingGitRefCode-11328</code></a>
             </td>
             <td>Could not resolve the git reference to a commit</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrResolvingGitRefCode-11328" target="_blank">search forum</a></td>
@@ -25052,12 +27170,14 @@ Supply a GitHub App or OAuth token with the Token option so private repositories
         
           
           
+          
+          
             
           
           <tr id="ErrFetchingGitTreeCode-11329" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrFetchingGitTreeCode-more-info" onclick="toggle_visibility('meshkit-ErrFetchingGitTreeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11329" class="error-name-code">
-              <code>ErrFetchingGitTreeCode-11329</code>
+              <a href="/reference/error-codes/library-meshkit/errfetchinggittreecode-11329/"><code>ErrFetchingGitTreeCode-11329</code></a>
             </td>
             <td>Could not fetch the git tree of the repository</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchingGitTreeCode-11329" target="_blank">search forum</a></td>
@@ -25078,12 +27198,14 @@ Supply a GitHub App or OAuth token with the Token option so private repositories
         
           
           
+          
+          
             
           
           <tr id="ErrFetchingGitBlobCode-11330" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrFetchingGitBlobCode-more-info" onclick="toggle_visibility('meshkit-ErrFetchingGitBlobCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11330" class="error-name-code">
-              <code>ErrFetchingGitBlobCode-11330</code>
+              <a href="/reference/error-codes/library-meshkit/errfetchinggitblobcode-11330/"><code>ErrFetchingGitBlobCode-11330</code></a>
             </td>
             <td>Could not fetch the contents of a file in the repository</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrFetchingGitBlobCode-11330" target="_blank">search forum</a></td>
@@ -25104,12 +27226,14 @@ Supply a GitHub App or OAuth token with the Token option so private repositories
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidBaseURLCode-11331" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidBaseURLCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidBaseURLCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11331" class="error-name-code">
-              <code>ErrInvalidBaseURLCode-11331</code>
+              <a href="/reference/error-codes/library-meshkit/errinvalidbaseurlcode-11331/"><code>ErrInvalidBaseURLCode-11331</code></a>
             </td>
             <td>Could not use the repository base URL for the GitHub API</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidBaseURLCode-11331" target="_blank">search forum</a></td>
@@ -25129,12 +27253,14 @@ Walk a repository hosted elsewhere with Walk or WalkContext, which clone it with
         
           
           
+          
+          
             
           
           <tr id="ErrNoFileInterceptorCode-11332" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrNoFileInterceptorCode-more-info" onclick="toggle_visibility('meshkit-ErrNoFileInterceptorCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11332" class="error-name-code">
-              <code>ErrNoFileInterceptorCode-11332</code>
+              <a href="/reference/error-codes/library-meshkit/errnofileinterceptorcode-11332/"><code>ErrNoFileInterceptorCode-11332</code></a>
             </td>
             <td>No file interceptor is registered to receive the fetched files</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNoFileInterceptorCode-11332" target="_blank">search forum</a></td>
@@ -25152,12 +27278,14 @@ Walk a repository hosted elsewhere with Walk or WalkContext, which clone it with
         
           
           
+          
+          
             
           
           <tr id="ErrRootNotFoundCode-11333" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrRootNotFoundCode-more-info" onclick="toggle_visibility('meshkit-ErrRootNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11333" class="error-name-code">
-              <code>ErrRootNotFoundCode-11333</code>
+              <a href="/reference/error-codes/library-meshkit/errrootnotfoundcode-11333/"><code>ErrRootNotFoundCode-11333</code></a>
             </td>
             <td>Could not find the configured root path in the repository</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRootNotFoundCode-11333" target="_blank">search forum</a></td>
@@ -25177,12 +27305,14 @@ Walk the repository with no root configured to read every file it holds</p>
         
           
           
+          
+          
             
           
           <tr id="ErrSymlinkedRootCode-11334" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrSymlinkedRootCode-more-info" onclick="toggle_visibility('meshkit-ErrSymlinkedRootCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -11334" class="error-name-code">
-              <code>ErrSymlinkedRootCode-11334</code>
+              <a href="/reference/error-codes/library-meshkit/errsymlinkedrootcode-11334/"><code>ErrSymlinkedRootCode-11334</code></a>
             </td>
             <td>Could not list a root that is a symbolic link</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSymlinkedRootCode-11334" target="_blank">search forum</a></td>
@@ -25226,12 +27356,14 @@ Configure the root the link points at rather than the link itself</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyConfigCode-1000" class="tbl-body-row hover-effect" data-details-id="nsm-ErrEmptyConfigCode-more-info" onclick="toggle_visibility('nsm-ErrEmptyConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1000" class="error-name-code">
-              <code>ErrEmptyConfigCode-1000</code>
+              <a href="/reference/error-codes/adapter-nsm/erremptyconfigcode-1000/"><code>ErrEmptyConfigCode-1000</code></a>
             </td>
             <td>Config is empty</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyConfigCode-1000" target="_blank">search forum</a></td>
@@ -25249,12 +27381,14 @@ Configure the root the link points at rather than the link itself</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleasesCode-1001" class="tbl-body-row hover-effect" data-details-id="nsm-ErrGetLatestReleasesCode-more-info" onclick="toggle_visibility('nsm-ErrGetLatestReleasesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1001" class="error-name-code">
-              <code>ErrGetLatestReleasesCode-1001</code>
+              <a href="/reference/error-codes/adapter-nsm/errgetlatestreleasescode-1001/"><code>ErrGetLatestReleasesCode-1001</code></a>
             </td>
             <td>unable to fetch release info: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleasesCode-1001" target="_blank">search forum</a></td>
@@ -25272,12 +27406,14 @@ Configure the root the link points at rather than the link itself</p>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleaseNamesCode-1002" class="tbl-body-row hover-effect" data-details-id="nsm-ErrGetLatestReleaseNamesCode-more-info" onclick="toggle_visibility('nsm-ErrGetLatestReleaseNamesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1002" class="error-name-code">
-              <code>ErrGetLatestReleaseNamesCode-1002</code>
+              <a href="/reference/error-codes/adapter-nsm/errgetlatestreleasenamescode-1002/"><code>ErrGetLatestReleaseNamesCode-1002</code></a>
             </td>
             <td>failed to extract release names: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleaseNamesCode-1002" target="_blank">search forum</a></td>
@@ -25295,12 +27431,14 @@ Configure the root the link points at rather than the link itself</p>
         
           
           
+          
+          
             
           
           <tr id="ErrInstallNSMCode-1003" class="tbl-body-row hover-effect" data-details-id="nsm-ErrInstallNSMCode-more-info" onclick="toggle_visibility('nsm-ErrInstallNSMCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1003" class="error-name-code">
-              <code>ErrInstallNSMCode-1003</code>
+              <a href="/reference/error-codes/adapter-nsm/errinstallnsmcode-1003/"><code>ErrInstallNSMCode-1003</code></a>
             </td>
             <td>Error with nsm operation: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInstallNSMCode-1003" target="_blank">search forum</a></td>
@@ -25318,12 +27456,14 @@ Configure the root the link points at rather than the link itself</p>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingHelmIndexCode-1004" class="tbl-body-row hover-effect" data-details-id="nsm-ErrCreatingHelmIndexCode-more-info" onclick="toggle_visibility('nsm-ErrCreatingHelmIndexCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1004" class="error-name-code">
-              <code>ErrCreatingHelmIndexCode-1004</code>
+              <a href="/reference/error-codes/adapter-nsm/errcreatinghelmindexcode-1004/"><code>ErrCreatingHelmIndexCode-1004</code></a>
             </td>
             <td>Error with nsm operation: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingHelmIndexCode-1004" target="_blank">search forum</a></td>
@@ -25341,12 +27481,14 @@ Configure the root the link points at rather than the link itself</p>
         
           
           
+          
+          
             
           
           <tr id="ErrEntryWithAppVersionNotExistsCode-1005" class="tbl-body-row hover-effect" data-details-id="nsm-ErrEntryWithAppVersionNotExistsCode-more-info" onclick="toggle_visibility('nsm-ErrEntryWithAppVersionNotExistsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1005" class="error-name-code">
-              <code>ErrEntryWithAppVersionNotExistsCode-1005</code>
+              <a href="/reference/error-codes/adapter-nsm/errentrywithappversionnotexistscode-1005/"><code>ErrEntryWithAppVersionNotExistsCode-1005</code></a>
             </td>
             <td>Entry: 
 with app version : 
@@ -25366,12 +27508,14 @@ does not exists</td>
         
           
           
+          
+          
             
           
           <tr id="ErrHelmRepositoryNotFoundCode-1006" class="tbl-body-row hover-effect" data-details-id="nsm-ErrHelmRepositoryNotFoundCode-more-info" onclick="toggle_visibility('nsm-ErrHelmRepositoryNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1006" class="error-name-code">
-              <code>ErrHelmRepositoryNotFoundCode-1006</code>
+              <a href="/reference/error-codes/adapter-nsm/errhelmrepositorynotfoundcode-1006/"><code>ErrHelmRepositoryNotFoundCode-1006</code></a>
             </td>
             <td>Either the repo : 
 does not exists or is corrupt: </td>
@@ -25390,12 +27534,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrDecodeYamlCode-1007" class="tbl-body-row hover-effect" data-details-id="nsm-ErrDecodeYamlCode-more-info" onclick="toggle_visibility('nsm-ErrDecodeYamlCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1007" class="error-name-code">
-              <code>ErrDecodeYamlCode-1007</code>
+              <a href="/reference/error-codes/adapter-nsm/errdecodeyamlcode-1007/"><code>ErrDecodeYamlCode-1007</code></a>
             </td>
             <td>Error decoding yaml: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDecodeYamlCode-1007" target="_blank">search forum</a></td>
@@ -25413,12 +27559,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrMeshConfigCode-1008" class="tbl-body-row hover-effect" data-details-id="nsm-ErrMeshConfigCode-more-info" onclick="toggle_visibility('nsm-ErrMeshConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1008" class="error-name-code">
-              <code>ErrMeshConfigCode-1008</code>
+              <a href="/reference/error-codes/adapter-nsm/errmeshconfigcode-1008/"><code>ErrMeshConfigCode-1008</code></a>
             </td>
             <td>Error configuration mesh: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshConfigCode-1008" target="_blank">search forum</a></td>
@@ -25436,12 +27584,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyHelmChartCode-1009" class="tbl-body-row hover-effect" data-details-id="nsm-ErrApplyHelmChartCode-more-info" onclick="toggle_visibility('nsm-ErrApplyHelmChartCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1009" class="error-name-code">
-              <code>ErrApplyHelmChartCode-1009</code>
+              <a href="/reference/error-codes/adapter-nsm/errapplyhelmchartcode-1009/"><code>ErrApplyHelmChartCode-1009</code></a>
             </td>
             <td>Error applying helm chart: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyHelmChartCode-1009" target="_blank">search forum</a></td>
@@ -25459,12 +27609,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrConvertingAppVersionToChartVersionCode-1010" class="tbl-body-row hover-effect" data-details-id="nsm-ErrConvertingAppVersionToChartVersionCode-more-info" onclick="toggle_visibility('nsm-ErrConvertingAppVersionToChartVersionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1010" class="error-name-code">
-              <code>ErrConvertingAppVersionToChartVersionCode-1010</code>
+              <a href="/reference/error-codes/adapter-nsm/errconvertingappversiontochartversioncode-1010/"><code>ErrConvertingAppVersionToChartVersionCode-1010</code></a>
             </td>
             <td>Error converting app version to chart version: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConvertingAppVersionToChartVersionCode-1010" target="_blank">search forum</a></td>
@@ -25482,12 +27634,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingNSMMeshClientCode-1011" class="tbl-body-row hover-effect" data-details-id="nsm-ErrCreatingNSMMeshClientCode-more-info" onclick="toggle_visibility('nsm-ErrCreatingNSMMeshClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1011" class="error-name-code">
-              <code>ErrCreatingNSMMeshClientCode-1011</code>
+              <a href="/reference/error-codes/adapter-nsm/errcreatingnsmmeshclientcode-1011/"><code>ErrCreatingNSMMeshClientCode-1011</code></a>
             </td>
             <td>Unable to create a new nsm client: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingNSMMeshClientCode-1011" target="_blank">search forum</a></td>
@@ -25505,12 +27659,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrSampleAppCode-1012" class="tbl-body-row hover-effect" data-details-id="nsm-ErrSampleAppCode-more-info" onclick="toggle_visibility('nsm-ErrSampleAppCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1012" class="error-name-code">
-              <code>ErrSampleAppCode-1012</code>
+              <a href="/reference/error-codes/adapter-nsm/errsampleappcode-1012/"><code>ErrSampleAppCode-1012</code></a>
             </td>
             <td>Error with sample app operation: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSampleAppCode-1012" target="_blank">search forum</a></td>
@@ -25528,12 +27684,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrCustomOperationCode-1013" class="tbl-body-row hover-effect" data-details-id="nsm-ErrCustomOperationCode-more-info" onclick="toggle_visibility('nsm-ErrCustomOperationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1013" class="error-name-code">
-              <code>ErrCustomOperationCode-1013</code>
+              <a href="/reference/error-codes/adapter-nsm/errcustomoperationcode-1013/"><code>ErrCustomOperationCode-1013</code></a>
             </td>
             <td>Error with custom operation: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCustomOperationCode-1013" target="_blank">search forum</a></td>
@@ -25551,12 +27709,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrOpInvalidCode-1014" class="tbl-body-row hover-effect" data-details-id="nsm-ErrOpInvalidCode-more-info" onclick="toggle_visibility('nsm-ErrOpInvalidCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1014" class="error-name-code">
-              <code>ErrOpInvalidCode-1014</code>
+              <a href="/reference/error-codes/adapter-nsm/erropinvalidcode-1014/"><code>ErrOpInvalidCode-1014</code></a>
             </td>
             <td>Invalid operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOpInvalidCode-1014" target="_blank">search forum</a></td>
@@ -25574,12 +27734,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrLoadNamespaceCode-1015" class="tbl-body-row hover-effect" data-details-id="nsm-ErrLoadNamespaceCode-more-info" onclick="toggle_visibility('nsm-ErrLoadNamespaceCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1015" class="error-name-code">
-              <code>ErrLoadNamespaceCode-1015</code>
+              <a href="/reference/error-codes/adapter-nsm/errloadnamespacecode-1015/"><code>ErrLoadNamespaceCode-1015</code></a>
             </td>
             <td>Error while labeling namespace:</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrLoadNamespaceCode-1015" target="_blank">search forum</a></td>
@@ -25622,12 +27784,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrApplyHelmChartCode-1012" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrApplyHelmChartCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrApplyHelmChartCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1012" class="error-name-code">
-              <code>ErrApplyHelmChartCode-1012</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errapplyhelmchartcode-1012/"><code>ErrApplyHelmChartCode-1012</code></a>
             </td>
             <td>Error occurred while applying Helm Chart</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrApplyHelmChartCode-1012" target="_blank">search forum</a></td>
@@ -25645,12 +27809,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrNilClientCode-1013" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrNilClientCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrNilClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1013" class="error-name-code">
-              <code>ErrNilClientCode-1013</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errnilclientcode-1013/"><code>ErrNilClientCode-1013</code></a>
             </td>
             <td>kubernetes client not initialized</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrNilClientCode-1013" target="_blank">search forum</a></td>
@@ -25668,12 +27834,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrInvalidOAMComponentTypeCode-1014" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrInvalidOAMComponentTypeCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrInvalidOAMComponentTypeCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1014" class="error-name-code">
-              <code>ErrInvalidOAMComponentTypeCode-1014</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errinvalidoamcomponenttypecode-1014/"><code>ErrInvalidOAMComponentTypeCode-1014</code></a>
             </td>
             <td>invalid OAM component name: </td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInvalidOAMComponentTypeCode-1014" target="_blank">search forum</a></td>
@@ -25691,12 +27859,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrTraefikCoreComponentFailCode-1015" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrTraefikCoreComponentFailCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrTraefikCoreComponentFailCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1015" class="error-name-code">
-              <code>ErrTraefikCoreComponentFailCode-1015</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errtraefikcorecomponentfailcode-1015/"><code>ErrTraefikCoreComponentFailCode-1015</code></a>
             </td>
             <td>error in Traefik core component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrTraefikCoreComponentFailCode-1015" target="_blank">search forum</a></td>
@@ -25714,12 +27884,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrProcessOAMCode-1016" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrProcessOAMCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrProcessOAMCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1016" class="error-name-code">
-              <code>ErrProcessOAMCode-1016</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errprocessoamcode-1016/"><code>ErrProcessOAMCode-1016</code></a>
             </td>
             <td>error performing OAM operations</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrProcessOAMCode-1016" target="_blank">search forum</a></td>
@@ -25737,12 +27909,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrParseTraefikCoreComponentCode-1017" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrParseTraefikCoreComponentCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrParseTraefikCoreComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1017" class="error-name-code">
-              <code>ErrParseTraefikCoreComponentCode-1017</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errparsetraefikcorecomponentcode-1017/"><code>ErrParseTraefikCoreComponentCode-1017</code></a>
             </td>
             <td>Traefik core component manifest parsing failing</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseTraefikCoreComponentCode-1017" target="_blank">search forum</a></td>
@@ -25760,12 +27934,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrParseOAMComponentCode-1018" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrParseOAMComponentCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrParseOAMComponentCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1018" class="error-name-code">
-              <code>ErrParseOAMComponentCode-1018</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errparseoamcomponentcode-1018/"><code>ErrParseOAMComponentCode-1018</code></a>
             </td>
             <td>error parsing the component</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseOAMComponentCode-1018" target="_blank">search forum</a></td>
@@ -25783,12 +27959,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrParseOAMConfigCode-1019" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrParseOAMConfigCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrParseOAMConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1019" class="error-name-code">
-              <code>ErrParseOAMConfigCode-1019</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errparseoamconfigcode-1019/"><code>ErrParseOAMConfigCode-1019</code></a>
             </td>
             <td>error parsing the configuration</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrParseOAMConfigCode-1019" target="_blank">search forum</a></td>
@@ -25806,12 +27984,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleaseCode-1020" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrGetLatestReleaseCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrGetLatestReleaseCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1020" class="error-name-code">
-              <code>ErrGetLatestReleaseCode-1020</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errgetlatestreleasecode-1020/"><code>ErrGetLatestReleaseCode-1020</code></a>
             </td>
             <td>Could not get latest version</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleaseCode-1020" target="_blank">search forum</a></td>
@@ -25829,12 +28009,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrEmptyConfigCode-1029" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrEmptyConfigCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrEmptyConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1029" class="error-name-code">
-              <code>ErrEmptyConfigCode-1029</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/erremptyconfigcode-1029/"><code>ErrEmptyConfigCode-1029</code></a>
             </td>
             <td>Config is empty</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEmptyConfigCode-1029" target="_blank">search forum</a></td>
@@ -25852,12 +28034,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleasesCode-1030" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrGetLatestReleasesCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrGetLatestReleasesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1030" class="error-name-code">
-              <code>ErrGetLatestReleasesCode-1030</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errgetlatestreleasescode-1030/"><code>ErrGetLatestReleasesCode-1030</code></a>
             </td>
             <td>Unable to fetch release info</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleasesCode-1030" target="_blank">search forum</a></td>
@@ -25875,12 +28059,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrGetLatestReleaseNamesCode-1031" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrGetLatestReleaseNamesCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrGetLatestReleaseNamesCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1031" class="error-name-code">
-              <code>ErrGetLatestReleaseNamesCode-1031</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errgetlatestreleasenamescode-1031/"><code>ErrGetLatestReleaseNamesCode-1031</code></a>
             </td>
             <td>Failed to extract release names</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrGetLatestReleaseNamesCode-1031" target="_blank">search forum</a></td>
@@ -25898,12 +28084,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrInstallTraefikCode-1032" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrInstallTraefikCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrInstallTraefikCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1032" class="error-name-code">
-              <code>ErrInstallTraefikCode-1032</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errinstalltraefikcode-1032/"><code>ErrInstallTraefikCode-1032</code></a>
             </td>
             <td>Error with traefik operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrInstallTraefikCode-1032" target="_blank">search forum</a></td>
@@ -25921,12 +28109,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingHelmIndexCode-1033" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrCreatingHelmIndexCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrCreatingHelmIndexCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1033" class="error-name-code">
-              <code>ErrCreatingHelmIndexCode-1033</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errcreatinghelmindexcode-1033/"><code>ErrCreatingHelmIndexCode-1033</code></a>
             </td>
             <td>Error while creating Helm Index</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingHelmIndexCode-1033" target="_blank">search forum</a></td>
@@ -25944,12 +28134,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrEntryWithAppVersionNotExistsCode-1034" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrEntryWithAppVersionNotExistsCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrEntryWithAppVersionNotExistsCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1034" class="error-name-code">
-              <code>ErrEntryWithAppVersionNotExistsCode-1034</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errentrywithappversionnotexistscode-1034/"><code>ErrEntryWithAppVersionNotExistsCode-1034</code></a>
             </td>
             <td>Entry for the app version does not exist</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrEntryWithAppVersionNotExistsCode-1034" target="_blank">search forum</a></td>
@@ -25967,12 +28159,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrHelmRepositoryNotFoundCode-1035" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrHelmRepositoryNotFoundCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrHelmRepositoryNotFoundCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1035" class="error-name-code">
-              <code>ErrHelmRepositoryNotFoundCode-1035</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errhelmrepositorynotfoundcode-1035/"><code>ErrHelmRepositoryNotFoundCode-1035</code></a>
             </td>
             <td>Helm repo not found</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrHelmRepositoryNotFoundCode-1035" target="_blank">search forum</a></td>
@@ -25990,12 +28184,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrDecodeYamlCode-1036" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrDecodeYamlCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrDecodeYamlCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1036" class="error-name-code">
-              <code>ErrDecodeYamlCode-1036</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errdecodeyamlcode-1036/"><code>ErrDecodeYamlCode-1036</code></a>
             </td>
             <td>Error occurred while decoding YAML</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrDecodeYamlCode-1036" target="_blank">search forum</a></td>
@@ -26013,12 +28209,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrMeshConfigCode-1037" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrMeshConfigCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrMeshConfigCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1037" class="error-name-code">
-              <code>ErrMeshConfigCode-1037</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errmeshconfigcode-1037/"><code>ErrMeshConfigCode-1037</code></a>
             </td>
             <td>Error configuration mesh</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshConfigCode-1037" target="_blank">search forum</a></td>
@@ -26036,12 +28234,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrConvertingAppVersionToChartVersionCode-1038" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrConvertingAppVersionToChartVersionCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrConvertingAppVersionToChartVersionCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1038" class="error-name-code">
-              <code>ErrConvertingAppVersionToChartVersionCode-1038</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errconvertingappversiontochartversioncode-1038/"><code>ErrConvertingAppVersionToChartVersionCode-1038</code></a>
             </td>
             <td>Error occurred while converting app version to chart version</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrConvertingAppVersionToChartVersionCode-1038" target="_blank">search forum</a></td>
@@ -26059,12 +28259,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrCreatingTraefikMeshClientCode-1039" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrCreatingTraefikMeshClientCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrCreatingTraefikMeshClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1039" class="error-name-code">
-              <code>ErrCreatingTraefikMeshClientCode-1039</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errcreatingtraefikmeshclientcode-1039/"><code>ErrCreatingTraefikMeshClientCode-1039</code></a>
             </td>
             <td>Unable to create a new NSM client</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCreatingTraefikMeshClientCode-1039" target="_blank">search forum</a></td>
@@ -26082,12 +28284,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrSampleAppCode-1040" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrSampleAppCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrSampleAppCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1040" class="error-name-code">
-              <code>ErrSampleAppCode-1040</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errsampleappcode-1040/"><code>ErrSampleAppCode-1040</code></a>
             </td>
             <td>Error with sample app operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSampleAppCode-1040" target="_blank">search forum</a></td>
@@ -26105,12 +28309,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrCustomOperationCode-1041" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrCustomOperationCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrCustomOperationCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1041" class="error-name-code">
-              <code>ErrCustomOperationCode-1041</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/errcustomoperationcode-1041/"><code>ErrCustomOperationCode-1041</code></a>
             </td>
             <td>Error with custom operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrCustomOperationCode-1041" target="_blank">search forum</a></td>
@@ -26128,12 +28334,14 @@ does not exists or is corrupt: </td>
         
           
           
+          
+          
             
           
           <tr id="ErrOpInvalidCode-1042" class="tbl-body-row hover-effect" data-details-id="meshery-traefik-mesh-ErrOpInvalidCode-more-info" onclick="toggle_visibility('meshery-traefik-mesh-ErrOpInvalidCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1042" class="error-name-code">
-              <code>ErrOpInvalidCode-1042</code>
+              <a href="/reference/error-codes/adapter-meshery-traefik-mesh/erropinvalidcode-1042/"><code>ErrOpInvalidCode-1042</code></a>
             </td>
             <td>Invalid operation</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrOpInvalidCode-1042" target="_blank">search forum</a></td>
