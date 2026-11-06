@@ -43,7 +43,7 @@ example actions: **"remove_from_organization", "add_to_organization"**.
 
 _Note: In certain conditions you must add some fields with specific keys:_
 
-- If the severity is "Error", include a field in Metadata using the key `err` with the corresponding error value.
+- If the severity is "Error", set the error on the event with `models.AttachEventError(builder, err, log)` after `WithMetadata`. It stores it under the `error` key as a schemas `EventError` (see [Error events](#error-events)); an error without a MeshKit code keeps the legacy form.
 - When you want to add a link to meshery docs, include a field in Metadata using the key `doc` with the corresponding link value.
 
 - `WithDescription` : The string argument provides a detailed, descriptive message that depicts the specific operation or action being executed on the server.
@@ -71,13 +71,45 @@ An event about a design carries the design's identity and a bounded summary, nev
 
 Readers must tolerate older rows: events stored earlier, and rows Meshery Cloud rewrote to this shape, may spell the identity in snake_case (`design_id`, `design_name`, `view_link`) and may lack `evaluationStatus`, `evaluationDurationMs` and `designLink`. A rewritten validate error's `code` is the JSON-schema keyword (`required`, `type`), not a MeshKit code. Meshery UI reads all of this through `ui/components/layout/NotificationCenter/formatters/design_event_metadata.ts`.
 
+### Starting a server event
+
+Prefer `models.NewServerEvent(ctx)` (`server/models/event_condition.go`) to a bare `events.NewEvent()`. It sets `source` to `meshery-server` and, when `ctx` carries an OpenTelemetry span, that span's W3C trace context (`traceId`, `parentId`). The router's `otelmux` middleware starts a span per request and continues the `traceparent` header the client sent, so the event joins the trace of the operation the client started. Nothing mints a trace context when an event is persisted. Chain `WithOperationID(id)` to group the events of one operation.
+
+Both persisters set `source` to `meshery-server` on any event that arrives without one, so events built with `events.NewEvent()` are stamped too.
+
+### Error events
+
+An error event carries the error as `metadata.error`, in the schemas `EventError` shape ([error definition contract](https://github.com/meshery/schemas/blob/master/docs/error-definition-contract.md)): the code, the descriptions rendered for this occurrence, the probable causes nested with their remediations, and `matchedCauses`, the causes that apply this time. `models.AttachEventError` builds it with MeshKit's `WithError`.
+
+Declare an error's causes with MeshKit's `errors.NewV3`, which nests each cause's remediations under it. A remediation that answers several causes is declared once as a package-level `errors.Remediation` and repeated under each cause. When the server can tell which cause applies, record it where the raw error is still in hand: `ErrUnreachableKubeAPI` (`server/models/error.go`) classifies the Kubernetes client error (unreachable, credentials rejected, certificate untrusted) and `models.MatchedCauses` reads the result. Rows recorded before this shape carry MeshKit's Go field names (`Code`, `ProbableCause`, `SuggestedRemediation`), and Meshery UI reads both.
+
+### Conditions
+
+An event can report one occurrence of an ongoing **condition**, for example a connection that keeps failing. Give it a `correlationKey` built with `models.ConditionKey(component, subject, condition)`, which yields `meshery-server/<component>/<subject>/<condition>`, for example `meshery-server/k8s-connection/<connectionId>/unreachable`. Never use an error code alone as the key.
+
+Creating an event with a key follows the schemas `createEvent` contract ([event correlation contract](https://github.com/meshery/schemas/blob/master/docs/event-correlation-contract.md)). The local and remote providers behave the same way:
+
+| The create carries | And the owner | Result |
+|---|---|---|
+| no `correlationKey`, or no owner | - | a new event, as before |
+| a key, no `resolvedAt` | has an open event with that key | no new event; the open event's `occurrenceCount` grows (by the payload's count, else 1) and its `lastSeenAt` moves to the later time |
+| a key, no `resolvedAt` | has none open | a new event that opens the condition (`occurrenceCount` 1, `firstSeenAt` and `lastSeenAt` set) |
+| a key and `resolvedAt` | has an open event with that key | no new event; the open event takes the `resolvedAt`, the later `lastSeenAt`, and the resolution's severity and description |
+| a key and `resolvedAt` | has none open | a new, already resolved event |
+
+Close a condition with `builder.Resolves(key, time)` under the condition's category, with a severity and description that say what cleared (for example `success`, "Connection restored"). Send a resolution only when the condition changes from present to cleared, never on every healthy check.
+
+The Kubernetes connection state machine is the first producer. A background Discovery failure that moves a connection to `not found` reports `meshery-server/k8s-connection/<connectionId>/unreachable`, and the Discovery that moves it out of `not found` sends the resolution. The de-duplication from [#20818](https://github.com/meshery/meshery/issues/20818), which suppresses a repeated failure that leaves the status unchanged, still applies. Another machine opts in by setting `StateMachine.ConditionComponent`.
+
 ## Event Persistence in Meshery
 
 Events in Meshery are persisted through two distinct mechanisms to ensure reliable event management. [Read more about providers]({{< ref "reference/extensibility/providers/index.md" >}}).
 
 ### Local Event Storage
 
-The `provider.PersistEvent(*event,nil)` method stores all events in Meshery's local database. This method works identically for both Local and Remote providers, ensuring events are always accessible within your Meshery instance.
+`provider.PersistEvent(*event, token)` records an event. The Local provider writes it to Meshery's local database (`EventsPersister.PersistEvent`). A Remote provider sends it to the remote provider's `createEvent` endpoint and accepts any `2xx` answer as the remote provider having it: `201` (recorded) or `200` (a replay, or an occurrence counted on or a resolution of an open condition), with the `Event-Disposition` header, when sent, logged at debug level. Only when there is no token, or the remote call fails, does it fall back to the local database. Every locally persisted event passes through `models.PrepareEventForPersistence`, which sets the default `source` and applies the 16 KB metadata guard.
+
+In the local database, a partial unique index (`idx_events_open_correlation`, created by `AutoMigrateSystemTables`) keeps at most one open event per owner and `correlation_key`, so two concurrent first occurrences cannot both open a condition.
 
 An event raised outside any user request - the registrant summaries and registration failures emitted while models are seeded at boot - has no provider to route through, and on a deployment that pins `PROVIDER` the provider registration map may not even hold the one you would name. Persist those through `HandlerConfig.SystemEventPersister`, which writes to the same local database. See [Enforced Provider Flow]({{< ref "reference/extensibility/providers/index.md" >}}) for why a name lookup is not an option there.
 
