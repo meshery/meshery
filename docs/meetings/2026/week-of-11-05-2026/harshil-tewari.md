@@ -18,7 +18,7 @@ I'm a final-year B.Tech CSE student from Lucknow. I enjoy building full-stack we
 ### Contributions to Meshery
 
 - PR [#22710](https://github.com/meshery/meshery/pull/22710) (merged): MeshSync table now resets to page 1 on search, filter, and cluster change, with regression tests.
-- PR [#22807](https://github.com/meshery/meshery/pull/22807) (approved): MeshSync shows a single error toast instead of two when resources fail to load.
+- PR [#22807](https://github.com/meshery/meshery/pull/22807) (in-review): MeshSync shows a single error toast instead of two when resources fail to load.
 
 ### Open-Source Goals
 
