@@ -9,6 +9,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/viewoutput"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/spf13/cobra"
@@ -111,38 +112,33 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			selectedWorkspace = *fetchedWorkspace
 		}
 
-		outputFormatterFactory := display.OutputFormatterFactory[workspace.AvailableWorkspace]{}
-		outputFormatter, err := outputFormatterFactory.New(workspaceViewFlagsProvided.OutputFormat, selectedWorkspace)
-		if err != nil {
-			return err
-		}
-
-		outputFormatter = outputFormatter.WithOutput(cmd.OutOrStdout())
-
-		err = outputFormatter.Display()
-		if err != nil {
-			return err
-		}
+		savePath := ""
 
 		if workspaceViewFlagsProvided.Save {
 			workspaceString := strings.ReplaceAll(selectedWorkspace.Name, " ", "_")
+
 			if workspaceString == "" {
 				workspaceString = selectedWorkspace.ID.String()
 			}
-			fileName := filepath.Join(utils.MesheryFolder, fmt.Sprintf("workspace_%s.%s", workspaceString, workspaceViewFlagsProvided.OutputFormat))
-			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[workspace.AvailableWorkspace]{}
-			outputFormatterSaver, err := outputFormatterSaverFactory.New(workspaceViewFlagsProvided.OutputFormat, outputFormatter)
-			if err != nil {
-				return err
-			}
-			outputFormatterSaver = outputFormatterSaver.WithFilePath(fileName)
-			err = outputFormatterSaver.Save()
-			if err != nil {
-				return err
-			}
+
+			fileName := filepath.Join(
+				utils.MesheryFolder,
+				fmt.Sprintf(
+					"workspace_%s.%s",
+					workspaceString,
+					workspaceViewFlagsProvided.OutputFormat,
+				),
+			)
+
+			savePath = fileName
 		}
 
-		return nil
+		return viewoutput.HandleViewOutput(
+			workspaceViewFlagsProvided.OutputFormat,
+			selectedWorkspace,
+			cmd.OutOrStdout(),
+			savePath,
+		)
 	},
 }
 
