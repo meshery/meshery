@@ -129,6 +129,8 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 	RunE: func(cmd *cobra.Command, args []string) error {
 		userResponse := false
 		isExistingProfile := false
+		// The server reads these only from the run request, not from the saved profile.
+		var requestHeaders, requestCookies, contentType string
 
 		// setting up for error formatting
 		cmdUsed = cmd.Name()
@@ -293,6 +295,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				if loadTestBody == "" {
 					loadTestBody = profiles[index].RequestBody
 				}
+
+				requestHeaders = profiles[index].RequestHeaders
+				requestCookies = profiles[index].RequestCookies
+				contentType = profiles[index].ContentType
 			}
 		}
 
@@ -324,6 +330,9 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		q.Add("url", testURL)
 		q.Add("qps", qps)
 		q.Add("reqBody", loadTestBody)
+		q.Add("headers", requestHeaders)
+		q.Add("cookies", requestCookies)
+		q.Add("contentType", contentType)
 
 		testDurationValue, testDurationUnit, err := splitTestDuration(testDuration)
 		if err != nil {
