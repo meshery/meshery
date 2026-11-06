@@ -33,6 +33,9 @@ import (
 	"github.com/spf13/viper"
 )
 
+// millisecondsPerSecond converts fortio's durations, reported in seconds.
+const millisecondsPerSecond = 1000
+
 type resultStruct struct {
 	Name          string
 	StartTime     *time.Time
@@ -277,12 +280,12 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 			QPS:      int(result.RunnerResults.QPS),
 			Duration: result.RunnerResults.RequestedDuration,
 			LatenciesMs: &models.LatenciesMs{
-				Average: result.RunnerResults.DurationHistogram.Average,
-				Max:     result.RunnerResults.DurationHistogram.Max,
-				Min:     result.RunnerResults.DurationHistogram.Min,
-				P50:     P50,
-				P90:     P90,
-				P99:     P99,
+				Average: result.RunnerResults.DurationHistogram.Average * millisecondsPerSecond,
+				Max:     result.RunnerResults.DurationHistogram.Max * millisecondsPerSecond,
+				Min:     result.RunnerResults.DurationHistogram.Min * millisecondsPerSecond,
+				P50:     P50 * millisecondsPerSecond,
+				P90:     P90 * millisecondsPerSecond,
+				P99:     P99 * millisecondsPerSecond,
 			},
 			StartTime:     result.TestStartTime,
 			MesheryID:     &mesheryid,
