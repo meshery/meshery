@@ -122,14 +122,21 @@ func ErrViewDesignFlag() error {
 		[]string{"-a/-all cannot be used when [design name|id] is specified"})
 }
 
+// ErrUndeployDesign returns an error indicating failure to undeploy a design.
 func ErrUndeployDesign(err error) error {
-	return errors.New(ErrUndeployDesignCode, errors.Alert,
+	mErr := errors.New(ErrUndeployDesignCode, errors.Alert,
 		[]string{"Undeploying design failed"},
 		[]string{"Unable to undeploy design due to empty path"},
 		[]string{"File path or design name not provided."},
 		[]string{"Provide a file path/design name.", `Usage: mesheryctl design undeploy -f [filepath]
 Example: mesheryctl design undeploy -f ./pattern.yml
 Description: Undeploy design`})
+
+	if err != nil && err.Error() != "" {
+		mErr.LongDescription = []string{err.Error()}
+	}
+
+	return mErr
 }
 
 func ErrParseDesignFile(err error) error {
