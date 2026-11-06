@@ -182,7 +182,7 @@ func TestPersistEventResolutionClosesTheOpenCondition(t *testing.T) {
 	mustPersist(t, p, conditionEvent(owner, key, "unreachable").Build())
 	resolvedAt := time.Now().UTC().Add(time.Minute).Truncate(time.Second)
 	mustPersist(t, p, events.NewEvent().FromOwner(owner).WithCategory("connection").WithAction("update").
-		WithSeverity(events.Success).WithDescription("reachable again").Resolves(key, resolvedAt).Build())
+		WithSeverity(events.Success).WithDescription("reachable again").WithOccurrenceCount(5).Resolves(key, resolvedAt).Build())
 
 	rows := storedEvents(t, p, owner)
 	if len(rows) != 1 {
@@ -199,7 +199,7 @@ func TestPersistEventResolutionClosesTheOpenCondition(t *testing.T) {
 		t.Fatalf("lastSeenAt = %v, want the resolution time %v", rows[0].LastSeenAt, resolvedAt)
 	}
 	if rows[0].Category != "connection" || count(rows[0].OccurrenceCount) != 1 {
-		t.Fatalf("a resolution changed fields it must keep: %+v", rows[0])
+		t.Fatalf("a resolution changed fields it must keep (it is a close, not an occurrence): %+v", rows[0])
 	}
 
 	// Once closed, the next occurrence opens a new condition.
@@ -238,6 +238,32 @@ func TestPersistEventResolutionWithNoOpenConditionIsRecorded(t *testing.T) {
 	rows := storedEvents(t, p, owner)
 	if len(rows) != 1 || rows[0].ResolvedAt == nil {
 		t.Fatalf("got %+v, want one already resolved event", rows)
+	}
+	resolvedAt := timeOf(rows[0].ResolvedAt)
+	if count(rows[0].OccurrenceCount) != 1 || !timeOf(rows[0].FirstSeenAt).Equal(resolvedAt) || !timeOf(rows[0].LastSeenAt).Equal(resolvedAt) {
+		t.Fatalf("got count %d firstSeenAt %v lastSeenAt %v, want 1 and both at resolvedAt %v",
+			count(rows[0].OccurrenceCount), rows[0].FirstSeenAt, rows[0].LastSeenAt, resolvedAt)
+	}
+}
+
+// A resolution recorded with no open condition keeps the occurrence fields the
+// producer sent.
+func TestPersistEventResolutionWithNoOpenConditionKeepsTheProducersTimes(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+
+	firstSeen := time.Date(2026, 11, 6, 9, 0, 0, 0, time.UTC)
+	lastSeen := firstSeen.Add(10 * time.Minute)
+	resolvedAt := lastSeen.Add(time.Minute)
+	mustPersist(t, p, events.NewEvent().FromOwner(owner).WithCategory("connection").WithAction("update").
+		WithSeverity(events.Success).WithDescription("restored").WithOccurrenceCount(4).
+		WithFirstSeenAt(firstSeen).WithLastSeenAt(lastSeen).
+		Resolves("meshery-server/k8s-connection/i/unreachable", resolvedAt).Build())
+
+	rows := storedEvents(t, p, owner)
+	if len(rows) != 1 || count(rows[0].OccurrenceCount) != 4 ||
+		!timeOf(rows[0].FirstSeenAt).Equal(firstSeen) || !timeOf(rows[0].LastSeenAt).Equal(lastSeen) {
+		t.Fatalf("got %+v, want the producer's count 4, firstSeenAt %v and lastSeenAt %v", rows, firstSeen, lastSeen)
 	}
 }
 

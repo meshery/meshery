@@ -81,7 +81,10 @@ func (e *EventsPersister) getCountBySeverity(userID core.Uuid, eventStatus event
 //     open event takes the resolvedAt, its lastSeenAt becomes the later of its
 //     own and the resolution's (its lastSeenAt, else resolvedAt), and its
 //     severity and description become the resolution's, which say what
-//     cleared. With none open it is recorded as an already resolved event.
+//     cleared. A resolution is a close, never an occurrence: it does not
+//     change occurrenceCount. With none open it is recorded as an already
+//     resolved event with occurrenceCount 1 (when unset) and firstSeenAt and
+//     lastSeenAt from the event, else its resolvedAt.
 //
 // An owner has at most one open event per key. The partial unique index
 // AutoMigrateSystemTables creates enforces it, and a create that loses the race
@@ -148,6 +151,8 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) error {
 		if found.RowsAffected == 0 {
 			if event.ResolvedAt == nil {
 				applyConditionOpeningDefaults(&event, now)
+			} else {
+				applyResolvedConditionDefaults(&event)
 			}
 			return tx.Create(&event).Error
 		}
@@ -218,6 +223,29 @@ func applyConditionOpeningDefaults(event *events.Event, now time.Time) {
 	if event.LastSeenAt == nil {
 		lastSeen := *event.FirstSeenAt
 		event.LastSeenAt = &lastSeen
+	}
+}
+
+// applyResolvedConditionDefaults fills the occurrence fields of a resolution
+// recorded with no open condition, as createEvent does: one occurrence, seen
+// at the payload's firstSeenAt and lastSeenAt, else at resolvedAt. A
+// firstSeenAt that would fall after lastSeenAt is moved back to it.
+func applyResolvedConditionDefaults(event *events.Event) {
+	if event.OccurrenceCount == nil {
+		one := 1
+		event.OccurrenceCount = &one
+	}
+	if event.FirstSeenAt == nil {
+		firstSeen := *event.ResolvedAt
+		event.FirstSeenAt = &firstSeen
+	}
+	if event.LastSeenAt == nil {
+		lastSeen := *event.ResolvedAt
+		event.LastSeenAt = &lastSeen
+	}
+	if event.FirstSeenAt.After(*event.LastSeenAt) {
+		firstSeen := *event.LastSeenAt
+		event.FirstSeenAt = &firstSeen
 	}
 }
 
