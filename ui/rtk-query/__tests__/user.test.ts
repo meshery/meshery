@@ -554,22 +554,32 @@ describe('user endpoints', () => {
     expect(utilsMod.initiateQuery).toHaveBeenCalledWith(userMod.userApi.endpoints.getSystemVersion);
   });
 
-  it('getAllUsers helper delegates to initiateQuery with skip when search is empty', async () => {
+  it('getAllUsers returns an empty result without dispatching when search is empty', async () => {
     const utilsMod = await import('../utils');
     const userMod = await import('../user');
     (utilsMod.initiateQuery as ReturnType<typeof vi.fn>).mockClear();
-    await userMod.getAllUsers({ page: 0, pagesize: 10, search: '' });
-    expect(utilsMod.initiateQuery).toHaveBeenCalledWith(
-      userMod.userApi.endpoints.getAllUsers,
-      { page: 0, pagesize: 10, search: '' },
-      { skip: true },
-    );
+    const result = await userMod.getAllUsers({ page: 0, pagesize: 10, search: '' });
+    // `skip` is a hook option, not honored by the imperative initiate call,
+    // so the helper returns early instead of dispatching a users request.
+    expect(utilsMod.initiateQuery).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      data: { data: [] },
+      isSuccess: true,
+      isError: false,
+      isLoading: false,
+      isFetching: false,
+    });
+  });
+
+  it('getAllUsers delegates to initiateQuery without a skip option when search is provided', async () => {
+    const utilsMod = await import('../utils');
+    const userMod = await import('../user');
     (utilsMod.initiateQuery as ReturnType<typeof vi.fn>).mockClear();
     await userMod.getAllUsers({ page: 0, pagesize: 10, search: 'a' });
-    expect(utilsMod.initiateQuery).toHaveBeenCalledWith(
-      userMod.userApi.endpoints.getAllUsers,
-      { page: 0, pagesize: 10, search: 'a' },
-      { skip: false },
-    );
+    expect(utilsMod.initiateQuery).toHaveBeenCalledWith(userMod.userApi.endpoints.getAllUsers, {
+      page: 0,
+      pagesize: 10,
+      search: 'a',
+    });
   });
 });

@@ -37,7 +37,7 @@ export const appendInvalidatesTags =
  * @param {Object} [options] - Options to be passed to the query initiate function.
  * @returns {Promise<Object>} - A Promise resolving with an object containing query execution results.
  */
-export const initiateQuery = async (query, variables, options) => {
+export const initiateQuery = async (query, variables, options = undefined) => {
   try {
     return await store.dispatch(query.initiate(variables, options));
   } catch (error) {
