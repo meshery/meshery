@@ -52,4 +52,7 @@ func TestServeHTTP_FailedWSUpgrade(t *testing.T) {
 	if panicked {
 		t.Fatalf("ServeHTTP panicked on failed /ws upgrade: %v", val)
 	}
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status %d, got %d", http.StatusBadRequest, rec.Code)
+	}
 }
