@@ -8274,7 +8274,13 @@ You can now design and manage any infrastructure that Meshery supports. For the 
     
   
     
+  
+    
+  
+    
       
+    
+  
     
   
     
@@ -20672,6 +20678,10 @@ When your diagrams require a more distinct visual style or an element for emphas
 
 </details>
 
+## Creating Custom Shapes
+
+Use [Shape Builder](/extensions/extensions/shape-builder/) to draw a custom polygon and export its coordinates for a Meshery component.
+
 ## Component Visuals in Different Contexts
 
 To see how this works in practice, let's take the Kubernetes `Deployment` component as an example. Its appearance adapts to different views in the Meshery UI:
@@ -25512,6 +25522,32 @@ url: /extensions/models/security-role-perm-operator-svc/index.md
 title: "Serverless Workflow"
 url: /extensions/models/serverless-workflow/index.md
 --------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+title: "Shape Builder"
+url: /extensions/extensions/shape-builder/index.md
+description: Create custom polygon shapes for Meshery components.
+--------------------------------------------------------------------------------
+
+Shape Builder is a visual tool for creating custom polygon shapes for Meshery components. It displays coordinates in the format Kanvas uses to render a polygon.
+
+## Create a shape
+
+1. Open [Shape Builder](https://shapes.meshery.io).
+2. Draw at least three points, then select **Close Shape**.
+   Check that each coordinate is between -1 and 1, including after scaling. If an x-coordinate exceeds 1, redraw the vertices within the leftmost 520 pixels of the canvas and check again. After your final redraw or scaling change, copy the checked coordinates displayed below the canvas.
+3. In your Meshery component, set `styles.shape` to `polygon` and put the coordinates in `styles.shape-polygon-points`.
+
+Polygon coordinates range from -1 to 1. For example, these styles describe a plus shape:
+
+```yaml
+styles:
+  shape: polygon
+  shape-polygon-points: "-0.33 -1 0.33 -1 0.33 -0.33 1 -0.33 1 0.33 0.33 0.33 0.33 1 -0.33 1 -0.33 0.33 -1 0.33 -1 -0.33 -0.33 -0.33"
+```
+
+See [Identifying Meshery Components](/guides/configuration-management/identifying-components/) for an overview of component visuals and built-in shapes. Visit the [Shape Builder repository](https://github.com/meshery-extensions/shape-builder) for more information.
 
 
 --------------------------------------------------------------------------------
@@ -70176,7 +70212,7 @@ For example, `mesheryctl system context create <context name>` assumes a default
 
 ### User Experience: GUI vs CLI
 
-Ideally, all functionally provided in Meshery UI should be available to users via CLI (in `mesheryctl`). Meshery strives for parity of functionality between it's two clients. For example, viewing a performance profile in the GUI and with `mesheryctl system perf view <profile name>` in the CLI should show the same data.
+Ideally, all functionally provided in Meshery UI should be available to users via CLI (in `mesheryctl`). Meshery strives for parity of functionality between it's two clients. For example, viewing a performance profile in the GUI and with `mesheryctl perf profile <profile-name> --view` in the CLI should show the same data.
 
 Command line interfaces offer less context to the user, which makes them inherently less intuitive compared to graphical user interfaces. Both of these user interfaces, however, are the same in that they are both clients of Meshery Server. Both clients _are_ a user experience and as such, to be attended to in this way. The following considerations should be accounted for when designing `mesheryctl` experiences:
 
@@ -75714,6 +75750,12 @@ url: /reference/error-codes/component-meshery-server/errgetpatterncode-1087/inde
 
 
 --------------------------------------------------------------------------------
+title: "ErrGetPolicyDefinitionsCode-11335"
+url: /reference/error-codes/library-meshkit/errgetpolicydefinitionscode-11335/index.md
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
 title: "ErrGetResourceCode-1352"
 url: /reference/error-codes/component-meshery-server/errgetresourcecode-1352/index.md
 --------------------------------------------------------------------------------
@@ -76454,6 +76496,12 @@ url: /reference/error-codes/client-mesheryctl/errinvalidoutputformatcode-1198/in
 --------------------------------------------------------------------------------
 title: "ErrInvalidPatternCode-1072"
 url: /reference/error-codes/component-meshery-server/errinvalidpatterncode-1072/index.md
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+title: "ErrInvalidPolicyPaginationCode-11336"
+url: /reference/error-codes/library-meshkit/errinvalidpolicypaginationcode-11336/index.md
 --------------------------------------------------------------------------------
 
 
@@ -89401,9 +89449,9 @@ Ensure network connectivity to the resource from your network</p>
               <div class="error-heading">Long Description</div>
               <p class="error-details"></p>
               <div class="error-heading">Probable Cause</div>
-              <p class="error-details"></p>
+              <p class="error-details">No contexts detected in the in-cluster kubeconfig.</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details"></p>
+              <p class="error-details">Ensure Meshery is deployed with a valid service account in a Kubernetes cluster.</p>
             </td>
           </tr>
         
@@ -104831,6 +104879,56 @@ Walk the repository with no root configured to read every file it holds</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Walk or WalkContext the same configuration instead, which clones the repository and reads through the link
 Configure the root the link points at rather than the link itself</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrGetPolicyDefinitionsCode-11335" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGetPolicyDefinitionsCode-more-info" onclick="toggle_visibility('meshkit-ErrGetPolicyDefinitionsCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11335" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errgetpolicydefinitionscode-11335/"><code>ErrGetPolicyDefinitionsCode-11335</code></a>
+            </td>
+            <td>Failed to retrieve policy definitions from the registry</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrGetPolicyDefinitionsCode-11335" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrGetPolicyDefinitionsCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">The policy registry query failed</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The registry database query failed</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Check the registry database connection and retry the request</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInvalidPolicyPaginationCode-11336" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidPolicyPaginationCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidPolicyPaginationCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11336" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errinvalidpolicypaginationcode-11336/"><code>ErrInvalidPolicyPaginationCode-11336</code></a>
+            </td>
+            <td>Policy limit and offset must be non-negative</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInvalidPolicyPaginationCode-11336" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrInvalidPolicyPaginationCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">The policy filter contains a negative pagination value</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Limit and offset values must be zero or positive</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Set limit and offset to zero or a positive value</p>
             </td>
           </tr>
         

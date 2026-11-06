@@ -750,6 +750,10 @@ When your diagrams require a more distinct visual style or an element for emphas
 
 </details>
 
+## Creating Custom Shapes
+
+Use [Shape Builder](/extensions/extensions/shape-builder/) to draw a custom polygon and export its coordinates for a Meshery component.
+
 ## Component Visuals in Different Contexts
 
 To see how this works in practice, let's take the Kubernetes `Deployment` component as an example. Its appearance adapts to different views in the Meshery UI:

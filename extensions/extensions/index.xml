@@ -43,4 +43,14 @@
 &lt;h3 id="usage"&gt;
 	Usage
 &lt;/h3&gt;
-&lt;p&gt;Run it directly with &lt;code&gt;npx&lt;/code&gt; - no global install required:&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;Run it directly with &lt;code&gt;npx&lt;/code&gt; - no global install required:&lt;/p&gt;</description></item><item><title>Shape Builder</title><link>/extensions/extensions/shape-builder/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/extensions/shape-builder/</guid><description>&lt;p&gt;Shape Builder is a visual tool for creating custom polygon shapes for Meshery components. It displays coordinates in the format Kanvas uses to render a polygon.&lt;/p&gt;
+&lt;h2 id="create-a-shape"&gt;
+	Create a shape
+&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Open &lt;a href="https://shapes.meshery.io"&gt;Shape Builder&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Draw at least three points, then select &lt;strong&gt;Close Shape&lt;/strong&gt;.
+Check that each coordinate is between -1 and 1, including after scaling. If an x-coordinate exceeds 1, redraw the vertices within the leftmost 520 pixels of the canvas and check again. After your final redraw or scaling change, copy the checked coordinates displayed below the canvas.&lt;/li&gt;
+&lt;li&gt;In your Meshery component, set &lt;code&gt;styles.shape&lt;/code&gt; to &lt;code&gt;polygon&lt;/code&gt; and put the coordinates in &lt;code&gt;styles.shape-polygon-points&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Polygon coordinates range from -1 to 1. For example, these styles describe a plus shape:&lt;/p&gt;</description></item></channel></rss>

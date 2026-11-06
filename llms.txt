@@ -475,6 +475,7 @@ Bookinfo The sample BookInfo …
 - [Schemahero](/extensions/models/schemahero/index.md)
 - [Security Role Perm Operator Svc](/extensions/models/security-role-perm-operator-svc/index.md)
 - [Serverless Workflow](/extensions/models/serverless-workflow/index.md)
+- [Shape Builder](/extensions/extensions/shape-builder/index.md): Create custom polygon shapes for Meshery components.
 - [Sidekick](/extensions/models/sidekick/index.md)
 - [Skooner](/extensions/models/skooner/index.md)
 - [Slack Operator](/extensions/models/slack-operator/index.md)
@@ -1000,6 +1001,7 @@ Bookinfo The sample BookInfo …
 - [ErrGetOrganizationsCode-1458](/reference/error-codes/component-meshery-server/errgetorganizationscode-1458/index.md)
 - [ErrGetPackageCode-1297](/reference/error-codes/component-meshery-server/errgetpackagecode-1297/index.md)
 - [ErrGetPatternCode-1087](/reference/error-codes/component-meshery-server/errgetpatterncode-1087/index.md)
+- [ErrGetPolicyDefinitionsCode-11335](/reference/error-codes/library-meshkit/errgetpolicydefinitionscode-11335/index.md)
 - [ErrGetResourceCode-1352](/reference/error-codes/component-meshery-server/errgetresourcecode-1352/index.md)
 - [ErrGetResourceIdentifierCode-11240](/reference/error-codes/library-meshkit/errgetresourceidentifiercode-11240/index.md)
 - [ErrGetResultCode-1033](/reference/error-codes/component-meshery-server/errgetresultcode-1033/index.md)
@@ -1124,6 +1126,7 @@ Bookinfo The sample BookInfo …
 - [ErrInvalidOutputChoiceCode-1047](/reference/error-codes/client-mesheryctl/errinvalidoutputchoicecode-1047/index.md)
 - [ErrInvalidOutputFormatCode-1198](/reference/error-codes/client-mesheryctl/errinvalidoutputformatcode-1198/index.md)
 - [ErrInvalidPatternCode-1072](/reference/error-codes/component-meshery-server/errinvalidpatterncode-1072/index.md)
+- [ErrInvalidPolicyPaginationCode-11336](/reference/error-codes/library-meshkit/errinvalidpolicypaginationcode-11336/index.md)
 - [ErrInvalidProtocolCode-11167](/reference/error-codes/library-meshkit/errinvalidprotocolcode-11167/index.md)
 - [ErrInvalidRegistrationCode-11320](/reference/error-codes/library-meshkit/errinvalidregistrationcode-11320/index.md)
 - [ErrInvalidReplicaNoSelectorsLabelsCode-11220](/reference/error-codes/library-meshkit/errinvalidreplicanoselectorslabelscode-11220/index.md)

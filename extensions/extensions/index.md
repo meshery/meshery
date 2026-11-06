@@ -18,3 +18,4 @@ Section pages:
 - [Kanvas](/extensions/extensions/kanvas/): Collaborative cloud native visual designer to design and manage infrastructure and applications.
 - [kubectl MeshSync Snapshot](/extensions/extensions/kubectl-meshsync-snapshot/): A native kubectl plugin for conveniently synchronizing the state of your cluster with Meshery Server.
 - [mesheryctl-axi](/extensions/extensions/mesheryctl-axi/): An agent-ergonomic AXI wrapper around mesheryctl - token-efficient TOON output, always non-interactive, with help[] next-step suggestions.
+- [Shape Builder](/extensions/extensions/shape-builder/): Create custom polygon shapes for Meshery components.
