@@ -4268,6 +4268,15 @@
         "short_description": "Meshery Server could not determine which keys to register with the Local Provider",
         "probable_cause": "The header row of the keys file was renamed or dropped, so no row could be selected for registration and nothing is seeded from this file; on a fresh or reset database the Key table stays empty, while previously seeded keys are left untouched",
         "suggested_remediation": "Restore the missing header in server/permissions/keys.csv (or the file KEYS_PATH points at) and restart Meshery Server so keys seed again"
+      },
+      "1487": {
+        "name": "ErrTelemetrySizeCode",
+        "code": "1487",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Telemetry response exceeds Meshery's 16 MiB limit",
+        "probable_cause": "The upstream response contains more data than Meshery can return.",
+        "suggested_remediation": "Reduce the response size, then retry.\nFor panel queries, shorten the time range or use more selective label matchers."
       }
     }
   }
