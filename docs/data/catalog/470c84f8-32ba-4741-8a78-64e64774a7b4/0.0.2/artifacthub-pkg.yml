@@ -15,6 +15,10 @@ readme: >-
     Requires a default StorageClass for three 8 GiB persistent volume claims.
     The in-cluster bootstrap address is kafka:9092 from the same namespace.
     Clients authenticate as user1 with the client-passwords key in the kafka-user-passwords Secret.
+    Use a non-empty client password without commas.
+    On an existing cluster, rotate the PLAIN client password by updating the Secret and restarting the brokers.
+    Rotate SCRAM-SHA-256 and SCRAM-SHA-512 for user1 in the running cluster with kafka-configs.sh --alter --add-config.
+    Kafka stores SCRAM credentials in KRaft metadata at format time.
     This design uses SASL_PLAINTEXT and is intended for development and testing.
     Replace the example credentials and configure TLS and ACLs before production use.
 install: mesheryctl design import -f
