@@ -139,7 +139,11 @@ func generateModelDataToDisplay(modelsResponse *model.MeshModelModelsPage) ([][]
 		return rows, int64(0)
 	}
 
-	for _, model := range *modelsResponse.Models {
+	var models []model.ModelDefinition
+	if modelsResponse.Models != nil {
+		models = *modelsResponse.Models
+	}
+	for _, model := range models {
 		modelName := model.Name
 		if modelName == "" {
 			modelName = "N/A"
