@@ -1788,10 +1788,10 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 
 	// createEvent answers 201 when it records a new event and 200 when it
 	// recorded nothing new: a replayed idempotencyKey, or an occurrence counted
-	// on (or a resolution of) an open condition. Both mean the remote provider
-	// has the event, so neither may fall back to the local database, which would
-	// store a second copy.
-	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+	// on (or a resolution of) an open condition. Any 2xx means the remote
+	// provider has the event, so none may fall back to the local database,
+	// which would store a second copy.
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
 		return ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
 	}
 	if disposition := resp.Header.Get(EventDispositionHeader); disposition != "" {
