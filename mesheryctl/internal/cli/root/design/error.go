@@ -43,9 +43,6 @@ const (
 )
 
 const (
-	errPatternMsg = `Usage: mesheryctl design import -f [file/url] -s [source-type]
-Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`
-
 	errUndeployMsg = `Usage: mesheryctl design undeploy -f [filepath]
 Example: mesheryctl design undeploy -f ./pattern.yml
 Description: Undeploy design`
