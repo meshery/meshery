@@ -5021,6 +5021,9 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 	if err != nil {
 		return err
 	}
+	defer func() {
+		_ = uncompressedStream.Close()
+	}()
 
 	tarReader := tar.NewReader(uncompressedStream)
 
