@@ -3,8 +3,10 @@ package utils
 import (
 	"database/sql/driver"
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"fmt"
+	"html"
 	"html/template"
 	"io"
 	"net/http"
@@ -148,12 +150,136 @@ func ToMapStringInterface(mp interface{}) map[string]interface{} {
 	return res
 }
 
-const UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
+// UI is a var, not a const, so tests can point it at a temp directory
+// instead of writing through the real (relative) path.
+var UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
 var UISVGPaths = make([]string, 1)
 
-func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename string) (svgColorPath, svgWhitePath, svgCompletePath string) {
+// registrySVGPathComponentPattern is the only shape a caller-supplied value
+// (Model.Name, Component.Kind) may take before it is used to build a
+// filesystem path under UI. Real registrants only ever send simple slugs
+// (istio, kubernetes, cert-manager); anything else, in particular path
+// separators and "..", is rejected outright rather than stripped, since a
+// stripped-but-still-attacker-influenced value gives no real guarantee.
+var registrySVGPathComponentPattern = regexp.MustCompile(`^[a-zA-Z0-9](?:[a-zA-Z0-9._-]{0,254}[a-zA-Z0-9])?$`)
+
+// dangerousSVGElements are element local names (case-insensitive, namespace
+// prefix stripped) that must never appear in a caller-supplied SVG asset:
+// script and foreignObject can carry or embed arbitrary script; iframe,
+// embed, and object can load and execute another document entirely.
+var dangerousSVGElements = map[string]bool{
+	"script":        true,
+	"foreignobject": true,
+	"iframe":        true,
+	"embed":         true,
+	"object":        true,
+}
+
+// dangerousSVGAttrValuePattern matches a javascript: (or vbscript:) URI once
+// an attribute value has been whitespace-collapsed, catching the common
+// obfuscation of splitting the scheme with tabs/newlines that some legacy
+// URI parsers tolerated.
+var dangerousSVGAttrValuePattern = regexp.MustCompile(`(?i)^\s*(javascript|vbscript)\s*:`)
+
+// containsDangerousSVGContent structurally walks svg as XML rather than
+// pattern-matching the raw bytes, so a script or event handler split across
+// unusual whitespace, attribute order, or HTML-entity-encoded characters
+// (for example &#106;avascript:) cannot slip past a single regex the way it
+// could with the string this replaced. html.UnescapeString normalizes
+// entities in every attribute value before it is checked. If the content
+// does not even parse as well-formed XML, it is rejected outright: real SVG
+// icon assets are well-formed, and a browser's own SVG/HTML parser is far
+// more forgiving of malformed markup than encoding/xml, so tolerating
+// malformed input here would open exactly the obfuscation gap this
+// function exists to close.
+func containsDangerousSVGContent(svg string) bool {
+	dec := xml.NewDecoder(strings.NewReader(svg))
+	for {
+		tok, err := dec.Token()
+		if err != nil {
+			return err != io.EOF
+		}
+		start, ok := tok.(xml.StartElement)
+		if !ok {
+			continue
+		}
+		if dangerousSVGElements[strings.ToLower(start.Name.Local)] {
+			return true
+		}
+		for _, attr := range start.Attr {
+			name := strings.ToLower(attr.Name.Local)
+			if strings.HasPrefix(name, "on") {
+				return true
+			}
+			value := html.UnescapeString(attr.Value)
+			if dangerousSVGAttrValuePattern.MatchString(value) {
+				return true
+			}
+		}
+	}
+}
+
+// InvalidRegistrySVGAssetError signals that a caller-supplied Model.Name,
+// Component.Kind, or SVG content was rejected by validation, as opposed to
+// a filesystem or I/O failure encountered while writing an already-valid
+// asset. A distinct type lets a caller of WriteSVGsOnFileSystem map it to
+// HTTP 400 while treating any other failure as HTTP 500, so a disk-full or
+// permission error is never reported back as if the request were bad.
+type InvalidRegistrySVGAssetError string
+
+func (e InvalidRegistrySVGAssetError) Error() string { return string(e) }
+
+func validateRegistrySVGPathComponent(value string) error {
+	if !registrySVGPathComponentPattern.MatchString(value) {
+		return InvalidRegistrySVGAssetError(fmt.Sprintf("invalid registry path component %q: must be a plain alphanumeric slug (letters, digits, '.', '_', '-')", value))
+	}
+	return nil
+}
+
+func validateSVGContent(svg string) error {
+	if svg == "" {
+		return nil
+	}
+	if containsDangerousSVGContent(svg) {
+		return InvalidRegistrySVGAssetError("SVG content contains a script, event handler, foreignObject, or javascript: URI, which is not permitted")
+	}
+	return nil
+}
+
+func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename string) (svgColorPath, svgWhitePath, svgCompletePath string, err error) {
+	if err = validateRegistrySVGPathComponent(dirname); err != nil {
+		return "", "", "", err
+	}
+	if err = validateRegistrySVGPathComponent(filename); err != nil {
+		return "", "", "", err
+	}
 
 	filename = strings.ToLower(filename)
+
+	// UI itself is expected to already exist (it ships with the ui/
+	// static assets), but OpenRoot requires that, unlike the MkdirAll
+	// this replaces; create it first if some deployment mode doesn't
+	// have it, so this isn't a new failure mode versus before.
+	if _, statErr := os.Stat(UI); os.IsNotExist(statErr) {
+		if mkErr := os.MkdirAll(UI, 0777); mkErr != nil {
+			return "", "", "", mkErr
+		}
+	}
+
+	// os.Root confines every MkdirAll/Create below to UI, following the
+	// same pattern SafeOpenFile (server/handlers/utils.go) already uses
+	// for reads: a dirname that somehow still resolved outside UI (a bug
+	// in validateRegistrySVGPathComponent, or a future caller that skips
+	// it) fails here instead of writing outside the intended directory,
+	// and unlike a check-then-write, there is no window between
+	// validation and the write in which the target could be swapped for
+	// a symlink.
+	root, err := os.OpenRoot(UI)
+	if err != nil {
+		return "", "", "", err
+	}
+	defer func() { _ = root.Close() }()
+
 	successCreatingDirectory := false
 	defer func() {
 		if successCreatingDirectory {
@@ -161,83 +287,114 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		}
 	}()
 	if svgColor != "" {
-		path := filepath.Join(UI, dirname, "color")
-		err := os.MkdirAll(path, 0777)
-		if err != nil {
+		if err = validateSVGContent(svgColor); err != nil {
+			return "", "", "", err
+		}
+		path := filepath.Join(dirname, "color")
+		if err = root.MkdirAll(path, 0777); err != nil {
 			fmt.Println(err)
-			return
+			return "", "", "", err
 		}
 		successCreatingDirectory = true
 
-		f, err := os.Create(filepath.Join(path, filename+"-color.svg"))
-		if err != nil {
-			fmt.Println(err)
-			return
+		f, ferr := root.Create(filepath.Join(path, filename+"-color.svg"))
+		if ferr != nil {
+			fmt.Println(ferr)
+			return "", "", "", ferr
 		}
-		_, err = f.WriteString(svgColor)
-		if err != nil {
-			fmt.Println(err)
-			return
+		_, ferr = f.WriteString(svgColor)
+		if ferr == nil {
+			ferr = f.Close()
+		} else {
+			_ = f.Close()
+		}
+		if ferr != nil {
+			fmt.Println(ferr)
+			return "", "", "", ferr
 		}
 		svgColorPath = getRelativePathForAPI(filepath.Join(dirname, "color", filename+"-color.svg")) //Replace the actual SVG with path to SVG
 
 	}
 
 	if svgWhite != "" {
-		path := filepath.Join(UI, dirname, "white")
-		err := os.MkdirAll(path, 0777)
-		if err != nil {
+		if err = validateSVGContent(svgWhite); err != nil {
+			return "", "", "", err
+		}
+		path := filepath.Join(dirname, "white")
+		if err = root.MkdirAll(path, 0777); err != nil {
 			fmt.Println(err)
-			return
+			return "", "", "", err
 		}
 		successCreatingDirectory = true
 
-		f, err := os.Create(filepath.Join(path, filename+"-white.svg"))
-		if err != nil {
-			fmt.Println(err)
-			return
+		f, ferr := root.Create(filepath.Join(path, filename+"-white.svg"))
+		if ferr != nil {
+			fmt.Println(ferr)
+			return "", "", "", ferr
 		}
-		_, err = f.WriteString(svgWhite)
-		if err != nil {
-			fmt.Println(err)
-			return
+		_, ferr = f.WriteString(svgWhite)
+		if ferr == nil {
+			ferr = f.Close()
+		} else {
+			_ = f.Close()
+		}
+		if ferr != nil {
+			fmt.Println(ferr)
+			return "", "", "", ferr
 		}
 		svgWhitePath = getRelativePathForAPI(filepath.Join(dirname, "white", filename+"-white.svg")) //Replace the actual SVG with path to SVG
 
 	}
 	if svgComplete != "" {
-		path := filepath.Join(UI, dirname, "complete")
-		err := os.MkdirAll(path, 0777)
-		if err != nil {
+		if err = validateSVGContent(svgComplete); err != nil {
+			return "", "", "", err
+		}
+		path := filepath.Join(dirname, "complete")
+		if err = root.MkdirAll(path, 0777); err != nil {
 			fmt.Println(err)
-			return
+			return "", "", "", err
 		}
 		successCreatingDirectory = true
 
-		f, err := os.Create(filepath.Join(path, filename+"-complete.svg"))
-		if err != nil {
-			fmt.Println(err)
-			return
+		f, ferr := root.Create(filepath.Join(path, filename+"-complete.svg"))
+		if ferr != nil {
+			fmt.Println(ferr)
+			return "", "", "", ferr
 		}
-		_, err = f.WriteString(svgComplete)
-		if err != nil {
-			fmt.Println(err)
-			return
+		_, ferr = f.WriteString(svgComplete)
+		if ferr == nil {
+			ferr = f.Close()
+		} else {
+			_ = f.Close()
+		}
+		if ferr != nil {
+			fmt.Println(ferr)
+			return "", "", "", ferr
 		}
 		svgCompletePath = getRelativePathForAPI(filepath.Join(dirname, "complete", filename+"-complete.svg")) //Replace the actual SVG with path to SVG
 
 	}
-	return
+	return svgColorPath, svgWhitePath, svgCompletePath, nil
 }
-func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) {
+
+// WriteSVGsOnFileSystem returns an InvalidRegistrySVGAssetError when
+// comp.Model.Name, comp.Component.Kind, or an SVG field was rejected by
+// validation, and a plain error for any other failure (a filesystem or I/O
+// problem writing an already-valid asset). Callers should check for
+// InvalidRegistrySVGAssetError to tell the two apart: the former is the
+// caller's fault (HTTP 400), the latter is the server's (HTTP 500).
+func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) error {
 
 	if comp.Styles != nil {
-		writeSVGHelper(
+		_, _, _, err := writeSVGHelper(
 			comp.Styles.SvgColor,
 			comp.Styles.SvgWhite,
 			comp.Styles.SvgComplete,
 			comp.Model.Name,
 			comp.Component.Kind) //Write SVG on components
+		if err != nil {
+			return err
+		}
 	}
 
 	if comp.Model.Metadata != nil {
@@ -245,13 +402,17 @@ func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) {
 		if comp.Model.Metadata.SvgComplete != nil {
 			svgComplete = *comp.Model.Metadata.SvgComplete
 		}
-		writeSVGHelper(
+		_, _, _, err := writeSVGHelper(
 			comp.Model.Metadata.SvgColor,
 			comp.Model.Metadata.SvgWhite,
 			svgComplete,
 			comp.Model.Name,
 			comp.Model.Name) //Write SVG on models
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
 func DeleteSVGsFromFileSystem() {

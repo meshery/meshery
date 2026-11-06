@@ -72,7 +72,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	for _, c := range man {
 		var isRegistranError bool
 		var isModelError bool
-		writeK8sMetadata(&c, reg)
+		writeK8sMetadata(&c, reg, log)
 		if models.K8sMeshModelMetadata.Capabilities != nil {
 			c.Capabilities = models.K8sMeshModelMetadata.Capabilities
 		}
@@ -103,7 +103,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	return
 }
 
-func writeK8sMetadata(comp *component.ComponentDefinition, reg *registry.RegistryManager) {
+func writeK8sMetadata(comp *component.ComponentDefinition, reg *registry.RegistryManager, log logger.Handler) {
 	ent, _, _, _ := reg.GetEntities(&regv1beta1.ComponentFilter{
 		Name:       comp.Component.Kind,
 		APIVersion: comp.Component.Version,
@@ -111,7 +111,9 @@ func writeK8sMetadata(comp *component.ComponentDefinition, reg *registry.Registr
 	// If component was not available in the registry, then use the generic model level metadata
 	if len(ent) == 0 {
 		comp.Styles = &models.K8sMeshModelMetadata.Styles
-		mesheryutils.WriteSVGsOnFileSystem(comp)
+		if err := mesheryutils.WriteSVGsOnFileSystem(comp); err != nil && log != nil {
+			log.Error(err)
+		}
 	} else {
 		existingComp, ok := ent[0].(*component.ComponentDefinition)
 		if !ok {
