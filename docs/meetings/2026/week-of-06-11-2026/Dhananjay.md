@@ -11,5 +11,5 @@ B.Tech Computer Science student at AKTU, Lucknow, looking for my first role in s
 Cloud-native tooling, Kubernetes policy and security, and contributing to open source.
 
 ## Links
-- LinkedIn: [<linkedin>](https://www.linkedin.com/in/dhananjaykumarsharma)
+- LinkedIn: [LinkedIn](https://www.linkedin.com/in/dhananjaykumarsharma)
 - GitHub: [github>](https://github.com/dhananjaysharma2004)
