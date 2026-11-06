@@ -136,7 +136,7 @@ func generateModelDataToDisplay(modelsResponse *model.MeshModelModelsPage) ([][]
 	rows := [][]string{}
 
 	if modelsResponse.Models == nil {
-		return rows, int64(*modelsResponse.TotalCount)
+		return rows, int64(0)
 	}
 
 	for _, model := range *modelsResponse.Models {
