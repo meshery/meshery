@@ -20,7 +20,15 @@ type ErrorHandler = (_action: { error_msg: string }) => (_error: unknown) => voi
 export function createErrorHandler({ notify }: { notify: Notify }): ErrorHandler {
   return (action) => (error) => {
     updateProgress({ showProgress: false });
-    const { message } = formatApiError(error, action.error_msg);
+    // formatApiError can throw on a malformed MeshKit envelope (e.g. a
+    // non-array suggestedRemediation), which would skip the notification
+    // and leave the rejection unhandled. Fall back to the action message.
+    let message: string;
+    try {
+      ({ message } = formatApiError(error, action.error_msg));
+    } catch {
+      message = action.error_msg;
+    }
     notify({ message, event_type: EVENT_TYPES.ERROR });
   };
 }

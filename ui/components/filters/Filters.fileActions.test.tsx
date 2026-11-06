@@ -605,4 +605,22 @@ describe('createErrorHandler', () => {
       event_type: 'ERROR',
     });
   });
+
+  it('falls back to the action message when error formatting throws', () => {
+    const notify = vi.fn();
+    // Malformed MeshKit envelope: a message with a non-array
+    // suggestedRemediation makes formatApiError throw.
+    const malformed = {
+      meshkit: { message: 'MeshKit says no', suggestedRemediation: 'try again' },
+    };
+    expect(() =>
+      createErrorHandler({ notify })({ error_msg: 'Failed to delete filter file' })(
+        malformed as any,
+      ),
+    ).not.toThrow();
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Failed to delete filter file',
+      event_type: 'ERROR',
+    });
+  });
 });
