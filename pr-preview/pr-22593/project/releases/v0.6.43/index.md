@@ -1,0 +1,28 @@
+# v0.6.43
+
+LLMS index: [llms.txt](/pr-preview/pr-22593/llms.txt)
+
+---
+
+## What's New
+## 🔤 General
+- [Conversion] name, namespace, labels and annotations as root field @Abhishek-kumar09 (#6878)
+- [MeshModel] Fix problem with #6875 @sudo-NithishKarthik (#6876)
+- [MeshModel] Update API Routes to Allow Optional URL Vars @sudo-NithishKarthik (#6875)
+
+## ⌨️ Meshery CLI
+
+- [mesheryctl] improve error message shown to users for "mesheryctl system channel" command #6274 @devkapilbansal (#6430)
+
+## 🖥 Meshery UI
+
+- [Playground] Redirect to playground based on capabilities, remove multiple api calls for capability query @Abhishek-kumar09 (#6879)
+
+## 📖 Documentation
+
+- correction in numbering of steps @AnnuCode (#6874)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@Abhishek-kumar09, @AnnuCode, @Revolyssup, @alphaX86, @devkapilbansal, @leecalcote and @sudo-NithishKarthik
