@@ -232,6 +232,22 @@ describe('getErrorCodesFromEvent', () => {
     // Deduped via Set
     expect(codes!.filter((c) => c === 'A')).toHaveLength(1);
   });
+
+  it('collects only the MeshKit codes of a pattern event errors list', () => {
+    expect(
+      getErrorCodesFromEvent({
+        metadata: {
+          status: 'failed',
+          errorCount: 3,
+          errors: [
+            { code: 'meshery-server-1480', componentId: 'c1' },
+            { code: 'required', componentId: 'c2' },
+            { code: 'FieldValueInvalid' },
+          ],
+        },
+      } as any),
+    ).toEqual(['meshery-server-1480']);
+  });
 });
 
 describe('DeleteEvent', () => {

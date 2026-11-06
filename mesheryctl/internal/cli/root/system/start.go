@@ -58,7 +58,7 @@ var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start Meshery",
 	Long: `Start Meshery and each of its cloud native components.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/start`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/start`,
 	Args: cobra.NoArgs,
 	Example: `
 // Start meshery

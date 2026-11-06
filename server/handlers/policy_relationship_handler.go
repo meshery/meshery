@@ -274,20 +274,56 @@ const defaultPolicyEvalTimeout = 3 * time.Minute
 
 var errEvalTimeout = errors.New("relationship policy evaluation timed out")
 
-// buildPolicyEvaluationEventMetadata builds the metadata map emitted on
-// the relationship-evaluation success event. Extracted into a named
-// function so the canonical camelCase keys (`historyTitle`, `trace`,
-// `evaluationResponse`, `evaluatedAt`) are pinned by a focused unit test
-// — see TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys.
-// Drift here would silently re-introduce the snake_case keys that
-// production carried for 125,840 rows pre-flip.
-func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse) map[string]interface{} {
-	return map[string]interface{}{
-		"historyTitle":       fmt.Sprintf("%d changes made at version %s", len(resp.Actions), resp.Design.Version),
-		"trace":              resp.Trace,
-		"evaluationResponse": resp,
-		"evaluatedAt":        *resp.Timestamp,
+// relationshipChangeCounts classifies the relationship actions an evaluation
+// produced. The ops are the gopolicies action constants carried in
+// pattern.Action.Op:
+//
+//   - add_relationship    -> relationshipsAdded
+//   - delete_relationship -> relationshipsRemoved
+//   - update_relationship -> relationshipsUpdated
+//
+// Component ops (add_component, delete_component, update_component,
+// update_component_configuration, remove_component_configuration) are not
+// relationship changes and are not counted.
+func relationshipChangeCounts(actions []pattern.Action) (added, removed, updated int) {
+	for _, action := range actions {
+		switch action.Op {
+		case gopolicies.AddRelationshipOp:
+			added++
+		case gopolicies.DeleteRelationshipOp:
+			removed++
+		case gopolicies.UpdateRelationshipOp:
+			updated++
+		}
 	}
+	return added, removed, updated
+}
+
+// policyEvaluationStatusCompleted is the evaluationStatus of an evaluation
+// that returned a response. Failed or timed-out evaluations do not emit the
+// success event this status belongs to.
+const policyEvaluationStatusCompleted = "completed"
+
+// buildPolicyEvaluationEventMetadata builds the metadata map emitted on
+// the relationship-evaluation success event. It carries the design's
+// identity and a summary of the evaluation - never the evaluated design,
+// its trace or the raw evaluation response (#22764). Keys are camelCase
+// and pinned by TestBuildPolicyEvaluationEventMetadata_*.
+func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse, serverURL string, duration time.Duration) map[string]interface{} {
+	design := resp.Design
+	metadata := models.DesignEventIdentity(serverURL, design.ID, design.Name, string(design.Version))
+
+	added, removed, updated := relationshipChangeCounts(resp.Actions)
+	metadata[models.EventMetadataHistoryTitle] = fmt.Sprintf("%d changes made at version %s", len(resp.Actions), design.Version)
+	metadata["relationshipsAdded"] = added
+	metadata["relationshipsRemoved"] = removed
+	metadata["relationshipsUpdated"] = updated
+	metadata["evaluationStatus"] = policyEvaluationStatusCompleted
+	metadata["evaluationDurationMs"] = duration.Milliseconds()
+	if resp.Timestamp != nil {
+		metadata["evaluatedAt"] = *resp.Timestamp
+	}
+	return metadata
 }
 
 func policyEvalTimeout() time.Duration {
@@ -801,6 +837,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		}
 	}
 
+	evalStart := time.Now()
 	evalRespChan := make(chan pattern.EvaluationResponse, 1)
 	evalErrChan := make(chan error, 1)
 
@@ -825,10 +862,11 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		return
 
 	case evaluationResponse := <-evalRespChan:
-		// include trace instead of design file in the event
+		evalDuration := time.Since(evalStart)
+		// the event carries the design's identity and an evaluation summary, never the design itself
 		description := fmt.Sprintf("Relationship evaluation complete: %d changes in '%s' at version '%s'", len(evaluationResponse.Actions), evaluationResponse.Design.Name, evaluationResponse.Design.Version)
 		event := eventBuilder.WithDescription(description).
-			WithMetadata(buildPolicyEvaluationEventMetadata(evaluationResponse)).
+			WithMetadata(buildPolicyEvaluationEventMetadata(evaluationResponse, models.ServerURLFromRequest(r), evalDuration)).
 			WithSeverity(events.Informational).Build()
 		go func() {
 			_ = provider.PersistEvent(*event, token)

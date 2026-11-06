@@ -36,7 +36,7 @@ var designUndeployCmd = &cobra.Command{
 	Use:   "undeploy",
 	Short: "Undeploy design",
 	Long: `Undeploy design will trigger undeploy of design.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/design/undeploy`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/design/undeploy`,
 	Example: `
 // Undeploy design by providing file path
 mesheryctl design undeploy -f [filepath]

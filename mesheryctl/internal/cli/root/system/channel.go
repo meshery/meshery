@@ -42,11 +42,41 @@ func IsBetaOrStable(str string) bool {
 	return str == "edge" || str == "stable"
 }
 
+// validateChannelArgs validates the channel and version arguments upfront
+// before any PreRunE health checks or confirmation prompts are executed.
+func validateChannelArgs(subcommand string) func(cmd *cobra.Command, args []string) error {
+	return func(_ *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", subcommand)))
+		}
+
+		channelVersion := args[0]
+		channelNameSeparated := strings.SplitN(channelVersion, "-", 2)
+
+		if !IsBetaOrStable(channelNameSeparated[0]) {
+			return ErrSystemSetInvalidReleaseChannel(channelNameSeparated[0])
+		}
+
+		if len(channelNameSeparated) > 1 {
+			switch channelNameSeparated[0] {
+			case "edge":
+				if channelNameSeparated[1] != "latest" {
+					return ErrSystemSetInvalidEdgeRelease(channelNameSeparated[1])
+				}
+			case "stable":
+				// valid stable channel
+			}
+		}
+
+		return nil
+	}
+}
+
 var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View release channel and version",
 	Long: `View release channel and version of context in focus
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel/view`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/view`,
 	Example: `
 // View current release channel
 mesheryctl system channel view edge
@@ -100,17 +130,12 @@ var setCmd = &cobra.Command{
 	Use:   "set [stable|stable-version|edge|edge-version]",
 	Short: "Set release channel and version",
 	Long: `Set release channel and version of context in focus
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel/set`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/set`,
 	Example: `
 // Subscribe to release channel or version
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 	`,
-	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", "set")))
-		}
-		return nil
-	},
+	Args: validateChannelArgs("set"),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -173,7 +198,7 @@ var switchCmd = &cobra.Command{
 	Use:   "switch [stable|stable-version|edge|edge-version]",
 	Short: "Switch release channel and version",
 	Long: `Switch release channel and version of context in focus
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel/switch`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/switch`,
 	Example: `
 // Switch between release channels
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
@@ -191,12 +216,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 		}
 		return hc.RunPreflightHealthChecks()
 	},
-	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", "switch")))
-		}
-		return nil
-	},
+	Args: validateChannelArgs("switch"),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		userResponse := false
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
@@ -238,7 +258,7 @@ var channelCmd = &cobra.Command{
 	Use:   "channel",
 	Short: "Switch between release channels",
 	Long: `Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel`,
 	Example: `
 // Subscribe to release channel or version
 mesheryctl system channel
