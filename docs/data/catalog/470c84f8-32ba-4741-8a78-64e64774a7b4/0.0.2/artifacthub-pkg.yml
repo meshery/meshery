@@ -15,10 +15,15 @@ readme: >-
     Requires a default StorageClass for three 8 GiB persistent volume claims.
     The in-cluster bootstrap address is kafka:9092 from the same namespace.
     Clients authenticate as user1 with the client-passwords key in the kafka-user-passwords Secret.
-    Use a non-empty client password without commas.
+    Use non-empty passwords containing only printable ASCII characters. The client password must also exclude commas.
+    To initialize a new cluster with three empty volumes, set bootstrap-new-cluster to "true" in the kafka-controller-configuration ConfigMap in the deployment namespace.
+    Wait for all three kafka-controller pods to become Ready, then immediately set bootstrap-new-cluster back to "false".
+    Keep bootstrap disabled on an existing cluster. If a controller loses its volume, restore the original volume or its backup before restarting the pod.
+    If the existing quorum still has a majority, follow the [Kafka 4.4 KRaft controller membership procedure](https://kafka.apache.org/44/operations/kraft/#controller-membership-changes) to provision a replacement with --no-initial-controllers and let it catch up before adding it as a voter.
+    If the quorum has lost its majority, recover the original controller metadata from backups before resuming service.
     On an existing cluster, rotate the PLAIN client password by updating the Secret and restarting the brokers.
     Rotate SCRAM-SHA-256 and SCRAM-SHA-512 for user1 in the running cluster with kafka-configs.sh --alter --add-config.
-    Kafka stores SCRAM credentials in KRaft metadata at format time.
+    Updating the Secret and restarting alone leaves the existing SCRAM credentials in KRaft metadata unchanged.
     This design uses SASL_PLAINTEXT and is intended for development and testing.
     Replace the example credentials and configure TLS and ACLs before production use.
 install: mesheryctl design import -f
