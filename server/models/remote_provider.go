@@ -5021,6 +5021,12 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 	if err != nil {
 		return err
 	}
+	// gzip.Reader owns the flate decompressor state, so release it on every
+	// return path - a truncated archive or a rejected entry leaves the loop
+	// early, and without this the reader is only reclaimed by the GC.
+	defer func() {
+		_ = uncompressedStream.Close()
+	}()
 
 	tarReader := tar.NewReader(uncompressedStream)
 
