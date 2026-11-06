@@ -43,7 +43,7 @@ The first and most consequential choice is *where MeshSync runs*. Meshery suppor
 
 The deployment mode is resolved per connection, in this order:
 
-1. **Per-connection setting** - the `meshsync_deployment_mode` entry in the connection's metadata. You set this in the UI when [importing a cluster]({{< ref "guides/infrastructure-management/registering-a-connection.md#meshsync-deployment-mode" >}}) and can change it later from the Connections page (open the connection's action menu and choose **Configure**). Switching modes redeploys MeshSync accordingly: operator to embedded undeploys the Operator and starts the in-server routine; embedded to operator stops the in-server routine and installs the Operator.
+1. **Per-connection setting** - the `meshsync_deployment_mode` entry in the connection's metadata. You set this in the UI when [importing a cluster]({{< ref "guides/infrastructure-management/registering-a-connection.md#importing-a-kubernetes-cluster" >}}) and can change it later from the Connections page (open the connection's action menu and choose **Configure**). Switching modes redeploys MeshSync accordingly: operator to embedded undeploys the Operator and starts the in-server routine; embedded to operator stops the in-server routine and installs the Operator.
 2. **Server-wide default** - the `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` environment variable on Meshery Server (`operator` or `embedded`). Connections without an explicit per-connection mode use this value.
 3. **Built-in default** - `embedded`.
 
@@ -326,7 +326,7 @@ Meshery UI exposes this configuration surface in two places today, with a broade
 
 **Available today:**
 
-- **Deployment mode at import** - the connection wizard lets you choose Operator or Embedded per kubeconfig context when [importing a cluster]({{< ref "guides/infrastructure-management/registering-a-connection.md#meshsync-deployment-mode" >}}).
+- **Deployment mode at import** - the connection wizard lets you choose Operator or Embedded per kubeconfig context when [importing a cluster]({{< ref "guides/infrastructure-management/registering-a-connection.md#importing-a-kubernetes-cluster" >}}).
 - **Deployment mode per connection** - the Connections table shows each Kubernetes connection's current mode. Open a connection's action menu, choose **Configure**, select the other mode, and **Apply**; Meshery tears down and re-establishes discovery for that connection in the new mode.
 - **Operator switch and diagnostics in Settings** - the Meshery Operator section of **Settings** provides a per-cluster on/off switch for the Operator, ad hoc connectivity tests for the Operator, Broker (NATS), and MeshSync, and database reset/flush actions.
 

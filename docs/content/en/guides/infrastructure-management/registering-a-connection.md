@@ -62,7 +62,7 @@ Kubernetes uses a dedicated flow because a single kubeconfig can describe many c
 
 1. **Choose Connection** → **Kubernetes**.
 2. **Import Kubeconfig.** Upload a kubeconfig file. Meshery parses it and lists the contexts it contains, indicating which are reachable - nothing is persisted yet.
-3. **Select contexts.** Choose which contexts to import. For each, you can override the Connection name and choose a [MeshSync deployment mode](#meshsync-deployment-mode).
+3. **Select contexts.** Choose which contexts to import. For each, you can override the Connection name and choose a [MeshSync deployment mode]({{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md#choosing-a-deployment-mode" >}}).
 4. **Review Import.** Confirm your selection and import. Meshery creates one Connection per selected context and reports the outcome, grouped into connected, registered, ignored, and errored buckets.
 
 Each imported cluster is created as a Kubernetes Connection that [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) keeps in sync. From there, Meshery can deploy and operate workloads, visualize the cluster, and more. See [Managing Connections]({{< ref "guides/infrastructure-management/lifecycle-management/index.md" >}}). If the cluster already runs workloads you did not deploy through Meshery, see [Bringing Existing Infrastructure Under Meshery Management]({{< ref "guides/infrastructure-management/managing-existing-infrastructure.md" >}}) for what to evaluate before importing and how discovery treats pre-existing resources.
@@ -104,7 +104,7 @@ For both kinds you can **skip credential verification** to register the source w
 
 The wizard also reconfigures an already-registered Connection. From the [Connections]({{< ref "concepts/logical/connections/index.md" >}}) table, open a Connection's action menu and choose **Configure**. The wizard opens in configure mode and presents only the post-registration steps relevant to that kind.
 
-For a Kubernetes Connection, this is where you change the [MeshSync deployment mode](#meshsync-deployment-mode). Selecting a different mode and clicking **Apply** makes Meshery undeploy MeshSync and redeploy it in the newly selected mode (Operator or Embedded) for that cluster.
+For a Kubernetes Connection, this is where you change the [MeshSync deployment mode]({{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md#choosing-a-deployment-mode" >}}). Selecting a different mode and clicking **Apply** makes Meshery undeploy MeshSync and redeploy it in the newly selected mode (Operator or Embedded) for that cluster.
 
 {{% alert color="info" title="Changing a Connection's state" %}}
 Configuring a Connection is distinct from transitioning its **state** (Connected, Ignored, Disconnected, and so on). State transitions - and the rules governing which are allowed - are driven by the connection definition and performed from the status control on the Connections table. See [States and the Lifecycle of Connections]({{< ref "concepts/logical/connections/index.md#states-and-the-lifecycle-of-connections" >}}).
