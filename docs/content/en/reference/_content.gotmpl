@@ -79,6 +79,11 @@
       {{- with $def.probableCause -}}{{- $definition = merge $definition (dict "probableCause" .) -}}{{- end -}}
       {{- with $def.suggestedRemediation -}}{{- $definition = merge $definition (dict "suggestedRemediation" .) -}}{{- end -}}
     {{- else -}}
+      {{- /* A component without a nested export may still carry NewV3 causes in
+             its flat export (errorutil adds `probableCauses` to those entries). */ -}}
+      {{- with $error.probableCauses -}}
+        {{- $definition = merge $definition (dict "probableCauses" .) -}}
+      {{- end -}}
       {{- /* The flat export joins lines with a newline; older exports wrote it escaped. */ -}}
       {{- range $field, $key := dict "probableCause" "probable_cause" "suggestedRemediation" "suggested_remediation" -}}
         {{- $lines := slice -}}
