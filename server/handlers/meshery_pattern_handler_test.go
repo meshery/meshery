@@ -660,8 +660,8 @@ type mockPatternHandlerProvider struct {
 	*models.DefaultLocalProvider
 }
 
-func (m *mockPatternHandlerProvider) PersistEvent(event _events.Event, token string) error {
-	return nil
+func (m *mockPatternHandlerProvider) PersistEvent(event _events.Event, token string) (models.PersistedEvent, error) {
+	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
 }
 
 func (m *mockPatternHandlerProvider) GetProviderToken(_ *http.Request) (string, error) {
