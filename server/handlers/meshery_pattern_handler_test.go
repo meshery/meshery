@@ -717,6 +717,7 @@ func TestDesignFileRequestHandlerWithSourceType_MissingPatternDataReturnsBadRequ
 			h.DesignFileRequestHandlerWithSourceType(rec, req, nil, &models.User{ID: userID}, provider)
 
 			assert.Equal(t, http.StatusBadRequest, rec.Code, "expected 400 Bad Request for %s", tc.name)
+			assert.Contains(t, rec.Body.String(), "patternData", "expected error to name the missing field for %s", tc.name)
 		})
 	}
 }
