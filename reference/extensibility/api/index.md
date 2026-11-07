@@ -23,7 +23,7 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
 </div></section><input id="api-reference-tabs-3-2" type="radio" name="api-reference-tabs-3">
     <label for="api-reference-tabs-3-2"><i class="fa fa-globe" aria-hidden="true"></i>GraphQL API
     </label>
-    <section class="tabbed" id="api-reference-tabs-3-content-2"><p>Meshery Server's GraphQl API is available at <code>{hostname]:[port]/api/graphql/query</code>. A GraphQL request can be made as a POST request to the endpoint with the query as the payload. Meshery Server's GraphQL API can be used to perform three operations:</p>
+    <section class="tabbed" id="api-reference-tabs-3-content-2"><p>Meshery Server's GraphQl API is available at <code>{hostname]:[port]/api/system/graphql/query</code>. A GraphQL request can be made as a POST request to the endpoint with the query as the payload. Meshery Server's GraphQL API can be used to perform three operations:</p>
 <ul>
 <li>Queries for data retrieval.</li>
 <li>Mutations for creating, updating, and deleting data.</li>

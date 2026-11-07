@@ -46,7 +46,7 @@ Meshery provides a REST API available through the default port of `9081/tcp` at 
 
 ### GraphQL API
 
-Meshery provides a GraphQl API available through the default port of `9081/tcp` at `<hostname>:<port>/api/graphql/query`. See the [GraphQL API Reference](/reference/graphql-apis/) [Relay](https://relay.dev) is the client used.
+Meshery provides a GraphQl API available through the default port of `9081/tcp` at `<hostname>:<port>/api/system/graphql/query`. See the [GraphQL API Reference](/reference/graphql-apis/) [Relay](https://relay.dev) is the client used.
 
 ## Design
 
