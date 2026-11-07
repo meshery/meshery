@@ -1793,7 +1793,10 @@ func (h *Handler) handlePatternUpdate(
 
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
-		go h.EventsBuffer.Publish(&res)
+		if h.EventsBuffer != nil {
+			addMeshkitErr(&res, missingRouteErr)
+			go h.EventsBuffer.Publish(&res)
+		}
 		writeMeshkitError(rw, missingRouteErr, http.StatusBadRequest)
 		return
 	}
@@ -1817,6 +1820,7 @@ func (h *Handler) handlePatternUpdate(
 			go h.config.EventBroadcaster.Publish(userID, event)
 		}
 		if h.EventsBuffer != nil {
+			addMeshkitErr(&res, err)
 			go h.EventsBuffer.Publish(&res)
 		}
 		writeMeshkitError(rw, err, http.StatusBadRequest)
