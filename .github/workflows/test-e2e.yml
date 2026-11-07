@@ -146,6 +146,7 @@ jobs:
         run: |
           docker run -d \
             -p 9081:8080 \
+            -e MESHERY_UI_ORIGINS=http://localhost:3000 \
             --name meshery \
             meshery-server:ci
 

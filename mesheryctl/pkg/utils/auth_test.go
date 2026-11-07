@@ -66,6 +66,30 @@ func TestAuth(t *testing.T) {
 	//@Aisuko Need a token file to do other testings
 }
 
+func TestSetRequestOrigin(t *testing.T) {
+	tests := []struct {
+		name string
+		url  string
+		want string
+	}{
+		{name: "HTTP destination", url: "http://localhost:9081/api/system/sync", want: "http://localhost:9081"},
+		{name: "HTTPS destination", url: "https://meshery.example.com/api/system/sync", want: "https://meshery.example.com"},
+		{name: "non-HTTP destination", url: "file:///tmp/request", want: ""},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			req, err := http.NewRequest(http.MethodGet, tc.url, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			setRequestOrigin(req)
+			if got := req.Header.Get("Origin"); got != tc.want {
+				t.Errorf("Origin = %q, want %q", got, tc.want)
+			}
+		})
+	}
+}
+
 func TestProviderUnmarshalJSON(t *testing.T) {
 	t.Run("Given canonical camelCase provider fields, When unmarshaled, Then it populates Provider correctly", func(t *testing.T) {
 		payload := []byte(`{"providerUrl":"https://cloud.meshery.io","providerName":"Meshery"}`)

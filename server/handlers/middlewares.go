@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -76,6 +77,122 @@ func resolveProviderName(req *http.Request, cookieName, enforcedProvider string)
 	return models.NormalizeProviderName(name), usedLegacyAlias
 }
 
+// localProviderRequestAllowed rejects requests without browser-origin proof
+// or from an origin outside loopback and configured UI origins before they
+// can reach a Local provider handler. The Local provider has no authenticated
+// session, so it cannot rely on normal provider session checks to prevent CSRF.
+func localProviderRequestAllowed(req *http.Request, allowedUIOrigins string) bool {
+	originValues := req.Header.Values("Origin")
+	if len(originValues) > 1 {
+		return false
+	}
+	source := ""
+	if len(originValues) == 1 && originValues[0] != "" {
+		source = originValues[0]
+	} else {
+		refererValues := req.Header.Values("Referer")
+		if len(refererValues) > 1 {
+			return false
+		}
+		if len(refererValues) == 1 {
+			source = refererValues[0]
+		}
+	}
+
+	if source == "" {
+		if strings.EqualFold(req.Header.Get("Sec-Fetch-Site"), "cross-site") {
+			return false
+		}
+		return !localRequestRequiresOrigin(req)
+	}
+
+	sourceURL, err := url.Parse(source)
+	if err != nil || sourceURL.User != nil || sourceURL.Opaque != "" || sourceURL.Hostname() == "" {
+		return false
+	}
+	if !isHTTPOrigin(sourceURL) {
+		return false
+	}
+
+	if len(originValues) == 1 && originValues[0] != "" &&
+		(sourceURL.Path != "" && sourceURL.Path != "/" || sourceURL.RawQuery != "" || sourceURL.Fragment != "") {
+		return false
+	}
+
+	targetScheme := "http"
+	if req.TLS != nil {
+		targetScheme = "https"
+	} else if req.URL != nil && (req.URL.Scheme == "http" || req.URL.Scheme == "https") {
+		targetScheme = req.URL.Scheme
+	}
+	targetURL := &url.URL{Scheme: targetScheme, Host: req.Host}
+	for _, rawUIOrigin := range strings.Split(allowedUIOrigins, ",") {
+		uiOrigin, err := url.Parse(strings.TrimSpace(rawUIOrigin))
+		if err == nil && isHTTPOrigin(uiOrigin) && (uiOrigin.Path == "" || uiOrigin.Path == "/") && uiOrigin.RawQuery == "" && uiOrigin.Fragment == "" && sameOrigin(sourceURL, uiOrigin) {
+			return true
+		}
+	}
+
+	if strings.EqualFold(req.Header.Get("Sec-Fetch-Site"), "cross-site") {
+		return false
+	}
+	// Host is supplied by the request and can be attacker-controlled during a
+	// DNS-rebinding attack. Implicit same-origin trust is safe for loopback
+	// Meshery installs; named deployments must configure their browser origin.
+	return isLoopbackHost(targetURL.Hostname()) && sameOrigin(sourceURL, targetURL)
+}
+
+// localRequestRequiresOrigin marks safe-verb endpoints that still perform an
+// action, along with every unsafe HTTP method, as requiring origin metadata.
+func localRequestRequiresOrigin(req *http.Request) bool {
+	if req.Method == http.MethodGet && req.URL != nil {
+		path := req.URL.Path
+		if path == "/user/logout" || path == "/api/provider" || path == "/api/system/sync" || path == "/api/perf/profile" ||
+			(strings.HasPrefix(path, "/api/user/performance/profiles/") && strings.HasSuffix(path, "/run")) {
+			return true
+		}
+	}
+	switch req.Method {
+	case http.MethodGet, http.MethodHead, http.MethodOptions, http.MethodTrace:
+		return false
+	default:
+		return true
+	}
+}
+
+// isHTTPOrigin validates an HTTP(S) URL for use as an origin candidate.
+func isHTTPOrigin(origin *url.URL) bool {
+	return origin != nil && (strings.EqualFold(origin.Scheme, "http") || strings.EqualFold(origin.Scheme, "https")) && origin.User == nil && origin.Opaque == "" && origin.Hostname() != "" && !strings.Contains(origin.Hostname(), "*")
+}
+
+// sameOrigin compares scheme, normalized hostname, and effective port.
+func sameOrigin(first, second *url.URL) bool {
+	firstHost := strings.TrimSuffix(strings.ToLower(first.Hostname()), ".")
+	secondHost := strings.TrimSuffix(strings.ToLower(second.Hostname()), ".")
+	return strings.EqualFold(first.Scheme, second.Scheme) && firstHost == secondHost && effectiveOriginPort(first) == effectiveOriginPort(second)
+}
+
+// effectiveOriginPort returns an explicit port or the scheme's standard port.
+func effectiveOriginPort(origin *url.URL) string {
+	if port := origin.Port(); port != "" {
+		return port
+	}
+	if strings.EqualFold(origin.Scheme, "https") {
+		return "443"
+	}
+	return "80"
+}
+
+// isLoopbackHost limits implicit same-origin trust to local-only hostnames and
+// IP addresses, avoiding trust in an attacker-controlled Host header.
+func isLoopbackHost(host string) bool {
+	if strings.EqualFold(strings.TrimSuffix(host, "."), "localhost") {
+		return true
+	}
+	ip := net.ParseIP(host)
+	return ip != nil && ip.IsLoopback()
+}
+
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
@@ -93,6 +210,10 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			if provider == nil && h.Provider != "" && providerName == models.NormalizeProviderName(h.Provider) {
 				h.log.Errorf("enforced provider %q is not registered in h.config.Providers; ProviderUIHandler will degrade to serving the provider-selection UI instead of auto-login. Register %q in PROVIDERS or unset PROVIDER on this deployment.", h.Provider, h.Provider)
 			}
+		}
+		if provider != nil && provider.GetProviderType() == models.LocalProviderType && !localProviderRequestAllowed(req, h.config.AllowedUIOrigins) {
+			writeJSONError(w, "cross-origin request is not allowed for the Local provider", http.StatusForbidden)
+			return
 		}
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
 
