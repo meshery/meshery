@@ -603,9 +603,12 @@ var remRetryKubeConnection = errors.Remediation{
 // and the returned error records which cause err points at, so an event that
 // reports it names that cause (see MatchedCauses).
 func ErrUnreachableKubeAPI(err error, server string) error {
-	return withMatchedCause(errors.NewV3(ErrUnreachableKubeAPICode, errors.Alert,
-		[]string{fmt.Sprintf("Error communicating with KubeAPI at %s.", server)},
-		[]string{err.Error()},
+	// errorutil reads the descriptions as string literals, so the instance
+	// text - the API server's address and the client error - is appended
+	// after NewV3 returns.
+	kubeAPIErr := errors.NewV3(ErrUnreachableKubeAPICode, errors.Alert,
+		[]string{"Error communicating with the Kubernetes API server."},
+		[]string{"Meshery Server did not get an answer from the cluster's API server."},
 		[]errors.Cause{
 			{
 				ID:          "api-server-unreachable",
@@ -632,7 +635,9 @@ func ErrUnreachableKubeAPI(err error, server string) error {
 				},
 			},
 		},
-	), classifyKubeAPIError(err))
+	)
+	kubeAPIErr.LongDescription = append(kubeAPIErr.LongDescription, fmt.Sprintf("API server: %s", server), err.Error())
+	return withMatchedCause(kubeAPIErr, classifyKubeAPIError(err))
 }
 
 func ErrFlushMeshSyncData(err error, contextName, server string) error {
