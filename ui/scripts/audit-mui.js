@@ -260,7 +260,6 @@ function runScan(scan) {
   };
 }
 
-
 function main() {
   const args = process.argv.slice(2);
   const showAll = args.includes('--all');
@@ -303,8 +302,7 @@ function main() {
       ) + '\n',
     );
 
-    process.exitCode =
-      failOnNew && (totalFiles > 0 || !scanComplete) ? 1 : 0;
+    process.exitCode = failOnNew && (totalFiles > 0 || !scanComplete) ? 1 : 0;
     return;
   }
 
@@ -347,14 +345,14 @@ function main() {
 
   for (const r of results) {
     process.stdout.write(
-      `  [${r.name.padEnd(20)}] files=${r.files} matches=${r.matches} allowlist=${r.allowlistSize}\n`,
+      `  [${r.name.padEnd(20)}] files=${r.files} matches=${r.matches} allowlist=${
+        r.allowlistSize
+      }\n`,
     );
   }
 
   if (!scanComplete) {
-    process.stderr.write(
-      'WARNING: Scan incomplete. Check the reported scan errors.\n',
-    );
+    process.stderr.write('WARNING: Scan incomplete. Check the reported scan errors.\n');
   }
 
   process.stdout.write('\n');
@@ -367,8 +365,8 @@ function main() {
   if (failOnNew && (totalFiles > 0 || !scanComplete)) {
     process.stderr.write(
       `\nFAIL: ${totalFiles} non-allowlisted file(s) import @mui/*. ` +
-      `${scanComplete ? '' : 'The scan was incomplete. Check scan errors. '}` +
-      `Migrate to @sistent/sistent or update the allowlist with justification.\n`,
+        `${scanComplete ? '' : 'The scan was incomplete. Check scan errors. '}` +
+        `Migrate to @sistent/sistent or update the allowlist with justification.\n`,
     );
     process.exitCode = 1;
   }

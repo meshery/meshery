@@ -38,10 +38,7 @@ function createFixture(t) {
   for (const directory of uiDirectories) {
     fs.mkdirSync(path.join(fixture, 'ui', directory), { recursive: true });
   }
-  fs.mkdirSync(
-    path.join(fixture, 'install', 'docker-extension', 'ui', 'src'),
-    { recursive: true },
-  );
+  fs.mkdirSync(path.join(fixture, 'install', 'docker-extension', 'ui', 'src'), { recursive: true });
   writeFile(fixture, 'ui/remote-component.config.js');
 
   return fixture;
@@ -49,14 +46,10 @@ function createFixture(t) {
 
 function runAudit(fixture, args = [], options = {}) {
   const script = path.join(fixture, 'ui', 'scripts', 'audit-mui.js');
-  const result = spawnSync(
-    process.execPath,
-    [script, '--json', ...args],
-    {
-      encoding: 'utf8',
-      env: { ...process.env, ...(options.env ?? {}) },
-    },
-  );
+  const result = spawnSync(process.execPath, [script, '--json', ...args], {
+    encoding: 'utf8',
+    env: { ...process.env, ...(options.env ?? {}) },
+  });
 
   let json;
   try {
@@ -102,10 +95,7 @@ test('a missing explicit scan file is recorded as a scan error', (t) => {
   const result = runAudit(fixture);
 
   assert.equal(result.json.scanComplete, false);
-  assert.match(
-    scanErrorText(result),
-    /missing scan file .*remote-component\.config\.js/,
-  );
+  assert.match(scanErrorText(result), /missing scan file .*remote-component\.config\.js/);
 });
 
 test('a recursive directory read failure is recorded while sibling directories are scanned', (t) => {
@@ -225,4 +215,3 @@ test('a complete scan with no offenders exits 0', (t) => {
   assert.equal(result.json.files, 0);
   assert.equal(result.json.matches, 0);
 });
-
