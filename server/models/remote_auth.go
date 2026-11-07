@@ -42,6 +42,11 @@ const (
 // JWK - a type respresting the JSON web Key
 type JWK map[string]string
 
+// defaultTokenDeletionDelay is the default wait before refreshToken evicts a
+// superseded token from TokenStore when RemoteProvider.TokenDeletionDelay is
+// unset.
+const defaultTokenDeletionDelay = 1 * time.Hour
+
 // SafeClose is a helper function help to close the io
 func SafeClose(co io.Closer, log logger.Handler) {
 	if cerr := co.Close(); cerr != nil {
@@ -126,8 +131,14 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 		return "", fmt.Errorf("failed to refresh token. response missing %q", TokenCookieName)
 	}
 	l.TokenStore[tokenString] = newTokenString
-	time.AfterFunc(1*time.Hour, func() {
+	deletionDelay := l.TokenDeletionDelay
+	if deletionDelay <= 0 {
+		deletionDelay = defaultTokenDeletionDelay
+	}
+	time.AfterFunc(deletionDelay, func() {
 		l.Log.Info("deleting old token string")
+		l.TokenStoreMut.Lock()
+		defer l.TokenStoreMut.Unlock()
 		delete(l.TokenStore, tokenString)
 	})
 	return newTokenString, nil
