@@ -75,12 +75,15 @@ func AttachEventError(builder *events.EventBuilder, err error, log logger.Handle
 			log.Warn(ErrAttachEventError(attachErr))
 		}
 		// WithError leaves the event unchanged on failure, so the legacy key is
-		// set here, keeping the rest of the metadata.
-		event := builder.Build()
-		if event.Metadata == nil {
-			event.Metadata = map[string]interface{}{}
+		// set here, through the builder, keeping the rest of the metadata.
+		// Build returns its own copy of the metadata, so the copy is changed
+		// and set back rather than changing a built event.
+		metadata := builder.Build().Metadata
+		if metadata == nil {
+			metadata = map[string]interface{}{}
 		}
-		event.Metadata[events.MetadataErrorKey] = err
+		metadata[events.MetadataErrorKey] = err
+		builder.WithMetadata(metadata)
 	}
 	return builder
 }

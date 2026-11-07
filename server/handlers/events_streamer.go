@@ -584,19 +584,40 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		return
 
 	}
-	go h.config.EventBroadcaster.Publish(userID, persisted.Event)
-
-	w.Header().Set("Content-Type", "application/json")
 	if persisted.Disposition != "" {
 		w.Header().Set(models.EventDispositionHeader, string(persisted.Disposition))
 	}
-	w.WriteHeader(http.StatusCreated)
+	if persisted.Event == nil {
+		// A remote provider recorded nothing new and did not return the
+		// stored event, so there is no event to broadcast or answer with.
+		w.WriteHeader(createEventStatus(persisted.Disposition))
+		return
+	}
+	go h.config.EventBroadcaster.Publish(userID, persisted.Event)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(createEventStatus(persisted.Disposition))
 	err = json.NewEncoder(w).Encode(persisted.Event)
 	if err != nil {
-		// Headers + 201 committed and the response body has started
+		// Headers + status committed and the response body has started
 		// streaming via json.Encoder, so we cannot send a fresh JSON
 		// error response here. Log only.
 		h.log.Error(models.ErrMarshal(err, "event response"))
 		return
+	}
+}
+
+// createEventStatus is the createEvent status for what persisting the event
+// did (docs/event-correlation-contract.md in meshery/schemas): 201 only when a
+// new event was recorded, 200 when the create recorded nothing new - an
+// occurrence counted on an open condition, its resolution, or a replay. A
+// remote provider that predates correlation reports no disposition; its create
+// recorded the event, so the answer is 201.
+func createEventStatus(disposition models.EventDisposition) int {
+	switch disposition {
+	case models.EventIncremented, models.EventResolved, models.EventReplayed:
+		return http.StatusOK
+	default:
+		return http.StatusCreated
 	}
 }
