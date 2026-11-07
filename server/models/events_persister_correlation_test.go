@@ -639,3 +639,76 @@ func TestPersistEventClampsTheOccurrenceCountToOne(t *testing.T) {
 		t.Fatalf("got %+v, want one open row at count 2", rows)
 	}
 }
+
+func withKey(event *events.Event, key string) *events.Event {
+	event.IdempotencyKey = &key
+	return event
+}
+
+// A create carrying an idempotencyKey its caller already used records and
+// changes nothing, whatever the rest of the payload says, and is answered with
+// the event the key is bound to: the recorded event, or the condition's event
+// for a key that counted an occurrence or resolved it.
+func TestPersistEventReplaysAnIdempotencyKey(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+
+	created := mustPersist(t, p, withKey(events.NewEvent().FromOwner(owner).WithCategory("perf").WithAction("run").
+		WithSeverity(events.Informational).WithDescription("first").Build(), "run-1"))
+	retry := mustPersist(t, p, withKey(events.NewEvent().FromOwner(owner).WithCategory("perf").WithAction("run").
+		WithSeverity(events.Error).WithDescription("different payload").Build(), "run-1"))
+	if retry.Disposition != EventReplayed || retry.Event.ID != created.Event.ID || retry.Event.Description != "first" {
+		t.Fatalf("retry = %s %s %q, want replayed %s %q", retry.Disposition, retry.Event.ID, retry.Event.Description, created.Event.ID, "first")
+	}
+
+	opened := mustPersist(t, p, conditionEvent(owner, "k", "down").Build())
+	counted := mustPersist(t, p, withKey(conditionEvent(owner, "k", "down").Build(), "occ-1"))
+	if counted.Disposition != EventIncremented {
+		t.Fatalf("keyed occurrence = %s, want incremented", counted.Disposition)
+	}
+	again := mustPersist(t, p, withKey(conditionEvent(owner, "k", "down").Build(), "occ-1"))
+	if again.Disposition != EventReplayed || again.Event.ID != opened.Event.ID || count(again.Event.OccurrenceCount) != 2 {
+		t.Fatalf("retried occurrence = %s %s count %d, want replayed %s count 2",
+			again.Disposition, again.Event.ID, count(again.Event.OccurrenceCount), opened.Event.ID)
+	}
+
+	resolution := withKey(conditionEvent(owner, "k", "up").WithResolvedAt(time.Now().UTC()).Build(), "res-1")
+	if got := mustPersist(t, p, resolution); got.Disposition != EventResolved {
+		t.Fatalf("keyed resolution = %s, want resolved", got.Disposition)
+	}
+	retried := withKey(conditionEvent(owner, "k", "up").WithResolvedAt(time.Now().UTC()).Build(), "res-1")
+	if got := mustPersist(t, p, retried); got.Disposition != EventReplayed || got.Event.ID != opened.Event.ID {
+		t.Fatalf("retried resolution = %s %s, want replayed %s", got.Disposition, got.Event.ID, opened.Event.ID)
+	}
+	if rows := storedEvents(t, p, owner); len(rows) != 2 {
+		t.Fatalf("got %d rows, want the created event and the condition", len(rows))
+	}
+
+	// Keys are scoped to the caller: another owner's key is its own.
+	other := mustUUID(t)
+	if got := mustPersist(t, p, withKey(events.NewEvent().FromOwner(other).WithCategory("perf").WithAction("run").
+		WithSeverity(events.Informational).Build(), "run-1")); got.Disposition != EventCreated {
+		t.Fatalf("another caller's key = %s, want created", got.Disposition)
+	}
+}
+
+// Of concurrent creates carrying one key, exactly one is recorded.
+func TestPersistEventConcurrentIdempotencyKeyRecordsOnce(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+	var wg sync.WaitGroup
+	for i := 0; i < 8; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			if _, err := p.PersistEvent(*withKey(events.NewEvent().FromOwner(owner).WithCategory("perf").WithAction("run").
+				WithSeverity(events.Informational).Build(), "run-1"), ""); err != nil {
+				t.Errorf("PersistEvent: %v", err)
+			}
+		}()
+	}
+	wg.Wait()
+	if rows := storedEvents(t, p, owner); len(rows) != 1 {
+		t.Fatalf("got %d rows, want 1", len(rows))
+	}
+}

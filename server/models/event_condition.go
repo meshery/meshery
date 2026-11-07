@@ -57,8 +57,8 @@ type PersistedEvent struct {
 // instance.
 const EventSourceServer = "meshery-server"
 
-// ApplyClientEventFields copies the optional correlation, provenance and trace
-// fields of an event a client sent (the schemas EventPayload) onto the event
+// ApplyClientEventFields copies the optional idempotency, correlation,
+// provenance and trace fields of an event a client sent (the schemas EventPayload) onto the event
 // the server records for it, so a condition a client reports correlates as it
 // would on the remote provider. The client's operationId groups the event with
 // the rest of its operation when it sent one. A client that names no source
@@ -74,6 +74,7 @@ func ApplyClientEventFields(event *events.Event, sent events.Event) {
 	event.TraceID = sent.TraceID
 	event.ParentID = sent.ParentID
 	event.Source = sent.Source
+	event.IdempotencyKey = sent.IdempotencyKey
 	if !sent.OperationID.IsNil() {
 		event.OperationID = sent.OperationID
 	}

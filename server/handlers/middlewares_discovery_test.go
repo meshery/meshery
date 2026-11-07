@@ -263,7 +263,7 @@ func TestClientEventHandlerForwardsContractFields(t *testing.T) {
 	provider := &tokenEventsProvider{}
 	rec := postClientEvent(t, h, provider, `{"actedUpon":"`+actedUpon+`","category":"connection","action":"update","severity":"error",
 		"description":"cluster unreachable","correlationKey":"meshery-ui/k8s-connection/abc/unreachable","occurrenceCount":2,
-		"source":"meshery-ui","traceId":"4bf92f3577b34da6a3ce929d0e0e4736","parentId":"00f067aa0ba902b7"}`)
+		"source":"meshery-ui","traceId":"4bf92f3577b34da6a3ce929d0e0e4736","parentId":"00f067aa0ba902b7","idempotencyKey":"ui/retry-1"}`)
 	if rec.Code != http.StatusCreated || len(provider.persisted) != 1 {
 		t.Fatalf("status %d, %d persisted; body %s", rec.Code, len(provider.persisted), rec.Body.String())
 	}
@@ -271,7 +271,8 @@ func TestClientEventHandlerForwardsContractFields(t *testing.T) {
 	if got.CorrelationKey == nil || *got.CorrelationKey != "meshery-ui/k8s-connection/abc/unreachable" ||
 		got.OccurrenceCount == nil || *got.OccurrenceCount != 2 ||
 		got.Source == nil || *got.Source != "meshery-ui" ||
-		got.TraceID == nil || *got.TraceID != "4bf92f3577b34da6a3ce929d0e0e4736" || got.ParentID == nil {
+		got.TraceID == nil || *got.TraceID != "4bf92f3577b34da6a3ce929d0e0e4736" || got.ParentID == nil ||
+		got.IdempotencyKey == nil || *got.IdempotencyKey != "ui/retry-1" {
 		t.Fatalf("contract fields were not forwarded: %+v", got)
 	}
 

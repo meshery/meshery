@@ -110,13 +110,28 @@ func (e *EventsPersister) PersistClientEvent(event events.Event, token string) (
 
 func (e *EventsPersister) persist(event events.Event) (PersistedEvent, error) {
 	event = PrepareEventForPersistence(event, e.Log)
+	// Replay runs first: a create carrying an idempotencyKey its caller
+	// already used records nothing and is answered with the bound event. A
+	// create without a key issues no query here; a retry by event ID is
+	// caught by the insert's primary key instead.
+	if bound, ok, err := boundEvent(e.DB.DB, event); err != nil {
+		return PersistedEvent{}, ErrPersistEvent(err)
+	} else if ok {
+		return PersistedEvent{Event: bound, Disposition: EventReplayed}, nil
+	}
 	if !correlatesEvent(event) {
 		// A new event is inserted, never upserted: the producer minted its ID
 		// (events.NewEvent does, and BeforeCreate keeps it), so a plain INSERT
 		// is the one statement it needs. GORM's Create requires a pointer.
-		if err := e.DB.Create(&event).Error; err != nil {
+		err := e.DB.Transaction(func(tx *gorm.DB) error {
+			if err := tx.Create(&event).Error; err != nil {
+				return err
+			}
+			return bindIdempotencyKey(tx, event, event.ID)
+		})
+		if err != nil {
 			if isUniqueViolation(err) {
-				if replayed, ok, lookupErr := e.replayedEvent(event.ID); lookupErr != nil {
+				if replayed, ok, lookupErr := e.replayedEvent(event); lookupErr != nil {
 					return PersistedEvent{}, ErrPersistEvent(lookupErr)
 				} else if ok {
 					return replayed, nil
@@ -134,7 +149,7 @@ func (e *EventsPersister) persist(event events.Event) (PersistedEvent, error) {
 		// between this create's lookup and its insert. The first is a replay.
 		// For the second, re-run the create: the lookup now finds the open
 		// event and the occurrence is counted on it.
-		if replayed, ok, lookupErr := e.replayedEvent(event.ID); lookupErr != nil {
+		if replayed, ok, lookupErr := e.replayedEvent(event); lookupErr != nil {
 			return PersistedEvent{}, ErrPersistEvent(lookupErr)
 		} else if ok {
 			return replayed, nil
@@ -147,17 +162,24 @@ func (e *EventsPersister) persist(event events.Event) (PersistedEvent, error) {
 	return persisted, nil
 }
 
-// replayedEvent reports whether an event with id is already stored, and
-// returns it as the answer to a retry of that event: an event value persisted
-// twice (a producer retrying after a timeout) is recorded once, and the retry
-// changes nothing. An event built with events.NewEvent carries its own ID, so
-// the ID identifies the event across retries.
-func (e *EventsPersister) replayedEvent(id uuid.UUID) (PersistedEvent, bool, error) {
-	if id.IsNil() {
+// replayedEvent reports whether event was already recorded, and returns the
+// stored event as the answer to the retry: a create carrying an idempotencyKey
+// its caller already used is answered with the event the key is bound to, and
+// an event value persisted twice (a producer retrying after a timeout; an
+// event built with events.NewEvent carries its own ID) with the stored row of
+// that ID. Either way the retry records and changes nothing.
+func (e *EventsPersister) replayedEvent(event events.Event) (PersistedEvent, bool, error) {
+	if bound, ok, err := boundEvent(e.DB.DB, event); err != nil || ok {
+		if err != nil {
+			return PersistedEvent{}, false, err
+		}
+		return PersistedEvent{Event: bound, Disposition: EventReplayed}, true, nil
+	}
+	if event.ID.IsNil() {
 		return PersistedEvent{}, false, nil
 	}
 	var stored events.Event
-	found := e.DB.Where("id = ?", id).Limit(1).Find(&stored)
+	found := e.DB.Where("id = ?", event.ID).Limit(1).Find(&stored)
 	if found.Error != nil {
 		return PersistedEvent{}, false, found.Error
 	}
@@ -244,7 +266,7 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) (PersistedE
 				return err
 			}
 			persisted = PersistedEvent{Event: &event, Disposition: EventCreated}
-			return nil
+			return bindIdempotencyKey(tx, event, event.ID)
 		}
 
 		// The update runs on the stored row, whose status is valid, so the
@@ -272,7 +294,10 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) (PersistedE
 			if event.Description != "" {
 				updates["description"] = event.Description
 			}
-			return updateOpenEvent(tx, &open, updates, EventResolved, &persisted)
+			if err := updateOpenEvent(tx, &open, updates, EventResolved, &persisted); err != nil {
+				return err
+			}
+			return bindIdempotencyKey(tx, event, open.ID)
 		}
 
 		increment := occurrenceCountOf(event)
@@ -283,13 +308,16 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) (PersistedE
 		if open.LastSeenAt != nil && open.LastSeenAt.After(lastSeen) {
 			lastSeen = open.LastSeenAt.UTC()
 		}
-		return updateOpenEvent(tx, &open, map[string]interface{}{
+		if err := updateOpenEvent(tx, &open, map[string]interface{}{
 			// An open row recorded by an older server, or as sent by a producer
 			// that set no count, counts as one occurrence.
 			"occurrence_count": gorm.Expr("COALESCE(occurrence_count, 1) + ?", increment),
 			"last_seen_at":     lastSeen,
 			"updated_at":       now,
-		}, EventIncremented, &persisted)
+		}, EventIncremented, &persisted); err != nil {
+			return err
+		}
+		return bindIdempotencyKey(tx, event, open.ID)
 	})
 	if err != nil {
 		return PersistedEvent{}, err

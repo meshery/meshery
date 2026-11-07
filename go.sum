@@ -638,6 +638,8 @@ github.com/meshery/meshery-operator v1.0.3 h1:s9dzHCTF/5c/S6zZlZwyooC6tMZ7QCP9t5
 github.com/meshery/meshery-operator v1.0.3/go.mod h1:sDYNJgmh45QcTanIuwDcQM8BW+gsswZ120CwSiqpT2Q=
 github.com/meshery/meshkit v1.0.28 h1:R/nCGZf3Ljh3qurNr3XCMRhfB7iye2BaN5pvgi6UrVY=
 github.com/meshery/meshkit v1.0.28/go.mod h1:4SIn3XnPtPMnZzufiIu9Yd4qIbM1njRC2PbveSWveeE=
+github.com/meshery/meshkit v1.0.29-0.20261107065549-d02244811cf1 h1:YzBHgxHRy0Az7ZeAppaRkbgXvclQcxoy8ACd9kK069I=
+github.com/meshery/meshkit v1.0.29-0.20261107065549-d02244811cf1/go.mod h1:4SIn3XnPtPMnZzufiIu9Yd4qIbM1njRC2PbveSWveeE=
 github.com/meshery/meshsync v1.0.3 h1:kgZ5HqjrRupRoOFQSjl3V6FpJ2K1cEkLrN8mxV6QV6M=
 github.com/meshery/meshsync v1.0.3/go.mod h1:ZAeZaId+fp/aoP7OuHw+u0LS/YmnTH40NNRltVbLuGE=
 github.com/meshery/schemas v1.3.116 h1:ZKTezeus4VbPdGrtA4KX6trllK8e5rfA7SAClt1jLVM=
