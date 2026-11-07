@@ -202,23 +202,24 @@ export function createHandleImportFilter({
     let requestBody: any = null;
     switch (uploadType) {
       case 'File Upload':
+        // The server reads the binary from `filterData.filterFile`; a
+        // snake_case key is silently dropped and the filter saved empty.
         requestBody = JSON.stringify({
           config,
           save: true,
-          filter_data: {
+          filterData: {
             name,
-            filter_file: getUnit8ArrayDecodedFile(file),
+            filterFile: getUnit8ArrayDecodedFile(file),
           },
         });
         break;
       case 'URL Upload':
+        // No `filterData` here: its presence makes the server treat the
+        // request as a local upload and never fetch `url`.
         requestBody = JSON.stringify({
           config,
           save: true,
           url,
-          filter_data: {
-            name,
-          },
         });
         break;
     }
