@@ -60,16 +60,18 @@ func timeOf(at *time.Time) time.Time {
 	return *at
 }
 
-func mustPersist(t *testing.T, p *EventsPersister, event *events.Event) {
+func mustPersist(t *testing.T, p *EventsPersister, event *events.Event) PersistedEvent {
 	t.Helper()
-	if err := p.PersistEvent(*event, ""); err != nil {
+	persisted, err := p.PersistEvent(*event, "")
+	if err != nil {
 		t.Fatalf("PersistEvent: %v", err)
 	}
+	return persisted
 }
 
 // An event that sets none of the new fields is recorded as a new row every
-// time, exactly as before correlation existed; the only field it gains is the
-// server's source.
+// time, exactly as before correlation existed; the persister sets none of
+// them, source included.
 func TestPersistEventWithoutCorrelationKeyRecordsEveryEvent(t *testing.T) {
 	p := newCorrelationTestPersister(t)
 	owner := mustUUID(t)
@@ -88,8 +90,8 @@ func TestPersistEventWithoutCorrelationKeyRecordsEveryEvent(t *testing.T) {
 			row.LastSeenAt != nil || row.ResolvedAt != nil || row.TraceID != nil || row.ParentID != nil {
 			t.Errorf("uncorrelated event gained correlation fields: %+v", row)
 		}
-		if row.Source == nil || *row.Source != EventSourceServer {
-			t.Errorf("source = %v, want %q", row.Source, EventSourceServer)
+		if row.Source != nil {
+			t.Errorf("source = %q, want none: only the producer names its surface", *row.Source)
 		}
 	}
 }
@@ -158,6 +160,42 @@ func TestPersistEventCountsOccurrencesOfOpenCondition(t *testing.T) {
 	rows = storedEvents(t, p, owner)
 	if len(rows) != 1 || count(rows[0].OccurrenceCount) != 5 || !timeOf(rows[0].LastSeenAt).Equal(later) {
 		t.Fatalf("got %+v, want one row counting 5 with lastSeenAt %v", rows, later)
+	}
+}
+
+// PersistEvent returns the event as stored and what it did: the new row when
+// one is created, and the condition's open row, as updated, when an occurrence
+// is counted on it or it is resolved. That is the event a caller broadcasts.
+func TestPersistEventReturnsTheStoredEvent(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+	key := "meshery-server/k8s-connection/r/unreachable"
+
+	opened := mustPersist(t, p, conditionEvent(owner, key, "unreachable").Build())
+	if rows := storedEvents(t, p, owner); opened.Disposition != EventCreated || len(rows) != 1 || opened.Event.ID != rows[0].ID {
+		t.Fatalf("opening: %s %s, want created and the stored row %+v", opened.Disposition, opened.Event.ID, rows)
+	}
+
+	sent := conditionEvent(owner, key, "still unreachable").Build()
+	counted := mustPersist(t, p, sent)
+	if counted.Disposition != EventIncremented || counted.Event.ID != opened.Event.ID || count(counted.Event.OccurrenceCount) != 2 {
+		t.Fatalf("occurrence: %s %s count %d, want incremented %s count 2 (sent %s)",
+			counted.Disposition, counted.Event.ID, count(counted.Event.OccurrenceCount), opened.Event.ID, sent.ID)
+	}
+
+	resolvedAt := time.Now().UTC().Add(time.Minute).Truncate(time.Second)
+	sent = events.NewEvent().FromOwner(owner).WithCategory("connection").WithAction("update").
+		WithSeverity(events.Success).WithDescription("reachable again").Resolves(key, resolvedAt).Build()
+	resolved := mustPersist(t, p, sent)
+	if resolved.Disposition != EventResolved || resolved.Event.ID != opened.Event.ID ||
+		!timeOf(resolved.Event.ResolvedAt).Equal(resolvedAt) || resolved.Event.Description != "reachable again" ||
+		count(resolved.Event.OccurrenceCount) != 2 {
+		t.Fatalf("resolution: %s %+v, want resolved %s with the resolution applied", resolved.Disposition, resolved.Event, opened.Event.ID)
+	}
+
+	rows := storedEvents(t, p, owner)
+	if len(rows) != 1 || rows[0].ID != resolved.Event.ID || !timeOf(rows[0].ResolvedAt).Equal(resolvedAt) {
+		t.Fatalf("got %+v, want the one stored row the persister returned", rows)
 	}
 }
 
@@ -364,7 +402,8 @@ func TestPersistEventCountsConcurrentOccurrencesOnce(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			errs <- p.PersistEvent(*conditionEvent(owner, key, "occurrence").Build(), "")
+			_, err := p.PersistEvent(*conditionEvent(owner, key, "occurrence").Build(), "")
+			errs <- err
 		}()
 	}
 	wg.Wait()

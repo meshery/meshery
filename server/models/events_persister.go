@@ -93,7 +93,11 @@ func (e *EventsPersister) getCountBySeverity(userID core.Uuid, eventStatus event
 // Every locally persisted event - local provider, system events and the remote
 // provider's fallback - is written here, so this is where
 // PrepareEventForPersistence applies.
-func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
+//
+// It returns the event as stored: the recorded event when one was created, or
+// the condition's open event, as updated, when an occurrence was counted on it
+// or it was resolved.
+func (e *EventsPersister) PersistEvent(event events.Event, token string) (PersistedEvent, error) {
 	event = PrepareEventForPersistence(event, e.Log)
 	if !correlatesEvent(event) {
 		// GORM's Save requires a pointer (it reflects on the struct to read and
@@ -101,26 +105,27 @@ func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
 		// produced "invalid value, should be pointer to struct or slice" and
 		// dropped every system event silently.
 		if err := e.DB.Save(&event).Error; err != nil {
-			return ErrPersistEvent(err)
+			return PersistedEvent{}, ErrPersistEvent(err)
 		}
-		return nil
+		return PersistedEvent{Event: &event, Disposition: EventCreated}, nil
 	}
 
-	err := e.persistCorrelatedEvent(event)
+	persisted, err := e.persistCorrelatedEvent(event)
 	if err != nil && isUniqueViolation(err) {
 		// A concurrent create opened the condition between this create's lookup
 		// and its insert. Re-run it: the lookup now finds the open event and
 		// the occurrence is counted on it.
-		err = e.persistCorrelatedEvent(event)
+		persisted, err = e.persistCorrelatedEvent(event)
 	}
 	if err != nil {
-		return ErrPersistEvent(err)
+		return PersistedEvent{}, ErrPersistEvent(err)
 	}
-	return nil
+	return persisted, nil
 }
 
 func (e *EventsPersister) PersistSystemEvent(event events.Event) error {
-	return e.PersistEvent(event, "")
+	_, err := e.PersistEvent(event, "")
+	return err
 }
 
 // correlatedEventsMu serializes correlated creates within this process. The
@@ -132,13 +137,15 @@ func (e *EventsPersister) PersistSystemEvent(event events.Event) error {
 var correlatedEventsMu sync.Mutex
 
 // persistCorrelatedEvent applies the createEvent correlation steps to an event
-// for which correlatesEvent holds, in one transaction.
-func (e *EventsPersister) persistCorrelatedEvent(event events.Event) error {
+// for which correlatesEvent holds, in one transaction, and returns the event as
+// stored.
+func (e *EventsPersister) persistCorrelatedEvent(event events.Event) (PersistedEvent, error) {
 	correlatedEventsMu.Lock()
 	defer correlatedEventsMu.Unlock()
 
 	now := time.Now().UTC()
-	return e.DB.Transaction(func(tx *gorm.DB) error {
+	var persisted PersistedEvent
+	err := e.DB.Transaction(func(tx *gorm.DB) error {
 		var open events.Event
 		found := tx.
 			Where("owner = ? AND correlation_key = ? AND resolved_at IS NULL", *event.Owner, *event.CorrelationKey).
@@ -154,7 +161,11 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) error {
 			} else {
 				applyResolvedConditionDefaults(&event)
 			}
-			return tx.Create(&event).Error
+			if err := tx.Create(&event).Error; err != nil {
+				return err
+			}
+			persisted = PersistedEvent{Event: &event, Disposition: EventCreated}
+			return nil
 		}
 
 		// The update runs on the stored row, whose status is valid, so the
@@ -182,7 +193,7 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) error {
 			if event.Description != "" {
 				updates["description"] = event.Description
 			}
-			return tx.Model(&open).Updates(updates).Error
+			return updateOpenEvent(tx, &open, updates, EventResolved, &persisted)
 		}
 
 		increment := 1
@@ -196,14 +207,32 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) error {
 		if open.LastSeenAt != nil && open.LastSeenAt.After(lastSeen) {
 			lastSeen = open.LastSeenAt.UTC()
 		}
-		return tx.Model(&open).Updates(map[string]interface{}{
+		return updateOpenEvent(tx, &open, map[string]interface{}{
 			// An open row recorded by an older server, or as sent by a producer
 			// that set no count, counts as one occurrence.
 			"occurrence_count": gorm.Expr("COALESCE(occurrence_count, 1) + ?", increment),
 			"last_seen_at":     lastSeen,
 			"updated_at":       now,
-		}).Error
+		}, EventIncremented, &persisted)
 	})
+	if err != nil {
+		return PersistedEvent{}, err
+	}
+	return persisted, nil
+}
+
+// updateOpenEvent applies updates to a condition's open event and reads it
+// back, so the caller gets the event as stored rather than as it was before.
+func updateOpenEvent(tx *gorm.DB, open *events.Event, updates map[string]interface{}, disposition EventDisposition, persisted *PersistedEvent) error {
+	if err := tx.Model(open).Updates(updates).Error; err != nil {
+		return err
+	}
+	var stored events.Event
+	if err := tx.Where("id = ?", open.ID).Take(&stored).Error; err != nil {
+		return err
+	}
+	*persisted = PersistedEvent{Event: &stored, Disposition: disposition}
+	return nil
 }
 
 // applyConditionOpeningDefaults fills the occurrence fields of an event that

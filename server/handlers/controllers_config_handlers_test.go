@@ -78,9 +78,9 @@ func (p *controllersConfigFakeProvider) UpdateConnectionById(_ string, payload *
 // PersistEvent is recorded rather than written: the handlers emit events on
 // every write path and a DefaultLocalProvider with no events persister would
 // panic.
-func (p *controllersConfigFakeProvider) PersistEvent(event events.Event, _ string) error {
+func (p *controllersConfigFakeProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
 	p.events = append(p.events, event)
-	return nil
+	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
 }
 
 func copyConnection(conn *connections.Connection) *connections.Connection {

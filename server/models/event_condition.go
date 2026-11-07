@@ -20,22 +20,41 @@ import (
 // `resolved`. A server that predates condition correlation omits it.
 const EventDispositionHeader = "Event-Disposition"
 
+// EventDisposition is what persisting an event did, as createEvent reports it
+// in EventDispositionHeader. Empty means a remote provider did not say.
+type EventDisposition string
+
+const (
+	// EventCreated: a new event was recorded.
+	EventCreated EventDisposition = "created"
+	// EventReplayed: the idempotencyKey was already used; nothing changed.
+	EventReplayed EventDisposition = "replayed"
+	// EventIncremented: an occurrence was counted on the open condition.
+	EventIncremented EventDisposition = "incremented"
+	// EventResolved: the open condition was closed.
+	EventResolved EventDisposition = "resolved"
+)
+
+// PersistedEvent is the event as recorded and what recording it did. For an
+// incremented or resolved condition, Event is the condition's stored event,
+// whose ID is not the ID of the event that was persisted, so it is the one to
+// broadcast or return to a client.
+type PersistedEvent struct {
+	Event       *events.Event
+	Disposition EventDisposition
+}
+
 // EventSourceServer is the `source` of every event Meshery Server emits. It is
 // the CloudEvents-compatible name of the emitting surface; `systemId` names the
 // instance.
 const EventSourceServer = "meshery-server"
 
-// EventSourceUnknownClient is the `source` of an event a client sent to
-// POST /api/events without saying which surface it is. The server records the
-// event on the client's behalf, so it is never attributed to EventSourceServer.
-const EventSourceUnknownClient = "unknown-client"
-
 // ApplyClientEventFields copies the optional correlation, provenance and trace
 // fields of an event a client sent (the schemas EventPayload) onto the event
 // the server records for it, so a condition a client reports correlates as it
 // would on the remote provider. The client's operationId groups the event with
-// the rest of its operation when it sent one. Check the result with
-// events.Event.Validate.
+// the rest of its operation when it sent one. A client that names no source
+// leaves it unset. Check the result with events.Event.Validate.
 func ApplyClientEventFields(event *events.Event, sent events.Event) {
 	event.CorrelationKey = sent.CorrelationKey
 	event.OccurrenceCount = sent.OccurrenceCount
@@ -46,14 +65,9 @@ func ApplyClientEventFields(event *events.Event, sent events.Event) {
 	event.SpecVersion = sent.SpecVersion
 	event.TraceID = sent.TraceID
 	event.ParentID = sent.ParentID
+	event.Source = sent.Source
 	if !sent.OperationID.IsNil() {
 		event.OperationID = sent.OperationID
-	}
-	if sent.Source != nil && *sent.Source != "" {
-		event.Source = sent.Source
-	} else {
-		source := EventSourceUnknownClient
-		event.Source = &source
 	}
 }
 
@@ -105,17 +119,14 @@ func conditionKeySegment(segment string) string {
 
 // PrepareEventForPersistence is applied to every event Meshery Server
 // persists, locally or with a remote provider, before it is written or sent.
-// It sets source EventSourceServer when the producer did not say (every event
-// that reaches a persister was emitted by this server) and bounds the metadata
-// with GuardEventMetadataSize.
+// It bounds the metadata with GuardEventMetadataSize. It never sets `source`:
+// only the producer knows which surface emitted the event, so a server event
+// names itself through NewServerEvent and an event that names no source is
+// recorded without one.
 //
 // The event is a copy and its metadata map is never mutated: the same map is
 // often shared with the copy published to the EventBroadcaster.
 func PrepareEventForPersistence(event events.Event, log logger.Handler) events.Event {
-	if event.Source == nil || *event.Source == "" {
-		source := EventSourceServer
-		event.Source = &source
-	}
 	return GuardEventMetadataSize(event, log)
 }
 

@@ -247,7 +247,7 @@ func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider mode
 			"error": ErrRetrieveUserToken(err),
 		}).WithDescription("No auth token provided in the request.").Build()
 
-		_ = provider.PersistEvent(*event, "")
+		_, _ = provider.PersistEvent(*event, "")
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
 
@@ -263,7 +263,7 @@ func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider mo
 			"error": ErrRequestBody(err),
 		}).WithDescription("Unable to parse request body").Build()
 
-		_ = provider.PersistEvent(*event, "")
+		_, _ = provider.PersistEvent(*event, "")
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
 }
@@ -321,7 +321,7 @@ func (h *Handler) DesignFileImportHandler(
 		h.log.Error(fmt.Errorf("resolve import variant: %w", err))
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, variant, err)
-		_ = provider.PersistEvent(*event, token)
+		_, _ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -340,7 +340,7 @@ func (h *Handler) DesignFileImportHandler(
 		h.log.Error(fmt.Errorf("conversion: failed to convert to design %w", err))
 		writeMeshkitError(rw, wrappedErr, http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, variant, wrappedErr)
-		_ = provider.PersistEvent(*event, token)
+		_, _ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -368,7 +368,7 @@ func (h *Handler) DesignFileImportHandler(
 			"error": ErrSavePattern(err),
 		}).WithDescription(ErrSavePattern(err).Error()).Build()
 
-		_ = provider.PersistEvent(*event, token)
+		_, _ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -393,7 +393,7 @@ func (h *Handler) DesignFileImportHandler(
 	_, _ = rw.Write(savedDesignByt)
 
 	event := eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Imported design '%s' of type '%s'", design.Name, sourceFileType)).Build()
-	_ = provider.PersistEvent(*event, token)
+	_, _ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 }

@@ -621,7 +621,10 @@ type Provider interface {
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
 	// PersistEvent persists a user-initiated event to the remote provider using the given auth token.
-	PersistEvent(event events.Event, token string) error
+	// It returns the event as stored and what persisting it did: for an occurrence counted on, or a
+	// resolution of, an open condition, the stored event is the condition's, with its own ID, and is
+	// the one to broadcast or return.
+	PersistEvent(event events.Event, token string) (PersistedEvent, error)
 
 	// PersistSystemEvent persists a system-initiated event (e.g. MeshSync updates, registry seeding,
 	// auto-registration) that occurs outside of a user request context and has no auth token.
