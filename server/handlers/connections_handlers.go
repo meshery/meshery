@@ -597,7 +597,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	// transition persists its status through the row, and a machine left in the
 	// tracker would be handed back to a re-import of the same (deterministic)
 	// id in its old state.
-	retired, teardownErr := h.retireConnectionMachine(req.Context(), user, connectionID)
+	retired, teardownErr := h.retireConnectionMachine(req.Context(), user, provider, token, connectionID)
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
@@ -687,7 +687,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 //
 // The bool reports that the Delete transition completed, i.e. teardown has
 // started and the row now reads "deleted".
-func (h *Handler) retireConnectionMachine(ctx context.Context, user *models.User, connectionID core.Uuid) (bool, error) {
+func (h *Handler) retireConnectionMachine(ctx context.Context, user *models.User, provider models.Provider, token string, connectionID core.Uuid) (bool, error) {
 	tracker := h.ConnectionToStateMachineInstanceTracker
 	if tracker == nil {
 		return false, nil
@@ -706,6 +706,16 @@ func (h *Handler) retireConnectionMachine(ctx context.Context, user *models.User
 	// from what this handler holds rather than rely on middleware order.
 	ctx = context.WithValue(context.WithoutCancel(ctx), models.UserCtxKey, user)
 	ctx = context.WithValue(ctx, models.SystemIDKey, h.SystemID)
+	// This route has no KubernetesMiddleware, so load the connected contexts
+	// the way it does: DeleteAction's FlushMeshSyncData reads them to decide
+	// whether this was the last context for its cluster, and without them it
+	// skips the flush and reports "No Kubernetes context specified". The row
+	// still exists here, so the context being deleted is counted.
+	if clusters, err := provider.LoadAllK8sContext(token); err != nil {
+		h.log.Warn(ErrFailToLoadK8sContext(err))
+	} else {
+		ctx = context.WithValue(ctx, models.AllKubeClusterKey, clusters)
+	}
 	if _, err := inst.SendEvent(ctx, machines.Delete, nil); err != nil {
 		h.log.Warnf("state machine for connection %s did not complete the delete transition: %v", connectionID, err)
 		return false, err

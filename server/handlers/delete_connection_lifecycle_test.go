@@ -29,19 +29,23 @@ type probeAction struct {
 	entered  chan struct{} // closed on entry when non-nil
 	release  chan struct{} // Execute waits on it when non-nil
 
-	calls     atomic.Int32
-	sawRow    atomic.Bool
-	sawCtx    atomic.Value
-	enterOnce sync.Once
+	calls       atomic.Int32
+	sawRow      atomic.Bool
+	sawCtx      atomic.Value
+	sawClusters atomic.Value // []*models.K8sContext under AllKubeClusterKey
+	enterOnce   sync.Once
 }
 
 func (p *probeAction) ExecuteOnEntry(context.Context, interface{}, interface{}) (machines.EventType, *events.Event, error) {
 	return machines.NoOp, nil, nil
 }
 
-func (p *probeAction) Execute(_ context.Context, machineCtx interface{}, _ interface{}) (machines.EventType, *events.Event, error) {
+func (p *probeAction) Execute(ctx context.Context, machineCtx interface{}, _ interface{}) (machines.EventType, *events.Event, error) {
 	p.calls.Add(1)
 	p.sawCtx.Store(machineCtx)
+	if clusters, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext); ok {
+		p.sawClusters.Store(clusters)
+	}
 	if _, _, err := p.provider.GetConnectionByID("", p.id); err == nil {
 		p.sawRow.Store(true)
 	}
@@ -68,6 +72,12 @@ type lifecycleFixture struct {
 func newLifecycleFixture(t *testing.T) *lifecycleFixture {
 	t.Helper()
 	h, provider := newDeleteConnectionFixture(t)
+	// Retirement loads the connected contexts, as KubernetesMiddleware does.
+	db := provider.ConnectionPersister.DB
+	if err := db.AutoMigrate(models.K8sContext{}); err != nil {
+		t.Fatalf("migrate k8s contexts: %v", err)
+	}
+	provider.MesheryK8sContextPersister = &models.MesheryK8sContextPersister{DB: db}
 	tracker := &machines.ConnectionToStateMachineInstanceTracker{ConnectToInstanceMap: map[core.Uuid]*machines.StateMachine{}}
 	h.ConnectionToStateMachineInstanceTracker = tracker
 	return &lifecycleFixture{h: h, provider: provider, tracker: tracker, userID: uuid.Must(uuid.NewV4())}
@@ -143,6 +153,36 @@ func (f *lifecycleFixture) reimport(t *testing.T, id core.Uuid, newCtx interface
 func (f *lifecycleFixture) requestCtx() context.Context {
 	ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: f.userID})
 	return context.WithValue(ctx, models.SystemIDKey, f.h.SystemID)
+}
+
+// The hard-delete route has no KubernetesMiddleware. The Delete transition
+// must still receive the connected contexts, including the one being deleted,
+// or DeleteAction's MeshSync flush cannot run its last-context check.
+func TestDeleteConnectionGivesTeardownTheConnectedContexts(t *testing.T) {
+	f := newLifecycleFixture(t)
+	id := k8sConnectionID(t)
+	f.saveRow(t, id, connections.CONNECTED)
+	contextID := strings.ReplaceAll(id.String(), "-", "")
+	if _, err := f.provider.MesheryK8sContextPersister.SaveMesheryK8sContext(models.K8sContext{ID: contextID, Name: "kind-test"}); err != nil {
+		t.Fatalf("save k8s context: %v", err)
+	}
+	probe := &probeAction{provider: f.provider, id: id}
+	f.trackMachine(t, id, machines.CONNECTED, &kubernetes.MachineCtx{}, probe)
+
+	if rec := deleteConnection(t, f.h, f.provider, id); rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200. body: %s", rec.Code, rec.Body.String())
+	}
+
+	clusters, _ := probe.sawClusters.Load().([]*models.K8sContext)
+	found := false
+	for _, c := range clusters {
+		if c != nil && c.ID == contextID {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("delete transition saw contexts %v under AllKubeClusterKey, want them to include %s", clusters, contextID)
+	}
 }
 
 // Hard delete must run the Delete transition while the row is still there,
