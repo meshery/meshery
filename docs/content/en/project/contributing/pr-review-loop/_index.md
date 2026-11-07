@@ -101,7 +101,7 @@ jobs:
 Decoupling concurrency into dedicated job-level groups guarantees:
 - **Triage Isolation**: The `triage` labeler job serializes independently (`pr-triage-${{ github.event.pull_request.number }}`), preventing race conditions from rapid pushes while ensuring suggestion-only events (such as `labeled` or `unlabeled`) cannot cancel or replace pending triage runs.
 - **Suggestion Serialization**: The `suggest-reviews` job serializes independently (`pr-review-suggestions-${{ github.event.pull_request.number }}`), ensuring that in-flight comment creation, update, and retirement operations complete sequentially without partial update truncation.
-- **State Freshness**: Setting `cancel-in-progress: false` across both groups ensures that every queued job completes, re-querying the GitHub API for the freshest repository metadata upon execution.
+- **State Reconciliation & Queueing Behavior**: Only one job runs per concurrency group at a time. Setting `cancel-in-progress: false` prevents cancellation of the currently running job, ensuring active comment operations complete cleanly. However, `cancel-in-progress: false` does not guarantee that every intermediate queued event will execute: under default GitHub Actions concurrency behavior (`queue: single`), at most one pending job is retained per group, and a newer pending job replaces the older pending job. This coalescing behavior is appropriate for the review suggestion workflow because suggestions operate on latest-state reconciliation—`suggest-reviews` re-queries the GitHub API for live PR metadata (labels, title, and state) upon execution, rendering intermediate runs redundant. If retaining multiple pending executions is ever necessary, `queue: max` can be configured.
 
 ---
 
