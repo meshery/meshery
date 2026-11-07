@@ -12,7 +12,10 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/events"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 type mockContextsProvider struct {
@@ -166,5 +169,38 @@ func TestDeleteContext_GetK8sContextError_WithNameFallback(t *testing.T) {
 	expectedDesc := "Failed to delete connection for production-cluster"
 	if ev.Description != expectedDesc {
 		t.Fatalf("expected event description %q, got %q", expectedDesc, ev.Description)
+	}
+}
+
+// A failed read must reach the client as an error, not as a 200 with an empty
+// page. Uses the real local provider so the persister's error path is covered.
+func TestGetAllContexts_DatabaseFailure(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to create in-memory database: %v", err)
+	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		t.Fatalf("failed to access underlying sql.DB: %v", err)
+	}
+	t.Cleanup(func() { _ = sqlDB.Close() })
+
+	// The k8s_contexts table is deliberately never migrated.
+	provider := &models.DefaultLocalProvider{
+		MesheryK8sContextPersister: &models.MesheryK8sContextPersister{DB: &database.Handler{DB: db}},
+	}
+	h := &Handler{log: newTestLogger(t)}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/system/kubernetes/contexts", nil)
+	req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+	rec := httptest.NewRecorder()
+
+	h.GetAllContexts(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected status %d, got %d. body: %s", http.StatusInternalServerError, rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrGetK8sContextsCode) {
+		t.Fatalf("expected error code %s in body, got %s", ErrGetK8sContextsCode, rec.Body.String())
 	}
 }
