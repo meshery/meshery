@@ -192,7 +192,7 @@ func TestEventsPersisterPersistSystemEventAcceptsStructValue(t *testing.T) {
 		Build()
 	built.ID = eventID
 
-	if err := persister.PersistSystemEvent(*built); err != nil {
+	if _, err := persister.PersistSystemEvent(*built); err != nil {
 		t.Fatalf("PersistSystemEvent returned error: %v", err)
 	}
 }

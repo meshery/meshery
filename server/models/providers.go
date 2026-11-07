@@ -569,8 +569,10 @@ func VerifyMesheryProvider(provider string, supportedProviders map[string]Provid
 // them write to the same local `events` table, so nothing about where these
 // events land changes with the provider a deployment is pinned to.
 type SystemEventPersister interface {
-	// PersistSystemEvent persists a system-initiated event to the local database.
-	PersistSystemEvent(event events.Event) error
+	// PersistSystemEvent persists a system-initiated event to the local database
+	// and returns it as stored, which is the event to broadcast (see
+	// PersistAndPublishSystemEvent).
+	PersistSystemEvent(event events.Event) (PersistedEvent, error)
 }
 
 // Provider - interface for providers
@@ -633,8 +635,9 @@ type Provider interface {
 
 	// PersistSystemEvent persists a system-initiated event (e.g. MeshSync updates, registry seeding,
 	// auto-registration) that occurs outside of a user request context and has no auth token.
-	// These events are persisted to the local database.
-	PersistSystemEvent(event events.Event) error
+	// These events are persisted to the local database. Like PersistEvent, it returns the event as
+	// stored, which is the one to broadcast.
+	PersistSystemEvent(event events.Event) (PersistedEvent, error)
 
 	SaveK8sContext(token string, k8sContext K8sContext, metadata map[string]any) (connections.Connection, error)
 	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)

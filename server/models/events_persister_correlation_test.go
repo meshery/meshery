@@ -463,3 +463,86 @@ func TestConditionKeyQualifiesBySourceAndComponent(t *testing.T) {
 		}
 	}
 }
+
+// receiveSystemEvent returns the next event published on ch.
+func receiveSystemEvent(t *testing.T, ch chan interface{}) *events.Event {
+	t.Helper()
+	select {
+	case data := <-ch:
+		event, ok := data.(*events.Event)
+		if !ok {
+			t.Fatalf("published %T, want *events.Event", data)
+		}
+		return event
+	case <-time.After(5 * time.Second):
+		t.Fatal("no event was published")
+		return nil
+	}
+}
+
+// A system event built with a bare events.NewEvent() carries no ID; it is
+// broadcast as stored, with the stored row's ID and the server's source.
+func TestPersistAndPublishSystemEventBroadcastsTheStoredRow(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+	broadcaster := NewBroadcaster("test")
+	ch, unsubscribe := broadcaster.Subscribe(owner)
+	defer unsubscribe()
+
+	sent := events.NewEvent().FromOwner(owner).WithCategory("registration").WithAction("get_summary").
+		WithSeverity(events.Informational).WithDescription("system event").Build()
+	if !sent.ID.IsNil() {
+		t.Fatalf("precondition: events.NewEvent() minted ID %s", sent.ID)
+	}
+	if err := PersistAndPublishSystemEvent(p, broadcaster, owner, sent); err != nil {
+		t.Fatalf("PersistAndPublishSystemEvent: %v", err)
+	}
+
+	got := receiveSystemEvent(t, ch)
+	rows := storedEvents(t, p, owner)
+	if len(rows) != 1 {
+		t.Fatalf("got %d rows, want 1", len(rows))
+	}
+	if got.ID.IsNil() || got.ID != rows[0].ID {
+		t.Fatalf("broadcast ID %s, stored ID %s; want the stored, non-zero ID", got.ID, rows[0].ID)
+	}
+	if got.Source == nil || *got.Source != EventSourceServer {
+		t.Fatalf("broadcast source %v, want %q", got.Source, EventSourceServer)
+	}
+}
+
+// A system event that counts an occurrence on, or resolves, an open condition
+// is broadcast as the condition's stored event, never as the event sent.
+func TestPersistAndPublishSystemEventBroadcastsTheCondition(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+	key := "meshery-server/k8s-connection/c/unreachable"
+	broadcaster := NewBroadcaster("test")
+	ch, unsubscribe := broadcaster.Subscribe(owner)
+	defer unsubscribe()
+
+	if err := PersistAndPublishSystemEvent(p, broadcaster, owner, conditionEvent(owner, key, "unreachable").Build()); err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	opened := receiveSystemEvent(t, ch)
+
+	occurrence := conditionEvent(owner, key, "still unreachable").Build()
+	if err := PersistAndPublishSystemEvent(p, broadcaster, owner, occurrence); err != nil {
+		t.Fatalf("occurrence: %v", err)
+	}
+	if got := receiveSystemEvent(t, ch); got.ID != opened.ID || count(got.OccurrenceCount) != 2 {
+		t.Fatalf("occurrence broadcast ID %s count %d, want the condition %s with 2", got.ID, count(got.OccurrenceCount), opened.ID)
+	}
+
+	resolution := events.NewEvent().FromOwner(owner).WithCategory("connection").WithAction("update").
+		WithSeverity(events.Success).WithDescription("reachable again").Resolves(key, time.Now().UTC()).Build()
+	if err := PersistAndPublishSystemEvent(p, broadcaster, owner, resolution); err != nil {
+		t.Fatalf("resolution: %v", err)
+	}
+	if got := receiveSystemEvent(t, ch); got.ID != opened.ID || got.ResolvedAt == nil {
+		t.Fatalf("resolution broadcast ID %s resolvedAt %v, want the condition %s, resolved", got.ID, got.ResolvedAt, opened.ID)
+	}
+	if rows := storedEvents(t, p, owner); len(rows) != 1 {
+		t.Fatalf("got %d rows, want the one condition", len(rows))
+	}
+}

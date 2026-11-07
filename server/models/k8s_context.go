@@ -555,16 +555,6 @@ func ReconcileK8sContextServerID(provider Provider, token string, k8sContext K8s
 // Resource deletion proceeds even when no active user ID is present in context,
 // preventing stale cluster resources from leaking on background or unauthenticated deletions.
 func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Provider, eventsChan *Broadcast, userID string, mesheryInstanceID *core.Uuid, log logger.Handler) {
-	persist := func(e events.Event) {
-		if provider == nil {
-			return
-		}
-		if perr := provider.PersistSystemEvent(e); perr != nil {
-			if log != nil {
-				log.Error(ErrPersistEvent(perr))
-			}
-		}
-	}
 	var mesheryInstanceUUID core.Uuid
 	if mesheryInstanceID != nil {
 		mesheryInstanceUUID = *mesheryInstanceID
@@ -574,6 +564,21 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	var userUUID uuid.UUID
 	if parsed, err := uuid.FromString(userID); err == nil {
 		userUUID = parsed
+	}
+	// persistAndPublish records e and broadcasts it, as stored, to the user the
+	// flush was requested by; with no user, it is only recorded.
+	persistAndPublish := func(e *events.Event) {
+		var persister SystemEventPersister
+		if provider != nil {
+			persister = provider
+		}
+		var broadcaster *Broadcast
+		if userUUID != uuid.Nil {
+			broadcaster = eventsChan
+		}
+		if perr := PersistAndPublishSystemEvent(persister, broadcaster, userUUID, e); perr != nil && log != nil {
+			log.Error(ErrPersistEvent(perr))
+		}
 	}
 	// Gets all the available kubernetes contexts
 
@@ -586,11 +591,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			event = event.FromOwner(userUUID)
 		}
 		builtEvent := event.Build()
-		persist(*builtEvent)
-
-		if eventsChan != nil && userUUID != uuid.Nil {
-			eventsChan.Publish(userUUID, builtEvent)
-		}
+		persistAndPublish(builtEvent)
 		return
 	}
 	var sid string
@@ -626,10 +627,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 				event = event.FromOwner(userUUID)
 			}
 			builtEvent := event.Build()
-			persist(*builtEvent)
-			if eventsChan != nil && userUUID != uuid.Nil {
-				eventsChan.Publish(userUUID, builtEvent)
-			}
+			persistAndPublish(builtEvent)
 			return
 		}
 
@@ -641,11 +639,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 				event = event.FromOwner(userUUID)
 			}
 			builtEvent := event.Build()
-			persist(*builtEvent)
-
-			if eventsChan != nil && userUUID != uuid.Nil {
-				eventsChan.Publish(userUUID, builtEvent)
-			}
+			persistAndPublish(builtEvent)
 			return
 		}
 
@@ -655,10 +649,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 		}
 		builtEvent := event.Build()
 		// Also add context name, as id is not helpful
-		persist(*builtEvent)
-		if eventsChan != nil && userUUID != uuid.Nil {
-			eventsChan.Publish(userUUID, builtEvent)
-		}
+		persistAndPublish(builtEvent)
 	}
 }
 

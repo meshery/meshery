@@ -83,8 +83,7 @@ func (h *Handler) handleFilterPOST(
 		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
 			"error": ErrRetrieveUserToken(err),
 		}).WithDescription("No auth token provided in the request.").Build()
-		_ = provider.PersistSystemEvent(*event)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		_ = models.PersistAndPublishSystemEvent(provider, h.config.EventBroadcaster, userID, event)
 		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
