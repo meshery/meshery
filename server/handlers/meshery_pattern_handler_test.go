@@ -1,7 +1,14 @@
 package handlers
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+
+	"github.com/gorilla/mux"
+	_events "github.com/meshery/meshkit/models/events"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -647,4 +654,76 @@ func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) 
 	designSub, ok := metadata["design"].(map[string]interface{})
 	require.True(t, ok, "design field should be a map")
 	assert.Equal(t, map[string]interface{}{"name": "test-design", "id": id.String()}, designSub)
+}
+
+type mockPatternHandlerProvider struct {
+	*models.DefaultLocalProvider
+}
+
+func (m *mockPatternHandlerProvider) PersistEvent(event _events.Event, token string) (models.PersistedEvent, error) {
+	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
+}
+
+func (m *mockPatternHandlerProvider) GetProviderToken(_ *http.Request) (string, error) {
+	return "test-token", nil
+}
+
+func TestDesignFileRequestHandlerWithSourceType_MissingPatternDataReturnsBadRequest(t *testing.T) {
+	testCases := []struct {
+		name string
+		body string
+	}{
+		{
+			name: "empty object",
+			body: "{}",
+		},
+		{
+			name: "null literal",
+			body: "null",
+		},
+		{
+			name: "body without patternData",
+			body: `{"name":"my-design"}`,
+		},
+	}
+
+	systemID := uuid.Must(uuid.NewV4())
+	userID := uuid.Must(uuid.NewV4())
+
+	h := &Handler{
+		config: &models.HandlerConfig{
+			EventBroadcaster: &models.Broadcast{},
+		},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+
+	provider := &mockPatternHandlerProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodPut, "/api/pattern/manifest", bytes.NewBufferString(tc.body))
+			req = mux.SetURLVars(req, map[string]string{"sourcetype": "manifest"})
+			ctx := context.WithValue(req.Context(), models.TokenCtxKey, "test-token")
+			ctx = context.WithValue(ctx, models.UserCtxKey, &models.User{ID: userID})
+			ctx = context.WithValue(ctx, models.SystemIDKey, &systemID)
+			req = req.WithContext(ctx)
+
+			rec := httptest.NewRecorder()
+
+			// Must not panic on body without patternData (#22898)
+			defer func() {
+				if r := recover(); r != nil {
+					t.Fatalf("handler panicked on %s: %v", tc.name, r)
+				}
+			}()
+
+			h.DesignFileRequestHandlerWithSourceType(rec, req, nil, &models.User{ID: userID}, provider)
+
+			assert.Equal(t, http.StatusBadRequest, rec.Code, "expected 400 Bad Request for %s", tc.name)
+			assert.Contains(t, rec.Body.String(), "patternData", "expected error to name the missing field for %s", tc.name)
+		})
+	}
 }

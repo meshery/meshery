@@ -58,6 +58,7 @@ func SystemDatabaseModels() []interface{} {
 		workspace.WorkspacesTeamsMapping{},
 		workspace.WorkspacesViewsMapping{},
 		events.Event{},
+		EventIdempotencyBinding{},
 		&SystemSetting{},
 	}
 }
@@ -67,5 +68,32 @@ func SystemDatabaseModels() []interface{} {
 // than migrating an inline list, so no path can ever again drop all tables and
 // re-migrate only a subset.
 func AutoMigrateSystemTables(db *database.Handler) error {
-	return db.AutoMigrate(SystemDatabaseModels()...)
+	if err := db.AutoMigrate(SystemDatabaseModels()...); err != nil {
+		return err
+	}
+	return migrateEventCorrelationIndex(db)
+}
+
+// openEventCorrelationIndex is the partial unique index that keeps at most one
+// open event (no resolved_at) per owner and correlation_key, which the
+// createEvent correlation contract requires. EventsPersister.PersistEvent
+// relies on it to make opening a condition atomic. Its predicate covers exactly
+// the rows correlatesEvent correlates: rows without a correlation_key, and rows
+// that identify no user (no owner or the zero owner), are recorded
+// uncorrelated, so they are outside the index and never conflict.
+const openEventCorrelationIndex = `CREATE UNIQUE INDEX IF NOT EXISTS idx_events_open_correlation
+	ON events (owner, correlation_key)
+	WHERE correlation_key IS NOT NULL AND correlation_key <> ''
+		AND owner IS NOT NULL AND owner <> '00000000-0000-0000-0000-000000000000'
+		AND resolved_at IS NULL`
+
+// migrateEventCorrelationIndex creates openEventCorrelationIndex. GORM's tags
+// cannot express a partial index, so it is created here, after AutoMigrate has
+// added the correlation columns. The statement is idempotent and runs on every
+// boot and reset.
+func migrateEventCorrelationIndex(db *database.Handler) error {
+	if err := db.Exec(openEventCorrelationIndex).Error; err != nil {
+		return ErrMigrateEventCorrelationIndex(err)
+	}
+	return nil
 }
