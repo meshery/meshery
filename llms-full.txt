@@ -88469,9 +88469,15 @@ Ask the Provider Adim for access</p>
               <div class="error-heading">Long Description</div>
               <p class="error-details"></p>
               <div class="error-heading">Probable Cause</div>
-              <p class="error-details">User doesn&#39;t have permission to save content.\nDatabase unreachable.\nDatabase locked or corrupt.\nContent unsupported.</p>
+              <p class="error-details">User doesn&#39;t have permission to save content.
+Database unreachable.
+Database locked or corrupt.
+Content unsupported.</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Retry fetching content\nRetry sigining in\nLogin with correct user account\nRetry after deleting &#39;~/.meshery/config&#39;.</p>
+              <p class="error-details">Retry fetching content
+Retry sigining in
+Login with correct user account
+Retry after deleting &#39;~/.meshery/config&#39;.</p>
             </td>
           </tr>
         
@@ -88495,9 +88501,13 @@ Ask the Provider Adim for access</p>
               <div class="error-heading">Long Description</div>
               <p class="error-details"></p>
               <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Sample content does not exist.\nContent file format not supported.\nUser doesn&#39;t have permission to read sample content.\nContent file corrupt.</p>
+              <p class="error-details">Sample content does not exist.
+Content file format not supported.
+User doesn&#39;t have permission to read sample content.
+Content file corrupt.</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Try restarting Meshery.\nTry fetching content again.</p>
+              <p class="error-details">Try restarting Meshery.
+Try fetching content again.</p>
             </td>
           </tr>
         
@@ -89170,7 +89180,7 @@ Invalid kubeconfig
 Filters passed incorrectly in config
 Could not fetch API resources from Kubernetes server</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">If there is the log \&#34;Starting to register ...\&#34; for the same contextID after this error means that for some reason the context was reloaded which caused this run to abort. In that case, this error can be ignored.
+              <p class="error-details">If there is the log &#34;Starting to register ...&#34; for the same contextID after this error means that for some reason the context was reloaded which caused this run to abort. In that case, this error can be ignored.
 Make sure that the configuration filters passed are in accordance with output from /openapi/v2</p>
             </td>
           </tr>
@@ -89221,7 +89231,7 @@ Could not fetch API resources from Kubernetes server</p>
               <div class="error-heading">Long Description</div>
               <p class="error-details"></p>
               <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Ensure manifests are valid and also use the restricted YAML features like using only \&#34;strings\&#34; in the field names</p>
+              <p class="error-details">Ensure manifests are valid and also use the restricted YAML features like using only &#34;strings&#34; in the field names</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Ensure YAML is a valid Kubernetes Manifest</p>
             </td>
@@ -89279,7 +89289,7 @@ _data does not have correct data</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Make sure cytoscape is valid
 Check if valid service name was passed in the request
-Make sure _data field has \&#34;settings\&#34; field</p>
+Make sure _data field has &#34;settings&#34; field</p>
             </td>
           </tr>
         
@@ -90230,7 +90240,7 @@ Remote provider is not able to complete the request</p>
           <tr id="meshery-server-ErrEmptySessionCode-more-info" class="tbl-hidden-row">
             <td style="word-break:break-all;" colspan="4">
               <div class="error-heading">Long Description</div>
-              <p class="error-details">Unable to find \&#34;token\&#34; cookie in the request.</p>
+              <p class="error-details">Unable to find &#34;token&#34; cookie in the request.</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">User is not authenticated with the selected Provider.
 Browser might be restricting use of cookies.</p>
@@ -91729,7 +91739,7 @@ OCI/tar tooling produced an invalid artifact.</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">The `contexts` form field is not a valid JSON map from context ID to {meshsync_deployment_mode: string}.</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Send a well-formed JSON object in the `contexts` form field, e.g. {\&#34;&lt;contextID&gt;\&#34;: {\&#34;meshsync_deployment_mode\&#34;: \&#34;operator\&#34;}}.</p>
+              <p class="error-details">Send a well-formed JSON object in the `contexts` form field, e.g. {&#34;&lt;contextID&gt;&#34;: {&#34;meshsync_deployment_mode&#34;: &#34;operator&#34;}}.</p>
             </td>
           </tr>
         
@@ -91910,7 +91920,7 @@ If the payload was hand-edited, re-encode it from the source bytes and retry.</p
               <p class="error-details">The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `fileName`, the URL variant requires `url`.
 Both variants were provided, or neither was.</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Send a request body with exactly one variant set: either {\&#34;file\&#34;: &lt;bytes&gt;, \&#34;fileName\&#34;: \&#34;design.yml\&#34;} or {\&#34;url\&#34;: \&#34;https://...\&#34;}.</p>
+              <p class="error-details">Send a request body with exactly one variant set: either {&#34;file&#34;: &lt;bytes&gt;, &#34;fileName&#34;: &#34;design.yml&#34;} or {&#34;url&#34;: &#34;https://...&#34;}.</p>
             </td>
           </tr>
         
@@ -93672,7 +93682,8 @@ There was an error connecting to the selected target platform (i.e. Kubernetes c
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Provide a valid file path/design name. 
 Ensure the Meshery server can interact with the Kubernetes cluster. 
-Check if the selected target platform is assigned to the current environment.\n</p>
+Check if the selected target platform is assigned to the current environment.
+</p>
             </td>
           </tr>
         
@@ -93698,9 +93709,9 @@ Check if the selected target platform is assigned to the current environment.\n<
               <p class="error-details">File path or design name not provided.</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Provide a file path/design name.
-`Usage: mesheryctl design undeploy -f [filepath]
+Usage: mesheryctl design undeploy -f [filepath]
 Example: mesheryctl design undeploy -f ./pattern.yml
-Description: Undeploy design`</p>
+Description: Undeploy design</p>
             </td>
           </tr>
         
@@ -93751,8 +93762,8 @@ Description: Undeploy design`</p>
               <p class="error-details">Manifest path not provided</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Provide the path to the design manifest.
-`Usage: mesheryctl design import -f [file/url] -s [source-type]
-Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#34;`</p>
+Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#34;</p>
             </td>
           </tr>
         
@@ -95214,7 +95225,12 @@ Ensure correct credential is used</p>
               <p class="error-details">The platform 
  is not supported for the deployment of Meshery. </p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Supported platforms are:\n\n- docker\n- kubernetes\n\n Verify this setting in your meshconfig at 
+              <p class="error-details">Supported platforms are:
+
+- docker
+- kubernetes
+
+ Verify this setting in your meshconfig at 
  or verify by executing `mesheryctl system context view`</p>
             </td>
           </tr>
@@ -95336,7 +95352,8 @@ Ensure correct credential is used</p>
           <tr id="mesheryctl-ErrK8sQueryCode-more-info" class="tbl-hidden-row">
             <td style="word-break:break-all;" colspan="4">
               <div class="error-heading">Long Description</div>
-              <p class="error-details">\nThe Kubernetes cluster is not accessible
+              <p class="error-details">
+The Kubernetes cluster is not accessible
  Please confirm that the token is valid
  See https://docs.meshery.io/installation/quick-start for additional instructions</p>
               <div class="error-heading">Probable Cause</div>
@@ -95363,7 +95380,8 @@ Ensure correct credential is used</p>
           <tr id="mesheryctl-ErrK8sConfigCode-more-info" class="tbl-hidden-row">
             <td style="word-break:break-all;" colspan="4">
               <div class="error-heading">Long Description</div>
-              <p class="error-details">\nThe Kubernetes cluster is not accessible
+              <p class="error-details">
+The Kubernetes cluster is not accessible
  Please confirm that the cluster is running
  See https://docs.meshery.io/installation/quick-start for additional instructions.</p>
               <div class="error-heading">Probable Cause</div>
@@ -96498,8 +96516,8 @@ Ensure model name formatting is correct</p>
               <p class="error-details">Design source type not provided</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Provide one of the supported source type for the design to import.
-`Usage: mesheryctl design import -f [file/url] -s [source-type]
-Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#34;`</p>
+Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#34;</p>
             </td>
           </tr>
         
@@ -96893,8 +96911,8 @@ Regenerate corrupted component</p>
               <p class="error-details">[File | File Path | URL] not detected. The &#39;-f&#39; flag is missing or empty in the &#39;mesheryctl design import&#39; command</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Provide the path to the design file using the &#39;-f&#39; flag. Ensure that the file path or URL is correctly specified and accessible.
-`Usage: mesheryctl design import -f [file/url] -s [source-type]
-Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#34;`</p>
+Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s &#34;Kubernetes Manifest&#34;</p>
             </td>
           </tr>
         
@@ -98042,7 +98060,8 @@ If running in a non-interactive environment, use &#39;--page&#39; flag to skip p
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">Command requires a design name or ID as argument</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Provide a design name or ID, or use &#39;-a&#39; flag to view all designs.\nRun &#39;mesheryctl design view --help&#39; for usage details</p>
+              <p class="error-details">Provide a design name or ID, or use &#39;-a&#39; flag to view all designs.
+Run &#39;mesheryctl design view --help&#39; for usage details</p>
             </td>
           </tr>
         
@@ -98320,7 +98339,7 @@ Check for any issues with the Meshery server that may cause it to return malform
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">The spreadsheet must contain valid relationship entries with the required headers.</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Ensure the spreadsheet contains at least two headers and corresponding values for it&#39;s headers. Refer to the Meshery relationship csv for the expected spreadsheet format \&#34;https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\</p>
+              <p class="error-details">Ensure the spreadsheet contains at least two headers and corresponding values for it&#39;s headers. Refer to the Meshery relationship csv for the expected spreadsheet format &#34;https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv&#34;</p>
             </td>
           </tr>
         
@@ -99326,7 +99345,7 @@ Check the publishing configuration and try again</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">The CSV file must contain valid relationship entries with the required headers.</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Ensure the CSV file contains two header rows and at least one data row with a minimum of 15 columns. Refer to the Meshery relationship CSV template: \&#34;https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\</p>
+              <p class="error-details">Ensure the CSV file contains two header rows and at least one data row with a minimum of 15 columns. Refer to the Meshery relationship CSV template: &#34;https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv&#34;</p>
             </td>
           </tr>
         
@@ -99351,7 +99370,10 @@ Check the publishing configuration and try again</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">A design must be specified either by file path (-f) or by ID as an argument, but not both simultaneously</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Provide a design file using &#39;-f&#39; flag or pass a design ID as an argument (not both).\n\nUsage: mesheryctl design evaluate [ID] -o [output-file]\n       mesheryctl design evaluate -f [file] -o [output-file]</p>
+              <p class="error-details">Provide a design file using &#39;-f&#39; flag or pass a design ID as an argument (not both).
+
+Usage: mesheryctl design evaluate [ID] -o [output-file]
+       mesheryctl design evaluate -f [file] -o [output-file]</p>
             </td>
           </tr>
         
@@ -99534,9 +99556,9 @@ Narrow the search so exactly one item matches</p>
               <div class="error-heading">Long Description</div>
               <p class="error-details"></p>
               <div class="error-heading">Probable Cause</div>
-              <p class="error-details">The model name does not match any entry in the CSV&#39;s \&#34;model\&#34; column, or contains a typo</p>
+              <p class="error-details">The model name does not match any entry in the CSV&#39;s &#34;model&#34; column, or contains a typo</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Check the model name against the \&#34;model\&#34; column in your Models CSV, or omit --model to generate all eligible models</p>
+              <p class="error-details">Check the model name against the &#34;model&#34; column in your Models CSV, or omit --model to generate all eligible models</p>
             </td>
           </tr>
         
