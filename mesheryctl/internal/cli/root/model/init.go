@@ -146,11 +146,14 @@ mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 					if err != nil {
 						return ErrModelInit(err)
 					}
-					defer func() { _ = file.Close() }() // Ensure the file is closed when the function exits
 
 					_, err = file.Write(content)
+					closeErr := file.Close()
 					if err != nil {
 						return ErrModelInit(err)
+					}
+					if closeErr != nil {
+						return ErrModelInit(closeErr)
 					}
 				}
 			}
