@@ -70,9 +70,11 @@ func (rfl *RegistrationFailureLog) GetNonRegisteredEntitiesCount() map[string]v1
 				entitySummary.Models = int64(modelsCount)
 				continue
 			}
-			entitySummary.Components = int64(len(entityTypeNamespacedData[string(entity.ComponentDefinition)]))
-			entitySummary.Relationships = int64(len(entityTypeNamespacedData[string(entity.RelationshipDefinition)]))
-			entitySummary.Policies = int64(len(entityTypeNamespacedData[string(entity.PolicyDefinition)]))
+			// A registrant's failures are spread across its models, so the
+			// per-model counts must be summed rather than overwritten.
+			entitySummary.Components += int64(len(entityTypeNamespacedData[string(entity.ComponentDefinition)]))
+			entitySummary.Relationships += int64(len(entityTypeNamespacedData[string(entity.RelationshipDefinition)]))
+			entitySummary.Policies += int64(len(entityTypeNamespacedData[string(entity.PolicyDefinition)]))
 		}
 		res[registrant] = entitySummary
 	}
