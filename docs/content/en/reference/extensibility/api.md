@@ -24,7 +24,7 @@ See [REST API Reference]({{< ref "reference/rest-apis/_index.md" >}}) Self-gener
 <!-- tab -->
 GraphQL API | fa fa-globe
 
-<p>Meshery Server's GraphQl API is available at <code>{hostname]:[port]/api/graphql/query</code>. A GraphQL request can be made as a POST request to the endpoint with the query as the payload. Meshery Server's GraphQL API can be used to perform three operations:</p>
+<p>Meshery Server's GraphQl API is available at <code>{hostname]:[port]/api/system/graphql/query</code>. A GraphQL request can be made as a POST request to the endpoint with the query as the payload. Meshery Server's GraphQL API can be used to perform three operations:</p>
 
 - Queries for data retrieval.
 - Mutations for creating, updating, and deleting data.
