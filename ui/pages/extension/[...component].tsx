@@ -3,13 +3,14 @@ import ExtensionSandbox, {
   getComponentTitleFromPath,
   getComponentIsBetaFromPath,
 } from '../../components/ExtensionSandbox';
-import { CircularProgress, NoSsr, useHasPermission } from '@sistent/sistent';
+import { CircularProgress, ErrorBoundary, NoSsr, useHasPermission } from '@sistent/sistent';
 import Head from 'next/head';
 import React, { useEffect, useMemo } from 'react';
 import RemoteComponent from '../../components/general/RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { useRouter } from 'next/router';
 import { DynamicFullScreenLoader } from '@/components/shared/LoadingState/DynamicFullscreenLoader';
+import CustomErrorFallback from '@/components/shared/ErrorBoundary/ErrorBoundary';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import {
   updateBetaBadge,
@@ -112,14 +113,16 @@ function RemoteExtension() {
       <DynamicFullScreenLoader isLoading={isLoading}>
         {providerCapabilities !== null && extensionType ? (
           <NoSsr>
-            {extensionType === 'navigator' ? (
-              <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
-            ) : (
-              <ExtensionSandbox
-                type={extensionType}
-                Extension={(url) => RemoteComponent({ url })}
-              />
-            )}
+            <ErrorBoundary customFallback={CustomErrorFallback}>
+              {extensionType === 'navigator' ? (
+                <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
+              ) : (
+                <ExtensionSandbox
+                  type={extensionType}
+                  Extension={(url) => RemoteComponent({ url })}
+                />
+              )}
+            </ErrorBoundary>
           </NoSsr>
         ) : !isLoading ? null : (
           <CircularProgress />
