@@ -184,12 +184,12 @@ func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, provider *
 		filePath := viper.GetString("REGISTRY_LOG_FILE")
 		errorEventBuilder := events.NewEvent().FromOwner(mesheryInstanceID).FromSystem(mesheryInstanceID).WithCategory("registration").WithAction("get_summary")
 		errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMsg)
-		errorEvent := errorEventBuilder.Build()
 		errorEventBuilder.WithMetadata(map[string]interface{}{
 			"Long_Description": fmt.Sprintf("One or more entities failed to register. The import process for registrant, %s, encountered the following issue: %s.", hostname, failedMsg),
 			"DownloadLink":     filePath,
 			"ViewLink":         filePath,
 		})
+		errorEvent := errorEventBuilder.Build()
 		if userID != "" {
 			_ = models.PersistAndPublishSystemEvent(*provider, ec, gofrs.FromStringOrNil(userID), errorEvent)
 		} else {

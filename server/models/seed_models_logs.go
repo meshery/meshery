@@ -120,12 +120,12 @@ func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, persister 
 		filePath := viper.GetString("REGISTRY_LOG_FILE")
 		errorEventBuilder := events.NewEvent().FromOwner(mesheryInstanceID).FromSystem(mesheryInstanceID).WithCategory("registration").WithAction("get_summary")
 		errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMsg)
-		errorEvent := errorEventBuilder.Build()
 		errorEventBuilder.WithMetadata(map[string]interface{}{
 			"DownloadLink": filePath,
 			"ViewLink":     filePath,
 			"error":        ErrImportFailure(hostname, failedMsg),
 		})
+		errorEvent := errorEventBuilder.Build()
 		if userID != "" {
 			persistErr = PersistAndPublishSystemEvent(persister, ec, gofrs.FromStringOrNil(userID), errorEvent)
 		} else {
