@@ -519,6 +519,7 @@ function PerformanceProfile() {
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
+                setPage(0);
               }}
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
