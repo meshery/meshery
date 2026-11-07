@@ -1737,8 +1737,9 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 // lastSeenAt, resolvedAt), source, type, specversion and trace context
 // (traceId, parentId). The remote provider applies the createEvent
 // correlation contract to them; the local fallback, EventsPersister, applies
-// the same contract, so an event behaves alike on both paths.
-func (l *RemoteProvider) PersistEvent(event events.Event, token string) error {
+// the same contract, so an event behaves alike on both paths. It returns the
+// event as the remote provider (or the local fallback) stored it.
+func (l *RemoteProvider) PersistEvent(event events.Event, token string) (PersistedEvent, error) {
 	// The remote path bypasses EventsPersister, so the event is prepared here
 	// too; the local fallback re-prepares an already prepared event, which
 	// changes nothing.
@@ -1746,29 +1747,32 @@ func (l *RemoteProvider) PersistEvent(event events.Event, token string) error {
 	if strings.TrimSpace(token) == "" {
 		return l.EventsPersister.PersistEvent(event, "")
 	}
-	if err := l.persistEventRemote(event, token); err != nil {
+	persisted, err := l.persistEventRemote(event, token)
+	if err != nil {
 		l.Log.Warn(fmt.Errorf("remote event persistence failed, falling back to local DB: %w", err))
 		return l.EventsPersister.PersistEvent(event, "")
 	}
-	return nil
+	return persisted, nil
 }
 
 // PersistSystemEvent persists a system-initiated event (MeshSync, registry seeding,
 // auto-registration) to the local database. These events have no user request context.
 func (l *RemoteProvider) PersistSystemEvent(event events.Event) error {
-	return l.EventsPersister.PersistEvent(event, "")
+	_, err := l.EventsPersister.PersistEvent(event, "")
+	return err
 }
 
-// persistEventRemote sends an event to the remote provider for persistence.
-func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString string) error {
+// persistEventRemote sends an event to the remote provider for persistence and
+// returns the event as the remote provider stored it.
+func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString string) (PersistedEvent, error) {
 	if !l.Capabilities.IsSupported(PersistEvents) {
-		return ErrInvalidCapability("PersistEvents", l.ProviderName)
+		return PersistedEvent{}, ErrInvalidCapability("PersistEvents", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEvents)
 
 	data, err := json.Marshal(event)
 	if err != nil {
-		return ErrMarshal(err, "meshery event")
+		return PersistedEvent{}, ErrMarshal(err, "meshery event")
 	}
 
 	l.Log.Infof("attempting to publish event to remote provider, size: %d", len(data))
@@ -1779,7 +1783,7 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return ErrUnreachableRemoteProvider(err)
+		return PersistedEvent{}, ErrUnreachableRemoteProvider(err)
 	}
 	defer func() {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -1792,12 +1796,30 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 	// provider has the event, so none may fall back to the local database,
 	// which would store a second copy.
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
-		return ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
+		return PersistedEvent{}, ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
 	}
-	if disposition := resp.Header.Get(EventDispositionHeader); disposition != "" {
-		l.Log.Debugf("remote provider recorded event (%s: %s)", EventDispositionHeader, disposition)
+	disposition := EventDisposition(resp.Header.Get(EventDispositionHeader))
+	if disposition == "" && resp.StatusCode == http.StatusCreated {
+		disposition = EventCreated
 	}
-	return nil
+	l.Log.Debugf("remote provider recorded event (%s: %s)", EventDispositionHeader, disposition)
+
+	// The answer carries the event as stored, which for an incremented,
+	// resolved or replayed create is an earlier event with its own ID. A
+	// remote provider that answers with no event stored the event as sent.
+	stored := &event
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Warn(ErrDataRead(err, "remote provider event response"))
+	} else if len(bytes.TrimSpace(body)) > 0 {
+		var decoded events.Event
+		if err := json.Unmarshal(body, &decoded); err != nil {
+			l.Log.Warn(ErrUnmarshal(err, "remote provider event response"))
+		} else if !decoded.ID.IsNil() {
+			stored = &decoded
+		}
+	}
+	return PersistedEvent{Event: stored, Disposition: disposition}, nil
 }
 
 func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {

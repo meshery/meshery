@@ -508,7 +508,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		}
 
 		_event := eventBuilder.Build()
-		_ = p.PersistEvent(*_event, token)
+		_, _ = p.PersistEvent(*_event, token)
 		ec.Publish(userUUID, _event)
 
 		data, err := json.Marshal(event)
@@ -578,18 +578,21 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		writeMeshkitError(w, ErrInvalidClientEvent(verr), http.StatusBadRequest)
 		return
 	}
-	err = provider.PersistEvent(*event, token)
+	persisted, err := provider.PersistEvent(*event, token)
 	if err != nil {
 		h.log.Error(models.ErrPersistEvent(err))
 		writeMeshkitError(w, models.ErrPersistEvent(err), http.StatusInternalServerError)
 		return
 
 	}
-	go h.config.EventBroadcaster.Publish(userID, event)
+	go h.config.EventBroadcaster.Publish(userID, persisted.Event)
 
 	w.Header().Set("Content-Type", "application/json")
+	if persisted.Disposition != "" {
+		w.Header().Set(models.EventDispositionHeader, string(persisted.Disposition))
+	}
 	w.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(w).Encode(event)
+	err = json.NewEncoder(w).Encode(persisted.Event)
 	if err != nil {
 		// Headers + 201 committed and the response body has started
 		// streaming via json.Encoder, so we cannot send a fresh JSON

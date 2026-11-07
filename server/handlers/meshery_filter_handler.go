@@ -118,7 +118,7 @@ func (h *Handler) handleFilterPOST(
 			"error": errSaveFilter,
 		}).WithDescription(description).Build()
 
-		_ = provider.PersistEvent(*event, token)
+		_, _ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		writeMeshkitError(rw, errSaveFilter, http.StatusBadRequest)
@@ -180,7 +180,7 @@ func (h *Handler) handleFilterPOST(
 					"error": errFilterSave,
 				}).WithDescription(fmt.Sprintf("Failed persisting filter %s", parsedBody.FilterData.Name)).Build()
 
-				_ = provider.PersistEvent(*event, token)
+				_, _ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userID, event)
 				addMeshkitErr(&res, ErrSaveFilter(err))
 				go h.EventsBuffer.Publish(&res)
@@ -201,7 +201,7 @@ func (h *Handler) handleFilterPOST(
 		}
 
 		h.formatFilterOutput(rw, byt, format, &res, eventBuilder)
-		_ = provider.PersistEvent(*eventBuilder.Build(), token)
+		_, _ = provider.PersistEvent(*eventBuilder.Build(), token)
 		return
 	}
 
@@ -215,7 +215,7 @@ func (h *Handler) handleFilterPOST(
 		}
 
 		h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
-		_ = provider.PersistEvent(*eventBuilder.Build(), token)
+		_, _ = provider.PersistEvent(*eventBuilder.Build(), token)
 		return
 	}
 }
@@ -365,7 +365,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 				"error": ErrRequestBody(err),
 			}).
 			WithDescription("Error parsing filter payload.").Build()
-		_ = provider.PersistEvent(*e, token)
+		_, _ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
@@ -379,7 +379,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 				"error": ErrPublishCatalogFilter(err),
 			}).
 			WithDescription("Error publishing filter.").Build()
-		_ = provider.PersistEvent(*e, token)
+		_, _ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		writeMeshkitError(rw, ErrPublishCatalogFilter(err), http.StatusInternalServerError)
 		return
@@ -392,14 +392,14 @@ func (h *Handler) PublishCatalogFilterHandler(
 		e := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrPublishCatalogFilter(err),
 		}).WithDescription("Error parsing response.").Build()
-		_ = provider.PersistEvent(*e, token)
+		_, _ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		writeMeshkitError(rw, ErrPublishCatalogFilter(err), http.StatusInternalServerError)
 		return
 	}
 
 	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("Request to publish '%s' filter submitted with status: %s", respBody.ContentName, respBody.Status)).Build()
-	_ = provider.PersistEvent(*e, token)
+	_, _ = provider.PersistEvent(*e, token)
 	go h.config.EventBroadcaster.Publish(userID, e)
 
 	rw.Header().Set("Content-Type", "application/json")
@@ -442,7 +442,7 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 				"error": ErrRequestBody(err),
 			}).
 			WithDescription("Error parsing filter payload.").Build()
-		_ = provider.PersistEvent(*e, token)
+		_, _ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
@@ -455,7 +455,7 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 				"error": ErrPublishCatalogFilter(err),
 			}).
 			WithDescription("Error publishing filter.").Build()
-		_ = provider.PersistEvent(*e, token)
+		_, _ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		writeMeshkitError(rw, ErrPublishCatalogFilter(err), http.StatusInternalServerError)
 		return
@@ -468,14 +468,14 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 		e := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrPublishCatalogFilter(err),
 		}).WithDescription("Error parsing response.").Build()
-		_ = provider.PersistEvent(*e, token)
+		_, _ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		writeMeshkitError(rw, ErrPublishCatalogFilter(err), http.StatusInternalServerError)
 		return
 	}
 
 	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("'%s' filter unpublished", respBody.ContentName)).Build()
-	_ = provider.PersistEvent(*e, token)
+	_, _ = provider.PersistEvent(*e, token)
 	go h.config.EventBroadcaster.Publish(userID, e)
 
 	rw.Header().Set("Content-Type", "application/json")

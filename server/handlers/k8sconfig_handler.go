@@ -221,7 +221,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				metadata["description"] = fmt.Sprintf("Unable to record the MeshSync deployment mode for context \"%s\" at %s", ctx.Name, ctx.Server)
 				metadata["error"] = modeErr
 				event := eventBuilder.WithSeverity(events.Error).WithDescription(metadata["description"].(string)).WithMetadata(metadata).Build()
-				_ = provider.PersistEvent(*event, token)
+				_, _ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userID, event)
 				continue
 			}
@@ -330,8 +330,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				go func(inst *machines.StateMachine) {
 					event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
 					if err != nil {
-						_ = provider.PersistEvent(*event, token)
-						go h.config.EventBroadcaster.Publish(userID, event)
+						h.persistAndPublish(provider, token, userID, event)
 					}
 				}(inst)
 			}
@@ -364,7 +363,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	// persistence failure rather than dropping it silently — a missing
 	// notification would otherwise be untraceable. The live event is still
 	// broadcast below regardless.
-	if perr := provider.PersistEvent(*event, token); perr != nil {
+	if _, perr := provider.PersistEvent(*event, token); perr != nil {
 		h.log.Error(models.ErrPersistEvent(perr))
 	}
 	go h.config.EventBroadcaster.Publish(userID, event)
@@ -451,7 +450,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	contexts := models.K8sContextsFromKubeconfigWithOptions(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log, true)
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = provider.PersistEvent(*event, token)
+	_, _ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userUUID, event)
 
 	err = json.NewEncoder(w).Encode(contexts)

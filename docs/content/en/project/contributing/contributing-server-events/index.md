@@ -75,7 +75,7 @@ Readers must tolerate older rows: events stored earlier, and rows Meshery Cloud 
 
 Prefer `models.NewServerEvent(ctx)` (`server/models/event_condition.go`) to a bare `events.NewEvent()`. It sets `source` to `meshery-server` and, when `ctx` carries an OpenTelemetry span, that span's W3C trace context (`traceId`, `parentId`). The router's `otelmux` middleware starts a span per request and continues the `traceparent` header the client sent, so the event joins the trace of the operation the client started. Nothing mints a trace context when an event is persisted. Chain `WithOperationID(id)` to group the events of one operation.
 
-Both persisters set `source` to `meshery-server` on any event that arrives without one, so events built with `events.NewEvent()` are stamped too.
+Neither persister sets `source`: only the producer knows which surface emitted an event, so an event built with a bare `events.NewEvent()` is recorded without one.
 
 ### Error events
 
@@ -99,6 +99,8 @@ Creating an event with a key follows the schemas `createEvent` contract ([event 
 
 Close a condition with `builder.Resolves(key, time)` under the condition's category, with a severity and description that say what cleared (for example `success`, "Connection restored"). Send a resolution only when the condition changes from present to cleared, never on every healthy check.
 
+`provider.PersistEvent` returns a `models.PersistedEvent`: the event as stored, and its `Disposition` (`created`, `replayed`, `incremented` or `resolved`). When an occurrence is counted on an open condition, or the condition is resolved, no row is inserted and the stored event is the condition's, with its own ID. Broadcast and return that event, never the one you sent, whose ID no stored row has: Meshery UI's `pushEvent` upserts by ID, so the condition's notification updates in place. `Handler.persistAndPublish` (`server/handlers/middlewares.go`) does both for the state machine's events.
+
 The Kubernetes connection state machine is the first producer. A background Discovery failure that moves a connection to `not found` reports `meshery-server/k8s-connection/<connectionId>/unreachable`, and the Discovery that moves it out of `not found` sends the resolution. The de-duplication from [#20818](https://github.com/meshery/meshery/issues/20818), which suppresses a repeated failure that leaves the status unchanged, still applies. Another machine opts in by setting `StateMachine.ConditionComponent`.
 
 ## Event Persistence in Meshery
@@ -107,7 +109,7 @@ Events in Meshery are persisted through two distinct mechanisms to ensure reliab
 
 ### Local Event Storage
 
-`provider.PersistEvent(*event, token)` records an event. The Local provider writes it to Meshery's local database (`EventsPersister.PersistEvent`). A Remote provider sends it to the remote provider's `createEvent` endpoint and accepts any `2xx` answer as the remote provider having it: `201` (recorded) or `200` (a replay, or an occurrence counted on or a resolution of an open condition), with the `Event-Disposition` header, when sent, logged at debug level. Only when there is no token, or the remote call fails, does it fall back to the local database. Every locally persisted event passes through `models.PrepareEventForPersistence`, which sets the default `source` and applies the 16 KB metadata guard.
+`provider.PersistEvent(*event, token)` records an event and returns it as stored (see [Conditions](#conditions)). The Local provider writes it to Meshery's local database (`EventsPersister.PersistEvent`). A Remote provider sends it to the remote provider's `createEvent` endpoint and accepts any `2xx` answer as the remote provider having it: `201` (recorded) or `200` (a replay, or an occurrence counted on or a resolution of an open condition). The stored event is the one in the answer's body; an answer with no event means the event was stored as sent. The disposition is the `Event-Disposition` header, else `created` for a `201`, else empty. Only when there is no token, or the remote call fails, does it fall back to the local database. Every persisted event passes through `models.PrepareEventForPersistence`, which applies the 16 KB metadata guard.
 
 In the local database, a partial unique index (`idx_events_open_correlation`, created by `AutoMigrateSystemTables`) keeps at most one open event per owner and `correlation_key`, so two concurrent first occurrences cannot both open a condition.
 
@@ -184,7 +186,7 @@ Meshery has two primary clients: Mesheryctl and Meshery UI. Both clients will pr
 
 Clients can send HTTP POST requests to [`api/events`]({{< ref "reference/rest-apis/_index.md" >}}) with the event encapsulated in a JSON request body. Upon receiving an event, the server processes, validates, and broadcasts it using the Broadcaster.
 
-The server records the client's optional correlation, provenance and trace fields with the event (`correlationKey`, `occurrenceCount`, `firstSeenAt`, `lastSeenAt`, `resolvedAt`, `source`, `type`, `specversion`, `traceId`, `parentId`, and `operationId` when sent), so a condition a client reports is counted and resolved as described in [Conditions](#conditions). A field that breaks the schemas contract is refused with `400` (`meshery-server-1489`). A client should name itself in `source` (`meshery-ui`, `mesheryctl`, `meshery-adapter-<name>`); an event that names no source is recorded as `unknown-client`. The answer is `201` with the event as received; it does not yet report whether an occurrence was counted on an open condition. This ensures that all relevant events generated by Mesheryctl and Meshery UI are effectively communicated and managed by the Meshery Server.
+The server records the client's optional correlation, provenance and trace fields with the event (`correlationKey`, `occurrenceCount`, `firstSeenAt`, `lastSeenAt`, `resolvedAt`, `source`, `type`, `specversion`, `traceId`, `parentId`, and `operationId` when sent), so a condition a client reports is counted and resolved as described in [Conditions](#conditions). A field that breaks the schemas contract is refused with `400` (`meshery-server-1489`). A client should name itself in `source` (`meshery-ui`, `mesheryctl`, `meshery-adapter-<name>`); an event that names no source is recorded without one. The answer is `201` with the event as stored, which for an occurrence counted on, or a resolution of, an open condition is the condition's event, and the `Event-Disposition` header says which. The same event is broadcast. This ensures that all relevant events generated by Mesheryctl and Meshery UI are effectively communicated and managed by the Meshery Server.
 
 ### Example
 
