@@ -30,7 +30,7 @@ Each policy is responsible for a specific relationship, matched by its `kind` / 
 - **Hierarchical parent-child** (`hierarchical` / `parent` / `inventory`) connects components that nest naturally (Namespace owning Deployments, Deployment owning Pods).
 - **Hierarchical alias** (`hierarchical` / `parent` / `alias`) declares an alias node that resolves to a path inside another component (a container port, for example).
 - **Inventory** (`hierarchical` / `parent` / `inventory`) auto-adds parent declarations when a child references a parent that is not yet present in the design.
-- **Sibling matchLabels** (type `sibling`) groups components that share the same value at a configured field path (typically labels).
+- **Sibling TagSets** (type `sibling`, subType `matchlabels`) groups components that share the same value at a configured field path (typically labels).
 - **Edge non-binding** (`edge` / `non-binding`) is a logical reference between two components, with no configuration mutation.
 - **Edge binding** (`edge` / `binding`) is a 3-party relationship (from, binding, to) that patches both endpoints through the binding component.
 
