@@ -307,6 +307,16 @@ func TestPreRunEValidation(t *testing.T) {
 			expectError: true,
 			errorMsg:    "isn't specified",
 		},
+		{
+			name: "Fails when run outside of meshery repository",
+			args: []string{"--directory", "/some/path"},
+			setup: func() {
+				resetGenerateFlags(generateCmd)
+				chdir(t, t.TempDir())
+			},
+			expectError: true,
+			errorMsg:    "meshery/meshery repository fork",
+		},
 	}
 
 	for _, tt := range tests {
