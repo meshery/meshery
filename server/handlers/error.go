@@ -1260,9 +1260,9 @@ func ErrInvalidClientEvent(err error) error {
 	return errors.New(
 		ErrInvalidClientEventCode,
 		errors.Alert,
-		[]string{"The event's correlation, provenance or trace fields are not valid"},
+		[]string{"The event's correlation, provenance, trace or metadata.error fields are not valid"},
 		[]string{err.Error()},
-		[]string{"A field breaks the meshery/schemas event contract: a correlationKey, source or type outside 1 to 255 characters, an occurrenceCount below 1, a lastSeenAt before firstSeenAt, a specversion other than 1.0, or a traceId or parentId that is not W3C Trace Context hex"},
-		[]string{"Send the fields as the schemas EventPayload defines them, or omit the ones the client does not set"},
+		[]string{"A field breaks the meshery/schemas event contract: a correlationKey, source or type outside 1 to 255 characters, an occurrenceCount below 1, a lastSeenAt before firstSeenAt, a specversion other than 1.0, a traceId or parentId that is not W3C Trace Context hex, or a metadata.error object carrying a lowercase code key that breaks the closed EventError shape: unknown keys, an empty code, a severity that is not an error severity, too many causes or remediations, or a matchedCauses entry whose causeId is not lowercase hyphenated words or whose confidence is outside 0 to 1"},
+		[]string{"Send the fields as the schemas EventPayload defines them, or omit the ones the client does not set", "Send metadata.error as the schemas EventError shape (code, shortDescription and the other defined keys only), or drop it when the client has no structured error to attach"},
 	)
 }
