@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -220,5 +221,51 @@ func TestExportDesignNonOKDownloadStatus(t *testing.T) {
 	}
 	if meshkiterrors.GetCode(err) != utils.ErrResponseStatusCode {
 		t.Fatalf("expected ErrResponseStatusCode (%s), got %s", utils.ErrResponseStatusCode, meshkiterrors.GetCode(err))
+	}
+}
+
+// TestFetchPatternIDByName verifies the lookup against the response the server
+// sends, built from its own type so the test can't drift from the wire format.
+func TestFetchPatternIDByName(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	utils.TokenFlag = utils.GetToken(t)
+
+	patternID := uuid.Must(uuid.NewV4())
+
+	tests := []struct {
+		name     string
+		patterns []models.MesheryPattern
+		wantID   string
+	}{
+		{name: "one match returns its ID", patterns: []models.MesheryPattern{{ID: &patternID, Name: "my-design"}}, wantID: patternID.String()},
+		{name: "no match returns an error", patterns: []models.MesheryPattern{}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			body, err := json.Marshal(models.PatternsAPIResponse{TotalCount: uint(len(tt.patterns)), Patterns: tt.patterns})
+			if err != nil {
+				t.Fatal(err)
+			}
+			searchURL := fmt.Sprintf("%s/api/pattern?search=%s", testContext.BaseURL, url.QueryEscape("my-design"))
+			httpmock.RegisterResponder("GET", searchURL, httpmock.NewStringResponder(http.StatusOK, string(body)))
+
+			id, err := fetchPatternIDByName(testContext.BaseURL, "my-design")
+			if tt.wantID == "" {
+				wantCode := meshkiterrors.GetCode(ErrDesignNotFound("my-design"))
+				if meshkiterrors.GetCode(err) != wantCode {
+					t.Fatalf("expected error code %s, got %v", wantCode, err)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if id != tt.wantID {
+				t.Fatalf("expected id %s, got %s", tt.wantID, id)
+			}
+		})
 	}
 }

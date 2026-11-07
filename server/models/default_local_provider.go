@@ -2079,23 +2079,6 @@ func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter,
 
 // Events
 
-func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
-	// GORM's Save requires a pointer (it reflects on the struct to read/update
-	// the primary key and timestamps). Passing the value directly produced
-	// "invalid value, should be pointer to struct or slice" and dropped every
-	// system event silently — including the controller-emitted events that
-	// flow through PersistSystemEvent.
-	err := e.DB.Save(&event).Error
-	if err != nil {
-		return ErrPersistEvent(err)
-	}
-	return nil
-}
-
-func (e *EventsPersister) PersistSystemEvent(event events.Event) error {
-	return e.PersistEvent(event, "")
-}
-
 func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {
 	e := l.EventsPersister
 	eventsDB := []*events.Event{}

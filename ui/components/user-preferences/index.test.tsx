@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const notify = vi.fn();
@@ -228,5 +228,20 @@ describe('UserPreference', () => {
     fireEvent.click(toggle);
     expect(dispatch).toHaveBeenCalled();
     expect(updateUserPref).toHaveBeenCalled();
+  });
+
+  it('shows an error when saving the Catalog Content preference fails', async () => {
+    updateUserPref.mockImplementationOnce(() => ({
+      unwrap: () => Promise.reject(new Error('network down')),
+    }));
+    render(<UserPreference />);
+    fireEvent.click(screen.getByTestId('CatalogContentPreference'));
+
+    await waitFor(() =>
+      expect(notify).toHaveBeenCalledWith({
+        message: 'There was an error sending your preference',
+        event_type: 'error',
+      }),
+    );
   });
 });
