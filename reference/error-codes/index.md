@@ -27379,6 +27379,108 @@ Configure the root the link points at rather than the link itself</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrNotMeshkitErrorCode-11337" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrNotMeshkitErrorCode-more-info" onclick="toggle_visibility('meshkit-ErrNotMeshkitErrorCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11337" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errnotmeshkiterrorcode-11337/"><code>ErrNotMeshkitErrorCode-11337</code></a>
+            </td>
+            <td>The error is not a MeshKit error</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrNotMeshkitErrorCode-11337" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrNotMeshkitErrorCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">The error has no MeshKit error code</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The error was created without errors.New, errors.NewV2 or errors.NewV3, so it has no error code.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Wrap the failure in a MeshKit error defined in the package&#39;s error.go, or report it in the event description instead of metadata.error.</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInvalidEventErrorCode-11338" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidEventErrorCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidEventErrorCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11338" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errinvalideventerrorcode-11338/"><code>ErrInvalidEventErrorCode-11338</code></a>
+            </td>
+            <td>The error cannot be attached to an event</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInvalidEventErrorCode-11338" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrInvalidEventErrorCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">The event&#39;s metadata.error would break the schemas EventError contract</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The error&#39;s causes break the error definition contract, for example a missing id, an unknown action policy, or an automatic remediation without an action.
+A matched cause names a cause id the error does not define, or its confidence is outside 0 to 1.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Run errorutil analyze on the component and fix the definitions it reports.
+Correct the code that builds the event so it sets the field as the schemas event construct defines it.</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInvalidEventCode-11339" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInvalidEventCode-more-info" onclick="toggle_visibility('meshkit-ErrInvalidEventCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11339" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errinvalideventcode-11339/"><code>ErrInvalidEventCode-11339</code></a>
+            </td>
+            <td>The event is not valid</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInvalidEventCode-11339" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrInvalidEventCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">The event breaks the schemas event construct</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">A correlation, provenance or trace field of the event has a value the schemas event construct does not allow.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Correct the code that builds the event so it sets the field as the schemas event construct defines it.</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrMintTraceContextCode-11340" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrMintTraceContextCode-more-info" onclick="toggle_visibility('meshkit-ErrMintTraceContextCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11340" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errminttracecontextcode-11340/"><code>ErrMintTraceContextCode-11340</code></a>
+            </td>
+            <td>Unable to mint a trace context id</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrMintTraceContextCode-11340" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrMintTraceContextCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">A trace or span id could not be generated</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The system&#39;s secure random number generator is unavailable.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Check that the operating system&#39;s random source is readable by the process.</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
