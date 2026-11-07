@@ -154,6 +154,51 @@ describe('CustomToolbarSelect', () => {
     expect(screen.getByTestId('meshery-chart')).toBeInTheDocument();
   });
 
+  it('builds the download link from a camelCase result', () => {
+    mockResultsSelection = {
+      k1: {
+        k2: {
+          mesheryId: 'meshery-camel',
+          name: 'profile-1',
+          runnerResults: { StartTime: '2023-01-01', ActualDuration: 1, Labels: 'L' },
+        },
+      },
+    };
+
+    render(<CustomToolbarSelect setSelectedRows={vi.fn()} />);
+
+    const downloadAnchor = screen.getByText(
+      (_text, el) =>
+        el?.tagName === 'A' &&
+        (el as HTMLAnchorElement).getAttribute('download') === 'profile-1_test_result.json',
+    ) as HTMLAnchorElement;
+    expect(downloadAnchor.getAttribute('href')).toBe('/api/perf/profile/result/meshery-camel');
+  });
+
+  it('compares the runnerResults of camelCase results', async () => {
+    mockResultsSelection = {
+      k1: {
+        k2: {
+          mesheryId: 'meshery-camel',
+          name: 'profile-1',
+          runnerResults: { StartTime: '2023-01-01T00:00:00Z', ActualDuration: 1, Labels: 'env' },
+        },
+      },
+    };
+
+    const user = userEvent.setup();
+    render(<CustomToolbarSelect setSelectedRows={vi.fn()} />);
+
+    const compareTooltip = screen
+      .getAllByTestId('tooltip')
+      .find((t) => t.getAttribute('data-title') === 'Compare selected');
+    await user.click(compareTooltip!.querySelector('a')!);
+
+    expect(JSON.parse(screen.getByTestId('meshery-chart').textContent!)).toEqual([
+      { StartTime: '2023-01-01T00:00:00Z', ActualDuration: 1, Labels: 'env' },
+    ]);
+  });
+
   it('skips undefined entries when iterating results_selection', () => {
     mockResultsSelection = {
       k1: { k2: undefined as any },
