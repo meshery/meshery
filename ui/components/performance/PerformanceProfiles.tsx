@@ -542,6 +542,7 @@ function PerformanceProfile() {
             deleteHandler={deleteProfile}
             setProfileForModal={setProfileForModal}
             pages={Math.ceil(count / pageSize)}
+            page={page}
             setPage={setPage}
             testHandler={setSelectedProfile}
           />
