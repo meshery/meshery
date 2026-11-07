@@ -18,6 +18,14 @@ vi.mock('@sistent/sistent', () => ({
 
 vi.mock('@rjsf/utils', () => ({
   canExpand: (schema: any) => !!schema?.canExpand,
+  // Mirrors RJSF's real getUiOptions for the keys this template reads:
+  // ui:options.* are merged in, bare ui:* keys lose their prefix, and the
+  // registry's global UI options are the base.
+  getUiOptions: (uiSchema: any = {}, globalOptions: any = {}) => ({
+    ...globalOptions,
+    ...(uiSchema?.['ui:options'] || {}),
+    ...(uiSchema?.['ui:hideError'] !== undefined ? { hideError: uiSchema['ui:hideError'] } : {}),
+  }),
 }));
 
 vi.mock('../../../../assets/icons/AddIcon', () => ({
@@ -98,6 +106,32 @@ describe('ObjectFieldTemplate', () => {
       <ObjectFieldTemplate {...(baseProps as any)} errorSchema={{ name: { __errors: ['bad'] } }} />,
     );
     expect(screen.getByTestId('error-icon')).toBeInTheDocument();
+  });
+
+  it('hides the error icon when ui:options.hideError is true', () => {
+    // ui:options.hideError must hide the indicator even though RJSF still
+    // passes errorSchema to the template: the caller asked for no error to
+    // be shown. RJSF's ObjectField does not forward hideError to the
+    // template, so the template reads it from the effective UI options.
+    render(
+      <ObjectFieldTemplate
+        {...(baseProps as any)}
+        errorSchema={{ name: { __errors: ['bad'] } }}
+        uiSchema={{ 'ui:options': { hideError: true } }}
+      />,
+    );
+    expect(screen.queryByTestId('error-icon')).not.toBeInTheDocument();
+  });
+
+  it('hides the error icon when the bare ui:hideError option is set', () => {
+    render(
+      <ObjectFieldTemplate
+        {...(baseProps as any)}
+        errorSchema={{ name: { __errors: ['bad'] } }}
+        uiSchema={{ 'ui:hideError': true }}
+      />,
+    );
+    expect(screen.queryByTestId('error-icon')).not.toBeInTheDocument();
   });
 
   it('renders only the properties grid when no title is provided', () => {
