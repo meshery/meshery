@@ -262,6 +262,18 @@ jobs:
         k8s_version: ['v1.33.0', 'v1.34.3']
         platform: ['docker', 'kubernetes']
     steps:
+      # Fail before starting Minikube or Meshery: an empty token would only
+      # surface later as a provider auth error during the performance test.
+      - name: Check remote-provider token
+        env:
+          REMOTE_PROVIDER_TEST_USER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
+        run: |
+          if [ -z "$REMOTE_PROVIDER_TEST_USER_TOKEN" ]; then
+            echo "::error::REMOTE_PROVIDER_TEST_USER_TOKEN is empty. The performance test authenticates against the remote provider and cannot run without it."
+            exit 1
+          fi
+        shell: bash
+
       - name: Setup Kubernetes
         uses: manusa/actions-setup-minikube@v2.14.0
         with:
@@ -294,7 +306,7 @@ jobs:
 
       - name: Run Performance Tests
         env:
-          PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+          REMOTE_PROVIDER_TEST_USER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
           PROFILE_NAME: ${{ github.event.inputs.profile_name }}
           PROFILE_FILENAME: ${{ github.event.inputs.profile_filename }}
           TEST_NAME: ${{ steps.date.outputs.date }}
@@ -315,7 +327,7 @@ jobs:
             - location: auth.json
               name: default
           EOF
-          echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = env.PROVIDER_TOKEN' > "$HOME/.meshery/auth.json"
+          echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = env.REMOTE_PROVIDER_TEST_USER_TOKEN' > "$HOME/.meshery/auth.json"
           cp "$HOME/.meshery/auth.json" "$RUNNER_TEMP/auth.json"
           chmod 600 "$RUNNER_TEMP/auth.json"
           make build
@@ -349,6 +361,18 @@ jobs:
         k8s_version: ['v1.33.0', 'v1.34.3']
         platform: ['docker', 'kubernetes']
     steps:
+      # Fail before starting Minikube or Meshery: an empty token would only
+      # surface later as a provider auth error during the performance test.
+      - name: Check remote-provider token
+        env:
+          REMOTE_PROVIDER_TEST_USER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
+        run: |
+          if [ -z "$REMOTE_PROVIDER_TEST_USER_TOKEN" ]; then
+            echo "::error::REMOTE_PROVIDER_TEST_USER_TOKEN is empty. The performance test authenticates against the remote provider and cannot run without it."
+            exit 1
+          fi
+        shell: bash
+
       - name: Setup Kubernetes
         uses: manusa/actions-setup-minikube@v2.14.0
         with:
@@ -376,7 +400,7 @@ jobs:
 
       - name: Run Performance Tests
         env:
-          PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+          REMOTE_PROVIDER_TEST_USER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
           PROFILE_NAME: smp-integration-e2e-workflow
           PROFILE_FILENAME: integration-test-config.yaml
           TEST_NAME: ${{ steps.date.outputs.date }}
@@ -397,7 +421,7 @@ jobs:
             - location: auth.json
               name: default
           EOF
-          echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = env.PROVIDER_TOKEN' > "$HOME/.meshery/auth.json"
+          echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = env.REMOTE_PROVIDER_TEST_USER_TOKEN' > "$HOME/.meshery/auth.json"
           cp "$HOME/.meshery/auth.json" "$RUNNER_TEMP/auth.json"
           chmod 600 "$RUNNER_TEMP/auth.json"
           make build
