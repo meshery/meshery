@@ -200,6 +200,10 @@ export const notificationCenterApi = api
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),
 
+      // TEMPORARY: replace with the schemas-generated hook once meshery/schemas#1318
+      // is published (see #22884). POST /api/events/mark-all-read, operationId markAllEventsRead,
+      // no request body. The server decides which events are user-owned, so callers
+      // must refresh the list afterwards.
       markAllEventsRead: builder.mutation({
         query: () => ({
           url: `/api/events/mark-all-read`,
