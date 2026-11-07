@@ -423,15 +423,22 @@ func flagValuesToJSON(flag, separator string, flagValues []string) (string, erro
 	}
 
 	encoded := make(map[string]string, len(flagValues))
+	seen := make(map[string]struct{}, len(flagValues))
 	for _, flagValue := range flagValues {
 		name, value, found := strings.Cut(flagValue, separator)
 		name = strings.TrimSpace(name)
 		if !found || name == "" {
 			return "", utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --%s: expected name%svalue", flag, separator))
 		}
-		if _, exists := encoded[name]; exists {
+		// Header names are case-insensitive, cookie names are not.
+		key := name
+		if flag == "header" {
+			key = strings.ToLower(name)
+		}
+		if _, exists := seen[key]; exists {
 			return "", utils.ErrFlagsInvalid(fmt.Errorf("duplicate value for --%s: %q", flag, name))
 		}
+		seen[key] = struct{}{}
 		encoded[name] = strings.TrimSpace(value)
 	}
 

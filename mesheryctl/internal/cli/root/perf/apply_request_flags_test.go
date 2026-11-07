@@ -113,6 +113,7 @@ func TestApplySavesRequestFlagsOnNewProfile(t *testing.T) {
 
 	require.NotNil(t, calls.run, "the run request was never sent")
 	assert.JSONEq(t, `{"Authorization":"Bearer a:b","X-Trace":"1"}`, calls.run.Get("headers"))
+	assert.JSONEq(t, `{"session":"abc=def"}`, calls.run.Get("cookies"))
 	assert.Equal(t, "application/json", calls.run.Get("contentType"))
 }
 
@@ -159,6 +160,7 @@ func TestApplyRejectsDuplicateRequestFlags(t *testing.T) {
 		second string
 	}{
 		{name: "duplicate header", flag: "header", first: "X-Trace: 1", second: "X-Trace: 2"},
+		{name: "duplicate header in a different case", flag: "header", first: "Authorization: one", second: "authorization: two"},
 		{name: "duplicate cookie", flag: "cookie", first: "session=abc", second: "session=def"},
 	}
 
@@ -181,4 +183,14 @@ func TestApplyRejectsDuplicateRequestFlags(t *testing.T) {
 			assert.Zero(t, httpmock.GetTotalCallCount(), "nothing may be sent for a duplicate value")
 		})
 	}
+}
+
+// TestFlagValuesToJSONKeepsCookieNamesCaseSensitive verifies that only header
+// names are compared without regard to case. Cookie names are case-sensitive, so
+// two that differ only in case are different cookies.
+func TestFlagValuesToJSONKeepsCookieNamesCaseSensitive(t *testing.T) {
+	encoded, err := flagValuesToJSON("cookie", "=", []string{"session=abc", "Session=def"})
+
+	require.NoError(t, err)
+	assert.JSONEq(t, `{"session":"abc","Session":"def"}`, encoded)
 }
