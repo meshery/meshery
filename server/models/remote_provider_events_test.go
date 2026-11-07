@@ -313,3 +313,54 @@ func TestRemoteProviderPersistEventAssignsAnIDToAnEventWithout(t *testing.T) {
 		t.Fatalf("returned ID %s, sent ID %q; want the same non-zero ID", persisted.Event.ID, sentID)
 	}
 }
+
+// A remote provider is known to correlate conditions only once a create
+// carrying a correlationKey is answered with an Event-Disposition, and stops
+// being known to once such a create is answered without one. A create without
+// a correlationKey says nothing either way.
+func TestRemoteProviderCorrelatesConditionsFollowsCorrelatedCreates(t *testing.T) {
+	var disposition string
+	provider := newEventsRemoteProvider(t, func(w http.ResponseWriter, r *http.Request) {
+		if disposition != "" {
+			w.Header().Set(EventDispositionHeader, disposition)
+		}
+		w.WriteHeader(http.StatusCreated)
+	})
+	owner := mustUUID(t)
+	correlated := func() events.Event {
+		return *events.NewEvent().FromOwner(owner).WithCategory("connection").WithAction("update").
+			WithSeverity(events.Error).WithCorrelationKey("meshery-server/k8s-connection/abc/unreachable").Build()
+	}
+	plain := func() events.Event {
+		return *events.NewEvent().FromOwner(owner).WithCategory("connection").WithAction("update").
+			WithSeverity(events.Informational).Build()
+	}
+	persist := func(event events.Event) {
+		t.Helper()
+		if _, err := provider.PersistEvent(event, "token"); err != nil {
+			t.Fatalf("PersistEvent: %v", err)
+		}
+	}
+
+	if provider.CorrelatesConditions() {
+		t.Fatal("a remote provider no correlated create has reached is known to correlate")
+	}
+	disposition = string(EventCreated)
+	persist(plain())
+	if provider.CorrelatesConditions() {
+		t.Fatal("an uncorrelated create made the remote provider known to correlate")
+	}
+	persist(correlated())
+	if !provider.CorrelatesConditions() {
+		t.Fatal("a correlated create answered with a disposition did not make the remote provider known to correlate")
+	}
+	disposition = ""
+	persist(plain())
+	if !provider.CorrelatesConditions() {
+		t.Fatal("an uncorrelated create answered without a disposition changed what is known")
+	}
+	persist(correlated())
+	if provider.CorrelatesConditions() {
+		t.Fatal("a correlated create answered without a disposition left the remote provider known to correlate")
+	}
+}

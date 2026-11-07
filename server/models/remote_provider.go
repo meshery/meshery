@@ -21,6 +21,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/meshery/schemas/models/core"
@@ -114,6 +115,12 @@ type RemoteProvider struct {
 
 	syncStopChan chan struct{}
 	syncChan     chan *userSession
+
+	// correlatesConditions records whether the remote provider was last seen
+	// applying condition correlation: the answer to the most recent create
+	// that carried a correlationKey said what it did (Event-Disposition) or
+	// did not. It starts false, as unknown.
+	correlatesConditions atomic.Bool
 
 	ProviderVersion    string
 	SmiResultPersister *SMIResultsPersister
@@ -1745,6 +1752,14 @@ func (l *RemoteProvider) PersistEvent(event events.Event, token string) (Persist
 	return l.persist(withServerSource(event), token)
 }
 
+// CorrelatesConditions reports whether the remote provider answered the most
+// recent create carrying a correlationKey with an Event-Disposition, which a
+// provider that predates condition correlation omits. Until such a create has
+// been answered it is false.
+func (l *RemoteProvider) CorrelatesConditions() bool {
+	return l.correlatesConditions.Load()
+}
+
 // PersistClientEvent persists an event a client sent as PersistEvent does, but
 // with its source as sent: one that names no source is recorded without one.
 func (l *RemoteProvider) PersistClientEvent(event events.Event, token string) (PersistedEvent, error) {
@@ -1810,6 +1825,9 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 		return PersistedEvent{}, ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
 	}
 	disposition := EventDisposition(resp.Header.Get(EventDispositionHeader))
+	if event.CorrelationKey != nil && *event.CorrelationKey != "" {
+		l.correlatesConditions.Store(disposition != "")
+	}
 	if disposition == "" && resp.StatusCode == http.StatusCreated {
 		disposition = EventCreated
 	}

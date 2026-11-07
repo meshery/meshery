@@ -108,6 +108,12 @@ func (e *EventsPersister) PersistClientEvent(event events.Event, token string) (
 	return e.persist(event)
 }
 
+// CorrelatesConditions is always true: the local database applies the
+// createEvent condition correlation contract.
+func (e *EventsPersister) CorrelatesConditions() bool {
+	return true
+}
+
 func (e *EventsPersister) persist(event events.Event) (PersistedEvent, error) {
 	event = PrepareEventForPersistence(event, e.Log)
 	// Replay runs first: a create carrying an idempotencyKey its caller

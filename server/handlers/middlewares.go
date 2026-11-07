@@ -398,12 +398,18 @@ func (h *Handler) reportBackgroundDiscovery(provider models.Provider, token stri
 
 // reportMachineOutcome reports what a connection's StateMachine.SendEvent
 // returned: nothing for no event, a Recurrence counted on its open condition
-// without a broadcast, and anything else persisted and broadcast.
+// without a broadcast, and anything else persisted and broadcast. A Recurrence
+// is sent only to a provider that correlates conditions
+// (Provider.CorrelatesConditions); any other would record it as a new event,
+// so it is dropped, as before condition correlation.
 func (h *Handler) reportMachineOutcome(provider models.Provider, token string, userID core.Uuid, event *events.Event, err error) {
 	if event == nil {
 		return
 	}
 	if machines.IsRecurrence(event, err) {
+		if !provider.CorrelatesConditions() {
+			return
+		}
 		if _, perr := provider.PersistEvent(*event, token); perr != nil {
 			h.log.Error(perr)
 		}

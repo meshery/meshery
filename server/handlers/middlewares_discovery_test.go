@@ -20,12 +20,16 @@ import (
 // recordingEventsProvider records the events persisted through it. It answers
 // with stored when set, as a persister does for an occurrence counted on, or
 // the resolution of, an open condition; otherwise with the event as created.
+// It correlates conditions unless uncorrelated is set.
 type recordingEventsProvider struct {
 	models.Provider
-	persisted []events.Event
-	stored    *models.PersistedEvent
-	err       error
+	persisted    []events.Event
+	stored       *models.PersistedEvent
+	err          error
+	uncorrelated bool
 }
+
+func (p *recordingEventsProvider) CorrelatesConditions() bool { return !p.uncorrelated }
 
 func (p *recordingEventsProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
 	p.persisted = append(p.persisted, event)
@@ -54,6 +58,10 @@ func (p *persisterEventsProvider) PersistEvent(event events.Event, token string)
 
 func (p *persisterEventsProvider) PersistClientEvent(event events.Event, token string) (models.PersistedEvent, error) {
 	return p.persister.PersistClientEvent(event, token)
+}
+
+func (p *persisterEventsProvider) CorrelatesConditions() bool {
+	return p.persister.CorrelatesConditions()
 }
 
 func (p *persisterEventsProvider) GetProviderToken(*http.Request) (string, error) { return "", nil }
@@ -420,5 +428,43 @@ func TestReportBackgroundDiscoveryCountsARecurrenceSilently(t *testing.T) {
 	case got := <-ch:
 		t.Fatalf("broadcast %v for a recurrence", got)
 	case <-time.After(100 * time.Millisecond):
+	}
+}
+
+// A provider not known to correlate conditions is sent no Recurrence, which it
+// would record as a new event, but is still sent a condition's first
+// occurrence and its resolution.
+func TestReportMachineOutcomeSendsRecurrencesOnlyToACorrelatingProvider(t *testing.T) {
+	key := models.ConditionKey("k8s-connection", uuid.Must(uuid.NewV4()).String(), "unreachable")
+	user := uuid.Must(uuid.NewV4())
+	resolvedAt := time.Now()
+	resolution := events.NewEvent().WithSeverity(events.Informational).WithCorrelationKey(key).WithResolvedAt(resolvedAt).Build()
+	firstOccurrence := events.NewEvent().WithSeverity(events.Error).WithCorrelationKey(key).Build()
+	recurrence := events.NewEvent().WithSeverity(events.Error).WithCorrelationKey(key).Build()
+
+	for _, tc := range []struct {
+		name         string
+		uncorrelated bool
+		want         []*events.Event
+	}{
+		{name: "correlating", want: []*events.Event{firstOccurrence, recurrence, resolution}},
+		{name: "not correlating", uncorrelated: true, want: []*events.Event{firstOccurrence, resolution}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			h := &Handler{config: &models.HandlerConfig{EventBroadcaster: models.NewBroadcaster("test")}, log: newTestLogger(t)}
+			provider := &recordingEventsProvider{uncorrelated: tc.uncorrelated}
+			h.reportMachineOutcome(provider, "token", user, firstOccurrence, errors.New("cluster unreachable"))
+			h.reportMachineOutcome(provider, "token", user, recurrence, nil)
+			h.reportMachineOutcome(provider, "token", user, resolution, nil)
+
+			if len(provider.persisted) != len(tc.want) {
+				t.Fatalf("persisted %d events, want %d", len(provider.persisted), len(tc.want))
+			}
+			for i, want := range tc.want {
+				if provider.persisted[i].ID != want.ID {
+					t.Errorf("persisted[%d] = %s, want %s", i, provider.persisted[i].ID, want.ID)
+				}
+			}
+		})
 	}
 }
