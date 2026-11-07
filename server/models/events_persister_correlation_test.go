@@ -769,32 +769,41 @@ func assertOpenConditionUntouched(t *testing.T, p *EventsPersister, owner core.U
 	t.Fatalf("newer condition %s not stored", id)
 }
 
-// Two creates carrying one key whose binding is stale (its event was deleted)
-// record one event between them. The callback holds the second create's
-// removal of the stale binding until the first has replaced it, the
-// interleaving in which removing the binding by owner and key alone would
-// delete the first create's binding and record a second event for the key.
-func TestPersistEventConcurrentCreatesOverAStaleBindingRecordOnce(t *testing.T) {
-	p := newCorrelationTestPersister(t)
-	owner := mustUUID(t)
-	const key = "run-1"
-
-	stale := mustPersist(t, p, withKey(events.NewEvent().FromOwner(owner).WithCategory("perf").WithAction("run").
-		WithSeverity(events.Informational).Build(), key))
+// staleBinding records an event bound to key and deletes the event, leaving
+// the key's binding stale, and returns the deleted event.
+func staleBinding(t *testing.T, p *EventsPersister, owner core.Uuid, key string) *events.Event {
+	t.Helper()
+	sent := withKey(events.NewEvent().FromOwner(owner).WithCategory("perf").WithAction("run").
+		WithSeverity(events.Informational).Build(), key)
+	stale := mustPersist(t, p, sent)
 	if err := p.DB.Where("id = ?", stale.Event.ID).Delete(&events.Event{}).Error; err != nil {
 		t.Fatalf("delete the bound event: %v", err)
 	}
+	return sent
+}
 
+// holdStaleBindingRace forces the interleaving of two creates over a stale
+// binding in which removing it carelessly records two events for one key:
+// both creates read the stale binding, then the first removes it and binds
+// the key again, and only then does the second remove the binding it read as
+// stale. The returned channel closes when the first create reaches the
+// removal, so the caller can start the second create only then and know which
+// create is first.
+func holdStaleBindingRace(t *testing.T, p *EventsPersister, owner core.Uuid, key string) <-chan struct{} {
+	t.Helper()
 	const wait = 5 * time.Second
-	var arrivals int32
 	var mu sync.Mutex
+	arrivals := 0
+	firstArrived := make(chan struct{})
 	bothRead := make(chan struct{})
+	// rebound reports whether the key is bound to an event that exists.
 	rebound := func() bool {
-		var binding EventIdempotencyBinding
-		found := p.DB.Session(&gorm.Session{NewDB: true}).
-			Where("owner = ? AND idempotency_key = ? AND event_id <> ?", owner, key, stale.Event.ID).
-			Limit(1).Find(&binding)
-		return found.Error == nil && found.RowsAffected > 0
+		var n int64
+		err := p.DB.Session(&gorm.Session{NewDB: true}).Model(&EventIdempotencyBinding{}).
+			Where("owner = ? AND idempotency_key = ? AND event_id IN (?)", owner, key,
+				p.DB.Session(&gorm.Session{NewDB: true}).Model(&events.Event{}).Select("id")).
+			Count(&n).Error
+		return err == nil && n > 0
 	}
 	// Registered before the delete's own transaction begins, so a held
 	// create holds no connection of the one-connection pool.
@@ -808,6 +817,7 @@ func TestPersistEventConcurrentCreatesOverAStaleBindingRecordOnce(t *testing.T) 
 		mu.Unlock()
 		switch arrival {
 		case 1:
+			close(firstArrived)
 			// Both creates read the stale binding before either removes it.
 			select {
 			case <-bothRead:
@@ -828,35 +838,131 @@ func TestPersistEventConcurrentCreatesOverAStaleBindingRecordOnce(t *testing.T) 
 	}); err != nil {
 		t.Fatalf("register callback: %v", err)
 	}
+	return firstArrived
+}
 
-	results := make(chan PersistedEvent, 2)
+// raceOverStaleBinding persists first and then, once first has read the
+// stale binding, second, under holdStaleBindingRace, and returns their
+// results in that order.
+func raceOverStaleBinding(t *testing.T, p *EventsPersister, owner core.Uuid, key string, first, second *events.Event) [2]PersistedEvent {
+	t.Helper()
+	firstArrived := holdStaleBindingRace(t, p, owner, key)
+	var results [2]PersistedEvent
 	var wg sync.WaitGroup
-	for i := 0; i < 2; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			persisted, err := p.PersistEvent(*withKey(events.NewEvent().FromOwner(owner).WithCategory("perf").WithAction("run").
-				WithSeverity(events.Informational).Build(), key), "")
-			if err != nil {
-				t.Errorf("PersistEvent: %v", err)
-				return
-			}
-			results <- persisted
-		}()
+	persist := func(i int, event *events.Event) {
+		defer wg.Done()
+		persisted, err := p.PersistEvent(*event, "")
+		if err != nil {
+			t.Errorf("PersistEvent: %v", err)
+			return
+		}
+		results[i] = persisted
 	}
+	wg.Add(2)
+	go persist(0, first)
+	go func() {
+		select {
+		case <-firstArrived:
+		case <-time.After(5 * time.Second):
+			t.Errorf("the first create never reached the stale binding")
+		}
+		persist(1, second)
+	}()
 	wg.Wait()
-	close(results)
+	return results
+}
 
-	dispositions := map[EventDisposition]int{}
-	var ids []uuid.UUID
-	for persisted := range results {
-		dispositions[persisted.Disposition]++
-		ids = append(ids, persisted.Event.ID)
+func keyedRun(owner core.Uuid, key string) *events.Event {
+	return withKey(events.NewEvent().FromOwner(owner).WithCategory("perf").WithAction("run").
+		WithSeverity(events.Informational).Build(), key)
+}
+
+// Two creates carrying one key whose binding is stale (its event was deleted)
+// record one event between them: the second is a replay of the first, whose
+// binding the second's removal of the stale binding leaves in place.
+func TestPersistEventConcurrentCreatesOverAStaleBindingRecordOnce(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+	const key = "run-1"
+	staleBinding(t, p, owner, key)
+
+	results := raceOverStaleBinding(t, p, owner, key, keyedRun(owner, key), keyedRun(owner, key))
+	assertOneRecordedOneReplayed(t, p, owner, results)
+}
+
+// The same holds when the first create is a retry of the deleted event itself,
+// recorded again under its original ID: the stale binding the second create
+// read names that ID again, but its event exists, so the binding is no longer
+// stale and is left in place.
+func TestPersistEventConcurrentCreatesOverAStaleBindingRecordOnceWhenTheIDIsReused(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+	const key = "run-1"
+	deleted := staleBinding(t, p, owner, key)
+
+	results := raceOverStaleBinding(t, p, owner, key, deleted, keyedRun(owner, key))
+	assertOneRecordedOneReplayed(t, p, owner, results)
+	if results[0].Event == nil || results[0].Event.ID != deleted.ID {
+		t.Fatalf("first create = %+v, want the deleted event recorded again with ID %s", results[0], deleted.ID)
 	}
-	if dispositions[EventCreated] != 1 || dispositions[EventReplayed] != 1 || len(ids) != 2 || ids[0] != ids[1] {
-		t.Fatalf("dispositions %v ids %v, want one created and one replay of it", dispositions, ids)
+}
+
+// assertOneRecordedOneReplayed fails unless the first of two creates recorded
+// an event, the second was answered as a replay of it, and it is the owner's
+// only stored event.
+func assertOneRecordedOneReplayed(t *testing.T, p *EventsPersister, owner core.Uuid, results [2]PersistedEvent) {
+	t.Helper()
+	first, second := results[0], results[1]
+	if first.Event == nil || second.Event == nil {
+		t.Fatalf("results %+v, want both creates answered with an event", results)
 	}
-	if rows := storedEvents(t, p, owner); len(rows) != 1 || rows[0].ID != ids[0] {
+	if first.Disposition != EventCreated || second.Disposition != EventReplayed || second.Event.ID != first.Event.ID {
+		t.Fatalf("first %s %s, second %s %s; want the first created and the second a replay of it",
+			first.Disposition, first.Event.ID, second.Disposition, second.Event.ID)
+	}
+	if rows := storedEvents(t, p, owner); len(rows) != 1 || rows[0].ID != first.Event.ID {
 		t.Fatalf("got %d rows, want the one created event", len(rows))
+	}
+}
+
+// A retry by event ID that carries an idempotencyKey not yet used binds that
+// key to the stored event, so a later create carrying only that key is a
+// replay of the event rather than a new one. It holds for a correlated event,
+// whose retry is caught before its condition is touched, and for an
+// uncorrelated one, whose retry is caught by the insert's primary key.
+func TestPersistEventRetryByIDBindsItsIdempotencyKey(t *testing.T) {
+	cases := map[string]func(owner core.Uuid) *events.Event{
+		"correlated": func(owner core.Uuid) *events.Event {
+			return conditionEvent(owner, "meshery-server/k8s-connection/c/unreachable", "down").Build()
+		},
+		"uncorrelated": func(owner core.Uuid) *events.Event {
+			return events.NewEvent().FromOwner(owner).WithCategory("perf").WithAction("run").
+				WithSeverity(events.Informational).WithDescription("run").Build()
+		},
+	}
+	for name, build := range cases {
+		build := build
+		t.Run(name, func(t *testing.T) {
+			p := newCorrelationTestPersister(t)
+			owner := mustUUID(t)
+			const key = "retry-1"
+
+			original := build(owner)
+			mustPersist(t, p, original)
+			retry := *original
+			if got := mustPersist(t, p, withKey(&retry, key)); got.Disposition != EventReplayed || got.Event.ID != original.ID {
+				t.Fatalf("retry with a fresh key = %s %s, want replayed %s", got.Disposition, got.Event.ID, original.ID)
+			}
+
+			// A new event value (its own ID) carrying only the key.
+			again := withKey(build(owner), key)
+			if got := mustPersist(t, p, again); got.Disposition != EventReplayed || got.Event.ID != original.ID {
+				t.Fatalf("create carrying only the key = %s %s, want replayed %s", got.Disposition, got.Event.ID, original.ID)
+			}
+			rows := storedEvents(t, p, owner)
+			if len(rows) != 1 || count(rows[0].OccurrenceCount) > 1 {
+				t.Fatalf("got %+v, want the one original event, uncounted", rows)
+			}
+		})
 	}
 }

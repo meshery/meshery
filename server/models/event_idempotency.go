@@ -54,12 +54,13 @@ func bindIdempotencyKey(tx *gorm.DB, event events.Event, eventID uuid.UUID) erro
 // whose event no longer exists (it was deleted) frees the key: it is removed
 // and the create proceeds.
 //
-// The stale binding is removed by its event ID as well as its owner and key,
-// so only the binding that was read as stale is removed. Two creates that both
-// read the stale binding may both proceed, but once one of them has bound the
-// key to its own event the other's delete matches nothing, its bind then
-// fails on the binding's primary key, and it is answered as a replay of the
-// winner, so one key never records two events.
+// The stale binding is removed in one statement that also checks its event
+// is still missing, so only a binding that is stale when it is removed goes.
+// Two creates that both read the stale binding may both proceed, but once one
+// of them has bound the key - to its own event, or to the deleted event
+// recorded again under its original ID - the other's delete matches nothing,
+// its bind then fails on the binding's primary key, and it is answered as a
+// replay of the winner, so one key never records two events.
 func boundEvent(db *gorm.DB, event events.Event) (*events.Event, bool, error) {
 	owner, key, ok := idempotencyScope(event)
 	if !ok {
@@ -79,7 +80,9 @@ func boundEvent(db *gorm.DB, event events.Event) (*events.Event, bool, error) {
 		return nil, false, read.Error
 	}
 	if read.RowsAffected == 0 {
-		if err := db.Where("owner = ? AND idempotency_key = ? AND event_id = ?", owner, key, binding.EventID).Delete(&EventIdempotencyBinding{}).Error; err != nil {
+		recorded := db.Session(&gorm.Session{NewDB: true}).Model(&events.Event{}).Select("1").Where("id = ?", binding.EventID)
+		if err := db.Where("owner = ? AND idempotency_key = ? AND event_id = ? AND NOT EXISTS (?)", owner, key, binding.EventID, recorded).
+			Delete(&EventIdempotencyBinding{}).Error; err != nil {
 			return nil, false, err
 		}
 		return nil, false, nil

@@ -179,7 +179,8 @@ func (e *EventsPersister) persist(event events.Event) (PersistedEvent, error) {
 // its caller already used is answered with the event the key is bound to, and
 // an event value persisted twice (a producer retrying after a timeout; an
 // event built with events.NewEvent carries its own ID) with the stored row of
-// that ID. Either way the retry records and changes nothing.
+// that ID. Either way the retry records nothing; a retry by ID binds the
+// idempotencyKey it carries, as replayStoredEvent does.
 func (e *EventsPersister) replayedEvent(event events.Event) (PersistedEvent, bool, error) {
 	if bound, ok, err := boundEvent(e.DB.DB, event); err != nil || ok {
 		if err != nil {
@@ -187,7 +188,36 @@ func (e *EventsPersister) replayedEvent(event events.Event) (PersistedEvent, boo
 		}
 		return PersistedEvent{Event: bound, Disposition: EventReplayed}, true, nil
 	}
-	return storedEventWithID(e.DB.DB, event.ID)
+	replayed, ok, err := replayStoredEvent(e.DB.DB, event)
+	if err != nil && isUniqueViolation(err) {
+		// A concurrent create bound the key first. The key is checked before
+		// the ID, so the retry is answered with the event the key is bound to.
+		if bound, ok, boundErr := boundEvent(e.DB.DB, event); boundErr != nil {
+			return PersistedEvent{}, false, boundErr
+		} else if ok {
+			return PersistedEvent{Event: bound, Disposition: EventReplayed}, true, nil
+		}
+	}
+	return replayed, ok, err
+}
+
+// replayStoredEvent answers a create carrying the ID of a stored event as a
+// replay of that event (see storedEventWithID), and binds the idempotencyKey
+// the create carries, when it carries one in a caller's scope, to the stored
+// event, as a create that records, counts or resolves an event does. A retry
+// that pairs a fresh key with an event already stored is therefore answered
+// the same way when it is retried again with only that key. A key bound
+// concurrently fails the bind on the binding's primary key; the caller answers
+// that as a replay of the bound event.
+func replayStoredEvent(db *gorm.DB, event events.Event) (PersistedEvent, bool, error) {
+	replayed, ok, err := storedEventWithID(db, event.ID)
+	if err != nil || !ok {
+		return PersistedEvent{}, false, err
+	}
+	if err := bindIdempotencyKey(db, event, replayed.Event.ID); err != nil {
+		return PersistedEvent{}, false, err
+	}
+	return replayed, true, nil
 }
 
 // storedEventWithID returns the stored event with id, answered as a replay,
@@ -267,8 +297,11 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) (PersistedE
 		// looked up among every stored event, not only the condition's open
 		// one: once the event is resolved and a newer event opens the same
 		// key, its retry must still be answered with it rather than counted
-		// on, or resolve, the newer condition.
-		if replayed, ok, err := storedEventWithID(tx, event.ID); err != nil {
+		// on, or resolve, the newer condition. The key the retry carries is
+		// bound to the event; a key bound concurrently fails the transaction
+		// on the binding's primary key, and persist answers it as a replay of
+		// the bound event.
+		if replayed, ok, err := replayStoredEvent(tx, event); err != nil {
 			return err
 		} else if ok {
 			persisted = replayed
