@@ -114,15 +114,13 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	}
 
 	ltURL, err := url.Parse(loadTestOptions.URL)
-	if err != nil {
-		obj := "the provided load test"
-		h.log.Error(ErrParseBool(err, obj))
-		writeMeshkitError(w, ErrParseBool(err, obj), http.StatusBadRequest)
-		return
-	}
-	if !ltURL.IsAbs() {
-		h.log.Error(ErrInvalidLTURL(ltURL.String()))
-		writeMeshkitError(w, ErrInvalidLTURL(ltURL.String()), http.StatusBadRequest)
+	if err != nil || !ltURL.IsAbs() || ltURL.Host == "" {
+		invalidURL := loadTestOptions.URL
+		if err != nil {
+			invalidURL = fmt.Sprintf("%s (%v)", loadTestOptions.URL, err)
+		}
+		h.log.Error(ErrInvalidLTURL(invalidURL))
+		writeMeshkitError(w, ErrInvalidLTURL(loadTestOptions.URL), http.StatusBadRequest)
 		return
 	}
 	loadTestOptions.Name = testName
@@ -148,7 +146,10 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 	return &headers
 }
 
-// LoadTestHandler runs the load test with the given parameters
+// LoadTestHandler executes a performance load test with the provided parameters.
+// It parses query parameters and performance profile metadata, safely writes temporary
+// CA certificate files when cert=true, ensures their file descriptors are closed and
+// unlinked upon exit, and invokes the underlying load generator.
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	cleanUpFiles := make([]string, 0)
 
@@ -222,8 +223,20 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 					writeMeshkitError(w, ErrCreateFile(err, certificateName), http.StatusInternalServerError)
 					return
 				}
+				defer func() {
+					if err := file.Close(); err != nil && err != os.ErrClosed {
+						h.log.Error(fmt.Errorf("failed to close temp certificate file %s: %w", file.Name(), err))
+					}
+				}()
 				cleanUpFiles = append(cleanUpFiles, file.Name())
-				certificateData := caCertificate["file"].(string)
+
+				certificateData, ok := caCertificate["file"].(string)
+				if !ok {
+					createErr := ErrCreateFile(fmt.Errorf("certificate file data is invalid or missing"), certificateName)
+					h.log.Error(createErr)
+					writeMeshkitError(w, createErr, http.StatusBadRequest)
+					return
+				}
 
 				_, err = file.Write([]byte(certificateData))
 				if err != nil {
@@ -309,10 +322,13 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	loadTestURL := q.Get("url")
 	ltURL, err := url.Parse(loadTestURL)
-	if err != nil || !ltURL.IsAbs() {
-		obj := "the provided load test url"
-		h.log.Error(ErrParseBool(err, obj))
-		writeMeshkitError(w, ErrParseBool(err, obj), http.StatusBadRequest)
+	if err != nil || !ltURL.IsAbs() || ltURL.Host == "" {
+		invalidURL := loadTestURL
+		if err != nil {
+			invalidURL = fmt.Sprintf("%s (%v)", loadTestURL, err)
+		}
+		h.log.Error(ErrInvalidLTURL(invalidURL))
+		writeMeshkitError(w, ErrInvalidLTURL(loadTestURL), http.StatusBadRequest)
 		return
 	}
 	loadTestOptions.URL = loadTestURL
