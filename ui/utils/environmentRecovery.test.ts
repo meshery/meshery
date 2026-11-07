@@ -49,6 +49,35 @@ describe('extractExpectedResources', () => {
     expect(extractExpectedResources(design)).toEqual([deploy, ns]);
   });
 
+  it('only falls back to displayName when it is a valid resource name', () => {
+    const component = (displayName: string) => ({ displayName, component: { kind: 'Service' } });
+    expect(
+      extractExpectedResources({
+        components: [
+          component('My Web Service'),
+          component('Web'),
+          component('web_svc'),
+          component('-web'),
+          component('a'.repeat(254)),
+          component('web-svc.v1'),
+        ],
+      }),
+    ).toEqual([{ kind: 'Service', name: 'web-svc.v1' }]);
+  });
+
+  it('prefers metadata.name over a valid displayName', () => {
+    const design = {
+      components: [
+        {
+          displayName: 'label',
+          component: { kind: 'Service' },
+          configuration: { metadata: { name: 'real-name' } },
+        },
+      ],
+    };
+    expect(extractExpectedResources(design)).toEqual([{ kind: 'Service', name: 'real-name' }]);
+  });
+
   it.each([null, undefined, {}, { components: 'x' }])('returns [] for %j', (design) => {
     expect(extractExpectedResources(design)).toEqual([]);
   });
@@ -79,6 +108,14 @@ describe('checkResources', () => {
       [live('Deployment', 'web', 'demo', 'Failed'), live('Deployment', 'web', 'demo', 'Running')],
     );
     expect(checks[0].state).toBe('available');
+  });
+
+  it('counts a present resource as available when it has no phase or is Pending', () => {
+    const checks = checkResources(
+      [deploy, { kind: 'Pod', name: 'p', namespace: 'demo' }],
+      [live('Deployment', 'web', 'demo'), live('Pod', 'p', 'demo', 'Pending')],
+    );
+    expect(checks.map((c) => c.state)).toEqual(['available', 'available']);
   });
 
   it('reads the phase from status.attribute too', () => {
@@ -202,6 +239,41 @@ describe('evaluateRecovery', () => {
 
   it('failed when nothing improved', () => {
     expect(evaluateRecovery({ before, after: report([]) })).toBe('recovery-failed');
+  });
+
+  describe('when the cluster was unreachable before recovery', () => {
+    const unavailableBefore = validateEnvironment({
+      reachability: 'unreachable',
+      expected,
+      live: [],
+    });
+
+    it('is partially recovered when the cluster is back and some resources exist', () => {
+      expect(
+        evaluateRecovery({ before: unavailableBefore, after: report([live('Namespace', 'demo')]) }),
+      ).toBe('partially-recovered');
+    });
+
+    it('is recovered when everything is back', () => {
+      const after = report([
+        live('Namespace', 'demo'),
+        live('Deployment', 'web', 'demo'),
+        live('Service', 'web', 'demo'),
+      ]);
+      expect(evaluateRecovery({ before: unavailableBefore, after })).toBe('recovered');
+    });
+
+    it('failed when the cluster is back but nothing expected exists', () => {
+      expect(evaluateRecovery({ before: unavailableBefore, after: report([]) })).toBe(
+        'recovery-failed',
+      );
+    });
+
+    it('stays environment unavailable when the cluster is still unreachable', () => {
+      expect(
+        evaluateRecovery({ before: unavailableBefore, after: report([], 'unreachable') }),
+      ).toBe('environment-unavailable');
+    });
   });
 
   it('environment unavailable when the cluster drops during recovery', () => {

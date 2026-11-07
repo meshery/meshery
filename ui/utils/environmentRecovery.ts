@@ -40,7 +40,10 @@ export interface ResourceCheck {
 
 export type EnvironmentStatus =
   | 'environment-unavailable' // the cluster itself cannot be reached
-  | 'ready' // every expected resource is present and healthy
+  // Every expected resource is present and not known to be unhealthy. This means "present",
+  // not "running": a resource with no reported phase, or a Pod still Pending, counts as
+  // available. Only explicitly failing phases (see UNHEALTHY_PHASES) are flagged.
+  | 'ready'
   | 'partial' // some, but not all, expected resources are present and healthy
   | 'empty'; // the cluster is reachable but none of the expected resources are usable
 
@@ -75,6 +78,12 @@ const UNHEALTHY_PHASES = new Set(['failed', 'unknown', 'crashloopbackoff', 'erro
 
 const normalize = (value?: string) => (value ?? '').trim().toLowerCase();
 
+// DNS-1123 subdomain: the name format most Kubernetes kinds require.
+const RESOURCE_NAME_PATTERN = /^[a-z0-9]([-a-z0-9.]*[a-z0-9])?$/;
+
+const isValidResourceName = (value?: string): value is string =>
+  !!value && value.length <= 253 && RESOURCE_NAME_PATTERN.test(value);
+
 const keyOf = (r: ExpectedResource) => `${normalize(r.kind)}/${normalize(r.namespace)}/${r.name}`;
 
 /**
@@ -96,7 +105,11 @@ export function extractExpectedResources(design: unknown): ExpectedResource[] {
     };
     const kind = component?.component?.kind;
     const metadata = component?.configuration?.metadata;
-    const name = metadata?.name || component?.displayName;
+    // displayName is a human label, not necessarily the object name, so it is only used as a
+    // fallback when it is a valid Kubernetes resource name. Otherwise the component is skipped
+    // rather than invented into an expected resource that could never match live state.
+    const displayName = component?.displayName;
+    const name = metadata?.name || (isValidResourceName(displayName) ? displayName : undefined);
     if (!kind || !name) continue;
 
     const resource: ExpectedResource = { kind, name };
@@ -118,6 +131,10 @@ const matches = (expected: ExpectedResource, live: LiveResource) => {
   );
 };
 
+/**
+ * True only when the resource reports an explicitly failing phase. A missing phase or a
+ * transient one such as Pending is not treated as unhealthy (see `EnvironmentStatus`).
+ */
 export function isUnhealthy(live: LiveResource): boolean {
   const phase = live.status?.phase ?? live.status?.attribute?.phase;
   return !!phase && UNHEALTHY_PHASES.has(normalize(phase));
@@ -220,7 +237,14 @@ export function evaluateRecovery(input: {
 
   if (after.status === 'environment-unavailable') return 'environment-unavailable';
   if (after.status === 'ready') return 'recovered';
-  // Progress is fewer problems than before; a failed deploy with no progress is a failure.
+  // An unavailable `before` report carries no problems by construction, so there is no
+  // count to compare against. If the cluster is back and some expected resources exist,
+  // that is progress. If it is back but nothing expected exists ('empty'), nothing was
+  // recovered, so that falls through to 'recovery-failed'.
+  if (before.status === 'environment-unavailable') {
+    return after.status === 'partial' ? 'partially-recovered' : 'recovery-failed';
+  }
+  // Otherwise progress is fewer problems than before.
   if (after.problems.length < before.problems.length) return 'partially-recovered';
   return 'recovery-failed';
 }
