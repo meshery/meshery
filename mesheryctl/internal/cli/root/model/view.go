@@ -3,14 +3,15 @@ package model
 import (
 	"errors"
 	"fmt"
-	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/viewoutput"
-	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/schemas/models/v1beta1/model"
-	"github.com/spf13/cobra"
 	"net/url"
 	"path/filepath"
 	"strings"
+
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/viewoutput"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/spf13/cobra"
 )
 
 type cmdModelViewFlags struct {
