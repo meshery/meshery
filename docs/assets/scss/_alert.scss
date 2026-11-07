@@ -71,7 +71,7 @@
 .alert-primary {
   border-style: solid;
   border-color:  #1976d2;
-  background-color: #a3c8ed;
+  background-color: #1976d222;
   border-width: 0 0 0 4px;
   font-size: 1rem;
   & .alert-heading > *,
@@ -79,6 +79,14 @@
     color:  #1976d2;
     margin: 0;
     margin-bottom: 1rem;
+  }
+}
+
+.dark-mode .alert-primary {
+  border-color: var(--color-secondary-light);
+  & .alert-heading > *,
+  & .alert-heading {
+    color: var(--color-secondary-light);
   }
 }
 .alert-secondary {
