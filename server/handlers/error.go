@@ -241,6 +241,7 @@ const (
 	ErrFetchProfilesCode         = "meshery-server-1464"
 	ErrResetInProgressCode       = "meshery-server-1481"
 	ErrInvalidClientEventCode    = "meshery-server-1489"
+	ErrInvalidEventIDCode        = "meshery-server-1490"
 )
 
 var (
@@ -763,6 +764,22 @@ func ErrBulkUpdateEvent(err error) error {
 
 func ErrDeleteEvent(err error, id string) error {
 	return errors.New(ErrDeleteEventCode, errors.Alert, []string{fmt.Sprintf("Could not delete event %s", id)}, []string{err.Error()}, []string{"Event might have been deleted and doesn't exist", "Database is corrupt."}, []string{"Verify event filter settings", "Reset database."})
+}
+
+// ErrInvalidEventID is returned when the event ID in a request path is not a
+// UUID, or is the nil UUID.
+func ErrInvalidEventID(id string) error {
+	e := errors.New(
+		ErrInvalidEventIDCode,
+		errors.Alert,
+		[]string{"Invalid event ID"},
+		[]string{"An event ID must be a UUID other than the nil UUID"},
+		[]string{"The provided event ID is not a valid UUID", "The provided event ID is the nil UUID"},
+		[]string{"Pass the ID of an existing event"},
+	)
+	// The descriptions stay literals for errorutil; the ID is appended after.
+	e.LongDescription = append(e.LongDescription, fmt.Sprintf("Received event ID: %q", id))
+	return e
 }
 
 func ErrBulkDeleteEvent(err error) error {

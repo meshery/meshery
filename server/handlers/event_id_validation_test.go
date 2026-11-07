@@ -53,11 +53,13 @@ func TestEventHandlersRejectInvalidID(t *testing.T) {
 			h, provider := newEventIDFixture(t)
 			rec := deleteEvent(h, provider, id)
 			assert.Equal(t, http.StatusBadRequest, rec.Code, rec.Body.String())
+			assert.Contains(t, rec.Body.String(), ErrInvalidEventIDCode, "the response must carry the invalid event ID error")
 		})
 		t.Run("update_status/"+id, func(t *testing.T) {
 			h, provider := newEventIDFixture(t)
 			rec := updateEventStatus(h, provider, id, "read")
 			assert.Equal(t, http.StatusBadRequest, rec.Code, rec.Body.String())
+			assert.Contains(t, rec.Body.String(), ErrInvalidEventIDCode, "the response must carry the invalid event ID error")
 		})
 	}
 }

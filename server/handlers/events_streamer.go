@@ -167,7 +167,7 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 	eventIDParam := mux.Vars(req)["id"]
 	eventID, err := uuid.FromString(eventIDParam)
 	if err != nil || eventID == uuid.Nil {
-		idErr := ErrUpdateEvent(fmt.Errorf("invalid event ID: %s", eventIDParam), eventIDParam)
+		idErr := ErrInvalidEventID(eventIDParam)
 		h.log.Error(idErr)
 		writeMeshkitError(w, idErr, http.StatusBadRequest)
 		return
@@ -299,7 +299,7 @@ func (h *Handler) DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj 
 	eventIDParam := mux.Vars(req)["id"]
 	eventID, err := uuid.FromString(eventIDParam)
 	if err != nil || eventID == uuid.Nil {
-		idErr := ErrDeleteEvent(fmt.Errorf("invalid event ID: %s", eventIDParam), eventIDParam)
+		idErr := ErrInvalidEventID(eventIDParam)
 		h.log.Error(idErr)
 		writeMeshkitError(w, idErr, http.StatusBadRequest)
 		return
