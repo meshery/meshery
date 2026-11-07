@@ -118,7 +118,7 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 
 	if err != nil {
 		h.log.Error(models.ErrUnmarshal(err, obj))
-		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
 		return
 	}
 
@@ -172,7 +172,7 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 
 	if err != nil {
 		h.log.Error(models.ErrUnmarshal(err, obj))
-		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
 		return
 	}
 
