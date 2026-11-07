@@ -125,7 +125,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 		}
 
 		if workspaceViewFlagsProvided.Save {
-			workspaceString := strings.ReplaceAll(selectedWorkspace.Name, " ", "_")
+			workspaceString := strings.NewReplacer(" ", "_", "/", "_", "\\", "_").Replace(selectedWorkspace.Name)
 			if workspaceString == "" {
 				workspaceString = selectedWorkspace.ID.String()
 			}

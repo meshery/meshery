@@ -110,3 +110,31 @@ func TestViewModel(t *testing.T) {
 	mesheryctlflags.InitValidators(ModelCmd)
 	utils.InvokeMesheryctlTestCommand(t, update, ModelCmd, tests, currDir, "model")
 }
+
+// TestViewModelSaveFlattensSeparatorsInName verifies that --save writes one
+// file for a model whose display name has path separators, and that the real
+// ~/.meshery is never touched.
+func TestViewModelSaveFlattensSeparatorsInName(t *testing.T) {
+	const modelId = "00000000-0000-0000-0000-000000000000"
+
+	modelsApiPath = "api/registry/models"
+	mesheryctlflags.InitValidators(ModelCmd)
+	mesheryDir := utils.IsolateMesheryHome(t)
+
+	run := utils.MesheryCommandRun{
+		Cmd:        ModelCmd,
+		Args:       []string{"view", modelId, "--save"},
+		CommandDir: utils.CallerDir(t),
+		Mocks: []utils.MockURL{
+			{
+				URL:      fmt.Sprintf("/api/registry/models?id=%s&page=0&pagesize=10", url.QueryEscape(modelId)),
+				Response: "view.model.save.name.api.response.golden",
+			},
+		},
+	}
+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "model_AMD_GPU_Pro_v1.yaml"))
+}
