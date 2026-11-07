@@ -11,7 +11,10 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/events"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 // recordingEventsProvider records the events persisted through it. It answers
@@ -29,6 +32,76 @@ func (p *recordingEventsProvider) PersistEvent(event events.Event, _ string) (mo
 		return *p.stored, nil
 	}
 	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
+}
+
+func (p *recordingEventsProvider) PersistClientEvent(event events.Event, token string) (models.PersistedEvent, error) {
+	return p.PersistEvent(event, token)
+}
+
+// persisterEventsProvider persists through a real EventsPersister.
+type persisterEventsProvider struct {
+	models.Provider
+	persister *models.EventsPersister
+}
+
+func (p *persisterEventsProvider) PersistEvent(event events.Event, token string) (models.PersistedEvent, error) {
+	return p.persister.PersistEvent(event, token)
+}
+
+func (p *persisterEventsProvider) PersistClientEvent(event events.Event, token string) (models.PersistedEvent, error) {
+	return p.persister.PersistClientEvent(event, token)
+}
+
+func (p *persisterEventsProvider) GetProviderToken(*http.Request) (string, error) { return "", nil }
+
+// An event the server emits is recorded with source meshery-server even when
+// built with a bare events.NewEvent(); an event a client sends without a
+// source is recorded without one.
+func TestEventSourceIsTheServersOnlyForServerEvents(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("open database: %v", err)
+	}
+	if err := db.AutoMigrate(&events.Event{}); err != nil {
+		t.Fatalf("migrate events: %v", err)
+	}
+	provider := &persisterEventsProvider{persister: &models.EventsPersister{DB: &database.Handler{DB: db}}}
+	systemID := uuid.Must(uuid.NewV4())
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: models.NewBroadcaster("test")},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+	user := uuid.Must(uuid.NewV4())
+
+	h.persistAndPublish(provider, "", user, events.NewEvent().FromOwner(user).WithCategory("connection").
+		WithAction("update").WithSeverity(events.Informational).WithDescription("server event").Build())
+
+	req := httptest.NewRequest(http.MethodPost, "/api/events", strings.NewReader(`{"actedUpon":"`+uuid.Must(uuid.NewV4()).String()+
+		`","category":"design","action":"save","severity":"informational","description":"client event"}`))
+	rec := httptest.NewRecorder()
+	h.ClientEventHandler(rec, req, nil, &models.User{ID: user}, provider)
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("client event: status %d; body %s", rec.Code, rec.Body.String())
+	}
+
+	var rows []events.Event
+	if err := db.Find(&rows).Error; err != nil {
+		t.Fatalf("read events: %v", err)
+	}
+	sources := map[string]*string{}
+	for _, row := range rows {
+		sources[row.Description] = row.Source
+	}
+	if len(rows) != 2 {
+		t.Fatalf("got %d events, want 2", len(rows))
+	}
+	if s := sources["server event"]; s == nil || *s != models.EventSourceServer {
+		t.Errorf("server event source = %v, want %q", s, models.EventSourceServer)
+	}
+	if s := sources["client event"]; s != nil {
+		t.Errorf("client event source = %q, want none", *s)
+	}
 }
 
 // receiveEvent returns the next event published on ch.

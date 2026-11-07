@@ -119,15 +119,25 @@ func conditionKeySegment(segment string) string {
 
 // PrepareEventForPersistence is applied to every event Meshery Server
 // persists, locally or with a remote provider, before it is written or sent.
-// It bounds the metadata with GuardEventMetadataSize. It never sets `source`:
-// only the producer knows which surface emitted the event, so a server event
-// names itself through NewServerEvent and an event that names no source is
-// recorded without one.
+// It bounds the metadata with GuardEventMetadataSize. It never sets `source`;
+// withServerSource does that for the events the server itself emits.
 //
 // The event is a copy and its metadata map is never mutated: the same map is
 // often shared with the copy published to the EventBroadcaster.
 func PrepareEventForPersistence(event events.Event, log logger.Handler) events.Event {
 	return GuardEventMetadataSize(event, log)
+}
+
+// withServerSource sets source EventSourceServer on an event Meshery Server
+// emitted without naming its source. Provider.PersistEvent applies it, as every
+// event persisted through it was emitted by this server; PersistClientEvent,
+// which records an event a client sent, does not.
+func withServerSource(event events.Event) events.Event {
+	if event.Source == nil || *event.Source == "" {
+		source := EventSourceServer
+		event.Source = &source
+	}
+	return event
 }
 
 // correlatesEvent reports whether a create of event takes part in condition

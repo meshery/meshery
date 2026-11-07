@@ -624,7 +624,12 @@ type Provider interface {
 	// It returns the event as stored and what persisting it did: for an occurrence counted on, or a
 	// resolution of, an open condition, the stored event is the condition's, with its own ID, and is
 	// the one to broadcast or return.
+	// The event is the server's own: one that names no source is recorded with source meshery-server.
 	PersistEvent(event events.Event, token string) (PersistedEvent, error)
+
+	// PersistClientEvent persists an event a client sent (POST /api/events) as PersistEvent does,
+	// but with its source as sent: one that names no source is recorded without one.
+	PersistClientEvent(event events.Event, token string) (PersistedEvent, error)
 
 	// PersistSystemEvent persists a system-initiated event (e.g. MeshSync updates, registry seeding,
 	// auto-registration) that occurs outside of a user request context and has no auth token.

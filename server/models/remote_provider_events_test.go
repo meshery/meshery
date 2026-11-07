@@ -40,7 +40,7 @@ func localEventCount(t *testing.T, provider *RemoteProvider) int64 {
 }
 
 // The remote provider receives every correlation, provenance and trace field
-// the event carries, under the schemas JSON names.
+// the event carries, under the schemas JSON names, plus the server's source.
 func TestRemoteProviderPersistEventSendsCorrelationFields(t *testing.T) {
 	var body map[string]interface{}
 	provider := newEventsRemoteProvider(t, func(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +58,6 @@ func TestRemoteProviderPersistEventSendsCorrelationFields(t *testing.T) {
 		WithCategory("connection").
 		WithAction("update").
 		WithSeverity(events.Error).
-		WithSource(EventSourceServer).
 		WithCorrelationKey("meshery-server/k8s-connection/abc/unreachable").
 		WithOccurrenceCount(2).
 		WithFirstSeenAt(firstSeen).
@@ -98,7 +97,8 @@ func TestRemoteProviderPersistEventSendsCorrelationFields(t *testing.T) {
 }
 
 // An event that sets none of the new fields sends none of them, so a remote
-// provider that predates them receives exactly what it did before.
+// provider that predates them receives exactly what it did before, apart from
+// the server's source. A client's event is sent with its source as sent.
 func TestRemoteProviderPersistEventOmitsUnsetFields(t *testing.T) {
 	var body map[string]interface{}
 	provider := newEventsRemoteProvider(t, func(w http.ResponseWriter, r *http.Request) {
@@ -113,10 +113,21 @@ func TestRemoteProviderPersistEventOmitsUnsetFields(t *testing.T) {
 		t.Fatalf("PersistEvent: %v", err)
 	}
 
-	for _, key := range []string{"correlationKey", "occurrenceCount", "firstSeenAt", "lastSeenAt", "resolvedAt", "source", "type", "specversion", "traceId", "parentId"} {
+	for _, key := range []string{"correlationKey", "occurrenceCount", "firstSeenAt", "lastSeenAt", "resolvedAt", "type", "specversion", "traceId", "parentId"} {
 		if _, ok := body[key]; ok {
 			t.Errorf("remote payload carries unset %s: %v", key, body[key])
 		}
+	}
+	if body["source"] != EventSourceServer {
+		t.Errorf("source = %v, want %q", body["source"], EventSourceServer)
+	}
+
+	body = nil
+	if _, err := provider.PersistClientEvent(*event, "token"); err != nil {
+		t.Fatalf("PersistClientEvent: %v", err)
+	}
+	if source, ok := body["source"]; ok {
+		t.Errorf("client event sent with source %v, want none", source)
 	}
 	if n := localEventCount(t, provider); n != 0 {
 		t.Fatalf("a 200 fell back to the local database (%d rows)", n)
