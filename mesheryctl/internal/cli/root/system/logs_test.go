@@ -18,7 +18,9 @@ import (
 	"context"
 	"errors"
 	"io"
+	"sync"
 	"testing"
+	"time"
 )
 
 func TestIsPodRequired(t *testing.T) {
@@ -220,5 +222,283 @@ func TestProcessLogStream(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+// blockingContextReadCloser simulates an active log stream that signals when Read
+// has begun, and then blocks until its stream context is cancelled.
+type blockingContextReadCloser struct {
+	ctx         context.Context
+	readStarted chan struct{}
+	closed      bool
+	closeCalls  int
+	mu          sync.Mutex
+}
+
+func (b *blockingContextReadCloser) Read(p []byte) (int, error) {
+	b.mu.Lock()
+	if b.readStarted != nil {
+		select {
+		case <-b.readStarted:
+		default:
+			close(b.readStarted)
+		}
+	}
+	b.mu.Unlock()
+
+	<-b.ctx.Done()
+	return 0, b.ctx.Err()
+}
+
+func (b *blockingContextReadCloser) Close() error {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.closeCalls++
+	b.closed = true
+	return nil
+}
+
+// TestFollowLogStreams_LaterStreamCreationError verifies that when a later stream
+// fails to open, followLogStreams cancels earlier active follow streams and waits
+// for their reader goroutines to complete and release stream resources before returning.
+func TestFollowLogStreams_LaterStreamCreationError(t *testing.T) {
+	laterStreamErr := errors.New("simulated stream creation failure for pod-2")
+
+	readStarted := make(chan struct{})
+	stream1 := &blockingContextReadCloser{
+		readStarted: readStarted,
+	}
+
+	sources := []streamLogSource{
+		{
+			podName: "pod-1",
+			open: func(ctx context.Context) (io.ReadCloser, error) {
+				stream1.ctx = ctx
+				return stream1, nil
+			},
+		},
+		{
+			podName: "pod-2",
+			open: func(ctx context.Context) (io.ReadCloser, error) {
+				// Ensure stream 1's reader goroutine is actively blocked on Read before failing
+				select {
+				case <-readStarted:
+				case <-time.After(2 * time.Second):
+					return nil, errors.New("timed out waiting for stream 1 to start reading")
+				}
+				return nil, laterStreamErr
+			},
+		},
+	}
+
+	// Use context.Background() without a deadline so that stream cancellation
+	// is solely driven by followLogStreams internal cancellation logic.
+	parentCtx := context.Background()
+
+	resultCh := make(chan error, 1)
+	go func() {
+		resultCh <- followLogStreams(parentCtx, sources, func(string, string) {})
+	}()
+
+	// Watchdog timeout to prevent the test from hanging indefinitely if cancellation is broken
+	var err error
+	select {
+	case err = <-resultCh:
+		// Succeeded in completing within the watchdog window
+	case <-time.After(3 * time.Second):
+		t.Fatal("followLogStreams hung: failed to cancel earlier streams or wait for goroutines")
+	}
+
+	// Assert the original second-stream error is returned
+	if !errors.Is(err, laterStreamErr) {
+		t.Fatalf("expected error %v, got %v", laterStreamErr, err)
+	}
+
+	// Assert that stream 1 was cancelled and closed exactly once
+	stream1.mu.Lock()
+	closeCalls := stream1.closeCalls
+	closed := stream1.closed
+	stream1.mu.Unlock()
+
+	if closeCalls != 1 {
+		t.Errorf("stream1.closeCalls = %d, want 1", closeCalls)
+	}
+	if !closed {
+		t.Errorf("stream1.closed = false, want true")
+	}
+}
+
+// syncLogStream is a mock ReadCloser that provides channel-based barrier synchronization.
+// It signals when Read begins, blocks until released by the test coordinator,
+// returns its payload, and then on the subsequent read returns EOF.
+type syncLogStream struct {
+	data        []byte
+	readEntered chan struct{}
+	proceedRead chan struct{}
+	mu          sync.Mutex
+	readCalls   int
+	closeCalls  int
+	closed      bool
+}
+
+func (s *syncLogStream) Read(p []byte) (int, error) {
+	s.mu.Lock()
+	call := s.readCalls
+	s.readCalls++
+	s.mu.Unlock()
+
+	switch call {
+	case 0:
+		if s.readEntered != nil {
+			close(s.readEntered)
+		}
+		if s.proceedRead != nil {
+			<-s.proceedRead
+		}
+		n := copy(p, s.data)
+		return n, nil
+	case 1:
+		return 0, io.EOF
+	default:
+		return 0, errUnexpectedRead
+	}
+}
+
+func (s *syncLogStream) Close() error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.closeCalls++
+	s.closed = true
+	return nil
+}
+
+// TestFollowLogStreams_NormalCompletion verifies that followLogStreams runs multiple
+// streams concurrently, prints their log messages with the correct pod association,
+// and terminates cleanly when all streams reach EOF, closing each stream exactly once.
+func TestFollowLogStreams_NormalCompletion(t *testing.T) {
+	stream1Started := make(chan struct{})
+	stream2Started := make(chan struct{})
+	proceedStreams := make(chan struct{})
+
+	stream1 := &syncLogStream{
+		data:        []byte("log message from pod-1\n"),
+		readEntered: stream1Started,
+		proceedRead: proceedStreams,
+	}
+	stream2 := &syncLogStream{
+		data:        []byte("log message from pod-2\n"),
+		readEntered: stream2Started,
+		proceedRead: proceedStreams,
+	}
+
+	sources := []streamLogSource{
+		{
+			podName: "pod-1",
+			open: func(ctx context.Context) (io.ReadCloser, error) {
+				return stream1, nil
+			},
+		},
+		{
+			podName: "pod-2",
+			open: func(ctx context.Context) (io.ReadCloser, error) {
+				return stream2, nil
+			},
+		},
+	}
+
+	type recordedEntry struct {
+		logMsg  string
+		podName string
+	}
+	var mu sync.Mutex
+	var recordedLogs []recordedEntry
+	captureLog := func(logMsg, podName string) {
+		mu.Lock()
+		defer mu.Unlock()
+		recordedLogs = append(recordedLogs, recordedEntry{logMsg: logMsg, podName: podName})
+	}
+
+	// Coordinator goroutine waits until BOTH streams have entered their Read loop,
+	// proving that both streams are being consumed concurrently.
+	coordinatorDone := make(chan struct{})
+	go func() {
+		defer close(coordinatorDone)
+		select {
+		case <-stream1Started:
+		case <-time.After(3 * time.Second):
+			t.Errorf("timed out waiting for stream1 to start reading")
+			return
+		}
+		select {
+		case <-stream2Started:
+		case <-time.After(3 * time.Second):
+			t.Errorf("timed out waiting for stream2 to start reading")
+			return
+		}
+		// Both streams are actively in Read() concurrently. Release both.
+		close(proceedStreams)
+	}()
+
+	resultCh := make(chan error, 1)
+	go func() {
+		resultCh <- followLogStreams(context.Background(), sources, captureLog)
+	}()
+
+	var err error
+	select {
+	case err = <-resultCh:
+	case <-time.After(5 * time.Second):
+		t.Fatal("followLogStreams timed out in normal completion")
+	}
+
+	<-coordinatorDone
+
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+
+	// Verify both streams were closed exactly once upon EOF
+	stream1.mu.Lock()
+	s1Closed, s1CloseCalls, s1ReadCalls := stream1.closed, stream1.closeCalls, stream1.readCalls
+	stream1.mu.Unlock()
+
+	if !s1Closed || s1CloseCalls != 1 {
+		t.Errorf("stream1 not closed properly: closed=%v, closeCalls=%d (want closed=true, closeCalls=1)", s1Closed, s1CloseCalls)
+	}
+	if s1ReadCalls != 2 {
+		t.Errorf("stream1 readCalls = %d, want 2 (data + EOF)", s1ReadCalls)
+	}
+
+	stream2.mu.Lock()
+	s2Closed, s2CloseCalls, s2ReadCalls := stream2.closed, stream2.closeCalls, stream2.readCalls
+	stream2.mu.Unlock()
+
+	if !s2Closed || s2CloseCalls != 1 {
+		t.Errorf("stream2 not closed properly: closed=%v, closeCalls=%d (want closed=true, closeCalls=1)", s2Closed, s2CloseCalls)
+	}
+	if s2ReadCalls != 2 {
+		t.Errorf("stream2 readCalls = %d, want 2 (data + EOF)", s2ReadCalls)
+	}
+
+	// Verify each stream's output is associated with the correct pod
+	mu.Lock()
+	entries := make([]recordedEntry, len(recordedLogs))
+	copy(entries, recordedLogs)
+	mu.Unlock()
+
+	if len(entries) != 2 {
+		t.Fatalf("expected 2 log entries, got %d", len(entries))
+	}
+
+	logsByPod := make(map[string]string)
+	for _, entry := range entries {
+		logsByPod[entry.podName] = entry.logMsg
+	}
+
+	if msg, ok := logsByPod["pod-1"]; !ok || msg != "log message from pod-1\n" {
+		t.Errorf("pod-1 output mismatch: got %q, want %q", msg, "log message from pod-1\n")
+	}
+	if msg, ok := logsByPod["pod-2"]; !ok || msg != "log message from pod-2\n" {
+		t.Errorf("pod-2 output mismatch: got %q, want %q", msg, "log message from pod-2\n")
 	}
 }
