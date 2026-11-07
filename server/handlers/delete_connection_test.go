@@ -119,7 +119,7 @@ func TestDeleteConnectionResolvesTheUnreachableCondition(t *testing.T) {
 			t.Fatalf("save connection: %v", err)
 		}
 		key := kubernetes.UnreachableConditionKey(saved.ID)
-		if _, err := provider.EventsPersister.PersistEvent(*events.NewEvent().FromOwner(user.ID).WithCategory("connection").
+		if _, err := provider.PersistEvent(*events.NewEvent().FromOwner(user.ID).WithCategory("connection").
 			WithAction("update").WithSeverity(events.Error).WithCorrelationKey(key).Build(), ""); err != nil {
 			t.Fatalf("open the condition: %v", err)
 		}
