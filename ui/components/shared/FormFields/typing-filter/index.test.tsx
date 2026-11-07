@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import TypingFilter from './index';
@@ -185,6 +185,42 @@ describe('TypingFilter', () => {
     // The clearIcon is rendered by the autocomplete, but our mock places it as <CrossCircleIcon onClick={clearAllFilters} />
     await user.click(screen.getByTestId('cross-circle-icon'));
     expect(handleFilter).toHaveBeenCalledWith({});
+  });
+
+  it('replaces the previous chip of a single-select filter before calling handleFilter', () => {
+    const handleFilter = vi.fn();
+    const singleSelectSchema: any = {
+      ...filterSchema,
+      STATUS: { ...filterSchema.STATUS, multiple: false },
+    };
+
+    render(
+      <TypingFilter
+        filterSchema={singleSelectSchema}
+        placeholder="Filter..."
+        handleFilter={handleFilter}
+        defaultFilters={[]}
+      />,
+    );
+
+    // lastAutocompleteProps is refreshed on every render, so read it fresh each time
+    const select = (value: string) => {
+      act(() => {
+        lastAutocompleteProps.onInputChange(null, 'status: ');
+      });
+      act(() => {
+        lastAutocompleteProps.onChange(null, [], 'selectOption', {
+          option: { type: 'STATUS', value, label: `status: ${value}` },
+        });
+      });
+    };
+
+    select('Open');
+    select('Closed');
+
+    expect(handleFilter).toHaveBeenCalledTimes(2);
+    // a string, not ['Open', 'Closed']
+    expect(handleFilter).toHaveBeenLastCalledWith({ status: 'Closed' });
   });
 
   it('renders selected filter chips', () => {
