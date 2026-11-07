@@ -96,8 +96,19 @@ func (e *EventsPersister) getCountBySeverity(userID core.Uuid, eventStatus event
 //
 // It returns the event as stored: the recorded event when one was created, or
 // the condition's open event, as updated, when an occurrence was counted on it
-// or it was resolved.
+// or it was resolved. The event is the server's own: one that names no source
+// is recorded with source EventSourceServer.
 func (e *EventsPersister) PersistEvent(event events.Event, token string) (PersistedEvent, error) {
+	return e.persist(withServerSource(event))
+}
+
+// PersistClientEvent records an event a client sent as PersistEvent does, but
+// with its source as sent: one that names no source is recorded without one.
+func (e *EventsPersister) PersistClientEvent(event events.Event, token string) (PersistedEvent, error) {
+	return e.persist(event)
+}
+
+func (e *EventsPersister) persist(event events.Event) (PersistedEvent, error) {
 	event = PrepareEventForPersistence(event, e.Log)
 	if !correlatesEvent(event) {
 		// GORM's Save requires a pointer (it reflects on the struct to read and

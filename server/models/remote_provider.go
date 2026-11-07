@@ -1738,19 +1738,31 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 // (traceId, parentId). The remote provider applies the createEvent
 // correlation contract to them; the local fallback, EventsPersister, applies
 // the same contract, so an event behaves alike on both paths. It returns the
-// event as the remote provider (or the local fallback) stored it.
+// event as the remote provider (or the local fallback) stored it. The event is
+// the server's own: one that names no source is sent with source
+// EventSourceServer.
 func (l *RemoteProvider) PersistEvent(event events.Event, token string) (PersistedEvent, error) {
+	return l.persist(withServerSource(event), token)
+}
+
+// PersistClientEvent persists an event a client sent as PersistEvent does, but
+// with its source as sent: one that names no source is recorded without one.
+func (l *RemoteProvider) PersistClientEvent(event events.Event, token string) (PersistedEvent, error) {
+	return l.persist(event, token)
+}
+
+func (l *RemoteProvider) persist(event events.Event, token string) (PersistedEvent, error) {
 	// The remote path bypasses EventsPersister, so the event is prepared here
 	// too; the local fallback re-prepares an already prepared event, which
 	// changes nothing.
 	event = PrepareEventForPersistence(event, l.Log)
 	if strings.TrimSpace(token) == "" {
-		return l.EventsPersister.PersistEvent(event, "")
+		return l.EventsPersister.persist(event)
 	}
 	persisted, err := l.persistEventRemote(event, token)
 	if err != nil {
 		l.Log.Warn(fmt.Errorf("remote event persistence failed, falling back to local DB: %w", err))
-		return l.EventsPersister.PersistEvent(event, "")
+		return l.EventsPersister.persist(event)
 	}
 	return persisted, nil
 }
@@ -1758,8 +1770,7 @@ func (l *RemoteProvider) PersistEvent(event events.Event, token string) (Persist
 // PersistSystemEvent persists a system-initiated event (MeshSync, registry seeding,
 // auto-registration) to the local database. These events have no user request context.
 func (l *RemoteProvider) PersistSystemEvent(event events.Event) error {
-	_, err := l.EventsPersister.PersistEvent(event, "")
-	return err
+	return l.EventsPersister.PersistSystemEvent(event)
 }
 
 // persistEventRemote sends an event to the remote provider for persistence and

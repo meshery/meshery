@@ -70,8 +70,8 @@ func mustPersist(t *testing.T, p *EventsPersister, event *events.Event) Persiste
 }
 
 // An event that sets none of the new fields is recorded as a new row every
-// time, exactly as before correlation existed; the persister sets none of
-// them, source included.
+// time, exactly as before correlation existed; the only field it gains is the
+// server's source.
 func TestPersistEventWithoutCorrelationKeyRecordsEveryEvent(t *testing.T) {
 	p := newCorrelationTestPersister(t)
 	owner := mustUUID(t)
@@ -90,8 +90,8 @@ func TestPersistEventWithoutCorrelationKeyRecordsEveryEvent(t *testing.T) {
 			row.LastSeenAt != nil || row.ResolvedAt != nil || row.TraceID != nil || row.ParentID != nil {
 			t.Errorf("uncorrelated event gained correlation fields: %+v", row)
 		}
-		if row.Source != nil {
-			t.Errorf("source = %q, want none: only the producer names its surface", *row.Source)
+		if row.Source == nil || *row.Source != EventSourceServer {
+			t.Errorf("source = %v, want %q", row.Source, EventSourceServer)
 		}
 	}
 }
@@ -107,6 +107,36 @@ func TestPersistEventKeepsProducerSource(t *testing.T) {
 	rows := storedEvents(t, p, owner)
 	if len(rows) != 1 || rows[0].Source == nil || *rows[0].Source != "meshery-adapter-istio" {
 		t.Fatalf("got %+v, want one row with the producer's source", rows)
+	}
+}
+
+// A client's event is recorded with its source as sent, none when it sent none.
+func TestPersistClientEventKeepsTheClientsSource(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+
+	for _, source := range []string{"", "meshery-ui"} {
+		builder := events.NewEvent().FromOwner(owner).WithCategory("design").WithAction("save").
+			WithSeverity(events.Informational).WithDescription("client " + source)
+		if source != "" {
+			builder = builder.WithSource(source)
+		}
+		if _, err := p.PersistClientEvent(*builder.Build(), ""); err != nil {
+			t.Fatalf("PersistClientEvent: %v", err)
+		}
+	}
+
+	for _, row := range storedEvents(t, p, owner) {
+		switch row.Description {
+		case "client ":
+			if row.Source != nil {
+				t.Errorf("source = %q, want none for a client that sent none", *row.Source)
+			}
+		case "client meshery-ui":
+			if row.Source == nil || *row.Source != "meshery-ui" {
+				t.Errorf("source = %v, want the client's", row.Source)
+			}
+		}
 	}
 }
 

@@ -578,7 +578,7 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		writeMeshkitError(w, ErrInvalidClientEvent(verr), http.StatusBadRequest)
 		return
 	}
-	persisted, err := provider.PersistEvent(*event, token)
+	persisted, err := provider.PersistClientEvent(*event, token)
 	if err != nil {
 		h.log.Error(models.ErrPersistEvent(err))
 		writeMeshkitError(w, models.ErrPersistEvent(err), http.StatusInternalServerError)
