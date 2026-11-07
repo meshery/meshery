@@ -43,6 +43,24 @@ const eventsEntityAdapter = createEntityAdapter({
   },
 });
 
+const timeOf = (value) => {
+  const at = typeof value === 'string' ? Date.parse(value) : NaN;
+  return Number.isNaN(at) ? undefined : at;
+};
+
+// isOlderRevision reports whether incoming is an earlier revision of the
+// stored event than existing: it was updated before existing was, or it shows
+// open a condition existing already shows resolved (a stored condition is
+// never reopened).
+const isOlderRevision = (incoming, existing) => {
+  if (existing.resolvedAt && !incoming.resolvedAt) {
+    return true;
+  }
+  const incomingAt = timeOf(incoming.updatedAt);
+  const existingAt = timeOf(existing.updatedAt);
+  return incomingAt !== undefined && existingAt !== undefined && incomingAt < existingAt;
+};
+
 export const eventsSlice = createSlice({
   name: 'events',
   initialState: eventsEntityAdapter.getInitialState(initialState),
@@ -74,7 +92,23 @@ export const eventsSlice = createSlice({
       // The server broadcasts an occurrence counted on, or the resolution of,
       // an open condition as the condition's stored event, so an event already
       // shown is updated in place rather than ignored.
-      eventsEntityAdapter.upsertOne(state, event);
+      const existing = state.entities[event.id];
+      if (!existing) {
+        eventsEntityAdapter.addOne(state, event);
+        return;
+      }
+      // Broadcasts of one condition can arrive out of order, so an older
+      // revision of the stored event never replaces a newer one.
+      if (isOlderRevision(event, existing)) {
+        return;
+      }
+      // Whether the user has read the notification is the user's, not the
+      // broadcast's: a re-push keeps it, and the selection, as they were.
+      eventsEntityAdapter.upsertOne(state, {
+        ...event,
+        status: existing.status,
+        checked: existing.checked,
+      });
     },
 
     updateEvent: eventsEntityAdapter.updateOne,
