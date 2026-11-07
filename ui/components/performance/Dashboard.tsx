@@ -150,7 +150,7 @@ function Dashboard() {
             sx={{ alignContent: 'space-around' }}
             data-testid="performance-dashboard"
           >
-            <Grid2 spacing={1} size={{ xs: 12, lg: 6 }} sx={{ flexDirection: 'column' }}>
+            <Grid2 spacing={1} size={{ xs: 12 }} sx={{ flexDirection: 'column' }}>
               <Grid2>
                 <StyledPaper>
                   <ResultContainer>
