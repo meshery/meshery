@@ -86,6 +86,12 @@ func (e *EventsPersister) getCountBySeverity(userID core.Uuid, eventStatus event
 //     resolved event with occurrenceCount 1 (when unset) and firstSeenAt and
 //     lastSeenAt from the event, else its resolvedAt.
 //
+// A create is a replay when it carries an idempotencyKey its caller already
+// used, or the ID of an event already stored, whatever that event's key or
+// state: it records and changes nothing and is answered with the stored event.
+// A retry of an event that has since been resolved is therefore never counted
+// on, and never resolves, a newer condition opened with the same key.
+//
 // An owner has at most one open event per key. The partial unique index
 // AutoMigrateSystemTables creates enforces it, and a create that loses the race
 // to open a condition is retried once as an occurrence of the winner.
@@ -181,11 +187,21 @@ func (e *EventsPersister) replayedEvent(event events.Event) (PersistedEvent, boo
 		}
 		return PersistedEvent{Event: bound, Disposition: EventReplayed}, true, nil
 	}
-	if event.ID.IsNil() {
+	return storedEventWithID(e.DB.DB, event.ID)
+}
+
+// storedEventWithID returns the stored event with id, answered as a replay,
+// and false when id is nil or no event has it. An event ID names one recorded
+// event whatever its correlation key or state, so a create carrying the ID of
+// a stored event is a retry of that event: it is answered with the event and
+// is never applied to another row - not counted as an occurrence of, nor
+// resolving, a newer condition opened with the same key.
+func storedEventWithID(db *gorm.DB, id uuid.UUID) (PersistedEvent, bool, error) {
+	if id.IsNil() {
 		return PersistedEvent{}, false, nil
 	}
 	var stored events.Event
-	found := e.DB.Where("id = ?", event.ID).Limit(1).Find(&stored)
+	found := db.Where("id = ?", id).Limit(1).Find(&stored)
 	if found.Error != nil {
 		return PersistedEvent{}, false, found.Error
 	}
@@ -246,6 +262,19 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) (PersistedE
 	now := time.Now().UTC()
 	var persisted PersistedEvent
 	err := e.DB.Transaction(func(tx *gorm.DB) error {
+		// An event already recorded, sent again, is a retry of that event,
+		// not another occurrence or the resolution of the condition. The ID is
+		// looked up among every stored event, not only the condition's open
+		// one: once the event is resolved and a newer event opens the same
+		// key, its retry must still be answered with it rather than counted
+		// on, or resolve, the newer condition.
+		if replayed, ok, err := storedEventWithID(tx, event.ID); err != nil {
+			return err
+		} else if ok {
+			persisted = replayed
+			return nil
+		}
+
 		var open events.Event
 		found := tx.
 			Where("owner = ? AND correlation_key = ? AND resolved_at IS NULL", *event.Owner, *event.CorrelationKey).
@@ -253,13 +282,6 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) (PersistedE
 			Find(&open)
 		if found.Error != nil {
 			return found.Error
-		}
-
-		// The event that opened the condition, sent again, is a retry of
-		// that event, not another occurrence of the condition.
-		if found.RowsAffected > 0 && !event.ID.IsNil() && open.ID == event.ID {
-			persisted = PersistedEvent{Event: &open, Disposition: EventReplayed}
-			return nil
 		}
 
 		if found.RowsAffected == 0 {

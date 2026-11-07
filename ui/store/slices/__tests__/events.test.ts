@@ -94,6 +94,73 @@ describe('events slice', () => {
     });
   });
 
+  it('pushEvent orders revisions at the sub-millisecond precision the server sends', () => {
+    let state = eventsReducer(undefined, { type: 'unknown' });
+    state = eventsReducer(
+      state,
+      pushEvent(makeEvent({ occurrenceCount: 3, updatedAt: '2025-01-01T07:48:29.932900Z' })),
+    );
+    // Both times fall within one millisecond, which Date.parse cannot tell apart.
+    state = eventsReducer(
+      state,
+      pushEvent(makeEvent({ occurrenceCount: 2, updatedAt: '2025-01-01T07:48:29.932100Z' })),
+    );
+    expect(state.entities['evt-1'].occurrenceCount).toBe(3);
+
+    state = eventsReducer(
+      state,
+      pushEvent(makeEvent({ occurrenceCount: 4, updatedAt: '2025-01-01T07:48:29.932900001Z' })),
+    );
+    expect(state.entities['evt-1'].occurrenceCount).toBe(4);
+  });
+
+  it('pushEvent compares update times across zones and fraction lengths', () => {
+    let state = eventsReducer(undefined, { type: 'unknown' });
+    state = eventsReducer(
+      state,
+      pushEvent(makeEvent({ occurrenceCount: 3, updatedAt: '2025-01-01T09:48:29.932900+02:00' })),
+    );
+    state = eventsReducer(
+      state,
+      pushEvent(makeEvent({ occurrenceCount: 2, updatedAt: '2025-01-01T07:48:29.9321Z' })),
+    );
+    expect(state.entities['evt-1'].occurrenceCount).toBe(3);
+  });
+
+  it('pushEvent breaks a tie in update time on lastSeenAt, then occurrenceCount', () => {
+    const updatedAt = '2025-01-01T07:48:29.932900Z';
+    let state = eventsReducer(undefined, { type: 'unknown' });
+    state = eventsReducer(
+      state,
+      pushEvent(
+        makeEvent({ occurrenceCount: 3, updatedAt, lastSeenAt: '2025-01-01T07:48:29.000000002Z' }),
+      ),
+    );
+    state = eventsReducer(
+      state,
+      pushEvent(
+        makeEvent({ occurrenceCount: 5, updatedAt, lastSeenAt: '2025-01-01T07:48:29.000000001Z' }),
+      ),
+    );
+    expect(state.entities['evt-1'].occurrenceCount).toBe(3);
+
+    state = eventsReducer(
+      state,
+      pushEvent(
+        makeEvent({ occurrenceCount: 2, updatedAt, lastSeenAt: '2025-01-01T07:48:29.000000002Z' }),
+      ),
+    );
+    expect(state.entities['evt-1'].occurrenceCount).toBe(3);
+
+    state = eventsReducer(
+      state,
+      pushEvent(
+        makeEvent({ occurrenceCount: 4, updatedAt, lastSeenAt: '2025-01-01T07:48:29.000000002Z' }),
+      ),
+    );
+    expect(state.entities['evt-1'].occurrenceCount).toBe(4);
+  });
+
   it('pushEvent trims severity and status', () => {
     const initial = eventsReducer(undefined, { type: 'unknown' });
     const event = makeEvent({ severity: '  warning  ', status: '  read  ' });

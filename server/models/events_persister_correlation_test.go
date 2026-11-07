@@ -8,6 +8,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
+	"gorm.io/gorm"
 )
 
 // newCorrelationTestPersister returns an EventsPersister over a database built
@@ -710,5 +711,152 @@ func TestPersistEventConcurrentIdempotencyKeyRecordsOnce(t *testing.T) {
 	wg.Wait()
 	if rows := storedEvents(t, p, owner); len(rows) != 1 {
 		t.Fatalf("got %d rows, want 1", len(rows))
+	}
+}
+
+// A retry of an event resolved since, sent while a newer event has opened the
+// same condition, is a replay of the resolved event: the newer condition is
+// neither counted on nor resolved by it.
+func TestPersistEventRetryOfAResolvedEventLeavesTheNewerConditionAlone(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+	key := "meshery-server/k8s-connection/c/unreachable"
+
+	// A opens the condition and is resolved; B then opens it again.
+	opening := conditionEvent(owner, key, "down").Build()
+	mustPersist(t, p, opening)
+	mustPersist(t, p, conditionEvent(owner, key, "up").WithResolvedAt(time.Now().UTC()).Build())
+	newer := mustPersist(t, p, conditionEvent(owner, key, "down again").Build())
+	if newer.Disposition != EventCreated || newer.Event.ID == opening.ID {
+		t.Fatalf("newer condition = %s %s, want a new event", newer.Disposition, newer.Event.ID)
+	}
+
+	retry := mustPersist(t, p, opening)
+	if retry.Disposition != EventReplayed || retry.Event.ID != opening.ID || retry.Event.ResolvedAt == nil {
+		t.Fatalf("retry of the resolved event = %s %s resolvedAt %v, want replayed %s, resolved",
+			retry.Disposition, retry.Event.ID, retry.Event.ResolvedAt, opening.ID)
+	}
+	assertOpenConditionUntouched(t, p, owner, newer.Event.ID)
+
+	// A resolution recorded with no condition open, retried once a newer
+	// condition is open, is a replay of the resolution, never resolving it.
+	other := mustUUID(t)
+	resolution := conditionEvent(other, key, "cleared").WithResolvedAt(time.Now().UTC()).Build()
+	if got := mustPersist(t, p, resolution); got.Disposition != EventCreated {
+		t.Fatalf("resolution with none open = %s, want created", got.Disposition)
+	}
+	opened := mustPersist(t, p, conditionEvent(other, key, "down").Build())
+	again := mustPersist(t, p, resolution)
+	if again.Disposition != EventReplayed || again.Event.ID != resolution.ID {
+		t.Fatalf("retry of the resolution = %s %s, want replayed %s", again.Disposition, again.Event.ID, resolution.ID)
+	}
+	assertOpenConditionUntouched(t, p, other, opened.Event.ID)
+}
+
+// assertOpenConditionUntouched fails unless the owner's event id is still
+// open with the one occurrence that opened it.
+func assertOpenConditionUntouched(t *testing.T, p *EventsPersister, owner core.Uuid, id uuid.UUID) {
+	t.Helper()
+	for _, row := range storedEvents(t, p, owner) {
+		if row.ID != id {
+			continue
+		}
+		if row.ResolvedAt != nil || count(row.OccurrenceCount) != 1 {
+			t.Fatalf("newer condition %s resolvedAt %v count %d, want open at count 1", id, row.ResolvedAt, count(row.OccurrenceCount))
+		}
+		return
+	}
+	t.Fatalf("newer condition %s not stored", id)
+}
+
+// Two creates carrying one key whose binding is stale (its event was deleted)
+// record one event between them. The callback holds the second create's
+// removal of the stale binding until the first has replaced it, the
+// interleaving in which removing the binding by owner and key alone would
+// delete the first create's binding and record a second event for the key.
+func TestPersistEventConcurrentCreatesOverAStaleBindingRecordOnce(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+	const key = "run-1"
+
+	stale := mustPersist(t, p, withKey(events.NewEvent().FromOwner(owner).WithCategory("perf").WithAction("run").
+		WithSeverity(events.Informational).Build(), key))
+	if err := p.DB.Where("id = ?", stale.Event.ID).Delete(&events.Event{}).Error; err != nil {
+		t.Fatalf("delete the bound event: %v", err)
+	}
+
+	const wait = 5 * time.Second
+	var arrivals int32
+	var mu sync.Mutex
+	bothRead := make(chan struct{})
+	rebound := func() bool {
+		var binding EventIdempotencyBinding
+		found := p.DB.Session(&gorm.Session{NewDB: true}).
+			Where("owner = ? AND idempotency_key = ? AND event_id <> ?", owner, key, stale.Event.ID).
+			Limit(1).Find(&binding)
+		return found.Error == nil && found.RowsAffected > 0
+	}
+	// Registered before the delete's own transaction begins, so a held
+	// create holds no connection of the one-connection pool.
+	if err := p.DB.Callback().Delete().Before("gorm:begin_transaction").Register("test:stale-binding-race", func(tx *gorm.DB) {
+		if tx.Statement.Table != (EventIdempotencyBinding{}).TableName() {
+			return
+		}
+		mu.Lock()
+		arrivals++
+		arrival := arrivals
+		mu.Unlock()
+		switch arrival {
+		case 1:
+			// Both creates read the stale binding before either removes it.
+			select {
+			case <-bothRead:
+			case <-time.After(wait):
+				t.Errorf("the second create never read the stale binding")
+			}
+		case 2:
+			close(bothRead)
+			deadline := time.Now().Add(wait)
+			for !rebound() {
+				if time.Now().After(deadline) {
+					t.Errorf("the first create never rebound the key")
+					return
+				}
+				time.Sleep(5 * time.Millisecond)
+			}
+		}
+	}); err != nil {
+		t.Fatalf("register callback: %v", err)
+	}
+
+	results := make(chan PersistedEvent, 2)
+	var wg sync.WaitGroup
+	for i := 0; i < 2; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			persisted, err := p.PersistEvent(*withKey(events.NewEvent().FromOwner(owner).WithCategory("perf").WithAction("run").
+				WithSeverity(events.Informational).Build(), key), "")
+			if err != nil {
+				t.Errorf("PersistEvent: %v", err)
+				return
+			}
+			results <- persisted
+		}()
+	}
+	wg.Wait()
+	close(results)
+
+	dispositions := map[EventDisposition]int{}
+	var ids []uuid.UUID
+	for persisted := range results {
+		dispositions[persisted.Disposition]++
+		ids = append(ids, persisted.Event.ID)
+	}
+	if dispositions[EventCreated] != 1 || dispositions[EventReplayed] != 1 || len(ids) != 2 || ids[0] != ids[1] {
+		t.Fatalf("dispositions %v ids %v, want one created and one replay of it", dispositions, ids)
+	}
+	if rows := storedEvents(t, p, owner); len(rows) != 1 || rows[0].ID != ids[0] {
+		t.Fatalf("got %d rows, want the one created event", len(rows))
 	}
 }
