@@ -37,6 +37,9 @@ func minimum(a, b, c int) int {
 }
 
 func minIntSlice(values []int) (int, int) {
+	if len(values) == 0 {
+		return -1, -1
+	}
 	min := values[0]
 	minIndex := 0
 	for i, val := range values {
@@ -49,6 +52,9 @@ func minIntSlice(values []int) (int, int) {
 }
 
 func FindClosestArg(argPassed string, validArgs []string) string {
+	if len(validArgs) == 0 {
+		return ""
+	}
 	argPassedR := []rune(argPassed)
 	var values []int
 	for _, arg := range validArgs {
@@ -56,5 +62,8 @@ func FindClosestArg(argPassed string, validArgs []string) string {
 		values = append(values, levenshtein(argPassedR, argR))
 	}
 	minIndex, _ := minIntSlice(values)
+	if minIndex < 0 || minIndex >= len(validArgs) {
+		return ""
+	}
 	return validArgs[minIndex]
 }
