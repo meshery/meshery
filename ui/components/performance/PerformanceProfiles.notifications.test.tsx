@@ -48,8 +48,20 @@ vi.mock('@meshery/schemas/permissions', () => ({
 
 vi.mock('./index', () => ({ default: () => null }));
 vi.mock('./PerformanceResults', () => ({ default: () => null }));
-vi.mock('../general/PromptComponent', () => ({ default: React.forwardRef(() => null) }));
-vi.mock('../general/ViewSwitch', () => ({ default: () => null }));
+// The delete confirmation prompt always answers DELETE.
+vi.mock('../general/PromptComponent', () => ({
+  default: React.forwardRef(function Prompt(_props, ref) {
+    React.useImperativeHandle(ref, () => ({ show: () => Promise.resolve('DELETE') }));
+    return null;
+  }),
+}));
+vi.mock('../general/ViewSwitch', () => ({
+  default: ({ changeView }: any) => (
+    <button data-testid="table-view" onClick={() => changeView('table')}>
+      table
+    </button>
+  ),
+}));
 vi.mock('../general/error-404', () => ({ default: () => <div>no access</div> }));
 vi.mock('../connections/common', () => ({
   DefaultTableCell: () => null,
@@ -75,7 +87,18 @@ vi.mock('@sistent/sistent', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@sistent/sistent')>();
   return {
     ...actual,
-    ResponsiveDataTable: () => null,
+    // Render the toolbar the table shows when the first row is selected.
+    ResponsiveDataTable: ({ options }: any) => (
+      <div data-testid="selected-toolbar">
+        {options.customToolbarSelect({ data: [{ index: 0 }] }, [], vi.fn())}
+      </div>
+    ),
+    CustomTooltip: ({ children }: any) => <>{children}</>,
+    IconButton: ({ children, onClick }: any) => (
+      <button data-testid="bulk-delete" onClick={onClick}>
+        {children}
+      </button>
+    ),
     CustomColumnVisibilityControl: () => null,
     SearchBar: () => null,
     useHasPermission: () => true,
@@ -120,5 +143,21 @@ describe('PerformanceProfiles delete notifications', () => {
     await waitFor(() => expect(notify).toHaveBeenCalledTimes(1));
     expect(notifiedEventTypes()).toEqual(['success']);
     expect(refetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('includes the server reason when a bulk delete from the table fails', async () => {
+    deleteProfile.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 500, data: 'profile is in use' }),
+    });
+    const user = userEvent.setup();
+    render(<PerformanceProfiles />);
+
+    await user.click(screen.getByTestId('table-view'));
+    await user.click(screen.getByTestId('bulk-delete'));
+
+    await waitFor(() => expect(notify).toHaveBeenCalledTimes(1));
+    expect(deleteProfile).toHaveBeenCalledWith({ id: 'p1' });
+    expect(notifiedEventTypes()).toEqual(['error']);
+    expect(notify.mock.calls[0][0].message).toBe('Failed to delete 1 Profile: profile is in use');
   });
 });

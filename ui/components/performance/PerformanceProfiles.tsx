@@ -392,11 +392,13 @@ function PerformanceProfile() {
             .then((results) => {
               let successCount = 0;
               let failureCount = 0;
+              let firstFailureReason;
 
               results.forEach((result) => {
                 if (result.status === 'fulfilled') {
                   successCount++;
                 } else {
+                  if (failureCount === 0) firstFailureReason = result.reason;
                   failureCount++;
                 }
               });
@@ -408,8 +410,11 @@ function PerformanceProfile() {
                 });
               }
               if (failureCount > 0) {
+                const summary = `Failed to delete ${failureCount} Profile${failureCount > 1 ? 's' : ''}`;
+                // Include the server's reason (from the first failure) when there is one.
+                const { message: reason } = formatApiError(firstFailureReason, summary);
                 notify({
-                  message: `Failed to delete ${failureCount} Profile${failureCount > 1 ? 's' : ''}`,
+                  message: reason === summary ? summary : `${summary}: ${reason}`,
                   event_type: EVENT_TYPES.ERROR,
                 });
               }
