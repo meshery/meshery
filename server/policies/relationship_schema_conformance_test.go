@@ -11,7 +11,9 @@ import (
 	"testing"
 
 	"github.com/Masterminds/semver/v3"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/schemas/models/v1beta1/component"
+	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
@@ -475,6 +477,111 @@ func TestIngressToServiceEdgeUsesNetworkingV1BackendShape(t *testing.T) {
 	}
 }
 
+// TestAzureBatchStorageReferenceTargetsKubernetesName pins the BatchAccount ->
+// StorageAccount edge (meshery/meshery#21403). BatchAccount's
+// autoStorage.storageAccountReference.name is the Kubernetes name of the
+// resource, so the StorageAccount side (mutatorRef, the value read) must be
+// configuration.metadata.name. The StorageAccount schema defines no spec.name
+// (only spec.azureName, the Azure resource name, a different identifier).
+//
+// The edge is found by selector: exactly one allow selector per azure-batch
+// version directory whose from is azure-batch/BatchAccount and whose to is
+// azure-storage/StorageAccount, in an edge / non-binding / reference
+// definition. Its roles are pinned in order because patchMutatorsAction pairs
+// mutatorRefs[i] with mutatedRefs[i].
+func TestAzureBatchStorageReferenceTargetsKubernetesName(t *testing.T) {
+	root := repoRoot(t)
+
+	wantMutated := [][]string{
+		{"configuration", "spec", "autoStorage", "storageAccountReference", "group"},
+		{"configuration", "spec", "autoStorage", "storageAccountReference", "kind"},
+		{"configuration", "spec", "autoStorage", "storageAccountReference", "name"},
+	}
+	wantMutator := [][]string{
+		{"configuration", "group"},
+		{"configuration", "kind"},
+		{"configuration", "metadata", "name"},
+	}
+	wantVersions := []string{
+		"azureserviceoperator_customresourcedefinitions_v2.13.0.yaml",
+		"azureserviceoperator_customresourcedefinitions_v2.14.0.yaml",
+	}
+
+	isItem := func(item relationship.SelectorItem, model, kind string) bool {
+		return item.Kind != nil && *item.Kind == kind && item.Model != nil && item.Model.Name == model
+	}
+
+	versionDirs, err := modelVersionDirs(root, "azure-batch")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(versionDirs) == 0 {
+		t.Fatal("azure-batch ships no version directories")
+	}
+
+	seen := map[string]bool{}
+	for _, modelDir := range versionDirs {
+		version := filepath.Base(filepath.Dir(modelDir))
+		seen[version] = true
+
+		files, err := filepath.Glob(filepath.Join(modelDir, "relationships", "*.json"))
+		if err != nil {
+			t.Fatalf("globbing relationships in %s: %v", modelDir, err)
+		}
+
+		matches := 0
+		for _, file := range files {
+			definition, err := loadRelationshipDefinition(file)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if definition.Selectors == nil {
+				continue
+			}
+
+			for _, selector := range *definition.Selectors {
+				if len(selector.Allow.From) != 1 || len(selector.Allow.To) != 1 {
+					continue
+				}
+				from, to := selector.Allow.From[0], selector.Allow.To[0]
+				if !isItem(from, "azure-batch", "BatchAccount") || !isItem(to, "azure-storage", "StorageAccount") {
+					continue
+				}
+				matches++
+				label := fmt.Sprintf("%s (%s)", version, filepath.Base(file))
+
+				if definition.Model.Model.Version != version {
+					t.Errorf("%s: declared model version %q does not match its directory %q", label, definition.Model.Model.Version, version)
+				}
+				if definition.Kind != relationship.Edge || string(definition.RelationshipType) != "non-binding" || string(definition.SubType) != "reference" {
+					t.Errorf("%s: relationship is %v/%v/%v, want edge/non-binding/reference", label, definition.Kind, definition.RelationshipType, definition.SubType)
+				}
+
+				assertPathsInOrder(t, label, "BatchAccount mutatedRef", mutatedPaths(from), wantMutated)
+				assertPathsInOrder(t, label, "BatchAccount mutatorRef", mutatorPaths(from), nil)
+				assertPathsInOrder(t, label, "StorageAccount mutatorRef", mutatorPaths(to), wantMutator)
+				assertPathsInOrder(t, label, "StorageAccount mutatedRef", mutatedPaths(to), nil)
+
+				for side, item := range map[string]relationship.SelectorItem{"from": from, "to": to} {
+					if item.RelationshipDefinitionSelectorsPatch == nil || item.RelationshipDefinitionSelectorsPatch.PatchStrategy == nil || string(*item.RelationshipDefinitionSelectorsPatch.PatchStrategy) != "replace" {
+						t.Errorf("%s: %s patchStrategy is not \"replace\"", label, side)
+					}
+				}
+			}
+		}
+
+		if matches != 1 {
+			t.Errorf("%s: found %d azure-batch BatchAccount -> azure-storage StorageAccount selectors, want exactly 1", version, matches)
+		}
+	}
+
+	for _, version := range wantVersions {
+		if !seen[version] {
+			t.Errorf("azure-batch version directory %s is missing", version)
+		}
+	}
+}
+
 // TestResolveSchemaPath covers the resolver semantics the corpus does not
 // currently exercise, so the gate cannot start rejecting valid paths.
 func TestResolveSchemaPath(t *testing.T) {
@@ -536,5 +643,121 @@ func assertPathsInOrder(t *testing.T, version, side string, got, want [][]string
 			t.Errorf("kubernetes %s: %s path %d is %q, want %q",
 				version, side, i, strings.Join(got[i], "."), strings.Join(path, "."))
 		}
+	}
+}
+
+// TestAzureBatchStorageReferenceEvaluatesToKubernetesName runs the shipped
+// BatchAccount -> StorageAccount edge through the policy evaluator
+// (meshery/meshery#21403). It proves the evaluator takes the value from the
+// StorageAccount's configuration.metadata.name (not spec.name or
+// spec.azureName) and writes it to the BatchAccount's
+// autoStorage.storageAccountReference.name. It does not load the component
+// schemas; those are covered by the schema-conformance tests above.
+func TestAzureBatchStorageReferenceEvaluatesToKubernetesName(t *testing.T) {
+	root := repoRoot(t)
+
+	versionDirs, err := modelVersionDirs(root, "azure-batch")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(versionDirs) == 0 {
+		t.Fatal("azure-batch ships no version directories")
+	}
+
+	batchID := uuid.Must(uuid.FromString("00000000-0000-0000-0000-0000000000b1"))
+	storageID := uuid.Must(uuid.FromString("00000000-0000-0000-0000-0000000000b2"))
+	wantPath := "configuration.spec.autoStorage.storageAccountReference.name"
+
+	evaluate := func(t *testing.T, definition *relationship.RelationshipDefinition, withSpecName bool) []PolicyAction {
+		t.Helper()
+		batch := &component.ComponentDefinition{
+			Component:      component.Component{Kind: "BatchAccount"},
+			ModelReference: modelv1beta1.ModelReference{Name: "azure-batch"},
+			Configuration:  map[string]interface{}{},
+		}
+		batch.ID = batchID
+		storageSpec := map[string]interface{}{"azureName": "azurestorage123"}
+		if withSpecName {
+			storageSpec["name"] = "wrong-name"
+		}
+		storage := &component.ComponentDefinition{
+			Component:      component.Component{Kind: "StorageAccount"},
+			ModelReference: modelv1beta1.ModelReference{Name: "azure-storage"},
+			Configuration: map[string]interface{}{
+				"metadata": map[string]interface{}{"name": "mystorage"},
+				"spec":     storageSpec,
+			},
+		}
+		storage.ID = storageID
+		design := makePatternFile([]*component.ComponentDefinition{batch, storage}, nil)
+
+		for _, set := range *definition.Selectors {
+			for i := range set.Allow.From {
+				if set.Allow.From[i].Kind != nil && *set.Allow.From[i].Kind == "BatchAccount" {
+					set.Allow.From[i].ID = &batchID
+				}
+			}
+			for i := range set.Allow.To {
+				if set.Allow.To[i].Kind != nil && *set.Allow.To[i].Kind == "StorageAccount" {
+					set.Allow.To[i].ID = &storageID
+				}
+			}
+		}
+		return patchMutatorsAction(definition, design)
+	}
+
+	for _, modelDir := range versionDirs {
+		version := filepath.Base(filepath.Dir(modelDir))
+		file := filepath.Join(modelDir, "relationships", "edge-non-binding-reference-btstr.json")
+
+		t.Run(version, func(t *testing.T) {
+			definition, err := loadRelationshipDefinition(file)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			var named []PolicyAction
+			for _, action := range evaluate(t, definition, true) {
+				if strings.Join(action.UpdatePath, ".") == wantPath {
+					named = append(named, action)
+				}
+			}
+			if len(named) != 1 || named[0].UpdateValue != "mystorage" || named[0].ID != batchID.String() {
+				t.Fatalf("%s: want exactly one update of %s on the BatchAccount to %q, got %+v", version, wantPath, "mystorage", named)
+			}
+
+			// Same edge with the previous source path: nothing may be written.
+			broken, err := loadRelationshipDefinition(file)
+			if err != nil {
+				t.Fatal(err)
+			}
+			for si := range *broken.Selectors {
+				to := (*broken.Selectors)[si].Allow.To
+				for ti := range to {
+					patch := to[ti].RelationshipDefinitionSelectorsPatch
+					if patch == nil || patch.MutatorRef == nil {
+						continue
+					}
+					for pi := range *patch.MutatorRef {
+						if strings.Join((*patch.MutatorRef)[pi], ".") == "configuration.metadata.name" {
+							(*patch.MutatorRef)[pi] = []string{"configuration", "spec", "name"}
+						}
+					}
+				}
+			}
+			// The spec.name variant never yields the Kubernetes name. Where
+			// the StorageAccount has no spec.name it writes nothing; where one
+			// exists it copies that unrelated value instead.
+			for _, action := range evaluate(t, broken, false) {
+				if strings.Join(action.UpdatePath, ".") == wantPath {
+					t.Errorf("%s: spec.name source wrote %v with no spec.name present", version, action.UpdateValue)
+				}
+			}
+			for _, action := range evaluate(t, broken, true) {
+				if strings.Join(action.UpdatePath, ".") == wantPath && action.UpdateValue == "mystorage" {
+					t.Errorf("%s: spec.name source wrote the Kubernetes name", version)
+				}
+			}
+		})
 	}
 }
