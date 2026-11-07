@@ -17,11 +17,14 @@ package config
 import "github.com/meshery/meshkit/errors"
 
 const (
-	ErrInvalidMeshConfigCode = "mesheryctl-1008"
-	ErrUpdateConfigCode      = "mesheryctl-1009"
-	ErrReadMesheryConfigCode = "mesheryctl-1220"
-	ErrDuplicateContextCode  = "mesheryctl-1221"
-	ErrWriteMeshConfigCode   = "mesheryctl-1222"
+	ErrInvalidMeshConfigCode          = "mesheryctl-1008"
+	ErrUpdateConfigCode               = "mesheryctl-1009"
+	ErrReadMesheryConfigCode          = "mesheryctl-1220"
+	ErrDuplicateContextCode           = "mesheryctl-1221"
+	ErrWriteMeshConfigCode            = "mesheryctl-1222"
+	ErrInvalidVersionCode             = "mesheryctl-1256"
+	ErrValidateVersionRequestCode     = "mesheryctl-1257"
+	ErrValidateVersionFailRequestCode = "mesheryctl-1258"
 )
 
 func ErrInvalidMeshConfig(err error) error {
@@ -59,4 +62,40 @@ func ErrWriteMeshConfig(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to write to config file"},
 		[]string{"Ensure that you have the correct permissions to write to the config file at `$HOME/.meshery/config.yaml`."})
+}
+
+// ErrValidateVersionRequest returns an error when an HTTP request to validate release version cannot be created.
+func ErrValidateVersionRequest(err error) error {
+	return errors.New(
+		ErrValidateVersionRequestCode,
+		errors.Fatal,
+		[]string{"Error occurred while making an HTTP request."},
+		[]string{err.Error()},
+		[]string{"Could not construct HTTP request to validate release version."},
+		[]string{"Check your request values or network configuration."},
+	)
+}
+
+// ErrValidateVersionFailRequest returns an error when the HTTP request to validate release version fails.
+func ErrValidateVersionFailRequest(err error) error {
+	return errors.New(
+		ErrValidateVersionFailRequestCode,
+		errors.Alert,
+		[]string{"Failed to make a request"},
+		[]string{err.Error()},
+		[]string{"Could not reach GitHub to validate the Meshery release version."},
+		[]string{"Check your internet connection and verify that github.com is reachable."},
+	)
+}
+
+// ErrInvalidVersion returns an error when version validation fails.
+func ErrInvalidVersion(err error) error {
+	return errors.New(
+		ErrInvalidVersionCode,
+		errors.Alert,
+		[]string{"Error validating Meshery version"},
+		[]string{err.Error()},
+		[]string{"The version in the context is invalid, unsupported, or unreachable on GitHub"},
+		[]string{"Verify the version in your context is valid, or check your network connection"},
+	)
 }
