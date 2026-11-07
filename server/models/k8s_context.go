@@ -206,8 +206,6 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, broadcast *Broa
 func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, includeUnreachable bool) []*K8sContext {
 	kcs := []*K8sContext{}
 
-	userUUID := uuid.FromStringOrNil(userID)
-
 	// Enumerate contexts from the raw kubeconfig rather than via
 	// kubernetes.ProcessConfig: ProcessConfig runs clientcmd MinifyConfig, which
 	// prunes every context except current-context. Driving the loop from its
@@ -229,7 +227,6 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 		}
 		metadata := map[string]interface{}{}
 		kc, _ := kcfg.K8sContext(name, instanceID, log)
-		eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(kc.ConnectionID)).WithCategory("connection").WithAction("register").FromSystem(*instanceID).FromOwner(userUUID)
 
 		metadata["context"] = RedactCredentialsForContext(&kc)
 
@@ -237,9 +234,6 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 		if err != nil {
 			err = ErrUnreachableKubeAPI(err, kc.Server)
 
-			_ = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error connecting with kubernetes context at %s, skipping %s", kc.Server, kc.Name)).WithMetadata(map[string]interface{}{
-				"error": err,
-			}).Build()
 			metadata["error"] = err
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
 			eventMetadata[name] = metadata
@@ -256,10 +250,6 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 		}
 
 		if err := kc.AssignServerID(handler); err != nil {
-
-			_ = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Could not assign server id, skipping context %s", kc.Name)).WithMetadata(map[string]interface{}{
-				"error": err,
-			}).Build()
 
 			metadata["error"] = err
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
@@ -287,9 +277,6 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 
 		err = kc.AssignVersion(handler)
 		if err != nil {
-			_ = eventBuilder.WithSeverity(events.Warning).WithDescription(fmt.Sprintf("Could not retrieve Kubernetes version for %s", kc.Name)).WithMetadata(map[string]interface{}{
-				"error": err,
-			}).Build()
 
 			// Preventing the publishing of event as the event details would be present in the reciept.
 			// Publishing again would lead to duplicate events and confusion to the user.

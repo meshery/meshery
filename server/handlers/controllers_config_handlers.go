@@ -54,17 +54,19 @@ func (h *Handler) UpdateControllersDefaultConfig(w http.ResponseWriter, req *htt
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	newEvent := func() *events.EventBuilder {
+		return events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	}
 
 	if err := models.SaveControllersConfigDefaults(h.dbHandler, cfg); err != nil {
 		h.log.Error(err)
-		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to persist server-wide controllers configuration defaults.").WithMetadata(map[string]interface{}{"error": err}).Build()
+		event := newEvent().WithSeverity(events.Error).WithDescription("Failed to persist server-wide controllers configuration defaults.").WithMetadata(map[string]interface{}{"error": err}).Build()
 		h.persistAndPublish(provider, token, userID, event)
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
 
-	event := eventBuilder.WithSeverity(events.Informational).WithDescription("Server-wide Meshery Operator, MeshSync, and Broker configuration defaults updated. Re-applying to connected clusters.").Build()
+	event := newEvent().WithSeverity(events.Informational).WithDescription("Server-wide Meshery Operator, MeshSync, and Broker configuration defaults updated. Re-applying to connected clusters.").Build()
 	h.persistAndPublish(provider, token, userID, event)
 
 	// Re-apply the resolved configuration to every tracked Kubernetes
@@ -136,7 +138,9 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 	}
 	connectionID := connection.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	newEvent := func() *events.EventBuilder {
+		return events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	}
 
 	metadata := connection.Metadata
 	if metadata == nil {
@@ -183,18 +187,18 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 	// both entry points behave identically.
 	if _, _, modeChanged, err := h.handleMeshSyncDeploymentModeChange(req.Context(), connectionID, payload, token, userID, provider); err != nil {
 		h.log.Error(err)
-		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to apply MeshSync deployment mode change.").WithMetadata(map[string]interface{}{"error": err}).Build()
+		event := newEvent().WithSeverity(events.Error).WithDescription("Failed to apply MeshSync deployment mode change.").WithMetadata(map[string]interface{}{"error": err}).Build()
 		h.persistAndPublish(provider, token, userID, event)
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	} else if modeChanged {
-		event := eventBuilder.WithSeverity(events.Informational).WithDescription("MeshSync deployment mode changed as part of the controllers configuration update.").Build()
+		event := newEvent().WithSeverity(events.Informational).WithDescription("MeshSync deployment mode changed as part of the controllers configuration update.").Build()
 		h.persistAndPublish(provider, token, userID, event)
 	}
 
 	if _, err := provider.UpdateConnectionById(token, payload, connectionID.String()); err != nil {
 		h.log.Error(err)
-		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to persist the connection's controllers configuration override.").WithMetadata(map[string]interface{}{"error": err}).Build()
+		event := newEvent().WithSeverity(events.Error).WithDescription("Failed to persist the connection's controllers configuration override.").WithMetadata(map[string]interface{}{"error": err}).Build()
 		h.persistAndPublish(provider, token, userID, event)
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
@@ -202,7 +206,7 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 
 	// Apply the resolved configuration to this connection's cluster (or
 	// restart the embedded run so it picks the new knobs up).
-	h.applyControllersConfigToConnection(req.Context(), connectionID, metadata, token, userID, provider, eventBuilder)
+	h.applyControllersConfigToConnection(req.Context(), connectionID, metadata, token, userID, provider, newEvent)
 
 	connection.Metadata = metadata
 	response, err := h.buildConnectionControllersConfig(connection)
@@ -317,7 +321,7 @@ func (h *Handler) applyControllersConfigToConnection(
 	token string,
 	userID core.Uuid,
 	provider models.Provider,
-	eventBuilder *events.EventBuilder,
+	newEvent func() *events.EventBuilder,
 ) {
 	if h.ConnectionToStateMachineInstanceTracker == nil {
 		return
@@ -340,7 +344,7 @@ func (h *Handler) applyControllersConfigToConnection(
 
 	merged, _, err := ctrlHelper.ResolveControllersConfigForConnection(metadata)
 	if err != nil {
-		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to resolve the connection's controllers configuration.", map[string]interface{}{"error": err, "connectionId": connectionID})
+		h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to resolve the connection's controllers configuration.", map[string]interface{}{"error": err, "connectionId": connectionID})
 		return
 	}
 	ctrlHelper.SetControllersConfig(merged)
@@ -358,7 +362,7 @@ func (h *Handler) applyControllersConfigToConnection(
 		contextID := machineCtx.K8sContext.ID
 		ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
 		ctrlHelper.AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, *h.SystemID, provider)
-		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Informational, "Controllers configuration applied: embedded MeshSync restarted with the updated configuration.", map[string]interface{}{"connectionId": connectionID})
+		h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Informational, "Controllers configuration applied: embedded MeshSync restarted with the updated configuration.", map[string]interface{}{"connectionId": connectionID})
 	case connections.MeshsyncDeploymentModeOperator:
 		// operator.version fixes the Helm chart version the operator is
 		// deployed at, and the controller handler captures it at construction,
@@ -366,24 +370,24 @@ func (h *Handler) applyControllersConfigToConnection(
 		// for the connection to reconnect.
 		if chartVersion, redeployed, verr := ctrlHelper.ReconcileOperatorChartVersion(machineCtx.K8sContext, machineCtx.OperatorTracker); verr != nil {
 			h.log.Error(verr)
-			h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to deploy Meshery Operator at the configured chart version.", map[string]interface{}{"error": verr, "connectionId": connectionID, "operatorChartVersion": chartVersion})
+			h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to deploy Meshery Operator at the configured chart version.", map[string]interface{}{"error": verr, "connectionId": connectionID, "operatorChartVersion": chartVersion})
 		} else if redeployed {
-			h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Informational, fmt.Sprintf("Meshery Operator redeployed at chart version %q.", chartVersion), map[string]interface{}{"connectionId": connectionID, "operatorChartVersion": chartVersion})
+			h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Informational, fmt.Sprintf("Meshery Operator redeployed at chart version %q.", chartVersion), map[string]interface{}{"connectionId": connectionID, "operatorChartVersion": chartVersion})
 		}
 
 		kubeClient, err := machineCtx.K8sContext.GenerateKubeHandler()
 		if err != nil {
-			h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to reach the connection's cluster to apply the controllers configuration.", map[string]interface{}{"error": err, "connectionId": connectionID})
+			h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to reach the connection's cluster to apply the controllers configuration.", map[string]interface{}{"error": err, "connectionId": connectionID})
 			return
 		}
 		applyCtx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 		defer cancel()
 		result, err := models.ApplyControllersConfigToCluster(applyCtx, h.log, kubeClient, merged)
 		if err != nil {
-			h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to apply the controllers configuration to the cluster.", map[string]interface{}{"error": err, "connectionId": connectionID, "result": result})
+			h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to apply the controllers configuration to the cluster.", map[string]interface{}{"error": err, "connectionId": connectionID, "result": result})
 			return
 		}
-		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Informational, "Controllers configuration applied to the cluster.", map[string]interface{}{"connectionId": connectionID, "result": result})
+		h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Informational, "Controllers configuration applied to the cluster.", map[string]interface{}{"connectionId": connectionID, "result": result})
 	}
 }
 
@@ -407,13 +411,15 @@ func (h *Handler) reapplyControllersConfigToTrackedConnections(token string, use
 		if connection.Kind != "kubernetes" {
 			return true
 		}
-		eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+		newEvent := func() *events.EventBuilder {
+			return events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+		}
 		// A deployment-mode change is not just a document to re-apply: it
 		// deploys or undeploys the operator and re-attaches the MeshSync data
 		// pipeline. Reconcile it first so the subsequent apply targets the
 		// cluster shape the new mode implies.
-		h.reconcileInheritedDeploymentMode(connection, serverDefaults, token, userID, provider, eventBuilder)
-		h.applyControllersConfigToConnection(context.Background(), connectionID, connection.Metadata, token, userID, provider, eventBuilder)
+		h.reconcileInheritedDeploymentMode(connection, serverDefaults, token, userID, provider, newEvent)
+		h.applyControllersConfigToConnection(context.Background(), connectionID, connection.Metadata, token, userID, provider, newEvent)
 		return true
 	})
 }
@@ -431,7 +437,7 @@ func (h *Handler) reconcileInheritedDeploymentMode(
 	token string,
 	userID core.Uuid,
 	provider models.Provider,
-	eventBuilder *events.EventBuilder,
+	newEvent func() *events.EventBuilder,
 ) {
 	metadata := connection.Metadata
 	if metadata == nil {
@@ -450,7 +456,7 @@ func (h *Handler) reconcileInheritedDeploymentMode(
 		// GET surfaces the parse failure so it can be corrected deliberately.
 		h.log.Error(err)
 		h.emitControllersConfigApplyEvent(
-			eventBuilder, provider, token, userID, events.Error,
+			newEvent, provider, token, userID, events.Error,
 			"Skipped reconciling this connection's MeshSync deployment mode: its stored controllers configuration could not be parsed.",
 			map[string]interface{}{"error": err, "connectionId": connection.ID},
 		)
@@ -477,16 +483,16 @@ func (h *Handler) reconcileInheritedDeploymentMode(
 	}
 	if _, err := provider.UpdateConnectionById(token, payload, connection.ID.String()); err != nil {
 		h.log.Error(err)
-		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to persist the MeshSync deployment mode inherited from the server-wide default.", map[string]interface{}{"error": err, "connectionId": connection.ID})
+		h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to persist the MeshSync deployment mode inherited from the server-wide default.", map[string]interface{}{"error": err, "connectionId": connection.ID})
 		return
 	}
 
 	if err := h.reconcileMeshsyncDeploymentMode(context.Background(), connection.ID, desired.Mode, merged, userID, provider); err != nil {
 		h.log.Error(err)
-		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to redeploy MeshSync for the deployment mode inherited from the server-wide default.", map[string]interface{}{"error": err, "connectionId": connection.ID})
+		h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to redeploy MeshSync for the deployment mode inherited from the server-wide default.", map[string]interface{}{"error": err, "connectionId": connection.ID})
 		return
 	}
-	h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Informational, fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' following the server-wide default.", previous, desired.Mode), map[string]interface{}{
+	h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Informational, fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' following the server-wide default.", previous, desired.Mode), map[string]interface{}{
 		"meshsyncDeploymentModeOld": previous,
 		"meshsyncDeploymentModeNew": desired.Mode,
 		"connectionId":              connection.ID,
@@ -496,7 +502,7 @@ func (h *Handler) reconcileInheritedDeploymentMode(
 // emitControllersConfigApplyEvent persists and broadcasts a controllers
 // configuration apply event.
 func (h *Handler) emitControllersConfigApplyEvent(
-	eventBuilder *events.EventBuilder,
+	newEvent func() *events.EventBuilder,
 	provider models.Provider,
 	token string,
 	userID core.Uuid,
@@ -504,6 +510,6 @@ func (h *Handler) emitControllersConfigApplyEvent(
 	description string,
 	metadata map[string]interface{},
 ) {
-	event := eventBuilder.WithSeverity(severity).WithDescription(description).WithMetadata(metadata).Build()
+	event := newEvent().WithSeverity(severity).WithDescription(description).WithMetadata(metadata).Build()
 	h.persistAndPublish(provider, token, userID, event)
 }

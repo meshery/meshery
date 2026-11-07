@@ -690,8 +690,10 @@ func TestReconcileInheritedDeploymentMode_SkipsConnectionWithUnparseableOverride
 		Operator: &controllersconfig.MesheryOperatorConfig{DeploymentMode: &operatorMode},
 	}
 
-	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
-	h.reconcileInheritedDeploymentMode(connection, serverDefaults, "token", uuid.Must(uuid.NewV4()), provider, eventBuilder)
+	newEvent := func() *events.EventBuilder {
+		return events.NewEvent().FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	}
+	h.reconcileInheritedDeploymentMode(connection, serverDefaults, "token", uuid.Must(uuid.NewV4()), provider, newEvent)
 
 	persisted := connections.MeshsyncDeploymentModeFromMetadata(provider.stored[id].Metadata)
 	if persisted != connections.MeshsyncDeploymentModeEmbedded {

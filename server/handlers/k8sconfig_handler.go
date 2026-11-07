@@ -107,8 +107,13 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		ErroredContexts:    make([]models.K8sContext, 0),
 	}
 
-	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
-		WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
+	// Every event of this import starts from its own builder: the receipt below
+	// and each per-context failure are separate events, and a builder built
+	// twice would hand both the same event.
+	newImportEvent := func() *events.EventBuilder {
+		return events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
+	}
+	eventBuilder := newImportEvent().WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
 	eventMetadata := map[string]interface{}{}
 	// Include unreachable contexts so they are still registered as discovered
 	// connections; reachability is only required to transition to connected.
@@ -220,7 +225,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Unable to record the MeshSync deployment mode for context \"%s\" at %s", ctx.Name, ctx.Server)
 				metadata["error"] = modeErr
-				event := eventBuilder.WithSeverity(events.Error).WithDescription(metadata["description"].(string)).WithMetadata(metadata).Build()
+				event := newImportEvent().WithSeverity(events.Error).WithDescription(metadata["description"].(string)).WithMetadata(metadata).Build()
 				h.persistAndPublish(provider, token, userID, event)
 				continue
 			}
