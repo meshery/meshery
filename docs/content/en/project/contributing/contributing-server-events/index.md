@@ -43,12 +43,12 @@ example actions: **"remove_from_organization", "add_to_organization"**.
 
 _Note: In certain conditions you must add some fields with specific keys:_
 
-- If the severity is "Error", include a field in Metadata using the key `err` with the corresponding error value.
+- If the severity is "Error", set the error on the event with `models.AttachEventError(builder, err, log)` after `WithMetadata`. It stores it under the `error` key as a schemas `EventError` (see [Error events](#error-events)); an error without a MeshKit code keeps the legacy form.
 - When you want to add a link to meshery docs, include a field in Metadata using the key `doc` with the corresponding link value.
 
 - `WithDescription` : The string argument provides a detailed, descriptive message that depicts the specific operation or action being executed on the server.
 - `WithMetadata`: it takes a Map `map[string]interface{}` data structure containing any supplementary information that the developer/contributor deems essential for the user to be informed about.
-- `Build` : returns the [Event](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L37) instance constructed upon the previously described functions and prepares it for publication through the [Broadcast](https://github.com/meshery/meshery/blob/1b5d78ed34648e0a91df8c2273026b930f748fbc/server/models/event_broadcast.go#L14), which is responsible for disseminating events.
+- `Build` : returns the [Event](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L37) instance constructed upon the previously described functions and prepares it for publication through the [Broadcast](https://github.com/meshery/meshery/blob/1b5d78ed34648e0a91df8c2273026b930f748fbc/server/models/event_broadcast.go#L14), which is responsible for disseminating events. Build each event from its own builder: depending on the MeshKit version, `Build` may return the builder's own event rather than a copy, so building a second event from the same builder on one execution path rewrites the first event after it was persisted and broadcast. Reusing one builder is safe only when each `Build` sits on an exclusive branch, as in the example below; where a function emits several events, start each from a fresh `events.NewEvent()`.
 
 <a href="images/events-table.png">
     <img src="images/events-table.png" alt="Event Schema" style="width:50%;">
@@ -71,13 +71,51 @@ An event about a design carries the design's identity and a bounded summary, nev
 
 Readers must tolerate older rows: events stored earlier, and rows Meshery Cloud rewrote to this shape, may spell the identity in snake_case (`design_id`, `design_name`, `view_link`) and may lack `evaluationStatus`, `evaluationDurationMs` and `designLink`. A rewritten validate error's `code` is the JSON-schema keyword (`required`, `type`), not a MeshKit code. Meshery UI reads all of this through `ui/components/layout/NotificationCenter/formatters/design_event_metadata.ts`.
 
+### Starting a server event
+
+Prefer `models.NewServerEvent(ctx)` (`server/models/event_condition.go`) to a bare `events.NewEvent()`. It sets `source` to `meshery-server` and, when `ctx` carries an OpenTelemetry span, that span's W3C trace context (`traceId`, `parentId`). The router's `otelmux` middleware starts a span per request and continues the `traceparent` header the client sent, so the event joins the trace of the operation the client started. Nothing mints a trace context when an event is persisted. Chain `WithOperationID(id)` to group the events of one operation.
+
+`provider.PersistEvent` records the server's own events, so it sets `source` to `meshery-server` on any event that arrives without one; events built with a bare `events.NewEvent()` are stamped too. `provider.PersistClientEvent`, which `POST /api/events` uses, records a client's event with its source as sent.
+
+### Error events
+
+An error event carries the error as `metadata.error`, in the schemas `EventError` shape ([error definition contract](https://github.com/meshery/schemas/blob/master/docs/error-definition-contract.md)): the code, the descriptions rendered for this occurrence, the probable causes nested with their remediations, and `matchedCauses`, the causes that apply this time. `models.AttachEventError` builds it with MeshKit's `WithError`.
+
+Declare an error's causes with MeshKit's `errors.NewV3`, which nests each cause's remediations under it. A remediation that answers several causes is declared once as a package-level `errors.Remediation` and repeated under each cause. When the server can tell which cause applies, record it where the raw error is still in hand: `ErrUnreachableKubeAPI` (`server/models/error.go`) classifies the Kubernetes client error (unreachable, credentials rejected, certificate untrusted) and `models.MatchedCauses` reads the result. Rows recorded before this shape carry MeshKit's Go field names (`Code`, `ProbableCause`, `SuggestedRemediation`), and Meshery UI reads both.
+
+### Conditions
+
+An event can report one occurrence of an ongoing **condition**, for example a connection that keeps failing. Give it a `correlationKey` built with `models.ConditionKey(component, subject, condition)`, which yields `meshery-server/<component>/<subject>/<condition>`, for example `meshery-server/k8s-connection/<connectionId>/unreachable`. Never use an error code alone as the key.
+
+Creating an event with a key follows the schemas `createEvent` contract ([event correlation contract](https://github.com/meshery/schemas/blob/master/docs/event-correlation-contract.md)). The local and remote providers behave the same way:
+
+| The create carries | And the owner | Result |
+|---|---|---|
+| an `idempotencyKey` the owner already used | - | nothing is recorded or changed, whatever the rest of the payload says: a replay, answered with the event the key is bound to. This is checked first |
+| an event already recorded (the same event ID, sent again) | - | no new event and nothing changes: a replay, answered with the stored event |
+| no `correlationKey`, or no owner | - | a new event, as before |
+| a key, no `resolvedAt` | has an open event with that key | no new event; the open event's `occurrenceCount` grows (by the payload's count, else 1; a count below 1 counts as 1) and its `lastSeenAt` moves to the later time |
+| a key, no `resolvedAt` | has none open | a new event that opens the condition (`occurrenceCount` 1, `firstSeenAt` and `lastSeenAt` set) |
+| a key and `resolvedAt` | has an open event with that key | no new event; the open event takes the `resolvedAt`, the later `lastSeenAt`, and the resolution's severity and description. A resolution is a close, not an occurrence: `occurrenceCount` is unchanged |
+| a key and `resolvedAt` | has none open | a new, already resolved event, with `occurrenceCount` 1 unless sent, and `firstSeenAt` and `lastSeenAt` from the payload, else `resolvedAt` |
+
+A create that carries an `idempotencyKey` and identifies its owner binds the key to the event it recorded, counted an occurrence on, or resolved, so a retry of any of them is a replay. Keys are scoped to the owner. Locally the bindings live in `event_idempotency_bindings` (`models.EventIdempotencyBinding`), keyed by owner and key, which also makes the binding atomic: of two concurrent creates with one key, one is recorded and the other is a replay.
+
+Close a condition with `builder.Resolves(key, time)` under the condition's category, with a severity and description that say what cleared (for example `success`, "Connection restored"). Send a resolution only when the condition changes from present to cleared, never on every healthy check.
+
+`provider.PersistEvent` returns a `models.PersistedEvent`: the event as stored, and its `Disposition` (`created`, `replayed`, `incremented` or `resolved`). When an occurrence is counted on an open condition, or the condition is resolved, no row is inserted and the stored event is the condition's, with its own ID. Broadcast and return that event, never the one you sent, whose ID no stored row has: Meshery UI's `pushEvent` upserts by ID, so the condition's notification updates in place; it keeps the notification's read status, and ignores a broadcast older than the one it shows (an earlier `updatedAt`, or an open revision of a resolved condition), since broadcasts can arrive out of order. `Handler.persistAndPublish` (`server/handlers/middlewares.go`) does both, and every server site that persists and broadcasts an event goes through it (or `persistAndPublishEvent`, for code without a `Handler`). `provider.PersistSystemEvent`, for an event raised outside a user request, returns the stored event the same way, and `models.PersistAndPublishSystemEvent` is its persist-and-broadcast helper. Never call `EventBroadcaster.Publish` on your own copy after `PersistEvent` or `PersistSystemEvent`.
+
+The Kubernetes connection state machine is the first producer. A background Discovery failure that moves a connection to `not found` reports `meshery-server/k8s-connection/<connectionId>/unreachable`. A repeated failure that leaves the status unchanged is not reported to the user again (the de-duplication from [#20818](https://github.com/meshery/meshery/issues/20818)), but `SendEvent` returns it, without an error, as a *Recurrence* (`machines.IsRecurrence`): `Handler.reportMachineOutcome` persists it, so the condition's `occurrenceCount` and `lastSeenAt` grow, and broadcasts nothing. A Recurrence is sent only to a provider that correlates conditions (`Provider.CorrelatesConditions`), because one that ignores `correlationKey` would store every repeat as a new event. The local provider always correlates. The remote provider is known to correlate only after its most recent create carrying a `correlationKey` was answered with an `Event-Disposition` header; one answered `2xx` without it, as a remote provider that predates correlation answers, marks it as not correlating. Until then, Recurrences are dropped as they were before correlation, while a condition's first occurrence and its resolution are still sent. The flag is held in memory per provider instance and starts unknown at every server start. Any successful send that moves the connection out of `not found` resolves the condition: the Discovery that finds the cluster reachable again, a manual reconnect, or a delete. A request that saves the new status before it drives the machine names the old one with `machines.WithPriorStatus`, because the status the machine reads is already the new one. `DeleteConnection`, which does not drive the machine, resolves the condition itself (`kubernetes.UnreachableConditionKey`) when the deleted connection was `not found`, and removes the connection from `ConnectionToStateMachineInstanceTracker` - and, locally, its Kubernetes context row in the same transaction - so the Kubernetes middlewares stop probing it. Another machine opts in by setting `StateMachine.ConditionComponent`.
+
 ## Event Persistence in Meshery
 
 Events in Meshery are persisted through two distinct mechanisms to ensure reliable event management. [Read more about providers]({{< ref "reference/extensibility/providers/index.md" >}}).
 
 ### Local Event Storage
 
-The `provider.PersistEvent(*event,nil)` method stores all events in Meshery's local database. This method works identically for both Local and Remote providers, ensuring events are always accessible within your Meshery instance.
+`provider.PersistEvent(*event, token)` records an event and returns it as stored (see [Conditions](#conditions)). The Local provider writes it to Meshery's local database (`EventsPersister.PersistEvent`). A Remote provider sends it to the remote provider's `createEvent` endpoint and accepts any `2xx` answer as the remote provider having it: `201` (recorded) or `200` (a replay, or an occurrence counted on or a resolution of an open condition). The stored event is the one in the answer's body; an answer with no event means the event was stored as sent, unless its disposition says the create recorded nothing new (`incremented`, `resolved` or `replayed`): then the stored event is unknown, `PersistedEvent.Event` is nil, and the caller broadcasts and returns nothing for it. The disposition is the `Event-Disposition` header, else `created` for a `201`, else empty. Only when there is no token, or the remote call fails, does it fall back to the local database. Every persisted event passes through `models.PrepareEventForPersistence`, which gives an event with no ID (one constructed without `events.NewEvent()`, which mints one) a fresh one, so no event is stored, sent or broadcast with the zero ID, and applies the 16 KB metadata guard. The local database inserts a new event with its ID as built; persisting the same event again (a retry) records nothing and answers `replayed` with the stored event. `PersistClientEvent` follows the same paths without the server's default `source`.
+
+In the local database, a partial unique index (`idx_events_open_correlation`, created by `AutoMigrateSystemTables`) keeps at most one open event per owner and `correlation_key`, so two concurrent first occurrences cannot both open a condition. It covers exactly the events that are correlated: an event with no `correlation_key`, or one that identifies no user (no owner, or the zero UUID owner), is recorded as a plain row and is outside the index.
 
 An event raised outside any user request - the registrant summaries and registration failures emitted while models are seeded at boot - has no provider to route through, and on a deployment that pins `PROVIDER` the provider registration map may not even hold the one you would name. Persist those through `HandlerConfig.SystemEventPersister`, which writes to the same local database. See [Enforced Provider Flow]({{< ref "reference/extensibility/providers/index.md" >}}) for why a name lookup is not an option there.
 
@@ -110,13 +148,10 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		k8sContext, err := provider.GetK8sContext(token, connectionID)
 		eventBuilder.ActedUpon(uuid.FromStringOrNil(connectionID))
 		if err != nil {
-			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Encountered an issue while retrieving kubernetes context for connection ID `%s`", connectionID)).
-			WithMetadata(map[string]interface{}{
-				"error": err,
-			})
+			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Encountered an issue while retrieving kubernetes context for connection ID `%s`", connectionID))
+			models.AttachEventError(eventBuilder, err, h.log)
 			event := eventBuilder.Build()
-		    _ = provider.PersistEvent(*event,nil)
-		    go h.config.EventBroadcaster.Publish(userID, event)
+		    h.persistAndPublish(provider, token, userID, event)
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "failed to get kubernetes context for the given ID")
 			return
@@ -127,8 +162,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 			"Server Address": k8sContext.Server,
 		})
 		event := eventBuilder.Build()
-		_ = provider.PersistEvent(*event,nil)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 
 		// Remaining code ...
     }
@@ -150,7 +184,9 @@ To gain a deeper understanding and examine events more closely, you can explore 
 
 Meshery has two primary clients: Mesheryctl and Meshery UI. Both clients will produce multiple events throughout their lifecycle. Meshery Server is designed to accept these client-generated events and broadcast them using the [Broadcaster](https://github.com/meshery/meshery/blob/1b5d78ed34648e0a91df8c2273026b930f748fbc/server/models/event_broadcast.go#L14).
 
-Clients can send HTTP POST requests to [`api/events`]({{< ref "reference/rest-apis/_index.md" >}}) with the event encapsulated in a JSON request body. Upon receiving an event, the server processes, validates, and broadcasts it using the Broadcaster. This ensures that all relevant events generated by Mesheryctl and Meshery UI are effectively communicated and managed by the Meshery Server.
+Clients can send HTTP POST requests to [`api/system/events`]({{< ref "reference/rest-apis/_index.md" >}}) with the event encapsulated in a JSON request body. Upon receiving an event, the server processes, validates, and broadcasts it using the Broadcaster.
+
+The server records the client's optional idempotency, correlation, provenance and trace fields with the event (`idempotencyKey`, `correlationKey`, `occurrenceCount`, `firstSeenAt`, `lastSeenAt`, `resolvedAt`, `source`, `type`, `specversion`, `traceId`, `parentId`, and `operationId` when sent), so a condition a client reports is counted and resolved as described in [Conditions](#conditions). A body that is not an event - malformed JSON, or a field of the wrong JSON type such as `"occurrenceCount": "2"` - is refused with `400` (`meshery-server-1226`) before it is validated; a field that decodes but breaks the schemas contract is refused with `400` (`meshery-server-1489`). A client should name itself in `source` (`meshery-ui`, `mesheryctl`, `meshery-adapter-<name>`); an event that names no source is recorded without one. The answer follows the `createEvent` contract: `201` when a new event was recorded, `200` when nothing new was (an occurrence counted on, or the resolution of, an open condition, or a replay), with the event as stored - the condition's event for an occurrence or a resolution - and the `Event-Disposition` header saying which. A remote provider that predates correlation sends no disposition; the answer then omits the header and is `201`. When a remote provider recorded nothing new and did not return the stored event, the answer is `200` with the disposition and no body, and nothing is broadcast. An occurrence counted on an open condition keeps the trace and provenance fields (`traceId`, `parentId`, `operationId`, `source`) the condition was first recorded with; only its count and `lastSeenAt` change, so a client cannot read a later occurrence's trace from the stored event. The same event is broadcast. This ensures that all relevant events generated by Mesheryctl and Meshery UI are effectively communicated and managed by the Meshery Server.
 
 ### Example
 
@@ -162,12 +198,13 @@ async function sendClientEvent(clientId, eventPayload) {
     action: "create",
     severity: "info",
     description: "Client event creation",
+    actedUpon: clientId,
     metadata: eventPayload,
   };
 
   try {
     // Send event to Meshery Server
-    const response = await fetch("http://localhost:9081/api/events", {
+    const response = await fetch("http://localhost:9081/api/system/events", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

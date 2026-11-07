@@ -30,6 +30,70 @@ describe('events slice', () => {
     expect(state.entities['evt-1'].description).toBe('Test event');
   });
 
+  it('pushEvent updates an event already shown in place', () => {
+    let state = eventsReducer(undefined, { type: 'unknown' });
+    state = eventsReducer(
+      state,
+      pushEvent(makeEvent({ severity: 'error', description: 'unreachable', occurrenceCount: 1 })),
+    );
+    state = eventsReducer(
+      state,
+      pushEvent(
+        makeEvent({
+          severity: 'success',
+          description: 'reachable again',
+          occurrenceCount: 2,
+          resolvedAt: '2025-01-01T00:05:00Z',
+        }),
+      ),
+    );
+    expect(state.ids).toEqual(['evt-1']);
+    expect(state.entities['evt-1']).toMatchObject({
+      severity: 'success',
+      description: 'reachable again',
+      occurrenceCount: 2,
+      resolvedAt: '2025-01-01T00:05:00Z',
+    });
+  });
+
+  it('pushEvent keeps the read status of an event already shown', () => {
+    let state = eventsReducer(undefined, { type: 'unknown' });
+    state = eventsReducer(state, pushEvent(makeEvent({ status: 'read', occurrenceCount: 1 })));
+    state = eventsReducer(state, pushEvent(makeEvent({ status: 'unread', occurrenceCount: 2 })));
+    expect(state.entities['evt-1']).toMatchObject({ status: 'read', occurrenceCount: 2 });
+  });
+
+  it('pushEvent ignores an older revision delivered after a newer one', () => {
+    let state = eventsReducer(undefined, { type: 'unknown' });
+    state = eventsReducer(
+      state,
+      pushEvent(makeEvent({ occurrenceCount: 3, updatedAt: '2025-01-01T00:03:00Z' })),
+    );
+    state = eventsReducer(
+      state,
+      pushEvent(makeEvent({ occurrenceCount: 2, updatedAt: '2025-01-01T00:02:00Z' })),
+    );
+    expect(state.entities['evt-1'].occurrenceCount).toBe(3);
+
+    state = eventsReducer(
+      state,
+      pushEvent(
+        makeEvent({
+          severity: 'success',
+          resolvedAt: '2025-01-01T00:05:00Z',
+          updatedAt: '2025-01-01T00:05:00Z',
+        }),
+      ),
+    );
+    // A delayed occurrence never reopens the resolved condition, even when it
+    // carries no update time.
+    state = eventsReducer(state, pushEvent(makeEvent({ severity: 'error', occurrenceCount: 4 })));
+    expect(state.entities['evt-1']).toMatchObject({
+      severity: 'success',
+      resolvedAt: '2025-01-01T00:05:00Z',
+    });
+  });
+
   it('pushEvent trims severity and status', () => {
     const initial = eventsReducer(undefined, { type: 'unknown' });
     const event = makeEvent({ severity: '  warning  ', status: '  read  ' });

@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/meshery/schemas/models/core"
 
@@ -206,16 +207,16 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 	return marshalMesheryPatterns(deletedMaptterns), nil
 }
 
+// SaveMesheryPattern inserts a new design, or updates an existing one with only
+// the non-zero fields of pattern, and bumps the design file's version.
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
 	pf, err := patterns.GetPatternFormat(pattern.PatternFile)
 	if err != nil {
 		return nil, err
 	}
 
-	if pattern.Visibility == "" {
-		pattern.Visibility = Private
-	}
-	if pattern.ID == nil {
+	isNew := pattern.ID == nil
+	if isNew {
 		id, err := uuid.NewV4()
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
@@ -242,7 +243,74 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 	// response shaping only - nothing extra is persisted.
 	stampLocalProviderOwner(pattern)
 
-	return marshalMesheryPatterns([]MesheryPattern{*pattern}), mpp.DB.Save(pattern).Error
+	// An ID does not mean the row exists: clone and seeding save new rows
+	// under IDs they minted themselves.
+	exists := false
+	if !isNew {
+		var count int64
+		if err := mpp.DB.Model(&MesheryPattern{}).Where("id = ?", *pattern.ID).Count(&count).Error; err != nil {
+			return nil, ErrDBRead(err)
+		}
+		exists = count > 0
+	}
+
+	updated := exists
+	if exists {
+		err = mpp.updateSavedColumns(pattern)
+	} else {
+		suppliedVisibility := pattern.Visibility
+		if pattern.Visibility == "" {
+			pattern.Visibility = Private
+		}
+		res := mpp.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(pattern)
+		if res.Error != nil {
+			return marshalMesheryPatterns([]MesheryPattern{*pattern}), ErrDBCreate(res.Error)
+		}
+		if res.RowsAffected == 0 {
+			// A concurrent save inserted this ID first: update it like any
+			// existing row, without the insert-only visibility default.
+			pattern.Visibility = suppliedVisibility
+			updated = true
+			err = mpp.updateSavedColumns(pattern)
+		}
+	}
+
+	// The saved struct holds only what the request carried; respond with the
+	// stored row so the response shows the columns the update preserved.
+	if updated && err == nil {
+		var stored MesheryPattern
+		if err = mpp.DB.First(&stored, "id = ?", *pattern.ID).Error; err != nil {
+			err = ErrDBRead(err)
+		} else {
+			stampLocalProviderOwner(&stored)
+			pattern = &stored
+		}
+	}
+
+	return marshalMesheryPatterns([]MesheryPattern{*pattern}), err
+}
+
+// updateSavedColumns updates an existing design with the columns the save
+// carries. A save carries only some of them - POST /api/pattern builds the
+// record from DesignPostPayload, which has no source content, type or creation
+// time - so Updates skips zero-valued fields and those columns keep their
+// stored values. created_at and the usage counters are never written by a save,
+// and pattern_file is not written when the request carried no design file.
+func (mpp *MesheryPatternPersister) updateSavedColumns(pattern *MesheryPattern) error {
+	omit := []string{"created_at", "view_count", "share_count", "download_count", "clone_count", "deployment_count"}
+	if pattern.PatternFileOmitted {
+		omit = append(omit, "pattern_file")
+	}
+	res := mpp.DB.Model(pattern).Omit(omit...).Updates(pattern)
+	// updated_at always changes, so no affected row means the design was
+	// deleted after the existence check.
+	if res.Error == nil && res.RowsAffected == 0 {
+		res.Error = fmt.Errorf("design %s was deleted while saving", pattern.ID)
+	}
+	if res.Error != nil {
+		return ErrDBPut(res.Error)
+	}
+	return nil
 }
 
 // SaveMesheryPatterns batch inserts the given patterns

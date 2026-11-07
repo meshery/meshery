@@ -869,7 +869,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 			WithMetadata(buildPolicyEvaluationEventMetadata(evaluationResponse, models.ServerURLFromRequest(r), evalDuration)).
 			WithSeverity(events.Informational).Build()
 		go func() {
-			_ = provider.PersistEvent(*event, token)
+			_, _ = provider.PersistEvent(*event, token)
 		}()
 
 		h.writeEvaluationResult(rw, evalResult{resp: evaluationResponse})

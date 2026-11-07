@@ -842,3 +842,66 @@ func TestSubcommandNames(t *testing.T) {
 		})
 	}
 }
+
+// TestTrimFileExtension checks that only the final extension is removed.
+// Regression test: strings.Trim(name, ext) strips a character set from both
+// ends, turning "my-app.yaml" into "-app". Use strings.TrimSuffix instead.
+func TestTrimFileExtension(t *testing.T) {
+	tests := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{"leading chars match extension", "my-app.yaml", "my-app"},
+		{"mostly extension letters", "mail.yaml", "mail"},
+		{"json extension", "sample.json", "sample"},
+		{"multiple dots", "app.v2.yaml", "app.v2"},
+		{"no extension", "Test Design", "Test Design"},
+		{"empty name", "", ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := TrimFileExtension(tt.in); got != tt.want {
+				t.Errorf("TrimFileExtension(%q) = %q, want %q", tt.in, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestUploadFileWithParams(t *testing.T) {
+	origToken := TokenFlag
+	defer func() { TokenFlag = origToken }()
+	TokenFlag = GetToken(t)
+
+	tmpDir := t.TempDir()
+	sampleFile := filepath.Join(tmpDir, "sample.txt")
+	err := os.WriteFile(sampleFile, []byte("sample content for upload"), 0o600)
+	if err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
+
+	params := map[string]string{
+		"token": "valid-token",
+		"org":   "meshery",
+	}
+
+	req, err := UploadFileWithParams("http://localhost:9081/api/upload", params, "file", sampleFile)
+	if err != nil {
+		t.Fatalf("UploadFileWithParams returned unexpected error: %v", err)
+	}
+	if req == nil {
+		t.Fatal("UploadFileWithParams returned nil request")
+	}
+	if req.Method != http.MethodPost {
+		t.Errorf("expected POST method, got %s", req.Method)
+	}
+	if !strings.HasPrefix(req.Header.Get("Content-Type"), "multipart/form-data") {
+		t.Errorf("expected multipart/form-data content type, got %s", req.Header.Get("Content-Type"))
+	}
+
+	nonExistent := filepath.Join(tmpDir, "does-not-exist.txt")
+	_, err = UploadFileWithParams("http://localhost:9081/api/upload", params, "file", nonExistent)
+	if err == nil {
+		t.Error("expected error for non-existent file, got nil")
+	}
+}

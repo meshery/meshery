@@ -16,7 +16,6 @@ package design
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -25,11 +24,9 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"gopkg.in/yaml.v2"
 )
 
 var deleteCmd = &cobra.Command{
@@ -117,7 +114,6 @@ mesheryctl design delete -f [file | URL]
 			return nil
 		}
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
-		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		var patternFileByt []byte
 		// If file path not a valid URL, treat it like a local file path
@@ -130,61 +126,9 @@ mesheryctl design delete -f [file | URL]
 			patternFileByt = content
 		} else {
 			// Else treat it like a URL
-			url, path, err := utils.ParseURLGithub(targetFile)
-			if err != nil {
-				return utils.ErrParseGithubFile(err, targetFile)
-			}
-
-			utils.Log.Debug(url)
-			utils.Log.Debug(path)
-
-			var jsonValues []byte
-
-			// Send the URL and path to the server and let it fetch the patternfile and delete
-			// the components
-			if path != "" {
-				jsonValues, _ = json.Marshal(map[string]interface{}{
-					"url":  url,
-					"path": path,
-					"save": false,
-				})
-			} else {
-				jsonValues, _ = json.Marshal(map[string]interface{}{
-					"url":  url,
-					"save": false,
-				})
-			}
-
-			req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
+			patternFileByt, err = fetchDesignFromGithub(targetFile)
 			if err != nil {
 				return err
-			}
-
-			resp, err := utils.MakeRequest(req)
-			if err != nil {
-				return err
-			}
-			utils.Log.Debug("remote hosted pattern request success")
-			var response []*models.MesheryPattern
-			defer func() { _ = resp.Body.Close() }()
-
-			body, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return utils.ErrReadFromBody(err)
-			}
-
-			err = json.Unmarshal(body, &response)
-			if err != nil {
-				return utils.ErrUnmarshal(err)
-			}
-
-			if len(response) == 0 {
-				return ErrDesignNotFound("design at " + targetFile)
-			}
-
-			patternFileByt, err = yaml.Marshal(response[0].PatternFile)
-			if err != nil {
-				return models.ErrMarshallingDesignIntoYAML(err)
 			}
 		}
 
