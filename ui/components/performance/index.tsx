@@ -6,6 +6,7 @@ import LoadTestTimerDialog from '../load-test-timer-dialog';
 import fetchControlPlanes from '@/graphql/queries/ControlPlanesQuery';
 import { getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { useNotification } from '../../utils/hooks/useNotification';
+import { formatApiError } from '../../utils/helpers/meshkitError';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { buildPerformanceRunUrl, generateTestName, generateUUID } from './helper';
 
@@ -103,7 +104,16 @@ const MesheryPerformanceComponent_ = (props) => {
     data: smpMeshes,
     isSuccess: isSMPMeshesFetched,
     isError: isSMPMeshError,
+    error: smpMeshError,
   } = useGetMeshQuery();
+
+  // Report a failed mesh list fetch on its own: going through handleError
+  // would also stop a running test and close its event stream.
+  useEffect(() => {
+    if (!isSMPMeshError) return;
+    const { message } = formatApiError(smpMeshError, 'Unable to fetch SMP meshes');
+    notify({ message, event_type: EVENT_TYPES.ERROR });
+  }, [isSMPMeshError, smpMeshError]);
 
   useEffect(() => {
     const fetchMeshModels = async () => {
@@ -431,8 +441,6 @@ const MesheryPerformanceComponent_ = (props) => {
       setAvailableSMPMeshes(
         [...(smpMeshes.availableMeshes || [])].sort((m1, m2) => m1.localeCompare(m2)),
       );
-    } else if (isSMPMeshError) {
-      handleError('unable to fetch SMP meshes');
     }
   };
 
