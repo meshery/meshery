@@ -24,6 +24,7 @@ This tool will create a couple of files, one of them is designed to be used to g
 1. Running `make error` analyzes your code and returns any warnings to be aware of.
 1. Capitalize the first letter of the every error description.
 1. Using errors.NewDefault(...) is deprecated. This tool emits a warning if its use is detected.
+1. Use errors.NewV3(...) for an error whose causes each need their own remediations (see [Errors with several causes](#errors-with-several-causes-errorsnewv3)); otherwise errors.NewV2(...) or errors.New(...).
 1. Use errors.New(...) from MeshKit to create actual errors with all the details.
   This is often done in a factory function. It is important that the error code variable is used here, not a literal.
   Specify detailed descriptions, probable causes, and remedies. They need to be string literals, call expressions are ignored.
@@ -114,6 +115,67 @@ body and strips the MeshKit code, severity, and remediation that clients parse.
 See [HTTP Error Response Contract](/project/contributing/error-contract/)
 for the response shape, the `writeMeshkitError` / `writeJSONError` helpers, and
 how to choose the status code.
+
+## Errors with several causes: `errors.NewV3`
+
+`errors.New` takes probable causes and suggested remediations as two flat lists, and nothing tells a reader which remediation answers which cause. When an error has causes that each need their own remediations, declare it with `errors.NewV3`. Each cause then carries the remediations that address it, and a remediation can name an action a client may run and the policy for running it ([error definition contract](https://github.com/meshery/schemas/blob/master/docs/error-definition-contract.md)).
+
+
+
+<pre class="codeblock-pre">
+	<div class="codeblock">
+		<code class="clipboardjs">// remRetryConnection answers every cause, so it is declared once.
+var remRetryConnection = errors.Remediation{
+	ID:          &#34;retry-connection&#34;,
+	Description: &#34;Once the cause is fixed, reconnect the connection.&#34;,
+	Action:      &#34;connection.reconnect&#34;,
+	ActionPolicy: errors.RequiresApproval,
+}
+
+func ErrUnreachableCluster(err error, server string) error {
+	e := errors.NewV3(ErrUnreachableClusterCode, errors.Alert,
+		[]string{&#34;Error communicating with the Kubernetes API server.&#34;},
+		[]string{&#34;Meshery Server did not get an answer from the cluster&#39;s API server.&#34;},
+		[]errors.Cause{
+			{
+				ID:          &#34;api-server-unreachable&#34;,
+				Description: &#34;The Kubernetes API server is not reachable.&#34;,
+				Remediations: []errors.Remediation{
+					{ID: &#34;check-network&#34;, Description: &#34;Verify network connectivity to the API server.&#34;},
+					remRetryConnection,
+				},
+			},
+			{
+				ID:          &#34;credentials-rejected&#34;,
+				Description: &#34;The cluster rejected the connection&#39;s credentials.&#34;,
+				Remediations: []errors.Remediation{
+					{ID: &#34;renew-credential&#34;, Description: &#34;Renew the connection&#39;s credential.&#34;,
+						Action: &#34;connection.refresh-credentials&#34;, ActionPolicy: errors.Automatic},
+					remRetryConnection,
+				},
+			},
+		})
+	// Instance text is appended after NewV3 returns.
+	e.LongDescription = append(e.LongDescription, fmt.Sprintf(&#34;API server: %s&#34;, server), err.Error())
+	return e
+}</code>
+	</div>
+</pre>
+
+
+`NewV3` returns a `*errors.ErrorV2` whose `Causes` hold the nesting and whose flat `ProbableCause` and `SuggestedRemediation` are derived from it. `GetCause`, `GetRemedy`, `Error()` and every reader of the flat lists keep working.
+
+`errorutil` reads these definitions from source, so they follow strict rules:
+
+- **Literals only.** Write every `errors.Cause` and `errors.Remediation` as a keyed composite literal with string-literal `ID`, `Description` and `Action`. Every element of the short- and long-description lists is a string literal too: build instance text, such as an address or `err.Error()`, into `LongDescription` after `NewV3` returns, as above.
+- **Stable ids.** Ids are lowercase words joined by hyphens (`api-server-unreachable`) and never change once published: events name the causes that applied in `metadata.error.matchedCauses`, and each code's reference page anchors on them. Cause ids are unique within an error, and every cause has at least one remediation.
+- **Shared remediations.** A remediation that answers several causes is declared once as a package-level `var` (in any file of the package) and referenced from each cause. `errorutil` resolves the variable, and the flat remediation list carries it once.
+- **Action policies.** `errors.Manual` (also when empty) means a person applies the remediation. `errors.RequiresApproval` lets a client run the `Action` after a person approves it, and `errors.Automatic` lets it run the `Action` on its own and say so. Both need an `Action`, dot-separated lowercase words such as `connection.reconnect`. An unknown policy is never coerced: `errors.ValidateCauses` and `errorutil` reject it, and a reader treats it as manual.
+- **Tests.** Unit-test a definition with `errors.ValidateCauses(errors.GetCauses(err))`. `TestErrUnreachableKubeAPICauses` in `server/models/event_error_test.go` is an example.
+
+**An invalid definition fails the build.** `errorutil` lists every `NewV3` definition it rejects in `errorutil_analyze_summary.json` under `invalid_definitions`, logs each one with its problems, leaves it out of both exports (never in a reduced form), and exits non-zero from `analyze` and `update`. The `error-codes-updater` workflow then fails the pull request. `errors.New` and `errors.NewV2` definitions are unaffected.
+
+When the server can tell which cause applies to an occurrence, record it where the underlying error is still in hand, so the error event names it. `ErrUnreachableKubeAPI` (`server/models/error.go`) classifies the Kubernetes client error, and `models.AttachEventError` puts the matched cause on the event; see [Contributing to Meshery Server Events](/project/contributing/contributing-server-events/).
 
 ## Replacing logrus
 
@@ -284,7 +346,17 @@ Name each constant `<BuilderFuncName>Code` - `errorutil` keys the export off tha
 
 ### Regenerating the docs reference
 
-`server/helpers/errorutil_errors_export.json` is gitignored, but the reference data at `docs/data/errorref/meshery-server_errors_export.json` is tracked. Regenerate it with the `jq --slurpfile` wrapper the workflow uses, or the published error reference silently omits the new codes.
+`errorutil` writes four files to the output directory, all gitignored: `errorutil_analyze_errors.json` and `errorutil_analyze_summary.json` (the analysis: duplicates, convention violations and `invalid_definitions`) and two exports:
+
+- `errorutil_errors_export.json`, the legacy export. Its shape is frozen (snake_case keys, joined strings) because the docs shortcodes read it; `NewV3` entries additionally carry `probableCauses`.
+- `errorutil_errors_index.json`, the component's definitions as a schemas `ErrorReferenceIndex` (`schemaVersion` 2): `code` (`meshery-server-1304`), `moniker`, `component`, `numericCode`, severity, descriptions, nested causes and the derived flat lists. `errorutil` validates every entry against the schema before writing it; the docs build assigns `referenceUrl`.
+
+The reference data built from them is tracked:
+
+- `docs/data/errorref/meshery-server_errors_export.json`, from the legacy export. Regenerate it with the `jq --slurpfile` wrapper the workflow uses, or the published error reference silently omits the new codes.
+- `docs/data/errorindex/meshery-server_errors_index.json`, from the nested export (`jq . server/helpers/errorutil_errors_index.json`). The docs build takes a code's causes from it, else from the legacy export's `probableCauses`, and otherwise shows the flat lists.
+
+The workflow regenerates both. The docs build publishes every component's codes as `reference/error-codes/index.json`, a schemas `ErrorReferenceIndex` (`schemaVersion` 2).
 
 ### Rendering errors to the user
 

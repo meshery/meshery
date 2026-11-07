@@ -8286,6 +8286,12 @@ You can now design and manage any infrastructure that Meshery supports. For the 
     
   
     
+  
+    
+  
+    
+  
+    
       
     
   
@@ -21077,6 +21083,10 @@ Each notification summarizes what happened. Depending on the event, it includes:
 - Links to the related design or to more detail.
 
 Expand a notification to see its full description. Meshery highlights critical, actionable events in red. Timestamps use your device's time zone.
+
+An error notification lists the error's probable causes. When Meshery knows which remediations address which cause, each cause is shown with its own remediations, and the cause Meshery found most likely is listed first and marked **Likely cause**. A remediation a client may run for you is labelled **Requires approval** or **Runs automatically**. The error's code links to its page in the [error code reference](/reference/error-codes/).
+
+A problem that keeps happening, such as a Kubernetes connection Meshery cannot reach, is one notification rather than one per attempt. Its summary shows how many times it occurred (for example `×4`) and when it was last seen. When the problem clears, Meshery records that the condition was resolved, and the notification is marked **Resolved**.
 
 <a href="./images/description.png">
   <img src="./images/description.png" alt="Event descriptions" style="max-width: 600px; width: 100%; height: auto; margin-top: 10px;" />
@@ -62782,7 +62792,7 @@ The pods passed in “expected_pods” are running in the subsequent namespaces 
 
 ## Automated Builds
 
-All Meshery GitHub repositories are configured with GitHub Actions. Everytime a pull request is submitted against the master branch of any repository, that repository’s GitHub Actions will be invoked (whether the PR is merged or not). Workflows defined in Meshery repository will generally (but not always) perform the following actions:
+All Meshery GitHub repositories are configured with GitHub Actions. Every time a pull request is submitted against the master branch of any repository, that repository’s GitHub Actions will be invoked (whether the PR is merged or not). Workflows defined in Meshery repository will generally (but not always) perform the following actions:
 
 1. trigger a Docker build to build a Docker container image
 1. generate two Docker tags:
@@ -66908,12 +66918,12 @@ example actions: **"remove_from_organization", "add_to_organization"**.
 
 _Note: In certain conditions you must add some fields with specific keys:_
 
-- If the severity is "Error", include a field in Metadata using the key `err` with the corresponding error value.
+- If the severity is "Error", set the error on the event with `models.AttachEventError(builder, err, log)` after `WithMetadata`. It stores it under the `error` key as a schemas `EventError` (see [Error events](#error-events)); an error without a MeshKit code keeps the legacy form.
 - When you want to add a link to meshery docs, include a field in Metadata using the key `doc` with the corresponding link value.
 
 - `WithDescription` : The string argument provides a detailed, descriptive message that depicts the specific operation or action being executed on the server.
 - `WithMetadata`: it takes a Map `map[string]interface{}` data structure containing any supplementary information that the developer/contributor deems essential for the user to be informed about.
-- `Build` : returns the [Event](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L37) instance constructed upon the previously described functions and prepares it for publication through the [Broadcast](https://github.com/meshery/meshery/blob/1b5d78ed34648e0a91df8c2273026b930f748fbc/server/models/event_broadcast.go#L14), which is responsible for disseminating events.
+- `Build` : returns the [Event](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L37) instance constructed upon the previously described functions and prepares it for publication through the [Broadcast](https://github.com/meshery/meshery/blob/1b5d78ed34648e0a91df8c2273026b930f748fbc/server/models/event_broadcast.go#L14), which is responsible for disseminating events. Build each event from its own builder: depending on the MeshKit version, `Build` may return the builder's own event rather than a copy, so building a second event from the same builder on one execution path rewrites the first event after it was persisted and broadcast. Reusing one builder is safe only when each `Build` sits on an exclusive branch, as in the example below; where a function emits several events, start each from a fresh `events.NewEvent()`.
 
 <a href="images/events-table.png">
     <img src="images/events-table.png" alt="Event Schema" style="width:50%;">
@@ -66936,13 +66946,47 @@ An event about a design carries the design's identity and a bounded summary, nev
 
 Readers must tolerate older rows: events stored earlier, and rows Meshery Cloud rewrote to this shape, may spell the identity in snake_case (`design_id`, `design_name`, `view_link`) and may lack `evaluationStatus`, `evaluationDurationMs` and `designLink`. A rewritten validate error's `code` is the JSON-schema keyword (`required`, `type`), not a MeshKit code. Meshery UI reads all of this through `ui/components/layout/NotificationCenter/formatters/design_event_metadata.ts`.
 
+### Starting a server event
+
+Prefer `models.NewServerEvent(ctx)` (`server/models/event_condition.go`) to a bare `events.NewEvent()`. It sets `source` to `meshery-server` and, when `ctx` carries an OpenTelemetry span, that span's W3C trace context (`traceId`, `parentId`). The router's `otelmux` middleware starts a span per request and continues the `traceparent` header the client sent, so the event joins the trace of the operation the client started. Nothing mints a trace context when an event is persisted. Chain `WithOperationID(id)` to group the events of one operation.
+
+`provider.PersistEvent` records the server's own events, so it sets `source` to `meshery-server` on any event that arrives without one; events built with a bare `events.NewEvent()` are stamped too. `provider.PersistClientEvent`, which `POST /api/events` uses, records a client's event with its source as sent.
+
+### Error events
+
+An error event carries the error as `metadata.error`, in the schemas `EventError` shape ([error definition contract](https://github.com/meshery/schemas/blob/master/docs/error-definition-contract.md)): the code, the descriptions rendered for this occurrence, the probable causes nested with their remediations, and `matchedCauses`, the causes that apply this time. `models.AttachEventError` builds it with MeshKit's `WithError`.
+
+Declare an error's causes with MeshKit's `errors.NewV3`, which nests each cause's remediations under it. A remediation that answers several causes is declared once as a package-level `errors.Remediation` and repeated under each cause. When the server can tell which cause applies, record it where the raw error is still in hand: `ErrUnreachableKubeAPI` (`server/models/error.go`) classifies the Kubernetes client error (unreachable, credentials rejected, certificate untrusted) and `models.MatchedCauses` reads the result. Rows recorded before this shape carry MeshKit's Go field names (`Code`, `ProbableCause`, `SuggestedRemediation`), and Meshery UI reads both.
+
+### Conditions
+
+An event can report one occurrence of an ongoing **condition**, for example a connection that keeps failing. Give it a `correlationKey` built with `models.ConditionKey(component, subject, condition)`, which yields `meshery-server/<component>/<subject>/<condition>`, for example `meshery-server/k8s-connection/<connectionId>/unreachable`. Never use an error code alone as the key.
+
+Creating an event with a key follows the schemas `createEvent` contract ([event correlation contract](https://github.com/meshery/schemas/blob/master/docs/event-correlation-contract.md)). The local and remote providers behave the same way:
+
+| The create carries | And the owner | Result |
+|---|---|---|
+| no `correlationKey`, or no owner | - | a new event, as before |
+| a key, no `resolvedAt` | has an open event with that key | no new event; the open event's `occurrenceCount` grows (by the payload's count, else 1) and its `lastSeenAt` moves to the later time |
+| a key, no `resolvedAt` | has none open | a new event that opens the condition (`occurrenceCount` 1, `firstSeenAt` and `lastSeenAt` set) |
+| a key and `resolvedAt` | has an open event with that key | no new event; the open event takes the `resolvedAt`, the later `lastSeenAt`, and the resolution's severity and description. A resolution is a close, not an occurrence: `occurrenceCount` is unchanged |
+| a key and `resolvedAt` | has none open | a new, already resolved event, with `occurrenceCount` 1 unless sent, and `firstSeenAt` and `lastSeenAt` from the payload, else `resolvedAt` |
+
+Close a condition with `builder.Resolves(key, time)` under the condition's category, with a severity and description that say what cleared (for example `success`, "Connection restored"). Send a resolution only when the condition changes from present to cleared, never on every healthy check.
+
+`provider.PersistEvent` returns a `models.PersistedEvent`: the event as stored, and its `Disposition` (`created`, `replayed`, `incremented` or `resolved`). When an occurrence is counted on an open condition, or the condition is resolved, no row is inserted and the stored event is the condition's, with its own ID. Broadcast and return that event, never the one you sent, whose ID no stored row has: Meshery UI's `pushEvent` upserts by ID, so the condition's notification updates in place. `Handler.persistAndPublish` (`server/handlers/middlewares.go`) does both, and every server site that persists and broadcasts an event goes through it (or `persistAndPublishEvent`, for code without a `Handler`). `provider.PersistSystemEvent`, for an event raised outside a user request, returns the stored event the same way, and `models.PersistAndPublishSystemEvent` is its persist-and-broadcast helper. Never call `EventBroadcaster.Publish` on your own copy after `PersistEvent` or `PersistSystemEvent`.
+
+The Kubernetes connection state machine is the first producer. A background Discovery failure that moves a connection to `not found` reports `meshery-server/k8s-connection/<connectionId>/unreachable`, and the Discovery that moves it out of `not found` sends the resolution. The de-duplication from [#20818](https://github.com/meshery/meshery/issues/20818), which suppresses a repeated failure that leaves the status unchanged, still applies. Another machine opts in by setting `StateMachine.ConditionComponent`.
+
 ## Event Persistence in Meshery
 
 Events in Meshery are persisted through two distinct mechanisms to ensure reliable event management. [Read more about providers](/reference/extensibility/providers/).
 
 ### Local Event Storage
 
-The `provider.PersistEvent(*event,nil)` method stores all events in Meshery's local database. This method works identically for both Local and Remote providers, ensuring events are always accessible within your Meshery instance.
+`provider.PersistEvent(*event, token)` records an event and returns it as stored (see [Conditions](#conditions)). The Local provider writes it to Meshery's local database (`EventsPersister.PersistEvent`). A Remote provider sends it to the remote provider's `createEvent` endpoint and accepts any `2xx` answer as the remote provider having it: `201` (recorded) or `200` (a replay, or an occurrence counted on or a resolution of an open condition). The stored event is the one in the answer's body; an answer with no event means the event was stored as sent. The disposition is the `Event-Disposition` header, else `created` for a `201`, else empty. Only when there is no token, or the remote call fails, does it fall back to the local database. Every persisted event passes through `models.PrepareEventForPersistence`, which gives an event with no ID (a bare `events.NewEvent()` mints none) a fresh one, so no event is stored, sent or broadcast with the zero ID, and applies the 16 KB metadata guard. `PersistClientEvent` follows the same paths without the server's default `source`.
+
+In the local database, a partial unique index (`idx_events_open_correlation`, created by `AutoMigrateSystemTables`) keeps at most one open event per owner and `correlation_key`, so two concurrent first occurrences cannot both open a condition. It covers exactly the events that are correlated: an event with no `correlation_key`, or one that identifies no user (no owner, or the zero UUID owner), is recorded as a plain row and is outside the index.
 
 An event raised outside any user request - the registrant summaries and registration failures emitted while models are seeded at boot - has no provider to route through, and on a deployment that pins `PROVIDER` the provider registration map may not even hold the one you would name. Persist those through `HandlerConfig.SystemEventPersister`, which writes to the same local database. See [Enforced Provider Flow](/reference/extensibility/providers/) for why a name lookup is not an option there.
 
@@ -66975,13 +67019,10 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		k8sContext, err := provider.GetK8sContext(token, connectionID)
 		eventBuilder.ActedUpon(uuid.FromStringOrNil(connectionID))
 		if err != nil {
-			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Encountered an issue while retrieving kubernetes context for connection ID `%s`", connectionID)).
-			WithMetadata(map[string]interface{}{
-				"error": err,
-			})
+			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Encountered an issue while retrieving kubernetes context for connection ID `%s`", connectionID))
+			models.AttachEventError(eventBuilder, err, h.log)
 			event := eventBuilder.Build()
-		    _ = provider.PersistEvent(*event,nil)
-		    go h.config.EventBroadcaster.Publish(userID, event)
+		    h.persistAndPublish(provider, token, userID, event)
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "failed to get kubernetes context for the given ID")
 			return
@@ -66992,8 +67033,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 			"Server Address": k8sContext.Server,
 		})
 		event := eventBuilder.Build()
-		_ = provider.PersistEvent(*event,nil)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 
 		// Remaining code ...
     }
@@ -67015,7 +67055,9 @@ To gain a deeper understanding and examine events more closely, you can explore 
 
 Meshery has two primary clients: Mesheryctl and Meshery UI. Both clients will produce multiple events throughout their lifecycle. Meshery Server is designed to accept these client-generated events and broadcast them using the [Broadcaster](https://github.com/meshery/meshery/blob/1b5d78ed34648e0a91df8c2273026b930f748fbc/server/models/event_broadcast.go#L14).
 
-Clients can send HTTP POST requests to [`api/system/events`](/reference/rest-apis/) with the event encapsulated in a JSON request body. Upon receiving an event, the server processes, validates, and broadcasts it using the Broadcaster. This ensures that all relevant events generated by Mesheryctl and Meshery UI are effectively communicated and managed by the Meshery Server.
+Clients can send HTTP POST requests to [`api/system/events`](/reference/rest-apis/) with the event encapsulated in a JSON request body. Upon receiving an event, the server processes, validates, and broadcasts it using the Broadcaster.
+
+The server records the client's optional correlation, provenance and trace fields with the event (`correlationKey`, `occurrenceCount`, `firstSeenAt`, `lastSeenAt`, `resolvedAt`, `source`, `type`, `specversion`, `traceId`, `parentId`, and `operationId` when sent), so a condition a client reports is counted and resolved as described in [Conditions](#conditions). A field that breaks the schemas contract is refused with `400` (`meshery-server-1489`). A client should name itself in `source` (`meshery-ui`, `mesheryctl`, `meshery-adapter-<name>`); an event that names no source is recorded without one. The answer is `201` with the event as stored, which for an occurrence counted on, or a resolution of, an open condition is the condition's event, and the `Event-Disposition` header says which. The same event is broadcast. This ensures that all relevant events generated by Mesheryctl and Meshery UI are effectively communicated and managed by the Meshery Server.
 
 ### Example
 
@@ -68225,7 +68267,7 @@ The chain looks like this:
 2. The machine spawns a subscription actor that calls `subscribeToEvents` from `ui/lib/eventsSubscription.ts`.
 3. `subscribeToEvents` opens an `EventSource` against `GET /api/system/events/subscribe`. Because the stream is same-origin, the browser automatically carries the `meshery-provider` auth cookie.
 4. Each frame arrives as `data: <event-json>` and is parsed into the raw event object. This is the same camelCase shape that the REST endpoint `/api/system/events` returns, so it is consumed as-is by the rest of the UI.
-5. For every event received, the machine stores it in Redux (`pushEvent`), invalidates the relevant RTK Query cache tag, and raises a toast through `notify`.
+5. For every event received, the machine stores it in Redux (`pushEvent`, which upserts by ID, so a condition's event the server broadcasts again after counting an occurrence or resolving it updates in place), invalidates the relevant RTK Query cache tag, and raises a toast through `notify`.
 
 Connection failures are handled inside `subscribeToEvents`. `EventSource` reconnects on its own while the connection is merely dropping, so an error is only surfaced to the caller once the browser permanently closes the stream. That notification is additionally delayed by a few seconds, which prevents a persistent failure (an expired session, for example) from turning caller-driven re-subscription into a request storm. The function returns a `{ dispose }` handle, and the state machine restarts the subscription actor when an error is finally reported.
 
@@ -68269,6 +68311,8 @@ This directory houses reusable formatter components dedicated to specific types 
 
 - **common.tsx**: Contains shared components like `TitleLink`, `DataToFileLink`, and `EmptyState`.
 - **error.tsx**: Defines `ErrorMetadataFormatter` for displaying structured error details.
+- **event_error.ts**: The single reader of `metadata.error`. `normalizeEventError` reads the schemas `EventError` (nested causes, `matchedCauses`, `referenceUrl`), the legacy MeshKit error stored with Go field names, and a design event's `{code, message}` into one view model; `eventErrorCode` and `eventErrorReferenceUrl` read the code and reference page of either shape. Never index `metadata.error` keys directly in a formatter.
+- **condition.tsx**: `getEventCondition` reads an event's condition fields (`correlationKey`, `occurrenceCount`, `firstSeenAt`, `lastSeenAt`, `resolvedAt`); `ConditionBadges` renders the summary row's occurrence count and "Resolved" badge, and `ConditionSummary` the detail panel's condition line. An event without these fields renders as before.
 - **model_registration.tsx**: Contains formatters for model import/registration events (`ModelImportMessages`, `ModelImportedSection`).
 - **pattern_dryrun.tsx**: Defines `DryRunResponse` and `SchemaValidationFormatter`, which delegate to the design lifecycle components.
 - **design_event_metadata.ts**: The single reader of design event metadata. `getDesignEventIdentity` returns `designId`, `designName`, `designVersion`, `designLink` and `viewLink`, falling back to the legacy `design_id`, `design_name` and `view_link` only when the camelCase key is absent; `getDesignEventErrorSummary` reads `status`, `errorCount`, `errors[]` and `truncated`; `isMeshkitErrorCode` tells a MeshKit code (`meshery-server-1480`) from a JSON-schema keyword or Kubernetes cause type. Never index these metadata keys directly in a formatter.
@@ -68368,20 +68412,19 @@ The following reusable components standardize how notification links, empty stat
 
 ### Error Formatter
 
-The `ErrorMetadataFormatter` is used for formatting error-related notifications in the Meshery UI Notification Center. It structures error details, probable causes, and suggested remediations in a readable format. Each entry is rendered as Markdown, so bullets and inline formatting supplied by the server are preserved.
+The `ErrorMetadataFormatter` renders an error event's `metadata.error`. It reads every shape the field is stored in through `normalizeEventError` (`formatters/event_error.ts`):
 
-- **Details**: A comprehensive explanation of the error, often broken into multiple points or steps.
-- **Probable Cause**: A list of potential reasons why the error occurred, helping the user understand the root cause.
-- **Suggested Remediation**: Actionable steps or recommendations to resolve the issue.
-- Inside the ellipse menu, the user can find the error code docs link for further explanation of the error. The code is extracted by `getErrorCodesFromEvent`, which looks at both `metadata.error` and errors nested inside `metadata.ModelDetails`.
+- **Details**: the long description rendered for this occurrence.
+- **Probable Causes**, when the producer paired each cause with its remediations (a schemas `EventError` with `probableCauses`, from a MeshKit `errors.NewV3` error): one card per cause, listing the remediations that address it. The causes named in `matchedCauses` come first, marked "Likely cause" (with the producer's confidence when it gave one). A remediation whose `actionPolicy` is `automatic` or `requiresApproval` carries a label saying so; the Notification Center runs no action. A remediation shared by several causes is listed under each.
+- **Probable Cause** and **Suggested Remediation**, for an unpaired error: MeshKit's flat lists, including every row recorded before the pairing existed (Go field names `LongDescription`, `ProbableCause`, `SuggestedRemediation`). The two lists are never paired by position.
+- A link to the code's reference page when `metadata.error.referenceUrl` is set.
+
+Each entry is rendered as Markdown. The event's full description is shown above the details only when the summary row had to truncate it. Inside the ellipsis menu, **Error Docs** opens the code's `referenceUrl`, else the code's anchor on the error code reference; `getErrorCodesFromEvent` reads the code from `metadata.error` (`code` or legacy `Code`), design event errors and `metadata.ModelDetails`.
 
 **Props:**
 
-- `metadata` (object): Contains error metadata fields, each an array of strings:
-  - `LongDescription`: Provides details about the error.
-  - `ProbableCause`: Lists possible reasons for the error.
-  - `SuggestedRemediation`: Suggests solutions to fix the error.
-- `event` (object, optional): Contains the notification event data. Only `description` is read.
+- `metadata` (unknown): the event's `metadata.error`, in any shape.
+- `event` (object, optional): the notification event. Only `description` is read. `FormattedMetadata` passes the notification's event.
 
 **Path:** `ui/components/layout/NotificationCenter/formatters/error.tsx`
 
@@ -68390,11 +68433,18 @@ The `ErrorMetadataFormatter` is used for formatting error-related notifications 
 ```tsx
 <ErrorMetadataFormatter
   metadata={{
-    LongDescription: ['An unexpected error occurred while deploying the design.'],
-    ProbableCause: ['Misconfigured Kubernetes cluster.'],
-    SuggestedRemediation: ['Check your kubeconfig file and retry deployment.'],
+    code: 'meshery-server-1304',
+    longDescription: 'dial tcp 10.0.0.1:6443: connect: connection refused',
+    probableCauses: [
+      {
+        id: 'api-server-unreachable',
+        description: 'The Kubernetes API server is not reachable.',
+        remediations: [{ id: 'check-network', description: 'Verify network connectivity.' }],
+      },
+    ],
+    matchedCauses: [{ causeId: 'api-server-unreachable' }],
   }}
-  event={{ description: 'Design deployment failed' }}
+  event={{ description: 'Could not assign server id, skipping context prod' }}
 />
 ```
 
@@ -68402,7 +68452,11 @@ The `ErrorMetadataFormatter` is used for formatting error-related notifications 
 
 **When to Use:**
 
-The `ErrorMetadataFormatter` is used when dealing with structured error events that follow a pattern (description, cause, remediation). A new formatter should be created only if the error metadata deviates significantly from the `ErrorMetadataFormatter` metadata structure.
+The `ErrorMetadataFormatter` is used for every `metadata.error`. A new formatter should be created only if an event's error metadata deviates from the schemas `EventError` and the legacy MeshKit shape.
+
+### Conditions
+
+An event that reports an ongoing condition counts its repeats instead of recording a notification each ([server events](/project/contributing/contributing-server-events/)). When its `occurrenceCount` is above one, the summary row shows the count and the time it was last seen; a resolved condition shows a "Resolved" badge. The expanded notification lists how often it occurred, when it was first and last seen, and when it was resolved.
 
 ### Model Registration Formatter
 
@@ -69712,6 +69766,7 @@ This tool will create a couple of files, one of them is designed to be used to g
 1. Running `make error` analyzes your code and returns any warnings to be aware of.
 1. Capitalize the first letter of the every error description.
 1. Using errors.NewDefault(...) is deprecated. This tool emits a warning if its use is detected.
+1. Use errors.NewV3(...) for an error whose causes each need their own remediations (see [Errors with several causes](#errors-with-several-causes-errorsnewv3)); otherwise errors.NewV2(...) or errors.New(...).
 1. Use errors.New(...) from MeshKit to create actual errors with all the details.
   This is often done in a factory function. It is important that the error code variable is used here, not a literal.
   Specify detailed descriptions, probable causes, and remedies. They need to be string literals, call expressions are ignored.
@@ -69802,6 +69857,67 @@ body and strips the MeshKit code, severity, and remediation that clients parse.
 See [HTTP Error Response Contract](/project/contributing/error-contract/)
 for the response shape, the `writeMeshkitError` / `writeJSONError` helpers, and
 how to choose the status code.
+
+## Errors with several causes: `errors.NewV3`
+
+`errors.New` takes probable causes and suggested remediations as two flat lists, and nothing tells a reader which remediation answers which cause. When an error has causes that each need their own remediations, declare it with `errors.NewV3`. Each cause then carries the remediations that address it, and a remediation can name an action a client may run and the policy for running it ([error definition contract](https://github.com/meshery/schemas/blob/master/docs/error-definition-contract.md)).
+
+
+
+<pre class="codeblock-pre">
+	<div class="codeblock">
+		<code class="clipboardjs">// remRetryConnection answers every cause, so it is declared once.
+var remRetryConnection = errors.Remediation{
+	ID:          &#34;retry-connection&#34;,
+	Description: &#34;Once the cause is fixed, reconnect the connection.&#34;,
+	Action:      &#34;connection.reconnect&#34;,
+	ActionPolicy: errors.RequiresApproval,
+}
+
+func ErrUnreachableCluster(err error, server string) error {
+	e := errors.NewV3(ErrUnreachableClusterCode, errors.Alert,
+		[]string{&#34;Error communicating with the Kubernetes API server.&#34;},
+		[]string{&#34;Meshery Server did not get an answer from the cluster&#39;s API server.&#34;},
+		[]errors.Cause{
+			{
+				ID:          &#34;api-server-unreachable&#34;,
+				Description: &#34;The Kubernetes API server is not reachable.&#34;,
+				Remediations: []errors.Remediation{
+					{ID: &#34;check-network&#34;, Description: &#34;Verify network connectivity to the API server.&#34;},
+					remRetryConnection,
+				},
+			},
+			{
+				ID:          &#34;credentials-rejected&#34;,
+				Description: &#34;The cluster rejected the connection&#39;s credentials.&#34;,
+				Remediations: []errors.Remediation{
+					{ID: &#34;renew-credential&#34;, Description: &#34;Renew the connection&#39;s credential.&#34;,
+						Action: &#34;connection.refresh-credentials&#34;, ActionPolicy: errors.Automatic},
+					remRetryConnection,
+				},
+			},
+		})
+	// Instance text is appended after NewV3 returns.
+	e.LongDescription = append(e.LongDescription, fmt.Sprintf(&#34;API server: %s&#34;, server), err.Error())
+	return e
+}</code>
+	</div>
+</pre>
+
+
+`NewV3` returns a `*errors.ErrorV2` whose `Causes` hold the nesting and whose flat `ProbableCause` and `SuggestedRemediation` are derived from it. `GetCause`, `GetRemedy`, `Error()` and every reader of the flat lists keep working.
+
+`errorutil` reads these definitions from source, so they follow strict rules:
+
+- **Literals only.** Write every `errors.Cause` and `errors.Remediation` as a keyed composite literal with string-literal `ID`, `Description` and `Action`. Every element of the short- and long-description lists is a string literal too: build instance text, such as an address or `err.Error()`, into `LongDescription` after `NewV3` returns, as above.
+- **Stable ids.** Ids are lowercase words joined by hyphens (`api-server-unreachable`) and never change once published: events name the causes that applied in `metadata.error.matchedCauses`, and each code's reference page anchors on them. Cause ids are unique within an error, and every cause has at least one remediation.
+- **Shared remediations.** A remediation that answers several causes is declared once as a package-level `var` (in any file of the package) and referenced from each cause. `errorutil` resolves the variable, and the flat remediation list carries it once.
+- **Action policies.** `errors.Manual` (also when empty) means a person applies the remediation. `errors.RequiresApproval` lets a client run the `Action` after a person approves it, and `errors.Automatic` lets it run the `Action` on its own and say so. Both need an `Action`, dot-separated lowercase words such as `connection.reconnect`. An unknown policy is never coerced: `errors.ValidateCauses` and `errorutil` reject it, and a reader treats it as manual.
+- **Tests.** Unit-test a definition with `errors.ValidateCauses(errors.GetCauses(err))`. `TestErrUnreachableKubeAPICauses` in `server/models/event_error_test.go` is an example.
+
+**An invalid definition fails the build.** `errorutil` lists every `NewV3` definition it rejects in `errorutil_analyze_summary.json` under `invalid_definitions`, logs each one with its problems, leaves it out of both exports (never in a reduced form), and exits non-zero from `analyze` and `update`. The `error-codes-updater` workflow then fails the pull request. `errors.New` and `errors.NewV2` definitions are unaffected.
+
+When the server can tell which cause applies to an occurrence, record it where the underlying error is still in hand, so the error event names it. `ErrUnreachableKubeAPI` (`server/models/error.go`) classifies the Kubernetes client error, and `models.AttachEventError` puts the matched cause on the event; see [Contributing to Meshery Server Events](/project/contributing/contributing-server-events/).
 
 ## Replacing logrus
 
@@ -69972,7 +70088,17 @@ Name each constant `<BuilderFuncName>Code` - `errorutil` keys the export off tha
 
 ### Regenerating the docs reference
 
-`server/helpers/errorutil_errors_export.json` is gitignored, but the reference data at `docs/data/errorref/meshery-server_errors_export.json` is tracked. Regenerate it with the `jq --slurpfile` wrapper the workflow uses, or the published error reference silently omits the new codes.
+`errorutil` writes four files to the output directory, all gitignored: `errorutil_analyze_errors.json` and `errorutil_analyze_summary.json` (the analysis: duplicates, convention violations and `invalid_definitions`) and two exports:
+
+- `errorutil_errors_export.json`, the legacy export. Its shape is frozen (snake_case keys, joined strings) because the docs shortcodes read it; `NewV3` entries additionally carry `probableCauses`.
+- `errorutil_errors_index.json`, the component's definitions as a schemas `ErrorReferenceIndex` (`schemaVersion` 2): `code` (`meshery-server-1304`), `moniker`, `component`, `numericCode`, severity, descriptions, nested causes and the derived flat lists. `errorutil` validates every entry against the schema before writing it; the docs build assigns `referenceUrl`.
+
+The reference data built from them is tracked:
+
+- `docs/data/errorref/meshery-server_errors_export.json`, from the legacy export. Regenerate it with the `jq --slurpfile` wrapper the workflow uses, or the published error reference silently omits the new codes.
+- `docs/data/errorindex/meshery-server_errors_index.json`, from the nested export (`jq . server/helpers/errorutil_errors_index.json`). The docs build takes a code's causes from it, else from the legacy export's `probableCauses`, and otherwise shows the flat lists.
+
+The workflow regenerates both. The docs build publishes every component's codes as `reference/error-codes/index.json`, a schemas `ErrorReferenceIndex` (`schemaVersion` 2).
 
 ### Rendering errors to the user
 
@@ -73479,6 +73605,12 @@ url: /reference/error-codes/client-mesheryctl/errattachauthtokencode-1093/index.
 
 
 --------------------------------------------------------------------------------
+title: "ErrAttachEventErrorCode-1488"
+url: /reference/error-codes/component-meshery-server/errattacheventerrorcode-1488/index.md
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
 title: "ErrAutoRegisterCode-1219"
 url: /reference/error-codes/component-meshery-server/errautoregistercode-1219/index.md
 --------------------------------------------------------------------------------
@@ -76263,6 +76395,12 @@ url: /reference/error-codes/component-meshery-server/errinvalidcapabilitycode-12
 
 
 --------------------------------------------------------------------------------
+title: "ErrInvalidClientEventCode-1489"
+url: /reference/error-codes/component-meshery-server/errinvalidclienteventcode-1489/index.md
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
 title: "ErrInvalidCommandCode-1191"
 url: /reference/error-codes/client-mesheryctl/errinvalidcommandcode-1191/index.md
 --------------------------------------------------------------------------------
@@ -77133,6 +77271,12 @@ url: /reference/error-codes/component-meshery-server/errmigratedatabasetablescod
 
 
 --------------------------------------------------------------------------------
+title: "ErrMigrateEventCorrelationIndexCode-1487"
+url: /reference/error-codes/component-meshery-server/errmigrateeventcorrelationindexcode-1487/index.md
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
 title: "ErrMintTraceContextCode-11340"
 url: /reference/error-codes/library-meshkit/errminttracecontextcode-11340/index.md
 --------------------------------------------------------------------------------
@@ -77671,19 +77815,24 @@ Each error code has a stable page. Its URL follows this pattern:
 /reference/error-codes/<component-type>-<component-name>/<event-moniker>-<code>/
 ```
 
-The [machine-readable error code index](./index.json)
-contains one record per code, including its component, severity, descriptions,
-probable cause, suggested remediation, and reference URL.
+The [machine-readable error code index](./index.json) is a
+[meshery/schemas](https://github.com/meshery/schemas/blob/master/docs/error-definition-contract.md)
+`ErrorReferenceIndex` (`schemaVersion` 2). It holds one `ErrorDefinition` per
+code: its full `code` (for example `meshery-server-1304`), `moniker`,
+`component`, `severity`, descriptions and `referenceUrl`. Where a component
+pairs each probable cause with the remediations that address it, the entry
+carries `probableCauses`, each with its own `remediations`; every entry carries
+the flat `probableCause` and `suggestedRemediation` lists.
 
-<div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Error codes are combination of component type, component name, event moniker and numberic code</div>
+<div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Error codes are combination of component type, component name, event moniker and numeric code</div>
 
 Error codes are a hyphenated collection of details that include:
 
 <ul>
 <li><b>Component Type</b> (string): The type of the component that emits this error event; e.g. <code>adapter</code></li>
-<li><b>Component Name</b> (string): The name of the component that emits this error event; e.g. <code>ameshery-istio</code></li>
+<li><b>Component Name</b> (string): The name of the component that emits this error event; e.g. <code>meshery-istio</code></li>
 <li><b>Error Moniker</b> (string): A semi-human readable short key used in descriptive reference to the specific event at-hand; e.g. <code>ErrClosingDatabaseInstanceCode</code></li>
-<li><b>Numberic Code</b> (number): Unique number identifying a specific error as scoped by a specific component; e.g. <code>a1000</code></li>
+<li><b>Numeric Code</b> (number): Unique number identifying a specific error as scoped by a specific component; e.g. <code>1000</code></li>
 </ul>
 The numeric portion of error codes are component-scoped. The numeric portion of error codes are allowed to overlap between Meshery components. The combination of the <code>[component type]-[component name]-[event moniker]-[numeric code]</code> is what makes a given error code globally unique.</div>
 
@@ -88932,18 +89081,20 @@ Meshery Database handler is not accessible to perform operations</p>
             <td id=" -1304" class="error-name-code">
               <a href="/reference/error-codes/component-meshery-server/errunreachablekubeapicode-1304/"><code>ErrUnreachableKubeAPICode-1304</code></a>
             </td>
-            <td></td>
+            <td>Error communicating with the Kubernetes API server.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnreachableKubeAPICode-1304" target="_blank">search forum</a></td>
           </tr>
           <tr id="meshery-server-ErrUnreachableKubeAPICode-more-info" class="tbl-hidden-row">
             <td style="word-break:break-all;" colspan="4">
               <div class="error-heading">Long Description</div>
-              <p class="error-details"></p>
+              <p class="error-details">Meshery Server did not get an answer from the cluster&#39;s API server.</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">The Kubernetes API server is not reachable.
-Credentials are invalid.</p>
+Credentials are invalid.
+The cluster&#39;s serving certificate is not trusted by Meshery Server.</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Verify network connectivity and Kubernetes API responsiveness between Meshery Server and your cluster.
+Once the cause is fixed, reconnect the cluster&#39;s connection from Connections, or wait for Meshery Server to discover it again.
 Ensure client credential is not expired and is properly formed.
 Remove the cluster credential and enable &#39;insecure-skip-tls-verify&#39;.</p>
             </td>
@@ -93580,6 +93731,87 @@ Check your logger configuration settings</p>
               <p class="error-details">The header row of the keys file was renamed or dropped, so no row could be selected for registration and nothing is seeded from this file; on a fresh or reset database the Key table stays empty, while previously seeded keys are left untouched</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Restore the missing header in server/permissions/keys.csv (or the file KEYS_PATH points at) and restart Meshery Server so keys seed again</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrMigrateEventCorrelationIndexCode-1487" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMigrateEventCorrelationIndexCode-more-info" onclick="toggle_visibility('meshery-server-ErrMigrateEventCorrelationIndexCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1487" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errmigrateeventcorrelationindexcode-1487/"><code>ErrMigrateEventCorrelationIndexCode-1487</code></a>
+            </td>
+            <td>Meshery Server could not create the index that keeps one open event per condition</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrMigrateEventCorrelationIndexCode-1487" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrMigrateEventCorrelationIndexCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The events table has more than one open event (no resolved_at) with the same owner and correlation_key, which an earlier Meshery Server could have recorded
+The database is read-only, locked by another process or not reachable</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Resolve or delete the duplicate open events for that owner and correlation_key, then restart Meshery Server
+Make sure Meshery Server can write to its database, or perform a hard reset</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrAttachEventErrorCode-1488" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrAttachEventErrorCode-more-info" onclick="toggle_visibility('meshery-server-ErrAttachEventErrorCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1488" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errattacheventerrorcode-1488/"><code>ErrAttachEventErrorCode-1488</code></a>
+            </td>
+            <td>An event&#39;s metadata.error was kept in its legacy form</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrAttachEventErrorCode-1488" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrAttachEventErrorCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The error the event reports carries no MeshKit error code
+The MeshKit error&#39;s causes or matched causes break the schemas EventError contract</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Report the error the event reports as a MeshKit error with a code
+Fix the probable causes of the MeshKit error, or the matched cause ids its producer names, so they satisfy the EventError contract</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInvalidClientEventCode-1489" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidClientEventCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidClientEventCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1489" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errinvalidclienteventcode-1489/"><code>ErrInvalidClientEventCode-1489</code></a>
+            </td>
+            <td>The event&#39;s correlation, provenance, trace or metadata.error fields are not valid</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInvalidClientEventCode-1489" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrInvalidClientEventCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">A field breaks the meshery/schemas event contract: a correlationKey, source or type outside 1 to 255 characters, an occurrenceCount below 1, a lastSeenAt before firstSeenAt, a specversion other than 1.0, or a traceId or parentId that is not W3C Trace Context hex
+A metadata.error object carrying a lowercase code key breaks the schemas EventError contract: a value of the wrong JSON type or an unknown key, an empty code, a severity that is not an error severity, too many causes or remediations, a duplicate cause id, one remediation id naming two different remediations, an automatic or requiresApproval actionPolicy without an action, flat probableCause or suggestedRemediation lists that are not the ones derived from probableCauses, or a matchedCauses entry whose causeId is malformed, is not one of probableCauses, or whose confidence is outside 0 to 1. The long description names each failing field path</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Send the fields as the schemas EventPayload defines them, or omit the ones the client does not set
+Send metadata.error as the schemas EventError shape (code, shortDescription and the other defined keys only), or drop it when the client has no structured error to attach</p>
             </td>
           </tr>
         

@@ -85,19 +85,24 @@ Each error code has a stable page. Its URL follows this pattern:
 /reference/error-codes/<component-type>-<component-name>/<event-moniker>-<code>/
 ```
 
-The [machine-readable error code index](./index.json)
-contains one record per code, including its component, severity, descriptions,
-probable cause, suggested remediation, and reference URL.
+The [machine-readable error code index](./index.json) is a
+[meshery/schemas](https://github.com/meshery/schemas/blob/master/docs/error-definition-contract.md)
+`ErrorReferenceIndex` (`schemaVersion` 2). It holds one `ErrorDefinition` per
+code: its full `code` (for example `meshery-server-1304`), `moniker`,
+`component`, `severity`, descriptions and `referenceUrl`. Where a component
+pairs each probable cause with the remediations that address it, the entry
+carries `probableCauses`, each with its own `remediations`; every entry carries
+the flat `probableCause` and `suggestedRemediation` lists.
 
-<div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Error codes are combination of component type, component name, event moniker and numberic code</div>
+<div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Error codes are combination of component type, component name, event moniker and numeric code</div>
 
 Error codes are a hyphenated collection of details that include:
 
 <ul>
 <li><b>Component Type</b> (string): The type of the component that emits this error event; e.g. <code>adapter</code></li>
-<li><b>Component Name</b> (string): The name of the component that emits this error event; e.g. <code>ameshery-istio</code></li>
+<li><b>Component Name</b> (string): The name of the component that emits this error event; e.g. <code>meshery-istio</code></li>
 <li><b>Error Moniker</b> (string): A semi-human readable short key used in descriptive reference to the specific event at-hand; e.g. <code>ErrClosingDatabaseInstanceCode</code></li>
-<li><b>Numberic Code</b> (number): Unique number identifying a specific error as scoped by a specific component; e.g. <code>a1000</code></li>
+<li><b>Numeric Code</b> (number): Unique number identifying a specific error as scoped by a specific component; e.g. <code>1000</code></li>
 </ul>
 The numeric portion of error codes are component-scoped. The numeric portion of error codes are allowed to overlap between Meshery components. The combination of the <code>[component type]-[component name]-[event moniker]-[numeric code]</code> is what makes a given error code globally unique.</div>
 
@@ -11346,18 +11351,20 @@ Meshery Database handler is not accessible to perform operations</p>
             <td id=" -1304" class="error-name-code">
               <a href="/reference/error-codes/component-meshery-server/errunreachablekubeapicode-1304/"><code>ErrUnreachableKubeAPICode-1304</code></a>
             </td>
-            <td></td>
+            <td>Error communicating with the Kubernetes API server.</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrUnreachableKubeAPICode-1304" target="_blank">search forum</a></td>
           </tr>
           <tr id="meshery-server-ErrUnreachableKubeAPICode-more-info" class="tbl-hidden-row">
             <td style="word-break:break-all;" colspan="4">
               <div class="error-heading">Long Description</div>
-              <p class="error-details"></p>
+              <p class="error-details">Meshery Server did not get an answer from the cluster&#39;s API server.</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">The Kubernetes API server is not reachable.
-Credentials are invalid.</p>
+Credentials are invalid.
+The cluster&#39;s serving certificate is not trusted by Meshery Server.</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Verify network connectivity and Kubernetes API responsiveness between Meshery Server and your cluster.
+Once the cause is fixed, reconnect the cluster&#39;s connection from Connections, or wait for Meshery Server to discover it again.
 Ensure client credential is not expired and is properly formed.
 Remove the cluster credential and enable &#39;insecure-skip-tls-verify&#39;.</p>
             </td>
@@ -15994,6 +16001,87 @@ Check your logger configuration settings</p>
               <p class="error-details">The header row of the keys file was renamed or dropped, so no row could be selected for registration and nothing is seeded from this file; on a fresh or reset database the Key table stays empty, while previously seeded keys are left untouched</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Restore the missing header in server/permissions/keys.csv (or the file KEYS_PATH points at) and restart Meshery Server so keys seed again</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrMigrateEventCorrelationIndexCode-1487" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMigrateEventCorrelationIndexCode-more-info" onclick="toggle_visibility('meshery-server-ErrMigrateEventCorrelationIndexCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1487" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errmigrateeventcorrelationindexcode-1487/"><code>ErrMigrateEventCorrelationIndexCode-1487</code></a>
+            </td>
+            <td>Meshery Server could not create the index that keeps one open event per condition</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrMigrateEventCorrelationIndexCode-1487" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrMigrateEventCorrelationIndexCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The events table has more than one open event (no resolved_at) with the same owner and correlation_key, which an earlier Meshery Server could have recorded
+The database is read-only, locked by another process or not reachable</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Resolve or delete the duplicate open events for that owner and correlation_key, then restart Meshery Server
+Make sure Meshery Server can write to its database, or perform a hard reset</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrAttachEventErrorCode-1488" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrAttachEventErrorCode-more-info" onclick="toggle_visibility('meshery-server-ErrAttachEventErrorCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1488" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errattacheventerrorcode-1488/"><code>ErrAttachEventErrorCode-1488</code></a>
+            </td>
+            <td>An event&#39;s metadata.error was kept in its legacy form</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrAttachEventErrorCode-1488" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrAttachEventErrorCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The error the event reports carries no MeshKit error code
+The MeshKit error&#39;s causes or matched causes break the schemas EventError contract</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Report the error the event reports as a MeshKit error with a code
+Fix the probable causes of the MeshKit error, or the matched cause ids its producer names, so they satisfy the EventError contract</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInvalidClientEventCode-1489" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidClientEventCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidClientEventCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1489" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errinvalidclienteventcode-1489/"><code>ErrInvalidClientEventCode-1489</code></a>
+            </td>
+            <td>The event&#39;s correlation, provenance, trace or metadata.error fields are not valid</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInvalidClientEventCode-1489" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrInvalidClientEventCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">A field breaks the meshery/schemas event contract: a correlationKey, source or type outside 1 to 255 characters, an occurrenceCount below 1, a lastSeenAt before firstSeenAt, a specversion other than 1.0, or a traceId or parentId that is not W3C Trace Context hex
+A metadata.error object carrying a lowercase code key breaks the schemas EventError contract: a value of the wrong JSON type or an unknown key, an empty code, a severity that is not an error severity, too many causes or remediations, a duplicate cause id, one remediation id naming two different remediations, an automatic or requiresApproval actionPolicy without an action, flat probableCause or suggestedRemediation lists that are not the ones derived from probableCauses, or a matchedCauses entry whose causeId is malformed, is not one of probableCauses, or whose confidence is outside 0 to 1. The long description names each failing field path</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Send the fields as the schemas EventPayload defines them, or omit the ones the client does not set
+Send metadata.error as the schemas EventError shape (code, shortDescription and the other defined keys only), or drop it when the client has no structured error to attach</p>
             </td>
           </tr>
         

@@ -30,6 +30,10 @@ Each notification summarizes what happened. Depending on the event, it includes:
 
 Expand a notification to see its full description. Meshery highlights critical, actionable events in red. Timestamps use your device's time zone.
 
+An error notification lists the error's probable causes. When Meshery knows which remediations address which cause, each cause is shown with its own remediations, and the cause Meshery found most likely is listed first and marked **Likely cause**. A remediation a client may run for you is labelled **Requires approval** or **Runs automatically**. The error's code links to its page in the [error code reference](/reference/error-codes/).
+
+A problem that keeps happening, such as a Kubernetes connection Meshery cannot reach, is one notification rather than one per attempt. Its summary shows how many times it occurred (for example `×4`) and when it was last seen. When the problem clears, Meshery records that the condition was resolved, and the notification is marked **Resolved**.
+
 <a href="./images/description.png">
   <img src="./images/description.png" alt="Event descriptions" style="max-width: 600px; width: 100%; height: auto; margin-top: 10px;" />
 </a>
