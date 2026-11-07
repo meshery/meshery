@@ -106,6 +106,15 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		return nil, ErrInvalidToken()
 	}
 
+	if resp.StatusCode == http.StatusInternalServerError {
+		defer func() { _ = resp.Body.Close() }()
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, ErrReadResponseBody(err)
+		}
+		return nil, ErrMesheryServerInternalError(errors.New(string(bodyBytes)))
+	}
+
 	// failsafe for not being authenticated
 	if ContentTypeIsHTML(resp) {
 		SafeClose(resp.Body)
@@ -121,15 +130,6 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		}
 		Log.Debugf("Response body for 404 Not Found: %s", string(bodyBytes))
 		return nil, ErrNotFound(errors.New(string(bodyBytes)))
-	}
-
-	if resp.StatusCode == http.StatusInternalServerError {
-		defer func() { _ = resp.Body.Close() }()
-		bodyBytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, ErrReadResponseBody(err)
-		}
-		return nil, ErrMesheryServerInternalError(errors.New(string(bodyBytes)))
 	}
 
 	// failsafe for bad api call
