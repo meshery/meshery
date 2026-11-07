@@ -632,6 +632,9 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 			description = "Error deleting connection; it was already disconnected and marked deleted"
 			metadata["connectionRetired"] = true
 		}
+		if teardownErr != nil {
+			metadata["teardownError"] = teardownErr.Error() // an error value marshals to {}
+		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(description).WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)

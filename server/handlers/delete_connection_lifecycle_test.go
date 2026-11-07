@@ -373,6 +373,49 @@ func TestDeleteConnectionProviderRefusalAfterRetirement(t *testing.T) {
 		t.Errorf("failure event = (%q, %q, connectionRetired %v); want an error that reports the retirement",
 			persisted[0].Severity, persisted[0].Description, persisted[0].Metadata["connectionRetired"])
 	}
+	if v, ok := persisted[0].Metadata["teardownError"]; ok {
+		t.Errorf("failure event carries teardownError %v although the teardown succeeded", v)
+	}
+}
+
+// When the teardown fails and the provider then refuses the row delete, the
+// failure event must still carry why the teardown failed - as a string, so it
+// survives persistence.
+func TestDeleteConnectionProviderRefusalAfterTeardownFailure(t *testing.T) {
+	f := newLifecycleFixture(t)
+	id := k8sConnectionID(t)
+	f.saveRow(t, id, connections.CONNECTED)
+	probe := &probeAction{provider: f.provider, id: id, err: errors.New("undeploy failed")}
+	f.trackMachine(t, id, machines.CONNECTED, &kubernetes.MachineCtx{}, probe)
+
+	rec := deleteConnection(t, f.h, refusingProvider{f.provider}, id)
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want 500. body: %s", rec.Code, rec.Body.String())
+	}
+	if n := probe.calls.Load(); n != 1 {
+		t.Errorf("delete action ran %d times, want 1", n)
+	}
+	if _, ok := f.tracker.Get(id); ok {
+		t.Error("tracker still holds the machine after a failed teardown")
+	}
+
+	var persisted []events.Event
+	if err := f.provider.EventsPersister.DB.Where("action = ?", "delete").Find(&persisted).Error; err != nil {
+		t.Fatal(err)
+	}
+	if len(persisted) != 1 {
+		t.Fatalf("persisted %d delete events, want 1", len(persisted))
+	}
+	if persisted[0].Severity != events.Error {
+		t.Errorf("failure event severity = %q, want %q", persisted[0].Severity, events.Error)
+	}
+	// Read back from the database: the reason must survive JSON.
+	if teardownErr, _ := persisted[0].Metadata["teardownError"].(string); !strings.Contains(teardownErr, "undeploy failed") {
+		t.Errorf("persisted teardownError = %#v, want a string carrying %q", persisted[0].Metadata["teardownError"], "undeploy failed")
+	}
+	if _, ok := persisted[0].Metadata["connectionRetired"]; ok {
+		t.Error("failure event reports a retirement although the delete transition did not complete")
+	}
 }
 
 // A delete racing a re-import of the same id must never leave the deleted
