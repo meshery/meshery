@@ -1829,6 +1829,105 @@
         "short_description": "Policy limit and offset must be non-negative",
         "probable_cause": "Limit and offset values must be zero or positive",
         "suggested_remediation": "Set limit and offset to zero or a positive value"
+      },
+      "11337": {
+        "name": "ErrNotMeshkitErrorCode",
+        "code": "11337",
+        "severity": "Alert",
+        "long_description": "The error has no MeshKit error code",
+        "short_description": "The error is not a MeshKit error",
+        "probable_cause": "The error was created without errors.New, errors.NewV2 or errors.NewV3, so it has no error code.",
+        "suggested_remediation": "Wrap the failure in a MeshKit error defined in the package's error.go, or report it in the event description instead of metadata.error.",
+        "probableCauses": [
+          {
+            "description": "The error was created without errors.New, errors.NewV2 or errors.NewV3, so it has no error code.",
+            "id": "plain-error",
+            "remediations": [
+              {
+                "actionPolicy": "manual",
+                "description": "Wrap the failure in a MeshKit error defined in the package's error.go, or report it in the event description instead of metadata.error.",
+                "id": "use-meshkit-error"
+              }
+            ]
+          }
+        ]
+      },
+      "11338": {
+        "name": "ErrInvalidEventErrorCode",
+        "code": "11338",
+        "severity": "Alert",
+        "long_description": "The event's metadata.error would break the schemas EventError contract",
+        "short_description": "The error cannot be attached to an event",
+        "probable_cause": "The error's causes break the error definition contract, for example a missing id, an unknown action policy, or an automatic remediation without an action.\nA matched cause names a cause id the error does not define, or its confidence is outside 0 to 1.",
+        "suggested_remediation": "Run errorutil analyze on the component and fix the definitions it reports.\nCorrect the code that builds the event so it sets the field as the schemas event construct defines it.",
+        "probableCauses": [
+          {
+            "description": "The error's causes break the error definition contract, for example a missing id, an unknown action policy, or an automatic remediation without an action.",
+            "id": "invalid-definition",
+            "remediations": [
+              {
+                "actionPolicy": "manual",
+                "description": "Run errorutil analyze on the component and fix the definitions it reports.",
+                "id": "run-errorutil"
+              }
+            ]
+          },
+          {
+            "description": "A matched cause names a cause id the error does not define, or its confidence is outside 0 to 1.",
+            "id": "unknown-matched-cause",
+            "remediations": [
+              {
+                "actionPolicy": "manual",
+                "description": "Correct the code that builds the event so it sets the field as the schemas event construct defines it.",
+                "id": "fix-event-producer"
+              }
+            ]
+          }
+        ]
+      },
+      "11339": {
+        "name": "ErrInvalidEventCode",
+        "code": "11339",
+        "severity": "Alert",
+        "long_description": "The event breaks the schemas event construct",
+        "short_description": "The event is not valid",
+        "probable_cause": "A correlation, provenance or trace field of the event has a value the schemas event construct does not allow.",
+        "suggested_remediation": "Correct the code that builds the event so it sets the field as the schemas event construct defines it.",
+        "probableCauses": [
+          {
+            "description": "A correlation, provenance or trace field of the event has a value the schemas event construct does not allow.",
+            "id": "invalid-field",
+            "remediations": [
+              {
+                "actionPolicy": "manual",
+                "description": "Correct the code that builds the event so it sets the field as the schemas event construct defines it.",
+                "id": "fix-event-producer"
+              }
+            ]
+          }
+        ]
+      },
+      "11340": {
+        "name": "ErrMintTraceContextCode",
+        "code": "11340",
+        "severity": "Alert",
+        "long_description": "A trace or span id could not be generated",
+        "short_description": "Unable to mint a trace context id",
+        "probable_cause": "The system's secure random number generator is unavailable.",
+        "suggested_remediation": "Check that the operating system's random source is readable by the process.",
+        "probableCauses": [
+          {
+            "description": "The system's secure random number generator is unavailable.",
+            "id": "no-entropy",
+            "remediations": [
+              {
+                "actionPolicy": "manual",
+                "description": "Check that the operating system's random source is readable by the process.",
+                "id": "check-random-source"
+              }
+            ]
+          }
+        ]
       }
     }
   }

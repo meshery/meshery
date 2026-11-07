@@ -2475,8 +2475,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error while saving sample ",
-        "probable_cause": "User doesn't have permission to save content.\\nDatabase unreachable.\\nDatabase locked or corrupt.\\nContent unsupported.",
-        "suggested_remediation": "Retry fetching content\\nRetry sigining in\\nLogin with correct user account\\nRetry after deleting '~/.meshery/config'."
+        "probable_cause": "User doesn't have permission to save content.\nDatabase unreachable.\nDatabase locked or corrupt.\nContent unsupported.",
+        "suggested_remediation": "Retry fetching content\nRetry sigining in\nLogin with correct user account\nRetry after deleting '~/.meshery/config'."
       },
       "1287": {
         "name": "ErrGettingSeededComponentsCode",
@@ -2484,8 +2484,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error while getting \n from sample content",
-        "probable_cause": "Sample content does not exist.\\nContent file format not supported.\\nUser doesn't have permission to read sample content.\\nContent file corrupt.",
-        "suggested_remediation": "Try restarting Meshery.\\nTry fetching content again."
+        "probable_cause": "Sample content does not exist.\nContent file format not supported.\nUser doesn't have permission to read sample content.\nContent file corrupt.",
+        "suggested_remediation": "Try restarting Meshery.\nTry fetching content again."
       },
       "1288": {
         "name": "ErrDownloadingSeededComponentsCode",
@@ -2719,7 +2719,7 @@
         "long_description": "",
         "short_description": "",
         "probable_cause": "component generation was canceled due to deletion or reload of K8s context\nInvalid kubeconfig\nFilters passed incorrectly in config\nCould not fetch API resources from Kubernetes server",
-        "suggested_remediation": "If there is the log \\\"Starting to register ...\\\" for the same contextID after this error means that for some reason the context was reloaded which caused this run to abort. In that case, this error can be ignored.\nMake sure that the configuration filters passed are in accordance with output from /openapi/v2"
+        "suggested_remediation": "If there is the log \"Starting to register ...\" for the same contextID after this error means that for some reason the context was reloaded which caused this run to abort. In that case, this error can be ignored.\nMake sure that the configuration filters passed are in accordance with output from /openapi/v2"
       },
       "1314": {
         "name": "ErrGetK8sComponentsCode",
@@ -2736,7 +2736,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Failed to parse manifest into JSON",
-        "probable_cause": "Ensure manifests are valid and also use the restricted YAML features like using only \\\"strings\\\" in the field names",
+        "probable_cause": "Ensure manifests are valid and also use the restricted YAML features like using only \"strings\" in the field names",
         "suggested_remediation": "Ensure YAML is a valid Kubernetes Manifest"
       },
       "1316": {
@@ -2755,7 +2755,7 @@
         "long_description": "",
         "short_description": "Could not create design file from given cytoscape",
         "probable_cause": "Invalid cytoscape body\nService name is empty for one or more services\n_data does not have correct data",
-        "suggested_remediation": "Make sure cytoscape is valid\nCheck if valid service name was passed in the request\nMake sure _data field has \\\"settings\\\" field"
+        "suggested_remediation": "Make sure cytoscape is valid\nCheck if valid service name was passed in the request\nMake sure _data field has \"settings\" field"
       },
       "1318": {
         "name": "ErrDryRunCode",
@@ -3094,7 +3094,7 @@
         "name": "ErrEmptySessionCode",
         "code": "1356",
         "severity": "Alert",
-        "long_description": "Unable to find \\\"token\\\" cookie in the request.",
+        "long_description": "Unable to find \"token\" cookie in the request.",
         "short_description": "No session found in the request",
         "probable_cause": "User is not authenticated with the selected Provider.\nBrowser might be restricting use of cookies.",
         "suggested_remediation": "Choose a Provider and login to establish an active session (receive a new token and cookie). Optionally, try using a private/incognito browser window.\nVerify that your browser settings allow cookies."
@@ -3628,7 +3628,7 @@
         "long_description": "",
         "short_description": "Invalid contexts configuration",
         "probable_cause": "The `contexts` form field is not a valid JSON map from context ID to {meshsync_deployment_mode: string}.",
-        "suggested_remediation": "Send a well-formed JSON object in the `contexts` form field, e.g. {\\\"<contextID>\\\": {\\\"meshsync_deployment_mode\\\": \\\"operator\\\"}}."
+        "suggested_remediation": "Send a well-formed JSON object in the `contexts` form field, e.g. {\"<contextID>\": {\"meshsync_deployment_mode\": \"operator\"}}."
       },
       "1416": {
         "name": "ErrEmptyConnectionIDCode",
@@ -3691,7 +3691,7 @@
         "long_description": "",
         "short_description": "Invalid design import request",
         "probable_cause": "The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `fileName`, the URL variant requires `url`.\nBoth variants were provided, or neither was.",
-        "suggested_remediation": "Send a request body with exactly one variant set: either {\\\"file\\\": <bytes>, \\\"fileName\\\": \\\"design.yml\\\"} or {\\\"url\\\": \\\"https://...\\\"}."
+        "suggested_remediation": "Send a request body with exactly one variant set: either {\"file\": <bytes>, \"fileName\": \"design.yml\"} or {\"url\": \"https://...\"}."
       },
       "1423": {
         "name": "ErrConvertToDesignCode",
