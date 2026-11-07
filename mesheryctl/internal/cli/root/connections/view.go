@@ -24,7 +24,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/viewoutput"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/viewoutput"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/pkg/errors"
