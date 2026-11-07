@@ -33,6 +33,7 @@ import {
   useGetPerformanceProfilesQuery,
 } from '@/rtk-query/performance-profile';
 import { useNotification } from '@/utils/hooks/useNotification';
+import { formatApiError } from '@/utils/helpers/meshkitError';
 import { updateVisibleColumns } from '@/utils/responsive-column';
 import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
@@ -138,16 +139,18 @@ function PerformanceProfile() {
         notify({ message: 'Performance Profile Deleted!', event_type: EVENT_TYPES.SUCCESS });
         refetchProfiles();
       })
-      .catch(() => handleError('Failed To Delete Profile'));
+      .catch(handleError('Failed To Delete Profile'));
   }
 
+  // Curried: call sites pass the failing operation and hand the raw error to
+  // the returned callback, e.g. `.catch(handleError('Failed To Delete Profile'))`.
   function handleError(msg) {
     return function (error) {
       dispatch(updateProgressAction({ showProgress: false }));
+      const { message } = formatApiError(error, msg);
       notify({
-        message: `${msg}: ${error}`,
+        message,
         event_type: EVENT_TYPES.ERROR,
-        details: error.toString(),
       });
     };
   }
