@@ -1,11 +1,15 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 	"testing"
 
+	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/patterns"
 	events "github.com/meshery/meshkit/models/events"
 )
@@ -19,7 +23,6 @@ func TestDeploymentOutcome_EdgeCases(t *testing.T) {
 		name, action, design, okDesc string
 		resp                         map[string]interface{}
 		total, succ, fail            int
-		fcCount                      int
 		severity                     events.EventSeverity
 		desc                         string
 	}{
@@ -44,7 +47,7 @@ func TestDeploymentOutcome_EdgeCases(t *testing.T) {
 				"c1": []patterns.DeploymentMessagePerContext{{Summary: []patterns.DeploymentMessagePerComp{dmsg("c1", true, nil, false, "")}}},
 				"c2": []patterns.DeploymentMessagePerContext{{Summary: []patterns.DeploymentMessagePerComp{dmsg("c2", false, errors.New("err"), false, "")}}},
 			},
-			total: 2, succ: 1, fail: 1, fcCount: 1, severity: events.Warning, desc: "Deployment partially completed for design 'd1': 1 of 2 components failed.",
+			total: 2, succ: 1, fail: 1, severity: events.Warning, desc: "Deployment partially completed for design 'd1': 1 of 2 components failed.",
 		},
 		{
 			name: "1 of N fails undeploy", action: "undeploy", design: "d1", okDesc: "undeployed design 'd1'.",
@@ -52,21 +55,21 @@ func TestDeploymentOutcome_EdgeCases(t *testing.T) {
 				"c1": []patterns.DeploymentMessagePerContext{{Summary: []patterns.DeploymentMessagePerComp{dmsg("c1", true, nil, false, "")}}},
 				"c2": []patterns.DeploymentMessagePerContext{{Summary: []patterns.DeploymentMessagePerComp{dmsg("c2", false, errors.New("err"), false, "")}}},
 			},
-			total: 2, succ: 1, fail: 1, fcCount: 1, severity: events.Warning, desc: "Undeployment partially completed for design 'd1': 1 of 2 components failed.",
+			total: 2, succ: 1, fail: 1, severity: events.Warning, desc: "Undeployment partially completed for design 'd1': 1 of 2 components failed.",
 		},
 		{
 			name: "all fail deploy", action: "deploy", design: "d1", okDesc: "Deployment completed for design 'd1'.",
 			resp: map[string]interface{}{
 				"c1": []patterns.DeploymentMessagePerContext{{Summary: []patterns.DeploymentMessagePerComp{dmsg("c1", false, errors.New("e1"), false, "")}}},
 			},
-			total: 1, succ: 0, fail: 1, fcCount: 1, severity: events.Error, desc: "Deployment failed for design 'd1': 1 of 1 components failed.",
+			total: 1, succ: 0, fail: 1, severity: events.Error, desc: "Deployment failed for design 'd1': 1 of 1 components failed.",
 		},
 		{
 			name: "all fail undeploy", action: "undeploy", design: "d1", okDesc: "undeployed design 'd1'.",
 			resp: map[string]interface{}{
 				"c1": []patterns.DeploymentMessagePerContext{{Summary: []patterns.DeploymentMessagePerComp{dmsg("c1", false, errors.New("e1"), false, "")}}},
 			},
-			total: 1, succ: 0, fail: 1, fcCount: 1, severity: events.Error, desc: "Undeployment failed for design 'd1': 1 of 1 components failed.",
+			total: 1, succ: 0, fail: 1, severity: events.Error, desc: "Undeployment failed for design 'd1': 1 of 1 components failed.",
 		},
 		{
 			name: "empty design (no 0 of 0)", action: "deploy", design: "d1", okDesc: "Deployment completed for design 'd1'.",
@@ -95,7 +98,7 @@ func TestDeploymentOutcome_EdgeCases(t *testing.T) {
 					dmsg("c1", false, errors.New("dep unsatisfied"), false, "Withheld c1"),
 				}}},
 			},
-			total: 1, succ: 0, fail: 1, fcCount: 1, severity: events.Error, desc: "Deployment failed for design 'd1': 1 of 1 components failed.",
+			total: 1, succ: 0, fail: 1, severity: events.Error, desc: "Deployment failed for design 'd1': 1 of 1 components failed.",
 		},
 		{
 			name: "dispatch-failure and no-outcome entries", action: "deploy", design: "d1", okDesc: "Deployment completed for design 'd1'.",
@@ -103,17 +106,17 @@ func TestDeploymentOutcome_EdgeCases(t *testing.T) {
 				"c1": []patterns.DeploymentMessagePerContext{{Summary: []patterns.DeploymentMessagePerComp{dmsg("c1", false, errors.New("dispatch err"), false, "Could not deploy")}}},
 				"c2": []patterns.DeploymentMessagePerContext{{Summary: []patterns.DeploymentMessagePerComp{dmsg("c2", false, nil, false, "Could not confirm")}}},
 			},
-			total: 2, succ: 0, fail: 2, fcCount: 2, severity: events.Error, desc: "Deployment failed for design 'd1': 2 of 2 components failed.",
+			total: 2, succ: 0, fail: 2, severity: events.Error, desc: "Deployment failed for design 'd1': 2 of 2 components failed.",
 		},
 		{
-			name: "multi-cluster with A ok and B fail = 1 failed naming B's location", action: "deploy", design: "d1", okDesc: "Deployment completed for design 'd1'.",
+			name: "multi-cluster with A ok and B fail = 1 failed", action: "deploy", design: "d1", okDesc: "Deployment completed for design 'd1'.",
 			resp: map[string]interface{}{
 				"c1": []patterns.DeploymentMessagePerContext{
 					{Location: "cluster-a", Summary: []patterns.DeploymentMessagePerComp{dmsg("c1", true, nil, false, "")}},
 					{Location: "cluster-b", Summary: []patterns.DeploymentMessagePerComp{dmsg("c1", false, errors.New("errB"), false, "")}},
 				},
 			},
-			total: 1, succ: 0, fail: 1, fcCount: 1, severity: events.Error, desc: "Deployment failed for design 'd1': 1 of 1 components failed.",
+			total: 1, succ: 0, fail: 1, severity: events.Error, desc: "Deployment failed for design 'd1': 1 of 1 components failed.",
 		},
 		{
 			name: "non-slice values and the \"\" key ignored", action: "deploy", design: "d1", okDesc: "Deployment completed for design 'd1'.",
@@ -129,8 +132,8 @@ func TestDeploymentOutcome_EdgeCases(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tally := tallyDeploymentOutcome(tt.resp)
-			if tally.Total != tt.total || tally.Succeeded != tt.succ || tally.Failed != tt.fail || len(tally.FailedComponents) != tt.fcCount {
-				t.Fatalf("got tally %+v, want total=%d, succ=%d, fail=%d, fc=%d", tally, tt.total, tt.succ, tt.fail, tt.fcCount)
+			if tally.Total != tt.total || tally.Succeeded != tt.succ || tally.Failed != tt.fail {
+				t.Fatalf("got tally %+v, want total=%d, succ=%d, fail=%d", tally, tt.total, tt.succ, tt.fail)
 			}
 			sev, desc := deploymentOutcomeEvent(tt.action, tally, tt.design, tt.okDesc)
 			if sev != tt.severity || desc != tt.desc {
@@ -143,49 +146,37 @@ func TestDeploymentOutcome_EdgeCases(t *testing.T) {
 	}
 }
 
-func TestDeploymentOutcome_SuccessFalseErrorNilFallback(t *testing.T) {
-	resp := map[string]interface{}{
-		"c1": []patterns.DeploymentMessagePerContext{{Summary: []patterns.DeploymentMessagePerComp{dmsg("c1", false, nil, false, "msg fallback")}}},
+// TestDeploymentOutcome_CountsSurviveMetadataSizeGuard pins that a large
+// partial failure keeps its counts: the outcome adds only three integers to
+// the capped metadata, so the event stays under models.MaxEventMetadataBytes
+// and is never reduced to the bare design identity.
+func TestDeploymentOutcome_CountsSurviveMetadataSizeGuard(t *testing.T) {
+	longErr := errors.New(strings.Repeat("admission webhook denied the request: ", 20))
+	resp := map[string]interface{}{}
+	for i := 0; i < 500; i++ {
+		ok := i%2 == 0
+		var err error
+		if !ok {
+			err = longErr
+		}
+		resp[fmt.Sprintf("component-%03d", i)] = []patterns.DeploymentMessagePerContext{{
+			Location: "https://127.0.0.1:6443",
+			Summary:  []patterns.DeploymentMessagePerComp{dmsg(fmt.Sprintf("component-%03d", i), ok, err, false, "")},
+		}}
 	}
-	tally := tallyDeploymentOutcome(resp)
-	if len(tally.FailedComponents) != 1 || tally.FailedComponents[0].Error != "msg fallback" {
-		t.Fatalf("expected fallback to message, got %+v", tally.FailedComponents)
-	}
-}
 
-func TestDeploymentOutcome_ErrorJSONSerialization(t *testing.T) {
-	resp := map[string]interface{}{
-		"c1": []patterns.DeploymentMessagePerContext{{Summary: []patterns.DeploymentMessagePerComp{dmsg("c1", false, errors.New("raw err"), false, "")}}},
-	}
-	tally := tallyDeploymentOutcome(resp)
-	b, err := json.Marshal(map[string]interface{}{"failedComponents": tally.FailedComponents})
+	metadata := buildPatternProcessEventMetadata(resp, "http://meshery.test", uuid.Must(uuid.NewV4()), "big", "")
+	addOutcomeMetadata(metadata, tallyDeploymentOutcome(resp))
+
+	b, err := json.Marshal(metadata)
 	if err != nil {
 		t.Fatalf("marshal error: %v", err)
 	}
-	var raw map[string]interface{}
-	if err := json.Unmarshal(b, &raw); err != nil {
-		t.Fatalf("unmarshal error: %v", err)
+	if len(b) > models.MaxEventMetadataBytes {
+		t.Fatalf("metadata is %d bytes, over the %d-byte guard", len(b), models.MaxEventMetadataBytes)
 	}
-	fc := raw["failedComponents"].([]interface{})[0].(map[string]interface{})
-	if fc["error"] != "raw err" {
-		t.Errorf("expected string 'raw err', got %v (%T)", fc["error"], fc["error"])
-	}
-}
-
-func TestDeploymentOutcome_FailedComponentsSortedByNameThenLocation(t *testing.T) {
-	resp := map[string]interface{}{
-		"z": []patterns.DeploymentMessagePerContext{
-			{Location: "loc2", Summary: []patterns.DeploymentMessagePerComp{dmsg("z", false, errors.New("e"), false, "")}},
-			{Location: "loc1", Summary: []patterns.DeploymentMessagePerComp{dmsg("z", false, errors.New("e"), false, "")}},
-		},
-		"a": []patterns.DeploymentMessagePerContext{
-			{Location: "loc2", Summary: []patterns.DeploymentMessagePerComp{dmsg("a", false, errors.New("e"), false, "")}},
-			{Location: "loc1", Summary: []patterns.DeploymentMessagePerComp{dmsg("a", false, errors.New("e"), false, "")}},
-		},
-	}
-	fc := tallyDeploymentOutcome(resp).FailedComponents
-	if len(fc) != 4 || fc[0].Name != "a" || fc[0].Location != "loc1" || fc[1].Location != "loc2" || fc[2].Name != "z" || fc[2].Location != "loc1" || fc[3].Location != "loc2" {
-		t.Fatalf("sorting mismatch: %+v", fc)
+	if metadata["total"] != 500 || metadata["succeeded"] != 250 || metadata["failed"] != 250 {
+		t.Errorf("got total=%v succeeded=%v failed=%v, want 500/250/250", metadata["total"], metadata["succeeded"], metadata["failed"])
 	}
 }
 
@@ -211,43 +202,47 @@ func TestDeploymentOutcome_ExampleEvent(t *testing.T) {
 
 	tally := tallyDeploymentOutcome(resp)
 	severity, description := deploymentOutcomeEvent("deploy", tally, "bookinfo", "Deployment completed for design 'bookinfo'.")
-	metadata := map[string]interface{}{
-		"designName": "bookinfo",
-		"designId":   "8c5a1f4e-2b7d-4e0a-9f3c-6d1e2a4b7c90",
-	}
+	designID := uuid.FromStringOrNil("8c5a1f4e-2b7d-4e0a-9f3c-6d1e2a4b7c90")
+	metadata := buildPatternProcessEventMetadata(resp, "http://localhost:9081", designID, "bookinfo", "")
 	addOutcomeMetadata(metadata, tally)
 
-	got, err := json.MarshalIndent(map[string]interface{}{
+	var buf bytes.Buffer
+	enc := json.NewEncoder(&buf)
+	enc.SetEscapeHTML(false)
+	enc.SetIndent("", "  ")
+	if err := enc.Encode(map[string]interface{}{
 		"severity":    severity,
 		"description": description,
 		"metadata":    metadata,
-	}, "", "  ")
-	if err != nil {
+	}); err != nil {
 		t.Fatalf("marshal error: %v", err)
 	}
+	got := strings.TrimSuffix(buf.String(), "\n")
 	t.Logf("example event:\n%s", got)
 
 	want := `{
   "description": "Deployment partially completed for design 'bookinfo': 1 of 3 components failed.",
   "metadata": {
     "designId": "8c5a1f4e-2b7d-4e0a-9f3c-6d1e2a4b7c90",
+    "designLink": "http://localhost:9081/extension/meshmap?mode=design&design=8c5a1f4e-2b7d-4e0a-9f3c-6d1e2a4b7c90",
     "designName": "bookinfo",
-    "failed": 1,
-    "failedComponents": [
+    "errorCount": 1,
+    "errors": [
       {
-        "name": "reviews",
-        "kind": "Deployment",
-        "model": "kubernetes",
-        "location": "https://127.0.0.1:6443",
-        "error": "Deployment.apps \"reviews\" is invalid: spec.template.spec.containers[0].image: Required value"
+        "code": "",
+        "componentId": "reviews"
       }
     ],
+    "failed": 1,
+    "status": "partial",
     "succeeded": 2,
-    "total": 3
+    "total": 3,
+    "truncated": false,
+    "viewLink": "http://localhost:9081/extension/meshmap?mode=operator&type=view&design_id=8c5a1f4e-2b7d-4e0a-9f3c-6d1e2a4b7c90"
   },
   "severity": "warning"
 }`
-	if string(got) != want {
+	if got != want {
 		t.Errorf("example event changed:\n got: %s\nwant: %s", got, want)
 	}
 }
