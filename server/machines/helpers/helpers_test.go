@@ -307,4 +307,12 @@ func TestInitializeMachineWithContext_SerializesConcurrentCalls(t *testing.T) {
 			t.Fatalf("expected all goroutines to receive the same instance, goroutine %d received %p != %p", i, instances[i], instances[0])
 		}
 	}
+
+	// Verify that the per-key mutex was cleanly evicted from initLockMap after completion
+	initLockMapMu.Lock()
+	remainingLocks := len(initLockMap)
+	initLockMapMu.Unlock()
+	if remainingLocks != 0 {
+		t.Fatalf("expected initLockMap to be empty after completion, found %d entries", remainingLocks)
+	}
 }

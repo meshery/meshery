@@ -122,11 +122,39 @@ func HasMachineContext(inst *machines.StateMachine) bool {
 	return inst != nil && !utils.IsInterfaceNil(inst.Context)
 }
 
-var initLockMap sync.Map // map[core.Uuid]*sync.Mutex
+type refCountedMutex struct {
+	sync.Mutex
+	refCount int
+}
 
-func getInitLock(id core.Uuid) *sync.Mutex {
-	lock, _ := initLockMap.LoadOrStore(id, &sync.Mutex{})
-	return lock.(*sync.Mutex)
+var (
+	initLockMapMu sync.Mutex
+	initLockMap   = make(map[core.Uuid]*refCountedMutex)
+)
+
+func acquireInitLock(id core.Uuid) *refCountedMutex {
+	initLockMapMu.Lock()
+	defer initLockMapMu.Unlock()
+
+	mu, exists := initLockMap[id]
+	if !exists {
+		mu = &refCountedMutex{}
+		initLockMap[id] = mu
+	}
+	mu.refCount++
+	return mu
+}
+
+func releaseInitLock(id core.Uuid, mu *refCountedMutex) {
+	mu.Unlock()
+
+	initLockMapMu.Lock()
+	defer initLockMapMu.Unlock()
+
+	mu.refCount--
+	if mu.refCount <= 0 {
+		delete(initLockMap, id)
+	}
 }
 
 // InitializeMachineWithContext retrieves an existing state machine instance from the
@@ -151,9 +179,9 @@ func InitializeMachineWithContext(
 		}
 	}
 
-	mu := getInitLock(ID)
+	mu := acquireInitLock(ID)
 	mu.Lock()
-	defer mu.Unlock()
+	defer releaseInitLock(ID, mu)
 
 	// Double-check after acquiring the lock in case another goroutine initialized it
 	if smInstanceTracker != nil {
