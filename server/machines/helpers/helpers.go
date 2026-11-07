@@ -132,6 +132,8 @@ var (
 	initLockMap   = make(map[core.Uuid]*refCountedMutex)
 )
 
+// acquireInitLock retrieves or creates a reference-counted mutex for the given
+// connection ID, incrementing its reference count under the map mutex.
 func acquireInitLock(id core.Uuid) *refCountedMutex {
 	initLockMapMu.Lock()
 	defer initLockMapMu.Unlock()
@@ -145,6 +147,8 @@ func acquireInitLock(id core.Uuid) *refCountedMutex {
 	return mu
 }
 
+// releaseInitLock unlocks the mutex and decrements its reference count, evicting
+// the entry from initLockMap once all active callers have completed.
 func releaseInitLock(id core.Uuid, mu *refCountedMutex) {
 	mu.Unlock()
 
