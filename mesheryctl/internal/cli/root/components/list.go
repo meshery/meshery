@@ -22,8 +22,8 @@ import (
 
 type componentListFlag struct {
 	Count    bool `json:"count" validate:"boolean"`
-	Page     int  `json:"page" validate:"omitempty,gte=1"`
-	PageSize int  `json:"page-size" validate:"omitempty,gte=1"`
+	Page     int  `json:"page" validate:"gte=1"`
+	PageSize int  `json:"pagesize" validate:"gte=1"`
 }
 
 var cmdComponentListFlag componentListFlag
