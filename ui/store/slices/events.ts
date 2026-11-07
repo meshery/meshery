@@ -88,15 +88,21 @@ const compareTimes = (a, b) => {
 const compareCounts = (a, b) => (typeof a === 'number' && typeof b === 'number' ? a - b : 0);
 
 // compareRevisions orders two revisions of one stored event by when they were
-// updated. When their update times are equal or unknown it breaks the tie on
+// updated. When both update times are known and equal it breaks the tie on
 // lastSeenAt and then occurrenceCount, which only grow from one revision to
 // the next, so the order does not depend on which broadcast arrived first. It
-// is negative when a is the earlier revision, and 0 when neither is known to
-// be.
-const compareRevisions = (a, b) =>
-  compareTimes(a.updatedAt, b.updatedAt) ||
-  compareTimes(a.lastSeenAt, b.lastSeenAt) ||
-  compareCounts(a.occurrenceCount, b.occurrenceCount);
+// is negative when a is the earlier revision, and 0 when either update time is
+// unknown or neither revision is known to be earlier.
+const compareRevisions = (a, b) => {
+  if (!instantOf(a.updatedAt) || !instantOf(b.updatedAt)) {
+    return 0;
+  }
+  return (
+    compareTimes(a.updatedAt, b.updatedAt) ||
+    compareTimes(a.lastSeenAt, b.lastSeenAt) ||
+    compareCounts(a.occurrenceCount, b.occurrenceCount)
+  );
+};
 
 // isOlderRevision reports whether incoming is an earlier revision of the
 // stored event than existing: it shows open a condition existing already

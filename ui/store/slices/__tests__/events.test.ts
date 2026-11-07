@@ -127,7 +127,7 @@ describe('events slice', () => {
     expect(state.entities['evt-1'].occurrenceCount).toBe(3);
   });
 
-  it('pushEvent breaks a tie in update time on lastSeenAt, then occurrenceCount', () => {
+  it('pushEvent breaks a tie between equal update times on lastSeenAt, then occurrenceCount', () => {
     const updatedAt = '2025-01-01T07:48:29.932900Z';
     let state = eventsReducer(undefined, { type: 'unknown' });
     state = eventsReducer(
@@ -159,6 +159,37 @@ describe('events slice', () => {
       ),
     );
     expect(state.entities['evt-1'].occurrenceCount).toBe(4);
+  });
+
+  it('pushEvent accepts a revision without updatedAt even when lastSeenAt or occurrenceCount is lower', () => {
+    let state = eventsReducer(undefined, { type: 'unknown' });
+    state = eventsReducer(
+      state,
+      pushEvent(
+        makeEvent({
+          occurrenceCount: 5,
+          updatedAt: '2025-01-01T07:48:29.932900Z',
+          lastSeenAt: '2025-01-01T07:48:29.000000002Z',
+        }),
+      ),
+    );
+    state = eventsReducer(
+      state,
+      pushEvent(makeEvent({ occurrenceCount: 2, lastSeenAt: '2025-01-01T07:48:29.000000001Z' })),
+    );
+    expect(state.entities['evt-1'].occurrenceCount).toBe(2);
+
+    state = eventsReducer(
+      state,
+      pushEvent(
+        makeEvent({
+          occurrenceCount: 1,
+          updatedAt: 'not a time',
+          lastSeenAt: '2025-01-01T07:48:29.000000000Z',
+        }),
+      ),
+    );
+    expect(state.entities['evt-1'].occurrenceCount).toBe(1);
   });
 
   it('pushEvent trims severity and status', () => {
