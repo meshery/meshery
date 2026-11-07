@@ -26,6 +26,7 @@ import (
 
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -198,7 +199,9 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 
 	payload := strings.NewReader(data.Encode())
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: constants.HttpClientTimeout,
+	}
 	req, err := utils.NewRequest(method, path, payload)
 	if err != nil {
 		return "", ErrCreatingValidateRequest(err)
