@@ -562,7 +562,9 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 
 	k8sContext.ConnectionID = connID.String()
 
-	_, _ = l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+	if _, err := l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext); err != nil {
+		return connections.Connection{}, err
+	}
 	return *connectionCreated, nil
 }
 
