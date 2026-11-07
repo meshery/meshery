@@ -642,6 +642,12 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		return
 	}
 
+	// Nothing can drive a deleted connection's machine any more; left in the
+	// tracker, the Kubernetes middlewares would keep probing it.
+	if h.ConnectionToStateMachineInstanceTracker != nil {
+		h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+	}
+
 	// A provider is free to answer a successful delete without echoing the
 	// deleted row back; dereferencing it unconditionally panicked the request.
 	deletedName := connectionID.String()

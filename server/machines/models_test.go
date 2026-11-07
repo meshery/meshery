@@ -825,3 +825,22 @@ func TestIsRecurrence(t *testing.T) {
 		}
 	}
 }
+
+// A status update that cannot read or write the connection is a failure, and
+// says so: without a severity its event used to land in the Notification
+// Center as informational.
+func TestSendEvent_StatusUpdateFailureIsAnError(t *testing.T) {
+	for name, provider := range map[string]*fakeProvider{
+		"retrieve": {status: connections.CONNECTED, getErr: errors.New("record not found")},
+		"update":   {status: connections.CONNECTED, updateErr: errors.New("database is locked")},
+	} {
+		sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+		event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+		if err == nil || event == nil {
+			t.Fatalf("%s: SendEvent = (%v, %v), want a failure event and an error", name, event, err)
+		}
+		if event.Severity != events.Error {
+			t.Errorf("%s: severity = %q, want %q", name, event.Severity, events.Error)
+		}
+	}
+}
