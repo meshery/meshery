@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/models/events"
 )
 
@@ -177,11 +178,56 @@ func TestRemoteProviderPersistEventAcceptsAny2xx(t *testing.T) {
 		})
 		event := events.NewEvent().FromOwner(mustUUID(t)).WithCategory("connection").WithAction("update").
 			WithSeverity(events.Error).Build()
-		if _, err := provider.PersistEvent(*event, "token"); err != nil {
+		persisted, err := provider.PersistEvent(*event, "token")
+		if err != nil {
 			t.Fatalf("status %d: PersistEvent: %v", status, err)
 		}
 		if n := localEventCount(t, provider); n != c.wantLocal {
 			t.Errorf("status %d: %d local rows, want %d", status, n, c.wantLocal)
+		}
+		// A 2xx that reports an occurrence counted but carries no stored event
+		// must not present the sent event, whose ID no row has, as stored.
+		if c.wantLocal == 0 && persisted.Event != nil {
+			t.Errorf("status %d: returned event %s for an incremented create with no body, want none", status, persisted.Event.ID)
+		}
+	}
+}
+
+// A body-less or unparseable answer for a create that recorded nothing new
+// returns no event, whatever the disposition; one for a created event returns
+// the event as sent.
+func TestRemoteProviderPersistEventWithoutTheStoredEvent(t *testing.T) {
+	for _, c := range []struct {
+		disposition EventDisposition
+		body        string
+		wantSent    bool
+	}{
+		{EventIncremented, "", false},
+		{EventResolved, "not json", false},
+		{EventReplayed, "{}", false},
+		{EventCreated, "", true},
+		{"", "", true},
+	} {
+		c := c
+		provider := newEventsRemoteProvider(t, func(w http.ResponseWriter, _ *http.Request) {
+			if c.disposition != "" {
+				w.Header().Set(EventDispositionHeader, string(c.disposition))
+			}
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(c.body))
+		})
+		sent := events.NewEvent().FromOwner(mustUUID(t)).WithCategory("connection").WithAction("update").
+			WithSeverity(events.Error).Build()
+		persisted, err := provider.PersistEvent(*sent, "token")
+		if err != nil {
+			t.Fatalf("%q: PersistEvent: %v", c.disposition, err)
+		}
+		if c.wantSent {
+			if persisted.Event == nil || persisted.Event.ID != sent.ID {
+				t.Errorf("%q: got %v, want the event as sent", c.disposition, persisted.Event)
+			}
+		} else if persisted.Event != nil {
+			t.Errorf("%q: got event %s, want none", c.disposition, persisted.Event.ID)
 		}
 	}
 }
@@ -241,7 +287,7 @@ func TestRemoteProviderPersistEventReturnsTheStoredEvent(t *testing.T) {
 	}
 }
 
-// An event built with a bare events.NewEvent() carries no ID. It is given one
+// An event constructed without the builder carries no ID. It is given one
 // before it is sent, so a legacy remote provider that answers with no body,
 // and therefore stores the event as sent, returns it with that ID rather than
 // the zero ID.
@@ -256,14 +302,65 @@ func TestRemoteProviderPersistEventAssignsAnIDToAnEventWithout(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 	sent := events.NewEvent().FromOwner(mustUUID(t)).WithCategory("design").WithAction("save").WithSeverity(events.Informational).Build()
-	if !sent.ID.IsNil() {
-		t.Fatalf("precondition: events.NewEvent() minted ID %s", sent.ID)
-	}
+	// events.NewEvent mints an ID; an event constructed without the
+	// builder carries none, which is the case under test.
+	sent.ID = uuid.Nil
 	persisted, err := provider.PersistEvent(*sent, "token")
 	if err != nil {
 		t.Fatalf("PersistEvent: %v", err)
 	}
 	if persisted.Event.ID.IsNil() || persisted.Event.ID.String() != sentID {
 		t.Fatalf("returned ID %s, sent ID %q; want the same non-zero ID", persisted.Event.ID, sentID)
+	}
+}
+
+// A remote provider is known to correlate conditions only once a create
+// carrying a correlationKey is answered with an Event-Disposition, and stops
+// being known to once such a create is answered without one. A create without
+// a correlationKey says nothing either way.
+func TestRemoteProviderCorrelatesConditionsFollowsCorrelatedCreates(t *testing.T) {
+	var disposition string
+	provider := newEventsRemoteProvider(t, func(w http.ResponseWriter, r *http.Request) {
+		if disposition != "" {
+			w.Header().Set(EventDispositionHeader, disposition)
+		}
+		w.WriteHeader(http.StatusCreated)
+	})
+	owner := mustUUID(t)
+	correlated := func() events.Event {
+		return *events.NewEvent().FromOwner(owner).WithCategory("connection").WithAction("update").
+			WithSeverity(events.Error).WithCorrelationKey("meshery-server/k8s-connection/abc/unreachable").Build()
+	}
+	plain := func() events.Event {
+		return *events.NewEvent().FromOwner(owner).WithCategory("connection").WithAction("update").
+			WithSeverity(events.Informational).Build()
+	}
+	persist := func(event events.Event) {
+		t.Helper()
+		if _, err := provider.PersistEvent(event, "token"); err != nil {
+			t.Fatalf("PersistEvent: %v", err)
+		}
+	}
+
+	if provider.CorrelatesConditions() {
+		t.Fatal("a remote provider no correlated create has reached is known to correlate")
+	}
+	disposition = string(EventCreated)
+	persist(plain())
+	if provider.CorrelatesConditions() {
+		t.Fatal("an uncorrelated create made the remote provider known to correlate")
+	}
+	persist(correlated())
+	if !provider.CorrelatesConditions() {
+		t.Fatal("a correlated create answered with a disposition did not make the remote provider known to correlate")
+	}
+	disposition = ""
+	persist(plain())
+	if !provider.CorrelatesConditions() {
+		t.Fatal("an uncorrelated create answered without a disposition changed what is known")
+	}
+	persist(correlated())
+	if provider.CorrelatesConditions() {
+		t.Fatal("a correlated create answered without a disposition left the remote provider known to correlate")
 	}
 }

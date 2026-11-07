@@ -58,6 +58,7 @@ func SystemDatabaseModels() []interface{} {
 		workspace.WorkspacesTeamsMapping{},
 		workspace.WorkspacesViewsMapping{},
 		events.Event{},
+		EventIdempotencyBinding{},
 		&SystemSetting{},
 	}
 }

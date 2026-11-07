@@ -21,6 +21,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/meshery/schemas/models/core"
@@ -114,6 +115,12 @@ type RemoteProvider struct {
 
 	syncStopChan chan struct{}
 	syncChan     chan *userSession
+
+	// correlatesConditions records whether the remote provider was last seen
+	// applying condition correlation: the answer to the most recent create
+	// that carried a correlationKey said what it did (Event-Disposition) or
+	// did not. It starts false, as unknown.
+	correlatesConditions atomic.Bool
 
 	ProviderVersion    string
 	SmiResultPersister *SMIResultsPersister
@@ -1745,6 +1752,14 @@ func (l *RemoteProvider) PersistEvent(event events.Event, token string) (Persist
 	return l.persist(withServerSource(event), token)
 }
 
+// CorrelatesConditions reports whether the remote provider answered the most
+// recent create carrying a correlationKey with an Event-Disposition, which a
+// provider that predates condition correlation omits. Until such a create has
+// been answered it is false.
+func (l *RemoteProvider) CorrelatesConditions() bool {
+	return l.correlatesConditions.Load()
+}
+
 // PersistClientEvent persists an event a client sent as PersistEvent does, but
 // with its source as sent: one that names no source is recorded without one.
 func (l *RemoteProvider) PersistClientEvent(event events.Event, token string) (PersistedEvent, error) {
@@ -1810,15 +1825,17 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 		return PersistedEvent{}, ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
 	}
 	disposition := EventDisposition(resp.Header.Get(EventDispositionHeader))
+	if event.CorrelationKey != nil && *event.CorrelationKey != "" {
+		l.correlatesConditions.Store(disposition != "")
+	}
 	if disposition == "" && resp.StatusCode == http.StatusCreated {
 		disposition = EventCreated
 	}
 	l.Log.Debugf("remote provider recorded event (%s: %s)", EventDispositionHeader, disposition)
 
 	// The answer carries the event as stored, which for an incremented,
-	// resolved or replayed create is an earlier event with its own ID. A
-	// remote provider that answers with no event stored the event as sent.
-	stored := &event
+	// resolved or replayed create is an earlier event with its own ID.
+	var stored *events.Event
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		l.Log.Warn(ErrDataRead(err, "remote provider event response"))
@@ -1830,7 +1847,33 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 			stored = &decoded
 		}
 	}
+	if stored == nil {
+		if recordedNothingNew(disposition) {
+			// The create recorded nothing new, so the event as sent is not
+			// what is stored: its ID names no row. Without the stored event
+			// in the answer there is nothing to present; the caller reports
+			// nothing new for it.
+			l.Log.Warn(fmt.Errorf("remote provider answered %s: %s without the stored event", EventDispositionHeader, disposition))
+			return PersistedEvent{Disposition: disposition}, nil
+		}
+		// A remote provider that answers a create with no event stored the
+		// event as sent.
+		stored = &event
+	}
 	return PersistedEvent{Event: stored, Disposition: disposition}, nil
+}
+
+// recordedNothingNew reports whether a create with disposition recorded no
+// new event: it counted an occurrence on, or resolved, an open condition, or
+// it was a replay. The stored event is then an earlier one, never the event
+// sent.
+func recordedNothingNew(disposition EventDisposition) bool {
+	switch disposition {
+	case EventIncremented, EventResolved, EventReplayed:
+		return true
+	default:
+		return false
+	}
 }
 
 func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {

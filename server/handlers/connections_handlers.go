@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/meshery/schemas/models/core"
 	connectionv1beta3 "github.com/meshery/schemas/models/v1beta3/connection"
@@ -446,6 +447,18 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	// {status}); the provider's UpdateConnectionById backfills any omitted field
 	// from the persisted row so a partial payload never clobbers columns like
 	// kind/name/type/metadata.
+	// The status the connection had before this update: the machine reads
+	// the saved status, already the new one, so it is told the old one to
+	// resolve the unreachable condition of a connection leaving NOTFOUND.
+	statusCtx := req.Context()
+	if connection.Status != "" {
+		if existing, _, gerr := provider.GetConnectionByID(token, connectionID); gerr != nil {
+			h.log.Warn(fmt.Errorf("could not read the status of connection %s before updating it: %w", connectionID, gerr))
+		} else if existing != nil {
+			statusCtx = machines.WithPriorStatus(statusCtx, existing.Status)
+		}
+	}
+
 	updatedConnection, err := provider.UpdateConnectionById(token, connection, mux.Vars(req)["connectionId"])
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
@@ -465,7 +478,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	eventBuilder = eventBuilder.WithDescription(description)
 
 	if connection.Status != "" {
-		event, _ := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
+		event, _ := h.NotifySmOfConnectionStatusChange(statusCtx, userID, provider, token, connection)
 		_, _ = provider.PersistEvent(event, token)
 	}
 
@@ -557,7 +570,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 			event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(status)), nil)
 			if err != nil {
 				h.log.Error(err)
-				h.persistAndPublish(provider, token, userID, event)
+				h.reportMachineOutcome(provider, token, userID, event, err)
 				return
 			}
 
@@ -565,7 +578,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 				smInstanceTracker.Remove(inst.ID)
 			}
 
-			h.persistAndPublish(provider, token, userID, event)
+			h.reportMachineOutcome(provider, token, userID, event, nil)
 		}(inst, connection.Status)
 	}
 
@@ -583,6 +596,13 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		return
 	}
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+
+	// A Kubernetes connection deleted while NOTFOUND retires its unreachable
+	// condition, so the deletion event resolves it.
+	resolvesUnreachable := false
+	if existing, _, gerr := provider.GetConnectionByID(token, connectionID); gerr == nil && existing != nil {
+		resolvesUnreachable = existing.Kind == "kubernetes" && existing.Status == connections.ConnectionStatus(machines.NOTFOUND)
+	}
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
@@ -622,6 +642,12 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		return
 	}
 
+	// Nothing can drive a deleted connection's machine any more; left in the
+	// tracker, the Kubernetes middlewares would keep probing it.
+	if h.ConnectionToStateMachineInstanceTracker != nil {
+		h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+	}
+
 	// A provider is free to answer a successful delete without echoing the
 	// deleted row back; dereferencing it unconditionally panicked the request.
 	deletedName := connectionID.String()
@@ -629,7 +655,13 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		deletedName = deletedConnection.Name
 	}
 	description := fmt.Sprintf("Connection %s deleted.", deletedName)
-	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
+	if resolvesUnreachable {
+		eventBuilder = eventBuilder.WithCategory("connection").WithSeverity(events.Success).
+			Resolves(kubernetes.UnreachableConditionKey(connectionID), time.Now().UTC())
+	} else {
+		eventBuilder = eventBuilder.WithSeverity(events.Informational)
+	}
+	event := eventBuilder.WithDescription(description).Build()
 
 	h.persistAndPublish(provider, token, userID, event)
 
