@@ -536,13 +536,12 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 		)
 
 		// A connection being deleted must not leave a tracker entry behind,
-		// whichever way its machine failed. InitializeMachineWithContext caches
-		// the instance *before* surfacing a Start error, so both the error return
-		// below and the no-context return after it would otherwise strand the
-		// entry - the first for a fresh failure, the second for every later cache
-		// hit. Nothing can drive that machine afterwards, and the delete paths
-		// that normally Remove it (the goroutine below, DeleteContext) both do so
-		// only after a SendEvent that cannot succeed without a Context.
+		// whichever way its machine failed. If an uninitialized or broken instance
+		// was previously present in the tracker, both the error return below and
+		// the no-context return after it would otherwise strand the entry.
+		// Nothing can drive that machine afterwards, and the delete paths that
+		// normally Remove it (the goroutine below, DeleteContext) both do so only
+		// after a SendEvent that cannot succeed without a Context.
 		usable := err == nil && helpers.HasMachineContext(inst)
 		if !usable && connection.Status == connections.DELETED {
 			smInstanceTracker.Remove(connectionID)
