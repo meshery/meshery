@@ -15,6 +15,7 @@ import (
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshsync/pkg/model"
@@ -399,14 +400,29 @@ func (h *Handler) reportBackgroundDiscovery(provider models.Provider, token stri
 // condition's stored event, so a client updates that notification in place
 // instead of showing one whose ID was never recorded. When persisting fails the
 // event is still broadcast, as sent.
+//
+// Every server site that persists an event and broadcasts it goes through this
+// helper (or persistAndPublishEvent, outside a Handler), never publishing its
+// own copy after PersistEvent: that copy carries no stored ID.
 func (h *Handler) persistAndPublish(provider models.Provider, token string, userID core.Uuid, event *events.Event) {
+	var broadcaster *models.Broadcast
+	if h.config != nil {
+		broadcaster = h.config.EventBroadcaster
+	}
+	persistAndPublishEvent(h.log, provider, token, broadcaster, userID, event)
+}
+
+// persistAndPublishEvent is persistAndPublish for code that has no Handler.
+func persistAndPublishEvent(log logger.Handler, provider models.Provider, token string, broadcaster *models.Broadcast, userID core.Uuid, event *events.Event) {
 	persisted, err := provider.PersistEvent(*event, token)
 	if err != nil {
-		h.log.Error(err)
+		log.Error(err)
 	} else {
 		event = persisted.Event
 	}
-	h.config.EventBroadcaster.Publish(userID, event)
+	if broadcaster != nil {
+		broadcaster.Publish(userID, event)
+	}
 }
 
 func (h *Handler) K8sFSMMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {

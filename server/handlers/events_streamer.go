@@ -508,8 +508,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		}
 
 		_event := eventBuilder.Build()
-		_, _ = p.PersistEvent(*_event, token)
-		ec.Publish(userUUID, _event)
+		persistAndPublishEvent(log, p, token, ec, userUUID, _event)
 
 		data, err := json.Marshal(event)
 		if err != nil {

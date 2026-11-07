@@ -104,6 +104,57 @@ func TestEventSourceIsTheServersOnlyForServerEvents(t *testing.T) {
 	}
 }
 
+// An event the server builds with a bare events.NewEvent() carries no ID; it
+// is broadcast as stored, with the stored row's non-zero ID and the server's
+// source, never as the zero-ID input.
+func TestPersistAndPublishBroadcastsTheStoredRow(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("open database: %v", err)
+	}
+	if err := db.AutoMigrate(&events.Event{}); err != nil {
+		t.Fatalf("migrate events: %v", err)
+	}
+	provider := &persisterEventsProvider{persister: &models.EventsPersister{DB: &database.Handler{DB: db}}}
+	broadcaster := models.NewBroadcaster("test")
+	user := uuid.Must(uuid.NewV4())
+	ch, unsubscribe := broadcaster.Subscribe(user)
+	defer unsubscribe()
+
+	publishers := map[string]func(*events.Event){
+		"handler": func(e *events.Event) {
+			h := &Handler{config: &models.HandlerConfig{EventBroadcaster: broadcaster}, log: newTestLogger(t)}
+			h.persistAndPublish(provider, "", user, e)
+		},
+		"adapter events": func(e *events.Event) {
+			persistAndPublishEvent(newTestLogger(t), provider, "", broadcaster, user, e)
+		},
+	}
+	for name, publish := range publishers {
+		sent := events.NewEvent().FromOwner(user).WithCategory("kubernetes").WithAction("register").
+			WithSeverity(events.Informational).WithDescription(name).Build()
+		if !sent.ID.IsNil() {
+			t.Fatalf("precondition: events.NewEvent() minted ID %s", sent.ID)
+		}
+		publish(sent)
+
+		got := receiveEvent(t, ch)
+		if got.ID.IsNil() {
+			t.Fatalf("%s: broadcast the zero ID", name)
+		}
+		var stored events.Event
+		if err := db.Where("description = ?", name).First(&stored).Error; err != nil {
+			t.Fatalf("%s: read stored event: %v", name, err)
+		}
+		if got.ID != stored.ID {
+			t.Errorf("%s: broadcast ID %s, stored ID %s", name, got.ID, stored.ID)
+		}
+		if got.Source == nil || *got.Source != models.EventSourceServer {
+			t.Errorf("%s: broadcast source %v, want %q", name, got.Source, models.EventSourceServer)
+		}
+	}
+}
+
 // receiveEvent returns the next event published on ch.
 func receiveEvent(t *testing.T, ch chan interface{}) *events.Event {
 	t.Helper()
