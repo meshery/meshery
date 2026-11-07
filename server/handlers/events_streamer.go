@@ -298,6 +298,10 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	// Send the headers now: a client doesn't see the response until they
+	// arrive, and no event may come for a long time.
+	w.WriteHeader(http.StatusOK)
+	flusher.Flush()
 
 	notify := req.Context()
 
@@ -504,8 +508,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		}
 
 		_event := eventBuilder.Build()
-		_ = p.PersistEvent(*_event, token)
-		ec.Publish(userUUID, _event)
+		persistAndPublishEvent(log, p, token, ec, userUUID, _event)
 
 		data, err := json.Marshal(event)
 		if err != nil {
@@ -568,18 +571,27 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		WithDescription(evt.Description).WithMetadata(evt.Metadata).ActedUpon(evt.ActedUpon)
 
 	event := eventBuilder.Build()
-	err = provider.PersistEvent(*event, token)
+	models.ApplyClientEventFields(event, evt)
+	if verr := event.Validate(); verr != nil {
+		h.log.Error(ErrInvalidClientEvent(verr))
+		writeMeshkitError(w, ErrInvalidClientEvent(verr), http.StatusBadRequest)
+		return
+	}
+	persisted, err := provider.PersistClientEvent(*event, token)
 	if err != nil {
 		h.log.Error(models.ErrPersistEvent(err))
 		writeMeshkitError(w, models.ErrPersistEvent(err), http.StatusInternalServerError)
 		return
 
 	}
-	go h.config.EventBroadcaster.Publish(userID, event)
+	go h.config.EventBroadcaster.Publish(userID, persisted.Event)
 
 	w.Header().Set("Content-Type", "application/json")
+	if persisted.Disposition != "" {
+		w.Header().Set(models.EventDispositionHeader, string(persisted.Disposition))
+	}
 	w.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(w).Encode(event)
+	err = json.NewEncoder(w).Encode(persisted.Event)
 	if err != nil {
 		// Headers + 201 committed and the response body has started
 		// streaming via json.Encoder, so we cannot send a fresh JSON

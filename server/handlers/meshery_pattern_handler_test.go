@@ -1,7 +1,14 @@
 package handlers
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+
+	"github.com/gorilla/mux"
+	_events "github.com/meshery/meshkit/models/events"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -618,15 +625,17 @@ func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) 
 		Relationships: make([]*relationship.RelationshipDefinition, 5),
 	}
 
-	metadata := buildDesignSavedEventMetadata(df)
+	metadata := buildDesignSavedEventMetadata(df, "http://meshery.test")
 
 	// Canonical camelCase keys MUST be present.
 	require.Contains(t, metadata, "historyTitle")
 	require.Contains(t, metadata, "design")
 	require.Contains(t, metadata, "doclink")
+	assert.Equal(t, "http://meshery.test/extension/meshmap?mode=design&design="+id.String(), metadata["designLink"])
 
 	// Legacy snake_case key MUST NOT be present.
 	require.NotContains(t, metadata, "history_title")
+	assertNoBannedDesignEventMetadataKeys(t, metadata)
 
 	// historyTitle reflects version + counts so future contributors
 	// don't repurpose the helper without keeping the user-visible label
@@ -635,10 +644,86 @@ func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) 
 	assert.Contains(t, metadata["historyTitle"], "3 components")
 	assert.Contains(t, metadata["historyTitle"], "5 relationships")
 
-	// `design` sub-object carries the design's id and name (single-word
-	// keys, exempt from the camelCase contract).
+	// The design is identified, never embedded.
+	assert.Equal(t, id, metadata["designId"])
+	assert.Equal(t, "test-design", metadata["designName"])
+	assert.Equal(t, "0.0.1", metadata["designVersion"])
+
+	// `design` sub-object carries only the design's id and name: the
+	// notification center's "Saved design" link reads it.
 	designSub, ok := metadata["design"].(map[string]interface{})
 	require.True(t, ok, "design field should be a map")
-	assert.Equal(t, "test-design", designSub["name"])
-	assert.Equal(t, id.String(), designSub["id"])
+	assert.Equal(t, map[string]interface{}{"name": "test-design", "id": id.String()}, designSub)
+}
+
+type mockPatternHandlerProvider struct {
+	*models.DefaultLocalProvider
+}
+
+func (m *mockPatternHandlerProvider) PersistEvent(event _events.Event, token string) (models.PersistedEvent, error) {
+	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
+}
+
+func (m *mockPatternHandlerProvider) GetProviderToken(_ *http.Request) (string, error) {
+	return "test-token", nil
+}
+
+func TestDesignFileRequestHandlerWithSourceType_MissingPatternDataReturnsBadRequest(t *testing.T) {
+	testCases := []struct {
+		name string
+		body string
+	}{
+		{
+			name: "empty object",
+			body: "{}",
+		},
+		{
+			name: "null literal",
+			body: "null",
+		},
+		{
+			name: "body without patternData",
+			body: `{"name":"my-design"}`,
+		},
+	}
+
+	systemID := uuid.Must(uuid.NewV4())
+	userID := uuid.Must(uuid.NewV4())
+
+	h := &Handler{
+		config: &models.HandlerConfig{
+			EventBroadcaster: &models.Broadcast{},
+		},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+
+	provider := &mockPatternHandlerProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodPut, "/api/pattern/manifest", bytes.NewBufferString(tc.body))
+			req = mux.SetURLVars(req, map[string]string{"sourcetype": "manifest"})
+			ctx := context.WithValue(req.Context(), models.TokenCtxKey, "test-token")
+			ctx = context.WithValue(ctx, models.UserCtxKey, &models.User{ID: userID})
+			ctx = context.WithValue(ctx, models.SystemIDKey, &systemID)
+			req = req.WithContext(ctx)
+
+			rec := httptest.NewRecorder()
+
+			// Must not panic on body without patternData (#22898)
+			defer func() {
+				if r := recover(); r != nil {
+					t.Fatalf("handler panicked on %s: %v", tc.name, r)
+				}
+			}()
+
+			h.DesignFileRequestHandlerWithSourceType(rec, req, nil, &models.User{ID: userID}, provider)
+
+			assert.Equal(t, http.StatusBadRequest, rec.Code, "expected 400 Bad Request for %s", tc.name)
+			assert.Contains(t, rec.Body.String(), "patternData", "expected error to name the missing field for %s", tc.name)
+		})
+	}
 }

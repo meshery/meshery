@@ -43,7 +43,7 @@ var viewCmd = &cobra.Command{
 	Use:   "view design name",
 	Short: "Display a design content",
 	Long: `Display the content of a specific design based on name or id.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/design/view`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/design/view`,
 	Args: cobra.MaximumNArgs(1),
 	Example: `
 // view a design

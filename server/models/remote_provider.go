@@ -1181,10 +1181,9 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 		return connections.Connection{}, err
 	}
 	if connection == nil {
-		// SaveConnection can return (nil, nil) when the remote provider answers
-		// 2xx but the connection page is empty or carries a null element. Guard
-		// the dereference below so a malformed response is a structured error,
-		// not a panic.
+		// SaveConnection returns (nil, nil) when a 2xx page's first entry is
+		// null. An empty page is already an error. Guard the dereference
+		// below so a malformed response is a structured error, not a panic.
 		err := ErrPersistConnection(fmt.Errorf("remote provider returned a nil connection for kubernetes context %q", conn.Name))
 		l.Log.Error(err)
 		return connections.Connection{}, err
@@ -1732,33 +1731,59 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 
 // PersistEvent persists a user-initiated event to the remote provider.
 // When the token is empty or remote persistence fails, it falls back to local persistence.
-func (l *RemoteProvider) PersistEvent(event events.Event, token string) error {
+//
+// The event is sent with every field it carries, including the optional
+// condition correlation (correlationKey, occurrenceCount, firstSeenAt,
+// lastSeenAt, resolvedAt), source, type, specversion and trace context
+// (traceId, parentId). The remote provider applies the createEvent
+// correlation contract to them; the local fallback, EventsPersister, applies
+// the same contract, so an event behaves alike on both paths. It returns the
+// event as the remote provider (or the local fallback) stored it. The event is
+// the server's own: one that names no source is sent with source
+// EventSourceServer.
+func (l *RemoteProvider) PersistEvent(event events.Event, token string) (PersistedEvent, error) {
+	return l.persist(withServerSource(event), token)
+}
+
+// PersistClientEvent persists an event a client sent as PersistEvent does, but
+// with its source as sent: one that names no source is recorded without one.
+func (l *RemoteProvider) PersistClientEvent(event events.Event, token string) (PersistedEvent, error) {
+	return l.persist(event, token)
+}
+
+func (l *RemoteProvider) persist(event events.Event, token string) (PersistedEvent, error) {
+	// The remote path bypasses EventsPersister, so the event is prepared here
+	// too; the local fallback re-prepares an already prepared event, which
+	// changes nothing.
+	event = PrepareEventForPersistence(event, l.Log)
 	if strings.TrimSpace(token) == "" {
-		return l.EventsPersister.PersistEvent(event, "")
+		return l.EventsPersister.persist(event)
 	}
-	if err := l.persistEventRemote(event, token); err != nil {
+	persisted, err := l.persistEventRemote(event, token)
+	if err != nil {
 		l.Log.Warn(fmt.Errorf("remote event persistence failed, falling back to local DB: %w", err))
-		return l.EventsPersister.PersistEvent(event, "")
+		return l.EventsPersister.persist(event)
 	}
-	return nil
+	return persisted, nil
 }
 
 // PersistSystemEvent persists a system-initiated event (MeshSync, registry seeding,
 // auto-registration) to the local database. These events have no user request context.
-func (l *RemoteProvider) PersistSystemEvent(event events.Event) error {
-	return l.EventsPersister.PersistEvent(event, "")
+func (l *RemoteProvider) PersistSystemEvent(event events.Event) (PersistedEvent, error) {
+	return l.EventsPersister.PersistSystemEvent(event)
 }
 
-// persistEventRemote sends an event to the remote provider for persistence.
-func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString string) error {
+// persistEventRemote sends an event to the remote provider for persistence and
+// returns the event as the remote provider stored it.
+func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString string) (PersistedEvent, error) {
 	if !l.Capabilities.IsSupported(PersistEvents) {
-		return ErrInvalidCapability("PersistEvents", l.ProviderName)
+		return PersistedEvent{}, ErrInvalidCapability("PersistEvents", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEvents)
 
 	data, err := json.Marshal(event)
 	if err != nil {
-		return ErrMarshal(err, "meshery event")
+		return PersistedEvent{}, ErrMarshal(err, "meshery event")
 	}
 
 	l.Log.Infof("attempting to publish event to remote provider, size: %d", len(data))
@@ -1769,17 +1794,43 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return ErrUnreachableRemoteProvider(err)
+		return PersistedEvent{}, ErrUnreachableRemoteProvider(err)
 	}
 	defer func() {
 		_, _ = io.Copy(io.Discard, resp.Body)
 		_ = resp.Body.Close()
 	}()
 
-	if resp.StatusCode != http.StatusOK {
-		return ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
+	// createEvent answers 201 when it records a new event and 200 when it
+	// recorded nothing new: a replayed idempotencyKey, or an occurrence counted
+	// on (or a resolution of) an open condition. Any 2xx means the remote
+	// provider has the event, so none may fall back to the local database,
+	// which would store a second copy.
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
+		return PersistedEvent{}, ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
 	}
-	return nil
+	disposition := EventDisposition(resp.Header.Get(EventDispositionHeader))
+	if disposition == "" && resp.StatusCode == http.StatusCreated {
+		disposition = EventCreated
+	}
+	l.Log.Debugf("remote provider recorded event (%s: %s)", EventDispositionHeader, disposition)
+
+	// The answer carries the event as stored, which for an incremented,
+	// resolved or replayed create is an earlier event with its own ID. A
+	// remote provider that answers with no event stored the event as sent.
+	stored := &event
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Warn(ErrDataRead(err, "remote provider event response"))
+	} else if len(bytes.TrimSpace(body)) > 0 {
+		var decoded events.Event
+		if err := json.Unmarshal(body, &decoded); err != nil {
+			l.Log.Warn(ErrUnmarshal(err, "remote provider event response"))
+		} else if !decoded.ID.IsNil() {
+			stored = &decoded
+		}
+	}
+	return PersistedEvent{Event: stored, Disposition: disposition}, nil
 }
 
 func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {
@@ -4557,18 +4608,20 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
 	l.Log.Debugf("RemoteProvider::SaveConnection: bdr value is [%s]", string(bdr))
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-		connectionPage := &connections.ConnectionPage{}
-		err = json.Unmarshal(bdr, connectionPage)
-		if err != nil {
-			return nil, ErrUnmarshal(err, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
+		// 200 and 201 may be a ConnectionPage (current Cloud) or a bare
+		// Connection (v1beta3 registerConnection). Anything else on these
+		// statuses is still a failure to save.
+		decoded, decErr := decodeRemoteProviderConnection(bdr)
+		if decErr != nil {
+			if errors.Is(decErr, errRemoteProviderConnectionMissing) {
+				return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
+			}
+			return nil, ErrUnmarshal(decErr, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
 		}
-		l.Log.Debugf("RemoteProvider::SaveConnection: parsed %d connection(s) (page=%d, pageSize=%d, totalCount=%d)",
-			len(connectionPage.Connections), connectionPage.Page, connectionPage.PageSize, connectionPage.TotalCount)
-		// On POST request to Remote Provider API, the response always contains single entry/connection.
-		if len(connectionPage.Connections) > 0 {
-			return connectionPage.Connections[0], nil
+		if decoded != nil {
+			l.Log.Debugf("RemoteProvider::SaveConnection: parsed connection %s (%s)", decoded.Name, decoded.ID)
 		}
-		return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
+		return decoded, nil
 	}
 
 	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status \"%s\"", conn.Name, conn.Kind, conn.Status), string(bdr), resp.StatusCode)
@@ -4877,13 +4930,13 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID core.U
 		return nil, ErrDataRead(err, "Connection: "+connectionID.String())
 	}
 
-	if resp.StatusCode == http.StatusOK {
+	// deleteConnection is moving from 200 with a Connection body to 204 with
+	// an empty body. Any 2xx is success. A JSON body may be a bare Connection
+	// or a ConnectionPage (first entry). An empty body still has to return a
+	// connection, because callers dereference the result.
+	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
 		l.Log.Info("connection deleted from remote provider")
-		var conn connections.Connection
-		if err = json.Unmarshal(bdr, &conn); err != nil {
-			return nil, err
-		}
-		return &conn, nil
+		return connectionFromRemoteDelete(bdr, resp.StatusCode, connectionID)
 	}
 	err = ErrDelete(fmt.Errorf("error while deleting connection: %s", bdr), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
@@ -4920,7 +4973,10 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 		_ = resp.Body.Close()
 	}()
 
-	if resp.StatusCode == http.StatusOK {
+	// Same success range as DeleteConnection: 200 with a body and 204 No Content
+	// both mean the meshery connection is gone. This endpoint does not return
+	// the deleted row.
+	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
 		return nil
 	}
 
@@ -5014,6 +5070,12 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 	if err != nil {
 		return err
 	}
+	// gzip.Reader owns the flate decompressor state, so release it on every
+	// return path - a truncated archive or a rejected entry leaves the loop
+	// early, and without this the reader is only reclaimed by the GC.
+	defer func() {
+		_ = uncompressedStream.Close()
+	}()
 
 	tarReader := tar.NewReader(uncompressedStream)
 

@@ -652,9 +652,9 @@ func ChangeManifestVersion(channel, version, filePath string) error {
 
 // CreateManifestsFolder creates a new folder (.meshery/manifests)
 func CreateManifestsFolder() error {
-	log.Debug("Deleting " + ManifestsFolder + " folder...")
+	log.Debug("Deleting " + filepath.Join(MesheryFolder, ManifestsFolder) + " folder...")
 	// delete manifests folder if it already exists
-	if err := os.RemoveAll(ManifestsFolder); err != nil {
+	if err := os.RemoveAll(filepath.Join(MesheryFolder, ManifestsFolder)); err != nil {
 		return err
 	}
 	log.Debug("Creating " + ManifestsFolder + " folder...")
@@ -729,7 +729,11 @@ func Startdockerdaemon(subcommand string) error {
 	if SilentFlag {
 		userResponse = true
 	} else {
-		userResponse = AskForConfirmation("Start Docker now")
+		var promptErr error
+		userResponse, promptErr = AskForConfirmation("Start Docker now")
+		if promptErr != nil {
+			return promptErr
+		}
 	}
 	if !userResponse {
 		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
@@ -742,14 +746,12 @@ func Startdockerdaemon(subcommand string) error {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 	} else {
-		// Assuming we are on macOS, try to start Docker from default path
-		cmd := exec.Command("/Applications/Docker.app/Contents/MacOS/Docker")
-		err := cmd.Start()
-		if err != nil {
+		// Assuming we are on macOS, try to start Docker
+		if err := exec.Command("open", "-a", "Docker").Run(); err != nil {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 		// wait for few seconds for docker to start
-		err = exec.Command("sleep", "30").Run()
+		err := exec.Command("sleep", "30").Run()
 		if err != nil {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
