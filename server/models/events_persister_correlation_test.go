@@ -369,6 +369,27 @@ func TestPersistEventWithoutOwnerIsNotCorrelated(t *testing.T) {
 	}
 }
 
+// An event owned by the zero UUID (what ResolveUserAndSystemID yields when no
+// user is on the request) identifies no user, so every open occurrence of its
+// condition is recorded uncorrelated rather than rejected by the open-condition
+// index.
+func TestPersistEventWithZeroOwnerIsNotCorrelated(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	key := "meshery-server/k8s-connection/z/unreachable"
+
+	for i := 0; i < 2; i++ {
+		mustPersist(t, p, conditionEvent(core.Uuid{}, key, "zero owner").Build())
+	}
+
+	var count int64
+	if err := p.DB.Model(&events.Event{}).Where("correlation_key = ?", key).Count(&count).Error; err != nil {
+		t.Fatalf("count: %v", err)
+	}
+	if count != 2 {
+		t.Fatalf("got %d rows, want 2 uncorrelated zero-owner events", count)
+	}
+}
+
 // A row an older server recorded open without a count counts as one
 // occurrence.
 func TestPersistEventCountsAnOpenRowWithoutACount(t *testing.T) {
