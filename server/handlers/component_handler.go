@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -890,8 +891,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 			"error": wrappedErr,
 		})
 		_event := eventBuilder.Build()
-		_ = provider.PersistEvent(*_event, token)
-		go h.config.EventBroadcaster.Publish(userID, _event)
+		h.persistAndPublish(provider, token, userID, _event)
 		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
@@ -899,8 +899,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	description := fmt.Sprintf("Status of '%s' updated to %s.", updateData.DisplayName, updateData.Status)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 
 	// Respond with success status
 	rw.WriteHeader(http.StatusNoContent)
@@ -1283,6 +1282,38 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 
 }
 
+var (
+	ociRepositoryNamePattern = regexp.MustCompile(`^[a-z0-9]+(?:(?:[._]|__|-+)[a-z0-9]+)*$`)
+	ociRepositoryNameInvalid = regexp.MustCompile(`[^a-z0-9]+`)
+)
+
+const (
+	ociRepositoryNameMinLength = 2
+	ociRepositoryNameMaxLength = 255
+)
+
+// ociRepositoryName maps a model name to a valid OCI repository name. The
+// mapping is lossy: distinct names can sanitize to the same repository name
+// (for example "foo bar" and "foo-bar"), so callers pushing to a shared
+// registry should be aware of possible collisions.
+func ociRepositoryName(modelName string) string {
+	if len(modelName) >= ociRepositoryNameMinLength && len(modelName) <= ociRepositoryNameMaxLength &&
+		ociRepositoryNamePattern.MatchString(modelName) {
+		return modelName
+	}
+	sanitized := strings.Trim(ociRepositoryNameInvalid.ReplaceAllString(strings.ToLower(modelName), "-"), "-")
+	if len(sanitized) > ociRepositoryNameMaxLength {
+		sanitized = strings.TrimRight(sanitized[:ociRepositoryNameMaxLength], "-")
+	}
+	switch {
+	case sanitized == "":
+		return "model"
+	case len(sanitized) < ociRepositoryNameMinLength:
+		return sanitized + "-model"
+	}
+	return sanitized
+}
+
 func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	modelId := r.URL.Query().Get("id")
 	name := r.URL.Query().Get("name")
@@ -1465,7 +1496,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 		// Save OCI artifact into a tar file
 		tarfileName := filepath.Join(modelDir, "model.tar")
-		err = meshkitOci.SaveOCIArtifact(img, tarfileName, model.Name)
+		err = meshkitOci.SaveOCIArtifact(img, tarfileName, ociRepositoryName(model.Name))
 		if err != nil {
 			h.log.Error(err)
 			writeMeshkitError(rw, ErrExportModel(err, "OCI artifact save"), http.StatusInternalServerError)

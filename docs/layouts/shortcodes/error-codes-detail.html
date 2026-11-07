@@ -51,6 +51,8 @@
       </thead>
       <tbody class="tbl-body">
         {{ range $errCode, $err_code := $component.errors }}
+          {{ $componentSlug := printf "%s-%s" $component.component_type $component.component_name | urlize }}
+          {{ $errorSlug := printf "%s-%s" $err_code.name $err_code.code | urlize }}
           {{ $severityClass := "tbl-severity-info" }}
           {{ if eq (lower $err_code.severity) "fatal" }}
             {{ $severityClass = "tbl-severity-fatal" }}
@@ -60,7 +62,7 @@
           <tr id="{{ $err_code.name }}-{{ $err_code.code }}" class="tbl-body-row hover-effect" data-details-id="{{ $component.component_name }}-{{ $err_code.name }}-more-info" onclick="toggle_visibility('{{ $component.component_name }}-{{ $err_code.name }}-more-info');">
             <td class="{{ $severityClass }}">{{ $err_code.severity }}</td>
             <td id="{{ $heading | lower | replace " " "-" }}-{{ $err_code.code }}" class="error-name-code">
-              <code>{{ $err_code.name }}-{{ $err_code.code }}</code>
+              <a href="{{ printf "reference/error-codes/%s/%s/" $componentSlug $errorSlug | relURL }}"><code>{{ $err_code.name }}-{{ $err_code.code }}</code></a>
             </td>
             <td>{{ $err_code.short_description }}</td>
             <td><a href="https://discuss.meshery.io/search?q={{ $err_code.name }}-{{ $err_code.code }}" target="_blank">search forum</a></td>
