@@ -53,22 +53,51 @@ function HideToggleFunction() {
 
 /*clipboard*/
 
-var getcodeelement = $('.clipboardjs');
+var clipButtonHtml = '<div class="btn-copy-wrap"><button type="button" class="clipbtn" aria-label="Copy code to clipboard"><i class="far fa-copy" aria-hidden="true"></i></button></div>';
 
-getcodeelement.each(function () {
-    
-    /*trigger*/
-    
-    var clipButton = '<div class="btn-copy-wrap"><button type="button" class="clipbtn" aria-label="Copy code to clipboard"><i class="far fa-copy" aria-hidden="true"></i></button></div>';
-    $(this).after(clipButton);
+// 1. Shortcode blocks (.codeblock-pre)
+$('pre.codeblock-pre').each(function () {
+    var pre = $(this);
+    var code = pre.find('.clipboardjs');
+    if (code.length) {
+        var text = code.text().trim();
+        if (text.indexOf('$') !== -1) {
+            text = text.replace(/^[ \t]+(?=\$ )/gm, '');
+        }
+        code.text(text);
+    }
+    if (!pre.find('.clipbtn').length) {
+        pre.append(clipButtonHtml);
+    }
+});
+
+// 2. Standard Markdown syntax-highlighted blocks (.highlight)
+$('.highlight').each(function () {
+    if (!$(this).find('.clipbtn').length) {
+        $(this).append(clipButtonHtml);
+    }
+});
+
+// 3. Standalone pre blocks (untagged markdown blocks not inside .highlight or .codeblock-pre)
+$('pre:not(.codeblock-pre)').each(function () {
+    if ($(this).closest('.highlight').length || $(this).closest('.codeblock-pre').length) return;
+    if (!$(this).find('.clipbtn').length) {
+        $(this).append(clipButtonHtml);
+    }
 });
 
 var clipboard = new Clipboard('.clipbtn', {
     text: function (trigger) {
         var container = trigger.closest('pre') || trigger.closest('.highlight');
-        var content = container ? container.querySelector('.clipboardjs') : null;
-        var text = content ? content.textContent : '';
-        return text.trim().replace(/^\s*\$\s+/gm, '');
+        if (!container) return '';
+        var content = container.querySelector('.clipboardjs') || container.querySelector('code') || container;
+        var clone = content ? content.cloneNode(true) : null;
+        if (clone) {
+            var btn = clone.querySelector('.btn-copy-wrap');
+            if (btn) btn.remove();
+            return (clone.textContent || '').trim().replace(/^\s*\$\s+/gm, '');
+        }
+        return '';
     }
 });
 
@@ -82,6 +111,7 @@ clipboard.on("success", (e) => {
     const icon = button.querySelector('i');
     if (!icon) return;
 
+    const originalLabel = button.getAttribute('aria-label') || 'Copy code to clipboard';
     button.dataset.isCopying = "true";
     button.setAttribute('aria-label', 'Copied to clipboard');
 
@@ -99,7 +129,7 @@ clipboard.on("success", (e) => {
 
     setTimeout(() => {
         // 1. Always reset accessible name/state first (safe even if detached)
-        button.setAttribute('aria-label', 'Copy code to clipboard');
+        button.setAttribute('aria-label', originalLabel);
         button.removeAttribute("data-is-copying");
         // 2. Guard only the physical DOM manipulation
         if (button.isConnected === false) {
