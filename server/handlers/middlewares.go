@@ -15,8 +15,11 @@ import (
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshsync/pkg/model"
+	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
 )
 
@@ -374,13 +377,53 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
-			if err != nil {
-				_ = provider.PersistEvent(*event, token)
-				go h.config.EventBroadcaster.Publish(userUUID, event)
-			}
+			h.reportBackgroundDiscovery(provider, token, userUUID, event, err)
 		}(inst)
 	}
 	return ctx, nil
+}
+
+// reportBackgroundDiscovery persists and broadcasts what a background
+// Discovery of a connection has to tell the user: its failure (SendEvent
+// already suppressed the repeats that did not change the connection's status),
+// or the resolution of the connection's unreachable condition when it became
+// reachable again. A routine successful Discovery reports nothing.
+func (h *Handler) reportBackgroundDiscovery(provider models.Provider, token string, userUUID core.Uuid, event *events.Event, err error) {
+	if event == nil || (err == nil && event.ResolvedAt == nil) {
+		return
+	}
+	h.persistAndPublish(provider, token, userUUID, event)
+}
+
+// persistAndPublish persists event and broadcasts it as stored: an occurrence
+// counted on, or the resolution of, an open condition is broadcast as the
+// condition's stored event, so a client updates that notification in place
+// instead of showing one whose ID was never recorded. When persisting fails the
+// event is still broadcast, as sent.
+//
+// Every server site that persists an event and broadcasts it goes through this
+// helper (or persistAndPublishEvent, outside a Handler; a system event goes
+// through models.PersistAndPublishSystemEvent), never publishing its own copy
+// after PersistEvent: that copy carries no stored ID.
+func (h *Handler) persistAndPublish(provider models.Provider, token string, userID core.Uuid, event *events.Event) {
+	var broadcaster *models.Broadcast
+	if h.config != nil {
+		broadcaster = h.config.EventBroadcaster
+	}
+	persistAndPublishEvent(h.log, provider, token, broadcaster, userID, event)
+}
+
+// persistAndPublishEvent is persistAndPublish for code that has no Handler.
+func persistAndPublishEvent(log logger.Handler, provider models.Provider, token string, broadcaster *models.Broadcast, userID core.Uuid, event *events.Event) {
+	persisted, err := provider.PersistEvent(*event, token)
+	if err != nil {
+		log.Error(err)
+	} else {
+		event = persisted.Event
+	}
+	if broadcaster != nil {
+		broadcaster.Publish(userID, event)
+	}
 }
 
 func (h *Handler) K8sFSMMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
@@ -439,10 +482,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
-			if err != nil {
-				_ = provider.PersistEvent(*event, token)
-				go h.config.EventBroadcaster.Publish(userUUID, event)
-			}
+			h.reportBackgroundDiscovery(provider, token, userUUID, event, err)
 		}(inst)
 		kubernesMachineCtx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
 		if err != nil {

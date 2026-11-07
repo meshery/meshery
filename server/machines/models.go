@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
@@ -81,6 +82,29 @@ type StateMachine struct {
 	Log logger.Handler
 
 	Provider models.Provider
+
+	// ConditionComponent opts the machine's connection into condition
+	// correlation (meshery/schemas event correlation contract): when set, a
+	// background Discovery failure that moves the connection to NOTFOUND
+	// reports the condition models.ConditionKey(ConditionComponent, ID,
+	// ConditionUnreachable), and the Discovery that later moves it out of
+	// NOTFOUND resolves that condition. Empty leaves the machine's events
+	// uncorrelated.
+	ConditionComponent string
+}
+
+// ConditionUnreachable is the condition a connection is in while background
+// Discovery cannot reach it and its status is NOTFOUND.
+const ConditionUnreachable = "unreachable"
+
+// conditionKey returns the correlationKey of the named condition of the
+// machine's connection, or "" when the machine does not take part in condition
+// correlation or has no connection id.
+func (sm *StateMachine) conditionKey(condition string) string {
+	if sm.ConditionComponent == "" || sm.ID.IsNil() {
+		return ""
+	}
+	return models.ConditionKey(sm.ConditionComponent, sm.ID.String(), condition)
 }
 
 func (sm *StateMachine) AssignProvider(provider models.Provider) *StateMachine {
@@ -316,6 +340,12 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// (issue #20818).
 	statusChanged := !haltedWithoutTransition
 
+	// persistedStatus is the connection status recorded before this send, when
+	// the status block below read it. Condition correlation keys off it: a
+	// Discovery that leaves NOTFOUND resolves the unreachable condition.
+	var persistedStatus connections.ConnectionStatus
+	persistedStatusKnown := false
+
 	// originalEventType (not eventType) is compared against Exit here: by the
 	// time the loop finishes, eventType has been overwritten to NoOp, so the
 	// caller's intent is only visible in the captured original. A halt without
@@ -341,6 +371,8 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// settled in. Only an actual change should produce a user-facing failure
 		// event (see statusChanged above).
 		statusChanged = connection.Status != connections.ConnectionStatus(sm.CurrentState)
+		persistedStatus = connection.Status
+		persistedStatusKnown = true
 
 		connectionPayload := &connections.ConnectionPayload{
 			ID:       sm.ID,
@@ -393,6 +425,16 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		if failureEvent == nil {
 			failureEvent = events.NewEvent().WithDescription(fmt.Sprintf("%s connection action failed.", sm.Name)).ActedUpon(sm.ID).FromOwner(userUUID).FromSystem(systemID).WithCategory("connection").WithAction("update").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": failureErr}).Build()
 		}
+		// A background Discovery failure that moved the connection to NOTFOUND
+		// opens (or, when concurrent requests both saw the status change, counts
+		// an occurrence of) the connection's unreachable condition. The
+		// de-duplication above already suppressed the repeats that left the
+		// status unchanged, so only status changes reach here.
+		if originalEventType == Discovery && sm.CurrentState == NOTFOUND {
+			if key := sm.conditionKey(ConditionUnreachable); key != "" {
+				failureEvent.CorrelationKey = &key
+			}
+		}
 		return failureEvent, failureErr
 	}
 
@@ -403,6 +445,24 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			"previousStatus": sm.PreviousState,
 			"currentStatus":  sm.CurrentState,
 		}).WithSeverity(events.Informational).Build()
+	}
+
+	// A Discovery that moves the connection out of NOTFOUND clears its
+	// unreachable condition, so the event announcing the change is the
+	// condition's resolution (the contract's resolution convention: the
+	// condition's key and category, resolvedAt, and a success severity and
+	// description saying what cleared). It is sent only on that change, never
+	// on every healthy check.
+	if originalEventType == Discovery && statusChanged && persistedStatusKnown &&
+		persistedStatus == connections.ConnectionStatus(NOTFOUND) && sm.CurrentState != NOTFOUND && sm.CurrentState != DELETED {
+		if key := sm.conditionKey(ConditionUnreachable); key != "" {
+			resolvedAt := time.Now().UTC()
+			event.CorrelationKey = &key
+			event.ResolvedAt = &resolvedAt
+			event.Category = "connection"
+			event.Severity = events.Success
+			event.Description = fmt.Sprintf("%s connection is reachable again and changed to %s", sm.Name, sm.CurrentState)
+		}
 	}
 
 	return event, nil

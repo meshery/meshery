@@ -121,12 +121,11 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
 
 		event := events.NewEvent().ActedUpon(connectionID).FromSystem(*ctx.MesheryInstanceID).WithSeverity(events.Informational).WithCategory("connection").WithAction(Registering.String()).FromOwner(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
-		err := provider.PersistSystemEvent(*event)
-		if err != nil {
-			// Even if event was not persisted continue with the operation and publish the event to user.
+		// Even if the event was not persisted, the event is published to the user
+		// and the operation continues.
+		if err := PersistAndPublishSystemEvent(provider, eventsBrodcaster, userUUID, event); err != nil {
 			cg.log.Warn(err)
 		}
-		eventsBrodcaster.Publish(userUUID, event)
 
 		go func(ctx *K8sContext) {
 			// set the status to RegistrationComplete

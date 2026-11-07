@@ -119,6 +119,11 @@ type MachineCtx struct {
 
 const (
 	machineName = "kubernetes"
+
+	// conditionComponent is the component segment of the correlationKey of a
+	// Kubernetes connection's conditions, for example
+	// meshery-server/k8s-connection/<connectionId>/unreachable.
+	conditionComponent = "k8s-connection"
 )
 
 func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachine, error) {
@@ -129,13 +134,14 @@ func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachin
 	}
 
 	return &machines.StateMachine{
-		ID:            connectionID,
-		UserID:        userID,
-		Name:          machineName,
-		PreviousState: machines.DefaultState,
-		InitialState:  machines.InitialState,
-		CurrentState:  machines.InitialState,
-		Log:           log,
+		ID:                 connectionID,
+		UserID:             userID,
+		Name:               machineName,
+		ConditionComponent: conditionComponent,
+		PreviousState:      machines.DefaultState,
+		InitialState:       machines.InitialState,
+		CurrentState:       machines.InitialState,
+		Log:                log,
 		States: machines.States{
 			machines.DISCOVERED:   Discovered(),
 			machines.REGISTERED:   Registered(),

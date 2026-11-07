@@ -71,8 +71,10 @@ export const eventsSlice = createSlice({
         severity: action.payload?.severity?.trim() || defaultEventProperties.severity,
         status: action.payload?.status?.trim() || defaultEventProperties.status,
       };
-      eventsEntityAdapter.addOne(state, event);
-      // state.events = [event, ...state.events]
+      // The server broadcasts an occurrence counted on, or the resolution of,
+      // an open condition as the condition's stored event, so an event already
+      // shown is updated in place rather than ignored.
+      eventsEntityAdapter.upsertOne(state, event);
     },
 
     updateEvent: eventsEntityAdapter.updateOne,
