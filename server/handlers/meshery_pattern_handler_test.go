@@ -6,14 +6,14 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-
-	"github.com/gorilla/mux"
-	_events "github.com/meshery/meshkit/models/events"
+	"strings"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
+	_events "github.com/meshery/meshkit/models/events"
 	component "github.com/meshery/schemas/models/v1beta2/component"
 	relationship "github.com/meshery/schemas/models/v1beta2/relationship"
 	design "github.com/meshery/schemas/models/v1beta3/design"
@@ -660,8 +660,8 @@ type mockPatternHandlerProvider struct {
 	*models.DefaultLocalProvider
 }
 
-func (m *mockPatternHandlerProvider) PersistEvent(event _events.Event, token string) error {
-	return nil
+func (m *mockPatternHandlerProvider) PersistEvent(event _events.Event, token string) (models.PersistedEvent, error) {
+	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
 }
 
 func (m *mockPatternHandlerProvider) GetProviderToken(_ *http.Request) (string, error) {
@@ -725,5 +725,124 @@ func TestDesignFileRequestHandlerWithSourceType_MissingPatternDataReturnsBadRequ
 			assert.Equal(t, http.StatusBadRequest, rec.Code, "expected 400 Bad Request for %s", tc.name)
 			assert.Contains(t, rec.Body.String(), "patternData", "expected error to name the missing field for %s", tc.name)
 		})
+	}
+}
+
+// mockCloneProvider is a minimal Provider mock for CloneMesheryPatternHandler tests.
+type mockCloneProvider struct {
+	*models.DefaultLocalProvider
+	token string
+}
+
+func newMockCloneProvider(token string) *mockCloneProvider {
+	base := &models.DefaultLocalProvider{}
+	base.Initialize()
+	return &mockCloneProvider{
+		DefaultLocalProvider: base,
+		token:                token,
+	}
+}
+
+func (m *mockCloneProvider) GetProviderToken(r *http.Request) (string, error) {
+	return m.token, nil
+}
+
+func TestErrRequestBody_NilError(t *testing.T) {
+	err := ErrRequestBody(nil)
+	if err == nil {
+		t.Fatal("expected non-nil error from ErrRequestBody(nil)")
+	}
+	if got, want := errors.GetCode(err), ErrRequestBodyCode; got != want {
+		t.Errorf("expected error code %q, got %q", want, got)
+	}
+}
+
+func TestErrClonePattern_NilError(t *testing.T) {
+	err := ErrClonePattern(nil)
+	if err == nil {
+		t.Fatal("expected non-nil error from ErrClonePattern(nil)")
+	}
+	if got, want := errors.GetCode(err), ErrClonePatternCode; got != want {
+		t.Errorf("expected error code %q, got %q", want, got)
+	}
+}
+
+func TestCloneMesheryPatternHandler_MissingID(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	body := bytes.NewBufferString(`{"name":"cloned-design"}`)
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/", body)
+	rec := httptest.NewRecorder()
+
+	h.CloneMesheryPatternHandler(rec, req, nil, nil, newMockCloneProvider("test-token"))
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrClonePatternCode) {
+		t.Errorf("expected response to contain ErrClonePatternCode %q, got %s", ErrClonePatternCode, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "missing design ID") {
+		t.Errorf("expected response to contain 'missing design ID', got %s", rec.Body.String())
+	}
+}
+
+func TestCloneMesheryPatternHandler_MalformedBody(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	body := bytes.NewBufferString(`invalid-json`)
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/test-id", body)
+	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+	rec := httptest.NewRecorder()
+
+	h.CloneMesheryPatternHandler(rec, req, nil, nil, newMockCloneProvider("test-token"))
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrRequestBodyCode) {
+		t.Errorf("expected response to contain ErrRequestBodyCode %q, got %s", ErrRequestBodyCode, rec.Body.String())
+	}
+}
+
+func TestCloneMesheryPatternHandler_EmptyName(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	body := bytes.NewBufferString(`{"name":""}`)
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/test-id", body)
+	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+	rec := httptest.NewRecorder()
+
+	h.CloneMesheryPatternHandler(rec, req, nil, nil, newMockCloneProvider("test-token"))
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrClonePatternCode) {
+		t.Errorf("expected response to contain ErrClonePatternCode %q, got %s", ErrClonePatternCode, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "design name is required") {
+		t.Errorf("expected response to contain 'design name is required', got %s", rec.Body.String())
+	}
+}
+
+func TestCloneMesheryPatternHandler_NullBody(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	body := bytes.NewBufferString(`null`)
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/test-id", body)
+	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+	rec := httptest.NewRecorder()
+
+	h.CloneMesheryPatternHandler(rec, req, nil, nil, newMockCloneProvider("test-token"))
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrClonePatternCode) {
+		t.Errorf("expected response to contain ErrClonePatternCode %q, got %s", ErrClonePatternCode, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "design name is required") {
+		t.Errorf("expected response to contain 'design name is required', got %s", rec.Body.String())
 	}
 }

@@ -119,7 +119,19 @@ type MachineCtx struct {
 
 const (
 	machineName = "kubernetes"
+
+	// conditionComponent is the component segment of the correlationKey of a
+	// Kubernetes connection's conditions, for example
+	// meshery-server/k8s-connection/<connectionId>/unreachable.
+	conditionComponent = "k8s-connection"
 )
+
+// UnreachableConditionKey is the correlationKey of a Kubernetes connection's
+// unreachable condition, for code that resolves it without driving the
+// connection's machine (deleting the connection).
+func UnreachableConditionKey(connectionID core.Uuid) string {
+	return models.ConditionKey(conditionComponent, connectionID.String(), machines.ConditionUnreachable)
+}
 
 func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
@@ -129,13 +141,14 @@ func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachin
 	}
 
 	return &machines.StateMachine{
-		ID:            connectionID,
-		UserID:        userID,
-		Name:          machineName,
-		PreviousState: machines.DefaultState,
-		InitialState:  machines.InitialState,
-		CurrentState:  machines.InitialState,
-		Log:           log,
+		ID:                 connectionID,
+		UserID:             userID,
+		Name:               machineName,
+		ConditionComponent: conditionComponent,
+		PreviousState:      machines.DefaultState,
+		InitialState:       machines.InitialState,
+		CurrentState:       machines.InitialState,
+		Log:                log,
 		States: machines.States{
 			machines.DISCOVERED:   Discovered(),
 			machines.REGISTERED:   Registered(),

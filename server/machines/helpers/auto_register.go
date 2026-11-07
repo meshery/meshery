@@ -139,7 +139,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 							event.Description = fmt.Sprintf("Failed to auto register \"%s\" connection at %s", connectionName, url)
 							// Do not publish the event if auto registration fails.
 							if data.MeshsyncDataHandler.Provider != nil {
-								_ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
+								_, _ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
 							}
 							continue
 						}
@@ -151,12 +151,11 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 
 						event = events.NewEvent().WithCategory("connection").WithAction("register").FromOwner(data.MeshsyncDataHandler.UserID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
 
-						if arh.eventBroadcast != nil {
-							go arh.eventBroadcast.Publish(data.MeshsyncDataHandler.UserID, event)
-						}
+						var persister models.SystemEventPersister
 						if data.MeshsyncDataHandler.Provider != nil {
-							_ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
+							persister = data.MeshsyncDataHandler.Provider
 						}
+						_ = models.PersistAndPublishSystemEvent(persister, arh.eventBroadcast, data.MeshsyncDataHandler.UserID, event)
 					}
 				}
 
