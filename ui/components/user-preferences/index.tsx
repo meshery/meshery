@@ -179,7 +179,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
         });
       })
       .catch(() => {
-        handleError('There was an error sending your preference');
+        handleError('There was an error sending your preference')();
       });
   };
 
@@ -226,7 +226,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
         }
       })
       .catch(() => {
-        handleError('There was an error sending your preference');
+        handleError('There was an error sending your preference')();
       });
   };
 
