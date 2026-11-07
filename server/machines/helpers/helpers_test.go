@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"context"
+	"errors"
 	"reflect"
 	"testing"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/meshery/meshery/server/machines/prometheus"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
 )
 
@@ -159,5 +161,86 @@ func TestGetMachineRegistersKindsWithoutVerifyAction(t *testing.T) {
 				t.Fatalf("events available from %q = %v, want %v", mch.CurrentState, got, want)
 			}
 		})
+	}
+}
+
+// InitializeMachineWithContext must not add a state machine to smInstanceTracker
+// when its initialization/Start fails. Caching an uninitialized instance strands
+// a broken machine with a nil Context in the tracker, causing subsequent calls
+// to return that cached instance with a nil error.
+func TestInitializeMachineWithContext_DoesNotCacheOnStartError(t *testing.T) {
+	connID := core.Uuid(uuid.Must(uuid.NewV4()))
+	userID := core.Uuid(uuid.Must(uuid.NewV4()))
+	log, err := logger.New("test", logger.Options{Format: logger.JsonLogFormat})
+	if err != nil {
+		t.Fatalf("logger.New() error = %v", err)
+	}
+
+	tracker := &machines.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
+	}
+	ctx := context.Background()
+
+	expectedErr := errors.New("simulated init failure")
+	failingInit := func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
+		return nil, nil, expectedErr
+	}
+
+	// First attempt: initFunc fails
+	inst, err := InitializeMachineWithContext(
+		nil,
+		ctx,
+		connID,
+		userID,
+		tracker,
+		log,
+		nil,
+		machines.InitialState,
+		"kubernetes",
+		failingInit,
+	)
+	if err == nil {
+		t.Fatal("expected InitializeMachineWithContext to fail, got nil")
+	}
+	if inst != nil {
+		t.Fatalf("expected nil instance on error, got %v", inst)
+	}
+
+	// Crucial check: the tracker must NOT contain the failed instance
+	if cached, ok := tracker.Get(connID); ok {
+		t.Fatalf("tracker cached failed machine instance: %v", cached)
+	}
+
+	// Second attempt: initFunc succeeds (simulating recovery)
+	successfulInit := func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
+		return &kubernetes.MachineCtx{}, nil, nil
+	}
+
+	inst, err = InitializeMachineWithContext(
+		nil,
+		ctx,
+		connID,
+		userID,
+		tracker,
+		log,
+		nil,
+		machines.InitialState,
+		"kubernetes",
+		successfulInit,
+	)
+	if err != nil {
+		t.Fatalf("expected InitializeMachineWithContext to succeed on retry, got %v", err)
+	}
+	if inst == nil {
+		t.Fatal("expected non-nil instance on success")
+	}
+
+	// Now the tracker SHOULD contain it
+	cached, ok := tracker.Get(connID)
+	if !ok || cached != inst {
+		t.Fatalf("expected tracker to cache successfully initialized machine, got ok=%v, cached=%v", ok, cached)
+	}
+	if !HasMachineContext(inst) {
+		t.Fatal("expected cached instance to have a valid context")
 	}
 }
