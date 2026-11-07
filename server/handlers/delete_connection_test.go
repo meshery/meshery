@@ -7,6 +7,8 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
@@ -94,5 +96,49 @@ func TestDeleteConnectionExisting(t *testing.T) {
 
 	if _, err := provider.ConnectionPersister.GetConnection(saved.ID, ""); err == nil {
 		t.Error("connection is still readable after a successful delete")
+	}
+}
+
+// Deleting a Kubernetes connection while it is NOTFOUND resolves its open
+// unreachable condition instead of leaving it open forever; deleting one that
+// is not NOTFOUND resolves nothing.
+func TestDeleteConnectionResolvesTheUnreachableCondition(t *testing.T) {
+	for _, c := range []struct {
+		status      connections.ConnectionStatus
+		wantResolve bool
+	}{
+		{connections.ConnectionStatus(machines.NOTFOUND), true},
+		{connections.CONNECTED, false},
+	} {
+		h, provider := newDeleteConnectionFixture(t)
+		user := &models.User{ID: uuid.Must(uuid.NewV4())}
+		saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+			Name: "test-connection", Kind: "kubernetes", ConnectionType: "platform", Status: c.status,
+		})
+		if err != nil {
+			t.Fatalf("save connection: %v", err)
+		}
+		key := kubernetes.UnreachableConditionKey(saved.ID)
+		if _, err := provider.EventsPersister.PersistEvent(*events.NewEvent().FromOwner(user.ID).WithCategory("connection").
+			WithAction("update").WithSeverity(events.Error).WithCorrelationKey(key).Build(), ""); err != nil {
+			t.Fatalf("open the condition: %v", err)
+		}
+
+		req := httptest.NewRequest(http.MethodDelete, "/api/integrations/connections/"+saved.ID.String(), nil)
+		req = mux.SetURLVars(req, map[string]string{"connectionId": saved.ID.String()})
+		rec := httptest.NewRecorder()
+		h.DeleteConnection(rec, req, nil, user, provider)
+		if rec.Code != http.StatusOK {
+			t.Fatalf("%s: status = %d. body: %s", c.status, rec.Code, rec.Body.String())
+		}
+
+		var open int64
+		if err := provider.EventsPersister.DB.Model(&events.Event{}).
+			Where("correlation_key = ? AND resolved_at IS NULL", key).Count(&open).Error; err != nil {
+			t.Fatalf("count open conditions: %v", err)
+		}
+		if got := open == 0; got != c.wantResolve {
+			t.Errorf("%s: %d open conditions after the delete, want resolved=%v", c.status, open, c.wantResolve)
+		}
 	}
 }

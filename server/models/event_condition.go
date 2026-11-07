@@ -43,6 +43,10 @@ const (
 // incremented or resolved condition, Event is the condition's stored event,
 // whose ID is not the ID of the event that was persisted, so it is the one to
 // broadcast or return to a client.
+//
+// Event is nil only when a remote provider recorded nothing new (incremented,
+// resolved or replayed) and did not answer with the stored event: there is
+// then no stored event to broadcast or return, and nothing new to report.
 type PersistedEvent struct {
 	Event       *events.Event
 	Disposition EventDisposition

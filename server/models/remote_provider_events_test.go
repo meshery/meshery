@@ -178,11 +178,56 @@ func TestRemoteProviderPersistEventAcceptsAny2xx(t *testing.T) {
 		})
 		event := events.NewEvent().FromOwner(mustUUID(t)).WithCategory("connection").WithAction("update").
 			WithSeverity(events.Error).Build()
-		if _, err := provider.PersistEvent(*event, "token"); err != nil {
+		persisted, err := provider.PersistEvent(*event, "token")
+		if err != nil {
 			t.Fatalf("status %d: PersistEvent: %v", status, err)
 		}
 		if n := localEventCount(t, provider); n != c.wantLocal {
 			t.Errorf("status %d: %d local rows, want %d", status, n, c.wantLocal)
+		}
+		// A 2xx that reports an occurrence counted but carries no stored event
+		// must not present the sent event, whose ID no row has, as stored.
+		if c.wantLocal == 0 && persisted.Event != nil {
+			t.Errorf("status %d: returned event %s for an incremented create with no body, want none", status, persisted.Event.ID)
+		}
+	}
+}
+
+// A body-less or unparseable answer for a create that recorded nothing new
+// returns no event, whatever the disposition; one for a created event returns
+// the event as sent.
+func TestRemoteProviderPersistEventWithoutTheStoredEvent(t *testing.T) {
+	for _, c := range []struct {
+		disposition EventDisposition
+		body        string
+		wantSent    bool
+	}{
+		{EventIncremented, "", false},
+		{EventResolved, "not json", false},
+		{EventReplayed, "{}", false},
+		{EventCreated, "", true},
+		{"", "", true},
+	} {
+		c := c
+		provider := newEventsRemoteProvider(t, func(w http.ResponseWriter, _ *http.Request) {
+			if c.disposition != "" {
+				w.Header().Set(EventDispositionHeader, string(c.disposition))
+			}
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(c.body))
+		})
+		sent := events.NewEvent().FromOwner(mustUUID(t)).WithCategory("connection").WithAction("update").
+			WithSeverity(events.Error).Build()
+		persisted, err := provider.PersistEvent(*sent, "token")
+		if err != nil {
+			t.Fatalf("%q: PersistEvent: %v", c.disposition, err)
+		}
+		if c.wantSent {
+			if persisted.Event == nil || persisted.Event.ID != sent.ID {
+				t.Errorf("%q: got %v, want the event as sent", c.disposition, persisted.Event)
+			}
+		} else if persisted.Event != nil {
+			t.Errorf("%q: got event %s, want none", c.disposition, persisted.Event.ID)
 		}
 	}
 }

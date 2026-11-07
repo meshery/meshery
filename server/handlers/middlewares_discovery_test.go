@@ -24,10 +24,14 @@ type recordingEventsProvider struct {
 	models.Provider
 	persisted []events.Event
 	stored    *models.PersistedEvent
+	err       error
 }
 
 func (p *recordingEventsProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
 	p.persisted = append(p.persisted, event)
+	if p.err != nil {
+		return models.PersistedEvent{}, p.err
+	}
 	if p.stored != nil {
 		return *p.stored, nil
 	}
@@ -218,7 +222,8 @@ func TestReportBackgroundDiscovery(t *testing.T) {
 		wantPersist bool
 	}{
 		{"routine success", routine, nil, false},
-		{"suppressed repeat", nil, nil, false},
+		{"suppressed", nil, nil, false},
+		{"recurrence", events.NewEvent().WithSeverity(events.Error).WithCorrelationKey(key).Build(), nil, true},
 		{"failure", failure, errors.New("unreachable"), true},
 		{"resolution", resolution, nil, true},
 	}
@@ -308,8 +313,9 @@ func TestClientEventHandlerAnswersStoredEvent(t *testing.T) {
 	rec := httptest.NewRecorder()
 	h.ClientEventHandler(rec, req, nil, user, provider)
 
-	if rec.Code != http.StatusCreated {
-		t.Fatalf("status %d; body %s", rec.Code, rec.Body.String())
+	// An occurrence counted on an open condition recorded nothing new.
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status %d, want 200; body %s", rec.Code, rec.Body.String())
 	}
 	if got := rec.Header().Get(models.EventDispositionHeader); got != string(models.EventIncremented) {
 		t.Errorf("%s = %q, want %q", models.EventDispositionHeader, got, models.EventIncremented)
@@ -323,5 +329,95 @@ func TestClientEventHandlerAnswersStoredEvent(t *testing.T) {
 	}
 	if got := receiveEvent(t, ch); got.ID != open.ID {
 		t.Errorf("broadcast event %s, want the stored condition %s", got.ID, open.ID)
+	}
+}
+
+// POST /api/events answers 201 only when the create recorded a new event, and
+// 200 when it recorded nothing new, as the createEvent contract requires. An
+// answer that names no stored event is sent with no body and broadcasts
+// nothing.
+func TestClientEventHandlerStatusFollowsTheDisposition(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: models.NewBroadcaster("test")},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+	body := `{"actedUpon":"` + uuid.Must(uuid.NewV4()).String() + `","category":"connection","action":"update","severity":"error"}`
+	stored := events.NewEvent().WithSeverity(events.Error).Build()
+	for _, c := range []struct {
+		disposition models.EventDisposition
+		event       *events.Event
+		want        int
+	}{
+		{models.EventCreated, stored, http.StatusCreated},
+		{"", stored, http.StatusCreated},
+		{models.EventIncremented, stored, http.StatusOK},
+		{models.EventResolved, stored, http.StatusOK},
+		{models.EventReplayed, stored, http.StatusOK},
+		{models.EventIncremented, nil, http.StatusOK},
+	} {
+		provider := &tokenEventsProvider{recordingEventsProvider{stored: &models.PersistedEvent{Event: c.event, Disposition: c.disposition}}}
+		rec := postClientEvent(t, h, provider, body)
+		if rec.Code != c.want {
+			t.Errorf("%q: status %d, want %d", c.disposition, rec.Code, c.want)
+		}
+		if c.event == nil && rec.Body.Len() != 0 {
+			t.Errorf("%q with no stored event: body %q, want none", c.disposition, rec.Body.String())
+		}
+	}
+}
+
+// persistAndPublishEvent reports nothing for a nil event (a suppressed
+// Discovery failure), broadcasts nothing when the stored event is unknown, and
+// broadcasts an event that failed to persist with an ID of its own.
+func TestPersistAndPublishEventEdgeCases(t *testing.T) {
+	broadcaster := models.NewBroadcaster("test")
+	user := uuid.Must(uuid.NewV4())
+	ch, unsubscribe := broadcaster.Subscribe(user)
+	defer unsubscribe()
+	log := newTestLogger(t)
+
+	provider := &recordingEventsProvider{}
+	persistAndPublishEvent(log, provider, "", broadcaster, user, nil)
+	if len(provider.persisted) != 0 {
+		t.Fatalf("persisted %d events for a nil event", len(provider.persisted))
+	}
+
+	provider = &recordingEventsProvider{stored: &models.PersistedEvent{Disposition: models.EventIncremented}}
+	persistAndPublishEvent(log, provider, "", broadcaster, user, events.NewEvent().WithSeverity(events.Error).Build())
+	select {
+	case got := <-ch:
+		t.Fatalf("broadcast %v for an occurrence whose stored event is unknown", got)
+	case <-time.After(100 * time.Millisecond):
+	}
+
+	provider = &recordingEventsProvider{err: errors.New("database is down")}
+	sent := events.NewEvent().WithSeverity(events.Error).Build()
+	sent.ID = uuid.Nil
+	persistAndPublishEvent(log, provider, "", broadcaster, user, sent)
+	if got := receiveEvent(t, ch); got.ID.IsNil() || got.ID != provider.persisted[0].ID {
+		t.Fatalf("fallback broadcast ID %s, persisted ID %s; want the same non-zero ID", got.ID, provider.persisted[0].ID)
+	}
+}
+
+// A Recurrence is counted on its open condition without notifying anyone.
+func TestReportBackgroundDiscoveryCountsARecurrenceSilently(t *testing.T) {
+	broadcaster := models.NewBroadcaster("test")
+	h := &Handler{config: &models.HandlerConfig{EventBroadcaster: broadcaster}, log: newTestLogger(t)}
+	user := uuid.Must(uuid.NewV4())
+	ch, unsubscribe := broadcaster.Subscribe(user)
+	defer unsubscribe()
+
+	key := models.ConditionKey("k8s-connection", uuid.Must(uuid.NewV4()).String(), "unreachable")
+	provider := &recordingEventsProvider{}
+	h.reportBackgroundDiscovery(provider, "token", user, events.NewEvent().WithSeverity(events.Error).WithCorrelationKey(key).Build(), nil)
+	if len(provider.persisted) != 1 {
+		t.Fatalf("persisted %d events, want the recurrence counted", len(provider.persisted))
+	}
+	select {
+	case got := <-ch:
+		t.Fatalf("broadcast %v for a recurrence", got)
+	case <-time.After(100 * time.Millisecond):
 	}
 }

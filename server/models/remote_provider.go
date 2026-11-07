@@ -1816,9 +1816,8 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 	l.Log.Debugf("remote provider recorded event (%s: %s)", EventDispositionHeader, disposition)
 
 	// The answer carries the event as stored, which for an incremented,
-	// resolved or replayed create is an earlier event with its own ID. A
-	// remote provider that answers with no event stored the event as sent.
-	stored := &event
+	// resolved or replayed create is an earlier event with its own ID.
+	var stored *events.Event
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		l.Log.Warn(ErrDataRead(err, "remote provider event response"))
@@ -1830,7 +1829,33 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 			stored = &decoded
 		}
 	}
+	if stored == nil {
+		if recordedNothingNew(disposition) {
+			// The create recorded nothing new, so the event as sent is not
+			// what is stored: its ID names no row. Without the stored event
+			// in the answer there is nothing to present; the caller reports
+			// nothing new for it.
+			l.Log.Warn(fmt.Errorf("remote provider answered %s: %s without the stored event", EventDispositionHeader, disposition))
+			return PersistedEvent{Disposition: disposition}, nil
+		}
+		// A remote provider that answers a create with no event stored the
+		// event as sent.
+		stored = &event
+	}
 	return PersistedEvent{Event: stored, Disposition: disposition}, nil
+}
+
+// recordedNothingNew reports whether a create with disposition recorded no
+// new event: it counted an occurrence on, or resolved, an open condition, or
+// it was a replay. The stored event is then an earlier one, never the event
+// sent.
+func recordedNothingNew(disposition EventDisposition) bool {
+	switch disposition {
+	case EventIncremented, EventResolved, EventReplayed:
+		return true
+	default:
+		return false
+	}
 }
 
 func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {

@@ -186,7 +186,11 @@ func PersistAndPublishSystemEvent(persister SystemEventPersister, broadcaster *B
 	if persister != nil {
 		var persisted PersistedEvent
 		persisted, err = persister.PersistSystemEvent(*event)
-		if err == nil && persisted.Event != nil {
+		if err == nil {
+			if persisted.Event == nil {
+				// Nothing new was recorded and the stored event is unknown.
+				return nil
+			}
 			event = persisted.Event
 		}
 	}
