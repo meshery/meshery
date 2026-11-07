@@ -333,8 +333,8 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			if mhelpers.HasMachineContext(inst) {
 				go func(inst *machines.StateMachine) {
 					event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
-					if err != nil {
-						h.persistAndPublish(provider, token, userID, event)
+					if err != nil || machines.IsRecurrence(event, err) {
+						h.reportMachineOutcome(provider, token, userID, event, err)
 					}
 				}(inst)
 			}

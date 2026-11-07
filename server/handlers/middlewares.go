@@ -299,6 +299,9 @@ func (h *Handler) GraphqlMiddleware(next http.Handler) func(http.ResponseWriter,
 	}
 }
 
+// KubernetesMiddleware loads connected Kubernetes contexts for the authenticated user and
+// initiates background discovery on associated state machine instances. It guards against
+// nil user, provider, or token inputs to prevent runtime panics.
 func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provider, user *models.User, k8sContextIDs []string) (context.Context, error) {
 	if user == nil {
 		err := fmt.Errorf("user is required for KubernetesMiddleware")
@@ -413,15 +416,40 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 }
 
 // reportBackgroundDiscovery persists and broadcasts what a background
-// Discovery of a connection has to tell the user: its failure (SendEvent
-// already suppressed the repeats that did not change the connection's status),
-// or the resolution of the connection's unreachable condition when it became
-// reachable again. A routine successful Discovery reports nothing.
+// Discovery of a connection has to tell the user: its failure, or the
+// resolution of the connection's unreachable condition when it became
+// reachable again. A repeat of a failure that left the status unchanged is a
+// Recurrence: it is counted on the open condition without notifying anyone. A
+// routine successful Discovery reports nothing.
 func (h *Handler) reportBackgroundDiscovery(provider models.Provider, token string, userUUID core.Uuid, event *events.Event, err error) {
-	if provider == nil || event == nil || (err == nil && event.ResolvedAt == nil) {
+	if provider == nil || event == nil || (err == nil && event.ResolvedAt == nil && !machines.IsRecurrence(event, err)) {
 		return
 	}
-	h.persistAndPublish(provider, token, userUUID, event)
+	h.reportMachineOutcome(provider, token, userUUID, event, err)
+}
+
+// reportMachineOutcome reports what a connection's StateMachine.SendEvent
+// returned: nothing for no event, a Recurrence counted on its open condition
+// without a broadcast, and anything else persisted and broadcast. A Recurrence
+// is sent only to a provider that correlates conditions
+// (Provider.CorrelatesConditions); any other would record it as a new event,
+// so it is dropped, as before condition correlation.
+func (h *Handler) reportMachineOutcome(provider models.Provider, token string, userID core.Uuid, event *events.Event, err error) {
+	if provider == nil || event == nil {
+		return
+	}
+	if machines.IsRecurrence(event, err) {
+		if !provider.CorrelatesConditions() {
+			return
+		}
+		if _, perr := provider.PersistEvent(*event, token); perr != nil {
+			if h.log != nil {
+				h.log.Error(perr)
+			}
+		}
+		return
+	}
+	h.persistAndPublish(provider, token, userID, event)
 }
 
 // persistAndPublish persists event and broadcasts it as stored: an occurrence
@@ -446,16 +474,28 @@ func (h *Handler) persistAndPublish(provider models.Provider, token string, user
 }
 
 // persistAndPublishEvent is persistAndPublish for code that has no Handler.
+//
+// A nil event reports nothing: SendEvent returns none for a background
+// Discovery whose failure it suppressed.
 func persistAndPublishEvent(log logger.Handler, provider models.Provider, token string, broadcaster *models.Broadcast, userID core.Uuid, event *events.Event) {
 	if provider == nil || event == nil {
 		return
 	}
+	// Prepare the event here, not only on the provider's copy, so the event
+	// broadcast when persisting fails has its own ID too: events that share
+	// the zero ID overwrite one another in the UI's store.
+	prepared := models.PrepareEventForPersistence(*event, log)
+	event = &prepared
 	persisted, err := provider.PersistEvent(*event, token)
 	if err != nil {
 		if log != nil {
 			log.Error(err)
 		}
-	} else if persisted.Event != nil {
+	} else {
+		if persisted.Event == nil {
+			// Nothing new was recorded and the stored event is unknown.
+			return
+		}
 		event = persisted.Event
 	}
 	if broadcaster != nil {
@@ -463,6 +503,8 @@ func persistAndPublishEvent(log logger.Handler, provider models.Provider, token 
 	}
 }
 
+// K8sFSMMiddleware wraps an HTTP handler function with Kubernetes finite state machine
+// background discovery, safely passing context and identity down the middleware chain.
 func (h *Handler) K8sFSMMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
 	return func(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 		K8sFSMMiddleware(req.Context(), h, provider, user)

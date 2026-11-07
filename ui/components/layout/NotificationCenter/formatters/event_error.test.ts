@@ -151,3 +151,43 @@ describe('eventErrorCode and eventErrorReferenceUrl', () => {
     ).toBeUndefined();
   });
 });
+
+describe('untrusted metadata.error values', () => {
+  it('keeps only an http or https reference URL', () => {
+    for (const unsafe of [
+      'javascript:alert(1)',
+      'data:text/html,x',
+      ' JavaScript:alert(1)',
+      'not a url',
+    ]) {
+      expect(eventErrorReferenceUrl({ code: 'x', referenceUrl: unsafe })).toBeUndefined();
+      expect(
+        normalizeEventError({ code: 'x', referenceUrl: unsafe })!.referenceUrl,
+      ).toBeUndefined();
+    }
+    expect(eventErrorReferenceUrl({ code: 'x', referenceUrl: 'http://docs.example/x' })).toBe(
+      'http://docs.example/x',
+    );
+  });
+
+  it('drops malformed remediation entries instead of throwing', () => {
+    const error = normalizeEventError({
+      code: 'x',
+      probableCauses: [
+        {
+          id: 'c',
+          description: 'cause',
+          remediations: [
+            null,
+            'text',
+            { id: 'r', description: 7 },
+            { id: 'ok', description: 'fix it' },
+          ],
+        },
+      ],
+    })!;
+    expect(error.causes).toHaveLength(1);
+    expect(error.causes[0].remediations.map((remediation) => remediation.id)).toEqual(['ok']);
+    expect(error.suggestedRemediation).toEqual(['fix it']);
+  });
+});

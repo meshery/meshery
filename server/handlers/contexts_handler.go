@@ -151,6 +151,12 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 				return
 			}
 
+			// Deleting a connection that was NOTFOUND resolves its
+			// unreachable condition; the routine outcome is already
+			// reported by the request's own event.
+			if event != nil && event.ResolvedAt != nil {
+				h.persistAndPublish(provider, token, userID, event)
+			}
 			smInstanceTracker.Remove(connectionUUID)
 		}(inst)
 	}

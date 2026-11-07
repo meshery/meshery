@@ -78,11 +78,37 @@ const toRemediation = (remediation: Remediation): ErrorRemediation => ({
   actionPolicy: effectiveActionPolicy(remediation),
 });
 
-const isProbableCause = (value: unknown): value is ProbableCause =>
-  isRecord(value) &&
-  typeof value.id === 'string' &&
-  typeof value.description === 'string' &&
-  Array.isArray(value.remediations);
+const isRemediation = (value: unknown): value is Remediation =>
+  isRecord(value) && typeof value.id === 'string' && typeof value.description === 'string';
+
+// A stored metadata.error is untrusted: rows from older servers or other
+// producers can hold any shape. A cause is kept with only its well-formed
+// remediations, so a malformed entry never reaches a render.
+const toProbableCause = (value: unknown): ProbableCause | undefined => {
+  if (
+    !isRecord(value) ||
+    typeof value.id !== 'string' ||
+    typeof value.description !== 'string' ||
+    !Array.isArray(value.remediations)
+  ) {
+    return undefined;
+  }
+  return { ...(value as ProbableCause), remediations: value.remediations.filter(isRemediation) };
+};
+
+// The reference page link is rendered as an href, so only an absolute http or
+// https URL is kept: a `javascript:` or `data:` URL in a stored event would
+// otherwise run when the link is clicked.
+const httpUrl = (value: unknown): string | undefined => {
+  const candidate = nonEmptyString(value);
+  if (!candidate) return undefined;
+  try {
+    const { protocol } = new URL(candidate.trim());
+    return protocol === 'http:' || protocol === 'https:' ? candidate.trim() : undefined;
+  } catch {
+    return undefined;
+  }
+};
 
 const orderCauses = (
   causes: ProbableCause[],
@@ -117,7 +143,9 @@ const orderCauses = (
 
 const normalizeSchemaEventError = (error: Partial<EventError> & Record<string, unknown>) => {
   const nested = Array.isArray(error.probableCauses)
-    ? error.probableCauses.filter(isProbableCause)
+    ? error.probableCauses
+        .map(toProbableCause)
+        .filter((cause): cause is ProbableCause => cause !== undefined)
     : [];
   const matched = Array.isArray(error.matchedCauses)
     ? error.matchedCauses.filter(
@@ -136,7 +164,7 @@ const normalizeSchemaEventError = (error: Partial<EventError> & Record<string, u
     suggestedRemediation: derived
       ? derived.suggestedRemediation
       : lines(error.suggestedRemediation),
-    referenceUrl: nonEmptyString(error.referenceUrl),
+    referenceUrl: httpUrl(error.referenceUrl),
   };
 };
 
@@ -169,6 +197,4 @@ export const eventErrorCode = (value: unknown): string | undefined => {
 
 /** The error's own reference page, when the producer linked one. */
 export const eventErrorReferenceUrl = (value: unknown): string | undefined =>
-  isRecord(value) && typeof value.code === 'string'
-    ? nonEmptyString(value.referenceUrl)
-    : undefined;
+  isRecord(value) && typeof value.code === 'string' ? httpUrl(value.referenceUrl) : undefined;

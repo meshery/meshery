@@ -11,6 +11,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
 )
@@ -344,6 +345,15 @@ func TestPersistAndPublishEvent_DefensiveGuards(t *testing.T) {
 		// Must return early without attempting to dereference nil event
 		persistAndPublishEvent(nil, nil, "dummy-token", nil, dummyUUID, nil)
 	})
+
+	t.Run("nil event with non-nil provider returns safely without calling PersistEvent", func(t *testing.T) {
+		prov := &recordingEventsProvider{}
+		// Must return early without attempting to call provider.PersistEvent
+		persistAndPublishEvent(nil, prov, "dummy-token", nil, dummyUUID, nil)
+		if len(prov.persisted) != 0 {
+			t.Fatalf("expected no events to be persisted when event is nil, got %d", len(prov.persisted))
+		}
+	})
 }
 
 // TestKubernetesMiddleware_NilGuards verifies that KubernetesMiddleware returns
@@ -375,13 +385,16 @@ func TestKubernetesMiddleware_NilGuards(t *testing.T) {
 
 	t.Run("missing token returns ErrRetrieveUserToken", func(t *testing.T) {
 		user := &models.User{ID: uuid.Must(uuid.NewV4())}
-		// provider stub is not needed because token check runs before provider calls
-		// but provider is non-nil
-		var prov models.Provider
-		// When provider is nil, the earlier guard catches it, so test with missing token
-		// while provider is checked first.
-		if _, err := KubernetesMiddleware(ctx, h, prov, user, nil); err == nil {
-			t.Fatalf("expected error when provider is nil")
+		prov := &recordingEventsProvider{}
+		resCtx, err := KubernetesMiddleware(ctx, h, prov, user, nil)
+		if err == nil {
+			t.Fatalf("expected error when token is missing from context, got nil")
+		}
+		if resCtx != nil {
+			t.Fatalf("expected nil context when error is returned, got %v", resCtx)
+		}
+		if code := meshkiterrors.GetCode(err); code != ErrRetrieveUserTokenCode {
+			t.Fatalf("expected error code %s, got %s", ErrRetrieveUserTokenCode, code)
 		}
 	})
 }

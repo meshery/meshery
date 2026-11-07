@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
 )
@@ -501,7 +502,7 @@ func receiveSystemEvent(t *testing.T, ch chan interface{}) *events.Event {
 	}
 }
 
-// A system event built with a bare events.NewEvent() carries no ID; it is
+// A system event constructed without the builder carries no ID; it is
 // broadcast as stored, with the stored row's ID and the server's source.
 func TestPersistAndPublishSystemEventBroadcastsTheStoredRow(t *testing.T) {
 	p := newCorrelationTestPersister(t)
@@ -512,9 +513,9 @@ func TestPersistAndPublishSystemEventBroadcastsTheStoredRow(t *testing.T) {
 
 	sent := events.NewEvent().FromOwner(owner).WithCategory("registration").WithAction("get_summary").
 		WithSeverity(events.Informational).WithDescription("system event").Build()
-	if !sent.ID.IsNil() {
-		t.Fatalf("precondition: events.NewEvent() minted ID %s", sent.ID)
-	}
+	// events.NewEvent mints an ID; an event constructed without the
+	// builder carries none, which is the case under test.
+	sent.ID = uuid.Nil
 	if err := PersistAndPublishSystemEvent(p, broadcaster, owner, sent); err != nil {
 		t.Fatalf("PersistAndPublishSystemEvent: %v", err)
 	}
@@ -565,5 +566,149 @@ func TestPersistAndPublishSystemEventBroadcastsTheCondition(t *testing.T) {
 	}
 	if rows := storedEvents(t, p, owner); len(rows) != 1 {
 		t.Fatalf("got %d rows, want the one condition", len(rows))
+	}
+}
+
+// A new event is inserted once, with the ID its builder minted, and a retry of
+// the same event value records nothing new: it is answered as a replay with
+// the stored event.
+func TestPersistEventInsertsANewEventOnceWithItsBuilderID(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+	sent := events.NewEvent().FromOwner(owner).WithCategory("design").WithAction("save").
+		WithSeverity(events.Informational).WithDescription("saved").Build()
+
+	first := mustPersist(t, p, sent)
+	if first.Disposition != EventCreated || first.Event.ID != sent.ID {
+		t.Fatalf("first persist = %s with ID %s, want created with the builder's ID %s", first.Disposition, first.Event.ID, sent.ID)
+	}
+	retry := mustPersist(t, p, sent)
+	if retry.Disposition != EventReplayed || retry.Event.ID != sent.ID {
+		t.Fatalf("retry = %s with ID %s, want replayed with ID %s", retry.Disposition, retry.Event.ID, sent.ID)
+	}
+	if rows := storedEvents(t, p, owner); len(rows) != 1 || rows[0].ID != sent.ID {
+		t.Fatalf("got %+v, want one row with the builder's ID", rows)
+	}
+}
+
+// A retry of the event that opened a condition is a replay, not a second
+// occurrence; a retry of a resolution recorded with no open condition is a
+// replay, not a second resolved row.
+func TestPersistEventRetryOfACorrelatedEventIsAReplay(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+
+	opening := conditionEvent(owner, "k", "down").Build()
+	mustPersist(t, p, opening)
+	retry := mustPersist(t, p, opening)
+	if retry.Disposition != EventReplayed || retry.Event.ID != opening.ID {
+		t.Fatalf("retry of the opening event = %s with ID %s, want replayed with ID %s", retry.Disposition, retry.Event.ID, opening.ID)
+	}
+	if rows := storedEvents(t, p, owner); len(rows) != 1 || count(rows[0].OccurrenceCount) != 1 {
+		t.Fatalf("got %+v, want the one open row still at count 1", rows)
+	}
+
+	other := mustUUID(t)
+	resolvedAt := time.Now().UTC()
+	resolution := conditionEvent(other, "k", "cleared").WithResolvedAt(resolvedAt).Build()
+	mustPersist(t, p, resolution)
+	again := mustPersist(t, p, resolution)
+	if again.Disposition != EventReplayed || again.Event.ID != resolution.ID {
+		t.Fatalf("retry of the resolution = %s with ID %s, want replayed with ID %s", again.Disposition, again.Event.ID, resolution.ID)
+	}
+	if rows := storedEvents(t, p, other); len(rows) != 1 {
+		t.Fatalf("got %d rows, want the one resolved row", len(rows))
+	}
+}
+
+// An occurrenceCount below 1 counts as one occurrence, both for the event that
+// opens a condition and for one counted on it: a server producer's zero or
+// negative count never leaves the count unchanged or decrements it.
+func TestPersistEventClampsTheOccurrenceCountToOne(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+
+	for _, n := range []int{0, -3} {
+		n := n
+		event := conditionEvent(owner, "k", "down").Build()
+		event.OccurrenceCount = &n
+		mustPersist(t, p, event)
+	}
+	rows := storedEvents(t, p, owner)
+	if len(rows) != 1 || count(rows[0].OccurrenceCount) != 2 {
+		t.Fatalf("got %+v, want one open row at count 2", rows)
+	}
+}
+
+func withKey(event *events.Event, key string) *events.Event {
+	event.IdempotencyKey = &key
+	return event
+}
+
+// A create carrying an idempotencyKey its caller already used records and
+// changes nothing, whatever the rest of the payload says, and is answered with
+// the event the key is bound to: the recorded event, or the condition's event
+// for a key that counted an occurrence or resolved it.
+func TestPersistEventReplaysAnIdempotencyKey(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+
+	created := mustPersist(t, p, withKey(events.NewEvent().FromOwner(owner).WithCategory("perf").WithAction("run").
+		WithSeverity(events.Informational).WithDescription("first").Build(), "run-1"))
+	retry := mustPersist(t, p, withKey(events.NewEvent().FromOwner(owner).WithCategory("perf").WithAction("run").
+		WithSeverity(events.Error).WithDescription("different payload").Build(), "run-1"))
+	if retry.Disposition != EventReplayed || retry.Event.ID != created.Event.ID || retry.Event.Description != "first" {
+		t.Fatalf("retry = %s %s %q, want replayed %s %q", retry.Disposition, retry.Event.ID, retry.Event.Description, created.Event.ID, "first")
+	}
+
+	opened := mustPersist(t, p, conditionEvent(owner, "k", "down").Build())
+	counted := mustPersist(t, p, withKey(conditionEvent(owner, "k", "down").Build(), "occ-1"))
+	if counted.Disposition != EventIncremented {
+		t.Fatalf("keyed occurrence = %s, want incremented", counted.Disposition)
+	}
+	again := mustPersist(t, p, withKey(conditionEvent(owner, "k", "down").Build(), "occ-1"))
+	if again.Disposition != EventReplayed || again.Event.ID != opened.Event.ID || count(again.Event.OccurrenceCount) != 2 {
+		t.Fatalf("retried occurrence = %s %s count %d, want replayed %s count 2",
+			again.Disposition, again.Event.ID, count(again.Event.OccurrenceCount), opened.Event.ID)
+	}
+
+	resolution := withKey(conditionEvent(owner, "k", "up").WithResolvedAt(time.Now().UTC()).Build(), "res-1")
+	if got := mustPersist(t, p, resolution); got.Disposition != EventResolved {
+		t.Fatalf("keyed resolution = %s, want resolved", got.Disposition)
+	}
+	retried := withKey(conditionEvent(owner, "k", "up").WithResolvedAt(time.Now().UTC()).Build(), "res-1")
+	if got := mustPersist(t, p, retried); got.Disposition != EventReplayed || got.Event.ID != opened.Event.ID {
+		t.Fatalf("retried resolution = %s %s, want replayed %s", got.Disposition, got.Event.ID, opened.Event.ID)
+	}
+	if rows := storedEvents(t, p, owner); len(rows) != 2 {
+		t.Fatalf("got %d rows, want the created event and the condition", len(rows))
+	}
+
+	// Keys are scoped to the caller: another owner's key is its own.
+	other := mustUUID(t)
+	if got := mustPersist(t, p, withKey(events.NewEvent().FromOwner(other).WithCategory("perf").WithAction("run").
+		WithSeverity(events.Informational).Build(), "run-1")); got.Disposition != EventCreated {
+		t.Fatalf("another caller's key = %s, want created", got.Disposition)
+	}
+}
+
+// Of concurrent creates carrying one key, exactly one is recorded.
+func TestPersistEventConcurrentIdempotencyKeyRecordsOnce(t *testing.T) {
+	p := newCorrelationTestPersister(t)
+	owner := mustUUID(t)
+	var wg sync.WaitGroup
+	for i := 0; i < 8; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			if _, err := p.PersistEvent(*withKey(events.NewEvent().FromOwner(owner).WithCategory("perf").WithAction("run").
+				WithSeverity(events.Informational).Build(), "run-1"), ""); err != nil {
+				t.Errorf("PersistEvent: %v", err)
+			}
+		}()
+	}
+	wg.Wait()
+	if rows := storedEvents(t, p, owner); len(rows) != 1 {
+		t.Fatalf("got %d rows, want 1", len(rows))
 	}
 }

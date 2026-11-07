@@ -126,6 +126,13 @@ const (
 	conditionComponent = "k8s-connection"
 )
 
+// UnreachableConditionKey is the correlationKey of a Kubernetes connection's
+// unreachable condition, for code that resolves it without driving the
+// connection's machine (deleting the connection).
+func UnreachableConditionKey(connectionID core.Uuid) string {
+	return models.ConditionKey(conditionComponent, connectionID.String(), machines.ConditionUnreachable)
+}
+
 func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
 	log.Info("initialising K8s machine for connetion Id", connectionID)
