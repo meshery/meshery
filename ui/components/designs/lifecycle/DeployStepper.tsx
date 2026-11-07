@@ -35,6 +35,7 @@ import { capitalize } from 'lodash';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
 import { DeploymentSummaryFormatter } from './DeploymentSummary';
 import { SEVERITY } from '../../layout/NotificationCenter/constants';
+import { getDesignEventIdentity } from '../../layout/NotificationCenter/formatters/design_event_metadata';
 import EnvironmentModal from '../../environments/EnvironmentFormModal';
 import { openViewScopedToDesignInOperator } from '@/utils/utils';
 import { useRouter } from 'next/router';
@@ -174,11 +175,8 @@ export const FinishDeploymentStep = ({
             deployment_type === DEPLOYMENT_TYPE.DEPLOY &&
             (serverEvent.severity === SEVERITY.INFO || serverEvent.severity === SEVERITY.SUCCESS)
           ) {
-            openViewScopedToDesignInOperator(
-              serverEvent?.metadata?.designName,
-              serverEvent?.metadata?.designId,
-              router,
-            );
+            const { designName, designId } = getDesignEventIdentity(serverEvent?.metadata);
+            openViewScopedToDesignInOperator(designName, designId, router);
           }
         }
       },
