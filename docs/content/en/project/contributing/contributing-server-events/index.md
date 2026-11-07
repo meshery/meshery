@@ -48,7 +48,7 @@ _Note: In certain conditions you must add some fields with specific keys:_
 
 - `WithDescription` : The string argument provides a detailed, descriptive message that depicts the specific operation or action being executed on the server.
 - `WithMetadata`: it takes a Map `map[string]interface{}` data structure containing any supplementary information that the developer/contributor deems essential for the user to be informed about.
-- `Build` : returns the [Event](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L37) instance constructed upon the previously described functions and prepares it for publication through the [Broadcast](https://github.com/meshery/meshery/blob/1b5d78ed34648e0a91df8c2273026b930f748fbc/server/models/event_broadcast.go#L14), which is responsible for disseminating events.
+- `Build` : returns the [Event](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L37) instance constructed upon the previously described functions and prepares it for publication through the [Broadcast](https://github.com/meshery/meshery/blob/1b5d78ed34648e0a91df8c2273026b930f748fbc/server/models/event_broadcast.go#L14), which is responsible for disseminating events. Build each event from its own builder: depending on the MeshKit version, `Build` may return the builder's own event rather than a copy, so building a second event from the same builder on one execution path rewrites the first event after it was persisted and broadcast. Reusing one builder is safe only when each `Build` sits on an exclusive branch, as in the example below; where a function emits several events, start each from a fresh `events.NewEvent()`.
 
 <a href="images/events-table.png">
     <img src="images/events-table.png" alt="Event Schema" style="width:50%;">
@@ -144,10 +144,8 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		k8sContext, err := provider.GetK8sContext(token, connectionID)
 		eventBuilder.ActedUpon(uuid.FromStringOrNil(connectionID))
 		if err != nil {
-			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Encountered an issue while retrieving kubernetes context for connection ID `%s`", connectionID)).
-			WithMetadata(map[string]interface{}{
-				"error": err,
-			})
+			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Encountered an issue while retrieving kubernetes context for connection ID `%s`", connectionID))
+			models.AttachEventError(eventBuilder, err, h.log)
 			event := eventBuilder.Build()
 		    h.persistAndPublish(provider, token, userID, event)
 			w.WriteHeader(http.StatusInternalServerError)
