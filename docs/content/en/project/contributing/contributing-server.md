@@ -94,8 +94,8 @@ Use the canonical reference instead: [Meshery Server Environment Variables]({{< 
 <ol>
   <li>
     <p>Checkout <strong>meshery</strong> and <strong>meshkit</strong> repository in adjacent directories.</p>
-    {{< code code=`$ git clone https://github.com/meshery/meshery.git
-    $ git clone https://github.com/meshery/meshkit.git` >}}
+{{< code code=`$ git clone https://github.com/meshery/meshery.git
+$ git clone https://github.com/meshery/meshkit.git` >}}
   </li>
   <li>
     <p>In your <code>meshery</code> go.mod, update the meshkit package.</p>

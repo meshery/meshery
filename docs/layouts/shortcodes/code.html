@@ -1,7 +1,2 @@
-{{ $code := .Get "code" }}
-
-<pre class="codeblock-pre">
-	<div class="codeblock">
-		<code class="clipboardjs">{{ $code | html }}</code>
-	</div>
-</pre>
+{{ $code := .Get "code" -}}
+<pre class="codeblock-pre"><div class="codeblock"><code class="clipboardjs">{{- $code | html -}}</code></div></pre>
