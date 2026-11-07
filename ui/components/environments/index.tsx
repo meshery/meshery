@@ -549,6 +549,16 @@ const Environments = () => {
                   renderItem={(item) => (
                     <PaginationItem
                       slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
+                      sx={{
+                        color: theme.palette.icon.default,
+                        '& svg': {
+                          fill: 'currentColor',
+                        },
+                        '&.Mui-disabled': {
+                          color: theme.palette.icon.disabled || theme.palette.icon.secondary,
+                          opacity: 1,
+                        },
+                      }}
                       {...item}
                     />
                   )}
