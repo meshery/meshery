@@ -148,9 +148,12 @@ mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 					}
 
 					_, err = file.Write(content)
-					_ = file.Close()
+					closeErr := file.Close()
 					if err != nil {
 						return ErrModelInit(err)
+					}
+					if closeErr != nil {
+						return ErrModelInit(closeErr)
 					}
 				}
 			}
