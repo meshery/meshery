@@ -99,6 +99,8 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 	},
 }
 
+// fetchPatternIDByName returns the ID of the design matching patternName, and
+// asks the user to choose when several designs match.
 func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	patternUrl := fmt.Sprintf("%s/api/pattern?search=%s", baseUrl, url.QueryEscape(patternName))
 	req, err := utils.NewRequest(http.MethodGet, patternUrl, nil)
@@ -119,15 +121,12 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	if err != nil {
 		return "", utils.ErrReadFromBody(err)
 	}
-	var response struct {
-		TotalCount int                     `json:"total_count"`
-		Patterns   []models.MesheryPattern `json:"patterns"`
-	}
+	var response models.PatternsAPIResponse
 	if err := encoding.Unmarshal(buf, &response); err != nil {
 		return "", err
 	}
 
-	switch response.TotalCount {
+	switch len(response.Patterns) {
 	case 0:
 		return "", ErrDesignNotFound(patternName)
 	case 1:

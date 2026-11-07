@@ -30,6 +30,32 @@ describe('events slice', () => {
     expect(state.entities['evt-1'].description).toBe('Test event');
   });
 
+  it('pushEvent updates an event already shown in place', () => {
+    let state = eventsReducer(undefined, { type: 'unknown' });
+    state = eventsReducer(
+      state,
+      pushEvent(makeEvent({ severity: 'error', description: 'unreachable', occurrenceCount: 1 })),
+    );
+    state = eventsReducer(
+      state,
+      pushEvent(
+        makeEvent({
+          severity: 'success',
+          description: 'reachable again',
+          occurrenceCount: 2,
+          resolvedAt: '2025-01-01T00:05:00Z',
+        }),
+      ),
+    );
+    expect(state.ids).toEqual(['evt-1']);
+    expect(state.entities['evt-1']).toMatchObject({
+      severity: 'success',
+      description: 'reachable again',
+      occurrenceCount: 2,
+      resolvedAt: '2025-01-01T00:05:00Z',
+    });
+  });
+
   it('pushEvent trims severity and status', () => {
     const initial = eventsReducer(undefined, { type: 'unknown' });
     const event = makeEvent({ severity: '  warning  ', status: '  read  ' });

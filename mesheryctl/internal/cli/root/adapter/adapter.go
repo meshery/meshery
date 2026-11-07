@@ -16,6 +16,7 @@ package adapter
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -31,6 +32,9 @@ import (
 )
 
 var availableSubcommands []*cobra.Command
+
+// errEventStreamClosed is the cause when the stream ends without a result.
+var errEventStreamClosed = errors.New("event stream closed before the operation finished")
 
 // AdapterCmd represents the Performance Management CLI command
 var (
@@ -214,8 +218,22 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 	return string(body), nil
 }
 
+// checkEventStream returns an error unless res is an open event stream, so a
+// response that can never carry a result fails right away.
+func checkEventStream(res *http.Response) error {
+	if res.StatusCode != http.StatusOK {
+		return utils.ErrResponseStatus(res.StatusCode)
+	}
+	if contentType := res.Header.Get("Content-Type"); !strings.HasPrefix(contentType, "text/event-stream") {
+		return fmt.Errorf("expected an event stream, got content type %q", contentType)
+	}
+	return nil
+}
+
+// waitForDeployResponse waits on the event stream for the result of an adapter
+// operation whose event details contain query.
 func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_deploy"
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/events?client=cli_deploy"
 	method := "GET"
 	client := &http.Client{}
 	req, err := utils.NewRequest(method, path, nil)
@@ -228,6 +246,10 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 		return "", ErrCreatingDeployResponseRequest(err)
 	}
 	defer func() { _ = res.Body.Close() }()
+
+	if err := checkEventStream(res); err != nil {
+		return "", ErrCreatingDeployResponseStream(err)
+	}
 
 	event, err := utils.ConvertRespToSSE(res)
 	if err != nil {
@@ -248,12 +270,16 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 				utils.Log.Infof("%s\n", i.Data.Summary)
 			}
 		}
+		close(eventChan)
 	}()
 
 	select {
 	case <-timer.C:
 		return "", ErrTimeoutWaitingForDeployResponse
-	case event := <-eventChan:
+	case event, ok := <-eventChan:
+		if !ok {
+			return "", ErrCreatingDeployResponseStream(errEventStreamClosed)
+		}
 		if event != "successful" {
 			return "", ErrFailedDeployingMesh
 		}
@@ -262,8 +288,10 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	return "", nil
 }
 
+// waitForValidateResponse waits on the event stream for the result of a
+// validation whose event summary contains query.
 func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_validate"
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/events?client=cli_validate"
 	method := "GET"
 	client := &http.Client{}
 	req, err := utils.NewRequest(method, path, nil)
@@ -277,6 +305,10 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 		return "", ErrCreatingValidateRequest(err)
 	}
 	defer func() { _ = res.Body.Close() }()
+
+	if err := checkEventStream(res); err != nil {
+		return "", ErrCreatingValidateResponseStream(err)
+	}
 
 	event, err := utils.ConvertRespToSSE(res)
 	if err != nil {
@@ -297,12 +329,16 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 				utils.Log.Infof("%s", i.Data.Summary)
 			}
 		}
+		close(eventChan)
 	}()
 
 	select {
 	case <-timer.C:
 		return "", ErrTimeoutWaitingForValidateResponse
-	case event := <-eventChan:
+	case event, ok := <-eventChan:
+		if !ok {
+			return "", ErrCreatingValidateResponseStream(errEventStreamClosed)
+		}
 		if event != "successful" {
 			return "", ErrSMIConformanceTestsFailed
 		}

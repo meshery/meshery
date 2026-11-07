@@ -569,8 +569,10 @@ func VerifyMesheryProvider(provider string, supportedProviders map[string]Provid
 // them write to the same local `events` table, so nothing about where these
 // events land changes with the provider a deployment is pinned to.
 type SystemEventPersister interface {
-	// PersistSystemEvent persists a system-initiated event to the local database.
-	PersistSystemEvent(event events.Event) error
+	// PersistSystemEvent persists a system-initiated event to the local database
+	// and returns it as stored, which is the event to broadcast (see
+	// PersistAndPublishSystemEvent).
+	PersistSystemEvent(event events.Event) (PersistedEvent, error)
 }
 
 // Provider - interface for providers
@@ -621,12 +623,21 @@ type Provider interface {
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
 	// PersistEvent persists a user-initiated event to the remote provider using the given auth token.
-	PersistEvent(event events.Event, token string) error
+	// It returns the event as stored and what persisting it did: for an occurrence counted on, or a
+	// resolution of, an open condition, the stored event is the condition's, with its own ID, and is
+	// the one to broadcast or return.
+	// The event is the server's own: one that names no source is recorded with source meshery-server.
+	PersistEvent(event events.Event, token string) (PersistedEvent, error)
+
+	// PersistClientEvent persists an event a client sent (POST /api/events) as PersistEvent does,
+	// but with its source as sent: one that names no source is recorded without one.
+	PersistClientEvent(event events.Event, token string) (PersistedEvent, error)
 
 	// PersistSystemEvent persists a system-initiated event (e.g. MeshSync updates, registry seeding,
 	// auto-registration) that occurs outside of a user request context and has no auth token.
-	// These events are persisted to the local database.
-	PersistSystemEvent(event events.Event) error
+	// These events are persisted to the local database. Like PersistEvent, it returns the event as
+	// stored, which is the one to broadcast.
+	PersistSystemEvent(event events.Event) (PersistedEvent, error)
 
 	SaveK8sContext(token string, k8sContext K8sContext, metadata map[string]any) (connections.Connection, error)
 	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)

@@ -240,6 +240,7 @@ const (
 	ErrGetUsersKeysCode          = "meshery-server-1461"
 	ErrFetchProfilesCode         = "meshery-server-1464"
 	ErrResetInProgressCode       = "meshery-server-1481"
+	ErrInvalidClientEventCode    = "meshery-server-1489"
 )
 
 var (
@@ -263,8 +264,14 @@ var (
 func ErrGenerateClusterContext(err error) error {
 	return errors.New(ErrGenerateClusterContextCode, errors.Alert, []string{"Failed to generate in cluster context."}, []string{err.Error()}, []string{}, []string{})
 }
+
+// ErrNilClusterContext occurs when no Kubernetes contexts are detected from in-cluster configuration.
 func ErrNilClusterContext(err error) error {
-	return errors.New(ErrNilClusterContextCode, errors.Alert, []string{"Nil context generated from in cluster config"}, []string{err.Error()}, []string{}, []string{})
+	errStr := ""
+	if err != nil {
+		errStr = err.Error()
+	}
+	return errors.New(ErrNilClusterContextCode, errors.Alert, []string{"Nil context generated from in cluster config"}, []string{errStr}, []string{"No contexts detected in the in-cluster kubeconfig."}, []string{"Ensure Meshery is deployed with a valid service account in a Kubernetes cluster."})
 }
 func ErrWriteResponse(err error) error {
 	return errors.New(ErrWriteResponseCode, errors.Alert, []string{"Error writing response"}, []string{err.Error()}, []string{}, []string{})
@@ -1246,5 +1253,16 @@ func ErrModelNotFound(modelName string) error {
 		[]string{fmt.Sprintf("Model %q was not found in the provided CSV input", modelName)},
 		[]string{"The requested model is not present in the CSV input"},
 		[]string{"Verify that the requested model exists in the CSV input"},
+	)
+}
+
+func ErrInvalidClientEvent(err error) error {
+	return errors.New(
+		ErrInvalidClientEventCode,
+		errors.Alert,
+		[]string{"The event's correlation, provenance, trace or metadata.error fields are not valid"},
+		[]string{err.Error()},
+		[]string{"A field breaks the meshery/schemas event contract: a correlationKey, source or type outside 1 to 255 characters, an occurrenceCount below 1, a lastSeenAt before firstSeenAt, a specversion other than 1.0, or a traceId or parentId that is not W3C Trace Context hex", "A metadata.error object carrying a lowercase code key breaks the schemas EventError contract: a value of the wrong JSON type or an unknown key, an empty code, a severity that is not an error severity, too many causes or remediations, a duplicate cause id, one remediation id naming two different remediations, an automatic or requiresApproval actionPolicy without an action, flat probableCause or suggestedRemediation lists that are not the ones derived from probableCauses, or a matchedCauses entry whose causeId is malformed, is not one of probableCauses, or whose confidence is outside 0 to 1. The long description names each failing field path"},
+		[]string{"Send the fields as the schemas EventPayload defines them, or omit the ones the client does not set", "Send metadata.error as the schemas EventError shape (code, shortDescription and the other defined keys only), or drop it when the client has no structured error to attach"},
 	)
 }
