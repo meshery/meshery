@@ -18,14 +18,29 @@ vi.mock('@sistent/sistent', () => ({
 
 vi.mock('@rjsf/utils', () => ({
   canExpand: (schema: any) => !!schema?.canExpand,
-  // Mirrors RJSF's real getUiOptions for the keys this template reads:
-  // ui:options.* are merged in, bare ui:* keys lose their prefix, and the
-  // registry's global UI options are the base.
-  getUiOptions: (uiSchema: any = {}, globalOptions: any = {}) => ({
-    ...globalOptions,
-    ...(uiSchema?.['ui:options'] || {}),
-    ...(uiSchema?.['ui:hideError'] !== undefined ? { hideError: uiSchema['ui:hideError'] } : {}),
-  }),
+  // Faithful port of RJSF's real getUiOptions: the registry's global UI
+  // options are the base, then every ui:* key is applied in uiSchema key
+  // order, with ui:options spread in and bare ui:* keys losing their prefix.
+  // (The real one also logs when ui:widget is an object; that path is
+  // skipped here because no test sets it.)
+  getUiOptions: (uiSchema: any = {}, globalOptions: any = {}) => {
+    if (!uiSchema) return { ...globalOptions };
+    return Object.keys(uiSchema)
+      .filter((key: string) => key.startsWith('ui:'))
+      .reduce(
+        (options: any, key: string) => {
+          const value = uiSchema[key];
+          if (key === 'ui:widget' && typeof value === 'object' && value !== null) {
+            return options;
+          }
+          if (key === 'ui:options' && typeof value === 'object' && value !== null) {
+            return { ...options, ...value };
+          }
+          return { ...options, [key.substring(3)]: value };
+        },
+        { ...globalOptions },
+      );
+  },
 }));
 
 vi.mock('../../../../assets/icons/AddIcon', () => ({
@@ -129,6 +144,17 @@ describe('ObjectFieldTemplate', () => {
         {...(baseProps as any)}
         errorSchema={{ name: { __errors: ['bad'] } }}
         uiSchema={{ 'ui:hideError': true }}
+      />,
+    );
+    expect(screen.queryByTestId('error-icon')).not.toBeInTheDocument();
+  });
+
+  it('hides the error icon when hideError comes from the registry global UI options', () => {
+    render(
+      <ObjectFieldTemplate
+        {...(baseProps as any)}
+        errorSchema={{ name: { __errors: ['bad'] } }}
+        registry={{ globalUiOptions: { hideError: true } }}
       />,
     );
     expect(screen.queryByTestId('error-icon')).not.toBeInTheDocument();
