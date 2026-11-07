@@ -15,8 +15,6 @@
 package design
 
 import (
-	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
@@ -41,7 +39,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List designs",
 	Long: `Display list of all available designs.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/design/list
+Find more information at: https://docs.meshery.io/reference/mesheryctl/design/list
 `,
 	Args: cobra.MinimumNArgs(0),
 	Example: `
@@ -106,7 +104,7 @@ func processDesignData(data *models.PatternsAPIResponse) ([][]string, int64) {
 	for _, v := range data.Patterns {
 		designId := v.ID.String()
 
-		designName := strings.Trim(v.Name, filepath.Ext(v.Name))
+		designName := utils.TrimFileExtension(v.Name)
 		createdAt := formatTimeToString(v.CreatedAt, verbose)
 		updatedAt := formatTimeToString(v.UpdatedAt, verbose)
 

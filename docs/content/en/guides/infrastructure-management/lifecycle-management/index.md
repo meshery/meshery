@@ -4,57 +4,87 @@ aliases:
 - /tasks/lifecycle-management
 - /guides/infrastructure-management/managing-connections
 categories: [infrastructure]
-description: Manage the lifecycle of your infrastructure by registering each infrastructure element with Meshery.
+description: Find, inspect, transition, reconfigure, and remove the Connections Meshery manages, from Meshery UI or mesheryctl.
 ---
 
 <a name="lifecycle-management"></a>
 
-Meshery manages hundreds of different types of cloud native infrastructure. See the [full set of integrations]({{< ref "extensions/models/_index.md" >}}).
+Every cluster, metrics server, and source that Meshery manages is a [Connection]({{< ref "concepts/logical/connections/index.md" >}}). After you [register a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}), use this guide to keep it in the state you want: find it, check its status, change its state, reconfigure it, and remove it when you are done.
 
-## Cloud Native Infrastructure Lifecycle Management
+[![States of a Kubernetes cluster connection](./images/states-for-kubernetes-cluster-connections.svg)](./images/states-for-kubernetes-cluster-connections.svg)
 
-[![Lifecycle Management](./images/states-for-kubernetes-cluster-connections.svg)](./images/states-for-kubernetes-cluster-connections.svg)
+## Find your Connections
 
-Meshery Adapters can optionally be deployed to provide deep support of different types of infrastructure, so that you can learn and compare different infrastructure functionality. Once you have selected to operate a given infrastructure, Meshery will assist you with ongoing operations.
+{{< tabpane text=true >}}
+{{% tab header="Meshery UI" %}}
+Open **Lifecycle → Connections**. The table lists each Connection with its **Name**, **Environments**, **Kind**, **Category**, **Status**, and timestamps. Search by name, or filter the table by kind and status. Click a Kubernetes Connection's row to expand it and see its server, its Operator, MeshSync, and Broker status, and its [Diagnostics]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#diagnostics" >}}).
+{{% /tab %}}
+{{% tab header="mesheryctl" %}}
+```bash
+mesheryctl connection list
+mesheryctl connection list --kind kubernetes --status connected
+mesheryctl connection list --count
+mesheryctl connection view <connection-name|connection-id> --output-format json
+```
 
-Meshery automates the provisioning of various infrastructurees, allowing users to select different configuration profiles in order to support a variety of deployment models.
+`list` shows 10 Connections per page. Use `--page` and `--pagesize` to see more. Repeat `--kind` or `--status` to match several values.
+{{% /tab %}}
+{{< /tabpane >}}
 
-Meshery adapters will dynamically retrieve the specific infrastructure's release package upon initial deployment of a given infrastructure. Meshery adapters cache (in `.meshery/bin`) the infrastructure installation package.
+## Change a Connection's state
 
-#### Deprovisioning infrastructure
+The **Status** column holds a selector for each Connection. Choose the state you want, then confirm the transition. The selector only offers transitions that the Connection's kind allows, and you need permission to change Connection state. Common transitions:
 
-Just as Meshery automates the provisioning of various cloud native infrastructure, so too does it facilitate the deprovisioning of infrastructure. Find the "Undeploy" button in Meshery UI or the `--undeploy` flag in Meshery CLI.
+| Goal | Choose | Result |
+|---|---|---|
+| Start managing a discovered or registered Connection | **Connected** | Meshery connects and, for a Kubernetes cluster, starts MeshSync. |
+| Stop managing it but keep it | **Disconnected** | Meshery disconnects. Reconnect it later from the same selector. |
+| Stop Meshery from rediscovering it | **Ignored** | Meshery keeps the Connection on record and leaves it alone. |
+| Remove it | **Deleted** | Meshery deletes the Connection. You cannot transition it again. |
 
-## Workload Lifecycle Management
+The **Status** filter also lists **Maintenance**, but no current Connection kind offers a transition into it.
 
-Users may bring their applications (perform workload onboarding) on the infrastructure using the Custom Configuration operation.
+For what each state means, see [States and the Lifecycle of Connections]({{< ref "concepts/logical/connections/index.md#states-and-the-lifecycle-of-connections" >}}).
 
-Commonly adjoining each infrastructure is a sample application that facilitates demonstration of the value of the given infrastructure. Meshery allows you to efficiently install sample applications across different infrastructures.
+## Reconfigure a Connection
 
-## Configuration Management
+Open the Connection's **Actions** menu:
 
-Meshery provides the ability for you as a infrastructure manager to customize your infrastructure deployment.
+- **Configure** opens the [Connection Wizard]({{< ref "guides/infrastructure-management/registering-a-connection.md#updating-a-connection" >}}) in configure mode. For a Kubernetes Connection, this is where you rename it, change its status, switch the MeshSync deployment mode, and flush MeshSync data.
+- **Configure Controllers** (Kubernetes only) tunes the Operator, MeshSync, and Broker for that cluster. See [Configuring Meshery Operator, MeshSync, and Broker]({{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md" >}}).
+- **Copy link** copies a direct link to the Connection.
 
-## Notifications
+## Group Connections into Environments
 
-Meshery tracks operations that you perform on infrastructurees and their workloads. Meshery provides notification of environment issues, application conflicts with infrastructure configuration, and so on.
+Use the **Environments** column to assign a Connection to one or more [Environments]({{< ref "concepts/logical/environments.md" >}}). Environments are how you target a deployment at a set of clusters and how you share Connections with your team through [Workspaces]({{< ref "concepts/logical/workspaces.md" >}}).
 
-#### Acknowledging and dismissing notifications
+## Remove a Connection
 
-Depending upon the severity of the notification, many notifications are informational and can readily be dismissed after reading. Some notifications include actionable alerts. Learn more in "[Managing Events with Notification Center]({{< ref "guides/infrastructure-management/notification-management/index.md" >}})".
+{{< tabpane text=true >}}
+{{% tab header="Meshery UI" %}}
+Set the Connection's **Status** to **Deleted** and confirm.
+{{% /tab %}}
+{{% tab header="mesheryctl" %}}
+```bash
+mesheryctl connection delete <connection-id>
+```
+{{% /tab %}}
+{{< /tabpane >}}
+
+Deleting a Kubernetes Connection removes it from Meshery. It does not delete anything that Meshery deployed into the cluster. To remove the Operator, MeshSync, and Broker from the cluster, uninstall them from the Connection first, as described in [Operating a connection]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#operating-a-connection" >}}).
 
 ## Lifecycle FAQs
 
 <details>
 <summary>
-<strong>Question:</strong> “Meshery is a collaboration platform. When I bring my infrastructure under Meshery's management, will my Kubernetes clusters be available to all other users? Can other people access my cluster?
-</summary><strong>Answer:</strong> <p>Yes, they can, <i>IF</i> you explicitly allow them to do so. It's important to understand the following controls and system behavior:</p>
-<p><b>1. Ownership:</b> Every connection to a Kubernetes cluster is created by and owned by the individual that provided the Kubernetes context. That individual may elect to share the connection with others on their team (if you have invited anyone to your team(s)).</p>
-<p><b>2. Permission:</b> If you do grant other team members access, you do so by creating an environment, assigning that Kubernetes connection to the environment, then creating a workspace and assigning that environment to the workspace. Users of any of your teams to which you have shared access to the workspace will then have permission to access the cluster.</p>
-<p><b>3. Connectivity:</b> those individuals will have to be afforded network connectivity to that cluster (in whatever fashion you deem appropriate). Grossly, there are two ways in which this can occur:</p>
-<p>3.a) The other user runs their own copy of Meshery (or signs into a shared instance like the Playground) and will see the connection as being available when they sign in. Their Meshery Server will need to be able to reach your Kube API over the network. How that is done can be any number of ways and is left unto your own devices.</p>
-<p>3.b.) The other user signs into your Meshery Server instance, which has network access to your Kubernetes cluster. In order for the other user to sign into your Meshery Server, you would have to expose it to the Internet or VPN or… one of the many other ways to all them access to your Meshery Server.</p>
-<p>So, in short, yes, you can share access to your Kubernetes cluster with other users, but you have to explicitly grant them access to do so. For more information please visit <a href="{{< ref "reference/extensibility/authorization/index.md" >}}">Remote Provider Permissions</a>.</p>
+<strong>Question:</strong> Meshery is a collaboration platform. When I bring my infrastructure under Meshery's management, will my Kubernetes clusters be available to all other users? Can other people access my cluster?
+</summary><strong>Answer:</strong> <p>Only if you explicitly allow it. These controls apply:</p>
+<p><b>1. Ownership:</b> The person who provides the Kubernetes context creates and owns the Connection to that cluster. That person may share the Connection with others on their teams.</p>
+<p><b>2. Permission:</b> To grant team members access, create an Environment, assign the Kubernetes Connection to it, then create a Workspace and assign the Environment to it. Members of the teams you share the Workspace with can then access the cluster.</p>
+<p><b>3. Connectivity:</b> Those people also need a network path to the cluster. There are two common setups:</p>
+<p>3.a) The other user runs their own Meshery Server (or signs into a shared instance such as the Playground) and sees the Connection when they sign in. Their Meshery Server must be able to reach your Kubernetes API server over the network.</p>
+<p>3.b) The other user signs into your Meshery Server, which already has network access to your cluster. You then need to make your Meshery Server reachable to them, for example over a VPN.</p>
+<p>For more information, see <a href="{{< ref "reference/extensibility/authorization/index.md" >}}">Remote Provider Permissions</a>.</p>
 </details>
 
 {{< discuss >}}

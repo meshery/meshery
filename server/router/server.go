@@ -136,6 +136,12 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/system/adapter/manage", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.MeshAdapterConfigHandler)), models.ProviderAuth)))
 	gMux.Handle("/api/system/adapter/operation", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.MeshOpsHandler)), models.ProviderAuth))).
 		Methods("POST")
+	// SSE stream of adapter operation events, read by mesheryctl adapter deploy
+	// and validate. Adapter events are only collected while this stream is open,
+	// and it also publishes them to the event broadcaster. It stays off /api/events,
+	// which is reserved for /api/system/events once the UI migration finishes.
+	gMux.Handle("/api/system/adapter/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.EventStreamHandler), models.ProviderAuth))).
+		Methods("GET")
 	gMux.Handle("/api/system/adapters", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AdaptersHandler), models.ProviderAuth)))
 	gMux.Handle("/api/system/availableAdapters", http.HandlerFunc(h.AvailableAdaptersHandler)).
 		Methods("GET")
@@ -217,6 +223,10 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.Handle("/api/pattern/import", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DesignFileImportHandler), models.ProviderAuth))).
 		Methods("POST")
+	gMux.Handle("/api/pattern/clone", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CloneMesheryPatternHandler), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/pattern/clone/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CloneMesheryPatternHandler), models.ProviderAuth))).
+		Methods("POST")
 	gMux.Handle("/api/pattern/{sourcetype}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DesignFileRequestHandlerWithSourceType), models.ProviderAuth))).
 		Methods("POST", "PUT")
 	gMux.Handle("/api/pattern/types", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryDesignTypesHandler), models.ProviderAuth))).
@@ -231,8 +241,6 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("GET")
 	gMux.Handle("/api/pattern/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryPatternHandler), models.ProviderAuth))).
 		Methods("DELETE")
-	gMux.Handle("/api/pattern/clone/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CloneMesheryPatternHandler), models.ProviderAuth))).
-		Methods("POST")
 	gMux.Handle("/api/pattern/download/{id}/{sourcetype}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryPatternSourceHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/pattern/download/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DownloadMesheryPatternHandler), models.ProviderAuth))).

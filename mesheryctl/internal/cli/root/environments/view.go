@@ -40,7 +40,7 @@ var viewEnvironmentCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View registered environmnents",
 	Long: `View details of an environment registered in Meshery Server for a specific organization
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/environment/view`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/view`,
 	Example: `
 // View details of a specific environment
 mesheryctl environment view --orgId [orgId]
@@ -92,14 +92,14 @@ mesheryctl environment view --orgId [orgId]
 			return err
 		}
 
-		// Get the home directory of the user to save the output file
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
-		}
-		environmentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedEnvironment.Name), " ", "_")
-
 		if environmentViewFlagsProvided.save {
+			// Get the home directory of the user to save the output file
+			homeDir, err := os.UserHomeDir()
+			if err != nil {
+				return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
+			}
+
+			environmentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedEnvironment.Name), " ", "_")
 			fileName := fmt.Sprintf("environment_%s.%s", environmentString, strings.ToLower(environmentViewFlagsProvided.outputFormat))
 			file := filepath.Join(homeDir, ".meshery", fileName)
 			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[environment.Environment]{}
