@@ -1816,7 +1816,10 @@ func (h *Handler) handlePatternUpdate(
 
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
-		go h.EventsBuffer.Publish(&res)
+		if h.EventsBuffer != nil {
+			addMeshkitErr(&res, missingRouteErr)
+			go h.EventsBuffer.Publish(&res)
+		}
 		writeMeshkitError(rw, missingRouteErr, http.StatusBadRequest)
 		return
 	}
@@ -1828,8 +1831,27 @@ func (h *Handler) handlePatternUpdate(
 		return
 	}
 
+	if parsedBody == nil || parsedBody.PatternData == nil {
+		err := ErrRequestBody(fmt.Errorf("patternData is required in request body"))
+		h.log.Error(err)
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": err,
+		}).WithDescription("Please provide design payload.").Build()
+
+		_ = provider.PersistEvent(*event, token)
+		if h.config != nil && h.config.EventBroadcaster != nil {
+			go h.config.EventBroadcaster.Publish(userID, event)
+		}
+		if h.EventsBuffer != nil {
+			addMeshkitErr(&res, err)
+			go h.EventsBuffer.Publish(&res)
+		}
+		writeMeshkitError(rw, err, http.StatusBadRequest)
+		return
+	}
+
 	actedUpon := &userID
-	if parsedBody.PatternData != nil && parsedBody.PatternData.ID != nil {
+	if parsedBody.PatternData.ID != nil {
 		actedUpon = parsedBody.PatternData.ID
 	}
 
