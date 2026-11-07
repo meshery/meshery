@@ -95,10 +95,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
-		_, _ = provider.PersistEvent(*event, token)
-		if h.config != nil && h.config.EventBroadcaster != nil {
-			go h.config.EventBroadcaster.Publish(userID, event)
-		}
+		h.persistAndPublish(provider, token, userID, event)
 		h.log.Error(ErrGetK8sContexts(err))
 		writeMeshkitError(w, ErrGetK8sContexts(err), http.StatusInternalServerError)
 		return
@@ -161,10 +158,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			"error": err,
 		})
 		event := eventBuilder.Build()
-		_, _ = provider.PersistEvent(*event, token)
-		if h.config != nil && h.config.EventBroadcaster != nil {
-			go h.config.EventBroadcaster.Publish(userID, event)
-		}
+		h.persistAndPublish(provider, token, userID, event)
 	}
 	// go h.config.EventBroadcaster.Publish(userID, event)
 

@@ -99,7 +99,7 @@ Creating an event with a key follows the schemas `createEvent` contract ([event 
 
 Close a condition with `builder.Resolves(key, time)` under the condition's category, with a severity and description that say what cleared (for example `success`, "Connection restored"). Send a resolution only when the condition changes from present to cleared, never on every healthy check.
 
-`provider.PersistEvent` returns a `models.PersistedEvent`: the event as stored, and its `Disposition` (`created`, `replayed`, `incremented` or `resolved`). When an occurrence is counted on an open condition, or the condition is resolved, no row is inserted and the stored event is the condition's, with its own ID. Broadcast and return that event, never the one you sent, whose ID no stored row has: Meshery UI's `pushEvent` upserts by ID, so the condition's notification updates in place. `Handler.persistAndPublish` (`server/handlers/middlewares.go`) does both for the state machine's events.
+`provider.PersistEvent` returns a `models.PersistedEvent`: the event as stored, and its `Disposition` (`created`, `replayed`, `incremented` or `resolved`). When an occurrence is counted on an open condition, or the condition is resolved, no row is inserted and the stored event is the condition's, with its own ID. Broadcast and return that event, never the one you sent, whose ID no stored row has: Meshery UI's `pushEvent` upserts by ID, so the condition's notification updates in place. `Handler.persistAndPublish` (`server/handlers/middlewares.go`) does both, and every server site that persists and broadcasts an event goes through it (or `persistAndPublishEvent`, for code without a `Handler`); never call `EventBroadcaster.Publish` on your own copy after `PersistEvent`.
 
 The Kubernetes connection state machine is the first producer. A background Discovery failure that moves a connection to `not found` reports `meshery-server/k8s-connection/<connectionId>/unreachable`, and the Discovery that moves it out of `not found` sends the resolution. The de-duplication from [#20818](https://github.com/meshery/meshery/issues/20818), which suppresses a repeated failure that leaves the status unchanged, still applies. Another machine opts in by setting `StateMachine.ConditionComponent`.
 
@@ -109,7 +109,7 @@ Events in Meshery are persisted through two distinct mechanisms to ensure reliab
 
 ### Local Event Storage
 
-`provider.PersistEvent(*event, token)` records an event and returns it as stored (see [Conditions](#conditions)). The Local provider writes it to Meshery's local database (`EventsPersister.PersistEvent`). A Remote provider sends it to the remote provider's `createEvent` endpoint and accepts any `2xx` answer as the remote provider having it: `201` (recorded) or `200` (a replay, or an occurrence counted on or a resolution of an open condition). The stored event is the one in the answer's body; an answer with no event means the event was stored as sent. The disposition is the `Event-Disposition` header, else `created` for a `201`, else empty. Only when there is no token, or the remote call fails, does it fall back to the local database. Every persisted event passes through `models.PrepareEventForPersistence`, which applies the 16 KB metadata guard. `PersistClientEvent` follows the same paths without the server's default `source`.
+`provider.PersistEvent(*event, token)` records an event and returns it as stored (see [Conditions](#conditions)). The Local provider writes it to Meshery's local database (`EventsPersister.PersistEvent`). A Remote provider sends it to the remote provider's `createEvent` endpoint and accepts any `2xx` answer as the remote provider having it: `201` (recorded) or `200` (a replay, or an occurrence counted on or a resolution of an open condition). The stored event is the one in the answer's body; an answer with no event means the event was stored as sent. The disposition is the `Event-Disposition` header, else `created` for a `201`, else empty. Only when there is no token, or the remote call fails, does it fall back to the local database. Every persisted event passes through `models.PrepareEventForPersistence`, which gives an event with no ID (a bare `events.NewEvent()` mints none) a fresh one, so no event is stored, sent or broadcast with the zero ID, and applies the 16 KB metadata guard. `PersistClientEvent` follows the same paths without the server's default `source`.
 
 In the local database, a partial unique index (`idx_events_open_correlation`, created by `AutoMigrateSystemTables`) keeps at most one open event per owner and `correlation_key`, so two concurrent first occurrences cannot both open a condition.
 
@@ -149,8 +149,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 				"error": err,
 			})
 			event := eventBuilder.Build()
-		    _ = provider.PersistEvent(*event,nil)
-		    go h.config.EventBroadcaster.Publish(userID, event)
+		    h.persistAndPublish(provider, token, userID, event)
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "failed to get kubernetes context for the given ID")
 			return
@@ -161,8 +160,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 			"Server Address": k8sContext.Server,
 		})
 		event := eventBuilder.Build()
-		_ = provider.PersistEvent(*event,nil)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 
 		// Remaining code ...
     }

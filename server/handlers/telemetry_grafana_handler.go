@@ -103,8 +103,7 @@ func (h *Handler) GrafanaTelemetryPingHandler(w http.ResponseWriter, req *http.R
 		metadata["url"] = connURL
 	}
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
-	_, _ = p.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(p, token, userID, event)
 
 	h.writeJSON(w, map[string]interface{}{
 		"reachable": true,
@@ -121,8 +120,7 @@ func (h *Handler) emitGrafanaPingFailure(p models.Provider, token string, userID
 		WithDescription(fmt.Sprintf("Grafana connection %q is unreachable.", label)).
 		WithMetadata(map[string]interface{}{"error": err}).
 		Build()
-	_, _ = p.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(p, token, userID, event)
 	h.log.Error(err)
 }
 

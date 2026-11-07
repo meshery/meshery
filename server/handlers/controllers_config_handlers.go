@@ -59,15 +59,13 @@ func (h *Handler) UpdateControllersDefaultConfig(w http.ResponseWriter, req *htt
 	if err := models.SaveControllersConfigDefaults(h.dbHandler, cfg); err != nil {
 		h.log.Error(err)
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to persist server-wide controllers configuration defaults.").WithMetadata(map[string]interface{}{"error": err}).Build()
-		_, _ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription("Server-wide Meshery Operator, MeshSync, and Broker configuration defaults updated. Re-applying to connected clusters.").Build()
-	_, _ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 
 	// Re-apply the resolved configuration to every tracked Kubernetes
 	// connection: per-connection overrides still win, so inheriting
@@ -186,21 +184,18 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 	if _, _, modeChanged, err := h.handleMeshSyncDeploymentModeChange(req.Context(), connectionID, payload, token, userID, provider); err != nil {
 		h.log.Error(err)
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to apply MeshSync deployment mode change.").WithMetadata(map[string]interface{}{"error": err}).Build()
-		_, _ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	} else if modeChanged {
 		event := eventBuilder.WithSeverity(events.Informational).WithDescription("MeshSync deployment mode changed as part of the controllers configuration update.").Build()
-		_, _ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 	}
 
 	if _, err := provider.UpdateConnectionById(token, payload, connectionID.String()); err != nil {
 		h.log.Error(err)
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to persist the connection's controllers configuration override.").WithMetadata(map[string]interface{}{"error": err}).Build()
-		_, _ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
@@ -510,6 +505,5 @@ func (h *Handler) emitControllersConfigApplyEvent(
 	metadata map[string]interface{},
 ) {
 	event := eventBuilder.WithSeverity(severity).WithDescription(description).WithMetadata(metadata).Build()
-	_, _ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 }

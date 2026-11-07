@@ -2,8 +2,10 @@ package models
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 )
@@ -119,12 +121,26 @@ func conditionKeySegment(segment string) string {
 
 // PrepareEventForPersistence is applied to every event Meshery Server
 // persists, locally or with a remote provider, before it is written or sent.
-// It bounds the metadata with GuardEventMetadataSize. It never sets `source`;
-// withServerSource does that for the events the server itself emits.
+// It gives an event without an ID (events.NewEvent() mints none) a fresh one,
+// so no event is stored, sent to a remote provider or broadcast with the zero
+// ID, and it bounds the metadata with GuardEventMetadataSize. It never sets
+// `source`; withServerSource does that for the events the server itself emits.
 //
 // The event is a copy and its metadata map is never mutated: the same map is
 // often shared with the copy published to the EventBroadcaster.
 func PrepareEventForPersistence(event events.Event, log logger.Handler) events.Event {
+	if event.ID.IsNil() {
+		id, err := uuid.NewV4()
+		if err != nil {
+			// Persisting fails on its own: the database insert mints an ID the
+			// same way and returns the same error.
+			if log != nil {
+				log.Warn(fmt.Errorf("could not assign an ID to event for category %q action %q: %w", event.Category, event.Action, err))
+			}
+		} else {
+			event.ID = id
+		}
+	}
 	return GuardEventMetadataSize(event, log)
 }
 

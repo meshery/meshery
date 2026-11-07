@@ -240,3 +240,30 @@ func TestRemoteProviderPersistEventReturnsTheStoredEvent(t *testing.T) {
 		}
 	}
 }
+
+// An event built with a bare events.NewEvent() carries no ID. It is given one
+// before it is sent, so a legacy remote provider that answers with no body,
+// and therefore stores the event as sent, returns it with that ID rather than
+// the zero ID.
+func TestRemoteProviderPersistEventAssignsAnIDToAnEventWithout(t *testing.T) {
+	var sentID string
+	provider := newEventsRemoteProvider(t, func(w http.ResponseWriter, r *http.Request) {
+		var body map[string]interface{}
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+			t.Errorf("decode request: %v", err)
+		}
+		sentID, _ = body["id"].(string)
+		w.WriteHeader(http.StatusOK)
+	})
+	sent := events.NewEvent().FromOwner(mustUUID(t)).WithCategory("design").WithAction("save").WithSeverity(events.Informational).Build()
+	if !sent.ID.IsNil() {
+		t.Fatalf("precondition: events.NewEvent() minted ID %s", sent.ID)
+	}
+	persisted, err := provider.PersistEvent(*sent, "token")
+	if err != nil {
+		t.Fatalf("PersistEvent: %v", err)
+	}
+	if persisted.Event.ID.IsNil() || persisted.Event.ID.String() != sentID {
+		t.Fatalf("returned ID %s, sent ID %q; want the same non-zero ID", persisted.Event.ID, sentID)
+	}
+}

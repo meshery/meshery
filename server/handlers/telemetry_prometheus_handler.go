@@ -96,8 +96,7 @@ func (h *Handler) PrometheusTelemetryPingHandler(w http.ResponseWriter, req *htt
 		metadata["url"] = connURL
 	}
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
-	_, _ = p.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(p, token, userID, event)
 
 	h.writeJSON(w, map[string]interface{}{
 		"reachable": true,
@@ -113,8 +112,7 @@ func (h *Handler) emitPrometheusPingFailure(p models.Provider, token string, use
 		WithDescription(fmt.Sprintf("Prometheus connection %q is unreachable.", label)).
 		WithMetadata(map[string]interface{}{"error": err}).
 		Build()
-	_, _ = p.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(p, token, userID, event)
 	h.log.Error(err)
 }
 
