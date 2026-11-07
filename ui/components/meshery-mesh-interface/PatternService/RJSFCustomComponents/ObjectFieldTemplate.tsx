@@ -33,16 +33,15 @@ const getRawErrors = (errorSchema) => {
  * hides its errors, and it does not forward hideError to the template at all
  * (@rjsf/core 6.6.2, ObjectField.js: hideError reaches only the child property
  * components, never templateProps), so the template cannot rely on props.hideError
- * alone. The effective value is resolved the same way SchemaField resolves it:
+ * at all. The effective value is resolved the same way SchemaField resolves it:
  * the uiSchema option wins (getUiOptions merges ui:options.hideError and the bare
- * ui:hideError, plus the registry's global UI options), falling back to the
- * inherited hideError prop when the uiSchema sets nothing.
+ * ui:hideError, plus the registry's global UI options).
  * @param {Object} props the object field template props.
  * @returns {boolean} true when the error indicator must not be rendered.
  */
-const isErrorHidden = ({ uiSchema, registry, hideError }) => {
+const isErrorHidden = ({ uiSchema, registry }) => {
   const uiOptions = getUiOptions(uiSchema, registry?.globalUiOptions);
-  return uiOptions.hideError === undefined ? Boolean(hideError) : Boolean(uiOptions.hideError);
+  return Boolean(uiOptions.hideError);
 };
 
 const ObjectFieldTemplate = ({
