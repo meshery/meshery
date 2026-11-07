@@ -53,6 +53,27 @@ func printLogs(logs string, podName string) {
 	}
 }
 
+// processLogStream consumes logs from an io.ReadCloser until EOF or an error occurs.
+// It ensures that any returned bytes are processed before inspecting errors,
+// quietly terminates on io.EOF or context cancellation, and always closes the stream.
+func processLogStream(logs io.ReadCloser, podName string, printLog func(string, string)) error {
+	defer func() { _ = logs.Close() }()
+
+	buf := make([]byte, BYTE_SIZE)
+	for {
+		numBytes, err := logs.Read(buf)
+		if numBytes > 0 {
+			printLog(string(buf[:numBytes]), podName)
+		}
+		if err != nil {
+			if errors.Is(err, io.EOF) || errors.Is(err, context.Canceled) {
+				return nil
+			}
+			return err
+		}
+	}
+}
+
 type cmdSystemLogsFlags struct {
 	Follow bool `json:"follow" validate:"boolean"`
 }
@@ -228,11 +249,10 @@ mesheryctl system logs meshery-istio
 					if err != nil {
 						return err
 					}
-					var logBuf []byte
 					if !systemLogsFlags.Follow {
 						err = func() error {
 							defer func() { _ = logs.Close() }()
-							logBuf, err = io.ReadAll(logs)
+							logBuf, err := io.ReadAll(logs)
 							if err != nil {
 								return utils.ErrReadResponseBody(err)
 							}
@@ -244,26 +264,12 @@ mesheryctl system logs meshery-istio
 						}
 					} else {
 						wg.Add(1)
-						go func(logs io.ReadCloser) {
+						go func(logs io.ReadCloser, podName string) {
 							defer wg.Done()
-							defer func() { _ = logs.Close() }()
-							for {
-								buf := make([]byte, BYTE_SIZE)
-								numBytes, err := logs.Read(buf)
-								if numBytes == 0 {
-									continue
-								}
-								if err == io.EOF {
-									break
-								}
-								if err != nil {
-									utils.Log.Errorf("error occurred while processing logs %v", err)
-									break
-								}
-								logBuf = buf[0:numBytes]
-								printLogs(string(logBuf), name)
+							if err := processLogStream(logs, podName, printLogs); err != nil {
+								utils.Log.Errorf("error occurred while processing logs: %v", err)
 							}
-						}(logs)
+						}(logs, name)
 					}
 				}
 			}
