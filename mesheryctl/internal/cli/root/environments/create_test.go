@@ -40,7 +40,7 @@ func TestCreateEnvironment(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgid 'invalid-org-id': must be a valid UUID")),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgId 'invalid-org-id': must be a valid UUID")),
 		},
 		{
 			Name:             "given empty flag values when environment create then throw error",
