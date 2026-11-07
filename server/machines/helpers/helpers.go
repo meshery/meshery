@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"context"
+	"sync"
 
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/machines/grafana"
@@ -121,6 +122,17 @@ func HasMachineContext(inst *machines.StateMachine) bool {
 	return inst != nil && !utils.IsInterfaceNil(inst.Context)
 }
 
+var initLockMap sync.Map // map[core.Uuid]*sync.Mutex
+
+func getInitLock(id core.Uuid) *sync.Mutex {
+	lock, _ := initLockMap.LoadOrStore(id, &sync.Mutex{})
+	return lock.(*sync.Mutex)
+}
+
+// InitializeMachineWithContext retrieves an existing state machine instance from the
+// tracker or constructs, starts, and caches a new instance for the given connection ID.
+// Initialization is serialized per connection ID so concurrent callers reuse a single
+// successfully started instance without racing. Instances whose Start fails are not cached.
 func InitializeMachineWithContext(
 	machineCtx interface{},
 	ctx context.Context,
@@ -133,9 +145,21 @@ func InitializeMachineWithContext(
 	mtype string,
 	initFunc connections.InitFunc,
 ) (*machines.StateMachine, error) {
-	inst, ok := smInstanceTracker.Get(ID)
-	if ok {
-		return inst, nil
+	if smInstanceTracker != nil {
+		if inst, ok := smInstanceTracker.Get(ID); ok {
+			return inst, nil
+		}
+	}
+
+	mu := getInitLock(ID)
+	mu.Lock()
+	defer mu.Unlock()
+
+	// Double-check after acquiring the lock in case another goroutine initialized it
+	if smInstanceTracker != nil {
+		if inst, ok := smInstanceTracker.Get(ID); ok {
+			return inst, nil
+		}
 	}
 
 	var dbHandler *database.Handler
@@ -153,7 +177,9 @@ func InitializeMachineWithContext(
 	if err != nil {
 		return nil, err
 	}
-	smInstanceTracker.Add(ID, inst)
+	if smInstanceTracker != nil {
+		smInstanceTracker.Add(ID, inst)
+	}
 
 	return inst, nil
 }

@@ -4,7 +4,10 @@ import (
 	"context"
 	"errors"
 	"reflect"
+	"sync"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
@@ -33,9 +36,8 @@ func TestHasMachineContext(t *testing.T) {
 			want: false,
 		},
 		{
-			// InitializeMachineWithContext Adds to the tracker before checking the
-			// Start error, so this is what every call after the first one sees for
-			// a connection whose cluster was unreachable.
+			// Defensive check: an uninitialized or broken instance whose Context
+			// was never assigned must be rejected even if encountered.
 			name: "cached instance whose Start failed",
 			inst: &machines.StateMachine{Context: nil},
 			want: false,
@@ -242,5 +244,67 @@ func TestInitializeMachineWithContext_DoesNotCacheOnStartError(t *testing.T) {
 	}
 	if !HasMachineContext(inst) {
 		t.Fatal("expected cached instance to have a valid context")
+	}
+}
+
+// InitializeMachineWithContext must serialize initialization per connection ID
+// so that concurrent callers do not spawn redundant machines or race on Start.
+func TestInitializeMachineWithContext_SerializesConcurrentCalls(t *testing.T) {
+	connID := core.Uuid(uuid.Must(uuid.NewV4()))
+	userID := core.Uuid(uuid.Must(uuid.NewV4()))
+	log, err := logger.New("test", logger.Options{Format: logger.JsonLogFormat})
+	if err != nil {
+		t.Fatalf("logger.New() error = %v", err)
+	}
+
+	tracker := &machines.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
+	}
+	ctx := context.Background()
+
+	var initCount atomic.Int32
+	initFunc := func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
+		initCount.Add(1)
+		time.Sleep(10 * time.Millisecond)
+		return &kubernetes.MachineCtx{}, nil, nil
+	}
+
+	const goroutines = 10
+	var wg sync.WaitGroup
+	instances := make([]*machines.StateMachine, goroutines)
+
+	for i := 0; i < goroutines; i++ {
+		wg.Add(1)
+		go func(idx int) {
+			defer wg.Done()
+			inst, err := InitializeMachineWithContext(
+				nil,
+				ctx,
+				connID,
+				userID,
+				tracker,
+				log,
+				nil,
+				machines.InitialState,
+				"kubernetes",
+				initFunc,
+			)
+			if err != nil {
+				t.Errorf("goroutine %d failed: %v", idx, err)
+			}
+			instances[idx] = inst
+		}(i)
+	}
+
+	wg.Wait()
+
+	if count := initCount.Load(); count != 1 {
+		t.Fatalf("expected initFunc to run exactly once, ran %d times", count)
+	}
+
+	for i := 1; i < goroutines; i++ {
+		if instances[i] != instances[0] {
+			t.Fatalf("expected all goroutines to receive the same instance, goroutine %d received %p != %p", i, instances[i], instances[0])
+		}
 	}
 }
