@@ -2635,8 +2635,8 @@
         "name": "ErrUnreachableKubeAPICode",
         "code": "1304",
         "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
+        "long_description": "Meshery Server did not get an answer from the cluster's API server.",
+        "short_description": "Error communicating with the Kubernetes API server.",
         "probable_cause": "The Kubernetes API server is not reachable.\nCredentials are invalid.\nThe cluster's serving certificate is not trusted by Meshery Server.",
         "suggested_remediation": "Verify network connectivity and Kubernetes API responsiveness between Meshery Server and your cluster.\nOnce the cause is fixed, reconnect the cluster's connection from Connections, or wait for Meshery Server to discover it again.\nEnsure client credential is not expired and is properly formed.\nRemove the cluster credential and enable 'insecure-skip-tls-verify'.",
         "probableCauses": [

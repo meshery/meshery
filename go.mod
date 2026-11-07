@@ -56,9 +56,9 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v1.0.3
-	github.com/meshery/meshkit v1.0.24
+	github.com/meshery/meshkit v1.0.25-0.20261107014851-7115fb2b75c8
 	github.com/meshery/meshsync v1.0.3
-	github.com/meshery/schemas v1.3.115
+	github.com/meshery/schemas v1.3.116
 	github.com/nsf/termbox-go v1.1.1
 	github.com/oapi-codegen/runtime v1.7.0
 	github.com/olekukonko/tablewriter v1.1.4
@@ -75,6 +75,7 @@ require (
 	github.com/vektah/gqlparser/v2 v2.5.31
 	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.64.0
 	go.opentelemetry.io/otel/sdk v1.44.0
+	go.opentelemetry.io/otel/trace v1.44.0
 	golang.org/x/oauth2 v0.36.0
 	golang.org/x/term v0.45.0
 	golang.org/x/text v0.41.0
@@ -395,7 +396,6 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0 // indirect
 	go.opentelemetry.io/otel/metric v1.44.0 // indirect
 	go.opentelemetry.io/otel/sdk/metric v1.44.0 // indirect
-	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect

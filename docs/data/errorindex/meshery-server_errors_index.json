@@ -4482,6 +4482,8 @@
       },
       "numericCode": "1304",
       "severity": "alert",
+      "shortDescription": "Error communicating with the Kubernetes API server.",
+      "longDescription": "Meshery Server did not get an answer from the cluster's API server.",
       "probableCauses": [
         {
           "description": "The Kubernetes API server is not reachable.",
