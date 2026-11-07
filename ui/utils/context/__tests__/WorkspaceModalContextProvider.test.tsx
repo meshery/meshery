@@ -15,9 +15,8 @@ vi.mock('@/rtk-query/workspace', () => ({
   useLazyGetWorkspacesQuery: () => [getWorkspaces],
 }));
 
-import WorkspaceModalContextProvider, {
-  WorkspaceModalContext,
-} from '../WorkspaceModalContextProvider';
+import { WorkspaceModalContext } from '../workspaceModalContext';
+import WorkspaceModalContextProvider from '../WorkspaceModalContextProvider';
 
 type Ctx = React.ContextType<typeof WorkspaceModalContext>;
 

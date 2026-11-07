@@ -102,7 +102,7 @@ vi.mock('@/utils/provider', () => ({
 
 vi.mock('css/icons.styles', () => ({ iconMedium: {}, iconSmall: {} }));
 
-vi.mock('@/utils/context/WorkspaceModalContextProvider', () => ({
+vi.mock('@/utils/context/workspaceModalContext', () => ({
   WorkspaceModalContext: React.createContext({
     selectedWorkspace: { id: null, name: null },
     setSelectedWorkspace: vi.fn(),
