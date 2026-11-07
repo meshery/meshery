@@ -402,8 +402,9 @@ func (h *Handler) reportBackgroundDiscovery(provider models.Provider, token stri
 // event is still broadcast, as sent.
 //
 // Every server site that persists an event and broadcasts it goes through this
-// helper (or persistAndPublishEvent, outside a Handler), never publishing its
-// own copy after PersistEvent: that copy carries no stored ID.
+// helper (or persistAndPublishEvent, outside a Handler; a system event goes
+// through models.PersistAndPublishSystemEvent), never publishing its own copy
+// after PersistEvent: that copy carries no stored ID.
 func (h *Handler) persistAndPublish(provider models.Provider, token string, userID core.Uuid, event *events.Event) {
 	var broadcaster *models.Broadcast
 	if h.config != nil {

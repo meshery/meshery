@@ -126,11 +126,10 @@ func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, persister 
 			"ViewLink":     filePath,
 			"error":        ErrImportFailure(hostname, failedMsg),
 		})
-		persistErr = persister.PersistSystemEvent(*errorEvent)
 		if userID != "" {
-			userUUID := gofrs.FromStringOrNil(userID)
-			ec.Publish(userUUID, errorEvent)
-
+			persistErr = PersistAndPublishSystemEvent(persister, ec, gofrs.FromStringOrNil(userID), errorEvent)
+		} else {
+			_, persistErr = persister.PersistSystemEvent(*errorEvent)
 		}
 	}
 	return failedMsg, persistErr
@@ -274,7 +273,7 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		})
 		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
 		successEvent := eventBuilder.Build()
-		if err := persister.PersistSystemEvent(*successEvent); err != nil {
+		if _, err := persister.PersistSystemEvent(*successEvent); err != nil {
 			log.Error(err)
 		}
 
@@ -320,4 +319,6 @@ func (rfl *RegistrationFailureLog) GetEntityRegErrors() []EntityRegError {
 // is not a silent skip.
 type discardSystemEvents struct{}
 
-func (discardSystemEvents) PersistSystemEvent(events.Event) error { return nil }
+func (discardSystemEvents) PersistSystemEvent(event events.Event) (PersistedEvent, error) {
+	return PersistedEvent{Event: &event, Disposition: EventCreated}, nil
+}

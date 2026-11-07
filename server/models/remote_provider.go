@@ -1769,7 +1769,7 @@ func (l *RemoteProvider) persist(event events.Event, token string) (PersistedEve
 
 // PersistSystemEvent persists a system-initiated event (MeshSync, registry seeding,
 // auto-registration) to the local database. These events have no user request context.
-func (l *RemoteProvider) PersistSystemEvent(event events.Event) error {
+func (l *RemoteProvider) PersistSystemEvent(event events.Event) (PersistedEvent, error) {
 	return l.EventsPersister.PersistSystemEvent(event)
 }
 

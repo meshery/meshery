@@ -134,8 +134,33 @@ func (e *EventsPersister) persist(event events.Event) (PersistedEvent, error) {
 	return persisted, nil
 }
 
-func (e *EventsPersister) PersistSystemEvent(event events.Event) error {
-	_, err := e.PersistEvent(event, "")
+func (e *EventsPersister) PersistSystemEvent(event events.Event) (PersistedEvent, error) {
+	return e.PersistEvent(event, "")
+}
+
+// PersistAndPublishSystemEvent persists a system event and broadcasts it to
+// userID as stored: with the stored row's ID, which an event built with a bare
+// events.NewEvent() does not carry, and, for an occurrence counted on or the
+// resolution of an open condition, as the condition's stored event. When
+// persisting fails, or there is no persister, the event is still broadcast, as
+// sent, and the persistence error is returned for the caller to report.
+//
+// It is the system-event counterpart of the handlers' persistAndPublish: every
+// site that persists a system event and broadcasts it goes through it, never
+// publishing its own copy after PersistSystemEvent. A nil broadcaster skips
+// the broadcast.
+func PersistAndPublishSystemEvent(persister SystemEventPersister, broadcaster *Broadcast, userID core.Uuid, event *events.Event) error {
+	var err error
+	if persister != nil {
+		var persisted PersistedEvent
+		persisted, err = persister.PersistSystemEvent(*event)
+		if err == nil && persisted.Event != nil {
+			event = persisted.Event
+		}
+	}
+	if broadcaster != nil {
+		broadcaster.Publish(userID, event)
+	}
 	return err
 }
 

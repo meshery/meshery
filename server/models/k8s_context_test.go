@@ -42,9 +42,9 @@ type flushFakeProvider struct {
 	persistedEvents []events.Event
 }
 
-func (f *flushFakeProvider) PersistSystemEvent(event events.Event) error {
+func (f *flushFakeProvider) PersistSystemEvent(event events.Event) (PersistedEvent, error) {
 	f.persistedEvents = append(f.persistedEvents, event)
-	return nil
+	return PersistedEvent{Event: &event, Disposition: EventCreated}, nil
 }
 
 // TestFlushMeshSyncDataEmptyUserIDAndNilMesheryInstanceID verifies that FlushMeshSyncData
