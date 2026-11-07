@@ -178,6 +178,11 @@ func resetVariables() {
 	viewSingleResult = false
 	additionalOptions = ""
 	certPath = ""
+	requestHeaderFlags = nil
+	requestCookieFlags = nil
+	requestHeaders = ""
+	requestCookies = ""
+	contentType = ""
 }
 
 func TestCreatePerformanceProfile_ServerErrors(t *testing.T) {

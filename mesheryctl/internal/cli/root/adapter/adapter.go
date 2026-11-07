@@ -263,11 +263,11 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	go func() {
 		for i := range event {
 			if strings.Contains(i.Data.Details, query) {
-				eventChan <- "successful"
 				utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
+				eventChan <- "successful"
 			} else if strings.Contains(i.Data.Details, "Error") {
-				eventChan <- "error"
 				utils.Log.Infof("%s\n", i.Data.Summary)
+				eventChan <- "error"
 			}
 		}
 		close(eventChan)
@@ -322,11 +322,11 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	go func() {
 		for i := range event {
 			if strings.Contains(i.Data.Summary, query) {
-				eventChan <- "successful"
 				utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
+				eventChan <- "successful"
 			} else if strings.Contains(i.Data.Details, "error") {
-				eventChan <- "error"
 				utils.Log.Infof("%s", i.Data.Summary)
+				eventChan <- "error"
 			}
 		}
 		close(eventChan)
