@@ -1,13 +1,13 @@
 import React from 'react';
 import { Box, crimson, InfoOutlinedIcon, AccountTreeIcon, EditIcon } from '@sistent/sistent';
 import { Keys } from '@meshery/schemas/permissions';
-import Moment from 'react-moment';
 import { GetApp as GetAppIcon } from '@/assets/icons';
 import { DoneAll as DoneAllIcon, Public as PublicIcon } from '@/assets/icons';
 import UndeployIcon from '../../../public/static/img/UndeployIcon';
 import CloneIcon from '../../../public/static/img/CloneIcon';
 
 import { DefaultTableCell, SortableTableCell } from '../../connections/common';
+import { toServerSortOrder, toUiSortOrder } from '../../connections/ConnectionTable.constants';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
@@ -167,13 +167,30 @@ export function buildPatternActions({
 }
 
 /**
+ * Builds the arguments for `useGetPatternsQuery`. The table keeps the sort
+ * order in whatever form the URL carries (`updated_at desc`, `createdAt asc`,
+ * or a bare `name`), so it is converted to the server's snake_case
+ * `<column> <asc|desc>` form here, at the request boundary.
+ */
+export function buildPatternsQueryArgs({ page, pageSize, search, sortOrder, visibilityFilter }) {
+  return {
+    page,
+    pagesize: pageSize,
+    search,
+    order: toServerSortOrder(sortOrder),
+    visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
+    populate: 'pattern_file',
+  };
+}
+
+/**
  * Builds the responsive-column view configuration used to determine which
  * columns are visible at different viewport widths.
  */
 export const PATTERN_COL_VIEWS = [
   ['name', 'xs'],
-  ['created_at', 'm'],
-  ['updated_at', 'm'],
+  ['createdAt', 'm'],
+  ['updatedAt', 'm'],
   ['visibility', 's'],
   ['Actions', 'xs'],
 ];
@@ -208,7 +225,10 @@ export function buildPatternColumns({ patterns, handlers, permissions }) {
       },
     },
     {
-      name: 'created_at',
+      // Named after the camelCase wire fields so the cell gets a value;
+      // Sistent's ResponsiveDataTable formats createdAt/updatedAt itself.
+      // Sort clicks map back to DB columns via toServerSortOrder.
+      name: 'createdAt',
       label: 'Created At',
       options: {
         filter: false,
@@ -224,13 +244,10 @@ export function buildPatternColumns({ patterns, handlers, permissions }) {
             />
           );
         },
-        customBodyRender: function CustomBody(value) {
-          return <Moment format="LLLL">{value}</Moment>;
-        },
       },
     },
     {
-      name: 'updated_at',
+      name: 'updatedAt',
       label: 'Updated At',
       options: {
         filter: false,
@@ -245,9 +262,6 @@ export function buildPatternColumns({ patterns, handlers, permissions }) {
               onSort={() => sortColumn(index)}
             />
           );
-        },
-        customBodyRender: function CustomBody(value) {
-          return <Moment format="LLLL">{value}</Moment>;
         },
       },
     },
@@ -322,6 +336,7 @@ export function buildPatternsTableOptions({
   deletePatterns,
   showModal,
 }) {
+  const [uiSortField, uiSortDirection] = toUiSortOrder(sortOrder).split(' ');
   return {
     customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
       <CustomToolbarSelect
@@ -348,8 +363,8 @@ export function buildPatternsTableOptions({
     print: false,
     download: false,
     sortOrder: {
-      name: sortOrder.split(' ')[0],
-      direction: sortOrder.split(' ')[1],
+      name: uiSortField,
+      direction: uiSortDirection,
     },
     textLabels: {
       selectedRows: {
@@ -380,7 +395,7 @@ export function buildPatternsTableOptions({
       const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
       let order = '';
       if (tableState.activeColumn != null) {
-        order = `${columns[tableState.activeColumn].name} desc`;
+        order = toServerSortOrder(`${columns[tableState.activeColumn].name} desc`);
       }
 
       switch (action) {
@@ -402,11 +417,8 @@ export function buildPatternsTableOptions({
           break;
         case 'sort':
           if (sortInfo.length === 2) {
-            if (sortInfo[1] === 'ascending') {
-              order = `${columns[tableState.activeColumn].name} asc`;
-            } else {
-              order = `${columns[tableState.activeColumn].name} desc`;
-            }
+            const direction = sortInfo[1] === 'ascending' ? 'asc' : 'desc';
+            order = toServerSortOrder(`${columns[tableState.activeColumn].name} ${direction}`);
           }
           if (order !== sortOrder) {
             setSortOrder(order);

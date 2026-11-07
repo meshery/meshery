@@ -55,11 +55,13 @@ import { PublishDesignModal } from '../PublishDesignModal';
 import MesheryPatternsToolbar from './MesheryPatternsToolbar';
 import {
   buildPatternColumns,
+  buildPatternsQueryArgs,
   buildPatternsTableOptions,
   PATTERN_COL_VIEWS,
 } from './MesheryPatterns.columns';
 import { buildDesignLifecycleHandlers } from './design-lifecycle-handlers';
 import { createPatternsActions } from './patterns-actions';
+import { toUiSortOrder } from '../../connections/ConnectionTable.constants';
 
 function MesheryPatterns({
   disableCreateImportDesignButton = false,
@@ -133,14 +135,9 @@ function MesheryPatterns({
     data: patternsData,
     isLoading: ispatternsLoading,
     refetch: getPatterns,
-  } = useGetPatternsQuery({
-    page: page,
-    pagesize: pageSize,
-    search: search,
-    order: sortOrder,
-    visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
-    populate: 'pattern_file',
-  });
+  } = useGetPatternsQuery(
+    buildPatternsQueryArgs({ page, pageSize, search, sortOrder, visibilityFilter }),
+  );
   const [clonePattern] = useClonePatternMutation();
   const [publishCatalog] = usePublishPatternMutation();
   const [unpublishCatalog] = useUnpublishPatternMutation();
@@ -394,9 +391,11 @@ function MesheryPatterns({
     },
   });
 
+  // sortOrder holds the server (snake_case) form; columns are camelCase.
+  const [uiSortField, uiSortDirection] = toUiSortOrder(sortOrder).split(' ');
   columns.forEach((column, idx) => {
-    if (column.name === sortOrder.split(' ')[0]) {
-      columns[idx].options.sortDirection = sortOrder.split(' ')[1];
+    if (column.name === uiSortField) {
+      columns[idx].options.sortDirection = uiSortDirection;
     }
   });
 
