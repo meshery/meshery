@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/meshery/schemas/models/core"
-
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
@@ -24,18 +22,23 @@ func (ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interfac
 	return machines.NoOp, nil, nil
 }
 
+// Execute establishes connection to the Kubernetes cluster and registers MeshSync data handlers.
 func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	userUUID := user.ID
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	userUUID, systemID := machines.ResolveUserAndSystemID(ctx)
+	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(systemID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
+	}
+
+	if provider == nil {
+		errProvider := ErrConnectAction(fmt.Errorf("failed to retrieve provider from context"))
+		eventBuilder.WithMetadata(map[string]interface{}{"error": errProvider})
+		return machines.NoOp, eventBuilder.Build(), errProvider
 	}
 
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
@@ -105,7 +108,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 			AddCtxControllerHandlers(machinectx.K8sContext).
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 			DeployUndeployedOperators(machinectx.OperatorTracker, machinectx.K8sContext.ID)
-		ctrlHelper.AddMeshsyncDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)
+		ctrlHelper.AddMeshsyncDataHandlers(ctx, machinectx.K8sContext, userUUID, systemID, provider)
 
 		// Operator mode: best-effort apply of the explicitly-set
 		// configuration onto the cluster's MeshSync/Broker custom resources

@@ -1,0 +1,22 @@
+{{ define "main" }}
+{{ $error := .Params.errorCode }}
+<p>
+  <strong>Component:</strong> {{ .Params.componentType }} / {{ .Params.componentName }}<br>
+  <strong>Code:</strong> <code>{{ $error.name }}-{{ $error.code }}</code><br>
+  <strong>Severity:</strong> {{ $error.severity }}
+</p>
+
+<h2>Short description</h2>
+<p>{{ $error.short_description }}</p>
+
+<h2>Long description</h2>
+<p>{{ $error.long_description }}</p>
+
+<h2>Probable cause</h2>
+<p>{{ $error.probable_cause }}</p>
+
+<h2>Suggested remediation</h2>
+<p>{{ $error.suggested_remediation }}</p>
+
+<p><a href="{{ "reference/error-codes/" | relURL }}">View the complete error code reference</a></p>
+{{ end }}

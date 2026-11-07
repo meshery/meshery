@@ -167,6 +167,10 @@ type DesignPostPayload struct {
 	UserID      *core.Uuid           `json:"userId,omitempty"`
 	Visibility  string               `json:"visibility"`
 	CatalogData v1alpha1.CatalogData `json:"catalogData,omitempty"`
+
+	// designFilePresent records whether the request carried any design-file
+	// key. A zero DesignFile cannot tell an omitted key from an empty design.
+	designFilePresent bool
 }
 
 // MarshalJSON emits both the canonical (`designFile`) and legacy
@@ -220,6 +224,8 @@ func (p *DesignPostPayload) UnmarshalJSON(data []byte) error {
 	// precedence-winning spelling below. Reset first so a reused receiver
 	// zeros cleanly when all four spellings are absent.
 	p.DesignFile = design.PatternFile{}
+	p.designFilePresent = aux.DesignFileCanonical != nil || aux.PatternFileCanonical != nil ||
+		aux.DesignFileLegacy != nil || aux.PatternFileLegacy != nil
 	switch {
 	case aux.DesignFileCanonical != nil:
 		p.DesignFile = *aux.DesignFileCanonical
@@ -254,21 +260,20 @@ func (h *Handler) PatternFileRequestHandler(
 }
 
 // buildDesignSavedEventMetadata builds the metadata map emitted on the
-// design-saved event. Extracted into a named function so the canonical
-// camelCase keys (`historyTitle`, `design`, `doclink`) are pinned by a
-// focused unit test — see TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys.
-// Drift here would silently re-introduce the snake_case `history_title`
-// key that production carried for 263,378 rows pre-flip.
-func buildDesignSavedEventMetadata(designFile design.PatternFile) map[string]interface{} {
-	return map[string]interface{}{
-		"historyTitle": fmt.Sprintf("Version %s - %d components and %d relationships",
-			designFile.Version, len(designFile.Components), len(designFile.Relationships)),
-		"design": map[string]interface{}{
-			"name": designFile.Name,
-			"id":   designFile.ID.String(),
-		},
-		"doclink": "https://docs.meshery.io/concepts/logical/designs",
+// design-saved event: the design's identity, the `design` {name, id} object
+// the notification center's "Saved design" link reads, historyTitle and
+// doclink. It never carries the design's contents (#22764). Keys are
+// camelCase and pinned by TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys.
+func buildDesignSavedEventMetadata(designFile design.PatternFile, serverURL string) map[string]interface{} {
+	metadata := models.DesignEventIdentity(serverURL, designFile.ID, designFile.Name, string(designFile.Version))
+	metadata[models.EventMetadataDesign] = map[string]interface{}{
+		"name": designFile.Name,
+		"id":   designFile.ID.String(),
 	}
+	metadata[models.EventMetadataHistoryTitle] = fmt.Sprintf("Version %s - %d components and %d relationships",
+		designFile.Version, len(designFile.Components), len(designFile.Relationships))
+	metadata["doclink"] = "https://docs.meshery.io/concepts/logical/designs"
+	return metadata
 }
 
 func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID core.Uuid, body []byte, err error, provider models.Provider, token string) {
@@ -389,6 +394,9 @@ func (h *Handler) handlePatternPOST(
 		Name:        requestPayload.Name,
 		Visibility:  requestPayload.Visibility,
 		CatalogData: requestPayload.CatalogData,
+		// An existing design keeps its stored design file when the request
+		// carried none; a new design still stores the empty one.
+		PatternFileOmitted: !requestPayload.designFilePresent,
 	}
 
 	savedDesignByt, err := provider.SaveMesheryPattern(token, &mesheryPatternRecord)
@@ -406,7 +414,7 @@ func (h *Handler) handlePatternPOST(
 	description := fmt.Sprintf("Design %s saved at version %s", requestPayload.DesignFile.Name, requestPayload.DesignFile.Version)
 	event := eventBuilder.
 		WithDescription(description).
-		WithMetadata(buildDesignSavedEventMetadata(requestPayload.DesignFile)).
+		WithMetadata(buildDesignSavedEventMetadata(requestPayload.DesignFile, models.ServerURLFromRequest(r))).
 		Build()
 	_ = provider.PersistEvent(*event, token)
 
@@ -1045,6 +1053,10 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			event := eb.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to create artifacthub pkg for the design \"%s\"", pattern.Name)).WithMetadata(map[string]interface{}{"error": err}).Build()
 			_ = provider.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userID, event)
+		} else {
+			defer func() {
+				_ = artifactHubPkgFile.Close()
+			}()
 		}
 
 		data, err := createArtifactHubPkg(pattern, strings.Trim(fmt.Sprintf("%s %s", user.FirstName, user.LastName), " "))
@@ -1056,7 +1068,15 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			go h.config.EventBroadcaster.Publish(userID, event)
 		}
 
-		_, err = artifactHubPkgFile.Write(data)
+		if artifactHubPkgFile != nil {
+			_, writeErr := artifactHubPkgFile.Write(data)
+			closeErr := artifactHubPkgFile.Close()
+			if writeErr != nil {
+				err = writeErr
+			} else if closeErr != nil {
+				err = closeErr
+			}
+		}
 		if err != nil {
 			err = ErrWritingIntoFile(err, "artifacthub-pkg.yml")
 			h.log.Error(err)
@@ -1127,7 +1147,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			return
 		}
 
-		file, err = os.OpenFile(tmpOCITarFilePath, os.O_RDONLY, 0444)
+		ociTarFile, err := os.OpenFile(tmpOCITarFilePath, os.O_RDONLY, 0444)
 		if err != nil {
 			h.log.Error(ErrOpenFile(tmpOCITarFilePath))
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
@@ -1139,7 +1159,10 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			writeMeshkitError(rw, ErrOpenFile(tmpOCITarFilePath), http.StatusInternalServerError)
 			return
 		}
-		content, err := io.ReadAll(file)
+		defer func() {
+			_ = ociTarFile.Close()
+		}()
+		content, err := io.ReadAll(ociTarFile)
 		if err != nil {
 			h.log.Error(ErrIOReader(err))
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
@@ -1793,7 +1816,10 @@ func (h *Handler) handlePatternUpdate(
 
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
-		go h.EventsBuffer.Publish(&res)
+		if h.EventsBuffer != nil {
+			addMeshkitErr(&res, missingRouteErr)
+			go h.EventsBuffer.Publish(&res)
+		}
 		writeMeshkitError(rw, missingRouteErr, http.StatusBadRequest)
 		return
 	}
@@ -1805,8 +1831,27 @@ func (h *Handler) handlePatternUpdate(
 		return
 	}
 
+	if parsedBody == nil || parsedBody.PatternData == nil {
+		err := ErrRequestBody(fmt.Errorf("patternData is required in request body"))
+		h.log.Error(err)
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": err,
+		}).WithDescription("Please provide design payload.").Build()
+
+		_ = provider.PersistEvent(*event, token)
+		if h.config != nil && h.config.EventBroadcaster != nil {
+			go h.config.EventBroadcaster.Publish(userID, event)
+		}
+		if h.EventsBuffer != nil {
+			addMeshkitErr(&res, err)
+			go h.EventsBuffer.Publish(&res)
+		}
+		writeMeshkitError(rw, err, http.StatusBadRequest)
+		return
+	}
+
 	actedUpon := &userID
-	if parsedBody.PatternData != nil && parsedBody.PatternData.ID != nil {
+	if parsedBody.PatternData.ID != nil {
 		actedUpon = parsedBody.PatternData.ID
 	}
 
