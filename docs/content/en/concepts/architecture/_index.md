@@ -24,6 +24,8 @@ Meshery and its components are written using the following languages and technol
 | [Meshery Remote Providers]({{< ref "reference/extensibility/providers/index.md" >}})                 | _any_ - must adhere to Meshery [Extension Points]({{< ref "reference/extensibility/_index.md" >}}) |
 | [Envoy WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust and C++                                                                      |
 
+For an overview of how Meshery records, streams, and presents events, see the [Messaging Framework]({{< ref "concepts/architecture/messaging-framework/index.md" >}}). This page also describes the proposed alignment with CloudEvents and distinguishes design goals from implemented behavior.
+
 ## Deployments
 
 Meshery deploys as a set of containers. Meshery's containers can be deployed to either Docker or Kubernetes. Meshery components connect to one another via gRPC requests. Meshery Server stores the location of the other components and connects with those components as needed. Typically, a connection from Meshery Server to Meshery Adapters is initiated from a client request (usually either `mesheryctl` or Meshery UI) to gather information from the Adapter or invoke an Adapter's operation.
