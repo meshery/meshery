@@ -1,9 +1,15 @@
 package config
 
 import (
+	"errors"
+	"io"
+	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+
+	meshkiterrors "github.com/meshery/meshkit/errors"
 )
 
 // var update = flag.Bool("update", false, "update golden files")
@@ -471,3 +477,138 @@ func TestSetOperatorStatus(t *testing.T) {
 // 		})
 // 	}
 // }
+
+
+// roundTripFunc implements http.RoundTripper for mocking HTTP responses in tests.
+type roundTripFunc func(req *http.Request) (*http.Response, error)
+
+// RoundTrip executes a single HTTP transaction, returning a Response for the provided Request.
+func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+	return f(req)
+}
+
+// TestValidateVersion tests the version validation logic for contexts.
+func TestValidateVersion(t *testing.T) {
+	// 1. Test empty version defaults to "latest" and returns nil
+	emptyCtx := Context{Version: ""}
+	if err := emptyCtx.ValidateVersion(); err != nil {
+		t.Fatalf("expected nil error for empty version, got: %v", err)
+	}
+	if emptyCtx.Version != "latest" {
+		t.Fatalf("expected version to be set to 'latest', got: %s", emptyCtx.Version)
+	}
+
+	// 2. Test "latest" version returns nil without making HTTP call
+	latestCtx := Context{Version: "latest"}
+	if err := latestCtx.ValidateVersion(); err != nil {
+		t.Fatalf("expected nil error for 'latest' version, got: %v", err)
+	}
+
+	// Preserve original client transport and restore after test
+	origTransport := validateVersionClient.Transport
+	defer func() {
+		validateVersionClient.Transport = origTransport
+	}()
+
+	testCases := []struct {
+		name          string
+		version       string
+		statusCode    int
+		respErr       error
+		wantErr       bool
+		expectedCode  string
+		expectedError string
+	}{
+		{
+			name:       "valid release version 200 OK",
+			version:    "v0.7.0",
+			statusCode: http.StatusOK,
+			wantErr:    false,
+		},
+		{
+			name:          "invalid release version 404 Not Found",
+			version:       "v999.999.999",
+			statusCode:    http.StatusNotFound,
+			wantErr:       true,
+			expectedCode:  ErrInvalidVersionCode,
+			expectedError: "version 'v999.999.999' is not a valid Meshery release",
+		},
+		{
+			name:          "server error 500",
+			version:       "v0.7.1",
+			statusCode:    http.StatusInternalServerError,
+			wantErr:       true,
+			expectedCode:  ErrInvalidVersionCode,
+			expectedError: "failed to validate Meshery release version v0.7.1 (server returned HTTP 500)",
+		},
+		{
+			name:          "forbidden error 403",
+			version:       "v0.7.3",
+			statusCode:    http.StatusForbidden,
+			wantErr:       true,
+			expectedCode:  ErrInvalidVersionCode,
+			expectedError: "failed to validate Meshery release version v0.7.3 (server returned HTTP 403)",
+		},
+		{
+			name:          "network error",
+			version:       "v0.7.2",
+			respErr:       errors.New("connection refused"),
+			wantErr:       true,
+			expectedCode:  ErrValidateVersionFailRequestCode,
+			expectedError: "connection refused",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			validateVersionClient.Transport = roundTripFunc(func(req *http.Request) (*http.Response, error) {
+				if tc.respErr != nil {
+					return nil, tc.respErr
+				}
+				return &http.Response{
+					StatusCode: tc.statusCode,
+					Body:       io.NopCloser(strings.NewReader("")),
+					Header:     make(http.Header),
+				}, nil
+			})
+
+			ctx := Context{Version: tc.version}
+			err := ctx.ValidateVersion()
+
+			if tc.wantErr {
+				if err == nil {
+					t.Fatalf("expected error for case %q, got nil", tc.name)
+				}
+				code := meshkiterrors.GetCode(err)
+				if code != tc.expectedCode {
+					t.Errorf("expected error code %q, got %q (err: %v)", tc.expectedCode, code, err)
+				}
+				if tc.expectedError != "" && !strings.Contains(err.Error(), tc.expectedError) {
+					t.Errorf("expected error to contain %q, got %q", tc.expectedError, err.Error())
+				}
+			} else if err != nil {
+				t.Fatalf("unexpected error for case %q: %v", tc.name, err)
+			}
+		})
+	}
+}
+
+// TestConfigHTTPErrorConstructors tests the error helper constructors.
+func TestConfigHTTPErrorConstructors(t *testing.T) {
+	origErr := errors.New("network timeout")
+
+	errCreate := ErrValidateVersionRequest(origErr)
+	if meshkiterrors.GetCode(errCreate) != ErrValidateVersionRequestCode {
+		t.Errorf("expected %s, got %s", ErrValidateVersionRequestCode, meshkiterrors.GetCode(errCreate))
+	}
+
+	errFail := ErrValidateVersionFailRequest(origErr)
+	if meshkiterrors.GetCode(errFail) != ErrValidateVersionFailRequestCode {
+		t.Errorf("expected %s, got %s", ErrValidateVersionFailRequestCode, meshkiterrors.GetCode(errFail))
+	}
+
+	errInvalid := ErrInvalidVersion(origErr)
+	if meshkiterrors.GetCode(errInvalid) != ErrInvalidVersionCode {
+		t.Errorf("expected %s, got %s", ErrInvalidVersionCode, meshkiterrors.GetCode(errInvalid))
+	}
+}
