@@ -62,8 +62,5 @@ func FindClosestArg(argPassed string, validArgs []string) string {
 		values = append(values, levenshtein(argPassedR, argR))
 	}
 	minIndex, _ := minIntSlice(values)
-	if minIndex < 0 || minIndex >= len(validArgs) {
-		return ""
-	}
 	return validArgs[minIndex]
 }
