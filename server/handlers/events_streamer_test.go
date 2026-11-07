@@ -3,12 +3,15 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"net/http"
+	"net/http/httptest"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
 
 	"github.com/meshery/meshery/server/meshes"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
 	_events "github.com/meshery/meshkit/utils/events"
 )
@@ -428,5 +431,27 @@ func TestListenForCoreEvents_IgnoresUnexpectedPayloads(t *testing.T) {
 	case <-done:
 	case <-time.After(testTimeout):
 		t.Fatal("edge-case listener did not stop after cancellation")
+	}
+}
+
+// TestEventStreamHandler_FlushesHeadersBeforeFirstEvent verifies that the stream
+// opens right away. A client doesn't see the response until the headers are
+// sent, so without the flush mesheryctl adapter would wait with no timer running
+// until an adapter sent its first event.
+func TestEventStreamHandler_FlushesHeadersBeforeFirstEvent(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	h := &Handler{log: newTestLogger(t), EventsBuffer: _events.NewEventStreamer()}
+	req := httptest.NewRequest(http.MethodGet, "/api/system/adapter/events", nil).WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	h.EventStreamHandler(rec, req, &models.Preference{}, nil, nil)
+
+	if !rec.Flushed {
+		t.Error("expected the response headers to be flushed before any event")
+	}
+	if got := rec.Header().Get("Content-Type"); got != "text/event-stream" {
+		t.Errorf("expected content type text/event-stream, got %q", got)
 	}
 }
