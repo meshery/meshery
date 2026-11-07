@@ -111,11 +111,17 @@ func (e *EventsPersister) PersistClientEvent(event events.Event, token string) (
 func (e *EventsPersister) persist(event events.Event) (PersistedEvent, error) {
 	event = PrepareEventForPersistence(event, e.Log)
 	if !correlatesEvent(event) {
-		// GORM's Save requires a pointer (it reflects on the struct to read and
-		// update the primary key and timestamps). Passing the value directly
-		// produced "invalid value, should be pointer to struct or slice" and
-		// dropped every system event silently.
-		if err := e.DB.Save(&event).Error; err != nil {
+		// A new event is inserted, never upserted: the producer minted its ID
+		// (events.NewEvent does, and BeforeCreate keeps it), so a plain INSERT
+		// is the one statement it needs. GORM's Create requires a pointer.
+		if err := e.DB.Create(&event).Error; err != nil {
+			if isUniqueViolation(err) {
+				if replayed, ok, lookupErr := e.replayedEvent(event.ID); lookupErr != nil {
+					return PersistedEvent{}, ErrPersistEvent(lookupErr)
+				} else if ok {
+					return replayed, nil
+				}
+			}
 			return PersistedEvent{}, ErrPersistEvent(err)
 		}
 		return PersistedEvent{Event: &event, Disposition: EventCreated}, nil
@@ -123,9 +129,16 @@ func (e *EventsPersister) persist(event events.Event) (PersistedEvent, error) {
 
 	persisted, err := e.persistCorrelatedEvent(event)
 	if err != nil && isUniqueViolation(err) {
-		// A concurrent create opened the condition between this create's lookup
-		// and its insert. Re-run it: the lookup now finds the open event and
-		// the occurrence is counted on it.
+		// Either this event was already recorded (a retry of the same event,
+		// whose ID is taken), or a concurrent create opened the condition
+		// between this create's lookup and its insert. The first is a replay.
+		// For the second, re-run the create: the lookup now finds the open
+		// event and the occurrence is counted on it.
+		if replayed, ok, lookupErr := e.replayedEvent(event.ID); lookupErr != nil {
+			return PersistedEvent{}, ErrPersistEvent(lookupErr)
+		} else if ok {
+			return replayed, nil
+		}
 		persisted, err = e.persistCorrelatedEvent(event)
 	}
 	if err != nil {
@@ -134,13 +147,32 @@ func (e *EventsPersister) persist(event events.Event) (PersistedEvent, error) {
 	return persisted, nil
 }
 
+// replayedEvent reports whether an event with id is already stored, and
+// returns it as the answer to a retry of that event: an event value persisted
+// twice (a producer retrying after a timeout) is recorded once, and the retry
+// changes nothing. An event built with events.NewEvent carries its own ID, so
+// the ID identifies the event across retries.
+func (e *EventsPersister) replayedEvent(id uuid.UUID) (PersistedEvent, bool, error) {
+	if id.IsNil() {
+		return PersistedEvent{}, false, nil
+	}
+	var stored events.Event
+	found := e.DB.Where("id = ?", id).Limit(1).Find(&stored)
+	if found.Error != nil {
+		return PersistedEvent{}, false, found.Error
+	}
+	if found.RowsAffected == 0 {
+		return PersistedEvent{}, false, nil
+	}
+	return PersistedEvent{Event: &stored, Disposition: EventReplayed}, true, nil
+}
+
 func (e *EventsPersister) PersistSystemEvent(event events.Event) (PersistedEvent, error) {
 	return e.PersistEvent(event, "")
 }
 
 // PersistAndPublishSystemEvent persists a system event and broadcasts it to
-// userID as stored: with the stored row's ID, which an event built with a bare
-// events.NewEvent() does not carry, and, for an occurrence counted on or the
+// userID as stored: with the stored row's ID, and, for an occurrence counted on or the
 // resolution of an open condition, as the condition's stored event. When
 // persisting fails, or there is no persister, the event is still broadcast, as
 // sent, and the persistence error is returned for the caller to report.
@@ -191,6 +223,13 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) (PersistedE
 			return found.Error
 		}
 
+		// The event that opened the condition, sent again, is a retry of
+		// that event, not another occurrence of the condition.
+		if found.RowsAffected > 0 && !event.ID.IsNil() && open.ID == event.ID {
+			persisted = PersistedEvent{Event: &open, Disposition: EventReplayed}
+			return nil
+		}
+
 		if found.RowsAffected == 0 {
 			if event.ResolvedAt == nil {
 				applyConditionOpeningDefaults(&event, now)
@@ -232,10 +271,7 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) (PersistedE
 			return updateOpenEvent(tx, &open, updates, EventResolved, &persisted)
 		}
 
-		increment := 1
-		if event.OccurrenceCount != nil {
-			increment = *event.OccurrenceCount
-		}
+		increment := occurrenceCountOf(event)
 		lastSeen := now
 		if event.LastSeenAt != nil {
 			lastSeen = event.LastSeenAt.UTC()
@@ -271,13 +307,22 @@ func updateOpenEvent(tx *gorm.DB, open *events.Event, updates map[string]interfa
 	return nil
 }
 
+// occurrenceCountOf is the number of occurrences event reports: its
+// occurrenceCount, and 1 when that is unset or below 1. Only ClientEventHandler
+// validates a payload, so a server producer's zero or negative count must
+// neither leave the stored count unchanged nor decrement it.
+func occurrenceCountOf(event events.Event) int {
+	if event.OccurrenceCount == nil || *event.OccurrenceCount < 1 {
+		return 1
+	}
+	return *event.OccurrenceCount
+}
+
 // applyConditionOpeningDefaults fills the occurrence fields of an event that
 // opens a condition, as createEvent does.
 func applyConditionOpeningDefaults(event *events.Event, now time.Time) {
-	if event.OccurrenceCount == nil {
-		one := 1
-		event.OccurrenceCount = &one
-	}
+	count := occurrenceCountOf(*event)
+	event.OccurrenceCount = &count
 	if event.FirstSeenAt == nil {
 		firstSeen := now
 		if event.LastSeenAt != nil {
@@ -296,10 +341,8 @@ func applyConditionOpeningDefaults(event *events.Event, now time.Time) {
 // at the payload's firstSeenAt and lastSeenAt, else at resolvedAt. A
 // firstSeenAt that would fall after lastSeenAt is moved back to it.
 func applyResolvedConditionDefaults(event *events.Event) {
-	if event.OccurrenceCount == nil {
-		one := 1
-		event.OccurrenceCount = &one
-	}
+	count := occurrenceCountOf(*event)
+	event.OccurrenceCount = &count
 	if event.FirstSeenAt == nil {
 		firstSeen := *event.ResolvedAt
 		event.FirstSeenAt = &firstSeen

@@ -104,7 +104,7 @@ func TestEventSourceIsTheServersOnlyForServerEvents(t *testing.T) {
 	}
 }
 
-// An event the server builds with a bare events.NewEvent() carries no ID; it
+// An event constructed without the builder carries no ID; it
 // is broadcast as stored, with the stored row's non-zero ID and the server's
 // source, never as the zero-ID input.
 func TestPersistAndPublishBroadcastsTheStoredRow(t *testing.T) {
@@ -133,9 +133,9 @@ func TestPersistAndPublishBroadcastsTheStoredRow(t *testing.T) {
 	for name, publish := range publishers {
 		sent := events.NewEvent().FromOwner(user).WithCategory("kubernetes").WithAction("register").
 			WithSeverity(events.Informational).WithDescription(name).Build()
-		if !sent.ID.IsNil() {
-			t.Fatalf("precondition: events.NewEvent() minted ID %s", sent.ID)
-		}
+		// events.NewEvent mints an ID; an event constructed without the
+		// builder carries none, which is the case under test.
+		sent.ID = uuid.Nil
 		publish(sent)
 
 		got := receiveEvent(t, ch)

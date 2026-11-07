@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/models/events"
 )
 
@@ -241,7 +242,7 @@ func TestRemoteProviderPersistEventReturnsTheStoredEvent(t *testing.T) {
 	}
 }
 
-// An event built with a bare events.NewEvent() carries no ID. It is given one
+// An event constructed without the builder carries no ID. It is given one
 // before it is sent, so a legacy remote provider that answers with no body,
 // and therefore stores the event as sent, returns it with that ID rather than
 // the zero ID.
@@ -256,9 +257,9 @@ func TestRemoteProviderPersistEventAssignsAnIDToAnEventWithout(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 	sent := events.NewEvent().FromOwner(mustUUID(t)).WithCategory("design").WithAction("save").WithSeverity(events.Informational).Build()
-	if !sent.ID.IsNil() {
-		t.Fatalf("precondition: events.NewEvent() minted ID %s", sent.ID)
-	}
+	// events.NewEvent mints an ID; an event constructed without the
+	// builder carries none, which is the case under test.
+	sent.ID = uuid.Nil
 	persisted, err := provider.PersistEvent(*sent, "token")
 	if err != nil {
 		t.Fatalf("PersistEvent: %v", err)

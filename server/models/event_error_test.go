@@ -10,11 +10,15 @@ import (
 	"reflect"
 	"syscall"
 	"testing"
+	"time"
 
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
+	mkkube "github.com/meshery/meshkit/utils/kubernetes"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	k8sclient "k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 // TestErrUnreachableKubeAPICauses pins the nested causes: each cause carries
@@ -133,7 +137,10 @@ func TestAttachEventErrorNamesTheMatchedCause(t *testing.T) {
 func TestAttachEventErrorKeepsLegacyFormForNonMeshkitErrors(t *testing.T) {
 	plain := stderrors.New("plain failure")
 	event := AttachEventError(events.NewEvent(), plain, nil).Build()
-	if event.Metadata[events.MetadataErrorKey] != plain {
+	// Build deep-copies the metadata, so the stored error is a copy of the
+	// error, equal to it but not the same pointer.
+	got, ok := event.Metadata[events.MetadataErrorKey].(error)
+	if !ok || got.Error() != plain.Error() {
 		t.Fatalf("metadata.error = %#v, want the error itself", event.Metadata[events.MetadataErrorKey])
 	}
 }
@@ -151,5 +158,42 @@ func TestMatchedCauseErrorSerializesAsTheMeshkitError(t *testing.T) {
 	}
 	if string(got) != string(want) {
 		t.Fatalf("wrapper JSON = %s, want the MeshKit error's %s", got, want)
+	}
+}
+
+// A Discovery that cannot reach the cluster reports AssignServerID's error,
+// which is already an ErrUnreachableKubeAPI: the event the discover action
+// builds from it carries the nested causes and the matched cause, not the
+// legacy raw error.
+func TestAssignServerIDFailureAttachesTheMatchedCause(t *testing.T) {
+	// Nothing listens on port 1, so the API call is refused at once.
+	clientset, err := k8sclient.NewForConfig(&rest.Config{Host: "http://127.0.0.1:1", Timeout: 5 * time.Second})
+	if err != nil {
+		t.Fatalf("build clientset: %v", err)
+	}
+	kc := &K8sContext{Server: "http://127.0.0.1:1"}
+	assignErr := kc.AssignServerID(&mkkube.Client{KubeClient: clientset})
+	if assignErr == nil {
+		t.Fatal("AssignServerID succeeded against a closed port")
+	}
+
+	event := AttachEventError(events.NewEvent().WithMetadata(map[string]interface{}{}), assignErr, nil).Build()
+	ee, ok := event.Metadata[events.MetadataErrorKey].(events.EventError)
+	if !ok {
+		t.Fatalf("metadata.error is %T, want events.EventError", event.Metadata[events.MetadataErrorKey])
+	}
+	if ee.Code != ErrUnreachableKubeAPICode {
+		t.Fatalf("code = %q, want %q", ee.Code, ErrUnreachableKubeAPICode)
+	}
+	if ee.MatchedCauses == nil || len(*ee.MatchedCauses) != 1 || (*ee.MatchedCauses)[0].CauseID != KubeAPICauseUnreachable {
+		t.Fatalf("matchedCauses = %v, want %q", ee.MatchedCauses, KubeAPICauseUnreachable)
+	}
+}
+
+// ErrUnreachableKubeAPI is exported, so a nil client error must not panic.
+func TestErrUnreachableKubeAPIAcceptsANilError(t *testing.T) {
+	err := ErrUnreachableKubeAPI(nil, "https://cluster:6443")
+	if mk, ok := meshkiterrors.AsErrorV2(err); !ok || mk.Code != ErrUnreachableKubeAPICode {
+		t.Fatalf("got %v, want an ErrUnreachableKubeAPI", err)
 	}
 }

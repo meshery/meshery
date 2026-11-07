@@ -29,7 +29,9 @@ type EventDisposition string
 const (
 	// EventCreated: a new event was recorded.
 	EventCreated EventDisposition = "created"
-	// EventReplayed: the idempotencyKey was already used; nothing changed.
+	// EventReplayed: the event was already recorded (its idempotencyKey was
+	// already used, or the same event, by ID, was persisted before); nothing
+	// changed.
 	EventReplayed EventDisposition = "replayed"
 	// EventIncremented: an occurrence was counted on the open condition.
 	EventIncremented EventDisposition = "incremented"
@@ -121,7 +123,8 @@ func conditionKeySegment(segment string) string {
 
 // PrepareEventForPersistence is applied to every event Meshery Server
 // persists, locally or with a remote provider, before it is written or sent.
-// It gives an event without an ID (events.NewEvent() mints none) a fresh one,
+// It gives an event without an ID (one constructed without events.NewEvent,
+// which mints one) a fresh one,
 // so no event is stored, sent to a remote provider or broadcast with the zero
 // ID, and it bounds the metadata with GuardEventMetadataSize. It never sets
 // `source`; withServerSource does that for the events the server itself emits.
