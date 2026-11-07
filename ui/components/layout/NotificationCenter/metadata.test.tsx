@@ -72,8 +72,10 @@ vi.mock('./formatters/common', () => ({
 }));
 
 vi.mock('./formatters/error', () => ({
-  ErrorMetadataFormatter: ({ metadata }: any) => (
-    <div data-testid="error-metadata">{JSON.stringify(metadata)}</div>
+  ErrorMetadataFormatter: ({ metadata, event }: any) => (
+    <div data-testid="error-metadata" data-event-description={event?.description ?? ''}>
+      {JSON.stringify(metadata)}
+    </div>
   ),
 }));
 
@@ -213,6 +215,25 @@ describe('LinkFormatters and PropertyLinkFormatters', () => {
 });
 
 describe('FormattedMetadata', () => {
+  it('hands the error formatter the event it renders', () => {
+    // The error formatter once read a free `event` identifier, which resolved
+    // to the browser's window.event instead of the notification's event.
+    render(
+      <FormattedMetadata
+        event={{
+          category: 'connection',
+          action: 'update',
+          description: 'Could not assign server id, skipping context prod',
+          metadata: { error: { code: 'meshery-server-1304' } },
+        }}
+      />,
+    );
+    expect(screen.getByTestId('error-metadata')).toHaveAttribute(
+      'data-event-description',
+      'Could not assign server id, skipping context prod',
+    );
+  });
+
   it('delegates to a registered event type formatter when matched', () => {
     render(
       <FormattedMetadata

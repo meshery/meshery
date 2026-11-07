@@ -582,3 +582,165 @@ func TestSendEvent_ExitActionFailureHaltsWithoutTransition(t *testing.T) {
 		t.Fatalf("expected persisted status to remain CONNECTED, got %q", provider.status)
 	}
 }
+
+func TestResolveUserAndSystemID(t *testing.T) {
+	t.Run("empty context returns nil uuids", func(t *testing.T) {
+		userUUID, sysUUID := ResolveUserAndSystemID(context.Background())
+		if userUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected userUUID to be Nil, got %v", userUUID)
+		}
+		if sysUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected sysUUID to be Nil, got %v", sysUUID)
+		}
+	})
+
+	t.Run("populated context returns correct uuids", func(t *testing.T) {
+		expectedUser := core.Uuid(uuid.Must(uuid.NewV4()))
+		expectedSys := core.Uuid(uuid.Must(uuid.NewV4()))
+		ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: expectedUser})
+		ctx = context.WithValue(ctx, models.SystemIDKey, &expectedSys)
+
+		userUUID, sysUUID := ResolveUserAndSystemID(ctx)
+		if userUUID != expectedUser {
+			t.Errorf("expected userUUID %v, got %v", expectedUser, userUUID)
+		}
+		if sysUUID != expectedSys {
+			t.Errorf("expected sysUUID %v, got %v", expectedSys, sysUUID)
+		}
+	})
+
+	t.Run("typed nil pointers in context return nil uuids without panic", func(t *testing.T) {
+		var nilUser *models.User
+		var nilSys *core.Uuid
+		ctx := context.WithValue(context.Background(), models.UserCtxKey, nilUser)
+		ctx = context.WithValue(ctx, models.SystemIDKey, nilSys)
+
+		userUUID, sysUUID := ResolveUserAndSystemID(ctx)
+		if userUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected userUUID to be Nil, got %v", userUUID)
+		}
+		if sysUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected sysUUID to be Nil, got %v", sysUUID)
+		}
+	})
+
+	t.Run("invalid types in context return nil uuids without panic", func(t *testing.T) {
+		ctx := context.WithValue(context.Background(), models.UserCtxKey, "not-a-user")
+		ctx = context.WithValue(ctx, models.SystemIDKey, 12345)
+
+		userUUID, sysUUID := ResolveUserAndSystemID(ctx)
+		if userUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected userUUID to be Nil, got %v", userUUID)
+		}
+		if sysUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected sysUUID to be Nil, got %v", sysUUID)
+		}
+	})
+}
+
+func TestSendEvent_NilContextKeysDoNotPanic(t *testing.T) {
+	provider := &fakeProvider{status: connections.CONNECTED}
+	sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+
+	// 1. Invalid transition with context.Background() (no user or sysID)
+	// Triggers invalidTransitionEvent which previously dereferenced *sysID and user.ID
+	event, err := sm.SendEvent(context.Background(), Delete, nil)
+	if err == nil {
+		t.Fatal("expected error on invalid transition Delete from InitialState, got nil")
+	}
+	if event == nil {
+		t.Fatal("expected non-nil event on invalid transition")
+	}
+	if event.Severity != events.Error {
+		t.Errorf("expected Error severity, got %v", event.Severity)
+	}
+
+	// 2. Valid transition with context.Background()
+	// Advances InitialState -> DISCOVERED, triggering status update event
+	_, err = sm.SendEvent(context.Background(), Discovery, nil)
+	if err != nil {
+		t.Fatalf("expected nil error on valid transition, got %v", err)
+	}
+	if sm.CurrentState != DISCOVERED {
+		t.Errorf("expected CurrentState DISCOVERED, got %v", sm.CurrentState)
+	}
+}
+
+// The unreachable condition (meshery/schemas event correlation contract): a
+// background Discovery failure that moves the connection to NOTFOUND reports
+// it, the de-duplication of repeats is unchanged, and the Discovery that later
+// moves the connection out of NOTFOUND resolves it.
+func TestSendEvent_DiscoveryFailureReportsUnreachableCondition(t *testing.T) {
+	provider := &fakeProvider{status: connections.CONNECTED}
+	failing := &stubAction{
+		execNext:  NotFound,
+		execEvent: events.NewEvent().WithSeverity(events.Error).WithDescription("cluster down").Build(),
+		execErr:   errors.New("dial tcp: connection refused"),
+	}
+	sm := newTestMachine(t, provider, failing)
+	sm.ConditionComponent = "k8s-connection"
+	ctx := newTestContext(t)
+
+	event, err := sm.SendEvent(ctx, Discovery, nil)
+	if err == nil || event == nil {
+		t.Fatalf("got event %v, err %v; want the failure", event, err)
+	}
+	want := models.ConditionKey("k8s-connection", sm.ID.String(), ConditionUnreachable)
+	if event.CorrelationKey == nil || *event.CorrelationKey != want {
+		t.Fatalf("correlationKey = %v, want %q", event.CorrelationKey, want)
+	}
+	if event.ResolvedAt != nil {
+		t.Fatalf("a failure carries resolvedAt %v", event.ResolvedAt)
+	}
+
+	// The connection is NOTFOUND now; the same failure again changes nothing,
+	// so it is still suppressed (issue #20818).
+	sm.ResetState()
+	failing.execEvent = events.NewEvent().WithSeverity(events.Error).WithDescription("cluster down").Build()
+	event, err = sm.SendEvent(ctx, Discovery, nil)
+	if event != nil || err != nil {
+		t.Fatalf("repeat failure surfaced (event %v, err %v); de-duplication must be unchanged", event, err)
+	}
+
+	// The cluster answers again: the Discovery that leaves NOTFOUND resolves the
+	// condition, under its key, with a success severity.
+	sm.ResetState()
+	failing.execNext, failing.execEvent, failing.execErr = NoOp, nil, nil
+	event, err = sm.SendEvent(ctx, Discovery, nil)
+	if err != nil || event == nil {
+		t.Fatalf("got event %v, err %v; want the resolution", event, err)
+	}
+	if event.CorrelationKey == nil || *event.CorrelationKey != want || event.ResolvedAt == nil {
+		t.Fatalf("got key %v resolvedAt %v; want a resolution of %q", event.CorrelationKey, event.ResolvedAt, want)
+	}
+	if event.Severity != events.Success || event.Category != "connection" {
+		t.Fatalf("resolution severity %q category %q, want success and connection", event.Severity, event.Category)
+	}
+
+	// A healthy Discovery afterwards is routine: no second resolution.
+	sm.ResetState()
+	event, err = sm.SendEvent(ctx, Discovery, nil)
+	if err != nil || event == nil {
+		t.Fatalf("got event %v, err %v", event, err)
+	}
+	if event.ResolvedAt != nil || event.CorrelationKey != nil {
+		t.Fatalf("a routine Discovery carries key %v resolvedAt %v", event.CorrelationKey, event.ResolvedAt)
+	}
+}
+
+// A machine that does not opt in keeps its events uncorrelated.
+func TestSendEvent_WithoutConditionComponentReportsNoCondition(t *testing.T) {
+	provider := &fakeProvider{status: connections.CONNECTED}
+	sm := newTestMachine(t, provider, &stubAction{
+		execNext:  NotFound,
+		execEvent: events.NewEvent().WithSeverity(events.Error).Build(),
+		execErr:   errors.New("down"),
+	})
+	event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err == nil || event == nil {
+		t.Fatalf("got event %v, err %v; want the failure", event, err)
+	}
+	if event.CorrelationKey != nil {
+		t.Fatalf("correlationKey = %q on a machine without ConditionComponent", *event.CorrelationKey)
+	}
+}
