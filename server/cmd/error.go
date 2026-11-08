@@ -19,7 +19,12 @@ const (
 	ErrClosingDatabaseInstanceCode                = "meshery-server-1011"
 	ErrInitializingRegistryManagerCode            = "meshery-server-1012"
 	ErrInitializingKeysRegistrationCode           = "meshery-server-1013"
+	ErrStartingMetricsServerCode                  = "meshery-server-1014"
 )
+
+func ErrStartingMetricsServer(err error) error {
+	return errors.New(ErrStartingMetricsServerCode, errors.Alert, []string{"Error starting Prometheus metrics server"}, []string{err.Error()}, []string{"Check if METRICS_PORT is already bound to another process"}, []string{"Specify an open port for METRICS_PORT or unset it to disable"})
+}
 
 func ErrInitializingRegistryManager(err error) error {
 	return errors.New(ErrInitializingRegistryManagerCode, errors.Fatal, []string{"could not initialize registry manager"}, []string{err.Error()}, []string{"could not migrate tables into the database"}, []string{"make sure the database instance passed is not nil"})
