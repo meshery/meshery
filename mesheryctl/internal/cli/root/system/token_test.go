@@ -586,7 +586,7 @@ func TestTokenViewCmd_NonExistentTokenWithSilentFlag(t *testing.T) {
 	utils.SetupCustomContextEnv(t, currDir+"/testdata/token/view.yaml")
 
 	originalSilentFlag := utils.SilentFlag
-	utils.SilentFlag = true
+	utils.SilentFlag = false
 	t.Cleanup(func() {
 		utils.SilentFlag = originalSilentFlag
 	})
