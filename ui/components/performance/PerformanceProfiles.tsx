@@ -33,6 +33,7 @@ import {
   useGetPerformanceProfilesQuery,
 } from '@/rtk-query/performance-profile';
 import { useNotification } from '@/utils/hooks/useNotification';
+import { formatApiError } from '@/utils/helpers/meshkitError';
 import { updateVisibleColumns } from '@/utils/responsive-column';
 import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
@@ -138,16 +139,18 @@ function PerformanceProfile() {
         notify({ message: 'Performance Profile Deleted!', event_type: EVENT_TYPES.SUCCESS });
         refetchProfiles();
       })
-      .catch(() => handleError('Failed To Delete Profile'));
+      .catch(handleError('Failed To Delete Profile'));
   }
 
+  // Curried: call sites pass the failing operation and hand the raw error to
+  // the returned callback, e.g. `.catch(handleError('Failed To Delete Profile'))`.
   function handleError(msg) {
     return function (error) {
       dispatch(updateProgressAction({ showProgress: false }));
+      const { message } = formatApiError(error, msg);
       notify({
-        message: `${msg}: ${error}`,
+        message,
         event_type: EVENT_TYPES.ERROR,
-        details: error.toString(),
       });
     };
   }
@@ -389,11 +392,13 @@ function PerformanceProfile() {
             .then((results) => {
               let successCount = 0;
               let failureCount = 0;
+              let firstFailureReason;
 
               results.forEach((result) => {
                 if (result.status === 'fulfilled') {
                   successCount++;
                 } else {
+                  if (failureCount === 0) firstFailureReason = result.reason;
                   failureCount++;
                 }
               });
@@ -405,8 +410,11 @@ function PerformanceProfile() {
                 });
               }
               if (failureCount > 0) {
+                const summary = `Failed to delete ${failureCount} Profile${failureCount > 1 ? 's' : ''}`;
+                // Include the server's reason (from the first failure) when there is one.
+                const { message: reason } = formatApiError(firstFailureReason, summary);
                 notify({
-                  message: `Failed to delete ${failureCount} Profile${failureCount > 1 ? 's' : ''}`,
+                  message: reason === summary ? summary : `${summary}: ${reason}`,
                   event_type: EVENT_TYPES.ERROR,
                 });
               }

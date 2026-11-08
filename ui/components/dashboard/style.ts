@@ -148,6 +148,8 @@ export const DashboardActionsContainer = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
   alignItems: 'center',
   width: '100%',
+  maxWidth: '100%',
+  flexWrap: 'wrap',
   marginTop: theme.spacing(-3),
   marginBottom: theme.spacing(1.5),
   [theme.breakpoints.down('sm')]: {
