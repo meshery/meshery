@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/handlers"
@@ -169,21 +170,43 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		return model.StatusUnknown, err
 	}
 
+	if r.Config == nil || r.Config.OperatorTracker == nil {
+		err := ErrOperatorSubscription(fmt.Errorf("operator tracker is not initialized"))
+		if r.Log != nil {
+			r.Log.Error(err)
+		}
+		if r.Broadcast != nil {
+			r.Broadcast.Submit(broadcast.BroadcastMessage{
+				Source: broadcast.OperatorSyncChannel,
+				Data: operatorStatusK8sContext{
+					processing: err,
+					ctxID:      ctxID,
+				},
+				Type: "error",
+			})
+		}
+		return model.StatusUnknown, err
+	}
+
+	if r.Config.OperatorTracker.DisableOperator { // Do not deploy operator if explicitly in disabled mode
+		err := ErrOperatorSubscription(fmt.Errorf("operator deployment is explicitly disabled"))
+		if r.Log != nil {
+			r.Log.Info("skipping operator deployment (in disabled mode)")
+		}
+		if r.Broadcast != nil {
+			r.Broadcast.Submit(broadcast.BroadcastMessage{
+				Source: broadcast.OperatorSyncChannel,
+				Data: operatorStatusK8sContext{
+					processing: err,
+					ctxID:      ctxID,
+				},
+				Type: "error",
+			})
+		}
+		return model.StatusDisabled, err
+	}
+
 	go func(del bool, kubeclient *mesherykube.Client) {
-		if r.Config == nil || r.Config.OperatorTracker == nil {
-			if r.Log != nil {
-				r.Log.Info("operator tracker is uninitialized; skipping background operator deployment")
-			}
-			return
-		}
-
-		if r.Config.OperatorTracker.DisableOperator { //Do not deploy operator is explicitly in disabled mode
-			if r.Log != nil {
-				r.Log.Info("skipping operator deployment (in disabled mode)")
-			}
-			return
-		}
-
 		// SetOperatorDeployment carries the same guard the connect-time path
 		// uses, so an unresolvable chart version is refused identically here
 		// rather than being handed to Helm as an opaque chart-not-found. It also

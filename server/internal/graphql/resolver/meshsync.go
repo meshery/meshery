@@ -41,6 +41,13 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 		return model.StatusUnknown, ErrInvalidRequest
 	}
 
+	if provider == nil {
+		if r.Log != nil {
+			r.Log.Error(ErrInvalidRequest)
+		}
+		return model.StatusUnknown, ErrInvalidRequest
+	}
+
 	if actions.ClearDb == "true" {
 		// copies the contents .meshery/config/mesherydb.sql to .meshery/config/.archive/mesherydb.sql
 		// then drops all the DB table and then migrate/create tables, missing foreign keys, constraints, columns and indexes.
@@ -108,10 +115,14 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			dbHandler.Lock()
 			defer dbHandler.Unlock()
 
-			r.Log.Info("Dropping Meshery Database")
+			if r.Log != nil {
+				r.Log.Info("Dropping Meshery Database")
+			}
 			tables, err := dbHandler.Migrator().GetTables()
 			if err != nil {
-				r.Log.Error(ErrGormDatabase(err))
+				if r.Log != nil {
+					r.Log.Error(ErrGormDatabase(err))
+				}
 				return "", err
 			}
 
@@ -120,19 +131,25 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 					continue
 				}
 				if err := dbHandler.Migrator().DropTable(table); err != nil {
-					r.Log.Error(ErrGormDatabase(err))
+					if r.Log != nil {
+						r.Log.Error(ErrGormDatabase(err))
+					}
 					return "", err
 				}
 			}
 
-			r.Log.Info("Migrating Meshery Database")
+			if r.Log != nil {
+				r.Log.Info("Migrating Meshery Database")
+			}
 			// The events table is intentionally left in place above; re-migrating
 			// it here is idempotent. Share models.SystemDatabaseModels with boot
 			// and the database reset handler so the hard reset can never
 			// re-create only a stale subset of tables.
 			err = models.AutoMigrateSystemTables(dbHandler)
 			if err != nil {
-				r.Log.Error(err)
+				if r.Log != nil {
+					r.Log.Error(err)
+				}
 				return "", err
 			}
 
@@ -148,7 +165,9 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 
 			if lp, ok := provider.(*models.DefaultLocalProvider); ok {
 				if err := lp.SeedDefaultOrganization(); err != nil {
-					r.Log.Error(err)
+					if r.Log != nil {
+						r.Log.Error(err)
+					}
 					return "", err
 				}
 			}
@@ -168,7 +187,9 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 					models.SeedComponents(r.Log, r.Config, rm, dbHandler)
 				})
 			}()
-			r.Log.Info("Hard reset complete.")
+			if r.Log != nil {
+				r.Log.Info("Hard reset complete.")
+			}
 		} else { //Delete meshsync objects coming from a particular cluster
 			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 			if !ok || len(k8sctxs) == 0 {
@@ -214,7 +235,9 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 
 	if actions.ReSync == "true" {
 		if actions.HardReset == "true" {
-			r.Log.Info("Skipping resync after hard reset due to missing Kubernetes context")
+			if r.Log != nil {
+				r.Log.Info("Skipping resync after hard reset due to missing Kubernetes context")
+			}
 			return model.StatusProcessing, nil
 		}
 		handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)

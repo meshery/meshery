@@ -54,6 +54,21 @@ func TestGetProvider(t *testing.T) {
 		}
 	})
 
+	t.Run("context with typed nil provider returns ErrInvalidRequest", func(t *testing.T) {
+		var typedNil *stubTestProvider
+		ctx := context.WithValue(context.Background(), models.ProviderCtxKey, typedNil)
+		prov, err := getProvider(ctx)
+		if err == nil {
+			t.Fatalf("expected error for typed nil provider, got nil")
+		}
+		if prov != nil {
+			t.Fatalf("expected nil provider, got %v", prov)
+		}
+		if code := meshkiterrors.GetCode(err); code != ErrResolverInvalidRequestCode {
+			t.Fatalf("expected code %s, got %s", ErrResolverInvalidRequestCode, code)
+		}
+	})
+
 	t.Run("context with valid provider returns provider successfully", func(t *testing.T) {
 		expected := &stubTestProvider{}
 		ctx := context.WithValue(context.Background(), models.ProviderCtxKey, expected)
@@ -260,6 +275,19 @@ func TestResyncCluster_EdgeCases(t *testing.T) {
 		}
 		if code := meshkiterrors.GetCode(err); code != ErrEmptyCurrentK8sContextCode {
 			t.Fatalf("expected code %s, got %s", ErrEmptyCurrentK8sContextCode, code)
+		}
+	})
+
+	t.Run("nil provider returns ErrInvalidRequest", func(t *testing.T) {
+		status, err := r.resyncCluster(ctx, nil, &model.ReSyncActions{}, "")
+		if err == nil {
+			t.Fatalf("expected error for nil provider, got nil")
+		}
+		if status != model.StatusUnknown {
+			t.Fatalf("expected StatusUnknown, got %v", status)
+		}
+		if code := meshkiterrors.GetCode(err); code != ErrResolverInvalidRequestCode {
+			t.Fatalf("expected code %s, got %s", ErrResolverInvalidRequestCode, code)
 		}
 	})
 
