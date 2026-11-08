@@ -31,8 +31,11 @@ Import from a local file or a URL:
 
 ```bash
 mesheryctl filter import /path/to/filter.wasm
+mesheryctl filter import ./filter.wasm
 mesheryctl filter import https://example.com/myfilter.wasm
 ```
+
+Local paths are resolved from the current working directory, so you can pass either a relative or absolute path.
 
 Set a name, and pass the filter's configuration either as a file path or as an inline string:
 
