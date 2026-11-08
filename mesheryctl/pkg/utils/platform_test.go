@@ -19,6 +19,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 )
 
@@ -186,5 +187,57 @@ func TestCreateManifestsFolder(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder)); err != nil {
 		t.Errorf("expected %s to exist, got: %v", filepath.Join(MesheryFolder, ManifestsFolder), err)
+	}
+}
+
+type interceptingTransport struct {
+	body    *trackingBody
+	handler func(req *http.Request) (*http.Response, error)
+}
+
+func (t *interceptingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	if t.handler != nil {
+		resp, err := t.handler(req)
+		if err == nil && resp != nil && resp.Body != nil {
+			t.body = &trackingBody{ReadCloser: resp.Body}
+			resp.Body = t.body
+		}
+		return resp, err
+	}
+	return http.DefaultTransport.RoundTrip(req)
+}
+
+func TestInstallprereqDocker_BodyClosed(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("InstallprereqDocker shells out to uname, which is not available on Windows")
+	}
+
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	tmpDir := t.TempDir()
+	unameSh := filepath.Join(tmpDir, "uname")
+	if err := os.WriteFile(unameSh, []byte("#!/bin/sh\necho test\n"), 0o755); err != nil {
+		t.Fatalf("failed to create mock uname: %v", err)
+	}
+	t.Setenv("PATH", tmpDir+string(os.PathListSeparator)+os.Getenv("PATH"))
+
+	transport := &interceptingTransport{
+		handler: func(req *http.Request) (*http.Response, error) {
+			rec := httptest.NewRecorder()
+			rec.WriteHeader(http.StatusOK)
+			_, _ = rec.WriteString("invalid json")
+			return rec.Result(), nil
+		},
+	}
+	previousTransport := http.DefaultTransport
+	http.DefaultTransport = transport
+	t.Cleanup(func() { http.DefaultTransport = previousTransport })
+
+	err := InstallprereqDocker()
+	if err == nil {
+		t.Fatal("expected error from unmarshal, got nil")
+	}
+	if transport.body == nil || !transport.body.closed {
+		t.Fatal("expected response body to be closed in InstallprereqDocker")
 	}
 }
