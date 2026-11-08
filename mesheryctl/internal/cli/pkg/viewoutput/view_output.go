@@ -14,8 +14,9 @@
 package viewoutput
 
 import (
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"io"
+
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 )
 
 // HandleViewOutput formats and displays the provided data in the specified output format.
@@ -40,7 +41,7 @@ func HandleViewOutput[T any](
 		return err
 	}
 
-	//if the savePath is empty only the output is displayed, and isnt written to a file.4
+	// If savePath is empty, only the output is displayed and nothing is written to a file.
 	if savePath == "" {
 		return nil
 	}
