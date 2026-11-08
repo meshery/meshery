@@ -9,10 +9,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Hook results must be referentially stable across renders: the container
 // keys effects on them.
-const { notify, getMeshModels, PATTERNS_QUERY_RESULT, TABLE_STATE, REDUX_STATE } = vi.hoisted(
-  () => ({
+const { notify, getMeshModels, actionDeps, PATTERNS_QUERY_RESULT, TABLE_STATE, REDUX_STATE } =
+  vi.hoisted(() => ({
     notify: vi.fn(),
     getMeshModels: vi.fn(),
+    actionDeps: vi.fn(),
     PATTERNS_QUERY_RESULT: {
       data: { patterns: [], totalCount: 0 },
       isLoading: false,
@@ -29,10 +30,21 @@ const { notify, getMeshModels, PATTERNS_QUERY_RESULT, TABLE_STATE, REDUX_STATE }
       updateTableState: () => {},
     },
     REDUX_STATE: { ui: { selectedK8sContexts: [], catalogVisibility: true, user: {} } },
-  }),
-);
+  }));
 
 vi.mock('../../../api/meshmodel', () => ({ getMeshModels }));
+// Record what the container passes to its actions so a test can tell when the
+// mesh models have been stored in state.
+vi.mock('./patterns-actions', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./patterns-actions')>();
+  return {
+    ...actual,
+    createPatternsActions: (deps) => {
+      actionDeps(deps);
+      return actual.createPatternsActions(deps);
+    },
+  };
+});
 vi.mock('../../../utils/hooks/useNotification', () => ({ useNotification: () => ({ notify }) }));
 vi.mock('@/rtk-query/design', () => {
   const mutation = () => [vi.fn()];
@@ -114,6 +126,7 @@ describe('MesheryPatterns publish schema notifications', () => {
   beforeEach(() => {
     notify.mockReset();
     getMeshModels.mockReset();
+    actionDeps.mockReset();
   });
 
   it('shows an error notification when the mesh models fail to load', async () => {
@@ -131,8 +144,12 @@ describe('MesheryPatterns publish schema notifications', () => {
 
     render(<MesheryPatterns />);
 
-    await waitFor(() => expect(getMeshModels).toHaveBeenCalled());
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    // Wait until the loaded models reach state, i.e. the fetch has fully settled.
+    await waitFor(() =>
+      expect(actionDeps).toHaveBeenLastCalledWith(
+        expect.objectContaining({ meshModels: [{ displayName: 'Kubernetes' }] }),
+      ),
+    );
     expect(notify).not.toHaveBeenCalled();
   });
 });
