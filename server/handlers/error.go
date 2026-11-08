@@ -240,6 +240,7 @@ const (
 	ErrGetUsersKeysCode          = "meshery-server-1461"
 	ErrFetchProfilesCode         = "meshery-server-1464"
 	ErrResetInProgressCode       = "meshery-server-1481"
+	ErrInvalidClientEventCode    = "meshery-server-1489"
 )
 
 var (
@@ -354,7 +355,11 @@ func ErrPatternDeploy(err error, patternName string) error {
 }
 
 func ErrRequestBody(err error) error {
-	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to read the request body"}, []string{err.Error()}, []string{"Request body is empty or faulty"}, []string{"Check if the request is sent with proper values"})
+	errStr := ""
+	if err != nil {
+		errStr = err.Error()
+	}
+	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to read the request body"}, []string{errStr}, []string{"Request body is empty or faulty"}, []string{"Check if the request is sent with proper values"})
 }
 
 func ErrParseBool(err error, obj string) error {
@@ -690,7 +695,11 @@ func ErrRemoteApplication(err error) error {
 }
 
 func ErrClonePattern(err error) error {
-	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone design"}, []string{err.Error()}, []string{"Failed to clone design with the given ID"}, []string{"Check if the design ID is correct and the design is published"})
+	errStr := ""
+	if err != nil {
+		errStr = err.Error()
+	}
+	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone design"}, []string{errStr}, []string{"Failed to clone design with the given ID"}, []string{"Check if the design ID is correct and the design is published"})
 }
 
 func ErrCloneFilter(err error) error {
@@ -1252,5 +1261,16 @@ func ErrModelNotFound(modelName string) error {
 		[]string{fmt.Sprintf("Model %q was not found in the provided CSV input", modelName)},
 		[]string{"The requested model is not present in the CSV input"},
 		[]string{"Verify that the requested model exists in the CSV input"},
+	)
+}
+
+func ErrInvalidClientEvent(err error) error {
+	return errors.New(
+		ErrInvalidClientEventCode,
+		errors.Alert,
+		[]string{"The event's correlation, provenance, trace or metadata.error fields are not valid"},
+		[]string{err.Error()},
+		[]string{"A field breaks the meshery/schemas event contract: a correlationKey, source or type outside 1 to 255 characters, an occurrenceCount below 1, a lastSeenAt before firstSeenAt, a specversion other than 1.0, or a traceId or parentId that is not W3C Trace Context hex", "A metadata.error object carrying a lowercase code key breaks the schemas EventError contract: a value of the wrong JSON type or an unknown key, an empty code, a severity that is not an error severity, too many causes or remediations, a duplicate cause id, one remediation id naming two different remediations, an automatic or requiresApproval actionPolicy without an action, flat probableCause or suggestedRemediation lists that are not the ones derived from probableCauses, or a matchedCauses entry whose causeId is malformed, is not one of probableCauses, or whose confidence is outside 0 to 1. The long description names each failing field path"},
+		[]string{"Send the fields as the schemas EventPayload defines them, or omit the ones the client does not set", "Send metadata.error as the schemas EventError shape (code, shortDescription and the other defined keys only), or drop it when the client has no structured error to attach"},
 	)
 }

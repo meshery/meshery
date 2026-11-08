@@ -144,81 +144,110 @@ const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
 const IMPORT_PATTERN =
   /(?:from\s+|require\(\s*)['"](@mui\/[^'"]+|@material-ui\/[^'"]+|@rjsf\/mui)['"]/g;
 
-function walk(dir, out) {
+function walk(dir, out, scanErrors) {
   let entries;
+
   try {
     entries = fs.readdirSync(dir, { withFileTypes: true });
   } catch (err) {
-    // Always report — this function is only called for subdirectories
-    // discovered during recursion, so any read failure is unexpected.
-    // The "is this configured scan dir missing?" check happens in
-    // runScan() *before* walk() runs.
-    process.stderr.write(`audit-mui: ${dir}: ${err.message}\n`);
+    const message = `audit-mui: ${dir}: ${err.message}`;
+    process.stderr.write(`${message}\n`);
+    scanErrors.push(message);
     return;
   }
+
   for (const entry of entries) {
     if (IGNORED_DIRS.has(entry.name)) continue;
+
     const full = path.join(dir, entry.name);
+
     if (entry.isDirectory()) {
-      walk(full, out);
+      walk(full, out, scanErrors);
     } else if (entry.isFile() && EXTENSIONS.has(path.extname(entry.name))) {
       out.push(full);
     }
   }
 }
+function scanFile(file, scanErrors) {
+  let src;
 
-function scanFile(file) {
-  const src = fs.readFileSync(file, 'utf8');
+  try {
+    src = fs.readFileSync(file, 'utf8');
+  } catch (error) {
+    const message = `audit-mui: unable to read scan file ${file}: ${error.message}`;
+    process.stderr.write(`${message}\n`);
+    scanErrors.push(message);
+    return null;
+  }
+
   const matches = [];
   let m;
   IMPORT_PATTERN.lastIndex = 0;
+
   while ((m = IMPORT_PATTERN.exec(src)) !== null) {
     matches.push(m[1]);
   }
+
   return matches;
 }
-
 function runScan(scan) {
   const files = [];
+  const scanErrors = [];
+
   for (const dir of scan.dirs) {
     const full = path.join(scan.root, dir);
-    // A configured scan dir that doesn't exist is a config error, not
-    // expected absence. Warn loudly — otherwise a typo (or a renamed
-    // directory) would silently drop a whole scan target and `--fail-on-new`
-    // would still pass. This is exactly the audit blind-spot pattern this
-    // script exists to prevent.
+
     if (!fs.existsSync(full)) {
-      process.stderr.write(`audit-mui: missing scan dir ${full}\n`);
+      const message = `audit-mui: missing scan dir ${full}`;
+      process.stderr.write(`${message}\n`);
+      scanErrors.push(message);
       continue;
     }
-    walk(full, files);
+
+    walk(full, files, scanErrors);
   }
-  // Explicit top-level files (e.g., config files that live at the scan
-  // root and aren't reached by walking any `dirs` entry).
+
   for (const file of scan.files ?? []) {
     const full = path.join(scan.root, file);
+
     if (!fs.existsSync(full)) {
-      process.stderr.write(`audit-mui: missing scan file ${full}\n`);
+      const message = `audit-mui: missing scan file ${full}`;
+      process.stderr.write(`${message}\n`);
+      scanErrors.push(message);
       continue;
     }
+
     files.push(full);
   }
 
   const offenders = [];
   let totalMatches = 0;
   let skippedAllowlisted = 0;
+
   for (const file of files) {
-    const matches = scanFile(file);
-    if (matches.length === 0) continue;
+    const matches = scanFile(file, scanErrors);
+
+    if (matches === null || matches.length === 0) continue;
+
     const rel = path.relative(scan.root, file);
+
     if (scan.allowlist.has(rel)) {
       skippedAllowlisted += 1;
       continue;
     }
-    offenders.push({ scan: scan.name, file: rel, count: matches.length, imports: matches });
+
+    offenders.push({
+      scan: scan.name,
+      file: rel,
+      count: matches.length,
+      imports: matches,
+    });
+
     totalMatches += matches.length;
   }
+
   offenders.sort((a, b) => b.count - a.count || a.file.localeCompare(b.file));
+
   return {
     name: scan.name,
     files: offenders.length,
@@ -226,6 +255,8 @@ function runScan(scan) {
     skippedAllowlisted,
     allowlistSize: scan.allowlist.size,
     offenders,
+    scanErrors,
+    scanComplete: scanErrors.length === 0,
   };
 }
 
@@ -239,6 +270,8 @@ function main() {
   const totalFiles = results.reduce((acc, r) => acc + r.files, 0);
   const totalMatches = results.reduce((acc, r) => acc + r.matches, 0);
   const totalAllowlist = results.reduce((acc, r) => acc + r.allowlistSize, 0);
+  const scanComplete = results.every((r) => r.scanComplete);
+
   // Sort across all scans so the "Top N by match count" header is honest
   // when there are offenders in more than one scan.
   const allOffenders = results
@@ -252,12 +285,15 @@ function main() {
           audit: 'mui',
           files: totalFiles,
           matches: totalMatches,
+          scanComplete,
           scans: results.map((r) => ({
             name: r.name,
             files: r.files,
             matches: r.matches,
             allowlistSize: r.allowlistSize,
             allowlistedFilesWithMuiImports: r.skippedAllowlisted,
+            scanComplete: r.scanComplete,
+            scanErrors: r.scanErrors,
             offenders: r.offenders,
           })),
         },
@@ -265,19 +301,24 @@ function main() {
         2,
       ) + '\n',
     );
-    process.exit(failOnNew && totalFiles > 0 ? 1 : 0);
+
+    process.exitCode = failOnNew && (totalFiles > 0 || !scanComplete) ? 1 : 0;
+    return;
   }
 
   process.stdout.write('meshery @mui/* import audit\n');
   process.stdout.write('===========================\n');
   process.stdout.write('Patterns: @mui/*, @material-ui/*, @rjsf/mui\n');
+
   for (const r of results) {
     const scan = SCANS.find((s) => s.name === r.name);
     process.stdout.write(`Scan [${r.name}]: ${scan.dirs.join(', ')}\n`);
   }
+
   process.stdout.write('\n');
 
   const limit = showAll ? allOffenders.length : Math.min(20, allOffenders.length);
+
   if (allOffenders.length === 0) {
     process.stdout.write(
       'No @mui/* imports found outside the allowlists. The restructure is done.\n\n',
@@ -285,38 +326,49 @@ function main() {
   } else {
     const header = showAll ? 'Offenders' : `Top ${limit} files (by match count)`;
     process.stdout.write(`${header}:\n`);
+
     for (let i = 0; i < limit; i++) {
       const { scan: scanName, file, count } = allOffenders[i];
       process.stdout.write(`  ${String(count).padStart(3)}  [${scanName}] ${file}\n`);
     }
+
     if (!showAll && allOffenders.length > limit) {
       process.stdout.write(
         `  ... and ${allOffenders.length - limit} more (use --all to see them)\n`,
       );
     }
+
     process.stdout.write('\n');
   }
 
   process.stdout.write('Per-scan summary:\n');
+
   for (const r of results) {
     process.stdout.write(
-      `  [${r.name.padEnd(20)}] files=${r.files} matches=${r.matches} allowlist=${r.allowlistSize}\n`,
+      `  [${r.name.padEnd(20)}] files=${r.files} matches=${r.matches} allowlist=${
+        r.allowlistSize
+      }\n`,
     );
   }
-  process.stdout.write('\n');
 
+  if (!scanComplete) {
+    process.stderr.write('WARNING: Scan incomplete. Check the reported scan errors.\n');
+  }
+
+  process.stdout.write('\n');
   process.stdout.write('Summary:\n');
   process.stdout.write(`  Files:                ${totalFiles}\n`);
   process.stdout.write(`  Matches:              ${totalMatches}\n`);
   process.stdout.write(`  Allowlisted (total):  ${totalAllowlist}\n\n`);
   process.stdout.write(`AUDIT mui files=${totalFiles} matches=${totalMatches}\n`);
 
-  if (failOnNew && totalFiles > 0) {
+  if (failOnNew && (totalFiles > 0 || !scanComplete)) {
     process.stderr.write(
       `\nFAIL: ${totalFiles} non-allowlisted file(s) import @mui/*. ` +
+        `${scanComplete ? '' : 'The scan was incomplete. Check scan errors. '}` +
         `Migrate to @sistent/sistent or update the allowlist with justification.\n`,
     );
-    process.exit(1);
+    process.exitCode = 1;
   }
 }
 

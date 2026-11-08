@@ -83,11 +83,11 @@ type lockedEventsProvider struct {
 	persisted []events.Event
 }
 
-func (p *lockedEventsProvider) PersistEvent(event events.Event, _ string) error {
+func (p *lockedEventsProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	p.persisted = append(p.persisted, event)
-	return nil
+	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
 }
 
 func (p *lockedEventsProvider) snapshot() []events.Event {

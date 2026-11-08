@@ -145,7 +145,7 @@ mesheryctl system logs meshery-istio
 				return utils.ErrDockerComposeClient(err)
 			}
 
-			if err := composeClient.Logs(context.Background(), utils.DockerComposeFile, true, os.Stdout); err != nil {
+			if err := composeClient.Logs(context.Background(), utils.DockerComposeFile, systemLogsFlags.Follow, os.Stdout); err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to get logs"))
 			}
 		case platformKubernetes:

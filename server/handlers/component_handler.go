@@ -890,8 +890,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 			"error": wrappedErr,
 		})
 		_event := eventBuilder.Build()
-		_ = provider.PersistEvent(*_event, token)
-		go h.config.EventBroadcaster.Publish(userID, _event)
+		h.persistAndPublish(provider, token, userID, _event)
 		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
@@ -899,8 +898,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	description := fmt.Sprintf("Status of '%s' updated to %s.", updateData.DisplayName, updateData.Status)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 
 	// Respond with success status
 	rw.WriteHeader(http.StatusNoContent)
