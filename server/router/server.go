@@ -262,8 +262,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	}
 
 	handleRegistry("/validate", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ValidationHandler), models.NoAuth)), "POST")
-	handleRegistry("/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents), models.ProviderAuth)), "POST")
-	gMux.Handle("/api/meshmodel/components/register", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents), models.ProviderAuth))).Methods("POST") //For backwards compatibility with previous registrants
+	handleRegistry("/components", h.ProviderMiddleware(h.RegistrationAuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents))), "POST")
+	gMux.Handle("/api/meshmodel/components/register", h.ProviderMiddleware(h.RegistrationAuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents)))).Methods("POST") //For backwards compatibility with previous registrants
 	handleRegistry("/{entityType}/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateEntityStatus), models.NoAuth)), "POST")
 	handleRegistry("/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelComponents), models.NoAuth)), "GET")
 
