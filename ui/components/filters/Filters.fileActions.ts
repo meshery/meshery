@@ -202,23 +202,26 @@ export function createHandleImportFilter({
     let requestBody: any = null;
     switch (uploadType) {
       case 'File Upload':
+        // The server reads the binary from `filterData.filterFile`. It still
+        // accepts the legacy `filter_data` wrapper, but not an inner
+        // `filter_file`, which is silently dropped (filter saved empty).
+        // Use the canonical camelCase shape for both.
         requestBody = JSON.stringify({
           config,
           save: true,
-          filter_data: {
+          filterData: {
             name,
-            filter_file: getUnit8ArrayDecodedFile(file),
+            filterFile: getUnit8ArrayDecodedFile(file),
           },
         });
         break;
       case 'URL Upload':
+        // No `filterData` here: its presence makes the server treat the
+        // request as a local upload and never fetch `url`.
         requestBody = JSON.stringify({
           config,
           save: true,
           url,
-          filter_data: {
-            name,
-          },
         });
         break;
     }
