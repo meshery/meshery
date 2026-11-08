@@ -55,7 +55,7 @@ mesheryctl filter import /path/to/filter.wasm --wasm-config [filepath|string]
 </div>
 </pre> 
 
-Specify the name of the filter to be imported. Use quotes if the name contains spaces
+Specify the name of a local filter file. Use quotes if the name contains spaces. Remote URL imports do not support `--name`.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -70,7 +70,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help                 help for import
-  -n, --name string          (optional) filter name
+  -n, --name string          (optional) filter name for local file imports
   -w, --wasm-config string   (optional) WASM configuration filepath/string
 
 </div>
