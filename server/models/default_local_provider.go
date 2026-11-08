@@ -683,12 +683,13 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 	}
 	user, _ := l.GetUserDetails(req)
 	pref, _ := l.ReadFromPersister(user.ID.String())
-	if !pref.AnonymousPerfResults {
-		return "", nil
-	}
 
-	l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
-	resultID, _ := l.shipResults(req, data)
+	// The preference only controls sending the result. It is always saved locally.
+	var resultID string
+	if pref.AnonymousPerfResults {
+		l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
+		resultID, _ = l.shipResults(req, data)
+	}
 
 	key := uuid.FromStringOrNil(resultID)
 	l.Log.Debug(fmt.Sprintf("key: %s, is nil: %t", key.String(), (key == uuid.Nil)))
@@ -2078,28 +2079,6 @@ func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter,
 }
 
 // Events
-
-func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
-	// GORM's Save requires a pointer (it reflects on the struct to read/update
-	// the primary key and timestamps). Passing the value directly produced
-	// "invalid value, should be pointer to struct or slice" and dropped every
-	// system event silently — including the controller-emitted events that
-	// flow through PersistSystemEvent.
-	//
-	// Every locally persisted event - local provider, system events and the
-	// remote provider's fallback - is written here, so this is where the
-	// metadata size guard applies.
-	event = GuardEventMetadataSize(event, e.Log)
-	err := e.DB.Save(&event).Error
-	if err != nil {
-		return ErrPersistEvent(err)
-	}
-	return nil
-}
-
-func (e *EventsPersister) PersistSystemEvent(event events.Event) error {
-	return e.PersistEvent(event, "")
-}
 
 func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {
 	e := l.EventsPersister

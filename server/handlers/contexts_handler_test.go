@@ -30,12 +30,14 @@ func (m *mockContextsProvider) GetK8sContext(token, id string) (models.K8sContex
 	return models.K8sContext{}, nil
 }
 
-func (m *mockContextsProvider) PersistEvent(event events.Event, token string) error {
+func (m *mockContextsProvider) PersistEvent(event events.Event, token string) (models.PersistedEvent, error) {
 	m.persistedEvents = append(m.persistedEvents, event)
 	if m.persistEventFn != nil {
-		return m.persistEventFn(event, token)
+		if err := m.persistEventFn(event, token); err != nil {
+			return models.PersistedEvent{}, err
+		}
 	}
-	return nil
+	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
 }
 
 func TestDeleteContext_MissingToken(t *testing.T) {
