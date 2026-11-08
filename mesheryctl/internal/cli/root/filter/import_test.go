@@ -79,3 +79,18 @@ func TestImportCmdRemoteURL(t *testing.T) {
 	require.Equal(t, remoteURL, request["url"])
 	require.NotContains(t, request, "filterData")
 }
+
+func TestImportCmdRemoteURLRejectsName(t *testing.T) {
+	utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer utils.ResetCommandFlags(FilterCmd, t)
+
+	utils.TokenFlag = utils.GetToken(t)
+
+	const remoteURL = "https://example.com/my-filter.wasm"
+	FilterCmd.SetArgs([]string{"import", remoteURL, "--name", "custom-filter"})
+
+	err := FilterCmd.Execute()
+	require.ErrorContains(t, err, "--name is only supported for local filter file imports")
+}

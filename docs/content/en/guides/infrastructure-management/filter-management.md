@@ -42,6 +42,8 @@ Set a name, and pass the filter's configuration either as a file path or as an i
 ```bash
 mesheryctl filter import /path/to/filter.wasm --name "rate-limit" --wasm-config ./config.json
 ```
+
+The `--name` flag applies only to local file imports. Remote URL imports do not support a name override.
 {{% /tab %}}
 {{< /tabpane >}}
 

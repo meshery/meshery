@@ -17,6 +17,7 @@ package filter
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"os"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -49,7 +50,8 @@ mesheryctl filter import https://example.com/myfilter.wasm
 // Use quotes if the string contains spaces
 mesheryctl filter import /path/to/filter.wasm --wasm-config [filepath|string]
 
-// Specify the name of the filter to be imported. Use quotes if the name contains spaces
+// Specify the name of a local filter file. Use quotes if the name contains spaces.
+// Remote URL imports do not support --name.
 mesheryctl filter import /path/to/filter.wasm --name [string]
 	`,
 	Args: cobra.MinimumNArgs(0),
@@ -73,11 +75,16 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 		}
 
 		uri := args[0]
+		isRemoteURL := utils.IsValidUrl(uri)
+		if isRemoteURL && name != "" {
+			return errors.New("--name is only supported for local filter file imports")
+		}
 
 		// Treat the argument as a remote URL only when it has an explicit scheme and host.
 		// govalidator.IsURL accepts scheme-less names such as "my.filter.wasm" as domains,
 		// which would wrongly route local files down the remote URL path.
-		if utils.IsValidUrl(uri) {
+		if isRemoteURL {
+			// The server treats any non-nil FilterData as a local upload.
 			body.URL = uri
 		} else {
 			filterFile, err := os.ReadFile(uri)
@@ -146,5 +153,5 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 
 func init() {
 	importCmd.Flags().StringVarP(&cfg, "wasm-config", "w", "", "(optional) WASM configuration filepath/string")
-	importCmd.Flags().StringVarP(&name, "name", "n", "", "(optional) filter name")
+	importCmd.Flags().StringVarP(&name, "name", "n", "", "(optional) filter name for local file imports")
 }
