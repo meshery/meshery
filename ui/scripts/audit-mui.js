@@ -223,18 +223,30 @@ function runScan(scan) {
   const offenders = [];
   let totalMatches = 0;
   let skippedAllowlisted = 0;
-
+  const allowlistStatus = {
+    active: [],
+    unused: [],
+    missing: [],
+  };
   for (const file of files) {
     const matches = scanFile(file, scanErrors);
 
-    if (matches === null || matches.length === 0) continue;
+    if (matches === null) continue;
 
     const rel = path.relative(scan.root, file);
 
     if (scan.allowlist.has(rel)) {
-      skippedAllowlisted += 1;
+      if (matches.length > 0) {
+        allowlistStatus.active.push(rel);
+        skippedAllowlisted += 1;
+      } else {
+        allowlistStatus.unused.push(rel);
+      }
+
       continue;
     }
+
+    if (matches.length === 0) continue;
 
     offenders.push({
       scan: scan.name,
@@ -245,7 +257,29 @@ function runScan(scan) {
 
     totalMatches += matches.length;
   }
+  for (const rel of scan.allowlist) {
+    if (allowlistStatus.active.includes(rel) || allowlistStatus.unused.includes(rel)) {
+      continue;
+    }
 
+    const full = path.join(scan.root, rel);
+
+    try {
+      fs.statSync(full);
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        allowlistStatus.missing.push(rel);
+      } else {
+        const message = `audit-mui: unable to check allowlist file ${full}: ${error.message}`;
+        process.stderr.write(`${message}\n`);
+        scanErrors.push(message);
+      }
+    }
+  }
+
+  allowlistStatus.active.sort();
+  allowlistStatus.unused.sort();
+  allowlistStatus.missing.sort();
   offenders.sort((a, b) => b.count - a.count || a.file.localeCompare(b.file));
 
   return {
@@ -254,6 +288,7 @@ function runScan(scan) {
     matches: totalMatches,
     skippedAllowlisted,
     allowlistSize: scan.allowlist.size,
+    allowlistStatus,
     offenders,
     scanErrors,
     scanComplete: scanErrors.length === 0,
@@ -292,6 +327,7 @@ function main() {
             matches: r.matches,
             allowlistSize: r.allowlistSize,
             allowlistedFilesWithMuiImports: r.skippedAllowlisted,
+            allowlistStatus: r.allowlistStatus,
             scanComplete: r.scanComplete,
             scanErrors: r.scanErrors,
             offenders: r.offenders,
@@ -348,6 +384,30 @@ function main() {
       `  [${r.name.padEnd(20)}] files=${r.files} matches=${r.matches} allowlist=${
         r.allowlistSize
       }\n`,
+    );
+  }
+  const staleAllowlistEntries = results.flatMap((r) => [
+    ...r.allowlistStatus.unused.map((file) => ({
+      scan: r.name,
+      status: 'unused',
+      file,
+    })),
+    ...r.allowlistStatus.missing.map((file) => ({
+      scan: r.name,
+      status: 'missing',
+      file,
+    })),
+  ]);
+
+  if (staleAllowlistEntries.length > 0) {
+    process.stdout.write('\nAllowlist maintenance:\n');
+
+    for (const entry of staleAllowlistEntries) {
+      process.stdout.write(`  [${entry.status}] [${entry.scan}] ${entry.file}\n`);
+    }
+
+    process.stdout.write(
+      '  Note: These entries are informational and do not affect --fail-on-new.\n',
     );
   }
 

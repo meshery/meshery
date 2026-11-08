@@ -61,6 +61,15 @@ function runAudit(fixture, args = [], options = {}) {
   return { ...result, json };
 }
 
+function runAuditHuman(fixture, args = []) {
+  const script = path.join(fixture, 'ui', 'scripts', 'audit-mui.js');
+
+  return spawnSync(process.execPath, [script, ...args], {
+    encoding: 'utf8',
+    env: process.env,
+  });
+}
+
 function scanErrors(result) {
   return result.json.scanErrors ?? result.json.scans.flatMap((scan) => scan.scanErrors ?? []);
 }
@@ -214,4 +223,95 @@ test('a complete scan with no offenders exits 0', (t) => {
   assert.equal(result.json.scanComplete, true);
   assert.equal(result.json.files, 0);
   assert.equal(result.json.matches, 0);
+});
+
+test('allowlist status reports files with MUI imports as active', (t) => {
+  const fixture = createFixture(t);
+  const relativePath = 'theme/index.ts';
+
+  writeFile(fixture, `ui/${relativePath}`, "import { darken } from '@mui/material/styles';\n");
+
+  const result = runAudit(fixture);
+  const uiScan = result.json.scans.find((scan) => scan.name === 'ui');
+
+  assert.ok(uiScan.allowlistStatus.active.includes(relativePath));
+  assert.ok(!uiScan.allowlistStatus.unused.includes(relativePath));
+  assert.ok(!uiScan.allowlistStatus.missing.includes(relativePath));
+});
+
+test('allowlist status reports files without MUI imports as unused', (t) => {
+  const fixture = createFixture(t);
+  const relativePath = 'theme/index.ts';
+
+  writeFile(fixture, `ui/${relativePath}`, 'export const theme = {};\n');
+
+  const result = runAudit(fixture, ['--fail-on-new']);
+  const uiScan = result.json.scans.find((scan) => scan.name === 'ui');
+
+  assert.equal(result.status, 0);
+  assert.equal(result.json.scanComplete, true);
+  assert.ok(uiScan.allowlistStatus.unused.includes(relativePath));
+  assert.ok(!uiScan.allowlistStatus.active.includes(relativePath));
+  const humanResult = runAuditHuman(fixture);
+
+  assert.match(humanResult.stdout, /\[unused\].*theme\/index\.ts/);
+});
+
+test('allowlist status reports nonexistent files as missing', (t) => {
+  const fixture = createFixture(t);
+  const relativePath = 'theme/index.ts';
+
+  const result = runAudit(fixture, ['--fail-on-new']);
+  const uiScan = result.json.scans.find((scan) => scan.name === 'ui');
+
+  assert.ok(uiScan.allowlistStatus.missing.includes(relativePath));
+  assert.ok(!uiScan.allowlistStatus.active.includes(relativePath));
+  assert.ok(!uiScan.allowlistStatus.unused.includes(relativePath));
+  assert.equal(result.status, 0);
+  assert.equal(result.json.scanComplete, true);
+
+  const humanResult = runAuditHuman(fixture);
+
+  assert.equal(humanResult.status, 0);
+  assert.match(humanResult.stdout, /\[missing\].*theme\/index\.ts/);
+});
+
+test('a failed read does not classify an allowlisted file as unused or missing', (t) => {
+  const fixture = createFixture(t);
+  const relativePath = 'theme/index.ts';
+  const unreadable = path.join(fixture, 'ui', relativePath);
+
+  writeFile(fixture, `ui/${relativePath}`, "import { darken } from '@mui/material/styles';\n");
+
+  const preload = path.join(fixture, 'allowlist-read-failure.cjs');
+
+  writeFile(
+    fixture,
+    'allowlist-read-failure.cjs',
+    `
+      const fs = require('node:fs');
+      const path = require('node:path');
+      const original = fs.readFileSync;
+      const blocked = ${JSON.stringify(unreadable)};
+
+      fs.readFileSync = (file, ...args) => {
+        if (path.resolve(file) === blocked) {
+          throw new Error('injected allowlist read failure');
+        }
+        return original(file, ...args);
+      };
+    `,
+  );
+
+  const result = runAudit(fixture, [], {
+    env: { NODE_OPTIONS: '--require=' + preload },
+  });
+
+  const uiScan = result.json.scans.find((scan) => scan.name === 'ui');
+
+  assert.equal(result.json.scanComplete, false);
+  assert.match(scanErrorText(result), /injected allowlist read failure/);
+  assert.ok(!uiScan.allowlistStatus.active.includes(relativePath));
+  assert.ok(!uiScan.allowlistStatus.unused.includes(relativePath));
+  assert.ok(!uiScan.allowlistStatus.missing.includes(relativePath));
 });
