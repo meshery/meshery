@@ -405,7 +405,20 @@ func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ 
 }
 
 func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
+	connectionID, err := uuid.FromString(mux.Vars(req)["connectionId"])
+	if err != nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %w", err))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
+	// No connection has the nil ID, so there is nothing to update.
+	if connectionID == uuid.Nil {
+		notFoundErr := models.ErrResultNotFound(fmt.Errorf("no connection with ID %s", connectionID))
+		h.log.Warn(notFoundErr)
+		writeMeshkitError(w, notFoundErr, http.StatusNotFound)
+		return
+	}
 	userID := user.ID
 
 	bd, err := io.ReadAll(req.Body)
@@ -443,6 +456,15 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
+	// An update never creates a connection: answer 404 for an ID the provider
+	// does not know, before anything is saved.
+	existing, statusCode, gerr := provider.GetConnectionByID(token, connectionID)
+	if gerr != nil && statusCode == http.StatusNotFound {
+		h.log.Warnf("No connection with ID %q found to update", connectionID)
+		writeMeshkitError(w, models.ErrResultNotFound(gerr), http.StatusNotFound)
+		return
+	}
+
 	// A PUT here is a partial update (the UI's connect action sends only
 	// {status}); the provider's UpdateConnectionById backfills any omitted field
 	// from the persisted row so a partial payload never clobbers columns like
@@ -452,7 +474,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	// resolve the unreachable condition of a connection leaving NOTFOUND.
 	statusCtx := req.Context()
 	if connection.Status != "" {
-		if existing, _, gerr := provider.GetConnectionByID(token, connectionID); gerr != nil {
+		if gerr != nil {
 			h.log.Warn(fmt.Errorf("could not read the status of connection %s before updating it: %w", connectionID, gerr))
 		} else if existing != nil {
 			statusCtx = machines.WithPriorStatus(statusCtx, existing.Status)
