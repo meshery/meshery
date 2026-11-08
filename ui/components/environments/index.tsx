@@ -495,6 +495,7 @@ const Environments = () => {
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
+                setPage(0);
               }}
               placeholder="Search Environments..."
               expanded={isSearchExpanded}
