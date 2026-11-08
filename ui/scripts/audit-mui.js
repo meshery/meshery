@@ -342,6 +342,7 @@ function main() {
           scans: results.map((r) => ({
             name: r.name,
             files: r.files,
+            scannedFiles: r.scannedFiles,
             matches: r.matches,
             allowlistSize: r.allowlistSize,
             allowlistedFilesWithMuiImports: r.skippedAllowlisted,
