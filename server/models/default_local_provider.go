@@ -1256,12 +1256,20 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfi
 		performanceProfile.Metadata = core.Map{}
 	}
 
-	data, err := json.Marshal(performanceProfile)
+	if err := l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile); err != nil {
+		return nil, err
+	}
+
+	// Respond with the stored profile: an edit does not carry createdAt.
+	stored, err := l.PerformanceProfilesPersister.GetPerformanceProfile(performanceProfile.ID)
+	if err != nil {
+		return nil, err
+	}
+	data, err := json.Marshal(stored)
 	if err != nil {
 		return nil, ErrMarshal(err, "Perf Profile for persisting")
 	}
-
-	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile)
+	return data, nil
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
