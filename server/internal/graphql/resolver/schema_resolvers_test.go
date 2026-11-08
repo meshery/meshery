@@ -17,6 +17,7 @@ type stubTestProvider struct {
 // TestGetProvider verifies defensive context extraction of models.Provider.
 func TestGetProvider(t *testing.T) {
 	t.Run("nil context returns ErrInvalidRequest", func(t *testing.T) {
+		//nolint:staticcheck // intentional nil context to test the getProvider guard
 		prov, err := getProvider(nil)
 		if err == nil {
 			t.Fatalf("expected error for nil context, got nil")
