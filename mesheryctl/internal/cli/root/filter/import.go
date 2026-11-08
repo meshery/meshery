@@ -68,8 +68,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 		}
 
 		body := models.MesheryFilterRequestBody{
-			Save:       true,
-			FilterData: &models.MesheryFilterPayload{},
+			Save: true,
 		}
 
 		uri := args[0]
@@ -92,8 +91,11 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 
 			content := filterFile
 
-			body.FilterData.Name = fileInfo.Name()
+			body.FilterData = &models.MesheryFilterPayload{Name: fileInfo.Name()}
 			body.FilterData.FilterFile = content
+			if name != "" {
+				body.FilterData.Name = name
+			}
 		}
 
 		if cfg != "" {
@@ -112,10 +114,6 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 				utils.Log.Info(cfg)
 				body.Config = cfg
 			}
-		}
-
-		if name != "" {
-			body.FilterData.Name = name
 		}
 
 		// Convert the request body to JSON
