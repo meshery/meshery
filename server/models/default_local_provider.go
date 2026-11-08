@@ -683,12 +683,13 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 	}
 	user, _ := l.GetUserDetails(req)
 	pref, _ := l.ReadFromPersister(user.ID.String())
-	if !pref.AnonymousPerfResults {
-		return "", nil
-	}
 
-	l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
-	resultID, _ := l.shipResults(req, data)
+	// The preference only controls sending the result. It is always saved locally.
+	var resultID string
+	if pref.AnonymousPerfResults {
+		l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
+		resultID, _ = l.shipResults(req, data)
+	}
 
 	key := uuid.FromStringOrNil(resultID)
 	l.Log.Debug(fmt.Sprintf("key: %s, is nil: %t", key.String(), (key == uuid.Nil)))
@@ -1255,12 +1256,20 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfi
 		performanceProfile.Metadata = core.Map{}
 	}
 
-	data, err := json.Marshal(performanceProfile)
+	if err := l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile); err != nil {
+		return nil, err
+	}
+
+	// Respond with the stored profile: an edit does not carry createdAt.
+	stored, err := l.PerformanceProfilesPersister.GetPerformanceProfile(performanceProfile.ID)
+	if err != nil {
+		return nil, err
+	}
+	data, err := json.Marshal(stored)
 	if err != nil {
 		return nil, ErrMarshal(err, "Perf Profile for persisting")
 	}
-
-	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile)
+	return data, nil
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
