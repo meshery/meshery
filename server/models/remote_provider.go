@@ -446,7 +446,11 @@ func (l *RemoteProvider) SyncPreferences() {
 
 // GetProviderCapabilities returns all of the provider properties
 func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *http.Request, userID string) {
-	tokenString := req.Context().Value(TokenCtxKey).(string)
+	tokenString, ok := req.Context().Value(TokenCtxKey).(string)
+	if !ok || tokenString == "" {
+		httputil.WriteMeshkitError(w, ErrGetToken(fmt.Errorf("token not found in request context")), http.StatusUnauthorized)
+		return
+	}
 
 	providerProperties, err := l.loadCapabilities(tokenString)
 
@@ -543,8 +547,9 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 		return
 	}
 
+	serverURL, _ := req.Context().Value(MesheryServerURL).(string)
 	credential := make(map[string]interface{}, 0)
-	connectionPayload := connections.BuildMesheryConnectionPayload(req.Context().Value(MesheryServerURL).(string), credential)
+	connectionPayload := connections.BuildMesheryConnectionPayload(serverURL, credential)
 
 	anonnymouseUserEp := providerURL.JoinPath(ep)
 
@@ -680,7 +685,12 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 	l.Log.Info(fmt.Sprintf("[AUTH_FLOW] step=InitiateLogin action=start path=%s", r.URL.Path))
 
 	_, supportsAnonymousUserSessions := l.GetProviderProperties().Capabilities.GetEndpointForFeature(PersistAnonymousUser)
-	baseCallbackURL := r.Context().Value(MesheryServerCallbackURL).(string)
+	baseCallbackURL, ok := r.Context().Value(MesheryServerCallbackURL).(string)
+	if !ok || baseCallbackURL == "" {
+		l.Log.Error(fmt.Errorf("missing callback URL in request context"))
+		http.Redirect(w, r, "/error", http.StatusFound)
+		return
+	}
 
 	// Support for deep-link and redirection to land user on their originally requested page post authentication instead of dropping user on the root (home) page.
 	refURLqueryParam := r.URL.Query().Get("ref")
@@ -4290,12 +4300,19 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	// stale value can't override the next login flow.
 	l.clearRefCookie(w)
 
+	serverURL, _ := r.Context().Value(MesheryServerURL).(string)
 	go func() {
+		defer func() {
+			if rec := recover(); rec != nil {
+				l.Log.Error(fmt.Errorf("panic in SaveConnection goroutine: %v", rec))
+			}
+		}()
+
 		credential := make(map[string]interface{}, 0)
 		var temp *core.Uuid
 		credential["token"] = temp
 
-		connectionPayload := connections.BuildMesheryConnectionPayload(r.Context().Value(MesheryServerURL).(string), credential)
+		connectionPayload := connections.BuildMesheryConnectionPayload(serverURL, credential)
 
 		_, err := l.SaveConnection(connectionPayload, tokenString, true)
 		if err != nil {
@@ -4310,6 +4327,12 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	// the user-scoped key that ProviderCapabilityHandler reads. Running in a
 	// goroutine because the redirect should not block on a secondary API call.
 	go func() {
+		defer func() {
+			if rec := recover(); rec != nil {
+				l.Log.Error(fmt.Errorf("panic in pre-warm capabilities goroutine: %v", rec))
+			}
+		}()
+
 		synReq, err := http.NewRequest(http.MethodGet, "/", nil)
 		if err != nil {
 			return
