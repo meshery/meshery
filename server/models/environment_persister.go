@@ -127,6 +127,18 @@ func (ep *EnvironmentPersister) DeleteEnvironment(environment *environment.Envir
 			return nil, ErrResultNotFound(err)
 		}
 	}
+
+	// Remove any connection mappings referencing this environment first, so
+	// deleting the environment doesn't leave orphaned rows in
+	// environment_connection_mappings that the UI then tries to render as an
+	// unlabeled tag for a now-deleted environment.
+	if err := ep.DB.Exec(
+		"DELETE FROM environment_connection_mappings WHERE environment_id = ?",
+		environment.ID,
+	).Error; err != nil {
+		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
+	}
+
 	err = ep.DB.Delete(environment).Error
 	if err != nil {
 		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
@@ -281,6 +293,15 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 	query.Count(&count)
 
 	var connectionsFetched []*connections.Connection
+
+	if page == "" {
+		page = "0"
+	}
+
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
