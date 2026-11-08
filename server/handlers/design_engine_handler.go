@@ -169,12 +169,11 @@ func (h *Handler) PatternFileHandler(
 
 	if err != nil {
 		err := ErrPatternDeploy(err, patternFile.Name)
+		// No outcome counts here: the response that comes with an error can
+		// omit targets (a cluster whose client could not be created is skipped
+		// without an outcome), so counts could report a component as succeeded
+		// that never reached every target.
 		metadata := patternErrorEventMetadata(r, patternID, patternFile.Name, string(patternFile.Version), err)
-		if action == "deploy" || action == "undeploy" {
-			if summary := summarizePatternProcessResponse(response); summary.Total > 0 {
-				addOutcomeCounts(metadata, summary)
-			}
-		}
 
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to %s design '%s'.", action, patternFile.Name)).WithMetadata(metadata).Build()
 		h.persistAndPublish(provider, token, userID, event)
