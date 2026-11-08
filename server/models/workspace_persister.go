@@ -375,7 +375,9 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
 	return envsJSON, nil
 }
 
-// DeleteEnvironmentFromWorkspace deletes an environment from a workspace
+// DeleteEnvironmentFromWorkspace deletes an environment from a workspace.
+// Every mapping of the pair is deleted, including duplicates stored before
+// assignments were checked.
 func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, environmentID core.Uuid) ([]byte, error) {
 	var wsEnvMapping workspace.WorkspacesEnvironmentsMapping
 
@@ -578,6 +580,8 @@ func schemaMesheryPatterns(patterns []*MesheryPattern) ([]patternv1beta1.Meshery
 	return decoded, nil
 }
 
+// AddViewToWorkspace adds a view to a workspace. Adding one the workspace
+// already has returns the existing mapping instead of a second row.
 func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID core.Uuid) ([]byte, error) {
 	// A view the workspace already has keeps its mapping; a second row would
 	// survive DeleteViewFromWorkspace.
@@ -615,6 +619,9 @@ func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID core.Uuid) 
 	return wsJSON, nil
 }
 
+// DeleteViewFromWorkspace deletes a view from a workspace. Every mapping of
+// the pair is deleted, including duplicates stored before assignments were
+// checked.
 func (wp *WorkspacePersister) DeleteViewFromWorkspace(workspaceID, viewID core.Uuid) ([]byte, error) {
 	var wsViewMapping workspace.WorkspacesViewsMapping
 
@@ -719,6 +726,8 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 	return viewsJSON, nil
 }
 
+// AddTeamToWorkspace adds a team to a workspace. Adding one the workspace
+// already has returns the existing mapping instead of a second row.
 func (wp *WorkspacePersister) AddTeamToWorkspace(workspaceID, teamID core.Uuid) ([]byte, error) {
 	// A team the workspace already has keeps its mapping; a second row would
 	// survive DeleteTeamFromWorkspace.
@@ -756,6 +765,9 @@ func (wp *WorkspacePersister) AddTeamToWorkspace(workspaceID, teamID core.Uuid) 
 	return wsJSON, nil
 }
 
+// DeleteTeamFromWorkspace deletes a team from a workspace. Every mapping of
+// the pair is deleted, including duplicates stored before assignments were
+// checked.
 func (wp *WorkspacePersister) DeleteTeamFromWorkspace(workspaceID, teamID core.Uuid) ([]byte, error) {
 	var wsTeamMapping workspace.WorkspacesTeamsMapping
 
