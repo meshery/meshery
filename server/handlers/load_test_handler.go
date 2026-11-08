@@ -202,11 +202,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 		return
 	}
 
-	options, ok := performanceProfile.Metadata["additional_options"].(string)
-
-	if ok {
-		loadTestOptions.Options = options
-	}
+	loadTestOptions.Options = savedAdditionalOptions(performanceProfile.Metadata)
 
 	if isSSLCertificateProvided {
 		var isErrLoadingCertificate bool
@@ -586,6 +582,24 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 		Status: models.LoadTestSuccess,
 		Result: result,
 	}
+}
+
+// savedAdditionalOptions returns the load generator options saved on a
+// performance profile. mesheryctl saves them as a string and the UI as a
+// one-element list of strings, so both shapes are read. An empty value means
+// no options.
+func savedAdditionalOptions(metadata map[string]interface{}) string {
+	switch options := metadata["additional_options"].(type) {
+	case string:
+		return options
+	case []interface{}:
+		for _, option := range options {
+			if s, ok := option.(string); ok && s != "" {
+				return s
+			}
+		}
+	}
+	return ""
 }
 
 func assignCertificatePath(key, path string, loadTestOptions *models.LoadTestOptions) {
