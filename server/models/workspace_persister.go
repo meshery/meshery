@@ -246,6 +246,12 @@ func (wp *WorkspacePersister) DeleteWorkspaceByID(workspaceID core.Uuid) ([]byte
 
 // AddEnvironmentToWorkspace adds an environment to a workspace
 func (wp *WorkspacePersister) AddEnvironmentToWorkspace(workspaceID, environmentID core.Uuid) ([]byte, error) {
+	// delete any existing mapping for the environment in the workspace
+	_, err := wp.DeleteEnvironmentFromWorkspace(workspaceID, environmentID)
+	if err != nil && !strings.Contains(err.Error(), "record not found") {
+		return nil, fmt.Errorf("failed to delete existing environment mapping: %w", err)
+	}
+
 	wsEnvMapping := workspace.WorkspacesEnvironmentsMapping{
 		EnvironmentID: environmentID,
 		WorkspaceID:   workspaceID,
@@ -568,6 +574,12 @@ func schemaMesheryPatterns(patterns []*MesheryPattern) ([]patternv1beta1.Meshery
 }
 
 func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID core.Uuid) ([]byte, error) {
+	// delete any existing mapping for the view in the workspace
+	_, err := wp.DeleteViewFromWorkspace(workspaceID, viewID)
+	if err != nil && !strings.Contains(err.Error(), "record not found") {
+		return nil, fmt.Errorf("failed to delete existing view mapping: %w", err)
+	}
+
 	wsViewMapping := workspace.WorkspacesViewsMapping{
 		ViewID:      viewID,
 		WorkspaceID: workspaceID,
@@ -696,6 +708,12 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 }
 
 func (wp *WorkspacePersister) AddTeamToWorkspace(workspaceID, teamID core.Uuid) ([]byte, error) {
+	// delete any existing mapping for the team in the workspace
+	_, err := wp.DeleteTeamFromWorkspace(workspaceID, teamID)
+	if err != nil && !strings.Contains(err.Error(), "record not found") {
+		return nil, fmt.Errorf("failed to delete existing team mapping: %w", err)
+	}
+
 	wsTeamMapping := workspace.WorkspacesTeamsMapping{
 		TeamID:      teamID,
 		WorkspaceID: workspaceID,
