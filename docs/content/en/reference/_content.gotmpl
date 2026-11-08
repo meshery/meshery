@@ -1,0 +1,123 @@
+{{- /*
+  Builds a page per error code and the machine-readable index.json from the
+  error reference exports.
+
+  docs/data/errorref/<component>_errors_export.json is each component's flat
+  export (MeshKit errorutil's legacy format). docs/data/errorindex/
+  <component>_errors_index.json, when a component publishes one, is its nested
+  export: a meshery/schemas ErrorReferenceIndex whose definitions carry each
+  probable cause with its own remediations. A code found in the nested export
+  takes its causes from there; every other code keeps its flat lists, which are
+  never paired by position.
+
+  index.json is an ErrorReferenceIndex (schemaVersion 2,
+  docs/error-definition-contract.md in meshery/schemas).
+*/ -}}
+{{- $records := slice -}}
+{{- $identities := newScratch -}}
+{{- $paths := newScratch -}}
+{{- $severities := dict "emergency" "emergency" "alert" "alert" "critical" "critical" "fatal" "fatal" -}}
+{{- range $fileName, $fileData := site.Data.errorref -}}
+  {{- $component := $fileData.errors_export -}}
+  {{- if or (not $component.component_type) (not $component.component_name) -}}
+    {{- errorf "error reference export %q has no component type or name" $fileName -}}
+  {{- end -}}
+  {{- /* The component's nested definitions, by numeric code. */ -}}
+  {{- $nested := newScratch -}}
+  {{- with index (site.Data.errorindex | default dict) (printf "%s_errors_index" $component.component_name) -}}
+    {{- if ne (printf "%v" .schemaVersion) "2" -}}
+      {{- errorf "nested error export for %q has schemaVersion %v, want 2" $component.component_name .schemaVersion -}}
+    {{- end -}}
+    {{- range .errors -}}
+      {{- if ne .component.name $component.component_name -}}
+        {{- errorf "nested error export for %q lists %q of component %q" $component.component_name .code .component.name -}}
+      {{- end -}}
+      {{- $nested.Set (printf "%v" .numericCode) . -}}
+    {{- end -}}
+  {{- end -}}
+  {{- range $mapCode, $error := $component.errors -}}
+    {{- if or (not $error.name) (not $error.code) -}}
+      {{- errorf "error reference export %q contains an error without a name or code" $fileName -}}
+    {{- end -}}
+    {{- if ne (printf "%v" $mapCode) (printf "%v" $error.code) -}}
+      {{- errorf "error reference export %q maps code %q to mismatched error code %q" $fileName $mapCode $error.code -}}
+    {{- end -}}
+    {{- $componentSlug := printf "%s-%s" $component.component_type $component.component_name | urlize -}}
+    {{- $errorSlug := printf "%s-%s" $error.name $error.code | urlize -}}
+    {{- $path := printf "error-codes/%s/%s" $componentSlug $errorSlug -}}
+    {{- $identity := printf "%s/%s/%s" $component.component_type $component.component_name $error.code -}}
+    {{- if $identities.Get $identity -}}
+      {{- errorf "duplicate error code identity %q in error reference exports" $identity -}}
+    {{- end -}}
+    {{- if $paths.Get $path -}}
+      {{- errorf "duplicate error code URL path %q in error reference exports" $path -}}
+    {{- end -}}
+    {{- $identities.Set $identity true -}}
+    {{- $paths.Set $path true -}}
+    {{- $url := printf "reference/%s/" $path | absURL -}}
+
+    {{- /* The ErrorDefinition of this code. */ -}}
+    {{- $definition := dict
+      "code" (printf "%s-%v" $component.component_name $error.code)
+      "moniker" $error.name
+      "component" (dict "type" $component.component_type "name" $component.component_name)
+      "numericCode" (printf "%v" $error.code)
+      "referenceUrl" $url
+    -}}
+    {{- with index $severities (lower ($error.severity | default "")) -}}
+      {{- $definition = merge $definition (dict "severity" .) -}}
+    {{- end -}}
+    {{- with $error.short_description -}}
+      {{- $definition = merge $definition (dict "shortDescription" .) -}}
+    {{- end -}}
+    {{- with $error.long_description -}}
+      {{- $definition = merge $definition (dict "longDescription" .) -}}
+    {{- end -}}
+    {{- $def := $nested.Get (printf "%v" $error.code) -}}
+    {{- if and $def $def.probableCauses -}}
+      {{- $definition = merge $definition (dict "probableCauses" $def.probableCauses) -}}
+      {{- with $def.probableCause -}}{{- $definition = merge $definition (dict "probableCause" .) -}}{{- end -}}
+      {{- with $def.suggestedRemediation -}}{{- $definition = merge $definition (dict "suggestedRemediation" .) -}}{{- end -}}
+    {{- else -}}
+      {{- /* A component without a nested export may still carry NewV3 causes in
+             its flat export (errorutil adds `probableCauses` to those entries). */ -}}
+      {{- with $error.probableCauses -}}
+        {{- $definition = merge $definition (dict "probableCauses" .) -}}
+      {{- end -}}
+      {{- /* The flat export joins lines with a newline; older exports wrote it escaped. */ -}}
+      {{- range $field, $key := dict "probableCause" "probable_cause" "suggestedRemediation" "suggested_remediation" -}}
+        {{- $lines := slice -}}
+        {{- range split (replace (index $error $key | default "") "\\n" "\n") "\n" -}}
+          {{- $line := trim . " \t" -}}
+          {{- if and $line (ne $line "None") -}}{{- $lines = $lines | append $line -}}{{- end -}}
+        {{- end -}}
+        {{- if $lines -}}{{- $definition = merge $definition (dict $field $lines) -}}{{- end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $records = $records | append $definition -}}
+
+    {{- $page := dict
+      "kind" "page"
+      "type" "error-codes"
+      "path" $path
+      "title" (printf "%s-%s" $error.name $error.code)
+      "params" (dict
+        "componentType" $component.component_type
+        "componentName" $component.component_name
+        "errorCode" $error
+        "definition" $definition
+        "referenceUrl" $url
+      )
+    -}}
+    {{- $.AddPage $page -}}
+  {{- end -}}
+{{- end -}}
+{{- if eq (len $records) 0 -}}
+  {{- errorf "no error codes found in docs/data/errorref" -}}
+{{- end -}}
+{{- $index := dict "schemaVersion" 2 "errors" (sort $records "referenceUrl") -}}
+{{- $resource := dict
+  "content" (dict "mediaType" "application/json" "value" ($index | jsonify))
+  "path" "error-codes/index.json"
+-}}
+{{- $.AddResource $resource -}}

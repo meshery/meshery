@@ -435,6 +435,28 @@ func TestListenForCoreEvents_IgnoresUnexpectedPayloads(t *testing.T) {
 	}
 }
 
+// TestEventStreamHandler_FlushesHeadersBeforeFirstEvent verifies that the stream
+// opens right away. A client doesn't see the response until the headers are
+// sent, so without the flush mesheryctl adapter would wait with no timer running
+// until an adapter sent its first event.
+func TestEventStreamHandler_FlushesHeadersBeforeFirstEvent(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	h := &Handler{log: newTestLogger(t), EventsBuffer: _events.NewEventStreamer()}
+	req := httptest.NewRequest(http.MethodGet, "/api/system/adapter/events", nil).WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	h.EventStreamHandler(rec, req, &models.Preference{}, nil, nil)
+
+	if !rec.Flushed {
+		t.Error("expected the response headers to be flushed before any event")
+	}
+	if got := rec.Header().Get("Content-Type"); got != "text/event-stream" {
+		t.Errorf("expected content type text/event-stream, got %q", got)
+	}
+}
+
 type nonFlusherResponseWriter struct {
 	header     http.Header
 	statusCode int

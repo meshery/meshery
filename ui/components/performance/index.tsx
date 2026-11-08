@@ -6,6 +6,7 @@ import LoadTestTimerDialog from '../load-test-timer-dialog';
 import fetchControlPlanes from '@/graphql/queries/ControlPlanesQuery';
 import { getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { useNotification } from '../../utils/hooks/useNotification';
+import { formatApiError } from '../../utils/helpers/meshkitError';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { buildPerformanceRunUrl, generateTestName, generateUUID } from './helper';
 
@@ -64,7 +65,9 @@ const MesheryPerformanceComponent_ = (props) => {
   const [tState, setT] = useState(t);
   const [tValueState, setTValue] = useState(t);
   const [loadGeneratorState, setLoadGenerator] = useState(loadGenerator || 'fortio');
-  const [additionalOptionsState, setAdditionalOptions] = useState(additional_options || '');
+  const [additionalOptionsState, setAdditionalOptions] = useState(
+    additional_options || metadata?.additional_options?.[0] || '',
+  );
   const [testResult, setTestResult] = useState();
   const [testResultsOpen, setTestResultsOpen] = useState(false);
   const { selectedK8sContexts, k8sConfig } = useSelector((state) => state.ui);
@@ -72,7 +75,7 @@ const MesheryPerformanceComponent_ = (props) => {
   const [cookiesState, setCookies] = useState(cookies || '');
   const [reqBodyState, setReqBody] = useState(reqBody || '');
   const [contentTypeState, setContentType] = useState(contentType || '');
-  const [caCertificateState, setCaCertificate] = useState({});
+  const [caCertificateState, setCaCertificate] = useState(metadata?.ca_certificate || {});
   const [profileNameState, setProfileName] = useState(profileName || '');
   const [performanceProfileIDState, setPerformanceProfileID] = useState(performanceProfileID || '');
   const [timerDialogOpenState, setTimerDialogOpen] = useState(false);
@@ -87,7 +90,10 @@ const MesheryPerformanceComponent_ = (props) => {
   const [selectedMeshState, setSelectedMesh] = useState('');
   const [availableAdaptersState, setAvailableAdapters] = useState([]);
   const [availableSMPMeshesState, setAvailableSMPMeshes] = useState([]);
-  const [metadataState, setMetadata] = useState(metadata);
+  const [metadataState, setMetadata] = useState({
+    ...metadata,
+    ca_certificate: metadata?.ca_certificate || {},
+  });
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const { data: userData, isSuccess: isUserDataFetched } =
@@ -98,7 +104,16 @@ const MesheryPerformanceComponent_ = (props) => {
     data: smpMeshes,
     isSuccess: isSMPMeshesFetched,
     isError: isSMPMeshError,
+    error: smpMeshError,
   } = useGetMeshQuery();
+
+  // Report a failed mesh list fetch on its own: going through handleError
+  // would also stop a running test and close its event stream.
+  useEffect(() => {
+    if (!isSMPMeshError) return;
+    const { message } = formatApiError(smpMeshError, 'Unable to fetch SMP meshes');
+    notify({ message, event_type: EVENT_TYPES.ERROR });
+  }, [isSMPMeshError, smpMeshError]);
 
   useEffect(() => {
     const fetchMeshModels = async () => {
@@ -147,7 +162,7 @@ const MesheryPerformanceComponent_ = (props) => {
     let err = false;
     let tNum = 0;
     try {
-      tNum = parseInt(t.substring(0, tState.length - 1));
+      tNum = parseInt(tState.substring(0, tState.length - 1));
     } catch {
       err = true;
     }
@@ -426,8 +441,6 @@ const MesheryPerformanceComponent_ = (props) => {
       setAvailableSMPMeshes(
         [...(smpMeshes.availableMeshes || [])].sort((m1, m2) => m1.localeCompare(m2)),
       );
-    } else if (isSMPMeshError) {
-      handleError('unable to fetch SMP meshes');
     }
   };
 
@@ -450,15 +463,18 @@ const MesheryPerformanceComponent_ = (props) => {
 
   const handleCertificateUpload = (event) => {
     const file = event.target.files[0];
+
     if (file) {
       const newMetadata = {
         ...metadataState,
         ca_certificate: {
-          ...metadataState.ca_certificate,
+          ...metadataState?.ca_certificate,
           name: file.name,
         },
       };
+
       setMetadata(newMetadata);
+      setCaCertificate(newMetadata.ca_certificate);
     }
   };
 
