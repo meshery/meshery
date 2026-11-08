@@ -78,6 +78,14 @@ mesheryctl filter import /path/to/filter.wasm
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
+mesheryctl filter import ./filter.wasm
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/pre&gt; 
 &lt;p&gt;Import a filter file from a remote URI&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;

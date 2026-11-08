@@ -57,10 +57,13 @@ Meshery stores Envoy WebAssembly (WASM) filters alongside your designs, so you c
         id="tabs-01-01" role="tabpanel" aria-labelled-by="tabs-01-01-tab" tabindex="1">
         <p>Import from a local file or a URL:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mesheryctl filter import /path/to/filter.wasm
+</span></span><span class="line"><span class="cl">mesheryctl filter import ./filter.wasm
 </span></span><span class="line"><span class="cl">mesheryctl filter import https://example.com/myfilter.wasm
-</span></span></code></pre></div><p>Set a name, and pass the filter&rsquo;s configuration either as a file path or as an inline string:</p>
+</span></span></code></pre></div><p>Local paths are resolved from the current working directory, so you can pass either a relative or absolute path.</p>
+<p>Set a name, and pass the filter&rsquo;s configuration either as a file path or as an inline string:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mesheryctl filter import /path/to/filter.wasm --name <span class="s2">&#34;rate-limit&#34;</span> --wasm-config ./config.json
-</span></span></code></pre></div>
+</span></span></code></pre></div><p>The <code>--name</code> flag applies only to local file imports. Remote URL imports do not support a name override.</p>
+
     </div>
 </div>
 
