@@ -412,11 +412,13 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
-	// No connection has the nil ID, so there is nothing to update.
+	// No connection has the nil ID, so there is nothing to update. Like a
+	// malformed ID, it is a client error: issue #22999 requires a nil ID
+	// to answer 400, not 404.
 	if connectionID == uuid.Nil {
-		notFoundErr := models.ErrResultNotFound(fmt.Errorf("no connection with ID %s", connectionID))
-		h.log.Warn(notFoundErr)
-		writeMeshkitError(w, notFoundErr, http.StatusNotFound)
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %s", connectionID))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
 	userID := user.ID
@@ -465,6 +467,18 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
+	// A lookup that fails for any other reason leaves the connection's
+	// existence unknown: stop here rather than saving over a row the
+	// provider could not read back. The local provider backfills omitted
+	// fields from the lookup, so proceeding would let a partial record
+	// clobber the stored one.
+	if gerr != nil {
+		lookupErr := ErrQueryGet(obj)
+		h.log.Error(lookupErr)
+		writeMeshkitError(w, lookupErr, http.StatusInternalServerError)
+		return
+	}
+
 	// A PUT here is a partial update (the UI's connect action sends only
 	// {status}); the provider's UpdateConnectionById backfills any omitted field
 	// from the persisted row so a partial payload never clobbers columns like
@@ -473,12 +487,8 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	// the saved status, already the new one, so it is told the old one to
 	// resolve the unreachable condition of a connection leaving NOTFOUND.
 	statusCtx := req.Context()
-	if connection.Status != "" {
-		if gerr != nil {
-			h.log.Warn(fmt.Errorf("could not read the status of connection %s before updating it: %w", connectionID, gerr))
-		} else if existing != nil {
-			statusCtx = machines.WithPriorStatus(statusCtx, existing.Status)
-		}
+	if connection.Status != "" && existing != nil {
+		statusCtx = machines.WithPriorStatus(statusCtx, existing.Status)
 	}
 
 	// The URL identifies the connection being updated: a body carrying a

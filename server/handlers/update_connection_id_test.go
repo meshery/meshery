@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -10,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/schemas/models/core"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -48,23 +50,50 @@ func TestUpdateConnectionByIDMalformedIDIsBadRequest(t *testing.T) {
 	assert.Zero(t, countConnections(t, provider), "an update must not create a connection")
 }
 
-// TestUpdateConnectionByIDUnknownIDIsNotFound checks that updating the nil ID,
-// or an ID that was never issued, answers 404 instead of creating a connection
-// under it.
+// TestUpdateConnectionByIDNilIDIsBadRequest checks that the nil ID is a client
+// error: issue #22999 requires a malformed or nil ID to answer 400, and
+// nothing is written.
+func TestUpdateConnectionByIDNilIDIsBadRequest(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+
+	rec := putConnection(h, provider, uuid.Nil.String())
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code, rec.Body.String())
+	assert.Zero(t, countConnections(t, provider), "an update must not create a connection")
+}
+
+// TestUpdateConnectionByIDUnknownIDIsNotFound checks that updating an ID that
+// was never issued answers 404 instead of creating a connection under it.
 func TestUpdateConnectionByIDUnknownIDIsNotFound(t *testing.T) {
-	for _, c := range []struct{ name, id string }{
-		{"nil", uuid.Nil.String()},
-		{"never-issued", uuid.Must(uuid.NewV4()).String()},
-	} {
-		t.Run(c.name, func(t *testing.T) {
-			h, provider := newDeleteConnectionFixture(t)
+	h, provider := newDeleteConnectionFixture(t)
 
-			rec := putConnection(h, provider, c.id)
+	rec := putConnection(h, provider, uuid.Must(uuid.NewV4()).String())
 
-			assert.Equal(t, http.StatusNotFound, rec.Code, rec.Body.String())
-			assert.Zero(t, countConnections(t, provider), "an update must not create a connection")
-		})
-	}
+	assert.Equal(t, http.StatusNotFound, rec.Code, rec.Body.String())
+	assert.Zero(t, countConnections(t, provider), "an update must not create a connection")
+}
+
+// failingLookupProvider wraps a real provider and fails the existence lookup
+// with a non-404 error, as a database outage would.
+type failingLookupProvider struct {
+	models.Provider
+}
+
+func (p failingLookupProvider) GetConnectionByID(_ string, _ core.Uuid) (*connections.Connection, int, error) {
+	return nil, http.StatusInternalServerError, errors.New("database unreachable")
+}
+
+// TestUpdateConnectionByIDLookupErrorIsServerError checks that an existence
+// lookup failing for a reason other than "not found" stops the update: the
+// provider backfills omitted fields from the lookup, so proceeding would let
+// a partial record clobber the stored one.
+func TestUpdateConnectionByIDLookupErrorIsServerError(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+
+	rec := putConnection(h, failingLookupProvider{Provider: provider}, uuid.Must(uuid.NewV4()).String())
+
+	assert.Equal(t, http.StatusInternalServerError, rec.Code, rec.Body.String())
+	assert.Zero(t, countConnections(t, provider), "an update must not create a connection")
 }
 
 // TestUpdateConnectionByIDExistingIsUpdated guards the fix's blast radius: the
