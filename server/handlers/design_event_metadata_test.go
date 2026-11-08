@@ -128,7 +128,7 @@ func TestBuildPatternProcessEventMetadata_DeployOutcomes(t *testing.T) {
 		prereqID: append(provisionOutcome(true, nil, false), provisionOutcome(false, meshkitErr, true)...),
 	}
 
-	metadata := buildPatternProcessEventMetadata(response, "http://meshery.test", designID, "my-design", "0.0.2")
+	metadata := buildPatternProcessEventMetadata(summarizePatternProcessResponse(response), "http://meshery.test", designID, "my-design", "0.0.2")
 
 	assertNoBannedDesignEventMetadataKeys(t, metadata)
 	assertMetadataExcludes(t, metadata, "must-not-leak")
@@ -205,7 +205,7 @@ func TestBuildPatternProcessEventMetadata_DryRun(t *testing.T) {
 		},
 	}
 
-	metadata := buildPatternProcessEventMetadata(response, "", designID, "dry", "")
+	metadata := buildPatternProcessEventMetadata(summarizePatternProcessResponse(response), "", designID, "dry", "")
 
 	assertNoBannedDesignEventMetadataKeys(t, metadata)
 	assertMetadataExcludes(t, metadata, "must-not-leak")

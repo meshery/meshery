@@ -171,9 +171,8 @@ func (h *Handler) PatternFileHandler(
 		err := ErrPatternDeploy(err, patternFile.Name)
 		metadata := patternErrorEventMetadata(r, patternID, patternFile.Name, string(patternFile.Version), err)
 		if action == "deploy" || action == "undeploy" {
-			tally := tallyDeploymentOutcome(response)
-			if tally.Total > 0 {
-				addOutcomeMetadata(metadata, tally)
+			if summary := summarizePatternProcessResponse(response); summary.Total > 0 {
+				addOutcomeCounts(metadata, summary)
 			}
 		}
 
@@ -187,18 +186,17 @@ func (h *Handler) PatternFileHandler(
 
 	// The raw response embeds every component, so the event carries only its
 	// status and per-component errors.
-	metadata := buildPatternProcessEventMetadata(response, models.ServerURLFromRequest(r), patternID, patternFile.Name, string(patternFile.Version))
+	summary := summarizePatternProcessResponse(response)
+	metadata := buildPatternProcessEventMetadata(summary, models.ServerURLFromRequest(r), patternID, patternFile.Name, string(patternFile.Version))
 	description = fmt.Sprintf("%s.", description)
 
-	var event *events.Event
+	// action is deploy, undeploy or dry-run; a dry-run event stays Informational.
+	severity := events.Informational
 	if action == "deploy" || action == "undeploy" {
-		tally := tallyDeploymentOutcome(response)
-		severity, desc := deploymentOutcomeEvent(action, tally, patternFile.Name, description)
-		addOutcomeMetadata(metadata, tally)
-		event = eventBuilder.WithSeverity(severity).WithDescription(desc).WithMetadata(metadata).Build()
-	} else {
-		event = eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
+		addOutcomeCounts(metadata, summary)
+		severity, description = deploymentOutcomeEvent(action, summary, patternFile.Name, description)
 	}
+	event := eventBuilder.WithSeverity(severity).WithDescription(description).WithMetadata(metadata).Build()
 
 	h.persistAndPublish(provider, token, userID, event)
 
