@@ -67,24 +67,33 @@ func operatorControllersHelper(ctx context.Context, k8scontext models.K8sContext
 	return machinectx.MesheryCtrlsHelper, nil
 }
 
+// changeOperatorStatus initiates asynchronous provisioning or deprovisioning of the Meshery Operator
+// in the specified Kubernetes context. It validates input pointers, client readiness, and background
+// configuration to guard against runtime panics in detached execution routines.
 func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Provider, status model.Status, ctxID string) (model.Status, error) {
 	deleteOperator := true
 
 	// Tell operator status subscription that operation is starting
-	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Source: broadcast.OperatorSyncChannel,
-		Data: operatorStatusK8sContext{
-			processing: true,
-			ctxID:      ctxID,
-		},
-		Type: "health",
-	})
+	if r.Broadcast != nil {
+		r.Broadcast.Submit(broadcast.BroadcastMessage{
+			Source: broadcast.OperatorSyncChannel,
+			Data: operatorStatusK8sContext{
+				processing: true,
+				ctxID:      ctxID,
+			},
+			Type: "health",
+		})
+	}
 
 	if status == model.StatusEnabled {
-		r.Log.Info("Installing Operator")
+		if r.Log != nil {
+			r.Log.Info("Installing Operator")
+		}
 		deleteOperator = false
 	} else {
-		r.Log.Info("Uninstalling Operator in context ", ctxID)
+		if r.Log != nil {
+			r.Log.Info("Uninstalling Operator in context ", ctxID)
+		}
 	}
 
 	var kubeclient *mesherykube.Client
@@ -93,7 +102,9 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	if ctxID != "" {
 		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 		if !ok || len(allContexts) == 0 {
-			r.Log.Error(ErrNilClient)
+			if r.Log != nil {
+				r.Log.Error(ErrNilClient)
+			}
 			return model.StatusUnknown, ErrNilClient
 		}
 		for _, ctx := range allContexts {
@@ -120,16 +131,20 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			return model.StatusUnknown, model.ErrMesheryClient(err)
 		}
 	}
-	if kubeclient.KubeClient == nil {
-		r.Log.Error(ErrNilClient)
-		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Source: broadcast.OperatorSyncChannel,
-			Data: operatorStatusK8sContext{
-				processing: ErrNilClient,
-				ctxID:      ctxID,
-			},
-			Type: "error",
-		})
+	if kubeclient == nil || kubeclient.KubeClient == nil {
+		if r.Log != nil {
+			r.Log.Error(ErrNilClient)
+		}
+		if r.Broadcast != nil {
+			r.Broadcast.Submit(broadcast.BroadcastMessage{
+				Source: broadcast.OperatorSyncChannel,
+				Data: operatorStatusK8sContext{
+					processing: ErrNilClient,
+					ctxID:      ctxID,
+				},
+				Type: "error",
+			})
+		}
 		return model.StatusUnknown, ErrNilClient
 	}
 
@@ -138,21 +153,34 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	// reporting "processing" and then going quiet.
 	ctrlHelper, err := operatorControllersHelper(ctx, k8scontext)
 	if err != nil {
-		r.Log.Error(err)
-		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Source: broadcast.OperatorSyncChannel,
-			Data: operatorStatusK8sContext{
-				processing: err,
-				ctxID:      ctxID,
-			},
-			Type: "error",
-		})
+		if r.Log != nil {
+			r.Log.Error(err)
+		}
+		if r.Broadcast != nil {
+			r.Broadcast.Submit(broadcast.BroadcastMessage{
+				Source: broadcast.OperatorSyncChannel,
+				Data: operatorStatusK8sContext{
+					processing: err,
+					ctxID:      ctxID,
+				},
+				Type: "error",
+			})
+		}
 		return model.StatusUnknown, err
 	}
 
 	go func(del bool, kubeclient *mesherykube.Client) {
+		if r.Config == nil || r.Config.OperatorTracker == nil {
+			if r.Log != nil {
+				r.Log.Info("operator tracker is uninitialized; skipping background operator deployment")
+			}
+			return
+		}
+
 		if r.Config.OperatorTracker.DisableOperator { //Do not deploy operator is explicitly in disabled mode
-			r.Log.Info("skipping operator deployment (in disabled mode)")
+			if r.Log != nil {
+				r.Log.Info("skipping operator deployment (in disabled mode)")
+			}
 			return
 		}
 
@@ -163,15 +191,19 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		// chart repository recovers is a retry that can actually succeed.
 		err := ctrlHelper.SetOperatorDeployment(k8scontext, !del)
 		if err != nil {
-			r.Log.Error(err)
-			r.Broadcast.Submit(broadcast.BroadcastMessage{
-				Source: broadcast.OperatorSyncChannel,
-				Data: operatorStatusK8sContext{
-					processing: err,
-					ctxID:      ctxID,
-				},
-				Type: "error",
-			})
+			if r.Log != nil {
+				r.Log.Error(err)
+			}
+			if r.Broadcast != nil {
+				r.Broadcast.Submit(broadcast.BroadcastMessage{
+					Source: broadcast.OperatorSyncChannel,
+					Data: operatorStatusK8sContext{
+						processing: err,
+						ctxID:      ctxID,
+					},
+					Type: "error",
+				})
+			}
 			return
 		}
 
@@ -181,37 +213,51 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			r.Config.OperatorTracker.Undeployed(ctxID, false)
 		}
 
-		r.Log.Info("Operator operation executed")
+		if r.Log != nil {
+			r.Log.Info("Operator operation executed")
+		}
 
-		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Source: broadcast.OperatorSyncChannel,
-			Data: operatorStatusK8sContext{
-				processing: false,
-				ctxID:      ctxID,
-			},
-			Type: "health",
-		})
+		if r.Broadcast != nil {
+			r.Broadcast.Submit(broadcast.BroadcastMessage{
+				Source: broadcast.OperatorSyncChannel,
+				Data: operatorStatusK8sContext{
+					processing: false,
+					ctxID:      ctxID,
+				},
+				Type: "health",
+			})
+		}
 		if !del {
 			endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn, connectionTrackerSingleton)
-			r.Log.Debug("Endpoint: ", endpoint)
+			if r.Log != nil {
+				r.Log.Debug("Endpoint: ", endpoint)
+			}
 			if err != nil {
-				r.Log.Error(err)
-				r.Broadcast.Submit(broadcast.BroadcastMessage{
-					Source: broadcast.OperatorSyncChannel,
-					Data: operatorStatusK8sContext{
-						processing: err,
-						ctxID:      ctxID,
-					},
-					Type: "health",
-				})
+				if r.Log != nil {
+					r.Log.Error(err)
+				}
+				if r.Broadcast != nil {
+					r.Broadcast.Submit(broadcast.BroadcastMessage{
+						Source: broadcast.OperatorSyncChannel,
+						Data: operatorStatusK8sContext{
+							processing: err,
+							ctxID:      ctxID,
+						},
+						Type: "health",
+					})
+				}
 				return
 			}
 			connectionTrackerSingleton.Set(k8scontext.ID, endpoint)
-			r.Log.Info("Connected to broker at:", endpoint)
-			connectionTrackerSingleton.Log(r.Log)
+			if r.Log != nil {
+				r.Log.Info("Connected to broker at:", endpoint)
+				connectionTrackerSingleton.Log(r.Log)
+			}
 		}
 
-		r.Log.Info("Meshsync operation executed")
+		if r.Log != nil {
+			r.Log.Info("Meshsync operation executed")
+		}
 
 		// r.operatorChannel <- &model.OperatorStatus{
 		// 	Status: status,

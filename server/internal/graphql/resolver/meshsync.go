@@ -31,7 +31,16 @@ var (
 	}
 )
 
+// resyncCluster triggers cluster resynchronization or resets MeshSync/database state based on the requested actions.
+// It verifies that actions, providers, and cluster context information are non-nil before executing destructive or resync operations.
 func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, actions *model.ReSyncActions, k8scontextID string) (model.Status, error) {
+	if actions == nil {
+		if r.Log != nil {
+			r.Log.Error(ErrInvalidRequest)
+		}
+		return model.StatusUnknown, ErrInvalidRequest
+	}
+
 	if actions.ClearDb == "true" {
 		// copies the contents .meshery/config/mesherydb.sql to .meshery/config/.archive/mesherydb.sql
 		// then drops all the DB table and then migrate/create tables, missing foreign keys, constraints, columns and indexes.
@@ -163,7 +172,9 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 		} else { //Delete meshsync objects coming from a particular cluster
 			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 			if !ok || len(k8sctxs) == 0 {
-				r.Log.Error(ErrEmptyCurrentK8sContext)
+				if r.Log != nil {
+					r.Log.Error(ErrEmptyCurrentK8sContext)
+				}
 				return "", ErrEmptyCurrentK8sContext
 			}
 			var sid, ctxName, ctxServer string
@@ -178,7 +189,13 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 					break
 				}
 			}
-			if provider.GetGenericPersister() == nil {
+			if sid == "" {
+				if r.Log != nil {
+					r.Log.Error(ErrEmptyCurrentK8sContext)
+				}
+				return "", ErrEmptyCurrentK8sContext
+			}
+			if provider == nil || provider.GetGenericPersister() == nil {
 				return "", models.ErrEmptyMeshSyncHandler()
 			}
 
@@ -187,7 +204,9 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			// table names rather than duplicated, easily-stale raw SQL.
 			if err := models.FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), sid); err != nil {
 				flushErr := models.ErrFlushMeshSyncData(err, ctxName, ctxServer)
-				r.Log.Error(flushErr)
+				if r.Log != nil {
+					r.Log.Error(flushErr)
+				}
 				return "", flushErr
 			}
 		}
