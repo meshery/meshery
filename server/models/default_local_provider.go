@@ -1411,6 +1411,10 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 	return updatedConnection, http.StatusOK, nil
 }
 
+// UpdateConnectionById updates an existing connection identified by connId (or
+// conn.ID when connId is not set), backfilling any fields omitted by the
+// partial payload and preserving the connection's original creation time and
+// owner.
 func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
 	// Always persist against the connection identified by the URL id. A payload
 	// that omits `id` (e.g. an RTK mutation that only forwards status+metadata)
@@ -1429,10 +1433,16 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 	conn.ID = id
 	// A partial payload (e.g. the UI's connect action sending only {status}, or an
 	// FSM status transition sending only {kind, metadata, status}) must not
-	// clobber the columns it omits — UpdateConnection persists via GORM's Save(),
-	// which writes every column. Backfill omitted fields from the persisted row.
+	// clobber the columns it omits — UpdateConnection writes every column.
+	// Backfill omitted fields and immutable row metadata from the persisted row.
+	createdAt := time.Now()
+	var owner *core.Uuid
 	if existing, gerr := l.ConnectionPersister.GetConnection(id, ""); gerr == nil && existing != nil {
 		connections.MergePayloadOntoExisting(conn, existing)
+		if !existing.CreatedAt.IsZero() {
+			createdAt = existing.CreatedAt
+		}
+		owner = existing.Owner
 	}
 	connection := connections.Connection{
 		ID:             id,
@@ -1442,7 +1452,8 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 		Kind:           conn.Kind,
 		Metadata:       conn.MetaData,
 		Status:         conn.Status,
-		CreatedAt:      time.Now(),
+		Owner:          owner,
+		CreatedAt:      createdAt,
 		UpdatedAt:      time.Now(),
 		CredentialID:   conn.CredentialID,
 	}
