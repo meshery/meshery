@@ -575,6 +575,8 @@ tokens:
 	}
 }
 
+// TestTokenViewCmd_NonExistentTokenWithSilentFlag tests that token view fails immediately
+// without prompting when passed a non-existent token with the silent flag (-y / --yes).
 func TestTokenViewCmd_NonExistentTokenWithSilentFlag(t *testing.T) {
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -598,6 +600,8 @@ func TestTokenViewCmd_NonExistentTokenWithSilentFlag(t *testing.T) {
 	BreakupFunc()
 }
 
+// TestTokenViewCmd_NoTokensConfigured tests that token view fails immediately without hanging
+// when attempting to view a token and no other tokens are configured in the meshconfig.
 func TestTokenViewCmd_NoTokensConfigured(t *testing.T) {
 	configPath := filepath.Join(t.TempDir(), "config.yaml")
 	sampleMeshConfig := `contexts:
@@ -626,6 +630,6 @@ tokens: []
 	SystemCmd.SetArgs([]string{"token", "view", "any-token"})
 	err := SystemCmd.Execute()
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), `token "any-token" not found, and no other tokens are configured`)
+	assert.Contains(t, err.Error(), `token "any-token" not found in config`)
 	BreakupFunc()
 }

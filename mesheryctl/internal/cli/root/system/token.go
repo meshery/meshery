@@ -227,11 +227,7 @@ mesheryctl system token view (show token of current context)
 			tokenNames = append(tokenNames, t.Name)
 		}
 
-		if len(tokenNames) == 0 {
-			return fmt.Errorf("token %q not found, and no other tokens are configured", tokenName)
-		}
-
-		if utils.SilentFlag {
+		if len(tokenNames) == 0 || utils.SilentFlag {
 			return fmt.Errorf("token %q not found in config", tokenName)
 		}
 
