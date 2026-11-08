@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"context"
+	"net"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -113,8 +114,10 @@ func (m *Metrics) HTTPMiddleware() mux.MiddlewareFunc {
 			m.httpRequestsTotal.WithLabelValues(r.Method, route, codeStr).Inc()
 
 			// Exclude indefinite-lived streaming connections (SSE, WebSockets) from
-			// duration histogram to prevent histogram distortion.
-			if !isStream {
+			// duration histogram to prevent histogram distortion. Also inspect response
+			// Content-Type in case client omitted Accept header.
+			isResponseStream := strings.Contains(strings.ToLower(rw.Header().Get("Content-Type")), "text/event-stream")
+			if !isStream && !isResponseStream {
 				m.httpRequestDuration.WithLabelValues(r.Method, route).Observe(duration.Seconds())
 			}
 		})
@@ -139,11 +142,16 @@ func StartServer(ctx context.Context, port int, m *Metrics, log logger.Handler) 
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
+	ln, err := net.Listen("tcp", srv.Addr)
+	if err != nil {
+		return nil, err
+	}
+
 	go func() {
 		if log != nil {
 			log.Info(fmt.Sprintf("Prometheus metrics server listening on :%d", port))
 		}
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := srv.Serve(ln); err != nil && err != http.ErrServerClosed {
 			if log != nil {
 				log.Error(fmt.Errorf("metrics server listener error: %w", err))
 			}

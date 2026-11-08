@@ -525,6 +525,21 @@ func main() {
 		log.Info("Initializing opt-in Prometheus metrics on port: ", metricsPort)
 		m := metrics.New(version, commitsha, releasechannel)
 		r.S.Use(m.HTTPMiddleware())
+
+		notFound := r.S.NotFoundHandler
+		if notFound == nil {
+			notFound = http.NotFoundHandler()
+		}
+		r.S.NotFoundHandler = m.HTTPMiddleware()(notFound)
+
+		methodNotAllowed := r.S.MethodNotAllowedHandler
+		if methodNotAllowed == nil {
+			methodNotAllowed = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+				http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			})
+		}
+		r.S.MethodNotAllowedHandler = m.HTTPMiddleware()(methodNotAllowed)
+
 		srv, err := metrics.StartServer(ctx, metricsPort, m, log)
 		if err != nil {
 			log.Error(ErrStartingMetricsServer(err))

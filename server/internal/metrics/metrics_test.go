@@ -113,8 +113,8 @@ func TestHTTPMiddlewareStreamingExclusion(t *testing.T) {
 		_, _ = w.Write([]byte("data: event\n\n"))
 	}).Methods("GET")
 
+	// Request without Accept header - response Content-Type should still trigger exclusion
 	req := httptest.NewRequest("GET", "/api/providers/stream", nil)
-	req.Header.Set("Accept", "text/event-stream")
 	rec := httptest.NewRecorder()
 
 	r.ServeHTTP(rec, req)

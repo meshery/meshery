@@ -19,7 +19,7 @@ const (
 	ErrClosingDatabaseInstanceCode                = "meshery-server-1011"
 	ErrInitializingRegistryManagerCode            = "meshery-server-1012"
 	ErrInitializingKeysRegistrationCode           = "meshery-server-1013"
-	ErrStartingMetricsServerCode                  = "meshery-server-1014"
+	ErrStartingMetricsServerCode                  = "meshery-server-1490"
 )
 
 func ErrStartingMetricsServer(err error) error {

@@ -27,6 +27,7 @@ It leaves out test-only variables, such as `RUN_INTEGRATION_TESTS` and `PATH_TO_
 | `KUBECONFIG_FOLDER` | `$HOME/.kube` | Directory from which Meshery reads Kubernetes configuration files. | `KUBECONFIG_FOLDER=/home/appuser/.kube docker compose up meshery` |
 | `KEYS_PATH` | unset (the Meshery Server image sets `/app/server/permissions/keys.csv`) | Path to a CSV file of permission keys that Meshery seeds into its keys store at startup and after a database reset. | `KEYS_PATH=/home/appuser/.meshery/keys.csv make server` |
 | `OTEL_CONFIG` | unset | Inline YAML configuration for OpenTelemetry tracing. When unset, tracing is disabled. | `OTEL_CONFIG=$'service_name: meshery-server\nservice_version: 1.0.0\nendpoint: localhost:4317\ninsecure: true' make server-local` |
+| `METRICS_PORT` | unset (disabled) | Dedicated HTTP listen port exposing opt-in Prometheus `/metrics` and `/healthz` for Meshery Server telemetry. When unset, the metrics server is disabled. | `METRICS_PORT=9090 make server-local` |
 
 `LOG_LEVEL` values are `0=panic`, `1=fatal`, `2=error`, `3=warn`, `4=info`, `5=debug`, and `6=trace`.
 
