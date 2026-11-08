@@ -263,17 +263,25 @@ func (cp *ConnectionPersister) UpdateConnectionStatusByID(connectionID core.Uuid
 	return &updatedConnection, nil
 }
 
+// UpdateConnectionByID persists updates to an existing connection while
+// preserving its original created_at timestamp, and returns the stored row.
 func (cp *ConnectionPersister) UpdateConnectionByID(connection *connections.Connection) (*connections.Connection, error) {
-	err := cp.DB.Save(connection).Error
-	if err != nil {
-		return nil, ErrDBPut(err)
+	res := cp.DB.Model(connection).Select("*").Omit("created_at").Updates(connection)
+	if res.Error != nil {
+		return nil, ErrDBPut(res.Error)
+	}
+	if res.RowsAffected == 0 {
+		if err := cp.DB.Save(connection).Error; err != nil {
+			return nil, ErrDBPut(err)
+		}
 	}
 
 	updatedConnection := connections.Connection{}
-	err = cp.DB.Model(&updatedConnection).Where("id = ?", connection.ID).First(&updatedConnection).Error
+	err := cp.DB.Model(&updatedConnection).Where("id = ?", connection.ID).First(&updatedConnection).Error
 	if err != nil {
 		return nil, ErrDBRead(err)
 	}
+	*connection = updatedConnection
 	return connection, nil
 }
 
