@@ -43,22 +43,76 @@ const eventsEntityAdapter = createEntityAdapter({
   },
 });
 
-const timeOf = (value) => {
-  const at = typeof value === 'string' ? Date.parse(value) : NaN;
-  return Number.isNaN(at) ? undefined : at;
+// An RFC 3339 time as Meshery Server's Go time.Time marshals one: whole
+// seconds, an optional fraction of up to nine digits, and a zone.
+const RFC3339 = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.(\d{1,9}))?(Z|[+-]\d{2}:\d{2})$/;
+
+const NANOSECONDS_PER_MILLISECOND = 1_000_000;
+
+// instantOf returns value as [whole seconds since the epoch, in milliseconds;
+// nanoseconds within that second], or undefined when it is not a time. Go
+// sends nanosecond precision, which Date.parse would cut to milliseconds, so
+// two revisions written within one millisecond would compare equal; the
+// fraction is therefore read as integer nanoseconds. A time in another format
+// falls back to Date.parse at millisecond precision.
+const instantOf = (value) => {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+  const match = RFC3339.exec(value);
+  if (match) {
+    const [, wholeSeconds, fraction = '', zone] = match;
+    const seconds = Date.parse(`${wholeSeconds}${zone}`);
+    return Number.isNaN(seconds) ? undefined : [seconds, Number(fraction.padEnd(9, '0'))];
+  }
+  const at = Date.parse(value);
+  if (Number.isNaN(at)) {
+    return undefined;
+  }
+  const seconds = Math.floor(at / 1000) * 1000;
+  return [seconds, (at - seconds) * NANOSECONDS_PER_MILLISECOND];
+};
+
+// compareTimes orders two times at full precision: negative when a is
+// earlier, positive when later, and 0 when they are equal or either is not a
+// time.
+const compareTimes = (a, b) => {
+  const x = instantOf(a);
+  const y = instantOf(b);
+  if (!x || !y) {
+    return 0;
+  }
+  return x[0] - y[0] || x[1] - y[1];
+};
+
+const compareCounts = (a, b) => (typeof a === 'number' && typeof b === 'number' ? a - b : 0);
+
+// compareRevisions orders two revisions of one stored event by when they were
+// updated. When both update times are known and equal it breaks the tie on
+// lastSeenAt and then occurrenceCount, which only grow from one revision to
+// the next, so the order does not depend on which broadcast arrived first. It
+// is negative when a is the earlier revision, and 0 when either update time is
+// unknown or neither revision is known to be earlier.
+const compareRevisions = (a, b) => {
+  if (!instantOf(a.updatedAt) || !instantOf(b.updatedAt)) {
+    return 0;
+  }
+  return (
+    compareTimes(a.updatedAt, b.updatedAt) ||
+    compareTimes(a.lastSeenAt, b.lastSeenAt) ||
+    compareCounts(a.occurrenceCount, b.occurrenceCount)
+  );
 };
 
 // isOlderRevision reports whether incoming is an earlier revision of the
-// stored event than existing: it was updated before existing was, or it shows
-// open a condition existing already shows resolved (a stored condition is
-// never reopened).
+// stored event than existing: it shows open a condition existing already
+// shows resolved (a stored condition is never reopened), or compareRevisions
+// orders it before existing.
 const isOlderRevision = (incoming, existing) => {
   if (existing.resolvedAt && !incoming.resolvedAt) {
     return true;
   }
-  const incomingAt = timeOf(incoming.updatedAt);
-  const existingAt = timeOf(existing.updatedAt);
-  return incomingAt !== undefined && existingAt !== undefined && incomingAt < existingAt;
+  return compareRevisions(incoming, existing) < 0;
 };
 
 export const eventsSlice = createSlice({

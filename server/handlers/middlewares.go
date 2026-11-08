@@ -299,11 +299,31 @@ func (h *Handler) GraphqlMiddleware(next http.Handler) func(http.ResponseWriter,
 	}
 }
 
+// KubernetesMiddleware loads connected Kubernetes contexts for the authenticated user and
+// initiates background discovery on associated state machine instances. It guards against
+// nil user, provider, or token inputs to prevent runtime panics.
 func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provider, user *models.User, k8sContextIDs []string) (context.Context, error) {
+	if user == nil {
+		err := fmt.Errorf("user is required for KubernetesMiddleware")
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
+		return nil, err
+	}
+	if provider == nil {
+		err := fmt.Errorf("provider is required for KubernetesMiddleware")
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
+		return nil, err
+	}
+
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
 	if !ok {
 		err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
-		h.log.Error(err)
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
 		return nil, err
 	}
 	userUUID := user.ID
@@ -340,14 +360,26 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 	ctx = context.WithValue(ctx, models.KubeClustersKey, k8sContextPassedByUser)
 	ctx = context.WithValue(ctx, models.AllKubeClusterKey, connectedK8sContexts)
 
+	var operatorTracker *models.OperatorTracker
+	var k8scontextChannel *models.K8scontextChan
+	var eventBroadcaster *models.Broadcast
+	if h.config != nil {
+		operatorTracker = h.config.OperatorTracker
+		k8scontextChannel = h.config.K8scontextChannel
+		eventBroadcaster = h.config.EventBroadcaster
+	}
+
 	for _, k8sContext := range k8sContextsFromKubeConfig {
+		if k8sContext == nil {
+			continue
+		}
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         *k8sContext,
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 			K8sCompRegHelper:   h.K8sCompRegHelper,
-			OperatorTracker:    h.config.OperatorTracker,
-			K8scontextChannel:  h.config.K8scontextChannel,
-			EventBroadcaster:   h.config.EventBroadcaster,
+			OperatorTracker:    operatorTracker,
+			K8scontextChannel:  k8scontextChannel,
+			EventBroadcaster:   eventBroadcaster,
 			RegistryManager:    h.registryManager,
 		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
@@ -364,7 +396,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			"kubernetes",
 			kubernetes.AssignInitialCtx,
 		)
-		if err != nil {
+		if err != nil && h.log != nil {
 			h.log.Error(err)
 		}
 
@@ -390,7 +422,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 // Recurrence: it is counted on the open condition without notifying anyone. A
 // routine successful Discovery reports nothing.
 func (h *Handler) reportBackgroundDiscovery(provider models.Provider, token string, userUUID core.Uuid, event *events.Event, err error) {
-	if event == nil || (err == nil && event.ResolvedAt == nil && !machines.IsRecurrence(event, err)) {
+	if provider == nil || event == nil || (err == nil && event.ResolvedAt == nil && !machines.IsRecurrence(event, err)) {
 		return
 	}
 	h.reportMachineOutcome(provider, token, userUUID, event, err)
@@ -403,7 +435,7 @@ func (h *Handler) reportBackgroundDiscovery(provider models.Provider, token stri
 // (Provider.CorrelatesConditions); any other would record it as a new event,
 // so it is dropped, as before condition correlation.
 func (h *Handler) reportMachineOutcome(provider models.Provider, token string, userID core.Uuid, event *events.Event, err error) {
-	if event == nil {
+	if provider == nil || event == nil {
 		return
 	}
 	if machines.IsRecurrence(event, err) {
@@ -411,7 +443,9 @@ func (h *Handler) reportMachineOutcome(provider models.Provider, token string, u
 			return
 		}
 		if _, perr := provider.PersistEvent(*event, token); perr != nil {
-			h.log.Error(perr)
+			if h.log != nil {
+				h.log.Error(perr)
+			}
 		}
 		return
 	}
@@ -429,6 +463,9 @@ func (h *Handler) reportMachineOutcome(provider models.Provider, token string, u
 // through models.PersistAndPublishSystemEvent), never publishing its own copy
 // after PersistEvent: that copy carries no stored ID.
 func (h *Handler) persistAndPublish(provider models.Provider, token string, userID core.Uuid, event *events.Event) {
+	if h == nil || provider == nil || event == nil {
+		return
+	}
 	var broadcaster *models.Broadcast
 	if h.config != nil {
 		broadcaster = h.config.EventBroadcaster
@@ -441,7 +478,7 @@ func (h *Handler) persistAndPublish(provider models.Provider, token string, user
 // A nil event reports nothing: SendEvent returns none for a background
 // Discovery whose failure it suppressed.
 func persistAndPublishEvent(log logger.Handler, provider models.Provider, token string, broadcaster *models.Broadcast, userID core.Uuid, event *events.Event) {
-	if event == nil {
+	if provider == nil || event == nil {
 		return
 	}
 	// Prepare the event here, not only on the provider's copy, so the event
@@ -451,7 +488,9 @@ func persistAndPublishEvent(log logger.Handler, provider models.Provider, token 
 	event = &prepared
 	persisted, err := provider.PersistEvent(*event, token)
 	if err != nil {
-		log.Error(err)
+		if log != nil {
+			log.Error(err)
+		}
 	} else {
 		if persisted.Event == nil {
 			// Nothing new was recorded and the stored event is unknown.
@@ -464,6 +503,8 @@ func persistAndPublishEvent(log logger.Handler, provider models.Provider, token 
 	}
 }
 
+// K8sFSMMiddleware wraps an HTTP handler function with Kubernetes finite state machine
+// background discovery, safely passing context and identity down the middleware chain.
 func (h *Handler) K8sFSMMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
 	return func(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 		K8sFSMMiddleware(req.Context(), h, provider, user)
@@ -476,21 +517,50 @@ type dataHandlerToClusterID struct {
 	clusterID string
 }
 
+// K8sFSMMiddleware re-runs background discovery across connected Kubernetes contexts and registers meshsync handlers.
+// It defensively extracts cluster contexts and guards against nil user or provider values to prevent runtime panics.
 func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider, user *models.User) {
+	if h == nil {
+		return
+	}
+
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
-	connectedK8sContexts := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
-	userUUID := user.ID
+
+	var connectedK8sContexts []*models.K8sContext
+	if val := ctx.Value(models.AllKubeClusterKey); val != nil {
+		if contexts, ok := val.([]*models.K8sContext); ok {
+			connectedK8sContexts = contexts
+		}
+	}
+
+	var userUUID uuid.UUID
+	if user != nil {
+		userUUID = user.ID
+	}
+
+	var operatorTracker *models.OperatorTracker
+	var k8scontextChannel *models.K8scontextChan
+	var eventBroadcaster *models.Broadcast
+	if h.config != nil {
+		operatorTracker = h.config.OperatorTracker
+		k8scontextChannel = h.config.K8scontextChannel
+		eventBroadcaster = h.config.EventBroadcaster
+	}
+
 	dataHandlers := []*dataHandlerToClusterID{}
 	clusterIDs := []string{}
 	for _, k8sContext := range connectedK8sContexts {
+		if k8sContext == nil {
+			continue
+		}
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         *k8sContext,
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 			K8sCompRegHelper:   h.K8sCompRegHelper,
-			OperatorTracker:    h.config.OperatorTracker,
-			K8scontextChannel:  h.config.K8scontextChannel,
-			EventBroadcaster:   h.config.EventBroadcaster,
+			OperatorTracker:    operatorTracker,
+			K8scontextChannel:  k8scontextChannel,
+			EventBroadcaster:   eventBroadcaster,
 			RegistryManager:    h.registryManager,
 		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
@@ -507,7 +577,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			"kubernetes",
 			kubernetes.AssignInitialCtx,
 		)
-		if err != nil {
+		if err != nil && h.log != nil {
 			h.log.Error(err)
 		}
 
@@ -524,30 +594,45 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		}(inst)
 		kubernesMachineCtx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
 		if err != nil {
-			h.log.Error(err)
+			if h.log != nil {
+				h.log.Error(err)
+			}
 			continue
 		}
-		mdh := kubernesMachineCtx.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
-		if mdh != nil {
-			if k8sContext.KubernetesServerID == nil {
-				continue
+		if kubernesMachineCtx != nil && kubernesMachineCtx.MesheryCtrlsHelper != nil {
+			mdh := kubernesMachineCtx.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
+			if mdh != nil {
+				if k8sContext.KubernetesServerID == nil {
+					continue
+				}
+				dataHandlers = append(dataHandlers, &dataHandlerToClusterID{
+					mdh:       *mdh,
+					clusterID: k8sContext.KubernetesServerID.String(),
+				})
+				clusterIDs = append(clusterIDs, k8sContext.KubernetesServerID.String())
 			}
-			dataHandlers = append(dataHandlers, &dataHandlerToClusterID{
-				mdh:       *mdh,
-				clusterID: k8sContext.KubernetesServerID.String(),
-			})
-			clusterIDs = append(clusterIDs, k8sContext.KubernetesServerID.String())
 		}
 	}
+
+	if provider == nil || len(clusterIDs) == 0 {
+		return
+	}
+	genericPersister := provider.GetGenericPersister()
+	if genericPersister == nil {
+		return
+	}
+
 	var resources []model.KubernetesResource
 
-	err := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
+	err := genericPersister.Model(&model.KubernetesResource{}).
 		Preload("KubernetesResourceMeta").
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
 		Where("kubernetes_resources.cluster_id IN (?)", clusterIDs).Where(&model.KubernetesResource{Kind: "Service"}).Where("lower(kubernetes_resource_object_meta.name) LIKE ? OR lower(kubernetes_resource_object_meta.name) LIKE ?", "%grafana%", "%prometheus%").Find(&resources).Error
 
 	if err != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err))
+		if h.log != nil {
+			h.log.Error(ErrFetchMeshSyncResources(err))
+		}
 		return
 	}
 
@@ -560,5 +645,4 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			}
 		}
 	}
-
 }
