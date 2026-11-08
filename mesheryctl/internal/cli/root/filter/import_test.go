@@ -79,4 +79,3 @@ func TestImportCmdRemoteURL(t *testing.T) {
 	require.Equal(t, remoteURL, request["url"])
 	require.NotContains(t, request, "filterData")
 }
-
