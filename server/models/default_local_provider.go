@@ -2159,7 +2159,9 @@ func (l *DefaultLocalProvider) GetEventTypes(token string, userID core.Uuid, sys
 		return eventTypes, err
 	}
 
-	err = e.DB.Table("events").Distinct("action").Where("owner = ?", userID).Find(&actions).Error
+	// Actions come from the same events as the categories, the ones GetEvents
+	// lists: the user's own and the Meshery instance's.
+	err = e.DB.Table("events").Distinct("action").Where("owner = ? OR owner = ?", userID, sysID).Find(&actions).Error
 	if err != nil {
 		return eventTypes, err
 	}
