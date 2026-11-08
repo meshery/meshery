@@ -1,0 +1,22 @@
+createdAt: '2026-08-04T13:23:00Z'
+description: Provisions a multi-region secure enterprise transit network utilizing
+  Transit Gateways and Hub-and-Spoke VPC attachments.
+displayName: AWS Enterprise Hub and Spoke Network
+homeURL: https://docs.meshery.io/concepts/logical/designs
+install: mesheryctl design import -f
+license: Apache-2.0
+links:
+- name: download
+  url: ../../catalog/e68873f6-6299-45e9-983d-ce7f07d6e8d9/0.0.1/design.yml
+- name: Meshery Catalog
+  url: https://meshery.io/catalog
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+name: aws-enterprise-hub-and-spoke-network
+provider:
+  name: 54a58e68-8c83-4683-a84e-4cf8d3256649
+readme: "Provisions a multi-region secure enterprise transit network utilizing Transit\
+  \ Gateways and Hub-and-Spoke VPC attachments.\n ##h4 Caveats and Consideration \n"
+screenshots:
+- title: Meshery Project
+  url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
+version: 0.0.1
