@@ -152,44 +152,58 @@ func TestExportModel_VersionTraversal(t *testing.T) {
 }
 
 // TestRegisterMeshmodelComponents_VersionTraversal verifies that registration
-// rejects a component whose embedded model carries a traversal version, so
-// a hostile version cannot be planted through the registration endpoint.
+// rejects a component whose model version carries a traversal string, in
+// either the outer version or the embedded model version, so a hostile
+// version cannot be planted through the registration endpoint.
 func TestRegisterMeshmodelComponents_VersionTraversal(t *testing.T) {
-	rm, _ := newTestRegistryDB(t)
-
-	log, err := logger.New("component_handler_test", logger.Options{})
-	require.NoError(t, err)
-
-	h := &Handler{
-		registryManager: rm,
-		log:             log,
+	tests := []struct {
+		name         string
+		version      string
+		innerVersion string
+	}{
+		{"outer version traverses", "../../../escaped", "v1"},
+		{"embedded version traverses", "v1", "../../../escaped"},
 	}
 
-	comp := compv1beta3.ComponentDefinition{
-		Model: &model.ModelDefinition{
-			Name:    "traversal-model",
-			Version: "../../../escaped",
-			Model:   model.Model{Version: "v1"},
-		},
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rm, _ := newTestRegistryDB(t)
+
+			log, err := logger.New("component_handler_test", logger.Options{})
+			require.NoError(t, err)
+
+			h := &Handler{
+				registryManager: rm,
+				log:             log,
+			}
+
+			comp := compv1beta3.ComponentDefinition{
+				Model: &model.ModelDefinition{
+					Name:    "traversal-model",
+					Version: tt.version,
+					Model:   model.Model{Version: tt.innerVersion},
+				},
+			}
+			entityBytes, err := json.Marshal(comp)
+			require.NoError(t, err)
+
+			payload := registry.MeshModelRegistrantData{
+				Connection: connv1beta3.Connection{},
+				EntityType: entity.ComponentDefinition,
+				Entity:     entityBytes,
+			}
+			body, err := json.Marshal(payload)
+			require.NoError(t, err)
+
+			req := httptest.NewRequest(http.MethodPost, "/api/registry/components", bytes.NewReader(body))
+			rw := httptest.NewRecorder()
+
+			h.RegisterMeshmodelComponents(rw, req)
+
+			resp := rw.Result()
+			assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+		})
 	}
-	entityBytes, err := json.Marshal(comp)
-	require.NoError(t, err)
-
-	payload := registry.MeshModelRegistrantData{
-		Connection: connv1beta3.Connection{},
-		EntityType: entity.ComponentDefinition,
-		Entity:     entityBytes,
-	}
-	body, err := json.Marshal(payload)
-	require.NoError(t, err)
-
-	req := httptest.NewRequest(http.MethodPost, "/api/registry/components", bytes.NewReader(body))
-	rw := httptest.NewRecorder()
-
-	h.RegisterMeshmodelComponents(rw, req)
-
-	resp := rw.Result()
-	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 }
 
 func TestExportModel_NotFound(t *testing.T) {
