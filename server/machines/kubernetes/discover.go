@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
@@ -24,7 +25,7 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 	userUUID, systemID := machines.ResolveUserAndSystemID(ctx)
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(systemID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	eventBuilder := models.NewServerEvent(ctx).ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(systemID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
@@ -33,6 +34,11 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 	}
 
 	k8sContext := machinectx.K8sContext
+	// The event is about the connection, so it names the connection once the
+	// machine context says which one it is.
+	if connectionID := uuid.FromStringOrNil(k8sContext.ConnectionID); !connectionID.IsNil() {
+		eventBuilder.ActedUpon(connectionID)
+	}
 	handler := machinectx.clientset
 
 	if handler == nil {
@@ -44,9 +50,12 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 
 	err = k8sContext.AssignServerID(handler)
 	if err != nil {
-		return machines.NotFound, eventBuilder.WithDescription(fmt.Sprintf("Could not assign server id, skipping context %s", k8sContext.Name)).WithMetadata(map[string]interface{}{
-			"error": err,
-		}).Build(), err
+		// The cluster's API server did not answer: the connection moves to
+		// NOTFOUND, and SendEvent reports that as its unreachable condition.
+		// metadata.error carries the error with its nested causes and the cause
+		// the client error points at (models.ErrUnreachableKubeAPI).
+		eventBuilder.WithDescription(fmt.Sprintf("Could not assign server id, skipping context %s", k8sContext.Name)).WithMetadata(map[string]interface{}{})
+		return machines.NotFound, models.AttachEventError(eventBuilder, err, machinectx.log).Build(), err
 	}
 
 	err = k8sContext.AssignVersion(handler)
