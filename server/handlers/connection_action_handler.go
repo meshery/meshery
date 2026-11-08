@@ -168,8 +168,7 @@ func (h *Handler) setMeshsyncDeploymentModeAction(
 	if err != nil {
 		_err := ErrFailToSave(err, "connection")
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to persist MeshSync deployment mode").WithMetadata(map[string]any{"error": _err}).Build()
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 		h.log.Error(_err)
 		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
@@ -185,14 +184,18 @@ func (h *Handler) setMeshsyncDeploymentModeAction(
 	// controller-status SSE stream reflects the deploy/undeploy progress.
 	// Detach from the request lifecycle but keep context values (token, etc.).
 	detachedCtx := context.WithoutCancel(req.Context())
+	// The goroutine builds its failure event from its own copy of the builder:
+	// Build() returns a pointer into the builder, so sharing eventBuilder would
+	// let the failure event overwrite the success event built below. The copy
+	// keeps the operation's OperationID.
+	failureBuilder := *eventBuilder
 	go func() {
 		if rerr := h.reconcileMeshsyncDeploymentMode(detachedCtx, connectionID, newMode, merged, userID, provider); rerr != nil {
 			h.log.Error(rerr)
-			event := eventBuilder.WithSeverity(events.Error).
+			event := failureBuilder.WithSeverity(events.Error).
 				WithDescription(fmt.Sprintf("MeshSync mode saved as '%s' but redeploy failed for connection %s", newMode, updated.Name)).
 				WithMetadata(map[string]any{"error": rerr, "connectionId": connectionID}).Build()
-			_ = provider.PersistEvent(*event, token)
-			h.config.EventBroadcaster.Publish(userID, event)
+			h.persistAndPublish(provider, token, userID, event)
 		}
 	}()
 
@@ -202,8 +205,7 @@ func (h *Handler) setMeshsyncDeploymentModeAction(
 		"meshsyncDeploymentModeNew": newMode,
 		"connectionId":              connectionID,
 	}).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 	h.log.Info(description)
 
 	writeJSONMessage(w, updated, http.StatusOK)
@@ -260,8 +262,7 @@ func (h *Handler) flushMeshsyncAction(
 		if perr := models.FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), serverID.String()); perr != nil {
 			_err := models.ErrFlushMeshSyncData(perr, machineCtx.K8sContext.Name, machineCtx.K8sContext.Server)
 			event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to flush MeshSync data").WithMetadata(map[string]any{"error": _err, "connectionId": connectionID}).Build()
-			_ = provider.PersistEvent(*event, token)
-			go h.config.EventBroadcaster.Publish(userID, event)
+			h.persistAndPublish(provider, token, userID, event)
 			h.log.Error(_err)
 			writeMeshkitError(w, _err, http.StatusInternalServerError)
 			return
@@ -271,8 +272,7 @@ func (h *Handler) flushMeshsyncAction(
 	// Repopulate from the live cluster. Fresh data streams back via the broker.
 	if rerr := mhelpers.ResyncResources(req.Context(), machine); rerr != nil {
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("MeshSync data flushed but resync failed for connection %s", existing.Name)).WithMetadata(map[string]any{"error": rerr, "connectionId": connectionID}).Build()
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 		h.log.Error(rerr)
 		writeJSONError(w, fmt.Sprintf("failed to resync MeshSync data: %v", rerr), http.StatusInternalServerError)
 		return
@@ -280,8 +280,7 @@ func (h *Handler) flushMeshsyncAction(
 
 	description := fmt.Sprintf("MeshSync data flushed and resync requested for connection %s", existing.Name)
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(map[string]any{"connectionId": connectionID}).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 	h.log.Info(description)
 
 	writeJSONMessage(w, existing, http.StatusOK)

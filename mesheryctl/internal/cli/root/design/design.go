@@ -17,8 +17,11 @@ package design
 import (
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -28,6 +31,9 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/spf13/cobra"
 )
+
+// githubDownloadTimeout bounds the download of a design file from GitHub.
+const githubDownloadTimeout = 30 * time.Second
 
 var (
 	availableSubcommands []*cobra.Command
@@ -39,7 +45,7 @@ var DesignCmd = &cobra.Command{
 	Use:   "design",
 	Short: "Manage cloud native designs",
 	Long: `Manage cloud and cloud native infrastructure using predefined designs.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl#command-reference`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
 // Apply design file:
 mesheryctl design apply --file [path to design file | URL of the file]
@@ -125,4 +131,37 @@ func fetchDesignByID(baseUrl, designID string) (pattern.PatternFile, error) {
 		return pattern.PatternFile{}, ErrParseDesignFile(errors.New("bridged pattern file is nil"))
 	}
 	return *bridged, nil
+}
+
+// fetchDesignFromGithub downloads a design file from a github.com or
+// raw.githubusercontent.com URL. The server has no endpoint that reads a design
+// from a URL without saving it, so the file is fetched here. It uses a plain
+// request, because utils.NewRequest would send the Meshery token to GitHub.
+func fetchDesignFromGithub(fileURL string) ([]byte, error) {
+	repoURL, filePath, err := utils.ParseURLGithub(fileURL)
+	if err != nil {
+		return nil, utils.ErrParseGithubFile(err, fileURL)
+	}
+
+	rawURL := repoURL
+	if filePath != "" {
+		rawURL = strings.Replace(repoURL, "https://github.com/", "https://raw.githubusercontent.com/", 1) + "/" + filePath
+	}
+
+	client := &http.Client{Timeout: githubDownloadTimeout}
+	resp, err := client.Get(rawURL)
+	if err != nil {
+		return nil, utils.ErrFailRequest(err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, utils.ErrResponseStatus(resp.StatusCode)
+	}
+
+	content, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, utils.ErrReadFromBody(err)
+	}
+	return content, nil
 }

@@ -1,125 +1,217 @@
 import React from 'react';
-import { Typography, Grid2, Box, List, ListItem, RenderMarkdown } from '@sistent/sistent';
+import {
+  Typography,
+  Grid2,
+  Box,
+  Chip,
+  List,
+  ListItem,
+  RenderMarkdown,
+  styled,
+} from '@sistent/sistent';
 import { FormatStructuredData } from '../../../data-formatter';
-import { TitleLink, formatErrorCode } from './common';
-import { MESHERY_DOCS_URL } from '@/constants/endpoints';
+import { canTruncateDescription } from '../notification';
+import { TitleLink } from './common';
+import { normalizeEventError } from './event_error';
+import type { ErrorCause, ErrorRemediation } from './event_error';
 
-type ErrorMetadata = {
-  LongDescription?: string[];
-  ProbableCause?: string[];
-  SuggestedRemediation?: string[];
-  Code?: string;
-  code?: string;
+// The labels of the action policies that let a client act on a remediation.
+// A manual remediation is the default and carries no label.
+const ACTION_POLICY_LABEL = {
+  automatic: 'Runs automatically',
+  requiresApproval: 'Requires approval',
+} as const;
+
+const CauseCard = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'matched',
+})<{ matched?: boolean }>(({ theme, matched }) => ({
+  padding: theme.spacing(1, 1.5),
+  marginBottom: theme.spacing(1),
+  borderRadius: theme.shape.borderRadius,
+  border: `1px solid ${matched ? theme.palette.border.brand : theme.palette.border.default}`,
+  backgroundColor: matched ? theme.palette.background.blur.light : 'transparent',
+}));
+
+const CauseHeading = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'flex-start',
+  justifyContent: 'space-between',
+  gap: theme.spacing(1),
+}));
+
+const MarkdownLine = ({ text }: { text: string }) => {
+  const hashed = text.trim().startsWith('-');
+  return (
+    <ListItem
+      sx={{
+        display: hashed ? 'block' : 'list-item',
+        lineHeight: '1.2rem',
+        padding: '0',
+        pb: 1,
+        '& ul': { paddingInlineStart: hashed ? '20px' : '0px' },
+        '& p': { lineHeight: '1.2rem', margin: 0 },
+      }}
+    >
+      <RenderMarkdown content={text} />
+    </ListItem>
+  );
 };
 
+const ErrorDetailsList = ({ heading, value }: { heading: string; value: string[] }) => {
+  const isUnorderedList = heading === 'Details' && value.length <= 1;
+  return (
+    <Box>
+      <Typography variant="body1">
+        <strong>{heading}</strong>
+      </Typography>
+      <List sx={{ listStyleType: isUnorderedList ? 'none' : 'decimal', pl: 3 }}>
+        {value.map((line, idx) => (
+          <MarkdownLine key={idx} text={line} />
+        ))}
+      </List>
+    </Box>
+  );
+};
+
+const RemediationItem = ({ remediation }: { remediation: ErrorRemediation }) => {
+  const policyLabel =
+    ACTION_POLICY_LABEL[remediation.actionPolicy as keyof typeof ACTION_POLICY_LABEL];
+  return (
+    <ListItem data-testid="error-remediation" sx={{ display: 'list-item', padding: 0, pb: 1 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: 1,
+          '& p': { margin: 0, lineHeight: '1.2rem' },
+        }}
+      >
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <RenderMarkdown content={remediation.description} />
+        </Box>
+        {policyLabel && (
+          <Chip
+            size="small"
+            variant="outlined"
+            label={policyLabel}
+            title={remediation.action}
+            sx={{ flexShrink: 0, height: 20 }}
+          />
+        )}
+      </Box>
+    </ListItem>
+  );
+};
+
+const CauseItem = ({ cause }: { cause: ErrorCause }) => (
+  <CauseCard matched={cause.matched} data-testid="error-cause" data-cause-id={cause.id}>
+    <CauseHeading>
+      <Box sx={{ '& p': { margin: 0, fontWeight: 600 } }}>
+        <RenderMarkdown content={cause.description} />
+      </Box>
+      {cause.matched && (
+        <Chip
+          size="small"
+          color="primary"
+          label={
+            cause.confidence === undefined
+              ? 'Likely cause'
+              : `Likely cause · ${Math.round(cause.confidence * 100)}%`
+          }
+          sx={{ flexShrink: 0, height: 20 }}
+        />
+      )}
+    </CauseHeading>
+    {cause.remediations.length > 0 && (
+      <List sx={{ listStyleType: 'disc', pl: 3, pt: 0.5, pb: 0 }}>
+        {cause.remediations.map((remediation) => (
+          <RemediationItem key={remediation.id} remediation={remediation} />
+        ))}
+      </List>
+    )}
+  </CauseCard>
+);
+
+/**
+ * Renders an error event's metadata.error. An error whose producer paired each
+ * probable cause with its own remediations is shown cause by cause, the causes
+ * the producer matched to this occurrence first. An unpaired error (MeshKit's
+ * flat lists, including every row recorded before the pairing existed) is shown
+ * as the two lists, never paired by position.
+ */
 export const ErrorMetadataFormatter = ({
   metadata,
   event,
 }: {
-  metadata: ErrorMetadata;
-  event: { description?: unknown; category?: string };
+  metadata: unknown;
+  event?: { description?: unknown };
 }) => {
-  const longDescription = metadata?.LongDescription || [];
-  const probableCause = metadata?.ProbableCause || [];
-  const suggestedRemediation = metadata?.SuggestedRemediation || [];
-  const rawCode = metadata?.Code || metadata?.code;
-  const formattedCode = rawCode
-    ? formatErrorCode(rawCode, event?.category || 'meshery-server')
-    : null;
-  const ErrorDetailsObjectFormatter = ({
-    heading,
-    value,
-  }: {
-    heading: string;
-    value: string[];
-  }) => {
-    const isUnorderedList = heading === 'Details' && value.length <= 1;
-    return (
-      <Box>
-        <Typography variant="body1">
-          <strong>{heading}</strong>
-        </Typography>
-        <List
-          sx={{
-            listStyleType: isUnorderedList ? 'none' : 'decimal',
-            pl: 3,
-          }}
-        >
-          {value.map((error, idx) => {
-            const hashedError = error.trim().startsWith('-');
-            return (
-              <ListItem
-                key={idx}
-                sx={{
-                  display: hashedError ? 'block' : 'list-item',
-                  lineHeight: '1.2rem',
-                  padding: '0',
-                  pb: 1,
-                  '& ul': { paddingInlineStart: hashedError ? '20px' : '0px' },
-                  '& p': { lineHeight: '1.2rem' },
-                }}
-              >
-                <RenderMarkdown content={error} />
-              </ListItem>
-            );
-          })}
-        </List>
-      </Box>
-    );
-  };
+  const error = normalizeEventError(metadata);
+  if (!error) return null;
+
+  // The notification's title already shows the description unless it had to
+  // be truncated there.
+  const description =
+    typeof event?.description === 'string' && canTruncateDescription(event.description)
+      ? event.description
+      : null;
+  const { longDescription, causes, probableCause, suggestedRemediation, referenceUrl, code } =
+    error;
+
   return (
     <Grid2 size="grow">
-      {' '}
       <div>
-        {formattedCode && (
-          <Box sx={{ mb: 1 }}>
-            <TitleLink
-              href={`${MESHERY_DOCS_URL}/reference/error-codes#${formattedCode}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {formattedCode}
-            </TitleLink>
-          </Box>
-        )}
-        {event?.description && <FormatStructuredData data={event.description} />}
+        {description && <FormatStructuredData data={description} />}
         <div style={{ marginTop: '1rem' }}>
           <FormatStructuredData
-            data={{
-              Details: longDescription,
-            }}
+            data={{ Details: longDescription }}
             propertyFormatters={{
-              Details: (value) => <ErrorDetailsObjectFormatter heading="Details" value={value} />,
+              Details: (value) => <ErrorDetailsList heading="Details" value={value} />,
             }}
           />
         </div>
       </div>
-      <Grid2 container spacing={1} style={{ marginTop: '0.5rem' }} size="grow">
-        <Grid2 size={{ sm: probableCause?.length > 0 ? 6 : 12 }}>
-          <FormatStructuredData
-            data={{
-              'Probable Cause': probableCause,
-            }}
-            propertyFormatters={{
-              'Probable Cause': (value) => (
-                <ErrorDetailsObjectFormatter heading="Probable Cause" value={value} />
-              ),
-            }}
-          />
+      {causes.length > 0 ? (
+        <Box sx={{ mt: 1 }} data-testid="error-causes">
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            <strong>Probable Causes</strong>
+          </Typography>
+          {causes.map((cause) => (
+            <CauseItem key={cause.id} cause={cause} />
+          ))}
+        </Box>
+      ) : (
+        <Grid2 container spacing={1} style={{ marginTop: '0.5rem' }} size="grow">
+          <Grid2 size={{ sm: probableCause.length > 0 ? 6 : 12 }}>
+            <FormatStructuredData
+              data={{ 'Probable Cause': probableCause }}
+              propertyFormatters={{
+                'Probable Cause': (value) => (
+                  <ErrorDetailsList heading="Probable Cause" value={value} />
+                ),
+              }}
+            />
+          </Grid2>
+          <Grid2 size={{ sm: suggestedRemediation.length > 0 ? 6 : 12 }}>
+            <FormatStructuredData
+              data={{ 'Suggested Remediation': suggestedRemediation }}
+              propertyFormatters={{
+                'Suggested Remediation': (value) => (
+                  <ErrorDetailsList heading="Suggested Remediation" value={value} />
+                ),
+              }}
+            />
+          </Grid2>
         </Grid2>
-        <Grid2 size={{ sm: suggestedRemediation?.length > 0 ? 6 : 12 }}>
-          <FormatStructuredData
-            data={{
-              'Suggested Remediation': suggestedRemediation,
-            }}
-            propertyFormatters={{
-              'Suggested Remediation': (value) => (
-                <ErrorDetailsObjectFormatter heading="Suggested Remediation" value={value} />
-              ),
-            }}
-          />
-        </Grid2>
-      </Grid2>
+      )}
+      {referenceUrl && (
+        <Box sx={{ mt: 1 }}>
+          <TitleLink href={referenceUrl}>
+            {code ? `${code} reference` : 'Error reference'}
+          </TitleLink>
+        </Box>
+      )}
     </Grid2>
   );
 };

@@ -54,6 +54,9 @@ import UnreadIcon from '../../../assets/icons/UnreadIcon';
 import { FormattedLinkMetadata, FormattedMetadata, PropertyLinkFormatters } from './metadata';
 import { truncate } from 'lodash';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
+import { getDesignEventErrorSummary, isMeshkitErrorCode } from './formatters/design_event_metadata';
+import { eventErrorCode, eventErrorReferenceUrl } from './formatters/event_error';
+import { ConditionBadges, ConditionSummary, getEventCondition } from './formatters/condition';
 import { useDispatch } from 'react-redux';
 import { formatErrorCode } from './formatters/common';
 
@@ -167,7 +170,10 @@ const BasicMenu = ({ event }) => {
             <OptionList>
               <ListButton
                 component="a"
-                href={`${MESHERY_DOCS_URL}/reference/error-codes#${errorCodes[0]}`}
+                href={
+                  eventErrorReferenceUrl(event.metadata?.error) ||
+                  `${MESHERY_DOCS_URL}/reference/error-codes#${errorCodes[0]}`
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
@@ -267,18 +273,23 @@ export const getErrorCodesFromEvent = (event) => {
     }
   };
 
+  // metadata.error is the schemas EventError (`code`) or, on rows recorded
+  // before it, MeshKit's error with Go field names (`Code`).
   if (event.metadata.error) {
-    if (Array.isArray(event.metadata.error)) {
-      event.metadata.error.forEach((err) => {
-        if (err?.Code) addCode(err.Code);
-        else if (err?.code) addCode(err.code);
-      });
-    } else if (event.metadata.error.Code) {
-      addCode(event.metadata.error.Code);
-    } else if (event.metadata.error.code) {
-      addCode(event.metadata.error.code);
-    }
+    const errors = Array.isArray(event.metadata.error)
+      ? event.metadata.error
+      : [event.metadata.error];
+    errors.forEach((err) => {
+      const code = eventErrorCode(err);
+      if (code) addCode(code);
+    });
   }
+
+  // Pattern events list {code, componentId} errors (#22764); only a MeshKit
+  // code has an error code reference entry.
+  getDesignEventErrorSummary(event.metadata)?.errors.forEach(({ code }) => {
+    if (isMeshkitErrorCode(code)) errorCodes.add(code);
+  });
 
   if (event.metadata.ModelDetails) {
     Object.values(event.metadata.ModelDetails).forEach((detail) => {
@@ -347,6 +358,14 @@ export const Notification = ({ event_id }) => {
       ? event.metadata.history_title
       : event.description;
 
+  // A repeated condition is about its latest occurrence, so the summary row
+  // shows when it was last seen.
+  const condition = getEventCondition(event);
+  const summaryTime =
+    condition && condition.occurrenceCount > 1 && condition.lastSeenAt
+      ? condition.lastSeenAt
+      : event.createdAt;
+
   const Detail = () => (
     <Expanded
       container
@@ -381,6 +400,7 @@ export const Notification = ({ event_id }) => {
           </ActorAvatar>
           <FormattedLinkMetadata event={event} />
         </Box>
+        <ConditionSummary condition={condition} />
         <FormattedMetadata event={event} />
       </Box>
     </Expanded>
@@ -430,8 +450,9 @@ export const Notification = ({ event_id }) => {
             </Message>
           </GridItem>
           <GridItem item xs="auto" style={{ gap: '0.5rem', marginLeft: 'auto', flexShrink: 0 }}>
+            <ConditionBadges condition={condition} />
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <FormattedTime date={event.createdAt} />
+              <FormattedTime date={summaryTime} />
             </Box>
             <BasicMenu event={event} />
           </GridItem>

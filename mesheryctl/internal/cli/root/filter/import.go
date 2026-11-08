@@ -19,7 +19,6 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -36,7 +35,7 @@ var importCmd = &cobra.Command{
 	Use:   "import [URI]",
 	Short: "Import a WASM filter",
 	Long: `Import a WASM filter from a URI (http/s) or local filesystem path.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/filter/import`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/filter/import`,
 	Example: `
 // Import a filter file from local filesystem
 mesheryctl filter import /path/to/filter.wasm
@@ -75,7 +74,10 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 
 		uri := args[0]
 
-		if validURL := govalidator.IsURL(uri); validURL {
+		// Treat the argument as a remote URL only when it has an explicit scheme and host.
+		// govalidator.IsURL accepts scheme-less names such as "my.filter.wasm" as domains,
+		// which would wrongly route local files down the remote URL path.
+		if utils.IsValidUrl(uri) {
 			body.URL = uri
 		} else {
 			filterFile, err := os.ReadFile(uri)

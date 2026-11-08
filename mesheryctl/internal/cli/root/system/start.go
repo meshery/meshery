@@ -58,7 +58,7 @@ var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start Meshery",
 	Long: `Start Meshery and each of its cloud native components.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/start`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/start`,
 	Args: cobra.NoArgs,
 	Example: `
 // Start meshery
@@ -362,7 +362,11 @@ func resolveDockerEndpoint(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 	if utils.SilentFlag || strings.HasSuffix(userPort[1], "localhost") {
 		userResponse = true
 	} else {
-		userResponse = utils.AskForConfirmation("The endpoint address will be changed to localhost. Are you sure you want to continue?")
+		var err error
+		userResponse, err = utils.AskForConfirmation("The endpoint address will be changed to localhost. Are you sure you want to continue?")
+		if err != nil {
+			return endpoint, err
+		}
 	}
 
 	if userResponse {
