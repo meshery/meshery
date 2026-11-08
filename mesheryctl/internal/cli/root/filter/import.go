@@ -39,6 +39,7 @@ var importCmd = &cobra.Command{
 	Example: `
 // Import a filter file from local filesystem
 mesheryctl filter import /path/to/filter.wasm
+mesheryctl filter import ./filter.wasm
 
 // Import a filter file from a remote URI
 mesheryctl filter import https://example.com/myfilter.wasm
