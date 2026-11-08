@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -23,6 +24,34 @@ type mockCloser struct {
 func (m mockCloser) Close() error {
 	return m.closeFunc()
 
+}
+
+type trackingTransport struct {
+	base http.RoundTripper
+	body *trackingBody
+}
+
+func (t *trackingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	base := t.base
+	if base == nil {
+		base = http.DefaultTransport
+	}
+	resp, err := base.RoundTrip(req)
+	if err == nil && resp != nil && resp.Body != nil {
+		t.body = &trackingBody{ReadCloser: resp.Body}
+		resp.Body = t.body
+	}
+	return resp, err
+}
+
+type trackingBody struct {
+	io.ReadCloser
+	closed bool
+}
+
+func (b *trackingBody) Close() error {
+	b.closed = true
+	return b.ReadCloser.Close()
 }
 
 func TestIsLocalProvider(t *testing.T) {
@@ -185,6 +214,7 @@ func TestAskForConfirmation(t *testing.T) {
 		question string
 		input    string
 		want     bool
+		wantErr  bool
 	}{
 		{
 			name:     "test with input 'yes'",
@@ -197,6 +227,24 @@ func TestAskForConfirmation(t *testing.T) {
 			question: "question?",
 			input:    "no\n",
 			want:     false,
+		},
+		{
+			name:     "unrecognized input is asked again until a valid answer",
+			question: "question?",
+			input:    "maybe\ny\n",
+			want:     true,
+		},
+		{
+			name:     "stdin closed without an answer returns an error",
+			question: "question?",
+			input:    "",
+			wantErr:  true,
+		},
+		{
+			name:     "stdin closed after an unrecognized answer returns an error",
+			question: "question?",
+			input:    "maybe\n",
+			wantErr:  true,
 		},
 	}
 	for _, tt := range tests {
@@ -216,7 +264,19 @@ func TestAskForConfirmation(t *testing.T) {
 			defer func() { os.Stdin = stdin }()
 			os.Stdin = r
 
-			got := AskForConfirmation(tt.question)
+			got, err := AskForConfirmation(tt.question)
+			if tt.wantErr {
+				if err == nil {
+					t.Fatalf("AskForConfirmation error = nil, want an error")
+				}
+				if got {
+					t.Errorf("AskForConfirmation got = true on error, want false")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("AskForConfirmation unexpected error = %v", err)
+			}
 			if got != tt.want {
 				t.Errorf("AskForConfirmation got = %v want = %v", got, tt.want)
 			}
@@ -361,9 +421,53 @@ func TestAskForInput(t *testing.T) {
 	defer func() { os.Stdin = stdin }()
 	os.Stdin = r
 
-	got := AskForInput("Prompt", []string{"data1", "data2"})
+	got, err := AskForInput("Prompt", []string{"data1", "data2"})
+	if err != nil {
+		t.Fatalf("AskForInput unexpected error = %v", err)
+	}
 	if got != input {
 		t.Errorf("AskForInput got = %v want = %v", got, input)
+	}
+}
+
+func TestAskForInputInvalidThenValid(t *testing.T) {
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err = w.WriteString("nope\ndata2\n"); err != nil {
+		t.Fatal(err)
+	}
+	_ = w.Close()
+	stdin := os.Stdin
+	defer func() { os.Stdin = stdin }()
+	os.Stdin = r
+
+	got, err := AskForInput("Prompt", []string{"data1", "data2"})
+	if err != nil {
+		t.Fatalf("AskForInput unexpected error = %v", err)
+	}
+	if got != "data2" {
+		t.Errorf("AskForInput got = %v want = data2", got)
+	}
+}
+
+func TestAskForInputStdinClosed(t *testing.T) {
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	_ = w.Close()
+	stdin := os.Stdin
+	defer func() { os.Stdin = stdin }()
+	os.Stdin = r
+
+	got, err := AskForInput("Prompt", []string{"data1", "data2"})
+	if err == nil {
+		t.Fatalf("AskForInput error = nil, want an error; got %q", got)
+	}
+	if got != "" {
+		t.Errorf("AskForInput got = %q on error, want an empty string", got)
 	}
 }
 
@@ -442,9 +546,6 @@ func TestSetOverrideValues(t *testing.T) {
 			},
 			mesheryImageVersion: "",
 			want: map[string]interface{}{
-				"meshery-app-mesh": map[string]interface{}{
-					"enabled": false,
-				},
 				"meshery-istio": map[string]interface{}{
 					"enabled": false,
 				},
@@ -461,9 +562,6 @@ func TestSetOverrideValues(t *testing.T) {
 					"enabled": false,
 				},
 				"meshery-nsm": map[string]interface{}{
-					"enabled": false,
-				},
-				"meshery-nginx-sm": map[string]interface{}{
 					"enabled": false,
 				},
 				"meshery-traefik-mesh": map[string]interface{}{
@@ -482,9 +580,6 @@ func TestSetOverrideValues(t *testing.T) {
 			},
 			mesheryImageVersion: "testImageVersion",
 			want: map[string]interface{}{
-				"meshery-app-mesh": map[string]interface{}{
-					"enabled": false,
-				},
 				"meshery-istio": map[string]interface{}{
 					"enabled": true,
 				},
@@ -502,9 +597,6 @@ func TestSetOverrideValues(t *testing.T) {
 				},
 				"meshery-nsm": map[string]interface{}{
 					"enabled": true,
-				},
-				"meshery-nginx-sm": map[string]interface{}{
-					"enabled": false,
 				},
 				"meshery-traefik-mesh": map[string]interface{}{
 					"enabled": false,
@@ -518,14 +610,11 @@ func TestSetOverrideValues(t *testing.T) {
 			name: "Context contains all available components and meshery image version",
 			ctx: &config.Context{
 				Components: []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-kuma",
-					"meshery-nsm", "meshery-nginx-sm", "meshery-traefik-mesh", "meshery-cilium"},
+					"meshery-nsm", "meshery-traefik-mesh", "meshery-cilium"},
 				Channel: testChannel,
 			},
 			mesheryImageVersion: "testImageVersion",
 			want: map[string]interface{}{
-				"meshery-app-mesh": map[string]interface{}{
-					"enabled": false,
-				},
 				"meshery-istio": map[string]interface{}{
 					"enabled": true,
 				},
@@ -542,9 +631,6 @@ func TestSetOverrideValues(t *testing.T) {
 					"enabled": true,
 				},
 				"meshery-nsm": map[string]interface{}{
-					"enabled": true,
-				},
-				"meshery-nginx-sm": map[string]interface{}{
 					"enabled": true,
 				},
 				"meshery-traefik-mesh": map[string]interface{}{
@@ -576,9 +662,6 @@ func TestSetOverrideValues(t *testing.T) {
 			customProviderURL:   "http://localhost:9876",
 			mesheryImageVersion: "",
 			want: map[string]interface{}{
-				"meshery-app-mesh": map[string]interface{}{
-					"enabled": false,
-				},
 				"meshery-istio": map[string]interface{}{
 					"enabled": false,
 				},
@@ -595,9 +678,6 @@ func TestSetOverrideValues(t *testing.T) {
 					"enabled": false,
 				},
 				"meshery-nsm": map[string]interface{}{
-					"enabled": false,
-				},
-				"meshery-nginx-sm": map[string]interface{}{
 					"enabled": false,
 				},
 				"meshery-traefik-mesh": map[string]interface{}{
@@ -760,5 +840,68 @@ func TestSubcommandNames(t *testing.T) {
 				t.Errorf("SubcommandNames() = %q, want %q", got, tt.expected)
 			}
 		})
+	}
+}
+
+// TestTrimFileExtension checks that only the final extension is removed.
+// Regression test: strings.Trim(name, ext) strips a character set from both
+// ends, turning "my-app.yaml" into "-app". Use strings.TrimSuffix instead.
+func TestTrimFileExtension(t *testing.T) {
+	tests := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{"leading chars match extension", "my-app.yaml", "my-app"},
+		{"mostly extension letters", "mail.yaml", "mail"},
+		{"json extension", "sample.json", "sample"},
+		{"multiple dots", "app.v2.yaml", "app.v2"},
+		{"no extension", "Test Design", "Test Design"},
+		{"empty name", "", ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := TrimFileExtension(tt.in); got != tt.want {
+				t.Errorf("TrimFileExtension(%q) = %q, want %q", tt.in, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestUploadFileWithParams(t *testing.T) {
+	origToken := TokenFlag
+	defer func() { TokenFlag = origToken }()
+	TokenFlag = GetToken(t)
+
+	tmpDir := t.TempDir()
+	sampleFile := filepath.Join(tmpDir, "sample.txt")
+	err := os.WriteFile(sampleFile, []byte("sample content for upload"), 0o600)
+	if err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
+
+	params := map[string]string{
+		"token": "valid-token",
+		"org":   "meshery",
+	}
+
+	req, err := UploadFileWithParams("http://localhost:9081/api/upload", params, "file", sampleFile)
+	if err != nil {
+		t.Fatalf("UploadFileWithParams returned unexpected error: %v", err)
+	}
+	if req == nil {
+		t.Fatal("UploadFileWithParams returned nil request")
+	}
+	if req.Method != http.MethodPost {
+		t.Errorf("expected POST method, got %s", req.Method)
+	}
+	if !strings.HasPrefix(req.Header.Get("Content-Type"), "multipart/form-data") {
+		t.Errorf("expected multipart/form-data content type, got %s", req.Header.Get("Content-Type"))
+	}
+
+	nonExistent := filepath.Join(tmpDir, "does-not-exist.txt")
+	_, err = UploadFileWithParams("http://localhost:9081/api/upload", params, "file", nonExistent)
+	if err == nil {
+		t.Error("expected error for non-existent file, got nil")
 	}
 }

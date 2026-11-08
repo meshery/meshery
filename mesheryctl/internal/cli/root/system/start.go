@@ -58,7 +58,7 @@ var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start Meshery",
 	Long: `Start Meshery and each of its cloud native components.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/start`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/start`,
 	Args: cobra.NoArgs,
 	Example: `
 // Start meshery
@@ -296,15 +296,12 @@ func buildAllowedDockerServices(currCtx *config.Context, mesheryImageVersion, ca
 	requiredServices := []string{"meshery", "watchtower"}
 	allowedServices := map[string]utils.Service{}
 
-	for _, component := range currCtx.GetComponents() {
-		if utils.Services[component].Image == "" {
-			return nil, ErrInvalidComponent(component)
-		}
+	if err := validateComponents(currCtx.GetComponents()); err != nil {
+		return nil, err
+	}
 
-		service, ok := utils.Services[component]
-		if !ok {
-			return nil, errors.Errorf("No Docker Compose service exists for Meshery component `%s`.", component)
-		}
+	for _, component := range currCtx.GetComponents() {
+		service := utils.Services[component]
 
 		spliter := strings.Split(service.Image, ":")
 		service.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
@@ -365,7 +362,11 @@ func resolveDockerEndpoint(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 	if utils.SilentFlag || strings.HasSuffix(userPort[1], "localhost") {
 		userResponse = true
 	} else {
-		userResponse = utils.AskForConfirmation("The endpoint address will be changed to localhost. Are you sure you want to continue?")
+		var err error
+		userResponse, err = utils.AskForConfirmation("The endpoint address will be changed to localhost. Are you sure you want to continue?")
+		if err != nil {
+			return endpoint, err
+		}
 	}
 
 	if userResponse {
@@ -517,6 +518,13 @@ func init() {
 
 // Apply Meshery helm charts
 func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction, callbackURL, providerURL string) error {
+	// Validate component references before starting
+	if act != meshkitkube.UNINSTALL {
+		if err := validateComponents(currCtx.GetComponents()); err != nil {
+			return err
+		}
+	}
+
 	// get value overrides to install the helm chart
 	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion, callbackURL, providerURL)
 

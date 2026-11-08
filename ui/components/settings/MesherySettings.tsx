@@ -12,7 +12,7 @@ import {
   LeftArrowIcon,
   DatabaseIcon,
   MendeleyIcon,
-  FileIcon,
+  AppRegistrationIcon,
   SettingsIcon,
   useTheme,
 } from '@sistent/sistent';
@@ -248,7 +248,7 @@ const MesherySettings = () => {
                 </CustomTooltip>
                 <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
                   <Tab
-                    icon={<FileIcon {...iconMedium} fill={theme.palette.icon.default} />}
+                    icon={<AppRegistrationIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Registry"
                     data-testid="settings-tab-registry"
                     value={REGISTRY}

@@ -18,7 +18,7 @@ func init() {
 	gob.Register([]*models.Adapter{})
 }
 
-// AdaptersHandler is used to fetch all the adapters
+// AvailableAdaptersHandler returns the list of available adapters
 func (h *Handler) AvailableAdaptersHandler(w http.ResponseWriter, _ *http.Request) {
 	err := json.NewEncoder(w).Encode(models.ListAvailableAdapters)
 	if err != nil {

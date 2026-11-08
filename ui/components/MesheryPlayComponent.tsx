@@ -8,7 +8,6 @@ import {
   Grid2,
   Typography,
   styled,
-  useTheme,
   gray,
   charcoal,
   NoSsr,
@@ -38,14 +37,11 @@ const PlayRoot = styled('div')(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
 
-export const PaneSection = styled('div')(() => {
-  const theme = useTheme();
-  return {
-    backgroundColor: theme.palette.mode === 'dark' ? gray[20] : charcoal[90],
-    padding: theme.spacing(2.5),
-    borderRadius: 4,
-  };
-});
+export const PaneSection = styled('div')(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? gray[20] : charcoal[90],
+  padding: theme.spacing(2.5),
+  borderRadius: 4,
+}));
 
 const AlreadyConfigured = styled('div')({
   textAlign: 'center',
@@ -79,8 +75,11 @@ const MesheryPlayComponent = () => {
       );
       if (selectedAdapter) {
         setAdapterState(selectedAdapter);
+        return;
       }
-    } else if (meshAdapters.length > 0) {
+    }
+
+    if (meshAdapters && meshAdapters.length > 0) {
       setAdapterState(meshAdapters[0]);
     }
   };
@@ -91,7 +90,7 @@ const MesheryPlayComponent = () => {
     return () => {
       router.events.off('routeChangeComplete', handleRouteChange);
     };
-  }, [router.events]);
+  }, [router.events, meshAdapters]);
 
   useEffect(() => {
     if (meshAdapters?.length > 0) {
@@ -116,34 +115,31 @@ const MesheryPlayComponent = () => {
   const handleAdapterChange = () => {
     return (event) => {
       if (event.target.value !== '') {
-        const selectedAdapter = meshAdapters.filter(
+        const selectedAdapter = meshAdapters.find(
           ({ adapterLocation }) => adapterLocation === event.target.value,
         );
-        if (selectedAdapter && selectedAdapter.size === 1) {
-          setAdapterState(selectedAdapter[0]);
-          dispatch(setAdapter({ selectedAdapter: selectedAdapter[0].name }));
+        if (selectedAdapter) {
+          setAdapterState(selectedAdapter);
+          dispatch(setAdapter({ selectedAdapter: selectedAdapter.name }));
         }
       }
     };
   };
 
   const renderIndividualAdapter = () => {
+    const queryParam = router?.query?.adapter;
+    if (!queryParam) return '';
     let adapCount = 0;
-    let adapter;
-    meshAdapters.forEach((adap) => {
-      if (adap.adapterLocation === adapter) {
-        adapter = adap;
-        meshAdapters.forEach((ad) => {
-          if (ad.name == adap.name) adapCount += 1;
-        });
-      }
-    });
-    if (adapter) {
-      const imageIcon = pickImage(adapter);
+    const targetAdapter = meshAdapters.find((adap) => adap.adapterLocation === queryParam);
+    if (targetAdapter) {
+      meshAdapters.forEach((ad) => {
+        if (ad.name === targetAdapter.name) adapCount += 1;
+      });
+      const imageIcon = pickImage(targetAdapter);
       return (
         <>
           <MesheryAdapterPlayComponent
-            adapter={adapter}
+            adapter={targetAdapter}
             adapCount={adapCount}
             adapter_icon={imageIcon}
           />
@@ -181,7 +177,7 @@ const MesheryPlayComponent = () => {
     );
   }
 
-  if (adapter && adapter !== '') {
+  if (router?.query?.adapter) {
     const indContent = renderIndividualAdapter();
     if (indContent !== '') {
       return indContent;
@@ -226,7 +222,7 @@ const MesheryPlayComponent = () => {
                 >
                   {meshAdapters.map((ada) => (
                     <MenuItem
-                      key={`${ada.adapterLocation}_${new Date().getTime()}`}
+                      key={ada.adapterLocation}
                       value={ada.adapterLocation}
                       sx={{
                         display: 'flex',

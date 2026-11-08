@@ -38,9 +38,9 @@ func PrintProviderToStdout(ctx config.Context, contextName string) string {
 
 var viewProviderCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view provider",
+	Short: "View provider",
 	Long: `View provider of context in focus.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/provider/view`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/provider/view`,
 	Example: `
 // View current provider
 mesheryctl system provider view
@@ -89,7 +89,7 @@ mesheryctl system provider view
 // listProviderCmd represents the list command
 var listProviderCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list available providers",
+	Short: "List available providers",
 	Long:  "List current provider and available providers",
 	Example: `
 // List all available providers
@@ -160,7 +160,7 @@ var providerSetFlags cmdProviderSetFlags
 
 var setProviderCmd = &cobra.Command{
 	Use:   "set [provider]",
-	Short: "set provider",
+	Short: "Set provider",
 	Long:  "Set provider of context in focus. Run `mesheryctl system provider list` to see the available providers.",
 	Example: `
 // Set provider
@@ -203,22 +203,8 @@ mesheryctl system provider set [provider]
 		provider := args[0]
 
 		if !providerSetFlags.Force {
-			// Verify provider
-			availableProviders, err := utils.GetProviderInfo(mctlCfg)
-			if err != nil {
-				return ErrProviderInfo(err)
-			}
-
-			isValidProvider := false
-
-			for k := range availableProviders {
-				if provider == k {
-					isValidProvider = true
-				}
-			}
-
-			if !isValidProvider {
-				return ErrValidProvider()
+			if err := validateProvider(mctlCfg, provider); err != nil {
+				return err
 			}
 		}
 
@@ -238,7 +224,7 @@ mesheryctl system provider set [provider]
 
 var switchProviderCmd = &cobra.Command{
 	Use:   "switch [provider]",
-	Short: "switch provider and redeploy",
+	Short: "Switch provider and redeploy",
 	Long:  "Switch provider of context in focus and redeploy Meshery. Run `mesheryctl system provider list` to see the available providers.",
 	Example: `
 // Switch provider and redeploy Meshery
@@ -279,12 +265,21 @@ mesheryctl system provider switch [provider]
 			focusedContext = mctlCfg.CurrentContext
 		}
 
+		// Check the provider before asking to replace the deployment, so an
+		// unknown provider fails without a confirmation prompt.
+		if err := validateProvider(mctlCfg, args[0]); err != nil {
+			return err
+		}
+
 		//skip asking confirmation if -y flag used
 		if utils.SilentFlag {
 			userResponse = true
 		} else {
 			// ask user for confirmation
-			userResponse = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment with provider set to '" + args[0] + "'. Are you sure you want to continue")
+			userResponse, err = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment with provider set to '" + args[0] + "'. Are you sure you want to continue")
+			if err != nil {
+				return err
+			}
 		}
 
 		if !userResponse {
@@ -301,6 +296,21 @@ mesheryctl system provider switch [provider]
 		}
 		return nil
 	},
+}
+
+// validateProvider returns an error unless provider is one of the providers
+// offered by the Meshery server.
+func validateProvider(mctlCfg *config.MesheryCtlConfig, provider string) error {
+	availableProviders, err := utils.GetProviderInfo(mctlCfg)
+	if err != nil {
+		return ErrProviderInfo(err)
+	}
+
+	if _, ok := availableProviders[provider]; !ok {
+		return ErrValidProvider()
+	}
+
+	return nil
 }
 
 // resetProviderCmd represents the reset command

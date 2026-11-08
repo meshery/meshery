@@ -366,7 +366,7 @@ func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Requ
 	if fromMiddleWare {
 		return
 	}
-	redirectURL := resolvePostLoginRedirect(r.URL.Query().Get("ref"), "/")
+	redirectURL := resolvePostLoginRedirect(r.URL.Query().Get("ref"), "/", postLoginHost(r))
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
 
@@ -683,12 +683,13 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 	}
 	user, _ := l.GetUserDetails(req)
 	pref, _ := l.ReadFromPersister(user.ID.String())
-	if !pref.AnonymousPerfResults {
-		return "", nil
-	}
 
-	l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
-	resultID, _ := l.shipResults(req, data)
+	// The preference only controls sending the result. It is always saved locally.
+	var resultID string
+	if pref.AnonymousPerfResults {
+		l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
+		resultID, _ = l.shipResults(req, data)
+	}
 
 	key := uuid.FromStringOrNil(resultID)
 	l.Log.Debug(fmt.Sprintf("key: %s, is nil: %t", key.String(), (key == uuid.Nil)))
@@ -1255,12 +1256,20 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfi
 		performanceProfile.Metadata = core.Map{}
 	}
 
-	data, err := json.Marshal(performanceProfile)
+	if err := l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile); err != nil {
+		return nil, err
+	}
+
+	// Respond with the stored profile: an edit does not carry createdAt.
+	stored, err := l.PerformanceProfilesPersister.GetPerformanceProfile(performanceProfile.ID)
+	if err != nil {
+		return nil, err
+	}
+	data, err := json.Marshal(stored)
 	if err != nil {
 		return nil, ErrMarshal(err, "Perf Profile for persisting")
 	}
-
-	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile)
+	return data, nil
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
@@ -2078,23 +2087,6 @@ func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter,
 }
 
 // Events
-
-func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
-	// GORM's Save requires a pointer (it reflects on the struct to read/update
-	// the primary key and timestamps). Passing the value directly produced
-	// "invalid value, should be pointer to struct or slice" and dropped every
-	// system event silently — including the controller-emitted events that
-	// flow through PersistSystemEvent.
-	err := e.DB.Save(&event).Error
-	if err != nil {
-		return ErrPersistEvent(err)
-	}
-	return nil
-}
-
-func (e *EventsPersister) PersistSystemEvent(event events.Event) error {
-	return e.PersistEvent(event, "")
-}
 
 func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {
 	e := l.EventsPersister

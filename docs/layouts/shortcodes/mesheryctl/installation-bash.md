@@ -1,5 +1,5 @@
 
-To install or upgrade `mesheryctl` using `bash`, execute anyone of the following commands.
+To install or upgrade `mesheryctl` with Bash, run one of the following commands.
 
 #### Option 1: Only install `mesheryctl` binary
 
@@ -36,7 +36,7 @@ To install or upgrade `mesheryctl` using `bash`, execute anyone of the following
 
 #### Option 4: Install `mesheryctl` binary and Meshery adapter(s)
 
-Install `mesheryctl` binary and include one or more [adapters]({{ relref . "concepts/architecture/adapters.md" }}) to be deployed
+Install the `mesheryctl` binary and deploy Meshery together with one or more [adapters]({{ relref . "concepts/architecture/adapters.md" }}). Separate multiple adapters with spaces, for example `ADAPTERS="istio linkerd"`. `mesheryctl` can deploy the `consul`, `istio`, `linkerd`, `nsm`, `kuma`, `traefik`, and `cilium` adapters. The script also accepts `osm`, `nighthawk`, `nginx`, `tanzu`, and `app`, but `mesheryctl` has no deployment definition for those adapters, so `mesheryctl system start` rejects them. The script ignores any other value.
 
  <pre class="codeblock-pre">
  <div class="codeblock">
@@ -48,13 +48,13 @@ Install `mesheryctl` binary and include one or more [adapters]({{ relref . "conc
 <br />
 
 ### Start Meshery
-You are ready to deploy Meshery `mesheryctl`. To do so, execute the following command.
+If you installed only the binary (Option 1), start Meshery on Kubernetes with `mesheryctl`:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">mesheryctl system start</div></div>
  </pre>
 
-If you are running Meshery on Docker, execute the following command.
+To run Meshery on Docker instead, run:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">mesheryctl system start -p docker</div></div>

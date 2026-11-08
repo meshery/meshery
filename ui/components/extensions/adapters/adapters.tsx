@@ -28,6 +28,9 @@ interface SyncResult {
 const Adapters: React.FC = () => {
   // States.
   const [availableAdapters, setAvailableAdapters] = useState<AdaptersListType>(adaptersList);
+  // Adapters with a deploy/undeploy request still in flight. Their switch is
+  // disabled so a second toggle can't race the first one's rollback.
+  const [pendingAdapters, setPendingAdapters] = useState<Record<string, boolean>>({});
 
   // Hooks.
   const { notify } = useNotification();
@@ -63,7 +66,7 @@ const Adapters: React.FC = () => {
           setAvailableAdapters(currentAdaptersList);
         }
       })
-      .catch(() => handleError('Unable to fetch list of adapters.'));
+      .catch((error) => handleError('Unable to fetch list of adapters.')(error));
   };
 
   const handleAdapterDeployment = (
@@ -73,17 +76,20 @@ const Adapters: React.FC = () => {
     adapterId: string,
   ): void => {
     updateProgress({ showProgress: true });
+    setPendingAdapters((prev) => ({ ...prev, [adapterId]: true }));
 
     changeAdapterState((response: unknown, errors: unknown) => {
       updateProgress({ showProgress: false });
+      setPendingAdapters((prev) => ({ ...prev, [adapterId]: false }));
 
       if (!isNil(errors)) {
-        // Toggle the switch to its previous state if the request fails.
-        setAvailableAdapters({
-          ...availableAdapters,
-          [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled },
-        });
-        handleError(msg);
+        // Put the switch back to where it was before the toggle. selectedAdapter
+        // still holds that original state.
+        setAvailableAdapters((prev) => ({
+          ...prev,
+          [adapterId]: { ...prev[adapterId], enabled: selectedAdapter.enabled },
+        }));
+        handleError(msg)(errors);
       } else {
         const actionText = payload.status.toLowerCase();
         notify({
@@ -96,12 +102,17 @@ const Adapters: React.FC = () => {
 
   const handleError =
     (msg: string) =>
-    (error?: Error): void => {
+    (error?: unknown): void => {
       updateProgress({ showProgress: false });
-      notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: error?.toString() });
+      notify({
+        message: msg,
+        event_type: EVENT_TYPES.ERROR,
+        details: isNil(error) ? undefined : String(error),
+      });
     };
 
   const handleToggle = (selectedAdapter: AdaptersListType[string], adapterId: string): void => {
+    if (pendingAdapters[adapterId]) return;
     setAvailableAdapters({
       ...availableAdapters,
       [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled },
@@ -185,6 +196,7 @@ const Adapters: React.FC = () => {
               <div style={{ textAlign: 'right' }}>
                 <Switch
                   checked={adapter.enabled}
+                  disabled={!!pendingAdapters[adapterId]}
                   onChange={() => handleToggle(adapter, adapterId)}
                   name="OperatorSwitch"
                   color="primary"

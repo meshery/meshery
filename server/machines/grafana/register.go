@@ -2,7 +2,6 @@ package grafana
 
 import (
 	"context"
-	"os"
 
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
@@ -11,7 +10,6 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils"
-	"github.com/meshery/schemas/models/core"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -22,6 +20,7 @@ func (ra *RegisterAction) ExecuteOnEntry(ctx context.Context, machineCtx interfa
 	return machines.NoOp, nil, nil
 }
 
+// Execute verifies the reachable Grafana instance and assigns its connection details.
 func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	logLevel := viper.GetInt("LOG_LEVEL")
 	if viper.GetBool("DEBUG") {
@@ -32,15 +31,12 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		LogLevel: logLevel,
 	})
 	if err != nil {
-		logrus.Error(err)
-		os.Exit(1)
+		return machines.NoOp, nil, models.ErrInitLogger(err)
 	}
 
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	userUUID := user.ID
+	userUUID, systemID := machines.ResolveUserAndSystemID(ctx)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(systemID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 
 	connPayload, err := utils.Cast[connections.ConnectionPayload](data)
 	if err != nil {

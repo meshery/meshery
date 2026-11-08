@@ -223,7 +223,20 @@ func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*co
 		// never loaded.
 		return nil, ErrDBRead(err)
 	}
-	err = cp.DB.Delete(connection).Error
+	// A Kubernetes connection's context row lives in its own table, and
+	// LoadAllK8sContext lists every row of it. Left behind, the context keeps
+	// being probed by the Kubernetes middlewares after its connection is gone,
+	// and every probe records a "Failed to retrieve the connection" event. The
+	// connection and its context therefore go together or not at all.
+	err = cp.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Delete(connection).Error; err != nil {
+			return err
+		}
+		if connection.Kind != "kubernetes" {
+			return nil
+		}
+		return tx.Where("connection_id = ?", connection.ID.String()).Delete(&K8sContext{}).Error
+	})
 	if err != nil {
 		return nil, ErrDBDelete(err, cp.fetchUserDetails().ID.String())
 	}
@@ -264,8 +277,7 @@ func (cp *ConnectionPersister) UpdateConnectionByID(connection *connections.Conn
 	return connection, nil
 }
 
-// Get connection by ID
-// If kind is provided filter with kind too
+// GetConnection gets a connection by ID. If kind is provided, it also filters by kind.
 func (cp *ConnectionPersister) GetConnection(id core.Uuid, kind string) (*connections.Connection, error) {
 	connection := connections.Connection{}
 	query := cp.DB.Where("id = ?", id)

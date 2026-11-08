@@ -98,8 +98,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	}
 	//if want to log we can use the above function in future to log the error in terminal.
 
-	_ = (*provider).PersistSystemEvent(*event)
-	ec.Publish(userUUID, event)
+	_ = models.PersistAndPublishSystemEvent(*provider, ec, userUUID, event)
 	return
 }
 
@@ -151,7 +150,9 @@ func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
 	return m
 }
 
-// move to meshmodel
+// GetK8sMeshModelComponents fetches Kubernetes CRDs and OpenAPI definitions using the given kubeconfig and converts them into MeshModel component definitions.
+//
+// TODO: move to meshmodel
 func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {

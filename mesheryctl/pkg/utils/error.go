@@ -81,6 +81,7 @@ var (
 	ErrDockerComposeLogsCode          = "mesheryctl-1226"
 	ErrMesheryCheckRunningStatusCode  = "mesheryctl-1227"
 	ErrDockerComposeStopCode          = "mesheryctl-1228"
+	ErrGitHubAPIResponseCode          = "mesheryctl-1255"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -562,6 +563,15 @@ func ErrResponseStatus(statusCode int) error {
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
 
+// ErrGitHubAPIResponse returns an error when the GitHub API returns a non-200 HTTP response.
+func ErrGitHubAPIResponse(statusCode int, url string, body string) error {
+	return errors.New(ErrGitHubAPIResponseCode, errors.Alert,
+		[]string{"Unexpected response from GitHub API"},
+		[]string{fmt.Sprintf("GitHub API at %s returned status %d: %s", url, statusCode, body)},
+		[]string{"GitHub API may be rate-limiting requests or the requested resource may not exist"},
+		[]string{"Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"})
+}
+
 func ErrJSONToYAML(err error) error {
 	return errors.New(ErrJSONToYAMLCode, errors.Alert,
 		[]string{"Failed to convert JSON to YAML"},
@@ -597,7 +607,7 @@ func ErrInvalidAPIResponse(err error) error {
 func ErrLoadConfig(err error) error {
 	return errors.New(ErrLoadConfigCode, errors.Alert,
 		[]string{"Error processing config"},
-		[]string{"Error processing config:" + err.Error()},
+		[]string{"Error processing config: " + err.Error()},
 		[]string{"Unable to load meshconfig due to wrong configurations"},
 		[]string{"Ensure your `config.yaml` file in your `.meshery` is valid, or run `mesheryctl system config`."})
 }
@@ -605,8 +615,8 @@ func ErrLoadConfig(err error) error {
 func ErrParseGithubFile(err error, URL string) error {
 	return errors.New(ErrParseGithubFileCode, errors.Alert,
 		[]string{"Failed to parse github file"},
-		[]string{"Failed to parse github file" + err.Error()},
-		[]string{"Unable to retrieve file from URL: %s", URL},
+		[]string{"Failed to parse github file: " + err.Error()},
+		[]string{"Unable to retrieve file from the given URL", fmt.Sprintf("URL: %s", URL)},
 		[]string{"Ensure you have a github url in file path"})
 }
 
@@ -621,7 +631,7 @@ func ErrReadToken(err error) error {
 func ErrRequestResponse(err error) error {
 	return errors.New(ErrRequestResponseCode, errors.Alert,
 		[]string{"Failed to handle request"},
-		[]string{"Unable to create a response from request" + err.Error()},
+		[]string{"Unable to create a response from request: " + err.Error()},
 		[]string{"Error occurred while generating a response"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
@@ -746,10 +756,10 @@ func ErrRetrieveHomeDir(err error) error {
 
 func ErrMarkFlagRequire(flagName string, err error) error {
 	return errors.New(ErrMarkFlagRequireCode, errors.Alert,
-		[]string{fmt.Sprintf("Failed to mark the flag '%s' as required", flagName)},
+		[]string{"Failed to mark the flag as required", fmt.Sprintf("Flag: %s", flagName)},
 		[]string{err.Error()},
 		[]string{"The flag may not exist or there was some error while specifying the flag."},
-		[]string{"Please ensure that the required flag '%s' is correctly specified and set before running the command."})
+		[]string{fmt.Sprintf("Please ensure that the required flag '%s' is correctly specified and set before running the command.", flagName)})
 }
 
 func ErrReadFromBody(err error) error {

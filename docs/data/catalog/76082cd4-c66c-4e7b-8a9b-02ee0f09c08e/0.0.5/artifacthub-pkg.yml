@@ -1,0 +1,20 @@
+version: 0.0.5
+name: my-first-kubernetes-web-app-copy
+displayName: My First Kubernetes Web App-copy
+createdAt: "2026-09-06T07:19:20Z"
+description: A simple Kubernetes web application architecture demonstrating the relationship between a Service, Deployment, Pod, ConfigMap, and Namespace. Created as an introductory Meshery design to explore Kubernetes visualization and cloud-native architecture.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/76082cd4-c66c-4e7b-8a9b-02ee0f09c08e/0.0.5/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a basic reference design intended for visualization and learning. It does not include production-specific configurations such as resource limits, security policies, persistent storage, or high-availability settings. Additional configuration would be required before using it in a production environment. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 888589e8-d93f-4e70-a661-d5332cad0d77
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

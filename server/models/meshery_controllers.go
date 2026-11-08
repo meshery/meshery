@@ -1358,13 +1358,7 @@ func setOverrideValues(delete bool, adapterTracker AdaptersTrackerInterface) map
 		"meshery-nsm": map[string]interface{}{
 			"enabled": false,
 		},
-		"meshery-nginx-sm": map[string]interface{}{
-			"enabled": false,
-		},
 		"meshery-traefik-mesh": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-app-mesh": map[string]interface{}{
 			"enabled": false,
 		},
 		"meshery-operator": map[string]interface{}{
@@ -1418,13 +1412,7 @@ func SetOverrideValuesForMesheryDeploy(adapters []Adapter, adapter Adapter, inst
 		"meshery-nsm": map[string]interface{}{
 			"enabled": false,
 		},
-		"meshery-nginx-sm": map[string]interface{}{
-			"enabled": false,
-		},
 		"meshery-traefik-mesh": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-app-mesh": map[string]interface{}{
 			"enabled": false,
 		},
 	}
@@ -1479,16 +1467,18 @@ func (mch *MesheryControllersHelper) emitEvent(description string, severity even
 
 		event := eventBuilder.Build()
 
-		if mch.provider != nil {
-			if shouldPersistControllerEvent(owner, actedUpon) {
-				if err := mch.provider.PersistSystemEvent(*event); err != nil {
-					mch.log.Error(fmt.Errorf("failed to persist event: %w", err))
-				}
-			} else {
-				mch.log.Debug("skipping persistence for controller event without a resource association")
+		if mch.provider != nil && shouldPersistControllerEvent(owner, actedUpon) {
+			if err := PersistAndPublishSystemEvent(mch.provider, mch.eventBroadcaster, owner, event); err != nil {
+				mch.log.Error(fmt.Errorf("failed to persist event: %w", err))
 			}
+			return
 		}
-		go mch.eventBroadcaster.Publish(owner, event)
+		if mch.provider != nil {
+			mch.log.Debug("skipping persistence for controller event without a resource association")
+		}
+		if mch.eventBroadcaster != nil {
+			mch.eventBroadcaster.Publish(owner, event)
+		}
 	}
 }
 

@@ -1,0 +1,121 @@
+{
+  "evaluationQuery": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "edge",
+  "metadata": {
+    "description": "Documents which Issuer or ClusterIssuer provisions an Ingress's certificate through the cert-manager ingress-shim annotations: a ClusterIssuer is named by metadata.annotations['cert-manager.io/cluster-issuer'], an Issuer by metadata.annotations['cert-manager.io/issuer']. The annotation value is set manually today, because the current patch engine mis-splits dotted annotation keys when writing (meshery/meshkit#1097, fix meshery/meshkit#1098). Automatic patching returns once that fix ships in a meshkit release consumed by Meshery.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "cert-manager",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.21.1"
+    },
+    "name": "cert-manager",
+    "registrant": {
+      "kind": "github"
+    },
+    "version": "v1.0.0"
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ClusterIssuer",
+            "model": {
+              "displayName": "cert-manager",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "cert-manager",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": null
+          }
+        ],
+        "to": [
+          {
+            "kind": "Ingress",
+            "model": {
+              "displayName": "Kubernetes",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": null
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Issuer",
+            "model": {
+              "displayName": "cert-manager",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "cert-manager",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": null
+          }
+        ],
+        "to": [
+          {
+            "kind": "Ingress",
+            "model": {
+              "displayName": "Kubernetes",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": null
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "status": "enabled",
+  "subType": "reference",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}
