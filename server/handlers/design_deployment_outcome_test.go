@@ -131,11 +131,11 @@ func TestDeploymentOutcome_EdgeCases(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tally := tallyDeploymentOutcome(tt.resp)
-			if tally.Total != tt.total || tally.Succeeded != tt.succ || tally.Failed != tt.fail {
-				t.Fatalf("got tally %+v, want total=%d, succ=%d, fail=%d", tally, tt.total, tt.succ, tt.fail)
+			summary := summarizePatternProcessResponse(tt.resp)
+			if summary.Total != tt.total || summary.Succeeded != tt.succ || summary.Failed != tt.fail {
+				t.Fatalf("got total=%d, succ=%d, fail=%d, want total=%d, succ=%d, fail=%d", summary.Total, summary.Succeeded, summary.Failed, tt.total, tt.succ, tt.fail)
 			}
-			sev, desc := deploymentOutcomeEvent(tt.action, tally, tt.design, tt.okDesc)
+			sev, desc := deploymentOutcomeEvent(tt.action, summary, tt.design, tt.okDesc)
 			if sev != tt.severity || desc != tt.desc {
 				t.Errorf("got (%v, %q), want (%v, %q)", sev, desc, tt.severity, tt.desc)
 			}
@@ -143,6 +143,33 @@ func TestDeploymentOutcome_EdgeCases(t *testing.T) {
 				t.Errorf("empty design should not produce '0 of 0'")
 			}
 		})
+	}
+}
+
+// TestDeploymentOutcome_FailedCountsComponentsNotOutcomes pins that failed and
+// errorCount use different units: a component that fails on two clusters is
+// one failed component but two failing outcomes.
+func TestDeploymentOutcome_FailedCountsComponentsNotOutcomes(t *testing.T) {
+	resp := map[string]interface{}{
+		"c1": []patterns.DeploymentMessagePerContext{
+			{Location: "cluster-a", Summary: []patterns.DeploymentMessagePerComp{dmsg("c1", false, errors.New("errA"), false, "")}},
+			{Location: "cluster-b", Summary: []patterns.DeploymentMessagePerComp{dmsg("c1", false, errors.New("errB"), false, "")}},
+		},
+		"c2": []patterns.DeploymentMessagePerContext{
+			{Location: "cluster-a", Summary: []patterns.DeploymentMessagePerComp{dmsg("c2", true, nil, false, "")}},
+			{Location: "cluster-b", Summary: []patterns.DeploymentMessagePerComp{dmsg("c2", true, nil, false, "")}},
+		},
+	}
+
+	summary := summarizePatternProcessResponse(resp)
+	if summary.Total != 2 || summary.Succeeded != 1 || summary.Failed != 1 {
+		t.Errorf("got total=%d succeeded=%d failed=%d, want 2/1/1", summary.Total, summary.Succeeded, summary.Failed)
+	}
+	if summary.ErrorCount != 2 {
+		t.Errorf("got errorCount=%d, want 2 (one per failing cluster)", summary.ErrorCount)
+	}
+	if summary.Status != patternProcessStatusPartial {
+		t.Errorf("got status %q, want %q", summary.Status, patternProcessStatusPartial)
 	}
 }
 
@@ -165,8 +192,9 @@ func TestDeploymentOutcome_CountsSurviveMetadataSizeGuard(t *testing.T) {
 		}}
 	}
 
-	metadata := buildPatternProcessEventMetadata(resp, "http://meshery.test", uuid.Must(uuid.NewV4()), "big", "")
-	addOutcomeMetadata(metadata, tallyDeploymentOutcome(resp))
+	summary := summarizePatternProcessResponse(resp)
+	metadata := buildPatternProcessEventMetadata(summary, "http://meshery.test", uuid.Must(uuid.NewV4()), "big", "")
+	addOutcomeCounts(metadata, summary)
 
 	b, err := json.Marshal(metadata)
 	if err != nil {
@@ -182,8 +210,7 @@ func TestDeploymentOutcome_CountsSurviveMetadataSizeGuard(t *testing.T) {
 
 // TestDeploymentOutcome_ExampleEvent pins the event a real partial deployment
 // produces: three Kubernetes components on one cluster, one rejected by the
-// API server. The logged JSON is the example used in the PR description; run
-// with -v to see it.
+// API server. Run with -v to see the event JSON.
 func TestDeploymentOutcome_ExampleEvent(t *testing.T) {
 	const host = "https://127.0.0.1:6443"
 	ok := func(name, kind string) []patterns.DeploymentMessagePerContext {
@@ -200,11 +227,11 @@ func TestDeploymentOutcome_ExampleEvent(t *testing.T) {
 		}}},
 	}
 
-	tally := tallyDeploymentOutcome(resp)
-	severity, description := deploymentOutcomeEvent("deploy", tally, "bookinfo", "Deployment completed for design 'bookinfo'.")
+	summary := summarizePatternProcessResponse(resp)
+	severity, description := deploymentOutcomeEvent("deploy", summary, "bookinfo", "Deployment completed for design 'bookinfo'.")
 	designID := uuid.FromStringOrNil("8c5a1f4e-2b7d-4e0a-9f3c-6d1e2a4b7c90")
-	metadata := buildPatternProcessEventMetadata(resp, "http://localhost:9081", designID, "bookinfo", "")
-	addOutcomeMetadata(metadata, tally)
+	metadata := buildPatternProcessEventMetadata(summary, "http://localhost:9081", designID, "bookinfo", "")
+	addOutcomeCounts(metadata, summary)
 
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
