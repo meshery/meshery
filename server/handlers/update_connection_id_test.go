@@ -17,7 +17,13 @@ import (
 // putConnection sends PUT /api/integrations/connections/{connectionId} with a
 // body that carries no id, as the UI's partial updates do.
 func putConnection(h *Handler, provider models.Provider, id string) *httptest.ResponseRecorder {
-	req := httptest.NewRequest(http.MethodPut, "/api/integrations/connections/"+id, strings.NewReader(`{"name":"renamed","kind":"prometheus"}`))
+	return putConnectionBody(h, provider, id, `{"name":"renamed","kind":"prometheus"}`)
+}
+
+// putConnectionBody sends PUT /api/integrations/connections/{connectionId} with
+// an explicit JSON body.
+func putConnectionBody(h *Handler, provider models.Provider, id, body string) *httptest.ResponseRecorder {
+	req := httptest.NewRequest(http.MethodPut, "/api/integrations/connections/"+id, strings.NewReader(body))
 	req = mux.SetURLVars(req, map[string]string{"connectionId": id})
 	rec := httptest.NewRecorder()
 	h.UpdateConnectionById(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
@@ -76,5 +82,53 @@ func TestUpdateConnectionByIDExistingIsUpdated(t *testing.T) {
 	got, err := provider.ConnectionPersister.GetConnection(saved.ID, "")
 	require.NoError(t, err)
 	assert.Equal(t, "renamed", got.Name)
+	assert.Equal(t, int64(1), countConnections(t, provider), "an update must not create a connection")
+}
+
+// TestUpdateConnectionByIDBodyIDDoesNotRedirect checks that the URL id is the
+// authority for the update: a body carrying a different non-nil id must not
+// redirect the update onto that other connection.
+func TestUpdateConnectionByIDBodyIDDoesNotRedirect(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	target, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name: "target", Kind: "prometheus", ConnectionType: "observability",
+	})
+	require.NoError(t, err)
+	other, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name: "other", Kind: "kubernetes", ConnectionType: "platform",
+	})
+	require.NoError(t, err)
+
+	body := `{"id":"` + other.ID.String() + `","name":"renamed","kind":"prometheus"}`
+	rec := putConnectionBody(h, provider, target.ID.String(), body)
+
+	assert.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+	gotTarget, err := provider.ConnectionPersister.GetConnection(target.ID, "")
+	require.NoError(t, err)
+	assert.Equal(t, "renamed", gotTarget.Name)
+	gotOther, err := provider.ConnectionPersister.GetConnection(other.ID, "")
+	require.NoError(t, err)
+	assert.Equal(t, "other", gotOther.Name, "a body id must not redirect the update")
+	assert.Equal(t, int64(2), countConnections(t, provider), "an update must not create a connection")
+}
+
+// TestUpdateConnectionByIDStatusOnlyPreservesFields checks that a status-only
+// PUT, as the UI's connect action sends, updates the status without clobbering
+// the fields the payload omits.
+func TestUpdateConnectionByIDStatusOnlyPreservesFields(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name: "original", Kind: "prometheus", ConnectionType: "observability",
+	})
+	require.NoError(t, err)
+
+	rec := putConnectionBody(h, provider, saved.ID.String(), `{"status":"connected"}`)
+
+	assert.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+	got, err := provider.ConnectionPersister.GetConnection(saved.ID, "")
+	require.NoError(t, err)
+	assert.Equal(t, "original", got.Name)
+	assert.Equal(t, "prometheus", got.Kind)
+	assert.Equal(t, connections.CONNECTED, got.Status)
 	assert.Equal(t, int64(1), countConnections(t, provider), "an update must not create a connection")
 }

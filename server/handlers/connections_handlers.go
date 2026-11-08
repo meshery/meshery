@@ -481,6 +481,12 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		}
 	}
 
+	// The URL identifies the connection being updated: a body carrying a
+	// different non-nil id must not redirect the update onto another row (or
+	// create one under it). Both providers only fall back to the URL id when
+	// the payload id is nil, so pin it here for both of them.
+	connection.ID = connectionID
+
 	updatedConnection, err := provider.UpdateConnectionById(token, connection, mux.Vars(req)["connectionId"])
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
