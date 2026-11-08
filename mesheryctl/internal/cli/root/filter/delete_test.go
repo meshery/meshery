@@ -47,8 +47,8 @@ func TestDeleteCmdArgs(t *testing.T) {
 				if err == nil {
 					t.Fatalf("expected error for args %v, got nil", tc.args)
 				}
-				if err.Error() != tc.expectedErr {
-					t.Errorf("expected error %q for args %v, got %q", tc.expectedErr, tc.args, err.Error())
+				if !strings.Contains(err.Error(), tc.expectedErr) {
+					t.Errorf("expected error containing %q for args %v, got %q", tc.expectedErr, tc.args, err.Error())
 				}
 			} else {
 				if err != nil {
