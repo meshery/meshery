@@ -33,7 +33,7 @@ export default function getMostRecentVersion(versionList) {
 }
 
 /**
- * Sorts version in "INCREASING ORDER", apply reverse if wanted to sort in descreasing order
+ * Sorts version in "INCREASING ORDER", apply reverse if wanted to sort in decreasing order
  *
  * @param {string} versionA
  * @param {string} versionB
