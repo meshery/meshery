@@ -574,3 +574,58 @@ tokens:
 		})
 	}
 }
+
+func TestTokenViewCmd_NonExistentTokenWithSilentFlag(t *testing.T) {
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	utils.SetupCustomContextEnv(t, currDir+"/testdata/token/view.yaml")
+
+	originalSilentFlag := utils.SilentFlag
+	utils.SilentFlag = true
+	t.Cleanup(func() {
+		utils.SilentFlag = originalSilentFlag
+	})
+
+	b := utils.SetupMeshkitLoggerTesting(t, false)
+	SystemCmd.SetOut(b)
+	SystemCmd.SetArgs([]string{"token", "view", "nonexistent-token", "-y"})
+	err := SystemCmd.Execute()
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), `token "nonexistent-token" not found in config`)
+	BreakupFunc()
+}
+
+func TestTokenViewCmd_NoTokensConfigured(t *testing.T) {
+	configPath := filepath.Join(t.TempDir(), "config.yaml")
+	sampleMeshConfig := `contexts:
+  local:
+    endpoint: http://localhost:9081
+    token: default
+current-context: local
+tokens: []
+`
+	if err := os.WriteFile(configPath, []byte(sampleMeshConfig), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	viper.Reset()
+	originalCfgFile := utils.CfgFile
+	originalDefaultConfigPath := utils.DefaultConfigPath
+	utils.CfgFile = configPath
+	utils.DefaultConfigPath = configPath
+	t.Cleanup(func() {
+		utils.CfgFile = originalCfgFile
+		utils.DefaultConfigPath = originalDefaultConfigPath
+		viper.Reset()
+	})
+
+	b := utils.SetupMeshkitLoggerTesting(t, false)
+	SystemCmd.SetOut(b)
+	SystemCmd.SetArgs([]string{"token", "view", "any-token"})
+	err := SystemCmd.Execute()
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), `token "any-token" not found, and no other tokens are configured`)
+	BreakupFunc()
+}
