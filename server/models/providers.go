@@ -633,6 +633,13 @@ type Provider interface {
 	// but with its source as sent: one that names no source is recorded without one.
 	PersistClientEvent(event events.Event, token string) (PersistedEvent, error)
 
+	// CorrelatesConditions reports whether the provider is known to apply the createEvent
+	// condition correlation contract to the events PersistEvent sends it, counting a create that
+	// carries an open condition's correlationKey as an occurrence instead of recording a new event.
+	// A Recurrence is persisted only while it does: a provider that ignores correlationKey would
+	// store every repeat as a new event.
+	CorrelatesConditions() bool
+
 	// PersistSystemEvent persists a system-initiated event (e.g. MeshSync updates, registry seeding,
 	// auto-registration) that occurs outside of a user request context and has no auth token.
 	// These events are persisted to the local database. Like PersistEvent, it returns the event as

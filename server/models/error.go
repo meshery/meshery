@@ -636,7 +636,10 @@ func ErrUnreachableKubeAPI(err error, server string) error {
 			},
 		},
 	)
-	kubeAPIErr.LongDescription = append(kubeAPIErr.LongDescription, fmt.Sprintf("API server: %s", server), err.Error())
+	kubeAPIErr.LongDescription = append(kubeAPIErr.LongDescription, fmt.Sprintf("API server: %s", server))
+	if err != nil {
+		kubeAPIErr.LongDescription = append(kubeAPIErr.LongDescription, err.Error())
+	}
 	return withMatchedCause(kubeAPIErr, classifyKubeAPIError(err))
 }
 
