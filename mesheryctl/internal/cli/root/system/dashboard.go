@@ -94,6 +94,10 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		if err != nil {
 			return err
 		}
+		// if a temp context is set using the -c flag, use it as the current context
+		if err := mctlCfg.SetCurrentContext(tempContext); err != nil {
+			return ErrGetCurrentContext(err)
+		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return ErrGetCurrentContext(err)
@@ -112,6 +116,10 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
+		}
+		// if a temp context is set using the -c flag, use it as the current context
+		if err := mctlCfg.SetCurrentContext(tempContext); err != nil {
+			return ErrGetCurrentContext(err)
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
