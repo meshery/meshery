@@ -4,12 +4,15 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -17,10 +20,13 @@ import (
 
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/v1beta1/category"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/model"
+	compv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
+	connv1beta3 "github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -64,6 +70,126 @@ func seedTestExportModel(t *testing.T, rm *registry.RegistryManager, modelName s
 	m.ID = id
 	_, _, err = rm.RegisterEntity(registry.RegistrantHostToV1beta3(conn), m)
 	require.NoError(t, err, "seedTestExportModel: RegisterEntity failed")
+}
+
+// seedTestExportModelVersion seeds a model with explicit version strings,
+// so a traversal version can be registered for export testing.
+func seedTestExportModelVersion(t *testing.T, rm *registry.RegistryManager, modelName, modelVersion, innerVersion string) {
+	t.Helper()
+	conn := connection.Connection{
+		Name:    "test-registrant",
+		Kind:    modelName,
+		Type:    "platform",
+		SubType: "orchestration",
+		Status:  connection.ConnectionStatusConnected,
+	}
+	m := &model.ModelDefinition{
+		Name:          modelName,
+		DisplayName:   "Test Model",
+		SchemaVersion: "models.meshery.io/v1beta1",
+		Version:       modelVersion,
+		Model:         model.Model{Version: innerVersion},
+		Category:      category.CategoryDefinition{Name: "Orchestration"},
+		Status:        model.Enabled,
+		Metadata:      &model.ModelDefinition_Metadata{},
+	}
+	id, err := m.GenerateID()
+	require.NoError(t, err)
+	m.ID = id
+	_, _, err = rm.RegisterEntity(registry.RegistrantHostToV1beta3(conn), m)
+	require.NoError(t, err, "seedTestExportModelVersion: RegisterEntity failed")
+}
+
+// TestExportModel_VersionTraversal verifies that a model version containing
+// path separators cannot make the export write outside the per-request temp
+// directory (CWE-22). The export joins model.Model.Version and model.Version
+// into the working directory, so either field carrying ".." escapes it.
+func TestExportModel_VersionTraversal(t *testing.T) {
+	suffix := make([]byte, 8)
+	_, err := rand.Read(suffix)
+	require.NoError(t, err)
+	probeName := "meshery-traversal-probe-" + hex.EncodeToString(suffix)
+	probePath := filepath.Join(os.TempDir(), probeName)
+	t.Cleanup(func() {
+		_ = os.RemoveAll(probePath)
+	})
+
+	tests := []struct {
+		name         string
+		modelVersion string
+		innerVersion string
+	}{
+		{"model version traverses", "../../../" + probeName, "v1"},
+		{"inner model version traverses", "v1", "../../../" + probeName},
+		{"both versions traverse", "../../../" + probeName, "../../../" + probeName},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rm, _ := newTestRegistryDB(t)
+			modelName := "traversal-model"
+			seedTestExportModelVersion(t, rm, modelName, tt.modelVersion, tt.innerVersion)
+
+			log, err := logger.New("component_handler_test", logger.Options{})
+			require.NoError(t, err)
+
+			h := &Handler{
+				registryManager: rm,
+				log:             log,
+			}
+
+			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/meshmodels/models/export?name=%s&fileType=tar", modelName), nil)
+			rw := httptest.NewRecorder()
+
+			h.ExportModel(rw, req)
+
+			resp := rw.Result()
+			assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+			_, statErr := os.Stat(probePath)
+			assert.True(t, os.IsNotExist(statErr), "export wrote outside the temp dir: %s exists", probePath)
+		})
+	}
+}
+
+// TestRegisterMeshmodelComponents_VersionTraversal verifies that registration
+// rejects a component whose embedded model carries a traversal version, so
+// a hostile version cannot be planted through the registration endpoint.
+func TestRegisterMeshmodelComponents_VersionTraversal(t *testing.T) {
+	rm, _ := newTestRegistryDB(t)
+
+	log, err := logger.New("component_handler_test", logger.Options{})
+	require.NoError(t, err)
+
+	h := &Handler{
+		registryManager: rm,
+		log:             log,
+	}
+
+	comp := compv1beta3.ComponentDefinition{
+		Model: &model.ModelDefinition{
+			Name:    "traversal-model",
+			Version: "../../../escaped",
+			Model:   model.Model{Version: "v1"},
+		},
+	}
+	entityBytes, err := json.Marshal(comp)
+	require.NoError(t, err)
+
+	payload := registry.MeshModelRegistrantData{
+		Connection: connv1beta3.Connection{},
+		EntityType: entity.ComponentDefinition,
+		Entity:     entityBytes,
+	}
+	body, err := json.Marshal(payload)
+	require.NoError(t, err)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/registry/components", bytes.NewReader(body))
+	rw := httptest.NewRecorder()
+
+	h.RegisterMeshmodelComponents(rw, req)
+
+	resp := rw.Result()
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 }
 
 func TestExportModel_NotFound(t *testing.T) {
