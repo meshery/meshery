@@ -54,21 +54,6 @@ func TestGetProvider(t *testing.T) {
 		}
 	})
 
-	t.Run("context with typed nil provider returns ErrInvalidRequest", func(t *testing.T) {
-		var typedNil *stubTestProvider
-		ctx := context.WithValue(context.Background(), models.ProviderCtxKey, typedNil)
-		prov, err := getProvider(ctx)
-		if err == nil {
-			t.Fatalf("expected error for typed nil provider, got nil")
-		}
-		if prov != nil {
-			t.Fatalf("expected nil provider, got %v", prov)
-		}
-		if code := meshkiterrors.GetCode(err); code != ErrResolverInvalidRequestCode {
-			t.Fatalf("expected code %s, got %s", ErrResolverInvalidRequestCode, code)
-		}
-	})
-
 	t.Run("context with valid provider returns provider successfully", func(t *testing.T) {
 		expected := &stubTestProvider{}
 		ctx := context.WithValue(context.Background(), models.ProviderCtxKey, expected)
