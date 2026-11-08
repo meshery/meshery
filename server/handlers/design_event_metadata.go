@@ -35,11 +35,23 @@ type patternEventError struct {
 
 // patternProcessSummary is what a pattern event reports about the response of
 // _processPattern.
+//
+// Two different units are counted. ErrorCount counts failing outcomes: one per
+// non-prerequisite outcome that reported Success: false, so a component that
+// failed on two clusters contributes two (a dry-run contributes one per failure
+// cause). Total, Succeeded and Failed count components: a component is counted
+// once, as failed when any of its outcomes failed, however many clusters it
+// was acted on. For a multi-cluster design ErrorCount can therefore exceed
+// Failed.
 type patternProcessSummary struct {
 	Status     string
 	ErrorCount int
 	Errors     []patternEventError
 	Truncated  bool
+
+	Total     int // components with an outcome in the response
+	Succeeded int // Total - Failed
+	Failed    int // components with at least one failing outcome
 }
 
 // summarizePatternProcessResponse derives the status and per-component errors
@@ -92,15 +104,18 @@ func summarizePatternProcessResponse(response map[string]interface{}) patternPro
 		}
 	}
 
-	summary := patternProcessSummary{
-		ErrorCount: len(errs),
-		Errors:     errs,
-	}
 	failedCount := 0
 	for _, isFailed := range failed {
 		if isFailed {
 			failedCount++
 		}
+	}
+	summary := patternProcessSummary{
+		ErrorCount: len(errs),
+		Errors:     errs,
+		Total:      len(failed),
+		Succeeded:  len(failed) - failedCount,
+		Failed:     failedCount,
 	}
 	switch {
 	case failedCount == 0:
@@ -177,15 +192,14 @@ func meshkitCode(err error) string {
 }
 
 // buildPatternProcessEventMetadata builds the metadata of a successful
-// pattern deploy, undeploy or dry-run event: the design's identity, the
-// operator view viewLink kept for existing readers, and the status and per-component errors
-// of the response - never the raw response, which embeds the components
-// (#22764).
-func buildPatternProcessEventMetadata(response map[string]interface{}, serverURL string, designID core.Uuid, name, version string) map[string]interface{} {
+// pattern deploy, undeploy or dry-run event from the summary of its response:
+// the design's identity, the operator view viewLink kept for existing readers,
+// and the status and per-component errors - never the raw response, which
+// embeds the components (#22764).
+func buildPatternProcessEventMetadata(summary patternProcessSummary, serverURL string, designID core.Uuid, name, version string) map[string]interface{} {
 	metadata := models.DesignEventIdentity(serverURL, designID, name, version)
 	metadata["viewLink"] = models.DesignOperatorViewLink(serverURL, designID)
 
-	summary := summarizePatternProcessResponse(response)
 	metadata["status"] = summary.Status
 	metadata["errorCount"] = summary.ErrorCount
 	metadata["errors"] = summary.Errors
