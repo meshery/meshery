@@ -9,7 +9,7 @@
 {{ $components := index $spec "components" | default dict }}
 {{ $securitySchemes := index $components "securitySchemes" | default dict }}
 {{ $tagGroups := index $spec "x-tagGroups" | default (slice) }}
-{{ $schemaURL := "https://raw.githubusercontent.com/meshery/meshery/refs/heads/master/docs/data/openapi.yml" }}
+{{ $schemaURL := "https://raw.githubusercontent.com/meshery/meshery/master/docs/data/openapi.yml" }}
 {{ $defaultOssServer := dict
   "url" "http://localhost:9081"
   "description" "Meshery Server default URL"

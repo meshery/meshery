@@ -189,6 +189,29 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 	return http.HandlerFunc(fn)
 }
 
+// RegistrationAuthMiddleware requires provider authentication for component
+// registration only when a provider is actually in play: a provider is
+// enforced through PROVIDER, or the request carries a selector for a remote
+// provider. Adapters register against a local deployment with no provider
+// selector, and in local mode there is no session to validate, so forcing
+// ProviderAuth there would redirect every selector-free registration to
+// /provider and break adapter registration. Requests that select Local
+// (including the legacy None alias) pass through for the same reason: local
+// mode has no credentials to check. The traversal itself is still blocked by
+// the single-path-component validation in RegisterMeshmodelComponents, which
+// runs regardless of auth.
+func (h *Handler) RegistrationAuthMiddleware(next http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		name, _ := resolveProviderName(r, h.config.ProviderCookieName, h.Provider)
+		if h.Provider != "" || (name != "" && name != models.LocalProviderName) {
+			h.AuthMiddleware(next, models.ProviderAuth).ServeHTTP(w, r)
+			return
+		}
+		next.ServeHTTP(w, r)
+	}
+	return http.HandlerFunc(fn)
+}
+
 func (h *Handler) validateAuth(provider models.Provider, req *http.Request) (bool, error) {
 	err := provider.GetSession(req)
 	if err == nil {

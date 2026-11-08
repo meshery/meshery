@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -165,4 +166,69 @@ func TestUpdateConnectionByIDStatusOnlyPreservesFields(t *testing.T) {
 	assert.Equal(t, "prometheus", got.Kind)
 	assert.Equal(t, connections.CONNECTED, got.Status)
 	assert.Equal(t, int64(1), countConnections(t, provider), "an update must not create a connection")
+}
+
+// TestUpdateConnectionByIDPreservesCreatedAtAndOwner checks that updating an
+// existing connection preserves its original created_at timestamp and owner
+// (user_id) both in the database row and in the HTTP response body.
+func TestUpdateConnectionByIDPreservesCreatedAtAndOwner(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	ownerID := uuid.Must(uuid.NewV4())
+	created := time.Date(2026, 11, 1, 9, 30, 0, 0, time.UTC)
+
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name:           "original",
+		Kind:           "prometheus",
+		ConnectionType: "observability",
+		SubType:        "monitoring",
+		Status:         connections.DISCOVERED,
+		Owner:          &ownerID,
+		CreatedAt:      created,
+		UpdatedAt:      created,
+	})
+	require.NoError(t, err)
+
+	rec := putConnectionBody(h, provider, saved.ID.String(), `{"name":"renamed","status":"connected"}`)
+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+
+	got, err := provider.ConnectionPersister.GetConnection(saved.ID, "")
+	require.NoError(t, err)
+	assert.Equal(t, "renamed", got.Name)
+	assert.Equal(t, connections.CONNECTED, got.Status)
+	assert.True(t, got.CreatedAt.Equal(created), "stored created_at = %v, want %v to survive the update", got.CreatedAt, created)
+	if assert.NotNil(t, got.Owner, "stored owner (user_id) must survive the update") {
+		assert.Equal(t, ownerID, *got.Owner)
+	}
+
+	// Direct provider call (used by FSM transitions and action handlers that
+	// serialize the returned *connections.Connection into the HTTP response)
+	// must also return the preserved created_at and owner.
+	updated, err := provider.UpdateConnectionById("", &connections.ConnectionPayload{
+		Status: connections.MAINTENANCE,
+	}, saved.ID.String())
+	require.NoError(t, err)
+	require.NotNil(t, updated)
+	assert.Equal(t, connections.MAINTENANCE, updated.Status)
+	assert.True(t, updated.CreatedAt.Equal(created), "returned created_at = %v, want %v", updated.CreatedAt, created)
+	if assert.NotNil(t, updated.Owner, "returned owner (user_id) must survive the update") {
+		assert.Equal(t, ownerID, *updated.Owner)
+	}
+
+	// Direct UpdateConnection call omitting CreatedAt must not wipe created_at
+	// in the database and must populate the returned struct from the stored row.
+	directUpdate := &connections.Connection{
+		ID:             saved.ID,
+		Name:           "direct-update",
+		Kind:           saved.Kind,
+		ConnectionType: saved.ConnectionType,
+		SubType:        saved.SubType,
+		Status:         connections.CONNECTED,
+		Owner:          &ownerID,
+		UpdatedAt:      time.Now(),
+	}
+	returnedDirect, err := provider.UpdateConnection(nil, directUpdate)
+	require.NoError(t, err)
+	require.NotNil(t, returnedDirect)
+	assert.Equal(t, "direct-update", returnedDirect.Name)
+	assert.True(t, returnedDirect.CreatedAt.Equal(created), "direct UpdateConnection returned created_at = %v, want %v", returnedDirect.CreatedAt, created)
 }

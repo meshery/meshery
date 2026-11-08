@@ -30,6 +30,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // render is an infinite render loop that exhausts the heap, not a test failure.
 const {
   notify,
+  getEnvironmentsQuery,
   createEnvironment,
   updateEnvironment,
   deleteEnvironment,
@@ -39,6 +40,7 @@ const {
   UI_STATE,
 } = vi.hoisted(() => ({
   notify: vi.fn(),
+  getEnvironmentsQuery: vi.fn(),
   createEnvironment: vi.fn(),
   updateEnvironment: vi.fn(),
   deleteEnvironment: vi.fn(),
@@ -65,7 +67,10 @@ vi.mock('../../rtk-query/environments', () => ({
   useCreateEnvironmentMutation: () => [createEnvironment, { isLoading: false }],
   useUpdateEnvironmentMutation: () => [updateEnvironment, { isLoading: false }],
   useDeleteEnvironmentMutation: () => [deleteEnvironment],
-  useGetEnvironmentsQuery: () => ENVIRONMENTS_QUERY_RESULT,
+  useGetEnvironmentsQuery: (args: unknown) => {
+    getEnvironmentsQuery(args);
+    return ENVIRONMENTS_QUERY_RESULT;
+  },
   useGetEnvironmentConnectionsQuery: () => CONNECTIONS_QUERY_RESULT,
   useAddConnectionToEnvironmentMutation: () => NOOP_MUTATION,
   useRemoveConnectionFromEnvironmentMutation: () => NOOP_MUTATION,
@@ -138,11 +143,19 @@ vi.mock('@sistent/sistent', () => ({
   ModalBody: ({ children }: any) => <div>{children}</div>,
   ModalFooter: ({ children }: any) => <div>{children}</div>,
   NoSsr: ({ children }: any) => <>{children}</>,
-  Pagination: () => null,
+  Pagination: ({ onChange }: any) => (
+    <button data-testid="go-to-page-3" onClick={(e) => onChange(e, 3)}>
+      page 3
+    </button>
+  ),
   PaginationItem: () => null,
   PrimaryActionButtons: () => null,
   PROMPT_VARIANTS: { DANGER: 'danger' },
-  SearchBar: () => null,
+  SearchBar: ({ onSearch }: any) => (
+    <button data-testid="search-prod" onClick={() => onSearch('prod')}>
+      search
+    </button>
+  ),
   TransferList: () => null,
   Typography: ({ children }: any) => <span>{children}</span>,
   createAndEditEnvironmentSchema: {},
@@ -257,5 +270,31 @@ describe('Environments create flow notifications', () => {
     expect(createEnvironment).toHaveBeenCalledWith({
       environmentPayload: expect.objectContaining({ organizationId: 'org-1' }),
     });
+  });
+});
+
+describe('Environments search paging', () => {
+  const lastQueryArgs = () => getEnvironmentsQuery.mock.calls.at(-1)?.[0];
+
+  it('goes back to the first page when the search changes', async () => {
+    const originalData = ENVIRONMENTS_QUERY_RESULT.data;
+    // Pagination only renders when the current page has environments.
+    ENVIRONMENTS_QUERY_RESULT.data = {
+      environments: [{ id: 'env-1', name: 'staging' }],
+      totalCount: 40,
+    } as any;
+    try {
+      const user = userEvent.setup();
+      render(<Environments />);
+
+      await user.click(screen.getByTestId('go-to-page-3'));
+      // The pagination handler is debounced.
+      await waitFor(() => expect(lastQueryArgs()).toMatchObject({ page: 2, search: '' }));
+
+      await user.click(screen.getByTestId('search-prod'));
+      await waitFor(() => expect(lastQueryArgs()).toMatchObject({ page: 0, search: 'prod' }));
+    } finally {
+      ENVIRONMENTS_QUERY_RESULT.data = originalData;
+    }
   });
 });
