@@ -210,7 +210,6 @@ export const eventsSlice = createSlice({
     },
 
     openNotificationCenter: (state, action) => {
-      console.log('Opening notification center with view:', action.payload);
       state.isNotificationCenterOpen = true;
       state.view_to_fetch_on_open =
         action.payload.view_to_open || initialState.view_to_fetch_on_open;

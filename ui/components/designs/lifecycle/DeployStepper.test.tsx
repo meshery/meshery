@@ -152,11 +152,12 @@ describe('FinishDeploymentStep', () => {
     }
   });
 
-  it('handles timeout: fires after rerender with new perform_deployment, opens notification center, and late event recovers', () => {
+  it('handles timeout: fires after rerender with new perform_deployment, opens notification center, and late event recovers', async () => {
     vi.useFakeTimers();
-    const [p1, p2] = [vi.fn(() => new Promise(() => {})), vi.fn()];
+    const [p1, p2] = [vi.fn().mockResolvedValue({}), vi.fn()];
     const { rerenderStep } = renderWithContext({ perform_deployment: p1 });
     rerenderStep({ perform_deployment: p2 });
+    await act(async () => {});
 
     act(() => vi.advanceTimersByTime(DEPLOYMENT_EVENT_TIMEOUT_MS));
     expect(screen.getByText(/Deployment status unknown/i)).toBeInTheDocument();
@@ -173,11 +174,10 @@ describe('FinishDeploymentStep', () => {
     expect(screen.getByTestId('deployment-summary')).toHaveTextContent('Arrived after timeout');
   });
 
-  it('clears timer and unsubscribes on unmount without state update', () => {
+  it('clears timer and unsubscribes on unmount without state update', async () => {
     vi.useFakeTimers();
-    const { unmount } = renderWithContext({
-      perform_deployment: vi.fn(() => new Promise(() => {})),
-    });
+    const { unmount } = renderWithContext();
+    await act(async () => {});
     unmount();
     expect(unsubscribeMock).toHaveBeenCalled();
     act(() => vi.advanceTimersByTime(DEPLOYMENT_EVENT_TIMEOUT_MS));
@@ -197,7 +197,38 @@ describe('FinishDeploymentStep', () => {
     expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
   });
 
-  it('shows error and Retry when request rejects after timeout has fired', async () => {
+  it('times only the wait for the event: a request slower than the timeout succeeds and then waits', async () => {
+    vi.useFakeTimers();
+    let resolveHttp: any;
+    renderWithContext({
+      perform_deployment: vi.fn(() => new Promise((res) => (resolveHttp = res))),
+    });
+
+    act(() => vi.advanceTimersByTime(DEPLOYMENT_EVENT_TIMEOUT_MS * 2));
+    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+    expect(screen.queryByText(/Deployment status unknown/i)).not.toBeInTheDocument();
+
+    await act(async () => resolveHttp({}));
+    act(() => vi.advanceTimersByTime(DEPLOYMENT_EVENT_TIMEOUT_MS - 1));
+    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(1));
+    expect(screen.getByText(/Deployment status unknown/i)).toBeInTheDocument();
+  });
+
+  it('starts no timer when the event arrives before the response', async () => {
+    vi.useFakeTimers();
+    let resolveHttp: any;
+    renderWithContext({
+      perform_deployment: vi.fn(() => new Promise((res) => (resolveHttp = res))),
+    });
+    emit({ actedUpon: 'd-1', description: 'Early event' });
+    await act(async () => resolveHttp({}));
+
+    expect(vi.getTimerCount()).toBe(0);
+    expect(screen.getByTestId('deployment-summary')).toHaveTextContent('Early event');
+  });
+
+  it('shows error and Retry when a request still in flight after the timeout rejects', async () => {
     vi.useFakeTimers();
     let rejectHttp: any;
     renderWithContext({
@@ -205,7 +236,7 @@ describe('FinishDeploymentStep', () => {
     });
 
     act(() => vi.advanceTimersByTime(DEPLOYMENT_EVENT_TIMEOUT_MS));
-    expect(screen.getByText(/Deployment status unknown/i)).toBeInTheDocument();
+    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
 
     await act(async () => {
       rejectHttp({ status: 504, data: { error: 'Gateway Timeout' } });
@@ -229,11 +260,12 @@ describe('FinishDeploymentStep', () => {
     expect(p1).toHaveBeenCalledTimes(1);
   });
 
-  it('sends exactly one request under React StrictMode and fires timeout after DEPLOYMENT_EVENT_TIMEOUT_MS', () => {
+  it('sends exactly one request under React StrictMode and fires timeout after DEPLOYMENT_EVENT_TIMEOUT_MS', async () => {
     vi.useFakeTimers();
-    const perform = vi.fn(() => new Promise(() => {}));
+    const perform = vi.fn().mockResolvedValue({});
     renderWithContext({ perform_deployment: perform }, true);
     expect(perform).toHaveBeenCalledTimes(1);
+    await act(async () => {});
 
     act(() => vi.advanceTimersByTime(DEPLOYMENT_EVENT_TIMEOUT_MS));
     expect(screen.getByText(/Deployment status unknown/i)).toBeInTheDocument();

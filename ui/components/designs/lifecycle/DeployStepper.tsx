@@ -78,7 +78,11 @@ export const FinishDeploymentStep = ({
 
   const isMountedRef = useRef(true);
   const sentRef = useRef(false);
+  // pendingRef is true while the request has succeeded and the step waits for
+  // the server event. Only that wait is timed: a request may legitimately take
+  // longer than DEPLOYMENT_EVENT_TIMEOUT_MS, and its outcome is still reported.
   const pendingRef = useRef(false);
+  const eventReceivedRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const performRef = useRef(perform_deployment);
 
@@ -97,15 +101,14 @@ export const FinishDeploymentStep = ({
     setIsDeploying(true);
     setDeployError(null);
     setIsTimedOut(false);
-    pendingRef.current = true;
-    startTimer();
+    pendingRef.current = false;
+    eventReceivedRef.current = false;
+    if (timerRef.current) clearTimeout(timerRef.current);
 
     try {
       await performRef.current();
     } catch (err: any) {
-      pendingRef.current = false;
       if (!isMountedRef.current) return;
-      if (timerRef.current) clearTimeout(timerRef.current);
       setIsDeploying(false);
       setIsTimedOut(false);
       const d = err?.data;
@@ -128,7 +131,13 @@ export const FinishDeploymentStep = ({
         isAuthError: status === 401 || status === 403,
         message: msg,
       });
+      return;
     }
+
+    // The event can arrive before the response; then there is nothing to wait for.
+    if (eventReceivedRef.current) return;
+    pendingRef.current = true;
+    if (isMountedRef.current) startTimer();
   }, [startTimer]);
 
   useEffect(() => {
@@ -164,6 +173,7 @@ export const FinishDeploymentStep = ({
           serverEvent.actedUpon === design?.id || serverEvent.metadata?.designId === design?.id;
 
         if (matchesDesign && serverEvent.action === deployment_type) {
+          eventReceivedRef.current = true;
           pendingRef.current = false;
           if (timerRef.current) clearTimeout(timerRef.current);
           setIsDeploying(false);
