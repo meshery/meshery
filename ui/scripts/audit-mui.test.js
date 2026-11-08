@@ -314,4 +314,32 @@ test('a failed read does not classify an allowlisted file as unused or missing',
   assert.ok(!uiScan.allowlistStatus.active.includes(relativePath));
   assert.ok(!uiScan.allowlistStatus.unused.includes(relativePath));
   assert.ok(!uiScan.allowlistStatus.missing.includes(relativePath));
+  assert.ok(!uiScan.allowlistStatus.uncovered.includes(relativePath));
+});
+
+test('existing allowlist files outside the scanned file set are uncovered', (t) => {
+  const fixture = createFixture(t);
+  const relativePath = 'components/not-scanned.json';
+  const script = path.join(fixture, 'ui/scripts/audit-mui.js');
+
+  writeFile(fixture, `ui/${relativePath}`, '{}\n');
+
+  const original = fs.readFileSync(script, 'utf8');
+  const anchor = "      'theme/index.ts',";
+  assert.equal(original.split(anchor).length - 1, 1);
+  fs.writeFileSync(script, original.replace(anchor, `${anchor}\n      '${relativePath}',`));
+
+  const result = runAudit(fixture, ['--fail-on-new']);
+  const uiScan = result.json.scans.find((scan) => scan.name === 'ui');
+
+  assert.equal(result.status, 0);
+  assert.equal(result.json.scanComplete, true);
+  assert.ok(uiScan.allowlistStatus.uncovered.includes(relativePath));
+  assert.ok(!uiScan.allowlistStatus.active.includes(relativePath));
+  assert.ok(!uiScan.allowlistStatus.unused.includes(relativePath));
+  assert.ok(!uiScan.allowlistStatus.missing.includes(relativePath));
+
+  const humanResult = runAuditHuman(fixture);
+  assert.equal(humanResult.status, 0);
+  assert.match(humanResult.stdout, /\[uncovered\].*components\/not-scanned\.json/);
 });

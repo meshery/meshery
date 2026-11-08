@@ -227,13 +227,20 @@ function runScan(scan) {
     active: [],
     unused: [],
     missing: [],
+    uncovered: [],
   };
+  const unreadableAllowlisted = new Set();
+
   for (const file of files) {
+    const rel = path.relative(scan.root, file);
     const matches = scanFile(file, scanErrors);
 
-    if (matches === null) continue;
-
-    const rel = path.relative(scan.root, file);
+    if (matches === null) {
+      if (scan.allowlist.has(rel)) {
+        unreadableAllowlisted.add(rel);
+      }
+      continue;
+    }
 
     if (scan.allowlist.has(rel)) {
       if (matches.length > 0) {
@@ -258,7 +265,11 @@ function runScan(scan) {
     totalMatches += matches.length;
   }
   for (const rel of scan.allowlist) {
-    if (allowlistStatus.active.includes(rel) || allowlistStatus.unused.includes(rel)) {
+    if (
+      allowlistStatus.active.includes(rel) ||
+      allowlistStatus.unused.includes(rel) ||
+      unreadableAllowlisted.has(rel)
+    ) {
       continue;
     }
 
@@ -266,6 +277,7 @@ function runScan(scan) {
 
     try {
       fs.statSync(full);
+      allowlistStatus.uncovered.push(rel);
     } catch (error) {
       if (error.code === 'ENOENT') {
         allowlistStatus.missing.push(rel);
@@ -280,6 +292,7 @@ function runScan(scan) {
   allowlistStatus.active.sort();
   allowlistStatus.unused.sort();
   allowlistStatus.missing.sort();
+  allowlistStatus.uncovered.sort();
   offenders.sort((a, b) => b.count - a.count || a.file.localeCompare(b.file));
 
   return {
@@ -395,6 +408,11 @@ function main() {
     ...r.allowlistStatus.missing.map((file) => ({
       scan: r.name,
       status: 'missing',
+      file,
+    })),
+    ...r.allowlistStatus.uncovered.map((file) => ({
+      scan: r.name,
+      status: 'uncovered',
       file,
     })),
   ]);
