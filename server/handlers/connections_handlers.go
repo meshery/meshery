@@ -473,8 +473,13 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	// fields from the lookup, so proceeding would let a partial record
 	// clobber the stored one.
 	if gerr != nil {
-		lookupErr := ErrQueryGet(obj)
-		h.log.Error(lookupErr)
+		// Log the real lookup error for diagnosis; the client gets a
+		// lookup-specific error, not ErrQueryGet's "pass the query
+		// parameter" guidance, which is wrong here — this PUT carries
+		// its id in the path, and a lookup failure is a provider
+		// failure, not a missing query parameter.
+		h.log.Error(gerr)
+		lookupErr := models.ErrFetch(fmt.Errorf("connection lookup failed"), obj, statusCode)
 		writeMeshkitError(w, lookupErr, http.StatusInternalServerError)
 		return
 	}

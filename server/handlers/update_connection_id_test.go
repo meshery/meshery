@@ -86,13 +86,18 @@ func (p failingLookupProvider) GetConnectionByID(_ string, _ core.Uuid) (*connec
 // TestUpdateConnectionByIDLookupErrorIsServerError checks that an existence
 // lookup failing for a reason other than "not found" stops the update: the
 // provider backfills omitted fields from the lookup, so proceeding would let
-// a partial record clobber the stored one.
+// a partial record clobber the stored one. The 500 names a failed lookup,
+// not a missing query parameter, and the provider's own error stays out of
+// the response.
 func TestUpdateConnectionByIDLookupErrorIsServerError(t *testing.T) {
 	h, provider := newDeleteConnectionFixture(t)
 
 	rec := putConnection(h, failingLookupProvider{Provider: provider}, uuid.Must(uuid.NewV4()).String())
 
 	assert.Equal(t, http.StatusInternalServerError, rec.Code, rec.Body.String())
+	assert.Contains(t, rec.Body.String(), "Unable to fetch data from the Provider")
+	assert.NotContains(t, rec.Body.String(), "query parameter")
+	assert.NotContains(t, rec.Body.String(), "database unreachable")
 	assert.Zero(t, countConnections(t, provider), "an update must not create a connection")
 }
 
