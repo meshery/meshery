@@ -22,7 +22,7 @@ metadata:
   {{- end }}
 spec:
 {{- if or .Values.ingress.ingressClassName .Values.ingress.className }}
-  ingressClassName: {{ default .Values.ingress.className .Values.ingress.ingressClassName }}
+  ingressClassName: {{ default .Values.ingress.className .Values.ingress.ingressClassName | quote }}
 {{- end }}
 {{- if .Values.ingress.tls }}
   tls:
