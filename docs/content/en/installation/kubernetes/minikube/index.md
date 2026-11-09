@@ -28,7 +28,7 @@ Once your cluster is a connection, you can use Meshery to deploy your [Meshery D
     <li>Install the Meshery command-line client, <a href="{{< ref "installation/mesheryctl/_index.md" >}}" class="meshery-light">mesheryctl</a>.</li>
     <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
     <li>Install <a href="https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Fx86-64%2Fstable%2Fbinary+download"> Minikube</a> on your local machine.</li>
-    <li>Install <a href="https://helm.sh/docs/intro/install/">Helm</a>.</li>
+    <li>Install <a href="https://helm.sh/docs/intro/install/">Helm</a>. For installation instructions, see the [Helm Installation Guide]({{< ref "installation/kubernetes/helm.md" >}}).</li>
   </ol>
 </div>
 
@@ -39,6 +39,7 @@ Also see: [Install Meshery on Kubernetes]({{< ref "installation/kubernetes/_inde
 - [In-cluster Installation](#in-cluster-installation)
   - [Installation: Install Meshery on Kubernetes Using `mesheryctl`](#installation-install-meshery-on-kubernetes-using-mesheryctl)
   - [Installation: Using Helm](#installation-using-helm)
+  - [Accessing Meshery UI](#accessing-meshery-ui)
 - [Out-of-cluster Installation](#out-of-cluster-installation)
   - [Installation: Install Meshery on Docker](#installation-install-meshery-on-docker)
     - [Minikube Docker Driver Users](#minikube-docker-driver-users)
@@ -170,6 +171,54 @@ If you run into problems during installation, see [Troubleshooting Meshery Insta
 # Post-Installation Steps
 
 Verify the health of your Meshery deployment with <a href='{{< ref "reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+
+For more information on accessing Meshery UI, including port-forwarding options, see the [Accessing Meshery UI]({{< ref "installation/kubernetes/_index.md#accessing-meshery-ui" >}}) section and the [Port Forwarding Guide]({{< ref "installation/kubernetes/port-forwarding.md" >}}).
+
+## Accessing Meshery UI
+
+After installing Meshery in-cluster, you can access the Meshery UI using one of several methods depending on your environment and requirements.
+
+### Option 1: LoadBalancer Service
+
+When Meshery is installed in-cluster, Meshery UI is served by a Kubernetes `Service` named `meshery` in the `meshery` namespace. This `Service` is created as type `LoadBalancer` by default, forwarding port `9081` (Meshery UI) to the Meshery Server container on port `8080`.
+
+On Minikube, a `LoadBalancer` `Service` requires a load balancer implementation such as [MetalLB](https://metallb.universe.tf/) to be installed. Without a load balancer controller, the `EXTERNAL-IP` will remain in `<pending>` state. Retrieve the service status with:
+
+{{< code code="kubectl get service meshery --namespace meshery" >}}
+
+If you have MetalLB or another load balancer configured, once the `EXTERNAL-IP` column shows an address, open Meshery UI in your browser at `http://[EXTERNAL-IP]:9081`.
+
+{{% alert title="EXTERNAL-IP not assigned?" color="warning" %}}
+Minikube does not provide a load balancer controller out of the box. If you don't have MetalLB or another load balancer installed, use port-forwarding instead to access Meshery UI.
+{{% /alert %}}
+
+### Option 2: Port Forwarding (Universal)
+
+Port forwarding is a universal method to access Meshery UI that works across all Kubernetes environments, including local clusters and managed clouds. This is particularly useful when:
+
+- A LoadBalancer is not available or practical (common in Minikube)
+- You're working in a local development environment
+- You need temporary access without exposing Meshery externally
+- You're behind a firewall or in a restricted network
+
+For detailed instructions on using port forwarding, see the [Port Forwarding Guide]({{< ref "installation/kubernetes/port-forwarding.md" >}}).
+
+**Quick example using mesheryctl:**
+
+{{< code code="mesheryctl system dashboard --port-forward" >}}
+
+**Quick example using kubectl:**
+
+{{< code code="kubectl port-forward svc/meshery 9081:9081 --namespace meshery" >}}
+
+Then open `http://localhost:9081` in your browser.
+
+{{% alert title="Port Forwarding vs LoadBalancer" color="info" %}}
+- **LoadBalancer**: Requires MetalLB or similar on Minikube
+- **Port Forwarding**: Recommended for Minikube and local development
+
+Choose the method that best fits your use case. You can use both methods simultaneously if needed.
+{{% /alert %}}
 
 {{< installation/accessing-meshery-ui >}}
 
