@@ -51,6 +51,15 @@ describe('formatResultRow', () => {
     });
     expect([row.p50, row.p75, row.p90, row.p99, row.p99_9]).toEqual([0, 0, 0, 0, 0]);
   });
+
+  it('returns default zeros gracefully when record or runnerResults is missing', () => {
+    const row = formatResultRow(undefined);
+    expect(row.test_start_time).toBe('');
+    expect(row.qps).toBe('0.0');
+    expect(row.duration).toBe('0.0');
+    expect(row.threads).toBe(0);
+    expect([row.p50, row.p75, row.p90, row.p99, row.p99_9]).toEqual([0, 0, 0, 0, 0]);
+  });
 });
 
 describe('getRunnerResults', () => {
