@@ -520,7 +520,8 @@ func parseTokenResponse(resp *http.Response) ([]byte, error) {
 		return nil, ErrReadResponseBody(err)
 	}
 
-	if resp.StatusCode == http.StatusFound {
+	// Any redirect means the server sent us to a login or provider page.
+	if resp.StatusCode >= 300 && resp.StatusCode < 400 {
 		return nil, ErrInvalidToken()
 	}
 	if resp.StatusCode != http.StatusOK {

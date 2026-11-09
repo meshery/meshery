@@ -22,11 +22,13 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"sync/atomic"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/spf13/viper"
 )
 
@@ -80,6 +82,13 @@ func respond(status int, contentType, body string) http.HandlerFunc {
 		}
 		w.WriteHeader(status)
 		_, _ = fmt.Fprint(w, body)
+	}
+}
+
+// redirectTo returns a handler that redirects to the HTML provider page with code.
+func redirectTo(code int) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/provider?ref=x", code)
 	}
 }
 
@@ -143,9 +152,6 @@ func TestLoginRejectsInvalidTokenResponse(t *testing.T) {
 		{"401 JSON", respond(http.StatusUnauthorized, "application/json", `{"error":"unauthorized"}`)},
 		{"403 text", respond(http.StatusForbidden, "text/plain", "forbidden")},
 		{"500 JSON", respond(http.StatusInternalServerError, "application/json", `{"message":"boom"}`)},
-		{"302 redirect to provider page", func(w http.ResponseWriter, r *http.Request) {
-			http.Redirect(w, r, "/provider?ref=x", http.StatusFound)
-		}},
 		{"200 HTML", respond(http.StatusOK, "text/html; charset=utf-8", "<html><body>Sign in</body></html>")},
 		{"200 malformed JSON", respond(http.StatusOK, "application/json", `{"token": "abc"`)},
 		{"200 empty body", respond(http.StatusOK, "", "")},
@@ -169,24 +175,56 @@ func TestLoginRejectsInvalidTokenResponse(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			authPath, logs, redirectHits := setupLoginEnv(t, tt.handler, existingAuth, 0o600)
 
-			if err := runLogin(t); err == nil {
-				t.Fatal("expected login to fail, got nil")
-			}
+			assertLoginRejected(t, runLogin(t), authPath, logs, redirectHits)
+		})
+	}
+}
 
-			got, err := os.ReadFile(authPath)
-			if err != nil {
-				t.Fatalf("unable to read auth file: %v", err)
-			}
-			if string(got) != existingAuth {
-				t.Errorf("existing credentials were replaced: got %q, want %q", got, existingAuth)
-			}
-			if strings.Contains(logs.String(), "authenticated") {
-				t.Errorf("failed login reported success: %q", logs.String())
-			}
-			if n := redirectHits.Load(); n != 0 {
-				t.Errorf("token request followed a redirect %d time(s)", n)
+// TestLoginRejectsRedirectAsInvalidToken checks that every 3xx from /api/token
+// is reported as an invalid token rather than followed or echoed back.
+func TestLoginRejectsRedirectAsInvalidToken(t *testing.T) {
+	codes := []int{
+		http.StatusMovedPermanently,
+		http.StatusFound,
+		http.StatusSeeOther,
+		http.StatusTemporaryRedirect,
+		http.StatusPermanentRedirect,
+	}
+
+	for _, code := range codes {
+		t.Run(strconv.Itoa(code), func(t *testing.T) {
+			authPath, logs, redirectHits := setupLoginEnv(t, redirectTo(code), existingAuth, 0o600)
+
+			err := runLogin(t)
+			assertLoginRejected(t, err, authPath, logs, redirectHits)
+			if got := meshkiterrors.GetCode(err); got != utils.ErrInvalidTokenCode {
+				t.Errorf("error code = %q, want %q (%v)", got, utils.ErrInvalidTokenCode, err)
 			}
 		})
+	}
+}
+
+// assertLoginRejected checks that a failed login returned an error, left the
+// existing auth file byte-identical, did not report success and did not
+// follow a redirect.
+func assertLoginRejected(t *testing.T, loginErr error, authPath string, logs *bytes.Buffer, redirectHits *atomic.Int32) {
+	t.Helper()
+	if loginErr == nil {
+		t.Fatal("expected login to fail, got nil")
+	}
+
+	got, err := os.ReadFile(authPath)
+	if err != nil {
+		t.Fatalf("unable to read auth file: %v", err)
+	}
+	if string(got) != existingAuth {
+		t.Errorf("existing credentials were replaced: got %q, want %q", got, existingAuth)
+	}
+	if strings.Contains(logs.String(), "authenticated") {
+		t.Errorf("failed login reported success: %q", logs.String())
+	}
+	if n := redirectHits.Load(); n != 0 {
+		t.Errorf("token request followed a redirect %d time(s)", n)
 	}
 }
 
