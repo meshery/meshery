@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"strconv"
 	"strings"
 	"time"
@@ -330,23 +331,30 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 }
 
 // DeleteConnectionFromEnvironment deletes a connection from an environment.
-// Every mapping of the pair is deleted, including duplicates stored before
-// assignments were checked.
+// Every mapping of the pair is deleted in a single transaction, including
+// duplicates stored before assignments were checked.
 func (ep *EnvironmentPersister) DeleteConnectionFromEnvironment(environmentID, connectionID core.Uuid) ([]byte, error) {
 	var envConMapping environment.EnvironmentConnectionMapping
 
-	// Find the specific connection mapping
-	if err := ep.DB.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).First(&envConMapping).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, ErrResultNotFound(err)
+	err := ep.DB.Transaction(func(tx *gorm.DB) error {
+		// Find the specific connection mapping
+		if err := tx.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).First(&envConMapping).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return ErrResultNotFound(err)
+			}
+			return ErrDBRead(err)
 		}
-		return nil, ErrDBRead(err)
-	}
 
-	// Delete every mapping of the pair, including duplicates stored before
-	// assignments were checked.
-	if err := ep.DB.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).Delete(&environment.EnvironmentConnectionMapping{}).Error; err != nil {
-		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
+		// Delete every mapping of the pair, including duplicates stored before
+		// assignments were checked.
+		if err := tx.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).Delete(&environment.EnvironmentConnectionMapping{}).Error; err != nil {
+			return ErrDBDelete(err, ep.fetchUserDetails().ID.String())
+		}
+
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	envJSON, err := json.Marshal(envConMapping)
