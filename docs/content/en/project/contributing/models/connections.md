@@ -248,7 +248,7 @@ The Connection's `metadata` contains non-secret endpoint and inference settings.
 
 | Metadata field | Requirement | Contract |
 | --- | --- | --- |
-| `baseUrl` | Required | Absolute provider API URL. Supply a provider default only when the provider has a stable default endpoint. |
+| `baseUrl` | Required | Absolute provider API URL. Cloud and self-hosted endpoints must use HTTPS with certificate verification enabled; never disable TLS verification. Permit HTTP only for `hostingMode: local` with `localOnly: true` when the endpoint host is loopback (`localhost`, `127.0.0.1`, or `::1`). Supply a provider default only when the provider has a stable default endpoint. |
 | `defaultModel` | Required | Model identifier sent for inference when a request does not choose a model. |
 | `timeoutSeconds` | Required | Positive request timeout. The server may impose a stricter deployment-wide maximum. |
 | `hostingMode` | Required | `cloud`, `local`, or `selfhosted`. This describes where the endpoint runs; it is not inferred from its URL or provider name. |
