@@ -356,8 +356,16 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 	k8sContextPassedByUser := []models.K8sContext{}
 	k8sContextsFromKubeConfig := []*models.K8sContext{}
 
-	if err != nil || len(connectedK8sContexts) == 0 {
+	// A failed read is not the same as having no contexts, so log its cause
+	// distinctly. Both still fall back to kubeconfig discovery: this middleware
+	// fronts session bootstrap routes such as /api/system/sync, and failing them
+	// on a transient read error would take the UI down with it.
+	if err != nil {
+		h.log.Error(ErrGetK8sContexts(err))
+	} else if len(connectedK8sContexts) == 0 {
 		h.log.Warn(ErrFailToGetK8SContext)
+	}
+	if err != nil || len(connectedK8sContexts) == 0 {
 		k8sContextsFromKubeConfig, err = h.DiscoverK8SContextFromKubeConfig(user.ID.String(), token, provider)
 		if err != nil {
 			h.log.Warn(ErrFailToLoadK8sContext(err))
