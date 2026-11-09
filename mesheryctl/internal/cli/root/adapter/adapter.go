@@ -15,6 +15,7 @@
 package adapter
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -218,6 +219,24 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 	return string(body), nil
 }
 
+// operationIDFromResponse returns the operation ID in the response to an
+// adapter operation request, or "" when the server doesn't send one.
+func operationIDFromResponse(body string) string {
+	var response struct {
+		OperationID string `json:"operationId"`
+	}
+	if err := json.Unmarshal([]byte(body), &response); err != nil {
+		return ""
+	}
+	return response.OperationID
+}
+
+// isOperationEvent reports whether an event may be the result of the
+// operation. Without an operation ID on both sides, every event may be.
+func isOperationEvent(data utils.EventData, operationID string) bool {
+	return operationID == "" || data.OperationID == "" || data.OperationID == operationID
+}
+
 // checkEventStream returns an error unless res is an open event stream, so a
 // response that can never carry a result fails right away.
 func checkEventStream(res *http.Response) error {
@@ -231,8 +250,9 @@ func checkEventStream(res *http.Response) error {
 }
 
 // waitForDeployResponse waits on the event stream for the result of an adapter
-// operation whose event details contain query.
-func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
+// operation whose event details contain query. When operationID is set, events
+// of other operations are ignored.
+func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query, operationID string) (string, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/events?client=cli_deploy"
 	method := "GET"
 	client := &http.Client{}
@@ -262,6 +282,9 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	// Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
+			if !isOperationEvent(i.Data, operationID) {
+				continue
+			}
 			if strings.Contains(i.Data.Details, query) {
 				eventChan <- "successful"
 				utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
@@ -289,8 +312,9 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 }
 
 // waitForValidateResponse waits on the event stream for the result of a
-// validation whose event summary contains query.
-func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
+// validation whose event summary contains query. When operationID is set,
+// events of other operations are ignored.
+func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query, operationID string) (string, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/events?client=cli_validate"
 	method := "GET"
 	client := &http.Client{}
@@ -321,6 +345,9 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	// Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
+			if !isOperationEvent(i.Data, operationID) {
+				continue
+			}
 			if strings.Contains(i.Data.Summary, query) {
 				eventChan <- "successful"
 				utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
