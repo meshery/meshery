@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/url"
 	"slices"
-	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -21,8 +20,8 @@ var serverAndNetworkErrors = []string{
 }
 
 // HandlePaginationAsync fetches and processes paginated results from the Meshery API,
-// appending page, pagesize, and search query parameters when they are not already
-// populated with non-empty values on displayData.UrlPath.
+// filling missing or empty page, pagesize, and search query values while preserving
+// non-empty values on displayData.UrlPath.
 func HandlePaginationAsync[T any](
 	displayData DisplayDataAsync,
 	pageHandlerFunc pageHandler[T],
@@ -45,35 +44,26 @@ func HandlePaginationAsync[T any](
 			utils.ClearLine()
 		}
 
-		urlPath := ""
-
-		var existingQuery url.Values
-		if parsedURL, err := url.Parse(displayData.UrlPath); err == nil {
-			existingQuery = parsedURL.Query()
+		parsedURL, err := url.Parse(displayData.UrlPath)
+		if err != nil {
+			return ErrPagination(err, currentPage)
 		}
 
-		pagesQuerySearch := url.Values{}
-		if existingQuery.Get("page") == "" {
-			pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
+		query := parsedURL.Query()
+		if query.Get("page") == "" {
+			query.Set("page", fmt.Sprintf("%d", currentPage))
 		}
 
-		if existingQuery.Get("pagesize") == "" {
-			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
+		if query.Get("pagesize") == "" {
+			query.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
 		}
 
-		if displayData.SearchTerm != "" && existingQuery.Get("search") == "" {
-			pagesQuerySearch.Set("search", displayData.SearchTerm)
+		if displayData.SearchTerm != "" && query.Get("search") == "" {
+			query.Set("search", displayData.SearchTerm)
 		}
 
-		encodedQuery := pagesQuerySearch.Encode()
-		switch {
-		case encodedQuery == "":
-			urlPath = displayData.UrlPath
-		case strings.Contains(displayData.UrlPath, "?"):
-			urlPath = fmt.Sprintf("%s&%s", displayData.UrlPath, encodedQuery)
-		default:
-			urlPath = fmt.Sprintf("%s?%s", displayData.UrlPath, encodedQuery)
-		}
+		parsedURL.RawQuery = query.Encode()
+		urlPath := parsedURL.String()
 
 		data, err := api.Fetch[T](urlPath)
 		if err != nil {
