@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"testing"
 
@@ -334,6 +335,82 @@ func TestPromptAsyncPagination(t *testing.T) {
 					assert.Equal(t, tt.expectItem.Name, result.Name)
 				}
 			}
+		})
+	}
+}
+
+func TestHandlePaginationAsyncPreservesExistingQueryParameters(t *testing.T) {
+	type items struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	}
+
+	utils.SetupContextEnv(t)
+	utils.StartMockery(t)
+	testContext := utils.NewTestHelper(t)
+
+	tests := []struct {
+		name        string
+		displayData DisplayDataAsync
+		expectedURL string
+	}{
+		{
+			name: "does not append trailing ampersand when page and pagesize are already in UrlPath",
+			displayData: DisplayDataAsync{
+				UrlPath:          "api/workspaces?orgId=org-1&page=1&pagesize=25",
+				Page:             2,
+				PageSize:         25,
+				DisplayCountOnly: true,
+				DataType:         "workspace",
+			},
+			expectedURL: "/api/workspaces?orgId=org-1&page=1&pagesize=25",
+		},
+		{
+			name: "does not duplicate search parameter when UrlPath already includes search",
+			displayData: DisplayDataAsync{
+				UrlPath:          "api/workspaces?orgId=org-1&search=my-workspace",
+				SearchTerm:       "my-workspace",
+				Page:             1,
+				PageSize:         10,
+				DisplayCountOnly: true,
+				DataType:         "workspace",
+			},
+			expectedURL: "/api/workspaces?orgId=org-1&search=my-workspace&page=0&pagesize=10",
+		},
+		{
+			name: "adds page and pagesize even when another query parameter or value contains page= or pagesize=",
+			displayData: DisplayDataAsync{
+				UrlPath:          "api/meshmodels/models?perpage=10&filter=pagesize=custom",
+				Page:             1,
+				PageSize:         10,
+				DisplayCountOnly: true,
+				DataType:         "model",
+			},
+			expectedURL: "/api/meshmodels/models?perpage=10&filter=pagesize=custom&page=0&pagesize=10",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			utils.TokenFlag = utils.GetToken(t)
+			defer func() {
+				utils.TokenFlag = "Not Set"
+			}()
+			httpmock.Reset()
+
+			var requestedURL string
+			httpmock.RegisterNoResponder(func(req *http.Request) (*http.Response, error) {
+				requestedURL = req.URL.RequestURI()
+				return httpmock.NewStringResponse(200, `[]`), nil
+			})
+
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+			err := ListAsyncPagination(tt.displayData, func(data *[]items) ([][]string, int64) {
+				return [][]string{}, 0
+			})
+			assert.NoError(t, err)
+			assert.Equal(t, testContext.BaseURL+tt.expectedURL, testContext.BaseURL+requestedURL)
 		})
 	}
 }

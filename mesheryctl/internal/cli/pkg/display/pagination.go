@@ -44,23 +44,32 @@ func HandlePaginationAsync[T any](
 
 		urlPath := ""
 
+		var existingQuery url.Values
+		if parsedURL, err := url.Parse(displayData.UrlPath); err == nil {
+			existingQuery = parsedURL.Query()
+		}
+
 		pagesQuerySearch := url.Values{}
-		if !strings.Contains(displayData.UrlPath, "page=") {
+		if !existingQuery.Has("page") {
 			pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
 		}
 
-		if !strings.Contains(displayData.UrlPath, "pagesize=") {
+		if !existingQuery.Has("pagesize") {
 			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
 		}
 
-		if displayData.SearchTerm != "" {
+		if displayData.SearchTerm != "" && !existingQuery.Has("search") {
 			pagesQuerySearch.Set("search", displayData.SearchTerm)
 		}
 
-		if strings.Contains(displayData.UrlPath, "?") {
-			urlPath = fmt.Sprintf("%s&%s", displayData.UrlPath, pagesQuerySearch.Encode())
-		} else {
-			urlPath = fmt.Sprintf("%s?%s", displayData.UrlPath, pagesQuerySearch.Encode())
+		encodedQuery := pagesQuerySearch.Encode()
+		switch {
+		case encodedQuery == "":
+			urlPath = displayData.UrlPath
+		case strings.Contains(displayData.UrlPath, "?"):
+			urlPath = fmt.Sprintf("%s&%s", displayData.UrlPath, encodedQuery)
+		default:
+			urlPath = fmt.Sprintf("%s?%s", displayData.UrlPath, encodedQuery)
 		}
 
 		data, err := api.Fetch[T](urlPath)
