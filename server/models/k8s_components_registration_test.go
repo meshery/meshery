@@ -200,12 +200,12 @@ func TestRegisterComponents_FailureResetsStatusAndAllowsRetry(t *testing.T) {
 	}
 
 	// Wait for background goroutine defer to finish
-	time.Sleep(100 * time.Millisecond)
+	require.Eventually(t, func() bool {
+		s, _ := cg.GetContextRegistrationStatus(ctxID)
+		return s == NotRegistered && len(mockProv.getEvents()) >= 2
+	}, 2*time.Second, 10*time.Millisecond)
 
-	cg.mx.RLock()
-	status := cg.ctxRegStatusMap[ctxID]
-	cg.mx.RUnlock()
-
+	status, _ := cg.GetContextRegistrationStatus(ctxID)
 	// Status must be reset to NotRegistered on failure to allow retry
 	require.Equal(t, NotRegistered, status, "status must be reset to NotRegistered on failure to allow retry")
 
@@ -232,11 +232,10 @@ func TestRegisterComponents_FailureResetsStatusAndAllowsRetry(t *testing.T) {
 		t.Fatal("timed out waiting for retry registration function to run; retry was dropped because status was falsely complete")
 	}
 
-	time.Sleep(100 * time.Millisecond)
-	cg.mx.RLock()
-	status = cg.ctxRegStatusMap[ctxID]
-	cg.mx.RUnlock()
-	require.Equal(t, RegistrationComplete, status, "status must be RegistrationComplete after successful retry")
+	require.Eventually(t, func() bool {
+		s, _ := cg.GetContextRegistrationStatus(ctxID)
+		return s == RegistrationComplete
+	}, 2*time.Second, 10*time.Millisecond, "status must be RegistrationComplete after successful retry")
 }
 
 // TestRegisterComponents_NilContextAndInvalidUserID verifies that RegisterComponents
@@ -294,4 +293,52 @@ func TestComponentsRegistrationHelper_RemoveContext(t *testing.T) {
 	status, exists = cg.GetContextRegistrationStatus(ctxID)
 	require.True(t, exists)
 	require.Equal(t, NotRegistered, status, "re-imported context must be NotRegistered")
+}
+
+// TestRegisterComponents_RemovedContextNotResurrected verifies that if a context is
+// removed via RemoveContext while registration is in-flight, the completing goroutine
+// does not resurrect the context in the status map or overwrite newer registrations.
+func TestRegisterComponents_RemovedContextNotResurrected(t *testing.T) {
+	log, err := logger.New("test", logger.Options{Format: logger.SyslogLogFormat, LogLevel: 0})
+	require.NoError(t, err)
+
+	cg := NewComponentsRegistrationHelper(log)
+	mockProv := &mockCompRegProvider{}
+	broadcaster := NewBroadcaster("test-broadcaster")
+	testUserID := uuid.Must(uuid.NewV4()).String()
+
+	ctxID := "ctx-inflight-remove"
+	k8sCtx := &K8sContext{ID: ctxID, Name: "test-inflight-cluster"}
+	cg.UpdateContexts([]*K8sContext{k8sCtx})
+
+	inFlight := make(chan struct{})
+	continueReg := make(chan struct{})
+
+	regFunc := func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID core.Uuid, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error {
+		close(inFlight)
+		<-continueReg
+		return nil
+	}
+
+	cg.RegisterComponents([]*K8sContext{k8sCtx}, []K8sRegistrationFunction{regFunc}, nil, broadcaster, mockProv, testUserID, false)
+
+	// Wait until registration function is actively executing
+	select {
+	case <-inFlight:
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for registration function to start")
+	}
+
+	// Context is deleted while registration is in flight
+	cg.RemoveContext(ctxID)
+	_, exists := cg.GetContextRegistrationStatus(ctxID)
+	require.False(t, exists, "context must be removed from map")
+
+	// Allow in-flight registration to finish
+	close(continueReg)
+
+	// Wait briefly and verify that the context was NOT resurrected into ctxRegStatusMap
+	time.Sleep(100 * time.Millisecond)
+	_, exists = cg.GetContextRegistrationStatus(ctxID)
+	require.False(t, exists, "lingering registration must not resurrect removed context")
 }

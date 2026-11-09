@@ -55,6 +55,7 @@ type ComponentsRegistrationHelper struct {
 	// map that holds the registration status of each of the contexts in this runtime of the server
 	// it should be private
 	ctxRegStatusMap map[string]RegistrationStatus
+	ctxRegTokenMap  map[string]uint64
 	log             logger.Handler
 	mx              sync.RWMutex
 }
@@ -63,6 +64,7 @@ type ComponentsRegistrationHelper struct {
 func NewComponentsRegistrationHelper(logger logger.Handler) *ComponentsRegistrationHelper {
 	return &ComponentsRegistrationHelper{
 		ctxRegStatusMap: make(map[string]RegistrationStatus),
+		ctxRegTokenMap:  make(map[string]uint64),
 		log:             logger,
 		mx:              sync.RWMutex{},
 	}
@@ -94,6 +96,7 @@ func (cg *ComponentsRegistrationHelper) RemoveContext(ctxID string) *ComponentsR
 	cg.mx.Lock()
 	defer cg.mx.Unlock()
 	delete(cg.ctxRegStatusMap, ctxID)
+	delete(cg.ctxRegTokenMap, ctxID)
 	return cg
 }
 
@@ -140,6 +143,8 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 
 		// update the status
 		cg.ctxRegStatusMap[ctxID] = Registering
+		regToken := cg.ctxRegTokenMap[ctxID] + 1
+		cg.ctxRegTokenMap[ctxID] = regToken
 		cg.mx.Unlock()
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
 
@@ -150,10 +155,17 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 			cg.log.Warn(err)
 		}
 
-		go func(ctx *K8sContext, ctxID string, connectionID core.Uuid, ctxName string, mesheryInstanceID core.Uuid) {
+		go func(ctx *K8sContext, ctxID string, connectionID core.Uuid, ctxName string, mesheryInstanceID core.Uuid, regToken uint64) {
 			var regErr error
 			defer func() {
 				cg.mx.Lock()
+				// Only update status and emit events if context was not removed
+				// and this registration generation is still current.
+				currentToken, exists := cg.ctxRegTokenMap[ctxID]
+				if !exists || currentToken != regToken {
+					cg.mx.Unlock()
+					return
+				}
 				if regErr != nil {
 					cg.ctxRegStatusMap[ctxID] = NotRegistered
 				} else {
@@ -196,7 +208,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 					return
 				}
 			}
-		}(ctx, ctxID, connectionID, ctxName, mesheryInstanceID)
+		}(ctx, ctxID, connectionID, ctxName, mesheryInstanceID, regToken)
 	}
 }
 
