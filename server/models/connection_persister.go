@@ -13,6 +13,7 @@ import (
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/database"
 	schemasConnection "github.com/meshery/schemas/models/v1beta3/connection"
+	schemasEnv "github.com/meshery/schemas/models/v1beta3/environment"
 	"gorm.io/gorm"
 )
 
@@ -210,6 +211,8 @@ func (cp *ConnectionPersister) SaveConnection(connection *connections.Connection
 	return connection, err
 }
 
+// DeleteConnectionById deletes a connection by its ID.
+// Any related Kubernetes context and environment connection mappings are also removed.
 func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*connections.Connection, error) {
 	connection := connections.Connection{}
 	err := cp.DB.Where("id = ?", connectionID).First(&connection).Error
@@ -230,6 +233,9 @@ func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*co
 	// connection and its context therefore go together or not at all.
 	err = cp.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Delete(connection).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("connection_id = ?", connection.ID.String()).Delete(&schemasEnv.EnvironmentConnectionMapping{}).Error; err != nil {
 			return err
 		}
 		if connection.Kind != "kubernetes" {

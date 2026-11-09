@@ -120,20 +120,26 @@ func (ep *EnvironmentPersister) SaveEnvironment(environment *environment.Environ
 	return envJSON, nil
 }
 
-func (ep *EnvironmentPersister) DeleteEnvironment(environment *environment.Environment) ([]byte, error) {
-	err := ep.DB.Model(&environment).Find(&environment).Error
+// DeleteEnvironment deletes an environment and cleans up its connection mappings.
+func (ep *EnvironmentPersister) DeleteEnvironment(env *environment.Environment) ([]byte, error) {
+	err := ep.DB.Model(&env).Find(&env).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, ErrResultNotFound(err)
 		}
 	}
-	err = ep.DB.Delete(environment).Error
+	err = ep.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Delete(env).Error; err != nil {
+			return err
+		}
+		return tx.Where("environment_id = ?", env.ID).Delete(&environment.EnvironmentConnectionMapping{}).Error
+	})
 	if err != nil {
 		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
 	}
 
 	// Marshal the environment to JSON
-	envJSON, err := json.Marshal(environment)
+	envJSON, err := json.Marshal(env)
 	if err != nil {
 		return nil, err
 	}
@@ -202,8 +208,18 @@ func (ep *EnvironmentPersister) DeleteEnvironmentByID(environmentID core.Uuid) (
 	return ep.DeleteEnvironment(env)
 }
 
-// AddConnectionToEnvironment adds a connection to an environment
+// AddConnectionToEnvironment adds a connection to an environment. Adding one the
+// environment already has returns the existing mapping instead of a second row.
 func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connectionID core.Uuid) ([]byte, error) {
+	var existing environment.EnvironmentConnectionMapping
+	found := ep.DB.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).Limit(1).Find(&existing)
+	if found.Error != nil {
+		return nil, ErrDBRead(found.Error)
+	}
+	if found.RowsAffected > 0 {
+		return json.Marshal(existing)
+	}
+
 	envConMapping := environment.EnvironmentConnectionMapping{
 		ConnectionID:  &connectionID,
 		EnvironmentID: &environmentID,
@@ -313,7 +329,9 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 	return connsJSON, nil
 }
 
-// DeleteConnectionFromEnvironment deletes a connection from an environment
+// DeleteConnectionFromEnvironment deletes a connection from an environment.
+// Every mapping of the pair is deleted, including duplicates stored before
+// assignments were checked.
 func (ep *EnvironmentPersister) DeleteConnectionFromEnvironment(environmentID, connectionID core.Uuid) ([]byte, error) {
 	var envConMapping environment.EnvironmentConnectionMapping
 
@@ -325,8 +343,9 @@ func (ep *EnvironmentPersister) DeleteConnectionFromEnvironment(environmentID, c
 		return nil, ErrDBRead(err)
 	}
 
-	// Delete the connection mapping
-	if err := ep.DB.Delete(&envConMapping).Error; err != nil {
+	// Delete every mapping of the pair, including duplicates stored before
+	// assignments were checked.
+	if err := ep.DB.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).Delete(&environment.EnvironmentConnectionMapping{}).Error; err != nil {
 		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
 	}
 
