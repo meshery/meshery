@@ -215,7 +215,7 @@ export const useLazyGetConnectionsQuery = () => {
     trigger(
       {
         page: queryArg?.page?.toString(),
-        pagesize: queryArg?.pagesize?.toString(),
+        pageSize: (queryArg?.pageSize ?? queryArg?.pagesize)?.toString(),
         search: queryArg?.search,
         order: queryArg?.order,
         status: queryArg?.status,

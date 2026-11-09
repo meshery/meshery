@@ -322,7 +322,7 @@ function MesheryPatterns({
         setMeshModels(models);
       } catch (err) {
         console.error(err);
-        handleError(ACTION_TYPES.SCHEMA_FETCH);
+        handleError(ACTION_TYPES.SCHEMA_FETCH)(err);
       }
 
       catalogVisibilityRef.current = catalogVisibility;
