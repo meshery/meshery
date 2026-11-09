@@ -515,7 +515,9 @@ const maxErrorBodyBytes = 512
 // name and a string token is rejected, so a failed login can never replace
 // existing credentials. An empty token is valid: the Local provider issues one.
 func parseTokenResponse(resp *http.Response) ([]byte, error) {
-	body, err := io.ReadAll(io.LimitReader(resp.Body, maxTokenResponseBytes))
+	// Read one byte past the limit so an oversized body is rejected rather than
+	// silently truncated into something that might still parse.
+	body, err := io.ReadAll(io.LimitReader(resp.Body, maxTokenResponseBytes+1))
 	if err != nil {
 		return nil, ErrReadResponseBody(err)
 	}
@@ -532,6 +534,9 @@ func parseTokenResponse(resp *http.Response) ([]byte, error) {
 	}
 	if ContentTypeIsHTML(resp) {
 		return nil, ErrUnauthenticated()
+	}
+	if len(body) > maxTokenResponseBytes {
+		return nil, ErrUnmarshal(errors.New("token response exceeds the maximum allowed size"))
 	}
 
 	var tokenObj struct {
