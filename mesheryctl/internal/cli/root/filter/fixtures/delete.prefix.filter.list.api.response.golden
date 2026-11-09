@@ -1,0 +1,35 @@
+{
+  "page": 0,
+  "pageSize": 25,
+  "totalCount": 2,
+  "filters": [
+    {
+      "id": "1b4e28ba-2fa1-4d3b-a3f5-ef19b5a7633b",
+      "name": "envoy",
+      "owner": "990f779c-708d-4396-84b8-e2ba37c1adcc",
+      "filterFile": "name: envoy\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "createdAt": "2021-07-30T13:37:03.729663Z",
+      "updatedAt": "2021-07-30T14:14:10.672636Z"
+    },
+    {
+      "id": "6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b",
+      "name": "envoy-wasm",
+      "owner": "990f779c-708d-4396-84b8-e2ba37c1adcc",
+      "filterFile": "name: envoy-wasm\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "createdAt": "2021-07-30T13:59:24.971527Z",
+      "updatedAt": "2021-07-30T13:59:24.971536Z"
+    }
+  ]
+}

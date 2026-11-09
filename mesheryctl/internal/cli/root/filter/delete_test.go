@@ -1,6 +1,7 @@
 package filter
 
 import (
+	"errors"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -32,7 +33,7 @@ func TestDeleteCmd(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/filter?page_size=10000",
+					URL:          testContext.BaseURL + "/api/filter?pagesize=10000",
 					Response:     "filter.list.api.response.golden",
 					ResponseCode: 200,
 				},
@@ -51,13 +52,45 @@ func TestDeleteCmd(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/filter?page_size=10000",
+					URL:          testContext.BaseURL + "/api/filter?pagesize=10000",
 					Response:     "filter.list.api.response.golden",
 					ResponseCode: 200,
 				},
 			},
 			ExpectedResponse: "delete.rollout.output.golden",
 			ExpectError:      false,
+		}, {
+			Name: "Delete exact name that is also a prefix of another name",
+			Args: []string{"delete", "envoy"},
+			URLs: []utils.MockURL{
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/filter/1b4e28ba-2fa1-4d3b-a3f5-ef19b5a7633b",
+					Response:     "delete.envoy.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/filter?pagesize=10000",
+					Response:     "delete.prefix.filter.list.api.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectedResponse: "delete.envoy.output.golden",
+			ExpectError:      false,
+		}, {
+			Name: "Delete with a name prefix shared by more than one filter",
+			Args: []string{"delete", "env"},
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/filter?pagesize=10000",
+					Response:     "delete.prefix.filter.list.api.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidNameOrID(errors.New(`"env" matches more than one filter (envoy, envoy-wasm); use the full name or the ID`)),
 		},
 	}
 
