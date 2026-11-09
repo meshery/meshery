@@ -282,6 +282,119 @@ func newTestLocalProviderForTracker(t *testing.T) *DefaultLocalProvider {
 	return lp
 }
 
+// TestProviderTracker_SnapshotDeliveredBeforeLiveUpdates asserts the
+// snapshot is always delivered before live updates, in full: a subscriber
+// sees one event per registered provider (the snapshot taken at Subscribe
+// time) before any Publish that happens after Subscribe returns, even when
+// the snapshot is larger than the old 32-event channel buffer.
+func TestProviderTracker_SnapshotDeliveredBeforeLiveUpdates(t *testing.T) {
+	log := newTestLogger(t)
+	providers := map[string]Provider{
+		LocalProviderName: newTestLocalProviderForTracker(t),
+	}
+	tracker := NewProviderTracker(providers, log)
+
+	// 40 snapshot entries: more than the 32-event buffer the old replay
+	// goroutine used, so a drop-prone replay would lose events here.
+	const extra = 40
+	tracker.mu.Lock()
+	for i := 0; i < extra; i++ {
+		key := "provider-" + string(rune('a'+i))
+		tracker.statuses[key] = ProviderStatusEvent{
+			Key:    key,
+			Status: ProviderStatusOnline,
+		}
+	}
+	tracker.mu.Unlock()
+	total := extra + 1 // plus the local provider
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	events, unsubscribe := tracker.Subscribe(ctx)
+	defer unsubscribe()
+
+	// A live update for an existing key, published after Subscribe
+	// returns, must arrive after the whole snapshot, never before it.
+	tracker.Publish(ProviderStatusEvent{
+		Key:    "provider-a",
+		Status: ProviderStatusOffline,
+		Error:  "test injected",
+	})
+
+	// Read the snapshot plus the one live event.
+	got := make([]ProviderStatusEvent, 0, total+1)
+	timeout := time.After(5 * time.Second)
+	for len(got) < total+1 {
+		select {
+		case evt, ok := <-events:
+			if !ok {
+				t.Fatalf("channel closed after %d events, want %d", len(got), total+1)
+			}
+			got = append(got, evt)
+		case <-timeout:
+			t.Fatalf("received %d events, want %d (snapshot incomplete or live update lost)", len(got), total+1)
+		}
+	}
+
+	// The live event must be last; everything before it is the snapshot.
+	live := got[len(got)-1]
+	if live.Key != "provider-a" || live.Status != ProviderStatusOffline {
+		t.Fatalf("last event = %+v, want live update for provider-a Offline", live)
+	}
+	seen := make(map[string]ProviderStatusEvent, total)
+	for _, evt := range got[:len(got)-1] {
+		if _, dup := seen[evt.Key]; dup {
+			t.Fatalf("duplicate snapshot event for key %q", evt.Key)
+		}
+		if evt.Key == "provider-a" && evt.Status != ProviderStatusOnline {
+			t.Fatalf("snapshot event for provider-a has status %q, want Online (live update overtook snapshot)", evt.Status)
+		}
+		seen[evt.Key] = evt
+	}
+	if len(seen) != total {
+		t.Fatalf("snapshot delivered %d distinct keys, want %d", len(seen), total)
+	}
+}
+
+// TestProviderTracker_ConcurrentUnsubscribeAndPublishDoesNotPanic asserts that
+// concurrent Publish calls and unsubscribe calls do not race into a send on a
+// closed channel.
+func TestProviderTracker_ConcurrentUnsubscribeAndPublishDoesNotPanic(t *testing.T) {
+	log := newTestLogger(t)
+	providers := map[string]Provider{
+		LocalProviderName: newTestLocalProviderForTracker(t),
+	}
+	tracker := NewProviderTracker(providers, log)
+
+	done := make(chan struct{})
+	go func() {
+		for i := 0; i < 500; i++ {
+			tracker.Publish(ProviderStatusEvent{
+				Key:    "churn",
+				Status: ProviderStatusOnline,
+			})
+			time.Sleep(10 * time.Microsecond)
+		}
+		close(done)
+	}()
+
+	for i := 0; i < 200; i++ {
+		ctx, cancel := context.WithCancel(context.Background())
+		ch, unsubscribe := tracker.Subscribe(ctx)
+
+		go func() {
+			time.Sleep(5 * time.Microsecond)
+			unsubscribe()
+			cancel()
+		}()
+
+		for range ch {
+		}
+	}
+
+	<-done
+}
+
 func mapKeys[K comparable, V any](m map[K]V) []K {
 	out := make([]K, 0, len(m))
 	for k := range m {

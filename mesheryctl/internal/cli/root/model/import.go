@@ -12,6 +12,9 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+
+	// this import will be kept during the /api/meshmodels deprecation window
+	// https://github.com/meshery/schemas/blob/1ff443e239d14d2a4415e4dca2bdfa4e306b52e2/build/lib/config.js#L116
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/encoding"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
