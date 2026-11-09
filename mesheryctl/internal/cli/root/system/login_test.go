@@ -92,13 +92,13 @@ func redirectTo(code int) http.HandlerFunc {
 	}
 }
 
-// oversizedTokenBody returns a valid token object padded with whitespace to the
-// 1 MiB read limit and followed by invalid data. Truncating it at the limit
-// would leave a parseable object, so it must be rejected as oversized.
+// oversizedTokenBody returns a valid token object padded with whitespace through
+// one byte past the 1 MiB read limit and followed by invalid data. Everything
+// the reader takes in still parses, so only the size check can reject it.
 func oversizedTokenBody() string {
 	const limit = 1 << 20
 	obj := `{"meshery-provider":"Local","token":"truncated"}`
-	return obj + strings.Repeat(" ", limit-len(obj)) + "not json"
+	return obj + strings.Repeat(" ", limit+1-len(obj)) + "not json"
 }
 
 // runLogin executes `system login -p Local` through the root system command.
@@ -162,6 +162,7 @@ func TestLoginRejectsInvalidTokenResponse(t *testing.T) {
 		{"403 text", respond(http.StatusForbidden, "text/plain", "forbidden")},
 		{"500 JSON", respond(http.StatusInternalServerError, "application/json", `{"message":"boom"}`)},
 		{"200 HTML", respond(http.StatusOK, "text/html; charset=utf-8", "<html><body>Sign in</body></html>")},
+		{"200 HTML with uppercase content type", respond(http.StatusOK, "Text/HTML", "<html><body>Sign in</body></html>")},
 		{"200 malformed JSON", respond(http.StatusOK, "application/json", `{"token": "abc"`)},
 		{"200 empty body", respond(http.StatusOK, "", "")},
 		{"200 JSON without either field", respond(http.StatusOK, "application/json", `{"status":"error"}`)},
