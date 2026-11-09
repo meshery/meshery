@@ -238,10 +238,12 @@ export const eventsSlice = createSlice({
     openNotificationCenter: (state, action) => {
       console.log('Opening notification center with view:', action.payload);
       state.isNotificationCenterOpen = true;
-      state.view_to_fetch_on_open =
-        action.payload.view_to_open || initialState.view_to_fetch_on_open;
-      if (action.payload.view_to_open) {
-        state.current_view = action.payload.view_to_open;
+      const viewToOpen = isSerializable(action.payload.view_to_open)
+        ? action.payload.view_to_open
+        : undefined;
+      state.view_to_fetch_on_open = viewToOpen || initialState.view_to_fetch_on_open;
+      if (viewToOpen) {
+        state.current_view = viewToOpen;
       }
 
       if (action.payload.ui) {

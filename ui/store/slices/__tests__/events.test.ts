@@ -333,6 +333,34 @@ describe('openNotificationCenter', () => {
     expect(state.ui.empty_message).toBe('No notifications found');
   });
 
+  it('drops a view_to_open that is not serializable', () => {
+    const initial = eventsReducer(undefined, { type: 'unknown' });
+    const state = eventsReducer(
+      initial,
+      openNotificationCenter({
+        view_to_open: { page: 1, at: new Date(), onSelect: () => {} },
+      }),
+    );
+    expect(state.isNotificationCenterOpen).toBe(true);
+    expect(state.view_to_fetch_on_open).toEqual(initial.view_to_fetch_on_open);
+    expect(state.current_view).toEqual(initial.current_view);
+  });
+
+  it('applies a serializable view_to_open', () => {
+    const initial = eventsReducer(undefined, { type: 'unknown' });
+    const view = { page: 2, filters: { status: 'read' } };
+    const state = eventsReducer(initial, openNotificationCenter({ view_to_open: view }));
+    expect(state.view_to_fetch_on_open).toEqual(view);
+    expect(state.current_view).toEqual(view);
+  });
+
+  it('applies a view_to_open given as a name', () => {
+    const initial = eventsReducer(undefined, { type: 'unknown' });
+    const state = eventsReducer(initial, openNotificationCenter({ view_to_open: 'history' }));
+    expect(state.view_to_fetch_on_open).toBe('history');
+    expect(state.current_view).toBe('history');
+  });
+
   it('closeNotificationCenter resets ui to the defaults', () => {
     const opened = open({ icon: 'error', title: 'Errors' });
     const closed = eventsReducer(opened, closeNotificationCenter());
