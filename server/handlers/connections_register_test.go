@@ -89,7 +89,6 @@ func TestProcessConnectionRegistrationRegistersKindsWithoutVerifyAction(t *testi
 	}
 }
 
-
 func TestProcessConnectionRegistrationReturnsErrorWhenRegistryLookupFails(t *testing.T) {
 	rm, db := newTestRegistryManager(t)
 
