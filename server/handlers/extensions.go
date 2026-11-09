@@ -11,6 +11,7 @@ import (
 
 	"github.com/meshery/meshery/server/extensions"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
 )
 
 var (
@@ -126,6 +127,12 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Reques
 func (h *Handler) ExtensionsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	resp, err := provider.ExtensionProxy(req)
 	if err != nil {
+		if errors.GetCode(err) == models.ErrInvalidExtensionProxyPathCode {
+			h.log.Error(err)
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
+
 		// ExtensionProxy can fail for two distinct classes of reasons:
 		//   1. The active provider doesn't support the call at all — the
 		//      local provider always returns ErrLocalProviderSupport,

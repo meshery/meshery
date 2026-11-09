@@ -4557,10 +4557,13 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error) {
 	l.Log.Info("attempting to request remote provider")
 	// gets the requested path from user_account extension UI in Meshery UI
-	// splits the requested path into '/api/extensions' and '/<remote-provider-endpoint>'
+	// validates that the path begins with '/api/extensions' and extracts '/<remote-provider-endpoint>'
 	p := req.URL.Path
-	split := strings.Split(p, "/api/extensions")
-	path := split[1]
+	const extensionsPrefix = "/api/extensions"
+	if p != extensionsPrefix && !strings.HasPrefix(p, extensionsPrefix+"/") {
+		return nil, ErrInvalidExtensionProxyPath(p)
+	}
+	path := strings.TrimPrefix(p, extensionsPrefix)
 	// gets the available query parameters
 	q := req.URL.Query().Encode()
 	if len(q) > 0 {

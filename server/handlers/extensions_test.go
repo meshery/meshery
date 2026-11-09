@@ -1,11 +1,14 @@
 package handlers
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/logger"
 )
 
 // TestLoadExtensionFromPackageOpensPluginOnce checks that a failed plugin load
@@ -51,5 +54,38 @@ func TestLoadExtensionFromPackageOpensPluginOnce(t *testing.T) {
 	mx.Unlock()
 	if !ok || recorded != first {
 		t.Fatalf("expected the load outcome to be recorded for %s", pluginPath)
+	}
+}
+
+type mockExtensionProxyProvider struct {
+	*models.DefaultLocalProvider
+	err error
+}
+
+func (m *mockExtensionProxyProvider) ExtensionProxy(req *http.Request) (*models.ExtensionProxyResponse, error) {
+	return nil, m.err
+}
+
+func TestExtensionsHandler_InvalidPathReturnsBadRequest(t *testing.T) {
+	log, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	h := &Handler{
+		log: log,
+	}
+
+	mockP := &mockExtensionProxyProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		err:                  models.ErrInvalidExtensionProxyPath("/invalid/path"),
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/invalid/path", nil)
+	rec := httptest.NewRecorder()
+
+	h.ExtensionsHandler(rec, req, nil, nil, mockP)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected HTTP 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
 	}
 }
