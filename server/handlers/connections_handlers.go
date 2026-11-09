@@ -694,6 +694,13 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		writeMeshkitError(w, _err, providerStatusOrInternal(err))
 		return
 	}
+	// The initial lookup may fail even when deletion succeeds.
+	// Use the deleted connection's details when the provider returns them.
+	if deletedConnection != nil &&
+		deletedConnection.Kind == "kubernetes" &&
+		deletedConnection.Status == connections.ConnectionStatus(machines.NOTFOUND) {
+		resolvesUnreachable = true
+	}
 
 	// Nothing can drive a deleted connection's machine any more; left in the
 	// tracker, the Kubernetes middlewares would keep probing it.

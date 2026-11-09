@@ -264,3 +264,33 @@ func TestSaveMesheryFilterDeletedDuringSaveIsError(t *testing.T) {
 		t.Errorf("rows = %d, want the deleted filter to stay deleted", n)
 	}
 }
+
+func TestDeleteMesheryFilterNotFound(t *testing.T) {
+	_, mfp := newFilterPersisterTestDB(t)
+	id := uuid.Must(uuid.NewV4())
+
+	_, err := mfp.DeleteMesheryFilter(id)
+	if err == nil {
+		t.Fatalf("expected error deleting non-existent filter, got nil")
+	}
+	if code := mkerrors.GetCode(err); code != ErrResultNotFoundCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrResultNotFoundCode, err)
+	}
+}
+
+func TestDeleteMesheryFilterExisting(t *testing.T) {
+	db, mfp := newFilterPersisterTestDB(t)
+	id := seedPublishedFilter(t, db)
+
+	resp, err := mfp.DeleteMesheryFilter(id)
+	if err != nil {
+		t.Fatalf("unexpected error deleting existing filter: %v", err)
+	}
+	if len(resp) == 0 {
+		t.Errorf("expected non-empty response bytes, got empty")
+	}
+
+	if n := countFilters(t, db); n != 0 {
+		t.Errorf("rows = %d, want 0 after deletion", n)
+	}
+}
