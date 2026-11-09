@@ -25,7 +25,7 @@ func (p *loadContextsProvider) LoadAllK8sContext(string) ([]*models.K8sContext, 
 	return p.contexts, p.err
 }
 
-func runKubernetesMiddleware(t *testing.T, prov models.Provider) (context.Context, error, string) {
+func runKubernetesMiddleware(t *testing.T, prov models.Provider) (context.Context, string, error) {
 	t.Helper()
 
 	var out bytes.Buffer
@@ -38,7 +38,7 @@ func runKubernetesMiddleware(t *testing.T, prov models.Provider) (context.Contex
 	user := &models.User{ID: uuid.Must(uuid.NewV4())}
 
 	resCtx, err := KubernetesMiddleware(ctx, h, prov, user, []string{"all"})
-	return resCtx, err, out.String()
+	return resCtx, out.String(), err
 }
 
 // A failed context read must be logged with its cause, distinctly from an
@@ -46,7 +46,7 @@ func runKubernetesMiddleware(t *testing.T, prov models.Provider) (context.Contex
 func TestKubernetesMiddleware_LoadContextsError(t *testing.T) {
 	prov := &loadContextsProvider{err: errors.New("database is unavailable")}
 
-	resCtx, err, logs := runKubernetesMiddleware(t, prov)
+	resCtx, logs, err := runKubernetesMiddleware(t, prov)
 
 	if err != nil {
 		t.Fatalf("expected the request to proceed, got error %v", err)
@@ -66,7 +66,7 @@ func TestKubernetesMiddleware_LoadContextsError(t *testing.T) {
 }
 
 func TestKubernetesMiddleware_NoContexts(t *testing.T) {
-	resCtx, err, logs := runKubernetesMiddleware(t, &loadContextsProvider{})
+	resCtx, logs, err := runKubernetesMiddleware(t, &loadContextsProvider{})
 
 	if err != nil {
 		t.Fatalf("expected the request to proceed, got error %v", err)
