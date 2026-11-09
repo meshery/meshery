@@ -1,12 +1,15 @@
 package models
 
 import (
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/meshery/meshkit/errors"
 )
 
+// TestExtensionProxy_InvalidPaths verifies that malformed paths or SSRF authority injection
+// attempts are rejected with ErrInvalidExtensionProxyPathCode without crashing the server.
 func TestExtensionProxy_InvalidPaths(t *testing.T) {
 	provider := newTestRemoteProvider(t, "http://remote.example")
 
@@ -67,49 +70,62 @@ func TestExtensionProxy_InvalidPaths(t *testing.T) {
 	}
 }
 
+// TestExtensionProxy_ValidPathPreservation asserts that valid extension proxy paths are
+// correctly forwarded to the remote provider without truncation or corruption.
 func TestExtensionProxy_ValidPathPreservation(t *testing.T) {
-	provider := newTestRemoteProvider(t, "http://remote.example")
+	var receivedPath string
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		receivedPath = r.URL.Path
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"status":"ok"}`))
+	}))
+	defer ts.Close()
+
+	provider := newTestRemoteProvider(t, ts.URL)
 
 	validPaths := []struct {
-		name string
-		path string
+		name         string
+		path         string
+		expectedPath string
 	}{
 		{
-			name: "exact extensions root",
-			path: "/api/extensions",
+			name:         "exact extensions root",
+			path:         "/api/extensions",
+			expectedPath: "/",
 		},
 		{
-			name: "extensions trailing slash",
-			path: "/api/extensions/",
+			name:         "extensions trailing slash",
+			path:         "/api/extensions/",
+			expectedPath: "/",
 		},
 		{
-			name: "valid subpath",
-			path: "/api/extensions/users",
+			name:         "valid subpath",
+			path:         "/api/extensions/users",
+			expectedPath: "/users",
 		},
 		{
-			name: "nested extensions substring",
-			path: "/api/extensions/deep/api/extensions/sub",
+			name:         "nested extensions substring",
+			path:         "/api/extensions/deep/api/extensions/sub",
+			expectedPath: "/deep/api/extensions/sub",
 		},
 	}
 
 	for _, tc := range validPaths {
 		t.Run(tc.name, func(t *testing.T) {
+			receivedPath = ""
 			req := httptest.NewRequest("GET", tc.path, nil)
+			req.AddCookie(&http.Cookie{Name: TokenCookieName, Value: "test-token"})
 
-			// We expect the call to pass path validation.
-			// It will fail at GetToken (because no token cookie is provided in this test request),
-			// which proves path validation succeeded without ErrInvalidExtensionProxyPathCode.
-			_, err := provider.ExtensionProxy(req)
-			if err == nil {
-				t.Fatalf("expected error at GetToken stage, got nil")
+			resp, err := provider.ExtensionProxy(req)
+			if err != nil {
+				t.Fatalf("unexpected error for path %q: %v", tc.path, err)
+			}
+			if resp == nil || resp.StatusCode != http.StatusOK {
+				t.Fatalf("expected status 200 OK, got %+v", resp)
 			}
 
-			code := errors.GetCode(err)
-			if code == ErrInvalidExtensionProxyPathCode {
-				t.Fatalf("path %q was unexpectedly rejected as invalid extension proxy path: %v", tc.path, err)
-			}
-			if code != ErrGetTokenCode {
-				t.Fatalf("expected error code %q (GetToken stage), got %q (err: %v)", ErrGetTokenCode, code, err)
+			if receivedPath != tc.expectedPath {
+				t.Fatalf("expected upstream forwarded path %q, got %q", tc.expectedPath, receivedPath)
 			}
 		})
 	}

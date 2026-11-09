@@ -57,6 +57,7 @@ func TestLoadExtensionFromPackageOpensPluginOnce(t *testing.T) {
 	}
 }
 
+// mockExtensionProxyProvider is a test provider mock for ExtensionProxy scenarios.
 type mockExtensionProxyProvider struct {
 	*models.DefaultLocalProvider
 	err error
@@ -66,6 +67,8 @@ func (m *mockExtensionProxyProvider) ExtensionProxy(req *http.Request) (*models.
 	return nil, m.err
 }
 
+// TestExtensionsHandler_InvalidPathReturnsBadRequest verifies that client path validation
+// errors return HTTP 400 Bad Request with the structured MeshKit error.
 func TestExtensionsHandler_InvalidPathReturnsBadRequest(t *testing.T) {
 	log, err := logger.New("test", logger.Options{})
 	if err != nil {
