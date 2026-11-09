@@ -535,7 +535,9 @@ func main() {
 		methodNotAllowed := r.S.MethodNotAllowedHandler
 		if methodNotAllowed == nil {
 			methodNotAllowed = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-				http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusMethodNotAllowed)
+				_, _ = w.Write([]byte(`{"error":"Method Not Allowed"}`))
 			})
 		}
 		r.S.MethodNotAllowedHandler = m.HTTPMiddleware()(methodNotAllowed)
