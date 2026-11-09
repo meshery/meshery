@@ -40,9 +40,24 @@ var (
 var RegistryCmd = &cobra.Command{
 	Use:   "registry",
 	Short: "Manage the capability registry",
-	Long: `Manage the state and contents of Meshery’s internal registry of capabilities.
+	Long: `Generate, publish, update, and purge models and components in Meshery's capability registry.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/registry`,
-	Example: `mesheryctl registry [subcommand]`,
+	Example: `
+// Generate models from a spreadsheet
+mesheryctl registry generate --spreadsheet-id [spreadsheet-id] --spreadsheet-cred [base64-encoded-csv-content]
+
+// Publish models to Meshery Cloud / Remote Provider
+mesheryctl registry publish
+
+// Update models from spreadsheets or website
+mesheryctl registry update
+
+// Dry run purging models directory, keeping only the latest version of each model
+mesheryctl registry purge ./models --dry-run
+
+// Purge older model versions, retaining the latest 2 versions per model
+mesheryctl registry purge ./models --retain 2
+`,
 
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		setupRegistryLogger()
