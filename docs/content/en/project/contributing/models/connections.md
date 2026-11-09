@@ -249,7 +249,7 @@ The Connection's `metadata` contains non-secret endpoint and inference settings.
 | `baseUrl` | Required | Absolute provider API URL. Supply a provider default only when the provider has a stable default endpoint. |
 | `defaultModel` | Required | Model identifier sent for inference when a request does not choose a model. |
 | `timeoutSeconds` | Required | Positive request timeout. The server may impose a stricter deployment-wide maximum. |
-| `hostingMode` | Required | `cloud`, `local`, or `selfHosted`. This describes where the endpoint runs; it is not inferred from its URL or provider name. |
+| `hostingMode` | Required | `cloud`, `local`, or `selfhosted`. This describes where the endpoint runs; it is not inferred from its URL or provider name. |
 | `localOnly` | Required | Boolean policy declaration. `true` means requests and prompt data must remain within the operator's configured trust boundary; do not silently fall back to a cloud service. |
 | `health` | System-managed, optional until first check | Sanitized health summary: `lastCheckedAt`, `lastSuccessAt`, and a stable `reasonCode`. Clients cannot set it. Never put raw provider responses, prompts, credentials, or unfiltered error text here. |
 
@@ -266,7 +266,9 @@ Credentials use the existing Meshery Credential resource and the provider's `cre
 
 The definition must make this distinction visible in `credentialSchema`: mark authentication fields `required` for providers that always require them; keep them optional for providers that can run anonymously; omit the credential schema only when that provider cannot accept credentials. A self-hosted endpoint that requires authentication follows the same Credential path as a cloud endpoint.
 
-Raw keys and tokens are write-only inputs. After save, credential responses must omit secret values, and logs, error messages, prompts, model context, generated Designs, and Connection metadata must not contain them. AI request code must resolve credentials through the existing credential-secret helpers, not index the persisted `secret` map directly. Before AI provider clients ship, the standard credential API must enforce write-only responses and redact secrets on every error path.
+Raw keys and tokens are write-only inputs. After save, credential responses must omit secret values, and logs, error messages, prompts, model context, generated Designs, and Connection metadata must not contain them. AI request code must resolve credentials through the existing credential-secret helpers, not index the persisted `secret` map directly.
+
+**Current behavior:** write-only credential responses are not implemented yet. The Local provider's credential detail and list APIs currently serialize stored credentials with their `secret` field. This PR defines the requirement; it does not change the existing API behavior. Track and complete the required API and response-redaction work in [#23096](https://github.com/meshery/meshery/issues/23096) before shipping AI provider clients. Remote provider response behavior must also be covered by that work.
 
 ### Health and lifecycle
 
