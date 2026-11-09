@@ -88,3 +88,49 @@ func TestProcessConnectionRegistrationRegistersKindsWithoutVerifyAction(t *testi
 		})
 	}
 }
+
+
+func TestProcessConnectionRegistrationReturnsErrorWhenRegistryLookupFails(t *testing.T) {
+	rm, db := newTestRegistryManager(t)
+
+	// Simulate a registry database failure.
+	if err := db.DBClose(); err != nil {
+		t.Fatalf("close registry database: %v", err)
+	}
+
+	systemID := uuid.Must(uuid.NewV4())
+	h := &Handler{
+		log:             newTestLogger(t),
+		SystemID:        &systemID,
+		registryManager: rm,
+	}
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+
+	body, err := json.Marshal(connectionv1beta3.ConnectionRegistrationEvent{
+		Kind:   "github",
+		Status: connectionv1beta3.ConnectionRegistrationEventStatusInitialize,
+	})
+	if err != nil {
+		t.Fatalf("marshal registration event: %v", err)
+	}
+
+	req := httptest.NewRequest(
+		http.MethodPost,
+		"/api/integrations/connections/register",
+		bytes.NewReader(body),
+	)
+	rec := httptest.NewRecorder()
+
+	h.ProcessConnectionRegistration(rec, req, nil, user, provider)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf(
+			"status = %d, want %d; body: %s",
+			rec.Code,
+			http.StatusInternalServerError,
+			rec.Body.String(),
+		)
+	}
+}
