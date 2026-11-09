@@ -87,7 +87,7 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 				return err
 			}
 
-			modelString := strings.ReplaceAll(fmt.Sprintf("%v", selectedModel.DisplayName), " ", "_")
+			modelString := strings.NewReplacer(" ", "_", "/", "_", "\\", "_").Replace(fmt.Sprintf("%v", selectedModel.DisplayName))
 			fileName := filepath.Join(utils.MesheryFolder, fmt.Sprintf("model_%s.%s", modelString, modelViewFlags.OutputFormat))
 
 			outputFormatterSaver = outputFormatterSaver.WithFilePath(fileName)
