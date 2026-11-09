@@ -185,7 +185,7 @@ export const FormatDryRunResponse = ({
   const totalDryRunErrors = getTotalCountOfDeploymentErrors(actualErrors);
   const theme = useTheme();
   const canShowComponentCount =
-    annotationComponentsCount !== undefined && annotationComponentsCount !== undefined;
+    configurableComponentsCount !== undefined && annotationComponentsCount !== undefined;
 
   const dryRunRequestErrors = actualErrors
     .filter((error) => error.type === 'RequestError')
