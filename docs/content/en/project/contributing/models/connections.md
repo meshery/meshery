@@ -12,6 +12,8 @@ weight: 15
 
 This guide explains how to author a connection definition so that Meshery understands a new kind of [Connection]({{< ref "concepts/logical/connections/index.md" >}}) and offers it in the [Connection Wizard]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}). In most cases, **authoring a JSON definition is all you need** - no UI or server code.
 
+For the configuration contract for AI inference services, see [AI provider Connections](#ai-provider-connections).
+
 ## What is a connection definition?
 
 A connection definition is a first-class [Registry]({{< ref "concepts/logical/registry.md" >}}) entity, authored per [Model]({{< ref "concepts/logical/models/index.md" >}}) - exactly like [Components]({{< ref "project/contributing/models/components" >}}) and [Relationships]({{< ref "project/contributing/models/relationships" >}}). It declares everything Meshery needs to register, render, and manage a kind of Connection:
@@ -225,6 +227,64 @@ Each step implements a small contract - an `id` and `label`, a `Component` to re
 {{% alert color="warning" title="Prefer schemas over code" %}}
 Reach for a custom extension only when the generic, schema-driven flow genuinely cannot express what your Connection needs. A definition-only contribution is easier to review, ships without a UI release, and stays consistent with every other Connection in the wizard.
 {{% /alert %}}
+
+## AI provider Connections
+
+AI inference providers use Meshery's existing Connection and Credential resources. This keeps endpoint configuration, lifecycle, ownership, and secret handling in the same system as other integrations. Do not add an AI-only configuration store or registration endpoint.
+
+### Identity and metadata
+
+Use these canonical identity values for AI provider Connection definitions:
+
+| Field | Value | Meaning |
+| --- | --- | --- |
+| `kind` | `aiProvider` | Groups AI inference provider Connections in the wizard. |
+| `type` | `ai` | Classifies the service. |
+| `subType` | A lowercase provider slug, such as `openai`, `anthropic`, `ollama`, or `localai` | Identifies the provider implementation. |
+
+The Connection's `metadata` contains non-secret endpoint and inference settings. A definition must declare these camelCase fields in its `connectionSchema`:
+
+| Metadata field | Requirement | Contract |
+| --- | --- | --- |
+| `baseUrl` | Required | Absolute provider API URL. Supply a provider default only when the provider has a stable default endpoint. |
+| `defaultModel` | Required | Model identifier sent for inference when a request does not choose a model. |
+| `timeoutSeconds` | Required | Positive request timeout. The server may impose a stricter deployment-wide maximum. |
+| `hostingMode` | Required | `cloud`, `local`, or `selfHosted`. This describes where the endpoint runs; it is not inferred from its URL or provider name. |
+| `localOnly` | Required | Boolean policy declaration. `true` means requests and prompt data must remain within the operator's configured trust boundary; do not silently fall back to a cloud service. |
+| `health` | System-managed, optional until first check | Sanitized health summary: `lastCheckedAt`, `lastSuccessAt`, and a stable `reasonCode`. Clients cannot set it. Never put raw provider responses, prompts, credentials, or unfiltered error text here. |
+
+Provider-specific, non-secret options may be added only in the schema definition for that provider. They must use camelCase, be documented there, and must not duplicate secret material. `credentialId` is a reference to the existing credential association, not a value in `metadata`.
+
+### Credentials and provider classes
+
+Credentials use the existing Meshery Credential resource and the provider's `credentialSchema`. Credential fields are stored only in the credential's `secret` payload; the Connection stores a reference to the Credential, never a key or token.
+
+| Provider class | Credential requirement | Examples |
+| --- | --- | --- |
+| Hosted cloud API | Required | OpenAI, Anthropic, and hosted Azure OpenAI endpoints require their provider-issued authentication. |
+| Local inference or self-hosted endpoint | Optional, based on endpoint authentication | Ollama and LocalAI can run without credentials. If authentication is enabled, associate a Credential; its fields are optional in the definition for deployments that do not enable auth. |
+
+The definition must make this distinction visible in `credentialSchema`: mark authentication fields `required` for providers that always require them; keep them optional for providers that can run anonymously; omit the credential schema only when that provider cannot accept credentials. A self-hosted endpoint that requires authentication follows the same Credential path as a cloud endpoint.
+
+Raw keys and tokens are write-only inputs. After save, credential responses must omit secret values, and logs, error messages, prompts, model context, generated Designs, and Connection metadata must not contain them. AI request code must resolve credentials through the existing credential-secret helpers, not index the persisted `secret` map directly. Before AI provider clients ship, the standard credential API must enforce write-only responses and redact secrets on every error path.
+
+### Health and lifecycle
+
+Use the existing Connection states; do not introduce AI-specific status values. A new Connection starts `registered`. A successful provider health check moves it to `connected`; a failed reachability or authentication check moves it to `disconnected`; a later successful check restores `connected`. Use `not found` only when the provider definitively reports that the configured resource no longer exists, not for timeouts or rejected credentials. Health checks update the Connection status and the sanitized, system-managed `metadata.health` fields above. They must never log request bodies, prompts, authorization headers, or raw provider error bodies.
+
+When `localOnly` is true, the server must fail closed if it cannot use the declared local endpoint. It must not route requests to a cloud endpoint or retry through a remote provider.
+
+### Registration and schema work
+
+The provider Connection definition is a Meshery Model construct and must be defined in `meshery/schemas` before server or UI implementation. Add the canonical identity, metadata properties, and provider-specific `connectionSchema`/`credentialSchema` there, generate the supported consumers, and run the schemas validator and consumer audit. The implementation then consumes those generated contracts. There is no AI-specific API contract to add.
+
+Register the definition through the Registry connection-definition flow (`/api/registry/connections`). Create and manage a user's configured provider through the existing `/api/integrations/connections` and `/api/integrations/credentials` resources. The older `/api/integrations/connections/register` flow is not the definition registry and must not become a separate AI registration path. Any new or changed HTTP fields or operations still require a schemas API definition and generated client before Meshery server/UI work.
+
+### Existing AI proposals
+
+- PR [#18032](https://github.com/meshery/meshery/pull/18032), which proposes an AI config endpoint, should be reworked to use the generated Connection and Credential APIs or closed. A parallel endpoint would create a second source of truth.
+- PR [#18696](https://github.com/meshery/meshery/pull/18696), which proposes environment-variable provider configuration, may use variables as a development bootstrap only. They are not persisted user configuration or a production fallback. Provider settings and secrets in deployed use belong to Connections and Credentials.
+- The Registry route migration in [#17965](https://github.com/meshery/meshery/issues/17965) and [#17966](https://github.com/meshery/meshery/pull/17966) does not change this ownership boundary: register definitions through the canonical Registry route, and manage configured Connections and Credentials through their integration resources.
 
 ## Authoring best practices
 
