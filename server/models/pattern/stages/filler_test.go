@@ -8,6 +8,7 @@ import (
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
 )
 
+// Test_matchPattern verifies that matchPattern correctly detects valid reference syntax and extracts the query token.
 func Test_matchPattern(t *testing.T) {
 	tests := []struct {
 		name      string
@@ -60,6 +61,7 @@ func Test_matchPattern(t *testing.T) {
 	}
 }
 
+// Test_fillMapString tests composite URLs, multi-reference strings, repeated references, scalar formatting, error handling, and non-reprocessing.
 func Test_fillMapString(t *testing.T) {
 	flattened := map[string]interface{}{
 		"services.api.name":     "api-gateway",
@@ -149,6 +151,7 @@ func Test_fillMapString(t *testing.T) {
 	}
 }
 
+// Test_fillMap verifies that fillMap recursively traverses nested maps and multi-dimensional slices.
 func Test_fillMap(t *testing.T) {
 	flattened := map[string]interface{}{
 		"host": "localhost",
@@ -206,6 +209,7 @@ func Test_fillMap(t *testing.T) {
 	}
 }
 
+// TestFiller_StageEndToEnd verifies full end-to-end execution of the Filler stage on an unmarshaled design pattern.
 func TestFiller_StageEndToEnd(t *testing.T) {
 	rawDesign := `{
 		"id": "11111111-2222-3333-4444-555555555555",
