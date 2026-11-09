@@ -343,3 +343,46 @@ test('existing allowlist files outside the scanned file set are uncovered', (t) 
   assert.equal(humanResult.status, 0);
   assert.match(humanResult.stdout, /\[uncovered\].*components\/not-scanned\.json/);
 });
+
+
+test('scannedFiles counts only files that were successfully read', (t) => {
+  const fixture = createFixture(t);
+  const unreadable = path.join(fixture, 'ui', 'components', 'unreadable.js');
+
+  writeFile(fixture, 'ui/components/unreadable.js', "require('@mui/material');\n");
+  writeFile(fixture, 'ui/components/readable-a.js', 'export const a = 1;\n');
+  writeFile(fixture, 'ui/components/readable-b.js', 'export const b = 1;\n');
+
+  const preload = path.join(fixture, 'scanned-count-read-failure.cjs');
+  writeFile(
+    fixture,
+    'scanned-count-read-failure.cjs',
+    `
+      const fs = require('node:fs');
+      const path = require('node:path');
+      const original = fs.readFileSync;
+      const blocked = ${JSON.stringify(unreadable)};
+
+      fs.readFileSync = (file, ...args) => {
+        if (path.resolve(file) === blocked) {
+          throw new Error('injected read failure for scannedFiles test');
+        }
+        return original(file, ...args);
+      };
+    `,
+  );
+
+  const result = runAudit(fixture, [], {
+    env: { NODE_OPTIONS: '--require=' + preload },
+  });
+
+  const uiScan = result.json.scans.find((scan) => scan.name === 'ui');
+
+  // 3 readable files: readable-a, readable-b, and remote-component.config.js
+  // created by createFixture. The unreadable file must not be counted.
+  assert.equal(uiScan.scannedFiles, 3);
+
+  // overall total equals the sum of the per-scan counts
+  const perScanSum = result.json.scans.reduce((acc, scan) => acc + scan.scannedFiles, 0);
+  assert.equal(result.json.scannedFiles, perScanSum);
+});
