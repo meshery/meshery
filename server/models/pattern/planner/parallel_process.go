@@ -66,9 +66,10 @@ func NewParallelProcessGraph(g *Graph) (*ParallelProcessGraph, error) {
 		}
 	}
 
-	// Sizing both channels to max(1, node.DepCount) guarantees that concurrent
-	// dependency signals can be sent without blocking or thread starvation.
-	// Every dependency reports exactly once (either success or failure).
+	// Sizing both channels to max(1, node.DepCount) ensures the buffer has sufficient
+	// capacity for all incoming signals. Given the exactly-once reporting invariant
+	// for each dependency, the buffer never saturates, allowing sends to proceed
+	// without waiting or lock contention.
 	for _, node := range pg.ParallelProcessGraphNodeMap {
 		bufSize := node.DepCount
 		if bufSize < 1 {
@@ -153,9 +154,9 @@ func sendSignalToDeps(deps []*ParallelProcessGraphNode, ok bool, from string, lo
 // depending upon the "ok" parameter. "from" names the node the signal is sent on
 // behalf of.
 //
-// Because DepUpdateCh and DepCancleCh are sized to the node's DepCount, channel
-// sends are non-blocking and safe for concurrent dispatch across parallel dependencies
-// without requiring mutex locking.
+// Because DepUpdateCh and DepCancleCh are buffered to the node's DepCount and each
+// dependency reports exactly once, the buffer never saturates, allowing standard channel
+// sends to complete without waiting and without requiring mutex locking.
 func sendSignalToDep(dep *ParallelProcessGraphNode, ok bool, from string, log logger.Handler) {
 	if ok {
 		log.Debug("Sending completed signal to:", dep.Name)
