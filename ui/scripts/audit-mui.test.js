@@ -344,7 +344,6 @@ test('existing allowlist files outside the scanned file set are uncovered', (t) 
   assert.match(humanResult.stdout, /\[uncovered\].*components\/not-scanned\.json/);
 });
 
-
 test('scannedFiles counts only files that were successfully read', (t) => {
   const fixture = createFixture(t);
   const unreadable = path.join(fixture, 'ui', 'components', 'unreadable.js');
