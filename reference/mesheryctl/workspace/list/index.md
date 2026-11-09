@@ -23,7 +23,7 @@ mesheryctl workspace list [flags]
 
 ## Examples
 
-List of workspace under a specific organization
+List of workspaces under a specific organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -33,7 +33,7 @@ mesheryctl workspace list --orgId [orgId]
 </div>
 </pre> 
 
-List of workspace under a specific organization for a specified page
+List of workspaces under a specific organization for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -43,7 +43,7 @@ mesheryctl workspace list --orgId [orgId] --page [page-number]
 </div>
 </pre> 
 
-Display number of available  workspace under a specific organization
+Display number of available workspaces under a specific organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
