@@ -81,6 +81,22 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 	return cg
 }
 
+// GetContextRegistrationStatus returns the current registration status of the given context ID.
+func (cg *ComponentsRegistrationHelper) GetContextRegistrationStatus(ctxID string) (RegistrationStatus, bool) {
+	cg.mx.RLock()
+	defer cg.mx.RUnlock()
+	status, ok := cg.ctxRegStatusMap[ctxID]
+	return status, ok
+}
+
+// RemoveContext removes a context from the registration map, allowing future registrations.
+func (cg *ComponentsRegistrationHelper) RemoveContext(ctxID string) *ComponentsRegistrationHelper {
+	cg.mx.Lock()
+	defer cg.mx.Unlock()
+	delete(cg.ctxRegStatusMap, ctxID)
+	return cg
+}
+
 type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID core.Uuid, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error
 
 // RegisterComponents starts registration of components for the contexts
@@ -102,9 +118,16 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 	}
 
 	for _, ctx := range ctxs {
+		if ctx == nil {
+			continue
+		}
 		ctxID := ctx.ID
 		connectionID := uuid.FromStringOrNil(ctx.ConnectionID)
 		ctxName := ctx.Name
+		var mesheryInstanceID core.Uuid
+		if ctx.MesheryInstanceID != nil {
+			mesheryInstanceID = *ctx.MesheryInstanceID
+		}
 
 		cg.mx.Lock()
 		// do not do anything about the contexts that are not present in the ctxRegStatusMap
@@ -120,37 +143,60 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		cg.mx.Unlock()
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
 
-		event := events.NewEvent().ActedUpon(connectionID).FromSystem(*ctx.MesheryInstanceID).WithSeverity(events.Informational).WithCategory("connection").WithAction(Registering.String()).FromOwner(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
+		event := events.NewEvent().ActedUpon(connectionID).FromSystem(mesheryInstanceID).WithSeverity(events.Informational).WithCategory("connection").WithAction(Registering.String()).FromOwner(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
 		// Even if the event was not persisted, the event is published to the user
 		// and the operation continues.
 		if err := PersistAndPublishSystemEvent(provider, eventsBrodcaster, userUUID, event); err != nil {
 			cg.log.Warn(err)
 		}
 
-		go func(ctx *K8sContext) {
-			// set the status to RegistrationComplete
+		go func(ctx *K8sContext, ctxID string, connectionID core.Uuid, ctxName string, mesheryInstanceID core.Uuid) {
+			var regErr error
 			defer func() {
 				cg.mx.Lock()
-				cg.ctxRegStatusMap[ctxID] = RegistrationComplete
+				if regErr != nil {
+					cg.ctxRegStatusMap[ctxID] = NotRegistered
+				} else {
+					cg.ctxRegStatusMap[ctxID] = RegistrationComplete
+				}
 				cg.mx.Unlock()
 
-				cg.log.Info("components registered for context ", ctxName, " ID:", ctxID)
+				if regErr != nil {
+					cg.log.Errorf("failed to register components for context %s (ID: %s): %v", ctxName, ctxID, regErr)
+					failEvent := events.NewEvent().
+						ActedUpon(connectionID).
+						FromSystem(mesheryInstanceID).
+						WithSeverity(events.Error).
+						WithCategory("connection").
+						WithAction(Registering.String()).
+						FromOwner(userUUID).
+						WithDescription(fmt.Sprintf("Failed to register components for Kubernetes context %s: %s", ctxName, regErr.Error())).
+						WithMetadata(map[string]interface{}{"error": regErr}).
+						Build()
+					if perr := PersistAndPublishSystemEvent(provider, eventsBrodcaster, userUUID, failEvent); perr != nil {
+						cg.log.Warn(perr)
+					}
+				} else {
+					cg.log.Info("components registered for context ", ctxName, " ID:", ctxID)
+				}
 			}()
 
 			// start registration
 			cfg, err := ctx.GenerateKubeConfig()
 			if err != nil {
+				regErr = err
 				cg.log.Error(err)
 				return
 			}
 			for _, f := range regFunc {
-				err = f(&provider, context.Background(), cfg, ctxID, ctx.ConnectionID, userID, *ctx.MesheryInstanceID, reg, eventsBrodcaster, cg.log, ctxName)
+				err = f(&provider, context.Background(), cfg, ctxID, ctx.ConnectionID, userID, mesheryInstanceID, reg, eventsBrodcaster, cg.log, ctxName)
 				if err != nil {
-					cg.log.Error(ErrUnreachableKubeAPI(err, ctx.Server))
+					regErr = ErrUnreachableKubeAPI(err, ctx.Server)
+					cg.log.Error(regErr)
 					return
 				}
 			}
-		}(ctx)
+		}(ctx, ctxID, connectionID, ctxName, mesheryInstanceID)
 	}
 }
 
