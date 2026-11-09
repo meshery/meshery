@@ -168,4 +168,78 @@ func TestMakeRequest_Status302AndHTMLResponseHandling(t *testing.T) {
 			t.Fatal("expected response body to be closed on HTML content-type response")
 		}
 	})
+
+	t.Run("MakeRequest returns ErrMesheryServerInternalError on HTML 500 response", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = fmt.Fprint(w, "<html><body>500 Internal Server Error</body></html>")
+		}))
+		defer server.Close()
+
+		req, err := http.NewRequest(http.MethodGet, server.URL, nil)
+		if err != nil {
+			t.Fatalf("unexpected error creating request: %v", err)
+		}
+
+		resp, err := MakeRequest(req)
+		if resp != nil {
+			t.Errorf("expected nil response on 500, got %v", resp)
+		}
+		if err == nil {
+			t.Fatal("expected error on 500, got nil")
+		}
+		if errors.GetCode(err) != ErrMesheryServerInternalErrorCode {
+			t.Errorf("expected error code %s, got %s", ErrMesheryServerInternalErrorCode, errors.GetCode(err))
+		}
+	})
+}
+
+func newTestMctCfg(endpoint string) *config.MesheryCtlConfig {
+	return &config.MesheryCtlConfig{
+		CurrentContext: "test",
+		Contexts:       map[string]config.Context{"test": {Endpoint: endpoint}},
+	}
+}
+
+func TestGetProviderInfo_BodyClosed(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	t.Run("closes body on 200 OK success", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			_, _ = fmt.Fprint(w, `{"Local":{"provider_name":"Local","provider_type":"local"}}`)
+		}))
+		defer server.Close()
+
+		transport := installTrackingTransport(t)
+		mctCfg := newTestMctCfg(server.URL)
+
+		providers, err := GetProviderInfo(mctCfg)
+		if err != nil {
+			t.Fatalf("expected no error, got: %v", err)
+		}
+		if _, ok := providers["Local"]; !ok {
+			t.Fatalf("expected Local provider, got: %v", providers)
+		}
+		assertBodyClosed(t, transport, "expected response body to be closed on success")
+	})
+
+	t.Run("closes body on decode error", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = fmt.Fprint(w, `invalid-json`)
+		}))
+		defer server.Close()
+
+		transport := installTrackingTransport(t)
+		mctCfg := newTestMctCfg(server.URL)
+
+		_, err := GetProviderInfo(mctCfg)
+		if err == nil {
+			t.Fatal("expected error decoding invalid JSON, got nil")
+		}
+		assertBodyClosed(t, transport, "expected response body to be closed on decode error")
+	})
 }
