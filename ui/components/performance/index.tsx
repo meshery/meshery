@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ModalBody, ModalFooter, NoSsr, useHasPermission } from '@sistent/sistent';
 import { URLValidator } from '../../utils/URLValidator';
 import { isValidJSON } from '../../utils/validators';
@@ -8,7 +8,12 @@ import { getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { formatApiError } from '../../utils/helpers/meshkitError';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { buildPerformanceRunUrl, generateTestName, generateUUID } from './helper';
+import {
+  buildPerformanceRunUrl,
+  generateTestName,
+  generateUUID,
+  getStoredAdditionalOptions,
+} from './helper';
 
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '@/components/general/error-404/index';
@@ -66,7 +71,7 @@ const MesheryPerformanceComponent_ = (props) => {
   const [tValueState, setTValue] = useState(t);
   const [loadGeneratorState, setLoadGenerator] = useState(loadGenerator || 'fortio');
   const [additionalOptionsState, setAdditionalOptions] = useState(
-    additional_options || metadata?.additional_options?.[0] || '',
+    additional_options || getStoredAdditionalOptions(metadata?.additional_options),
   );
   const [testResult, setTestResult] = useState();
   const [testResultsOpen, setTestResultsOpen] = useState(false);
@@ -82,10 +87,10 @@ const MesheryPerformanceComponent_ = (props) => {
   const [blockRunTestState, setBlockRunTest] = useState(false);
   const [urlErrorState, setUrlError] = useState(false);
   const [tErrorState, setTError] = useState('');
-  const [jsonErrorState, setJsonError] = useState(false);
-  const [disableTestState, setDisableTest] = useState(
-    !(URLValidator(urlState) || isValidJSON(additionalOptionsState)),
+  const [jsonErrorState, setJsonError] = useState(
+    additionalOptionsState !== '' && !isValidJSON(additionalOptionsState),
   );
+  const [disableTestState, setDisableTest] = useState(!URLValidator(urlState));
   const [testUUIDState, setTestUUID] = useState(generateUUID());
   const [selectedMeshState, setSelectedMesh] = useState('');
   const [availableAdaptersState, setAvailableAdapters] = useState([]);
@@ -94,6 +99,7 @@ const MesheryPerformanceComponent_ = (props) => {
     ...metadata,
     ca_certificate: metadata?.ca_certificate || {},
   });
+  const autoRunAttemptedRef = useRef(false);
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const { data: userData, isSuccess: isUserDataFetched } =
@@ -159,6 +165,13 @@ const MesheryPerformanceComponent_ = (props) => {
       return;
     }
 
+    // Run Test on mount calls this directly, so the disabled buttons are not
+    // enough to keep invalid options from being sent.
+    if (additionalOptionsState !== '' && !isValidJSON(additionalOptionsState)) {
+      setJsonError(true);
+      return;
+    }
+
     let err = false;
     let tNum = 0;
     try {
@@ -218,6 +231,7 @@ const MesheryPerformanceComponent_ = (props) => {
     setProfileName('');
     setLoadGenerator('');
     setAdditionalOptions('');
+    setJsonError(false);
     setUrl('');
     setMeshName('');
     setC(0);
@@ -376,7 +390,12 @@ const MesheryPerformanceComponent_ = (props) => {
     scanForMeshes();
     getLoadTestPrefs();
     getSMPMeshes();
-    if (props.runTestOnMount) handleSubmit();
+    // This effect reruns as user data and meshes load. Run only once, so a run
+    // blocked by invalid options does not start later while they are edited.
+    if (props.runTestOnMount && !autoRunAttemptedRef.current) {
+      autoRunAttemptedRef.current = true;
+      handleSubmit();
+    }
   }, [userData, isUserDataFetched, smpMeshes]);
 
   const getLoadTestPrefs = () => {
@@ -538,6 +557,7 @@ const MesheryPerformanceComponent_ = (props) => {
               <React.Fragment>
                 <PerformanceFormActions
                   disableTest={disableTestState}
+                  hasJsonError={jsonErrorState}
                   blockRunTest={blockRunTestState}
                   hasTestResult={!!testResult}
                   onAbort={handleAbort}
