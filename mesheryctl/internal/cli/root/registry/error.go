@@ -90,7 +90,6 @@ func ErrPrereqRepository(err error) error {
 			"The current working directory is not within a Meshery repository fork",
 		},
 		[]string{
-			"Clone or fork https://github.com/meshery/meshery",
-			"Navigate to your local meshery/meshery repository fork (root or any subdirectory) and re-run the command",
+			"Navigate to your local meshery/meshery repository fork (root or any subdirectory) and re-run the command, or clone/fork https://github.com/meshery/meshery",
 		})
 }

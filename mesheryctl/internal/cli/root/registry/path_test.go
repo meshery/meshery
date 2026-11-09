@@ -4,25 +4,14 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	meshkiterrors "github.com/meshery/meshkit/errors"
 )
 
-// chdir changes the working directory for the duration of a test and restores
-// it afterwards.
-func chdir(t *testing.T, dir string) {
-	t.Helper()
-	orig, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("getwd: %v", err)
-	}
-	if err := os.Chdir(dir); err != nil {
-		t.Fatalf("chdir %s: %v", dir, err)
-	}
-	t.Cleanup(func() { _ = os.Chdir(orig) })
-}
-
 func TestDefaultModelsLocation(t *testing.T) {
-	// Lay out a fake repo root containing a models directory and a
-	// mesheryctl subdirectory, mirroring how the command is actually run.
+	// Lay out a fake repo root containing a models directory, a server
+	// directory with its own models directory, and a mesheryctl subdirectory,
+	// mirroring how the command is actually run.
 	root := t.TempDir()
 	// On macOS t.TempDir() lives under /private/var symlinks; resolve so the
 	// directory probes below compare against a stable path.
@@ -32,6 +21,10 @@ func TestDefaultModelsLocation(t *testing.T) {
 	}
 	if err := os.MkdirAll(filepath.Join(root, "models"), 0o755); err != nil {
 		t.Fatalf("mkdir models: %v", err)
+	}
+	serverDir := filepath.Join(root, "server")
+	if err := os.MkdirAll(filepath.Join(serverDir, "models"), 0o755); err != nil {
+		t.Fatalf("mkdir server/models: %v", err)
 	}
 	subDir := filepath.Join(root, "mesheryctl")
 	if err := os.MkdirAll(subDir, 0o755); err != nil {
@@ -62,6 +55,11 @@ func TestDefaultModelsLocation(t *testing.T) {
 			want: filepath.Join("..", "models"),
 		},
 		{
+			name: "from subdirectory having its own models directory",
+			cwd:  serverDir,
+			want: filepath.Join("..", "models"),
+		},
+		{
 			name: "from nested subdirectory",
 			cwd:  nestedSubDir,
 			want: filepath.Join("..", "..", "..", "models"),
@@ -75,7 +73,7 @@ func TestDefaultModelsLocation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			chdir(t, tt.cwd)
+			t.Chdir(tt.cwd)
 			if got := defaultModelsLocation(); got != tt.want {
 				t.Errorf("defaultModelsLocation() = %q, want %q", got, tt.want)
 			}
@@ -201,10 +199,15 @@ func TestVerifyPrerequisiteRepo(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			chdir(t, tt.cwd)
+			t.Chdir(tt.cwd)
 			err := verifyPrerequisiteRepo()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("verifyPrerequisiteRepo() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if tt.wantErr && err != nil {
+				if code := meshkiterrors.GetCode(err); code != ErrPrereqRepositoryCode {
+					t.Errorf("verifyPrerequisiteRepo() errorCode = %q, want %q", code, ErrPrereqRepositoryCode)
+				}
 			}
 		})
 	}

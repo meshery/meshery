@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -296,33 +297,35 @@ func TestPreRunEValidation(t *testing.T) {
 	tests := []struct {
 		name        string
 		args        []string
-		setup       func()
+		setup       func(t *testing.T)
 		expectError bool
 		errorMsg    string
+		errorCode   string
 	}{
 		{
 			name:        "No input source specified",
 			args:        []string{},
-			setup:       func() { resetGenerateFlags(generateCmd) },
+			setup:       func(t *testing.T) { resetGenerateFlags(generateCmd) },
 			expectError: true,
 			errorMsg:    "isn't specified",
 		},
 		{
 			name: "Fails when run outside of meshery repository",
 			args: []string{"--directory", "/some/path"},
-			setup: func() {
+			setup: func(t *testing.T) {
 				resetGenerateFlags(generateCmd)
-				chdir(t, t.TempDir())
+				t.Chdir(t.TempDir())
 			},
 			expectError: true,
 			errorMsg:    "meshery/meshery repository fork",
+			errorCode:   ErrPrereqRepositoryCode,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.setup != nil {
-				tt.setup()
+				tt.setup(t)
 			}
 
 			generateCmd.SetArgs(tt.args)
@@ -332,6 +335,9 @@ func TestPreRunEValidation(t *testing.T) {
 				assert.Error(t, err)
 				if tt.errorMsg != "" {
 					assert.Contains(t, err.Error(), tt.errorMsg)
+				}
+				if tt.errorCode != "" {
+					assert.Equal(t, tt.errorCode, meshkiterrors.GetCode(err))
 				}
 			} else {
 				assert.NoError(t, err)
