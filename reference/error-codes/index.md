@@ -16085,6 +16085,33 @@ Send metadata.error as the schemas EventError shape (code, shortDescription and 
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInvalidExtensionProxyPathCode-1490" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidExtensionProxyPathCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidExtensionProxyPathCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1490" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errinvalidextensionproxypathcode-1490/"><code>ErrInvalidExtensionProxyPathCode-1490</code></a>
+            </td>
+            <td>Invalid extension proxy path</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInvalidExtensionProxyPathCode-1490" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrInvalidExtensionProxyPathCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The path does not start with &#39;/api/extensions&#39; or has an invalid delimiter
+The URL format might be malformed or manipulated</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Ensure the request path starts with &#39;/api/extensions&#39; followed by a valid subpath (e.g. &#39;/api/extensions/users&#39;)
+Check client routing and extension configuration</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>

@@ -574,6 +574,7 @@ Section pages:
 - [ErrInvalidEventCode-11339](/reference/error-codes/library-meshkit/errinvalideventcode-11339/)
 - [ErrInvalidEventDataCode-1357](/reference/error-codes/component-meshery-server/errinvalideventdatacode-1357/)
 - [ErrInvalidEventErrorCode-11338](/reference/error-codes/library-meshkit/errinvalideventerrorcode-11338/)
+- [ErrInvalidExtensionProxyPathCode-1490](/reference/error-codes/component-meshery-server/errinvalidextensionproxypathcode-1490/)
 - [ErrInvalidFileCode-1102](/reference/error-codes/client-mesheryctl/errinvalidfilecode-1102/)
 - [ErrInvalidFileRequestCode-1382](/reference/error-codes/component-meshery-server/errinvalidfilerequestcode-1382/)
 - [ErrInvalidFilterCommandCode-1171](/reference/error-codes/client-mesheryctl/errinvalidfiltercommandcode-1171/)

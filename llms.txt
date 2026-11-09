@@ -1099,6 +1099,7 @@ Bookinfo The sample BookInfo …
 - [ErrInvalidEventCode-11339](/reference/error-codes/library-meshkit/errinvalideventcode-11339/index.md)
 - [ErrInvalidEventDataCode-1357](/reference/error-codes/component-meshery-server/errinvalideventdatacode-1357/index.md)
 - [ErrInvalidEventErrorCode-11338](/reference/error-codes/library-meshkit/errinvalideventerrorcode-11338/index.md)
+- [ErrInvalidExtensionProxyPathCode-1490](/reference/error-codes/component-meshery-server/errinvalidextensionproxypathcode-1490/index.md)
 - [ErrInvalidFileCode-1102](/reference/error-codes/client-mesheryctl/errinvalidfilecode-1102/index.md)
 - [ErrInvalidFileRequestCode-1382](/reference/error-codes/component-meshery-server/errinvalidfilerequestcode-1382/index.md)
 - [ErrInvalidFilterCommandCode-1171](/reference/error-codes/client-mesheryctl/errinvalidfiltercommandcode-1171/index.md)
