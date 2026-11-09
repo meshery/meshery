@@ -27,6 +27,32 @@ const initialState = {
   isNotificationCenterOpen: false,
 };
 
+export const isSerializable = (value, seen = new Set()) => {
+  if (value === null || value === undefined) {
+    return true;
+  }
+  const type = typeof value;
+  if (type === 'string' || type === 'number' || type === 'boolean') {
+    return true;
+  }
+  if (type !== 'object' || seen.has(value)) {
+    return false;
+  }
+  const isArray = Array.isArray(value);
+  const prototype = Object.getPrototypeOf(value);
+  if (!isArray && prototype !== Object.prototype && prototype !== null) {
+    return false;
+  }
+  seen.add(value);
+  const entries = isArray ? value : Object.values(value);
+  const result = entries.every((entry) => isSerializable(entry, seen));
+  seen.delete(value);
+  return result;
+};
+
+const serializableUi = (ui) =>
+  Object.fromEntries(Object.entries(ui || {}).filter(([, value]) => isSerializable(value)));
+
 const defaultEventProperties = {
   severity: SEVERITY.INFO,
   status: STATUS.UNREAD,
@@ -221,7 +247,7 @@ export const eventsSlice = createSlice({
       if (action.payload.ui) {
         state.ui = {
           ...state.ui,
-          ...action.payload.ui,
+          ...serializableUi(action.payload.ui),
         };
       }
     },
@@ -241,6 +267,7 @@ export const {
   updateEvent,
   toggleNotificationCenter,
   closeNotificationCenter,
+  openNotificationCenter,
   updateEvents,
 } = eventsSlice.actions;
 
