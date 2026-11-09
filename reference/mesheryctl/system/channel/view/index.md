@@ -27,7 +27,7 @@ View current release channel
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system channel view edge
+mesheryctl system channel view
 
 </div>
 </div>

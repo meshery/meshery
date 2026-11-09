@@ -125,7 +125,7 @@ mesheryctl system channel view [flags]
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl system channel view edge
+mesheryctl system channel view
 
 &lt;/div&gt;
 &lt;/div&gt;
