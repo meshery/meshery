@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/server/models"
@@ -88,7 +89,7 @@ func TestExtensionsHandler_InvalidPathReturnsBadRequest(t *testing.T) {
 
 	h.ExtensionsHandler(rec, req, nil, nil, mockP)
 
-	if rec.Code != http.StatusBadRequest {
-		t.Fatalf("expected HTTP 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
+	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), models.ErrInvalidExtensionProxyPathCode) {
+		t.Fatalf("expected HTTP 400 with error code %q, got %d (body: %s)", models.ErrInvalidExtensionProxyPathCode, rec.Code, rec.Body.String())
 	}
 }

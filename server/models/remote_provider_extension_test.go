@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/meshery/meshkit/errors"
 )
@@ -73,9 +74,9 @@ func TestExtensionProxy_InvalidPaths(t *testing.T) {
 // TestExtensionProxy_ValidPathPreservation asserts that valid extension proxy paths are
 // correctly forwarded to the remote provider without truncation or corruption.
 func TestExtensionProxy_ValidPathPreservation(t *testing.T) {
-	var receivedPath string
+	receivedPaths := make(chan string, 1)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		receivedPath = r.URL.Path
+		receivedPaths <- r.URL.Path
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte(`{"status":"ok"}`))
 	}))
@@ -112,7 +113,6 @@ func TestExtensionProxy_ValidPathPreservation(t *testing.T) {
 
 	for _, tc := range validPaths {
 		t.Run(tc.name, func(t *testing.T) {
-			receivedPath = ""
 			req := httptest.NewRequest("GET", tc.path, nil)
 			req.AddCookie(&http.Cookie{Name: TokenCookieName, Value: "test-token"})
 
@@ -124,8 +124,13 @@ func TestExtensionProxy_ValidPathPreservation(t *testing.T) {
 				t.Fatalf("expected status 200 OK, got %+v", resp)
 			}
 
-			if receivedPath != tc.expectedPath {
-				t.Fatalf("expected upstream forwarded path %q, got %q", tc.expectedPath, receivedPath)
+			select {
+			case receivedPath := <-receivedPaths:
+				if receivedPath != tc.expectedPath {
+					t.Fatalf("expected upstream forwarded path %q, got %q", tc.expectedPath, receivedPath)
+				}
+			case <-time.After(5 * time.Second):
+				t.Fatalf("timed out waiting for upstream request for path %q", tc.path)
 			}
 		})
 	}

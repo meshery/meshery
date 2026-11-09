@@ -128,7 +128,7 @@ func (h *Handler) ExtensionsHandler(w http.ResponseWriter, req *http.Request, _ 
 	resp, err := provider.ExtensionProxy(req)
 	if err != nil {
 		if errors.GetCode(err) == models.ErrInvalidExtensionProxyPathCode {
-			h.log.Error(err)
+			h.log.Warn(err)
 			writeMeshkitError(w, err, http.StatusBadRequest)
 			return
 		}
