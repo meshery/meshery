@@ -188,10 +188,10 @@ describe('MesherySettingsPerformanceComponent', () => {
     expect(updateLoadTestPrefs).not.toHaveBeenCalled();
   });
 
-  it('does not submit unsupported day durations', () => {
+  it.each(['1d', '1d1h'])('does not submit unsupported day durations (%s)', (duration) => {
     render(<MesherySettingsPerformanceComponent />);
 
-    fireEvent.change(screen.getByTestId('duration-input'), { target: { value: '1d' } });
+    fireEvent.change(screen.getByTestId('duration-input'), { target: { value: duration } });
     fireEvent.click(screen.getByRole('button', { name: /Save/ }));
 
     expect(updateLoadTestPrefs).not.toHaveBeenCalled();
