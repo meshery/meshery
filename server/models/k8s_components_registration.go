@@ -183,7 +183,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 						WithAction(Registering.String()).
 						FromOwner(userUUID).
 						WithDescription(fmt.Sprintf("Failed to register components for Kubernetes context %s: %s", ctxName, regErr.Error())).
-						WithMetadata(map[string]interface{}{"error": regErr}).
+						WithMetadata(map[string]interface{}{"error": regErr.Error()}).
 						Build()
 					if perr := PersistAndPublishSystemEvent(provider, eventsBrodcaster, userUUID, failEvent); perr != nil {
 						cg.log.Warn(perr)

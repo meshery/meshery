@@ -216,6 +216,7 @@ func TestRegisterComponents_FailureResetsStatusAndAllowsRetry(t *testing.T) {
 	assert.Contains(t, evts[0].Description, "started")
 	assert.Equal(t, events.Error, evts[1].Severity)
 	assert.Contains(t, evts[1].Description, "Failed to register components")
+	assert.Contains(t, evts[1].Metadata["error"], "simulated cluster unreachable error")
 
 	// Retry with a successful registration function
 	successRan := make(chan struct{})
