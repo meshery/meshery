@@ -120,7 +120,7 @@ mesheryctl environment list [flags]
 &lt;h2 id="examples"&gt;
 	Examples
 &lt;/h2&gt;
-&lt;p&gt;List all registered environment&lt;/p&gt;
+&lt;p&gt;List all registered environments&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
@@ -129,7 +129,7 @@ mesheryctl environment list --orgId [orgId]
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;List count of all registered environment&lt;/p&gt;
+&lt;p&gt;List count of all registered environments&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
@@ -138,7 +138,7 @@ mesheryctl environment list --orgId [orgId] --count
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;List all registered environment at a specific page&lt;/p&gt;
+&lt;p&gt;List all registered environments at a specific page&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
@@ -147,7 +147,7 @@ mesheryctl environment list --orgId [orgId] --page [page]
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;List all registered environment with a specific page size&lt;/p&gt;</description></item><item><title>mesheryctl-environment-view</title><link>/reference/mesheryctl/environment/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/environment/view/</guid><description>&lt;h1 id="mesheryctl-environment-view"&gt;
+&lt;p&gt;List all registered environments with a specific page size&lt;/p&gt;</description></item><item><title>mesheryctl-environment-view</title><link>/reference/mesheryctl/environment/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/environment/view/</guid><description>&lt;h1 id="mesheryctl-environment-view"&gt;
 	mesheryctl environment view
 &lt;/h1&gt;
 &lt;p&gt;View registered environmnents&lt;/p&gt;
