@@ -85,6 +85,7 @@ const MesherySettingsPerformanceComponent = () => {
 
   const handleInputDurationChange = (_event: unknown, newValue: string) => {
     setT(newValue);
+    setTError('');
   };
 
   const handleSubmit = () => {
@@ -92,14 +93,8 @@ const MesherySettingsPerformanceComponent = () => {
       setTError('error-autocomplete-value');
       return;
     }
-    try {
-      const tNum = t.length > 1 ? parseInt(t.substring(0, t.length - 1), 10) : NaN;
-      if (isNaN(tNum) || tNum <= 0 || !['h', 'm', 's'].includes(t.slice(-1).toLowerCase())) {
-        setTError('error-autocomplete-value');
-        return;
-      }
-    } catch (e) {
-      console.error('[MesherySettingsPerformance] autocomplete error:', e);
+    const durationMatch = /^(\d+(?:\.\d+)?)[hms]$/i.exec(t);
+    if (!durationMatch || Number(durationMatch[1]) <= 0) {
       setTError('error-autocomplete-value');
       return;
     }
@@ -197,7 +192,15 @@ const MesherySettingsPerformanceComponent = () => {
                   options={durationOptions}
                   style={{ marginTop: '16px', marginBottom: '8px' }}
                   renderInput={(params) => (
-                    <TextField {...params} label="Duration*" variant="outlined" />
+                    <TextField
+                      {...params}
+                      label="Duration*"
+                      variant="outlined"
+                      error={!!tError}
+                      helperText={
+                        tError ? 'Use a number followed by h, m or s (for example 24h).' : ''
+                      }
+                    />
                   )}
                 />
               </CustomTooltip>
