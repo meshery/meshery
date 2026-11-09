@@ -384,10 +384,11 @@ func BackupConfigFile(cfgFile string) {
 	if err != nil {
 		Log.Fatal(err)
 	}
-	_, err = os.Create(cfgFile)
+	f, err := os.Create(cfgFile)
 	if err != nil {
 		Log.Fatal(err)
 	}
+	_ = f.Close()
 }
 
 const (
@@ -456,15 +457,15 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path 
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		_ = file.Close()
+	}()
 	fileContents, err := io.ReadAll(file)
 	if err != nil {
 		return nil, err
 	}
 	fi, err := file.Stat()
 	if err != nil {
-		return nil, err
-	}
-	if err = file.Close(); err != nil {
 		return nil, err
 	}
 
@@ -551,7 +552,8 @@ func UpdateMesheryContainers() error {
 }
 
 // AskForConfirmation asks the user for confirmation. A user must type in "yes" or "no" and then press enter. It has fuzzy matching, so "y", "Y", "yes", "YES", and "Yes" all count as confirmations. If the input is not recognized, it will ask again. The function does not return until it gets a valid response from the user.
-func AskForConfirmation(s string) bool {
+// A failure to read from stdin (for example EOF in a non-interactive shell) is returned as an error instead of terminating the process.
+func AskForConfirmation(s string) (bool, error) {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
@@ -559,16 +561,16 @@ func AskForConfirmation(s string) bool {
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			Log.Fatal(err)
+			return false, ErrReadInput(err)
 		}
 
 		response = strings.ToLower(strings.TrimSpace(response))
 
 		switch response {
 		case "y", "yes":
-			return true
+			return true, nil
 		case "n", "no":
-			return false
+			return false, nil
 		}
 	}
 }
@@ -576,10 +578,11 @@ func AskForConfirmation(s string) bool {
 // CreateConfigFile creates config file in Meshery Folder
 func CreateConfigFile() error {
 	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
-		_, err := os.Create(DefaultConfigPath)
+		f, err := os.Create(DefaultConfigPath)
 		if err != nil {
 			return err
 		}
+		_ = f.Close()
 	}
 	return nil
 }
@@ -725,10 +728,11 @@ func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
 		return err
 	}
 
-	_, err = MakeRequest(req)
+	res, err := MakeRequest(req)
 	if err != nil {
 		return err
 	}
+	defer SafeClose(res.Body)
 	return nil
 }
 
@@ -774,8 +778,9 @@ func ValidName(mesheryServerUrl, args string, configuration string) (string, str
 	return fullName, ID, isName, nil
 }
 
-// AskForInput asks the user for an input and checks if it is in the available values
-func AskForInput(prompt string, allowed []string) string {
+// AskForInput asks the user for an input and checks if it is in the available values.
+// It asks again when the input is not one of the allowed values. A failure to read from stdin is returned as an error instead of terminating the process.
+func AskForInput(prompt string, allowed []string) (string, error) {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
@@ -783,15 +788,15 @@ func AskForInput(prompt string, allowed []string) string {
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			Log.Fatal(err)
+			return "", ErrReadInput(err)
 		}
 
 		response = strings.ToLower(strings.TrimSpace(response))
 
 		if StringInSlice(response, allowed) {
-			return response
+			return response, nil
 		}
-		Log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
+		fmt.Printf("Invalid response %q. Allowed responses: %s\n", response, allowed)
 	}
 }
 
@@ -1362,4 +1367,9 @@ func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 		return "", err
 	}
 	return config.CurrentContext, nil
+}
+
+// TrimFileExtension returns name with its final file extension removed
+func TrimFileExtension(name string) string {
+	return strings.TrimSuffix(name, filepath.Ext(name))
 }

@@ -46,10 +46,11 @@ mesheryctl environment delete [environmentId]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		_, err := api.Delete(fmt.Sprintf("%s/%s", environmentApiPath, args[0]))
+		resp, err := api.Delete(fmt.Sprintf("%s/%s", environmentApiPath, args[0]))
 		if err != nil {
 			return err
 		}
+		defer utils.SafeClose(resp.Body)
 
 		utils.Log.Infof("Environment with ID %s has been deleted", args[0])
 		return nil
