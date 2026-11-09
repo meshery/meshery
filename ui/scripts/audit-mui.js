@@ -222,6 +222,7 @@ function runScan(scan) {
 
   const offenders = [];
   let totalMatches = 0;
+  let scannedFiles = 0;
   let skippedAllowlisted = 0;
   const allowlistStatus = {
     active: [],
@@ -241,6 +242,7 @@ function runScan(scan) {
       }
       continue;
     }
+    scannedFiles += 1;
 
     if (scan.allowlist.has(rel)) {
       if (matches.length > 0) {
@@ -299,6 +301,7 @@ function runScan(scan) {
     name: scan.name,
     files: offenders.length,
     matches: totalMatches,
+    scannedFiles,
     skippedAllowlisted,
     allowlistSize: scan.allowlist.size,
     allowlistStatus,
@@ -316,6 +319,7 @@ function main() {
 
   const results = SCANS.map(runScan);
   const totalFiles = results.reduce((acc, r) => acc + r.files, 0);
+  const totalScannedFiles = results.reduce((acc, r) => acc + r.scannedFiles, 0);
   const totalMatches = results.reduce((acc, r) => acc + r.matches, 0);
   const totalAllowlist = results.reduce((acc, r) => acc + r.allowlistSize, 0);
   const scanComplete = results.every((r) => r.scanComplete);
@@ -332,11 +336,13 @@ function main() {
         {
           audit: 'mui',
           files: totalFiles,
+          scannedFiles: totalScannedFiles,
           matches: totalMatches,
           scanComplete,
           scans: results.map((r) => ({
             name: r.name,
             files: r.files,
+            scannedFiles: r.scannedFiles,
             matches: r.matches,
             allowlistSize: r.allowlistSize,
             allowlistedFilesWithMuiImports: r.skippedAllowlisted,
@@ -436,6 +442,7 @@ function main() {
   process.stdout.write('\n');
   process.stdout.write('Summary:\n');
   process.stdout.write(`  Files:                ${totalFiles}\n`);
+  process.stdout.write(`  Files scanned:        ${totalScannedFiles}\n`);
   process.stdout.write(`  Matches:              ${totalMatches}\n`);
   process.stdout.write(`  Allowlisted (total):  ${totalAllowlist}\n\n`);
   process.stdout.write(`AUDIT mui files=${totalFiles} matches=${totalMatches}\n`);
