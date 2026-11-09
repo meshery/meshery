@@ -173,6 +173,7 @@ const (
 	ErrOperatorChartNotPublishedCode      = "meshery-server-1470"
 	ErrOperatorChartSubstitutedCode       = "meshery-server-1471"
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
+	ErrInvalidExtensionProxyPathCode      = "meshery-server-1490"
 )
 
 var (
@@ -946,6 +947,25 @@ func ErrOperatorChartNotPublished(requested, newest string) error {
 // to compare against.
 func ErrNoMesheryReleasesFound() error {
 	return errors.New(ErrNoMesheryReleasesFoundCode, errors.Alert, []string{"No Meshery releases were found"}, []string{"The GitHub releases listing for meshery/meshery returned no tags."}, []string{"GitHub returned an empty or filtered release listing, possibly because the request was rate-limited."}, []string{"Retry later. This only affects the reported latest-version comparison; Meshery continues to run."})
+}
+
+// ErrInvalidExtensionProxyPath is returned when a requested extension proxy path
+// does not match the expected '/api/extensions' prefix or contains malformed boundary characters.
+func ErrInvalidExtensionProxyPath(path string) error {
+	return errors.New(
+		ErrInvalidExtensionProxyPathCode,
+		errors.Alert,
+		[]string{"Invalid extension proxy path"},
+		[]string{fmt.Sprintf("The requested path '%s' is not a valid extension proxy path", path)},
+		[]string{
+			"The path does not start with '/api/extensions' or has an invalid delimiter",
+			"The URL format might be malformed or manipulated",
+		},
+		[]string{
+			"Ensure the request path starts with '/api/extensions' followed by a valid subpath (e.g. '/api/extensions/users')",
+			"Check client routing and extension configuration",
+		},
+	)
 }
 
 // ErrOperatorChartSubstituted reports that the Meshery Operator chart
