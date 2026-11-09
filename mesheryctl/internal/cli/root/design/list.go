@@ -15,6 +15,7 @@
 package design
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
@@ -22,6 +23,8 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 )
+
+const listUsageMsg = "Usage: mesheryctl design list\nRun 'mesheryctl design list --help' to see detailed help message"
 
 var (
 	verbose  bool
@@ -41,7 +44,12 @@ var listCmd = &cobra.Command{
 	Long: `Display list of all available designs.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/design/list
 `,
-	Args: cobra.MinimumNArgs(0),
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg))
+		}
+		return nil
+	},
 	Example: `
 // Display a list of all available designs
 mesheryctl design list
@@ -50,7 +58,7 @@ mesheryctl design list
 mesheryctl design list --verbose
 
 // Display a list of all available designs with specified page number (10 designs per page by default)
-mesheryctl design list --page [pange-number]
+mesheryctl design list --page [page-number]
 
 // Display a list of all available designs with custom page size (10 designs per page by default)
 mesheryctl design list --pagesize [page-size]

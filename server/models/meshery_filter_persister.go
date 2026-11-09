@@ -178,7 +178,13 @@ func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilt
 // DeleteMesheryFilter takes in a profile id and delete it if it already exists
 func (mfp *MesheryFilterPersister) DeleteMesheryFilter(id core.Uuid) ([]byte, error) {
 	filter := MesheryFilter{ID: &id}
-	mfp.DB.Delete(&filter)
+	res := mfp.DB.Delete(&filter)
+	if res.Error != nil {
+		return nil, ErrDBDelete(res.Error, id.String())
+	}
+	if res.RowsAffected == 0 {
+		return nil, ErrResultNotFound(fmt.Errorf("filter %s not found", id.String()))
+	}
 
 	return marshalMesheryFilter(&filter), nil
 }
