@@ -227,6 +227,10 @@ mesheryctl system token view (show token of current context)
 			tokenNames = append(tokenNames, t.Name)
 		}
 
+		if len(tokenNames) == 0 || utils.SilentFlag {
+			return fmt.Errorf("token %q not found in config", tokenName)
+		}
+
 		utils.Log.Info("Invalid token name. Select from available tokens-")
 		prompt := promptui.Select{
 			Label: "Select a token from the list",

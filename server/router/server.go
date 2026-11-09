@@ -223,6 +223,10 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.Handle("/api/pattern/import", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DesignFileImportHandler), models.ProviderAuth))).
 		Methods("POST")
+	gMux.Handle("/api/pattern/clone", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CloneMesheryPatternHandler), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/pattern/clone/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CloneMesheryPatternHandler), models.ProviderAuth))).
+		Methods("POST")
 	gMux.Handle("/api/pattern/{sourcetype}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DesignFileRequestHandlerWithSourceType), models.ProviderAuth))).
 		Methods("POST", "PUT")
 	gMux.Handle("/api/pattern/types", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryDesignTypesHandler), models.ProviderAuth))).
@@ -237,8 +241,6 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("GET")
 	gMux.Handle("/api/pattern/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryPatternHandler), models.ProviderAuth))).
 		Methods("DELETE")
-	gMux.Handle("/api/pattern/clone/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CloneMesheryPatternHandler), models.ProviderAuth))).
-		Methods("POST")
 	gMux.Handle("/api/pattern/download/{id}/{sourcetype}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryPatternSourceHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/pattern/download/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DownloadMesheryPatternHandler), models.ProviderAuth))).
@@ -260,8 +262,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	}
 
 	handleRegistry("/validate", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ValidationHandler), models.NoAuth)), "POST")
-	handleRegistry("/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents), models.NoAuth)), "POST") //This should also be left with NoAuth
-	gMux.Handle("/api/meshmodel/components/register", h.ProviderMiddleware((http.HandlerFunc(h.RegisterMeshmodelComponents)))).Methods("POST") //For backwards compatibility with previous registrants
+	handleRegistry("/components", h.ProviderMiddleware(h.RegistrationAuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents))), "POST")
+	gMux.Handle("/api/meshmodel/components/register", h.ProviderMiddleware(h.RegistrationAuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents)))).Methods("POST") //For backwards compatibility with previous registrants
 	handleRegistry("/{entityType}/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateEntityStatus), models.NoAuth)), "POST")
 	handleRegistry("/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelComponents), models.NoAuth)), "GET")
 
@@ -309,7 +311,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	// form above uses the corrected /policies/{name} shape.
 	gMux.Handle("/api/meshmodels/models/{model}/policies{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelPoliciesByName), models.NoAuth))).Methods("GET")
 
-	handleRegistry("/export", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ExportModel), models.NoAuth)), "GET")
+	handleRegistry("/export", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ExportModel), models.ProviderAuth)), "GET")
 
 	gMux.Handle("/api/filter/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.FilterFileHandler)), models.ProviderAuth))).
 		Methods("POST", "DELETE")

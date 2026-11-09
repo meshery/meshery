@@ -29,7 +29,9 @@ type EventDisposition string
 const (
 	// EventCreated: a new event was recorded.
 	EventCreated EventDisposition = "created"
-	// EventReplayed: the idempotencyKey was already used; nothing changed.
+	// EventReplayed: the event was already recorded (its idempotencyKey was
+	// already used, or the same event, by ID, was persisted before); nothing
+	// changed.
 	EventReplayed EventDisposition = "replayed"
 	// EventIncremented: an occurrence was counted on the open condition.
 	EventIncremented EventDisposition = "incremented"
@@ -41,6 +43,10 @@ const (
 // incremented or resolved condition, Event is the condition's stored event,
 // whose ID is not the ID of the event that was persisted, so it is the one to
 // broadcast or return to a client.
+//
+// Event is nil only when a remote provider recorded nothing new (incremented,
+// resolved or replayed) and did not answer with the stored event: there is
+// then no stored event to broadcast or return, and nothing new to report.
 type PersistedEvent struct {
 	Event       *events.Event
 	Disposition EventDisposition
@@ -51,8 +57,8 @@ type PersistedEvent struct {
 // instance.
 const EventSourceServer = "meshery-server"
 
-// ApplyClientEventFields copies the optional correlation, provenance and trace
-// fields of an event a client sent (the schemas EventPayload) onto the event
+// ApplyClientEventFields copies the optional idempotency, correlation,
+// provenance and trace fields of an event a client sent (the schemas EventPayload) onto the event
 // the server records for it, so a condition a client reports correlates as it
 // would on the remote provider. The client's operationId groups the event with
 // the rest of its operation when it sent one. A client that names no source
@@ -68,6 +74,7 @@ func ApplyClientEventFields(event *events.Event, sent events.Event) {
 	event.TraceID = sent.TraceID
 	event.ParentID = sent.ParentID
 	event.Source = sent.Source
+	event.IdempotencyKey = sent.IdempotencyKey
 	if !sent.OperationID.IsNil() {
 		event.OperationID = sent.OperationID
 	}
@@ -121,7 +128,8 @@ func conditionKeySegment(segment string) string {
 
 // PrepareEventForPersistence is applied to every event Meshery Server
 // persists, locally or with a remote provider, before it is written or sent.
-// It gives an event without an ID (events.NewEvent() mints none) a fresh one,
+// It gives an event without an ID (one constructed without events.NewEvent,
+// which mints one) a fresh one,
 // so no event is stored, sent to a remote provider or broadcast with the zero
 // ID, and it bounds the metadata with GuardEventMetadataSize. It never sets
 // `source`; withServerSource does that for the events the server itself emits.

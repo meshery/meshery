@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
@@ -694,12 +695,16 @@ func TestSendEvent_DiscoveryFailureReportsUnreachableCondition(t *testing.T) {
 	}
 
 	// The connection is NOTFOUND now; the same failure again changes nothing,
-	// so it is still suppressed (issue #20818).
+	// so it is not reported to the user again (issue #20818), but it comes back
+	// as a Recurrence, without an error, to count on the open condition.
 	sm.ResetState()
 	failing.execEvent = events.NewEvent().WithSeverity(events.Error).WithDescription("cluster down").Build()
 	event, err = sm.SendEvent(ctx, Discovery, nil)
-	if event != nil || err != nil {
-		t.Fatalf("repeat failure surfaced (event %v, err %v); de-duplication must be unchanged", event, err)
+	if !IsRecurrence(event, err) {
+		t.Fatalf("repeat failure = event %v, err %v; want a Recurrence", event, err)
+	}
+	if *event.CorrelationKey != want {
+		t.Fatalf("recurrence key = %q, want %q", *event.CorrelationKey, want)
 	}
 
 	// The cluster answers again: the Discovery that leaves NOTFOUND resolves the
@@ -742,5 +747,100 @@ func TestSendEvent_WithoutConditionComponentReportsNoCondition(t *testing.T) {
 	}
 	if event.CorrelationKey != nil {
 		t.Fatalf("correlationKey = %q on a machine without ConditionComponent", *event.CorrelationKey)
+	}
+}
+
+// Deleting a connection that is NOTFOUND resolves its unreachable condition.
+func TestSendEvent_DeleteFromNotFoundResolvesTheCondition(t *testing.T) {
+	provider := &fakeProvider{status: connections.ConnectionStatus(NOTFOUND)}
+	sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+	sm.ConditionComponent = "k8s-connection"
+	sm.States[DELETED] = State{Events: Events{}, Action: &stubAction{execNext: NoOp}}
+	sm.CurrentState = NOTFOUND
+
+	event, err := sm.SendEvent(newTestContext(t), Delete, nil)
+	if err != nil || event == nil {
+		t.Fatalf("got event %v, err %v; want the resolution", event, err)
+	}
+	want := models.ConditionKey("k8s-connection", sm.ID.String(), ConditionUnreachable)
+	if event.CorrelationKey == nil || *event.CorrelationKey != want || event.ResolvedAt == nil {
+		t.Fatalf("got key %v resolvedAt %v; want a resolution of %q", event.CorrelationKey, event.ResolvedAt, want)
+	}
+	if IsRecurrence(event, err) {
+		t.Fatal("a resolution is not a Recurrence")
+	}
+}
+
+// A request that saved the new status before driving the machine names the
+// old one with WithPriorStatus: a connection that left NOTFOUND resolves its
+// condition although the status the machine reads is already the new one, and
+// one that was not NOTFOUND resolves nothing.
+func TestSendEvent_PriorStatusResolvesAManualReconnect(t *testing.T) {
+	for _, c := range []struct {
+		prior       connections.ConnectionStatus
+		wantResolve bool
+	}{
+		{connections.ConnectionStatus(NOTFOUND), true},
+		{connections.CONNECTED, false},
+		{"", false},
+	} {
+		provider := &fakeProvider{status: connections.ConnectionStatus(DISCOVERED)}
+		sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+		sm.ConditionComponent = "k8s-connection"
+		ctx := newTestContext(t)
+		if c.prior != "" {
+			ctx = WithPriorStatus(ctx, c.prior)
+		}
+		event, err := sm.SendEvent(ctx, Discovery, nil)
+		if err != nil || event == nil {
+			t.Fatalf("prior %q: got event %v, err %v", c.prior, event, err)
+		}
+		if got := event.ResolvedAt != nil; got != c.wantResolve {
+			t.Errorf("prior %q: resolved = %v, want %v", c.prior, got, c.wantResolve)
+		}
+	}
+}
+
+// IsRecurrence holds only for an event without an error that carries an open
+// condition's key.
+func TestIsRecurrence(t *testing.T) {
+	key := "k"
+	now := time.Now()
+	open := &events.Event{CorrelationKey: &key}
+	resolved := &events.Event{CorrelationKey: &key, ResolvedAt: &now}
+	for _, c := range []struct {
+		name  string
+		event *events.Event
+		err   error
+		want  bool
+	}{
+		{"open key, no error", open, nil, true},
+		{"open key with an error", open, errors.New("down"), false},
+		{"resolution", resolved, nil, false},
+		{"no key", &events.Event{}, nil, false},
+		{"no event", nil, nil, false},
+	} {
+		if got := IsRecurrence(c.event, c.err); got != c.want {
+			t.Errorf("%s: IsRecurrence = %v, want %v", c.name, got, c.want)
+		}
+	}
+}
+
+// A status update that cannot read or write the connection is a failure, and
+// says so: without a severity its event used to land in the Notification
+// Center as informational.
+func TestSendEvent_StatusUpdateFailureIsAnError(t *testing.T) {
+	for name, provider := range map[string]*fakeProvider{
+		"retrieve": {status: connections.CONNECTED, getErr: errors.New("record not found")},
+		"update":   {status: connections.CONNECTED, updateErr: errors.New("database is locked")},
+	} {
+		sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+		event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+		if err == nil || event == nil {
+			t.Fatalf("%s: SendEvent = (%v, %v), want a failure event and an error", name, event, err)
+		}
+		if event.Severity != events.Error {
+			t.Errorf("%s: severity = %q, want %q", name, event.Severity, events.Error)
+		}
 	}
 }

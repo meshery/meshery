@@ -6,11 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
-	"strings"
 	"time"
 
 	"github.com/meshery/meshery/server/models"
@@ -134,13 +134,13 @@ func stringFromPtr(p *string) string {
 }
 
 func getFileNameFromResponse(resp *http.Response, fileURL string) string {
-	// Check Content-Disposition header
-	contentDisp := resp.Header.Get("Content-Disposition")
-	if contentDisp != "" {
-		parts := strings.Split(contentDisp, "filename=")
-		if len(parts) > 1 {
-			filename := strings.Trim(parts[1], `"`)
-			return filename
+	// Content-Disposition can carry more than the name: other parameters, or
+	// a filename* form next to filename (RFC 6266, section 4.3).
+	// ParseMediaType returns the filename parameter on its own, decoding
+	// filename* into it when present.
+	if contentDisp := resp.Header.Get("Content-Disposition"); contentDisp != "" {
+		if _, params, err := mime.ParseMediaType(contentDisp); err == nil && params["filename"] != "" {
+			return params["filename"]
 		}
 	}
 
