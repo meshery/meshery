@@ -72,6 +72,7 @@ func setupLoginEnv(t *testing.T, tokenHandler http.HandlerFunc, authContent stri
 	return authPath, logs, redirectHits
 }
 
+// respond returns a handler that writes a fixed status, content type and body.
 func respond(status int, contentType, body string) http.HandlerFunc {
 	return func(w http.ResponseWriter, _ *http.Request) {
 		if contentType != "" {
@@ -82,12 +83,15 @@ func respond(status int, contentType, body string) http.HandlerFunc {
 	}
 }
 
+// runLogin executes `system login -p Local` through the root system command.
 func runLogin(t *testing.T) error {
 	t.Helper()
 	SystemCmd.SetArgs([]string{"login", "-p", "Local"})
 	return SystemCmd.Execute()
 }
 
+// TestLoginPersistsValidTokenResponse checks that a valid token response,
+// including the Local provider's empty token, is written and reported.
 func TestLoginPersistsValidTokenResponse(t *testing.T) {
 	tests := []struct {
 		name string
@@ -128,6 +132,9 @@ func TestLoginPersistsValidTokenResponse(t *testing.T) {
 	}
 }
 
+// TestLoginRejectsInvalidTokenResponse checks that every unsuccessful or
+// malformed /api/token response fails the login, leaves the existing auth
+// file byte-identical, does not report success and does not follow redirects.
 func TestLoginRejectsInvalidTokenResponse(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -183,6 +190,8 @@ func TestLoginRejectsInvalidTokenResponse(t *testing.T) {
 	}
 }
 
+// TestLoginDoesNotReportSuccessWhenTokenCannotBeWritten checks that a valid
+// response whose token cannot be persisted fails without claiming success.
 func TestLoginDoesNotReportSuccessWhenTokenCannotBeWritten(t *testing.T) {
 	if runtime.GOOS == "windows" || os.Geteuid() == 0 {
 		t.Skip("read-only file permissions are not enforced in this environment")

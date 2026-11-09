@@ -470,6 +470,8 @@ func createProviderURI(provider Provider, host string, port int) (string, error)
 	return uri.String(), nil
 }
 
+// getTokenObjFromMesheryServer exchanges the provider session for a token object
+// via /api/token and returns it only once parseTokenResponse has validated it.
 func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, mctl.GetBaseMesheryURL()+"/api/token", nil)
 	if err != nil {
