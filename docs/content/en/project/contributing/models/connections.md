@@ -242,6 +242,8 @@ Use these canonical identity values for AI provider Connection definitions:
 | `type` | `ai` | Classifies the service. |
 | `subType` | A lowercase provider slug, such as `openai`, `anthropic`, `ollama`, or `localai` | Identifies the provider implementation. |
 
+Any wizard extension or provider-definition lookup must match the full identity tuple (`kind`, `type`, and `subType`). Multiple provider definitions share `kind: aiProvider`; matching on `kind` alone can select another provider's form and schema.
+
 The Connection's `metadata` contains non-secret endpoint and inference settings. A definition must declare these camelCase fields in its `connectionSchema`:
 
 | Metadata field | Requirement | Contract |
@@ -266,13 +268,17 @@ Credentials use the existing Meshery Credential resource and the provider's `cre
 
 The definition must make this distinction visible in `credentialSchema`: mark authentication fields `required` for providers that always require them; keep them optional for providers that can run anonymously; omit the credential schema only when that provider cannot accept credentials. A self-hosted endpoint that requires authentication follows the same Credential path as a cloud endpoint.
 
+An anonymous registration must leave the Connection's credential association empty and must not create a blank Credential record. Optional fields in `credentialSchema` alone do not make the current wizard flow credential-free: the wizard and registration action must skip both credential creation and association when the user chooses anonymous access. When credentials are supplied, create and associate the normal Credential.
+
 Raw keys and tokens are write-only inputs. After save, credential responses must omit secret values, and logs, error messages, prompts, model context, generated Designs, and Connection metadata must not contain them. AI request code must resolve credentials through the existing credential-secret helpers, not index the persisted `secret` map directly.
 
 **Current behavior:** write-only credential responses are not implemented yet. The Local provider's credential detail and list APIs currently serialize stored credentials with their `secret` field. This PR defines the requirement; it does not change the existing API behavior. Track and complete the required API and response-redaction work in [#23096](https://github.com/meshery/meshery/issues/23096) before shipping AI provider clients. Remote provider response behavior must also be covered by that work.
 
+Before redacting existing credential responses, migrate current consumers that read returned secrets. In particular, connection verification must pass the selected `credentialId` to the server and let the server resolve the secret for the verification operation; it must not send the secret back to the UI. Complete this consumer migration before enforcing write-only responses, so existing credential reuse continues to work.
+
 ### Health and lifecycle
 
-Use the existing Connection states; do not introduce AI-specific status values. A new Connection starts `registered`. A successful provider health check moves it to `connected`; a failed reachability or authentication check moves it to `disconnected`; a later successful check restores `connected`. Use `not found` only when the provider definitively reports that the configured resource no longer exists, not for timeouts or rejected credentials. Health checks update the Connection status and the sanitized, system-managed `metadata.health` fields above. They must never log request bodies, prompts, authorization headers, or raw provider error bodies.
+Use the existing Connection states; do not introduce AI-specific status values. A new Connection starts `registered`. The provider definition must supply a verification action, and the wizard must not mark the Connection `connected` until that check succeeds. A successful check moves `registered` or `disconnected` to `connected`; a failed reachability or authentication check moves `registered` or `connected` to `disconnected`; a later successful check restores `connected`. Declare these transitions in the AI provider definition's `transitionMap`, including `registered` to `disconnected` because the default Connection machine does not include that edge. Use `not found` only when the provider definitively reports that the configured resource no longer exists, not for timeouts or rejected credentials. Health checks update the Connection status and the sanitized, system-managed `metadata.health` fields above. They must never log request bodies, prompts, authorization headers, or raw provider error bodies.
 
 When `localOnly` is true, the server must fail closed if it cannot use the declared local endpoint. It must not route requests to a cloud endpoint or retry through a remote provider.
 
