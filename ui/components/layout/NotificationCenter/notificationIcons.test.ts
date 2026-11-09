@@ -17,6 +17,12 @@ describe('resolveNotificationIcon', () => {
     expect(resolveNotificationIcon('no-such-icon')).toBe(BellIcon);
   });
 
+  it('falls back to the bell for prototype chain names', () => {
+    expect(resolveNotificationIcon('constructor')).toBe(BellIcon);
+    expect(resolveNotificationIcon('__proto__')).toBe(BellIcon);
+    expect(resolveNotificationIcon('toString')).toBe(BellIcon);
+  });
+
   it('falls back to the bell when no icon is set', () => {
     expect(resolveNotificationIcon(undefined)).toBe(BellIcon);
     expect(resolveNotificationIcon(null)).toBe(BellIcon);

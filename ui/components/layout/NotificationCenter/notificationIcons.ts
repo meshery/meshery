@@ -16,5 +16,7 @@ export const resolveNotificationIcon = (name) => {
   if (typeof name !== 'string') {
     return NOTIFICATION_ICONS[DEFAULT_NOTIFICATION_ICON];
   }
-  return NOTIFICATION_ICONS[name] || NOTIFICATION_ICONS[DEFAULT_NOTIFICATION_ICON];
+  return Object.hasOwn(NOTIFICATION_ICONS, name)
+    ? NOTIFICATION_ICONS[name]
+    : NOTIFICATION_ICONS[DEFAULT_NOTIFICATION_ICON];
 };
