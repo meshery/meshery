@@ -56,6 +56,7 @@ type ComponentsRegistrationHelper struct {
 	// it should be private
 	ctxRegStatusMap map[string]RegistrationStatus
 	ctxRegTokenMap  map[string]uint64
+	regTokenSeq     uint64
 	log             logger.Handler
 	mx              sync.RWMutex
 }
@@ -143,7 +144,8 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 
 		// update the status
 		cg.ctxRegStatusMap[ctxID] = Registering
-		regToken := cg.ctxRegTokenMap[ctxID] + 1
+		cg.regTokenSeq++
+		regToken := cg.regTokenSeq
 		cg.ctxRegTokenMap[ctxID] = regToken
 		cg.mx.Unlock()
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
