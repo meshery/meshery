@@ -64,9 +64,10 @@ func Test_fillMapString(t *testing.T) {
 	flattened := map[string]interface{}{
 		"services.api.name":     "api-gateway",
 		"services.api.host":     "10.0.0.1",
-		"services.api.port":     float64(8080),
-		"services.api.replicas": 3,
-		"services.api.enabled":  true,
+		"services.api.port":       float64(8080),
+		"services.api.replicas":   3,
+		"services.api.enabled":    true,
+		"services.api.rawPattern": "$(#ref.services.other.ignored)",
 	}
 
 	tests := []struct {
@@ -110,6 +111,12 @@ func Test_fillMapString(t *testing.T) {
 			name:       "Numeric and boolean scalars formatted cleanly",
 			input:      "replicas=$(#ref.services.api.replicas)&enabled=$(#ref.services.api.enabled)",
 			wantResult: "replicas=3&enabled=true",
+			wantOk:     true,
+		},
+		{
+			name:       "Resolved value containing reference pattern is not reprocessed",
+			input:      "$(#ref.services.api.rawPattern)",
+			wantResult: "$(#ref.services.other.ignored)",
 			wantOk:     true,
 		},
 		{

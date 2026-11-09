@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
-	"strings"
 
 	"github.com/meshery/meshery/server/models/pattern/planner"
 	"github.com/meshery/meshery/server/models/pattern/utils"
@@ -18,6 +17,7 @@ const FillerPattern = `\$\(#ref\.([^)]+)\)`
 
 var FillerRegex = regexp.MustCompile(FillerPattern)
 
+// formatScalar formats scalar values (strings, integers, floats, booleans) into strings.
 func formatScalar(val interface{}) string {
 	switch v := val.(type) {
 	case string:
@@ -57,6 +57,7 @@ func Filler(skipPrintLogs bool) ChainStageFunction {
 	}
 }
 
+// fill resolves references across all components within the design pattern file.
 func fill(p *pattern.PatternFile, flattenedComponent map[string]interface{}) error {
 	var errs []error
 	for _, component := range p.Components {
@@ -118,11 +119,8 @@ func fillDependsOn(designName string, component *component.ComponentDefinition, 
 	return nil
 }
 
+// fillVersion resolves references declared in a component's model or component version.
 func fillVersion(component *component.ComponentDefinition, flattenedPattern map[string]interface{}) error {
-	// Refernce to a version?
-	// So that if user chooses a comp def of other comps but all other comps in design refer to some other version,
-	// So instead of choosing new comp of correct version, user can quickly point to particular version?
-	// But it can be that the version are not compatible??
 	if versionKey, ok := matchPattern(component.Model.Model.Version); ok {
 		val, found := flattenedPattern[versionKey]
 		if !found || mutils.IsInterfaceNil(val) {
@@ -144,6 +142,7 @@ func fillVersion(component *component.ComponentDefinition, flattenedPattern map[
 	return nil
 }
 
+// fillNamespace resolves namespace references declared within a component's metadata configuration.
 func fillNamespace(component *component.ComponentDefinition, flattenedPattern map[string]interface{}) error {
 	_metadata, ok := component.Configuration["metadata"]
 	if !ok || mutils.IsInterfaceNil(_metadata) {
@@ -180,6 +179,7 @@ func fillNamespace(component *component.ComponentDefinition, flattenedPattern ma
 	return nil
 }
 
+// fillType resolves references declared in a component's kind definition.
 func fillType(component *component.ComponentDefinition, flattenedPattern map[string]interface{}) error {
 	kindKey, ok := matchPattern(component.Component.Kind)
 	if !ok {
@@ -195,11 +195,13 @@ func fillType(component *component.ComponentDefinition, flattenedPattern map[str
 	return nil
 }
 
+// fillConfiguration resolves references within a component's configuration dictionary.
 func fillConfiguration(component *component.ComponentDefinition, flattenedPattern map[string]interface{}) (err error) {
 	component.Configuration, err = fillMap(component.Configuration, flattenedPattern)
 	return
 }
 
+// fillMap recursively processes maps and slices to interpolate references in strings.
 func fillMap(mp map[string]interface{}, flattenedPattern map[string]interface{}) (map[string]interface{}, error) {
 	var _fillMap func(mp map[string]interface{}) (map[string]interface{}, error)
 	var _fillSlice func(s []interface{}) ([]interface{}, error)
@@ -267,26 +269,34 @@ func fillMap(mp map[string]interface{}, flattenedPattern map[string]interface{})
 	return _fillMap(mp)
 }
 
+// fillMapString substitutes all references in a string in a single pass without reprocessing substituted values.
 func fillMapString(str string, flattenedPattern map[string]interface{}) (string, bool, error) {
-	matches := FillerRegex.FindAllStringSubmatch(str, -1)
-	if len(matches) == 0 {
+	if !FillerRegex.MatchString(str) {
 		return "", false, nil
 	}
 
-	result := str
-	for _, match := range matches {
-		if len(match) < 2 {
-			continue
+	var resolveErr error
+	result := FillerRegex.ReplaceAllStringFunc(str, func(m string) string {
+		if resolveErr != nil {
+			return m
 		}
-		fullMatch := match[0]
-		res := match[1]
 
-		val, found := flattenedPattern[res]
+		sub := FillerRegex.FindStringSubmatch(m)
+		if len(sub) < 2 {
+			return m
+		}
+
+		val, found := flattenedPattern[sub[1]]
 		if !found || mutils.IsInterfaceNil(val) {
-			return "", false, fmt.Errorf("invalid reference query: %s", res)
+			resolveErr = fmt.Errorf("invalid reference query: %s", sub[1])
+			return m
 		}
 
-		result = strings.ReplaceAll(result, fullMatch, formatScalar(val))
+		return formatScalar(val)
+	})
+
+	if resolveErr != nil {
+		return "", false, resolveErr
 	}
 
 	return result, true, nil
