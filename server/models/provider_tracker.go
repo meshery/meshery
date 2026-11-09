@@ -88,54 +88,30 @@ func (t *ProviderTracker) Snapshot() map[string]ProviderStatusEvent {
 // followed by every future Publish. The returned unsubscribe must be called
 // when the listener is done; calling it twice is safe.
 //
-// Sends to a subscriber that is not draining its channel are dropped
-// (logged at debug) rather than blocking the publisher. A slow SSE client
-// will simply miss intermediate updates and pick up state on its next
-// reconnection.
+// The snapshot is enqueued synchronously, under the tracker mutex, before
+// the channel is registered for live publishes, and the channel is sized to
+// hold the whole snapshot: a subscriber always sees the complete snapshot
+// first and no snapshot event is ever dropped because the channel was full
+// or overtaken by a newer live update. Live sends to a subscriber that is
+// not draining its channel are still dropped (logged at debug) rather than
+// blocking the publisher. A slow SSE client will simply miss intermediate
+// updates and pick up state on its next reconnection.
 func (t *ProviderTracker) Subscribe(ctx context.Context) (<-chan ProviderStatusEvent, func()) {
-	ch := make(chan ProviderStatusEvent, 32)
-
 	t.mu.Lock()
-	t.subs[ch] = struct{}{}
 	snapshot := make([]ProviderStatusEvent, 0, len(t.statuses))
 	for _, evt := range t.statuses {
 		snapshot = append(snapshot, evt)
 	}
+	// Buffer the whole snapshot plus headroom for live publishes, so the
+	// synchronous enqueue below can never block or drop, and a Publish
+	// that lands before the subscriber starts draining still fits.
+	buf := len(snapshot) + 32
+	ch := make(chan ProviderStatusEvent, buf)
+	for _, evt := range snapshot {
+		ch <- evt
+	}
+	t.subs[ch] = struct{}{}
 	t.mu.Unlock()
-
-	go func() {
-		defer func() {
-			if r := recover(); r != nil && t.log != nil {
-				t.log.Errorf("provider-tracker: recovered panic in snapshot replay: %v", r)
-			}
-		}()
-
-		for _, evt := range snapshot {
-			select {
-			case <-ctx.Done():
-				return
-			default:
-			}
-
-			t.mu.Lock()
-			if ctx.Err() != nil {
-				t.mu.Unlock()
-				return
-			}
-			if _, ok := t.subs[ch]; !ok {
-				t.mu.Unlock()
-				return
-			}
-			select {
-			case ch <- evt:
-			default:
-				if t.log != nil {
-					t.log.Debugf("provider-tracker: subscriber channel full during snapshot; dropping event for %q", evt.Key)
-				}
-			}
-			t.mu.Unlock()
-		}
-	}()
 
 	var once sync.Once
 	unsubscribe := func() {

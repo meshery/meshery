@@ -282,20 +282,23 @@ func newTestLocalProviderForTracker(t *testing.T) *DefaultLocalProvider {
 	return lp
 }
 
-// TestProviderTracker_UnsubscribeDuringSnapshotReplayDoesNotPanic asserts that
-// when a subscriber disconnects and unsubscribes while the background snapshot
-// replay is in flight, the replay goroutine terminates safely without attempting
-// a send on a closed channel (which would cause a fatal runtime panic).
-func TestProviderTracker_UnsubscribeDuringSnapshotReplayDoesNotPanic(t *testing.T) {
+// TestProviderTracker_SnapshotDeliveredBeforeLiveUpdates asserts the
+// snapshot is always delivered before live updates, in full: a subscriber
+// sees one event per registered provider (the snapshot taken at Subscribe
+// time) before any Publish that happens after Subscribe returns, even when
+// the snapshot is larger than the old 32-event channel buffer.
+func TestProviderTracker_SnapshotDeliveredBeforeLiveUpdates(t *testing.T) {
 	log := newTestLogger(t)
 	providers := map[string]Provider{
 		LocalProviderName: newTestLocalProviderForTracker(t),
 	}
 	tracker := NewProviderTracker(providers, log)
 
-	// Populate multiple provider statuses to give the snapshot replay several items
+	// 40 snapshot entries: more than the 32-event buffer the old replay
+	// goroutine used, so a drop-prone replay would lose events here.
+	const extra = 40
 	tracker.mu.Lock()
-	for i := 0; i < 20; i++ {
+	for i := 0; i < extra; i++ {
 		key := "provider-" + string(rune('a'+i))
 		tracker.statuses[key] = ProviderStatusEvent{
 			Key:    key,
@@ -303,21 +306,53 @@ func TestProviderTracker_UnsubscribeDuringSnapshotReplayDoesNotPanic(t *testing.
 		}
 	}
 	tracker.mu.Unlock()
+	total := extra + 1 // plus the local provider
 
-	for iter := 0; iter < 200; iter++ {
-		ctx, cancel := context.WithCancel(context.Background())
-		ch, unsubscribe := tracker.Subscribe(ctx)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	events, unsubscribe := tracker.Subscribe(ctx)
+	defer unsubscribe()
 
-		// Race unsubscribe against the background snapshot replay
-		go func() {
-			time.Sleep(time.Duration(iter%5) * time.Microsecond)
-			unsubscribe()
-			cancel()
-		}()
+	// A live update for an existing key, published after Subscribe
+	// returns, must arrive after the whole snapshot, never before it.
+	tracker.Publish(ProviderStatusEvent{
+		Key:    "provider-a",
+		Status: ProviderStatusOffline,
+		Error:  "test injected",
+	})
 
-		// Drain whatever arrived before unsubscribe
-		for range ch {
+	// Read the snapshot plus the one live event.
+	got := make([]ProviderStatusEvent, 0, total+1)
+	timeout := time.After(5 * time.Second)
+	for len(got) < total+1 {
+		select {
+		case evt, ok := <-events:
+			if !ok {
+				t.Fatalf("channel closed after %d events, want %d", len(got), total+1)
+			}
+			got = append(got, evt)
+		case <-timeout:
+			t.Fatalf("received %d events, want %d (snapshot incomplete or live update lost)", len(got), total+1)
 		}
+	}
+
+	// The live event must be last; everything before it is the snapshot.
+	live := got[len(got)-1]
+	if live.Key != "provider-a" || live.Status != ProviderStatusOffline {
+		t.Fatalf("last event = %+v, want live update for provider-a Offline", live)
+	}
+	seen := make(map[string]ProviderStatusEvent, total)
+	for _, evt := range got[:len(got)-1] {
+		if _, dup := seen[evt.Key]; dup {
+			t.Fatalf("duplicate snapshot event for key %q", evt.Key)
+		}
+		if evt.Key == "provider-a" && evt.Status != ProviderStatusOnline {
+			t.Fatalf("snapshot event for provider-a has status %q, want Online (live update overtook snapshot)", evt.Status)
+		}
+		seen[evt.Key] = evt
+	}
+	if len(seen) != total {
+		t.Fatalf("snapshot delivered %d distinct keys, want %d", len(seen), total)
 	}
 }
 
