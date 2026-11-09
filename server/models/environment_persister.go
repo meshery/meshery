@@ -14,6 +14,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta3/environment"
+	schemasWorkspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"gorm.io/gorm"
 )
 
@@ -121,20 +122,29 @@ func (ep *EnvironmentPersister) SaveEnvironment(environment *environment.Environ
 	return envJSON, nil
 }
 
-// DeleteEnvironment deletes an environment and cleans up its connection mappings.
+// DeleteEnvironment deletes an environment and cleans up its connection and workspace mappings.
 func (ep *EnvironmentPersister) DeleteEnvironment(env *environment.Environment) ([]byte, error) {
-	err := ep.DB.Model(&env).Find(&env).Error
+	var existing environment.Environment
+	err := ep.DB.Where("id = ?", env.ID).First(&existing).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, ErrResultNotFound(err)
 		}
+		return nil, ErrDBRead(err)
 	}
 	err = ep.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Delete(env).Error; err != nil {
 			return err
 		}
 		if tx.Migrator().HasTable(&environment.EnvironmentConnectionMapping{}) {
-			return tx.Where("environment_id = ?", env.ID).Delete(&environment.EnvironmentConnectionMapping{}).Error
+			if err := tx.Where("environment_id = ?", env.ID).Delete(&environment.EnvironmentConnectionMapping{}).Error; err != nil {
+				return err
+			}
+		}
+		if tx.Migrator().HasTable(&schemasWorkspace.WorkspacesEnvironmentsMapping{}) {
+			if err := tx.Where("environment_id = ?", env.ID).Delete(&schemasWorkspace.WorkspacesEnvironmentsMapping{}).Error; err != nil {
+				return err
+			}
 		}
 		return nil
 	})
