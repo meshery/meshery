@@ -146,6 +146,40 @@ describe('CustomBaseInput', () => {
     expect(screen.getByTestId('error-icon')).toBeInTheDocument();
   });
 
+  it('hides the error icon and error state when hideError is true', () => {
+    render(
+      <BaseInput
+        id="input1"
+        label="Name"
+        value="alice"
+        rawErrors={['required']}
+        hideError={true}
+        schema={{}}
+        options={{}}
+        onChange={vi.fn()}
+      />,
+    );
+    expect(screen.getByTestId('textfield')).toHaveAttribute('data-error', 'false');
+    expect(screen.queryByTestId('error-icon')).not.toBeInTheDocument();
+  });
+
+  it('shows the error icon when hideError is false', () => {
+    render(
+      <BaseInput
+        id="input1"
+        label="Name"
+        value="alice"
+        rawErrors={['required']}
+        hideError={false}
+        schema={{}}
+        options={{}}
+        onChange={vi.fn()}
+      />,
+    );
+    expect(screen.getByTestId('textfield')).toHaveAttribute('data-error', 'true');
+    expect(screen.getByTestId('error-icon')).toBeInTheDocument();
+  });
+
   it('passes through file input changes raw without re-encoding', () => {
     const onChange = vi.fn();
     render(
