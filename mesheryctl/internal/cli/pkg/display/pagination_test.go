@@ -339,6 +339,8 @@ func TestPromptAsyncPagination(t *testing.T) {
 	}
 }
 
+// TestHandlePaginationAsyncPreservesExistingQueryParameters verifies that HandlePaginationAsync
+// inspects parsed query parameters before appending page, pagesize, or search.
 func TestHandlePaginationAsyncPreservesExistingQueryParameters(t *testing.T) {
 	type items struct {
 		ID   string `json:"id"`
@@ -347,7 +349,6 @@ func TestHandlePaginationAsyncPreservesExistingQueryParameters(t *testing.T) {
 
 	utils.SetupContextEnv(t)
 	utils.StartMockery(t)
-	testContext := utils.NewTestHelper(t)
 
 	tests := []struct {
 		name        string
@@ -388,6 +389,17 @@ func TestHandlePaginationAsyncPreservesExistingQueryParameters(t *testing.T) {
 			},
 			expectedURL: "/api/meshmodels/models?perpage=10&filter=pagesize=custom&page=0&pagesize=10",
 		},
+		{
+			name: "populates page and pagesize when UrlPath contains empty page= or pagesize= values",
+			displayData: DisplayDataAsync{
+				UrlPath:          "api/workspaces?orgId=org-1&page=&pagesize=",
+				Page:             1,
+				PageSize:         10,
+				DisplayCountOnly: true,
+				DataType:         "workspace",
+			},
+			expectedURL: "/api/workspaces?orgId=org-1&page=&pagesize=&page=0&pagesize=10",
+		},
 	}
 
 	for _, tt := range tests {
@@ -410,7 +422,7 @@ func TestHandlePaginationAsyncPreservesExistingQueryParameters(t *testing.T) {
 				return [][]string{}, 0
 			})
 			assert.NoError(t, err)
-			assert.Equal(t, testContext.BaseURL+tt.expectedURL, testContext.BaseURL+requestedURL)
+			assert.Equal(t, tt.expectedURL, requestedURL)
 		})
 	}
 }

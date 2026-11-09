@@ -20,6 +20,9 @@ var serverAndNetworkErrors = []string{
 	utils.ErrFailRequestCode,
 }
 
+// HandlePaginationAsync fetches and processes paginated results from the Meshery API,
+// appending page, pagesize, and search query parameters when they are not already
+// populated with non-empty values on displayData.UrlPath.
 func HandlePaginationAsync[T any](
 	displayData DisplayDataAsync,
 	pageHandlerFunc pageHandler[T],
@@ -50,15 +53,15 @@ func HandlePaginationAsync[T any](
 		}
 
 		pagesQuerySearch := url.Values{}
-		if !existingQuery.Has("page") {
+		if existingQuery.Get("page") == "" {
 			pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
 		}
 
-		if !existingQuery.Has("pagesize") {
+		if existingQuery.Get("pagesize") == "" {
 			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
 		}
 
-		if displayData.SearchTerm != "" && !existingQuery.Has("search") {
+		if displayData.SearchTerm != "" && existingQuery.Get("search") == "" {
 			pagesQuerySearch.Set("search", displayData.SearchTerm)
 		}
 
