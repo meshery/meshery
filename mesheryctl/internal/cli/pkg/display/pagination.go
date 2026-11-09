@@ -43,7 +43,7 @@ func HandlePaginationAsync[T any](
 
 		parsedURL, err := url.Parse(displayData.UrlPath)
 		if err != nil {
-			return err
+			return ErrPagination(err, currentPage)
 		}
 
 		query := parsedURL.Query()
@@ -53,7 +53,7 @@ func HandlePaginationAsync[T any](
 		if !query.Has("pagesize") {
 			query.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
 		}
-		if displayData.SearchTerm != "" && !query.Has("search") {
+		if displayData.SearchTerm != "" {
 			query.Set("search", displayData.SearchTerm)
 		}
 
