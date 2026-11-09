@@ -47,7 +47,7 @@ Display a list of all available designs with specified page number (10 designs p
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl design list --page [pange-number]
+mesheryctl design list --page [page-number]
 
 </div>
 </div>

@@ -38068,7 +38068,7 @@ mesheryctl design list --verbose
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl design list --page [pange-number]
+mesheryctl design list --page [page-number]
 
 &lt;/div&gt;
 &lt;/div&gt;
