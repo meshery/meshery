@@ -274,7 +274,7 @@ func TestParallelProcess_MixedOutcomesWithManyPrereqs(t *testing.T) {
 				}
 
 				var idx int
-				fmt.Sscanf(comp.DisplayName, "p-%d", &idx)
+				_, _ = fmt.Sscanf(comp.DisplayName, "p-%d", &idx)
 				return idx%2 == 0
 			},
 			func(id string, comp component.ComponentDefinition, failedDep string) {
