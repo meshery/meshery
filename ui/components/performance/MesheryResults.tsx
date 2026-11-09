@@ -17,11 +17,24 @@ import { isLocalProvider } from '@/utils/provider';
 const DEFAULT_PAGE_SIZE = 10;
 const ROWS_PER_PAGE_OPTIONS = [10, 20, 25];
 
-// The server sends camelCase (runnerResults); the snake_case fallback keeps
-// older remote-provider payloads working.
+/**
+ * Extracts the runner results from a performance result record, prioritizing
+ * the server's canonical camelCase wire format (`runnerResults`) while falling
+ * back to legacy remote provider snake_case payloads (`runner_results`).
+ *
+ * @param record - The performance result object from the server.
+ * @returns The runner results object, or undefined if absent.
+ */
 export const getRunnerResults = (record) => record?.runnerResults ?? record?.runner_results;
 
-// Format one result for display in the table
+/**
+ * Formats a performance result record into a table row object with formatted
+ * duration, QPS, and percentile latency metrics. Defaults missing percentiles
+ * to 0.
+ *
+ * @param record - The performance result record to format.
+ * @returns Formatted table row object.
+ */
 export const formatResultRow = (record) => {
   const runnerResults = getRunnerResults(record);
   if (!runnerResults) {
@@ -47,21 +60,17 @@ export const formatResultRow = (record) => {
     qps: (runnerResults.ActualQPS ?? 0).toFixed(1),
     duration: ((runnerResults.ActualDuration ?? 0) / 1000000000).toFixed(1),
     threads: runnerResults.NumThreads ?? 0,
+    p50: 0,
+    p75: 0,
+    p90: 0,
+    p99: 0,
+    p99_9: 0,
   };
 
   const percentiles = runnerResults.DurationHistogram?.Percentiles || [];
   percentiles.forEach(({ Percentile, Value }) => {
     row[`p${Percentile}`.replace('.', '_')] = Value.toFixed(3);
   });
-
-  // Default values for percentiles if not available
-  if (percentiles.length === 0) {
-    row.p50 = 0;
-    row.p75 = 0;
-    row.p90 = 0;
-    row.p99 = 0;
-    row.p99_9 = 0;
-  }
 
   return row;
 };
@@ -368,7 +377,7 @@ const MesheryResults = () => {
       ),
       expandableRows: true,
       renderExpandableRow: (rowData, rowMeta) => {
-        const row = results[rowMeta.dataIndex].runner_results;
+        const row = getRunnerResults(results[rowMeta.dataIndex]);
         const colSpan = rowData.length + 1;
 
         return (
