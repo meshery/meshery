@@ -21,10 +21,13 @@ type loadContextsProvider struct {
 	err      error
 }
 
+// LoadAllK8sContext returns the stubbed contexts and error.
 func (p *loadContextsProvider) LoadAllK8sContext(string) ([]*models.K8sContext, error) {
 	return p.contexts, p.err
 }
 
+// runKubernetesMiddleware runs KubernetesMiddleware for an authenticated request and returns
+// the resulting context, everything logged during the call, and the middleware's error.
 func runKubernetesMiddleware(t *testing.T, prov models.Provider) (context.Context, string, error) {
 	t.Helper()
 
@@ -65,6 +68,8 @@ func TestKubernetesMiddleware_LoadContextsError(t *testing.T) {
 	}
 }
 
+// TestKubernetesMiddleware_NoContexts verifies that an empty result keeps its existing
+// warning and is not logged as a read error.
 func TestKubernetesMiddleware_NoContexts(t *testing.T) {
 	resCtx, logs, err := runKubernetesMiddleware(t, &loadContextsProvider{})
 

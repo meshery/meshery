@@ -11,6 +11,8 @@ import (
 	"gorm.io/gorm"
 )
 
+// newK8sContextPersister returns a persister backed by an in-memory SQLite database,
+// with the k8s_contexts table migrated only when migrate is true.
 func newK8sContextPersister(t *testing.T, migrate bool) *MesheryK8sContextPersister {
 	t.Helper()
 
@@ -34,6 +36,8 @@ func newK8sContextPersister(t *testing.T, migrate bool) *MesheryK8sContextPersis
 	return &MesheryK8sContextPersister{DB: &database.Handler{DB: db}}
 }
 
+// TestGetMesheryK8sContexts_ReturnsPage verifies case-insensitive search, ordering,
+// pagination and the total count on a successful read.
 func TestGetMesheryK8sContexts_ReturnsPage(t *testing.T) {
 	persister := newK8sContextPersister(t, true)
 	for _, c := range []K8sContext{{ID: "1", Name: "alpha"}, {ID: "2", Name: "beta"}, {ID: "3", Name: "alphabet"}} {
@@ -59,6 +63,8 @@ func TestGetMesheryK8sContexts_ReturnsPage(t *testing.T) {
 	}
 }
 
+// TestGetMesheryK8sContexts_PropagatesCountError verifies that a failed Count, here a
+// missing table, is returned as ErrDBRead with no response body.
 func TestGetMesheryK8sContexts_PropagatesCountError(t *testing.T) {
 	persister := newK8sContextPersister(t, false)
 
@@ -74,6 +80,8 @@ func TestGetMesheryK8sContexts_PropagatesCountError(t *testing.T) {
 	}
 }
 
+// TestGetMesheryK8sContexts_PropagatesFindError verifies that a failed Find, here a row
+// whose auth column cannot be decoded, is returned as ErrDBRead with no response body.
 func TestGetMesheryK8sContexts_PropagatesFindError(t *testing.T) {
 	persister := newK8sContextPersister(t, true)
 	// COUNT never decodes a row, so an undecodable column fails only in Find.

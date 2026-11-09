@@ -25,6 +25,7 @@ type mockContextsProvider struct {
 	persistedEvents []events.Event
 }
 
+// GetK8sContext returns the stubbed context lookup, or an empty context when none is set.
 func (m *mockContextsProvider) GetK8sContext(token, id string) (models.K8sContext, error) {
 	if m.getK8sContextFn != nil {
 		return m.getK8sContextFn(token, id)
@@ -32,6 +33,7 @@ func (m *mockContextsProvider) GetK8sContext(token, id string) (models.K8sContex
 	return models.K8sContext{}, nil
 }
 
+// PersistEvent records the event and returns the stubbed persistence result.
 func (m *mockContextsProvider) PersistEvent(event events.Event, token string) (models.PersistedEvent, error) {
 	m.persistedEvents = append(m.persistedEvents, event)
 	if m.persistEventFn != nil {
@@ -42,6 +44,7 @@ func (m *mockContextsProvider) PersistEvent(event events.Event, token string) (m
 	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
 }
 
+// TestDeleteContext_MissingToken verifies that a request without a token is rejected with ErrFetchToken.
 func TestDeleteContext_MissingToken(t *testing.T) {
 	systemID := uuid.Must(uuid.NewV4())
 	h := &Handler{
@@ -67,6 +70,8 @@ func TestDeleteContext_MissingToken(t *testing.T) {
 	}
 }
 
+// TestDeleteContext_GetK8sContextError verifies that a failed context lookup returns a 500,
+// persists one error event named after the context id, and broadcasts it.
 func TestDeleteContext_GetK8sContextError(t *testing.T) {
 	systemID := uuid.Must(uuid.NewV4())
 	broadcaster := &models.Broadcast{}
@@ -133,6 +138,8 @@ func TestDeleteContext_GetK8sContextError(t *testing.T) {
 	}
 }
 
+// TestDeleteContext_GetK8sContextError_WithNameFallback verifies that the error event
+// names the context by its name when the failed lookup still returned one.
 func TestDeleteContext_GetK8sContextError_WithNameFallback(t *testing.T) {
 	systemID := uuid.Must(uuid.NewV4())
 	h := &Handler{

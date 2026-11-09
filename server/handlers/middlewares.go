@@ -115,6 +115,8 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	}
 	return http.HandlerFunc(fn)
 }
+
+// NoCacheMiddleware sets response headers that stop clients and proxies from caching the response.
 func (h *Handler) NoCacheMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		// Set headers to disable caching
@@ -212,6 +214,8 @@ func (h *Handler) RegistrationAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
+// validateAuth reports whether the request carries a valid provider session, returning the
+// session error when it does not.
 func (h *Handler) validateAuth(provider models.Provider, req *http.Request) (bool, error) {
 	err := provider.GetSession(req)
 	if err == nil {

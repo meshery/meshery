@@ -63,6 +63,8 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order stri
 	return resp, nil
 }
 
+// SaveMesheryK8sContext persists the context, deriving its ID when unset. It returns
+// ErrContextAlreadyPersisted when a context with that ID already exists.
 func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (connections.Connection, error) {
 	conn := connections.Connection{}
 	if mkc.ID == "" {
@@ -89,6 +91,7 @@ func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (c
 	return conn, err
 }
 
+// GetMesheryK8sContext returns the context with the given ID.
 func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContext(id string) (K8sContext, error) {
 	var mesheryK8sContext K8sContext
 
