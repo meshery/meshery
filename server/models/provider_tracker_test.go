@@ -282,6 +282,84 @@ func newTestLocalProviderForTracker(t *testing.T) *DefaultLocalProvider {
 	return lp
 }
 
+// TestProviderTracker_UnsubscribeDuringSnapshotReplayDoesNotPanic asserts that
+// when a subscriber disconnects and unsubscribes while the background snapshot
+// replay is in flight, the replay goroutine terminates safely without attempting
+// a send on a closed channel (which would cause a fatal runtime panic).
+func TestProviderTracker_UnsubscribeDuringSnapshotReplayDoesNotPanic(t *testing.T) {
+	log := newTestLogger(t)
+	providers := map[string]Provider{
+		LocalProviderName: newTestLocalProviderForTracker(t),
+	}
+	tracker := NewProviderTracker(providers, log)
+
+	// Populate multiple provider statuses to give the snapshot replay several items
+	tracker.mu.Lock()
+	for i := 0; i < 20; i++ {
+		key := "provider-" + string(rune('a'+i))
+		tracker.statuses[key] = ProviderStatusEvent{
+			Key:    key,
+			Status: ProviderStatusOnline,
+		}
+	}
+	tracker.mu.Unlock()
+
+	for iter := 0; iter < 200; iter++ {
+		ctx, cancel := context.WithCancel(context.Background())
+		ch, unsubscribe := tracker.Subscribe(ctx)
+
+		// Race unsubscribe against the background snapshot replay
+		go func() {
+			time.Sleep(time.Duration(iter%5) * time.Microsecond)
+			unsubscribe()
+			cancel()
+		}()
+
+		// Drain whatever arrived before unsubscribe
+		for range ch {
+		}
+	}
+}
+
+// TestProviderTracker_ConcurrentUnsubscribeAndPublishDoesNotPanic asserts that
+// concurrent Publish calls and unsubscribe calls do not race into a send on a
+// closed channel.
+func TestProviderTracker_ConcurrentUnsubscribeAndPublishDoesNotPanic(t *testing.T) {
+	log := newTestLogger(t)
+	providers := map[string]Provider{
+		LocalProviderName: newTestLocalProviderForTracker(t),
+	}
+	tracker := NewProviderTracker(providers, log)
+
+	done := make(chan struct{})
+	go func() {
+		for i := 0; i < 500; i++ {
+			tracker.Publish(ProviderStatusEvent{
+				Key:    "churn",
+				Status: ProviderStatusOnline,
+			})
+			time.Sleep(10 * time.Microsecond)
+		}
+		close(done)
+	}()
+
+	for i := 0; i < 200; i++ {
+		ctx, cancel := context.WithCancel(context.Background())
+		ch, unsubscribe := tracker.Subscribe(ctx)
+
+		go func() {
+			time.Sleep(5 * time.Microsecond)
+			unsubscribe()
+			cancel()
+		}()
+
+		for range ch {
+		}
+	}
+
+	<-done
+}
+
 func mapKeys[K comparable, V any](m map[K]V) []K {
 	out := make([]K, 0, len(m))
 	for k := range m {

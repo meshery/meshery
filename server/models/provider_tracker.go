@@ -104,12 +104,36 @@ func (t *ProviderTracker) Subscribe(ctx context.Context) (<-chan ProviderStatusE
 	t.mu.Unlock()
 
 	go func() {
+		defer func() {
+			if r := recover(); r != nil && t.log != nil {
+				t.log.Errorf("provider-tracker: recovered panic in snapshot replay: %v", r)
+			}
+		}()
+
 		for _, evt := range snapshot {
 			select {
-			case ch <- evt:
 			case <-ctx.Done():
 				return
+			default:
 			}
+
+			t.mu.Lock()
+			if ctx.Err() != nil {
+				t.mu.Unlock()
+				return
+			}
+			if _, ok := t.subs[ch]; !ok {
+				t.mu.Unlock()
+				return
+			}
+			select {
+			case ch <- evt:
+			default:
+				if t.log != nil {
+					t.log.Debugf("provider-tracker: subscriber channel full during snapshot; dropping event for %q", evt.Key)
+				}
+			}
+			t.mu.Unlock()
 		}
 	}()
 
@@ -128,19 +152,17 @@ func (t *ProviderTracker) Subscribe(ctx context.Context) (<-chan ProviderStatusE
 }
 
 // Publish records the new event in the status map and broadcasts it to every
-// subscriber. Sends are non-blocking; a subscriber whose channel is full is
-// skipped for this event so a single stalled SSE writer cannot stall the
-// tracker for everyone else.
+// subscriber. Sends are non-blocking and run under the same mutex that guards
+// unsubscribe so that any channel present in subs is guaranteed still open
+// (so the send can never panic on a closed channel). A subscriber whose channel
+// is full is skipped for this event so a single stalled SSE writer cannot stall
+// the tracker for everyone else.
 func (t *ProviderTracker) Publish(evt ProviderStatusEvent) {
 	t.mu.Lock()
-	t.statuses[evt.Key] = evt
-	subs := make([]chan ProviderStatusEvent, 0, len(t.subs))
-	for ch := range t.subs {
-		subs = append(subs, ch)
-	}
-	t.mu.Unlock()
+	defer t.mu.Unlock()
 
-	for _, ch := range subs {
+	t.statuses[evt.Key] = evt
+	for ch := range t.subs {
 		select {
 		case ch <- evt:
 		default:
