@@ -30,6 +30,14 @@ func (p *Plan) IsFeasible() (bool, error) {
 // A component that is never dispatched, because a component it declared a
 // dependency on did not succeed, is reported to withheld instead.
 func (p *Plan) Execute(cb VisitFn, withheld WithheldFn, log logger.Handler) error {
+	feasible, err := p.IsFeasible()
+	if err != nil {
+		return err
+	}
+	if !feasible {
+		return ErrCyclicDependency(p.Data.Name, false)
+	}
+
 	parallelGraph, err := NewParallelProcessGraph(p.Graph)
 	if err != nil {
 		return err
