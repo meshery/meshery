@@ -235,8 +235,10 @@ func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*co
 		if err := tx.Delete(connection).Error; err != nil {
 			return err
 		}
-		if err := tx.Where("connection_id = ?", connection.ID.String()).Delete(&schemasEnv.EnvironmentConnectionMapping{}).Error; err != nil {
-			return err
+		if tx.Migrator().HasTable(&schemasEnv.EnvironmentConnectionMapping{}) {
+			if err := tx.Where("connection_id = ?", connection.ID.String()).Delete(&schemasEnv.EnvironmentConnectionMapping{}).Error; err != nil {
+				return err
+			}
 		}
 		if connection.Kind != "kubernetes" {
 			return nil

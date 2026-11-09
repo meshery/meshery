@@ -133,7 +133,10 @@ func (ep *EnvironmentPersister) DeleteEnvironment(env *environment.Environment) 
 		if err := tx.Delete(env).Error; err != nil {
 			return err
 		}
-		return tx.Where("environment_id = ?", env.ID).Delete(&environment.EnvironmentConnectionMapping{}).Error
+		if tx.Migrator().HasTable(&environment.EnvironmentConnectionMapping{}) {
+			return tx.Where("environment_id = ?", env.ID).Delete(&environment.EnvironmentConnectionMapping{}).Error
+		}
+		return nil
 	})
 	if err != nil {
 		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
