@@ -46,6 +46,12 @@ func TestListComponent(t *testing.T) {
 			ExpectedResponse: "components.list.count.empty.ouput.golden",
 			ExpectError:      false,
 		},
+		{
+			Name:        "list components with extraneous positional arguments",
+			Args:        []string{"list", "invalidArg"},
+			URL:         testUrl,
+			ExpectError: true,
+		},
 	}
 
 	mesheryctlflags.InitValidators(ComponentCmd)
