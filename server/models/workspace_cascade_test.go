@@ -213,4 +213,14 @@ func TestWorkspaceDeleteNotFound(t *testing.T) {
 	if meshkiterrors.GetCode(err) != ErrResultNotFoundCode {
 		t.Errorf("DeleteWorkspace error code = %q; want %q", meshkiterrors.GetCode(err), ErrResultNotFoundCode)
 	}
+
+	// DeleteWorkspaceByID looks the workspace up first, so the same
+	// not-found error must surface there too instead of the raw gorm error.
+	_, err = wp.DeleteWorkspaceByID(nonExistentWS.ID)
+	if err == nil {
+		t.Fatalf("DeleteWorkspaceByID returned nil error for non-existent workspace; want ErrResultNotFound")
+	}
+	if meshkiterrors.GetCode(err) != ErrResultNotFoundCode {
+		t.Errorf("DeleteWorkspaceByID error code = %q; want %q", meshkiterrors.GetCode(err), ErrResultNotFoundCode)
+	}
 }

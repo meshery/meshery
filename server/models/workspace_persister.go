@@ -267,6 +267,9 @@ func (wp *WorkspacePersister) UpdateWorkspace(workspaceID core.Uuid, payload *wo
 func (wp *WorkspacePersister) DeleteWorkspaceByID(workspaceID core.Uuid) ([]byte, error) {
 	ws, err := wp.GetWorkspace(workspaceID)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, ErrResultNotFound(err)
+		}
 		return nil, err
 	}
 
