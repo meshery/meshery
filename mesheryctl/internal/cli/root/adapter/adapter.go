@@ -216,6 +216,11 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 	if err != nil {
 		return "", utils.ErrReadResponseBody(err)
 	}
+	// A rejected request carries no operation ID, so without this check
+	// --watch would follow another operation's events.
+	if res.StatusCode < 200 || res.StatusCode >= 300 {
+		return "", utils.ErrResponseStatus(res.StatusCode)
+	}
 	return string(body), nil
 }
 
