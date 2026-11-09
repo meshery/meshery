@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta3/environment"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
@@ -58,7 +59,7 @@ func TestWorkspaceDeleteCascadesToAllMappings(t *testing.T) {
 
 	for _, tbl := range tables {
 		var count int64
-		if err := db.Table(tbl.table).Where("workspace_id = ?", wsID).Count(&count).Error; err != nil {
+		if err := db.Table(tbl.table).Where("workspace_id = ? AND "+tbl.column+" = ?", wsID, tbl.member).Count(&count).Error; err != nil {
 			t.Fatalf("count %s: %v", tbl.table, err)
 		}
 		if count != 0 {
@@ -208,5 +209,8 @@ func TestWorkspaceDeleteNotFound(t *testing.T) {
 	_, err := wp.DeleteWorkspace(nonExistentWS)
 	if err == nil {
 		t.Fatalf("DeleteWorkspace returned nil error for non-existent workspace; want ErrResultNotFound")
+	}
+	if meshkiterrors.GetCode(err) != ErrResultNotFoundCode {
+		t.Errorf("DeleteWorkspace error code = %q; want %q", meshkiterrors.GetCode(err), ErrResultNotFoundCode)
 	}
 }
