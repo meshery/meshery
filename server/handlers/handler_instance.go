@@ -35,6 +35,7 @@ type Handler struct {
 	ConnectionToStateMachineInstanceTracker *machines.ConnectionToStateMachineInstanceTracker
 	MeshsyncDefaultDeploymentMode           connections.MeshsyncDeploymentMode
 	evalTracker                             *evaluationTracker
+	adapterOperations                       *adapterOperationOwners
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -67,6 +68,7 @@ func NewHandlerInstance(
 		Provider:                                provider,
 		Rego:                                    rego,
 		GoEngine:                                gopolicies.NewGoEngine(logger),
+		adapterOperations:                       newAdapterOperationOwners(),
 		SystemID:                                viper.Get("INSTANCE_ID").(*core.Uuid),
 		ConnectionToStateMachineInstanceTracker: connToInstanceTracker,
 		MeshsyncDefaultDeploymentMode:           meshsyncDefaultDeploymentMode,
