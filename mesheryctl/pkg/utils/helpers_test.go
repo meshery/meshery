@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -14,6 +15,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"k8s.io/client-go/tools/clientcmd/api"
 )
 
@@ -52,6 +54,41 @@ type trackingBody struct {
 func (b *trackingBody) Close() error {
 	b.closed = true
 	return b.ReadCloser.Close()
+}
+
+func installTrackingTransport(t *testing.T) *trackingTransport {
+	t.Helper()
+	transport := &trackingTransport{base: http.DefaultTransport}
+	previous := http.DefaultTransport
+	http.DefaultTransport = transport
+	t.Cleanup(func() { http.DefaultTransport = previous })
+	return transport
+}
+
+func assertBodyClosed(t *testing.T, transport *trackingTransport, msg string) {
+	t.Helper()
+	if transport.body == nil || !transport.body.closed {
+		t.Fatal(msg)
+	}
+}
+
+func setupAuthenticatedContext(t *testing.T, endpoint string) {
+	t.Helper()
+	origToken := TokenFlag
+	t.Cleanup(func() { TokenFlag = origToken })
+	TokenFlag = GetToken(t)
+	origEndpoint := viper.GetString("contexts.local.endpoint")
+	t.Cleanup(func() { viper.Set("contexts.local.endpoint", origEndpoint) })
+	viper.Set("contexts.local.endpoint", endpoint)
+	tokenData, err := os.ReadFile(GetToken(t))
+	if err != nil {
+		return
+	}
+	tempAuth := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tempAuth, tokenData, 0o600); err != nil {
+		return
+	}
+	viper.Set("tokens", []map[string]string{{"name": "default", "location": tempAuth}})
 }
 
 func TestIsLocalProvider(t *testing.T) {
@@ -904,4 +941,22 @@ func TestUploadFileWithParams(t *testing.T) {
 	if err == nil {
 		t.Error("expected error for non-existent file, got nil")
 	}
+}
+
+func TestDeleteConfiguration_BodyClosed(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	t.Run("closes body on success", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = fmt.Fprint(w, `{"status":"deleted"}`)
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+		transport := installTrackingTransport(t)
+		if err := DeleteConfiguration(server.URL, "test-id", "pattern"); err != nil {
+			t.Fatalf("expected no error, got: %v", err)
+		}
+		assertBodyClosed(t, transport, "expected response body to be closed on delete configuration")
+	})
 }
