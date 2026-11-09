@@ -1,6 +1,7 @@
 package design
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -15,7 +16,7 @@ func TestDesignListCmd(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 
-	// test scenrios for fetching data
+	// test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "given no arguments provided when design list then design list is displayed",
@@ -24,6 +25,16 @@ func TestDesignListCmd(t *testing.T) {
 			Fixture:          "list.design.api.response.golden",
 			URL:              "/api/pattern?page=0&pagesize=10",
 			ExpectError:      false,
+		},
+		{
+			Name:             "given extra positional arguments when design list then throw error",
+			Args:             []string{"list", "extra-arg"},
+			ExpectedResponse: "",
+			Fixture:          "list.design.api.response.golden",
+			URL:              "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg)),
 		},
 	}
 

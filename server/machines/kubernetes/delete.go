@@ -56,6 +56,9 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 	}
 
 	contextID := machinectx.K8sContext.ID
+	if machinectx.K8sCompRegHelper != nil {
+		machinectx.K8sCompRegHelper.RemoveContext(contextID)
+	}
 
 	go func() {
 		if machinectx.MesheryCtrlsHelper != nil {
