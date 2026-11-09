@@ -154,7 +154,7 @@ func ErrHealthChecker(err error) error {
 func ErrPerformanceProfileResult(err error) error {
 	return errors.New(ErrPerformanceProfileResultCode, errors.Alert,
 		[]string{"Error displaying performance"},
-		[]string{"Unable to display performance Profile" + err.Error()},
+		[]string{"Unable to display performance Profile: " + err.Error()},
 		[]string{"Failed to fetch results for a specific profile"},
 		[]string{"Check your network connection and ensure Meshery is running .", formatErrorWithReference()})
 }
