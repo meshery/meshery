@@ -204,33 +204,24 @@ func filterByPatternIds(query *gorm.DB, patternIDs []string) *gorm.DB {
 	return query
 }
 
-// filterByKey filters a GORM query to only include resources with specific key-value pairs in their metadata.
+// filterByKey keeps the resources whose metadata carries every one of the
+// given "key=value" pairs of the given kind (e.g. "label"). The query must
+// already join kubernetes_resource_object_meta.
 //
-// This function performs the following steps:
-// 1. Joins the `kubernetes_resources` table with `kubernetes_resource_object_meta` to access metadata for resources.
-// 2. Joins the `kubernetes_resource_object_meta` table with `kubernetes_key_values` to access key-value pairs.
-// 3. Filters the results based on:
-//   - The `kind` of the key-value pair (e.g., "label", "annotation").
-//   - A set of key-value pairs provided in the `keyValues` slice, formatted as "key=value".
-//
-// The query ensures only matching resources are returned.
-//
-// Parameters:
-// - query: The initial GORM query to apply the filters to.
-// - kind: The kind of key-value pair to filter by (e.g., "label").
-// - keyValues: A slice of strings in the format "key=value" used to match key-value pairs.
-//
-// Returns:
-// - A filtered GORM query that includes only resources with matching key-value pairs.
+// Each pair is its own EXISTS condition rather than a join on
+// kubernetes_key_values: the join returned a resource once per matching pair,
+// matched any of the pairs instead of all of them, and brought a second `kind`
+// column into scope, which made ORDER BY kind ambiguous. Key and value are
+// compared as one "key=value" string so a key never pairs with another
+// label's value.
 func filterByKey(query *gorm.DB, kind string, keyValues []string) *gorm.DB {
-	if len(keyValues) == 0 {
-		return query
+	for _, keyValue := range keyValues {
+		query = query.Where(
+			"EXISTS (SELECT 1 FROM kubernetes_key_values WHERE kubernetes_key_values.id = kubernetes_resource_object_meta.id AND kubernetes_key_values.kind = ? AND (kubernetes_key_values.key || '=' || kubernetes_key_values.value) = ?)",
+			kind, keyValue,
+		)
 	}
-	return query.
-		// Joins("join kubernetes_resource_object_meta on kubernetes_resources.id = kubernetes_resource_object_meta.id").
-		Joins("join kubernetes_key_values on kubernetes_resource_object_meta.id = kubernetes_key_values.id").
-		// We need to use the `||` operator to concatenate the key and value, so we can compare it to the key-value pairs. and not cross match with other key value pairs
-		Where("kubernetes_key_values.kind = ? AND  (kubernetes_key_values.key || '=' || kubernetes_key_values.value) IN (?)", kind, keyValues)
+	return query
 }
 
 func selectDistinctKeyValues(db *gorm.DB, kind string) *gorm.DB {
