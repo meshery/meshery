@@ -41294,7 +41294,7 @@ mesheryctl system token set [token-name]
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl system token view [flags]
+mesheryctl system token view [token-name] [flags]
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -41302,6 +41302,7 @@ mesheryctl system token view [flags]
 &lt;h2 id="examples"&gt;
 	Examples
 &lt;/h2&gt;
+&lt;p&gt;View a specific token&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
@@ -41310,10 +41311,20 @@ mesheryctl system token view [token-name]
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
+&lt;p&gt;View token of current context&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl system token view (show token of current context)
+mesheryctl system token view
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View all available tokens&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
+mesheryctl system token view --all
 
 &lt;/div&gt;
 &lt;/div&gt;
