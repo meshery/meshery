@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -36,7 +37,38 @@ func TestDesignListCmd(t *testing.T) {
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg)),
 		},
+		{
+			Name:             "given --page 0 when design list then throw invalid flag error",
+			Args:             []string{"list", "--page", "0"},
+			ExpectedResponse: "",
+			URL:              "",
+			Fixture:          "list.design.api.response.golden",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
+		},
+		{
+			Name:             "given a negative --page when design list then throw invalid flag error",
+			Args:             []string{"list", "--page", "-1"},
+			ExpectedResponse: "",
+			URL:              "",
+			Fixture:          "list.design.api.response.golden",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '-1'")),
+		},
+		{
+			Name:             "given --pagesize 0 when design list then throw invalid flag error",
+			Args:             []string{"list", "--pagesize", "0"},
+			ExpectedResponse: "",
+			URL:              "",
+			Fixture:          "list.design.api.response.golden",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '0'")),
+		},
 	}
 
+	mesheryctlflags.InitValidators(DesignCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, DesignCmd, tests, currDir, "design")
 }

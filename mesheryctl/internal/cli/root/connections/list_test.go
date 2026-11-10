@@ -1,10 +1,12 @@
 package connections
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -90,7 +92,35 @@ func TestConnectionListCmd(t *testing.T) {
 			ExpectError:      false,
 			IsOutputGolden:   true,
 		},
+		{
+			Name:             "given --page 0 when running mesheryctl connection list then an invalid flag error is returned",
+			Args:             []string{"list", "--page", "0"},
+			ExpectedResponse: "",
+			Fixture:          "list.connection.api.response.golden",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
+		},
+		{
+			Name:             "given a negative --page when running mesheryctl connection list then an invalid flag error is returned",
+			Args:             []string{"list", "--page", "-1"},
+			ExpectedResponse: "",
+			Fixture:          "list.connection.api.response.golden",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '-1'")),
+		},
+		{
+			Name:             "given --pagesize 0 when running mesheryctl connection list then an invalid flag error is returned",
+			Args:             []string{"list", "--pagesize", "0"},
+			ExpectedResponse: "",
+			Fixture:          "list.connection.api.response.golden",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '0'")),
+		},
 	}
 
+	mesheryctlflags.InitValidators(ConnectionsCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, ConnectionsCmd, tests, currDir, "connection")
 }
