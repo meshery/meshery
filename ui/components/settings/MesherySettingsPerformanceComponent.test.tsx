@@ -80,7 +80,7 @@ vi.mock('@sistent/sistent', () => ({
       <input
         data-testid="duration-input"
         value={inputValue || ''}
-        onChange={(e) => onInputChange?.(e, e.target.value)}
+        onChange={(e) => onInputChange?.(e, e.target.value, 'input')}
       />
       <button onClick={() => onChange?.({}, value)}>autocomplete-change</button>
       {renderInput && renderInput({})}
@@ -122,6 +122,7 @@ vi.mock('../../lib/load-test-prefs', async (importOriginal) => {
   return {
     normalizeLoadTestPrefs: (p: any) => p,
     isValidLoadTestDuration: actual.isValidLoadTestDuration,
+    isZeroLoadTestDuration: actual.isZeroLoadTestDuration,
   };
 });
 
@@ -204,7 +205,30 @@ describe('MesherySettingsPerformanceComponent', () => {
     },
   );
 
-  it.each(['30s', '5m', '1h', '24h', '1h30m', '1h.5m', '0h30m', '1.5h'])(
+  it('saves other changes with an unchanged stored zero duration', () => {
+    selectedStore.prefTest.loadTestPref.t = '0s';
+    render(<MesherySettingsPerformanceComponent />);
+
+    fireEvent.change(screen.getByTestId('textfield-qps'), { target: { value: '20' } });
+    fireEvent.click(screen.getByRole('button', { name: /Save/ }));
+
+    expect(updateLoadTestPrefs).toHaveBeenCalledWith(
+      expect.objectContaining({ loadTestPrefs: expect.objectContaining({ t: '0s', qps: 20 }) }),
+    );
+  });
+
+  it('rejects a zero duration entered after editing a stored zero', () => {
+    selectedStore.prefTest.loadTestPref.t = '0s';
+    render(<MesherySettingsPerformanceComponent />);
+
+    fireEvent.change(screen.getByTestId('duration-input'), { target: { value: '1s' } });
+    fireEvent.change(screen.getByTestId('duration-input'), { target: { value: '0s' } });
+    fireEvent.click(screen.getByRole('button', { name: /Save/ }));
+
+    expect(updateLoadTestPrefs).not.toHaveBeenCalled();
+  });
+
+  it.each(['30s', '500ms', '1s500ms', '5m', '1h', '24h', '1h30m', '1h.5m', '0h30m', '1.5h'])(
     'submits the supported duration %s',
     (duration) => {
       render(<MesherySettingsPerformanceComponent />);

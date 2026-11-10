@@ -32,10 +32,13 @@ const toNonNegativeNumber = (value: unknown, fallback: number) => {
 
 // Share the duration syntax between read-back and submission. Stored zero
 // durations are preserved on read-back, but the form requires a positive value.
-const loadTestDurationPattern = /^(?:(?:\d+(?:\.\d*)?|\.\d+)[hms])+$/;
+const loadTestDurationPattern = /^(?:(?:\d+(?:\.\d*)?|\.\d+)(?:ms|h|m|s))+$/;
 
 export const isValidLoadTestDuration = (value: string) =>
   loadTestDurationPattern.test(value) && /[1-9]/.test(value);
+
+export const isZeroLoadTestDuration = (value: string) =>
+  loadTestDurationPattern.test(value) && !/[1-9]/.test(value);
 
 const toDuration = (value: unknown) =>
   typeof value === 'string' && loadTestDurationPattern.test(value.trim())
