@@ -111,6 +111,7 @@ var eventQueryIndexes = []string{
 	"CREATE INDEX IF NOT EXISTS idx_events_owner_status_severity ON events (owner, status, severity)",
 }
 
+// migrateEventQueryIndexes creates every index in eventQueryIndexes.
 func migrateEventQueryIndexes(db *database.Handler) error {
 	for _, stmt := range eventQueryIndexes {
 		if err := db.Exec(stmt).Error; err != nil {

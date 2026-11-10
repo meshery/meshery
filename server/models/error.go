@@ -1004,7 +1004,7 @@ func ErrMigrateEventIndexes(err error) error {
 		[]string{"Meshery Server could not create the indexes the Notification Center queries use"},
 		[]string{err.Error()},
 		[]string{"The database is read-only, locked by another process or not reachable"},
-		[]string{"Make sure Meshery Server can write to its database, then restart Meshery Server, or perform a hard reset"},
+		[]string{"Make sure Meshery Server can write to its database, then restart Meshery Server"},
 	)
 }
 

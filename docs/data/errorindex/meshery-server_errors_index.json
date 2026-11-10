@@ -7656,7 +7656,7 @@
         "The database is read-only, locked by another process or not reachable"
       ],
       "suggestedRemediation": [
-        "Make sure Meshery Server can write to its database, then restart Meshery Server, or perform a hard reset"
+        "Make sure Meshery Server can write to its database, then restart Meshery Server"
       ]
     }
   ],

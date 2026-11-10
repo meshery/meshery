@@ -4362,7 +4362,7 @@
         "long_description": "",
         "short_description": "Meshery Server could not create the indexes the Notification Center queries use",
         "probable_cause": "The database is read-only, locked by another process or not reachable",
-        "suggested_remediation": "Make sure Meshery Server can write to its database, then restart Meshery Server, or perform a hard reset"
+        "suggested_remediation": "Make sure Meshery Server can write to its database, then restart Meshery Server"
       }
     }
   }
