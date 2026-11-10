@@ -47,7 +47,7 @@ View design file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl design view [design name | ID]
+mesheryctl design view [design-name | ID]
 
 </div>
 </div>
@@ -58,6 +58,26 @@ List all designs:
 <div class='codeblock'>
 <div class='clipboardjs'>
 mesheryctl design list
+
+</div>
+</div>
+</pre> 
+
+Import a design:
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design import -f [file/URL] -n [name]
+
+</div>
+</div>
+</pre> 
+
+Export a design:
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design export [design-name | ID]
 
 </div>
 </div>
