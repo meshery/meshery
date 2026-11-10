@@ -513,6 +513,25 @@ Installation, troubleshooting and debugging of Meshery and its adapters
         <td>--source-type, -s</td>
         <td>Type of source file (ex. manifest / compose / helm)</td>
       </tr>
+      <tr><td><a href="/reference/mesheryctl/design/evaluate/">evaluate</a></td>
+        <td></td>
+        <td>Evaluate a design by running relationship evaluation policies</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--file, -f</td>
+        <td>Path to design file</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--output, -o</td>
+        <td>Path to save the evaluated design (required)</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--output-format</td>
+        <td>Output format for the evaluated design [json|yaml] (default yaml)</td>
+      </tr>
       <tr><td><a href="/reference/mesheryctl/design/export/">export</a></td>
         <td></td>
         <td>Export a design from Meshery</td>
@@ -723,6 +742,30 @@ Installation, troubleshooting and debugging of Meshery and its adapters
         <td></td>
         <td>--output-format, -o</td>
         <td>(optional) format to display in [md | mdx | js]</td>
+      </tr>
+      <tr><td><a href="/reference/mesheryctl/registry/purge/">purge</a></td>
+        <td></td>
+        <td>Prune old model version directories under ./models, retaining only the most recent versions of each model (kubernetes and meshery-core are always excluded)</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--dry-run</td>
+        <td>Print what would be removed without deleting anything</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--exclude</td>
+        <td>Comma-delimited list of additional model names to exclude from purging</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--retain</td>
+        <td>Number of most-recent versions to retain per model (default 1)</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--yes, -y</td>
+        <td>(optional) assume yes for user interactive prompts</td>
       </tr>
       <tr><td><a href="/reference/mesheryctl/registry/update/">update</a></td>
         <td></td>
