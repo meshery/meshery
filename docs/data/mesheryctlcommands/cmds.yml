@@ -855,7 +855,7 @@ registry:
       flags:
         output:
           name: --output, -o
-          description: (optional) location to output generated models (default "./models")
+          description: (optional) location to output generated models (when unset, the repo-root models directory is auto-detected)
         registrant_cred:
           name: --registrant-cred
           description: path pointing to the registrant credential definition
