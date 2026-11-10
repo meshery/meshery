@@ -2117,6 +2117,15 @@
         "short_description": "Unexpected response from GitHub API",
         "probable_cause": "GitHub API may be rate-limiting requests or the requested resource may not exist",
         "suggested_remediation": "Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"
+      },
+      "1256": {
+        "name": "ErrAmbiguousIDCode",
+        "code": "1256",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Ambiguous ID prefix",
+        "probable_cause": "The ID prefix matches more than one resource.",
+        "suggested_remediation": "Use a longer prefix or a full ID to select one resource."
       }
     }
   }

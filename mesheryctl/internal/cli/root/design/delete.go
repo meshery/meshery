@@ -90,6 +90,9 @@ mesheryctl design delete -f [file | URL]
 			} else {
 				pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), target, "pattern")
 				if err != nil {
+					if errors.GetCode(err) == utils.ErrAmbiguousIDCode {
+						return err
+					}
 					if errors.GetCode(err) == utils.ErrNotFoundCode {
 						return ErrDesignNotFound(target)
 					}

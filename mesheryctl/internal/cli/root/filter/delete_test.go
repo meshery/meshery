@@ -32,8 +32,8 @@ func TestDeleteCmd(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/filter?page_size=10000",
-					Response:     "filter.list.api.response.golden",
+					URL:          testContext.BaseURL + "/api/filter?page=0&pagesize=100",
+					Response:     "valid-id-list.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -44,6 +44,12 @@ func TestDeleteCmd(t *testing.T) {
 			Args: []string{"delete", "RolloutAndIstio"},
 			URLs: []utils.MockURL{
 				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/filter?page_size=10000",
+					Response:     "filter.list.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
 					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/filter/d0e09134-acb6-4c71-b051-3d5611653f70",
 					Response:     "delete.rollout.api.response.golden",
@@ -51,8 +57,8 @@ func TestDeleteCmd(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/filter?page_size=10000",
-					Response:     "filter.list.api.response.golden",
+					URL:          testContext.BaseURL + "/api/filter?page=0&pagesize=100",
+					Response:     "valid-id-list.response.golden",
 					ResponseCode: 200,
 				},
 			},
