@@ -16112,6 +16112,31 @@ Check client routing and extension configuration</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrMigrateEventIndexesCode-1491" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMigrateEventIndexesCode-more-info" onclick="toggle_visibility('meshery-server-ErrMigrateEventIndexesCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1491" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errmigrateeventindexescode-1491/"><code>ErrMigrateEventIndexesCode-1491</code></a>
+            </td>
+            <td>Meshery Server could not create the indexes the Notification Center queries use</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrMigrateEventIndexesCode-1491" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrMigrateEventIndexesCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The database is read-only, locked by another process or not reachable</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Make sure Meshery Server can write to its database, then restart Meshery Server</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>

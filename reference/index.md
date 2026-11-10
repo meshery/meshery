@@ -709,6 +709,7 @@ Section pages:
 - [ErrMethodNotAllowedCode-1408](/reference/error-codes/component-meshery-server/errmethodnotallowedcode-1408/)
 - [ErrMigrateDatabaseTablesCode-1404](/reference/error-codes/component-meshery-server/errmigratedatabasetablescode-1404/)
 - [ErrMigrateEventCorrelationIndexCode-1487](/reference/error-codes/component-meshery-server/errmigrateeventcorrelationindexcode-1487/)
+- [ErrMigrateEventIndexesCode-1491](/reference/error-codes/component-meshery-server/errmigrateeventindexescode-1491/)
 - [ErrMintTraceContextCode-11340](/reference/error-codes/library-meshkit/errminttracecontextcode-11340/)
 - [ErrMissingCommandsCode-1137](/reference/error-codes/client-mesheryctl/errmissingcommandscode-1137/)
 - [ErrMissingFieldCode-11174](/reference/error-codes/library-meshkit/errmissingfieldcode-11174/)
