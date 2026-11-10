@@ -45,7 +45,7 @@ var DesignCmd = &cobra.Command{
 	Use:   "design",
 	Short: "Manage cloud native designs",
 	Long: `Manage cloud and cloud native infrastructure using predefined designs.
-Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/design`,
 	Example: `
 // Apply design file:
 mesheryctl design apply --file [path to design file | URL of the file]
@@ -54,10 +54,16 @@ mesheryctl design apply --file [path to design file | URL of the file]
 mesheryctl design delete --file [path to design file]
 
 // View design file:
-mesheryctl design view [design name | ID]
+mesheryctl design view [design-name | ID]
 
 // List all designs:
 mesheryctl design list
+
+// Import a design:
+mesheryctl design import -f [file/URL] -s [source-type] -n [name]
+
+// Export a design:
+mesheryctl design export [design-name | ID]
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
