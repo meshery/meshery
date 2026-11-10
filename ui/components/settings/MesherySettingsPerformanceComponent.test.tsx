@@ -117,9 +117,13 @@ vi.mock('@/store/slices/prefTest', () => ({
   updateLoadTestPref: vi.fn((arg: any) => arg),
 }));
 
-vi.mock('../../lib/load-test-prefs', () => ({
-  normalizeLoadTestPrefs: (p: any) => p,
-}));
+vi.mock('../../lib/load-test-prefs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../lib/load-test-prefs')>();
+  return {
+    normalizeLoadTestPrefs: (p: any) => p,
+    isValidLoadTestDuration: actual.isValidLoadTestDuration,
+  };
+});
 
 import MesherySettingsPerformanceComponent from './MesherySettingsPerformanceComponent';
 

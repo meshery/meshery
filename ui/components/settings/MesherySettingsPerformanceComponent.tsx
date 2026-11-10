@@ -24,7 +24,7 @@ import { useGetLoadTestPrefsQuery, useUpdateLoadTestPrefsMutation } from '@/rtk-
 import { useSelector, useDispatch } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
-import { normalizeLoadTestPrefs } from '../../lib/load-test-prefs';
+import { isValidLoadTestDuration, normalizeLoadTestPrefs } from '../../lib/load-test-prefs';
 
 const loadGenerators = ['fortio'];
 
@@ -93,8 +93,7 @@ const MesherySettingsPerformanceComponent = () => {
       setTError('error-autocomplete-value');
       return;
     }
-    const validDuration = /^(?:(?:\d+(?:\.\d*)?|\.\d+)[hms])+$/.test(t);
-    if (!validDuration || !/[1-9]/.test(t)) {
+    if (!isValidLoadTestDuration(t)) {
       setTError('error-autocomplete-value');
       return;
     }
