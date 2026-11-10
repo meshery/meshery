@@ -183,7 +183,7 @@ export function parseRam(value) {
 function parseUnitsOfBytes(value) {
   if (!value) return 0;
 
-  const groups = value.match(/(\d+)([BKMGTPEe])?(i)?(\d+)?/) || [];
+  const groups = value.match(/(\d+)([BkKMGTPEe])?(i)?(\d+)?/) || [];
   const number = parseInt(groups[1], 10);
 
   // number ex. 1000
@@ -196,7 +196,7 @@ function parseUnitsOfBytes(value) {
     return number * 10 ** parseInt(groups[4], 10);
   }
 
-  const unitIndex = _.indexOf(UNITS, groups[2]);
+  const unitIndex = _.indexOf(UNITS, groups[2] === 'k' ? 'K' : groups[2]);
 
   // Unit + i ex. 1Ki
   if (groups[3] !== undefined) {
