@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -202,5 +203,93 @@ func TestGrafanaClientForConnection_NilUUID(t *testing.T) {
 	}
 	if err == nil || err.Error() == "" {
 		t.Fatal("expected non-nil error")
+	}
+}
+
+// TestPrometheusTelemetryQueryRangeBatchHandler_RejectsInvalidConnectionID pins
+// that the batch handler validates the connection ID before reading the request
+// body: an invalid ID with a body that would fail to unmarshal still returns
+// 400 with ErrInvalidUUIDValueCode, so a regression that moves validation after
+// the body read fails this test.
+func TestPrometheusTelemetryQueryRangeBatchHandler_RejectsInvalidConnectionID(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		id   string
+	}{
+		{"absent", ""},
+		{"malformed", "not-a-uuid"},
+		{"explicit nil uuid", "00000000-0000-0000-0000-000000000000"},
+		{"too short", "1234"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			systemID := uuid.Must(uuid.NewV4())
+			h := &Handler{
+				config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+				log:      newTestLogger(t),
+				SystemID: &systemID,
+			}
+			provider := newTelemetrySpyProvider()
+
+			batchReq := httptest.NewRequest(http.MethodPost, "/api/telemetry/prometheus/"+tc.id+"/query_range_batch", strings.NewReader("this is not json"))
+			if tc.id != "" {
+				batchReq = mux.SetURLVars(batchReq, map[string]string{"connectionID": tc.id})
+			}
+			batchRec := httptest.NewRecorder()
+			h.PrometheusTelemetryQueryRangeBatchHandler(batchRec, batchReq, nil, &models.User{}, provider)
+
+			if batchRec.Code != http.StatusBadRequest {
+				t.Errorf("Prometheus Batch expected 400, got %d (body=%q)", batchRec.Code, batchRec.Body.String())
+			}
+			if decoded := decodeErrorBody(t, batchRec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
+				t.Errorf("Prometheus Batch expected code %q, got %q", models.ErrInvalidUUIDValueCode, decoded.Code)
+			}
+			if len(provider.persistedEvents) > 0 {
+				t.Errorf("Prometheus Batch unexpectedly persisted failure event for invalid ID: %+v", provider.persistedEvents)
+			}
+		})
+	}
+}
+
+// TestGrafanaTelemetryQueryRangeBatchHandler_RejectsInvalidConnectionID pins
+// that the batch handler validates the connection ID before reading the request
+// body: an invalid ID with a body that would fail to unmarshal still returns
+// 400 with ErrInvalidUUIDValueCode, so a regression that moves validation after
+// the body read fails this test.
+func TestGrafanaTelemetryQueryRangeBatchHandler_RejectsInvalidConnectionID(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		id   string
+	}{
+		{"absent", ""},
+		{"malformed", "not-a-uuid"},
+		{"explicit nil uuid", "00000000-0000-0000-0000-000000000000"},
+		{"too short", "1234"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			systemID := uuid.Must(uuid.NewV4())
+			h := &Handler{
+				config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+				log:      newTestLogger(t),
+				SystemID: &systemID,
+			}
+			provider := newTelemetrySpyProvider()
+
+			batchReq := httptest.NewRequest(http.MethodPost, "/api/telemetry/grafana/"+tc.id+"/query_range_batch", strings.NewReader("this is not json"))
+			if tc.id != "" {
+				batchReq = mux.SetURLVars(batchReq, map[string]string{"connectionID": tc.id})
+			}
+			batchRec := httptest.NewRecorder()
+			h.GrafanaTelemetryQueryRangeBatchHandler(batchRec, batchReq, nil, &models.User{}, provider)
+
+			if batchRec.Code != http.StatusBadRequest {
+				t.Errorf("Grafana Batch expected 400, got %d (body=%q)", batchRec.Code, batchRec.Body.String())
+			}
+			if decoded := decodeErrorBody(t, batchRec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
+				t.Errorf("Grafana Batch expected code %q, got %q", models.ErrInvalidUUIDValueCode, decoded.Code)
+			}
+			if len(provider.persistedEvents) > 0 {
+				t.Errorf("Grafana Batch unexpectedly persisted failure event for invalid ID: %+v", provider.persistedEvents)
+			}
+		})
 	}
 }
