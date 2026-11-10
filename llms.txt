@@ -140,7 +140,7 @@
 - [AWS API Gateway](/extensions/models/aws-api-gateway-operator/index.md)
 - [AWS API Gateway v2](/extensions/models/aws-apigatewayv2-controller/index.md)
 - [AWS App Mesh](/extensions/models/appmesh-controller/index.md)
-- [AWS Applilcation Autoscaling](/extensions/models/aws-applicationautoscaling-controller/index.md)
+- [AWS Application Autoscaling](/extensions/models/aws-applicationautoscaling-controller/index.md)
 - [AWS CloudFront](/extensions/models/aws-cloudfront-controller/index.md)
 - [AWS CloudTrail](/extensions/models/aws-cloudtrail-controller/index.md)
 - [AWS CloudWatch](/extensions/models/aws-cloudwatch-controller/index.md)
@@ -1764,7 +1764,7 @@ Synopsis Delete a filter file using the name or ID of a filter. …
 Synopsis Import a WASM filter from a URI (http/s) or local filesystem …
 - [mesheryctl-filter-list](/reference/mesheryctl/filter/list/index.md):  mesheryctl filter list List filters
 Synopsis Display list of all available filter files.
-mesheryctl filter list [flags] …
+mesheryctl filter list …
 - [mesheryctl-filter-view](/reference/mesheryctl/filter/view/index.md):  mesheryctl filter view View filter(s)
 Synopsis Displays the contents of a specific filter based on name or id. …
 - [mesheryctl-model-build](/reference/mesheryctl/model/build/index.md):  mesheryctl model build Create an OCI-compliant package from the model files

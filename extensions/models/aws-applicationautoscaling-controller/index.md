@@ -1,3 +1,3 @@
-# AWS Applilcation Autoscaling
+# AWS Application Autoscaling
 
 LLMS index: [llms.txt](/llms.txt)
