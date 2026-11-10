@@ -790,6 +790,15 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 			writeMeshkitError(rw, models.ErrUnmarshal(err, "component definition"), http.StatusBadRequest)
 			return
 		}
+		// Reject a model version that could escape the export working
+		// directory. Registration is unauthenticated, so a hostile version
+		// planted here would otherwise reach ExportModel (CWE-22).
+		if c.Model != nil && (!isSafePathComponent(c.Model.Version) || !isSafePathComponent(c.Model.Model.Version)) {
+			err := fmt.Errorf("invalid model version: must be a single path component")
+			h.log.Error(ErrRequestBody(err))
+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+			return
+		}
 		utils.WriteSVGsOnFileSystem(&c)
 		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &c)
 		helpers.HandleError(registry.RegistrantHostToV1beta1(cc.Connection), &c, err, isModelError, isRegistranError)
@@ -1314,6 +1323,16 @@ func ociRepositoryName(modelName string) string {
 	return sanitized
 }
 
+// isSafePathComponent reports whether s can be interpolated into a filesystem
+// path as a single component without escaping its parent directory. An empty
+// string is harmless (filepath.Join drops it) and is accepted.
+func isSafePathComponent(s string) bool {
+	if s == "" {
+		return true
+	}
+	return s != "." && s != ".." && filepath.Base(s) == s
+}
+
 func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	modelId := r.URL.Query().Get("id")
 	name := r.URL.Query().Get("name")
@@ -1398,6 +1417,19 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		writeMeshkitError(rw, ErrExportModel(err, "model name validation"), http.StatusBadRequest)
 		return
 	}
+	// The model versions are interpolated into the same paths. Apply the same
+	// single-component check to both, so a hostile version cannot escape the
+	// per-request temp directory either (CWE-22).
+	if !isSafePathComponent(model.Model.Version) {
+		err := fmt.Errorf("invalid model version %q: must be a single path component", model.Model.Version)
+		writeMeshkitError(rw, ErrExportModel(err, "model version validation"), http.StatusBadRequest)
+		return
+	}
+	if !isSafePathComponent(model.Version) {
+		err := fmt.Errorf("invalid model version %q: must be a single path component", model.Version)
+		writeMeshkitError(rw, ErrExportModel(err, "model version validation"), http.StatusBadRequest)
+		return
+	}
 	// 2. Convert it to oci
 	// Fixed pattern: the model name is already preserved in modelDir inside the
 	// temp root, and embedding it here risks exceeding filesystem name limits.
@@ -1416,6 +1448,14 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 	modelDir := filepath.Join(tempDir, model.Name)
 	versionDir := filepath.Join(modelDir, model.Model.Version, model.Version)
+
+	// Defense in depth: even if a version slips past the checks above, the
+	// working directory must stay inside the per-request temp directory.
+	if versionDir != modelDir && !strings.HasPrefix(versionDir, modelDir+string(filepath.Separator)) {
+		err := fmt.Errorf("invalid model version: resolved path %q escapes the export directory", versionDir)
+		writeMeshkitError(rw, ErrExportModel(err, "model version validation"), http.StatusBadRequest)
+		return
+	}
 
 	// Create necessary directories: {modelName}/v1.0.0/1.0.0/{components, relationships}
 	dirs := []string{

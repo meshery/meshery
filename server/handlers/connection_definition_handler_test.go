@@ -41,6 +41,8 @@ func newConnectionDefTestDB(t *testing.T) *database.Handler {
 	return dbHandler
 }
 
+// TestDeleteConnectionDefinition_InvalidUUID verifies that DeleteConnectionDefinition returns
+// HTTP 400 Bad Request when an invalid UUID string is provided in the route parameters.
 func TestDeleteConnectionDefinition_InvalidUUID(t *testing.T) {
 	h := &Handler{
 		config: &models.HandlerConfig{},
@@ -62,6 +64,8 @@ func TestDeleteConnectionDefinition_InvalidUUID(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 }
 
+// TestDeleteConnectionDefinition_NotFound verifies that DeleteConnectionDefinition returns
+// HTTP 404 Not Found when attempting to delete a connection definition that does not exist in the database.
 func TestDeleteConnectionDefinition_NotFound(t *testing.T) {
 	dbHandler := newConnectionDefTestDB(t)
 	h := &Handler{
@@ -87,6 +91,8 @@ func TestDeleteConnectionDefinition_NotFound(t *testing.T) {
 	assert.Contains(t, rw.Body.String(), fmt.Sprintf("connection definition with id %s not found", missingID))
 }
 
+// TestDeleteConnectionDefinition_Success verifies that DeleteConnectionDefinition returns
+// HTTP 204 No Content and successfully removes the definition and its registry entry from the database.
 func TestDeleteConnectionDefinition_Success(t *testing.T) {
 	dbHandler := newConnectionDefTestDB(t)
 	h := &Handler{
