@@ -1,30 +1,76 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
-
-    const savedMode = localStorage.getItem("mode");
-
-    if (!savedMode || savedMode === "dark-mode") {
-        document.body.classList.add("dark-mode");
-    } else {
-        document.body.classList.remove("dark-mode");
-    }
-
     const toggleBtn = document.getElementById("mode-toggle-btn");
+
     if (toggleBtn) {
         toggleBtn.addEventListener("click", setMode);
     }
 
+    // Keep the early-applied theme and update the logos.
     updateLogos();
+
+    // Follow system preference changes only when no explicit preference exists.
+    if (window.matchMedia) {
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+        const handleSystemThemeChange = event => {
+            if (localStorage.getItem("mode") === null) {
+                applyTheme(event.matches);
+            }
+        };
+
+        if (systemTheme.addEventListener) {
+            systemTheme.addEventListener("change", handleSystemThemeChange);
+        } else {
+            systemTheme.addListener(handleSystemThemeChange);
+        }
+    }
+
+    // Synchronize theme changes made in other tabs.
+    window.addEventListener("storage", event => {
+        if (event.storageArea !== localStorage) return;
+
+        if (event.key === "mode" || event.key === null) {
+            applyCurrentPreference();
+        }
+    });
 });
 
+function applyTheme(isDark) {
+    if (window.applyDocsTheme) {
+        window.applyDocsTheme(isDark);
+    } else {
+        document.body.classList.toggle("dark-mode", isDark);
+        updateLogos();
+    }
+}
+
+function applyCurrentPreference() {
+    const savedMode = localStorage.getItem("mode");
+
+    if (savedMode === "light-mode") {
+        applyTheme(false);
+    } else if (savedMode === "dark-mode") {
+        applyTheme(true);
+    } else {
+        const systemPreference = window.matchMedia
+            ? window.matchMedia("(prefers-color-scheme: dark)").matches
+            : true;
+
+        applyTheme(systemPreference);
+    }
+}
+
 function setMode() {
-    document.body.classList.toggle("dark-mode");
-    updateLogos();
+    const isDark = !document.body.classList.contains("dark-mode");
+
     localStorage.setItem(
         "mode",
-        document.body.classList.contains("dark-mode") ? "dark-mode" : "light-mode"
+        isDark ? "dark-mode" : "light-mode"
     );
+
+    applyTheme(isDark);
 }
 
 function updateLogos() {
