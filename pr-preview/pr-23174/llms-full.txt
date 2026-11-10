@@ -93976,7 +93976,7 @@ Check client routing and extension configuration</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">The database is read-only, locked by another process or not reachable</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Make sure Meshery Server can write to its database, then restart Meshery Server, or perform a hard reset</p>
+              <p class="error-details">Make sure Meshery Server can write to its database, then restart Meshery Server</p>
             </td>
           </tr>
         
