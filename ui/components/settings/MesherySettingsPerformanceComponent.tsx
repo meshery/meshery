@@ -93,8 +93,8 @@ const MesherySettingsPerformanceComponent = () => {
       setTError('error-autocomplete-value');
       return;
     }
-    const durationMatch = /^(\d+(?:\.\d+)?)[hms]$/i.exec(t);
-    if (!durationMatch || Number(durationMatch[1]) <= 0) {
+    const validDuration = /^(?:(?:\d+(?:\.\d*)?|\.\d+)[hms])+$/.test(t);
+    if (!validDuration || !/[1-9]/.test(t)) {
       setTError('error-autocomplete-value');
       return;
     }
@@ -198,7 +198,7 @@ const MesherySettingsPerformanceComponent = () => {
                       variant="outlined"
                       error={!!tError}
                       helperText={
-                        tError ? 'Use a number followed by h, m or s (for example 24h).' : ''
+                        tError ? 'Use lowercase h, m or s, for example 24h or 1h30m.' : ''
                       }
                     />
                   )}

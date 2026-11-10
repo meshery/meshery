@@ -188,25 +188,31 @@ describe('MesherySettingsPerformanceComponent', () => {
     expect(updateLoadTestPrefs).not.toHaveBeenCalled();
   });
 
-  it.each(['1d', '1d1h'])('does not submit unsupported day durations (%s)', (duration) => {
-    render(<MesherySettingsPerformanceComponent />);
+  it.each(['1d', '1d1h', '24H', '1H30m', '0h0m'])(
+    'does not submit an unsupported duration (%s)',
+    (duration) => {
+      render(<MesherySettingsPerformanceComponent />);
 
-    fireEvent.change(screen.getByTestId('duration-input'), { target: { value: duration } });
-    fireEvent.click(screen.getByRole('button', { name: /Save/ }));
+      fireEvent.change(screen.getByTestId('duration-input'), { target: { value: duration } });
+      fireEvent.click(screen.getByRole('button', { name: /Save/ }));
 
-    expect(updateLoadTestPrefs).not.toHaveBeenCalled();
-  });
+      expect(updateLoadTestPrefs).not.toHaveBeenCalled();
+    },
+  );
 
-  it.each(['30s', '5m', '1h', '24h'])('submits the supported duration %s', (duration) => {
-    render(<MesherySettingsPerformanceComponent />);
+  it.each(['30s', '5m', '1h', '24h', '1h30m', '1h.5m', '0h30m', '1.5h'])(
+    'submits the supported duration %s',
+    (duration) => {
+      render(<MesherySettingsPerformanceComponent />);
 
-    fireEvent.change(screen.getByTestId('duration-input'), { target: { value: duration } });
-    fireEvent.click(screen.getByRole('button', { name: /Save/ }));
+      fireEvent.change(screen.getByTestId('duration-input'), { target: { value: duration } });
+      fireEvent.click(screen.getByRole('button', { name: /Save/ }));
 
-    expect(updateLoadTestPrefs).toHaveBeenCalledWith(
-      expect.objectContaining({
-        loadTestPrefs: expect.objectContaining({ t: duration }),
-      }),
-    );
-  });
+      expect(updateLoadTestPrefs).toHaveBeenCalledWith(
+        expect.objectContaining({
+          loadTestPrefs: expect.objectContaining({ t: duration }),
+        }),
+      );
+    },
+  );
 });
