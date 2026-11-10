@@ -1,0 +1,81 @@
+package registry
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/meshery/meshkit/errors"
+)
+
+var (
+	ErrGenerateModelCode         = "mesheryctl-1055"
+	ErrGenerateComponentCode     = "mesheryctl-1056"
+	ErrUpdateModelCode           = "mesheryctl-1057"
+	ErrUpdateComponentCode       = "mesheryctl-1058"
+	ErrUpdateRegistryCode        = "mesheryctl-1059"
+	ErrParsingSheetCode          = "mesheryctl-1128"
+	ErrGenerationTimeoutCode     = "mesheryctl-1129"
+	ErrParsingRelationshipCode   = "mesheryctl-1130"
+	ErrModelGenerationFailedCode = "mesheryctl-1159"
+	ErrPublishCode               = "mesheryctl-1233"
+	ErrPurgeInvalidRetainCode    = "mesheryctl-1249"
+	ErrPurgeReadModelsDirCode    = "mesheryctl-1250"
+	ErrPurgeRemoveCode           = "mesheryctl-1251"
+	ErrPurgeUnsafePathCode       = "mesheryctl-1252"
+)
+
+func ErrUpdateRegistry(err error, path string) error {
+	return errors.New(ErrUpdateRegistryCode, errors.Alert, []string{"error updating registry at ", path}, []string{err.Error()}, []string{"Provided spreadsheet ID is incorrect", "Provided credential is incorrect"}, []string{"Ensure correct spreadsheet ID is provided", "Ensure correct credential is used"})
+}
+
+func ErrGenerateModel(err error, modelName string) error {
+	return errors.New(ErrGenerateModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, err.Error())}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
+}
+
+func ErrGenerateComponent(err error, modelName, compName string) error {
+	return errors.New(ErrGenerateComponentCode, errors.Alert, []string{"Error generating component", fmt.Sprintf("component %s of model %s", compName, modelName)}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrUpdateModel(err error, modelName string) error {
+	return errors.New(ErrUpdateModelCode, errors.Alert, []string{"error updating model ", modelName}, []string{err.Error()}, []string{"Model does not exist"}, []string{"Ensure existence of model, check for typo in model name"})
+}
+
+func ErrUpdateComponent(err error, modelName, compName string) error {
+	return errors.New(ErrUpdateComponentCode, errors.Alert, []string{fmt.Sprintf("error updating component %s of model %s ", compName, modelName)}, []string{err.Error()}, []string{"Component does not exist", "Component definition is corrupted"}, []string{"Ensure existence of component, check for typo in component name", "Regenerate corrupted component"})
+}
+
+func ErrParsingSheet(err error, obj string) error {
+	return errors.New(ErrParsingSheetCode, errors.Alert, []string{fmt.Sprintf("error parsing %s sheet", obj)}, []string{fmt.Sprintf("while parsing the %s sheet encountered an error: %s", obj, err)}, []string{"provided sheet id for %s might be incorrect"}, []string{"ensure the sheet id is correct"})
+}
+
+func ErrGenerationTimeout(duration time.Duration) error {
+	return errors.New(ErrGenerationTimeoutCode, errors.Alert, []string{fmt.Sprintf("model generation timed out after %v", duration)}, []string{fmt.Sprintf("The model generation process exceeded the maximum allowed time of %v", duration)}, []string{"The model source may be unresponsive", "Network connectivity issues", "Large number of components to generate"}, []string{"Try generating a specific model using --model flag", "Check network connectivity", "Review the generation logs for problematic models"})
+}
+
+func ErrParsingRelationship(err error, modelName string) error {
+	return errors.New(ErrParsingRelationshipCode, errors.Alert, []string{fmt.Sprintf("error parsing relationships for model: %s", modelName)}, []string{err.Error()}, []string{"Invalid relationship definition format", "Missing required relationship fields", "Malformed selector in relationship"}, []string{"Verify the relationship CSV format", "Check that all required fields are present", "Validate the selector JSON syntax"})
+}
+
+func ErrPublish(err error, system string) error {
+	return errors.New(ErrPublishCode, errors.Alert, []string{fmt.Sprintf("error publishing to %s", system)}, []string{err.Error()}, []string{"Invalid system specified", "Publishing process encountered an error"}, []string{"Ensure a valid system is provided (meshery, remote-provider, website)", "Check the publishing configuration and try again"})
+}
+
+func ErrModelGenerationFailed(modelName string, err error) error {
+	return errors.New(ErrModelGenerationFailedCode, errors.Alert, []string{fmt.Sprintf("failed to generate model: %s", modelName)}, []string{err.Error()}, []string{"Invalid model source URL", "Unsupported registrant type", "Network issues fetching model data"}, []string{"Verify the model's source URL is accessible", "Check the registrant type is supported", "Review network connectivity"})
+}
+
+func ErrPurgeInvalidRetain(retain int) error {
+	return errors.New(ErrPurgeInvalidRetainCode, errors.Alert, []string{fmt.Sprintf("invalid --retain value: %d", retain)}, []string{"--retain must be a positive integer, but a value less than 1 was provided"}, []string{"A value less than 1 was passed to the --retain flag"}, []string{"Pass --retain with a value of 1 or greater"})
+}
+
+func ErrPurgeReadModelsDir(err error, path string) error {
+	return errors.New(ErrPurgeReadModelsDirCode, errors.Alert, []string{fmt.Sprintf("error reading models directory: %s", path)}, []string{err.Error()}, []string{"The ./models directory is not readable", "Insufficient filesystem permissions"}, []string{"Ensure ./models exists and is readable", "Run mesheryctl registry purge from the root of a meshery/meshery fork"})
+}
+
+func ErrPurgeUnsafePath(path, modelsDir string) error {
+	return errors.New(ErrPurgeUnsafePathCode, errors.Alert, []string{fmt.Sprintf("refusing to remove path outside of the models directory: %s", path)}, []string{fmt.Sprintf("%s does not resolve within %s, so it was left untouched", path, modelsDir)}, []string{"A model version directory name escapes the models directory", "The models directory layout was modified while the purge was running"}, []string{"Inspect the models directory for unexpected entries", "Re-run mesheryctl registry purge from the root of a meshery/meshery fork"})
+}
+
+func ErrPurgeRemove(err error, path string) error {
+	return errors.New(ErrPurgeRemoveCode, errors.Alert, []string{fmt.Sprintf("error removing model version directory: %s", path)}, []string{err.Error()}, []string{"Insufficient filesystem permissions", "The directory is in use by another process"}, []string{"Ensure sufficient permissions to delete the directory", "Retry the purge after closing any process using the directory"})
+}

@@ -1,0 +1,40 @@
+{{ $name := .name | default "Ungrouped" }}
+{{ $tags := .tags | default dict }}
+{{ $meta := index $tags $name }}
+
+{{ $rawLabel := "" }}
+{{ $description := "" }}
+
+{{ if $meta }}
+  {{ $rawLabel = index $meta "x-displayName" | default "" }}
+  {{ $description = index $meta "description" | default "" }}
+{{ end }}
+
+{{ $fallback := index (split $name "_") 0 | default $name }}
+
+{{ if or (eq $rawLabel "") (eq (lower $rawLabel) "other") (and (eq (lower $rawLabel) "users") (not (strings.HasPrefix $name "User_"))) }}
+  {{ $rawLabel = $fallback }}
+{{ end }}
+
+{{ if eq $rawLabel "" }}
+  {{ $rawLabel = "Ungrouped" }}
+{{ end }}
+
+{{ if strings.Contains (lower $description) "meshery cloud" }}
+  {{ $description = "" }}
+{{ end }}
+
+{{ $label := replace $rawLabel "_" " " }}
+{{ if ne $label "" }}
+  {{ $label = $label | title }}
+{{ else }}
+  {{ $label = "Ungrouped" }}
+{{ end }}
+
+{{ $result := dict
+  "name" $name
+  "label" $label
+  "description" $description
+}}
+
+{{ return $result }}

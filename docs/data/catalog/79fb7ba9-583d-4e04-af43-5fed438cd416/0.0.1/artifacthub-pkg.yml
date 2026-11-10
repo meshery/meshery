@@ -1,0 +1,20 @@
+version: 0.0.1
+name: simple-kubernetes-pod
+displayName: Simple Kubernetes Pod
+createdAt: "2023-08-16T11:17:55Z"
+description: 'This cloud-native design consists of a Kubernetes Pod running an Nginx container and a Kubernetes Service named service. The Pod uses the image nginx with an image pull policy of Always. The Service defines two ports: one with port 80 and target port 8080, and another with port 80. The Service allows communication between the Pod and external clients on port 80.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/79fb7ba9-583d-4e04-af43-5fed438cd416/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Networking should be properly configured to enable communication between pod and services. Ensure sufficient resources are available in the cluster. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 969bfd5e-28fb-4c20-a020-ee9db65da812
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

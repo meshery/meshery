@@ -1,0 +1,30 @@
+{
+  "page": 0,
+  "page_size": 25,
+  "total_count": 1,
+  "relationships": [
+    {
+      "id": "aaaabbbb-cccc-dddd-eeee-111122223333",
+      "subType": "Mount",
+      "kind": "edge",
+      "type": "network",
+      "version": "v1.0.0",
+      "evaluation policy": "OPA",
+      "model": {
+        "name": "kubernetes"
+      },
+      "metadata": {
+        "description": "A relationship that defines network edges between components."
+      },
+      "selector": [
+        {
+          "allow": {
+            "from": [{"kind": "Service", "model": "kubernetes"}],
+            "to":   [{"kind": "Pod",     "model": "kubernetes"}]
+          },
+          "deny": {}
+        }
+      ]
+    }
+  ]
+}

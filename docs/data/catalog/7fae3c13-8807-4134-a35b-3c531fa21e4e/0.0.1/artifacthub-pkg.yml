@@ -1,0 +1,20 @@
+version: 0.0.1
+name: pod-node-affinity
+displayName: Pod Node Affinity
+createdAt: "2024-01-14T09:54:43Z"
+description: By defining node affinity rules, this design ensures that Pods are deployed on nodes with specific labels, such as hardware capabilities or geographical location, aligning with application requirements and operational policies. This capability enhances workload performance, optimizes resource utilization, and supports efficient workload distribution across Kubernetes clusters, enhancing scalability and fault tolerance in distributed computing environments.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/7fae3c13-8807-4134-a35b-3c531fa21e4e/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "While node affinity provides powerful capabilities for workload optimization, improper configuration or overly restrictive rules can lead to uneven distribution of Pods across nodes, potentially underutilizing cluster resources or causing nodes to become overwhelmed. Careful consideration of node labels, resource requirements, and workload characteristics is necessary to achieve balanced resource allocation and maximize cluster efficiency. Additionally, changes in node labels or availability might impact Pod scheduling, necessitating regular review and adjustment of node affinity rules to maintain optimal deployment strategies. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

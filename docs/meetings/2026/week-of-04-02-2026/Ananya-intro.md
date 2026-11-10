@@ -1,0 +1,1 @@
+I am Ananya Kaushal a college student with a strong interest in technology and programming. I have knowledge of C++, Python, and JavaScript, and I am also skilled in full stack web development. I enjoy building projects, learning new technologies, and continuously improving my coding skills.

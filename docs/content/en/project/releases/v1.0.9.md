@@ -1,0 +1,55 @@
+---
+title: v1.0.9
+date: 2026-04-17
+tag: v1.0.9
+prerelease: false
+---
+
+## What's New
+## 🔤 General
+## ⌨️ Meshery CLI
+
+- refactor(mesheryctl): Improve error messages for model init missing argument @lekaf974 (#18699)
+-  `\[Fix\] Resolve Server Panics in Provider logic and K8s Context Handlers` @KumarADITHYA123 (#18718)
+- fixes environment fetch failures by aligning the server’s query parameter handling with the UI contract. @saurabhraghuvanshii (#18639)
+
+## 🖥 Meshery UI
+
+- \[UI\] Document and enforce @/theme entrypoint @jamieplu (#18764)
+- \[UI\] Align @/theme export surface with Sistent @jamieplu (#18761)
+-  `\[Fix\] Resolve Server Panics in Provider logic and K8s Context Handlers` @KumarADITHYA123 (#18718)
+- \[UI\] Add palette accessors to ui/theme/index.ts @jamieplu (#18762)
+- \[UI\] Route app theme infrastructure through @/theme @jamieplu (#18763)
+- Bump follow-redirects from 1.15.11 to 1.16.0 in /provider-ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#18708)
+
+## 🧰 Maintenance
+
+- Update build-and-preview-docs.yml @CodexRaunak (#18774)
+- \[UI\] Add palette accessors to ui/theme/index.ts @jamieplu (#18762)
+- Bump follow-redirects from 1.15.11 to 1.16.0 in /provider-ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#18708)
+- chore(workflow): unblock docs-noob-tester with write permissions and … @Junnygram (#18715)
+
+## 📖 Documentation
+
+- Add Utkarsh Anand's of week 17-04-2026 @ITACHI161105 (#18794)
+- Attendance: Madaminjon Esanov (devesanoff) - Week of April 16, 2026 @Devesanoff (#18793)
+- Create Utkarsh-Anand.md @Bhumikagarggg (#18792)
+- Create SohamBabrekar.md @Bhumikagarggg (#18791)
+- Create Ankit-Rewar.md @Bhumikagarggg (#18790)
+- Added introduction for Prarthana Vadeesha @prarii (#18789)
+- Add Put-your-name.md for participant introductions @Bhumikagarggg (#18788)
+- Create Gaurav_Chaudhary.md @ANAMASGARD (#18787)
+- Add introduction for Shivam in markdown file @kryptonn36 (#18786)
+- Add introduction for Sulagna Ghosh @suzy-g38 (#18785)
+- Add Kavitha Karunakaran's bio to meetings documentation @matrixkavi (#18784)
+- Add Yash-Mahakal.md with introduction @YASHMAHAKAL (#18783)
+- Add attendance instructions to meeting notes @YASHMAHAKAL (#18773)
+-  `\[Fix\] Resolve Server Panics in Provider logic and K8s Context Handlers` @KumarADITHYA123 (#18718)
+- \[Docs\] Add OpenGraph and Twitter image tags for docs @nitheeshmk41 (#18566)
+- fix: added toggle visibility button @banana-three-join (#18308)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@ANAMASGARD, @Bhumikagarggg, @CodexRaunak, @Devesanoff, @ITACHI161105, @Junnygram, @KumarADITHYA123, @PragalvaXFREZ, @YASHMAHAKAL, @alexquincy, @banana-three-join, @fitzergerald, @jamieplu, @kryptonn36, @l5io, @leecalcote, @lekaf974, @marblom007, @matrixkavi, @miacycle, @nitheeshmk41, @prarii, @saurabhraghuvanshii, @suzy-g38, @winkletinkle and \[dependabot\[bot\]\](https://github.com/apps/dependabot)
+

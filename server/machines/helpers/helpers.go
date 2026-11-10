@@ -1,0 +1,217 @@
+package helpers
+
+import (
+	"context"
+	"sync"
+
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/machines/grafana"
+	"github.com/meshery/meshery/server/machines/kubernetes"
+	"github.com/meshery/meshery/server/machines/prometheus"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/utils"
+	"github.com/meshery/schemas/models/core"
+)
+
+func StatusToEvent(status connections.ConnectionStatus) machines.EventType {
+	switch status {
+	case connections.DISCOVERED:
+		return machines.Discovery
+	case connections.REGISTERED:
+		return machines.Register
+	case connections.CONNECTED:
+		return machines.Connect
+	case connections.DISCONNECTED:
+		return machines.Disconnect
+	case connections.IGNORED:
+		return machines.Ignore
+	case connections.DELETED:
+		return machines.Delete
+	case connections.NOTFOUND:
+		return machines.NotFound
+	}
+	return machines.EventType(machines.DefaultState)
+}
+
+// getMachine builds the lifecycle state machine for a connection kind.
+//
+// Kubernetes has a bespoke machine (extra states, cluster-specific actions).
+// Every other kind runs the default machine, whose transitions mirror the
+// `transitionMap` authored on the kind's connection definition
+// (models/.../connections/*.json): discovered -> registered/ignored,
+// registered -> connected/ignored, connected -> disconnected/deleted,
+// disconnected -> connected/deleted.
+//
+// Kinds differ only in whether the REGISTERED state carries a verification
+// action. Grafana and Prometheus verify their endpoint is reachable before
+// advancing; kinds without a reachability probe (e.g. artifacthub, github)
+// register with no extra action and persist on connect.
+//
+// This deliberately does NOT allowlist kinds. The set of registerable kinds is
+// the set of registered connection definitions - that is what drives the Create
+// Connection wizard (buildConnectionWizardKindConfigs) - so an allowlist here
+// would be a second, silently divergent source of truth: shipping a definition
+// would surface the kind in the wizard and then fail registration with
+// meshery-server-1218.
+func getMachine(initialState machines.StateType, mtype, id string, userID core.Uuid, log logger.Handler, dbHandler *database.Handler) (*machines.StateMachine, error) {
+	if mtype == "kubernetes" {
+		return kubernetes.New(id, userID, log)
+	}
+
+	mch, err := machines.New(initialState, id, userID, log, mtype)
+	if err != nil {
+		return mch, err
+	}
+
+	if action := registerActionForKind(mtype); action != nil {
+		register := mch.States[machines.REGISTERED]
+		mch.States[machines.REGISTERED] = *register.RegisterAction(action)
+	}
+
+	connect := mch.States[machines.CONNECTED]
+	mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
+
+	return mch, nil
+}
+
+// registerActionForKind returns the kind-specific action run on entry to the
+// REGISTERED state, or nil when the kind has no verification step.
+func registerActionForKind(mtype string) machines.Action {
+	switch mtype {
+	case "grafana":
+		return &grafana.RegisterAction{}
+	case "prometheus":
+		return &prometheus.RegisterAction{}
+	}
+	return nil
+}
+
+// HasMachineContext reports whether a state machine instance exists and carries
+// an assigned Context. Callers that must resolve that Context - anything doing
+// utils.Cast[*kubernetes.MachineCtx](inst.Context), or driving an action that
+// does - should gate on this.
+//
+// It rejects two distinct shapes of a failed initialization:
+//
+//   - a nil instance, which InitializeMachineWithContext returns when the
+//     machine could not be built at all (e.g. the cluster's API server was
+//     unreachable, so the client set could not be generated and
+//     AssignInitialCtx returned an error);
+//   - a non-nil instance whose Context is nil, guarding against any uninitialized
+//     or externally constructed machine where Start was not completed.
+//
+// Driving either shape nil-dereferences, or type-asserts a nil interface and
+// logs meshkit-11180 ("nil interface cannot be type casted") - which, on the
+// ~5s controller-status poll, is a log line every five seconds per broken
+// connection.
+//
+// NOT a general "is this machine usable" test: a machine started with a nil
+// InitFunc - as the connection-registration path does for non-kubernetes kinds
+// - never gets a Context assigned, yet Start succeeds and the machine is
+// perfectly drivable. Gating that path on this predicate would skip every such
+// registration. This is for callers that genuinely require a Context.
+//
+// The Context test uses utils.IsInterfaceNil rather than a bare `== nil` so a
+// boxed typed-nil pointer is caught too, matching the check utils.Cast performs
+// internally; a bare nil-interface comparison would silently stop working if an
+// InitFunc ever returned a partially-built context instead of a literal nil.
+func HasMachineContext(inst *machines.StateMachine) bool {
+	return inst != nil && !utils.IsInterfaceNil(inst.Context)
+}
+
+type refCountedMutex struct {
+	sync.Mutex
+	refCount int
+}
+
+var (
+	initLockMapMu sync.Mutex
+	initLockMap   = make(map[core.Uuid]*refCountedMutex)
+)
+
+// acquireInitLock retrieves or creates a reference-counted mutex for the given
+// connection ID, incrementing its reference count under the map mutex.
+func acquireInitLock(id core.Uuid) *refCountedMutex {
+	initLockMapMu.Lock()
+	defer initLockMapMu.Unlock()
+
+	mu, exists := initLockMap[id]
+	if !exists {
+		mu = &refCountedMutex{}
+		initLockMap[id] = mu
+	}
+	mu.refCount++
+	return mu
+}
+
+// releaseInitLock unlocks the mutex and decrements its reference count, evicting
+// the entry from initLockMap once all active callers have completed.
+func releaseInitLock(id core.Uuid, mu *refCountedMutex) {
+	mu.Unlock()
+
+	initLockMapMu.Lock()
+	defer initLockMapMu.Unlock()
+
+	mu.refCount--
+	if mu.refCount <= 0 {
+		delete(initLockMap, id)
+	}
+}
+
+// InitializeMachineWithContext retrieves an existing state machine instance from the
+// tracker or constructs, starts, and caches a new instance for the given connection ID.
+// Initialization is serialized per connection ID so concurrent callers reuse a single
+// successfully started instance without racing. Instances whose Start fails are not cached.
+func InitializeMachineWithContext(
+	machineCtx interface{},
+	ctx context.Context,
+	ID core.Uuid,
+	userID core.Uuid,
+	smInstanceTracker *machines.ConnectionToStateMachineInstanceTracker,
+	log logger.Handler,
+	provider models.Provider,
+	initialState machines.StateType,
+	mtype string,
+	initFunc connections.InitFunc,
+) (*machines.StateMachine, error) {
+	if smInstanceTracker != nil {
+		if inst, ok := smInstanceTracker.Get(ID); ok {
+			return inst, nil
+		}
+	}
+
+	mu := acquireInitLock(ID)
+	mu.Lock()
+	defer releaseInitLock(ID, mu)
+
+	// Double-check after acquiring the lock in case another goroutine initialized it
+	if smInstanceTracker != nil {
+		if inst, ok := smInstanceTracker.Get(ID); ok {
+			return inst, nil
+		}
+	}
+
+	var dbHandler *database.Handler
+	if provider != nil {
+		dbHandler = provider.GetGenericPersister()
+	}
+
+	inst, err := getMachine(initialState, mtype, ID.String(), userID, log, dbHandler)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	inst.Provider = provider
+	_, err = inst.Start(ctx, machineCtx, log, initFunc)
+	if err != nil {
+		return nil, err
+	}
+	if smInstanceTracker != nil {
+		smInstanceTracker.Add(ID, inst)
+	}
+
+	return inst, nil
+}

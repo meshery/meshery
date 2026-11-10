@@ -1,0 +1,93 @@
+---
+# Grants GET /metrics; bind a scraper's ServiceAccount to this role to scrape
+# the manager's TLS metrics endpoint (authn/authz filtered).
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: meshery-metrics-reader
+  labels:
+{{- include "meshery-operator.labels" . | nindent 4 }}
+rules:
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get
+---
+# Mirrors config/rbac/role.yaml in meshery/meshery-operator (the
+# controller-gen output of the +kubebuilder:rbac markers). Least-privilege:
+# no wildcards.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: meshery-operator-role
+  labels:
+{{- include "meshery-operator.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - secrets
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+- apiGroups:
+  - meshery.io
+  resources:
+  - brokers
+  - meshsyncs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - meshery.io
+  resources:
+  - brokers/finalizers
+  - meshsyncs/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - meshery.io
+  resources:
+  - brokers/status
+  - meshsyncs/status
+  verbs:
+  - get
+  - patch
+  - update

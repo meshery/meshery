@@ -1,0 +1,20 @@
+version: 0.0.1
+name: accelerated-mtls-handshake-for-envoy-data-planes
+displayName: Accelerated mTLS handshake for Envoy data planes
+createdAt: "2023-08-16T13:34:39Z"
+description: Cryptographic operations are among the most compute-intensive and critical operations when it comes to secured connections. Istio uses Envoy as the “gateways/sidecar” to handle secure connections and intercept the traffic. Depending upon use cases, when an ingress gateway must handle a large number of incoming TLS and secured service-to-service connections through sidecar proxies, the load on Envoy increases. The potential performance depends on many factors, such as size of the cpuset on which Envoy is running, incoming traffic patterns, and key size. These factors can impact Envoy serving many new incoming TLS requests. To achieve performance improvements and accelerated handshakes, a new feature was introduced in Envoy 1.20 and Istio 1.14. It can be achieved with 3rd Gen Intel® Xeon® Scalable processors, the Intel® Integrated Performance Primitives (Intel® IPP) crypto library, CryptoMB Private Key Provider Method support in Envoy, and Private Key Provider configuration in Istio using ProxyConfig.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/075ec9ba-6ad7-4421-a09c-3b8edd5fb4a6/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure networking is setup properly and correct annotation are applied to each resource for custom Intel configuration \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 090e7114-509a-4046-81f1-9c5fb8daf724
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

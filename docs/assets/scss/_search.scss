@@ -1,0 +1,36 @@
+.search-results-list {
+  padding-left: 10px;
+}
+
+.search-result-item {
+  margin-bottom: 2rem;
+}
+
+.search-result-title {
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+  line-height: 1.4;
+}
+
+.search-result-bullet {
+  color: var(--brand-color-secondary);
+  margin-right: 8px;
+}
+
+.search-result-link {
+  color: var(--brand-color-secondary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.search-result-snippet {
+  color: var(--color-grey-dark);
+  font-size: 1rem;
+  line-height: 1.6;
+  padding-left: 20px;
+}
+
+.search-highlight {
+  color: var(--brand-color-secondary);
+  font-weight: bold;
+}

@@ -1,0 +1,17 @@
+---
+timestamp: "2022-07-18 18:07:27 UTC Mon"
+meshery-component: meshery-traefik-mesh
+meshery-component-version: v0.5.23
+meshery-server-version: "v0.6.0-rc.6b"
+k8s-distro: minikube
+k8s-version: "v1.20.11"
+service-mesh: traefik-mesh
+service-mesh-version: ""
+tests:
+  pod/traefik-mesh-controller: "Running"
+  pod/traefik-mesh-proxy: "Running"
+  pod/grafana-core:  "Running"
+  pod/jaeger: "Running"
+  pod/prometheus-core: "Running" 
+overall-status: "passing"
+---

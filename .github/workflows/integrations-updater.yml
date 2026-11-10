@@ -1,0 +1,26 @@
+name: Meshery Integrations Updater
+# Meshery Extension Point
+# ---
+# Purpose: Publish contents of Meshery Catalog
+# Learn more: See https://docs.meshery.io/extensibility
+# Add your repository to the list: https://github.com/meshery/meshery/issues/new/choose
+# ---
+# This driver schedules and dispatches the reusable publish workflow that
+# lives in meshery-extensions/integrations-workflow. The reusable workflow
+# owns the actual checkouts, build, publish, and commit steps.
+
+on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - ".github/workflows/integrations-updater.yml"
+  schedule:
+    - cron: "0 0 * * *" # Run the job every day at midnight
+  workflow_dispatch:
+
+jobs:
+  integrations:
+    if: github.repository == 'meshery/meshery'
+    uses: meshery-extensions/integrations-workflow/.github/workflows/publish.yml@d29a957313963d66beb6aebc3fde199b5c3580aa
+    secrets: inherit
