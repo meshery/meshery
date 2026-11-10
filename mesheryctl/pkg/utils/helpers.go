@@ -13,7 +13,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
 	"runtime"
 	"sort"
 	"strconv"
@@ -23,6 +22,7 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
+	"github.com/gofrs/uuid"
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
@@ -646,42 +646,61 @@ func StringInSlice(str string, slice []string) bool {
 
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
 func GetID(mesheryServerUrl, configuration string) ([]string, error) {
-	url := mesheryServerUrl + "/api/" + configuration + "?"
-	if configuration == "pattern" {
-		url += "populate=pattern_file&"
-	}
-	url += "page_size=10000"
 	configType := configuration + "s"
 	var idList []string
-	req, err := NewRequest("GET", url, nil)
-	if err != nil {
-		return idList, err
+	seen := make(map[string]bool)
+	for page := 0; ; page++ {
+		params := url.Values{"page": {strconv.Itoa(page)}, "pagesize": {"100"}}
+		if configuration == "pattern" {
+			params.Set("populate", "pattern_file")
+		}
+		req, err := NewRequest("GET", mesheryServerUrl+"/api/"+configuration+"?"+params.Encode(), nil)
+		if err != nil {
+			return nil, err
+		}
+		res, err := MakeRequest(req)
+		if err != nil {
+			return nil, err
+		}
+		body, err := io.ReadAll(res.Body)
+		_ = res.Body.Close()
+		if err != nil {
+			return nil, ErrReadResponseBody(err)
+		}
+		var dat map[string]interface{}
+		if err = encoding.Unmarshal(body, &dat); err != nil {
+			return nil, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
+		}
+		configs, ok := dat[configType].([]interface{})
+		if !ok {
+			return nil, ErrNotFound(errors.New("no results found"))
+		}
+		for _, config := range configs {
+			entry, ok := config.(map[string]interface{})
+			if !ok {
+				return nil, fmt.Errorf("invalid %s result", configuration)
+			}
+			id, ok := entry["id"].(string)
+			if !ok || id == "" || seen[id] {
+				return nil, fmt.Errorf("invalid or repeated %s ID in paginated response", configuration)
+			}
+			seen[id] = true
+			idList = append(idList, id)
+		}
+		total, hasTotal := dat["totalCount"].(float64)
+		if !hasTotal {
+			total, hasTotal = dat["total_count"].(float64)
+		}
+		if !hasTotal || total < 0 || total != float64(int(total)) || len(idList) > int(total) {
+			return nil, fmt.Errorf("invalid total count in %s ID listing", configuration)
+		}
+		if len(idList) == int(total) {
+			return idList, nil
+		}
+		if len(configs) == 0 {
+			return nil, fmt.Errorf("incomplete %s ID listing", configuration)
+		}
 	}
-
-	res, err := MakeRequest(req)
-	if err != nil {
-		return idList, err
-	}
-
-	defer func() { _ = res.Body.Close() }()
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return idList, ErrReadResponseBody(err)
-	}
-	var dat map[string]interface{}
-	if err = encoding.Unmarshal(body, &dat); err != nil {
-		return idList, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
-	}
-	if dat == nil {
-		return idList, ErrNotFound(errors.New("no data found"))
-	}
-	if dat[configType] == nil {
-		return idList, ErrNotFound(errors.New("no results found"))
-	}
-	for _, config := range dat[configType].([]interface{}) {
-		idList = append(idList, config.(map[string]interface{})["id"].(string))
-	}
-	return idList, nil
 }
 
 // GetName returns a of name:id from meshery server endpoint /api/{configurations}
@@ -736,24 +755,38 @@ func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
 	return nil
 }
 
+// ErrAmbiguousID indicates that a short ID matches multiple resources.
+var ErrAmbiguousID = errors.New("ambiguous ID prefix")
+
 // ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID
 func ValidId(mesheryServerUrl, args string, configuration string) (string, bool, error) {
-	isID := false
+	if strings.TrimSpace(args) == "" {
+		return "", false, ErrInvalidNameOrID(errors.New("name or ID cannot be empty"))
+	}
 	configID, err := GetID(mesheryServerUrl, configuration)
-	if err == nil {
-		for _, id := range configID {
-			if strings.HasPrefix(id, args) {
-				args = id
-			}
-		}
-	} else {
+	if err != nil {
 		return "", false, err
 	}
-	isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", args)
-	if err != nil {
-		return "", false, ErrInvalidNameOrID(err)
+	var matches []string
+	for _, id := range configID {
+		if strings.EqualFold(id, args) {
+			args = id
+			matches = nil
+			break
+		}
+		if strings.HasPrefix(strings.ToLower(id), strings.ToLower(args)) {
+			matches = append(matches, id)
+		}
 	}
-	return args, isID, nil
+	if len(matches) > 1 {
+		sort.Strings(matches)
+		return "", false, fmt.Errorf("%w %q for %s; matches: %s", ErrAmbiguousID, args, configuration, strings.Join(matches, ", "))
+	}
+	if len(matches) == 1 {
+		args = matches[0]
+	}
+	_, err = uuid.FromString(args)
+	return args, len(args) == 36 && err == nil, nil
 }
 
 // ValidName - Check if args is a valid name or a valid name prefix and returns the full name and ID

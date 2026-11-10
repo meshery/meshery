@@ -1,11 +1,15 @@
 package design
 
 import (
+	stderrors "errors"
 	"fmt"
+	"net/http"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -92,8 +96,8 @@ func TestDeleteCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
-					Response:     "delete.idList.response.golden",
+					URL:          testContext.BaseURL + "/api/pattern?page=0&pagesize=100&populate=pattern_file",
+					Response:     "delete-valid-id-list.response.golden",
 					ResponseCode: 200,
 				},
 				{
@@ -165,4 +169,32 @@ func TestDeleteCmd(t *testing.T) {
 
 	// Run tests
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
+
+func TestDeleteRejectsAmbiguousIDWithoutSendingDelete(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	utils.TokenFlag = utils.GetToken(t)
+	utils.SetupMeshkitLoggerTesting(t, false)
+	defer resetVariables()
+	defer utils.ResetCommandFlags(DesignCmd, t)
+
+	first := "dc761694-5e61-4dd4-83c9-bca45667ef70"
+	second := "d7ccca72-adea-42e1-bb19-b28701db050d"
+	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/pattern?page=0&pagesize=100&populate=pattern_file",
+		httpmock.NewStringResponder(200, fmt.Sprintf(`{"totalCount":2,"patterns":[{"id":%q},{"id":%q}]}`, first, second)))
+	deleted := false
+	for _, id := range []string{first, second} {
+		httpmock.RegisterResponder("DELETE", testContext.BaseURL+"/api/pattern/"+id, func(_ *http.Request) (*http.Response, error) {
+			deleted = true
+			return httpmock.NewStringResponse(200, ""), nil
+		})
+	}
+	DesignCmd.SetArgs([]string{"delete", "d"})
+	err := DesignCmd.Execute()
+	if !stderrors.Is(err, utils.ErrAmbiguousID) || !strings.Contains(err.Error(), first) || !strings.Contains(err.Error(), second) {
+		t.Fatalf("expected ambiguity with both IDs, got %v", err)
+	}
+	if deleted {
+		t.Fatal("ambiguous ID must not send a DELETE request")
+	}
 }
