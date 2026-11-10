@@ -1,5 +1,5 @@
 import React, { useState, type ReactNode } from 'react';
-import { FlipCardWrapper, InnerCard } from './FlipCard.styles';
+import { CardFaceBack, CardFaceFront, FlipCardWrapper, InnerCard } from './FlipCard.styles';
 import { useTimeout } from '@/utils/hooks';
 
 interface FlipCardProps {
@@ -25,6 +25,7 @@ function FlipCard({ duration = 500, onClick, onShow, children }: FlipCardProps) 
 
   return (
     <FlipCardWrapper
+      data-testid="flip-card-wrapper"
       onClick={() => {
         setFlipped((f) => !f);
         onClick?.();
@@ -32,6 +33,7 @@ function FlipCard({ duration = 500, onClick, onShow, children }: FlipCardProps) 
       }}
     >
       <InnerCard
+        data-testid="inner-card"
         style={{
           transform: flipped ? 'scale(-1,1)' : undefined,
           transition: `transform ${duration}ms`,
@@ -39,20 +41,13 @@ function FlipCard({ duration = 500, onClick, onShow, children }: FlipCardProps) 
         }}
       >
         {!activeBack ? (
-          <div style={{ backfaceVisibility: 'hidden' }}>
+          <CardFaceFront data-testid="card-face-front">
             {React.isValidElement(Front) ? Front : null}
-          </div>
+          </CardFaceFront>
         ) : (
-          <div
-            style={{
-              backfaceVisibility: 'hidden',
-              transform: 'scale(-1, 1)',
-              maxWidth: '50vw',
-              wordBreak: 'break-word',
-            }}
-          >
+          <CardFaceBack data-testid="card-face-back">
             {React.isValidElement(Back) ? Back : null}
-          </div>
+          </CardFaceBack>
         )}
       </InnerCard>
     </FlipCardWrapper>
