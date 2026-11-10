@@ -11,6 +11,8 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	mhelpers "github.com/meshery/meshery/server/machines/helpers"
+	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
 )
@@ -166,5 +168,102 @@ func TestDeleteContext_GetK8sContextError_WithNameFallback(t *testing.T) {
 	expectedDesc := "Failed to delete connection for production-cluster"
 	if ev.Description != expectedDesc {
 		t.Fatalf("expected event description %q, got %q", expectedDesc, ev.Description)
+	}
+}
+
+func TestDeleteContext_SendEventError(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	userID := uuid.Must(uuid.NewV4())
+	contextID := uuid.Must(uuid.NewV4())
+
+	broadcaster := &models.Broadcast{}
+	broadcastCh, unsubscribe := broadcaster.Subscribe(userID)
+	defer unsubscribe()
+
+	asyncErrorPersisted := make(chan events.Event, 1)
+
+	provider := &mockContextsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		getK8sContextFn: func(token, id string) (models.K8sContext, error) {
+			return models.K8sContext{Name: "test-cluster"}, nil
+		},
+		persistEventFn: func(event events.Event, token string) error {
+			if event.Severity == events.Error {
+				asyncErrorPersisted <- event
+			}
+			return nil
+		},
+	}
+
+	log := newTestLogger(t)
+	inst, err := kubernetes.New(contextID.String(), userID, log)
+	if err != nil {
+		t.Fatalf("failed to create Kubernetes state machine: %v", err)
+	}
+
+	// A non-nil but invalid context passes HasMachineContext and makes
+	// DeleteAction.Execute fail its Kubernetes MachineCtx type assertion.
+	// Use a non-zero context that passes HasMachineContext but fails
+	// DeleteAction.Execute's *kubernetes.MachineCtx type assertion.
+	inst.Context = struct {
+		marker int
+	}{marker: 1}
+
+	if !mhelpers.HasMachineContext(inst) {
+		t.Fatal("test setup failed: machine context is not detected")
+	}
+
+	h := &Handler{
+		config:                                  &models.HandlerConfig{EventBroadcaster: broadcaster},
+		log:                                     log,
+		SystemID:                                &systemID,
+		ConnectionToStateMachineInstanceTracker: trackerWith(contextID, inst),
+	}
+
+	req := httptest.NewRequest(
+		http.MethodDelete,
+		"/api/system/kubernetes/contexts/"+contextID.String(),
+		nil,
+	)
+	req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+	req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+
+	rec := httptest.NewRecorder()
+
+	h.DeleteContext(rec, req, nil, &models.User{ID: userID}, provider)
+
+	// Wait for the asynchronous SendEvent failure to be persisted.
+	var errorEvent events.Event
+	select {
+	case errorEvent = <-asyncErrorPersisted:
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for asynchronous DeleteAction error event to be persisted")
+	}
+
+	if errorEvent.Severity != events.Error {
+		t.Fatalf("expected Error severity, got %v", errorEvent.Severity)
+	}
+	if errorEvent.Metadata == nil || errorEvent.Metadata["error"] == nil {
+		t.Fatalf("expected error metadata, got %v", errorEvent.Metadata)
+	}
+
+	// The initial informational delete-request event and the asynchronous
+	// failure event should both have been persisted.
+	if len(provider.persistedEvents) != 2 {
+		t.Fatalf("expected 2 persisted events, got %d", len(provider.persistedEvents))
+	}
+
+	// The asynchronous failure should also be broadcast to the user.
+	select {
+	case message := <-broadcastCh:
+		broadcastEvent, ok := message.(*events.Event)
+		if !ok {
+			t.Fatalf("expected *events.Event from broadcaster, got %T", message)
+		}
+		if broadcastEvent.Severity != events.Error {
+			t.Fatalf("expected broadcast Error severity, got %v", broadcastEvent.Severity)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for asynchronous DeleteAction error broadcast")
 	}
 }

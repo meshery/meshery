@@ -147,6 +147,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			event, err := inst.SendEvent(req.Context(), machines.Delete, nil)
 			if err != nil {
 				h.log.Error(err)
+				h.reportMachineOutcome(provider, token, userID, event, err)
 				h.log.Debug(event)
 				return
 			}
