@@ -164,6 +164,71 @@ func TestIdentifyInventoryAdditions_SkipsWhenParentAlreadyPresent(t *testing.T) 
 	assert.Empty(t, actions, "must not emit add_component when a matching parent already exists in the design")
 }
 
+// makeDeploymentInNamespace builds a Deployment with metadata.namespace set
+// to the given value, for designs where several children share one parent.
+func makeDeploymentInNamespace(t *testing.T, ns string) *component.ComponentDefinition {
+	t.Helper()
+	id, err := uuid.NewV4()
+	require.NoError(t, err)
+	return &component.ComponentDefinition{
+		ID:             id,
+		Component:      component.Component{Kind: "Deployment", Version: "apps/v1"},
+		Model:          &modelv1beta1.ModelDefinition{Name: "kubernetes"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{
+				"namespace": ns,
+			},
+		},
+	}
+}
+
+// Issue #22778 regression: several Deployments in one namespace, evaluated
+// against several Namespace inventory relationships (the registry ships one
+// per kubernetes model version), must add exactly one Namespace. Each
+// candidate gets a fresh ID, so deduplicating by ID added one per pair.
+func TestIdentifyInventoryAdditions_SharedNamespaceAddedOnce(t *testing.T) {
+	t.Parallel()
+	design := makePatternFile([]*component.ComponentDefinition{
+		makeDeploymentInNamespace(t, "web"),
+		makeDeploymentInNamespace(t, "web"),
+		makeDeploymentInNamespace(t, "web"),
+	}, nil)
+	rels := []*relationship.RelationshipDefinition{
+		kubernetesInventoryRelationship(),
+		kubernetesInventoryRelationship(),
+	}
+
+	actions := identifyInventoryAdditions(design, rels)
+
+	require.Len(t, actions, 1, "one shared namespace must produce exactly one auto-added Namespace")
+	require.NotNil(t, actions[0].Component)
+	assert.Equal(t, "Namespace", actions[0].Component.Component.Kind)
+	assert.Equal(t, "web", string(actions[0].Component.DisplayName))
+}
+
+// Deduplication must not collapse distinct parents: Deployments in two
+// namespaces still get one Namespace each.
+func TestIdentifyInventoryAdditions_DistinctNamespacesAddedSeparately(t *testing.T) {
+	t.Parallel()
+	design := makePatternFile([]*component.ComponentDefinition{
+		makeDeploymentInNamespace(t, "web"),
+		makeDeploymentInNamespace(t, "web"),
+		makeDeploymentInNamespace(t, "db"),
+	}, nil)
+
+	actions := identifyInventoryAdditions(design, []*relationship.RelationshipDefinition{kubernetesInventoryRelationship()})
+
+	require.Len(t, actions, 2, "each distinct namespace must produce its own Namespace")
+	names := []string{}
+	for _, a := range actions {
+		require.NotNil(t, a.Component)
+		assert.Equal(t, "Namespace", a.Component.Component.Kind)
+		names = append(names, string(a.Component.DisplayName))
+	}
+	assert.ElementsMatch(t, []string{"web", "db"}, names)
+}
+
 // Cross-model regression: if the relationship has a different model on the
 // to-side than the from-side (e.g. azure-event-grid EventSubscription →
 // azure-storage StorageAccount), the auto-added parent must inherit the

@@ -32,11 +32,15 @@ func identifyInventoryAdditions(
 		return nil
 	}
 	var actions []PolicyAction
+	// Shared across relationships: the registry ships one Namespace
+	// inventory relationship per kubernetes model version, and several
+	// children usually reference the same parent.
+	emitted := map[string]bool{}
 	for _, rel := range relsInScope {
 		if !isHierarchicalParentInventory(rel) {
 			continue
 		}
-		actions = append(actions, identifyInventoryAdditionsForRel(rel, design)...)
+		actions = append(actions, identifyInventoryAdditionsForRel(rel, design, emitted)...)
 	}
 	return actions
 }
@@ -54,16 +58,17 @@ func isHierarchicalParentInventory(rel *relationship.RelationshipDefinition) boo
 // identify_additions.rego: split the from/to selectors into mutated/mutator
 // pools, find existing components matching the mutated selectors, and for
 // each (mutated_component, mutator_selector) pair emit a new component
-// unless one already exists with matching mutatorRef values.
+// unless one already exists with matching mutatorRef values or an
+// equivalent candidate is already in emitted.
 func identifyInventoryAdditionsForRel(
 	rel *relationship.RelationshipDefinition,
 	design *pattern.PatternFile,
+	emitted map[string]bool,
 ) []PolicyAction {
 	if rel.Selectors == nil {
 		return nil
 	}
 	var out []PolicyAction
-	emittedIDs := map[string]bool{}
 
 	for _, ss := range *rel.Selectors {
 		mutatedSels, mutatorSels := partitionByPatchRole(ss)
@@ -98,10 +103,11 @@ func identifyInventoryAdditionsForRel(
 					if feasibleRelationshipSelectorBetween(mutatedComp, candidate, rel) == nil {
 						continue
 					}
-					if emittedIDs[candidate.ID.String()] {
+					key := inventoryCandidateKey(candidate)
+					if emitted[key] {
 						continue
 					}
-					emittedIDs[candidate.ID.String()] = true
+					emitted[key] = true
 					out = append(out, newAddComponentAction(candidate))
 				}
 			}
@@ -222,6 +228,20 @@ func jsonValuesEqual(a, b interface{}) bool {
 		return false
 	}
 	return string(aBytes) == string(bBytes)
+}
+
+// inventoryCandidateKey identifies a candidate parent by what it is rather
+// than by its ID, which buildInventoryParentCandidate generates fresh for
+// every candidate. The configuration is part of the key so parents that
+// differ in a configuration patch (e.g. metadata.namespace) stay distinct.
+func inventoryCandidateKey(candidate *component.ComponentDefinition) string {
+	config, _ := json.Marshal(candidate.Configuration)
+	return strings.Join([]string{
+		candidate.Component.Kind,
+		candidate.ModelReference.Name,
+		string(candidate.DisplayName),
+		string(config),
+	}, "\x00")
 }
 
 // buildInventoryParentCandidate constructs the new component that would be
