@@ -23,7 +23,10 @@ func hydrateComponentWithOriginalType(compType string, spec interface{}) error {
 		return fmt.Errorf("empty spec provided for component: %s", compType)
 	}
 
-	specValue := spec.(map[string]interface{})
+	specValue, ok := spec.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("invalid spec provided for component %s: expected an object, got %T", compType, spec)
+	}
 
 	switch compType {
 	case "EnvoyFilter":
