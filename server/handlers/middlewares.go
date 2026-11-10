@@ -40,6 +40,12 @@ func isTransientProviderError(err error) bool {
 
 const providerQParamName = "provider"
 
+// backgroundDiscoveryContext keeps request values while allowing discovery to
+// outlive the HTTP response, with a deadline for context-aware operations.
+func backgroundDiscoveryContext(ctx context.Context) (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.WithoutCancel(ctx), 2*time.Minute)
+}
+
 // legacyProviderAliasWarnOnce ensures the "None"->"Local" deprecation warning
 // fires at most once per process lifetime, regardless of how many requests
 // arrive with the legacy alias.
@@ -445,7 +451,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			// Discovery outlives the request but must not wait indefinitely on Kubernetes.
-			discoveryCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 2*time.Minute)
+			discoveryCtx, cancel := backgroundDiscoveryContext(ctx)
 			defer cancel()
 			event, err := inst.SendEvent(discoveryCtx, machines.Discovery, nil)
 			h.reportBackgroundDiscovery(provider, token, userUUID, event, err)
@@ -628,7 +634,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		}
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
-			discoveryCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 2*time.Minute)
+			discoveryCtx, cancel := backgroundDiscoveryContext(ctx)
 			defer cancel()
 			event, err := inst.SendEvent(discoveryCtx, machines.Discovery, nil)
 			h.reportBackgroundDiscovery(provider, token, userUUID, event, err)
