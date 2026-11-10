@@ -670,7 +670,7 @@ design:
           example: mesheryctl design evaluate -f design.yaml
         output:
           name: --output, -o
-          description: Path to save the evaluated design
+          description: Path to save the evaluated design (required)
           usage: mesheryctl design evaluate -f [filepath] -o [output-filepath]
           example: mesheryctl design evaluate -f design.yaml -o evaluated-design.yaml
         output-format:
@@ -874,7 +874,7 @@ registry:
           description: id of the spreadsheet to download
     purge:
       name: purge
-      description: Prune old model version directories under ./models, retaining only the most recent versions of each model
+      description: Prune old model version directories under ./models, retaining only the most recent versions of each model (kubernetes and meshery-core are always excluded)
       usage: mesheryctl registry purge [flags]
       example: mesheryctl registry purge --retain 3
       flags:
