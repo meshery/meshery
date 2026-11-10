@@ -27,6 +27,8 @@ import (
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
+	"net/http"
+	"github.com/meshery/meshery/server/internal/metrics"
 	"github.com/meshery/meshery/server/router"
 	"github.com/meshery/meshkit/broker/nats"
 	"github.com/meshery/meshkit/logger"
@@ -110,6 +112,7 @@ func main() {
 	viper.AutomaticEnv()
 
 	viper.SetDefault("PORT", 8080)
+	viper.SetDefault("METRICS_PORT", 0)
 	viper.SetDefault("ADAPTER_URLS", "")
 	viper.SetDefault("BUILD", version)
 	viper.SetDefault("OS", "meshery")
@@ -515,6 +518,40 @@ func main() {
 
 	port := viper.GetInt("PORT")
 	r := router.NewRouter(ctx, h, port, g, gp)
+
+	metricsPort := viper.GetInt("METRICS_PORT")
+	var metricsSrv *http.Server
+	if metricsPort > 0 {
+		log.Info("Initializing opt-in Prometheus metrics on port: ", metricsPort)
+		m := metrics.New(version, commitsha, releasechannel)
+		r.S.Use(m.HTTPMiddleware())
+
+		notFound := r.S.NotFoundHandler
+		if notFound == nil {
+			notFound = http.NotFoundHandler()
+		}
+		r.S.NotFoundHandler = m.HTTPMiddleware()(notFound)
+
+		methodNotAllowed := r.S.MethodNotAllowedHandler
+		if methodNotAllowed == nil {
+			methodNotAllowed = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusMethodNotAllowed)
+				_, _ = w.Write([]byte(`{"error":"Method Not Allowed"}`))
+			})
+		}
+		r.S.MethodNotAllowedHandler = m.HTTPMiddleware()(methodNotAllowed)
+
+		srv, err := metrics.StartServer(ctx, metricsPort, m, log)
+		if err != nil {
+			log.Error(ErrStartingMetricsServer(err))
+		} else {
+			metricsSrv = srv
+		}
+	} else {
+		log.Info("METRICS_PORT not set; Prometheus metrics server disabled")
+	}
+
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
@@ -526,6 +563,15 @@ func main() {
 		}
 	}()
 	<-c
+
+	if metricsSrv != nil {
+		log.Info("Shutting down Prometheus metrics server...")
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		if err := metricsSrv.Shutdown(shutdownCtx); err != nil {
+			log.Error(err)
+		}
+		cancel()
+	}
 	regManager.Cleanup()
 	log.Info("Doing seeded content cleanup...")
 
