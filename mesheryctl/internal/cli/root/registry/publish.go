@@ -216,10 +216,16 @@ func remoteProviderSystem() error {
 	modelDir := filepath.Join(outputPath)
 	totalModelsPublished := 0
 	for _, model := range models {
-		comps, ok := components[model.Registrant][model.Model]
+		registrantComps, ok := components[model.Registrant]
 		if !ok {
 			utils.Log.Debug("no components found for ", model.Model)
 			comps = []meshkitRegistryUtils.ComponentCSV{}
+		} else {
+			comps, ok = registrantComps[model.Model]
+			if !ok {
+				utils.Log.Debug("no components found for ", model.Model)
+				comps = []meshkitRegistryUtils.ComponentCSV{}
+			}
 		}
 
 		err := utils.GenerateIcons(model, comps, imgsOutputPath)
@@ -247,10 +253,16 @@ func websiteSystem() error {
 	}
 	docsJSON := "const data = ["
 	for _, model := range models {
-		comps, ok := components[model.Registrant][model.Model]
+		registrantComps, ok := components[model.Registrant]
 		if !ok {
 			utils.Log.Debug("no components found for ", model.Model)
 			comps = []meshkitRegistryUtils.ComponentCSV{}
+		} else {
+			comps, ok = registrantComps[model.Model]
+			if !ok {
+				utils.Log.Debug("no components found for ", model.Model)
+				comps = []meshkitRegistryUtils.ComponentCSV{}
+			}
 		}
 
 		relnships, ok := relationshipMap[model.Model]
