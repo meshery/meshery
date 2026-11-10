@@ -40,7 +40,7 @@ export default function CustomSelectWidget({
   rawErrors,
   // registry,
   // uiSchema,
-  // hideError,
+  hideError,
   formContext,
   ...textFieldProps
 }) {
@@ -92,7 +92,7 @@ export default function CustomSelectWidget({
         autoFocus={autofocus}
         placeholder={placeholder}
         label={xRjsfGridArea ? '' : safeLabel}
-        error={rawErrors?.length > 0}
+        error={!hideError && rawErrors?.length > 0}
         onChange={_onChange}
         onBlur={_onBlur}
         onFocus={_onFocus}
@@ -101,7 +101,7 @@ export default function CustomSelectWidget({
           style: { paddingRight: '0px' },
           endAdornment: (
             <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
-              {rawErrors?.length > 0 && (
+              {!hideError && rawErrors?.length > 0 && (
                 <CustomTextTooltip
                   bgColor={theme.palette.error.main}
                   flag={formContext?.overrideFlag}
