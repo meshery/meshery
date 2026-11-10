@@ -180,6 +180,7 @@ var viewTokenCmd = &cobra.Command{
 mesheryctl system token view [token-name]
 mesheryctl system token view (show token of current context)
 	`,
+	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		configPath := utils.GetActiveConfigPath()
 		if _, err := os.Stat(configPath); os.IsNotExist(err) {
