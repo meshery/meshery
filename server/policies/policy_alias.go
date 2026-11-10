@@ -219,19 +219,6 @@ func aliasRelationshipAlreadyExists(design *pattern.PatternFile, rel *relationsh
 	return false
 }
 
-// getFirstToSelectorItem returns the first "to" selector item from a relationship.
-func getFirstToSelectorItem(rel *relationship.RelationshipDefinition) *relationship.SelectorItem {
-	if rel.Selectors == nil {
-		return nil
-	}
-	for _, ss := range *rel.Selectors {
-		if len(ss.Allow.To) > 0 {
-			return &ss.Allow.To[0]
-		}
-	}
-	return nil
-}
-
 // aliasAddComponentSideEffects creates actions to add alias components.
 func aliasAddComponentSideEffects(rel *relationship.RelationshipDefinition, _ *pattern.PatternFile) []PolicyAction {
 	if rel.Selectors == nil {
