@@ -657,6 +657,27 @@ design:
           description: Type of source file (ex. manifest / compose / helm)
           usage: mesheryctl design deploy --file [filepath] --source-type [manifest/compose/helm]
           example: mesheryctl design deploy -f "bookInfo.yaml" --source-type manifest
+    evaluate:
+      name: evaluate
+      description: Evaluate a design by running relationship evaluation policies
+      usage: mesheryctl design evaluate [ID] [flags]
+      example: mesheryctl design evaluate -f design.yaml -o evaluated-design.yaml
+      flags:
+        file:
+          name: --file, -f
+          description: Path to design file
+          usage: mesheryctl design evaluate -f [filepath]
+          example: mesheryctl design evaluate -f design.yaml
+        output:
+          name: --output, -o
+          description: Path to save the evaluated design
+          usage: mesheryctl design evaluate -f [filepath] -o [output-filepath]
+          example: mesheryctl design evaluate -f design.yaml -o evaluated-design.yaml
+        output-format:
+          name: --output-format
+          description: Output format for the evaluated design [json|yaml] (default yaml)
+          usage: mesheryctl design evaluate -f [filepath] --output-format [json|yaml]
+          example: mesheryctl design evaluate -f design.yaml --output-format json -o evaluated-design.json
     export:
       name: export
       description: Export a design from Meshery
@@ -851,6 +872,32 @@ registry:
         spreadsheet_id:
           name: --spreadsheet-id
           description: id of the spreadsheet to download
+    purge:
+      name: purge
+      description: Prune old model version directories under ./models, retaining only the most recent versions of each model
+      usage: mesheryctl registry purge [flags]
+      example: mesheryctl registry purge --retain 3
+      flags:
+        retain:
+          name: --retain
+          description: Number of most-recent versions to retain per model (default 1)
+          usage: mesheryctl registry purge --retain [number]
+          example: mesheryctl registry purge --retain 3
+        exclude:
+          name: --exclude
+          description: Comma-delimited list of additional model names to exclude from purging
+          usage: mesheryctl registry purge --exclude [model-name,...]
+          example: mesheryctl registry purge --exclude aws-ec2-controller,cilium
+        dry-run:
+          name: --dry-run
+          description: Print what would be removed without deleting anything
+          usage: mesheryctl registry purge --dry-run
+          example: mesheryctl registry purge --dry-run
+        yes:
+          name: --yes, -y
+          description: (optional) assume yes for user interactive prompts
+          usage: mesheryctl registry purge -y
+          example: mesheryctl registry purge --retain 2 -y
 
 model:
   name: model
