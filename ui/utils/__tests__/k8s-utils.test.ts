@@ -213,6 +213,11 @@ describe('parseDiskSpace / parseRam (parseUnitsOfBytes)', () => {
     expect(parseRam('1Gi')).toBe(1024 ** 3);
   });
 
+  it('rejects the invalid lowercase ki binary suffix', () => {
+    expect(parseRam('1ki')).toBeNaN();
+    expect(parseDiskSpace('1ki')).toBeNaN();
+  });
+
   it('parses exponent notation', () => {
     expect(parseRam('5e3')).toBe(5000);
   });

@@ -186,6 +186,11 @@ function parseUnitsOfBytes(value) {
   const groups = value.match(/(\d+)([BkKMGTPEe])?(i)?(\d+)?/) || [];
   const number = parseInt(groups[1], 10);
 
+  // Kubernetes uses lowercase k for decimal quantities, but Ki for binary quantities.
+  if (groups[2] === 'k' && groups[3] === 'i') {
+    return NaN;
+  }
+
   // number ex. 1000
   if (groups[2] === undefined) {
     return number;
