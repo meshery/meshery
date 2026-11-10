@@ -55,6 +55,19 @@ func newDeleteConnectionFixture(t *testing.T) (*Handler, *models.DefaultLocalPro
 	return h, provider
 }
 
+// lookupFailingProvider simulates a transient connection lookup failure
+// while preserving the underlying provider's normal delete behavior.
+type lookupFailingProvider struct {
+	models.Provider
+}
+
+func (p *lookupFailingProvider) GetConnectionByID(
+	token string,
+	connectionID uuid.UUID,
+) (*connections.Connection, int, error) {
+	return nil, http.StatusInternalServerError, errors.New("simulated temporary lookup failure")
+}
+
 func deleteConnection(t *testing.T, h *Handler, provider models.Provider, connectionID uuid.UUID) *httptest.ResponseRecorder {
 	t.Helper()
 
@@ -151,6 +164,59 @@ func TestDeleteConnectionResolvesTheUnreachableCondition(t *testing.T) {
 		if got := open == 0; got != c.wantResolve {
 			t.Errorf("%s: %d open conditions after the delete, want resolved=%v", c.status, open, c.wantResolve)
 		}
+	}
+}
+
+func TestDeleteConnectionResolvesUnreachableConditionWhenLookupFails(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name:           "unreachable-cluster",
+		Kind:           "kubernetes",
+		ConnectionType: "platform",
+		Status:         connections.ConnectionStatus(machines.NOTFOUND),
+	})
+	if err != nil {
+		t.Fatalf("save connection: %v", err)
+	}
+
+	key := kubernetes.UnreachableConditionKey(saved.ID)
+	if _, err := provider.PersistEvent(*events.NewEvent().
+		FromOwner(user.ID).
+		WithCategory("connection").
+		WithAction("update").
+		WithSeverity(events.Error).
+		WithCorrelationKey(key).
+		Build(), ""); err != nil {
+		t.Fatalf("open unreachable condition: %v", err)
+	}
+
+	failingProvider := &lookupFailingProvider{Provider: provider}
+
+	req := httptest.NewRequest(
+		http.MethodDelete,
+		"/api/integrations/connections/"+saved.ID.String(),
+		nil,
+	)
+	req = mux.SetURLVars(req, map[string]string{"connectionId": saved.ID.String()})
+	rec := httptest.NewRecorder()
+
+	h.DeleteConnection(rec, req, nil, user, failingProvider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusOK, rec.Body.String())
+	}
+
+	var open int64
+	if err := provider.EventsPersister.DB.Model(&events.Event{}).
+		Where("correlation_key = ? AND resolved_at IS NULL", key).
+		Count(&open).Error; err != nil {
+		t.Fatalf("count open conditions: %v", err)
+	}
+
+	if open != 0 {
+		t.Errorf("unreachable condition remains open after successful deletion; open count = %d", open)
 	}
 }
 
