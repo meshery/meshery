@@ -35,6 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
             applyCurrentPreference();
         }
     });
+    // Reconcile the theme in case preferences changed before listeners were registered.
+    applyCurrentPreference();
 });
 
 function applyTheme(isDark) {
