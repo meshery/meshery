@@ -172,15 +172,31 @@ mesheryctl system token list
 		return nil
 	},
 }
+var viewTokenUsageMsg = "Usage: mesheryctl system token view [token-name]\nRun 'mesheryctl system token view --help' to see detailed help message"
+
 var viewTokenCmd = &cobra.Command{
-	Use:   "view",
+	Use:   "view [token-name]",
 	Short: "View token",
 	Long:  "View a specific token in meshery config",
 	Example: `
+// View a specific token
 mesheryctl system token view [token-name]
-mesheryctl system token view (show token of current context)
+
+// View token of current context
+mesheryctl system token view
+
+// View all available tokens
+mesheryctl system token view --all
 	`,
-	Args: cobra.MaximumNArgs(1),
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", viewTokenUsageMsg))
+		}
+		if len(args) > 0 && viewAllTokens {
+			return utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a token name and --all flag\n\n%s", viewTokenUsageMsg))
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		configPath := utils.GetActiveConfigPath()
 		if _, err := os.Stat(configPath); os.IsNotExist(err) {
