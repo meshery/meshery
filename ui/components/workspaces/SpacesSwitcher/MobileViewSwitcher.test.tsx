@@ -51,7 +51,7 @@ vi.mock('@sistent/sistent', () => {
   };
 });
 
-vi.mock('@/utils/context/WorkspaceModalContextProvider', () => ({
+vi.mock('@/utils/context/workspaceModalContext', () => ({
   WorkspaceModalContext: React.createContext({
     openModal: vi.fn(),
     setCreateNewWorkspaceModalOpen: vi.fn(),
