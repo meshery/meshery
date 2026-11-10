@@ -60,7 +60,7 @@ mesheryctl design view [design-name | ID]
 mesheryctl design list
 
 // Import a design:
-mesheryctl design import -f [file/URL] -s [source-type] -n [name]
+mesheryctl design import -f [file/URL] -n [name]
 
 // Export a design:
 mesheryctl design export [design-name | ID]
