@@ -14,7 +14,10 @@ import (
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/events"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 type mockContextsProvider struct {
@@ -24,6 +27,7 @@ type mockContextsProvider struct {
 	persistedEvents []events.Event
 }
 
+// GetK8sContext returns the stubbed context lookup, or an empty context when none is set.
 func (m *mockContextsProvider) GetK8sContext(token, id string) (models.K8sContext, error) {
 	if m.getK8sContextFn != nil {
 		return m.getK8sContextFn(token, id)
@@ -31,6 +35,7 @@ func (m *mockContextsProvider) GetK8sContext(token, id string) (models.K8sContex
 	return models.K8sContext{}, nil
 }
 
+// PersistEvent records the event and returns the stubbed persistence result.
 func (m *mockContextsProvider) PersistEvent(event events.Event, token string) (models.PersistedEvent, error) {
 	m.persistedEvents = append(m.persistedEvents, event)
 	if m.persistEventFn != nil {
@@ -41,6 +46,7 @@ func (m *mockContextsProvider) PersistEvent(event events.Event, token string) (m
 	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
 }
 
+// TestDeleteContext_MissingToken verifies that a request without a token is rejected with ErrFetchToken.
 func TestDeleteContext_MissingToken(t *testing.T) {
 	systemID := uuid.Must(uuid.NewV4())
 	h := &Handler{
@@ -66,6 +72,8 @@ func TestDeleteContext_MissingToken(t *testing.T) {
 	}
 }
 
+// TestDeleteContext_GetK8sContextError verifies that a failed context lookup returns a 500,
+// persists one error event named after the context id, and broadcasts it.
 func TestDeleteContext_GetK8sContextError(t *testing.T) {
 	systemID := uuid.Must(uuid.NewV4())
 	broadcaster := &models.Broadcast{}
@@ -132,6 +140,8 @@ func TestDeleteContext_GetK8sContextError(t *testing.T) {
 	}
 }
 
+// TestDeleteContext_GetK8sContextError_WithNameFallback verifies that the error event
+// names the context by its name when the failed lookup still returned one.
 func TestDeleteContext_GetK8sContextError_WithNameFallback(t *testing.T) {
 	systemID := uuid.Must(uuid.NewV4())
 	h := &Handler{
@@ -168,6 +178,39 @@ func TestDeleteContext_GetK8sContextError_WithNameFallback(t *testing.T) {
 	expectedDesc := "Failed to delete connection for production-cluster"
 	if ev.Description != expectedDesc {
 		t.Fatalf("expected event description %q, got %q", expectedDesc, ev.Description)
+	}
+}
+
+// A failed read must reach the client as an error, not as a 200 with an empty
+// page. Uses the real local provider so the persister's error path is covered.
+func TestGetAllContexts_DatabaseFailure(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to create in-memory database: %v", err)
+	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		t.Fatalf("failed to access underlying sql.DB: %v", err)
+	}
+	t.Cleanup(func() { _ = sqlDB.Close() })
+
+	// The k8s_contexts table is deliberately never migrated.
+	provider := &models.DefaultLocalProvider{
+		MesheryK8sContextPersister: &models.MesheryK8sContextPersister{DB: &database.Handler{DB: db}},
+	}
+	h := &Handler{log: newTestLogger(t)}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/system/kubernetes/contexts", nil)
+	req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+	rec := httptest.NewRecorder()
+
+	h.GetAllContexts(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected status %d, got %d. body: %s", http.StatusInternalServerError, rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrGetK8sContextsCode) {
+		t.Fatalf("expected error code %s in body, got %s", ErrGetK8sContextsCode, rec.Body.String())
 	}
 }
 
