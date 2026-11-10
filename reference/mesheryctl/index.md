@@ -139,11 +139,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
         <td></td>
         <td>Configures Meshery to use a Kubernetes cluster.</td>
       </tr>
-      <tr>
-        <td></td>
-        <td>--token</td>
-        <td>Path to token for authenticating to Meshery API.</td>
-      </tr>
       <tr><td><a href="/reference/mesheryctl/system/dashboard/">dashboard</a></td>
         <td></td>
         <td>Open Meshery UI in browser.</td>
@@ -412,17 +407,12 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       </tr>
       <tr>
         <td></td>
-        <td>--adapter, -a</td>
-        <td>(required) adapter to use for validation.</td>
-      </tr>
-      <tr>
-        <td></td>
         <td>--namespace, -n</td>
         <td>Kubernetes namespace to be used for deploying the validation tests and sample workload</td>
       </tr>
       <tr>
         <td></td>
-        <td>--tokenpath, -t</td>
+        <td>--token, -t</td>
         <td>(required) path to token for authenticating to Meshery API</td>
       </tr>
       <tr><td><a href="/reference/mesheryctl/adapter/remove/">remove</a></td>
@@ -445,17 +435,12 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       </tr>
       <tr>
         <td></td>
-        <td>--namespace, -n</td>
-        <td>Kubernetes namespace to be used for deploying the validation tests and sample workload</td>
-      </tr>
-      <tr>
-        <td></td>
         <td>--spec, -s</td>
         <td>(required) specification to be used for conformance test. Defaults to &#34;smi&#34;</td>
       </tr>
       <tr>
         <td></td>
-        <td>--tokenpath, -t</td>
+        <td>--token, -t</td>
         <td>(required) path to token for authenticating to Meshery API</td>
       </tr>
 </tbody>
@@ -719,8 +704,8 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       </tr>
       <tr>
         <td></td>
-        <td>--output-format, -o</td>
-        <td>(optional) format to display in [md | mdx | js]</td>
+        <td>--output, -o</td>
+        <td>(optional) location to output generated models (when unset, the repo-root models directory is auto-detected)</td>
       </tr>
       <tr>
         <td></td>
@@ -1074,7 +1059,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       </tr>
       <tr>
         <td></td>
-        <td>-o, --orgId</td>
+        <td>--orgId</td>
         <td>organization id</td>
       </tr>
       <tr><td><a href="/reference/mesheryctl/environment/view/">view</a></td>
@@ -1270,7 +1255,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       </tr>
       <tr>
         <td></td>
-        <td>-s, --sheetId</td>
+        <td>--spreadsheet-id</td>
         <td>google sheet id</td>
       </tr>
       <tr><td><a href="/reference/mesheryctl/relationship/list/">list</a></td>
