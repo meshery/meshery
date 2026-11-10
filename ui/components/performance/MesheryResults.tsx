@@ -75,7 +75,6 @@ export const formatResultRow = (record) => {
   return row;
 };
 
-
 const MesheryResults = () => {
   const { notify } = useNotification();
   const [page, setPage] = useState(0);

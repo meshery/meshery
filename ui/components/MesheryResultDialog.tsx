@@ -123,10 +123,7 @@ function MesheryResultDialog(props) {
     let contents = '';
     if (runnerResults) {
       let percentiles = '';
-      if (
-        runnerResults.DurationHistogram &&
-        runnerResults.DurationHistogram.Percentiles
-      ) {
+      if (runnerResults.DurationHistogram && runnerResults.DurationHistogram.Percentiles) {
         percentiles = runnerResults.DurationHistogram.Percentiles.map((p) =>
           createTableRow(`p${p.Percentile} Response Time`, p.Value),
         );
@@ -139,10 +136,7 @@ function MesheryResultDialog(props) {
         createTableRow('Threads', runnerResults.NumThreads),
         createTableRow('Connections', runnerResults.SocketCount),
         createTableRow('Requested Duration', runnerResults.RequestedDuration),
-        createTableRow(
-          'Actual Duration',
-          (runnerResults.ActualDuration / 1000000000).toFixed(1),
-        ),
+        createTableRow('Actual Duration', (runnerResults.ActualDuration / 1000000000).toFixed(1)),
         ...(runnerResults.DurationHistogram
           ? [createTableRow('Average Response Time', runnerResults.DurationHistogram.Avg)]
           : []),
