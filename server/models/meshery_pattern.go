@@ -89,6 +89,10 @@ type MesheryPattern struct {
 
 	Name        string `json:"name,omitempty"`
 	PatternFile string `json:"patternFile"`
+	// PatternFileOmitted marks a save whose request carried no design file,
+	// so an existing row keeps its stored pattern_file. Never persisted or
+	// sent on the wire.
+	PatternFileOmitted bool `json:"-" gorm:"-"`
 	// UserID is the id of the design's owner. On the wire it is emitted as
 	// "userId", matching the canonical schemas v1beta3 design.MesheryPattern
 	// contract (github.com/meshery/schemas/models/v1beta3/design) rather than

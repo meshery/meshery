@@ -5,9 +5,7 @@ import (
 	"time"
 
 	"github.com/meshery/meshery/server/machines"
-	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
-	"github.com/meshery/schemas/models/core"
 )
 
 type DisconnectAction struct{}
@@ -16,12 +14,11 @@ func (da *DisconnectAction) ExecuteOnEntry(ctx context.Context, machineCtx inter
 	return machines.NoOp, nil, nil
 
 }
+// Execute cleanly tears down MeshSync data handlers and disconnects from the Kubernetes cluster.
 func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	userUUID := user.ID
+	userUUID, systemID := machines.ResolveUserAndSystemID(ctx)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(systemID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
@@ -31,12 +28,13 @@ func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{},
 
 	contextID := machinectx.K8sContext.ID
 	go func() {
-		machinectx.MesheryCtrlsHelper.
-			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-			UndeployDeployedOperators(machinectx.OperatorTracker, contextID).
-			RemoveCtxControllerHandler(ctx, contextID)
-		machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)
-
+		if machinectx.MesheryCtrlsHelper != nil {
+			machinectx.MesheryCtrlsHelper.
+				UpdateOperatorsStatusMap(machinectx.OperatorTracker).
+				UndeployDeployedOperators(machinectx.OperatorTracker, contextID).
+				RemoveCtxControllerHandler(ctx, contextID)
+			machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)
+		}
 	}()
 
 	_ctx, cancel := context.WithTimeout(ctx, 100*time.Millisecond)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -14,6 +15,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"k8s.io/client-go/tools/clientcmd/api"
 )
 
@@ -52,6 +54,41 @@ type trackingBody struct {
 func (b *trackingBody) Close() error {
 	b.closed = true
 	return b.ReadCloser.Close()
+}
+
+func installTrackingTransport(t *testing.T) *trackingTransport {
+	t.Helper()
+	transport := &trackingTransport{base: http.DefaultTransport}
+	previous := http.DefaultTransport
+	http.DefaultTransport = transport
+	t.Cleanup(func() { http.DefaultTransport = previous })
+	return transport
+}
+
+func assertBodyClosed(t *testing.T, transport *trackingTransport, msg string) {
+	t.Helper()
+	if transport.body == nil || !transport.body.closed {
+		t.Fatal(msg)
+	}
+}
+
+func setupAuthenticatedContext(t *testing.T, endpoint string) {
+	t.Helper()
+	origToken := TokenFlag
+	t.Cleanup(func() { TokenFlag = origToken })
+	TokenFlag = GetToken(t)
+	origEndpoint := viper.GetString("contexts.local.endpoint")
+	t.Cleanup(func() { viper.Set("contexts.local.endpoint", origEndpoint) })
+	viper.Set("contexts.local.endpoint", endpoint)
+	tokenData, err := os.ReadFile(GetToken(t))
+	if err != nil {
+		return
+	}
+	tempAuth := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tempAuth, tokenData, 0o600); err != nil {
+		return
+	}
+	viper.Set("tokens", []map[string]string{{"name": "default", "location": tempAuth}})
 }
 
 func TestIsLocalProvider(t *testing.T) {
@@ -841,4 +878,85 @@ func TestSubcommandNames(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestTrimFileExtension checks that only the final extension is removed.
+// Regression test: strings.Trim(name, ext) strips a character set from both
+// ends, turning "my-app.yaml" into "-app". Use strings.TrimSuffix instead.
+func TestTrimFileExtension(t *testing.T) {
+	tests := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{"leading chars match extension", "my-app.yaml", "my-app"},
+		{"mostly extension letters", "mail.yaml", "mail"},
+		{"json extension", "sample.json", "sample"},
+		{"multiple dots", "app.v2.yaml", "app.v2"},
+		{"no extension", "Test Design", "Test Design"},
+		{"empty name", "", ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := TrimFileExtension(tt.in); got != tt.want {
+				t.Errorf("TrimFileExtension(%q) = %q, want %q", tt.in, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestUploadFileWithParams(t *testing.T) {
+	origToken := TokenFlag
+	defer func() { TokenFlag = origToken }()
+	TokenFlag = GetToken(t)
+
+	tmpDir := t.TempDir()
+	sampleFile := filepath.Join(tmpDir, "sample.txt")
+	err := os.WriteFile(sampleFile, []byte("sample content for upload"), 0o600)
+	if err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
+
+	params := map[string]string{
+		"token": "valid-token",
+		"org":   "meshery",
+	}
+
+	req, err := UploadFileWithParams("http://localhost:9081/api/upload", params, "file", sampleFile)
+	if err != nil {
+		t.Fatalf("UploadFileWithParams returned unexpected error: %v", err)
+	}
+	if req == nil {
+		t.Fatal("UploadFileWithParams returned nil request")
+	}
+	if req.Method != http.MethodPost {
+		t.Errorf("expected POST method, got %s", req.Method)
+	}
+	if !strings.HasPrefix(req.Header.Get("Content-Type"), "multipart/form-data") {
+		t.Errorf("expected multipart/form-data content type, got %s", req.Header.Get("Content-Type"))
+	}
+
+	nonExistent := filepath.Join(tmpDir, "does-not-exist.txt")
+	_, err = UploadFileWithParams("http://localhost:9081/api/upload", params, "file", nonExistent)
+	if err == nil {
+		t.Error("expected error for non-existent file, got nil")
+	}
+}
+
+func TestDeleteConfiguration_BodyClosed(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	t.Run("closes body on success", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = fmt.Fprint(w, `{"status":"deleted"}`)
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+		transport := installTrackingTransport(t)
+		if err := DeleteConfiguration(server.URL, "test-id", "pattern"); err != nil {
+			t.Fatalf("expected no error, got: %v", err)
+		}
+		assertBodyClosed(t, transport, "expected response body to be closed on delete configuration")
+	})
 }

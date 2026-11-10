@@ -26,6 +26,7 @@ model:
         deleted_at: null
         environments: []
         schemaVersion: ""
+        organizationId: null
     connection_id: fd01c4e7-14ae-4435-8236-adfb9cea0395
     category:
         id: fda1c4e7-14ae-4435-8236-adfb9cea0395
