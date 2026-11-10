@@ -253,6 +253,17 @@ function MesheryPatternCard_({
                     permissionKey: Keys.CatalogManagementEvaluateRelationships,
                     'data-testid': 'pattern-btn-evaluate',
                   },
+                  ...(isReadOnly
+                    ? []
+                    : [
+                        {
+                          label: 'Delete',
+                          icon: <DeleteIcon fill={crimson[40]} style={iconMedium} />,
+                          onClick: (e) => genericClickHandler(e, deleteHandler),
+                          permissionKey: Keys.CatalogManagementDeleteADesign,
+                          'data-testid': 'pattern-btn-delete',
+                        },
+                      ]),
                 ]}
                 data-testid="pattern-btn-action-dropdown"
               />

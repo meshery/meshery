@@ -1,5 +1,12 @@
 import React from 'react';
-import { Box, crimson, InfoOutlinedIcon, AccountTreeIcon, EditIcon } from '@sistent/sistent';
+import {
+  Box,
+  crimson,
+  InfoOutlinedIcon,
+  AccountTreeIcon,
+  EditIcon,
+  DeleteIcon,
+} from '@sistent/sistent';
 import { Keys } from '@meshery/schemas/permissions';
 import Moment from 'react-moment';
 import { GetApp as GetAppIcon } from '@/assets/icons';
@@ -43,6 +50,7 @@ export function buildPatternActions({
     handleUnpublishModal,
     handleEvaluateRelationship,
     userCanEdit,
+    handleDelete,
   } = handlers;
 
   return [
@@ -162,6 +170,16 @@ export function buildPatternActions({
       disabled: !permissions.unpublishDesign,
       permissionKey: Keys.CatalogManagementUnpublishDesign,
       condition: visibility === VISIBILITY.PUBLISHED,
+    },
+    {
+      label: 'Delete',
+      icon: <DeleteIcon fill={crimson[40]} data-cy="delete-button" />,
+      onClick: (e) => {
+        e.stopPropagation();
+        handleDelete?.(rowData);
+      },
+      disabled: !permissions.deleteDesign,
+      permissionKey: Keys.CatalogManagementDeleteADesign,
     },
   ].filter((action) => action.condition === undefined || action.condition);
 }
