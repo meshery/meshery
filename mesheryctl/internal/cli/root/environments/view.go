@@ -36,18 +36,26 @@ type environmentViewFlags struct {
 
 var environmentViewFlagsProvided environmentViewFlags
 
+var viewUsageMsg = "Usage: mesheryctl environment view --orgId [orgId]\nRun 'mesheryctl environment view --help' to see detailed help message"
+
 var viewEnvironmentCmd = &cobra.Command{
 	Use:   "view",
-	Short: "View registered environmnents",
+	Short: "View registered environments",
 	Long: `View details of an environment registered in Meshery Server for a specific organization
 Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/view`,
 	Example: `
 // View details of a specific environment
 mesheryctl environment view --orgId [orgId]
 	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", viewUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if environmentViewFlagsProvided.orgId == "" {
-			const errMsg = "[ orgId ] isn't specified\n\nUsage: mesheryctl environment view --orgId [orgId]\nRun 'mesheryctl environment view --help' to see detailed help message"
+			errMsg := "[ orgId ] isn't specified\n\n" + viewUsageMsg
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 
