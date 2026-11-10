@@ -46,7 +46,7 @@ type UserProfile struct {
 }
 
 var exportCmd = &cobra.Command{
-	Use:   "export [pattern-name | ID]",
+	Use:   "export [design-name | ID]",
 	Short: "Export a design from Meshery",
 	Long: `The 'export' command allows you to export a specific design from your Meshery server.
 You can specify the design by its name or ID and optionally define the type of design.
@@ -55,16 +55,16 @@ By default, the exported design will be saved in the current directory. The diff
 type allowed are oci, original, and current. The default design type is current.`,
 	Example: `
 // Export a design with a specific ID
-mesheryctl design export [pattern-name | ID]
+mesheryctl design export [design-name | ID]
 
 // Export a design with a specific ID and type
-mesheryctl design export [pattern-name | ID] --type [design-type]
+mesheryctl design export [design-name | ID] --type [design-type]
 
 // Export a design and save it to a specific directory
-mesheryctl design export [pattern-name | ID] --output ./designs
+mesheryctl design export [design-name | ID] --output ./designs
 
 // Export a design with a specific type and save it to a directory
-mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exports
+mesheryctl design export [design-name | ID] --type [design-type] --output ./exports
 	`,
 	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
