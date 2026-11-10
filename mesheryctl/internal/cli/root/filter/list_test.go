@@ -56,6 +56,14 @@ func TestListCmd(t *testing.T) {
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pageSize '0'")),
 		},
+		{
+			Name:             "List filters with too many arguments",
+			Args:             []string{"list", "filter1", "filter2"},
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg)),
+		},
 	}
 	mesheryctlflags.InitValidators(FilterCmd)
 	// Run tests
