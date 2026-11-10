@@ -705,7 +705,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       <tr>
         <td></td>
         <td>--output, -o</td>
-        <td>(optional) location to output generated models (default &#34;./models&#34;)</td>
+        <td>(optional) location to output generated models (when unset, the repo-root models directory is auto-detected)</td>
       </tr>
       <tr>
         <td></td>
