@@ -186,6 +186,12 @@ jobs:
         run: sleep 120
       - name: Pattern apply, second iteration. [IDEMPOTENT]
         run: |
+          echo "##################"
+          echo "Current working directory:"
+          pwd
+          echo "Listing current directory contents:"
+          ls -l
+          echo "############"
           cat ./${{ inputs.patternfile_name }}
           mesheryctl design apply -f ./${{ inputs.patternfile_name }}
       - name: Check adapter logs
