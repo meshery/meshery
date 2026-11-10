@@ -15,10 +15,19 @@
 package models
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
+	"time"
 
+	"github.com/gofrs/uuid"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/schemas/models/core"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -124,4 +133,294 @@ func TestK8sMeshModelMetadata_PackageVar(t *testing.T) {
 	assert.NotEmpty(t, *K8sMeshModelMetadata.SecondaryColor)
 	require.NotNil(t, K8sMeshModelMetadata.Shape)
 	assert.NotEmpty(t, string(*K8sMeshModelMetadata.Shape))
+}
+
+type mockCompRegProvider struct {
+	Provider
+	mu     sync.Mutex
+	events []events.Event
+}
+
+func (m *mockCompRegProvider) PersistSystemEvent(event events.Event) (PersistedEvent, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.events = append(m.events, event)
+	return PersistedEvent{Event: &event}, nil
+}
+
+func (m *mockCompRegProvider) getEvents() []events.Event {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	copied := make([]events.Event, len(m.events))
+	copy(copied, m.events)
+	return copied
+}
+
+func TestRegisterComponents_FailureResetsStatusAndAllowsRetry(t *testing.T) {
+	log, err := logger.New("test", logger.Options{Format: logger.SyslogLogFormat, LogLevel: 0})
+	require.NoError(t, err)
+
+	cg := NewComponentsRegistrationHelper(log)
+	instID := core.Uuid(uuid.Must(uuid.NewV4()))
+	connID := uuid.Must(uuid.NewV4()).String()
+	ctxID := "test-fail-ctx"
+	k8sCtx := &K8sContext{
+		ID:                ctxID,
+		Name:              "test-fail-cluster",
+		Server:            "https://k8s.example.com",
+		ConnectionID:      connID,
+		MesheryInstanceID: &instID,
+		Cluster: map[string]interface{}{
+			"name":   "test-cluster",
+			"server": "https://k8s.example.com",
+		},
+		Auth: map[string]interface{}{
+			"name": "test-user",
+		},
+	}
+
+	cg.UpdateContexts([]*K8sContext{k8sCtx})
+	mockProv := &mockCompRegProvider{}
+	broadcaster := NewBroadcaster("test-broadcaster")
+	testUserID := uuid.Must(uuid.NewV4()).String()
+
+	failRan := make(chan struct{})
+	failingFunc := func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID core.Uuid, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error {
+		close(failRan)
+		return fmt.Errorf("simulated cluster unreachable error")
+	}
+
+	cg.RegisterComponents([]*K8sContext{k8sCtx}, []K8sRegistrationFunction{failingFunc}, nil, broadcaster, mockProv, testUserID, false)
+
+	// Wait for failing registration function to execute
+	select {
+	case <-failRan:
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for failing registration function to run")
+	}
+
+	// Wait for background goroutine defer to finish
+	require.Eventually(t, func() bool {
+		s, _ := cg.GetContextRegistrationStatus(ctxID)
+		return s == NotRegistered && len(mockProv.getEvents()) >= 2
+	}, 2*time.Second, 10*time.Millisecond)
+
+	status, _ := cg.GetContextRegistrationStatus(ctxID)
+	// Status must be reset to NotRegistered on failure to allow retry
+	require.Equal(t, NotRegistered, status, "status must be reset to NotRegistered on failure to allow retry")
+
+	// Verify that the failure event was persisted and published with Error severity
+	evts := mockProv.getEvents()
+	require.GreaterOrEqual(t, len(evts), 2, "must have emitted started and failure events")
+	assert.Equal(t, events.Informational, evts[0].Severity)
+	assert.Contains(t, evts[0].Description, "started")
+	assert.Equal(t, events.Error, evts[1].Severity)
+	assert.Contains(t, evts[1].Description, "Failed to register components")
+	assert.Contains(t, evts[1].Metadata["error"], "simulated cluster unreachable error")
+
+	// Retry with a successful registration function
+	successRan := make(chan struct{})
+	successFunc := func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID core.Uuid, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error {
+		close(successRan)
+		return nil
+	}
+
+	cg.RegisterComponents([]*K8sContext{k8sCtx}, []K8sRegistrationFunction{successFunc}, nil, broadcaster, mockProv, testUserID, false)
+
+	select {
+	case <-successRan:
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for retry registration function to run; retry was dropped because status was falsely complete")
+	}
+
+	require.Eventually(t, func() bool {
+		s, _ := cg.GetContextRegistrationStatus(ctxID)
+		return s == RegistrationComplete
+	}, 2*time.Second, 10*time.Millisecond, "status must be RegistrationComplete after successful retry")
+}
+
+// TestRegisterComponents_NilContextAndInvalidUserID verifies that RegisterComponents
+// safely handles nil contexts in the slice and rejects invalid user IDs without panic.
+func TestRegisterComponents_NilContextAndInvalidUserID(t *testing.T) {
+	log, err := logger.New("test", logger.Options{Format: logger.SyslogLogFormat, LogLevel: 0})
+	require.NoError(t, err)
+
+	cg := NewComponentsRegistrationHelper(log)
+	mockProv := &mockCompRegProvider{}
+	broadcaster := NewBroadcaster("test-broadcaster")
+
+	// 1. Invalid user ID should log error and return without registering or panicking
+	cg.RegisterComponents([]*K8sContext{{ID: "ctx-1"}}, nil, nil, broadcaster, mockProv, "invalid-uuid", false)
+	assert.Empty(t, mockProv.getEvents(), "no events should be emitted for invalid user ID")
+
+	// 2. Nil context inside slice should be safely skipped without panicking
+	validUserID := uuid.Must(uuid.NewV4()).String()
+	cg.RegisterComponents([]*K8sContext{nil}, nil, nil, broadcaster, mockProv, validUserID, false)
+	assert.Empty(t, mockProv.getEvents(), "no events should be emitted for nil context")
+}
+
+// TestComponentsRegistrationHelper_RemoveContext verifies that RemoveContext
+// drops the context from the tracking map, allowing a deleted and re-imported
+// cluster to register its components afresh.
+func TestComponentsRegistrationHelper_RemoveContext(t *testing.T) {
+	log, err := logger.New("test", logger.Options{Format: logger.SyslogLogFormat, LogLevel: 0})
+	require.NoError(t, err)
+
+	cg := NewComponentsRegistrationHelper(log)
+	ctxID := "ctx-remove-test"
+	k8sCtx := &K8sContext{ID: ctxID, Name: "test-remove-cluster"}
+
+	cg.UpdateContexts([]*K8sContext{k8sCtx})
+	status, exists := cg.GetContextRegistrationStatus(ctxID)
+	require.True(t, exists)
+	require.Equal(t, NotRegistered, status)
+
+	// Simulate completed registration
+	cg.mx.Lock()
+	cg.ctxRegStatusMap[ctxID] = RegistrationComplete
+	cg.mx.Unlock()
+
+	status, exists = cg.GetContextRegistrationStatus(ctxID)
+	require.True(t, exists)
+	require.Equal(t, RegistrationComplete, status)
+
+	// Remove context upon deletion
+	cg.RemoveContext(ctxID)
+	_, exists = cg.GetContextRegistrationStatus(ctxID)
+	require.False(t, exists, "context must be removed from map")
+
+	// Re-importing the context re-initializes it as NotRegistered
+	cg.UpdateContexts([]*K8sContext{k8sCtx})
+	status, exists = cg.GetContextRegistrationStatus(ctxID)
+	require.True(t, exists)
+	require.Equal(t, NotRegistered, status, "re-imported context must be NotRegistered")
+}
+
+// TestRegisterComponents_RemovedContextNotResurrected verifies that if a context is
+// removed via RemoveContext while registration is in-flight, the completing goroutine
+// does not resurrect the context in the status map or overwrite newer registrations.
+func TestRegisterComponents_RemovedContextNotResurrected(t *testing.T) {
+	log, err := logger.New("test", logger.Options{Format: logger.SyslogLogFormat, LogLevel: 0})
+	require.NoError(t, err)
+
+	cg := NewComponentsRegistrationHelper(log)
+	mockProv := &mockCompRegProvider{}
+	broadcaster := NewBroadcaster("test-broadcaster")
+	testUserID := uuid.Must(uuid.NewV4()).String()
+
+	ctxID := "ctx-inflight-remove"
+	k8sCtx := &K8sContext{ID: ctxID, Name: "test-inflight-cluster"}
+	cg.UpdateContexts([]*K8sContext{k8sCtx})
+
+	inFlight := make(chan struct{})
+	continueReg := make(chan struct{})
+
+	regFunc := func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID core.Uuid, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error {
+		close(inFlight)
+		<-continueReg
+		return nil
+	}
+
+	cg.RegisterComponents([]*K8sContext{k8sCtx}, []K8sRegistrationFunction{regFunc}, nil, broadcaster, mockProv, testUserID, false)
+
+	// Wait until registration function is actively executing
+	select {
+	case <-inFlight:
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for registration function to start")
+	}
+
+	// Context is deleted while registration is in flight
+	cg.RemoveContext(ctxID)
+	_, exists := cg.GetContextRegistrationStatus(ctxID)
+	require.False(t, exists, "context must be removed from map")
+
+	// Allow in-flight registration to finish
+	close(continueReg)
+
+	// Verify that the context is NOT resurrected into ctxRegStatusMap
+	require.Never(t, func() bool {
+		_, exists := cg.GetContextRegistrationStatus(ctxID)
+		return exists
+	}, 300*time.Millisecond, 10*time.Millisecond, "lingering registration must not resurrect removed context")
+}
+
+// TestRegisterComponents_StaleRegistrationDoesNotClobberNewRegistration verifies that when
+// a context is removed and re-imported with a new registration in flight, the completion
+// of the older registration does not clobber or alter the status of the newer registration.
+func TestRegisterComponents_StaleRegistrationDoesNotClobberNewRegistration(t *testing.T) {
+	log, err := logger.New("test", logger.Options{Format: logger.SyslogLogFormat, LogLevel: 0})
+	require.NoError(t, err)
+
+	cg := NewComponentsRegistrationHelper(log)
+	mockProv := &mockCompRegProvider{}
+	broadcaster := NewBroadcaster("test-broadcaster")
+	testUserID := uuid.Must(uuid.NewV4()).String()
+
+	ctxID := "ctx-clobber-test"
+	k8sCtx := &K8sContext{ID: ctxID, Name: "test-clobber-cluster"}
+	cg.UpdateContexts([]*K8sContext{k8sCtx})
+
+	inFlight1 := make(chan struct{})
+	continueReg1 := make(chan struct{})
+
+	// Registration 1 will block until signaled
+	regFunc1 := func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID core.Uuid, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error {
+		close(inFlight1)
+		<-continueReg1
+		return nil
+	}
+
+	cg.RegisterComponents([]*K8sContext{k8sCtx}, []K8sRegistrationFunction{regFunc1}, nil, broadcaster, mockProv, testUserID, false)
+
+	// Wait until Registration 1 is running
+	select {
+	case <-inFlight1:
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for registration 1 to start")
+	}
+
+	// Delete context and re-import
+	cg.RemoveContext(ctxID)
+	cg.UpdateContexts([]*K8sContext{k8sCtx})
+
+	// Start Registration 2 for the same context ID
+	inFlight2 := make(chan struct{})
+	continueReg2 := make(chan struct{})
+
+	regFunc2 := func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID core.Uuid, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error {
+		close(inFlight2)
+		<-continueReg2
+		return nil
+	}
+
+	cg.RegisterComponents([]*K8sContext{k8sCtx}, []K8sRegistrationFunction{regFunc2}, nil, broadcaster, mockProv, testUserID, false)
+
+	select {
+	case <-inFlight2:
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for registration 2 to start")
+	}
+
+	// Status must currently be Registering for Registration 2
+	status, exists := cg.GetContextRegistrationStatus(ctxID)
+	require.True(t, exists)
+	require.Equal(t, Registering, status)
+
+	// Release Registration 1 so its defer executes
+	close(continueReg1)
+
+	// Verify that Registration 1's completion does NOT clobber Registration 2's status to RegistrationComplete prematurely
+	require.Never(t, func() bool {
+		s, _ := cg.GetContextRegistrationStatus(ctxID)
+		return s != Registering
+	}, 200*time.Millisecond, 10*time.Millisecond, "stale registration 1 must not alter registration 2's status")
+
+	// Release Registration 2 so it completes
+	close(continueReg2)
+
+	require.Eventually(t, func() bool {
+		s, _ := cg.GetContextRegistrationStatus(ctxID)
+		return s == RegistrationComplete
+	}, 2*time.Second, 10*time.Millisecond, "registration 2 must successfully complete")
 }
