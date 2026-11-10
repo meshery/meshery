@@ -115,6 +115,8 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	}
 	return http.HandlerFunc(fn)
 }
+
+// NoCacheMiddleware sets response headers that stop clients and proxies from caching the response.
 func (h *Handler) NoCacheMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		// Set headers to disable caching
@@ -212,6 +214,8 @@ func (h *Handler) RegistrationAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
+// validateAuth reports whether the request carries a valid provider session, returning the
+// session error when it does not.
 func (h *Handler) validateAuth(provider models.Provider, req *http.Request) (bool, error) {
 	err := provider.GetSession(req)
 	if err == nil {
@@ -356,8 +360,16 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 	k8sContextPassedByUser := []models.K8sContext{}
 	k8sContextsFromKubeConfig := []*models.K8sContext{}
 
-	if err != nil || len(connectedK8sContexts) == 0 {
+	// A failed read is not the same as having no contexts, so log its cause
+	// distinctly. Both still fall back to kubeconfig discovery: this middleware
+	// fronts session bootstrap routes such as /api/system/sync, and failing them
+	// on a transient read error would take the UI down with it.
+	if err != nil {
+		h.log.Error(ErrGetK8sContexts(err))
+	} else if len(connectedK8sContexts) == 0 {
 		h.log.Warn(ErrFailToGetK8SContext)
+	}
+	if err != nil || len(connectedK8sContexts) == 0 {
 		k8sContextsFromKubeConfig, err = h.DiscoverK8SContextFromKubeConfig(user.ID.String(), token, provider)
 		if err != nil {
 			h.log.Warn(ErrFailToLoadK8sContext(err))
