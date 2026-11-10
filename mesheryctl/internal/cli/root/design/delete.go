@@ -17,7 +17,6 @@ package design
 import (
 	"bytes"
 	"encoding/json"
-	stderrors "errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -91,7 +90,7 @@ mesheryctl design delete -f [file | URL]
 			} else {
 				pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), target, "pattern")
 				if err != nil {
-					if stderrors.Is(err, utils.ErrAmbiguousID) {
+					if errors.GetCode(err) == utils.ErrAmbiguousIDCode {
 						return err
 					}
 					if errors.GetCode(err) == utils.ErrNotFoundCode {

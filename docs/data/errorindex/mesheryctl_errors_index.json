@@ -3967,6 +3967,23 @@
       "suggestedRemediation": [
         "Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"
       ]
+    },
+    {
+      "code": "mesheryctl-1256",
+      "moniker": "ErrAmbiguousIDCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1256",
+      "severity": "fatal",
+      "shortDescription": "Ambiguous ID prefix",
+      "probableCause": [
+        "The ID prefix matches more than one resource."
+      ],
+      "suggestedRemediation": [
+        "Use a longer prefix or a full ID to select one resource."
+      ]
     }
   ],
   "schemaVersion": 2

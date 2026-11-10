@@ -59,14 +59,63 @@ func TestValidIDFindsAmbiguityAcrossPages(t *testing.T) {
 	}
 }
 
-func TestValidIDRejectsIncompleteListing(t *testing.T) {
+func TestValidIDAllowsShortPageWithoutTotalCount(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = fmt.Fprint(w, `{"patterns":[{"id":"dc761694-5e61-4dd4-83c9-bca45667ef70"}]}`)
 	}))
 	defer server.Close()
 	setupAuthenticatedContext(t, server.URL)
-	if _, _, err := ValidId(server.URL, "dc", "pattern"); err == nil {
-		t.Fatal("must not resolve a short ID without a total count")
+	got, isID, err := ValidId(server.URL, "dc", "pattern")
+	if err != nil || !isID || got != "dc761694-5e61-4dd4-83c9-bca45667ef70" {
+		t.Fatalf("short page should resolve the ID: got %q, %v, %v", got, isID, err)
+	}
+}
+
+func TestValidIDRejectsFullPageWithoutTotalCount(t *testing.T) {
+	for _, tc := range []struct {
+		name            string
+		pageSize        int
+		includePageSize bool
+	}{
+		{name: "requested page size", pageSize: 100},
+		{name: "server capped page size", pageSize: 10, includePageSize: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				patterns := make([]map[string]string, tc.pageSize)
+				for i := range patterns {
+					patterns[i] = map[string]string{"id": fmt.Sprintf("d%07x-5e61-4dd4-83c9-bca45667ef70", i)}
+				}
+				response := map[string]interface{}{"patterns": patterns}
+				if tc.includePageSize {
+					response["pageSize"] = tc.pageSize
+				}
+				w.Header().Set("Content-Type", "application/json")
+				_ = json.NewEncoder(w).Encode(response)
+			}))
+			defer server.Close()
+			setupAuthenticatedContext(t, server.URL)
+			if _, _, err := ValidId(server.URL, "d", "pattern"); err == nil {
+				t.Fatal("must reject a full page without a total count")
+			}
+		})
+	}
+}
+
+func TestValidIDLimitsAmbiguityError(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		patterns := make([]map[string]string, 12)
+		for i := range patterns {
+			patterns[i] = map[string]string{"id": fmt.Sprintf("d%07x-5e61-4dd4-83c9-bca45667ef70", i)}
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{"patterns": patterns, "totalCount": len(patterns)})
+	}))
+	defer server.Close()
+	setupAuthenticatedContext(t, server.URL)
+	_, _, err := ValidId(server.URL, "d", "pattern")
+	if err == nil || !strings.Contains(err.Error(), "and 2 more") || strings.Count(err.Error(), "-5e61-4dd4-83c9-bca45667ef70") != 10 {
+		t.Fatalf("expected 10 matches and the remaining count, got %v", err)
 	}
 }

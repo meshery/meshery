@@ -82,6 +82,7 @@ var (
 	ErrMesheryCheckRunningStatusCode  = "mesheryctl-1227"
 	ErrDockerComposeStopCode          = "mesheryctl-1228"
 	ErrGitHubAPIResponseCode          = "mesheryctl-1255"
+	ErrAmbiguousIDCode                = "mesheryctl-1256"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -476,6 +477,14 @@ func ErrInvalidNameOrID(err error) error {
 		[]string{err.Error()},
 		[]string{"The provided Name or ID is either not present or invalid."},
 		[]string{"Provide a valid Name or ID using the `list` command with the appropriate subcommand."})
+}
+
+func ErrAmbiguousID(prefix, configuration, matches string) error {
+	return errors.New(ErrAmbiguousIDCode, errors.Fatal,
+		[]string{"Ambiguous ID prefix"},
+		[]string{fmt.Sprintf("ID prefix %q for %s matches: %s", prefix, configuration, matches)},
+		[]string{"The ID prefix matches more than one resource."},
+		[]string{"Use a longer prefix or a full ID to select one resource."})
 }
 
 func ErrAttachAuthToken(err error) error {

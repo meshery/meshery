@@ -646,11 +646,12 @@ func StringInSlice(str string, slice []string) bool {
 
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
 func GetID(mesheryServerUrl, configuration string) ([]string, error) {
+	const requestedPageSize = 100
 	configType := configuration + "s"
 	var idList []string
 	seen := make(map[string]bool)
 	for page := 0; ; page++ {
-		params := url.Values{"page": {strconv.Itoa(page)}, "pagesize": {"100"}}
+		params := url.Values{"page": {strconv.Itoa(page)}, "pagesize": {strconv.Itoa(requestedPageSize)}}
 		if configuration == "pattern" {
 			params.Set("populate", "pattern_file")
 		}
@@ -678,27 +679,40 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 		for _, config := range configs {
 			entry, ok := config.(map[string]interface{})
 			if !ok {
-				return nil, fmt.Errorf("invalid %s result", configuration)
+				return nil, ErrInvalidAPIResponse(fmt.Errorf("invalid %s result", configuration))
 			}
 			id, ok := entry["id"].(string)
 			if !ok || id == "" || seen[id] {
-				return nil, fmt.Errorf("invalid or repeated %s ID in paginated response", configuration)
+				return nil, ErrInvalidAPIResponse(fmt.Errorf("invalid or repeated %s ID in paginated response", configuration))
 			}
 			seen[id] = true
 			idList = append(idList, id)
 		}
-		total, hasTotal := dat["totalCount"].(float64)
+		totalValue, hasTotal := dat["totalCount"]
 		if !hasTotal {
-			total, hasTotal = dat["total_count"].(float64)
+			totalValue, hasTotal = dat["total_count"]
 		}
-		if !hasTotal || total < 0 || total != float64(int(total)) || len(idList) > int(total) {
-			return nil, fmt.Errorf("invalid total count in %s ID listing", configuration)
+		if !hasTotal {
+			// A short page is complete, but a full page without a total cannot
+			// establish uniqueness. Honor a smaller server-reported page size.
+			pageSize := requestedPageSize
+			if size, ok := dat["pageSize"].(float64); ok && size > 0 && size == float64(int(size)) && int(size) < pageSize {
+				pageSize = int(size)
+			}
+			if len(configs) < pageSize {
+				return idList, nil
+			}
+			return nil, ErrInvalidAPIResponse(fmt.Errorf("cannot establish a complete %s ID listing without a total count", configuration))
+		}
+		total, validTotal := totalValue.(float64)
+		if !validTotal || total < 0 || total != float64(int(total)) || len(idList) > int(total) {
+			return nil, ErrInvalidAPIResponse(fmt.Errorf("invalid total count in %s ID listing", configuration))
 		}
 		if len(idList) == int(total) {
 			return idList, nil
 		}
 		if len(configs) == 0 {
-			return nil, fmt.Errorf("incomplete %s ID listing", configuration)
+			return nil, ErrInvalidAPIResponse(fmt.Errorf("incomplete %s ID listing", configuration))
 		}
 	}
 }
@@ -755,9 +769,6 @@ func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
 	return nil
 }
 
-// ErrAmbiguousID indicates that a short ID matches multiple resources.
-var ErrAmbiguousID = errors.New("ambiguous ID prefix")
-
 // ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID
 func ValidId(mesheryServerUrl, args string, configuration string) (string, bool, error) {
 	if strings.TrimSpace(args) == "" {
@@ -780,7 +791,13 @@ func ValidId(mesheryServerUrl, args string, configuration string) (string, bool,
 	}
 	if len(matches) > 1 {
 		sort.Strings(matches)
-		return "", false, fmt.Errorf("%w %q for %s; matches: %s", ErrAmbiguousID, args, configuration, strings.Join(matches, ", "))
+		shown := matches
+		suffix := ""
+		if len(matches) > 10 {
+			shown = matches[:10]
+			suffix = fmt.Sprintf(" and %d more", len(matches)-10)
+		}
+		return "", false, ErrAmbiguousID(args, configuration, strings.Join(shown, ", ")+suffix)
 	}
 	if len(matches) == 1 {
 		args = matches[0]

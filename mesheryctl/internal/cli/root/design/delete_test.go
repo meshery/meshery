@@ -1,7 +1,6 @@
 package design
 
 import (
-	stderrors "errors"
 	"fmt"
 	"net/http"
 	"path/filepath"
@@ -11,6 +10,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 )
 
 const nonExistentID = "a12b3c4d-5e6f-4890-abcd-ef1234567890"
@@ -191,7 +191,7 @@ func TestDeleteRejectsAmbiguousIDWithoutSendingDelete(t *testing.T) {
 	}
 	DesignCmd.SetArgs([]string{"delete", "d"})
 	err := DesignCmd.Execute()
-	if !stderrors.Is(err, utils.ErrAmbiguousID) || !strings.Contains(err.Error(), first) || !strings.Contains(err.Error(), second) {
+	if meshkiterrors.GetCode(err) != utils.ErrAmbiguousIDCode || !strings.Contains(err.Error(), first) || !strings.Contains(err.Error(), second) {
 		t.Fatalf("expected ambiguity with both IDs, got %v", err)
 	}
 	if deleted {
