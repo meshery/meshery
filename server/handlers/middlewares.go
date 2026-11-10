@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
@@ -443,7 +444,10 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		}
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
-			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
+			// Discovery outlives the request but must not wait indefinitely on Kubernetes.
+			discoveryCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 2*time.Minute)
+			defer cancel()
+			event, err := inst.SendEvent(discoveryCtx, machines.Discovery, nil)
 			h.reportBackgroundDiscovery(provider, token, userUUID, event, err)
 		}(inst)
 	}
@@ -624,7 +628,9 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		}
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
-			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
+			discoveryCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 2*time.Minute)
+			defer cancel()
+			event, err := inst.SendEvent(discoveryCtx, machines.Discovery, nil)
 			h.reportBackgroundDiscovery(provider, token, userUUID, event, err)
 		}(inst)
 		kubernesMachineCtx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
