@@ -87,7 +87,10 @@ describe('YAMLEditor', () => {
     id: 'f-1',
     name: 'my filter',
     catalogData: { foo: 'bar' },
-    filter_resource: JSON.stringify({ settings: { config: 'apiVersion: v1' } }),
+    filterResource: JSON.stringify({
+      component: { kind: 'WASMFilter' },
+      configuration: { config: 'apiVersion: v1' },
+    }),
   };
 
   it('renders the filter name as the dialog title', () => {
@@ -95,13 +98,13 @@ describe('YAMLEditor', () => {
     expect(screen.getByText('my filter')).toBeInTheDocument();
   });
 
-  it('initialises CodeMirror with the YAML from filter_resource.settings.config', () => {
+  it('initialises CodeMirror with the stored filterResource configuration', () => {
     render(<YAMLEditor filter={filter} onClose={() => {}} onSubmit={() => {}} />);
     expect(screen.getByTestId('codemirror')).toHaveValue('apiVersion: v1');
   });
 
-  it('falls back to empty config when filter_resource is invalid JSON', () => {
-    const badFilter = { ...filter, filter_resource: '{invalid json' };
+  it('falls back to empty config when filterResource is invalid JSON', () => {
+    const badFilter = { ...filter, filterResource: '{invalid json' };
     render(<YAMLEditor filter={badFilter} onClose={() => {}} onSubmit={() => {}} />);
     expect(screen.getByTestId('codemirror')).toHaveValue('');
   });
