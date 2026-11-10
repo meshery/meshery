@@ -167,6 +167,22 @@ func TestReadValidationErrorMessages(t *testing.T) {
 			shouldHaveError: true,
 		},
 		{
+			name: "given invalid oneof value for camelCase flag when isOneof then error message keeps flag name casing",
+			setupStruct: struct {
+				OutputType string `json:"outputType" validate:"oneof=oci tar"`
+			}{OutputType: "zip"},
+			expectedError:   "Invalid value for --outputType 'zip': valid values are oci tar",
+			shouldHaveError: true,
+		},
+		{
+			name: "given invalid uuid for camelCase flag when isUUID then error message keeps flag name casing",
+			setupStruct: struct {
+				OrgID string `json:"orgId" validate:"uuid"`
+			}{OrgID: "invalid-org-id"},
+			expectedError:   "Invalid value for --orgId 'invalid-org-id': must be a valid UUID",
+			shouldHaveError: true,
+		},
+		{
 			name: "given invalid directory when isDir then error message indicates directory does not exist",
 			setupStruct: struct {
 				OutputDir string `json:"output-dir" validate:"dir"`
