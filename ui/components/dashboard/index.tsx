@@ -360,6 +360,10 @@ const Dashboard = () => {
               justifyContent="flex-end"
               alignItems="center"
               flexWrap="wrap"
+              sx={{
+                width: '100%',
+                maxWidth: '100%',
+              }}
             >
               {topBarActions.map(({ key, ...layoutAction }) => (
                 <LayoutActionButton {...layoutAction} key={key} />

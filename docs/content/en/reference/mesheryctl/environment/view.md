@@ -10,7 +10,7 @@ aliases:
 
 # mesheryctl environment view
 
-View registered environmnents
+View registered environments
 
 ## Synopsis
 

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -788,6 +789,15 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 			writeMeshkitError(rw, models.ErrUnmarshal(err, "component definition"), http.StatusBadRequest)
 			return
 		}
+		// Reject a model version that could escape the export working
+		// directory. Registration is unauthenticated, so a hostile version
+		// planted here would otherwise reach ExportModel (CWE-22).
+		if c.Model != nil && (!isSafePathComponent(c.Model.Version) || !isSafePathComponent(c.Model.Model.Version)) {
+			err := fmt.Errorf("invalid model version: must be a single path component")
+			h.log.Error(ErrRequestBody(err))
+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+			return
+		}
 		utils.WriteSVGsOnFileSystem(&c)
 		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &c)
 		helpers.HandleError(registry.RegistrantHostToV1beta1(cc.Connection), &c, err, isModelError, isRegistranError)
@@ -889,8 +899,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 			"error": wrappedErr,
 		})
 		_event := eventBuilder.Build()
-		_ = provider.PersistEvent(*_event, token)
-		go h.config.EventBroadcaster.Publish(userID, _event)
+		h.persistAndPublish(provider, token, userID, _event)
 		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
@@ -898,8 +907,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	description := fmt.Sprintf("Status of '%s' updated to %s.", updateData.DisplayName, updateData.Status)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 
 	// Respond with success status
 	rw.WriteHeader(http.StatusNoContent)
@@ -1282,6 +1290,48 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 
 }
 
+var (
+	ociRepositoryNamePattern = regexp.MustCompile(`^[a-z0-9]+(?:(?:[._]|__|-+)[a-z0-9]+)*$`)
+	ociRepositoryNameInvalid = regexp.MustCompile(`[^a-z0-9]+`)
+)
+
+const (
+	ociRepositoryNameMinLength = 2
+	ociRepositoryNameMaxLength = 255
+)
+
+// ociRepositoryName maps a model name to a valid OCI repository name. The
+// mapping is lossy: distinct names can sanitize to the same repository name
+// (for example "foo bar" and "foo-bar"), so callers pushing to a shared
+// registry should be aware of possible collisions.
+func ociRepositoryName(modelName string) string {
+	if len(modelName) >= ociRepositoryNameMinLength && len(modelName) <= ociRepositoryNameMaxLength &&
+		ociRepositoryNamePattern.MatchString(modelName) {
+		return modelName
+	}
+	sanitized := strings.Trim(ociRepositoryNameInvalid.ReplaceAllString(strings.ToLower(modelName), "-"), "-")
+	if len(sanitized) > ociRepositoryNameMaxLength {
+		sanitized = strings.TrimRight(sanitized[:ociRepositoryNameMaxLength], "-")
+	}
+	switch {
+	case sanitized == "":
+		return "model"
+	case len(sanitized) < ociRepositoryNameMinLength:
+		return sanitized + "-model"
+	}
+	return sanitized
+}
+
+// isSafePathComponent reports whether s can be interpolated into a filesystem
+// path as a single component without escaping its parent directory. An empty
+// string is harmless (filepath.Join drops it) and is accepted.
+func isSafePathComponent(s string) bool {
+	if s == "" {
+		return true
+	}
+	return s != "." && s != ".." && filepath.Base(s) == s
+}
+
 func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	modelId := r.URL.Query().Get("id")
 	name := r.URL.Query().Get("name")
@@ -1366,6 +1416,19 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		writeMeshkitError(rw, ErrExportModel(err, "model name validation"), http.StatusBadRequest)
 		return
 	}
+	// The model versions are interpolated into the same paths. Apply the same
+	// single-component check to both, so a hostile version cannot escape the
+	// per-request temp directory either (CWE-22).
+	if !isSafePathComponent(model.Model.Version) {
+		err := fmt.Errorf("invalid model version %q: must be a single path component", model.Model.Version)
+		writeMeshkitError(rw, ErrExportModel(err, "model version validation"), http.StatusBadRequest)
+		return
+	}
+	if !isSafePathComponent(model.Version) {
+		err := fmt.Errorf("invalid model version %q: must be a single path component", model.Version)
+		writeMeshkitError(rw, ErrExportModel(err, "model version validation"), http.StatusBadRequest)
+		return
+	}
 	// 2. Convert it to oci
 	// Fixed pattern: the model name is already preserved in modelDir inside the
 	// temp root, and embedding it here risks exceeding filesystem name limits.
@@ -1384,6 +1447,14 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 	modelDir := filepath.Join(tempDir, model.Name)
 	versionDir := filepath.Join(modelDir, model.Model.Version, model.Version)
+
+	// Defense in depth: even if a version slips past the checks above, the
+	// working directory must stay inside the per-request temp directory.
+	if versionDir != modelDir && !strings.HasPrefix(versionDir, modelDir+string(filepath.Separator)) {
+		err := fmt.Errorf("invalid model version: resolved path %q escapes the export directory", versionDir)
+		writeMeshkitError(rw, ErrExportModel(err, "model version validation"), http.StatusBadRequest)
+		return
+	}
 
 	// Create necessary directories: {modelName}/v1.0.0/1.0.0/{components, relationships}
 	dirs := []string{
@@ -1464,7 +1535,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 		// Save OCI artifact into a tar file
 		tarfileName := filepath.Join(modelDir, "model.tar")
-		err = meshkitOci.SaveOCIArtifact(img, tarfileName, model.Name)
+		err = meshkitOci.SaveOCIArtifact(img, tarfileName, ociRepositoryName(model.Name))
 		if err != nil {
 			h.log.Error(err)
 			writeMeshkitError(rw, ErrExportModel(err, "OCI artifact save"), http.StatusInternalServerError)
