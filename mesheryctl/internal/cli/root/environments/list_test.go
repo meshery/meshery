@@ -46,6 +46,15 @@ func TestListEnvironment(t *testing.T) {
 			ExpectedResponse: "list.environment.success.golden",
 			ExpectError:      false,
 		},
+		{
+			Name:             "given extra positional arguments when environment list then throw error",
+			Args:             []string{"list", "extra-arg", "--orgId", testConstants["orgId"]},
+			Fixture:          "list.environment.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg)),
+		},
 	}
 
 	utils.InvokeMesheryctlTestListCommand(t, update, EnvironmentCmd, tests, currDir, "environments")
