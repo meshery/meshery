@@ -18,6 +18,11 @@ Stop and remove all Meshery containers (Docker) or delete all Meshery resources
 from the cluster, including custom resource instances, custom resource
 definitions, the Helm release and the Meshery namespace (Kubernetes).
 
+For Docker installations, containers are always removed forcefully, so --force
+has no effect. For Kubernetes installations, --force skips the Helm release
+uninstallation and forcefully deletes the remaining Meshery resources; use it
+when a normal uninstall fails.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -49,7 +54,7 @@ mesheryctl system uninstall --keep-namespace
 </div>
 </pre>
 
-Uninstall Meshery forcefully (use it when system uninstall doesn't work)
+Uninstall Meshery forcefully on Kubernetes (use it when system uninstall doesn't work)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -63,7 +68,7 @@ mesheryctl system uninstall --force
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --force            (optional) uninstall Meshery resources forcefully
+      --force            (optional) forcefully delete Kubernetes resources; has no effect for Docker installations
   -h, --help             help for uninstall
       --keep-namespace   (optional) keep the Meshery namespace during uninstallation
 

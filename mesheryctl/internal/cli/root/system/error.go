@@ -160,8 +160,8 @@ func ErrUninstallMeshery(err error) error {
 		errors.Alert,
 		[]string{"Error uninstalling Meshery"},
 		[]string{err.Error()},
-		[]string{"Meshery is not uninstalled, some of the Meshery resources are still present"},
-		[]string{"Verify all Meshery resources (Docker containers, Kubernetes resources) are removed and retry with `mesheryctl system uninstall --force`. See https://docs.meshery.io/reference/references/mesheryctl/system/uninstall for usage details"})
+		[]string{"Meshery is not uninstalled, some of the Meshery resources are still present in the cluster"},
+		[]string{"Verify all Meshery resources are removed from the cluster. If the Helm release or leftover Meshery resources are blocking the uninstall, retry with `mesheryctl system uninstall --force`. See https://docs.meshery.io/reference/references/mesheryctl/system/uninstall for usage details"})
 }
 
 func ErrResetMeshconfig(err error) error {

@@ -37,6 +37,11 @@ var uninstallCmd = &cobra.Command{
 Stop and remove all Meshery containers (Docker) or delete all Meshery resources
 from the cluster, including custom resource instances, custom resource
 definitions, the Helm release and the Meshery namespace (Kubernetes).
+
+For Docker installations, containers are always removed forcefully, so --force
+has no effect. For Kubernetes installations, --force skips the Helm release
+uninstallation and forcefully deletes the remaining Meshery resources; use it
+when a normal uninstall fails.
 	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/uninstall`,
 	Example: `
 // Uninstall Meshery
@@ -45,7 +50,7 @@ mesheryctl system uninstall
 // (optional) keep the Meshery namespace during uninstallation
 mesheryctl system uninstall --keep-namespace
 
-// Uninstall Meshery forcefully (use it when system uninstall doesn't work)
+// Uninstall Meshery forcefully on Kubernetes (use it when system uninstall doesn't work)
 mesheryctl system uninstall --force
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -131,9 +136,10 @@ func uninstallMeshery() error {
 			return utils.ErrDockerComposeStop(err)
 		}
 
-		// Remove all Docker containers
+		// Remove all Docker containers. Remove forces container removal, so the
+		// Kubernetes-only --force flag does not change this path.
 		if err := composeClient.Remove(context.Background(), utils.DockerComposeFile); err != nil {
-			return ErrUninstallMeshery(err)
+			return utils.ErrDockerComposeRemove(err)
 		}
 		utils.Log.Info("Meshery uninstalled.")
 	case platformKubernetes:
@@ -171,7 +177,9 @@ func uninstallMeshery() error {
 			// Delete meshery components by uninstalling the helm release
 			err := applyHelmCharts(client, currCtx, currCtx.GetVersion(), false, meshkitkube.UNINSTALL, "", "")
 			if err != nil {
-				return errors.Wrap(err, "cannot uninstall Meshery")
+				// --force skips the Helm release uninstallation and cleans up the
+				// remaining resources directly.
+				return ErrUninstallMeshery(errors.Wrap(err, "cannot uninstall Meshery"))
 			}
 		}
 
@@ -203,6 +211,6 @@ func uninstallMeshery() error {
 }
 
 func init() {
-	uninstallCmd.Flags().BoolVar(&forceDelete, "force", false, "(optional) uninstall Meshery resources forcefully")
+	uninstallCmd.Flags().BoolVar(&forceDelete, "force", false, "(optional) forcefully delete Kubernetes resources; has no effect for Docker installations")
 	uninstallCmd.Flags().BoolVar(&utils.KeepNamespace, "keep-namespace", false, "(optional) keep the Meshery namespace during uninstallation")
 }

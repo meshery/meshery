@@ -113,7 +113,7 @@ system:
       flags:
         force:
           name: --force
-          description: (optional) uninstall Meshery resources forcefully
+          description: (optional) forcefully delete Kubernetes resources; has no effect for Docker installations
           usage: mesheryctl system uninstall --force
         keep-namespace:
           name: --keep-namespace
