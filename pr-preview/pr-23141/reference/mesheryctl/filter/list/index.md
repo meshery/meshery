@@ -15,7 +15,7 @@ Display list of all available filter files.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl filter list [flags]
+mesheryctl filter list [filter-name] [flags]
 
 </div>
 </div>
@@ -23,11 +23,11 @@ mesheryctl filter list [flags]
 
 ## Examples
 
-List all WASM filter files present
+List all WASM filter files present (maximum 25 filters)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl filter list	(maximum 25 filters)
+mesheryctl filter list
 
 </div>
 </div>
@@ -37,7 +37,7 @@ Search for filter
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl filter list Test (maximum 25 filters)
+mesheryctl filter list Test
 
 </div>
 </div>
@@ -47,7 +47,7 @@ Search for filter with space
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl filter list 'Test Filter' (maximum 25 filters)
+mesheryctl filter list 'Test Filter'
 
 </div>
 </div>

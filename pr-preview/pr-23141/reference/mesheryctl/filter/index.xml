@@ -108,7 +108,7 @@ Use quotes if the string contains spaces&lt;/p&gt;</description></item><item><ti
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl filter list [flags]
+mesheryctl filter list [filter-name] [flags]
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -116,11 +116,11 @@ mesheryctl filter list [flags]
 &lt;h2 id="examples"&gt;
 	Examples
 &lt;/h2&gt;
-&lt;p&gt;List all WASM filter files present&lt;/p&gt;
+&lt;p&gt;List all WASM filter files present (maximum 25 filters)&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl filter list	(maximum 25 filters)
+mesheryctl filter list
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -129,7 +129,7 @@ mesheryctl filter list	(maximum 25 filters)
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl filter list Test (maximum 25 filters)
+mesheryctl filter list Test
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -138,7 +138,7 @@ mesheryctl filter list Test (maximum 25 filters)
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl filter list 'Test Filter' (maximum 25 filters)
+mesheryctl filter list 'Test Filter'
 
 &lt;/div&gt;
 &lt;/div&gt;
