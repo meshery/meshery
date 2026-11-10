@@ -158,6 +158,10 @@ Installation, troubleshooting and debugging of Meshery and its adapters
         <td>--skip-browser</td>
         <td>(optional) skip opening of MesheryUI in browser.</td>
       </tr>
+      <tr><td><a href="/reference/mesheryctl/system/delete/">delete</a></td>
+        <td></td>
+        <td>Delete Meshery containers created by docker-compose</td>
+      </tr>
       <tr><td><a href="/reference/mesheryctl/system/login/">login</a></td>
         <td></td>
         <td>Authenticate with the Meshery Provider of your choice: the Local Provider or a Remote Provider.</td>
@@ -343,6 +347,10 @@ Installation, troubleshooting and debugging of Meshery and its adapters
         <td></td>
         <td>--url</td>
         <td>(required/optional) URL of the endpoint send load to during testing.</td>
+      </tr>
+      <tr><td><a href="/reference/mesheryctl/perf/delete/">delete</a></td>
+        <td></td>
+        <td>Delete a performance profile by its name</td>
       </tr>
       <tr><td><a href="/reference/mesheryctl/perf/profile/">profile</a></td>
         <td></td>
@@ -838,6 +846,41 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       <tr><td><a href="/reference/mesheryctl/model/export/">export</a></td>
         <td></td>
         <td>Export a model by name to the given output type (default is oci).</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--discard-components, -c</td>
+        <td>(optional) whether to discard components in the exported model definition (default false)</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--discard-relationships, -r</td>
+        <td>(optional) whether to discard relationships in the exported model definition (default false)</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--output-format, -t</td>
+        <td>(optional) format of the exported model definition [json|yaml] (default yaml)</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--output-location, -l</td>
+        <td>(optional) directory to save the exported model in (default current directory)</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--output-type, -o</td>
+        <td>(optional) package type of the exported model [oci|tar] (default oci)</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--page, -p</td>
+        <td>(optional) page number for paginated results (default 1)</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--version</td>
+        <td>(optional) model version to export, in vX.X.X format</td>
       </tr>
       <tr><td><a href="/reference/mesheryctl/model/generate/">generate</a></td>
         <td></td>

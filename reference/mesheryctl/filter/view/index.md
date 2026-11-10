@@ -64,7 +64,7 @@ mesheryctl filter view --all --output-format json -s
 </div>
 </pre> 
 
-//View multi-word named filter files. Multi-word filter names should be enclosed in quotes
+View multi-word named filter files. Multi-word filter names should be enclosed in quotes
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
