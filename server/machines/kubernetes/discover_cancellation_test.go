@@ -56,7 +56,10 @@ func TestDiscoveryReleasesMachineAfterCanceledRequest(t *testing.T) {
 			}
 			cancel()
 			select {
-			case <-done:
+			case err := <-done:
+				if err != nil && err != context.Canceled {
+					t.Logf("discovery returned: %v", err)
+				}
 			case <-time.After(5 * time.Second):
 				t.Fatal("discovery did not return")
 			}
