@@ -1,0 +1,47 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta2",
+  "version": "v1.0.0",
+  "name": "gateway-api",
+  "displayName": "Gateway API",
+  "status": "enabled",
+  "registrant": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Github",
+    "type": "registry",
+    "subType": "",
+    "kind": "github",
+    "status": "discovered",
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "deleted_at": null,
+    "schemaVersion": ""
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "category": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Cloud Native Network"
+  },
+  "subCategory": "API Gateway",
+  "metadata": {
+    "capabilities": null,
+    "isAnnotation": false,
+    "primaryColor": "#5f49d9",
+    "secondaryColor": "#b7a9f9",
+    "shape": "circle",
+    "styleOverrides": "",
+    "svgColor": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#b7a9f9\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+    "svgComplete": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#b7a9f9\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+    "svgWhite": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+    "source_uri": "git://github.com/kubernetes-sigs/gateway-api/main/config/crd/standard"
+  },
+  "model": {
+    "version": "v1.6.3"
+  },
+  "components_count": 6,
+  "relationships_count": 0,
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z",
+  "components": null,
+  "relationships": null
+}
