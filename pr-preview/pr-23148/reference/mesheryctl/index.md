@@ -525,7 +525,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       <tr>
         <td></td>
         <td>--output, -o</td>
-        <td>Path to save the evaluated design</td>
+        <td>Path to save the evaluated design (required)</td>
       </tr>
       <tr>
         <td></td>
@@ -745,7 +745,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       </tr>
       <tr><td><a href="/pr-preview/pr-23148/reference/mesheryctl/registry/purge/">purge</a></td>
         <td></td>
-        <td>Prune old model version directories under ./models, retaining only the most recent versions of each model</td>
+        <td>Prune old model version directories under ./models, retaining only the most recent versions of each model (kubernetes and meshery-core are always excluded)</td>
       </tr>
       <tr>
         <td></td>
