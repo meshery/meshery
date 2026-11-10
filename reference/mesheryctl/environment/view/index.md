@@ -6,7 +6,7 @@ LLMS index: [llms.txt](/llms.txt)
 
 # mesheryctl environment view
 
-View registered environmnents
+View registered environments
 
 ## Synopsis
 

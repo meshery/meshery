@@ -150,7 +150,7 @@ mesheryctl environment list --orgId [orgId] --page [page]
 &lt;p&gt;List all registered environments with a specific page size&lt;/p&gt;</description></item><item><title>mesheryctl-environment-view</title><link>/reference/mesheryctl/environment/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/environment/view/</guid><description>&lt;h1 id="mesheryctl-environment-view"&gt;
 	mesheryctl environment view
 &lt;/h1&gt;
-&lt;p&gt;View registered environmnents&lt;/p&gt;
+&lt;p&gt;View registered environments&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;

@@ -113659,7 +113659,7 @@ url: /reference/mesheryctl/environment/view/index.md
 
 # mesheryctl environment view
 
-View registered environmnents
+View registered environments
 
 ## Synopsis
 
