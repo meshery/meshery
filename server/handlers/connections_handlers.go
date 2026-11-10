@@ -167,7 +167,13 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, event *conn
 		Name:  fmt.Sprintf("%sConnection", event.Kind),
 		Limit: 1,
 	}
-	connectionComponent, _, _, _ := h.registryManager.GetEntities(compFilter)
+	connectionComponent, _, _, err := h.registryManager.GetEntities(compFilter)
+	if err != nil {
+		h.log.Error(ErrWriteResponse(err))
+		writeMeshkitError(w, ErrWriteResponse(err), http.StatusInternalServerError)
+		return
+	}
+
 	if len(connectionComponent) == 0 {
 		writeMeshkitError(w, ErrUnknownConnectionKind(event.Kind), http.StatusBadRequest)
 		return
@@ -188,10 +194,15 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, event *conn
 		ID:         uuid.Must(uuid.NewV4()),
 	}
 
-	credential, _, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
+	credential, _, _, err := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:  fmt.Sprintf("%sCredential", event.Kind),
 		Limit: 1,
 	})
+	if err != nil {
+		h.log.Error(ErrWriteResponse(err))
+		writeMeshkitError(w, ErrWriteResponse(err), http.StatusInternalServerError)
+		return
+	}
 	if len(credential) > 0 {
 		credentialDefinition, err := utils.MarshalAndUnmarshal[interface{}, core.Map](credential[0])
 		if err != nil {
