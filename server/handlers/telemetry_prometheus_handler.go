@@ -32,6 +32,9 @@ const defaultMetricNamesLimit = 2000
 // credential (anonymous Prometheus). The returned int is an HTTP status to use
 // when err is non-nil.
 func (h *Handler) prometheusTelemetryClientForConnection(token string, connectionID uuid.UUID, p models.Provider) (*prometheus.Client, *connections.Connection, int, error) {
+	if connectionID.IsNil() {
+		return nil, nil, http.StatusBadRequest, models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
+	}
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		return nil, nil, statusCode, err
@@ -62,6 +65,12 @@ func (h *Handler) PrometheusTelemetryPingHandler(w http.ResponseWriter, req *htt
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	userID := user.ID
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	if connectionID.IsNil() {
+		invalidID := models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
+		h.log.Error(invalidID)
+		writeMeshkitError(w, invalidID, http.StatusBadRequest)
+		return
+	}
 
 	eventBuilder := events.NewEvent().
 		ActedUpon(connectionID).
@@ -308,6 +317,12 @@ type prometheusBatchResultItem struct {
 func (h *Handler) PrometheusTelemetryQueryRangeBatchHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	if connectionID.IsNil() {
+		invalidID := models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
+		h.log.Error(invalidID)
+		writeMeshkitError(w, invalidID, http.StatusBadRequest)
+		return
+	}
 
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -371,6 +386,12 @@ func prometheusQueryError(err error) (int, error) {
 func (h *Handler) PrometheusTelemetryPanelsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	if connectionID.IsNil() {
+		invalidID := models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
+		h.log.Error(invalidID)
+		writeMeshkitError(w, invalidID, http.StatusBadRequest)
+		return
+	}
 
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
