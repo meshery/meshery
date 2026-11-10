@@ -318,7 +318,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 		for mClient := range newAdaptersChan {
 			h.log.Debug("received a new mesh client, listening for events")
 			go func(mClient *meshes.MeshClient) {
-				listenForAdapterEvents(req.Context(), mClient, respChan, h.log, p, h.config.EventBroadcaster, *h.SystemID, user.ID.String())
+				listenForAdapterEvents(req.Context(), mClient, respChan, h.log, p, h.config.EventBroadcaster, *h.SystemID, user.ID.String(), h.adapterOperations)
 				_ = mClient.Close()
 			}(mClient)
 		}
@@ -468,7 +468,7 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 		}
 	}
 }
-func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID core.Uuid, userID string) {
+func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID core.Uuid, userID string, owners *adapterOperationOwners) {
 	log.Debug("Received a stream client...")
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 	userUUID := uuid.FromStringOrNil(userID)
@@ -492,6 +492,9 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 			return
 		}
 		// log.Debugf("received an event: %+#v", event)
+		if !forwardAdapterEvent(owners, event, userID) {
+			continue
+		}
 		log.Debug("Received an event.")
 		eventType := event.EventType.String()
 		eventBuilder := events.NewEvent().FromSystem(uuid.FromStringOrNil(event.Component)).

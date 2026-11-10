@@ -319,7 +319,7 @@ function main() {
 
   const results = SCANS.map(runScan);
   const totalFiles = results.reduce((acc, r) => acc + r.files, 0);
-  const totalscannedFiles = results.reduce((acc, r) => acc + r.scannedFiles, 0);
+  const totalScannedFiles = results.reduce((acc, r) => acc + r.scannedFiles, 0);
   const totalMatches = results.reduce((acc, r) => acc + r.matches, 0);
   const totalAllowlist = results.reduce((acc, r) => acc + r.allowlistSize, 0);
   const scanComplete = results.every((r) => r.scanComplete);
@@ -342,6 +342,7 @@ function main() {
           scans: results.map((r) => ({
             name: r.name,
             files: r.files,
+            scannedFiles: r.scannedFiles,
             matches: r.matches,
             allowlistSize: r.allowlistSize,
             allowlistedFilesWithMuiImports: r.skippedAllowlisted,
