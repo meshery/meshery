@@ -564,6 +564,119 @@ func TestContainsStringPrefix(t *testing.T) {
 	}
 }
 
+func TestValidId(t *testing.T) {
+	const (
+		idA = "dc76a1b2-0000-4000-8000-000000000001"
+		idB = "d4e5f6a7-0000-4000-8000-000000000002"
+		idC = "1a2b3c4d-0000-4000-8000-000000000003"
+	)
+	tests := []struct {
+		name         string
+		ids          []string
+		input        string
+		wantID       string
+		wantIsID     bool
+		wantErr      error
+		wantRequests int
+	}{
+		{
+			name:         "given an exact ID when ValidId then that ID is returned",
+			ids:          []string{idA, idB, idC},
+			input:        idB,
+			wantID:       idB,
+			wantIsID:     true,
+			wantRequests: 1,
+		},
+		{
+			name:         "given a prefix of one ID when ValidId then the full ID is returned",
+			ids:          []string{idA, idB, idC},
+			input:        "dc",
+			wantID:       idA,
+			wantIsID:     true,
+			wantRequests: 1,
+		},
+		{
+			name:         "given a prefix of several IDs when ValidId then an ambiguity error lists them",
+			ids:          []string{idA, idB, idC},
+			input:        "d",
+			wantErr:      ErrAmbiguousID("d", []string{idA, idB}),
+			wantRequests: 1,
+		},
+		{
+			name:         "given input matching no ID when ValidId then the input is returned unchanged",
+			ids:          []string{idA, idB, idC},
+			input:        "my-design",
+			wantID:       "my-design",
+			wantIsID:     false,
+			wantRequests: 1,
+		},
+		{
+			name:         "given an exact ID that is also a prefix of another ID when ValidId then the exact ID wins",
+			ids:          []string{idA + "0", idA},
+			input:        idA,
+			wantID:       idA,
+			wantIsID:     true,
+			wantRequests: 1,
+		},
+		{
+			name:         "given an empty ID list when ValidId then the input is returned unchanged",
+			ids:          []string{},
+			input:        "d",
+			wantID:       "d",
+			wantIsID:     false,
+			wantRequests: 1,
+		},
+		{
+			name:         "given empty input when ValidId then it is rejected without a request",
+			ids:          []string{idA, idB, idC},
+			input:        "",
+			wantErr:      ErrInvalidArgument(errors.New("name or ID cannot be empty")),
+			wantRequests: 0,
+		},
+		{
+			name:         "given whitespace input when ValidId then it is rejected without a request",
+			ids:          []string{idA, idB, idC},
+			input:        "   ",
+			wantErr:      ErrInvalidArgument(errors.New("name or ID cannot be empty")),
+			wantRequests: 0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			requests := 0
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				requests++
+				patterns := make([]string, 0, len(tt.ids))
+				for _, id := range tt.ids {
+					patterns = append(patterns, fmt.Sprintf(`{"id":%q}`, id))
+				}
+				_, _ = fmt.Fprintf(w, `{"patterns":[%s]}`, strings.Join(patterns, ","))
+			}))
+			defer server.Close()
+			setupAuthenticatedContext(t, server.URL)
+
+			gotID, gotIsID, err := ValidId(server.URL, tt.input, "pattern")
+
+			if tt.wantErr != nil {
+				if err == nil {
+					t.Fatalf("expected error %v, got nil", tt.wantErr)
+				}
+				AssertMeshkitErrorsEqual(t, err, tt.wantErr)
+			} else {
+				if err != nil {
+					t.Fatalf("unexpected error: %v", err)
+				}
+				if gotID != tt.wantID || gotIsID != tt.wantIsID {
+					t.Errorf("ValidId got = (%q, %v), want (%q, %v)", gotID, gotIsID, tt.wantID, tt.wantIsID)
+				}
+			}
+			if requests != tt.wantRequests {
+				t.Errorf("ValidId made %d requests, want %d", requests, tt.wantRequests)
+			}
+		})
+	}
+}
+
 func TestSetOverrideValues(t *testing.T) {
 	testChannel := "testChannel"
 
