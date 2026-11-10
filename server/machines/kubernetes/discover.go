@@ -48,7 +48,7 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 		}).Build(), err
 	}
 
-	err = k8sContext.AssignServerID(handler)
+	err = k8sContext.AssignServerID(ctx, handler)
 	if err != nil {
 		// The cluster's API server did not answer: the connection moves to
 		// NOTFOUND, and SendEvent reports that as its unreachable condition.
@@ -58,7 +58,7 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 		return machines.NotFound, models.AttachEventError(eventBuilder, err, machinectx.log).Build(), err
 	}
 
-	err = k8sContext.AssignVersion(handler)
+	err = k8sContext.AssignVersion(ctx, handler)
 	if err != nil {
 		machinectx.log.Info("unable to set kubernes server version, continuing without assigning version")
 	}

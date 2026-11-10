@@ -25,6 +25,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/version"
 )
 
 type K8sContext struct {
@@ -151,6 +152,8 @@ func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *core.Uuid, lo
 	)
 }
 
+// NewK8sContextWithServerID constructs a new K8sContext, verifies connectivity via PingTest,
+// and assigns the cluster version and server ID.
 func NewK8sContextWithServerID(
 	contextName string,
 	clusters map[string]interface{},
@@ -172,20 +175,15 @@ func NewK8sContextWithServerID(
 		return nil, err
 	}
 
-	err = ctx.AssignVersion(handler)
+	err = ctx.AssignVersion(context.TODO(), handler)
 	if err != nil {
 		return nil, err
 	}
 
-	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
-	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
+	err = ctx.AssignServerID(context.TODO(), handler)
 	if err != nil {
 		return nil, err
 	}
-	uid := ksns.GetUID()
-	ksUUID := uuid.FromStringOrNil(string(uid))
-
-	ctx.KubernetesServerID = &ksUUID
 
 	return &ctx, nil
 }
@@ -249,8 +247,7 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 			continue
 		}
 
-		if err := kc.AssignServerID(handler); err != nil {
-
+		if err := kc.AssignServerID(context.TODO(), handler); err != nil {
 			metadata["error"] = err
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
 			eventMetadata[name] = metadata
@@ -275,7 +272,7 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 		// context is reachable even if a later (non-fatal) version lookup fails.
 		kc.Reachable = true
 
-		err = kc.AssignVersion(handler)
+		err = kc.AssignVersion(context.TODO(), handler)
 		if err != nil {
 
 			// Preventing the publishing of event as the event details would be present in the reciept.
@@ -435,13 +432,30 @@ func (kc *K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
 	return kubernetes.New(cfg)
 }
 
-func (kc *K8sContext) AssignVersion(handler *kubernetes.Client) error {
-	res, err := handler.KubeClient.ServerVersion()
+// AssignVersion queries the Kubernetes cluster /version endpoint using the provided context
+// and assigns the GitVersion to kc.Version. It returns an ErrUnreachableKubeAPI error if the
+// API server is unreachable, the context is canceled or expires, or the version payload is invalid.
+func (kc *K8sContext) AssignVersion(ctx context.Context, handler *kubernetes.Client) error {
+	if handler == nil || handler.KubeClient == nil || handler.KubeClient.DiscoveryClient == nil {
+		return fmt.Errorf("kubernetes client handler is nil")
+	}
+
+	restClient := handler.KubeClient.RESTClient()
+	if restClient == nil {
+		return fmt.Errorf("kubernetes discovery REST client is nil")
+	}
+
+	body, err := restClient.Get().AbsPath("/version").Do(ctx).Raw()
 	if err != nil {
 		return ErrUnreachableKubeAPI(err, kc.Server)
 	}
 
-	kc.Version = res.GitVersion
+	var info version.Info
+	if err := json.Unmarshal(body, &info); err != nil {
+		return ErrUnreachableKubeAPI(fmt.Errorf("unable to parse the server version: %w", err), kc.Server)
+	}
+
+	kc.Version = info.GitVersion
 	return nil
 }
 
@@ -461,11 +475,16 @@ func (kc K8sContext) PingTest() error {
 	return nil
 }
 
-// AssignServerID will attempt to assign kubernetes
-// server ID to the kubernetes context
-func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
+// AssignServerID queries the kube-system namespace using the provided context and assigns
+// its UID as the KubernetesServerID on the context. It returns an ErrUnreachableKubeAPI error
+// if the API server is unreachable or if the context is canceled or times out.
+func (kc *K8sContext) AssignServerID(ctx context.Context, handler *kubernetes.Client) error {
+	if handler == nil || handler.KubeClient == nil {
+		return fmt.Errorf("kubernetes client handler is nil")
+	}
+
 	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
-	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
+	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(ctx, "kube-system", v1.GetOptions{})
 	if err != nil {
 		return ErrUnreachableKubeAPI(err, kc.Server)
 	}

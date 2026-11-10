@@ -2,13 +2,19 @@ package kubernetes
 
 import (
 	"context"
+	"net/http"
+	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
+	mkkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/core"
+	k8sclient "k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 // TestAssignInitialCtx_AttachesLoggerBeforeClientSetAssignment guards against
@@ -128,6 +134,100 @@ func TestAssignInitialCtx_NilContextDoesNotPanic(t *testing.T) {
 	}
 	if result != nil {
 		t.Fatalf("expected nil machine context on AssignClientSetToContext error, got %#v", result)
+	}
+}
+
+// TestDiscoverAction_ContextCancellationReleasesStateMachineLock asserts that canceling
+// the context during an active in-flight discovery request aborts promptly and releases
+// the state machine mutex lock so subsequent operations like ResetState succeed.
+func TestDiscoverAction_ContextCancellationReleasesStateMachineLock(t *testing.T) {
+	log, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatalf("failed to build test logger: %v", err)
+	}
+
+	connectionUUID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate connection UUID: %v", err)
+	}
+	userUUID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate user UUID: %v", err)
+	}
+
+	sm, err := New(connectionUUID.String(), userUUID, log)
+	if err != nil {
+		t.Fatalf("failed to initialize K8s state machine: %v", err)
+	}
+
+	requestReceived := make(chan struct{}, 1)
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case requestReceived <- struct{}{}:
+		default:
+		}
+		<-r.Context().Done()
+	}))
+	defer srv.CloseClientConnections()
+	defer srv.Close()
+
+	clientset, err := k8sclient.NewForConfig(&rest.Config{Host: srv.URL, Timeout: 30 * time.Second})
+	if err != nil {
+		t.Fatalf("build clientset: %v", err)
+	}
+
+	sm.Context = &MachineCtx{
+		K8sContext: models.K8sContext{
+			Name:         "test-cluster",
+			Server:       srv.URL,
+			ConnectionID: connectionUUID.String(),
+		},
+		clientset: &mkkube.Client{KubeClient: clientset},
+		log:       log,
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	sendDone := make(chan error, 1)
+	start := time.Now()
+	go func() {
+		_, sendErr := sm.SendEvent(ctx, machines.Discovery, nil)
+		sendDone <- sendErr
+	}()
+
+	select {
+	case <-requestReceived:
+		// Active in-flight request reached mock server; cancel context during request
+		cancel()
+	case <-time.After(3 * time.Second):
+		t.Fatal("timed out waiting for request to reach mock server")
+	}
+
+	select {
+	case sendErr := <-sendDone:
+		if sendErr == nil {
+			t.Fatal("expected SendEvent to return error on context cancellation, got nil")
+		}
+		if time.Since(start) > 2*time.Second {
+			t.Fatalf("SendEvent took %v; expected prompt abort upon cancellation", time.Since(start))
+		}
+	case <-time.After(3 * time.Second):
+		t.Fatal("SendEvent did not return within 3s after cancellation")
+	}
+
+	// Verify that the state machine lock was released by ensuring ResetState succeeds immediately
+	lockAcquired := make(chan struct{})
+	go func() {
+		sm.ResetState()
+		close(lockAcquired)
+	}()
+
+	select {
+	case <-lockAcquired:
+		// success: lock was released and ResetState succeeded
+	case <-time.After(1 * time.Second):
+		t.Fatal("state machine mutex lock was not released after context cancellation")
 	}
 }
 

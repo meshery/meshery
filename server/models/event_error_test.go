@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	stderrors "errors"
 	"net"
+	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"reflect"
 	"syscall"
@@ -17,6 +19,7 @@ import (
 	mkkube "github.com/meshery/meshkit/utils/kubernetes"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/version"
 	k8sclient "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )
@@ -172,7 +175,7 @@ func TestAssignServerIDFailureAttachesTheMatchedCause(t *testing.T) {
 		t.Fatalf("build clientset: %v", err)
 	}
 	kc := &K8sContext{Server: "http://127.0.0.1:1"}
-	assignErr := kc.AssignServerID(&mkkube.Client{KubeClient: clientset})
+	assignErr := kc.AssignServerID(context.Background(), &mkkube.Client{KubeClient: clientset})
 	if assignErr == nil {
 		t.Fatal("AssignServerID succeeded against a closed port")
 	}
@@ -195,5 +198,162 @@ func TestErrUnreachableKubeAPIAcceptsANilError(t *testing.T) {
 	err := ErrUnreachableKubeAPI(nil, "https://cluster:6443")
 	if mk, ok := meshkiterrors.AsErrorV2(err); !ok || mk.Code != ErrUnreachableKubeAPICode {
 		t.Fatalf("got %v, want an ErrUnreachableKubeAPI", err)
+	}
+}
+
+// TestAssignServerID_HonorsContextCancellation verifies that AssignServerID immediately
+// aborts when invoked with a pre-canceled context.
+func TestAssignServerID_HonorsContextCancellation(t *testing.T) {
+	clientset, err := k8sclient.NewForConfig(&rest.Config{Host: "http://127.0.0.1:1", Timeout: 10 * time.Second})
+	if err != nil {
+		t.Fatalf("build clientset: %v", err)
+	}
+	kc := &K8sContext{Server: "http://127.0.0.1:1"}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel() // pre-cancel context
+
+	start := time.Now()
+	err = kc.AssignServerID(ctx, &mkkube.Client{KubeClient: clientset})
+	if err == nil {
+		t.Fatal("expected error with canceled context, got nil")
+	}
+	if time.Since(start) > 2*time.Second {
+		t.Fatalf("call took %v, expected immediate abort on canceled context", time.Since(start))
+	}
+}
+
+// TestAssignVersion_HonorsContextCancellation verifies that AssignVersion immediately
+// aborts when invoked with a pre-canceled context.
+func TestAssignVersion_HonorsContextCancellation(t *testing.T) {
+	clientset, err := k8sclient.NewForConfig(&rest.Config{Host: "http://127.0.0.1:1", Timeout: 10 * time.Second})
+	if err != nil {
+		t.Fatalf("build clientset: %v", err)
+	}
+	kc := &K8sContext{Server: "http://127.0.0.1:1"}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel() // pre-cancel context
+
+	start := time.Now()
+	err = kc.AssignVersion(ctx, &mkkube.Client{KubeClient: clientset})
+	if err == nil {
+		t.Fatal("expected error with canceled context, got nil")
+	}
+	if time.Since(start) > 2*time.Second {
+		t.Fatalf("call took %v, expected immediate abort on canceled context", time.Since(start))
+	}
+}
+
+// TestAssignServerIDAndVersion_StalledServerHonorsDeadline asserts that both AssignServerID
+// and AssignVersion respect context deadlines when connecting to an unresponsive server.
+func TestAssignServerIDAndVersion_StalledServerHonorsDeadline(t *testing.T) {
+	// A server that waits on the request context simulates a cluster that became unresponsive
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		<-r.Context().Done()
+	}))
+	defer srv.CloseClientConnections()
+	defer srv.Close()
+
+	clientset, err := k8sclient.NewForConfig(&rest.Config{Host: srv.URL, Timeout: 30 * time.Second})
+	if err != nil {
+		t.Fatalf("build clientset: %v", err)
+	}
+	kc := &K8sContext{Server: srv.URL}
+
+	t.Run("AssignServerID", func(t *testing.T) {
+		ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+		defer cancel()
+
+		start := time.Now()
+		err := kc.AssignServerID(ctx, &mkkube.Client{KubeClient: clientset})
+		duration := time.Since(start)
+		if err == nil {
+			t.Fatal("expected timeout error on stalled server")
+		}
+		if duration > 1*time.Second {
+			t.Fatalf("AssignServerID hung for %v instead of stopping at deadline", duration)
+		}
+	})
+
+	t.Run("AssignVersion", func(t *testing.T) {
+		ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+		defer cancel()
+
+		start := time.Now()
+		err := kc.AssignVersion(ctx, &mkkube.Client{KubeClient: clientset})
+		duration := time.Since(start)
+		if err == nil {
+			t.Fatal("expected timeout error on stalled server")
+		}
+		if duration > 1*time.Second {
+			t.Fatalf("AssignVersion hung for %v instead of stopping at deadline", duration)
+		}
+	})
+}
+
+// TestAssignVersion_Success verifies that AssignVersion correctly parses a valid version
+// response from the /version endpoint into kc.Version.
+func TestAssignVersion_Success(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/version" {
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(version.Info{GitVersion: "v1.28.2"})
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+
+	clientset, err := k8sclient.NewForConfig(&rest.Config{Host: srv.URL})
+	if err != nil {
+		t.Fatalf("build clientset: %v", err)
+	}
+	kc := &K8sContext{Server: srv.URL}
+
+	if err := kc.AssignVersion(context.Background(), &mkkube.Client{KubeClient: clientset}); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if kc.Version != "v1.28.2" {
+		t.Fatalf("got version %q, want %q", kc.Version, "v1.28.2")
+	}
+}
+
+// TestAssignVersion_NilRESTClient verifies that AssignVersion returns a clear error
+// rather than panicking when the discovery REST client is nil.
+func TestAssignVersion_NilRESTClient(t *testing.T) {
+	kc := &K8sContext{Server: "http://127.0.0.1:1"}
+	// handler with nil DiscoveryClient REST client returns error without panicking
+	err := kc.AssignVersion(context.Background(), &mkkube.Client{KubeClient: &k8sclient.Clientset{}})
+	if err == nil {
+		t.Fatal("expected error with nil discovery REST client, got nil")
+	}
+}
+
+// TestAssignVersion_MalformedJSON verifies that AssignVersion wraps JSON unmarshaling
+// errors in ErrUnreachableKubeAPI.
+func TestAssignVersion_MalformedJSON(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/version" {
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write([]byte("not-valid-json"))
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+
+	clientset, err := k8sclient.NewForConfig(&rest.Config{Host: srv.URL})
+	if err != nil {
+		t.Fatalf("build clientset: %v", err)
+	}
+	kc := &K8sContext{Server: srv.URL}
+
+	err = kc.AssignVersion(context.Background(), &mkkube.Client{KubeClient: clientset})
+	if err == nil {
+		t.Fatal("expected error on malformed JSON, got nil")
+	}
+	if code := meshkiterrors.GetCode(err); code != ErrUnreachableKubeAPICode {
+		t.Fatalf("expected ErrUnreachableKubeAPICode (%s), got: %v (code: %s)", ErrUnreachableKubeAPICode, err, code)
 	}
 }
