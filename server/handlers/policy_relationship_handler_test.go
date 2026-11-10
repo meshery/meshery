@@ -41,12 +41,12 @@ func TestRunRelationshipEvaluation_RecoversPanic(t *testing.T) {
 	// 120 ECONNREFUSEDs. Verify the panic is converted to an error sent
 	// to the requesting client AND broadcast to coalesced followers.
 	tracker := newEvaluationTracker()
-	leader, _ := tracker.acquire("design-1")
+	leader, gen1, _ := tracker.acquire("design-1")
 	if !leader {
 		t.Fatalf("expected leader on first acquire")
 	}
 	// A follower joins before the leader publishes.
-	_, waitCh := tracker.acquire("design-1")
+	_, _, waitCh := tracker.acquire("design-1")
 
 	respCh := make(chan pattern.EvaluationResponse, 1)
 	errCh := make(chan error, 1)
@@ -59,6 +59,7 @@ func TestRunRelationshipEvaluation_RecoversPanic(t *testing.T) {
 			newTestLogger(t),
 			tracker,
 			"design-1",
+			gen1,
 			func() (pattern.EvaluationResponse, error) {
 				panic("synthetic engine explosion")
 			},
@@ -108,7 +109,7 @@ func TestRunRelationshipEvaluation_PanicDoesNotDeadlock(t *testing.T) {
 	// short-circuits before eval() is called and exercises a different
 	// path).
 	tracker := newEvaluationTracker()
-	tracker.acquire("design-2")
+	_, gen2, _ := tracker.acquire("design-2")
 
 	respCh := make(chan pattern.EvaluationResponse)
 	errCh := make(chan error)
@@ -121,6 +122,7 @@ func TestRunRelationshipEvaluation_PanicDoesNotDeadlock(t *testing.T) {
 			newTestLogger(t),
 			tracker,
 			"design-2",
+			gen2,
 			func() (pattern.EvaluationResponse, error) {
 				panic("synthetic engine explosion with no receiver")
 			},
@@ -140,7 +142,7 @@ func TestRunRelationshipEvaluation_PassesThroughEvalError(t *testing.T) {
 	// Non-panic eval errors must still flow through the same channels so
 	// the existing happy-error path is unchanged by the recovery wrapper.
 	tracker := newEvaluationTracker()
-	tracker.acquire("design-3")
+	_, gen3, _ := tracker.acquire("design-3")
 
 	respCh := make(chan pattern.EvaluationResponse, 1)
 	errCh := make(chan error, 1)
@@ -152,6 +154,7 @@ func TestRunRelationshipEvaluation_PassesThroughEvalError(t *testing.T) {
 		newTestLogger(t),
 		tracker,
 		"design-3",
+		gen3,
 		func() (pattern.EvaluationResponse, error) {
 			return pattern.EvaluationResponse{}, sentinel
 		},
