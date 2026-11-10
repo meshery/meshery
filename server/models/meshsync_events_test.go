@@ -321,6 +321,65 @@ func TestMeshsyncDataHandlerStopIsIdempotent(t *testing.T) {
 	}
 }
 
+// storeSubscriptionFailureBroker fails the store subscription the way a
+// closed NATS connection does, and counts the publishes, so a test can tell
+// that the store was never requested.
+type storeSubscriptionFailureBroker struct {
+	testMeshsyncBroker
+	publishes int
+}
+
+func (b *storeSubscriptionFailureBroker) SubscribeWithChannel(subject, queue string, subscription chan *meshkitBroker.Message) error {
+	if subject == MeshsyncStoreUpdatesSubject {
+		return fmt.Errorf("nats: connection closed")
+	}
+	return b.testMeshsyncBroker.SubscribeWithChannel(subject, queue, subscription)
+}
+
+func (b *storeSubscriptionFailureBroker) Publish(subject string, message *meshkitBroker.Message) error {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.publishes++
+	return nil
+}
+
+func (b *storeSubscriptionFailureBroker) publishCount() int {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.publishes
+}
+
+// A store subscription that fails leaves the handler with no store to read,
+// so Run must report it: the caller discards a handler whose Run fails, so
+// the next connect cycle retries instead of a handler that never loads the
+// objects that already exist.
+func TestMeshsyncDataHandlerRunReportsAFailedStoreSubscription(t *testing.T) {
+	broker := &storeSubscriptionFailureBroker{}
+	logger := &fakeMeshsyncLogger{}
+	handler := &MeshsyncDataHandler{
+		broker: broker,
+		log:    logger,
+		stopCh: make(chan struct{}),
+	}
+	handler.listenerWg = &sync.WaitGroup{}
+
+	err := handler.Run()
+	if err == nil {
+		t.Fatal("expected Run to fail when the store subscription fails")
+	}
+	if mkErr, ok := err.(*meshkitErrors.Error); ok {
+		assert.Equal(t, ErrBrokerSubscriptionCode, mkErr.Code)
+	} else {
+		t.Fatalf("expected a *meshkitErrors.Error, got %T: %v", err, err)
+	}
+
+	// the store is never requested, and what Run started is released
+	assert.Equal(t, 0, broker.publishCount())
+	if !broker.isClosed() {
+		t.Fatal("expected Run to close the broker connection")
+	}
+}
+
 type fakeMeshsyncLogger struct {
 	logger.Handler
 	mu     sync.Mutex
@@ -403,7 +462,7 @@ func TestMeshsyncStoreUpdatesErrorWrappedWithMeshKit(t *testing.T) {
 	handler.listenerWg = &sync.WaitGroup{}
 	handler.listenerWg.Add(1)
 
-	statusChan := make(chan bool)
+	statusChan := make(chan error)
 	go handler.subsribeToStoreUpdates(statusChan)
 
 	// Wait for subscription to establish
@@ -451,7 +510,7 @@ func TestMeshsyncStoreUpdatesNonErrorObjectWrapped(t *testing.T) {
 	handler.listenerWg = &sync.WaitGroup{}
 	handler.listenerWg.Add(1)
 
-	statusChan := make(chan bool)
+	statusChan := make(chan error)
 	go handler.subsribeToStoreUpdates(statusChan)
 
 	// Wait for subscription to establish

@@ -69,7 +69,7 @@ func (mh *MeshsyncDataHandler) IsConnected() bool {
 }
 
 func (mh *MeshsyncDataHandler) Run() error {
-	storeSubscriptionStatusChan := make(chan bool)
+	storeSubscriptionStatusChan := make(chan error)
 	if mh.listenerWg == nil {
 		mh.listenerWg = &sync.WaitGroup{}
 	}
@@ -80,15 +80,19 @@ func (mh *MeshsyncDataHandler) Run() error {
 	mh.listenerWg.Add(1)
 	go mh.subsribeToStoreUpdates(storeSubscriptionStatusChan)
 	// to make sure that we don't ask for data before we start listening
-	if <-storeSubscriptionStatusChan {
-		// err := mh.removeStaleObjects()
-		// if err != nil {
-		//  return err
-		// }
-		err := mh.requestMeshsyncStore()
-		if err != nil {
-			return err
-		}
+	if err := <-storeSubscriptionStatusChan; err != nil {
+		// The store listener could not subscribe, so the store is never
+		// requested and the objects that already exist are never loaded.
+		// The caller discards a handler whose Run fails, so report the
+		// failure here and release what Run started: the next connect cycle
+		// retries.
+		mh.Stop()
+		return err
+	}
+
+	err := mh.requestMeshsyncStore()
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -140,19 +144,20 @@ func (mh *MeshsyncDataHandler) ListenToMeshSyncEvents(out chan *broker.Message) 
 	return nil
 }
 
-func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
+func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan error) {
 	defer mh.listenerWg.Done()
 
 	storeChan := make(chan *broker.Message, 1)
 	mh.log.Info("subscribing to store updates from meshsync on NATS subject: ", MeshsyncStoreUpdatesSubject)
 	err := mh.broker.SubscribeWithChannel(MeshsyncStoreUpdatesSubject, "", storeChan)
 	if err != nil {
-		mh.log.Error(ErrBrokerSubscription(err))
-		statusChan <- false
+		subscriptionErr := ErrBrokerSubscription(err)
+		mh.log.Error(subscriptionErr)
+		statusChan <- subscriptionErr
 		return
 	}
 
-	statusChan <- true
+	statusChan <- nil
 
 	for {
 		select {
