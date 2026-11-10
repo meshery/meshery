@@ -41,3 +41,10 @@ func TestEnvironmentViewSaveCreatesFile(t *testing.T) {
 
 	utils.AssertFileExists(t, filepath.Join(mesheryDir, "environment_test-environment.yaml"))
 }
+
+func TestEnvironmentViewExtraArgsFails(t *testing.T) {
+	run := environmentViewRun(utils.CallerDir(t), []string{"view", "extra-arg", "--orgId", testConstants["orgId"]})
+	if _, err := utils.RunMesheryctlCommand(t, run); err == nil {
+		t.Fatalf("expected error when extra positional argument is passed, got nil")
+	}
+}
