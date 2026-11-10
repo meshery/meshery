@@ -119,6 +119,15 @@ func TestConnectionListCmd(t *testing.T) {
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '0'")),
 		},
+		{
+			Name:             "given a negative --pagesize when running mesheryctl connection list then an invalid flag error is returned",
+			Args:             []string{"list", "--pagesize", "-1"},
+			ExpectedResponse: "",
+			Fixture:          "list.connection.api.response.golden",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '-1'")),
+		},
 	}
 
 	mesheryctlflags.InitValidators(ConnectionsCmd)

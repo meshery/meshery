@@ -67,6 +67,16 @@ func TestDesignListCmd(t *testing.T) {
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '0'")),
 		},
+		{
+			Name:             "given a negative --pagesize when design list then throw invalid flag error",
+			Args:             []string{"list", "--pagesize", "-1"},
+			ExpectedResponse: "",
+			URL:              "",
+			Fixture:          "list.design.api.response.golden",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '-1'")),
+		},
 	}
 
 	mesheryctlflags.InitValidators(DesignCmd)
