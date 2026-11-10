@@ -12,6 +12,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/errors"
+	"github.com/meshery/schemas/models/core"
 )
 
 const (
@@ -26,6 +27,49 @@ func remoteConnectionJSON(id, name string) string {
 func persistConnectionCapability() Capabilities {
 	return Capabilities{
 		{Feature: PersistConnection, Endpoint: "/api/integrations/connections"},
+	}
+}
+
+// TestRemoteProviderGetK8sContextsReportsConversionErrors ensures that a
+// connection which cannot be converted into a Kubernetes context does not
+// silently disappear from an otherwise successful page.
+func TestRemoteProviderGetK8sContextsReportsConversionErrors(t *testing.T) {
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+	setViperKeyForRemoteAuthTest(t, "INSTANCE_ID", &instanceID)
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			t.Errorf("method = %s, want GET", r.Method)
+		}
+
+		_, _ = io.WriteString(w, `{
+			"page": 0,
+			"pageSize": 10,
+			"totalCount": 1,
+			"connections": [{
+				"id": "11111111-1111-1111-1111-111111111111",
+				"name": "missing-credential",
+				"kind": "kubernetes",
+				"type": "platform",
+				"subType": "orchestrator"
+			}]
+		}`)
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = persistConnectionCapability()
+
+	_, err := provider.GetK8sContexts("test-token", "0", "10", "", "", "", false)
+	if err == nil {
+		t.Fatal("expected an error when a connection cannot be converted into a Kubernetes context")
+	}
+	if !strings.Contains(err.Error(), "missing-credential") {
+		t.Fatalf("error = %q, want it to include the connection name", err)
+	}
+
+	if !strings.Contains(err.Error(), "missing credential_id") {
+		t.Fatalf("error = %q, want it to mention missing credential_id", err)
 	}
 }
 
