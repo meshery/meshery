@@ -30,16 +30,15 @@ const toNonNegativeNumber = (value: unknown, fallback: number) => {
   return Number.isFinite(parsedValue) && parsedValue >= 0 ? parsedValue : fallback;
 };
 
-// Durations the performance preferences form accepts: one or more
-// `<number><h|m|s>` segments with lowercase units and at least one nonzero
-// digit, so "0h0m" is rejected. This is the single definition shared by the
-// submit validation and by toDuration below, so a duration the form saves
-// is never silently replaced with the default when it is read back.
+// Share the duration syntax between read-back and submission. Stored zero
+// durations are preserved on read-back, but the form requires a positive value.
+const loadTestDurationPattern = /^(?:(?:\d+(?:\.\d*)?|\.\d+)[hms])+$/;
+
 export const isValidLoadTestDuration = (value: string) =>
-  /^(?:(?:\d+(?:\.\d*)?|\.\d+)[hms])+$/.test(value) && /[1-9]/.test(value);
+  loadTestDurationPattern.test(value) && /[1-9]/.test(value);
 
 const toDuration = (value: unknown) =>
-  typeof value === 'string' && isValidLoadTestDuration(value.trim())
+  typeof value === 'string' && loadTestDurationPattern.test(value.trim())
     ? value.trim()
     : DEFAULT_LOAD_TEST_PREFS.t;
 

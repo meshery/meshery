@@ -192,7 +192,7 @@ describe('MesherySettingsPerformanceComponent', () => {
     expect(updateLoadTestPrefs).not.toHaveBeenCalled();
   });
 
-  it.each(['1d', '1d1h', '24H', '1H30m', '0h0m'])(
+  it.each(['1d', '1d1h', '24H', '1H30m', '0s', '0h0m'])(
     'does not submit an unsupported duration (%s)',
     (duration) => {
       render(<MesherySettingsPerformanceComponent />);

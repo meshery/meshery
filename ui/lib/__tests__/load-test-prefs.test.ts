@@ -58,9 +58,13 @@ describe('normalizeLoadTestPrefs', () => {
   });
 
   it('falls back for durations the form no longer accepts', () => {
-    for (const duration of ['24H', '1H30m', '0h0m', '1d', '1d1h']) {
+    for (const duration of ['24H', '1H30m', '1d', '1d1h']) {
       expect(normalizeLoadTestPrefs({ t: duration }).t).toBe(DEFAULT_LOAD_TEST_PREFS.t);
     }
+  });
+
+  it.each(['0s', '0h0m', '0.0s'])('preserves stored zero duration %s on read-back', (duration) => {
+    expect(normalizeLoadTestPrefs({ t: duration }).t).toBe(duration);
   });
 
   it('falls back for durations missing a unit', () => {
