@@ -68,34 +68,51 @@ func TestPrometheusTelemetryHandlers_RejectsInvalidConnectionID(t *testing.T) {
 				t.Errorf("Prometheus Ping expected code %q, got %q", models.ErrInvalidUUIDValueCode, decoded.Code)
 			}
 
-			// Test Metrics Handler
-			metricsReq := httptest.NewRequest(http.MethodGet, "/api/telemetry/prometheus/"+tc.id+"/metrics", nil)
-			if tc.id != "" {
-				metricsReq = mux.SetURLVars(metricsReq, map[string]string{"connectionID": tc.id})
+			handlers := []struct {
+				name   string
+				path   string
+				invoke func(w http.ResponseWriter, req *http.Request)
+			}{
+				{"Metrics", "/metrics", func(w http.ResponseWriter, req *http.Request) {
+					h.PrometheusTelemetryMetricsHandler(w, req, nil, &models.User{}, provider)
+				}},
+				{"Labels", "/labels", func(w http.ResponseWriter, req *http.Request) {
+					h.PrometheusTelemetryLabelsHandler(w, req, nil, &models.User{}, provider)
+				}},
+				{"LabelValues", "/label_values", func(w http.ResponseWriter, req *http.Request) {
+					h.PrometheusTelemetryLabelValuesHandler(w, req, nil, &models.User{}, provider)
+				}},
+				{"Metadata", "/metadata", func(w http.ResponseWriter, req *http.Request) {
+					h.PrometheusTelemetryMetadataHandler(w, req, nil, &models.User{}, provider)
+				}},
+				{"Query", "/query", func(w http.ResponseWriter, req *http.Request) {
+					h.PrometheusTelemetryQueryHandler(w, req, nil, &models.User{}, provider)
+				}},
+				{"QueryRange", "/query_range", func(w http.ResponseWriter, req *http.Request) {
+					h.PrometheusTelemetryQueryRangeHandler(w, req, nil, &models.User{}, provider)
+				}},
+				{"Panels", "/panels", func(w http.ResponseWriter, req *http.Request) {
+					h.PrometheusTelemetryPanelsHandler(w, req, nil, &models.User{}, provider)
+				}},
 			}
-			metricsRec := httptest.NewRecorder()
-			h.PrometheusTelemetryMetricsHandler(metricsRec, metricsReq, nil, &models.User{}, provider)
 
-			if metricsRec.Code != http.StatusBadRequest {
-				t.Errorf("Prometheus Metrics expected 400, got %d (body=%q)", metricsRec.Code, metricsRec.Body.String())
-			}
-			if decoded := decodeErrorBody(t, metricsRec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
-				t.Errorf("Prometheus Metrics expected code %q, got %q", models.ErrInvalidUUIDValueCode, decoded.Code)
-			}
+			for _, target := range handlers {
+				req := httptest.NewRequest(http.MethodGet, "/api/telemetry/prometheus/"+tc.id+target.path, nil)
+				if tc.id != "" {
+					req = mux.SetURLVars(req, map[string]string{"connectionID": tc.id})
+				}
+				rec := httptest.NewRecorder()
+				target.invoke(rec, req)
 
-			// Test Panels Handler
-			panelsReq := httptest.NewRequest(http.MethodGet, "/api/telemetry/prometheus/"+tc.id+"/panels", nil)
-			if tc.id != "" {
-				panelsReq = mux.SetURLVars(panelsReq, map[string]string{"connectionID": tc.id})
+				if rec.Code != http.StatusBadRequest {
+					t.Errorf("Prometheus %s expected 400, got %d (body=%q)", target.name, rec.Code, rec.Body.String())
+				}
+				if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
+					t.Errorf("Prometheus %s expected code %q, got %q", target.name, models.ErrInvalidUUIDValueCode, decoded.Code)
+				}
 			}
-			panelsRec := httptest.NewRecorder()
-			h.PrometheusTelemetryPanelsHandler(panelsRec, panelsReq, nil, &models.User{}, provider)
-
-			if panelsRec.Code != http.StatusBadRequest {
-				t.Errorf("Prometheus Panels expected 400, got %d (body=%q)", panelsRec.Code, panelsRec.Body.String())
-			}
-			if decoded := decodeErrorBody(t, panelsRec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
-				t.Errorf("Prometheus Panels expected code %q, got %q", models.ErrInvalidUUIDValueCode, decoded.Code)
+			if len(provider.persistedEvents) > 0 {
+				t.Errorf("Prometheus handlers unexpectedly persisted events for invalid ID: %+v", provider.persistedEvents)
 			}
 		})
 	}
@@ -141,34 +158,53 @@ func TestGrafanaTelemetryHandlers_RejectsInvalidConnectionID(t *testing.T) {
 				t.Errorf("Grafana Ping expected code %q, got %q", models.ErrInvalidUUIDValueCode, decoded.Code)
 			}
 
-			// Test Boards Handler
-			boardsReq := httptest.NewRequest(http.MethodGet, "/api/telemetry/grafana/"+tc.id+"/boards", nil)
-			if tc.id != "" {
-				boardsReq = mux.SetURLVars(boardsReq, map[string]string{"connectionID": tc.id})
+			handlers := []struct {
+				name   string
+				path   string
+				vars   map[string]string
+				invoke func(w http.ResponseWriter, req *http.Request)
+			}{
+				{"Boards", "/boards", nil, func(w http.ResponseWriter, req *http.Request) {
+					h.GrafanaTelemetryBoardsHandler(w, req, nil, &models.User{}, provider)
+				}},
+				{"Board", "/boards/test-uid", map[string]string{"uid": "test-uid"}, func(w http.ResponseWriter, req *http.Request) {
+					h.GrafanaTelemetryBoardHandler(w, req, nil, &models.User{}, provider)
+				}},
+				{"Datasources", "/datasources", nil, func(w http.ResponseWriter, req *http.Request) {
+					h.GrafanaTelemetryDatasourcesHandler(w, req, nil, &models.User{}, provider)
+				}},
+				{"QueryRange", "/query_range", nil, func(w http.ResponseWriter, req *http.Request) {
+					h.GrafanaTelemetryQueryRangeHandler(w, req, nil, &models.User{}, provider)
+				}},
+				{"PinnedBoards", "/pinned", nil, func(w http.ResponseWriter, req *http.Request) {
+					h.GrafanaTelemetryPinnedBoardsHandler(w, req, nil, &models.User{}, provider)
+				}},
 			}
-			boardsRec := httptest.NewRecorder()
-			h.GrafanaTelemetryBoardsHandler(boardsRec, boardsReq, nil, &models.User{}, provider)
 
-			if boardsRec.Code != http.StatusBadRequest {
-				t.Errorf("Grafana Boards expected 400, got %d (body=%q)", boardsRec.Code, boardsRec.Body.String())
-			}
-			if decoded := decodeErrorBody(t, boardsRec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
-				t.Errorf("Grafana Boards expected code %q, got %q", models.ErrInvalidUUIDValueCode, decoded.Code)
-			}
+			for _, target := range handlers {
+				req := httptest.NewRequest(http.MethodGet, "/api/telemetry/grafana/"+tc.id+target.path, nil)
+				reqVars := map[string]string{}
+				if tc.id != "" {
+					reqVars["connectionID"] = tc.id
+				}
+				for k, v := range target.vars {
+					reqVars[k] = v
+				}
+				if len(reqVars) > 0 {
+					req = mux.SetURLVars(req, reqVars)
+				}
+				rec := httptest.NewRecorder()
+				target.invoke(rec, req)
 
-			// Test Pinned Boards Handler
-			pinnedReq := httptest.NewRequest(http.MethodGet, "/api/telemetry/grafana/"+tc.id+"/pinned", nil)
-			if tc.id != "" {
-				pinnedReq = mux.SetURLVars(pinnedReq, map[string]string{"connectionID": tc.id})
+				if rec.Code != http.StatusBadRequest {
+					t.Errorf("Grafana %s expected 400, got %d (body=%q)", target.name, rec.Code, rec.Body.String())
+				}
+				if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
+					t.Errorf("Grafana %s expected code %q, got %q", target.name, models.ErrInvalidUUIDValueCode, decoded.Code)
+				}
 			}
-			pinnedRec := httptest.NewRecorder()
-			h.GrafanaTelemetryPinnedBoardsHandler(pinnedRec, pinnedReq, nil, &models.User{}, provider)
-
-			if pinnedRec.Code != http.StatusBadRequest {
-				t.Errorf("Grafana Pinned Boards expected 400, got %d (body=%q)", pinnedRec.Code, pinnedRec.Body.String())
-			}
-			if decoded := decodeErrorBody(t, pinnedRec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
-				t.Errorf("Grafana Pinned Boards expected code %q, got %q", models.ErrInvalidUUIDValueCode, decoded.Code)
+			if len(provider.persistedEvents) > 0 {
+				t.Errorf("Grafana handlers unexpectedly persisted events for invalid ID: %+v", provider.persistedEvents)
 			}
 		})
 	}
