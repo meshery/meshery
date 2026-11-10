@@ -246,6 +246,12 @@ system:
           usage: mesheryctl system check --components
           example: mesheryctl system check --components
 
+    delete:
+      name: delete
+      description: Delete Meshery containers created by docker-compose
+      usage: mesheryctl system delete
+      example: mesheryctl system delete -y
+
 system-channel:
   name: system channel
   description: Switch between release channels.
@@ -546,6 +552,12 @@ perf:
           description: "(optional) View more information of the performance test results."
           usage: mesheryctl perf result --view
           example: mesheryctl perf result --view
+
+    delete:
+      name: delete
+      description: Delete a performance profile by its name
+      usage: mesheryctl perf delete [profile-name]
+      example: mesheryctl perf delete test-3 --yes
 
 adapter:
   name: adapter
