@@ -34,18 +34,22 @@ const SchemaVersion: FC<SchemaVersionProps> = ({ schema_array, type, schemaChang
   return (
     <div>
       <Tooltip title="Schema_Changer">
-        <IconButton component="span" onClick={(e) => setAnchorEl(e.currentTarget)}>
+        <IconButton
+          aria-label="Change schema version"
+          component="span"
+          onClick={(e) => setAnchorEl(e.currentTarget)}
+        >
           <ArrowDropDown style={{ color: theme.palette.text.primary }} />
         </IconButton>
       </Tooltip>
       <Menu id="schema-menu" anchorEl={anchorEl} open={open} handleClose={handleClose}>
-        {schema_array.map((version, index) => (
+        {schema_array?.map((version, index) => (
           <MenuItem
             id="schema-menu-item"
-            key={index}
+            key={version || index}
             selected={version === type}
             onClick={() => {
-              schemaChangeHandler(version);
+              schemaChangeHandler?.(version);
               handleClose();
             }}
           >
@@ -141,15 +145,15 @@ function Modal(props) {
   return (
     <>
       <SistentModal open={open} closeModal={handleClose} title={title} headerIcon={leftHeaderIcon}>
-        <Typography variant="h5">
-          {schema_array?.length < 1 && (
+        {schema_array && schema_array.length > 0 && (
+          <Typography component="div" variant="h5">
             <SchemaVersion
               schema_array={schema_array}
               type={type}
               schemaChangeHandler={schemaChangeHandler}
             />
-          )}
-        </Typography>
+          </Typography>
+        )}
         <ModalBody>
           {loadingSchema ? (
             <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>

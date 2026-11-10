@@ -4,9 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
-	"path/filepath"
 	"sync"
 
 	"github.com/meshery/schemas/models/core"
@@ -57,13 +55,17 @@ type ComponentsRegistrationHelper struct {
 	// map that holds the registration status of each of the contexts in this runtime of the server
 	// it should be private
 	ctxRegStatusMap map[string]RegistrationStatus
+	ctxRegTokenMap  map[string]uint64
+	regTokenSeq     uint64
 	log             logger.Handler
 	mx              sync.RWMutex
 }
 
+// NewComponentsRegistrationHelper initializes and returns a new ComponentsRegistrationHelper.
 func NewComponentsRegistrationHelper(logger logger.Handler) *ComponentsRegistrationHelper {
 	return &ComponentsRegistrationHelper{
 		ctxRegStatusMap: make(map[string]RegistrationStatus),
+		ctxRegTokenMap:  make(map[string]uint64),
 		log:             logger,
 		mx:              sync.RWMutex{},
 	}
@@ -79,6 +81,23 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 		}
 		cg.mx.Unlock()
 	}
+	return cg
+}
+
+// GetContextRegistrationStatus returns the current registration status of the given context ID.
+func (cg *ComponentsRegistrationHelper) GetContextRegistrationStatus(ctxID string) (RegistrationStatus, bool) {
+	cg.mx.RLock()
+	defer cg.mx.RUnlock()
+	status, ok := cg.ctxRegStatusMap[ctxID]
+	return status, ok
+}
+
+// RemoveContext removes a context from the registration map, allowing future registrations.
+func (cg *ComponentsRegistrationHelper) RemoveContext(ctxID string) *ComponentsRegistrationHelper {
+	cg.mx.Lock()
+	defer cg.mx.Unlock()
+	delete(cg.ctxRegStatusMap, ctxID)
+	delete(cg.ctxRegTokenMap, ctxID)
 	return cg
 }
 
@@ -103,9 +122,16 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 	}
 
 	for _, ctx := range ctxs {
+		if ctx == nil {
+			continue
+		}
 		ctxID := ctx.ID
 		connectionID := uuid.FromStringOrNil(ctx.ConnectionID)
 		ctxName := ctx.Name
+		var mesheryInstanceID core.Uuid
+		if ctx.MesheryInstanceID != nil {
+			mesheryInstanceID = *ctx.MesheryInstanceID
+		}
 
 		cg.mx.Lock()
 		// do not do anything about the contexts that are not present in the ctxRegStatusMap
@@ -118,58 +144,98 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 
 		// update the status
 		cg.ctxRegStatusMap[ctxID] = Registering
+		cg.regTokenSeq++
+		regToken := cg.regTokenSeq
+		cg.ctxRegTokenMap[ctxID] = regToken
 		cg.mx.Unlock()
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
 
-		event := events.NewEvent().ActedUpon(connectionID).FromSystem(*ctx.MesheryInstanceID).WithSeverity(events.Informational).WithCategory("connection").WithAction(Registering.String()).FromOwner(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
-		err := provider.PersistSystemEvent(*event)
-		if err != nil {
-			// Even if event was not persisted continue with the operation and publish the event to user.
+		event := events.NewEvent().ActedUpon(connectionID).FromSystem(mesheryInstanceID).WithSeverity(events.Informational).WithCategory("connection").WithAction(Registering.String()).FromOwner(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
+		// Even if the event was not persisted, the event is published to the user
+		// and the operation continues.
+		if err := PersistAndPublishSystemEvent(provider, eventsBrodcaster, userUUID, event); err != nil {
 			cg.log.Warn(err)
 		}
-		eventsBrodcaster.Publish(userUUID, event)
 
-		go func(ctx *K8sContext) {
-			// set the status to RegistrationComplete
+		go func(ctx *K8sContext, ctxID string, connectionID core.Uuid, ctxName string, mesheryInstanceID core.Uuid, regToken uint64) {
+			var regErr error
 			defer func() {
 				cg.mx.Lock()
-				cg.ctxRegStatusMap[ctxID] = RegistrationComplete
+				// Only update status and emit events if context was not removed
+				// and this registration generation is still current.
+				currentToken, exists := cg.ctxRegTokenMap[ctxID]
+				if !exists || currentToken != regToken {
+					cg.mx.Unlock()
+					return
+				}
+				if regErr != nil {
+					cg.ctxRegStatusMap[ctxID] = NotRegistered
+				} else {
+					cg.ctxRegStatusMap[ctxID] = RegistrationComplete
+				}
 				cg.mx.Unlock()
 
-				cg.log.Info("components registered for context ", ctxName, " ID:", ctxID)
+				if regErr != nil {
+					cg.log.Errorf("failed to register components for context %s (ID: %s): %v", ctxName, ctxID, regErr)
+					failEvent := events.NewEvent().
+						ActedUpon(connectionID).
+						FromSystem(mesheryInstanceID).
+						WithSeverity(events.Error).
+						WithCategory("connection").
+						WithAction(Registering.String()).
+						FromOwner(userUUID).
+						WithDescription(fmt.Sprintf("Failed to register components for Kubernetes context %s: %s", ctxName, regErr.Error())).
+						WithMetadata(map[string]interface{}{"error": regErr.Error()}).
+						Build()
+					if perr := PersistAndPublishSystemEvent(provider, eventsBrodcaster, userUUID, failEvent); perr != nil {
+						cg.log.Warn(perr)
+					}
+				} else {
+					cg.log.Info("components registered for context ", ctxName, " ID:", ctxID)
+				}
 			}()
 
 			// start registration
 			cfg, err := ctx.GenerateKubeConfig()
 			if err != nil {
+				regErr = err
 				cg.log.Error(err)
 				return
 			}
 			for _, f := range regFunc {
-				err = f(&provider, context.Background(), cfg, ctxID, ctx.ConnectionID, userID, *ctx.MesheryInstanceID, reg, eventsBrodcaster, cg.log, ctxName)
+				err = f(&provider, context.Background(), cfg, ctxID, ctx.ConnectionID, userID, mesheryInstanceID, reg, eventsBrodcaster, cg.log, ctxName)
 				if err != nil {
-					cg.log.Error(ErrUnreachableKubeAPI(err, ctx.Server))
+					regErr = ErrUnreachableKubeAPI(err, ctx.Server)
+					cg.log.Error(regErr)
 					return
 				}
 			}
-		}(ctx)
+		}(ctx, ctxID, connectionID, ctxName, mesheryInstanceID, regToken)
 	}
+}
+
+// loadK8sMeshModelMetadata reads and unmarshals the Kubernetes mesh model template from the specified path,
+// ensuring the file descriptor is closed across all return paths.
+func loadK8sMeshModelMetadata(path string) (ModelTemplate, error) {
+	byt, err := os.ReadFile(path)
+	if err != nil {
+		return ModelTemplate{}, err
+	}
+
+	componentStyles := ModelTemplate{}
+	err = json.Unmarshal(byt, &componentStyles)
+	if err != nil {
+		return ModelTemplate{}, err
+	}
+
+	return componentStyles, nil
 }
 
 // Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation
 func init() {
-	f, err := os.Open(filepath.Join(k8sMeshModelPath))
+	metadata, err := loadK8sMeshModelMetadata(k8sMeshModelPath)
 	if err != nil {
 		return
 	}
-	byt, err := io.ReadAll(f)
-	if err != nil {
-		return
-	}
-	componentStyles := ModelTemplate{}
-	err = json.Unmarshal(byt, &componentStyles)
-	if err != nil {
-		return
-	}
-	K8sMeshModelMetadata = componentStyles
+	K8sMeshModelMetadata = metadata
 }

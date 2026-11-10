@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/meshery/schemas/models/core"
 	connectionv1beta3 "github.com/meshery/schemas/models/v1beta3/connection"
@@ -82,8 +83,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 				"error": wrappedErr,
 			}).Build()
 			if event != nil {
-				_ = provider.PersistEvent(*event, token)
-				go h.config.EventBroadcaster.Publish(userUUID, event)
+				h.persistAndPublish(provider, token, userUUID, event)
 			}
 			h.log.Error(wrappedErr)
 			writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
@@ -96,8 +96,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			h.log.Error(wrappedErr)
 			writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
 			if event != nil {
-				_ = provider.PersistEvent(*event, token)
-				go h.config.EventBroadcaster.Publish(userUUID, event)
+				go h.persistAndPublish(provider, token, userUUID, event)
 			}
 			return
 		}
@@ -168,7 +167,13 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, event *conn
 		Name:  fmt.Sprintf("%sConnection", event.Kind),
 		Limit: 1,
 	}
-	connectionComponent, _, _, _ := h.registryManager.GetEntities(compFilter)
+	connectionComponent, _, _, err := h.registryManager.GetEntities(compFilter)
+	if err != nil {
+		h.log.Error(ErrWriteResponse(err))
+		writeMeshkitError(w, ErrWriteResponse(err), http.StatusInternalServerError)
+		return
+	}
+
 	if len(connectionComponent) == 0 {
 		writeMeshkitError(w, ErrUnknownConnectionKind(event.Kind), http.StatusBadRequest)
 		return
@@ -189,10 +194,15 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, event *conn
 		ID:         uuid.Must(uuid.NewV4()),
 	}
 
-	credential, _, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
+	credential, _, _, err := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:  fmt.Sprintf("%sCredential", event.Kind),
 		Limit: 1,
 	})
+	if err != nil {
+		h.log.Error(ErrWriteResponse(err))
+		writeMeshkitError(w, ErrWriteResponse(err), http.StatusInternalServerError)
+		return
+	}
 	if len(credential) > 0 {
 		credentialDefinition, err := utils.MarshalAndUnmarshal[interface{}, core.Map](credential[0])
 		if err != nil {
@@ -244,8 +254,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 			"error": _err,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error creating connection %s", connection.Name)).WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 
 		h.log.Error(_err)
 		writeMeshkitError(w, _err, http.StatusInternalServerError)
@@ -255,8 +264,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	description := fmt.Sprintf("Connection %s created.", connection.Name)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 
 	h.log.Info(description)
 	w.WriteHeader(http.StatusCreated)
@@ -408,7 +416,22 @@ func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ 
 }
 
 func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
+	connectionID, err := uuid.FromString(mux.Vars(req)["connectionId"])
+	if err != nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %w", err))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
+	// No connection has the nil ID, so there is nothing to update. Like a
+	// malformed ID, it is a client error: issue #22999 requires a nil ID
+	// to answer 400, not 404.
+	if connectionID == uuid.Nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %s", connectionID))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
 	userID := user.ID
 
 	bd, err := io.ReadAll(req.Body)
@@ -441,9 +464,34 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 			"error": ErrRetrieveUserToken(err),
 		}).WithDescription("No auth token provided in the request.").Build()
 
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
+		return
+	}
+
+	// An update never creates a connection: answer 404 for an ID the provider
+	// does not know, before anything is saved.
+	existing, statusCode, gerr := provider.GetConnectionByID(token, connectionID)
+	if gerr != nil && statusCode == http.StatusNotFound {
+		h.log.Warnf("No connection with ID %q found to update", connectionID)
+		writeMeshkitError(w, models.ErrResultNotFound(gerr), http.StatusNotFound)
+		return
+	}
+
+	// A lookup that fails for any other reason leaves the connection's
+	// existence unknown: stop here rather than saving over a row the
+	// provider could not read back. The local provider backfills omitted
+	// fields from the lookup, so proceeding would let a partial record
+	// clobber the stored one.
+	if gerr != nil {
+		// Log the real lookup error for diagnosis; the client gets a
+		// lookup-specific error, not ErrQueryGet's "pass the query
+		// parameter" guidance, which is wrong here — this PUT carries
+		// its id in the path, and a lookup failure is a provider
+		// failure, not a missing query parameter.
+		h.log.Error(gerr)
+		lookupErr := models.ErrFetch(fmt.Errorf("connection lookup failed"), obj, statusCode)
+		writeMeshkitError(w, lookupErr, http.StatusInternalServerError)
 		return
 	}
 
@@ -451,6 +499,20 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	// {status}); the provider's UpdateConnectionById backfills any omitted field
 	// from the persisted row so a partial payload never clobbers columns like
 	// kind/name/type/metadata.
+	// The status the connection had before this update: the machine reads
+	// the saved status, already the new one, so it is told the old one to
+	// resolve the unreachable condition of a connection leaving NOTFOUND.
+	statusCtx := req.Context()
+	if connection.Status != "" && existing != nil {
+		statusCtx = machines.WithPriorStatus(statusCtx, existing.Status)
+	}
+
+	// The URL identifies the connection being updated: a body carrying a
+	// different non-nil id must not redirect the update onto another row (or
+	// create one under it). Both providers only fall back to the URL id when
+	// the payload id is nil, so pin it here for both of them.
+	connection.ID = connectionID
+
 	updatedConnection, err := provider.UpdateConnectionById(token, connection, mux.Vars(req)["connectionId"])
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
@@ -458,8 +520,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 			"error": _err,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error updating connection").WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 
 		h.log.Error(_err)
 		writeMeshkitError(w, _err, http.StatusInternalServerError)
@@ -471,13 +532,12 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	eventBuilder = eventBuilder.WithDescription(description)
 
 	if connection.Status != "" {
-		event, _ := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
-		_ = provider.PersistEvent(event, token)
+		event, _ := h.NotifySmOfConnectionStatusChange(statusCtx, userID, provider, token, connection)
+		_, _ = provider.PersistEvent(event, token)
 	}
 
 	event := eventBuilder.WithSeverity(events.Informational).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 	h.log.Info(description)
 	w.WriteHeader(http.StatusOK)
 }
@@ -530,13 +590,12 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 		)
 
 		// A connection being deleted must not leave a tracker entry behind,
-		// whichever way its machine failed. InitializeMachineWithContext caches
-		// the instance *before* surfacing a Start error, so both the error return
-		// below and the no-context return after it would otherwise strand the
-		// entry - the first for a fresh failure, the second for every later cache
-		// hit. Nothing can drive that machine afterwards, and the delete paths
-		// that normally Remove it (the goroutine below, DeleteContext) both do so
-		// only after a SendEvent that cannot succeed without a Context.
+		// whichever way its machine failed. If an uninitialized or broken instance
+		// was previously present in the tracker, both the error return below and
+		// the no-context return after it would otherwise strand the entry.
+		// Nothing can drive that machine afterwards, and the delete paths that
+		// normally Remove it (the goroutine below, DeleteContext) both do so only
+		// after a SendEvent that cannot succeed without a Context.
 		usable := err == nil && helpers.HasMachineContext(inst)
 		if !usable && connection.Status == connections.DELETED {
 			smInstanceTracker.Remove(connectionID)
@@ -558,14 +617,14 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 		}
 
 		// detach from the http request lifecycle so that the goroutine isn't cancelled when
-		// the handler returns, while preserving context values (e.g. TokenCtxKey) that downstream calls depend on.
-		detachedCtx := context.WithoutCancel(ctx)
+		// the handler returns, while preserving context values and enforcing a bounded execution deadline.
+		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), defaultFSMTransitionTimeout)
 		go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
+			defer cancel()
 			event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(status)), nil)
 			if err != nil {
 				h.log.Error(err)
-				_ = provider.PersistEvent(*event, token)
-				h.config.EventBroadcaster.Publish(userID, event)
+				h.reportMachineOutcome(provider, token, userID, event, err)
 				return
 			}
 
@@ -573,8 +632,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 				smInstanceTracker.Remove(inst.ID)
 			}
 
-			_ = provider.PersistEvent(*event, token)
-			h.config.EventBroadcaster.Publish(userID, event)
+			h.reportMachineOutcome(provider, token, userID, event, nil)
 		}(inst, connection.Status)
 	}
 
@@ -592,6 +650,13 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		return
 	}
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+
+	// A Kubernetes connection deleted while NOTFOUND retires its unreachable
+	// condition, so the deletion event resolves it.
+	resolvesUnreachable := false
+	if existing, _, gerr := provider.GetConnectionByID(token, connectionID); gerr == nil && existing != nil {
+		resolvesUnreachable = existing.Kind == "kubernetes" && existing.Status == connections.ConnectionStatus(machines.NOTFOUND)
+	}
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
@@ -620,8 +685,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 			"error": _err,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error deleting connection").WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 
 		h.log.Error(_err)
 		// Surface the status the provider actually returned (403, 409, 5xx ...)
@@ -631,6 +695,19 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		writeMeshkitError(w, _err, providerStatusOrInternal(err))
 		return
 	}
+	// The initial lookup may fail even when deletion succeeds.
+	// Use the deleted connection's details when the provider returns them.
+	if deletedConnection != nil &&
+		deletedConnection.Kind == "kubernetes" &&
+		deletedConnection.Status == connections.ConnectionStatus(machines.NOTFOUND) {
+		resolvesUnreachable = true
+	}
+
+	// Nothing can drive a deleted connection's machine any more; left in the
+	// tracker, the Kubernetes middlewares would keep probing it.
+	if h.ConnectionToStateMachineInstanceTracker != nil {
+		h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+	}
 
 	// A provider is free to answer a successful delete without echoing the
 	// deleted row back; dereferencing it unconditionally panicked the request.
@@ -639,10 +716,15 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		deletedName = deletedConnection.Name
 	}
 	description := fmt.Sprintf("Connection %s deleted.", deletedName)
-	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
+	if resolvesUnreachable {
+		eventBuilder = eventBuilder.WithCategory("connection").WithSeverity(events.Success).
+			Resolves(kubernetes.UnreachableConditionKey(connectionID), time.Now().UTC())
+	} else {
+		eventBuilder = eventBuilder.WithSeverity(events.Informational)
+	}
+	event := eventBuilder.WithDescription(description).Build()
 
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 
 	h.log.Info("connection deleted.")
 	w.WriteHeader(http.StatusOK)

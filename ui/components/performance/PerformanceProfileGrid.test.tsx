@@ -9,8 +9,8 @@ vi.mock('@sistent/sistent', () => ({
     ) : (
       <div data-testid="grid-item">{children}</div>
     ),
-  Pagination: ({ count, onChange }: any) => (
-    <div data-testid="pagination" data-count={count}>
+  Pagination: ({ count, page, onChange }: any) => (
+    <div data-testid="pagination" data-count={count} data-page={page}>
       <button type="button" onClick={() => onChange(null, 2)}>
         page-2
       </button>
@@ -96,6 +96,15 @@ describe('PerformanceProfileGrid', () => {
     render(<PerformanceProfileGrid {...baseProps} setPage={setPage} />);
     fireEvent.click(screen.getByRole('button', { name: 'page-2' }));
     expect(setPage).toHaveBeenCalledWith(1);
+  });
+
+  it('shows the current zero-based page as the one-based pagination page', () => {
+    const { rerender } = render(<PerformanceProfileGrid {...baseProps} page={2} />);
+    expect(screen.getByTestId('pagination')).toHaveAttribute('data-page', '3');
+
+    // e.g. a new search resets the parent's page to 0
+    rerender(<PerformanceProfileGrid {...baseProps} page={0} />);
+    expect(screen.getByTestId('pagination')).toHaveAttribute('data-page', '1');
   });
 
   it('wraps the run callback with `{ ...profile, runTest: true }`', () => {
