@@ -174,6 +174,7 @@ const (
 	ErrOperatorChartSubstitutedCode       = "meshery-server-1471"
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
 	ErrInvalidExtensionProxyPathCode      = "meshery-server-1490"
+	ErrMigrateEventIndexesCode            = "meshery-server-1491"
 )
 
 var (
@@ -993,6 +994,17 @@ func ErrMigrateEventCorrelationIndex(err error) error {
 		[]string{err.Error()},
 		[]string{"The events table has more than one open event (no resolved_at) with the same owner and correlation_key, which an earlier Meshery Server could have recorded", "The database is read-only, locked by another process or not reachable"},
 		[]string{"Resolve or delete the duplicate open events for that owner and correlation_key, then restart Meshery Server", "Make sure Meshery Server can write to its database, or perform a hard reset"},
+	)
+}
+
+func ErrMigrateEventIndexes(err error) error {
+	return errors.New(
+		ErrMigrateEventIndexesCode,
+		errors.Alert,
+		[]string{"Meshery Server could not create the indexes the Notification Center queries use"},
+		[]string{err.Error()},
+		[]string{"The database is read-only, locked by another process or not reachable"},
+		[]string{"Make sure Meshery Server can write to its database, then restart Meshery Server, or perform a hard reset"},
 	)
 }
 

@@ -71,7 +71,10 @@ func AutoMigrateSystemTables(db *database.Handler) error {
 	if err := db.AutoMigrate(SystemDatabaseModels()...); err != nil {
 		return err
 	}
-	return migrateEventCorrelationIndex(db)
+	if err := migrateEventCorrelationIndex(db); err != nil {
+		return err
+	}
+	return migrateEventQueryIndexes(db)
 }
 
 // openEventCorrelationIndex is the partial unique index that keeps at most one
@@ -94,6 +97,25 @@ const openEventCorrelationIndex = `CREATE UNIQUE INDEX IF NOT EXISTS idx_events_
 func migrateEventCorrelationIndex(db *database.Handler) error {
 	if err := db.Exec(openEventCorrelationIndex).Error; err != nil {
 		return ErrMigrateEventCorrelationIndex(err)
+	}
+	return nil
+}
+
+// eventQueryIndexes back the Notification Center queries. GetEvents filters by
+// owner and sorts by created_at; getCountBySeverity filters by owner and status
+// and groups by severity. events.Event is a meshkit type, so the indexes are
+// created here rather than through gorm tags. Each statement is idempotent and
+// runs on every boot and reset.
+var eventQueryIndexes = []string{
+	"CREATE INDEX IF NOT EXISTS idx_events_owner_created_at ON events (owner, created_at)",
+	"CREATE INDEX IF NOT EXISTS idx_events_owner_status_severity ON events (owner, status, severity)",
+}
+
+func migrateEventQueryIndexes(db *database.Handler) error {
+	for _, stmt := range eventQueryIndexes {
+		if err := db.Exec(stmt).Error; err != nil {
+			return ErrMigrateEventIndexes(err)
+		}
 	}
 	return nil
 }
