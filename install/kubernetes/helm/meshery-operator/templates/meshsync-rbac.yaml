@@ -1,4 +1,4 @@
-{{- $sa := required "meshsync.serviceAccount.name is required: the operator runs MeshSync under it" .Values.meshsync.serviceAccount.name }}
+{{- $sa := required "meshsync.serviceAccount.name is required" .Values.meshsync.serviceAccount.name | toString }}
 {{- if or (gt (len $sa) 253) (not (regexMatch "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$" $sa)) }}
 {{- fail (printf "meshsync.serviceAccount.name %q is not a valid ServiceAccount name (DNS-1123 subdomain)" $sa) }}
 {{- end }}
@@ -7,7 +7,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ $sa }}
+  name: {{ $sa | quote }}
   namespace: {{ .Release.Namespace }}
   labels:
 {{- include "meshery-operator.labels" . | nindent 4 }}
@@ -66,7 +66,7 @@ roleRef:
   name: meshery-meshsync-role
 subjects:
 - kind: ServiceAccount
-  name: {{ $sa }}
+  name: {{ $sa | quote }}
   namespace: {{ .Release.Namespace }}
 {{- if not .Values.meshsync.serviceAccount.dedicated }}
 ---
