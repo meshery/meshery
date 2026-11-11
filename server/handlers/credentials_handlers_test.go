@@ -121,6 +121,9 @@ func TestDeleteUserCredential_RejectsMissingOrInvalidID(t *testing.T) {
 			if p.observedDelete.Load() != nil {
 				t.Error("provider DeleteUserCredential was invoked for an unusable id")
 			}
+			if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
+				t.Errorf("expected code %q, got %q", models.ErrInvalidUUIDValueCode, decoded.Code)
+			}
 		})
 	}
 }

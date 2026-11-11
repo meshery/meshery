@@ -82,7 +82,8 @@ func commandAcceptsFlag(cmd *cobra.Command, flag string) bool {
 
 	shorthand := strings.TrimPrefix(flag, "-")
 	return cmd.Flags().ShorthandLookup(shorthand) != nil ||
-		cmd.InheritedFlags().ShorthandLookup(shorthand) != nil
+		cmd.InheritedFlags().ShorthandLookup(shorthand) != nil ||
+		cmd.PersistentFlags().ShorthandLookup(shorthand) != nil
 }
 
 // TestExampleResolutionWithLeadingFlags pins the behavior of resolving an

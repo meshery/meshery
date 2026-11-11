@@ -7641,6 +7641,23 @@
         "Ensure the request path starts with '/api/extensions' followed by a valid subpath (e.g. '/api/extensions/users')",
         "Check client routing and extension configuration"
       ]
+    },
+    {
+      "code": "meshery-server-1491",
+      "moniker": "ErrMigrateEventIndexesCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1491",
+      "severity": "alert",
+      "shortDescription": "Meshery Server could not create the indexes the Notification Center queries use",
+      "probableCause": [
+        "The database is read-only, locked by another process or not reachable"
+      ],
+      "suggestedRemediation": [
+        "Make sure Meshery Server can write to its database, then restart Meshery Server"
+      ]
     }
   ],
   "schemaVersion": 2
