@@ -471,6 +471,20 @@ func TestEnvironmentReassignRestoresSoftDeletedMapping(t *testing.T) {
 	}
 
 	// 4. Verify mapping is active again (deleted_at is NULL) and shows as assigned
+	var activeCount, deletedCount int64
+	if err := db.Table("environment_connection_mappings").Where("environment_id = ? AND connection_id = ? AND deleted_at IS NULL", envID, savedConn.ID).Count(&activeCount).Error; err != nil {
+		t.Fatalf("count active: %v", err)
+	}
+	if activeCount != 1 {
+		t.Errorf("expected 1 active mapping row in db, got %d", activeCount)
+	}
+	if err := db.Table("environment_connection_mappings").Where("environment_id = ? AND connection_id = ? AND deleted_at IS NOT NULL", envID, savedConn.ID).Count(&deletedCount).Error; err != nil {
+		t.Fatalf("count deleted: %v", err)
+	}
+	if deletedCount != 0 {
+		t.Errorf("expected 0 soft-deleted mapping rows in db, got %d", deletedCount)
+	}
+
 	rawAssigned, err := ep.GetEnvironmentConnections(envID, "", "", "0", "10", `{"assigned":true}`)
 	if err != nil {
 		t.Fatalf("get assigned after reassign: %v", err)
