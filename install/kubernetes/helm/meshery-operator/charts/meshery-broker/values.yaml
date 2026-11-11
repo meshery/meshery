@@ -10,7 +10,10 @@ version: ""
 # server-side-applies `spec.service` under the field manager meshery-server.
 # Set each field in one place only: when both set it, Helm 4 (server-side
 # apply) fails the upgrade with a field conflict and Helm 3 lets the last
-# writer win.
+# writer win. To go back to the default, set type ClusterIP rather than unsetting
+# every field: operator 1.0.6 co-owns an empty `spec.service`, so under Helm 4
+# removing the last chart-set field there fails the upgrade with
+# `spec.service ... must be of type object: "null"`.
 service:
   # -- `ClusterIP`, `NodePort` or `LoadBalancer`. Empty: the operator default, `ClusterIP`.
   type: ""
