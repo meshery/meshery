@@ -59,7 +59,12 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	eventMetadata := make(map[string]interface{}, 0)
 	ctx := models.K8sContextsFromKubeconfig(*provider, userID, ec, config, &mesheryInstanceID, eventMetadata, log)
 	if err != nil {
-		return ErrCreatingKubernetesComponents(err, ctxID)
+		if len(man) == 0 {
+			return ErrCreatingKubernetesComponents(err, ctxID)
+		}
+		if log != nil {
+			log.Warn(ErrCreatingKubernetesComponents(err, ctxID))
+		}
 	}
 	if man == nil {
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
@@ -195,8 +200,14 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 		arrAPIResources = append(arrAPIResources, res)
 	}
 	var crds []crdResponse
+	var errs []error
 	for _, content := range contents {
-		crds = append(crds, getCRDsFromManifest(string(content), arrAPIResources)...)
+		extractedCRDs, err := getCRDsFromManifest(string(content), arrAPIResources)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		crds = append(crds, extractedCRDs...)
 	}
 	components := make([]component.ComponentDefinition, 0)
 	for _, crd := range crds {
@@ -235,6 +246,9 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 		}
 		components = append(components, c)
 	}
+	if len(errs) > 0 {
+		return components, patterncore.ErrGetK8sComponents(errors.Join(errs...))
+	}
 	return components, nil
 }
 
@@ -266,18 +280,17 @@ type crdResponse struct {
 	schema     string
 }
 
-func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdResponse {
+func getCRDsFromManifest(manifest string, arrAPIResources []string) ([]crdResponse, error) {
 	var err error
 	res := make([]crdResponse, 0)
 	manifest, err = getResolvedManifest(manifest)
 	if err != nil {
-		fmt.Printf("%v", err)
-		return nil
+		return nil, fmt.Errorf("failed to resolve manifest: %w", err)
 	}
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
 	if err != nil {
-		return nil
+		return nil, fmt.Errorf("failed to extract cue json from manifest: %w", err)
 	}
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
 	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
@@ -285,8 +298,10 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 		resource := strings.ToLower(name)
 		fields, err := definitions.Fields()
 		if err != nil {
-			fmt.Printf("%v\n", err)
-			continue
+			if !definitions.Exists() {
+				continue
+			}
+			return nil, fmt.Errorf("failed to get schema fields: %w", err)
 		}
 		for fields.Next() {
 			fieldVal := fields.Value()
@@ -339,7 +354,7 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 			}
 		}
 	}
-	return res
+	return res, nil
 }
 
 // TODO: To be moved in meshkit
