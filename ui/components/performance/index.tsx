@@ -97,7 +97,9 @@ const MesheryPerformanceComponent_ = (props) => {
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const { data: userData, isSuccess: isUserDataFetched } =
-    useGetUserPrefWithContextQuery(selectedK8sContexts);
+    useGetUserPrefWithContextQuery(selectedK8sContexts, {
+      skip: !hasPermission,
+    });
 
   const [savePerformanceProfile] = useSavePerformanceProfileMutation();
   const {
@@ -105,7 +107,9 @@ const MesheryPerformanceComponent_ = (props) => {
     isSuccess: isSMPMeshesFetched,
     isError: isSMPMeshError,
     error: smpMeshError,
-  } = useGetMeshQuery();
+  } = useGetMeshQuery(undefined, {
+    skip: !hasPermission,
+  });
 
   // Report a failed mesh list fetch on its own: going through handleError
   // would also stop a running test and close its event stream.
@@ -116,13 +120,14 @@ const MesheryPerformanceComponent_ = (props) => {
   }, [isSMPMeshError, smpMeshError]);
 
   useEffect(() => {
+    if (!hasPermission) return;
     const fetchMeshModels = async () => {
       const { models } = await getMeshModels();
       const modelNames = models.map((model) => model.displayName);
       setMeshModels(modelNames);
     };
     fetchMeshModels();
-  }, []);
+  }, [hasPermission]);
 
   const handleChange = createPerformanceFormChangeHandler({
     setProfileName,

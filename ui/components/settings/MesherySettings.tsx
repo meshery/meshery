@@ -123,7 +123,9 @@ const MesherySettings = () => {
   const theme = useTheme();
   const { k8sConfig } = useSelector((state) => state.ui);
   const { meshAdapters } = useSelector((state) => state.adapter);
-  const { data: providerCapabilities } = useGetProviderCapabilitiesQuery();
+  const { data: providerCapabilities } = useGetProviderCapabilitiesQuery(undefined, {
+    skip: !canViewSettings,
+  });
   const [state, setState] = useState({
     meshAdapters,
     tabVal: selectedSettingsCategory || OVERVIEW,
@@ -137,6 +139,9 @@ const MesherySettings = () => {
   const systemResetPromptRef = useRef<{ show: (_args: any) => Promise<string> } | null>(null);
 
   useEffect(() => {
+    if (!canViewSettings) {
+      return;
+    }
     const fetchData = async () => {
       try {
         const modelsResponse = await getMeshModels();
@@ -161,7 +166,7 @@ const MesherySettings = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [canViewSettings]);
 
   useEffect(() => {
     const { selectedSettingsCategory } = settingsRouter(router);

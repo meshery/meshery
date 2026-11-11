@@ -34,6 +34,7 @@ const {
   createEnvironment,
   updateEnvironment,
   deleteEnvironment,
+  canSpy,
   ENVIRONMENTS_QUERY_RESULT,
   CONNECTIONS_QUERY_RESULT,
   NOOP_MUTATION,
@@ -44,6 +45,7 @@ const {
   createEnvironment: vi.fn(),
   updateEnvironment: vi.fn(),
   deleteEnvironment: vi.fn(),
+  canSpy: vi.fn(() => true),
   ENVIRONMENTS_QUERY_RESULT: {
     data: { environments: [], totalCount: 0 },
     isLoading: false,
@@ -67,8 +69,8 @@ vi.mock('../../rtk-query/environments', () => ({
   useCreateEnvironmentMutation: () => [createEnvironment, { isLoading: false }],
   useUpdateEnvironmentMutation: () => [updateEnvironment, { isLoading: false }],
   useDeleteEnvironmentMutation: () => [deleteEnvironment],
-  useGetEnvironmentsQuery: (args: unknown) => {
-    getEnvironmentsQuery(args);
+  useGetEnvironmentsQuery: (args: unknown, options: unknown) => {
+    getEnvironmentsQuery(args, options);
     return ENVIRONMENTS_QUERY_RESULT;
   },
   useGetEnvironmentConnectionsQuery: () => CONNECTIONS_QUERY_RESULT,
@@ -128,7 +130,7 @@ vi.mock('../../assets/icons/Connection', () => ({ default: () => null }));
 vi.mock('@sistent/sistent', () => ({
   // This suite exercises the create flow, not authorization: grant every
   // capability so the permission gates never mask the behaviour under test.
-  useHasPermission: () => true,
+  useHasPermission: (key: any) => canSpy(key),
   Button: ({ children, onClick, ...rest }: any) => (
     <button onClick={onClick} {...rest}>
       {children}
@@ -212,6 +214,7 @@ const notifiedEventTypes = () =>
 
 describe('Environments create flow notifications', () => {
   beforeEach(() => {
+    canSpy.mockReturnValue(true);
     notify.mockReset();
     createEnvironment.mockReset();
     updateEnvironment.mockReset();
@@ -296,5 +299,32 @@ describe('Environments search paging', () => {
     } finally {
       ENVIRONMENTS_QUERY_RESULT.data = originalData;
     }
+  });
+});
+
+describe('Environments permissions and wire query skipping', () => {
+  beforeEach(() => {
+    getEnvironmentsQuery.mockClear();
+  });
+
+  it('skips useGetEnvironmentsQuery and renders 404 fallback when WorkspaceManagementViewEnvironment is denied', () => {
+    canSpy.mockReturnValue(false);
+    render(<Environments />);
+
+    expect(screen.getByText('no access')).toBeInTheDocument();
+    expect(getEnvironmentsQuery).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ skip: true }),
+    );
+  });
+
+  it('runs useGetEnvironmentsQuery without skip when view permission and orgId are present', () => {
+    canSpy.mockReturnValue(true);
+    render(<Environments />);
+
+    expect(getEnvironmentsQuery).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ skip: false }),
+    );
   });
 });

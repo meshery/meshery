@@ -110,7 +110,7 @@ const Environments = () => {
       orgId: orgId,
     },
     {
-      skip: !orgId ? true : false,
+      skip: !orgId || !canViewEnv,
     },
   );
 
