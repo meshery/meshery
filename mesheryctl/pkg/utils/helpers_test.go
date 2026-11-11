@@ -822,15 +822,16 @@ func TestValidId_MultiPage(t *testing.T) {
 			requests++
 			page := r.URL.Query().Get("page")
 			w.Header().Set("Content-Type", "application/json")
-			if page == "" {
+			switch page {
+			case "":
 				patterns := make([]string, len(manyIDs))
 				for i, id := range manyIDs {
 					patterns[i] = fmt.Sprintf(`{"id":%q}`, id)
 				}
 				_, _ = fmt.Fprintf(w, `{"patterns":[%s]}`, strings.Join(patterns, ","))
-			} else if page == "1" {
+			case "1":
 				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}]}`, idA)
-			} else {
+			default:
 				_, _ = fmt.Fprintf(w, `{"patterns":[]}`)
 			}
 		}))
