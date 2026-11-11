@@ -54,7 +54,7 @@ func TestListCmd(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pageSize '0'")),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '0'")),
 		},
 		{
 			Name:             "List filters with too many arguments",
