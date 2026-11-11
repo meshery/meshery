@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 // trackingBody wraps an io.ReadCloser to track when Close is called.
@@ -88,4 +89,40 @@ func TestKeepConnectionAlive_Failure(t *testing.T) {
 	if strings.Contains(output, "connection request success") {
 		t.Fatal("did not expect success to be logged after connection failure")
 	}
+}
+
+func TestDashboardCmdFlags(t *testing.T) {
+	t.Cleanup(func() {
+		dashboardCmdFlags = CmdDashboardFlags{
+			Port: 9081,
+		}
+		_ = dashboardCmd.Flags().Set("skip-browser", "false")
+		_ = dashboardCmd.Flags().Set("port-forward", "false")
+		_ = dashboardCmd.Flags().Set("port", "9081")
+	})
+
+	// Verify flag registration
+	skipBrowserFlag := dashboardCmd.Flags().Lookup("skip-browser")
+	assert.NotNil(t, skipBrowserFlag)
+	assert.Equal(t, "false", skipBrowserFlag.DefValue)
+	assert.Equal(t, "bool", skipBrowserFlag.Value.Type())
+
+	portForwardFlag := dashboardCmd.Flags().Lookup("port-forward")
+	assert.NotNil(t, portForwardFlag)
+	assert.Equal(t, "false", portForwardFlag.DefValue)
+	assert.Equal(t, "bool", portForwardFlag.Value.Type())
+
+	// Verify flag parsing
+	err := dashboardCmd.ParseFlags([]string{"--skip-browser", "--port-forward"})
+	assert.NoError(t, err)
+	assert.True(t, dashboardCmdFlags.SkipBrowser)
+	assert.True(t, dashboardCmdFlags.PortForward)
+
+	skipBrowserVal, err := dashboardCmd.Flags().GetBool("skip-browser")
+	assert.NoError(t, err)
+	assert.True(t, skipBrowserVal)
+
+	portForwardVal, err := dashboardCmd.Flags().GetBool("port-forward")
+	assert.NoError(t, err)
+	assert.True(t, portForwardVal)
 }
