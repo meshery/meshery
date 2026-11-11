@@ -51,8 +51,10 @@ function RemoteExtension() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { extensionType } = useSelector((state) => state.ui);
-  const { data: providerCapabilities, isLoading } = useGetProviderCapabilitiesQuery();
   const canViewExtensions = useHasPermission(Keys.ExtensibilityViewExtensions);
+  const { data: providerCapabilities, isLoading } = useGetProviderCapabilitiesQuery(undefined, {
+    skip: !canViewExtensions,
+  });
 
   // Resolve the active extension that matches the current path. Derived from
   // providerCapabilities rather than mirrored into local state to avoid

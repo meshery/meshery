@@ -79,7 +79,7 @@ var viewCmd = &cobra.Command{
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/view`,
 	Example: `
 // View current release channel
-mesheryctl system channel view edge
+mesheryctl system channel view
 
 // View release channel for all contexts
 mesheryctl system channel view --all
@@ -234,7 +234,10 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 			userResponse = true
 		} else {
 			// ask user for confirmation
-			userResponse = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment and channel subscription. Are you sure you want to continue")
+			userResponse, err = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment and channel subscription. Are you sure you want to continue")
+			if err != nil {
+				return err
+			}
 		}
 
 		if !userResponse {

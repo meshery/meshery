@@ -90,7 +90,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 		}
 		s := utils.CreateDefaultSpinner(fmt.Sprintf("Validating %s", meshName), fmt.Sprintf("\n%s validation successful", meshName))
 		s.Start()
-		_, err = sendOperationRequest(mctlCfg, meshName, false, spec)
+		response, err := sendOperationRequest(mctlCfg, meshName, false, spec)
 		if err != nil {
 			s.Stop()
 			return err
@@ -99,7 +99,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
 		if watch {
 			utils.Log.Info("Verifying Operation")
-			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
+			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test", operationIDFromResponse(response))
 			if err != nil {
 				return ErrWaitValidateResponse(err)
 			}
