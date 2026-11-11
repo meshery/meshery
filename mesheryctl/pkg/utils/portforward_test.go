@@ -3,7 +3,6 @@ package utils
 import (
 	"errors"
 	"fmt"
-
 	"net"
 	"net/http"
 	"testing"
@@ -37,8 +36,9 @@ func TestPortForwardListeners(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		defer ln.Close()
+		defer func() { _ = ln.Close() }()
 		forward := newForward(ln.Addr().(*net.TCPAddr).Port)
+		forward.host = "127.0.0.1"
 		if err := forward.Init(); !IsPortBusyError(err) {
 			forward.Stop()
 			t.Fatalf("Init() error = %v, want busy port", err)
@@ -53,7 +53,7 @@ func TestPortForwardListeners(t *testing.T) {
 		if forward.LocalPort() == 0 {
 			t.Fatal("Init did not resolve ephemeral port")
 		}
-		if got, want := forward.URLFor(""), fmt.Sprintf("http://127.0.0.1:%d", forward.LocalPort()); got != want {
+		if got, want := forward.URLFor(""), fmt.Sprintf("http://localhost:%d", forward.LocalPort()); got != want {
 			t.Fatalf("URLFor = %q, want %q", got, want)
 		}
 	})

@@ -114,11 +114,6 @@ func newPortForward(
 // run creates and runs the port-forward connection.
 // When the connection is established it blocks until Stop() is called.
 func (pf *PortForward) run() error {
-	// Use one loopback address for both the listener and URL. Client-go
-	// otherwise accepts a partial localhost bind, which may route the browser elsewhere.
-	if pf.host == "localhost" {
-		pf.host = "127.0.0.1"
-	}
 	dialer := pf.dialer
 	if dialer == nil {
 		transport, upgrader, err := spdy.RoundTripperFor(pf.config)
