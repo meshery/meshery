@@ -195,12 +195,17 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 		arrAPIResources = append(arrAPIResources, res)
 	}
 	var crds []crdResponse
+	var errs []error
 	for _, content := range contents {
 		extractedCRDs, err := getCRDsFromManifest(string(content), arrAPIResources)
 		if err != nil {
-			return nil, err
+			errs = append(errs, err)
+			continue
 		}
 		crds = append(crds, extractedCRDs...)
+	}
+	if len(errs) > 0 {
+		return nil, errors.Join(errs...)
 	}
 	components := make([]component.ComponentDefinition, 0)
 	for _, crd := range crds {
@@ -275,12 +280,12 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) ([]crdRespon
 	res := make([]crdResponse, 0)
 	manifest, err = getResolvedManifest(manifest)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to resolve manifest: %w", err)
 	}
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to extract cue json from manifest: %w", err)
 	}
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
 	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
