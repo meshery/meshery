@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -39,6 +40,39 @@ func newConnectionDefTestDB(t *testing.T) *database.Handler {
 		t.Fatalf("failed to auto migrate connection definition and registry: %v", err)
 	}
 	return dbHandler
+}
+
+func TestUpdateConnectionDefinition(t *testing.T) {
+	db := newConnectionDefTestDB(t)
+	h := &Handler{config: &models.HandlerConfig{}, log: newTestLogger(t), dbHandler: db}
+	id := uuid.Must(uuid.NewV4())
+	put := func(id uuid.UUID, body string) *httptest.ResponseRecorder {
+		req := httptest.NewRequest(http.MethodPut, "/api/registry/connections/"+id.String(), strings.NewReader(body))
+		req = mux.SetURLVars(req, map[string]string{"connectionDefinitionId": id.String()})
+		rw := httptest.NewRecorder()
+		h.UpdateConnectionDefinition(rw, req, nil, nil, nil)
+		return rw
+	}
+
+	rw := put(id, `{"name":"ghost"}`)
+	require.Equal(t, http.StatusNotFound, rw.Code, rw.Body.String())
+	var count int64
+	require.NoError(t, db.Model(&connectionv1beta3.ConnectionDefinition{}).Count(&count).Error)
+	assert.Zero(t, count)
+
+	original := connectionv1beta3.ConnectionDefinition{ID: id, Name: "original"}
+	require.NoError(t, db.Create(&original).Error)
+	require.NoError(t, db.First(&original, "id = ?", id).Error)
+	for _, body := range []string{`{"name":"updated"}`, `{"name":"updated","createdAt":"2000-01-01T00:00:00Z"}`} {
+		rw = put(id, body)
+		require.Equal(t, http.StatusOK, rw.Code, rw.Body.String())
+		var stored, response connectionv1beta3.ConnectionDefinition
+		require.NoError(t, db.First(&stored, "id = ?", id).Error)
+		require.NoError(t, json.Unmarshal(rw.Body.Bytes(), &response))
+		assert.Equal(t, "updated", stored.Name)
+		assert.True(t, original.CreatedAt.Equal(stored.CreatedAt))
+		assert.True(t, original.CreatedAt.Equal(response.CreatedAt))
+	}
 }
 
 // TestDeleteConnectionDefinition_InvalidUUID verifies that DeleteConnectionDefinition returns
