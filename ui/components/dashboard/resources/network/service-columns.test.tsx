@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
 vi.mock('../../../../utils/k8s-utils', () => ({
   getStatus: (v: any) => `STATUS:${v}`,
