@@ -848,6 +848,45 @@ func TestValidId_MultiPage(t *testing.T) {
 			t.Errorf("ValidId made %d requests, want 2", requests)
 		}
 	})
+
+	t.Run("full page with a malformed entry still paginates", func(t *testing.T) {
+		requests := 0
+		manyIDs := make([]string, 9999)
+		for i := range manyIDs {
+			manyIDs[i] = fmt.Sprintf("10000000-0000-4000-8000-%012d", i)
+		}
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			requests++
+			page := r.URL.Query().Get("page")
+			w.Header().Set("Content-Type", "application/json")
+			switch page {
+			case "":
+				patterns := make([]string, len(manyIDs))
+				for i, id := range manyIDs {
+					patterns[i] = fmt.Sprintf(`{"id":%q}`, id)
+				}
+				patterns = append(patterns, `{"name":"entry without an id"}`)
+				_, _ = fmt.Fprintf(w, `{"patterns":[%s]}`, strings.Join(patterns, ","))
+			case "1":
+				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}]}`, idA)
+			default:
+				_, _ = fmt.Fprintf(w, `{"patterns":[]}`)
+			}
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+
+		gotID, gotIsID, err := ValidId(server.URL, "dc", "pattern")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if gotID != idA || !gotIsID {
+			t.Errorf("ValidId got = (%q, %v), want (%q, true)", gotID, gotIsID, idA)
+		}
+		if requests != 2 {
+			t.Errorf("ValidId made %d requests, want 2", requests)
+		}
+	})
 }
 
 func TestGetID_Pagination(t *testing.T) {
@@ -867,6 +906,63 @@ func TestGetID_Pagination(t *testing.T) {
 			_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q},{"id":%q}],"totalCount":3}`, id1, id2)
 		case "1":
 			_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}],"totalCount":3}`, id3)
+		default:
+			_, _ = fmt.Fprintf(w, `{"patterns":[],"totalCount":3}`)
+		}
+	}))
+	defer server.Close()
+	setupAuthenticatedContext(t, server.URL)
+
+	ids, err := GetID(server.URL, "pattern")
+	if err != nil {
+		t.Fatalf("GetID returned unexpected error: %v", err)
+	}
+	wantIDs := []string{id1, id2, id3}
+	if !reflect.DeepEqual(ids, wantIDs) {
+		t.Errorf("GetID = %v, want %v", ids, wantIDs)
+	}
+	if requests != 2 {
+		t.Errorf("GetID made %d requests, want 2", requests)
+	}
+}
+
+func TestGetID_PageLimitReturnsError(t *testing.T) {
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = fmt.Fprintf(w, `{"patterns":[{"id":"11111111-0000-4000-8000-%012d"}],"totalCount":600000}`, requests)
+	}))
+	defer server.Close()
+	setupAuthenticatedContext(t, server.URL)
+
+	_, err := GetID(server.URL, "pattern")
+	if err == nil {
+		t.Fatalf("expected incomplete-lookup error, got nil")
+	}
+	AssertMeshkitErrorsEqual(t, err, ErrIDLookupIncomplete(600000, 50))
+	if requests != 50 {
+		t.Errorf("GetID made %d requests, want 50", requests)
+	}
+}
+
+func TestGetID_DeduplicatesIDs(t *testing.T) {
+	const (
+		id1 = "11111111-0000-4000-8000-000000000001"
+		id2 = "22222222-0000-4000-8000-000000000002"
+		id3 = "33333333-0000-4000-8000-000000000003"
+	)
+
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		page := r.URL.Query().Get("page")
+		w.Header().Set("Content-Type", "application/json")
+		switch page {
+		case "":
+			_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q},{"id":%q}],"totalCount":3}`, id1, id2)
+		case "1":
+			_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q},{"id":%q}],"totalCount":3}`, id2, id3)
 		default:
 			_, _ = fmt.Fprintf(w, `{"patterns":[],"totalCount":3}`)
 		}

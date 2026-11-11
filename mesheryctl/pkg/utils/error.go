@@ -84,6 +84,7 @@ var (
 	ErrDockerComposeStopCode          = "mesheryctl-1228"
 	ErrGitHubAPIResponseCode          = "mesheryctl-1255"
 	ErrAmbiguousIDCode                = "mesheryctl-1256"
+	ErrIDLookupIncompleteCode         = "mesheryctl-1257"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -486,6 +487,16 @@ func ErrAmbiguousID(prefix string, matches []string) error {
 		[]string{fmt.Sprintf("%q matches %d IDs, including: %s", prefix, len(matches), strings.Join(matches[:min(10, len(matches))], ", "))},
 		[]string{"The provided ID prefix is shared by more than one item."},
 		[]string{"Provide more characters of the ID, or the full ID."})
+}
+
+// ErrIDLookupIncomplete reports that a paginated ID lookup stopped before
+// fetching every item the server reported, so the returned list may be incomplete.
+func ErrIDLookupIncomplete(total, fetched int64) error {
+	return errors.New(ErrIDLookupIncompleteCode, errors.Alert,
+		[]string{"ID lookup incomplete"},
+		[]string{fmt.Sprintf("fetched %d of %d IDs; the ID list may be incomplete", fetched, total)},
+		[]string{"The server reported more items than mesheryctl could fetch within the page limit."},
+		[]string{"Provide the full ID instead of a short prefix, or retry the command."})
 }
 
 func ErrAttachAuthToken(err error) error {

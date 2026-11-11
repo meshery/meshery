@@ -652,9 +652,13 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 	}
 	configType := configuration + "s"
 	var idList []string
+	seen := map[string]bool{}
 
 	const pageSize = 10000
 	const maxPages = 50
+
+	var totalCount int64
+	var hasTotalCount bool
 
 	for page := 0; page < maxPages; page++ {
 		var url string
@@ -702,38 +706,41 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 			if page == 0 {
 				return idList, ErrNotFound(errors.New("no results found"))
 			}
-			break
+			return idList, ErrInvalidAPIResponse(errors.New("expected an array of results"))
 		}
 
-		pageItemsCount := 0
 		for _, config := range configs {
 			m, ok := config.(map[string]interface{})
 			if !ok {
 				continue
 			}
 			id, ok := m["id"].(string)
-			if !ok || id == "" {
+			if !ok || id == "" || seen[id] {
 				continue
 			}
+			seen[id] = true
 			idList = append(idList, id)
-			pageItemsCount++
 		}
 
-		totalCount, hasTotalCount := parseTotalCount(dat)
+		totalCount, hasTotalCount = parseTotalCount(dat)
 		if hasTotalCount {
-			if int64(len(idList)) >= totalCount || pageItemsCount == 0 {
+			if int64(len(idList)) >= totalCount || len(configs) == 0 {
 				break
 			}
-		} else {
-			if pageItemsCount < pageSize {
-				break
-			}
+		} else if len(configs) < pageSize {
+			break
 		}
+	}
+
+	if hasTotalCount && int64(len(idList)) < totalCount {
+		return idList, ErrIDLookupIncomplete(totalCount, int64(len(idList)))
 	}
 
 	return idList, nil
 }
 
+// parseTotalCount reads the total item count from a paginated list response,
+// accepting both the current "totalCount" field and the legacy "total_count" field.
 func parseTotalCount(dat map[string]interface{}) (int64, bool) {
 	for _, key := range []string{"totalCount", "total_count"} {
 		if v, ok := dat[key]; ok && v != nil {
