@@ -200,10 +200,22 @@ describe('parseDiskSpace / parseRam (parseUnitsOfBytes)', () => {
     expect(parseRam('1G')).toBe(1_000_000_000);
   });
 
+  it('parses the Kubernetes lowercase k suffix for node memory', () => {
+    expect(parseRam('1k')).toBe(1000);
+    expect(parseDiskSpace('1k')).toBe(1000);
+    expect(parseRam('16777217k')).toBe(16_777_217_000);
+    expect(getResourceStr(parseRam('16777217k'), 'memory')).toBe('15.6Gi');
+  });
+
   it('parses binary-suffix bytes', () => {
     expect(parseRam('1Ki')).toBe(1024);
     expect(parseRam('1Mi')).toBe(1024 * 1024);
     expect(parseRam('1Gi')).toBe(1024 ** 3);
+  });
+
+  it('rejects the invalid lowercase ki binary suffix', () => {
+    expect(parseRam('1ki')).toBeNaN();
+    expect(parseDiskSpace('1ki')).toBeNaN();
   });
 
   it('parses exponent notation', () => {
