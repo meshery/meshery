@@ -710,11 +710,12 @@ func TestValidId_MultiPage(t *testing.T) {
 			requests++
 			page := r.URL.Query().Get("page")
 			w.Header().Set("Content-Type", "application/json")
-			if page == "" {
+			switch page {
+			case "":
 				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}],"totalCount":2}`, idA)
-			} else if page == "1" {
+			case "1":
 				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}],"totalCount":2}`, idD)
-			} else {
+			default:
 				_, _ = fmt.Fprintf(w, `{"patterns":[],"totalCount":2}`)
 			}
 		}))
@@ -737,11 +738,12 @@ func TestValidId_MultiPage(t *testing.T) {
 			requests++
 			page := r.URL.Query().Get("page")
 			w.Header().Set("Content-Type", "application/json")
-			if page == "" {
+			switch page {
+			case "":
 				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q},{"id":%q}],"totalCount":3}`, idB, idC)
-			} else if page == "1" {
+			case "1":
 				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}],"totalCount":3}`, idA)
-			} else {
+			default:
 				_, _ = fmt.Fprintf(w, `{"patterns":[],"totalCount":3}`)
 			}
 		}))
@@ -766,11 +768,12 @@ func TestValidId_MultiPage(t *testing.T) {
 			requests++
 			page := r.URL.Query().Get("page")
 			w.Header().Set("Content-Type", "application/json")
-			if page == "" {
+			switch page {
+			case "":
 				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}],"total_count":2}`, idA)
-			} else if page == "1" {
+			case "1":
 				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}],"total_count":2}`, idD)
-			} else {
+			default:
 				_, _ = fmt.Fprintf(w, `{"patterns":[],"total_count":2}`)
 			}
 		}))
