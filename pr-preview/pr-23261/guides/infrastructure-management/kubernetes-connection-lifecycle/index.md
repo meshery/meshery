@@ -54,7 +54,10 @@ namespace `meshery`, serves every operator-mode connection to that cluster -
 several kubeconfig contexts naming the same API server, several users of one
 Meshery Server, and other Meshery Servers managing the same cluster. Meshery
 recognizes a cluster by its Kubernetes server ID (the `kube-system` namespace
-UID), so different API server addresses for one cluster count as one.
+UID), so different API server addresses for one cluster count as one when
+each context was imported while the cluster was reachable. A context imported
+while its cluster was unreachable carries no server ID and is matched only by
+its exact API server address.
 
 Because of that, Meshery manages the Operator at cluster scope:
 

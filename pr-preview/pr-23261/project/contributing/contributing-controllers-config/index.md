@@ -307,7 +307,9 @@ release. The cluster-scoped rules live in `server/models/operator_cluster_lifecy
   calls through `OperatorTracker.withOperatorClusterLock`, and
   `DeployUndeployedOperators` re-reads the operator's live status inside it, so
   a connection that waited behind another's install sees it rather than
-  repeating it. The lock is per cluster, never global, and is always the
+  repeating it. Only a re-read showing the operator present (`Deployed` or
+  `Deploying`) skips the install; an unreadable status (`Unknown`, as a
+  transient API error yields) still attempts it. The lock is per cluster, never global, and is always the
   innermost lock taken (the FSM holds `setupLock` around the connect chain):
   `withOperatorClusterLock` wraps only the Helm calls and releases the lock even
   if one panics, and consumer lookups, logging and event emission happen before

@@ -346,7 +346,7 @@ Meshery UI exposes this configuration surface in two places today, with a broade
 
 - **Deployment mode at import** - the connection wizard lets you choose Operator or Embedded per kubeconfig context when [importing a cluster](/pr-preview/pr-23261/guides/infrastructure-management/registering-a-connection/#meshsync-deployment-mode).
 - **Deployment mode per connection** - the Connections table shows each Kubernetes connection's current mode. Open a connection's action menu, choose **Configure**, select the other mode, and **Apply**; Meshery tears down and re-establishes discovery for that connection in the new mode.
-- **Operator switch and diagnostics in Settings** - the Meshery Operator section of **Settings** provides a per-cluster on/off switch for the Operator, ad hoc connectivity tests for the Operator, Broker (NATS), and MeshSync, and database reset/flush actions.
+- **Diagnostics in Settings** - **Settings** provides ad hoc connectivity tests for the Operator, Broker (NATS), and MeshSync, and database reset/flush actions. Meshery UI has no Operator on/off switch; uninstalling the Operator is the cluster-wide GraphQL request described in [Configuring Meshery Operator](#configuring-meshery-operator).
 
 **Landing in an upcoming release** (tracked in [meshery/meshery#20487](https://github.com/meshery/meshery/issues/20487); the names below follow the implementation plan recorded on that issue and may evolve until it ships):
 

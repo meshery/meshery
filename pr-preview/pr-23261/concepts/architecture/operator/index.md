@@ -126,7 +126,7 @@ ServiceAccount to the `meshery-metrics-reader` ClusterRole and scrape the
 ## Operator FAQs
 
 ### When is Meshery Operator deployed and when is it deleted?
-As a Kubernetes custom controller, Meshery Operator is provisioned and deprovisioned when Meshery Server is connected to or disconnected from Kubernetes cluster. Meshery Server connections to Kubernetes clusters are controlled using Meshery Server clients: `mesheryctl` or Meshery UI.  This behavior described below is consistent whether your Meshery deployment is using Docker or Kubernetes as the platform to host the Meshery deployment.
+As a Kubernetes custom controller, Meshery Operator is provisioned when Meshery Server connects to a Kubernetes cluster in operator mode and the cluster does not have it yet. Disconnecting does not deprovision it (see **Meshery UI** below). Meshery Server connections to Kubernetes clusters are controlled using Meshery Server clients: `mesheryctl` or Meshery UI.  This behavior described below is consistent whether your Meshery deployment is using Docker or Kubernetes as the platform to host the Meshery deployment.
 
 **Meshery CLI**
 
@@ -134,7 +134,7 @@ As a Kubernetes custom controller, Meshery Operator is provisioned and deprovisi
 
 **Meshery UI**
 
-Meshery UI offers more granular control over the deployment of Meshery Operator in that you can remove Meshery Operator from a Kubernetes cluster without disconnecting Meshery Server from the Kubernetes cluster. You can control the deployment of Meshery Operator using the on/off switch found in the Meshery Operator section of  Settings.
+Meshery Operator is installed once per cluster and shared by every connection to it, so disconnecting, deleting, or switching a connection to embedded mode leaves it installed. Removing it from a cluster without disconnecting is an explicit, cluster-wide request; see [One Operator per cluster](/pr-preview/pr-23261/guides/infrastructure-management/kubernetes-connection-lifecycle/#one-operator-per-cluster-shared-by-every-connection).
 
 ### Does the Meshery Operator use an SDK or framework?
 Yes. Meshery Operator is built on [Kubebuilder](https://book.kubebuilder.io)
