@@ -459,3 +459,55 @@ func TestMeshSyncResources_OrderInputSanitization(t *testing.T) {
 		}
 	}
 }
+
+// TestDeleteMeshSyncResource_RemovesChildRows verifies that deleting a resource
+// through the API also removes the rows that share its id: object meta, spec,
+// status, labels and annotations. Before the fix only the parent row was
+// deleted, and the orphaned labels reattached to the resource when MeshSync
+// discovered it again under the same deterministic id.
+func TestDeleteMeshSyncResource_RemovesChildRows(t *testing.T) {
+	h, provider, db := newMeshSyncTestFixture(t)
+
+	resID := base64.StdEncoding.EncodeToString([]byte("test-cluster.Pod.v1.default.web"))
+	rows := []interface{}{
+		&model.KubernetesResourceObjectMeta{ID: resID, Name: "web", UID: resID},
+		&model.KubernetesResourceSpec{ID: resID, Attribute: `{"containers":[]}`},
+		&model.KubernetesResourceStatus{ID: resID, Attribute: `{"phase":"Running"}`},
+		&model.KubernetesKeyValue{ID: resID, UniqueID: resID + "-label", Kind: model.KindLabel, Key: "app", Value: "web"},
+		&model.KubernetesKeyValue{ID: resID, UniqueID: resID + "-annotation", Kind: model.KindAnnotation, Key: "owner", Value: "team-a"},
+	}
+	for _, row := range rows {
+		if err := db.Create(row).Error; err != nil {
+			t.Fatalf("failed to seed %T: %v", row, err)
+		}
+	}
+	if err := db.Table("kubernetes_resources").Create(&model.KubernetesResource{ID: resID, ClusterID: "test-cluster"}).Error; err != nil {
+		t.Fatalf("failed to seed resource: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/meshsync/resources/"+resID, nil)
+	req = mux.SetURLVars(req, map[string]string{"id": resID})
+	rec := httptest.NewRecorder()
+
+	h.DeleteMeshSyncResource(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+
+	for name, table := range map[string]interface{}{
+		"resource":           &model.KubernetesResource{},
+		"object meta":        &model.KubernetesResourceObjectMeta{},
+		"spec":               &model.KubernetesResourceSpec{},
+		"status":             &model.KubernetesResourceStatus{},
+		"labels/annotations": &model.KubernetesKeyValue{},
+	} {
+		var n int64
+		if err := db.Model(table).Where("id = ?", resID).Count(&n).Error; err != nil {
+			t.Fatalf("counting %s rows: %v", name, err)
+		}
+		if n != 0 {
+			t.Errorf("%s rows left after delete: got %d, want 0", name, n)
+		}
+	}
+}
