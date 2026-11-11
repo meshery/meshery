@@ -646,42 +646,112 @@ func StringInSlice(str string, slice []string) bool {
 
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
 func GetID(mesheryServerUrl, configuration string) ([]string, error) {
-	url := mesheryServerUrl + "/api/" + configuration + "?"
+	populatePrefix := ""
 	if configuration == "pattern" {
-		url += "populate=pattern_file&"
+		populatePrefix = "populate=pattern_file&"
 	}
-	url += "pagesize=10000"
 	configType := configuration + "s"
 	var idList []string
-	req, err := NewRequest("GET", url, nil)
-	if err != nil {
-		return idList, err
+
+	const pageSize = 10000
+	const maxPages = 50
+
+	for page := 0; page < maxPages; page++ {
+		var url string
+		if page == 0 {
+			url = fmt.Sprintf("%s/api/%s?%spagesize=%d", mesheryServerUrl, configuration, populatePrefix, pageSize)
+		} else {
+			url = fmt.Sprintf("%s/api/%s?%spagesize=%d&page=%d", mesheryServerUrl, configuration, populatePrefix, pageSize, page)
+		}
+
+		req, err := NewRequest("GET", url, nil)
+		if err != nil {
+			return idList, err
+		}
+
+		res, err := MakeRequest(req)
+		if err != nil {
+			return idList, err
+		}
+
+		body, err := io.ReadAll(res.Body)
+		_ = res.Body.Close()
+		if err != nil {
+			return idList, ErrReadResponseBody(err)
+		}
+
+		var dat map[string]interface{}
+		if err = encoding.Unmarshal(body, &dat); err != nil {
+			return idList, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
+		}
+		if dat == nil {
+			if page == 0 {
+				return idList, ErrNotFound(errors.New("no data found"))
+			}
+			break
+		}
+		if dat[configType] == nil {
+			if page == 0 {
+				return idList, ErrNotFound(errors.New("no results found"))
+			}
+			break
+		}
+
+		configs, ok := dat[configType].([]interface{})
+		if !ok {
+			if page == 0 {
+				return idList, ErrNotFound(errors.New("no results found"))
+			}
+			break
+		}
+
+		pageItemsCount := 0
+		for _, config := range configs {
+			m, ok := config.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			id, ok := m["id"].(string)
+			if !ok || id == "" {
+				continue
+			}
+			idList = append(idList, id)
+			pageItemsCount++
+		}
+
+		totalCount, hasTotalCount := parseTotalCount(dat)
+		if hasTotalCount {
+			if int64(len(idList)) >= totalCount || pageItemsCount == 0 {
+				break
+			}
+		} else {
+			if pageItemsCount < pageSize {
+				break
+			}
+		}
 	}
 
-	res, err := MakeRequest(req)
-	if err != nil {
-		return idList, err
-	}
-
-	defer func() { _ = res.Body.Close() }()
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return idList, ErrReadResponseBody(err)
-	}
-	var dat map[string]interface{}
-	if err = encoding.Unmarshal(body, &dat); err != nil {
-		return idList, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
-	}
-	if dat == nil {
-		return idList, ErrNotFound(errors.New("no data found"))
-	}
-	if dat[configType] == nil {
-		return idList, ErrNotFound(errors.New("no results found"))
-	}
-	for _, config := range dat[configType].([]interface{}) {
-		idList = append(idList, config.(map[string]interface{})["id"].(string))
-	}
 	return idList, nil
+}
+
+func parseTotalCount(dat map[string]interface{}) (int64, bool) {
+	for _, key := range []string{"totalCount", "total_count"} {
+		if v, ok := dat[key]; ok && v != nil {
+			switch val := v.(type) {
+			case float64:
+				return int64(val), true
+			case int:
+				return int64(val), true
+			case int64:
+				return val, true
+			case string:
+				if parsed, err := strconv.ParseInt(val, 10, 64); err == nil {
+					return parsed, true
+				}
+			}
+		}
+	}
+	return 0, false
 }
 
 // GetName returns a of name:id from meshery server endpoint /api/{configurations}
