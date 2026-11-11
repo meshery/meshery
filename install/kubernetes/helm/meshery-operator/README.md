@@ -60,25 +60,35 @@ separate identity for it:
 | ClusterRole | `meshery-meshsync-role` |
 | ClusterRoleBinding | `meshery-meshsync-rolebinding` |
 
-and passes the ServiceAccount name to the manager as
-`MESHSYNC_SERVICE_ACCOUNT`, which the operator uses for the MeshSync
-Deployment. `meshery-meshsync-role` grants `list`/`watch` on every resource -
+`meshery-meshsync-role` grants `list`/`watch` on every resource -
 MeshSync's watch-list is user-configurable and includes CRDs and
 cluster-scoped kinds - plus `get` on its own `MeshSync` resource, Namespaces
 and `pods/log`. It does not wildcard `get`, because `get` on `*` also
-authorizes the exec, attach, port-forward and proxy subresources. Add rules
-(for example `create` on `pods/exec` for Meshery's interactive terminal) with
+authorizes the exec, attach, port-forward and proxy subresources (`get` on
+`nodes/proxy` reaches the kubelet API of every node). Add rules (for example
+`create` on `pods/exec` for Meshery's interactive terminal) with
 `meshsync.rbac.extraRules`.
 
-**Compatibility with operator 1.0.6 and earlier.** Those releases ignore
-`MESHSYNC_SERVICE_ACCOUNT` and run MeshSync as `meshery-operator`. While
-`meshsync.rbac.bindOperatorServiceAccount` is `true` (the default), the chart
-also binds the read-only `meshery-meshsync-role` to `meshery-operator`
-(`meshery-meshsync-compat-rolebinding`), so MeshSync can read the cluster under
-either operator. The operator ServiceAccount gains no write access. The
-default flips to `false` in the change that moves `image.tag` to the first
-operator release that honors `MESHSYNC_SERVICE_ACCOUNT`; set it to `false`
-earlier only if you run such an operator.
+**Which ServiceAccount MeshSync runs as** is set by one switch,
+`meshsync.serviceAccount.dedicated`:
+
+- `false` (the default while the chart deploys operator 1.0.6): the chart does
+  not set `MESHSYNC_SERVICE_ACCOUNT`, and the operator runs MeshSync as
+  `meshery-operator` (1.0.6 hard-codes it; later releases default to it). The
+  chart binds the read-only `meshery-meshsync-role` to `meshery-operator`
+  (`meshery-meshsync-compat-rolebinding`); the operator ServiceAccount gains
+  reads only, never writes. MeshSync, sharing that ServiceAccount, still holds
+  the operator's write permissions, as it has since 1.0.0.
+- `true`: the chart passes `MESHSYNC_SERVICE_ACCOUNT=<meshsync.serviceAccount.name>`
+  to the manager and drops the compatibility binding. Requires an operator
+  release that includes meshery/meshery-operator#954; with an older operator
+  MeshSync would stay on `meshery-operator` without read access.
+
+The default flips to `true` in the change that moves `image.tag` to the first
+operator release that includes meshery/meshery-operator#954. Until then,
+leaving it `false` with a newer operator is safe: MeshSync simply keeps running
+as `meshery-operator` with read-only access. The ServiceAccount must exist in
+the `MeshSync` resource's namespace, which is the release namespace.
 
 ## Broker exposure
 
@@ -173,10 +183,10 @@ to opt out.
 | meshery-broker.fullnameOverride | string | `"meshery-broker"` |  |
 | meshery-meshsync.enabled | bool | `true` |  |
 | meshery-meshsync.fullnameOverride | string | `"meshery-meshsync"` |  |
-| meshsync.rbac.bindOperatorServiceAccount | bool | `true` | Also bind the read-only `meshery-meshsync-role` to `meshery-operator`, which operator releases up to 1.0.6 run MeshSync as; flips to `false` with the bump to the first operator release that honors `MESHSYNC_SERVICE_ACCOUNT` (see [MeshSync identity and RBAC](#meshsync-identity-and-rbac)) |
 | meshsync.rbac.extraRules | list | `[]` | Rules appended to the otherwise read-only `meshery-meshsync-role`, e.g. `create` on `pods/exec` for the interactive terminal |
 | meshsync.serviceAccount.create | bool | `true` | Create the MeshSync ServiceAccount; when `false` it must already exist in the release namespace |
-| meshsync.serviceAccount.name | string | `"meshery-meshsync"` | ServiceAccount the operator runs MeshSync under, passed to the manager as `MESHSYNC_SERVICE_ACCOUNT` |
+| meshsync.serviceAccount.dedicated | bool | `false` | Run MeshSync as `meshsync.serviceAccount.name` by passing `MESHSYNC_SERVICE_ACCOUNT` to the operator (needs an operator with meshery/meshery-operator#954); while `false`, the read-only role is bound to `meshery-operator` instead (see [MeshSync identity and RBAC](#meshsync-identity-and-rbac)) |
+| meshsync.serviceAccount.name | string | `"meshery-meshsync"` | MeshSync's ServiceAccount (DNS-1123 name), bound to the read-only `meshery-meshsync-role` |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
 | podAnnotations | object | `{}` |  |
