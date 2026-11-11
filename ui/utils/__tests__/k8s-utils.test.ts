@@ -294,11 +294,21 @@ describe('getStatus', () => {
     expect(getStatus(status)).toBe('Ready');
   });
 
-  it('returns false when most recent condition is not Ready', () => {
+  it('returns Ready when Ready condition is True regardless of its position in conditions array', () => {
     const status = JSON.stringify({
       conditions: [
         { type: 'Ready', status: 'True' },
-        { type: 'Available', status: 'False' },
+        { type: 'DiskPressure', status: 'False' },
+      ],
+    });
+    expect(getStatus(status)).toBe('Ready');
+  });
+
+  it('returns false when Ready condition is not present in conditions array', () => {
+    const status = JSON.stringify({
+      conditions: [
+        { type: 'DiskPressure', status: 'False' },
+        { type: 'MemoryPressure', status: 'False' },
       ],
     });
     expect(getStatus(status)).toBe(false);
