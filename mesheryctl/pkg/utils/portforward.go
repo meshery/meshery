@@ -3,7 +3,6 @@ package utils
 import (
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -115,6 +114,11 @@ func newPortForward(
 // run creates and runs the port-forward connection.
 // When the connection is established it blocks until Stop() is called.
 func (pf *PortForward) run() error {
+	// Use one loopback address for both the listener and URL. Client-go
+	// otherwise accepts a partial localhost bind, which may route the browser elsewhere.
+	if pf.host == "localhost" {
+		pf.host = "127.0.0.1"
+	}
 	dialer := pf.dialer
 	if dialer == nil {
 		transport, upgrader, err := spdy.RoundTripperFor(pf.config)
@@ -174,11 +178,6 @@ func (pf *PortForward) Init() error {
 	// 2) Return an err, causing a receive `<-failure`
 	select {
 	case <-pf.readyCh:
-		// client-go considers localhost ready when either address family binds.
-		if IsPortBusyError(errors.New(pf.listenerErrors.String())) {
-			pf.Stop()
-			return fmt.Errorf("local port %d is already in use on a localhost address: %s", pf.localPort, strings.TrimSpace(pf.listenerErrors.String()))
-		}
 		log.Debug("Port forward initialized")
 		ports, err := pf.forwarder.GetPorts()
 		if err != nil {

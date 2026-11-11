@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"net"
 	"net/http"
 	"testing"
 	"time"
@@ -29,38 +30,30 @@ func (c stubConnection) RemoveStreams(...httpstream.Stream) {}
 
 func TestPortForwardListeners(t *testing.T) {
 	newForward := func(port int) *PortForward {
-		return &PortForward{host: "localhost", namespace: "meshery", podName: "meshery-test", localPort: port, remotePort: 8080, stopCh: make(chan struct{}, 1), readyCh: make(chan struct{}), dialer: stubDialer{}}
+		return &PortForward{host: "localhost", namespace: "meshery", podName: "meshery-test", localPort: port, remotePort: 8080, stopCh: make(chan struct{}), readyCh: make(chan struct{}), dialer: stubDialer{}}
 	}
-
-	for _, address := range []struct {
-		name string
-		addr string
-	}{
-		{name: "IPv4", addr: "listen tcp4 127.0.0.1:9081: bind: address already in use"},
-		{name: "IPv6", addr: "listen tcp6 [::1]:9081: bind: address already in use"},
-	} {
-		t.Run(address.name+" conflict", func(t *testing.T) {
-			forward := newForward(9081)
-			// Model client-go reporting a bind conflict for one localhost
-			// address while the other address made the forward ready.
-			_, _ = fmt.Fprintf(&forward.listenerErrors, "unable to create listener: Error %s", address.addr)
-			if err := forward.Init(); !IsPortBusyError(err) {
-				t.Fatalf("Init() error = %v, want busy port", err)
-			}
-		})
-	}
-
-	t.Run("IPv6 unavailable is non-fatal", func(t *testing.T) {
+	t.Run("occupied port", func(t *testing.T) {
+		ln, err := net.Listen("tcp4", "127.0.0.1:0")
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer ln.Close()
+		forward := newForward(ln.Addr().(*net.TCPAddr).Port)
+		if err := forward.Init(); !IsPortBusyError(err) {
+			forward.Stop()
+			t.Fatalf("Init() error = %v, want busy port", err)
+		}
+	})
+	t.Run("ephemeral port", func(t *testing.T) {
 		forward := newForward(0)
-		_, _ = fmt.Fprintln(&forward.listenerErrors, "unable to create listener: Error listen tcp6 [::1]:0: bind: address family not supported")
 		if err := forward.Init(); err != nil {
-			t.Fatalf("Init() error = %v, want IPv4-only startup to succeed", err)
+			t.Fatal(err)
 		}
 		defer forward.Stop()
 		if forward.LocalPort() == 0 {
 			t.Fatal("Init did not resolve ephemeral port")
 		}
-		if got, want := forward.URLFor(""), fmt.Sprintf("http://localhost:%d", forward.LocalPort()); got != want {
+		if got, want := forward.URLFor(""), fmt.Sprintf("http://127.0.0.1:%d", forward.LocalPort()); got != want {
 			t.Fatalf("URLFor = %q, want %q", got, want)
 		}
 	})
