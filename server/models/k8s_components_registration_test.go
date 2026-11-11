@@ -16,6 +16,7 @@ package models
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -423,4 +424,83 @@ func TestRegisterComponents_StaleRegistrationDoesNotClobberNewRegistration(t *te
 		s, _ := cg.GetContextRegistrationStatus(ctxID)
 		return s == RegistrationComplete
 	}, 2*time.Second, 10*time.Millisecond, "registration 2 must successfully complete")
+}
+
+// TestRegisterComponents_PartialRegistration verifies that when component registration
+// completes with partial warnings, the context status is tracked as RegistrationPartial,
+// stringifies to "partial", and allows subsequent re-registration attempts.
+func TestRegisterComponents_PartialRegistration(t *testing.T) {
+	log, err := logger.New("test", logger.Options{Format: logger.SyslogLogFormat, LogLevel: 0})
+	require.NoError(t, err)
+
+	cg := NewComponentsRegistrationHelper(log)
+	instID := core.Uuid(uuid.Must(uuid.NewV4()))
+	connID := uuid.Must(uuid.NewV4()).String()
+	ctxID := "test-partial-ctx"
+	k8sCtx := &K8sContext{
+		ID:                ctxID,
+		Name:              "test-partial-cluster",
+		Server:            "https://k8s.example.com",
+		ConnectionID:      connID,
+		MesheryInstanceID: &instID,
+		Cluster: map[string]interface{}{
+			"name":   "test-cluster",
+			"server": "https://k8s.example.com",
+		},
+		Auth: map[string]interface{}{
+			"name": "test-user",
+		},
+	}
+
+	cg.UpdateContexts([]*K8sContext{k8sCtx})
+	status, exists := cg.GetContextRegistrationStatus(ctxID)
+	require.True(t, exists)
+	require.Equal(t, NotRegistered, status)
+
+	mockProv := &mockCompRegProvider{}
+	broadcaster := NewBroadcaster("test-broadcaster")
+	testUserID := uuid.Must(uuid.NewV4()).String()
+
+	partialFuncRan := make(chan struct{})
+	partialFunc := func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID core.Uuid, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error {
+		close(partialFuncRan)
+		return NewErrPartialRegistration(errors.New("manifest /openapi/v3/apis/faulty/v1 failed"))
+	}
+
+	cg.RegisterComponents([]*K8sContext{k8sCtx}, []K8sRegistrationFunction{partialFunc}, nil, broadcaster, mockProv, testUserID, false)
+
+	select {
+	case <-partialFuncRan:
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for partial registration function to run")
+	}
+
+	require.Eventually(t, func() bool {
+		s, _ := cg.GetContextRegistrationStatus(ctxID)
+		return s == RegistrationPartial
+	}, 2*time.Second, 10*time.Millisecond, "status must be RegistrationPartial when partial warnings occur")
+
+	status, _ = cg.GetContextRegistrationStatus(ctxID)
+	assert.Equal(t, RegistrationPartial, status)
+	assert.Equal(t, "partial", status.String())
+
+	// Verify that a RegistrationPartial context can be re-registered / retried
+	successRan := make(chan struct{})
+	successFunc := func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID core.Uuid, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error {
+		close(successRan)
+		return nil
+	}
+
+	cg.RegisterComponents([]*K8sContext{k8sCtx}, []K8sRegistrationFunction{successFunc}, nil, broadcaster, mockProv, testUserID, false)
+
+	select {
+	case <-successRan:
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for retry registration function to run on RegistrationPartial context")
+	}
+
+	require.Eventually(t, func() bool {
+		s, _ := cg.GetContextRegistrationStatus(ctxID)
+		return s == RegistrationComplete
+	}, 2*time.Second, 10*time.Millisecond, "status must transition from RegistrationPartial to RegistrationComplete on successful retry")
 }
