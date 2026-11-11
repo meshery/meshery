@@ -98,8 +98,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	}
 	//if want to log we can use the above function in future to log the error in terminal.
 
-	_ = (*provider).PersistSystemEvent(*event)
-	ec.Publish(userUUID, event)
+	_ = models.PersistAndPublishSystemEvent(*provider, ec, userUUID, event)
 	return
 }
 
@@ -245,11 +244,11 @@ const namespacedKey = "isNamespaced"
 func getResolvedManifest(manifest string) (string, error) {
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
-	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
-	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	if err != nil {
 		return "", err
 	}
+	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
+	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	resol := manifests.ResolveOpenApiRefs{}
 	cache := make(map[string][]byte)
 	resolved, err := resol.ResolveReferences([]byte(manifest), definitions, cache)
@@ -277,11 +276,11 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 	}
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
-	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
-	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	if err != nil {
 		return nil
 	}
+	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
+	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	for _, name := range arrAPIResources {
 		resource := strings.ToLower(name)
 		fields, err := definitions.Fields()

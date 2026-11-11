@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"path/filepath"
 	"strings"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -35,31 +34,38 @@ import (
 type filterListFlags struct {
 	Count    bool `json:"count" validate:"boolean"`
 	Page     int  `json:"page" validate:"gte=1"`
-	PageSize int  `json:"pageSize" validate:"gte=1"`
+	PageSize int  `json:"pagesize" validate:"gte=1"`
 	Verbose  bool `json:"verbose" validate:"boolean"`
 }
 
 var filterListFlagsProvided filterListFlags
 
+var listUsageMsg = "Usage: mesheryctl filter list [filter-name]\nRun 'mesheryctl filter list --help' to see detailed help message"
+
 var listCmd = &cobra.Command{
-	Use:   "list",
+	Use:   "list [filter-name]",
 	Short: "List filters",
 	Long: `Display list of all available filter files.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/filter/list`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/filter/list`,
 	Example: `
-// List all WASM filter files present
-mesheryctl filter list	(maximum 25 filters)
+// List all WASM filter files present (maximum 25 filters)
+mesheryctl filter list
 
 // Search for filter
-mesheryctl filter list Test (maximum 25 filters)
+mesheryctl filter list Test
 
 // Search for filter with space
-mesheryctl filter list 'Test Filter' (maximum 25 filters)
+mesheryctl filter list 'Test Filter'
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &filterListFlagsProvided)
 	},
-	Args: cobra.MinimumNArgs(0),
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg))
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -102,7 +108,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			if utils.IsLocalProvider(provider) {
 				for _, v := range response.Filters {
 					FilterID := v.ID.String()
-					FilterName := v.Name
+					FilterName := utils.TrimFileExtension(v.Name)
 					CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
 					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
 					data = append(data, []string{FilterID, FilterName, CreatedAt, UpdatedAt})
@@ -118,7 +124,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 					} else {
 						owner = "null"
 					}
-					FilterName := v.Name
+					FilterName := utils.TrimFileExtension(v.Name)
 					CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
 					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
 					data = append(data, []string{FilterID, owner, FilterName, CreatedAt, UpdatedAt})
@@ -128,7 +134,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			}
 		} else if utils.IsLocalProvider(provider) {
 			for _, v := range response.Filters {
-				FilterName := strings.Trim(v.Name, filepath.Ext(v.Name))
+				FilterName := utils.TrimFileExtension(v.Name)
 				FilterID := utils.TruncateID(v.ID.String())
 				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
 				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
@@ -145,7 +151,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 				} else {
 					owner = "null"
 				}
-				FilterName := v.Name
+				FilterName := utils.TrimFileExtension(v.Name)
 				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
 				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
 				data = append(data, []string{FilterID, owner, FilterName, CreatedAt, UpdatedAt})

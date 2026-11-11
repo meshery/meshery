@@ -81,13 +81,9 @@ test.describe('User Preferences Page Tests', () => {
       await userPrefReq;
       await userPrefRes;
 
-      // Verify that state of switch changed
-      await page.waitForTimeout(2000);
-      if (wasChecked) {
-        await expect(prefSwitch).not.toBeChecked();
-      } else {
-        await expect(prefSwitch).toBeChecked();
-      }
+      // Verify that state of switch changed. toBeChecked() retries until the switch settles
+      // on the expected state, so no fixed sleep is needed.
+      await expect(prefSwitch).toBeChecked({ checked: !wasChecked });
     });
   }
 });

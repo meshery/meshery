@@ -33,7 +33,11 @@ components:
   colorIcon: extensions/models/aws-opensearchservice-controller/components/vpc-endpoint-access/icons/color/vpc-endpoint-access-color.svg
   whiteIcon: extensions/models/aws-opensearchservice-controller/components/vpc-endpoint-access/icons/white/vpc-endpoint-access-white.svg
   description: 
-components-count: 6
+- name: vpc-endpoint-access
+  colorIcon: extensions/models/aws-opensearchservice-controller/components/vpc-endpoint-access/icons/color/vpc-endpoint-access-color.svg
+  whiteIcon: extensions/models/aws-opensearchservice-controller/components/vpc-endpoint-access/icons/white/vpc-endpoint-access-white.svg
+  description: 
+components-count: 7
 relationships: 
 - type: "non-binding"
   kind: "edge"

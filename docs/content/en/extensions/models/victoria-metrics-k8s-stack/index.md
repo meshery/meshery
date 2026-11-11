@@ -117,7 +117,11 @@ components:
   colorIcon: extensions/models/victoria-metrics-k8s-stack/components/vm-distributed/icons/color/vm-distributed-color.svg
   whiteIcon: extensions/models/victoria-metrics-k8s-stack/components/vm-distributed/icons/white/vm-distributed-white.svg
   description: 
-components-count: 27
+- name: vt-agent
+  colorIcon: extensions/models/victoria-metrics-k8s-stack/components/vt-agent/icons/color/vt-agent-color.svg
+  whiteIcon: extensions/models/victoria-metrics-k8s-stack/components/vt-agent/icons/white/vt-agent-white.svg
+  description: 
+components-count: 28
 relationships: 
 relationship-count: 0
 featureList: [
