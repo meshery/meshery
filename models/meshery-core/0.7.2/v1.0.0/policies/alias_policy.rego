@@ -87,11 +87,17 @@ identify_relationship(rel_definition, design_file, policy_identifier) := identif
 	})
 }
 
+alias_is_annotation(relationship) if {
+	object_get_nested(relationship, ["metadata", "isAnnotation"], false) == true
+} else := false
+
 # add alias components for pending and identified
 relationship_side_effects(relationship, design_file, policy_identifier) := side_effects if {
 	policy_identifier == alias_policy_identifier
 
 	relationship.status in {"identified", "pending"}
+
+	is_annotation := alias_is_annotation(relationship)
 
 	side_effects := {action |
 		some selector in relationship.selectors
@@ -106,7 +112,7 @@ relationship_side_effects(relationship, design_file, policy_identifier) := side_
 			"component": {"kind": from.kind},
 			"model": from.model,
 			"displayName": displayName,
-			"metadata": {"isAnnotation": true},
+			"metadata": {"isAnnotation": is_annotation},
 		}
 
 		action := {

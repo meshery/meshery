@@ -5,9 +5,10 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // TestWalletPatching verifies that wallet relationships patch the child component's
@@ -354,15 +355,12 @@ func TestBindingPatching(t *testing.T) {
 	_ = subjectPatched // subject patching depends on match field orientation
 }
 
-// TestAliasSideEffects tests that alias relationships produce add-component
-// side effects when status is "identified".
-func TestAliasSideEffects(t *testing.T) {
-	p := &AliasPolicy{}
+// boolPtr returns a pointer to the given bool.
+func boolPtr(b bool) *bool { return &b }
 
-	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	aliasID, _ := uuid.FromString("00000000-0000-0000-0000-000000000099")
-
+func newTestContainerDeployment(deployID uuid.UUID) *component.ComponentDefinition {
 	deploy := &component.ComponentDefinition{
+		ID:             deployID,
 		Component:      component.Component{Kind: "Deployment"},
 		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
 		Configuration: map[string]interface{}{
@@ -377,11 +375,18 @@ func TestAliasSideEffects(t *testing.T) {
 			},
 		},
 	}
-	deploy.ID = deployID
+	return deploy
+}
 
+func newContainerAliasFixture(t *testing.T, metadata *relationship.RelationshipMetadata) (*pattern.PatternFile, *relationship.RelationshipDefinition, uuid.UUID) {
+	t.Helper()
+
+	deployID := uuid.Must(uuid.FromString("00000000-0000-0000-0000-000000000001"))
+	aliasID := uuid.Must(uuid.FromString("00000000-0000-0000-0000-000000000099"))
+
+	deploy := newTestContainerDeployment(deployID)
 	design := makePatternFile([]*component.ComponentDefinition{deploy}, nil)
 
-	// Alias relationship with status "identified" should produce add-component actions.
 	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "containers", "0"}}
 	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "template", "spec", "containers", "0"}}
 	relStatus := relationship.RelationshipDefinitionStatus("identified")
@@ -413,14 +418,27 @@ func TestAliasSideEffects(t *testing.T) {
 	}
 
 	rel := &relationship.RelationshipDefinition{
-		Kind:             relationship.Hierarchical,
-		RelationshipType: "parent",
-		SubType:          "alias",
-		Status:           &relStatus,
-		Model:            modelv1beta1.ModelReference{Name: "meshery-core"},
-		Selectors:        &selectorSet,
+		Kind:                 relationship.Hierarchical,
+		RelationshipType:     "parent",
+		SubType:              "alias",
+		Status:               &relStatus,
+		RelationshipMetadata: metadata,
+		Model:                modelv1beta1.ModelReference{Name: "meshery-core"},
+		Selectors:            &selectorSet,
 	}
-	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000030")
+	rel.ID = uuid.Must(uuid.FromString("00000000-0000-0000-0000-000000000030"))
+
+	return design, rel, aliasID
+}
+
+// TestAliasSideEffects tests that alias relationships produce add-component
+// side effects when status is "identified".
+func TestAliasSideEffects(t *testing.T) {
+	p := &AliasPolicy{}
+
+	design, rel, aliasID := newContainerAliasFixture(t, &relationship.RelationshipMetadata{
+		IsAnnotation: boolPtr(false),
+	})
 
 	actions := p.SideEffects(rel, design)
 	if len(actions) == 0 {
@@ -432,11 +450,171 @@ func TestAliasSideEffects(t *testing.T) {
 		if a.Op == AddComponentOp && a.Component != nil {
 			if a.Component.Component.Kind == "Container" {
 				found = true
+				if a.Component.ID != aliasID {
+					t.Errorf("Expected Container alias ID %s, got %s", aliasID, a.Component.ID)
+				}
+				if a.Component.DisplayName != "containers.0" {
+					t.Errorf("Expected Container alias DisplayName %q, got %q", "containers.0", a.Component.DisplayName)
+				}
+				if a.Component.Metadata.IsAnnotation {
+					t.Errorf("Expected standard Container alias Metadata.IsAnnotation = false, got true")
+				}
 			}
 		}
 	}
 	if !found {
 		t.Error("Expected Container component to be added as alias side effect")
+	}
+}
+
+// TestAliasSideEffects_AnnotationClassification verifies that alias component
+// side effects derive Metadata.IsAnnotation from relationship metadata and
+// default to false when metadata or isAnnotation is absent.
+func TestAliasSideEffects_AnnotationClassification(t *testing.T) {
+	p := &AliasPolicy{}
+
+	tests := []struct {
+		name             string
+		metadata         *relationship.RelationshipMetadata
+		wantIsAnnotation bool
+	}{
+		{
+			name:             "explicit false",
+			metadata:         &relationship.RelationshipMetadata{IsAnnotation: boolPtr(false)},
+			wantIsAnnotation: false,
+		},
+		{
+			name:             "explicit true",
+			metadata:         &relationship.RelationshipMetadata{IsAnnotation: boolPtr(true)},
+			wantIsAnnotation: true,
+		},
+		{
+			name:             "metadata present with IsAnnotation omitted",
+			metadata:         &relationship.RelationshipMetadata{},
+			wantIsAnnotation: false,
+		},
+		{
+			name:             "nil relationship metadata",
+			metadata:         nil,
+			wantIsAnnotation: false,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			design, rel, aliasID := newContainerAliasFixture(t, tc.metadata)
+			actions := p.SideEffects(rel, design)
+			if len(actions) != 1 {
+				t.Fatalf("Expected 1 add-component action, got %d", len(actions))
+			}
+			a := actions[0]
+			if a.Op != AddComponentOp || a.Component == nil {
+				t.Fatalf("Expected AddComponentOp action with non-nil component, got %+v", a)
+			}
+			if a.Component.ID != aliasID {
+				t.Errorf("Expected component ID %s, got %s", aliasID, a.Component.ID)
+			}
+			if a.Component.Component.Kind != "Container" {
+				t.Errorf("Expected component Kind Container, got %q", a.Component.Component.Kind)
+			}
+			if a.Component.DisplayName != "containers.0" {
+				t.Errorf("Expected DisplayName %q, got %q", "containers.0", a.Component.DisplayName)
+			}
+			if a.Component.Metadata.IsAnnotation != tc.wantIsAnnotation {
+				t.Errorf("Metadata.IsAnnotation = %v, want %v", a.Component.Metadata.IsAnnotation, tc.wantIsAnnotation)
+			}
+		})
+	}
+}
+
+// TestAliasPolicy_EvaluateDesignAnnotationClassification verifies end-to-end
+// Go engine evaluation preserves relationship metadata through relationship
+// identification (deepCopyRelDef) and alias side-effect generation.
+func TestAliasPolicy_EvaluateDesignAnnotationClassification(t *testing.T) {
+	log, err := logger.New("test", logger.Options{Format: logger.SyslogLogFormat})
+	if err != nil {
+		t.Fatalf("Failed to create logger: %v", err)
+	}
+	engine := NewGoEngine(log)
+
+	tests := []struct {
+		name             string
+		metadata         *relationship.RelationshipMetadata
+		wantIsAnnotation bool
+	}{
+		{
+			name:             "workload Container alias remains non-annotation",
+			metadata:         &relationship.RelationshipMetadata{IsAnnotation: boolPtr(false)},
+			wantIsAnnotation: false,
+		},
+		{
+			name:             "explicit annotation relationship propagates true",
+			metadata:         &relationship.RelationshipMetadata{IsAnnotation: boolPtr(true)},
+			wantIsAnnotation: true,
+		},
+		{
+			name:             "nil metadata defaults to non-annotation",
+			metadata:         nil,
+			wantIsAnnotation: false,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			deployID := uuid.Must(uuid.FromString("00000000-0000-0000-0000-000000000001"))
+			deploy := newTestContainerDeployment(deployID)
+
+			mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "containers", "_"}}
+			mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "template", "spec", "containers", "_"}}
+			enabledStatus := relationship.RelationshipDefinitionStatus("enabled")
+			relDef := &relationship.RelationshipDefinition{
+				Kind:                 relationship.Hierarchical,
+				RelationshipType:     "parent",
+				SubType:              "alias",
+				Status:               &enabledStatus,
+				RelationshipMetadata: tc.metadata,
+				Model:                modelv1beta1.ModelReference{Name: "kubernetes"},
+				Selectors: &relationship.SelectorSet{
+					{
+						Allow: relationship.Selector{
+							From: []relationship.SelectorItem{
+								{
+									Kind:  strPtr("Container"),
+									Model: &modelv1beta1.ModelReference{Name: "meshery-core"},
+									RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+										MutatorRef: &mutatorRef,
+										MutatedRef: &mutatedRef,
+									},
+								},
+							},
+							To: []relationship.SelectorItem{
+								{
+									Kind:  strPtr("Deployment"),
+									Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+								},
+							},
+						},
+					},
+				},
+			}
+			relDef.ID = uuid.Must(uuid.FromString("00000000-0000-0000-0000-000000000031"))
+
+			design := makePatternFile([]*component.ComponentDefinition{deploy}, nil)
+			resp, evalErr := engine.EvaluateDesign(*design, []*relationship.RelationshipDefinition{relDef})
+			if evalErr != nil {
+				t.Fatalf("EvaluateDesign failed: %v", evalErr)
+			}
+			if len(resp.Trace.ComponentsAdded) != 1 {
+				t.Fatalf("Expected 1 added alias component in trace, got %d", len(resp.Trace.ComponentsAdded))
+			}
+			added := resp.Trace.ComponentsAdded[0]
+			if added.Component.Kind != "Container" {
+				t.Fatalf("Expected Container component in trace, got %q", added.Component.Kind)
+			}
+			if added.Metadata.IsAnnotation != tc.wantIsAnnotation {
+				t.Errorf("Trace.ComponentsAdded[0].Metadata.IsAnnotation = %v, want %v", added.Metadata.IsAnnotation, tc.wantIsAnnotation)
+			}
+		})
 	}
 }
 
