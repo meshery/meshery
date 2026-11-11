@@ -1,6 +1,7 @@
 package system
 
 import (
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -87,5 +88,51 @@ func TestKeepConnectionAlive_Failure(t *testing.T) {
 	}
 	if strings.Contains(output, "connection request success") {
 		t.Fatal("did not expect success to be logged after connection failure")
+	}
+}
+
+// TestOpenMesheryUI verifies that --skip-browser keeps the browser closed, and
+// that the user is always pointed to the given URL.
+func TestOpenMesheryUI(t *testing.T) {
+	const mesheryURL = "http://localhost:9081"
+
+	tests := []struct {
+		name        string
+		skipBrowser bool
+		browserErr  error
+		wantOpened  bool
+		wantLog     string
+	}{
+		{name: "opens the browser", wantOpened: true, wantLog: "Opening Meshery UI in browser at " + mesheryURL},
+		{name: "skip-browser leaves it closed", skipBrowser: true, wantLog: "Meshery UI available at: " + mesheryURL},
+		{name: "browser fails to open", browserErr: errors.New("no browser"), wantOpened: true, wantLog: "please point your browser to " + mesheryURL},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			buf := utils.SetupMeshkitLoggerTesting(t, true)
+
+			originalNavigate, originalSkip := navigateToBrowser, dashboardCmdFlags.SkipBrowser
+			t.Cleanup(func() { navigateToBrowser, dashboardCmdFlags.SkipBrowser = originalNavigate, originalSkip })
+
+			var opened []string
+			navigateToBrowser = func(url string) error {
+				opened = append(opened, url)
+				return tt.browserErr
+			}
+			dashboardCmdFlags.SkipBrowser = tt.skipBrowser
+
+			openMesheryUI(mesheryURL, "")
+
+			if tt.wantOpened && (len(opened) != 1 || opened[0] != mesheryURL) {
+				t.Errorf("expected the browser to open %s, got %v", mesheryURL, opened)
+			}
+			if !tt.wantOpened && len(opened) != 0 {
+				t.Errorf("expected the browser to stay closed, got %v", opened)
+			}
+			if !strings.Contains(buf.String(), tt.wantLog) {
+				t.Errorf("expected output to contain %q, got %q", tt.wantLog, buf.String())
+			}
+		})
 	}
 }

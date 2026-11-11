@@ -31,6 +31,7 @@ func TestProcessConnectionRegistrationRegistersKindsWithoutVerifyAction(t *testi
 	if err != nil {
 		t.Fatalf("open database: %v", err)
 	}
+	t.Cleanup(func() { _ = db.DBClose() })
 	if err := db.AutoMigrate(connections.Connection{}, events.Event{}, models.Credential{}); err != nil {
 		t.Fatalf("migrate: %v", err)
 	}
@@ -140,6 +141,7 @@ func TestProcessConnectionRegistration_KubernetesKindWithoutContextReturnsGetCon
 	if err != nil {
 		t.Fatalf("open database: %v", err)
 	}
+	t.Cleanup(func() { _ = db.DBClose() })
 	if err := db.AutoMigrate(connections.Connection{}, events.Event{}, models.Credential{}, models.K8sContext{}); err != nil {
 		t.Fatalf("migrate: %v", err)
 	}
@@ -213,6 +215,7 @@ func TestProcessConnectionRegistration_KubernetesKindPreExistingTrackerInstance(
 	if err != nil {
 		t.Fatalf("open database: %v", err)
 	}
+	t.Cleanup(func() { _ = db.DBClose() })
 	if err := db.AutoMigrate(connections.Connection{}, events.Event{}, models.Credential{}, models.K8sContext{}); err != nil {
 		t.Fatalf("migrate: %v", err)
 	}
@@ -298,6 +301,7 @@ func TestProcessConnectionRegistration_KubernetesKindFreshRegistrationWithPersis
 	if err != nil {
 		t.Fatalf("open database: %v", err)
 	}
+	t.Cleanup(func() { _ = db.DBClose() })
 	if err := db.AutoMigrate(connections.Connection{}, events.Event{}, models.Credential{}, models.K8sContext{}); err != nil {
 		t.Fatalf("migrate: %v", err)
 	}
@@ -398,6 +402,7 @@ func TestProcessConnectionRegistration_KubernetesKindResolvesContextByConnection
 	if err != nil {
 		t.Fatalf("open database: %v", err)
 	}
+	t.Cleanup(func() { _ = db.DBClose() })
 	if err := db.AutoMigrate(connections.Connection{}, events.Event{}, models.Credential{}, models.K8sContext{}); err != nil {
 		t.Fatalf("migrate: %v", err)
 	}
@@ -492,6 +497,7 @@ func TestDefaultLocalProvider_GetK8sContextDisambiguatesExactFromNormalizedID(t 
 	if err != nil {
 		t.Fatalf("open database: %v", err)
 	}
+	t.Cleanup(func() { _ = db.DBClose() })
 	if err := db.AutoMigrate(models.K8sContext{}); err != nil {
 		t.Fatalf("migrate: %v", err)
 	}
@@ -548,6 +554,7 @@ func TestProcessConnectionRegistration_RemoteProviderUsesConnectionUUIDEvenWithM
 	if err != nil {
 		t.Fatalf("open database: %v", err)
 	}
+	t.Cleanup(func() { _ = db.DBClose() })
 	if err := db.AutoMigrate(connections.Connection{}, events.Event{}, models.Credential{}, models.K8sContext{}); err != nil {
 		t.Fatalf("migrate: %v", err)
 	}
@@ -637,6 +644,7 @@ func TestProcessConnectionRegistration_KubernetesKindFullLifecycleFromSaveK8sCon
 	if err != nil {
 		t.Fatalf("open database: %v", err)
 	}
+	t.Cleanup(func() { _ = db.DBClose() })
 	if err := db.AutoMigrate(connections.Connection{}, events.Event{}, models.Credential{}, models.K8sContext{}); err != nil {
 		t.Fatalf("migrate: %v", err)
 	}
