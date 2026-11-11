@@ -1,11 +1,16 @@
 package models
 
 import (
+	"context"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/controllers"
+	"github.com/meshery/schemas/models/core"
 )
 
 func TestControllerEventActedUponPrefersConnectionID(t *testing.T) {
@@ -94,3 +99,80 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 		t.Fatalf("expected ctxControllerHandlers to be empty, got %d", len(mch.ctxControllerHandlers))
 	}
 }
+
+// TestAddMeshsyncDataHandlers_ConcurrentCallsSerialized verifies that concurrent
+// invocations of AddMeshsyncDataHandlers are serialized by meshsyncMutex and do
+// not cause data races or overwrite handlers.
+func TestAddMeshsyncDataHandlers_ConcurrentCallsSerialized(t *testing.T) {
+	log, _ := logger.New("test", logger.Options{})
+	mch := NewMesheryControllersHelper(
+		log,
+		controllers.OperatorDeploymentConfig{},
+		nil,
+		nil,
+		nil,
+		nil,
+	)
+
+	k8sCtx := K8sContext{
+		ID:           "test-context-concurrent",
+		Name:         "test-cluster",
+		ConnectionID: uuid.Must(uuid.NewV4()).String(),
+	}
+
+	var wg sync.WaitGroup
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			mch.AddMeshsyncDataHandlers(context.Background(), k8sCtx, core.Uuid(uuid.Nil), core.Uuid(uuid.Nil), nil)
+		}()
+	}
+	wg.Wait()
+
+	for i := 0; i < 5; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			mch.RemoveMeshSyncDataHandler(context.Background(), k8sCtx.ID)
+		}()
+	}
+	wg.Wait()
+}
+
+// TestAddMeshsyncDataHandlers_EmbeddedModeDoesNotDeadlock verifies that initializing
+// MeshSync data handlers in embedded mode does not trigger a recursive mutex deadlock
+// when meshsyncDataHandlersStartLibMeshsyncRun reads deployment mode under meshsyncMutex.
+func TestAddMeshsyncDataHandlers_EmbeddedModeDoesNotDeadlock(t *testing.T) {
+	log, _ := logger.New("test", logger.Options{})
+	mch := NewMesheryControllersHelper(
+		log,
+		controllers.OperatorDeploymentConfig{},
+		nil,
+		nil,
+		nil,
+		nil,
+	)
+	mch.SetMeshsyncDeploymentMode(connections.MeshsyncDeploymentModeEmbedded)
+
+	k8sCtx := K8sContext{
+		ID:           "test-context-embedded",
+		Name:         "test-cluster",
+		ConnectionID: uuid.Must(uuid.NewV4()).String(),
+		Cluster:      map[string]interface{}{"name": "test-cluster"},
+		Auth:         map[string]interface{}{"name": "test-user"},
+	}
+
+	done := make(chan struct{})
+	go func() {
+		mch.AddMeshsyncDataHandlers(context.Background(), k8sCtx, core.Uuid(uuid.Nil), core.Uuid(uuid.Nil), nil)
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatal("deadlock: AddMeshsyncDataHandlers blocked in embedded mode")
+	}
+}
+
