@@ -36,3 +36,20 @@ func TestErrGenerateComponentFormat(t *testing.T) {
 		t.Errorf("short description %q still contains a literal format verb", sdesc)
 	}
 }
+
+// TestErrParsingSheetFormat is a regression test for issue #22753: the probable
+// cause carried a bare "%s" that was never fed through Sprintf, so the literal
+// verb surfaced to the user. The probable cause must now contain the sheet name
+// and no literal format verb. The short and long descriptions already contain
+// the sheet name, so the assertion targets the probable cause specifically.
+func TestErrParsingSheetFormat(t *testing.T) {
+	err := ErrParsingSheet(errors.New("boom"), "Models")
+	cause := meshkiterrors.GetCause(err)
+
+	if !strings.Contains(cause, "The provided sheet id might be incorrect. Sheet: Models") {
+		t.Errorf("expected the sheet name in the probable cause, got: %s", cause)
+	}
+	if strings.Contains(cause, "%s") || strings.Contains(cause, "%v") {
+		t.Errorf("literal format verb leaked into the probable cause: %s", cause)
+	}
+}
