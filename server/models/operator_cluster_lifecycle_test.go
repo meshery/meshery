@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"reflect"
+	"sort"
 	"sync"
 	"testing"
 	"time"
@@ -348,26 +349,163 @@ func TestExplicitUndeployOfAnUnsharedOperatorIsQuiet(t *testing.T) {
 	}
 }
 
-func TestOperatorClusterKey(t *testing.T) {
+func TestOperatorClusterKeys(t *testing.T) {
+	shares := func(a, b K8sContext) bool {
+		for _, ka := range operatorClusterKeys(a) {
+			for _, kb := range operatorClusterKeys(b) {
+				if ka == kb {
+					return true
+				}
+			}
+		}
+		return false
+	}
+
 	serverID := core.Uuid(uuid.Must(uuid.NewV4()))
-	viaLoadBalancer := connectionTo(serverID, "lb")
-	viaNode := connectionTo(serverID, "node")
-	if operatorClusterKey(viaLoadBalancer) != operatorClusterKey(viaNode) {
+	if !shares(connectionTo(serverID, "lb"), connectionTo(serverID, "node")) {
 		t.Fatal("two API server addresses for one cluster must share its operator lifecycle")
 	}
 
 	unresolved := K8sContext{ID: "ctx-a", Server: "https://shared.example.invalid:6443"}
-	sameServer := K8sContext{ID: "ctx-b", Server: "https://shared.example.invalid:6443"}
-	if operatorClusterKey(unresolved) != operatorClusterKey(sameServer) {
-		t.Fatal("contexts without a server ID must still share a key when they name the same API server")
+	resolved := K8sContext{ID: "ctx-b", Server: "https://shared.example.invalid:6443", KubernetesServerID: &serverID}
+	if !shares(unresolved, resolved) {
+		t.Fatal("a context without a server ID must share a key with one that has it when they name the same API server")
 	}
 	nilID := core.Uuid(uuid.Nil)
 	unresolved.KubernetesServerID = &nilID
-	if operatorClusterKey(unresolved) != operatorClusterKey(sameServer) {
-		t.Fatal("a nil server ID must fall back to the API server, not key every such context together")
+	if got := operatorClusterKeys(unresolved); !reflect.DeepEqual(got, []string{"server:https://shared.example.invalid:6443"}) {
+		t.Fatalf("keys of a context with a nil server ID = %v, want only its API server", got)
 	}
 
-	if operatorClusterKey(K8sContext{ID: "ctx-a"}) == operatorClusterKey(K8sContext{ID: "ctx-b"}) {
+	if shares(K8sContext{ID: "ctx-a"}, K8sContext{ID: "ctx-b"}) {
 		t.Fatal("contexts with nothing in common must not share a key")
+	}
+	if shares(connectionTo(serverID, "a"), connectionTo(core.Uuid(uuid.Must(uuid.NewV4())), "b")) {
+		t.Fatal("different clusters must not share a key")
+	}
+}
+
+// TestConnectionsSharingOneAliasShareTheOperatorLifecycle: a context row
+// imported while its cluster was unreachable never gains a server ID, so the
+// only thing it has in common with the cluster's other connections may be the
+// API server URL - and two connections through different addresses have only
+// the server ID in common. Either alias must serialize Helm and pool consumers.
+func TestConnectionsSharingOneAliasShareTheOperatorLifecycle(t *testing.T) {
+	serverID := core.Uuid(uuid.Must(uuid.NewV4()))
+	const sharedURL = "https://shared.example.invalid:6443"
+	idOf := func(id core.Uuid) *core.Uuid { return &id }
+
+	pairs := []struct {
+		name      string
+		one, peer K8sContext
+	}{
+		{
+			name: "same API server URL, only one has a server ID",
+			one:  K8sContext{ID: "ctx-unresolved", ConnectionID: uuid.Must(uuid.NewV4()).String(), Server: sharedURL},
+			peer: K8sContext{ID: "ctx-resolved", ConnectionID: uuid.Must(uuid.NewV4()).String(), Server: sharedURL, KubernetesServerID: idOf(serverID)},
+		},
+		{
+			name: "same server ID, different API server URLs",
+			one:  connectionTo(serverID, "lb"),
+			peer: connectionTo(serverID, "node"),
+		},
+	}
+
+	for _, tt := range pairs {
+		t.Run(tt.name, func(t *testing.T) {
+			ot := NewOperatorTracker(false)
+			cluster := newFakeCluster()
+			one, peer := operatorModeConsumer(t, cluster), operatorModeConsumer(t, cluster)
+
+			start := make(chan struct{})
+			var wg sync.WaitGroup
+			for _, run := range []func(){
+				func() { one.DeployUndeployedOperators(ot, tt.one) },
+				func() { peer.DeployUndeployedOperators(ot, tt.peer) },
+			} {
+				wg.Add(1)
+				go func() {
+					defer wg.Done()
+					<-start
+					run()
+				}()
+			}
+			close(start)
+			wg.Wait()
+
+			if _, installs, _, maxInFlight := cluster.snapshot(); installs != 1 || maxInFlight != 1 {
+				t.Fatalf("installs = %d with %d Helm actions overlapping, want one serialized install", installs, maxInFlight)
+			}
+			want := []string{tt.one.ConnectionID, tt.peer.ConnectionID}
+			sort.Strings(want)
+			for _, k8sctx := range []K8sContext{tt.one, tt.peer} {
+				if got := ot.OperatorConsumers(k8sctx); !reflect.DeepEqual(got, want) {
+					t.Fatalf("consumers seen from %s = %v, want both connections %v", k8sctx.ID, got, want)
+				}
+			}
+			if got, wantOthers := ot.otherOperatorConsumers(tt.one), []string{tt.peer.ConnectionID}; !reflect.DeepEqual(got, wantOthers) {
+				t.Fatalf("other consumers seen from %s = %v, want %v", tt.one.ID, got, wantOthers)
+			}
+
+			one.DetachFromCluster(context.Background(), ot, tt.one)
+			if got, wantLeft := ot.OperatorConsumers(tt.peer), []string{tt.peer.ConnectionID}; !reflect.DeepEqual(got, wantLeft) {
+				t.Fatalf("consumers after one connection left = %v, want %v", got, wantLeft)
+			}
+		})
+	}
+}
+
+// TestOverlappingAliasLocksDoNotDeadlock: contexts lock different, overlapping
+// sets of cluster keys. Taking them in one global order is what keeps two
+// such contexts from each holding the lock the other waits on.
+func TestOverlappingAliasLocksDoNotDeadlock(t *testing.T) {
+	ot := NewOperatorTracker(false)
+	serverID := core.Uuid(uuid.Must(uuid.NewV4()))
+	idOf := func(id core.Uuid) *core.Uuid { return &id }
+	contexts := []K8sContext{
+		{ID: "id-and-a", Server: "https://a.example.invalid", KubernetesServerID: idOf(serverID)},
+		{ID: "id-and-b", Server: "https://b.example.invalid", KubernetesServerID: idOf(serverID)},
+		{ID: "a-only", Server: "https://a.example.invalid"},
+		{ID: "b-only", Server: "https://b.example.invalid"},
+		{ID: "id-only", KubernetesServerID: idOf(serverID)},
+	}
+
+	var inFlight, maxInFlight int
+	var mu sync.Mutex
+	done := make(chan struct{})
+	var wg sync.WaitGroup
+	for i := 0; i < 8; i++ {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			for j := 0; j < 200; j++ {
+				k8sctx := contexts[(i+j)%len(contexts)]
+				unlock := ot.lockOperatorCluster(k8sctx)
+				if k8sctx.KubernetesServerID != nil {
+					mu.Lock()
+					inFlight++
+					if inFlight > maxInFlight {
+						maxInFlight = inFlight
+					}
+					mu.Unlock()
+					mu.Lock()
+					inFlight--
+					mu.Unlock()
+				}
+				unlock()
+			}
+		}(i)
+	}
+	go func() {
+		wg.Wait()
+		close(done)
+	}()
+	select {
+	case <-done:
+	case <-time.After(10 * time.Second):
+		t.Fatal("locking overlapping cluster key sets deadlocked")
+	}
+	if maxInFlight > 1 {
+		t.Fatalf("%d holders of the server ID's lock overlapped, want them serialized", maxInFlight)
 	}
 }
