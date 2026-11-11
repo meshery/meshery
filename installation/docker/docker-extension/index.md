@@ -136,6 +136,14 @@ Meshery creates its own Docker networks, which can remain after you uninstall th
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
+            Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
+          </a>
+        </li><li>
+          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
+            New comer here and looking for Meshmates
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
           </a>
@@ -158,14 +166,6 @@ Meshery creates its own Docker networks, which can remain after you uninstall th
         </li><li>
           <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
             Request for a MeshMate — Active Meshery Contributor
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/how-to-present-an-issue-pr-in-a-development-meeting-feedback-wanted/8107" target="_blank" rel="noopener noreferrer">
-            How to Present an Issue/PR in a Development Meeting: feedback wanted
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/newbie-here-excited-to-join/8052" target="_blank" rel="noopener noreferrer">
-            Newbie here -- Excited to join
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">

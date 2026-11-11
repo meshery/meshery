@@ -140,7 +140,7 @@
 - [AWS API Gateway](/extensions/models/aws-api-gateway-operator/index.md)
 - [AWS API Gateway v2](/extensions/models/aws-apigatewayv2-controller/index.md)
 - [AWS App Mesh](/extensions/models/appmesh-controller/index.md)
-- [AWS Application Autoscaling](/extensions/models/aws-applicationautoscaling-controller/index.md)
+- [AWS Applilcation Autoscaling](/extensions/models/aws-applicationautoscaling-controller/index.md)
 - [AWS CloudFront](/extensions/models/aws-cloudfront-controller/index.md)
 - [AWS CloudTrail](/extensions/models/aws-cloudtrail-controller/index.md)
 - [AWS CloudWatch](/extensions/models/aws-cloudwatch-controller/index.md)

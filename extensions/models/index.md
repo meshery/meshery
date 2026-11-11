@@ -47,7 +47,7 @@ Section pages:
 - [AWS API Gateway](/extensions/models/aws-api-gateway-operator/)
 - [AWS API Gateway v2](/extensions/models/aws-apigatewayv2-controller/)
 - [AWS App Mesh](/extensions/models/appmesh-controller/)
-- [AWS Application Autoscaling](/extensions/models/aws-applicationautoscaling-controller/)
+- [AWS Applilcation Autoscaling](/extensions/models/aws-applicationautoscaling-controller/)
 - [AWS CloudFront](/extensions/models/aws-cloudfront-controller/)
 - [AWS CloudTrail](/extensions/models/aws-cloudtrail-controller/)
 - [AWS CloudWatch](/extensions/models/aws-cloudwatch-controller/)
