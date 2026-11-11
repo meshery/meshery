@@ -716,6 +716,12 @@ func meshSyncResourceChildModels() []any {
 // existed; when it did not, nothing is deleted. Leaving the children behind would
 // orphan them, and because MeshSync ids are deterministic they would reattach to
 // the resource the next time it is discovered.
+//
+// The children are deleted before the parent, as in
+// FlushMeshSyncResourcesForCluster: their foreign keys are ON DELETE SET NULL on
+// their own primary key, so deleting the parent first fails on Postgres, which
+// always enforces foreign keys, and nulls the child ids on SQLite when foreign
+// keys are enabled.
 func DeleteMeshSyncResourceByID(db *database.Handler, id string) (bool, error) {
 	if db == nil || db.DB == nil {
 		return false, ErrEmptyMeshSyncHandler()
@@ -723,11 +729,11 @@ func DeleteMeshSyncResourceByID(db *database.Handler, id string) (bool, error) {
 
 	deleted := false
 	err := db.Transaction(func(tx *gorm.DB) error {
-		res := tx.Where("id = ?", id).Delete(&meshsyncmodel.KubernetesResource{})
-		if res.Error != nil {
-			return res.Error
+		var exists int64
+		if err := tx.Model(&meshsyncmodel.KubernetesResource{}).Where("id = ?", id).Count(&exists).Error; err != nil {
+			return err
 		}
-		if res.RowsAffected == 0 {
+		if exists == 0 {
 			return nil
 		}
 		for _, child := range meshSyncResourceChildModels() {
@@ -735,7 +741,11 @@ func DeleteMeshSyncResourceByID(db *database.Handler, id string) (bool, error) {
 				return err
 			}
 		}
-		deleted = true
+		res := tx.Where("id = ?", id).Delete(&meshsyncmodel.KubernetesResource{})
+		if res.Error != nil {
+			return res.Error
+		}
+		deleted = res.RowsAffected > 0
 		return nil
 	})
 	if err != nil {

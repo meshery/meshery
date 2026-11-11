@@ -66,6 +66,49 @@ func TestDeleteMeshSyncResourceByID(t *testing.T) {
 	assertMeshSyncRows(t, db, keptID, 1)
 }
 
+// TestDeleteMeshSyncResourceByIDWithForeignKeysEnforced guards the delete order.
+// The child tables reference the resource with ON DELETE SET NULL on their own
+// primary key. Postgres always enforces foreign keys, so deleting the parent
+// first fails there; SQLite with foreign keys enabled instead nulls the child
+// ids, and a later delete by the original id misses them. Deleting the children
+// before the parent works on both engines.
+func TestDeleteMeshSyncResourceByIDWithForeignKeysEnforced(t *testing.T) {
+	db := newMeshSyncTestDB(t)
+	if err := db.Exec("PRAGMA foreign_keys = ON").Error; err != nil {
+		t.Fatalf("enabling foreign keys: %v", err)
+	}
+	var enforced int
+	if err := db.Raw("PRAGMA foreign_keys").Scan(&enforced).Error; err != nil || enforced != 1 {
+		t.Fatalf("foreign keys not enforced (value %d, err %v)", enforced, err)
+	}
+
+	const id = "res-fk"
+	seedMeshSyncResource(t, db, id, "cluster-a")
+
+	deleted, err := DeleteMeshSyncResourceByID(db, id)
+	if err != nil {
+		t.Fatalf("DeleteMeshSyncResourceByID returned error: %v", err)
+	}
+	if !deleted {
+		t.Fatal("expected the resource to be reported as deleted")
+	}
+
+	assertMeshSyncRows(t, db, id, 0)
+	for name, model := range map[string]interface{}{
+		"object meta": &meshsyncmodel.KubernetesResourceObjectMeta{},
+		"spec":        &meshsyncmodel.KubernetesResourceSpec{},
+		"status":      &meshsyncmodel.KubernetesResourceStatus{},
+	} {
+		var n int64
+		if err := db.Model(model).Where("id IS NULL").Count(&n).Error; err != nil {
+			t.Fatalf("counting %s rows with a NULL id: %v", name, err)
+		}
+		if n != 0 {
+			t.Errorf("%s rows orphaned with a NULL id: got %d, want 0", name, n)
+		}
+	}
+}
+
 // TestDeleteMeshSyncResourceByIDNotFound verifies that an unknown id is reported
 // as not deleted, so the handler can answer 404, and that nothing else is
 // removed.
