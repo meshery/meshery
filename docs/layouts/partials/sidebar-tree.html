@@ -85,6 +85,7 @@
   -}}
   {{ $mid := printf "m-%s" ($s.RelPermalink | anchorize) -}}
   {{ $pages_tmp := where (union $s.Pages $s.Sections) ".Params.toc_hide" "!=" true -}}
+  {{ $pages_tmp = where $pages_tmp ".Type" "!=" "error-codes" -}}
   {{ $pages_tmp = sort $pages_tmp "Title" "asc" -}}
   {{ $pages_tmp = sort $pages_tmp "Weight" "asc" -}}
   {{ $pages := $pages_tmp -}}
