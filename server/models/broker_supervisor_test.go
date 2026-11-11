@@ -273,6 +273,14 @@ func TestBrokerSupervisorLeavesWhatItShouldNotTouch(t *testing.T) {
 				b.recreate("", "old-token")
 			},
 		},
+		{
+			// The new token is provisioned before the new Broker publishes an
+			// endpoint: rebuilding now would find nothing to connect through.
+			name: "new token, no endpoint published yet",
+			arrange: func(_ *MesheryControllersHelper, b *liveBroker, _ *natsConn) {
+				b.recreate("", "new-token")
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -291,6 +299,54 @@ func TestBrokerSupervisorLeavesWhatItShouldNotTouch(t *testing.T) {
 				t.Fatalf("%d connections opened, want the original left alone", n)
 			}
 		})
+	}
+}
+
+// TestFailedRebuildKeepsTheConnectionSupervised: a rebuild that attaches no
+// handler must not leave the connection without one, nor without a supervisor
+// to try again.
+func TestFailedRebuildKeepsTheConnectionSupervised(t *testing.T) {
+	mch, broker, dialer := supervisedConnection(t)
+	target := attach(t, mch)
+	first := dialer.opened()[0]
+	broker.recreate(newBrokerEndpoint, "new-token")
+	dialer.mu.Lock()
+	dialer.publishErr = errors.New("publish failed")
+	dialer.mu.Unlock()
+
+	var since time.Time
+	t0 := time.Unix(1000, 0)
+	mch.recheckBroker(target, t0, &since)
+	if mch.recheckBroker(target, t0.Add(mch.brokerStaleAfter), &since) {
+		t.Fatal("the supervisor finished although its rebuild attached nothing")
+	}
+	conns := dialer.opened()
+	if len(conns) != 2 || !conns[1].isClosed() {
+		t.Fatalf("%d connections opened, want one failed rebuild, closed", len(conns))
+	}
+	if first.isClosed() || stopped(target) {
+		t.Fatal("a failed rebuild tore down the connection it was replacing")
+	}
+	mch.meshsyncMutex.Lock()
+	kept := mch.brokerTarget == target && mch.ctxMeshsyncDataHandler != nil &&
+		mch.ctxMeshsyncDataHandler.GetBrokerHandler() == meshkitBroker.Handler(first)
+	mch.meshsyncMutex.Unlock()
+	if !kept {
+		t.Fatal("a failed rebuild left the connection without its handler or supervisor")
+	}
+
+	dialer.mu.Lock()
+	dialer.publishErr = nil
+	dialer.mu.Unlock()
+	if !mch.recheckBroker(target, t0.Add(2*mch.brokerStaleAfter), &since) {
+		t.Fatal("the supervisor did not retry the rebuild")
+	}
+	conns = dialer.opened()
+	if len(conns) != 3 || conns[2].opts.Token != "new-token" {
+		t.Fatalf("%d connections opened, want a retried rebuild with the new token", len(conns))
+	}
+	if !first.isClosed() || !stopped(target) {
+		t.Fatal("the replaced connection or its supervisor outlived a successful rebuild")
 	}
 }
 

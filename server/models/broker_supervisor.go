@@ -87,13 +87,13 @@ func (t *brokerTarget) halt() {
 // built for without having moved: a different endpoint counts only if it
 // answers.
 func (t *brokerTarget) replacedBy(endpoint, token string, answers func(string) bool) bool {
-	if token == "" {
+	if token == "" || endpoint == "" {
 		return false
 	}
 	if token != t.token {
 		return true
 	}
-	return endpoint != "" && endpoint != t.endpoint && answers(endpoint)
+	return endpoint != t.endpoint && answers(endpoint)
 }
 
 func (mch *MesheryControllersHelper) brokerTimings() (interval, staleAfter time.Duration) {
@@ -148,7 +148,8 @@ func (mch *MesheryControllersHelper) stopBrokerSupervisorLocked() {
 // recheckBroker is one supervisor tick. disconnectedSince carries how long the
 // connection has been down across ticks. It reports true once this supervisor
 // is finished: its connection was replaced, removed, or just rebuilt (which
-// starts a supervisor of its own).
+// starts a supervisor of its own). A rebuild that attaches nothing leaves the
+// old handler and this supervisor in place, so the next tick tries again.
 func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now time.Time, disconnectedSince *time.Time) (finished bool) {
 	mch.meshsyncMutex.Lock()
 	current, handler := mch.brokerTarget, mch.ctxMeshsyncDataHandler
@@ -195,10 +196,17 @@ func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now tim
 
 	// The managed port-forward is kept: it re-resolves the NATS pod by label,
 	// so it already follows a recreated broker.
-	mch.ctxMeshsyncDataHandler.Stop()
+	stale := mch.ctxMeshsyncDataHandler
 	mch.ctxMeshsyncDataHandler = nil
+	mch.brokerTarget = nil
 	mch.meshsyncConnectedEventEmitted.Store(false)
-	mch.stopBrokerSupervisorLocked()
 	target.reattach()
+	if mch.ctxMeshsyncDataHandler == nil {
+		mch.ctxMeshsyncDataHandler = stale
+		mch.brokerTarget = target
+		return false
+	}
+	target.halt()
+	stale.Stop()
 	return true
 }

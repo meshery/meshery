@@ -354,9 +354,12 @@ rules govern it:
   attached operator-mode data handler therefore has a supervisor
   (`server/models/broker_supervisor.go`). Once the connection has been down for
   `brokerStaleAfter` it re-reads the endpoint and token, and when either changed
-  it stops the handler and rebuilds it in place under `meshsyncMutex` with the
-  inputs the original was built from. A merely-down Broker (same endpoint and
-  token), a token not provisioned yet, and a live connection are left alone.
+  it rebuilds the handler in place under `meshsyncMutex` with the inputs the
+  original was built from, and stops the old one only once the replacement is
+  attached; a rebuild that attaches nothing keeps the old handler and its
+  supervisor, which retries on the next tick. A merely-down Broker (same
+  endpoint and token), a token not provisioned yet, an endpoint that cannot be
+  resolved (even alongside a new token), and a live connection are left alone.
   A changed endpoint counts only if it answers a TCP dial (`brokerReachable`):
   `GetPublicEndpoint` returns the first published candidate that answers and
   falls back to the internal one when none does, so a down Broker reached
@@ -528,8 +531,9 @@ Unit coverage that exists today:
   and token) is reconnected after a sustained outage, the cases that must not
   rebuild (merely down, live connection, token not provisioned, no endpoint),
   the outage clock resetting on reconnect, a removed handler ending its
-  supervisor, the real ticker driving a rebuild, and a handler that fails to
-  start closing its broker connection.
+  supervisor, the real ticker driving a rebuild, a failed rebuild keeping the
+  old handler and retrying, and a handler that fails to start closing its
+  broker connection.
 - `server/models/operator_chart_version_test.go` - `operator.version` selecting
   the operator Helm chart version, the layering it resolves through, and the
   cases where a chart-version reconcile must not touch the cluster.
