@@ -126,3 +126,66 @@ test_is_alias_relationship_case_insensitive_upper if {
 	}
 	eval.is_alias_relationship(relationship)
 }
+
+base_alias_relationship := {
+	"id": "rel-alias-1",
+	"kind": "hierarchical",
+	"type": "parent",
+	"subType": "alias",
+	"status": "identified",
+	"selectors": [{
+		"allow": {
+			"from": [{
+				"id": "alias-container-1",
+				"kind": "Container",
+				"model": {"name": "meshery-core", "registrant": {"kind": "meshery"}},
+				"patch": {"mutatorRef": [["configuration", "spec", "template", "spec", "containers", "0"]]},
+			}],
+			"to": [{
+				"id": "deploy-1",
+				"kind": "Deployment",
+				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			}],
+		},
+	}],
+}
+
+alias_relationship_with_metadata(metadata) := object.union(base_alias_relationship, {"metadata": metadata})
+
+test_alias_side_effects_is_annotation_false if {
+	rel := alias_relationship_with_metadata({"isAnnotation": false})
+	side_effects := eval.relationship_side_effects(rel, {"components": []}, "alias_relationships_policy")
+	count(side_effects) == 1
+	some action in side_effects
+	action.op == "add_component"
+	action.value.item.component.kind == "Container"
+	action.value.item.displayName == "containers.0"
+	action.value.item.metadata.isAnnotation == false
+}
+
+test_alias_side_effects_is_annotation_true if {
+	rel := alias_relationship_with_metadata({"isAnnotation": true})
+	side_effects := eval.relationship_side_effects(rel, {"components": []}, "alias_relationships_policy")
+	count(side_effects) == 1
+	some action in side_effects
+	action.op == "add_component"
+	action.value.item.component.kind == "Container"
+	action.value.item.metadata.isAnnotation == true
+}
+
+test_alias_side_effects_is_annotation_field_missing if {
+	rel := alias_relationship_with_metadata({"description": "metadata without isAnnotation"})
+	side_effects := eval.relationship_side_effects(rel, {"components": []}, "alias_relationships_policy")
+	count(side_effects) == 1
+	some action in side_effects
+	action.op == "add_component"
+	action.value.item.metadata.isAnnotation == false
+}
+
+test_alias_side_effects_missing_metadata if {
+	side_effects := eval.relationship_side_effects(base_alias_relationship, {"components": []}, "alias_relationships_policy")
+	count(side_effects) == 1
+	some action in side_effects
+	action.op == "add_component"
+	action.value.item.metadata.isAnnotation == false
+}

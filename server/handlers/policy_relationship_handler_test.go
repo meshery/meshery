@@ -589,6 +589,130 @@ func TestProcessEvaluationResponse_HydratesMultipleAddedComponents(t *testing.T)
 	assert.Equal(t, "#326CE5", *byID[nsID].Styles.BackgroundColor, "Namespace must hydrate to its own colour")
 }
 
+func seedContainerComponent(t *testing.T, rm *registry.RegistryManager, registryIsAnnotation bool) {
+	t.Helper()
+	conn := connection.Connection{
+		Name:    "test-registrant",
+		Kind:    "meshery",
+		Type:    "registry",
+		SubType: "orchestration",
+		Status:  connection.ConnectionStatusConnected,
+	}
+	enabled := v1beta3comp.Enabled
+	bgColor := "#00B39F"
+	shape := core.Shape("circle")
+	comp := v1beta3comp.ComponentDefinition{
+		DisplayName:   "Container",
+		SchemaVersion: "core.meshery.io/v1beta1",
+		Status:        &enabled,
+		Component: v1beta3comp.Component{
+			Kind:    "Container",
+			Version: "core.meshery.io/v1alpha1",
+			Schema:  `{"properties":{}}`,
+		},
+		Metadata: v1beta3comp.ComponentDefinition_Metadata{
+			IsAnnotation: registryIsAnnotation,
+		},
+		Model: &model.ModelDefinition{
+			Name:          "meshery-core",
+			DisplayName:   "Meshery Core",
+			SchemaVersion: "models.meshery.io/v1beta1",
+			Version:       "0.7.2",
+			Model:         model.Model{Version: "0.7.2"},
+			Category:      category.CategoryDefinition{Name: "Orchestration"},
+			Status:        model.Enabled,
+		},
+		Styles: &core.ComponentStyles{
+			BackgroundColor: &bgColor,
+			PrimaryColor:    "#00B39F",
+			Shape:           &shape,
+		},
+	}
+	id, err := comp.GenerateID()
+	require.NoError(t, err)
+	comp.ID = id
+	_, _, err = rm.RegisterEntity(registry.RegistrantHostToV1beta3(conn), &comp)
+	require.NoError(t, err, "seedContainerComponent: RegisterEntity failed")
+}
+
+func TestProcessEvaluationResponse_AliasIsAnnotationClassification(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name                 string
+		registryIsAnnotation bool
+		policyIsAnnotation   bool
+		wantIsAnnotation     bool
+	}{
+		{
+			name:                 "false alias classification remains false after hydration",
+			registryIsAnnotation: false,
+			policyIsAnnotation:   false,
+			wantIsAnnotation:     false,
+		},
+		{
+			name:                 "false alias classification stays false even when registry entry is marked annotation",
+			registryIsAnnotation: true,
+			policyIsAnnotation:   false,
+			wantIsAnnotation:     false,
+		},
+		{
+			name:                 "true policy metadata propagates to hydrated component",
+			registryIsAnnotation: false,
+			policyIsAnnotation:   true,
+			wantIsAnnotation:     true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			rm, _ := newTestRegistryManager(t)
+			seedContainerComponent(t, rm, tc.registryIsAnnotation)
+
+			aliasID, err := uuid.NewV4()
+			require.NoError(t, err)
+
+			partial := &component.ComponentDefinition{
+				ID:             aliasID,
+				Component:      component.Component{Kind: "Container"},
+				DisplayName:    "containers.0",
+				ModelReference: model.ModelReference{Name: "meshery-core"},
+				Metadata:       component.ComponentDefinition_Metadata{IsAnnotation: tc.policyIsAnnotation},
+			}
+			resp := &pattern.EvaluationResponse{
+				Design: pattern.PatternFile{
+					Version:    "0.0.1",
+					Components: []*component.ComponentDefinition{partial},
+				},
+				Trace: pattern.Trace{
+					ComponentsAdded: []component.ComponentDefinition{*partial},
+				},
+				Actions: []pattern.Action{
+					{
+						Op: "add_component",
+						Value: map[string]interface{}{
+							"item": map[string]interface{}{
+								"id": aliasID.String(),
+							},
+						},
+					},
+				},
+			}
+
+			got := processEvaluationResponse(rm, pattern.EvaluationRequest{}, resp)
+			require.Empty(t, got, "Container component must hydrate from registry")
+			require.Len(t, resp.Design.Components, 1)
+			require.NotNil(t, resp.Design.Components[0].Styles)
+			require.NotNil(t, resp.Design.Components[0].Styles.BackgroundColor)
+			assert.Equal(t, "#00B39F", *resp.Design.Components[0].Styles.BackgroundColor)
+			assert.Equal(t, tc.wantIsAnnotation, resp.Design.Components[0].Metadata.IsAnnotation)
+			require.Len(t, resp.Trace.ComponentsAdded, 1)
+			assert.Equal(t, tc.wantIsAnnotation, resp.Trace.ComponentsAdded[0].Metadata.IsAnnotation)
+		})
+	}
+}
+
 func TestParseRelationshipToAlias(t *testing.T) {
 	fromID := uuid.Must(uuid.NewV4())
 	toID := uuid.Must(uuid.NewV4())

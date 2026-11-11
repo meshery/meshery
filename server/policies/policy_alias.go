@@ -221,8 +221,12 @@ func aliasRelationshipAlreadyExists(design *pattern.PatternFile, rel *relationsh
 
 // aliasAddComponentSideEffects creates actions to add alias components.
 func aliasAddComponentSideEffects(rel *relationship.RelationshipDefinition, _ *pattern.PatternFile) []PolicyAction {
-	if rel.Selectors == nil {
+	if rel == nil || rel.Selectors == nil {
 		return nil
+	}
+	isAnnotation := false
+	if rel.RelationshipMetadata != nil && rel.RelationshipMetadata.IsAnnotation != nil {
+		isAnnotation = *rel.RelationshipMetadata.IsAnnotation
 	}
 	var actions []PolicyAction
 	for _, ss := range *rel.Selectors {
@@ -241,7 +245,7 @@ func aliasAddComponentSideEffects(rel *relationship.RelationshipDefinition, _ *p
 					ID:          *fromSel.ID,
 					DisplayName: displayName,
 					Component:   component.Component{Kind: selectorItemKind(fromSel)},
-					Metadata:    component.ComponentDefinition_Metadata{IsAnnotation: true},
+					Metadata:    component.ComponentDefinition_Metadata{IsAnnotation: isAnnotation},
 				}
 				if fromSel.Model != nil {
 					newComp.ModelReference = *fromSel.Model
