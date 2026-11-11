@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -1014,6 +1015,61 @@ func TestGetID_PreservesTotalWhenLaterPageOmitsCount(t *testing.T) {
 	AssertMeshkitErrorsEqual(t, err, ErrIDLookupIncomplete(3, 2))
 	if requests != 3 {
 		t.Errorf("GetID made %d requests, want 3", requests)
+	}
+}
+
+// fullPagePatternIDs returns a comma-separated list of pageSize unique pattern
+// IDs for the given zero-based page, so a test server can serve a full page.
+func fullPagePatternIDs(page, pageSize int) string {
+	var b strings.Builder
+	for i := 0; i < pageSize; i++ {
+		if i > 0 {
+			b.WriteByte(',')
+		}
+		fmt.Fprintf(&b, `{"id":"11111111-0000-4000-8000-%012d"}`, page*pageSize+i)
+	}
+	return b.String()
+}
+
+func TestGetID_PageLimitWithoutTotalReturnsError(t *testing.T) {
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = fmt.Fprintf(w, `{"patterns":[%s]}`, fullPagePatternIDs(page, 10000))
+	}))
+	defer server.Close()
+	setupAuthenticatedContext(t, server.URL)
+
+	_, err := GetID(server.URL, "pattern")
+	if err == nil {
+		t.Fatalf("expected page-limit error, got nil")
+	}
+	AssertMeshkitErrorsEqual(t, err, ErrIDLookupPageLimit(500000))
+	if requests != 50 {
+		t.Errorf("GetID made %d requests, want 50", requests)
+	}
+}
+
+func TestValidId_PageLimitWithoutTotalReturnsError(t *testing.T) {
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = fmt.Fprintf(w, `{"patterns":[%s]}`, fullPagePatternIDs(page, 10000))
+	}))
+	defer server.Close()
+	setupAuthenticatedContext(t, server.URL)
+
+	_, _, err := ValidId(server.URL, "11111111", "pattern")
+	if err == nil {
+		t.Fatalf("expected page-limit error, got nil")
+	}
+	AssertMeshkitErrorsEqual(t, err, ErrIDLookupPageLimit(500000))
+	if requests != 50 {
+		t.Errorf("ValidId made %d requests, want 50", requests)
 	}
 }
 

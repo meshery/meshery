@@ -659,6 +659,7 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 
 	var totalCount int64
 	var hasTotalCount bool
+	completed := false
 
 	for page := 0; page < maxPages; page++ {
 		var url string
@@ -692,12 +693,14 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 			if page == 0 {
 				return idList, ErrNotFound(errors.New("no data found"))
 			}
+			completed = true
 			break
 		}
 		if dat[configType] == nil {
 			if page == 0 {
 				return idList, ErrNotFound(errors.New("no results found"))
 			}
+			completed = true
 			break
 		}
 
@@ -727,15 +730,20 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 		}
 		if hasTotalCount {
 			if int64(len(idList)) >= totalCount || len(configs) == 0 {
+				completed = true
 				break
 			}
 		} else if len(configs) < pageSize {
+			completed = true
 			break
 		}
 	}
 
 	if hasTotalCount && int64(len(idList)) < totalCount {
 		return idList, ErrIDLookupIncomplete(totalCount, int64(len(idList)))
+	}
+	if !completed {
+		return idList, ErrIDLookupPageLimit(int64(len(idList)))
 	}
 
 	return idList, nil

@@ -85,6 +85,7 @@ var (
 	ErrGitHubAPIResponseCode          = "mesheryctl-1255"
 	ErrAmbiguousIDCode                = "mesheryctl-1256"
 	ErrIDLookupIncompleteCode         = "mesheryctl-1257"
+	ErrIDLookupPageLimitCode          = "mesheryctl-1258"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -496,6 +497,17 @@ func ErrIDLookupIncomplete(total, fetched int64) error {
 		[]string{"ID lookup incomplete"},
 		[]string{fmt.Sprintf("fetched %d of %d IDs; the ID list may be incomplete", fetched, total)},
 		[]string{"The server reported more items than mesheryctl could fetch within the page limit."},
+		[]string{"Provide the full ID instead of a short prefix, or retry the command."})
+}
+
+// ErrIDLookupPageLimit reports that a paginated ID lookup hit the page limit
+// without the server reporting a total count, so mesheryctl could not confirm
+// the returned list is complete.
+func ErrIDLookupPageLimit(fetched int64) error {
+	return errors.New(ErrIDLookupPageLimitCode, errors.Alert,
+		[]string{"ID lookup hit page limit"},
+		[]string{fmt.Sprintf("fetched %d IDs across the page limit without a reported total; the ID list may be incomplete", fetched)},
+		[]string{"The server did not report a total count and every page was full, so mesheryctl stopped at the page limit without confirming the list is complete."},
 		[]string{"Provide the full ID instead of a short prefix, or retry the command."})
 }
 

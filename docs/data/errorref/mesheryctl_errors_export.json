@@ -2135,6 +2135,15 @@
         "short_description": "ID lookup incomplete",
         "probable_cause": "The server reported more items than mesheryctl could fetch within the page limit.",
         "suggested_remediation": "Provide the full ID instead of a short prefix, or retry the command."
+      },
+      "1258": {
+        "name": "ErrIDLookupPageLimitCode",
+        "code": "1258",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "ID lookup hit page limit",
+        "probable_cause": "The server did not report a total count and every page was full, so mesheryctl stopped at the page limit without confirming the list is complete.",
+        "suggested_remediation": "Provide the full ID instead of a short prefix, or retry the command."
       }
     }
   }
