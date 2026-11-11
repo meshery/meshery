@@ -222,8 +222,27 @@ func (ep *EnvironmentPersister) DeleteEnvironmentByID(environmentID core.Uuid) (
 	return ep.DeleteEnvironment(env)
 }
 
+// parseBoolFilter checks filterMap for the given keys in order and parses either a
+// boolean or a string-encoded boolean value.
+func parseBoolFilter(filterMap map[string]interface{}, keys ...string) (bool, bool) {
+	for _, key := range keys {
+		if val, ok := filterMap[key]; ok {
+			switch v := val.(type) {
+			case bool:
+				return v, true
+			case string:
+				if b, err := strconv.ParseBool(v); err == nil {
+					return b, true
+				}
+			}
+		}
+	}
+	return false, false
+}
+
 // AddConnectionToEnvironment adds a connection to an environment. Adding one the
 // environment already has returns the existing mapping instead of a second row.
+// If a soft-deleted mapping exists, it is restored so the connection becomes active again.
 func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connectionID core.Uuid) ([]byte, error) {
 	var existing environment.EnvironmentConnectionMapping
 	found := ep.DB.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).Limit(1).Find(&existing)
@@ -231,6 +250,17 @@ func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connec
 		return nil, ErrDBRead(found.Error)
 	}
 	if found.RowsAffected > 0 {
+		if existing.DeletedAt.Valid {
+			now := time.Now()
+			if err := ep.DB.Model(&existing).Updates(map[string]interface{}{
+				"deleted_at": nil,
+				"updated_at": now,
+			}).Error; err != nil {
+				return nil, ErrDBCreate(err)
+			}
+			existing.DeletedAt = core.NullTime{}
+			existing.UpdatedAt = core.Time(now)
+		}
 		return json.Marshal(existing)
 	}
 
@@ -278,35 +308,11 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 			return nil, err
 		}
 
-		if assignedVal, ok := filterMap["assigned"]; ok {
-			switch v := assignedVal.(type) {
-			case bool:
-				isAssigned = v
-			case string:
-				if b, err := strconv.ParseBool(v); err == nil {
-					isAssigned = b
-				}
-			}
+		if b, ok := parseBoolFilter(filterMap, "assigned"); ok {
+			isAssigned = b
 		}
-
-		if delVal, ok := filterMap["deletedAt"]; ok {
-			switch v := delVal.(type) {
-			case bool:
-				deletedAt = v
-			case string:
-				if b, err := strconv.ParseBool(v); err == nil {
-					deletedAt = b
-				}
-			}
-		} else if delVal, ok := filterMap["deleted_at"]; ok {
-			switch v := delVal.(type) {
-			case bool:
-				deletedAt = v
-			case string:
-				if b, err := strconv.ParseBool(v); err == nil {
-					deletedAt = b
-				}
-			}
+		if b, ok := parseBoolFilter(filterMap, "deletedAt", "deleted_at"); ok {
+			deletedAt = b
 		}
 	}
 
