@@ -63,7 +63,7 @@ func (h *Handler) GetSchedulesHandler(
 ) {
 	q := r.URL.Query()
 
-	resp, err := provider.GetSchedules(r, q.Get("page"), q.Get("pagesize"), q.Get("order"))
+	resp, err := provider.GetSchedules(r, q.Get("page"), getPageSizeParam(q), q.Get("order"))
 	if err != nil {
 		obj := "schedules"
 		//unable to get schedules
