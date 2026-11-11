@@ -963,10 +963,6 @@ model:
           name: --output-type, -o
           description: (optional) package type of the exported model [oci|tar] (default oci)
           usage: mesheryctl model export [model-name] --output-type [oci|tar]
-        page:
-          name: --page, -p
-          description: (optional) page number for paginated results (default 1)
-          usage: mesheryctl model export [model-name] --page [page-number]
         version:
           name: --version
           description: (optional) model version to export, in vX.X.X format
