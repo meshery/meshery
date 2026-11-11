@@ -21,12 +21,26 @@ import (
 
 // liveBroker is the cluster's current Meshery Broker as its controller reports
 // it: the endpoint the Broker resource publishes and the token in
-// meshery-nats-auth. A test "recreates the broker" by changing both.
+// meshery-nats-auth. A test "recreates the broker" by changing both. While up,
+// it answers at that endpoint and nowhere else.
 type liveBroker struct {
 	stubController
 	mu       sync.Mutex
 	endpoint string
 	token    string
+	up       bool
+}
+
+func (b *liveBroker) answers(endpoint string) bool {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.up && endpoint == b.endpoint
+}
+
+func (b *liveBroker) setUp(v bool) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.up = v
 }
 
 func (b *liveBroker) GetPublicEndpoint() (string, error) {
@@ -118,6 +132,7 @@ func supervisedConnection(t *testing.T) (*MesheryControllersHelper, *liveBroker,
 
 	broker := &liveBroker{endpoint: oldBrokerEndpoint, token: "old-token"}
 	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{MesheryBroker: broker}
+	mch.brokerReachable = broker.answers
 	dialer := &brokerDialer{}
 	mch.newBrokerConnection = dialer.dial
 	t.Cleanup(func() { mch.RemoveMeshSyncDataHandler(context.Background(), "ctx-1") })
@@ -196,6 +211,27 @@ func TestRecreatedBrokerIsReconnectedWithItsNewEndpointAndToken(t *testing.T) {
 	}
 }
 
+// TestMovedBrokerWithTheSameTokenIsReconnected: a broker that answers at a
+// different endpoint while the connection is down has moved, even though its
+// token did not change.
+func TestMovedBrokerWithTheSameTokenIsReconnected(t *testing.T) {
+	mch, broker, dialer := supervisedConnection(t)
+	target := attach(t, mch)
+	broker.recreate(newBrokerEndpoint, "old-token")
+	broker.setUp(true)
+
+	var since time.Time
+	t0 := time.Unix(1000, 0)
+	mch.recheckBroker(target, t0, &since)
+	if !mch.recheckBroker(target, t0.Add(mch.brokerStaleAfter), &since) {
+		t.Fatal("a sustained outage against a moved broker did not rebuild the connection")
+	}
+	conns := dialer.opened()
+	if len(conns) != 2 || !slices.Contains(conns[1].opts.URLS, newBrokerEndpoint) {
+		t.Fatalf("connections opened: %d, want one rebuilt against the moved broker's endpoint", len(conns))
+	}
+}
+
 // TestBrokerSupervisorLeavesWhatItShouldNotTouch covers every case in which
 // the supervisor must not rebuild: the NATS client recovers a merely-down
 // broker on its own, and tearing down a live connection loses data.
@@ -208,6 +244,15 @@ func TestBrokerSupervisorLeavesWhatItShouldNotTouch(t *testing.T) {
 		{
 			name:    "broker down, same endpoint and token",
 			arrange: func(*MesheryControllersHelper, *liveBroker, *natsConn) {},
+		},
+		{
+			// A NodePort, LoadBalancer or host.docker.internal connection: once
+			// nothing answers, the resolved endpoint falls back to the internal
+			// one although the broker has not moved.
+			name: "broker down, resolves to a different candidate, same token",
+			arrange: func(_ *MesheryControllersHelper, b *liveBroker, _ *natsConn) {
+				b.recreate(newBrokerEndpoint, "old-token")
+			},
 		},
 		{
 			name: "connection live, broker token rotated",

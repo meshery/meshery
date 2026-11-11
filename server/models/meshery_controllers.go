@@ -108,6 +108,11 @@ type MesheryControllersHelper struct {
 	// constructed.
 	newBrokerConnection func(nats.Options) (broker.Handler, error)
 
+	// brokerReachable reports whether a broker endpoint answers. It is
+	// brokerAnswers; injected so tests need no listener. Never nil once
+	// constructed.
+	brokerReachable func(endpoint string) bool
+
 	// brokerRecheckInterval is how often the supervisor looks at a broker
 	// connection, and brokerStaleAfter how long it must have been down before
 	// the broker's endpoint and token are re-resolved. See superviseBroker.
@@ -266,6 +271,7 @@ func NewMesheryControllersHelper(
 		chartVersions:          mesheryutils.PublishedChartVersions,
 		hostCluster:            defaultHostCluster,
 		newBrokerConnection:    nats.New,
+		brokerReachable:        brokerAnswers,
 		brokerRecheckInterval:  defaultBrokerRecheckInterval,
 		brokerStaleAfter:       defaultBrokerStaleAfter,
 		meshsyncDeploymentMode: connections.MeshsyncDeploymentModeOperator,

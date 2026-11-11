@@ -357,6 +357,11 @@ rules govern it:
   it stops the handler and rebuilds it in place under `meshsyncMutex` with the
   inputs the original was built from. A merely-down Broker (same endpoint and
   token), a token not provisioned yet, and a live connection are left alone.
+  A changed endpoint counts only if it answers a TCP dial (`brokerReachable`):
+  `GetPublicEndpoint` returns the first published candidate that answers and
+  falls back to the internal one when none does, so a down Broker reached
+  through a NodePort, LoadBalancer or `host.docker.internal` resolves to a
+  different endpoint without having moved.
   `brokerTarget` identifies the supervised connection: every supervisor action
   is re-checked under the mutex against `MesheryControllersHelper.brokerTarget`,
   so `RemoveMeshSyncDataHandler` stops a supervisor without waiting for it.

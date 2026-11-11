@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"net"
 	"sync"
 	"time"
 
@@ -31,7 +32,18 @@ import (
 const (
 	defaultBrokerRecheckInterval = 15 * time.Second
 	defaultBrokerStaleAfter      = 45 * time.Second
+	brokerReachTimeout           = 5 * time.Second
 )
+
+// brokerAnswers reports whether endpoint accepts a TCP connection.
+func brokerAnswers(endpoint string) bool {
+	conn, err := net.DialTimeout("tcp", endpoint, brokerReachTimeout)
+	if err != nil {
+		return false
+	}
+	_ = conn.Close()
+	return true
+}
 
 // brokerTarget is what one broker connection was built from. It also owns the
 // lifetime of that connection's supervisor.
@@ -69,15 +81,19 @@ func (t *brokerTarget) halt() {
 // different broker than the one this connection was built for. An empty token
 // means the operator has not provisioned the new broker yet, so there is
 // nothing to rebuild against; an empty endpoint means none could be resolved,
-// which is not evidence that it changed.
-func (t *brokerTarget) replacedBy(endpoint, token string) bool {
+// which is not evidence that it changed. The resolved endpoint is the first
+// published candidate that answers, falling back to the internal one when none
+// does, so a down broker resolves differently from the one the connection was
+// built for without having moved: a different endpoint counts only if it
+// answers.
+func (t *brokerTarget) replacedBy(endpoint, token string, answers func(string) bool) bool {
 	if token == "" {
 		return false
 	}
 	if token != t.token {
 		return true
 	}
-	return endpoint != "" && endpoint != t.endpoint
+	return endpoint != "" && endpoint != t.endpoint && answers(endpoint)
 }
 
 func (mch *MesheryControllersHelper) brokerTimings() (interval, staleAfter time.Duration) {
@@ -159,7 +175,7 @@ func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now tim
 	if err != nil {
 		mch.log.Warn(err)
 	}
-	if !target.replacedBy(endpoint, token) {
+	if !target.replacedBy(endpoint, token, mch.brokerReachable) {
 		return false
 	}
 

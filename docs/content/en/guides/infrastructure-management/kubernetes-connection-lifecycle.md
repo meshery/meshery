@@ -122,9 +122,10 @@ If the Broker is recreated - the Operator reinstalled, or the `meshery`
 namespace rebuilt - it comes back with a new token and often a new endpoint,
 and the connection Meshery holds keeps presenting the old ones. Meshery notices:
 once a Broker connection has been down for about 45 seconds, it re-reads the
-Broker's endpoint and the `meshery-nats-auth` token, and if either changed it
-rebuilds the MeshSync data connection with the new values and raises an
-informational **Meshery Broker changed; reconnecting MeshSync** event. A Broker
+Broker's endpoint and the `meshery-nats-auth` token, and if the token changed,
+or the Broker answers at a different endpoint, it rebuilds the MeshSync data
+connection with the new values and raises an informational **Meshery Broker
+changed; reconnecting MeshSync** event. A Broker
 that is only down, with the same endpoint and token, is left to reconnect on its
 own. No server restart or reconnect is needed.
 
