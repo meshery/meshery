@@ -9,6 +9,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/meshery/meshery/server/handlers"
+	"github.com/meshery/meshery/server/internal/graphql/dataloader"
 	"github.com/meshery/meshery/server/internal/graphql/generated"
 	"github.com/meshery/meshery/server/internal/graphql/resolver"
 	"github.com/meshery/meshery/server/models"
@@ -59,7 +60,12 @@ func New(opts Options) http.Handler {
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})
 
-	return srv
+	dlMiddleware := dataloader.Middleware(func(ctx context.Context) models.Provider {
+		provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
+		return provider
+	})
+
+	return dlMiddleware(srv)
 }
 
 // NewPlayground returns a graphql playground instance
