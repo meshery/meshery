@@ -736,8 +736,80 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	// A Kubernetes connection deleted while NOTFOUND retires its unreachable
 	// condition, so the deletion event resolves it.
 	resolvesUnreachable := false
-	if existing, _, gerr := provider.GetConnectionByID(token, connectionID); gerr == nil && existing != nil {
+	existing, _, gerr := provider.GetConnectionByID(token, connectionID)
+	if gerr == nil && existing != nil {
 		resolvesUnreachable = existing.Kind == "kubernetes" && existing.Status == connections.ConnectionStatus(machines.NOTFOUND)
+	}
+
+	// For Kubernetes connections, trigger cluster teardown (undeploying deployed operators,
+	// removing controller handlers, stopping MeshSync, and flushing MeshSync data)
+	// before the connection and its context rows are deleted from the database.
+	isKubernetes := (existing != nil && strings.EqualFold(existing.Kind, "kubernetes"))
+	if !isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
+		if tracked, ok := h.ConnectionToStateMachineInstanceTracker.Get(connectionID); ok && tracked != nil {
+			isKubernetes = strings.EqualFold(tracked.Name, "kubernetes")
+		}
+	}
+
+	if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
+		var inst *machines.StateMachine
+		if tracked, ok := h.ConnectionToStateMachineInstanceTracker.Get(connectionID); ok && tracked != nil {
+			inst = tracked
+		} else {
+			contextID := connectionID.String()
+			if existing != nil && existing.Metadata != nil && provider.GetProviderType() != models.RemoteProviderType {
+				for _, key := range []string{"contextId", "context_id", "k8sContextId", "k8s_context_id"} {
+					if val, ok := existing.Metadata[key].(string); ok && val != "" {
+						contextID = val
+						break
+					}
+				}
+			}
+
+			if k8scontext, ctxErr := provider.GetK8sContext(token, contextID); ctxErr == nil {
+				var operatorTracker *models.OperatorTracker
+				var k8scontextChannel *models.K8scontextChan
+				var eventBroadcaster *models.Broadcast
+				if h.config != nil {
+					operatorTracker = h.config.OperatorTracker
+					k8scontextChannel = h.config.K8scontextChannel
+					eventBroadcaster = h.config.EventBroadcaster
+				}
+
+				machineCtx := &kubernetes.MachineCtx{
+					K8sContext:         k8scontext,
+					MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+					K8sCompRegHelper:   h.K8sCompRegHelper,
+					OperatorTracker:    operatorTracker,
+					K8scontextChannel:  k8scontextChannel,
+					EventBroadcaster:   eventBroadcaster,
+					RegistryManager:    h.registryManager,
+				}
+				inst, _ = helpers.InitializeMachineWithContext(
+					machineCtx,
+					req.Context(),
+					connectionID,
+					userID,
+					h.ConnectionToStateMachineInstanceTracker,
+					h.log,
+					provider,
+					machines.InitialState,
+					"kubernetes",
+					kubernetes.AssignInitialCtx,
+				)
+			}
+		}
+
+		if inst != nil && helpers.HasMachineContext(inst) {
+			detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), defaultFSMTransitionTimeout)
+			defer cancel()
+			event, sendErr := inst.SendEvent(detachedCtx, machines.Delete, nil)
+			if sendErr != nil {
+				h.log.Warnf("failed to transition Kubernetes connection %s to deleted during teardown: %v", connectionID, sendErr)
+			} else if event != nil && event.ResolvedAt != nil {
+				resolvesUnreachable = true
+			}
+		}
 	}
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
