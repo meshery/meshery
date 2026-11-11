@@ -156,7 +156,8 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 						return ErrRunPortForward(err)
 					}
 					requestedPort := dashboardCmdFlags.Port
-					utils.Log.Warnf("Port %d is already in use, falling back to an available ephemeral port...", requestedPort)
+					utils.Log.Warnf("Default port %d is already in use. Falling back to an available port...", requestedPort)
+					utils.Log.Debugf("Port-forward listener error: %v", err)
 					portforward, err = utils.NewPortForward(
 						cmd.Context(), client, utils.MesheryNamespace, "meshery",
 						options.host, 0, options.podPort, false,

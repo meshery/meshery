@@ -2,16 +2,53 @@ package utils
 
 import (
 	"errors"
+	"fmt"
+	"k8s.io/apimachinery/pkg/util/httpstream"
+	"net"
+	"net/http"
 	"testing"
+	"time"
 )
 
-func TestPortForwardURLUsesBoundLocalPort(t *testing.T) {
-	pf := &PortForward{host: "localhost", localPort: 49152}
-	if got, want := pf.URLFor(""), "http://localhost:49152"; got != want {
-		t.Fatalf("URLFor(\"\") = %q, want %q", got, want)
+type stubDialer struct{}
+
+func (stubDialer) Dial(...string) (httpstream.Connection, string, error) {
+	return stubConnection{make(chan bool)}, "portforward.k8s.io", nil
+}
+
+type stubConnection struct{ closed chan bool }
+
+func (c stubConnection) CreateStream(http.Header) (httpstream.Stream, error) {
+	return nil, fmt.Errorf("unexpected stream")
+}
+func (c stubConnection) Close() error                       { return nil }
+func (c stubConnection) CloseChan() <-chan bool             { return c.closed }
+func (c stubConnection) SetIdleTimeout(time.Duration)       {}
+func (c stubConnection) RemoveStreams(...httpstream.Stream) {}
+
+func TestPortForwardListeners(t *testing.T) {
+	ln, err := net.Listen("tcp4", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
 	}
-	if got := pf.LocalPort(); got != 49152 {
-		t.Fatalf("LocalPort() = %d, want 49152", got)
+	defer ln.Close()
+	newForward := func(port int) *PortForward {
+		return &PortForward{host: "127.0.0.1", namespace: "meshery", podName: "meshery-test", localPort: port, remotePort: 8080, stopCh: make(chan struct{}), readyCh: make(chan struct{}), dialer: stubDialer{}}
+	}
+	busy := newForward(ln.Addr().(*net.TCPAddr).Port)
+	if err := busy.Init(); !IsPortBusyError(err) {
+		t.Fatalf("Init() error = %v, want busy port", err)
+	}
+	free := newForward(0)
+	if err := free.Init(); err != nil {
+		t.Fatal(err)
+	}
+	defer free.Stop()
+	if free.LocalPort() == 0 {
+		t.Fatal("Init did not resolve ephemeral port")
+	}
+	if got, want := free.URLFor(""), fmt.Sprintf("http://127.0.0.1:%d", free.LocalPort()); got != want {
+		t.Fatalf("URLFor = %q, want %q", got, want)
 	}
 }
 

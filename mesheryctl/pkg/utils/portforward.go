@@ -15,6 +15,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/httpstream"
 	"k8s.io/client-go/rest"
 
 	"k8s.io/client-go/tools/portforward"
@@ -34,6 +35,7 @@ type PortForward struct {
 	stopCh     chan struct{}
 	readyCh    chan struct{}
 	forwarder  *portforward.PortForwarder
+	dialer     httpstream.Dialer
 	config     *rest.Config
 }
 
@@ -109,9 +111,13 @@ func newPortForward(
 // run creates and runs the port-forward connection.
 // When the connection is established it blocks until Stop() is called.
 func (pf *PortForward) run() error {
-	transport, upgrader, err := spdy.RoundTripperFor(pf.config)
-	if err != nil {
-		return err
+	dialer := pf.dialer
+	if dialer == nil {
+		transport, upgrader, err := spdy.RoundTripperFor(pf.config)
+		if err != nil {
+			return err
+		}
+		dialer = spdy.NewDialer(upgrader, &http.Client{Transport: transport}, pf.method, pf.url)
 	}
 
 	out := io.Discard
@@ -128,7 +134,6 @@ func (pf *PortForward) run() error {
 	}
 
 	ports := []string{fmt.Sprintf("%d:%d", pf.localPort, pf.remotePort)}
-	dialer := spdy.NewDialer(upgrader, &http.Client{Transport: transport}, pf.method, pf.url)
 
 	fw, err := portforward.NewOnAddresses(dialer, []string{pf.host}, ports, pf.stopCh, pf.readyCh, out, errOut)
 	if err != nil {
