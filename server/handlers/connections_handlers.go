@@ -755,50 +755,67 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 				h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
 			}
 			contextID := connectionID.String()
+			hasMetadataContextID := false
 			if existing != nil && existing.Metadata != nil && provider.GetProviderType() != models.RemoteProviderType {
 				for _, key := range []string{"contextId", "context_id", "k8sContextId", "k8s_context_id"} {
 					if val, ok := existing.Metadata[key].(string); ok && val != "" {
 						contextID = val
+						hasMetadataContextID = true
 						break
 					}
 				}
 			}
 
 			k8scontext, ctxErr := provider.GetK8sContext(token, contextID)
-			if ctxErr == nil {
-				var operatorTracker *models.OperatorTracker
-				var k8scontextChannel *models.K8scontextChan
-				var eventBroadcaster *models.Broadcast
-				if h.config != nil {
-					operatorTracker = h.config.OperatorTracker
-					k8scontextChannel = h.config.K8scontextChannel
-					eventBroadcaster = h.config.EventBroadcaster
+			if ctxErr != nil && hasMetadataContextID {
+				// If metadata named a missing context, fall back to resolving the context
+				// linked to the connection by its connectionID before skipping teardown.
+				var linkErr error
+				k8scontext, linkErr = provider.GetK8sContext(token, connectionID.String())
+				if linkErr == nil {
+					ctxErr = nil
 				}
+			}
 
-				machineCtx := &kubernetes.MachineCtx{
-					K8sContext:         k8scontext,
-					MesheryCtrlsHelper: h.MesheryCtrlsHelper,
-					K8sCompRegHelper:   h.K8sCompRegHelper,
-					OperatorTracker:    operatorTracker,
-					K8scontextChannel:  k8scontextChannel,
-					EventBroadcaster:   eventBroadcaster,
-					RegistryManager:    h.registryManager,
-				}
-				var initErr error
-				inst, initErr = helpers.InitializeMachineWithContext(
-					machineCtx,
-					req.Context(),
-					connectionID,
-					userID,
-					h.ConnectionToStateMachineInstanceTracker,
-					h.log,
-					provider,
-					machines.InitialState,
-					"kubernetes",
-					kubernetes.AssignInitialCtx,
-				)
-				if initErr != nil {
-					h.log.Warnf("failed to initialize Kubernetes machine for connection %s during teardown: %v", connectionID, initErr)
+			if ctxErr == nil {
+				connUUID := uuid.FromStringOrNil(k8scontext.ConnectionID)
+				if connUUID != uuid.Nil && connUUID != connectionID {
+					h.log.Warnf("resolved Kubernetes context %s does not belong to connection %s (linked to %s), skipping teardown", k8scontext.ID, connectionID, k8scontext.ConnectionID)
+				} else {
+					var operatorTracker *models.OperatorTracker
+					var k8scontextChannel *models.K8scontextChan
+					var eventBroadcaster *models.Broadcast
+					if h.config != nil {
+						operatorTracker = h.config.OperatorTracker
+						k8scontextChannel = h.config.K8scontextChannel
+						eventBroadcaster = h.config.EventBroadcaster
+					}
+
+					machineCtx := &kubernetes.MachineCtx{
+						K8sContext:         k8scontext,
+						MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+						K8sCompRegHelper:   h.K8sCompRegHelper,
+						OperatorTracker:    operatorTracker,
+						K8scontextChannel:  k8scontextChannel,
+						EventBroadcaster:   eventBroadcaster,
+						RegistryManager:    h.registryManager,
+					}
+					var initErr error
+					inst, initErr = helpers.InitializeMachineWithContext(
+						machineCtx,
+						req.Context(),
+						connectionID,
+						userID,
+						h.ConnectionToStateMachineInstanceTracker,
+						h.log,
+						provider,
+						machines.InitialState,
+						"kubernetes",
+						kubernetes.AssignInitialCtx,
+					)
+					if initErr != nil {
+						h.log.Warnf("failed to initialize Kubernetes machine for connection %s during teardown: %v", connectionID, initErr)
+					}
 				}
 			} else {
 				h.log.Warnf("failed to resolve Kubernetes context %s for connection %s during teardown: %v", contextID, connectionID, ctxErr)

@@ -758,3 +758,83 @@ func TestDeleteConnection_KubernetesKindWithoutMachineContext_ReinitializesIfPer
 		t.Error("expected connection to be deleted from database")
 	}
 }
+
+// TestDeleteConnection_KubernetesKindMetadataStaleContextFallsBackToLinkedContextTriggersTeardown
+// verifies that when a connection's metadata names a missing/stale context ID, DeleteConnection
+// falls back to resolving the context linked via the connection's connectionID foreign key,
+// verifies context ownership, initializes the machine, and triggers cluster teardown.
+func TestDeleteConnection_KubernetesKindMetadataStaleContextFallsBackToLinkedContextTriggersTeardown(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name:           "k8s-stale-meta-cluster",
+		Kind:           "kubernetes",
+		ConnectionType: "platform",
+		Status:         connections.CONNECTED,
+		Metadata: map[string]interface{}{
+			"contextId": "stale-or-nonexistent-context-id",
+		},
+	})
+	if err != nil {
+		t.Fatalf("save connection: %v", err)
+	}
+
+	cluster := isql.Map{
+		"name": "test-cluster",
+		"cluster": map[string]interface{}{
+			"server": "https://127.0.0.1:6443",
+		},
+	}
+	auth := isql.Map{
+		"name": "test-user",
+		"user": map[string]interface{}{
+			"token": "fake-token",
+		},
+	}
+
+	// Persist the actual K8sContext with an MD5 hash ID, linked via ConnectionID = saved.ID
+	actualContextID := "linked-actual-k8s-context-id"
+	if err := provider.MesheryK8sContextPersister.DB.Create(&models.K8sContext{
+		ID:                actualContextID,
+		Name:              "test-cluster",
+		ConnectionID:      saved.ID.String(),
+		MesheryInstanceID: h.SystemID,
+		Cluster:           cluster,
+		Auth:              auth,
+	}).Error; err != nil {
+		t.Fatalf("save k8s context: %v", err)
+	}
+
+	// Verify machine is NOT in tracker prior to delete
+	if _, ok := h.ConnectionToStateMachineInstanceTracker.Get(saved.ID); ok {
+		t.Fatal("expected machine to not be in tracker prior to delete")
+	}
+
+	observingProvider := &teardownObservingProvider{
+		Provider: provider,
+		h:        h,
+	}
+
+	rec := deleteConnection(t, h, observingProvider, saved.ID)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusOK, rec.Body.String())
+	}
+
+	if !observingProvider.observedTransition {
+		t.Error("expected machine to be initialized via linked context fallback and tracked during teardown")
+	}
+	if observingProvider.observedState != machines.DELETED {
+		t.Errorf("expected machine state to transition to DELETED before eviction, got %s", observingProvider.observedState)
+	}
+	if !observingProvider.hasContext {
+		t.Error("expected machine to carry context resolved from linked context")
+	}
+
+	if _, ok := h.ConnectionToStateMachineInstanceTracker.Get(saved.ID); ok {
+		t.Error("expected state machine to be evicted from tracker after delete")
+	}
+
+	if _, err := provider.ConnectionPersister.GetConnection(saved.ID, ""); err == nil {
+		t.Error("expected connection to be deleted from database")
+	}
+}
