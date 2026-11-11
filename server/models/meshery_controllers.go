@@ -134,6 +134,11 @@ type MesheryControllersHelper struct {
 	provider         Provider
 	systemID         *core.Uuid
 
+	// meshsyncMutex serializes MeshSync data handler initialization and
+	// teardown across retries and concurrent callers so overlapping setup
+	// attempts cannot start handlers that overwrite one another.
+	meshsyncMutex sync.Mutex
+
 	// lastOperatorError records the most recent failure to set up the operator for
 	// this context — an unreadable kubeconfig, a failed Kubernetes client, or a
 	// failed Deploy — so the connection-diagnostics API can surface *why* the
@@ -208,6 +213,8 @@ func (mch *MesheryControllersHelper) GetControllerHandlersForEachContext() map[M
 }
 
 func (mch *MesheryControllersHelper) GetMeshSyncDataHandlersForEachContext() *MeshsyncDataHandler {
+	mch.meshsyncMutex.Lock()
+	defer mch.meshsyncMutex.Unlock()
 	return mch.ctxMeshsyncDataHandler
 }
 
@@ -253,11 +260,15 @@ func (mch *MesheryControllersHelper) reattach(ctx K8sContext) {
 }
 
 func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value connections.MeshsyncDeploymentMode) *MesheryControllersHelper {
+	mch.meshsyncMutex.Lock()
+	defer mch.meshsyncMutex.Unlock()
 	mch.meshsyncDeploymentMode = value
 	return mch
 }
 
 func (mch *MesheryControllersHelper) GetMeshsyncDeploymentMode() connections.MeshsyncDeploymentMode {
+	mch.meshsyncMutex.Lock()
+	defer mch.meshsyncMutex.Unlock()
 	return mch.meshsyncDeploymentMode
 }
 
@@ -315,6 +326,9 @@ func (mch *MesheryControllersHelper) ResolveControllersConfigForConnection(metad
 // updating the map. The presence of a handler for a context in a map indicate that
 // the meshsync data for that context is properly being handled
 func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context, k8scontext K8sContext, userID, mesheryInstanceID core.Uuid, provider Provider) *MesheryControllersHelper {
+	mch.meshsyncMutex.Lock()
+	defer mch.meshsyncMutex.Unlock()
+
 	// only checking those contexts whose MesheryControllers are active
 	// go func(mch *MesheryControllersHelper) {
 
@@ -360,6 +374,15 @@ func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context
 		if brokerHandler == nil {
 			mch.log.Warnf("MesheryControllersHelper::AddMeshsyncDataHandlers brokerHandler is nil")
 			mch.emitWarningEvent("MeshSync data handler broker is nil", nil, map[string]any{
+				"k8sContextID":   ctxID,
+				"k8sContextName": k8scontext.Name,
+				"connectionID":   k8scontext.ConnectionID,
+			}, userID)
+			return mch
+		}
+		if mch.dbHandler == nil {
+			mch.log.Warnf("MesheryControllersHelper::AddMeshsyncDataHandlers dbHandler is nil")
+			mch.emitWarningEvent("MeshSync data handler database is nil", nil, map[string]any{
 				"k8sContextID":   ctxID,
 				"k8sContextName": k8scontext.Name,
 				"connectionID":   k8scontext.ConnectionID,
@@ -705,6 +728,7 @@ func (mch *MesheryControllersHelper) meshsyncDataHandlersStartLibMeshsyncRun(
 		}
 	}
 
+	mode := mch.meshsyncDeploymentMode
 	go func() {
 		if err := libmeshsync.Run(
 			mch.log,
@@ -716,7 +740,7 @@ func (mch *MesheryControllersHelper) meshsyncDataHandlersStartLibMeshsyncRun(
 				"k8sContextID":           k8sContext.ID,
 				"k8sContextName":         k8sContext.Name,
 				"connectionID":           k8sContext.ConnectionID,
-				"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
+				"meshsyncDeploymentMode": mode,
 			}, userID)
 		}
 	}()
@@ -725,6 +749,9 @@ func (mch *MesheryControllersHelper) meshsyncDataHandlersStartLibMeshsyncRun(
 }
 
 func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
+	mch.meshsyncMutex.Lock()
+	defer mch.meshsyncMutex.Unlock()
+
 	if mch.ctxMeshsyncDataHandler != nil {
 		mch.log.Infof("MesheryControllersHelper::RemoveMeshSyncDataHandler for contextID = %s", contextID)
 		mch.ctxMeshsyncDataHandler.Stop()
@@ -740,6 +767,9 @@ func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Conte
 }
 
 func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
+	mch.meshsyncMutex.Lock()
+	defer mch.meshsyncMutex.Unlock()
+
 	if mch.ctxMeshsyncDataHandler != nil {
 		return mch.ctxMeshsyncDataHandler.Resync()
 	}

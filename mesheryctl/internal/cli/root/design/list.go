@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
@@ -26,11 +27,15 @@ import (
 
 const listUsageMsg = "Usage: mesheryctl design list\nRun 'mesheryctl design list --help' to see detailed help message"
 
+type designListFlags struct {
+	Page     int `json:"page" validate:"gte=1"`
+	PageSize int `json:"pagesize" validate:"gte=1"`
+}
+
 var (
-	verbose  bool
-	page     int
-	pageSize int
-	provider string
+	verbose              bool
+	designListFlagsInput designListFlags
+	provider             string
 )
 
 var linkDocPatternList = map[string]string{
@@ -68,6 +73,10 @@ mesheryctl design list --count
 	`,
 	Annotations: linkDocPatternList,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := mesheryctlflags.ValidateCmdFlags(cmd, &designListFlagsInput); err != nil {
+			return err
+		}
+
 		// token flag is not provided
 		if utils.TokenFlag == "" {
 			// retrieve token from default location
@@ -97,8 +106,8 @@ mesheryctl design list --count
 			UrlPath:          "api/pattern",
 			DataType:         "design",
 			Header:           header,
-			Page:             page,
-			PageSize:         pageSize,
+			Page:             designListFlagsInput.Page,
+			PageSize:         designListFlagsInput.PageSize,
 			IsPage:           cmd.Flags().Changed("page"),
 			DisplayCountOnly: cmd.Flags().Changed("count"),
 		}
@@ -141,7 +150,7 @@ func formatTimeToString(t *time.Time, isVerbose bool) string {
 
 func init() {
 	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "(optional) Display full length owner identifiers and detailed timestamps")
-	listCmd.Flags().IntVarP(&page, "page", "p", 1, "(optional) List next set of designs with --page")
-	listCmd.Flags().IntVarP(&pageSize, "pagesize", "", 10, "(optional) Number of designs to be displayed per page")
+	listCmd.Flags().IntVarP(&designListFlagsInput.Page, "page", "p", 1, "(optional) List next set of designs with --page")
+	listCmd.Flags().IntVarP(&designListFlagsInput.PageSize, "pagesize", "", 10, "(optional) Number of designs to be displayed per page")
 	listCmd.Flags().BoolP("count", "c", false, "(optional) Display count only")
 }
