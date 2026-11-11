@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/meshery/meshkit/errors"
 )
@@ -82,6 +83,7 @@ var (
 	ErrMesheryCheckRunningStatusCode  = "mesheryctl-1227"
 	ErrDockerComposeStopCode          = "mesheryctl-1228"
 	ErrGitHubAPIResponseCode          = "mesheryctl-1255"
+	ErrAmbiguousIDCode                = "mesheryctl-1256"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -476,6 +478,14 @@ func ErrInvalidNameOrID(err error) error {
 		[]string{err.Error()},
 		[]string{"The provided Name or ID is either not present or invalid."},
 		[]string{"Provide a valid Name or ID using the `list` command with the appropriate subcommand."})
+}
+
+func ErrAmbiguousID(prefix string, matches []string) error {
+	return errors.New(ErrAmbiguousIDCode, errors.Alert,
+		[]string{"Ambiguous ID prefix"},
+		[]string{fmt.Sprintf("%q matches %d IDs, including: %s", prefix, len(matches), strings.Join(matches[:min(10, len(matches))], ", "))},
+		[]string{"The provided ID prefix is shared by more than one item."},
+		[]string{"Provide more characters of the ID, or the full ID."})
 }
 
 func ErrAttachAuthToken(err error) error {
