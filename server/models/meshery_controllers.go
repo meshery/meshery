@@ -1027,9 +1027,8 @@ func (mch *MesheryControllersHelper) ReconcileOperatorChartVersion(k8sctx K8sCon
 	// Helm upgrade against one that is installed, so an operator the user turned
 	// off is not resurrected by a chart-version change. It is serialized with
 	// every other Helm action against this cluster.
-	unlock := ot.lockOperatorCluster(k8sctx)
-	deployErr := operatorHandler.Deploy(false)
-	unlock()
+	var deployErr error
+	ot.withOperatorClusterLock(k8sctx, func() { deployErr = operatorHandler.Deploy(false) })
 	if deployErr != nil {
 		mch.attachedOperatorChartVersion = previousChartVersion
 		mch.setOperatorError(deployErr)
@@ -1213,11 +1212,11 @@ func (mch *MesheryControllersHelper) SetOperatorDeployment(ot *OperatorTracker, 
 		}
 		return err
 	}
-	unlock := ot.lockOperatorCluster(k8sctx)
-	defer unlock()
-	if err := operatorHandler.Deploy(true); err != nil {
-		mch.setOperatorError(err)
-		return err
+	var deployErr error
+	ot.withOperatorClusterLock(k8sctx, func() { deployErr = operatorHandler.Deploy(true) })
+	if deployErr != nil {
+		mch.setOperatorError(deployErr)
+		return deployErr
 	}
 	return nil
 }
@@ -1257,12 +1256,12 @@ func (mch *MesheryControllersHelper) uninstallOperator(ot *OperatorTracker, k8sc
 		return err
 	}
 
-	unlock := ot.lockOperatorCluster(k8sctx)
-	defer unlock()
 	affected := ot.otherOperatorConsumers(k8sctx)
-	if err := operatorHandler.Undeploy(); err != nil {
-		mch.setOperatorError(err)
-		return err
+	var undeployErr error
+	ot.withOperatorClusterLock(k8sctx, func() { undeployErr = operatorHandler.Undeploy() })
+	if undeployErr != nil {
+		mch.setOperatorError(undeployErr)
+		return undeployErr
 	}
 	if len(affected) == 0 {
 		return nil
@@ -1320,17 +1319,23 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 		return mch
 	}
 
-	unlock := ot.lockOperatorCluster(k8sctx)
-	defer unlock()
-	if status := operatorHandler.GetStatus(); status != controllers.NotDeployed {
+	var status controllers.MesheryControllerStatus
+	var deployErr error
+	ot.withOperatorClusterLock(k8sctx, func() {
+		status = operatorHandler.GetStatus()
+		if status == controllers.NotDeployed {
+			deployErr = operatorHandler.Deploy(false)
+		}
+	})
+	if status != controllers.NotDeployed {
 		mch.ctxOperatorStatus = status
 		return mch
 	}
 
-	if err := operatorHandler.Deploy(false); err != nil {
-		mch.setOperatorError(err)
-		mch.log.Error(err)
-		mch.emitErrorEvent("Failed to deploy Meshery Operator", err, map[string]any{
+	if deployErr != nil {
+		mch.setOperatorError(deployErr)
+		mch.log.Error(deployErr)
+		mch.emitErrorEvent("Failed to deploy Meshery Operator", deployErr, map[string]any{
 			"k8sContextID":           contextID,
 			"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
 			"operatorStatus":         mch.ctxOperatorStatus,
