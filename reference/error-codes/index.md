@@ -22142,6 +22142,31 @@ Narrow the search so exactly one item matches</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrAmbiguousIDCode-1256" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrAmbiguousIDCode-more-info" onclick="toggle_visibility('mesheryctl-ErrAmbiguousIDCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1256" class="error-name-code">
+              <a href="/reference/error-codes/client-mesheryctl/errambiguousidcode-1256/"><code>ErrAmbiguousIDCode-1256</code></a>
+            </td>
+            <td>Ambiguous ID prefix</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrAmbiguousIDCode-1256" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="mesheryctl-ErrAmbiguousIDCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The provided ID prefix is shared by more than one item.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Provide more characters of the ID, or the full ID.</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>

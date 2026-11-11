@@ -68,6 +68,7 @@ Section pages:
 - [ErrAddonFromTemplateCode-1012](/reference/error-codes/adapter-meshery-istio/erraddonfromtemplatecode-1012/)
 - [ErrAddonSubscriptionCode-1188](/reference/error-codes/component-meshery-server/erraddonsubscriptioncode-1188/)
 - [ErrAmbiguousDependencyCode-1477](/reference/error-codes/component-meshery-server/errambiguousdependencycode-1477/)
+- [ErrAmbiguousIDCode-1256](/reference/error-codes/client-mesheryctl/errambiguousidcode-1256/)
 - [ErrAmbiguousSelectionCode-1253](/reference/error-codes/client-mesheryctl/errambiguousselectioncode-1253/)
 - [ErrAnnotatingNamespaceCode-1024](/reference/error-codes/adapter-meshery-linkerd/errannotatingnamespacecode-1024/)
 - [ErrAnonymousUserIDMissingCode-1467](/reference/error-codes/component-meshery-server/erranonymoususeridmissingcode-1467/)
