@@ -650,7 +650,7 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 	if configuration == "pattern" {
 		url += "populate=pattern_file&"
 	}
-	url += "page_size=10000"
+	url += "pagesize=10000"
 	configType := configuration + "s"
 	var idList []string
 	req, err := NewRequest("GET", url, nil)

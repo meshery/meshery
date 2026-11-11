@@ -570,6 +570,10 @@ func TestValidId(t *testing.T) {
 		idB = "d4e5f6a7-0000-4000-8000-000000000002"
 		idC = "1a2b3c4d-0000-4000-8000-000000000003"
 	)
+	manyIDs := make([]string, 12)
+	for i := range manyIDs {
+		manyIDs[i] = fmt.Sprintf("e0000000-0000-4000-8000-0000000000%02d", i)
+	}
 	tests := []struct {
 		name         string
 		ids          []string
@@ -577,6 +581,7 @@ func TestValidId(t *testing.T) {
 		wantID       string
 		wantIsID     bool
 		wantErr      error
+		wantErrText  string
 		wantRequests int
 	}{
 		{
@@ -600,6 +605,14 @@ func TestValidId(t *testing.T) {
 			ids:          []string{idA, idB, idC},
 			input:        "d",
 			wantErr:      ErrAmbiguousID("d", []string{idA, idB}),
+			wantRequests: 1,
+		},
+		{
+			name:         "given a prefix of more than 10 IDs when ValidId then the error lists only the first 10",
+			ids:          manyIDs,
+			input:        "e",
+			wantErr:      ErrAmbiguousID("e", manyIDs),
+			wantErrText:  `"e" matches 12 IDs, including: ` + strings.Join(manyIDs[:10], ", "),
 			wantRequests: 1,
 		},
 		{
@@ -646,6 +659,9 @@ func TestValidId(t *testing.T) {
 			requests := 0
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				requests++
+				if got := r.URL.Query().Get("pagesize"); got != "10000" {
+					t.Errorf("GetID sent pagesize=%q, want %q", got, "10000")
+				}
 				patterns := make([]string, 0, len(tt.ids))
 				for _, id := range tt.ids {
 					patterns = append(patterns, fmt.Sprintf(`{"id":%q}`, id))
@@ -662,6 +678,9 @@ func TestValidId(t *testing.T) {
 					t.Fatalf("expected error %v, got nil", tt.wantErr)
 				}
 				AssertMeshkitErrorsEqual(t, err, tt.wantErr)
+				if tt.wantErrText != "" && !strings.HasPrefix(err.Error(), tt.wantErrText+" | ") {
+					t.Errorf("ValidId error = %q, want it to start with %q", err.Error(), tt.wantErrText)
+				}
 			} else {
 				if err != nil {
 					t.Fatalf("unexpected error: %v", err)

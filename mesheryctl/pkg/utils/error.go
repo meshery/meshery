@@ -483,7 +483,7 @@ func ErrInvalidNameOrID(err error) error {
 func ErrAmbiguousID(prefix string, matches []string) error {
 	return errors.New(ErrAmbiguousIDCode, errors.Alert,
 		[]string{"Ambiguous ID prefix"},
-		[]string{fmt.Sprintf("%q matches more than one ID: %s", prefix, strings.Join(matches, ", "))},
+		[]string{fmt.Sprintf("%q matches %d IDs, including: %s", prefix, len(matches), strings.Join(matches[:min(10, len(matches))], ", "))},
 		[]string{"The provided ID prefix is shared by more than one item."},
 		[]string{"Provide more characters of the ID, or the full ID."})
 }
