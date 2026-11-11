@@ -1082,14 +1082,14 @@ type OperatorTracker struct {
 	// FSM goroutines, so no access may bypass it.
 	mx                      sync.Mutex
 	ctxIDtoDeploymentStatus map[string]bool
-	clusters                map[string]*operatorCluster
+	clustersByKey           map[string]*operatorCluster
 	DisableOperator         bool
 }
 
 func NewOperatorTracker(disabled bool) *OperatorTracker {
 	return &OperatorTracker{
 		ctxIDtoDeploymentStatus: make(map[string]bool),
-		clusters:                make(map[string]*operatorCluster),
+		clustersByKey:           make(map[string]*operatorCluster),
 		DisableOperator:         disabled,
 	}
 }

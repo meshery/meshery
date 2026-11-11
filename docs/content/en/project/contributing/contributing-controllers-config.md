@@ -309,10 +309,23 @@ release. The cluster-scoped rules live in `server/models/operator_cluster_lifecy
   behind another's install sees it rather than repeating it. The lock is per
   cluster, never global, and is always the innermost lock taken (the FSM holds
   `setupLock` around the connect chain).
-- **Cluster identity** is `operatorClusterKey`: the Kubernetes server ID (the
-  `kube-system` namespace UID), falling back to the API server URL and then the
-  context ID when the ID was never resolved. **Consumer identity** is the
-  connection ID.
+- **Cluster identity** is a set of aliases, `operatorClusterKeys`: the
+  Kubernetes server ID (the `kube-system` namespace UID) when the context
+  carries one, and the API server URL when it names one, falling back to the
+  context ID when it has neither. Claims are recorded under every alias,
+  `lockOperatorCluster` takes the Helm lock of every alias in sorted key order
+  (one global order, so overlapping alias sets cannot deadlock), and
+  `OperatorConsumers` is the union across aliases - so two connections sharing
+  either the server ID or the URL serialize their Helm actions and see each
+  other as consumers. The URL alias matters because a persisted context row
+  carries a server ID only if its cluster was reachable when it was imported,
+  and that row is never rewritten. Identity needs no cluster I/O: nothing
+  resolves or rewrites a context before it is keyed. Every caller keys on the
+  connection state machine's `MachineCtx.K8sContext` (the GraphQL
+  `changeOperatorStatus` resolver included, never its request-scoped copy).
+  **Remaining edge:** aliasing is not transitive, so a context with no server
+  ID whose API server URL no other context names cannot be unified with the
+  cluster's other connections. **Consumer identity** is the connection ID.
 
 Uninstalling when the last consumer leaves was considered and rejected. The
 server can count only its own connections: other Meshery Servers and operators

@@ -31,16 +31,18 @@ type operatorStatusK8sContext struct {
 	processing interface{}
 }
 
-// operatorControllersHelper resolves the controllers helper that owns Meshery
-// Operator lifecycle for a Kubernetes context, by way of that connection's
-// state machine - the same route the resync and controller-status paths take.
+// operatorMachineCtx resolves the connection state machine context that owns
+// Meshery Operator lifecycle for a Kubernetes context - the same route the
+// resync and controller-status paths take. Its controllers helper performs the
+// action, and its K8sContext is what the cluster-scoped lock and consumer set
+// are keyed on, as on every connection-driven path.
 //
 // Operator install and removal go through the helper rather than a meshkit
 // handler read straight out of the request context, because the helper is what
 // holds the resolved Helm chart version and refuses an install when no
 // published version could be pinned. Reaching around it is how an unresolvable
 // version would reach Helm from this entry point while every other one refused.
-func operatorControllersHelper(ctx context.Context, k8scontext models.K8sContext) (*models.MesheryControllersHelper, error) {
+func operatorMachineCtx(ctx context.Context, k8scontext models.K8sContext) (*kubernetes.MachineCtx, error) {
 	connectionDetail := "Kubernetes context " + k8scontext.ID + " (connection " + k8scontext.ConnectionID + ")"
 
 	h, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
@@ -65,7 +67,7 @@ func operatorControllersHelper(ctx context.Context, k8scontext models.K8sContext
 	if machinectx.MesheryCtrlsHelper == nil {
 		return nil, ErrOperatorControllersHelper(connectionDetail + " has no controllers helper attached.")
 	}
-	return machinectx.MesheryCtrlsHelper, nil
+	return machinectx, nil
 }
 
 // changeOperatorStatus initiates asynchronous provisioning or deprovisioning of the Meshery Operator
@@ -152,7 +154,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	// Resolve the lifecycle owner before reporting the request as accepted, so a
 	// connection that cannot be acted on fails the mutation outright instead of
 	// reporting "processing" and then going quiet.
-	ctrlHelper, err := operatorControllersHelper(ctx, k8scontext)
+	machinectx, err := operatorMachineCtx(ctx, k8scontext)
 	if err != nil {
 		if r.Log != nil {
 			r.Log.Error(err)
@@ -212,7 +214,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		// rather than being handed to Helm as an opaque chart-not-found. It also
 		// re-resolves that version first, so clicking deploy again after the
 		// chart repository recovers is a retry that can actually succeed.
-		err := ctrlHelper.SetOperatorDeployment(r.Config.OperatorTracker, k8scontext, !del)
+		err := machinectx.MesheryCtrlsHelper.SetOperatorDeployment(r.Config.OperatorTracker, machinectx.K8sContext, !del)
 		if err != nil {
 			if r.Log != nil {
 				r.Log.Error(err)
