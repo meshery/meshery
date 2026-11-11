@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -12,6 +13,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -231,4 +233,56 @@ func TestUpdateConnectionByIDPreservesCreatedAtAndOwner(t *testing.T) {
 	require.NotNil(t, returnedDirect)
 	assert.Equal(t, "direct-update", returnedDirect.Name)
 	assert.True(t, returnedDirect.CreatedAt.Equal(created), "direct UpdateConnection returned created_at = %v, want %v", returnedDirect.CreatedAt, created)
+}
+
+// TestUpdateConnectionByIDNonKubernetesStatusRecordsNoErrorEvent: a status
+// change for a non-Kubernetes connection must not run the Kubernetes machine
+// path, which fails the K8s context lookup and persisted an error event while
+// the client still got 200.
+func TestUpdateConnectionByIDNonKubernetesStatusRecordsNoErrorEvent(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name: "original", Kind: "prometheus", ConnectionType: "observability",
+	})
+	require.NoError(t, err)
+
+	rec := putConnectionBody(h, provider, saved.ID.String(), `{"status":"ignored"}`)
+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+
+	got, err := provider.ConnectionPersister.GetConnection(saved.ID, "")
+	require.NoError(t, err)
+	assert.Equal(t, connections.IGNORED, got.Status)
+
+	var errorEvents int64
+	require.NoError(t, provider.EventsPersister.DB.Model(&events.Event{}).Where("severity = ?", string(events.Error)).Count(&errorEvents).Error)
+	assert.Zero(t, errorEvents, "a non-Kubernetes status change must not persist an error event")
+	assert.Empty(t, h.ConnectionToStateMachineInstanceTracker.ConnectToInstanceMap, "no Kubernetes machine may be created for it")
+}
+
+// TestNotifySmOfConnectionStatusChangeByKind pins the routing: a non-Kubernetes
+// kind returns without touching the Kubernetes machinery, while a Kubernetes
+// (or unknown) kind still resolves its K8s context first.
+func TestNotifySmOfConnectionStatusChangeByKind(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	userID := uuid.Must(uuid.NewV4())
+	newPayload := func() *connections.ConnectionPayload {
+		return &connections.ConnectionPayload{ID: uuid.Must(uuid.NewV4()), Status: connections.CONNECTED}
+	}
+
+	for _, kind := range []string{"prometheus", "grafana", "anthropic-claude"} {
+		t.Run(kind+" skips the Kubernetes path", func(t *testing.T) {
+			event, err := h.NotifySmOfConnectionStatusChange(context.Background(), userID, provider, "", newPayload(), kind)
+			require.NoError(t, err)
+			assert.NotEqual(t, events.Error, event.Severity)
+			assert.Empty(t, h.ConnectionToStateMachineInstanceTracker.ConnectToInstanceMap)
+		})
+	}
+
+	for _, kind := range []string{"kubernetes", "Kubernetes", ""} {
+		t.Run("kind '"+kind+"' keeps the Kubernetes path", func(t *testing.T) {
+			event, err := h.NotifySmOfConnectionStatusChange(context.Background(), userID, provider, "", newPayload(), kind)
+			require.Error(t, err, "the K8s context lookup must still run for this kind")
+			assert.Equal(t, events.Error, event.Severity)
+		})
+	}
 }
