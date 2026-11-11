@@ -329,3 +329,12 @@ func TestPreRunEValidation(t *testing.T) {
 		})
 	}
 }
+
+func TestGenerateCmdArgs(t *testing.T) {
+	err := generateCmd.Args(generateCmd, []string{"extra-arg"})
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "too many arguments specified")
+
+	err = generateCmd.Args(generateCmd, []string{})
+	assert.NoError(t, err)
+}
