@@ -82,3 +82,77 @@ func TestRemoteProviderDeleteUserCredential_SendsCanonicalCredentialIdParam(t *t
 		t.Errorf("request still carries the legacy snake_case `credential_id`: %v", gotQuery)
 	}
 }
+
+// TestRemoteProviderGetMesheryPattern_SendsMetricsQueryParam verifies that
+// RemoteProvider.GetMesheryPattern encodes the metrics query parameter onto the
+// outgoing request according to the includeMetrics argument (#23220).
+func TestRemoteProviderGetMesheryPattern_SendsMetricsQueryParam(t *testing.T) {
+	tests := []struct {
+		name           string
+		endpoint       string
+		includeMetrics string
+		wantMetrics    string
+	}{
+		{
+			name:           "metrics enabled",
+			endpoint:       "/patterns",
+			includeMetrics: "true",
+			wantMetrics:    "true",
+		},
+		{
+			name:           "metrics disabled",
+			endpoint:       "/patterns",
+			includeMetrics: "false",
+			wantMetrics:    "false",
+		},
+		{
+			name:           "empty metrics",
+			endpoint:       "/patterns",
+			includeMetrics: "",
+			wantMetrics:    "",
+		},
+		{
+			name:           "api pattern endpoint path",
+			endpoint:       "/api/pattern",
+			includeMetrics: "true",
+			wantMetrics:    "true",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var (
+				gotQuery url.Values
+				gotPath  string
+			)
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				gotPath = r.URL.Path
+				gotQuery = r.URL.Query()
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write([]byte(`{}`))
+			}))
+			defer server.Close()
+
+			provider := newTestRemoteProvider(t, server.URL)
+			provider.Capabilities = Capabilities{{Feature: PersistMesheryPatterns, Endpoint: tt.endpoint}}
+
+			req := httptest.NewRequest(http.MethodGet, "/api/pattern/test-id", nil)
+			req.AddCookie(&http.Cookie{Name: TokenCookieName, Value: "token"})
+
+			if _, err := provider.GetMesheryPattern(req, "test-id", tt.includeMetrics); err != nil {
+				t.Fatalf("GetMesheryPattern failed: %v", err)
+			}
+
+			wantPath := tt.endpoint + "/test-id"
+			if gotPath != wantPath {
+				t.Errorf("path = %q, want %q", gotPath, wantPath)
+			}
+
+			if got := gotQuery.Get("metrics"); got != tt.wantMetrics {
+				t.Errorf("metrics = %q, want %q (query was %v)", got, tt.wantMetrics, gotQuery)
+			}
+		})
+	}
+}
+
