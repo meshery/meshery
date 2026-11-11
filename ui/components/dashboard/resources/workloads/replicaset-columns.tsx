@@ -7,6 +7,7 @@ import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChi
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CoreConnectionKinds } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const buildReplicaSetColumns = ({
   switchView,
@@ -86,8 +87,8 @@ export const buildReplicaSetColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
-          let replicas = attribute?.replicas;
+          const attribute = safeJsonParse<{ replicas?: number; readyReplicas?: number }>(val);
+          const replicas = attribute?.replicas;
           return <>{replicas}</>;
         },
       },
@@ -101,8 +102,8 @@ export const buildReplicaSetColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
-          let replicas = attribute?.replicas;
+          const attribute = safeJsonParse<{ replicas?: number; readyReplicas?: number }>(val);
+          const replicas = attribute?.replicas;
           return <>{replicas}</>;
         },
       },
@@ -116,8 +117,8 @@ export const buildReplicaSetColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
-          let readyReplicas = attribute?.readyReplicas;
+          const attribute = safeJsonParse<{ replicas?: number; readyReplicas?: number }>(val);
+          const readyReplicas = attribute?.readyReplicas;
           return <>{readyReplicas}</>;
         },
       },
