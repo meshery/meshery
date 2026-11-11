@@ -286,3 +286,35 @@ func TestNotifySmOfConnectionStatusChangeByKind(t *testing.T) {
 		})
 	}
 }
+
+// blankKindUpdateProvider mimics a provider whose update response omits Kind,
+// as a remote provider's PUT response may.
+type blankKindUpdateProvider struct {
+	models.Provider
+}
+
+func (p blankKindUpdateProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, connID string) (*connections.Connection, error) {
+	updated, err := p.Provider.UpdateConnectionById(token, conn, connID)
+	if updated != nil {
+		updated.Kind = ""
+	}
+	return updated, err
+}
+
+// TestUpdateConnectionByIDFallsBackToPersistedKind checks that when the update
+// response carries no kind, the handler routes on the persisted connection's
+// kind instead of falling through to the Kubernetes path.
+func TestUpdateConnectionByIDFallsBackToPersistedKind(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name: "original", Kind: "prometheus", ConnectionType: "observability",
+	})
+	require.NoError(t, err)
+
+	rec := putConnectionBody(h, blankKindUpdateProvider{Provider: provider}, saved.ID.String(), `{"status":"ignored"}`)
+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+
+	var errorEvents int64
+	require.NoError(t, provider.EventsPersister.DB.Model(&events.Event{}).Where("severity = ?", string(events.Error)).Count(&errorEvents).Error)
+	assert.Zero(t, errorEvents, "an empty kind in the update response must fall back to the persisted kind")
+}

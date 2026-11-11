@@ -532,7 +532,11 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	eventBuilder = eventBuilder.WithDescription(description)
 
 	if connection.Status != "" {
-		event, notifyErr := h.NotifySmOfConnectionStatusChange(statusCtx, userID, provider, token, connection, updatedConnection.Kind)
+		kind := updatedConnection.Kind
+		if kind == "" && existing != nil {
+			kind = existing.Kind
+		}
+		event, notifyErr := h.NotifySmOfConnectionStatusChange(statusCtx, userID, provider, token, connection, kind)
 		if notifyErr != nil {
 			// The new status is already saved, so the response stays 200, but the
 			// failure must not vanish: log it as well as persisting the event.
