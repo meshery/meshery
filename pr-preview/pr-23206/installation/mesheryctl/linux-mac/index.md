@@ -52,7 +52,7 @@ To customize the callback URL that your Provider redirects to after sign-in, set
 
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
- $ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
+ $ MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start
 
 </div></div>
 </pre>
@@ -113,7 +113,7 @@ To install or upgrade `mesheryctl` with Bash, run one of the following commands.
 
 #### Option 4: Install `mesheryctl` binary and Meshery adapter(s)
 
-Install the `mesheryctl` binary and deploy Meshery together with one or more [adapters](/pr-preview/pr-23206/concepts/architecture/adapters/). Separate multiple adapters with spaces, for example `ADAPTERS="istio linkerd"`. `mesheryctl` can deploy the `consul`, `istio`, `linkerd`, `nsm`, `kuma`, `traefik`, and `cilium` adapters. The script also accepts `osm`, `nighthawk`, `nginx`, `tanzu`, and `app`, but `mesheryctl` has no deployment definition for those adapters, so `mesheryctl system start` rejects them. The script ignores any other value.
+Install the `mesheryctl` binary and deploy Meshery together with one or more [adapters](/pr-preview/pr-23206/concepts/architecture/adapters/). Separate multiple adapters with spaces, for example `ADAPTERS="istio linkerd"`. The script supports the `consul`, `istio`, `linkerd`, `nsm`, `kuma`, `traefik`, and `cilium` adapters. Unsupported adapter values are skipped with a warning. If no supported adapters are specified, the script exits with an error.
 
  <pre class="codeblock-pre">
  <div class="codeblock">

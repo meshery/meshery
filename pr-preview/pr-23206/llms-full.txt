@@ -9932,11 +9932,12 @@ Remote Provider OAuth flow to complete, set the callback URL to Meshery's
 
 ```bash
 helm install meshery meshery/meshery --namespace meshery --create-namespace \
-  --set env.MESHERY_SERVER_CALLBACK_URL=https://meshery.example.com
+  --set env.MESHERY_SERVER_CALLBACK_URL=https://meshery.example.com/api/user/token
 ```
 
-The callback path Meshery uses is `/api/user/token`, so the effective callback
-becomes `https://meshery.example.com/api/user/token`. If login redirects fail or
+The callback URL must include the `/api/user/token` path. Meshery uses the
+value as-is and does not append the path for you, so a bare host sends users
+back to the login screen in a loop after sign-in. If login redirects fail or
 loop when behind a proxy, a missing or incorrect callback URL is the usual
 cause. See
 [Authentication, Authorization & Identity](/pr-preview/pr-23206/installation/production/authentication-and-identity/)
@@ -10563,13 +10564,14 @@ Meshery's internal address differs from the external URL, so you must tell
 Meshery its external callback address:
 
 - **`MESHERY_SERVER_CALLBACK_URL`** - overrides the OAuth callback URL. Set it to
-  Meshery's external base URL; the effective callback path is
-  `/api/user/token`.
+  Meshery's full external callback URL, including the `/api/user/token` path.
+  Meshery uses the value as-is and does not append the path for you, so a
+  bare host sends users back to the login screen in a loop after sign-in.
 
 ```bash
 helm install meshery meshery/meshery --namespace meshery --create-namespace \
   --set env.PROVIDER=Meshery \
-  --set env.MESHERY_SERVER_CALLBACK_URL=https://meshery.example.com
+  --set env.MESHERY_SERVER_CALLBACK_URL=https://meshery.example.com/api/user/token
 ```
 
 Symptoms of a missing or wrong callback URL include login redirect loops, "redirect
@@ -11473,7 +11475,7 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
-<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start</code>
+<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start</code>
 </div>
 </pre>
 
@@ -11928,7 +11930,7 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
-<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start</code>
+<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start</code>
 </div>
 </pre>
 
@@ -12026,7 +12028,7 @@ To install or upgrade `mesheryctl` with Bash, run one of the following commands.
 
 #### Option 4: Install `mesheryctl` binary and Meshery adapter(s)
 
-Install the `mesheryctl` binary and deploy Meshery together with one or more [adapters](/pr-preview/pr-23206/concepts/architecture/adapters/). Separate multiple adapters with spaces, for example `ADAPTERS="istio linkerd"`. `mesheryctl` can deploy the `consul`, `istio`, `linkerd`, `nsm`, `kuma`, `traefik`, and `cilium` adapters. The script also accepts `osm`, `nighthawk`, `nginx`, `tanzu`, and `app`, but `mesheryctl` has no deployment definition for those adapters, so `mesheryctl system start` rejects them. The script ignores any other value.
+Install the `mesheryctl` binary and deploy Meshery together with one or more [adapters](/pr-preview/pr-23206/concepts/architecture/adapters/). Separate multiple adapters with spaces, for example `ADAPTERS="istio linkerd"`. The script supports the `consul`, `istio`, `linkerd`, `nsm`, `kuma`, `traefik`, and `cilium` adapters. Unsupported adapter values are skipped with a warning. If no supported adapters are specified, the script exits with an error.
 
  <pre class="codeblock-pre">
  <div class="codeblock">
@@ -12097,7 +12099,7 @@ To customize the callback URL that your Provider redirects to after sign-in, set
 
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
- $ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
+ $ MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start
 
 </div></div>
 </pre>
@@ -12332,7 +12334,7 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
-<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start</code>
+<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start</code>
 </div>
 </pre>
 
@@ -12612,7 +12614,7 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
-<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start</code>
+<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start</code>
 </div>
 </pre>
 
@@ -12985,7 +12987,7 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
-<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start</code>
+<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start</code>
 </div>
 </pre>
 
@@ -13159,7 +13161,7 @@ Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) c
 
 <pre class="codeblock-pre">
 	<div class="codeblock">
-		<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start -p kubernetes</code>
+		<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start -p kubernetes</code>
 	</div>
 </pre>
 
@@ -13255,7 +13257,7 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
-<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start</code>
+<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start</code>
 </div>
 </pre>
 
@@ -13340,7 +13342,7 @@ Optionally, customize the callback URL that your Remote Provider redirects to af
 
 <pre class="codeblock-pre">
 	<div class="codeblock">
-		<code class="clipboardjs">helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host --create-namespace</code>
+		<code class="clipboardjs">helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token --create-namespace</code>
 	</div>
 </pre>
 
@@ -13558,7 +13560,7 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
-<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start</code>
+<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start</code>
 </div>
 </pre>
 
@@ -13804,7 +13806,7 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
-<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start</code>
+<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start</code>
 </div>
 </pre>
 
@@ -14282,7 +14284,7 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
-<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start</code>
+<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start</code>
 </div>
 </pre>
 
@@ -114476,7 +114478,6 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
   -t, --output-format string     (optional) format to display in [json|yaml] (default = yaml) (default "yaml")
   -l, --output-location string   (optional) output location (default = current directory) (default "./")
   -o, --output-type string       (optional) format to display in [oci|tar] (default = oci) (default "oci")
-  -p, --page int                 (optional) page number for paginated results (default = 1) (default 1)
       --version string           (optional) model version to export (default = "", format: vX.X.X)
 
 </div>

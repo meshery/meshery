@@ -36,7 +36,7 @@ Optionally, customize the callback URL that your Remote Provider redirects to af
 
 <pre class="codeblock-pre">
 	<div class="codeblock">
-		<code class="clipboardjs">helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host --create-namespace</code>
+		<code class="clipboardjs">helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token --create-namespace</code>
 	</div>
 </pre>
 
@@ -254,7 +254,7 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
-<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start</code>
+<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start</code>
 </div>
 </pre>
 

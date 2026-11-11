@@ -859,11 +859,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       </tr>
       <tr>
         <td></td>
-        <td>--page, -p</td>
-        <td>(optional) page number for paginated results (default 1)</td>
-      </tr>
-      <tr>
-        <td></td>
         <td>--version</td>
         <td>(optional) model version to export, in vX.X.X format</td>
       </tr>
