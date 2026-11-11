@@ -1,0 +1,158 @@
+{{- if .Values.customResourceCleanup.enabled }}
+{{- $fullname := include "meshery-operator.fullname" . }}
+{{- $broker := index .Values "meshery-broker" }}
+{{- $meshsync := index .Values "meshery-meshsync" }}
+{{- $crs := list }}
+{{- if $broker.enabled }}{{ $crs = append $crs (printf "brokers.meshery.io/%s" $broker.name) }}{{ end }}
+{{- if $meshsync.enabled }}{{ $crs = append $crs (printf "meshsyncs.meshery.io/%s" $meshsync.name) }}{{ end }}
+{{- if $crs }}
+{{/*
+Deletes the release's Broker/MeshSync resources while the operator still runs
+to process their finalizers; otherwise `helm uninstall` removes both at once
+and the resources hang Terminating. Only resources carrying this release's
+Helm ownership annotation are touched, so a `helm template | kubectl apply`
+render of this Job deletes nothing. If the operator does not process the
+finalizers in time they are removed: its child objects carry controller
+ownerReferences and are garbage-collected. Runs before the webhook teardown
+(weight 0) so conversion is still served. See README "Uninstall".
+*/}}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ $fullname }}-cr-cleanup
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $fullname }}-cr-cleanup
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+rules:
+- apiGroups:
+  - meshery.io
+  resources:
+  - brokers
+  - meshsyncs
+  verbs:
+  - get
+  - list
+  - watch
+  - delete
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $fullname }}-cr-cleanup
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-4"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $fullname }}-cr-cleanup
+subjects:
+- kind: ServiceAccount
+  name: {{ $fullname }}-cr-cleanup
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $fullname }}-cr-cleanup
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 1
+  # Pod start + 90s graceful wait + 60s fallback wait, inside Helm's default
+  # 5m uninstall timeout.
+  activeDeadlineSeconds: 240
+  template:
+    metadata:
+      labels:
+        {{- include "meshery-operator.hookPodLabels" (dict "context" . "component" "cr-cleanup") | nindent 8 }}
+    spec:
+      serviceAccountName: {{ $fullname }}-cr-cleanup
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: cr-cleanup
+          image: "{{ .Values.crds.updateJob.image.repository }}:{{ .Values.crds.updateJob.image.tag }}"
+          imagePullPolicy: {{ .Values.crds.updateJob.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: HOME
+              value: /tmp
+          command:
+            - /bin/sh
+            - -uc
+            - |
+              ns={{ .Release.Namespace | quote }}
+              release={{ .Release.Name | quote }}
+              owned=""
+              for cr in {{ join " " $crs }}; do
+                if ! owner="$(kubectl -n "$ns" get "$cr" --ignore-not-found \
+                    -o 'jsonpath={.metadata.annotations.meta\.helm\.sh/release-name}' 2>&1)"; then
+                  case "$owner" in
+                    *"doesn't have a resource type"*)
+                      echo "$cr: CRD not installed, nothing to delete"; continue ;;
+                    *)
+                      echo "error: reading $cr: $owner" >&2; exit 1 ;;
+                  esac
+                fi
+                if [ "$owner" = "$release" ]; then
+                  owned="$owned $cr"
+                else
+                  echo "$cr: absent or not owned by release $release, leaving it in place"
+                fi
+              done
+              [ -n "$owned" ] || exit 0
+              # Delete while the operator is still running to process finalizers.
+              if kubectl -n "$ns" delete $owned --ignore-not-found --wait --timeout=90s; then
+                exit 0
+              fi
+              echo "finalizers not processed within 90s (operator not reconciling); removing them" >&2
+              for cr in $owned; do
+                kubectl -n "$ns" patch "$cr" --type=merge -p '{"metadata":{"finalizers":null}}' \
+                  || echo "warning: could not remove finalizers from $cr; checking whether it is gone" >&2
+              done
+              kubectl -n "$ns" wait --for=delete $owned --timeout=60s
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+{{- end }}
+{{- end }}

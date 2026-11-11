@@ -61,3 +61,15 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Pod labels for hook Jobs. Deliberately not the selector labels: the manager
+Deployment and the metrics Service select on those, so a hook pod carrying
+them is added to the Service's endpoints while it runs.
+Usage: include "meshery-operator.hookPodLabels" (dict "context" . "component" "crd-update")
+*/}}
+{{- define "meshery-operator.hookPodLabels" -}}
+app.kubernetes.io/name: {{ include "meshery-operator.name" .context }}-{{ .component }}
+app.kubernetes.io/instance: {{ .context.Release.Name }}
+app.kubernetes.io/component: {{ .component }}
+{{- end -}}

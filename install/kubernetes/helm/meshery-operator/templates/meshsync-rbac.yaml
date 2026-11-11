@@ -1,0 +1,87 @@
+{{- $sa := required "meshsync.serviceAccount.name is required: the operator runs MeshSync under it" .Values.meshsync.serviceAccount.name }}
+{{- if .Values.meshsync.serviceAccount.create }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ $sa }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{- include "meshery-operator.labels" . | nindent 4 }}
+{{- end }}
+---
+# Read-only identity for MeshSync. Keep in step with MeshSync's API usage
+# (meshery/meshsync) and with config/rbac in meshery/meshery-operator.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: meshery-meshsync-role
+  labels:
+{{- include "meshery-operator.labels" . | nindent 4 }}
+rules:
+# Discovery. The watch-list is user-configurable (MeshSync spec.watch-list) and
+# spans CRDs and cluster-scoped kinds, so list/watch cover every resource.
+# get is deliberately not wildcarded: get on "*" also authorizes the connect
+# subresources reached over GET (pods/exec, pods/attach and pods/portforward
+# via WebSocket; pods/proxy, services/proxy, nodes/proxy), which run commands
+# or proxy traffic rather than read state.
+- apiGroups:
+  - "*"
+  resources:
+  - "*"
+  verbs:
+  - list
+  - watch
+# Point reads: MeshSync's own custom resource (its watch-list, read at startup),
+# the kube-system Namespace (cluster ID) and pod logs (on-request log streaming).
+- apiGroups:
+  - meshery.io
+  resources:
+  - meshsyncs
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - pods/log
+  verbs:
+  - get
+{{- with .Values.meshsync.rbac.extraRules }}
+{{ toYaml . }}
+{{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: meshery-meshsync-rolebinding
+  labels:
+{{- include "meshery-operator.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: meshery-meshsync-role
+subjects:
+- kind: ServiceAccount
+  name: {{ $sa }}
+  namespace: {{ .Release.Namespace }}
+{{- if .Values.meshsync.rbac.bindOperatorServiceAccount }}
+---
+# Compatibility for operator releases that ignore MESHSYNC_SERVICE_ACCOUNT
+# (1.0.6 and earlier): they run MeshSync under the literal ServiceAccount name
+# meshery-operator, whatever serviceAccount.name says. Read-only, same role.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: meshery-meshsync-compat-rolebinding
+  labels:
+{{- include "meshery-operator.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: meshery-meshsync-role
+subjects:
+- kind: ServiceAccount
+  name: meshery-operator
+  namespace: {{ .Release.Namespace }}
+{{- end }}

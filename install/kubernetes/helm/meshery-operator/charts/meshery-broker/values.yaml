@@ -1,2 +1,24 @@
+# -- Name of the Broker custom resource. Meshery Server addresses it as `meshery-broker`.
 name: meshery-broker
+# -- NATS server replicas (Broker `spec.size`, 1-10).
 replica: 1
+# -- NATS server image tag (Broker `spec.version`). Empty: the operator's pinned NATS release.
+version: ""
+# Client Service exposure (Broker `spec.service`). Every field is omitted from
+# the Broker when unset, which keeps the operator default (ClusterIP) and leaves
+# the field free for Meshery Server's controllers configuration, which
+# server-side-applies `spec.service` under the field manager meshery-server.
+# Set each field in one place only: when both set it, Helm 4 (server-side
+# apply) fails the upgrade with a field conflict and Helm 3 lets the last
+# writer win.
+service:
+  # -- `ClusterIP`, `NodePort` or `LoadBalancer`. Empty: the operator default, `ClusterIP`.
+  type: ""
+  # -- Annotations merged onto the client Service (cloud load-balancer hints, MetalLB pools).
+  annotations: {}
+  # -- Load-balancer implementation to use. Requires `type: LoadBalancer`.
+  loadBalancerClass: ""
+  # -- CIDRs allowed to reach the Broker. Requires `type: LoadBalancer`.
+  loadBalancerSourceRanges: []
+  # -- Advertised external endpoint (`host:port`) when it cannot be derived from the Service (ingress, gateway, NAT).
+  externalEndpointOverride: ""

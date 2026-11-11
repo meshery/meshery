@@ -12,6 +12,12 @@ The Broker and MeshSync CRDs were applied by the CRD update Job
 Metrics are served over TLS with authentication/authorization on port
 {{ .Values.service.port }} of Service {{ include "meshery-operator.fullname" . }};
 bind your scraper's ServiceAccount to the meshery-metrics-reader ClusterRole.
+
+MeshSync reads the cluster as ServiceAccount {{ .Values.meshsync.serviceAccount.name }} (ClusterRole
+meshery-meshsync-role, read-only).
+{{- if .Values.meshsync.rbac.bindOperatorServiceAccount }} The role is also bound to meshery-operator,
+which operator releases up to 1.0.6 run MeshSync as (meshsync.rbac.bindOperatorServiceAccount).
+{{- end }}
 {{- if .Values.webhook.enabled }}
 
 Conversion webhook: ENABLED ({{ if .Values.webhook.certManager.enabled }}cert-manager{{ else }}chart-generated self-signed{{ end }} certificate).

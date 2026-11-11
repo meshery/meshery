@@ -40,6 +40,13 @@ Grant only what is needed.
   defaults to `false`. Some managed platforms (AKS, AWS, GCP) require permission
   to watch nodes for full discovery; enable `rbac.nodes: true` **only** on the
   clusters that need it rather than globally.
+- **Know the operator-mode identities.** On clusters running Meshery
+  Operator, the operator's `meshery-operator` ServiceAccount can manage only the
+  Broker and MeshSync workloads, and MeshSync reads the cluster as
+  `meshery-meshsync`, bound to a read-only role that can list and watch every
+  type but write nothing (`pods/exec` is opt-in via
+  `meshsync.rbac.extraRules`). Operator releases up to 1.0.6 also need
+  `meshsync.rbac.bindOperatorServiceAccount` (the chart default).
 - **Separate duty by cluster.** In out-of-cluster and multi-cloud topologies,
   use a distinct, minimally scoped credential per managed cluster so a single
   compromised credential cannot reach every cluster. See
