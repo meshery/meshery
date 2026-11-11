@@ -54,7 +54,7 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/adapter`,
 mesheryctl adapter deploy [mesh-name]
 
 // Validate conformance to predefined standards
-mesheryctl adapter validate [mesh-name] --adapter [adapter-name]
+mesheryctl adapter validate [mesh-name] --adapter [adapter-name] --spec smi
 
 // Remove deployed infrastructure
 mesheryctl adapter remove [mesh-name]
