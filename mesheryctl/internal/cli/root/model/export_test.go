@@ -76,7 +76,6 @@ func TestExportModelToFile(t *testing.T) {
 	queryParams.Set("fileType", "oci")
 	queryParams.Set("components", "true")
 	queryParams.Set("relationships", "true")
-	queryParams.Set("page", "1")
 
 	exportURL := fmt.Sprintf("%s/api/registry/export?%s", testContext.BaseURL, queryParams.Encode())
 	httpmock.RegisterResponder("GET", exportURL,
@@ -95,4 +94,43 @@ func TestExportModelToFile(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, exportedContent, got)
 	assert.Contains(t, buf.String(), "Exported model to")
+}
+
+func TestExportModelDeprecatedPageFlag(t *testing.T) {
+	defer utils.ResetCommandFlags(ModelCmd, t)
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	oldToken := utils.TokenFlag
+	defer func() { utils.TokenFlag = oldToken }()
+	utils.TokenFlag = utils.GetToken(t)
+	mesheryctlflags.InitValidators(ModelCmd)
+
+	const modelName = "test-model"
+	exportedContent := []byte("exported-model-archive-bytes")
+
+	// --page is deprecated and must not be sent: the export API ignores it.
+	// httpmock answers only an exact URL match, so a request carrying page=2 would fail.
+	queryParams := url.Values{}
+	queryParams.Set("name", modelName)
+	queryParams.Set("outputFormat", "yaml")
+	queryParams.Set("fileType", "oci")
+	queryParams.Set("components", "true")
+	queryParams.Set("relationships", "true")
+
+	exportURL := fmt.Sprintf("%s/api/registry/export?%s", testContext.BaseURL, queryParams.Encode())
+	httpmock.RegisterResponder("GET", exportURL,
+		httpmock.NewBytesResponder(200, exportedContent))
+
+	outputDir := t.TempDir()
+	buf := utils.SetupMeshkitLoggerTesting(t, false)
+	ModelCmd.SetArgs([]string{"export", modelName, "--output-location", outputDir, "--page", "2"})
+	ModelCmd.SetOut(buf)
+
+	err := ModelCmd.Execute()
+	assert.NoError(t, err)
+
+	got, err := os.ReadFile(filepath.Join(outputDir, modelName+".tar"))
+	assert.NoError(t, err)
+	assert.Equal(t, exportedContent, got)
+	assert.Contains(t, buf.String(), "Flag --page has been deprecated")
 }
