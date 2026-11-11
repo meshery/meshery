@@ -53,10 +53,12 @@ spec:
           env:
             - name: ENABLE_WEBHOOKS
               value: {{ .Values.webhook.enabled | quote }}
-            # ServiceAccount the operator runs MeshSync under. Releases up to
-            # 1.0.6 ignore it (see meshsync.rbac.bindOperatorServiceAccount).
+            {{- if .Values.meshsync.serviceAccount.dedicated }}
+            # ServiceAccount the operator runs MeshSync under
+            # (meshery/meshery-operator#954; unset keeps meshery-operator).
             - name: MESHSYNC_SERVICE_ACCOUNT
               value: {{ .Values.meshsync.serviceAccount.name | quote }}
+            {{- end }}
           {{- range $key, $val := $userEnv }}
             - name: {{ $key }}
               value: {{ $val | quote }}

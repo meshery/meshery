@@ -42,11 +42,12 @@ Grant only what is needed.
   clusters that need it rather than globally.
 - **Know the operator-mode identities.** On clusters running Meshery
   Operator, the operator's `meshery-operator` ServiceAccount can manage only the
-  Broker and MeshSync workloads, and MeshSync reads the cluster as
-  `meshery-meshsync`, bound to a read-only role that can list and watch every
-  type but write nothing (`pods/exec` is opt-in via
-  `meshsync.rbac.extraRules`). Operator releases up to 1.0.6 also need
-  `meshsync.rbac.bindOperatorServiceAccount` (the chart default).
+  Broker and MeshSync workloads, and MeshSync reads the cluster through the
+  read-only `meshery-meshsync-role`, which can list and watch every type but
+  write nothing (`pods/exec` is opt-in via `meshsync.rbac.extraRules`). Until
+  the chart's `meshsync.serviceAccount.dedicated` is on (it needs an operator
+  release with `MESHSYNC_SERVICE_ACCOUNT` support), that role is bound to
+  `meshery-operator`, which MeshSync runs as.
 - **Separate duty by cluster.** In out-of-cluster and multi-cloud topologies,
   use a distinct, minimally scoped credential per managed cluster so a single
   compromised credential cannot reach every cluster. See

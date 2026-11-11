@@ -118,26 +118,27 @@ tolerations: []
 affinity: {}
 
 # Identity of the MeshSync workload the operator deploys for the MeshSync
-# custom resource. MeshSync gets its own read-only ServiceAccount instead of
-# sharing the operator's, whose least-privilege role grants writes but no
-# discovery reads (see templates/meshsync-rbac.yaml).
+# custom resource. MeshSync reads the cluster through the read-only
+# meshery-meshsync-role instead of the operator's least-privilege role, which
+# grants writes but no discovery reads (see templates/meshsync-rbac.yaml).
 meshsync:
   serviceAccount:
+    # -- Run MeshSync under the ServiceAccount below by passing
+    # MESHSYNC_SERVICE_ACCOUNT to the operator. Requires an operator release
+    # that includes meshery/meshery-operator#954; flip the default to true in
+    # the change that moves image.tag to that release. While false, the operator
+    # runs MeshSync as meshery-operator (1.0.6 and earlier hard-code it; later
+    # releases default to it without the variable), so the chart binds the
+    # read-only meshery-meshsync-role to meshery-operator instead; the operator
+    # gains reads only, never writes.
+    dedicated: false
     # -- Create the MeshSync ServiceAccount. Set false to supply your own; it
-    # must exist in the release namespace.
+    # must exist in the release namespace (the MeshSync resource's namespace).
     create: true
-    # -- ServiceAccount the operator runs MeshSync under, passed to the manager
-    # as MESHSYNC_SERVICE_ACCOUNT and bound to the read-only meshery-meshsync-role.
+    # -- MeshSync's ServiceAccount, bound to the read-only meshery-meshsync-role
+    # and, when `dedicated`, passed to the operator as MESHSYNC_SERVICE_ACCOUNT.
     name: meshery-meshsync
   rbac:
-    # -- Also bind meshery-meshsync-role to the operator's own ServiceAccount
-    # (meshery-operator). Operator releases up to and including 1.0.6 ignore
-    # MESHSYNC_SERVICE_ACCOUNT and run MeshSync as meshery-operator, so without
-    # this binding MeshSync is forbidden from every resource it watches. The
-    # binding is read-only: the operator gains no write access. Flip this
-    # default to false in the change that moves image.tag to the first
-    # operator release that honors MESHSYNC_SERVICE_ACCOUNT.
-    bindOperatorServiceAccount: true
     # -- Rules appended to meshery-meshsync-role, which is otherwise read-only.
     # For example, Meshery's interactive terminal needs
     # `{apiGroups: [""], resources: [pods/exec], verbs: [create]}`.
