@@ -16,7 +16,11 @@ import (
 	"github.com/meshery/meshkit/models/events"
 )
 
-const stateMachineEventTimeout = 2 * time.Minute
+// defaultFSMTransitionTimeout is the maximum duration permitted for asynchronous
+// state machine transitions triggered during request handling (discovery, connect,
+// delete). Bounding the detached context prevents leaked goroutines and indefinite
+// lock retention on unresponsive clusters.
+const defaultFSMTransitionTimeout = 2 * time.Minute
 
 // Deprecated: GetAllContexts (GET /api/system/kubernetes/contexts) is being
 // retired in favor of the connections API (kind=kubernetes) — everything is now
@@ -149,14 +153,15 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			smInstanceTracker.Remove(connectionUUID)
 		}
 	} else {
-		// detach from the http request lifecycle with a bounded timeout so that the goroutine isn't cancelled when
-		// the handler returns, while preventing goroutine leaks if downstream calls hang.
-		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), stateMachineEventTimeout)
+// Detach from the request context so cancellation on HTTP handler exit
+		// does not abort background state machine transitions, bounded by a timeout.
+		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), defaultFSMTransitionTimeout)
 		go func(inst *machines.StateMachine) {
 			defer cancel()
 			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
 			if err != nil {
 				h.log.Error(err)
+				h.reportMachineOutcome(provider, token, userID, event, err)
 				h.log.Debug(event)
 				return
 			}

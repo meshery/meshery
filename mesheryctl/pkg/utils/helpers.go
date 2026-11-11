@@ -650,7 +650,7 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 	if configuration == "pattern" {
 		url += "populate=pattern_file&"
 	}
-	url += "page_size=10000"
+	url += "pagesize=10000"
 	configType := configuration + "s"
 	var idList []string
 	req, err := NewRequest("GET", url, nil)
@@ -728,22 +728,38 @@ func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
 		return err
 	}
 
-	_, err = MakeRequest(req)
+	res, err := MakeRequest(req)
 	if err != nil {
 		return err
 	}
+	defer SafeClose(res.Body)
 	return nil
 }
 
-// ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID
+// ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID.
+// An exact ID match wins; a prefix shared by more than one ID is rejected as ambiguous.
 func ValidId(mesheryServerUrl, args string, configuration string) (string, bool, error) {
 	isID := false
+	if strings.TrimSpace(args) == "" {
+		return "", false, ErrInvalidArgument(errors.New("name or ID cannot be empty"))
+	}
 	configID, err := GetID(mesheryServerUrl, configuration)
 	if err == nil {
+		var matches []string
 		for _, id := range configID {
-			if strings.HasPrefix(id, args) {
-				args = id
+			if id == args {
+				matches = []string{id}
+				break
 			}
+			if strings.HasPrefix(id, args) {
+				matches = append(matches, id)
+			}
+		}
+		if len(matches) > 1 {
+			return "", false, ErrAmbiguousID(args, matches)
+		}
+		if len(matches) == 1 {
+			args = matches[0]
 		}
 	} else {
 		return "", false, err

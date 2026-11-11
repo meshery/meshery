@@ -13,9 +13,9 @@ import (
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
+	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
-	"github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta3/component"
 )
@@ -287,11 +287,24 @@ func (h *Handler) DeleteMesheryFilterHandler(
 	provider models.Provider,
 ) {
 	filterID := mux.Vars(r)["id"]
+	filterUUID, err := uuid.FromString(filterID)
+	if err != nil || filterUUID == uuid.Nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid filter ID: %s", filterID))
+		h.log.Warn(invalidIDErr)
+		writeMeshkitError(rw, invalidIDErr, http.StatusBadRequest)
+		return
+	}
 
 	resp, err := provider.DeleteMesheryFilter(r, filterID)
 	if err != nil {
+		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			h.log.Warnf("No filter with ID %q found to delete", filterID)
+			writeMeshkitError(rw, err, http.StatusNotFound)
+			return
+		}
+
 		h.log.Error(ErrDeleteFilter(err))
-		writeMeshkitError(rw, ErrDeleteFilter(err), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrDeleteFilter(err), providerStatusOrInternal(err))
 		return
 	}
 
@@ -543,46 +556,63 @@ func (h *Handler) FilterFileHandler(
 	h.PatternFileHandler(rw, r, prefObj, user, provider)
 }
 
+// wasmFilterModelName is the model that ships the WASMFilter component.
+const wasmFilterModelName = "meshery-core"
+
+// generateFilterComponent wraps a filter's configuration in a WASMFilter
+// component, which is what a filter save persists as its filterResource.
 func (h *Handler) generateFilterComponent(config string) (string, error) {
-	res, _, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
-		Name:       "WASMFilter",
-		Trim:       false,
-		APIVersion: v1beta1.ComponentSchemaVersion,
-		Version:    "v1.0.0",
-		Limit:      1,
+	// Look the component up by kind and model. ComponentFilter matches
+	// APIVersion against the component's own version
+	// (core.meshery.io/v1alpha1) and Version against its model's version, so
+	// constraining them to the component schema version never matched and
+	// every filter configuration was silently dropped.
+	res, _, _, err := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
+		Name:      "WASMFilter",
+		ModelName: wasmFilterModelName,
+		Trim:      false,
+		Limit:     1,
 	})
 
+	var filterCompDef *component.ComponentDefinition
 	if len(res) > 0 {
-		filterEntity := res[0]
-		filterCompDef, ok := filterEntity.(*component.ComponentDefinition)
-		if ok {
-			filterID := uuid.Must(uuid.NewV4())
-			filterSvc := component.ComponentDefinition{
-				ID:          filterID,
-				DisplayName: strings.ToLower(filterCompDef.Component.Kind) + utils.GetRandomAlphabetsOfDigit(5),
-				Component: component.Component{
-					Kind:    filterCompDef.Component.Kind,
-					Version: filterCompDef.Component.Version,
-				},
-				Model: &model.ModelDefinition{
-					Name: filterCompDef.Model.Name,
-					Model: model.Model{
-						Version: filterCompDef.Model.Model.Version,
-					},
-				},
-				Metadata: component.ComponentDefinition_Metadata{
-					IsAnnotation: true,
-				},
-				Configuration: map[string]interface{}{
-					"config": config,
-				},
-			}
-			marshalledFilter, err := json.Marshal(filterSvc)
-			if err != nil {
-				return string(marshalledFilter), err
-			}
-			return string(marshalledFilter), nil
-		}
+		filterCompDef, _ = res[0].(*component.ComponentDefinition)
 	}
-	return "", nil
+	if filterCompDef == nil {
+		// Without the component there is nowhere to keep a configuration.
+		// Report that rather than saving the filter without it.
+		if config == "" {
+			return "", nil
+		}
+		if err != nil {
+			return "", err
+		}
+		return "", fmt.Errorf("the WASMFilter component of the %s model is not registered, so the filter configuration cannot be stored", wasmFilterModelName)
+	}
+
+	filterSvc := component.ComponentDefinition{
+		ID:          uuid.Must(uuid.NewV4()),
+		DisplayName: strings.ToLower(filterCompDef.Component.Kind) + utils.GetRandomAlphabetsOfDigit(5),
+		Component: component.Component{
+			Kind:    filterCompDef.Component.Kind,
+			Version: filterCompDef.Component.Version,
+		},
+		Model: &model.ModelDefinition{
+			Name: filterCompDef.Model.Name,
+			Model: model.Model{
+				Version: filterCompDef.Model.Model.Version,
+			},
+		},
+		Metadata: component.ComponentDefinition_Metadata{
+			IsAnnotation: true,
+		},
+		Configuration: map[string]interface{}{
+			"config": config,
+		},
+	}
+	marshalledFilter, err := json.Marshal(filterSvc)
+	if err != nil {
+		return string(marshalledFilter), err
+	}
+	return string(marshalledFilter), nil
 }

@@ -902,3 +902,104 @@ func TestBuildPolicyEvaluationEventMetadata_NilTimestamp(t *testing.T) {
 	assert.NotContains(t, metadata, "designVersion")
 	assert.Equal(t, 0, metadata["relationshipsAdded"])
 }
+
+
+func seedAnnotationComponent(t *testing.T, rm *registry.RegistryManager) {
+	t.Helper()
+	conn := connection.Connection{
+		Name:    "test-registrant",
+		Kind:    "meshery",
+		Type:    "core",
+		SubType: "whiteboard",
+		Status:  connection.ConnectionStatusConnected,
+	}
+	enabled := v1beta3comp.Enabled
+	comp := v1beta3comp.ComponentDefinition{
+		DisplayName:   "Comment",
+		SchemaVersion: "core.meshery.io/v1beta1",
+		Status:        &enabled,
+		Component: v1beta3comp.Component{
+			Kind:    "Comment",
+			Version: "v1.0.0",
+			Schema:  `{"properties":{}}`,
+		},
+		Model: &model.ModelDefinition{
+			Name:          "meshery-core",
+			DisplayName:   "Meshery Core",
+			SchemaVersion: "models.meshery.io/v1beta1",
+			Version:       "v1.0.0",
+			Model:         model.Model{Version: "v1.0.0"},
+			Category:      category.CategoryDefinition{Name: "Core"},
+			Status:        model.Enabled,
+		},
+		Metadata: v1beta3comp.ComponentDefinition_Metadata{
+			IsAnnotation: true,
+		},
+	}
+	id, err := comp.GenerateID()
+	require.NoError(t, err)
+	comp.ID = id
+	_, _, err = rm.RegisterEntity(registry.RegistrantHostToV1beta3(conn), &comp)
+	require.NoError(t, err, "seedAnnotationComponent: RegisterEntity failed")
+}
+
+// TestProcessEvaluationResponse_PreservesRegistryAnnotationClassification tests that
+// component hydration preserves the authoritative IsAnnotation classification from the registry
+// in both directions:
+// 1. Workload components (registry IsAnnotation=false) retain IsAnnotation=false even if synthesized without annotation flag.
+// 2. Genuine annotation components (registry IsAnnotation=true) retain IsAnnotation=true even if synthesized without annotation flag.
+func TestProcessEvaluationResponse_PreservesRegistryAnnotationClassification(t *testing.T) {
+	t.Parallel()
+
+	rm, _ := newTestRegistryManager(t)
+	seedTestComponent(t, rm)       // Job -> Metadata.IsAnnotation = false
+	seedAnnotationComponent(t, rm) // Comment -> Metadata.IsAnnotation = true
+
+	jobID, err := uuid.NewV4()
+	require.NoError(t, err)
+	commentID, err := uuid.NewV4()
+	require.NoError(t, err)
+
+	// Synthesized workload component with IsAnnotation: false
+	bareJob := &component.ComponentDefinition{
+		ID:             jobID,
+		Component:      component.Component{Kind: "Job", Version: "batch/v1"},
+		DisplayName:    "spec.template.spec.containers.0",
+		ModelReference: model.ModelReference{Name: "kubernetes"},
+		Metadata:       component.ComponentDefinition_Metadata{IsAnnotation: false},
+	}
+
+	// Synthesized annotation component with IsAnnotation: false (simulating synthesized component without explicit annotation flag)
+	bareComment := &component.ComponentDefinition{
+		ID:             commentID,
+		Component:      component.Component{Kind: "Comment", Version: "v1.0.0"},
+		DisplayName:    "user-note",
+		ModelReference: model.ModelReference{Name: "meshery-core"},
+		Metadata:       component.ComponentDefinition_Metadata{IsAnnotation: false},
+	}
+
+	resp := &pattern.EvaluationResponse{
+		Design: pattern.PatternFile{
+			Version:    "0.0.1",
+			Components: []*component.ComponentDefinition{bareJob, bareComment},
+		},
+		Trace: pattern.Trace{
+			ComponentsAdded: []component.ComponentDefinition{*bareJob, *bareComment},
+		},
+	}
+
+	got := processEvaluationResponse(rm, pattern.EvaluationRequest{}, resp)
+	require.Empty(t, got)
+	require.Len(t, resp.Design.Components, 2)
+
+	byID := map[core.Uuid]*component.ComponentDefinition{}
+	for _, c := range resp.Design.Components {
+		byID[c.ID] = c
+	}
+
+	// 1. Workload component Job must preserve IsAnnotation=false from registry
+	assert.False(t, byID[jobID].Metadata.IsAnnotation, "Workload component Job must preserve IsAnnotation=false from registry")
+
+	// 2. Genuine annotation component Comment must preserve IsAnnotation=true from registry
+	assert.True(t, byID[commentID].Metadata.IsAnnotation, "Annotation component Comment must preserve IsAnnotation=true from registry")
+}

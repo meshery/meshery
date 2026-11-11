@@ -306,11 +306,14 @@ describe('createHandleImportFilter', () => {
     });
     await flush();
 
+    // The server decodes the binary from `filterData.filterFile`
+    // (server/models/meshery_filter.go); a snake_case `filter_file` is
+    // silently dropped and the filter is saved without its WASM file.
     const body = JSON.parse(updateFilterFile.mock.calls[0][0].updateBody);
     expect(body).toEqual({
       config: 'cfg',
       save: true,
-      filter_data: { name: 'n', filter_file: 'decoded:rawdata' },
+      filterData: { name: 'n', filterFile: 'decoded:rawdata' },
     });
     expect(notify).toHaveBeenCalledWith({
       message: '"n" filter uploaded',
@@ -337,12 +340,14 @@ describe('createHandleImportFilter', () => {
     });
     await flush();
 
+    // A URL import must not carry `filterData`: handleFilterPOST takes the
+    // local-upload branch whenever filterData is present, before it ever
+    // looks at `url`, so the remote filter would never be fetched.
     const body = JSON.parse(updateFilterFile.mock.calls[0][0].updateBody);
     expect(body).toEqual({
       config: 'cfg',
       save: true,
       url: 'http://e.com',
-      filter_data: { name: 'n' },
     });
   });
 
