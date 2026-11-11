@@ -532,6 +532,7 @@ Section pages:
 - [ErrHelmRepositoryNotFoundCode-1035](/pr-preview/pr-23206/reference/error-codes/adapter-meshery-traefik-mesh/errhelmrepositorynotfoundcode-1035/)
 - [ErrHelmRepositoryNotFoundCode-11203](/pr-preview/pr-23206/reference/error-codes/library-meshkit/errhelmrepositorynotfoundcode-11203/)
 - [ErrIDLookupIncompleteCode-1257](/pr-preview/pr-23206/reference/error-codes/client-mesheryctl/erridlookupincompletecode-1257/)
+- [ErrIDLookupPageLimitCode-1258](/pr-preview/pr-23206/reference/error-codes/client-mesheryctl/erridlookuppagelimitcode-1258/)
 - [ErrImportDesignCode-1001](/pr-preview/pr-23206/reference/error-codes/client-mesheryctl/errimportdesigncode-1001/)
 - [ErrImportFailureCode-11270](/pr-preview/pr-23206/reference/error-codes/library-meshkit/errimportfailurecode-11270/)
 - [ErrImportFailureCode-1359](/pr-preview/pr-23206/reference/error-codes/component-meshery-server/errimportfailurecode-1359/)
