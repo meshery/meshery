@@ -200,6 +200,11 @@ describe('parseDiskSpace / parseRam (parseUnitsOfBytes)', () => {
     expect(parseRam('1G')).toBe(1_000_000_000);
   });
 
+  it('parses lowercase k decimal-suffix bytes', () => {
+    expect(parseRam('16777217k')).toBe(16_777_217_000);
+    expect(parseRam('1k')).toBe(1000);
+  });
+
   it('parses binary-suffix bytes', () => {
     expect(parseRam('1Ki')).toBe(1024);
     expect(parseRam('1Mi')).toBe(1024 * 1024);

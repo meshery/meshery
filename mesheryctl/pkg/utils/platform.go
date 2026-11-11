@@ -729,7 +729,11 @@ func Startdockerdaemon(subcommand string) error {
 	if SilentFlag {
 		userResponse = true
 	} else {
-		userResponse = AskForConfirmation("Start Docker now")
+		var promptErr error
+		userResponse, promptErr = AskForConfirmation("Start Docker now")
+		if promptErr != nil {
+			return promptErr
+		}
 	}
 	if !userResponse {
 		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
@@ -772,6 +776,9 @@ func InstallprereqDocker() error {
 	dockerComposeBinaryURL := dockerComposeBinaryURL
 	//checks for the latest docker-compose
 	resp, err := http.Get(dockerComposeWebURL)
+	if resp != nil {
+		defer SafeClose(resp.Body)
+	}
 	if err != nil {
 		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
 	} else {

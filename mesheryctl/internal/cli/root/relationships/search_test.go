@@ -94,6 +94,24 @@ func TestSearch_WithFlags(t *testing.T) {
 			ExpectError:      false,
 			IsOutputGolden:   true,
 		},
+		{
+			Name:             "Search registered relationships with --page 0",
+			Args:             []string{"search", "--model", "kubernetes", "--page", "0"},
+			Fixture:          "search.relationship.api.response.matching.result.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
+		},
+		{
+			Name:             "Search registered relationships with a negative --page",
+			Args:             []string{"search", "--model", "kubernetes", "--page", "-1"},
+			Fixture:          "search.relationship.api.response.matching.result.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '-1'")),
+		},
 	}
 
 	mesheryctlflags.InitValidators(RelationshipCmd)

@@ -517,7 +517,11 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 		}
 
 		defaultCapabilities := []capability.Capability{} // only assign empty capabilities for component declarations
-		_component.Metadata.IsAnnotation = _c.Metadata.IsAnnotation
+		// Preserve authoritative classification from the component registry definition.
+		// Propagate annotation status only when explicitly marked on the synthesized component.
+		if _c.Metadata.IsAnnotation {
+			_component.Metadata.IsAnnotation = true
+		}
 		_component.Configuration = _c.Configuration
 		_component.Capabilities = &defaultCapabilities
 		if originalStyles != nil && originalStyles.Position != nil {
@@ -869,7 +873,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 			WithMetadata(buildPolicyEvaluationEventMetadata(evaluationResponse, models.ServerURLFromRequest(r), evalDuration)).
 			WithSeverity(events.Informational).Build()
 		go func() {
-			_ = provider.PersistEvent(*event, token)
+			_, _ = provider.PersistEvent(*event, token)
 		}()
 
 		h.writeEvaluationResult(rw, evalResult{resp: evaluationResponse})
@@ -975,10 +979,11 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 		greedy = true
 	}
 
-	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
+	entities, totalCount, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		Kind:      name,
 		ModelName: typ,
 		Greedy:    greedy,
+		Limit:     limit,
 		Offset:    offset,
 		OrderOn:   order,
 		Sort:      sort,
@@ -994,7 +999,7 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	response := models.MeshmodelPoliciesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount: 0,
+		TotalCount: totalCount,
 		Policies:   entities,
 	}
 
@@ -1018,9 +1023,10 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 		greedy = true
 	}
 
-	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
+	entities, totalCount, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		ModelName: typ,
 		Greedy:    greedy,
+		Limit:     limit,
 		Offset:    offset,
 		OrderOn:   order,
 		Sort:      sort,
@@ -1037,7 +1043,7 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	response := models.MeshmodelPoliciesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount: 0,
+		TotalCount: totalCount,
 		Policies:   entities,
 	}
 

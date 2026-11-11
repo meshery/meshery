@@ -2,13 +2,19 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshkit/database"
+	policyv1beta1 "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/category"
@@ -16,6 +22,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	modelv1beta2 "github.com/meshery/schemas/models/v1beta2/model"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	v1beta3comp "github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/stretchr/testify/assert"
@@ -901,4 +908,219 @@ func TestBuildPolicyEvaluationEventMetadata_NilTimestamp(t *testing.T) {
 	assert.NotContains(t, metadata, "evaluatedAt")
 	assert.NotContains(t, metadata, "designVersion")
 	assert.Equal(t, 0, metadata["relationshipsAdded"])
+}
+
+func seedAnnotationComponent(t *testing.T, rm *registry.RegistryManager) {
+	t.Helper()
+	conn := connection.Connection{
+		Name:    "test-registrant",
+		Kind:    "meshery",
+		Type:    "core",
+		SubType: "whiteboard",
+		Status:  connection.ConnectionStatusConnected,
+	}
+	enabled := v1beta3comp.Enabled
+	comp := v1beta3comp.ComponentDefinition{
+		DisplayName:   "Comment",
+		SchemaVersion: "core.meshery.io/v1beta1",
+		Status:        &enabled,
+		Component: v1beta3comp.Component{
+			Kind:    "Comment",
+			Version: "v1.0.0",
+			Schema:  `{"properties":{}}`,
+		},
+		Model: &model.ModelDefinition{
+			Name:          "meshery-core",
+			DisplayName:   "Meshery Core",
+			SchemaVersion: "models.meshery.io/v1beta1",
+			Version:       "v1.0.0",
+			Model:         model.Model{Version: "v1.0.0"},
+			Category:      category.CategoryDefinition{Name: "Core"},
+			Status:        model.Enabled,
+		},
+		Metadata: v1beta3comp.ComponentDefinition_Metadata{
+			IsAnnotation: true,
+		},
+	}
+	id, err := comp.GenerateID()
+	require.NoError(t, err)
+	comp.ID = id
+	_, _, err = rm.RegisterEntity(registry.RegistrantHostToV1beta3(conn), &comp)
+	require.NoError(t, err, "seedAnnotationComponent: RegisterEntity failed")
+}
+
+// TestProcessEvaluationResponse_PreservesRegistryAnnotationClassification tests that
+// component hydration preserves the authoritative IsAnnotation classification from the registry
+// in both directions:
+// 1. Workload components (registry IsAnnotation=false) retain IsAnnotation=false even if synthesized without annotation flag.
+// 2. Genuine annotation components (registry IsAnnotation=true) retain IsAnnotation=true even if synthesized without annotation flag.
+func TestProcessEvaluationResponse_PreservesRegistryAnnotationClassification(t *testing.T) {
+	t.Parallel()
+
+	rm, _ := newTestRegistryManager(t)
+	seedTestComponent(t, rm)       // Job -> Metadata.IsAnnotation = false
+	seedAnnotationComponent(t, rm) // Comment -> Metadata.IsAnnotation = true
+
+	jobID, err := uuid.NewV4()
+	require.NoError(t, err)
+	commentID, err := uuid.NewV4()
+	require.NoError(t, err)
+
+	// Synthesized workload component with IsAnnotation: false
+	bareJob := &component.ComponentDefinition{
+		ID:             jobID,
+		Component:      component.Component{Kind: "Job", Version: "batch/v1"},
+		DisplayName:    "spec.template.spec.containers.0",
+		ModelReference: model.ModelReference{Name: "kubernetes"},
+		Metadata:       component.ComponentDefinition_Metadata{IsAnnotation: false},
+	}
+
+	// Synthesized annotation component with IsAnnotation: false (simulating synthesized component without explicit annotation flag)
+	bareComment := &component.ComponentDefinition{
+		ID:             commentID,
+		Component:      component.Component{Kind: "Comment", Version: "v1.0.0"},
+		DisplayName:    "user-note",
+		ModelReference: model.ModelReference{Name: "meshery-core"},
+		Metadata:       component.ComponentDefinition_Metadata{IsAnnotation: false},
+	}
+
+	resp := &pattern.EvaluationResponse{
+		Design: pattern.PatternFile{
+			Version:    "0.0.1",
+			Components: []*component.ComponentDefinition{bareJob, bareComment},
+		},
+		Trace: pattern.Trace{
+			ComponentsAdded: []component.ComponentDefinition{*bareJob, *bareComment},
+		},
+	}
+
+	got := processEvaluationResponse(rm, pattern.EvaluationRequest{}, resp)
+	require.Empty(t, got)
+	require.Len(t, resp.Design.Components, 2)
+
+	byID := map[core.Uuid]*component.ComponentDefinition{}
+	for _, c := range resp.Design.Components {
+		byID[c.ID] = c
+	}
+
+	// 1. Workload component Job must preserve IsAnnotation=false from registry
+	assert.False(t, byID[jobID].Metadata.IsAnnotation, "Workload component Job must preserve IsAnnotation=false from registry")
+
+	// 2. Genuine annotation component Comment must preserve IsAnnotation=true from registry
+	assert.True(t, byID[commentID].Metadata.IsAnnotation, "Annotation component Comment must preserve IsAnnotation=true from registry")
+}
+
+func seedTestPolicies(t *testing.T, rm *registry.RegistryManager) {
+	t.Helper()
+
+	conn := connection.Connection{
+		Name:    "test-policy-registrant",
+		Kind:    "kubernetes",
+		Type:    "platform",
+		SubType: "orchestration",
+		Status:  connection.ConnectionStatusConnected,
+	}
+
+	host := registry.RegistrantHostToV1beta3(conn)
+
+	for _, version := range []string{"v1", "v2"} {
+		policy := policyv1beta1.PolicyDefinition{
+			Kind:    "TestPolicy",
+			Version: version,
+			Model: modelv1beta2.ModelDefinition{
+				Name:          "test-policy-model",
+				DisplayName:   "Test Policy Model",
+				SchemaVersion: "models.meshery.io/v1beta1",
+				Version:       "1.0.0",
+				Model:         modelv1beta2.Model{Version: "1.0.0"},
+				Category:      category.CategoryDefinition{Name: "Orchestration"},
+				Status:        modelv1beta2.Enabled,
+			},
+		}
+
+		_, _, err := rm.RegisterEntity(host, &policy)
+		require.NoError(t, err, "failed to register test policy")
+	}
+}
+
+func TestGetAllMeshmodelPoliciesPagination(t *testing.T) {
+	tests := []struct {
+		name    string
+		handler func(*Handler, http.ResponseWriter, *http.Request)
+		vars    map[string]string
+	}{
+		{
+			name:    "all policies",
+			handler: (*Handler).GetAllMeshmodelPolicies,
+			vars:    map[string]string{"model": "test-policy-model"},
+		},
+		{
+			name:    "policies by name",
+			handler: (*Handler).GetAllMeshmodelPoliciesByName,
+			vars: map[string]string{
+				"model": "test-policy-model",
+				"name":  "TestPolicy",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rm, _ := newTestRegistryManager(t)
+			seedTestPolicies(t, rm)
+
+			h := &Handler{
+				registryManager: rm,
+				log:             newTestLogger(t),
+			}
+
+			request := func(page int) struct {
+				Page       int               `json:"page"`
+				PageSize   int               `json:"pageSize"`
+				TotalCount int64             `json:"totalCount"`
+				Policies   []json.RawMessage `json:"policies"`
+			} {
+				req := httptest.NewRequest(
+					http.MethodGet,
+					fmt.Sprintf("/?page=%d&pageSize=1", page),
+					nil,
+				)
+				req = mux.SetURLVars(req, tt.vars)
+
+				recorder := httptest.NewRecorder()
+				tt.handler(h, recorder, req)
+
+				require.Equal(t, http.StatusOK, recorder.Code)
+
+				var response struct {
+					Page       int               `json:"page"`
+					PageSize   int               `json:"pageSize"`
+					TotalCount int64             `json:"totalCount"`
+					Policies   []json.RawMessage `json:"policies"`
+				}
+
+				require.NoError(t, json.Unmarshal(recorder.Body.Bytes(), &response))
+				return response
+			}
+
+			firstPage := request(0)
+			secondPage := request(1)
+
+			assert.Equal(t, 0, firstPage.Page)
+			assert.Equal(t, 1, firstPage.PageSize)
+			assert.Equal(t, int64(2), firstPage.TotalCount)
+			require.Len(t, firstPage.Policies, 1)
+
+			assert.Equal(t, 1, secondPage.Page)
+			assert.Equal(t, 1, secondPage.PageSize)
+			assert.Equal(t, int64(2), secondPage.TotalCount)
+			require.Len(t, secondPage.Policies, 1)
+
+			assert.NotEqual(
+				t,
+				string(firstPage.Policies[0]),
+				string(secondPage.Policies[0]),
+			)
+		})
+	}
 }

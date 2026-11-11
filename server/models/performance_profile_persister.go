@@ -89,8 +89,18 @@ func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id core.Uuid) (
 	return json.Marshal(&profile)
 }
 
+// SavePerformanceProfile updates the profile with this ID, or inserts it when
+// none is stored. An edit from the performance form carries every form field
+// but no createdAt, so an update writes every column except created_at.
 func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ core.Uuid, profile *PerformanceProfile) error {
-	return ppp.DB.Save(profile).Error
+	res := ppp.DB.Model(profile).Select("*").Omit("created_at").Updates(profile)
+	if res.Error != nil {
+		return res.Error
+	}
+	if res.RowsAffected > 0 {
+		return nil
+	}
+	return ppp.DB.Create(profile).Error
 }
 
 func (ppp *PerformanceProfilePersister) GetPerformanceProfile(id core.Uuid) (*PerformanceProfile, error) {

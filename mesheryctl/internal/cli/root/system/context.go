@@ -153,7 +153,10 @@ mesheryctl system context delete [context name]
 			if utils.SilentFlag {
 				res = true
 			} else {
-				res = utils.AskForConfirmation("Are you sure you want to delete the current context")
+				res, err = utils.AskForConfirmation("Are you sure you want to delete the current context")
+				if err != nil {
+					return err
+				}
 			}
 
 			if !res {
@@ -207,6 +210,8 @@ mesheryctl system context delete [context name]
 	},
 }
 
+var listContextUsageMsg = "Usage: mesheryctl system context list\nRun 'mesheryctl system context list --help' to see detailed help message"
+
 // listContextCmd represents the list command
 var listContextCmd = &cobra.Command{
 	Use:   "list",
@@ -217,11 +222,13 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/system/co
 // List all contexts present
 mesheryctl system context list
 	`,
-	SilenceUsage: true,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return utils.ErrInvalidArgument(errors.New(utils.SystemContextSubError("this command takes no arguments.\n", "list")))
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listContextUsageMsg))
 		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
 			return utils.ErrUnmarshal(err)
