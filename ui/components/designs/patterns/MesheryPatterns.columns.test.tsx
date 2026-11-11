@@ -197,6 +197,20 @@ describe('buildPatternActions', () => {
     expect(stopPropagation).toHaveBeenCalled();
     expect(handlers.handleDelete).toHaveBeenCalledWith(rowData);
   });
+
+  it('omits the Delete action when arePatternsReadOnly is true', () => {
+    const handlers = makeHandlers();
+    const actions = buildPatternActions({
+      rowData: { id: 'p1' },
+      visibility: 'private',
+      patterns: [{ id: 'p1' }],
+      tableMeta: { rowIndex: 0 },
+      handlers,
+      permissions: makePermissions(),
+      arePatternsReadOnly: true,
+    });
+    expect(actions.map((a: any) => a.label)).not.toContain('Delete');
+  });
 });
 
 describe('buildPatternColumns', () => {

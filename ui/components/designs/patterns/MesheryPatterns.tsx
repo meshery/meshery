@@ -368,6 +368,7 @@ function MesheryPatterns({
 
   const columns = buildPatternColumns({
     patterns,
+    arePatternsReadOnly,
     handlers: {
       handleOpenInConfigurator,
       handleClone,

@@ -37,6 +37,7 @@ export function buildPatternActions({
   tableMeta,
   handlers,
   permissions,
+  arePatternsReadOnly = false,
 }) {
   const {
     handleOpenInConfigurator,
@@ -180,6 +181,7 @@ export function buildPatternActions({
       },
       disabled: !permissions.deleteDesign,
       permissionKey: Keys.CatalogManagementDeleteADesign,
+      condition: !arePatternsReadOnly,
     },
   ].filter((action) => action.condition === undefined || action.condition);
 }
@@ -204,7 +206,12 @@ export const PATTERN_COL_VIEWS = [
  * we therefore rebuild the columns inside the parent component on each
  * render (matching the original behavior).
  */
-export function buildPatternColumns({ patterns, handlers, permissions }) {
+export function buildPatternColumns({
+  patterns,
+  handlers,
+  permissions,
+  arePatternsReadOnly = false,
+}) {
   return [
     {
       name: 'name',
@@ -301,6 +308,7 @@ export function buildPatternColumns({ patterns, handlers, permissions }) {
             tableMeta,
             handlers,
             permissions,
+            arePatternsReadOnly,
           });
 
           return (
