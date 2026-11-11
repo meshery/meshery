@@ -12010,7 +12010,7 @@ To install or upgrade `mesheryctl` with Bash, run one of the following commands.
 
 #### Option 4: Install `mesheryctl` binary and Meshery adapter(s)
 
-Install the `mesheryctl` binary and deploy Meshery together with one or more [adapters](/concepts/architecture/adapters/). Separate multiple adapters with spaces, for example `ADAPTERS="istio linkerd"`. `mesheryctl` can deploy the `consul`, `istio`, `linkerd`, `nsm`, `kuma`, `traefik`, and `cilium` adapters. The script also accepts `osm`, `nighthawk`, `nginx`, `tanzu`, and `app`, but `mesheryctl` has no deployment definition for those adapters, so `mesheryctl system start` rejects them. The script ignores any other value.
+Install the `mesheryctl` binary and deploy Meshery together with one or more [adapters](/concepts/architecture/adapters/). Separate multiple adapters with spaces, for example `ADAPTERS="istio linkerd"`. The script supports the `consul`, `istio`, `linkerd`, `nsm`, `kuma`, `traefik`, and `cilium` adapters. Unsupported adapter values are skipped with a warning. If no supported adapters are specified, the script exits with an error.
 
  <pre class="codeblock-pre">
  <div class="codeblock">
@@ -114396,7 +114396,6 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
   -t, --output-format string     (optional) format to display in [json|yaml] (default = yaml) (default "yaml")
   -l, --output-location string   (optional) output location (default = current directory) (default "./")
   -o, --output-type string       (optional) format to display in [oci|tar] (default = oci) (default "oci")
-  -p, --page int                 (optional) page number for paginated results (default = 1) (default 1)
       --version string           (optional) model version to export (default = "", format: vX.X.X)
 
 </div>
