@@ -84,7 +84,11 @@ vi.mock('@sistent/sistent', () => ({
   Paper: ({ children }: any) => <div>{children}</div>,
   Typography: ({ children }: any) => <span>{children}</span>,
   useTheme: () => ({
-    palette: { border: { normal: '#ccc' } },
+    palette: {
+      border: { normal: '#ccc' },
+      text: { default: '#000' },
+      icon: { default: '#000' },
+    },
     breakpoints: { down: () => '@media (max-width: 600px)' },
   }),
   styled: (Component: any) => () => {

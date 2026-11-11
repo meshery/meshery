@@ -2,19 +2,15 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const {
-  getUserPrefQuerySpy,
-  getMeshQuerySpy,
-  canSpy,
-  USER_PREF_RESULT,
-  MESH_RESULT,
-} = vi.hoisted(() => ({
-  getUserPrefQuerySpy: vi.fn(),
-  getMeshQuerySpy: vi.fn(),
-  canSpy: vi.fn(() => true),
-  USER_PREF_RESULT: { data: {}, isSuccess: true },
-  MESH_RESULT: { data: [], isSuccess: true, isError: false, error: undefined },
-}));
+const { getUserPrefQuerySpy, getMeshQuerySpy, canSpy, USER_PREF_RESULT, MESH_RESULT } = vi.hoisted(
+  () => ({
+    getUserPrefQuerySpy: vi.fn(),
+    getMeshQuerySpy: vi.fn(),
+    canSpy: vi.fn(() => true),
+    USER_PREF_RESULT: { data: {}, isSuccess: true },
+    MESH_RESULT: { data: [], isSuccess: true, isError: false, error: undefined },
+  }),
+);
 
 vi.mock('react-redux', () => ({
   useDispatch: () => vi.fn(),

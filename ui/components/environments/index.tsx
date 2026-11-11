@@ -134,7 +134,7 @@ const Environments = () => {
       filter: '{"assigned":false}',
     },
     {
-      skip,
+      skip: skip || !canViewEnv,
     },
   );
 
@@ -149,7 +149,7 @@ const Environments = () => {
       pagesize: connectionPageSize,
     },
     {
-      skip,
+      skip: skip || !canViewEnv,
     },
   );
 

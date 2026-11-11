@@ -31,35 +31,42 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const {
   notify,
   getEnvironmentsQuery,
+  getEnvironmentConnectionsQuery,
   createEnvironment,
   updateEnvironment,
   deleteEnvironment,
   canSpy,
+  permissionOverrides,
   ENVIRONMENTS_QUERY_RESULT,
   CONNECTIONS_QUERY_RESULT,
   NOOP_MUTATION,
   UI_STATE,
-} = vi.hoisted(() => ({
-  notify: vi.fn(),
-  getEnvironmentsQuery: vi.fn(),
-  createEnvironment: vi.fn(),
-  updateEnvironment: vi.fn(),
-  deleteEnvironment: vi.fn(),
-  canSpy: vi.fn(() => true),
-  ENVIRONMENTS_QUERY_RESULT: {
-    data: { environments: [], totalCount: 0 },
-    isLoading: false,
-    isError: false,
-    error: undefined,
-  },
-  CONNECTIONS_QUERY_RESULT: {
-    data: { connections: [], totalCount: 0 },
-    isError: false,
-    error: undefined,
-  },
-  NOOP_MUTATION: [vi.fn()],
-  UI_STATE: { ui: { organization: { id: 'org-1' } } },
-}));
+} = vi.hoisted(() => {
+  const overrides = new Map<string, boolean>();
+  return {
+    notify: vi.fn(),
+    getEnvironmentsQuery: vi.fn(),
+    getEnvironmentConnectionsQuery: vi.fn(),
+    createEnvironment: vi.fn(),
+    updateEnvironment: vi.fn(),
+    deleteEnvironment: vi.fn(),
+    permissionOverrides: overrides,
+    canSpy: vi.fn((key?: { id?: string }) => overrides.get(key?.id ?? '') ?? true),
+    ENVIRONMENTS_QUERY_RESULT: {
+      data: { environments: [], totalCount: 0 },
+      isLoading: false,
+      isError: false,
+      error: undefined,
+    },
+    CONNECTIONS_QUERY_RESULT: {
+      data: { connections: [], totalCount: 0 },
+      isError: false,
+      error: undefined,
+    },
+    NOOP_MUTATION: [vi.fn()],
+    UI_STATE: { ui: { organization: { id: 'org-1' } } },
+  };
+});
 
 vi.mock('../../utils/hooks/useNotification', () => ({
   useNotification: () => ({ notify }),
@@ -73,7 +80,10 @@ vi.mock('../../rtk-query/environments', () => ({
     getEnvironmentsQuery(args, options);
     return ENVIRONMENTS_QUERY_RESULT;
   },
-  useGetEnvironmentConnectionsQuery: () => CONNECTIONS_QUERY_RESULT,
+  useGetEnvironmentConnectionsQuery: (args: unknown, options: unknown) => {
+    getEnvironmentConnectionsQuery(args, options);
+    return CONNECTIONS_QUERY_RESULT;
+  },
   useAddConnectionToEnvironmentMutation: () => NOOP_MUTATION,
   useRemoveConnectionFromEnvironmentMutation: () => NOOP_MUTATION,
 }));
@@ -91,7 +101,7 @@ vi.mock('@/store/slices/mesheryUi', () => ({ updateProgress: vi.fn() }));
 vi.mock('@/utils/can', () => ({ default: () => true }));
 
 vi.mock('@meshery/schemas/permissions', () => ({
-  Keys: new Proxy({}, { get: () => ({ id: 'id', function: 'fn' }) }),
+  Keys: new Proxy({}, { get: (_, prop) => ({ id: String(prop), function: 'fn' }) }),
 }));
 
 // The RJSF form is not under test; expose a button that submits the payload the
@@ -304,11 +314,14 @@ describe('Environments search paging', () => {
 
 describe('Environments permissions and wire query skipping', () => {
   beforeEach(() => {
+    permissionOverrides.clear();
+    canSpy.mockClear();
     getEnvironmentsQuery.mockClear();
+    getEnvironmentConnectionsQuery.mockClear();
   });
 
   it('skips useGetEnvironmentsQuery and renders 404 fallback when WorkspaceManagementViewEnvironment is denied', () => {
-    canSpy.mockReturnValue(false);
+    permissionOverrides.set('WorkspaceManagementViewEnvironment', false);
     render(<Environments />);
 
     expect(screen.getByText('no access')).toBeInTheDocument();
@@ -316,10 +329,13 @@ describe('Environments permissions and wire query skipping', () => {
       expect.anything(),
       expect.objectContaining({ skip: true }),
     );
+    expect(getEnvironmentConnectionsQuery).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ skip: true }),
+    );
   });
 
   it('runs useGetEnvironmentsQuery without skip when view permission and orgId are present', () => {
-    canSpy.mockReturnValue(true);
     render(<Environments />);
 
     expect(getEnvironmentsQuery).toHaveBeenCalledWith(
