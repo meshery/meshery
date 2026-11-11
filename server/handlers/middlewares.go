@@ -54,14 +54,24 @@ func backgroundDiscoveryContext(ctx context.Context) (context.Context, context.C
 // per minute, and at most one reload per minute.
 const notFoundProbeInterval = time.Minute
 
+// notFoundProbeLoadScope identifies one NOTFOUND load budget: a provider
+// deployment serving one user. A single Handler serves every user and every
+// provider, so a single global load gate would let one user's requests block
+// another user's NOTFOUND recovery for a minute.
+type notFoundProbeLoadScope struct {
+	providerName string
+	providerURL  string
+	user         core.Uuid
+}
+
 // notFoundProbeThrottle gates background Discovery probes of NOTFOUND
 // Kubernetes connections (issue #22955). A connection whose cluster went
 // unreachable sits in NOTFOUND with an open "unreachable" condition, and
 // Discovery never runs for it again because it is no longer in
 // AllKubeClusterKey. The throttle lets K8sFSMMiddleware re-probe such
 // connections without a second remote-provider round trip per request: the
-// NOTFOUND list is reloaded at most once per interval, and each connection
-// is probed at most once per interval.
+// NOTFOUND list is reloaded at most once per interval per provider+user, and
+// each connection is probed at most once per interval.
 //
 // Both gates are an atomic check-and-set under one mutex, stamped when the
 // load/probe starts rather than when it finishes, because the middleware
@@ -69,14 +79,16 @@ const notFoundProbeInterval = time.Minute
 // double-probe a connection. Entries are dropped when a connection leaves
 // NOTFOUND (its probe resolves the condition, see forget) or disappears
 // from the NOTFOUND list (it left NOTFOUND or was deleted, see prune), so
-// the map cannot grow without bound.
+// the map cannot grow without bound. Load entries are likewise dropped once
+// they are older than the interval: a scope that has not loaded within the
+// interval would be allowed again anyway.
 //
 // The clock is injected so tests can advance time without sleeping.
 type notFoundProbeThrottle struct {
 	mu         sync.Mutex
 	now        func() time.Time
 	interval   time.Duration
-	lastLoad   time.Time
+	lastLoad   map[notFoundProbeLoadScope]time.Time
 	lastProbed map[core.Uuid]time.Time
 }
 
@@ -87,20 +99,23 @@ func newNotFoundProbeThrottle(now func() time.Time, interval time.Duration) *not
 	return &notFoundProbeThrottle{
 		now:        now,
 		interval:   interval,
+		lastLoad:   make(map[notFoundProbeLoadScope]time.Time),
 		lastProbed: make(map[core.Uuid]time.Time),
 	}
 }
 
-// allowLoad reports whether the NOTFOUND list may be reloaded now, and
-// stamps the load start time when it does. At most one load per interval.
-func (t *notFoundProbeThrottle) allowLoad() bool {
+// allowLoad reports whether the NOTFOUND list may be reloaded now for this
+// provider+user, and stamps the load start time when it does. At most one
+// load per interval per scope, so one user's traffic cannot block another
+// user's NOTFOUND recovery.
+func (t *notFoundProbeThrottle) allowLoad(scope notFoundProbeLoadScope) bool {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	now := t.now()
-	if !t.lastLoad.IsZero() && now.Sub(t.lastLoad) < t.interval {
+	if last, ok := t.lastLoad[scope]; ok && now.Sub(last) < t.interval {
 		return false
 	}
-	t.lastLoad = now
+	t.lastLoad[scope] = now
 	return true
 }
 
@@ -126,13 +141,20 @@ func (t *notFoundProbeThrottle) forget(id core.Uuid) {
 }
 
 // prune drops probe entries for connections no longer in the NOTFOUND list:
-// they left NOTFOUND or were deleted.
+// they left NOTFOUND or were deleted. It also drops load entries older than
+// the interval: those scopes would be allowed to load again anyway.
 func (t *notFoundProbeThrottle) prune(keep map[core.Uuid]struct{}) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	for id := range t.lastProbed {
 		if _, ok := keep[id]; !ok {
 			delete(t.lastProbed, id)
+		}
+	}
+	now := t.now()
+	for scope, at := range t.lastLoad {
+		if now.Sub(at) >= t.interval {
+			delete(t.lastLoad, scope)
 		}
 	}
 }
@@ -806,6 +828,26 @@ func (h *Handler) discoverK8sContext(ctx context.Context, provider models.Provid
 	if !mhelpers.HasMachineContext(inst) {
 		return nil
 	}
+
+	// A tracked machine reuses the context (and clientset) built when it was
+	// created, so a credential update would otherwise never reach Discovery:
+	// the probe would keep failing against the old clientset and the
+	// unreachable condition would stay open. Refresh the stored context when
+	// the newly loaded one carries different connection material. This runs
+	// here, in the helper both paths share, so the connected path benefits
+	// too. A rebuild failure keeps the old context and is logged; the probe
+	// then runs as before.
+	inst.UpdateContext(func(oldCtx interface{}) interface{} {
+		stored, ok := oldCtx.(*kubernetes.MachineCtx)
+		if !ok || stored == nil {
+			return oldCtx
+		}
+		if _, err := stored.RefreshK8sContext(*k8sContext, models.NewServerEvent(ctx), h.log); err != nil && h.log != nil {
+			h.log.Error(err)
+		}
+		return oldCtx
+	})
+
 	inst.ResetState()
 	go func(inst *machines.StateMachine) {
 		discoveryCtx, cancel := backgroundDiscoveryContext(ctx)
@@ -857,20 +899,29 @@ func loadNotFoundK8sContexts(provider models.Provider, token string) ([]*models.
 // CONNECTED contexts, so a NOTFOUND connection is never probed again.
 //
 // The NOTFOUND list is loaded with a single provider call, gated by the
-// throttle (at most one load per interval) — no second remote-provider
-// round trip per request. Each connection is probed at most once per
-// interval, and a connection already in AllKubeClusterKey (i.e. CONNECTED,
-// or a local-provider context, which the local provider returns
-// unfiltered) is skipped. Probed connections stay out of
-// AllKubeClusterKey: only the Discovery event can move them back to
-// CONNECTED, through the state machine, exactly like a connected context.
+// throttle (at most one load per interval per provider+user) — no second
+// remote-provider round trip per request. Each connection is probed at most
+// once per interval, and a connection already in AllKubeClusterKey (i.e.
+// CONNECTED, or a local-provider context, which the local provider returns
+// unfiltered) is skipped; for the local provider the persisted status is
+// checked too, so a DISCONNECTED context is never probed. Probed connections
+// stay out of AllKubeClusterKey: only the Discovery event can move them back
+// to CONNECTED, through the state machine, exactly like a connected context.
 func (h *Handler) probeNotFoundK8sContexts(ctx context.Context, provider models.Provider, token string, userUUID uuid.UUID, connectedK8sContexts []*models.K8sContext) {
 	if provider == nil {
 		return
 	}
 
 	throttle := h.notFoundProbeThrottleOrDefault()
-	if !throttle.allowLoad() {
+	// One Handler serves every user and provider, so the load gate is
+	// scoped to this provider and user: one user's requests must not block
+	// another user's NOTFOUND recovery. The per-connection probe limit stays
+	// global — a connection belongs to one user and provider anyway.
+	if !throttle.allowLoad(notFoundProbeLoadScope{
+		providerName: provider.Name(),
+		providerURL:  provider.GetProviderURL(),
+		user:         userUUID,
+	}) {
 		return
 	}
 
@@ -908,6 +959,23 @@ func (h *Handler) probeNotFoundK8sContexts(ctx context.Context, provider models.
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
 		if _, ok := connectedIDs[connectionUUID]; ok {
 			continue
+		}
+		// The local provider returns contexts unfiltered by status, so a
+		// context whose connection is not NOTFOUND can slip into this load.
+		// Probe only connections that are still NOTFOUND: a DISCONNECTED
+		// connection must wait for the user to reconnect it, and Discovery
+		// must not move it to CONNECTED on its own. Remote providers filter
+		// by status server-side, so the check is unnecessary there. A
+		// lookup failure skips the probe this cycle; the connection is
+		// retried on the next load.
+		if provider.GetProviderType() == models.LocalProviderType {
+			conn, _, err := provider.GetConnectionByID(token, connectionUUID)
+			if err != nil || conn == nil || conn.Status != connections.NOTFOUND {
+				if err != nil && h.log != nil {
+					h.log.Error(err)
+				}
+				continue
+			}
 		}
 		if !throttle.allowProbe(connectionUUID) {
 			continue
