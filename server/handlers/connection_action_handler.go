@@ -250,7 +250,7 @@ func (h *Handler) flushMeshsyncAction(
 		writeJSONError(w, fmt.Sprintf("no active session for connection %s; connect the cluster before flushing MeshSync", connectionID), http.StatusConflict)
 		return
 	}
-	machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
+	machineCtx, err := kubernetes.GetMachineCtx(machine.GetContext(), nil)
 	if err != nil || machineCtx == nil {
 		writeJSONError(w, fmt.Sprintf("failed to resolve machine context for connection %s", connectionID), http.StatusInternalServerError)
 		return
@@ -310,7 +310,7 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 	if !ok || machine == nil {
 		return ErrMeshsyncReconcile(fmt.Sprintf("no state machine for connection %s", connectionID))
 	}
-	machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
+	machineCtx, err := kubernetes.GetMachineCtx(machine.GetContext(), nil)
 	if err != nil {
 		return ErrMeshsyncReconcile(err.Error())
 	}

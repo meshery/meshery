@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"sync"
 	"testing"
 	"time"
@@ -43,6 +44,7 @@ type notFoundProbeTestProvider struct {
 	notFoundPage     []byte
 	connection       *connections.Connection
 	filterByStatus   bool
+	contextsErr      error // when set, GetK8sContexts fails the load
 }
 
 func (p *notFoundProbeTestProvider) Name() string {
@@ -67,6 +69,9 @@ func (p *notFoundProbeTestProvider) GetK8sContexts(_, _, _, _, _, withStatus str
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	p.getContextsCalls = append(p.getContextsCalls, withStatus)
+	if p.contextsErr != nil {
+		return nil, p.contextsErr
+	}
 	if p.filterByStatus && (p.connection == nil || string(p.connection.Status) != withStatus) {
 		empty, err := json.Marshal(models.MesheryK8sContextPage{
 			Page:       0,
@@ -835,5 +840,61 @@ func TestK8sFSMMiddlewareSkipsConnectedNotFoundContext(t *testing.T) {
 	}
 	if got := provider.persistedCount(); got != 1 {
 		t.Errorf("persisted events = %d, want 1 (one probe, one Recurrence)", got)
+	}
+}
+
+// TestK8sFSMMiddlewarePrunesExpiredEntriesBeforeLoad checks the prune call
+// sits before the load gate: when the NOTFOUND load fails, expired throttle
+// entries are still pruned instead of sitting until a load succeeds. With
+// prune after the load, the failing load would return before pruning and
+// the expired entries would stay in the maps.
+func TestK8sFSMMiddlewarePrunesExpiredEntriesBeforeLoad(t *testing.T) {
+	probed := make(chan struct{}, 16)
+	action := &probeCountingAction{probed: probed}
+	h, provider, clock, connectionID, user, _ := newNotFoundProbeFixture(t, action)
+
+	// First pass probes the connection and stamps the throttle entries.
+	runFSM(t, h, provider, user)
+	waitForProbes(t, probed, 1)
+	waitForPersisted(t, provider, 1)
+
+	throttle := h.notFoundProbeThrottle
+	throttle.mu.Lock()
+	_, hasProbe := throttle.lastProbed[connectionID]
+	throttle.mu.Unlock()
+	if !hasProbe {
+		t.Fatal("expected a probe throttle entry after the first pass")
+	}
+
+	// A minute later the entries are expired, and the next load fails.
+	clock.advance(notFoundProbeInterval + time.Second)
+	provider.mu.Lock()
+	provider.contextsErr = errors.New("provider unavailable")
+	provider.mu.Unlock()
+
+	runFSM(t, h, provider, user)
+	if got := provider.getContextsCallCount(); got != 2 {
+		t.Fatalf("GetK8sContexts calls = %d, want 2 (the failing load was attempted)", got)
+	}
+	if got := provider.persistedCount(); got != 1 {
+		t.Errorf("persisted events = %d, want 1 (no probe ran on the failing load)", got)
+	}
+
+	// Prune runs before the load gate, so the expired probe entry is gone
+	// even though the load failed. (The load entry itself is re-stamped
+	// by this attempt's allowLoad, as designed — the failed load still
+	// consumes the load budget for the interval.)
+	throttle.mu.Lock()
+	_, hasProbe = throttle.lastProbed[connectionID]
+	throttle.mu.Unlock()
+	if hasProbe {
+		t.Error("expired probe entry survived a failed load, want it pruned before the load")
+	}
+
+	// And the load gate still works after the move: an immediate third
+	// pass is gated, no third load is attempted.
+	runFSM(t, h, provider, user)
+	if got := provider.getContextsCallCount(); got != 2 {
+		t.Errorf("GetK8sContexts calls after third pass = %d, want 2 (load still gated)", got)
 	}
 }

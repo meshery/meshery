@@ -867,7 +867,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("instance tracker does not contain machine for connection %s", connectionID)
 		}
 
-		machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
+		machineCtx, err := kubernetes.GetMachineCtx(machine.GetContext(), nil)
 		if err != nil {
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("failed to get machine context for connection %s: %w", connectionID, err)
 		}

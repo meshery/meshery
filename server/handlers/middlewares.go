@@ -933,6 +933,12 @@ func (h *Handler) probeNotFoundK8sContexts(ctx context.Context, provider models.
 	}
 
 	throttle := h.notFoundProbeThrottleOrDefault()
+
+	// Prune expired throttle entries before the load, so the maps cannot
+	// grow without bound even when loads keep failing: a probe entry for a
+	// connection that left NOTFOUND or was deleted expires after the interval.
+	throttle.prune()
+
 	// One Handler serves every user and provider, so the load gate is
 	// scoped to this provider and user: one user's requests must not block
 	// another user's NOTFOUND recovery. The per-connection probe limit stays
@@ -960,11 +966,6 @@ func (h *Handler) probeNotFoundK8sContexts(ctx context.Context, provider models.
 		}
 		connectedIDs[uuid.FromStringOrNil(k8sContext.ConnectionID)] = struct{}{}
 	}
-
-	// Prune expired throttle entries, so the maps cannot grow without
-	// bound: a probe entry for a connection that left NOTFOUND or was
-	// deleted expires after the interval.
-	throttle.prune()
 
 	for _, k8sContext := range notFoundContexts {
 		if k8sContext == nil {
