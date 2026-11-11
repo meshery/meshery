@@ -331,6 +331,40 @@ MeshSync custom resource, which embedded-mode clusters never install.
 form clears them when the effective type changes away from `LoadBalancer`.
 Service changes reconcile in place and must not restart broker pods.
 
+#### How Meshery Server reaches the Broker
+
+`meshsyncDataHandlersNatsBroker` builds the operator-mode NATS connection. Two
+rules govern it:
+
+- **The managed port-forward is decided per target cluster.**
+  `ensureBrokerPortForward` skips it only when `TargetsHostCluster` says the
+  connection reaches the cluster Meshery Server itself runs in
+  (`server/models/host_cluster.go`). That compares the connection's Kubernetes
+  server ID with the host cluster's (the `kube-system` UID, read once through
+  the Pod's service account and cached; a failed read is retried after a
+  minute), falling back to whether the connection names the in-cluster API
+  endpoint. Anything not positively identified gets the port-forward. Never
+  decide this from `KUBERNETES_SERVICE_HOST` alone: it is set in every Pod, so a
+  Meshery Server in one cluster that managed another skipped the port-forward
+  and could not reach a ClusterIP-only Broker. The `broker_networking`
+  diagnostic uses the same predicate.
+- **A recreated Broker is followed.** The connection is built once from the
+  resolved endpoint and the `meshery-nats-auth` token, and the NATS client never
+  re-resolves either - an authorization rejection is terminal for it. Each
+  attached operator-mode data handler therefore has a supervisor
+  (`server/models/broker_supervisor.go`). Once the connection has been down for
+  `brokerStaleAfter` it re-reads the endpoint and token, and when either changed
+  it stops the handler and rebuilds it in place under `meshsyncMutex` with the
+  inputs the original was built from. A merely-down Broker (same endpoint and
+  token), a token not provisioned yet, and a live connection are left alone.
+  `brokerTarget` identifies the supervised connection: every supervisor action
+  is re-checked under the mutex against `MesheryControllersHelper.brokerTarget`,
+  so `RemoveMeshSyncDataHandler` stops a supervisor without waiting for it.
+  Re-resolving after a sustained outage was preferred over watching the Broker
+  resource and the Secret: it needs no watch RBAC, holds no watch stream per
+  remote cluster, and costs API calls only while the connection is already
+  broken.
+
 ## What each deployment mode can apply
 
 Meshery Operator manages MeshSync and Meshery Broker, so the deployment mode is
@@ -481,6 +515,16 @@ Unit coverage that exists today:
   mode precedence (a server-wide default reaching an inheriting connection),
   the wizard/editor convergence on one store, and the effective document
   reporting the mode a connection actually runs.
+- `server/models/host_cluster_test.go` - the per-target port-forward decision:
+  a Meshery Server in one cluster managing another gets the port-forward, its
+  own cluster (even named by an external address) does not, the address
+  fallback when a server ID is unknown, and caching/retry of the host identity.
+- `server/models/broker_supervisor_test.go` - a recreated Broker (new endpoint
+  and token) is reconnected after a sustained outage, the cases that must not
+  rebuild (merely down, live connection, token not provisioned, no endpoint),
+  the outage clock resetting on reconnect, a removed handler ending its
+  supervisor, the real ticker driving a rebuild, and a handler that fails to
+  start closing its broker connection.
 - `server/models/operator_chart_version_test.go` - `operator.version` selecting
   the operator Helm chart version, the layering it resolves through, and the
   cases where a chart-version reconcile must not touch the cluster.

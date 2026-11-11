@@ -293,7 +293,7 @@ kubectl -n meshery get broker meshery-broker -o jsonpath='{.status.endpoint}{"\n
 Which type you need follows from where Meshery Server runs relative to the cluster:
 
 - **Meshery Server in the same cluster**: the default `ClusterIP` is correct. The Broker acquires no external address.
-- **Meshery Server outside the cluster** (Docker host, another cluster, Meshery Cloud): the server must reach the Broker's *external* endpoint. Use `NodePort` or `LoadBalancer`, or front the Broker with your own ingress/gateway and pin the advertised address with `spec.service.externalEndpointOverride: <host:port>`.
+- **Meshery Server outside the cluster** (Docker host, a Pod in another cluster, Meshery Cloud): by default Meshery Server reaches a `ClusterIP` Broker through a [managed port-forward]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#managed-port-forward-automatic" >}}) over the Kubernetes API, so no exposure is needed. To connect directly instead (for example with `MESHERY_MANAGED_BROKER_PORTFORWARD=false`), the server must reach the Broker's *external* endpoint: use `NodePort` or `LoadBalancer`, or front the Broker with your own ingress/gateway and pin the advertised address with `spec.service.externalEndpointOverride: <host:port>`.
 
 Service annotations pass load-balancer hints through to your platform - for example, requesting an internal load balancer on AWS, or a MetalLB address pool on bare metal:
 

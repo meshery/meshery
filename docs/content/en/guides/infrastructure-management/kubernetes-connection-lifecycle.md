@@ -118,27 +118,51 @@ token in the `meshery-nats-auth` secret. Meshery Server reads that token and
 presents it when connecting; without it the Broker rejects the connection with an
 authorization violation. This is automatic - there is nothing to configure.
 
+If the Broker is recreated - the Operator reinstalled, or the `meshery`
+namespace rebuilt - it comes back with a new token and often a new endpoint,
+and the connection Meshery holds keeps presenting the old ones. Meshery notices:
+once a Broker connection has been down for about 45 seconds, it re-reads the
+Broker's endpoint and the `meshery-nats-auth` token, and if either changed it
+rebuilds the MeshSync data connection with the new values and raises an
+informational **Meshery Broker changed; reconnecting MeshSync** event. A Broker
+that is only down, with the same endpoint and token, is left to reconnect on its
+own. No server restart or reconnect is needed.
+
 ### Reachability
 
-- **Meshery running in-cluster** (Helm / `mesheryctl system start --platform
-  kubernetes`): the Broker's `ClusterIP` is directly reachable. Nothing to do.
-- **Meshery running out-of-cluster** (a Docker host, your laptop, or managing a
-  _different_ cluster): the Broker is typically exposed as `ClusterIP` only, which
-  is **not reachable from outside the cluster**. Meshery needs a path to it.
+What matters is whether Meshery Server runs in **the connection's own cluster**,
+not whether it runs in a cluster at all:
+
+- **Meshery running in the connection's cluster** (Helm / `mesheryctl system
+  start --platform kubernetes`, managing the cluster it is installed in): the
+  Broker's `ClusterIP` is directly reachable. Nothing to do.
+- **Meshery running anywhere else** - a Docker host, your laptop, or a Pod in a
+  _different_ cluster: the Broker is typically exposed as `ClusterIP` only, which
+  is **not reachable from outside its cluster**. Meshery needs a path to it.
 
 ### Managed port-forward (automatic)
 
-When Meshery Server runs **out-of-cluster**, it automatically establishes a
-**self-healing port-forward** to the Broker's NATS pod through the Kubernetes API
-server (the same mechanism as `kubectl port-forward`, using the credentials
-Meshery already holds) and connects to NATS over it. It re-establishes the tunnel
-if the pod restarts or the connection drops, and tears it down when the connection
-is disconnected or deleted. **No manual `kubectl port-forward` is required.**
+Unless Meshery Server runs in the connection's own cluster, it automatically
+establishes a **self-healing port-forward** to the Broker's NATS pod through the
+Kubernetes API server (the same mechanism as `kubectl port-forward`, using the
+credentials Meshery already holds) and connects to NATS over it. It
+re-establishes the tunnel if the pod restarts or the connection drops, and tears
+it down when the connection is disconnected or deleted. **No manual `kubectl
+port-forward` is required.**
+
+Meshery recognizes its own cluster by Kubernetes server ID (the `kube-system`
+namespace UID), so a kubeconfig that names that cluster by an external address
+still counts as the same cluster. If the server ID cannot be read - for example,
+Meshery's service account may not read namespaces - only a connection that names
+the in-cluster API endpoint (`kubernetes.default.svc` or the
+`KUBERNETES_SERVICE_HOST` address) is treated as Meshery's own cluster; every
+other connection gets the port-forward, which costs at most a hop through the
+API server.
 
 | Behavior | Detail |
 |---|---|
-| Default | **On** when Meshery runs out-of-cluster. |
-| In-cluster | **Skipped** automatically (the `ClusterIP` is directly reachable). |
+| Default | **On** for every connection to a cluster other than the one Meshery runs in. |
+| Meshery's own cluster | **Skipped** automatically (the `ClusterIP` is directly reachable). |
 | Disable | Set `MESHERY_MANAGED_BROKER_PORTFORWARD=false` on Meshery Server. |
 
 Current releases treat a Meshery Server running inside *any* Kubernetes cluster as
@@ -166,7 +190,7 @@ controller status and Meshery's actual Broker connection. The codes it reports:
 | `connection_inactive` | No active session for the connection yet. | Connect the cluster. |
 | `operator_deploy_failed` | Meshery tried to deploy the Operator and could not; the underlying cause is carried in the diagnostic. | Read the cause. An unreadable kubeconfig or missing permissions in the `meshery` namespace need fixing first; an unresolvable chart version means the requested `operator.version` is not published, or the chart repository was unreachable. Redeploying the Operator re-resolves the version, so a transient repository outage clears on retry. |
 | `operator_not_deployed` | The Operator isn't deployed (operator mode). | Reconnect the cluster, or switch MeshSync mode; ensure Meshery can create resources in the `meshery` namespace. |
-| `broker_unreachable` | The Broker is up but Meshery can't reach/authenticate to it. | Make the Broker reachable (the managed port-forward normally handles this; otherwise port-forward it, expose it via NodePort/LoadBalancer, or run Meshery in-cluster). |
+| `broker_unreachable` | The Broker is up but Meshery can't reach/authenticate to it. | Make the Broker reachable (the managed port-forward normally handles this; otherwise port-forward it, expose it via NodePort/LoadBalancer, or run Meshery in that cluster). |
 | `broker_networking` | Informational: how Meshery reaches the Broker - managed port-forward, in-cluster ClusterIP, or a direct endpoint - and the address in use. | Nothing to fix; it reports the transport behind a Broker that Meshery can see. |
 
 The same diagnostics are available programmatically at
@@ -195,9 +219,9 @@ From the connection in Meshery UI you can:
   operator (quote it: `token: "$NATS_TOKEN"`). Redeploying often generates a token
   that parses.
 - **"MeshSync running but not connected to Broker."** Almost always a Broker
-  reachability or authentication problem for an out-of-cluster Meshery - see
-  [Broker connectivity](#broker-connectivity). The Diagnostics section will say
-  `broker_unreachable` with remediation.
+  reachability or authentication problem for a Meshery running outside the
+  connection's cluster - see [Broker connectivity](#broker-connectivity). The
+  Diagnostics section will say `broker_unreachable` with remediation.
 
 ## See Also
 
