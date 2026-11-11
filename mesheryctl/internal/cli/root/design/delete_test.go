@@ -92,7 +92,7 @@ func TestDeleteCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
 					Response:     "delete.idList.response.golden",
 					ResponseCode: 200,
 				},
@@ -160,6 +160,42 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("file path cannot be empty")),
+		},
+		{
+			Name:             "given ID prefix shared by two designs when design delete then ambiguity error is thrown and nothing is deleted",
+			Args:             []string{"delete", "a12"},
+			ExpectedResponse: "",
+			// DELETE responders are registered so that any delete request would
+			// succeed and fail this test, which expects the ambiguity error.
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.ambiguousIdList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/a12b3c4d-5e6f-4890-abcd-ef1234567890",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/a12f9e8d-7c6b-4a59-8d4c-3b2a19087654",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  utils.ErrAmbiguousID("a12", []string{"a12b3c4d-5e6f-4890-abcd-ef1234567890", "a12f9e8d-7c6b-4a59-8d4c-3b2a19087654"}),
 		},
 	}
 
