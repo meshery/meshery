@@ -14,6 +14,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/meshery/schemas/models/core"
 	"k8s.io/client-go/util/homedir"
@@ -804,6 +805,8 @@ func (l *DefaultLocalProvider) PublishEventToProvider(_ string, _ events.Event) 
 
 // PublishMetrics - publishes metrics to the provider backend asynchronously
 func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
+	const maxPublishMetricsErrorBodyBytes = 1024
+
 	data, err := json.Marshal(result)
 	if err != nil {
 		return ErrMarshal(err, "Meshery Metrics for shipping")
@@ -830,12 +833,36 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		l.Log.Info("metrics published to remote provider")
 		return nil
 	}
-	_, err = io.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(io.LimitReader(resp.Body, maxPublishMetricsErrorBodyBytes+1))
 	if err != nil {
 		l.Log.Warn(ErrDataRead(err, "body"))
 		return nil
 	}
-	l.Log.Warn(ErrDoRequest(err, resp.Request.Method, remoteProviderURL.String()))
+	truncated := len(bdr) > maxPublishMetricsErrorBodyBytes
+	if truncated {
+		bdr = bdr[:maxPublishMetricsErrorBodyBytes]
+		for i := len(bdr) - 1; i >= 0 && len(bdr)-i < utf8.UTFMax; i-- {
+			if utf8.RuneStart(bdr[i]) {
+				if !utf8.FullRune(bdr[i:]) {
+					bdr = bdr[:i]
+				}
+				break
+			}
+		}
+	}
+	obj := "metrics"
+	if body := strings.TrimSpace(string(bdr)); body != "" {
+		if truncated {
+			obj = fmt.Sprintf("metrics: %s... (truncated)", body)
+		} else {
+			obj = fmt.Sprintf("metrics: %s", body)
+		}
+	}
+	l.Log.Warn(ErrPost(
+		fmt.Errorf("unexpected HTTP status %d %s from %s %s", resp.StatusCode, http.StatusText(resp.StatusCode), cReq.Method, remoteProviderURL.String()),
+		obj,
+		resp.StatusCode,
+	))
 	return nil
 }
 
