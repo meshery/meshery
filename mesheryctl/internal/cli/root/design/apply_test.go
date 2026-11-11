@@ -2,6 +2,7 @@ package design
 
 import (
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -94,6 +95,33 @@ func TestApplyCmd(t *testing.T) {
 
 				return utils.ErrUnmarshal(innerErr)
 			}(),
+		},
+		{
+			Name:             "given no args and no file flag when design apply then validation error is returned",
+			Args:             []string{"apply"},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("please provide a design name or specify a file using --file")),
+		},
+		{
+			Name:             "given empty file flag when design apply then error is returned",
+			Args:             []string{"apply", "-f", ""},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("file path cannot be empty")),
+		},
+		{
+			Name:             "given both design name and file flag when design apply then error is returned",
+			Args:             []string{"apply", "my-design", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a design name and the --file flag")),
 		},
 	}
 
