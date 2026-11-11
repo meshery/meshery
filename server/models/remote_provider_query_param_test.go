@@ -149,6 +149,10 @@ func TestRemoteProviderGetMesheryPattern_SendsMetricsQueryParam(t *testing.T) {
 				t.Errorf("path = %q, want %q", gotPath, wantPath)
 			}
 
+			if _, ok := gotQuery["metrics"]; !ok {
+				t.Fatalf("metrics parameter is missing (query was %v)", gotQuery)
+			}
+
 			if got := gotQuery.Get("metrics"); got != tt.wantMetrics {
 				t.Errorf("metrics = %q, want %q (query was %v)", got, tt.wantMetrics, gotQuery)
 			}
