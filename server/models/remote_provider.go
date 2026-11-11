@@ -2695,6 +2695,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, patternID))
 	q := remoteProviderURL.Query()
 	q.Set("metrics", includeMetrics)
+	remoteProviderURL.RawQuery = q.Encode()
 
 	l.Log.Debug("constructed design url: ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
