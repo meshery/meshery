@@ -159,7 +159,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 				SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
 				AddCtxControllerHandlers(k8sCtx).
 				UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-				DeployUndeployedOperators(machinectx.OperatorTracker, k8sCtx.ID)
+				DeployUndeployedOperators(machinectx.OperatorTracker, k8sCtx)
 
 			ctrlHelper.AddMeshsyncDataHandlers(ctx, k8sCtx, userUUID, systemID, provider)
 			machinectx.setupLock.Unlock()
