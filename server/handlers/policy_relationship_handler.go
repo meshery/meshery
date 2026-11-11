@@ -979,10 +979,11 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 		greedy = true
 	}
 
-	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
+	entities, totalCount, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		Kind:      name,
 		ModelName: typ,
 		Greedy:    greedy,
+		Limit:     limit,
 		Offset:    offset,
 		OrderOn:   order,
 		Sort:      sort,
@@ -998,7 +999,7 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	response := models.MeshmodelPoliciesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount: 0,
+		TotalCount: totalCount,
 		Policies:   entities,
 	}
 
@@ -1022,9 +1023,10 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 		greedy = true
 	}
 
-	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
+	entities, totalCount, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		ModelName: typ,
 		Greedy:    greedy,
+		Limit:     limit,
 		Offset:    offset,
 		OrderOn:   order,
 		Sort:      sort,
@@ -1041,7 +1043,7 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	response := models.MeshmodelPoliciesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount: 0,
+		TotalCount: totalCount,
 		Policies:   entities,
 	}
 
