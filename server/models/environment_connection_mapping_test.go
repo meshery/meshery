@@ -208,3 +208,205 @@ func TestDeleteEnvironmentCleansUpConnectionMappings(t *testing.T) {
 		t.Errorf("orphaned environment mappings after deleting environment = %d, want 0", n)
 	}
 }
+
+// TestGetEnvironmentConnectionsExcludesSoftDeletedConnections verifies that soft-deleted
+// connections are not returned in assigned or unassigned connection queries.
+func TestGetEnvironmentConnectionsExcludesSoftDeletedConnections(t *testing.T) {
+	db := newWorkspaceMappingDB(t)
+	ep := &EnvironmentPersister{DB: db}
+	cp := &ConnectionPersister{DB: db}
+
+	envID := mustUUID(t)
+	connAssignedID := mustUUID(t)
+	connUnassignedID := mustUUID(t)
+
+	// Create and assign connection 1
+	savedAssigned, err := cp.SaveConnection(&connections.Connection{
+		ID:             connAssignedID,
+		Name:           "assigned-cluster",
+		Kind:           "kubernetes",
+		ConnectionType: "orchestrator",
+		SubType:        "k8s",
+		Status:         connections.CONNECTED,
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
+	})
+	if err != nil {
+		t.Fatalf("save assigned conn: %v", err)
+	}
+	if _, err := ep.AddConnectionToEnvironment(envID, savedAssigned.ID); err != nil {
+		t.Fatalf("add assigned conn: %v", err)
+	}
+
+	// Create unassigned connection 2
+	savedUnassigned, err := cp.SaveConnection(&connections.Connection{
+		ID:             connUnassignedID,
+		Name:           "unassigned-cluster",
+		Kind:           "kubernetes",
+		ConnectionType: "orchestrator",
+		SubType:        "k8s",
+		Status:         connections.CONNECTED,
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
+	})
+	if err != nil {
+		t.Fatalf("save unassigned conn: %v", err)
+	}
+
+	// Verify before soft-deletion: 1 assigned, 1 unassigned
+	rawAssigned, err := ep.GetEnvironmentConnections(envID, "", "", "0", "10", `{"assigned":true}`)
+	if err != nil {
+		t.Fatalf("get assigned before: %v", err)
+	}
+	var pageAssigned connections.ConnectionPage
+	if err := json.Unmarshal(rawAssigned, &pageAssigned); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if pageAssigned.TotalCount != 1 {
+		t.Fatalf("expected 1 assigned conn before soft-delete, got %d", pageAssigned.TotalCount)
+	}
+
+	rawUnassigned, err := ep.GetEnvironmentConnections(envID, "", "", "0", "10", `{"assigned":false}`)
+	if err != nil {
+		t.Fatalf("get unassigned before: %v", err)
+	}
+	var pageUnassigned connections.ConnectionPage
+	if err := json.Unmarshal(rawUnassigned, &pageUnassigned); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if pageUnassigned.TotalCount != 1 {
+		t.Fatalf("expected 1 unassigned conn before soft-delete, got %d", pageUnassigned.TotalCount)
+	}
+
+	// Soft-delete both connections
+	now := time.Now()
+	if err := db.Table("connections").Where("id IN ?", []core.Uuid{savedAssigned.ID, savedUnassigned.ID}).Update("deleted_at", now).Error; err != nil {
+		t.Fatalf("soft-delete connections: %v", err)
+	}
+
+	// Both queries should now return 0 connections by default
+	rawAssignedAfter, err := ep.GetEnvironmentConnections(envID, "", "", "0", "10", `{"assigned":true}`)
+	if err != nil {
+		t.Fatalf("get assigned after: %v", err)
+	}
+	var pageAssignedAfter connections.ConnectionPage
+	if err := json.Unmarshal(rawAssignedAfter, &pageAssignedAfter); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if pageAssignedAfter.TotalCount != 0 {
+		t.Errorf("expected 0 assigned conns after soft-delete, got %d", pageAssignedAfter.TotalCount)
+	}
+
+	rawUnassignedAfter, err := ep.GetEnvironmentConnections(envID, "", "", "0", "10", `{"assigned":false}`)
+	if err != nil {
+		t.Fatalf("get unassigned after: %v", err)
+	}
+	var pageUnassignedAfter connections.ConnectionPage
+	if err := json.Unmarshal(rawUnassignedAfter, &pageUnassignedAfter); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if pageUnassignedAfter.TotalCount != 0 {
+		t.Errorf("expected 0 unassigned conns after soft-delete, got %d", pageUnassignedAfter.TotalCount)
+	}
+
+	// When explicitly querying for deleted connections, they should be found
+	rawDeleted, err := ep.GetEnvironmentConnections(envID, "", "", "0", "10", `{"assigned":true,"deletedAt":true}`)
+	if err != nil {
+		t.Fatalf("get deleted assigned: %v", err)
+	}
+	var pageDeleted connections.ConnectionPage
+	if err := json.Unmarshal(rawDeleted, &pageDeleted); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if pageDeleted.TotalCount != 1 {
+		t.Errorf("expected 1 deleted assigned conn, got %d", pageDeleted.TotalCount)
+	}
+}
+
+// TestGetEnvironmentConnectionsFilterSafeStringParsing verifies that string-encoded
+// boolean filter parameters (such as from query params) do not panic.
+func TestGetEnvironmentConnectionsFilterSafeStringParsing(t *testing.T) {
+	db := newWorkspaceMappingDB(t)
+	ep := &EnvironmentPersister{DB: db}
+	envID := mustUUID(t)
+
+	testFilters := []string{
+		`{"assigned":"true"}`,
+		`{"assigned":"false"}`,
+		`{"assigned":true,"deletedAt":"false"}`,
+		`{"assigned":"false","deleted_at":"true"}`,
+		`{"assigned":false}`,
+	}
+
+	for _, filter := range testFilters {
+		raw, err := ep.GetEnvironmentConnections(envID, "", "", "", "", filter)
+		if err != nil {
+			t.Fatalf("filter %q returned error: %v", filter, err)
+		}
+		var page connections.ConnectionPage
+		if err := json.Unmarshal(raw, &page); err != nil {
+			t.Fatalf("filter %q returned invalid JSON: %v", filter, err)
+		}
+	}
+}
+
+// TestGetEnvironmentConnectionsExcludesSoftDeletedMappings verifies that when an assignment
+// mapping is soft-deleted, the connection is treated as unassigned.
+func TestGetEnvironmentConnectionsExcludesSoftDeletedMappings(t *testing.T) {
+	db := newWorkspaceMappingDB(t)
+	ep := &EnvironmentPersister{DB: db}
+	cp := &ConnectionPersister{DB: db}
+
+	envID := mustUUID(t)
+	connID := mustUUID(t)
+
+	savedConn, err := cp.SaveConnection(&connections.Connection{
+		ID:             connID,
+		Name:           "mapping-soft-delete-cluster",
+		Kind:           "kubernetes",
+		ConnectionType: "orchestrator",
+		SubType:        "k8s",
+		Status:         connections.CONNECTED,
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
+	})
+	if err != nil {
+		t.Fatalf("save conn: %v", err)
+	}
+
+	if _, err := ep.AddConnectionToEnvironment(envID, savedConn.ID); err != nil {
+		t.Fatalf("assign: %v", err)
+	}
+
+	// Soft-delete the mapping in environment_connection_mappings
+	now := time.Now()
+	if err := db.Table("environment_connection_mappings").Where("environment_id = ? AND connection_id = ?", envID, savedConn.ID).Update("deleted_at", now).Error; err != nil {
+		t.Fatalf("soft-delete mapping: %v", err)
+	}
+
+	// Assigned query should return 0
+	rawAssigned, err := ep.GetEnvironmentConnections(envID, "", "", "0", "10", `{"assigned":true}`)
+	if err != nil {
+		t.Fatalf("get assigned: %v", err)
+	}
+	var pageAssigned connections.ConnectionPage
+	if err := json.Unmarshal(rawAssigned, &pageAssigned); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if pageAssigned.TotalCount != 0 {
+		t.Errorf("expected 0 assigned conns when mapping is soft-deleted, got %d", pageAssigned.TotalCount)
+	}
+
+	// Unassigned query should return 1 (it is available to assign again)
+	rawUnassigned, err := ep.GetEnvironmentConnections(envID, "", "", "0", "10", `{"assigned":false}`)
+	if err != nil {
+		t.Fatalf("get unassigned: %v", err)
+	}
+	var pageUnassigned connections.ConnectionPage
+	if err := json.Unmarshal(rawUnassigned, &pageUnassigned); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if pageUnassigned.TotalCount != 1 {
+		t.Errorf("expected 1 unassigned conn when mapping is soft-deleted, got %d", pageUnassigned.TotalCount)
+	}
+}
