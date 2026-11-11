@@ -113,7 +113,10 @@ const settingsRouter = (router: ReturnType<typeof useRouter>): SettingsRouter =>
   };
 };
 
-//TODO: Tabs are hardcoded everywhere
+/**
+ * MesherySettings renders system configurations, registered adapters, and capabilities.
+ * Gated on `Keys.MesherySystemViewSettings`. Skips background queries when access is denied.
+ */
 const MesherySettings = () => {
   const canViewSettings = useHasPermission(Keys.MesherySystemViewSettings);
   const canViewInfra = useHasPermission(Keys.InfrastructureManagementViewCloudNativeInfrastructure);
@@ -123,7 +126,9 @@ const MesherySettings = () => {
   const theme = useTheme();
   const { k8sConfig } = useSelector((state) => state.ui);
   const { meshAdapters } = useSelector((state) => state.adapter);
-  const { data: providerCapabilities } = useGetProviderCapabilitiesQuery();
+  const { data: providerCapabilities } = useGetProviderCapabilitiesQuery(undefined, {
+    skip: !canViewSettings,
+  });
   const [state, setState] = useState({
     meshAdapters,
     tabVal: selectedSettingsCategory || OVERVIEW,
@@ -137,12 +142,23 @@ const MesherySettings = () => {
   const systemResetPromptRef = useRef<{ show: (_args: any) => Promise<string> } | null>(null);
 
   useEffect(() => {
+    if (!canViewSettings) {
+      return;
+    }
+    let isCancelled = false;
+    /**
+     * Fetches models, components, relationships, and registrant counts for overview display.
+     */
     const fetchData = async () => {
       try {
         const modelsResponse = await getMeshModels();
+        if (isCancelled) return;
         const componentsResponse = await getComponentsDetail();
+        if (isCancelled) return;
         const relationshipsResponse = await getRelationshipsDetail();
+        if (isCancelled) return;
         const registrantResponce = await getMeshModelRegistrants();
+        if (isCancelled) return;
 
         const modelsCount = removeDuplicateVersions(modelsResponse.models).length;
         const componentsCount = componentsResponse.totalCount;
@@ -161,7 +177,10 @@ const MesherySettings = () => {
       }
     };
     fetchData();
-  }, []);
+    return () => {
+      isCancelled = true;
+    };
+  }, [canViewSettings]);
 
   useEffect(() => {
     const { selectedSettingsCategory } = settingsRouter(router);
