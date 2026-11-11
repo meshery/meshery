@@ -588,9 +588,26 @@ func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order s
 	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
 }
 
+// GetK8sContext returns the Kubernetes context associated with the given ID or ConnectionID.
+// It searches for an exact ID match first before falling back to a dash-normalized form.
+// Returns ErrDBConnection if MesheryK8sContextPersister is uninitialized.
 func (l *DefaultLocalProvider) GetK8sContext(_, id string) (K8sContext, error) {
+	if l.MesheryK8sContextPersister == nil {
+		return K8sContext{}, ErrDBConnection
+	}
+	// Try the exact ID (or ConnectionID fallback in persister) first.
+	k8sCtx, err := l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+	if err == nil {
+		return k8sCtx, nil
+	}
+	// Fall back to the legacy dash-normalized UUID form if different from the exact ID.
 	idStrWithoutDashes := strings.ReplaceAll(id, "-", "")
-	return l.MesheryK8sContextPersister.GetMesheryK8sContext(idStrWithoutDashes)
+	if idStrWithoutDashes != id {
+		if k8sCtxNorm, errNorm := l.MesheryK8sContextPersister.GetMesheryK8sContext(idStrWithoutDashes); errNorm == nil {
+			return k8sCtxNorm, nil
+		}
+	}
+	return K8sContext{}, err
 }
 
 func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
