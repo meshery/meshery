@@ -86,6 +86,11 @@ mesheryctl connection list --count
 			DisplayCountOnly: connectionListFlagsProvided.Count,
 		}
 
+		// Bypass interactive pagination if terminal is non-interactive (stdout redirected)
+		if !utils.IsInteractiveTerminal() {
+			data.PageSize = 0
+		}
+
 		return display.ListAsyncPagination(data, processConnectionData)
 	},
 }
