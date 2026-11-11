@@ -87,6 +87,9 @@ func (mh *MeshsyncDataHandler) Run() error {
 		// }
 		err := mh.requestMeshsyncStore()
 		if err != nil {
+			// The listeners and subscriptions above are already running and the
+			// caller discards a handler whose Run fails, so release them here.
+			mh.Stop()
 			return err
 		}
 	}
