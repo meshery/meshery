@@ -315,6 +315,7 @@ describe('Environments search paging', () => {
 describe('Environments permissions and wire query skipping', () => {
   beforeEach(() => {
     permissionOverrides.clear();
+    canSpy.mockReset();
     canSpy.mockImplementation(
       (key?: { id?: string }) => permissionOverrides.get(key?.id ?? '') ?? true,
     );

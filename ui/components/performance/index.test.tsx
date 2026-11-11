@@ -56,6 +56,7 @@ vi.mock('@/components/general/error-404/index', () => ({
 
 vi.mock('@sistent/sistent', () => ({
   useHasPermission: (key: any) => canSpy(key),
+  Link: ({ children, ...rest }: any) => <a {...rest}>{children}</a>,
   ModalBody: ({ children }: any) => <div>{children}</div>,
   ModalFooter: ({ children }: any) => <div>{children}</div>,
   NoSsr: ({ children }: any) => <>{children}</>,
