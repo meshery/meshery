@@ -64,30 +64,89 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 		connectionRegisterPayload := registrationEventToConnectionPayload(&registrationEvent)
 
-		machineCtx := make(map[string]string, 0)
-		inst, err := helpers.InitializeMachineWithContext(
-			machineCtx,
-			req.Context(),
-			connectionRegisterPayload.ID,
-			userUUID,
-			smInstanceTracker,
-			h.log,
-			provider,
-			machines.DISCOVERED,
-			strings.ToLower(connectionRegisterPayload.Kind),
-			nil,
-		)
-		if err != nil {
-			wrappedErr := ErrInitializeMachine(err)
-			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to persist the \"%s\" connection details", connectionRegisterPayload.Kind)).WithMetadata(map[string]interface{}{
-				"error": wrappedErr,
-			}).Build()
-			if event != nil {
-				h.persistAndPublish(provider, token, userUUID, event)
+		var inst *machines.StateMachine
+		if smInstanceTracker != nil {
+			if tracked, ok := smInstanceTracker.Get(connectionRegisterPayload.ID); ok {
+				inst = tracked
 			}
-			h.log.Error(wrappedErr)
-			writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
-			return
+		}
+
+		if inst == nil {
+			var machineCtx any
+			var initFunc connections.InitFunc
+
+			if strings.EqualFold(connectionRegisterPayload.Kind, "kubernetes") {
+				contextID := connectionRegisterPayload.ID.String()
+				if provider.GetProviderType() != models.RemoteProviderType && connectionRegisterPayload.MetaData != nil {
+					for _, key := range []string{"contextId", "context_id", "k8sContextId", "k8s_context_id"} {
+						if val, ok := connectionRegisterPayload.MetaData[key].(string); ok && val != "" {
+							contextID = val
+							break
+						}
+					}
+				}
+
+				k8scontext, err := provider.GetK8sContext(token, contextID)
+				if err != nil {
+					_err := ErrGetK8sContexts(err)
+					h.log.Error(_err)
+					writeMeshkitError(w, _err, http.StatusInternalServerError)
+					return
+				}
+
+				if k8scontext.ConnectionID == "" {
+					k8scontext.ConnectionID = connectionRegisterPayload.ID.String()
+					if persister := provider.GetGenericPersister(); persister != nil {
+						_ = persister.Model(&models.K8sContext{}).Where("id = ? AND (connection_id IS NULL OR connection_id = '')", k8scontext.ID).Update("connection_id", k8scontext.ConnectionID).Error
+					}
+				}
+
+				var operatorTracker *models.OperatorTracker
+				var k8scontextChannel *models.K8scontextChan
+				var eventBroadcaster *models.Broadcast
+				if h.config != nil {
+					operatorTracker = h.config.OperatorTracker
+					k8scontextChannel = h.config.K8scontextChannel
+					eventBroadcaster = h.config.EventBroadcaster
+				}
+
+				machineCtx = &kubernetes.MachineCtx{
+					K8sContext:         k8scontext,
+					MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+					K8sCompRegHelper:   h.K8sCompRegHelper,
+					OperatorTracker:    operatorTracker,
+					K8scontextChannel:  k8scontextChannel,
+					EventBroadcaster:   eventBroadcaster,
+					RegistryManager:    h.registryManager,
+				}
+				initFunc = kubernetes.AssignInitialCtx
+			}
+
+			var err error
+			inst, err = helpers.InitializeMachineWithContext(
+				machineCtx,
+				req.Context(),
+				connectionRegisterPayload.ID,
+				userUUID,
+				smInstanceTracker,
+				h.log,
+				provider,
+				machines.DISCOVERED,
+				strings.ToLower(connectionRegisterPayload.Kind),
+				initFunc,
+			)
+			if err != nil {
+				wrappedErr := ErrInitializeMachine(err)
+				event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to persist the \"%s\" connection details", connectionRegisterPayload.Kind)).WithMetadata(map[string]interface{}{
+					"error": wrappedErr,
+				}).Build()
+				if event != nil {
+					h.persistAndPublish(provider, token, userUUID, event)
+				}
+				h.log.Error(wrappedErr)
+				writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
+				return
+			}
 		}
 
 		event, err := inst.SendEvent(req.Context(), machines.EventType(registrationEvent.Status), connectionRegisterPayload)
