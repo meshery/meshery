@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
 
 vi.mock('../../../../utils/k8s-utils', () => ({
   getStatus: (v: any) => `STATUS:${v}`,
@@ -41,5 +42,30 @@ describe('buildServiceColumns', () => {
     });
     expect(cfg.name).toBe('Service');
     expect(cfg.columns.length).toBeGreaterThan(0);
+  });
+
+  const renderExternalIP = (attribute: unknown) => {
+    const cfg = buildServiceColumns({
+      switchView: () => {},
+      meshSyncResources: [],
+      k8sConfig: {},
+      connectionMetadataState: {},
+      workloadType: 'Service',
+      ping: () => {},
+    });
+    const column = cfg.columns.find((c) => c.label === 'External IP');
+    return render(<>{column?.options.customBodyRender(JSON.stringify(attribute))}</>);
+  };
+
+  it('shows load balancer ingress IPs and hostnames from status.loadBalancer', () => {
+    const { container } = renderExternalIP({
+      loadBalancer: { ingress: [{ ip: '203.0.113.10' }, { hostname: 'abc.elb.amazonaws.com' }] },
+    });
+    expect(container).toHaveTextContent('203.0.113.10,abc.elb.amazonaws.com');
+  });
+
+  it('renders nothing when the Service has no load balancer ingress', () => {
+    const { container } = renderExternalIP({ loadBalancer: {} });
+    expect(container).toBeEmptyDOMElement();
   });
 });
