@@ -87,7 +87,7 @@ Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) c
 
 <pre class="codeblock-pre">
 	<div class="codeblock">
-		<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start -p kubernetes</code>
+		<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start -p kubernetes</code>
 	</div>
 </pre>
 
@@ -183,7 +183,7 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
-<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start</code>
+<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start</code>
 </div>
 </pre>
 

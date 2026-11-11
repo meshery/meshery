@@ -85,13 +85,14 @@ Meshery's internal address differs from the external URL, so you must tell
 Meshery its external callback address:
 
 - **`MESHERY_SERVER_CALLBACK_URL`** - overrides the OAuth callback URL. Set it to
-  Meshery's external base URL; the effective callback path is
-  `/api/user/token`.
+  Meshery's full external callback URL, including the `/api/user/token` path.
+  Meshery uses the value as-is and does not append the path for you, so a
+  bare host sends users back to the login screen in a loop after sign-in.
 
 ```bash
 helm install meshery meshery/meshery --namespace meshery --create-namespace \
   --set env.PROVIDER=Meshery \
-  --set env.MESHERY_SERVER_CALLBACK_URL=https://meshery.example.com
+  --set env.MESHERY_SERVER_CALLBACK_URL=https://meshery.example.com/api/user/token
 ```
 
 Symptoms of a missing or wrong callback URL include login redirect loops, "redirect
