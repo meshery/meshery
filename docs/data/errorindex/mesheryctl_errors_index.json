@@ -3967,6 +3967,23 @@
       "suggestedRemediation": [
         "Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"
       ]
+    },
+    {
+      "code": "mesheryctl-1256",
+      "moniker": "ErrAmbiguousIDCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1256",
+      "severity": "alert",
+      "shortDescription": "Ambiguous ID prefix",
+      "probableCause": [
+        "The provided ID prefix is shared by more than one item."
+      ],
+      "suggestedRemediation": [
+        "Provide more characters of the ID, or the full ID."
+      ]
     }
   ],
   "schemaVersion": 2
