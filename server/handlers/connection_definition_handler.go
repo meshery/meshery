@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -180,9 +181,29 @@ func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Req
 	}
 	def.ID = id
 
+	// An update must target an existing row. gorm's Save() upserts — it inserts
+	// when the primary key matches no row — so without this guard a PUT to an
+	// unknown id would silently create a definition instead of returning 404.
+	var existing connectionv1beta3.ConnectionDefinition
+	if err := h.dbHandler.First(&existing, "id = ?", id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			writeJSONError(rw, fmt.Sprintf("connection definition with id %s not found", id), http.StatusNotFound)
+			return
+		}
+		_err := ErrQueryGet(obj)
+		h.log.Error(_err)
+		writeMeshkitError(rw, _err, http.StatusInternalServerError)
+		return
+	}
+
+	// created_at is immutable; the request body does not carry it, so a plain
+	// Save() would reset the stored timestamp to the zero value. Preserve the
+	// existing value and omit the column from the write.
+	def.CreatedAt = existing.CreatedAt
+
 	// Persist only the connection definition row; associations (e.g. model) are
 	// managed through registration, not this update.
-	if err := h.dbHandler.Omit(clause.Associations).Save(&def).Error; err != nil {
+	if err := h.dbHandler.Omit(clause.Associations, "created_at").Save(&def).Error; err != nil {
 		_err := ErrFailToSave(err, obj)
 		h.log.Error(_err)
 		writeMeshkitError(rw, _err, http.StatusInternalServerError)
