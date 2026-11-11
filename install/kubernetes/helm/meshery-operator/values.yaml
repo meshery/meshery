@@ -129,8 +129,8 @@ meshsync:
     # the change that moves image.tag to that release. While false, the operator
     # runs MeshSync as meshery-operator (1.0.6 and earlier hard-code it; later
     # releases default to it without the variable), so the chart binds the
-    # read-only meshery-meshsync-role to meshery-operator instead; the operator
-    # gains reads only, never writes.
+    # read-only meshery-meshsync-role (plus any rbac.extraRules) to
+    # meshery-operator instead; it gains no wildcard writes.
     dedicated: false
     # -- Create the MeshSync ServiceAccount. Set false to supply your own; it
     # must exist in the release namespace (the MeshSync resource's namespace).

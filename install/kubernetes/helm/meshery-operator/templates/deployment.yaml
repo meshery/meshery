@@ -48,7 +48,7 @@ spec:
           {{- fail "env.ENABLE_WEBHOOKS is managed by the chart; set webhook.enabled instead" }}
           {{- end }}
           {{- if hasKey $userEnv "MESHSYNC_SERVICE_ACCOUNT" }}
-          {{- fail "env.MESHSYNC_SERVICE_ACCOUNT is managed by the chart; set meshsync.serviceAccount.name instead" }}
+          {{- fail "env.MESHSYNC_SERVICE_ACCOUNT is managed by the chart; set meshsync.serviceAccount.dedicated=true (and meshsync.serviceAccount.name) instead" }}
           {{- end }}
           env:
             - name: ENABLE_WEBHOOKS

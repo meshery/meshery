@@ -47,12 +47,12 @@ The chart's `version`/`appVersion` and the CRD bundles under `crds/` and
 
 ## MeshSync identity and RBAC
 
-The operator's own ServiceAccount (`meshery-operator`, bound to
-`meshery-operator-role`) is least-privilege: it can manage the Broker and
-MeshSync workloads but cannot read the cluster. MeshSync, which the operator
-deploys from the `MeshSync` custom resource, needs the opposite: read access
-to everything it discovers, and no writes. The chart therefore creates a
-separate identity for it:
+The operator's own ClusterRole (`meshery-operator-role`, bound to the
+`meshery-operator` ServiceAccount) is least-privilege: it can manage the
+Broker and MeshSync workloads but grants no cluster-wide reads. MeshSync,
+which the operator deploys from the `MeshSync` custom resource, needs the
+opposite: read access to everything it discovers, and no writes. The chart
+therefore gives it a separate role and ServiceAccount:
 
 | Object | Name |
 | --- | --- |
@@ -76,18 +76,19 @@ authorizes the exec, attach, port-forward and proxy subresources (`get` on
   not set `MESHSYNC_SERVICE_ACCOUNT`, and the operator runs MeshSync as
   `meshery-operator` (1.0.6 hard-codes it; later releases default to it). The
   chart binds the read-only `meshery-meshsync-role` to `meshery-operator`
-  (`meshery-meshsync-compat-rolebinding`); the operator ServiceAccount gains
-  reads only, never writes. MeshSync, sharing that ServiceAccount, still holds
-  the operator's write permissions, as it has since 1.0.0.
+  (`meshery-meshsync-compat-rolebinding`), so that ServiceAccount gains the
+  role's reads (plus any `meshsync.rbac.extraRules`) and no wildcard writes.
+  MeshSync, sharing it, still holds the operator's own write permissions, as
+  it has since 1.0.0.
 - `true`: the chart passes `MESHSYNC_SERVICE_ACCOUNT=<meshsync.serviceAccount.name>`
   to the manager and drops the compatibility binding. Requires an operator
   release that includes meshery/meshery-operator#954; with an older operator
-  MeshSync would stay on `meshery-operator` without read access.
+  MeshSync would stay on `meshery-operator` without discovery reads.
 
 The default flips to `true` in the change that moves `image.tag` to the first
 operator release that includes meshery/meshery-operator#954. Until then,
 leaving it `false` with a newer operator is safe: MeshSync simply keeps running
-as `meshery-operator` with read-only access. The ServiceAccount must exist in
+as `meshery-operator` with the role's read access. The ServiceAccount must exist in
 the `MeshSync` resource's namespace, which is the release namespace.
 
 ## Broker exposure
