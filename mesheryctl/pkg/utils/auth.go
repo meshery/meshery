@@ -470,6 +470,8 @@ func createProviderURI(provider Provider, host string, port int) (string, error)
 	return uri.String(), nil
 }
 
+// getTokenObjFromMesheryServer exchanges the provider session for a token object
+// via /api/token and returns it only once parseTokenResponse has validated it.
 func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, mctl.GetBaseMesheryURL()+"/api/token", nil)
 	if err != nil {
@@ -487,7 +489,11 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 		HttpOnly: true,
 	})
 
-	cli := &http.Client{}
+	// A redirect here means the server sent us to a login or provider page
+	// instead of issuing a token, so it must not be followed.
+	cli := &http.Client{
+		CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse },
+	}
 	resp, err := cli.Do(req)
 	if err != nil {
 		return nil, err
@@ -495,7 +501,60 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 
 	defer func() { _ = resp.Body.Close() }()
 
-	return io.ReadAll(resp.Body)
+	return parseTokenResponse(resp)
+}
+
+// maxTokenResponseBytes bounds how much of the /api/token response is read.
+const maxTokenResponseBytes = 1 << 20
+
+// maxErrorBodyBytes bounds how much of an error response is echoed back to the user.
+const maxErrorBodyBytes = 512
+
+// parseTokenResponse validates the /api/token response and returns the token
+// object to persist. Anything other than a 200 JSON body carrying a provider
+// name and a string token is rejected, so a failed login can never replace
+// existing credentials. An empty token is valid: the Local provider issues one.
+func parseTokenResponse(resp *http.Response) ([]byte, error) {
+	// Read one byte past the limit so an oversized body is rejected rather than
+	// silently truncated into something that might still parse.
+	body, err := io.ReadAll(io.LimitReader(resp.Body, maxTokenResponseBytes+1))
+	if err != nil {
+		return nil, ErrReadResponseBody(err)
+	}
+
+	// Any redirect means the server sent us to a login or provider page.
+	if resp.StatusCode >= 300 && resp.StatusCode < 400 {
+		return nil, ErrInvalidToken()
+	}
+	if resp.StatusCode != http.StatusOK {
+		if len(body) > maxErrorBodyBytes {
+			body = body[:maxErrorBodyBytes]
+		}
+		return nil, ErrFailReqStatus(resp.StatusCode, string(body))
+	}
+	if ContentTypeIsHTML(resp) {
+		return nil, ErrUnauthenticated()
+	}
+	if len(body) > maxTokenResponseBytes {
+		return nil, ErrUnmarshal(errors.New("token response exceeds the maximum allowed size"))
+	}
+
+	var tokenObj struct {
+		Provider string  `json:"meshery-provider"`
+		Token    *string `json:"token"`
+	}
+	if err := json.Unmarshal(body, &tokenObj); err != nil {
+		return nil, ErrUnmarshal(err)
+	}
+	if tokenObj.Provider == "" || tokenObj.Token == nil {
+		return nil, ErrUnmarshal(errors.New(`token response must contain a "meshery-provider" name and a "token" string`))
+	}
+
+	// Persist only the two fields AddAuthDetails reads back.
+	return json.Marshal(map[string]string{
+		providerName: tokenObj.Provider,
+		tokenName:    *tokenObj.Token,
+	})
 }
 
 func IsServerRunning(serverAddr string) error {

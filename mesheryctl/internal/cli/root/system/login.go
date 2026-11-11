@@ -78,10 +78,8 @@ mesheryctl system login -p Meshery
 		}
 
 		if err != nil {
-			return errors.Wrap(err, "authentication failed: Unable to reach Meshery Server. Verify system readiness with `mesheryctl system check`.")
+			return errors.Wrap(err, "authentication failed. Verify system readiness with `mesheryctl system check`.")
 		}
-
-		utils.Log.Info("authenticated")
 
 		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
 		if err != nil {
@@ -98,6 +96,7 @@ mesheryctl system login -p Meshery
 			return utils.ErrCreateFile(token.GetLocation(), err)
 		}
 
+		utils.Log.Info("authenticated")
 		return nil
 	},
 }
