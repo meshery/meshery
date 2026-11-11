@@ -99,6 +99,13 @@ server-side-applies `spec.service` and `spec.version` from its controllers
 configuration under the field manager `meshery-server`. Set each field in one
 place only: when both set it, Helm 4 (server-side apply) fails the upgrade with
 a field-ownership conflict, and Helm 3 lets whichever wrote last win.
+To return to the default exposure, set `meshery-broker.service.type=ClusterIP`
+in the same upgrade that removes the other `service` values, rather than
+unsetting every field. Operator 1.0.6 writes an empty `spec.service` back to
+the Broker and co-owns it, so under Helm 4 removing the last chart-set field
+there (for example with `--reset-values`) fails the upgrade with
+`spec.service ... must be of type object: "null"`. Helm 3, or Helm 4 with
+`--server-side=false`, is not affected.
 `loadBalancerClass` and `loadBalancerSourceRanges` require
 `type: LoadBalancer`; the chart refuses to render them otherwise. The resource
 is rendered as `meshery.io/v1alpha1`: both served versions are field-identical,
