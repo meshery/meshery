@@ -25,6 +25,7 @@ type stubAction struct {
 	execNext  EventType
 	execEvent *events.Event
 	execErr   error
+	execCount int
 }
 
 func (a *stubAction) ExecuteOnEntry(context.Context, interface{}, interface{}) (EventType, *events.Event, error) {
@@ -32,6 +33,7 @@ func (a *stubAction) ExecuteOnEntry(context.Context, interface{}, interface{}) (
 }
 
 func (a *stubAction) Execute(context.Context, interface{}, interface{}) (EventType, *events.Event, error) {
+	a.execCount++
 	return a.execNext, a.execEvent, a.execErr
 }
 
@@ -835,6 +837,9 @@ func TestSendEvent_StatusUpdateFailureIsAnError(t *testing.T) {
 		"update":   {status: connections.CONNECTED, updateErr: errors.New("database is locked")},
 	} {
 		sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+		initialState := sm.CurrentState
+		initialPrevState := sm.PreviousState
+
 		event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
 		if err == nil || event == nil {
 			t.Fatalf("%s: SendEvent = (%v, %v), want a failure event and an error", name, event, err)
@@ -842,5 +847,72 @@ func TestSendEvent_StatusUpdateFailureIsAnError(t *testing.T) {
 		if event.Severity != events.Error {
 			t.Errorf("%s: severity = %q, want %q", name, event.Severity, events.Error)
 		}
+		if sm.CurrentState != initialState {
+			t.Errorf("%s: currentState = %q, want rolled back state %q", name, sm.CurrentState, initialState)
+		}
+		if sm.PreviousState != initialPrevState {
+			t.Errorf("%s: previousState = %q, want rolled back state %q", name, sm.PreviousState, initialPrevState)
+		}
+	}
+}
+
+// TestSendEvent_StatusUpdateFailureRollbackEnablesRetry verifies that when a
+// database status update fails, in-memory state rolls back so subsequent retry
+// events do not fail with ErrInvalidTransitionEvent.
+func TestSendEvent_StatusUpdateFailureRollbackEnablesRetry(t *testing.T) {
+	provider := &fakeProvider{status: connections.CONNECTED, updateErr: errors.New("database is locked")}
+	action := &stubAction{execNext: NoOp}
+	sm := newTestMachine(t, provider, action)
+
+	// First attempt fails during status persistence.
+	_, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err == nil {
+		t.Fatal("expected SendEvent to fail when DB update errors")
+	}
+	if sm.CurrentState != InitialState {
+		t.Fatalf("expected state to roll back to %q, got %q", InitialState, sm.CurrentState)
+	}
+	if action.execCount != 1 {
+		t.Fatalf("expected action to have executed once on first attempt, got %d", action.execCount)
+	}
+
+	// Resolve the transient database error and retry the same event.
+	provider.updateErr = nil
+	event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err != nil {
+		t.Fatalf("expected retry SendEvent to succeed after DB recovery, got error: %v", err)
+	}
+	if event == nil || event.Severity != events.Informational {
+		t.Fatalf("expected informational success event on retry, got %v", event)
+	}
+	if sm.CurrentState != DISCOVERED {
+		t.Fatalf("expected currentState = %q after successful retry, got %q", DISCOVERED, sm.CurrentState)
+	}
+	if action.execCount != 2 {
+		t.Fatalf("expected action to have re-executed safely on retry, got %d", action.execCount)
+	}
+}
+
+// TestSendEvent_AmbiguousUpdateSucceededDoesNotRollback verifies that when
+// UpdateConnectionById returns an error (e.g. read-back or transport error) but
+// the database write actually succeeded, SendEvent reconciles the persisted state
+// and does not roll back in-memory state.
+func TestSendEvent_AmbiguousUpdateSucceededDoesNotRollback(t *testing.T) {
+	provider := &fakeProvider{
+		status:    connections.DISCOVERED, // simulated state persisted in database
+		updateErr: errors.New("read-back failed after write"),
+	}
+	action := &stubAction{execNext: NoOp}
+	sm := newTestMachine(t, provider, action)
+
+	event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err != nil {
+		t.Fatalf("expected SendEvent to reconcile and succeed without error, got %v", err)
+	}
+	if sm.CurrentState != DISCOVERED {
+		t.Fatalf("expected currentState to remain %q, got %q", DISCOVERED, sm.CurrentState)
+	}
+	if event == nil || event.Severity != events.Informational {
+		t.Fatalf("expected informational success event, got %v", event)
 	}
 }

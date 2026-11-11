@@ -633,3 +633,26 @@ tokens: []
 	assert.Contains(t, err.Error(), `token "any-token" not found in config`)
 	BreakupFunc()
 }
+
+func TestTokenViewCmd_TooManyArgs(t *testing.T) {
+	b := utils.SetupMeshkitLoggerTesting(t, false)
+	SystemCmd.SetOut(b)
+	SystemCmd.SetArgs([]string{"token", "view", "token1", "token2"})
+	err := SystemCmd.Execute()
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "too many arguments specified")
+	assert.Contains(t, err.Error(), viewTokenUsageMsg)
+	BreakupFunc()
+}
+
+func TestTokenViewCmd_ConflictingAllFlag(t *testing.T) {
+	b := utils.SetupMeshkitLoggerTesting(t, false)
+	SystemCmd.SetOut(b)
+	SystemCmd.SetArgs([]string{"token", "view", "token1", "--all"})
+	err := SystemCmd.Execute()
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "cannot specify both a token name and --all flag")
+	assert.Contains(t, err.Error(), viewTokenUsageMsg)
+	viewAllTokens = false
+	BreakupFunc()
+}

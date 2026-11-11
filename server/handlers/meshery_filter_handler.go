@@ -13,6 +13,7 @@ import (
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
+	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/model"
@@ -286,11 +287,24 @@ func (h *Handler) DeleteMesheryFilterHandler(
 	provider models.Provider,
 ) {
 	filterID := mux.Vars(r)["id"]
+	filterUUID, err := uuid.FromString(filterID)
+	if err != nil || filterUUID == uuid.Nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid filter ID: %s", filterID))
+		h.log.Warn(invalidIDErr)
+		writeMeshkitError(rw, invalidIDErr, http.StatusBadRequest)
+		return
+	}
 
 	resp, err := provider.DeleteMesheryFilter(r, filterID)
 	if err != nil {
+		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			h.log.Warnf("No filter with ID %q found to delete", filterID)
+			writeMeshkitError(rw, err, http.StatusNotFound)
+			return
+		}
+
 		h.log.Error(ErrDeleteFilter(err))
-		writeMeshkitError(rw, ErrDeleteFilter(err), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrDeleteFilter(err), providerStatusOrInternal(err))
 		return
 	}
 
