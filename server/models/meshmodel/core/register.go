@@ -293,8 +293,10 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) ([]crdRespon
 		resource := strings.ToLower(name)
 		fields, err := definitions.Fields()
 		if err != nil {
-			fmt.Printf("%v\n", err)
-			continue
+			if !definitions.Exists() {
+				continue
+			}
+			return nil, fmt.Errorf("failed to get schema fields: %w", err)
 		}
 		for fields.Next() {
 			fieldVal := fields.Value()

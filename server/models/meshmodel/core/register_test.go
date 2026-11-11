@@ -49,6 +49,11 @@ func TestGetCRDsFromManifest_InvalidOrEmpty(t *testing.T) {
 			manifest:     "{broken",
 			apiResources: []string{"Pod"},
 		},
+		{
+			name:         "schemas field is not an object",
+			manifest:     `{"components": {"schemas": "invalid-string"}}`,
+			apiResources: []string{"Pod"},
+		},
 	}
 
 	for _, tt := range tests {
@@ -61,6 +66,17 @@ func TestGetCRDsFromManifest_InvalidOrEmpty(t *testing.T) {
 				t.Errorf("expected 0 crds for %s, got %d", tt.name, len(res))
 			}
 		})
+	}
+}
+
+func TestGetCRDsFromManifest_AbsentSchemas(t *testing.T) {
+	manifest := `{"openapi": "3.0.0", "info": {"title": "test without schemas"}}`
+	res, err := getCRDsFromManifest(manifest, []string{"Pod"})
+	if err != nil {
+		t.Fatalf("unexpected error for manifest without schemas: %v", err)
+	}
+	if len(res) != 0 {
+		t.Errorf("expected 0 crds for manifest without schemas, got %d", len(res))
 	}
 }
 
