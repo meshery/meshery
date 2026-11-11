@@ -462,6 +462,7 @@ func TestEventStreamHandler_FlushesHeadersBeforeFirstEvent(t *testing.T) {
 	}
 }
 
+// eventsSpyProvider mocks models.Provider to inspect event handling invocations and record arguments.
 type eventsSpyProvider struct {
 	*models.DefaultLocalProvider
 	getEventsCalled          atomic.Bool
@@ -476,11 +477,13 @@ type eventsSpyProvider struct {
 	lastSysID  core.Uuid
 }
 
+// newEventsSpyProvider instantiates a new eventsSpyProvider with an embedded DefaultLocalProvider.
 func newEventsSpyProvider() *eventsSpyProvider {
 	base := &models.DefaultLocalProvider{}
 	return &eventsSpyProvider{DefaultLocalProvider: base}
 }
 
+// GetEvents mocks provider.GetEvents, capturing the user and system ID arguments.
 func (s *eventsSpyProvider) GetEvents(token string, filter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*models.EventsResponse, error) {
 	s.getEventsCalled.Store(true)
 	s.lastUserID = userID
@@ -488,45 +491,53 @@ func (s *eventsSpyProvider) GetEvents(token string, filter *events.EventsFilter,
 	return &models.EventsResponse{Events: []*events.Event{}}, nil
 }
 
-func (s *eventsSpyProvider) GetEventTypes(token string, userID core.Uuid, sysID core.Uuid) ([]string, error) {
+// GetEventTypes mocks provider.GetEventTypes, returning an EventTypesResponse with category1.
+func (s *eventsSpyProvider) GetEventTypes(token string, userID core.Uuid, sysID core.Uuid) (models.EventTypesResponse, error) {
 	s.getEventTypesCalled.Store(true)
 	s.lastUserID = userID
 	s.lastSysID = sysID
-	return []string{"category1"}, nil
+	return models.EventTypesResponse{Category: []string{"category1"}}, nil
 }
 
+// UpdateEventStatus mocks provider.UpdateEventStatus, recording the call.
 func (s *eventsSpyProvider) UpdateEventStatus(token string, eventID core.Uuid, status string) error {
 	s.updateEventStatusCalled.Store(true)
 	return nil
 }
 
+// BulkUpdateEventStatus mocks provider.BulkUpdateEventStatus, recording the call.
 func (s *eventsSpyProvider) BulkUpdateEventStatus(token string, eventIDs []*core.Uuid, status string) error {
 	s.bulkUpdateCalled.Store(true)
 	return nil
 }
 
+// BulkDeleteEvent mocks provider.BulkDeleteEvent, recording the call.
 func (s *eventsSpyProvider) BulkDeleteEvent(token string, eventIDs []*core.Uuid) error {
 	s.bulkDeleteCalled.Store(true)
 	return nil
 }
 
+// DeleteEvent mocks provider.DeleteEvent, recording the call.
 func (s *eventsSpyProvider) DeleteEvent(token string, eventID core.Uuid) error {
 	s.deleteEventCalled.Store(true)
 	return nil
 }
 
+// GetProviderToken returns a mock provider token.
 func (s *eventsSpyProvider) GetProviderToken(req *http.Request) (string, error) {
 	return "test-token", nil
 }
 
-func (s *eventsSpyProvider) PersistClientEvent(event events.Event, token string) (models.PersistedEventResponse, error) {
+// PersistClientEvent mocks provider.PersistClientEvent, recording the call and returning a persisted event.
+func (s *eventsSpyProvider) PersistClientEvent(event events.Event, token string) (models.PersistedEvent, error) {
 	s.persistClientEventCalled.Store(true)
-	return models.PersistedEventResponse{
+	return models.PersistedEvent{
 		Event:       &event,
 		Disposition: "created",
 	}, nil
 }
 
+// TestGetAllEvents_NilUser verifies that GetAllEvents returns 401 Unauthorized when user is nil.
 func TestGetAllEvents_NilUser(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
 	spy := newEventsSpyProvider()
@@ -542,6 +553,7 @@ func TestGetAllEvents_NilUser(t *testing.T) {
 	}
 }
 
+// TestGetAllEvents_NilProvider verifies that GetAllEvents returns 500 when provider is nil.
 func TestGetAllEvents_NilProvider(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
 	user := &models.User{ID: uuid.Must(uuid.NewV4())}
@@ -554,6 +566,7 @@ func TestGetAllEvents_NilProvider(t *testing.T) {
 	}
 }
 
+// TestGetAllEvents_NilSystemID verifies that GetAllEvents safely defaults to uuid.Nil when h.SystemID is nil.
 func TestGetAllEvents_NilSystemID(t *testing.T) {
 	h := &Handler{log: newTestLogger(t), SystemID: nil}
 	spy := newEventsSpyProvider()
@@ -576,6 +589,7 @@ func TestGetAllEvents_NilSystemID(t *testing.T) {
 	}
 }
 
+// TestGetEventTypes_NilUser verifies that GetEventTypes returns 401 Unauthorized when user is nil.
 func TestGetEventTypes_NilUser(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
 	spy := newEventsSpyProvider()
@@ -591,6 +605,7 @@ func TestGetEventTypes_NilUser(t *testing.T) {
 	}
 }
 
+// TestGetEventTypes_NilProvider verifies that GetEventTypes returns 500 when provider is nil.
 func TestGetEventTypes_NilProvider(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
 	user := &models.User{ID: uuid.Must(uuid.NewV4())}
@@ -603,6 +618,7 @@ func TestGetEventTypes_NilProvider(t *testing.T) {
 	}
 }
 
+// TestGetEventTypes_NilSystemID verifies that GetEventTypes safely defaults to uuid.Nil when h.SystemID is nil.
 func TestGetEventTypes_NilSystemID(t *testing.T) {
 	h := &Handler{log: newTestLogger(t), SystemID: nil}
 	spy := newEventsSpyProvider()
@@ -622,6 +638,7 @@ func TestGetEventTypes_NilSystemID(t *testing.T) {
 	}
 }
 
+// TestUpdateEventStatus_NilProvider verifies that UpdateEventStatus returns 500 when provider is nil.
 func TestUpdateEventStatus_NilProvider(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
 	req := httptest.NewRequest(http.MethodPut, "/api/system/events/status/123", nil)
@@ -633,6 +650,7 @@ func TestUpdateEventStatus_NilProvider(t *testing.T) {
 	}
 }
 
+// TestUpdateEventStatus_MalformedJSON verifies that UpdateEventStatus returns 400 Bad Request on invalid JSON.
 func TestUpdateEventStatus_MalformedJSON(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
 	spy := newEventsSpyProvider()
@@ -648,6 +666,7 @@ func TestUpdateEventStatus_MalformedJSON(t *testing.T) {
 	}
 }
 
+// TestUpdateEventStatus_MissingStatus verifies that UpdateEventStatus returns 400 Bad Request on empty status.
 func TestUpdateEventStatus_MissingStatus(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
 	spy := newEventsSpyProvider()
@@ -663,6 +682,7 @@ func TestUpdateEventStatus_MissingStatus(t *testing.T) {
 	}
 }
 
+// TestBulkUpdateEventStatus_NilProvider verifies that BulkUpdateEventStatus returns 500 when provider is nil.
 func TestBulkUpdateEventStatus_NilProvider(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
 	req := httptest.NewRequest(http.MethodPut, "/api/system/events/status/bulk", nil)
@@ -674,6 +694,7 @@ func TestBulkUpdateEventStatus_NilProvider(t *testing.T) {
 	}
 }
 
+// TestBulkUpdateEventStatus_EmptyOrMalformed verifies that BulkUpdateEventStatus returns 400 on malformed or empty payloads.
 func TestBulkUpdateEventStatus_EmptyOrMalformed(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
 	spy := newEventsSpyProvider()
@@ -693,11 +714,21 @@ func TestBulkUpdateEventStatus_EmptyOrMalformed(t *testing.T) {
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("expected 400 for empty IDs, got %d", rec.Code)
 	}
+
+	// Empty Status with non-empty IDs
+	validID := uuid.Must(uuid.NewV4()).String()
+	req = httptest.NewRequest(http.MethodPut, "/api/system/events/status/bulk", bytes.NewBufferString(fmt.Sprintf(`{"status":"","ids":["%s"]}`, validID)))
+	rec = httptest.NewRecorder()
+	h.BulkUpdateEventStatus(rec, req, nil, nil, spy)
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 for empty status, got %d", rec.Code)
+	}
 	if spy.bulkUpdateCalled.Load() {
 		t.Fatal("provider.BulkUpdateEventStatus should not be called on invalid input")
 	}
 }
 
+// TestBulkDeleteEvent_NilProvider verifies that BulkDeleteEvent returns 500 when provider is nil.
 func TestBulkDeleteEvent_NilProvider(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
 	req := httptest.NewRequest(http.MethodDelete, "/api/system/events/bulk", nil)
@@ -709,6 +740,7 @@ func TestBulkDeleteEvent_NilProvider(t *testing.T) {
 	}
 }
 
+// TestBulkDeleteEvent_EmptyOrMalformed verifies that BulkDeleteEvent returns 400 on malformed or empty payloads.
 func TestBulkDeleteEvent_EmptyOrMalformed(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
 	spy := newEventsSpyProvider()
@@ -733,6 +765,7 @@ func TestBulkDeleteEvent_EmptyOrMalformed(t *testing.T) {
 	}
 }
 
+// TestDeleteEvent_NilProvider verifies that DeleteEvent returns 500 when provider is nil.
 func TestDeleteEvent_NilProvider(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
 	req := httptest.NewRequest(http.MethodDelete, "/api/system/events/123", nil)
@@ -744,6 +777,7 @@ func TestDeleteEvent_NilProvider(t *testing.T) {
 	}
 }
 
+// TestClientEventHandler_NilUser verifies that ClientEventHandler returns 401 Unauthorized when user is nil.
 func TestClientEventHandler_NilUser(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
 	spy := newEventsSpyProvider()
@@ -756,6 +790,7 @@ func TestClientEventHandler_NilUser(t *testing.T) {
 	}
 }
 
+// TestClientEventHandler_NilProvider verifies that ClientEventHandler returns 500 when provider is nil.
 func TestClientEventHandler_NilProvider(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
 	user := &models.User{ID: uuid.Must(uuid.NewV4())}
@@ -768,6 +803,7 @@ func TestClientEventHandler_NilProvider(t *testing.T) {
 	}
 }
 
+// TestClientEventHandler_SuccessWithNilSystemIDAndNilBroadcaster verifies that ClientEventHandler safely handles nil SystemID and nil EventBroadcaster.
 func TestClientEventHandler_SuccessWithNilSystemIDAndNilBroadcaster(t *testing.T) {
 	h := &Handler{
 		log:      newTestLogger(t),

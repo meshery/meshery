@@ -228,7 +228,7 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 		writeMeshkitError(w, _err, http.StatusBadRequest)
 		return
 	}
-	if len(reqBody.StatusIDs) == 0 {
+	if len(reqBody.StatusIDs) == 0 || reqBody.Status == "" {
 		_err := models.ErrInvalidEventData()
 		h.log.Error(_err)
 		writeMeshkitError(w, _err, http.StatusBadRequest)
