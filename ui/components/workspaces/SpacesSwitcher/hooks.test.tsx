@@ -274,7 +274,7 @@ describe('useContentDelete', () => {
 });
 
 describe('useContentDownload', () => {
-  it('handleDesignDownload calls downloadContent and notifies', () => {
+  it('handleDesignDownload notifies for legacy source-type downloads', () => {
     const { result } = renderHook(() => useContentDownload());
     const ev = { stopPropagation: vi.fn() } as any;
     result.current.handleDesignDownload(ev, { id: 'd-1', name: 'a' }, 'src', {});
@@ -285,6 +285,30 @@ describe('useContentDownload', () => {
       message: '"a" design downloaded',
       event_type: 'INFO',
     });
+  });
+
+  it('handleDesignDownload does not notify for canonical downloads', () => {
+    const { result } = renderHook(() => useContentDownload());
+    const ev = { stopPropagation: vi.fn() } as any;
+
+    result.current.handleDesignDownload(
+      ev,
+      { id: 'd-1', name: 'a' },
+      undefined,
+      'export=Kubernetes%20Manifest',
+    );
+
+    expect(downloadContent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'd-1',
+        name: 'a',
+        type: 'pattern',
+        source_type: undefined,
+        params: 'export=Kubernetes%20Manifest',
+      }),
+    );
+
+    expect(notify).not.toHaveBeenCalled();
   });
 
   it('handleDesignDownload supports an array of designs', () => {
