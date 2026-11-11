@@ -59,7 +59,12 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	eventMetadata := make(map[string]interface{}, 0)
 	ctx := models.K8sContextsFromKubeconfig(*provider, userID, ec, config, &mesheryInstanceID, eventMetadata, log)
 	if err != nil {
-		return ErrCreatingKubernetesComponents(err, ctxID)
+		if len(man) == 0 {
+			return ErrCreatingKubernetesComponents(err, ctxID)
+		}
+		if log != nil {
+			log.Warn(ErrCreatingKubernetesComponents(err, ctxID))
+		}
 	}
 	if man == nil {
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
@@ -204,9 +209,6 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 		}
 		crds = append(crds, extractedCRDs...)
 	}
-	if len(errs) > 0 {
-		return nil, errors.Join(errs...)
-	}
 	components := make([]component.ComponentDefinition, 0)
 	for _, crd := range crds {
 		m := make(map[string]interface{})
@@ -243,6 +245,9 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 			},
 		}
 		components = append(components, c)
+	}
+	if len(errs) > 0 {
+		return components, patterncore.ErrGetK8sComponents(errors.Join(errs...))
 	}
 	return components, nil
 }
