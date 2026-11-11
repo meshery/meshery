@@ -946,14 +946,19 @@ func TestDeleteConnection_KubernetesKindMetadataOwnershipMismatchFallsBackToLink
 }
 
 // deleteFailingOnceProvider fails the first DeleteConnection call, then delegates
-// to the underlying provider on subsequent calls.
+// to the underlying provider on subsequent calls, while tracking observed state transitions.
 type deleteFailingOnceProvider struct {
 	models.Provider
-	callCount int
+	h                *Handler
+	callCount        int
+	observedAttempts []machines.StateType
 }
 
 func (p *deleteFailingOnceProvider) DeleteConnection(req *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {
 	p.callCount++
+	if inst, ok := p.h.ConnectionToStateMachineInstanceTracker.Get(connectionID); ok && inst != nil {
+		p.observedAttempts = append(p.observedAttempts, inst.CurrentState)
+	}
 	if p.callCount == 1 {
 		return nil, fmt.Errorf("simulated transient provider failure")
 	}
@@ -962,8 +967,9 @@ func (p *deleteFailingOnceProvider) DeleteConnection(req *http.Request, connecti
 
 // TestDeleteConnection_ProviderDeleteFails_AllowsRetry verifies that when
 // provider.DeleteConnection fails after SendEvent(machines.Delete) has already
-// transitioned the machine to DELETED, the handler clears the tracker entry and
-// the connection row survives, allowing a retry that succeeds.
+// transitioned the machine to DELETED, the handler clears the tracker entry,
+// the surviving connection record reflects the attempted DELETED status, and
+// a subsequent retry re-runs teardown and successfully deletes the connection.
 func TestDeleteConnection_ProviderDeleteFails_AllowsRetry(t *testing.T) {
 	h, provider := newDeleteConnectionFixture(t)
 
@@ -1002,7 +1008,10 @@ func TestDeleteConnection_ProviderDeleteFails_AllowsRetry(t *testing.T) {
 		t.Fatalf("save k8s context: %v", err)
 	}
 
-	failingProvider := &deleteFailingOnceProvider{Provider: provider}
+	failingProvider := &deleteFailingOnceProvider{
+		Provider: provider,
+		h:        h,
+	}
 
 	// First attempt: provider.DeleteConnection fails.
 	rec := deleteConnection(t, h, failingProvider, saved.ID)
@@ -1010,9 +1019,13 @@ func TestDeleteConnection_ProviderDeleteFails_AllowsRetry(t *testing.T) {
 		t.Fatal("expected first delete attempt to fail")
 	}
 
-	// Connection row must survive.
-	if _, err := provider.ConnectionPersister.GetConnection(saved.ID, ""); err != nil {
+	// Connection row must survive with DELETED status reflecting the attempted teardown.
+	surviving, err := provider.ConnectionPersister.GetConnection(saved.ID, "")
+	if err != nil {
 		t.Fatalf("expected connection to survive after failed provider delete: %v", err)
+	}
+	if surviving.Status != connections.ConnectionStatus(machines.DELETED) {
+		t.Errorf("expected surviving connection status to be DELETED, got %s", surviving.Status)
 	}
 
 	// Tracker entry must be cleared so retry starts clean.
@@ -1024,6 +1037,16 @@ func TestDeleteConnection_ProviderDeleteFails_AllowsRetry(t *testing.T) {
 	rec2 := deleteConnection(t, h, failingProvider, saved.ID)
 	if rec2.Code != http.StatusOK {
 		t.Fatalf("retry status = %d, want %d. body: %s", rec2.Code, http.StatusOK, rec2.Body.String())
+	}
+
+	// Verify teardown was triggered and reached DELETED on both attempts.
+	if len(failingProvider.observedAttempts) != 2 {
+		t.Fatalf("expected 2 teardown attempts observed in tracker, got %d", len(failingProvider.observedAttempts))
+	}
+	for i, st := range failingProvider.observedAttempts {
+		if st != machines.DELETED {
+			t.Errorf("attempt %d: expected machine state to transition to DELETED during teardown, got %s", i+1, st)
+		}
 	}
 
 	// Connection must now be gone.
