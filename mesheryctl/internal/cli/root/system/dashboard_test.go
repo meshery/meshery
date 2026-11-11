@@ -93,7 +93,7 @@ func TestKeepConnectionAlive_Failure(t *testing.T) {
 
 func TestDashboardCmdFlags(t *testing.T) {
 	t.Cleanup(func() {
-		dashboardCmdFlags = CmdDashboardFlags{
+		dashboardCmdFlags = cmdDashboardFlags{
 			Port: 9081,
 		}
 		_ = dashboardCmd.Flags().Set("skip-browser", "false")
