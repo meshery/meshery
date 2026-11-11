@@ -91,10 +91,15 @@ func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (c
 	return conn, err
 }
 
-// GetMesheryK8sContext returns the context with the given ID.
+// GetMesheryK8sContext returns the context matching the given ID, or falling back
+// to matching ConnectionID if no direct ID match is found.
 func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContext(id string) (K8sContext, error) {
 	var mesheryK8sContext K8sContext
 
-	err := mkcp.DB.First(&mesheryK8sContext, "id = ?", id).Error
+	err := mkcp.DB.Where("id = ?", id).First(&mesheryK8sContext).Error
+	if err == nil {
+		return mesheryK8sContext, nil
+	}
+	err = mkcp.DB.Where("connection_id = ?", id).First(&mesheryK8sContext).Error
 	return mesheryK8sContext, err
 }
