@@ -170,7 +170,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			if event != nil && event.ResolvedAt != nil {
 				h.persistAndPublish(provider, token, userID, event)
 			}
-			smInstanceTracker.Remove(connectionUUID)
+			smInstanceTracker.RemoveIfMatch(connectionUUID, inst)
 		}(inst)
 	}
 
