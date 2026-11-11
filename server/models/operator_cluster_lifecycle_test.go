@@ -190,6 +190,37 @@ func TestHelmLockIsPerClusterNotGlobal(t *testing.T) {
 	}
 }
 
+// TestLockedStatusReReadSkipsTheInstallOnlyWhenTheOperatorIsPresent: the
+// re-read under the cluster lock exists to see another connection's install.
+// A status it cannot read (Unknown, which meshkit returns for a transient API
+// error) is not evidence of one, so the install still runs, as it did before
+// the re-read was added.
+func TestLockedStatusReReadSkipsTheInstallOnlyWhenTheOperatorIsPresent(t *testing.T) {
+	tests := []struct {
+		reread       controllers.MesheryControllerStatus
+		wantInstalls int
+	}{
+		{reread: controllers.NotDeployed, wantInstalls: 1},
+		{reread: controllers.Unknown, wantInstalls: 1},
+		{reread: controllers.Deployed, wantInstalls: 0},
+		{reread: controllers.Deploying, wantInstalls: 0},
+	}
+	for _, tt := range tests {
+		t.Run(tt.reread.String(), func(t *testing.T) {
+			ot := NewOperatorTracker(false)
+			cluster := newFakeCluster()
+			cluster.status = tt.reread
+			mch := operatorModeConsumer(t, cluster)
+
+			mch.DeployUndeployedOperators(ot, connectionTo(core.Uuid(uuid.Must(uuid.NewV4())), "only"))
+
+			if _, installs, _, _ := cluster.snapshot(); installs != tt.wantInstalls {
+				t.Fatalf("re-read %v: helm install ran %d times, want %d", tt.reread, installs, tt.wantInstalls)
+			}
+		})
+	}
+}
+
 // TestImplicitTransitionsLeaveASharedOperatorInstalled is the production
 // incident: one connection switching to embedded mode ran helm uninstall on
 // the operator every other operator-mode connection to that cluster depended
