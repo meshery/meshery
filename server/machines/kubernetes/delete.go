@@ -20,7 +20,8 @@ func (da *DeleteAction) ExecuteOnEntry(ctx context.Context, machineCtx interface
 	return machines.NoOp, nil, nil
 }
 
-// Execute undeploys deployed operators, removes controller handlers, and flushes MeshSync cluster data.
+// Execute releases the connection's claim on the cluster's Meshery Operator (leaving it
+// installed), removes controller handlers, and flushes MeshSync cluster data.
 func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	logLevel := viper.GetInt("LOG_LEVEL")
 	if viper.GetBool("DEBUG") {
@@ -69,13 +70,10 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		machinectx.setupLock.Lock()
 		defer machinectx.setupLock.Unlock()
 		if machinectx.MesheryCtrlsHelper != nil {
-			if machinectx.OperatorTracker != nil {
-				machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-					UndeployDeployedOperators(machinectx.OperatorTracker, contextID)
-			}
-			machinectx.MesheryCtrlsHelper.RemoveCtxControllerHandler(ctx, contextID)
-
-			machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)
+			// Releases this connection's claim on the cluster's Meshery Operator
+			// without uninstalling it: the operator is cluster-scoped and other
+			// connections may still depend on it.
+			machinectx.MesheryCtrlsHelper.DetachFromCluster(ctx, machinectx.OperatorTracker, machinectx.K8sContext)
 		}
 	}()
 

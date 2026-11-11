@@ -741,9 +741,11 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		resolvesUnreachable = existing.Kind == "kubernetes" && existing.Status == connections.ConnectionStatus(machines.NOTFOUND)
 	}
 
-	// For Kubernetes connections, trigger cluster teardown (undeploying deployed operators,
-	// removing controller handlers, stopping MeshSync, and flushing MeshSync data)
-	// before the connection and its context rows are deleted from the database.
+	// For Kubernetes connections, trigger cluster teardown (releasing the
+	// connection's claim on the cluster-scoped Meshery Operator - which stays
+	// installed - removing controller handlers, stopping MeshSync, and flushing
+	// MeshSync data) before the connection and its context rows are deleted from
+	// the database.
 	isKubernetes := (gerr == nil && existing != nil && strings.EqualFold(existing.Kind, "kubernetes"))
 
 	if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
@@ -994,7 +996,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 		}
 
 		// Resolve BEFORE tearing anything down. A resolution failure means the
-		// intended configuration is unknown, and undeploying the operators only
+		// intended configuration is unknown, and tearing the controllers down only
 		// to rebuild them from the last-known-good document is a partial
 		// reconciliation performed on unreadable input - the same fault as
 		// reconciling a connection whose override will not parse. Fail with the
@@ -1005,15 +1007,10 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, resolveErr
 		}
 
-		// disconnect
-		{
-			contextID := machineCtx.K8sContext.ID
-			ctrlHelper.
-				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				UndeployDeployedOperators(machineCtx.OperatorTracker, contextID).
-				RemoveCtxControllerHandler(ctx, contextID)
-			ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
-		}
+		// disconnect. The cluster's Meshery Operator stays installed: it is
+		// cluster-scoped, and this connection's mode change does not speak for
+		// the others using it.
+		ctrlHelper.DetachFromCluster(ctx, machineCtx.OperatorTracker, machineCtx.K8sContext)
 		// connect. The controllers configuration is refreshed and stashed
 		// before AddCtxControllerHandlers, which constructs the operator
 		// controller handler with the Helm chart version that document
@@ -1026,7 +1023,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
 				AddCtxControllerHandlers(machineCtx.K8sContext).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				DeployUndeployedOperators(machineCtx.OperatorTracker, machineCtx.K8sContext.ID).
+				DeployUndeployedOperators(machineCtx.OperatorTracker, machineCtx.K8sContext).
 				AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
 		}
 

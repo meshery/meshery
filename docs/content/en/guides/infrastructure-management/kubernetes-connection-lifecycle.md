@@ -48,6 +48,38 @@ Each reports a status that surfaces on the connection (for example the Broker an
 MeshSync move to **CONNECTED** once Meshery is actually receiving data). See
 [Understanding the status]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#understanding-the-status-of-meshery-operator-meshsync-and-meshery-broker" >}}).
 
+### One Operator per cluster, shared by every connection
+
+The Operator is a cluster singleton: one Helm release, `meshery-operator` in
+namespace `meshery`, serves every operator-mode connection to that cluster -
+several kubeconfig contexts naming the same API server, several users of one
+Meshery Server, and other Meshery Servers managing the same cluster. Meshery
+recognizes a cluster by its Kubernetes server ID (the `kube-system` namespace
+UID), so different API server addresses for one cluster count as one.
+
+Because of that, Meshery manages the Operator at cluster scope:
+
+- **Installing is serialized per cluster.** When several connections to one
+  cluster connect at once, one installs the Operator and the others find it
+  installed, instead of racing each other into `helm install`.
+- **Disconnecting, deleting, or switching a connection to embedded mode never
+  uninstalls the Operator.** Each only ends that connection's use of it. The
+  Operator stays installed even after the last connection on this Meshery
+  Server leaves, because Meshery cannot see every consumer - another Meshery
+  Server, or an Operator installed with Helm or `mesheryctl`, may still depend
+  on it.
+- **Uninstalling is an explicit request**, made through the GraphQL
+  `changeOperatorStatus` mutation (target status `DISABLED`). It removes the
+  Operator for every connection to the cluster. When other connections on the
+  same Meshery Server were using it, Meshery raises a warning event, **Meshery
+  Operator removed from a cluster other connections use**, that names them in
+  `affectedConnectionIDs`. Those connections reinstall the Operator the next
+  time they connect in operator mode; switch them to embedded mode to keep it
+  off.
+
+To remove the Operator from a cluster nothing uses any more, run
+`helm uninstall meshery-operator -n meshery`.
+
 ### Which Operator version gets installed
 
 Meshery Server installs the Operator as a Helm chart from
@@ -102,7 +134,9 @@ Switch a connection's MeshSync mode from the Kubernetes connection's actions in
 the UI. Under the hood this calls
 `POST /api/integrations/connections/{connectionId}/actions` with
 `{"action":"setMeshsyncMode","mode":"operator"|"embedded"}`; Meshery tears down
-the old setup and redeploys MeshSync in the new mode.
+the old setup and redeploys MeshSync in the new mode. Switching to embedded mode
+leaves the cluster's Operator installed, because other connections may share it
+(see [One Operator per cluster](#one-operator-per-cluster-shared-by-every-connection)).
 {{% /alert %}}
 
 ## Broker connectivity
@@ -172,11 +206,12 @@ The same diagnostics are available programmatically at
 From the connection in Meshery UI you can:
 
 - **Switch MeshSync mode** (operator ↔ embedded) - see [MeshSync deployment modes](#meshsync-deployment-modes).
-- **(Re)deploy or uninstall** Operator / MeshSync / Broker.
+- **(Re)deploy** Operator / MeshSync / Broker. Uninstalling is cluster-wide and
+  explicit - see [One Operator per cluster](#one-operator-per-cluster-shared-by-every-connection).
 - **Reconnect** Meshery Server to the Broker, or run an ad-hoc connectivity test.
 - **Rediscover / re-upload** the kubeconfig, or **disconnect / delete** the
   connection (which also tears down the managed port-forward and MeshSync data
-  handler).
+  handler, and leaves the cluster's Operator installed).
 - **Reset the Meshery Database** if the cached cluster state looks stale.
 
 ## Known kinks

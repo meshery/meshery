@@ -212,7 +212,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		// rather than being handed to Helm as an opaque chart-not-found. It also
 		// re-resolves that version first, so clicking deploy again after the
 		// chart repository recovers is a retry that can actually succeed.
-		err := ctrlHelper.SetOperatorDeployment(k8scontext, !del)
+		err := ctrlHelper.SetOperatorDeployment(r.Config.OperatorTracker, k8scontext, !del)
 		if err != nil {
 			if r.Log != nil {
 				r.Log.Error(err)

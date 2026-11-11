@@ -1025,8 +1025,12 @@ func (mch *MesheryControllersHelper) ReconcileOperatorChartVersion(k8sctx K8sCon
 	}
 	// Deploy(false) is a no-op against an operator this handler undeployed and a
 	// Helm upgrade against one that is installed, so an operator the user turned
-	// off is not resurrected by a chart-version change.
-	if deployErr := operatorHandler.Deploy(false); deployErr != nil {
+	// off is not resurrected by a chart-version change. It is serialized with
+	// every other Helm action against this cluster.
+	unlock := ot.lockOperatorCluster(k8sctx)
+	deployErr := operatorHandler.Deploy(false)
+	unlock()
+	if deployErr != nil {
 		mch.attachedOperatorChartVersion = previousChartVersion
 		mch.setOperatorError(deployErr)
 		return desired, false, ErrReconcileOperatorChartVersion(deployErr)
@@ -1067,16 +1071,25 @@ func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracke
 	return mch
 }
 
+// OperatorTracker is the server-wide record of Meshery Operator lifecycle. One
+// instance is shared by every connection's state machine, which is what lets it
+// hold the cluster-scoped state (see operator_cluster_lifecycle.go): the
+// per-cluster Helm lock and the set of connections using each cluster's
+// operator.
 type OperatorTracker struct {
-	ctxIDtoDeploymentStatus map[string]bool
+	// mx guards ctxIDtoDeploymentStatus and every operatorCluster's consumers.
+	// It is written from GraphQL resolver goroutines and read from connection
+	// FSM goroutines, so no access may bypass it.
 	mx                      sync.Mutex
+	ctxIDtoDeploymentStatus map[string]bool
+	clusters                map[string]*operatorCluster
 	DisableOperator         bool
 }
 
 func NewOperatorTracker(disabled bool) *OperatorTracker {
 	return &OperatorTracker{
 		ctxIDtoDeploymentStatus: make(map[string]bool),
-		mx:                      sync.Mutex{},
+		clusters:                make(map[string]*operatorCluster),
 		DisableOperator:         disabled,
 	}
 }
@@ -1085,6 +1098,8 @@ func (ot *OperatorTracker) Undeployed(ctxID string, undeployed bool) {
 	if ot.DisableOperator { //no-op when operator is disabled
 		return
 	}
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
 	if ot.ctxIDtoDeploymentStatus == nil {
 		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
 	}
@@ -1095,10 +1110,8 @@ func (ot *OperatorTracker) IsUndeployed(ctxID string) bool {
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return true
 	}
-	if ot.ctxIDtoDeploymentStatus == nil {
-		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
-		return false
-	}
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
 	return ot.ctxIDtoDeploymentStatus[ctxID]
 }
 
@@ -1156,20 +1169,16 @@ func (mch *MesheryControllersHelper) reportMissingOperatorHandler(action, contex
 	}, uuid.Nil)
 }
 
-// operatorStatusObserved reports whether Meshery has ever actually read this
-// context's operator status, as opposed to still carrying the Unknown that
-// NewMesheryControllersHelper seeds. It distinguishes "we saw an operator and
-// can no longer act on it" from "we never reached this cluster at all".
-func (mch *MesheryControllersHelper) operatorStatusObserved() bool {
-	return mch.ctxOperatorStatus != controllers.Unknown
-}
-
 // SetOperatorDeployment applies a user-initiated Meshery Operator lifecycle
 // request for k8sctx: deploy=true installs or upgrades it, deploy=false removes
-// it. It is the counterpart to the FSM's DeployUndeployedOperators and
-// UndeployDeployedOperators for callers that must be told the outcome - the
-// GraphQL changeOperatorStatus mutation - and shares their guard rather than
-// restating it.
+// it. It is the counterpart to the FSM's DeployUndeployedOperators for callers
+// that must be told the outcome - the GraphQL changeOperatorStatus mutation -
+// and shares its guard rather than restating it.
+//
+// deploy=false is the only path in Meshery Server that uninstalls the
+// operator. The operator is cluster-scoped, so removing it removes it for every
+// connection to that cluster, on this server or any other; see
+// uninstallOperator for how that blast radius is reported.
 //
 // A latched chart-resolution failure is retried here rather than being final.
 // operatorChartError is written only when handlers are attached, so a connect
@@ -1186,19 +1195,9 @@ func (mch *MesheryControllersHelper) operatorStatusObserved() bool {
 //
 // The error is returned rather than emitted: the caller owns how a request it
 // initiated is surfaced. A failure is still recorded for the diagnostics API.
-func (mch *MesheryControllersHelper) SetOperatorDeployment(k8sctx K8sContext, deploy bool) error {
+func (mch *MesheryControllersHelper) SetOperatorDeployment(ot *OperatorTracker, k8sctx K8sContext, deploy bool) error {
 	if !deploy {
-		operatorHandler := mch.attachedOperatorHandler()
-		if operatorHandler == nil {
-			err := ErrOperatorHandlerNotAttached(k8sctx.ID)
-			mch.setOperatorErrorIfUnset(err)
-			return err
-		}
-		if err := operatorHandler.Undeploy(); err != nil {
-			mch.setOperatorError(err)
-			return err
-		}
-		return nil
+		return mch.uninstallOperator(ot, k8sctx)
 	}
 
 	if mch.GetOperatorChartError() != nil {
@@ -1214,6 +1213,8 @@ func (mch *MesheryControllersHelper) SetOperatorDeployment(k8sctx K8sContext, de
 		}
 		return err
 	}
+	unlock := ot.lockOperatorCluster(k8sctx)
+	defer unlock()
 	if err := operatorHandler.Deploy(true); err != nil {
 		mch.setOperatorError(err)
 		return err
@@ -1221,19 +1222,90 @@ func (mch *MesheryControllersHelper) SetOperatorDeployment(k8sctx K8sContext, de
 	return nil
 }
 
-// DeployUndeployedOperators looks at the status of Meshery Operator for each cluster and takes necessary action.
-// it will deploy the operator only when it is in NotDeployed state
-func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTracker, contextID string) *MesheryControllersHelper {
+// OperatorSharedRemovalLongDescription explains the event raised when a user
+// removes Meshery Operator from a cluster that other connections still use.
+const OperatorSharedRemovalLongDescription = "Meshery Operator is installed once per cluster (Helm release meshery-operator in namespace meshery) and is shared by every Meshery connection to that cluster. Removing it on request for one connection removed it for the connections listed in affectedConnectionIDs as well, and for any other Meshery Server that manages this cluster. Their MeshSync data stops until the operator is installed again."
+
+// OperatorSharedRemovalRemediation is surfaced with that event.
+var OperatorSharedRemovalRemediation = []string{
+	"If the removal was intended, switch the affected connections to embedded MeshSync mode so they keep receiving cluster state without the operator.",
+	"Otherwise, reconnect any affected operator-mode connection, or deploy the operator again; Meshery reinstalls it.",
+}
+
+// uninstallOperator removes the Meshery Operator release from k8sctx's cluster
+// on an explicit user request.
+//
+// Unlike deploy, this is not gated on GetOperatorChartError. Removal is the
+// direction to attempt rather than refuse: refusing would leave the operator
+// running on a cluster the user asked to have it taken off. Attempted is all it
+// is, though. meshkit's ApplyHelmChart downloads and loads the chart archive
+// before dispatching UNINSTALL just as it does for INSTALL, from the same
+// repository whose index could not be read - so in the very case that motivates
+// not refusing, Undeploy fails at chart download, the operator stays on the
+// cluster, and the user gets a Helm error. A removal path that does not need
+// the archive would have to come from meshkit.
+//
+// The operator is cluster-scoped, so the removal is reported with its blast
+// radius: every other connection on this server that was using the operator is
+// named in a warning event. Other Meshery Servers are invisible from here; the
+// event says so.
+func (mch *MesheryControllersHelper) uninstallOperator(ot *OperatorTracker, k8sctx K8sContext) error {
+	operatorHandler := mch.attachedOperatorHandler()
+	if operatorHandler == nil {
+		err := ErrOperatorHandlerNotAttached(k8sctx.ID)
+		mch.setOperatorErrorIfUnset(err)
+		return err
+	}
+
+	unlock := ot.lockOperatorCluster(k8sctx)
+	defer unlock()
+	affected := ot.otherOperatorConsumers(k8sctx)
+	if err := operatorHandler.Undeploy(); err != nil {
+		mch.setOperatorError(err)
+		return err
+	}
+	if len(affected) == 0 {
+		return nil
+	}
+	mch.log.Warnf("Meshery Operator removed from cluster %q on request for Kubernetes context %s; %d other connection(s) on this server were using it: %s",
+		k8sctx.Server, k8sctx.ID, len(affected), strings.Join(affected, ", "))
+	mch.emitWarningEvent("Meshery Operator removed from a cluster other connections use", nil, map[string]any{
+		"k8sContextID":          k8sctx.ID,
+		"k8sContextName":        k8sctx.Name,
+		"connectionID":          k8sctx.ConnectionID,
+		"affectedConnectionIDs": affected,
+		"LongDescription":       OperatorSharedRemovalLongDescription,
+		"SuggestedRemediation":  OperatorSharedRemovalRemediation,
+	}, uuid.Nil)
+	return nil
+}
+
+// DeployUndeployedOperators installs the Meshery Operator on k8sctx's cluster
+// when it is not there yet, and records the connection as one of the cluster's
+// operator consumers. It does nothing for an operator this connection's user
+// explicitly removed (Undeployed) or one that is already installed.
+//
+// Every Helm action against a cluster is serialized, and the operator's live
+// status is re-read once the lock is held: the status this connection read
+// before waiting is stale if another connection to the same cluster installed
+// the operator meanwhile. Without that, two connections connecting together
+// both saw NotDeployed and both ran helm install for the one release.
+func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTracker, k8sctx K8sContext) *MesheryControllersHelper {
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return mch
 	}
 	if mch.meshsyncDeploymentMode != connections.MeshsyncDeploymentModeOperator {
 		return mch
 	}
+	// An operator-mode connection depends on its cluster's operator whether this
+	// call installs it, finds it installed, or fails and retries later, so it is
+	// a consumer from here on - which is what an explicit removal reports.
+	ot.claimOperator(k8sctx)
 	if mch.ctxOperatorStatus != controllers.NotDeployed {
 		return mch
 	}
 
+	contextID := k8sctx.ID
 	operatorHandler, attached, err := mch.operatorInstallTarget(contextID)
 	if err != nil {
 		if !attached {
@@ -1245,6 +1317,13 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 		// rather than emitted a second time on every reconcile.
 		mch.setOperatorError(err)
 		mch.log.Error(err)
+		return mch
+	}
+
+	unlock := ot.lockOperatorCluster(k8sctx)
+	defer unlock()
+	if status := operatorHandler.GetStatus(); status != controllers.NotDeployed {
+		mch.ctxOperatorStatus = status
 		return mch
 	}
 
@@ -1261,46 +1340,28 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 	return mch
 }
 
-func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTracker, contextID string) *MesheryControllersHelper {
-	if mch.ctxOperatorStatus == controllers.Undeployed {
-		return mch
+// ReleaseOperator ends k8sctx's connection's use of its cluster's Meshery
+// Operator. It never uninstalls the operator: that is cluster-scoped and may
+// still serve other connections on this server, other Meshery Servers, or an
+// installation made with Helm or mesheryctl, none of which a connection's
+// disconnect, deletion or switch to embedded mode speaks for. Removal is
+// SetOperatorDeployment's alone, on an explicit request.
+func (mch *MesheryControllersHelper) ReleaseOperator(ot *OperatorTracker, k8sctx K8sContext) *MesheryControllersHelper {
+	if released, remaining := ot.releaseOperatorClaim(k8sctx); released && mch.log != nil {
+		mch.log.Infof("Kubernetes context %s released Meshery Operator on cluster %q and left it installed; %d other connection(s) on this server still use it",
+			k8sctx.ID, k8sctx.Server, remaining)
 	}
-
-	// Unlike deploy, this is not gated on GetOperatorChartError. Removal is the
-	// direction to attempt rather than refuse: refusing would leave the operator
-	// running on a cluster the user asked to have it taken off.
-	//
-	// Attempted is all it is, though. meshkit's ApplyHelmChart downloads and
-	// loads the chart archive before dispatching UNINSTALL just as it does for
-	// INSTALL, from the same repository whose index could not be read - so in the
-	// very case that motivates not refusing, Undeploy fails at chart download,
-	// the operator stays on the cluster, and the user gets a Helm error. A
-	// removal path that does not need the archive would have to come from
-	// meshkit; until then this surfaces the failure rather than hiding it.
-	operatorHandler := mch.attachedOperatorHandler()
-	if operatorHandler == nil {
-		// A connection whose cluster was never reached has no operator to
-		// remove and never had one, so reporting a failed removal on its
-		// teardown would be a second alert for a non-event - and would bury the
-		// kubeconfig or Kubernetes-client diagnostic that explains it. Report
-		// only when an operator was actually observed here at some point.
-		if mch.operatorStatusObserved() {
-			mch.reportMissingOperatorHandler("Failed to undeploy Meshery Operator", contextID)
-		}
-		return mch
-	}
-
-	if err := operatorHandler.Undeploy(); err != nil {
-		mch.setOperatorError(err)
-		mch.log.Error(err)
-		mch.emitErrorEvent("Failed to undeploy Meshery Operator", err, map[string]any{
-			"k8sContextID":           contextID,
-			"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
-			"operatorStatus":         mch.ctxOperatorStatus,
-		}, uuid.Nil)
-	}
-
 	return mch
+}
+
+// DetachFromCluster is the teardown every implicit connection transition runs -
+// disconnect, delete, and the first half of a MeshSync deployment-mode switch.
+// It releases the connection's claim on the cluster's operator, drops the
+// controller handlers, and stops the MeshSync data handler (and with it the
+// managed broker port-forward). Nothing is removed from the cluster.
+func (mch *MesheryControllersHelper) DetachFromCluster(ctx context.Context, ot *OperatorTracker, k8sctx K8sContext) {
+	mch.ReleaseOperator(ot, k8sctx).RemoveCtxControllerHandler(ctx, k8sctx.ID)
+	mch.RemoveMeshSyncDataHandler(ctx, k8sctx.ID)
 }
 
 func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) controllers.OperatorDeploymentConfig {

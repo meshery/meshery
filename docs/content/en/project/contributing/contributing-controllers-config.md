@@ -58,7 +58,7 @@ server writes; "Observable as" names what the user can actually see change.
 
 | Setting | Wire path | Propagates to | Observable as |
 | --- | --- | --- | --- |
-| Deployment mode | `operator.deploymentMode` | Deploy/undeploy of the operator; MeshSync data pipeline teardown and reattach | Connection detail "MeshSync Deployment Mode"; operator/MeshSync/broker status chips in the header |
+| Deployment mode | `operator.deploymentMode` | Deploy of the operator when the cluster lacks it (switching away never uninstalls the shared operator); MeshSync data pipeline teardown and reattach | Connection detail "MeshSync Deployment Mode"; operator/MeshSync/broker status chips in the header |
 | Operator version | `operator.version` | `meshery-operator` Helm release chart version | Operator version in the header status chip; `meshery-operator` pod image |
 
 `deploymentMode` is one of `operator` (Meshery Operator installs MeshSync and
@@ -225,15 +225,15 @@ install guard cannot see: a stale handler holding an unresolved version with
 `DeployUndeployedOperators` in an FSM chain would hand to Helm. Do not move that
 clear back up.
 
-`UndeployDeployedOperators` is deliberately **not** gated on the chart error:
-removal is the direction to attempt rather than refuse, since refusing would
-leave the operator running on a cluster the user asked to have it taken off.
-Attempted is all it is, though - meshkit's `ApplyHelmChart` downloads and loads
-the chart archive before dispatching `UNINSTALL` exactly as it does for
-`INSTALL`, from the same repository whose index could not be read, so in the very
-case that motivates not refusing, `Undeploy` fails at chart download, the
-operator stays on the cluster, and the user gets a Helm error. A removal path
-that does not need the archive would have to come from meshkit.
+Explicit removal is deliberately **not** gated on the chart error: removal is
+the direction to attempt rather than refuse, since refusing would leave the
+operator running on a cluster the user asked to have it taken off. Attempted is
+all it is, though - meshkit's `ApplyHelmChart` downloads and loads the chart
+archive before dispatching `UNINSTALL` exactly as it does for `INSTALL`, from the
+same repository whose index could not be read, so in the very case that
+motivates not refusing, `Undeploy` fails at chart download, the operator stays
+on the cluster, and the user gets a Helm error. A removal path that does not
+need the archive would have to come from meshkit.
 
 A missing `MesheryOperator` handler - which means only that the kubeconfig or
 the Kubernetes client failed - is reported through `ErrOperatorHandlerNotAttached`
@@ -247,12 +247,9 @@ not read to the user as one that succeeded. Two things bound that report:
   empty-string key forever - and is documented at its declaration rather than
   fixed here, because assigning it would silently change operator-undeploy
   behavior.
-- Teardown of a connection whose cluster was never reached stays quiet.
-  `UndeployDeployedOperators` reports a missing handler only when the operator
-  status was ever genuinely observed (not the `controllers.Unknown` the
-  constructor seeds), so deleting a connection that never had an operator does
-  not alert about failing to remove one. User-initiated deploy and undeploy are
-  not gated this way - those always report.
+- Teardown never reports a missing handler: `DetachFromCluster` does not act on
+  the operator, so it has nothing to fail at. User-initiated deploy and undeploy
+  always report.
 
 Relatedly, the missing-handler error never overwrites a more specific one:
 `setOperatorErrorIfUnset` records it only when nothing is already recorded. "No
@@ -282,6 +279,55 @@ which is what was wanted.
 `attachedOperatorChartVersion` always records a published version, so comparing
 the raw request against it would differ forever whenever the request is being
 substituted - re-running the Helm upgrade on every reconcile.
+
+### The operator is cluster-scoped
+
+Meshery Operator is one Helm release (`meshery-operator` in `meshery`) per
+cluster, shared by every operator-mode connection that reaches it - several
+kubeconfig contexts, several users of one server, and other Meshery Servers.
+Its lifecycle used to be driven per connection: disconnect, delete and a switch
+to embedded mode each ran `helm uninstall` through `UndeployDeployedOperators`,
+removing the operator from underneath every other connection to that cluster,
+and two connections connecting together raced into `helm install` for the same
+release. The cluster-scoped rules live in `server/models/operator_cluster_lifecycle.go`:
+
+- **Implicit transitions never uninstall.** Disconnect, delete and both
+  deployment-mode switch paths (`reconcileMeshsyncDeploymentMode` and the
+  connection update handler) run `DetachFromCluster`, which calls
+  `ReleaseOperator` - it drops the connection's claim and touches nothing in the
+  cluster - then removes the controller and MeshSync data handlers.
+  `UndeployDeployedOperators` no longer exists; do not reintroduce an implicit
+  `Undeploy`.
+- **The only uninstall is `SetOperatorDeployment(ot, k8sctx, false)`**, reached
+  from the GraphQL `changeOperatorStatus` mutation. It reports its blast radius:
+  when other connections on this server hold a claim on the cluster, it emits a
+  warning event listing them in `affectedConnectionIDs`.
+- **Every Helm action is serialized per cluster.** `DeployUndeployedOperators`,
+  `SetOperatorDeployment` and `ReconcileOperatorChartVersion` take
+  `OperatorTracker.lockOperatorCluster`, and `DeployUndeployedOperators` re-reads
+  the operator's live status once it holds the lock, so a connection that waited
+  behind another's install sees it rather than repeating it. The lock is per
+  cluster, never global, and is always the innermost lock taken (the FSM holds
+  `setupLock` around the connect chain).
+- **Cluster identity** is `operatorClusterKey`: the Kubernetes server ID (the
+  `kube-system` namespace UID), falling back to the API server URL and then the
+  context ID when the ID was never resolved. **Consumer identity** is the
+  connection ID.
+
+Uninstalling when the last consumer leaves was considered and rejected. The
+server can count only its own connections: other Meshery Servers and operators
+installed with Helm or `mesheryctl` are invisible to it, so "the last consumer I
+know of" is not "the last consumer". An in-cluster consumer registry (a
+ConfigMap of consumer IDs) would need leases and heartbeats from every server to
+every cluster, plus write RBAC there, and still could not see out-of-band
+installs - while a mistaken removal is an outage for someone else. Leaving an
+idle operator behind is visible and removable on request.
+
+`OperatorTracker` is the one server-wide instance (`HandlerConfig.OperatorTracker`,
+copied into every `MachineCtx`), which is what makes it the home for this state.
+All of its maps are guarded by `OperatorTracker.mx`; `Undeployed` and
+`IsUndeployed` previously read and wrote theirs unguarded from resolver and FSM
+goroutines.
 
 ### MeshSync
 
@@ -400,7 +446,7 @@ Contributors changing controller behavior must account for them.
 | `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` | Server env / `viper` | Process config | Fallback when no layer and no materialization sets a deployment mode. Logged at boot. |
 | MeshSync deployment mode (wizard) | Connection Wizard -> **MeshSync Mode** step | `controllers_config.operator.deploymentMode` | Reconfigure-time picker. Writes the override through `connections.SetDeploymentModeOverride` via `POST /api/integrations/connections/{id}/actions` (`setMeshsyncMode`). |
 | MeshSync deployment mode (per-context, at import) | Connection Wizard -> kubeconfig context review | Same field, per context | Written only when the user actually picks one; otherwise the connection inherits. |
-| Operator status | GraphQL `changeOperatorStatus` | Cluster state | Deploys/undeploys the operator directly, bypassing the layered document. |
+| Operator status | GraphQL `changeOperatorStatus` | Cluster state | Deploys/undeploys the operator directly, bypassing the layered document. The only path that uninstalls it, for every connection to the cluster. |
 
 ### One store for the deployment mode
 
@@ -439,7 +485,7 @@ when, and only when, no layer sets one.
 
 A server-wide default change is not just a document to re-apply.
 `reconcileInheritedDeploymentMode` persists the refreshed materialization and
-drives the same undeploy/redeploy path the wizard uses, so an inheriting
+drives the same teardown/redeploy path the wizard uses, so an inheriting
 connection actually switches modes on the cluster.
 
 ## API
@@ -469,6 +515,15 @@ Tracked here so they are not rediscovered. Each is a defect, not a design.
    `Skipped[]` list with human-readable reasons. That result only reaches event
    metadata; both editors report "saved" either way, so a save that changed
    nothing on the cluster looks identical to one that changed everything.
+2. **`operator.version` is per connection, but the operator is per cluster.**
+   Two connections to one cluster that resolve different `operator.version`
+   values each run `ReconcileOperatorChartVersion` against the same release, so
+   the last one to reconcile wins and the other's next reconcile flips it back.
+   The Helm actions are serialized, so they no longer collide, but the version
+   is not settled. The fix belongs with the cluster-scoped lifecycle: resolve
+   one desired version per cluster (for example, the highest any consumer asks
+   for) in `OperatorTracker` and reconcile toward that, reporting the
+   conflicting requests on the connections that lost.
 
 ## Test coverage
 
@@ -496,8 +551,17 @@ Unit coverage that exists today:
   user-initiated retry, survives a re-attach that never reached resolution, and
   clears only when resolution actually succeeds; undeploy does not refuse, a
   missing handler is reported by name with its context id rather than passed
-  over, teardown of a never-connected connection stays quiet, and the
-  kubeconfig/client diagnostic survives that teardown).
+  over, teardown never reports an operator failure, and the kubeconfig/client
+  diagnostic survives a missing-handler report).
+- `server/models/operator_cluster_lifecycle_test.go` - the cluster-scoped
+  lifecycle against a fake cluster shared by several connections' handlers:
+  concurrent connects install once with no overlapping Helm actions, the Helm
+  lock is per cluster rather than global, a connection that switches to
+  embedded mode, disconnects or is deleted leaves a shared operator installed,
+  the last consumer leaving leaves it installed too, an explicit removal names
+  the other connections it affected (and stays quiet when there are none), and
+  cluster keys unify one cluster reached through different API server
+  addresses.
 
   These are unit tests and none of them may reach a meshkit `Deploy` or
   `Undeploy`. `reachableK8sContext` yields real meshkit handlers, and meshkit
