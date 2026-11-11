@@ -224,7 +224,7 @@ const notifiedEventTypes = () =>
 
 describe('Environments create flow notifications', () => {
   beforeEach(() => {
-    canSpy.mockReturnValue(true);
+    permissionOverrides.clear();
     notify.mockReset();
     createEnvironment.mockReset();
     updateEnvironment.mockReset();
@@ -315,7 +315,9 @@ describe('Environments search paging', () => {
 describe('Environments permissions and wire query skipping', () => {
   beforeEach(() => {
     permissionOverrides.clear();
-    canSpy.mockClear();
+    canSpy.mockImplementation(
+      (key?: { id?: string }) => permissionOverrides.get(key?.id ?? '') ?? true,
+    );
     getEnvironmentsQuery.mockClear();
     getEnvironmentConnectionsQuery.mockClear();
   });
