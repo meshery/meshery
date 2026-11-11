@@ -2126,6 +2126,15 @@
         "short_description": "Ambiguous ID prefix",
         "probable_cause": "The provided ID prefix is shared by more than one item.",
         "suggested_remediation": "Provide more characters of the ID, or the full ID."
+      },
+      "1257": {
+        "name": "ErrIDLookupIncompleteCode",
+        "code": "1257",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "ID lookup incomplete",
+        "probable_cause": "The server reported more items than mesheryctl could fetch within the page limit.",
+        "suggested_remediation": "Provide the full ID instead of a short prefix, or retry the command."
       }
     }
   }

@@ -3984,6 +3984,23 @@
       "suggestedRemediation": [
         "Provide more characters of the ID, or the full ID."
       ]
+    },
+    {
+      "code": "mesheryctl-1257",
+      "moniker": "ErrIDLookupIncompleteCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1257",
+      "severity": "alert",
+      "shortDescription": "ID lookup incomplete",
+      "probableCause": [
+        "The server reported more items than mesheryctl could fetch within the page limit."
+      ],
+      "suggestedRemediation": [
+        "Provide the full ID instead of a short prefix, or retry the command."
+      ]
     }
   ],
   "schemaVersion": 2

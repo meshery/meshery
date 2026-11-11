@@ -722,7 +722,9 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 			idList = append(idList, id)
 		}
 
-		totalCount, hasTotalCount = parseTotalCount(dat)
+		if count, ok := parseTotalCount(dat); ok {
+			totalCount, hasTotalCount = count, true
+		}
 		if hasTotalCount {
 			if int64(len(idList)) >= totalCount || len(configs) == 0 {
 				break

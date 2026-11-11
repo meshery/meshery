@@ -983,6 +983,39 @@ func TestGetID_DeduplicatesIDs(t *testing.T) {
 	}
 }
 
+func TestGetID_PreservesTotalWhenLaterPageOmitsCount(t *testing.T) {
+	const (
+		id1 = "11111111-0000-4000-8000-000000000001"
+		id2 = "22222222-0000-4000-8000-000000000002"
+	)
+
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		page := r.URL.Query().Get("page")
+		w.Header().Set("Content-Type", "application/json")
+		switch page {
+		case "":
+			_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}],"totalCount":3}`, id1)
+		case "1":
+			_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}]}`, id2)
+		default:
+			_, _ = fmt.Fprintf(w, `{"patterns":[]}`)
+		}
+	}))
+	defer server.Close()
+	setupAuthenticatedContext(t, server.URL)
+
+	_, err := GetID(server.URL, "pattern")
+	if err == nil {
+		t.Fatalf("expected incomplete-lookup error, got nil")
+	}
+	AssertMeshkitErrorsEqual(t, err, ErrIDLookupIncomplete(3, 2))
+	if requests != 3 {
+		t.Errorf("GetID made %d requests, want 3", requests)
+	}
+}
+
 func TestSetOverrideValues(t *testing.T) {
 	testChannel := "testChannel"
 
