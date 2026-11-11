@@ -1320,14 +1320,16 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 	}
 
 	var status controllers.MesheryControllerStatus
+	var present bool
 	var deployErr error
 	ot.withOperatorClusterLock(k8sctx, func() {
 		status = operatorHandler.GetStatus()
-		if status == controllers.NotDeployed {
+		present = status == controllers.Deployed || status == controllers.Deploying
+		if !present {
 			deployErr = operatorHandler.Deploy(false)
 		}
 	})
-	if status != controllers.NotDeployed {
+	if present {
 		mch.ctxOperatorStatus = status
 		return mch
 	}
