@@ -69,9 +69,11 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		machinectx.setupLock.Lock()
 		defer machinectx.setupLock.Unlock()
 		if machinectx.MesheryCtrlsHelper != nil {
-			machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-				UndeployDeployedOperators(machinectx.OperatorTracker, contextID).
-				RemoveCtxControllerHandler(ctx, contextID)
+			if machinectx.OperatorTracker != nil {
+				machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker).
+					UndeployDeployedOperators(machinectx.OperatorTracker, contextID)
+			}
+			machinectx.MesheryCtrlsHelper.RemoveCtxControllerHandler(ctx, contextID)
 
 			machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)
 		}
