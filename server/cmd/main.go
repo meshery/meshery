@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"path"
 	"strings"
+	"syscall"
 	"time"
 
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -515,8 +516,7 @@ func main() {
 
 	port := viper.GetInt("PORT")
 	r := router.NewRouter(ctx, h, port, g, gp)
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
+	shutdown, stopShutdownNotify := notifyShutdown()
 
 	go func() {
 		log.Info("Meshery Server listening on: ", port)
@@ -525,7 +525,11 @@ func main() {
 			os.Exit(1)
 		}
 	}()
-	<-c
+	sig := <-shutdown
+	// Restore default handling, so a second signal during cleanup terminates
+	// the process instead of being swallowed.
+	stopShutdownNotify()
+	log.Info(fmt.Sprintf("Received %s, shutting down Meshery Server gracefully", sig))
 	regManager.Cleanup()
 	log.Info("Doing seeded content cleanup...")
 
@@ -559,4 +563,18 @@ func main() {
 	}
 
 	log.Info("Shutting down Meshery Server...")
+}
+
+// shutdownSignals start a graceful shutdown: Ctrl-C (SIGINT) interactively,
+// and SIGTERM, which is how Kubernetes, Docker and systemd stop a process.
+// Trapping only SIGINT meant every Pod restart killed the server outright, so
+// provider de-registration, session logout and the database close never ran.
+var shutdownSignals = []os.Signal{os.Interrupt, syscall.SIGTERM}
+
+// notifyShutdown returns a channel that receives the first shutdown signal,
+// and the function that stops the trap again.
+func notifyShutdown() (<-chan os.Signal, func()) {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, shutdownSignals...)
+	return c, func() { signal.Stop(c) }
 }
