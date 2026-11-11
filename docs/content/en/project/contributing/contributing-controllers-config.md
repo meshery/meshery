@@ -303,15 +303,15 @@ release. The cluster-scoped rules live in `server/models/operator_cluster_lifecy
   when other connections on this server hold a claim on the cluster, it emits a
   warning event listing them in `affectedConnectionIDs`.
 - **Every Helm action is serialized per cluster.** `DeployUndeployedOperators`,
-  `SetOperatorDeployment` and `ReconcileOperatorChartVersion` take
-  `OperatorTracker.lockOperatorCluster`, and `DeployUndeployedOperators` re-reads
-  the operator's live status once it holds the lock, so a connection that waited
-  behind another's install sees it rather than repeating it. The lock is per
-  cluster, never global, and is always the innermost lock taken (the FSM holds
-  `setupLock` around the connect chain): `withOperatorClusterLock` wraps only
-  the Helm calls, and
-  consumer lookups, logging and event emission happen before or after it, never
-  under it.
+  `SetOperatorDeployment` and `ReconcileOperatorChartVersion` run their Helm
+  calls through `OperatorTracker.withOperatorClusterLock`, and
+  `DeployUndeployedOperators` re-reads the operator's live status inside it, so
+  a connection that waited behind another's install sees it rather than
+  repeating it. The lock is per cluster, never global, and is always the
+  innermost lock taken (the FSM holds `setupLock` around the connect chain):
+  `withOperatorClusterLock` wraps only the Helm calls and releases the lock even
+  if one panics, and consumer lookups, logging and event emission happen before
+  or after it, never under it.
 - **Cluster identity** is a set of aliases, `operatorClusterKeys`: the
   Kubernetes server ID (the `kube-system` namespace UID) when the context
   carries one, and the API server URL when it names one, falling back to the
