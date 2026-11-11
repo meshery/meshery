@@ -2,13 +2,19 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshkit/database"
+	policyv1beta1 "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/category"
@@ -16,6 +22,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	modelv1beta2 "github.com/meshery/schemas/models/v1beta2/model"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	v1beta3comp "github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/stretchr/testify/assert"
@@ -903,7 +910,6 @@ func TestBuildPolicyEvaluationEventMetadata_NilTimestamp(t *testing.T) {
 	assert.Equal(t, 0, metadata["relationshipsAdded"])
 }
 
-
 func seedAnnotationComponent(t *testing.T, rm *registry.RegistryManager) {
 	t.Helper()
 	conn := connection.Connection{
@@ -1002,4 +1008,119 @@ func TestProcessEvaluationResponse_PreservesRegistryAnnotationClassification(t *
 
 	// 2. Genuine annotation component Comment must preserve IsAnnotation=true from registry
 	assert.True(t, byID[commentID].Metadata.IsAnnotation, "Annotation component Comment must preserve IsAnnotation=true from registry")
+}
+
+func seedTestPolicies(t *testing.T, rm *registry.RegistryManager) {
+	t.Helper()
+
+	conn := connection.Connection{
+		Name:    "test-policy-registrant",
+		Kind:    "kubernetes",
+		Type:    "platform",
+		SubType: "orchestration",
+		Status:  connection.ConnectionStatusConnected,
+	}
+
+	host := registry.RegistrantHostToV1beta3(conn)
+
+	for _, version := range []string{"v1", "v2"} {
+		policy := policyv1beta1.PolicyDefinition{
+			Kind:    "TestPolicy",
+			Version: version,
+			Model: modelv1beta2.ModelDefinition{
+				Name:          "test-policy-model",
+				DisplayName:   "Test Policy Model",
+				SchemaVersion: "models.meshery.io/v1beta1",
+				Version:       "1.0.0",
+				Model:         modelv1beta2.Model{Version: "1.0.0"},
+				Category:      category.CategoryDefinition{Name: "Orchestration"},
+				Status:        modelv1beta2.Enabled,
+			},
+		}
+
+		_, _, err := rm.RegisterEntity(host, &policy)
+		require.NoError(t, err, "failed to register test policy")
+	}
+}
+
+func TestGetAllMeshmodelPoliciesPagination(t *testing.T) {
+	tests := []struct {
+		name    string
+		handler func(*Handler, http.ResponseWriter, *http.Request)
+		vars    map[string]string
+	}{
+		{
+			name:    "all policies",
+			handler: (*Handler).GetAllMeshmodelPolicies,
+			vars:    map[string]string{"model": "test-policy-model"},
+		},
+		{
+			name:    "policies by name",
+			handler: (*Handler).GetAllMeshmodelPoliciesByName,
+			vars: map[string]string{
+				"model": "test-policy-model",
+				"name":  "TestPolicy",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rm, _ := newTestRegistryManager(t)
+			seedTestPolicies(t, rm)
+
+			h := &Handler{
+				registryManager: rm,
+				log:             newTestLogger(t),
+			}
+
+			request := func(page int) struct {
+				Page       int               `json:"page"`
+				PageSize   int               `json:"pageSize"`
+				TotalCount int64             `json:"totalCount"`
+				Policies   []json.RawMessage `json:"policies"`
+			} {
+				req := httptest.NewRequest(
+					http.MethodGet,
+					fmt.Sprintf("/?page=%d&pageSize=1", page),
+					nil,
+				)
+				req = mux.SetURLVars(req, tt.vars)
+
+				recorder := httptest.NewRecorder()
+				tt.handler(h, recorder, req)
+
+				require.Equal(t, http.StatusOK, recorder.Code)
+
+				var response struct {
+					Page       int               `json:"page"`
+					PageSize   int               `json:"pageSize"`
+					TotalCount int64             `json:"totalCount"`
+					Policies   []json.RawMessage `json:"policies"`
+				}
+
+				require.NoError(t, json.Unmarshal(recorder.Body.Bytes(), &response))
+				return response
+			}
+
+			firstPage := request(0)
+			secondPage := request(1)
+
+			assert.Equal(t, 0, firstPage.Page)
+			assert.Equal(t, 1, firstPage.PageSize)
+			assert.Equal(t, int64(2), firstPage.TotalCount)
+			require.Len(t, firstPage.Policies, 1)
+
+			assert.Equal(t, 1, secondPage.Page)
+			assert.Equal(t, 1, secondPage.PageSize)
+			assert.Equal(t, int64(2), secondPage.TotalCount)
+			require.Len(t, secondPage.Policies, 1)
+
+			assert.NotEqual(
+				t,
+				string(firstPage.Policies[0]),
+				string(secondPage.Policies[0]),
+			)
+		})
+	}
 }
