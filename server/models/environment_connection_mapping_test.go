@@ -411,8 +411,13 @@ func TestGetEnvironmentConnectionsFilterSafeStringParsing(t *testing.T) {
 		if page.TotalCount != tc.wantCount {
 			t.Errorf("filter %q TotalCount = %d, want %d", tc.filter, page.TotalCount, tc.wantCount)
 		}
-		if tc.shouldCheckID && len(page.Connections) > 0 && page.Connections[0].ID != tc.wantConnID {
-			t.Errorf("filter %q returned connection ID %s, want %s", tc.filter, page.Connections[0].ID, tc.wantConnID)
+		if tc.shouldCheckID {
+			if len(page.Connections) != tc.wantCount {
+				t.Fatalf("filter %q returned %d connections in page, want %d", tc.filter, len(page.Connections), tc.wantCount)
+			}
+			if len(page.Connections) > 0 && page.Connections[0].ID != tc.wantConnID {
+				t.Errorf("filter %q returned connection ID %s, want %s", tc.filter, page.Connections[0].ID, tc.wantConnID)
+			}
 		}
 	}
 }

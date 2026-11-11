@@ -252,16 +252,22 @@ func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connec
 	if found.RowsAffected > 0 {
 		if existing.DeletedAt.Valid {
 			now := time.Now()
-			if err := ep.DB.Model(&existing).Updates(map[string]interface{}{
+			res := ep.DB.Model(&existing).Updates(map[string]interface{}{
 				"deleted_at": nil,
 				"updated_at": now,
-			}).Error; err != nil {
-				return nil, ErrDBCreate(err)
+			})
+			if res.Error != nil {
+				return nil, ErrDBCreate(res.Error)
 			}
-			existing.DeletedAt = core.NullTime{}
-			existing.UpdatedAt = core.Time(now)
+			if res.RowsAffected > 0 {
+				existing.DeletedAt = core.NullTime{}
+				existing.UpdatedAt = core.Time(now)
+				return json.Marshal(existing)
+			}
+			// If RowsAffected == 0, the row was deleted concurrently; fall through to create a new mapping.
+		} else {
+			return json.Marshal(existing)
 		}
-		return json.Marshal(existing)
 	}
 
 	envConMapping := environment.EnvironmentConnectionMapping{
