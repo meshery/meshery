@@ -57,7 +57,21 @@ mesheryctl design apply -f [file | URL]
 mesheryctl design apply [design-name]
 	`,
 	Annotations: linkDocPatternApply,
-	Args:        cobra.MinimumNArgs(0),
+	Args: func(cmd *cobra.Command, args []string) error {
+		if cmd.Flags().Changed("file") && strings.TrimSpace(file) == "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("file path cannot be empty"))
+		}
+		hasDesignName := strings.TrimSpace(strings.Join(args, " ")) != ""
+		hasFile := strings.TrimSpace(file) != ""
+
+		if !hasDesignName && !hasFile {
+			return utils.ErrInvalidArgument(fmt.Errorf("please provide a design name or specify a file using --file"))
+		}
+		if len(args) > 0 && hasFile {
+			return utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a design name and the --file flag"))
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

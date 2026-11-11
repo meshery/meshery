@@ -1200,6 +1200,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 
 	return *connection, nil
 }
+
 func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*core.Uuid)
 	if !ok {
@@ -1260,8 +1261,14 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 			for _, c := range cp.Connections {
 				ctx, err := K8sContextFromConnection(Provider(l), token, c)
 				if err != nil {
-					l.Log.Error(err)
-					continue
+					if c == nil {
+						return nil, fmt.Errorf("failed to convert remote Kubernetes connection: %w", err)
+					}
+					return nil, fmt.Errorf(
+						"failed to convert remote Kubernetes connection %q: %w",
+						c.Name,
+						err,
+					)
 				}
 				contexts = append(contexts, &ctx)
 			}
