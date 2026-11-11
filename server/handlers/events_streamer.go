@@ -49,6 +49,14 @@ type statusIDs struct {
 }
 
 func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 	userID := user.ID
 	page, offset, limit,
 		search, order, sortOnCol, status := getPaginationParams(req)
@@ -67,7 +75,12 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	ctx := req.Context()
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-	e, err := provider.GetEvents(token, filter, page, userID, *h.SystemID)
+	var sysID core.Uuid
+	if h.SystemID != nil {
+		sysID = *h.SystemID
+	}
+
+	e, err := provider.GetEvents(token, filter, page, userID, sysID)
 
 	if err != nil || e == nil {
 		h.log.Error(ErrGetEvents(err))
@@ -109,9 +122,23 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 }
 
 func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 	userID := user.ID
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	eventTypes, err := provider.GetEventTypes(token, userID, *h.SystemID)
+
+	var sysID core.Uuid
+	if h.SystemID != nil {
+		sysID = *h.SystemID
+	}
+
+	eventTypes, err := provider.GetEventTypes(token, userID, sysID)
 
 	if err != nil {
 		retrieveErr := ErrRetrieveEventTypes(err)
@@ -133,6 +160,10 @@ func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefOb
 }
 
 func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 
@@ -148,9 +179,14 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 		return
 	}
 
-	_ = json.Unmarshal(body, &reqBody)
+	if err = json.Unmarshal(body, &reqBody); err != nil {
+		_err := models.ErrUnmarshal(err, "event request body")
+		h.log.Error(_err)
+		writeMeshkitError(w, _err, http.StatusBadRequest)
+		return
+	}
 	status, ok := reqBody["status"].(string)
-	if !ok {
+	if !ok || status == "" {
 		// Missing/non-string status field is a client-side payload issue.
 		statusErr := ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String())
 		h.log.Error(statusErr)
@@ -168,6 +204,10 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 }
 
 func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 
 	defer func() {
 		_ = req.Body.Close()
@@ -182,7 +222,18 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	_ = json.Unmarshal(body, &reqBody)
+	if err = json.Unmarshal(body, &reqBody); err != nil {
+		_err := models.ErrUnmarshal(err, "bulk update event status")
+		h.log.Error(_err)
+		writeMeshkitError(w, _err, http.StatusBadRequest)
+		return
+	}
+	if len(reqBody.StatusIDs) == 0 || reqBody.Status == "" {
+		_err := models.ErrInvalidEventData()
+		h.log.Error(_err)
+		writeMeshkitError(w, _err, http.StatusBadRequest)
+		return
+	}
 	err = provider.BulkUpdateEventStatus(token, reqBody.StatusIDs, reqBody.Status)
 	if err != nil {
 		_err := ErrBulkUpdateEvent(err)
@@ -194,6 +245,11 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 }
 
 func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+
 	defer func() {
 		_ = req.Body.Close()
 	}()
@@ -207,7 +263,18 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 		return
 	}
 
-	_ = json.Unmarshal(body, &reqBody)
+	if err = json.Unmarshal(body, &reqBody); err != nil {
+		_err := models.ErrUnmarshal(err, "bulk delete event")
+		h.log.Error(_err)
+		writeMeshkitError(w, _err, http.StatusBadRequest)
+		return
+	}
+	if len(reqBody.IDs) == 0 {
+		_err := models.ErrInvalidEventData()
+		h.log.Error(_err)
+		writeMeshkitError(w, _err, http.StatusBadRequest)
+		return
+	}
 	err = provider.BulkDeleteEvent(token, reqBody.IDs)
 	if err != nil {
 		_err := ErrBulkDeleteEvent(err)
@@ -218,6 +285,10 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 }
 
 func (h *Handler) DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	err := provider.DeleteEvent(token, eventID)
@@ -535,6 +606,14 @@ func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapter
 }
 
 func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 	userID := user.ID
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
@@ -569,7 +648,12 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 
-	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).
+	var sysID core.Uuid
+	if h.SystemID != nil {
+		sysID = *h.SystemID
+	}
+
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(sysID).
 		WithCategory(evt.Category).WithAction(evt.Action).WithSeverity(events.EventSeverity(evt.Severity)).
 		WithDescription(evt.Description).WithMetadata(evt.Metadata).ActedUpon(evt.ActedUpon)
 
@@ -596,7 +680,9 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		w.WriteHeader(createEventStatus(persisted.Disposition))
 		return
 	}
-	go h.config.EventBroadcaster.Publish(userID, persisted.Event)
+	if h.config != nil && h.config.EventBroadcaster != nil {
+		go h.config.EventBroadcaster.Publish(userID, persisted.Event)
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(createEventStatus(persisted.Disposition))
