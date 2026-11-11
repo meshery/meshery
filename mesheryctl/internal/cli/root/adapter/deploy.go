@@ -68,7 +68,7 @@ mesheryctl adapter deploy linkerd --watch
 			}
 			s := utils.CreateDefaultSpinner(fmt.Sprintf("Deploying %s", meshName), fmt.Sprintf("\n%s infrastructure deployed", meshName))
 			s.Start()
-			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), false, "null")
+			response, err := sendOperationRequest(mctlCfg, strings.ToLower(meshName), false, "null")
 			if err != nil {
 				s.Stop()
 				return err
@@ -77,7 +77,7 @@ mesheryctl adapter deploy linkerd --watch
 
 			if watch {
 				utils.Log.Info("Verifying Operation")
-				_, err = waitForDeployResponse(mctlCfg, "mesh is now installed")
+				_, err = waitForDeployResponse(mctlCfg, "mesh is now installed", operationIDFromResponse(response))
 				if err != nil {
 					return err
 				}

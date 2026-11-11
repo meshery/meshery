@@ -6,11 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
-	"strings"
 	"time"
 
 	"github.com/meshery/meshery/server/models"
@@ -134,13 +134,13 @@ func stringFromPtr(p *string) string {
 }
 
 func getFileNameFromResponse(resp *http.Response, fileURL string) string {
-	// Check Content-Disposition header
-	contentDisp := resp.Header.Get("Content-Disposition")
-	if contentDisp != "" {
-		parts := strings.Split(contentDisp, "filename=")
-		if len(parts) > 1 {
-			filename := strings.Trim(parts[1], `"`)
-			return filename
+	// Content-Disposition can carry more than the name: other parameters, or
+	// a filename* form next to filename (RFC 6266, section 4.3).
+	// ParseMediaType returns the filename parameter on its own, decoding
+	// filename* into it when present.
+	if contentDisp := resp.Header.Get("Content-Disposition"); contentDisp != "" {
+		if _, params, err := mime.ParseMediaType(contentDisp); err == nil && params["filename"] != "" {
+			return params["filename"]
 		}
 	}
 
@@ -247,8 +247,7 @@ func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider mode
 			"error": ErrRetrieveUserToken(err),
 		}).WithDescription("No auth token provided in the request.").Build()
 
-		_ = provider.PersistEvent(*event, "")
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, "", userID, event)
 	}
 
 }
@@ -263,8 +262,7 @@ func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider mo
 			"error": ErrRequestBody(err),
 		}).WithDescription("Unable to parse request body").Build()
 
-		_ = provider.PersistEvent(*event, "")
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, "", userID, event)
 	}
 }
 
@@ -321,8 +319,7 @@ func (h *Handler) DesignFileImportHandler(
 		h.log.Error(fmt.Errorf("resolve import variant: %w", err))
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, variant, err)
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 		return
 	}
 
@@ -340,8 +337,7 @@ func (h *Handler) DesignFileImportHandler(
 		h.log.Error(fmt.Errorf("conversion: failed to convert to design %w", err))
 		writeMeshkitError(rw, wrappedErr, http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, variant, wrappedErr)
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 		return
 	}
 
@@ -368,8 +364,7 @@ func (h *Handler) DesignFileImportHandler(
 			"error": ErrSavePattern(err),
 		}).WithDescription(ErrSavePattern(err).Error()).Build()
 
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 		return
 	}
 
@@ -393,7 +388,6 @@ func (h *Handler) DesignFileImportHandler(
 	_, _ = rw.Write(savedDesignByt)
 
 	event := eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Imported design '%s' of type '%s'", design.Name, sourceFileType)).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 
 }

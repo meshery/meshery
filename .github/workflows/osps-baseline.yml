@@ -1,25 +1,45 @@
-name: OSPS Baseline Scan
+name: OSPS Baseline
 
-on: [workflow_dispatch]
+on:
+  schedule:
+    - cron: "0 9 * * 0" # Weekly, Sundays 09:00 UTC
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 jobs:
-  scan:
+  assess:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write # Upload failed controls to the Security tab
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - name: Pull the pvtr-github-repo image
-        run: docker pull eddieknight/pvtr-github-repo:latest
+      - name: OSPS Baseline scan
+        uses: revanite-io/osps-baseline-action@1af7ff8b44af83f120b20cc5f63b877286849257 # v1.5.2
+        with:
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          catalog: "osps-baseline-2026-08"
+          upload-sarif: "true"
+          fail-on-error: "true"
 
-      - name: Add GitHub Secret to config file so it is protected in outputs
-        run: |
-          sed -i 's/{{ GH_ACCESS_TOKEN }}/${{ secrets.GH_ACCESS_TOKEN }}/g' ${{ github.workspace }}/.github/pvtr-config.yml
-
-      - name: Scan all repos specified in .github/pvtr-config.yml
-        run: |
-          docker run --rm \
-            -v ${{ github.workspace }}/.github/pvtr-config.yml:/.privateer/config.yml \
-            -v ${{ github.workspace }}/docker_output:/evaluation_results \
-            eddieknight/pvtr-github-repo:latest
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: osps-baseline-results-${{ github.run_number }}
+          path: evaluation_results/
+          retention-days: 30

@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"strconv"
 	"strings"
 	"time"
@@ -13,6 +14,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta3/environment"
+	schemasWorkspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"gorm.io/gorm"
 )
 
@@ -120,20 +122,38 @@ func (ep *EnvironmentPersister) SaveEnvironment(environment *environment.Environ
 	return envJSON, nil
 }
 
-func (ep *EnvironmentPersister) DeleteEnvironment(environment *environment.Environment) ([]byte, error) {
-	err := ep.DB.Model(&environment).Find(&environment).Error
+// DeleteEnvironment deletes an environment and cleans up its connection and workspace mappings.
+func (ep *EnvironmentPersister) DeleteEnvironment(env *environment.Environment) ([]byte, error) {
+	var existing environment.Environment
+	err := ep.DB.Where("id = ?", env.ID).First(&existing).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, ErrResultNotFound(err)
 		}
+		return nil, ErrDBRead(err)
 	}
-	err = ep.DB.Delete(environment).Error
+	err = ep.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Delete(env).Error; err != nil {
+			return err
+		}
+		if tx.Migrator().HasTable(&environment.EnvironmentConnectionMapping{}) {
+			if err := tx.Where("environment_id = ?", env.ID).Delete(&environment.EnvironmentConnectionMapping{}).Error; err != nil {
+				return err
+			}
+		}
+		if tx.Migrator().HasTable(&schemasWorkspace.WorkspacesEnvironmentsMapping{}) {
+			if err := tx.Where("environment_id = ?", env.ID).Delete(&schemasWorkspace.WorkspacesEnvironmentsMapping{}).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
 	}
 
 	// Marshal the environment to JSON
-	envJSON, err := json.Marshal(environment)
+	envJSON, err := json.Marshal(env)
 	if err != nil {
 		return nil, err
 	}
@@ -202,8 +222,18 @@ func (ep *EnvironmentPersister) DeleteEnvironmentByID(environmentID core.Uuid) (
 	return ep.DeleteEnvironment(env)
 }
 
-// AddConnectionToEnvironment adds a connection to an environment
+// AddConnectionToEnvironment adds a connection to an environment. Adding one the
+// environment already has returns the existing mapping instead of a second row.
 func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connectionID core.Uuid) ([]byte, error) {
+	var existing environment.EnvironmentConnectionMapping
+	found := ep.DB.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).Limit(1).Find(&existing)
+	if found.Error != nil {
+		return nil, ErrDBRead(found.Error)
+	}
+	if found.RowsAffected > 0 {
+		return json.Marshal(existing)
+	}
+
 	envConMapping := environment.EnvironmentConnectionMapping{
 		ConnectionID:  &connectionID,
 		EnvironmentID: &environmentID,
@@ -313,21 +343,31 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 	return connsJSON, nil
 }
 
-// DeleteConnectionFromEnvironment deletes a connection from an environment
+// DeleteConnectionFromEnvironment deletes a connection from an environment.
+// Every mapping of the pair is deleted in a single transaction, including
+// duplicates stored before assignments were checked.
 func (ep *EnvironmentPersister) DeleteConnectionFromEnvironment(environmentID, connectionID core.Uuid) ([]byte, error) {
 	var envConMapping environment.EnvironmentConnectionMapping
 
-	// Find the specific connection mapping
-	if err := ep.DB.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).First(&envConMapping).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, ErrResultNotFound(err)
+	err := ep.DB.Transaction(func(tx *gorm.DB) error {
+		// Find the specific connection mapping
+		if err := tx.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).First(&envConMapping).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return ErrResultNotFound(err)
+			}
+			return ErrDBRead(err)
 		}
-		return nil, ErrDBRead(err)
-	}
 
-	// Delete the connection mapping
-	if err := ep.DB.Delete(&envConMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
+		// Delete every mapping of the pair, including duplicates stored before
+		// assignments were checked.
+		if err := tx.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).Delete(&environment.EnvironmentConnectionMapping{}).Error; err != nil {
+			return ErrDBDelete(err, ep.fetchUserDetails().ID.String())
+		}
+
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	envJSON, err := json.Marshal(envConMapping)

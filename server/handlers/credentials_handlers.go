@@ -50,7 +50,14 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 }
 
 func (h *Handler) GetUserCredentialByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	credentialID := uuid.FromStringOrNil(mux.Vars(req)["credentialID"])
+	raw := mux.Vars(req)["credentialID"]
+	credentialID, err := uuid.FromString(raw)
+	if err != nil || credentialID.IsNil() {
+		invalidID := models.ErrInvalidUUID(fmt.Errorf("credentialID must be a valid UUID"))
+		h.log.Error(invalidID)
+		writeMeshkitError(w, invalidID, http.StatusBadRequest)
+		return
+	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	credential, statusCode, err := provider.GetCredentialByID(token, credentialID)
 	if err != nil {
@@ -159,7 +166,7 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
 		// Built once and reused: constructing the error separately for the log
 		// and the response duplicates the message, which is how the two drift
 		// apart when only one is later edited.
-		invalidID := ErrInvalidRequestObject("credentialId must be a valid UUID")
+		invalidID := models.ErrInvalidUUID(fmt.Errorf("credentialId must be a valid UUID"))
 		h.log.Error(invalidID)
 		writeMeshkitError(w, invalidID, http.StatusBadRequest)
 		return

@@ -71,7 +71,7 @@ var purgeCmd = &cobra.Command{
 Prerequisite: Execute this command from the root of a meshery/meshery repo fork; it operates on the "./models" directory relative to the current working directory.
 
 The "kubernetes" and "meshery-core" models are always excluded from purging, regardless of flags. Use --exclude to skip additional models.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/registry/purge`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/purge`,
 	Example: `
 // Retain only the latest version of every model (default).
 mesheryctl registry purge
@@ -128,7 +128,10 @@ mesheryctl registry purge --retain 2 -y
 
 		userResponse := utils.SilentFlag
 		if !userResponse {
-			userResponse = utils.AskForConfirmation(fmt.Sprintf("This will permanently delete %s under %s. Are you sure you want to continue", pluralize(plan.totalToRemove(), "model version directory", "model version directories"), modelsDir))
+			userResponse, err = utils.AskForConfirmation(fmt.Sprintf("This will permanently delete %s under %s. Are you sure you want to continue", pluralize(plan.totalToRemove(), "model version directory", "model version directories"), modelsDir))
+			if err != nil {
+				return err
+			}
 		}
 		if !userResponse {
 			utils.Log.Info("Purge aborted.")

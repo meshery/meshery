@@ -32,7 +32,7 @@ var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete Meshery containers",
 	Long: `Delete Meshery containers. This command removes all Meshery containers created by docker-compose.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/delete`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/delete`,
 	Example: `
 // Delete Meshery containers
 mesheryctl system delete
@@ -96,7 +96,10 @@ func deleteContainers() error {
 		if utils.SilentFlag {
 			userResponse = true
 		} else {
-			userResponse = utils.AskForConfirmation("Meshery containers will be deleted. Are you sure you want to continue")
+			userResponse, err = utils.AskForConfirmation("Meshery containers will be deleted. Are you sure you want to continue")
+			if err != nil {
+				return err
+			}
 		}
 
 		if !userResponse {

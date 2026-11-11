@@ -268,7 +268,7 @@ func main() {
 		EnvironmentPersister:            &models.EnvironmentPersister{DB: dbHandler},
 		WorkspacePersister:              &models.WorkspacePersister{DB: dbHandler},
 		KeyPersister:                    &models.KeyPersister{DB: dbHandler},
-		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
+		EventsPersister:                 &models.EventsPersister{DB: dbHandler, Log: log},
 		GenericPersister:                dbHandler,
 		Log:                             log,
 		MeshsyncDefaultDeploymentMode:   meshsyncDefaultDeploymentMode,
@@ -299,7 +299,7 @@ func main() {
 		// This is the same database handler every provider's own
 		// EventsPersister wraps, so the events land in the same table either
 		// way.
-		SystemEventPersister: &models.EventsPersister{DB: dbHandler},
+		SystemEventPersister: &models.EventsPersister{DB: dbHandler, Log: log},
 
 		K8scontextChannel: models.NewContextHelper(),
 		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
@@ -367,7 +367,7 @@ func main() {
 			ProviderVersion:               version,
 			SmiResultPersister:            &models.SMIResultsPersister{DB: dbHandler},
 			GenericPersister:              dbHandler,
-			EventsPersister:               &models.EventsPersister{DB: dbHandler},
+			EventsPersister:               &models.EventsPersister{DB: dbHandler, Log: log},
 			Log:                           log,
 			CookieDuration:                24 * time.Hour,
 			MeshsyncDefaultDeploymentMode: meshsyncDefaultDeploymentMode,

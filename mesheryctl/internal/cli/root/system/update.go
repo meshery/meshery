@@ -37,7 +37,7 @@ var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Pull new Meshery images/manifest files.",
 	Long: `Pull new Meshery container images and manifests from artifact repository.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/update`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/update`,
 	Example: `
 // Pull new Meshery images from Docker Hub. This does not update mesheryctl. This command may be executed while Meshery is running.
 mesheryctl system update
@@ -92,7 +92,10 @@ mesheryctl system update --skip-reset
 			if utils.SilentFlag {
 				userResponse = true
 			} else {
-				userResponse = utils.AskForConfirmation("Updating Meshery container images/manifest files will supersede the version to latest. Are you sure you want to continue")
+				userResponse, err = utils.AskForConfirmation("Updating Meshery container images/manifest files will supersede the version to latest. Are you sure you want to continue")
+				if err != nil {
+					return err
+				}
 			}
 
 			if !userResponse {

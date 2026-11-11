@@ -299,9 +299,17 @@ describe('getSharableCommonHostAndprotocolLink', () => {
     );
   });
 
-  it('returns an extension/meshmap link with filter id for filter_resource', () => {
-    expect(getSharableCommonHostAndprotocolLink({ filter_resource: 'foo', id: 'f-1' })).toBe(
+  it('returns an extension/meshmap link with filter id for filterResource resources', () => {
+    expect(getSharableCommonHostAndprotocolLink({ filterResource: '{}', id: 'f-1' })).toBe(
       'http://localhost:9081/extension/meshmap?filter=f-1',
+    );
+  });
+
+  // Filters saved without a configuration carry an empty filterResource; they
+  // are still filters and need a share link.
+  it('returns a filter link when filterResource is empty', () => {
+    expect(getSharableCommonHostAndprotocolLink({ filterResource: '', id: 'f-2' })).toBe(
+      'http://localhost:9081/extension/meshmap?filter=f-2',
     );
   });
 

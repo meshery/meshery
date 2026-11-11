@@ -65,7 +65,7 @@ var createTokenCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a token in your meshconfig",
 	Long: `Create the token with provided token name (optionally token path) to your meshconfig tokens.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/token/create`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/token/create`,
 	Example: `
 mesheryctl system token create [token-name] -f [token-path]
 mesheryctl system token create [token-name] (default path is auth.json)
@@ -158,14 +158,12 @@ mesheryctl system token list
 		viper.SetConfigFile(configPath)
 		err := viper.ReadInConfig()
 		if err != nil {
-			utils.Log.Error(utils.ErrReadConfigFile(err))
-			return nil
+			return utils.ErrReadConfigFile(err)
 		}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		utils.Log.Info("Available tokens: ")
 		for _, t := range *mctlCfg.GetTokens() {
@@ -174,14 +172,31 @@ mesheryctl system token list
 		return nil
 	},
 }
+var viewTokenUsageMsg = "Usage: mesheryctl system token view [token-name]\nRun 'mesheryctl system token view --help' to see detailed help message"
+
 var viewTokenCmd = &cobra.Command{
-	Use:   "view",
+	Use:   "view [token-name]",
 	Short: "View token",
 	Long:  "View a specific token in meshery config",
 	Example: `
+// View a specific token
 mesheryctl system token view [token-name]
-mesheryctl system token view (show token of current context)
+
+// View token of current context
+mesheryctl system token view
+
+// View all available tokens
+mesheryctl system token view --all
 	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", viewTokenUsageMsg))
+		}
+		if len(args) > 0 && viewAllTokens {
+			return utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a token name and --all flag\n\n%s", viewTokenUsageMsg))
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		configPath := utils.GetActiveConfigPath()
 		if _, err := os.Stat(configPath); os.IsNotExist(err) {
@@ -191,14 +206,12 @@ mesheryctl system token view (show token of current context)
 		viper.SetConfigFile(configPath)
 		err := viper.ReadInConfig()
 		if err != nil {
-			utils.Log.Error(utils.ErrReadConfigFile(err))
-			return nil
+			return utils.ErrReadConfigFile(err)
 		}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		if viewAllTokens {
 			utils.Log.Info("Listing all available tokens...\n")
@@ -212,8 +225,7 @@ mesheryctl system token view (show token of current context)
 		if len(args) == 0 {
 			token, err := mctlCfg.GetTokenForContext(viper.GetString("current-context"))
 			if err != nil {
-				utils.Log.Error(ErrTokenContext(err))
-				return nil
+				return ErrTokenContext(err)
 			}
 			utils.Log.Warnf("Token unspecified. Displaying token for current context \"%s\"\n", viper.GetString("current-context"))
 			utils.Log.Info("token: ", token.Name)
@@ -230,6 +242,10 @@ mesheryctl system token view (show token of current context)
 			}
 			// Collecting token names in case the provided token name is invalid and a prompt is to be shown.
 			tokenNames = append(tokenNames, t.Name)
+		}
+
+		if len(tokenNames) == 0 || utils.SilentFlag {
+			return fmt.Errorf("token %q not found in config", tokenName)
 		}
 
 		utils.Log.Info("Invalid token name. Select from available tokens-")

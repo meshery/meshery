@@ -6,14 +6,14 @@ aliases:
 - /reference/meshery-server-environment-variables
 ---
 
-Meshery Server loads configuration from `server/cmd/server-config.env` and from process environment variables via Viper (`viper.AutomaticEnv()`).
+Meshery Server loads its configuration from `server/cmd/server-config.env` and from process environment variables, which it reads through Viper (`viper.AutomaticEnv()`).
 
 This page documents:
 
-- environment variables operators intentionally set for local, Docker, and Kubernetes deployments.
-- runtime variables that Meshery reads from the platform when they are present.
+- Environment variables that operators set for local, Docker, and Kubernetes deployments.
+- Runtime variables that Meshery reads from the platform when they are present.
 
-It intentionally excludes test-only variables such as `RUN_INTEGRATION_TESTS` and `PATH_TO_SQL_FILE`, and internal-only keys that Meshery sets for itself during startup.
+It leaves out test-only variables, such as `RUN_INTEGRATION_TESTS` and `PATH_TO_SQL_FILE`, and internal keys that Meshery sets for itself during startup.
 
 ## Core server configuration
 
@@ -25,7 +25,7 @@ It intentionally excludes test-only variables such as `RUN_INTEGRATION_TESTS` an
 | `ADAPTER_URLS` | unset | Space- or comma-separated list of Meshery Adapter endpoints to pre-register at startup. | `ADAPTER_URLS='localhost:10000 localhost:10001' make server-local` |
 | `USER_DATA_FOLDER` | `$HOME/.meshery/config` | Directory used for Meshery Server state, including the SQLite database. | `USER_DATA_FOLDER=$HOME/.meshery-dev/config make server` |
 | `KUBECONFIG_FOLDER` | `$HOME/.kube` | Directory from which Meshery reads Kubernetes configuration files. | `KUBECONFIG_FOLDER=/home/appuser/.kube docker compose up meshery` |
-| `KEYS_PATH` | unset | Path to a CSV file whose rows are seeded into the keys store at startup and after database reset. | `KEYS_PATH=/home/appuser/.meshery/keys.csv make server` |
+| `KEYS_PATH` | unset (the Meshery Server image sets `/app/server/permissions/keys.csv`) | Path to a CSV file of permission keys that Meshery seeds into its keys store at startup and after a database reset. | `KEYS_PATH=/home/appuser/.meshery/keys.csv make server` |
 | `OTEL_CONFIG` | unset | Inline YAML configuration for OpenTelemetry tracing. When unset, tracing is disabled. | `OTEL_CONFIG=$'service_name: meshery-server\nservice_version: 1.0.0\nendpoint: localhost:4317\ninsecure: true' make server-local` |
 
 `LOG_LEVEL` values are `0=panic`, `1=fatal`, `2=error`, `3=warn`, `4=info`, `5=debug`, and `6=trace`.
@@ -51,8 +51,9 @@ https://cloud.meshery.io,https://perf.smp-spec.io,https://cloud.layer5.io,https:
 ```
 
 The Helm chart and the Docker Compose file ship this same list. If you pin
-`PROVIDER`, its provider's base URL must be present here or the server will not
-be able to resolve it at startup.
+`PROVIDER` to a Remote Provider, include that provider's base URL in this list,
+or the server cannot resolve the provider at startup and refuses to start. The
+built-in `Local` provider (legacy alias `None`) needs no base URL.
 
 ## Feature flags and runtime behavior
 
@@ -63,11 +64,11 @@ be able to resolve it at startup.
 | `SKIP_DOWNLOAD_CONTENT` | `false` | Skips downloading bundled seed content such as patterns and filters before loading local content. | `SKIP_DOWNLOAD_CONTENT=true make server` |
 | `SKIP_COMP_GEN` | `false` | Skips background Kubernetes component generation during startup. Explicit API-triggered registration can still run. | `SKIP_COMP_GEN=true make server` |
 | `POLICY_EVAL_TIMEOUT` | `3m` | Maximum duration for a single relationship-policy evaluation. Uses Go duration syntax. | `POLICY_EVAL_TIMEOUT=5m make server` |
-| `USE_GO_POLICY_ENGINE` | `true` | Uses the Go relationship-policy engine instead of the default Rego/OPA path. The local `make server` target commonly sets this to `true`. | `USE_GO_POLICY_ENGINE=true make server` |
+| `USE_GO_POLICY_ENGINE` | `false` | Uses the Go relationship-policy engine instead of the default Rego/OPA path. The local `make server` target sets this to `true`. | `USE_GO_POLICY_ENGINE=true make server` |
 
 ## Build and runtime metadata
 
-These variables are usually injected by the build or deployment pipeline rather than set manually by end users.
+The build or deployment pipeline usually injects these variables; end users rarely set them.
 
 | Variable | Default | Description | Example |
 | --- | --- | --- | --- |
@@ -79,7 +80,7 @@ These variables are usually injected by the build or deployment pipeline rather 
 
 ## Platform-provided environment variables
 
-Meshery Server reads these values from the hosting environment when they are present. In Kubernetes deployments they are usually injected automatically and typically do not need to be set manually.
+Meshery Server reads these values from the hosting environment when they are present. Kubernetes injects `KUBERNETES_SERVICE_HOST` and `KUBERNETES_SERVICE_PORT` into every pod, and `HOME` comes from the process environment, so you rarely need to set any of them yourself.
 
 | Variable | Default | Description | Example |
 | --- | --- | --- | --- |

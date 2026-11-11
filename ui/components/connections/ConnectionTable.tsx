@@ -9,6 +9,7 @@ import { CONNECTION_STATES } from '../../utils/Enum';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import useGrafanaPingHook from '@/utils/hooks/useGrafanaPingHook';
 import usePrometheusPingHook from '@/utils/hooks/usePrometheusPingHook';
+import useMesheryPingHook from '@/utils/hooks/useMesheryPingHook';
 import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
@@ -87,6 +88,7 @@ const ConnectionTable = ({
   const ping = useKubernetesHook();
   const pingGrafana = useGrafanaPingHook();
   const pingPrometheus = usePrometheusPingHook();
+  const pingMeshery = useMesheryPingHook();
   const { width } = useWindowDimensions();
 
   const { tableState, updateTableState, copyRowDeepLink } = useTableUrlState({
@@ -229,7 +231,9 @@ const ConnectionTable = ({
     isError: isEnvironmentsError,
     error: environmentsError,
   } = useGetEnvironmentsQuery(
-    { orgId: organization?.id },
+    // Without a page size the server returns only its default first page of
+    // 10, which would hide every later environment from this select.
+    { orgId: organization?.id, pagesize: 'all' },
     {
       skip: !organization?.id,
     },
@@ -615,6 +619,7 @@ const ConnectionTable = ({
     ping,
     pingGrafana,
     pingPrometheus,
+    pingMeshery,
     transitionMapByKind,
   });
   const columnNames = useMemo(

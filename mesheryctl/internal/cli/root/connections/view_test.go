@@ -11,15 +11,12 @@ import (
 )
 
 func TestConnectionViewCmd(t *testing.T) {
-
-	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
 
-	// test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
 			Name:           "given no argument provided when connection view then throw error",
@@ -64,8 +61,72 @@ func TestConnectionViewCmd(t *testing.T) {
 			ExpectError:      false,
 			IsOutputGolden:   true,
 		},
+		{
+			Name:             "given an uppercase --output-format argument provided when connection view then display detailed information in the specified format",
+			Args:             []string{"view", connectionId, "--output-format", "YAML"},
+			URL:              "/api/integrations/connections/" + connectionId,
+			Fixture:          "view.connection.api.response.golden",
+			ExpectedResponse: "view.connection.yaml.output.golden",
+			ExpectError:      false,
+			IsOutputGolden:   true,
+		},
 	}
 
-	// Run tests
 	utils.InvokeMesheryctlTestListCommand(t, update, ConnectionsCmd, tests, currDir, "connection")
+}
+
+// connectionViewRun describes the view invocation shared by the --save tests
+// below, which assert on the file written rather than on golden output.
+func connectionViewRun(commandDir string, args []string) utils.MesheryCommandRun {
+	return utils.MesheryCommandRun{
+		Cmd:        ConnectionsCmd,
+		Args:       args,
+		CommandDir: commandDir,
+		Mocks: []utils.MockURL{
+			{
+				URL:      "/api/integrations/connections/" + connectionId,
+				Response: "view.connection.api.response.golden",
+			},
+		},
+	}
+}
+
+// TestConnectionViewSaveCreatesFile verifies that --save writes a file named
+// for the connection and the output format. The home directory is isolated so
+// the real ~/.meshery is never touched.
+func TestConnectionViewSaveCreatesFile(t *testing.T) {
+	mesheryDir := utils.IsolateMesheryHome(t)
+
+	run := connectionViewRun(utils.CallerDir(t), []string{"view", connectionId, "--save"})
+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "connection_minikube.yaml"))
+}
+
+// TestConnectionViewSaveWithUppercaseOutputFormat verifies that an uppercase
+// --output-format saves the file with a lowercase extension.
+func TestConnectionViewSaveWithUppercaseOutputFormat(t *testing.T) {
+	mesheryDir := utils.IsolateMesheryHome(t)
+
+	run := connectionViewRun(utils.CallerDir(t), []string{"view", connectionId, "--output-format", "JSON", "--save"})
+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "connection_minikube.json"))
+}
+
+// TestConnectionViewNoSaveWithBrokenHome verifies that view without --save
+// succeeds when no home directory can be resolved, proving os.UserHomeDir is
+// not called on the display-only path.
+func TestConnectionViewNoSaveWithBrokenHome(t *testing.T) {
+	t.Setenv("HOME", "")
+	t.Setenv("USERPROFILE", "")
+
+	run := connectionViewRun(utils.CallerDir(t), []string{"view", connectionId})
+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
+		t.Fatalf("view without --save should succeed even with no HOME: %v", err)
+	}
 }

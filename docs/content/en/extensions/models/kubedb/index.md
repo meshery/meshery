@@ -237,7 +237,11 @@ components:
   colorIcon: extensions/models/kubedb/components/postgres-migration/icons/color/postgres-migration-color.svg
   whiteIcon: extensions/models/kubedb/components/postgres-migration/icons/white/postgres-migration-white.svg
   description: 
-components-count: 57
+- name: failover-group
+  colorIcon: extensions/models/kubedb/components/failover-group/icons/color/failover-group-color.svg
+  whiteIcon: extensions/models/kubedb/components/failover-group/icons/white/failover-group-white.svg
+  description: 
+components-count: 58
 relationships: 
 relationship-count: 0
 featureList: [

@@ -24,7 +24,7 @@ func TestWaitForValidateResponseWithMissingToken(t *testing.T) {
 	t.Cleanup(func() { utils.TokenFlag = originalToken })
 	utils.TokenFlag = filepath.Join(t.TempDir(), "absent-token.json")
 
-	_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
+	_, err = waitForValidateResponse(mctlCfg, "Smi conformance test", "")
 
 	assert.Error(t, err)
 	assert.Equal(t, ErrCreatingValidateResponseRequestCode, errors.GetCode(err))

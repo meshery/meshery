@@ -225,7 +225,9 @@ export function getSharableCommonHostAndprotocolLink(sharedResource) {
   if (sharedResource?.patternFile) {
     return `${webAddr}?mode=${DESIGN}&${DESIGN}=${sharedResource.id}`;
   }
-  if (sharedResource?.filter_resource) {
+  // A filter carries filterResource even when it was saved without a
+  // configuration, so test for the field rather than its value.
+  if (typeof sharedResource?.filterResource === 'string') {
     return `${webAddr}?${FILTER}=${sharedResource.id}`;
   }
 

@@ -27,7 +27,7 @@ import {
   ErrorBoundary,
   useHasPermission,
 } from '@sistent/sistent';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { iconSmall } from 'css/icons.styles';
 import WorkSpaceContentDataTable from './WorkSpaceContentDataTable';
 import WorkspaceActionList from './WorkspaceActionList';
@@ -64,6 +64,13 @@ const WorkspaceDataTable = ({
 
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  // Go back to the first page when the search changes, before the query runs,
+  // so a narrower search isn't requested at a page that no longer exists.
+  const [prevSearch, setPrevSearch] = useState(search);
+  if (search !== prevSearch) {
+    setPrevSearch(search);
+    setPage(0);
+  }
   const [sortOrder, setSortOrder] = useState('updated_at desc');
   const { selectedOrganization: organization } = useGetSelectedOrganization();
   const orgId = organization?.id;
@@ -85,9 +92,6 @@ const WorkspaceDataTable = ({
   );
 
   const workspacesData = workspaces?.workspaces ? workspaces.workspaces : [];
-
-  const workspacesDataRef = useRef(workspacesData);
-  workspacesDataRef.current = workspacesData;
 
   const columns = [
     {
@@ -275,6 +279,9 @@ const WorkspaceDataTable = ({
         customBodyRender: (value, tableMeta) => {
           const workspaceId = getColumnValue(tableMeta.rowData, 'id', columns);
           const workspaceName = getColumnValue(tableMeta.rowData, 'name', columns);
+          const workspaceById = workspacesData.find((w) => w.id === workspaceId);
+
+          if (!workspaceById) return null;
 
           return (
             <WorkspaceActionList
@@ -284,7 +291,7 @@ const WorkspaceDataTable = ({
               handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
               workspaceId={workspaceId}
               workspaceName={workspaceName}
-              selectedWorkspace={workspacesDataRef.current[tableMeta.rowIndex]}
+              selectedWorkspace={workspaceById}
             />
           );
         },

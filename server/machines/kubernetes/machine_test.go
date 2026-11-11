@@ -105,3 +105,29 @@ func TestRegisteredState_HasNotFoundTransition(t *testing.T) {
 		t.Fatalf("expected NotFound transition to go to %q, got %q", machines.NOTFOUND, next)
 	}
 }
+
+func TestAssignInitialCtx_NilContextDoesNotPanic(t *testing.T) {
+	log, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatalf("failed to build test logger: %v", err)
+	}
+
+	machinectx := &MachineCtx{
+		K8sContext: models.K8sContext{
+			Name:         "unreachable-test-context",
+			Server:       "https://127.0.0.1:1",
+			ConnectionID: uuid.Must(uuid.NewV4()).String(),
+		},
+	}
+
+	// Calling AssignInitialCtx with context.Background() where UserCtxKey and SystemIDKey are absent.
+	// Previously this caused a nil-pointer dereference panic immediately when extracting user.ID or *sysID.
+	result, _, err := AssignInitialCtx(context.Background(), machinectx, log)
+	if err == nil {
+		t.Fatal("expected AssignInitialCtx to return an error for an unreachable K8s context, got nil")
+	}
+	if result != nil {
+		t.Fatalf("expected nil machine context on AssignClientSetToContext error, got %#v", result)
+	}
+}
+

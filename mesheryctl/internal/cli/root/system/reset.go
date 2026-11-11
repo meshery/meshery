@@ -33,7 +33,7 @@ var resetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "Reset Meshery's configuration",
 	Long: `Reset Meshery to it's default configuration.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/reset`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/reset`,
 	Example: `
 // Resets meshery.yaml file with a copy from Meshery repo
 mesheryctl system reset
@@ -52,12 +52,16 @@ mesheryctl system reset
 
 // resets meshery config, skips conirmation if skipConfirmation is true
 func resetMesheryConfig() error {
+	var err error
 	userResponse := false
 	if utils.SilentFlag {
 		userResponse = true
 	} else {
 		// ask user for confirmation
-		userResponse = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
+		userResponse, err = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
+		if err != nil {
+			return err
+		}
 	}
 	if !userResponse {
 		utils.Log.Info("Reset aborted.")

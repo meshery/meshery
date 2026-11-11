@@ -110,7 +110,7 @@ const Environments = () => {
       orgId: orgId,
     },
     {
-      skip: !orgId ? true : false,
+      skip: !orgId || !canViewEnv,
     },
   );
 
@@ -134,7 +134,7 @@ const Environments = () => {
       filter: '{"assigned":false}',
     },
     {
-      skip,
+      skip: skip || !canViewEnv,
     },
   );
 
@@ -149,7 +149,7 @@ const Environments = () => {
       pagesize: connectionPageSize,
     },
     {
-      skip,
+      skip: skip || !canViewEnv,
     },
   );
 
@@ -495,6 +495,7 @@ const Environments = () => {
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
+                setPage(0);
               }}
               placeholder="Search Environments..."
               expanded={isSearchExpanded}

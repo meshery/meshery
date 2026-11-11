@@ -59,7 +59,7 @@ var createContextCmd = &cobra.Command{
 	Use:   "create context-name",
 	Short: "Create a new context (a named Meshery deployment)",
 	Long: `Add a new context to Meshery config.yaml file.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/context/create`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/create`,
 	Example: `
 // Create new context
 mesheryctl system context create [context-name]
@@ -101,6 +101,9 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 		}
 
 		if len(contextCreateFlags.Components) >= 1 {
+			if err := validateComponents(contextCreateFlags.Components); err != nil {
+				return err
+			}
 			tempCntxt.Components = contextCreateFlags.Components
 		}
 
@@ -121,7 +124,7 @@ var deleteContextCmd = &cobra.Command{
 	Use:   "delete [context-name]",
 	Short: "Delete context",
 	Long: `Delete an existing context (a named Meshery deployment) from Meshery config file.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/context/delete`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/delete`,
 	Example: `
 // ### Delete context
 mesheryctl system context delete [context name]
@@ -150,7 +153,10 @@ mesheryctl system context delete [context name]
 			if utils.SilentFlag {
 				res = true
 			} else {
-				res = utils.AskForConfirmation("Are you sure you want to delete the current context")
+				res, err = utils.AskForConfirmation("Are you sure you want to delete the current context")
+				if err != nil {
+					return err
+				}
 			}
 
 			if !res {
@@ -204,21 +210,25 @@ mesheryctl system context delete [context name]
 	},
 }
 
+var listContextUsageMsg = "Usage: mesheryctl system context list\nRun 'mesheryctl system context list --help' to see detailed help message"
+
 // listContextCmd represents the list command
 var listContextCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List contexts",
 	Long: `List current context and available contexts.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/context/list`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/list`,
 	Example: `
 // List all contexts present
 mesheryctl system context list
 	`,
-	SilenceUsage: true,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return utils.ErrInvalidArgument(errors.New(utils.SystemContextSubError("this command takes no arguments.\n", "list")))
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listContextUsageMsg))
 		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
 			return utils.ErrUnmarshal(err)
@@ -277,7 +287,7 @@ var viewContextCmd = &cobra.Command{
 	Long: `Display the current Meshery CLI context configuration.
 This command shows which Kubernetes cluster, platform, and provider Meshery is configured to communicate with.
 Use this to verify or debug your current CLI settings.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/context/view`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/view`,
 	Example: `
 // View the default context
 mesheryctl system context view
@@ -376,7 +386,7 @@ var switchContextCmd = &cobra.Command{
 	Use:   "switch context-name",
 	Short: "Switch context",
 	Long: `Configure mesheryctl to actively use one one context vs. another context.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/context/switch`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/switch`,
 	Example: `
 // Switch to context named "sample"
 mesheryctl system context switch sample
@@ -439,7 +449,7 @@ var ContextCmd = &cobra.Command{
 	Use:   "context [command]",
 	Short: "Configure your Meshery deployment(s)",
 	Long: `Configure and switch between different named Meshery server and component versions and deployments.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/context`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context`,
 	Example: `
 // Base command
 mesheryctl system context

@@ -432,11 +432,33 @@ func TestAliasSideEffects(t *testing.T) {
 		if a.Op == AddComponentOp && a.Component != nil {
 			if a.Component.Component.Kind == "Container" {
 				found = true
+				if a.Component.Metadata.IsAnnotation {
+					t.Errorf("Expected workload alias component Container to have IsAnnotation=false, got true")
+				}
 			}
 		}
 	}
 	if !found {
 		t.Error("Expected Container component to be added as alias side effect")
+	}
+
+	// When relationship metadata defines isAnnotation=true, alias component should inherit IsAnnotation=true
+	isAnnoTrue := true
+	rel.RelationshipMetadata = &relationship.RelationshipMetadata{
+		IsAnnotation: &isAnnoTrue,
+	}
+	actionsWithAnno := p.SideEffects(rel, design)
+	foundAnno := false
+	for _, a := range actionsWithAnno {
+		if a.Op == AddComponentOp && a.Component != nil && a.Component.Component.Kind == "Container" {
+			foundAnno = true
+			if !a.Component.Metadata.IsAnnotation {
+				t.Errorf("Expected alias component to have IsAnnotation=true when relationship defines IsAnnotation=true")
+			}
+		}
+	}
+	if !foundAnno {
+		t.Error("Expected Container component with annotation metadata")
 	}
 }
 

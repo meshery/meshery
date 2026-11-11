@@ -19,8 +19,8 @@ where it is explained in full.
 
 ## Upgrade strategy
 
-Meshery is a composition of components—Server, UI, Operator, MeshSync, Broker,
-Adapters, and `mesheryctl`—some of which upgrade together and some
+Meshery is a composition of components - Server, UI, Operator, MeshSync, Broker,
+Adapters, and `mesheryctl` - some of which upgrade together and some
 independently. For Kubernetes production deployments:
 
 - **Use Helm and pin versions.** Upgrade with `helm upgrade`, and pin the image
@@ -61,7 +61,7 @@ independently. For Kubernetes production deployments:
   outbound access from Meshery Server to the chart repository accordingly
   ([egress requirements]({{< ref "installation/production/networking-and-connectivity.md#egress-requirements" >}})).
 - **Let the Server own the Operator.** On Server-managed clusters, do not
-  hand-upgrade or hand-configure the `meshery-operator` Helm release — the
+  hand-upgrade or hand-configure the `meshery-operator` Helm release - the
   Server's reconciliation re-applies the chart version it resolves and reverts
   manual changes. Upgrading the Server is the supported way to upgrade the
   Operator; the chart's CRD update Job refreshes the `Broker`/`MeshSync` CRD
@@ -78,7 +78,7 @@ independently. For Kubernetes production deployments:
   permanent removal is intended.
 - **Rehearse and roll back.** Because durable state lives with the Remote
   Provider and the local database is a cache, rolling back the deployment is
-  low-risk for data—validate the rollback path anyway. On rollback, managed
+  low-risk for data - validate the rollback path anyway. On rollback, managed
   clusters converge back to the operator chart the older Server resolves,
   automatically. The minimum deployable chart version guards that derived
   default, but it is not a blanket guarantee: an explicit `operator.version` is
@@ -86,8 +86,8 @@ independently. For Kubernetes production deployments:
   repository publishes nothing at or above the minimum the newest published
   chart is deployed with a warning that the Operator may not become ready.
 - **Edge caches need no purge.** If a CDN or caching reverse proxy fronts
-  Meshery, its UI cache busts itself on upgrade—hashed asset URLs change and the
-  HTML `ETag` follows the build/release version—so a manual cache purge is not
+  Meshery, its UI cache busts itself on upgrade - hashed asset URLs change and the
+  HTML `ETag` follows the build/release version - so a manual cache purge is not
   required in your upgrade pipeline
   ([networking]({{< ref "installation/production/networking-and-connectivity.md" >}})).
 
@@ -100,7 +100,7 @@ ephemeral database.
 
 ## Known caveats and limitations
 
-Plan around these known characteristics—they are by design and shape good
+Plan around these known characteristics - they are by design and shape good
 production architecture:
 
 - **The database is an ephemeral, single-writer cache.** It is SQLite/Bitcask on
@@ -131,7 +131,7 @@ production architecture:
 - **The chart ships permissive defaults for portability.** No resource
   requests/limits, empty security contexts, and a `stable-latest`,
   `Always`-pull image are convenient for getting started but are **not**
-  production settings—set them explicitly.
+  production settings - set them explicitly.
 
 ## The consolidated production-readiness checklist
 

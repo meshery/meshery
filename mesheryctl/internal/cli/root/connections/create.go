@@ -47,7 +47,7 @@ var createConnectionCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new connection",
 	Long: `Create a new connection to a Kubernetes cluster or other supported platform.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/connection/create`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/connection/create`,
 	Example: `
 // Create a new Kubernetes connection using a specific type
 mesheryctl connection create --type aks

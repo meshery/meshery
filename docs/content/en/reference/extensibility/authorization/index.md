@@ -84,7 +84,7 @@ selected, and nothing is seeded from the file - not just for the key you were
 adding. On a fresh or reset database the Key table is left empty on every boot;
 previously seeded keys are not cleared and keep working. `SeedKeys` reports this
 once per seeding run - at boot, and again after a database reset - as
-[`meshery-server-1486`]({{< ref "reference/references/error-codes.md" >}});
+[`meshery-server-1486`]({{< ref "reference/error-codes.md" >}});
 restore the header and restart the server to seed again.
 
 An empty Key table is fail-closed, and its effect is confined to Meshery UI. The
@@ -223,7 +223,7 @@ If the key is missing from `Keys` altogether, it has not made it through the spr
 ##### 5. Local Provider: confirm database seeding
 The key must be in [`server/permissions/keys.csv`](https://github.com/meshery/meshery/blob/master/server/permissions/keys.csv) with **`Local Provider = TRUE`**. Restart Meshery Server (or reset the local DB) after the CSV updates.
 
-If *no* key gates correctly rather than just this one, check the server log for [`meshery-server-1486`]({{< ref "reference/references/error-codes.md" >}}): the CSV's `Local Provider` header itself is missing, so `SeedKeys` seeded nothing at all.
+If *no* key gates correctly rather than just this one, check the server log for [`meshery-server-1486`]({{< ref "reference/error-codes.md" >}}): the CSV's `Local Provider` header itself is missing, so `SeedKeys` seeded nothing at all.
 
 ##### 6. Remote Provider: confirm role assignment
 Keys come from roles assigned in the Remote Provider admin UI. An empty API response usually means a role/keychain issue—not a missing entry in the generated `Keys` alone.

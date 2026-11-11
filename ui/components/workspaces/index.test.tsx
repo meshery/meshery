@@ -102,8 +102,23 @@ vi.mock('../shared/Modal/Modal', () => ({
 
 vi.mock('../general/PromptComponent', () => ({ default: React.forwardRef(() => null) }));
 vi.mock('@/components/lifecycle/general', () => ({ EmptyState: () => <div>empty</div> }));
-vi.mock('@/components/general/ViewSwitch', () => ({ default: () => null }));
-vi.mock('./WorkspaceGridView', () => ({ default: () => null }));
+vi.mock('@/components/general/ViewSwitch', () => ({
+  default: ({ changeView }: any) => (
+    <button data-testid="grid-view" onClick={() => changeView('grid')}>
+      grid
+    </button>
+  ),
+}));
+vi.mock('./WorkspaceGridView', () => ({
+  default: ({ page, setPage }: any) => (
+    <div>
+      <span data-testid="grid-page">{page}</span>
+      <button data-testid="go-to-page-3" onClick={() => setPage(2)}>
+        page 3
+      </button>
+    </div>
+  ),
+}));
 vi.mock('./WorkspaceDataTable', () => ({ default: () => null }));
 vi.mock('./styles', () => ({ CreateButtonWrapper: ({ children }: any) => <div>{children}</div> }));
 vi.mock('@/assets/styles/general/tool.styles', () => ({
@@ -131,7 +146,11 @@ vi.mock('@sistent/sistent', () => ({
   NoSsr: ({ children }: any) => <>{children}</>,
   PROMPT_VARIANTS: { DANGER: 'danger' },
   Select: ({ children, ...rest }: any) => <select {...rest}>{children}</select>,
-  SearchBar: () => null,
+  SearchBar: ({ onSearch }: any) => (
+    <button data-testid="search-prod" onClick={() => onSearch('prod')}>
+      search
+    </button>
+  ),
   TeamsIcon: () => null,
   Typography: ({ children }: any) => <span>{children}</span>,
   WorkspaceIcon: () => null,
@@ -269,5 +288,29 @@ describe('Workspaces create flow notifications', () => {
     createWorkspace.mockReturnValue({ unwrap: () => Promise.resolve({ id: 'ws-1' }) });
     await userEvent.setup().click(screen.getByTestId('submit-workspace'));
     await waitFor(() => expect(screen.queryByTestId('submit-workspace')).not.toBeInTheDocument());
+  });
+});
+
+describe('Workspaces search paging', () => {
+  it('goes back to the first page of the grid when the search changes', async () => {
+    const originalData = WORKSPACES_QUERY_RESULT.data;
+    // The grid only renders when the current page has workspaces.
+    WORKSPACES_QUERY_RESULT.data = {
+      workspaces: [{ id: 'ws-1', name: 'team' }],
+      totalCount: 40,
+    } as any;
+    try {
+      const user = userEvent.setup();
+      render(<Workspaces onSelectWorkspace={undefined} />);
+
+      await user.click(screen.getByTestId('grid-view'));
+      await user.click(await screen.findByTestId('go-to-page-3'));
+      expect(screen.getByTestId('grid-page')).toHaveTextContent('2');
+
+      await user.click(screen.getByTestId('search-prod'));
+      expect(screen.getByTestId('grid-page')).toHaveTextContent('0');
+    } finally {
+      WORKSPACES_QUERY_RESULT.data = originalData;
+    }
   });
 });

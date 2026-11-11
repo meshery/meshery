@@ -198,7 +198,7 @@ resolves consistently.
 {{% alert color="warning" title="Contributing: a seeding fault must not terminate the server" %}}
 Every boot seeding stage runs through `models.RunSeedStage`, which recovers a
 panic raised inside that stage, logs it as
-[`meshery-server-1483`]({{< ref "reference/references/error-codes.md" >}}) with
+[`meshery-server-1483`]({{< ref "reference/error-codes.md" >}}) with
 the stage name and stack trace, and lets the remaining stages run. A Meshery
 Server with an incomplete registry is still useful and its operator can read the
 error; one that exits at boot leaves them a crash loop and no UI to read it in.

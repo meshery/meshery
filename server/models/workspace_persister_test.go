@@ -123,3 +123,84 @@ func TestDefaultLocalProviderUpdateWorkspace_ReturnsErrorForInvalidUUID(t *testi
 		t.Fatal("expected invalid workspace ID to return an error")
 	}
 }
+
+func TestWorkspacePersisterAddEnvironmentToWorkspace_Deduplication(t *testing.T) {
+	dbHandler := newWorkspaceTestDB(t)
+	if err := dbHandler.AutoMigrate(&workspace.WorkspacesEnvironmentsMapping{}); err != nil {
+		t.Fatalf("failed to auto-migrate: %v", err)
+	}
+
+	wsID := core.Uuid(uuid.Must(uuid.NewV4()))
+	envID := core.Uuid(uuid.Must(uuid.NewV4()))
+
+	persister := &WorkspacePersister{DB: dbHandler}
+	_, err := persister.AddEnvironmentToWorkspace(wsID, envID)
+	if err != nil {
+		t.Fatalf("first add failed: %v", err)
+	}
+
+	_, err = persister.AddEnvironmentToWorkspace(wsID, envID)
+	if err != nil {
+		t.Fatalf("second add failed: %v", err)
+	}
+
+	var count int64
+	dbHandler.Model(&workspace.WorkspacesEnvironmentsMapping{}).Where("workspace_id = ? AND environment_id = ?", wsID, envID).Count(&count)
+	if count != 1 {
+		t.Fatalf("expected 1 mapping after adding twice, got %d", count)
+	}
+}
+
+func TestWorkspacePersisterAddViewToWorkspace_Deduplication(t *testing.T) {
+	dbHandler := newWorkspaceTestDB(t)
+	if err := dbHandler.AutoMigrate(&workspace.WorkspacesViewsMapping{}); err != nil {
+		t.Fatalf("failed to auto-migrate: %v", err)
+	}
+
+	wsID := core.Uuid(uuid.Must(uuid.NewV4()))
+	viewID := core.Uuid(uuid.Must(uuid.NewV4()))
+
+	persister := &WorkspacePersister{DB: dbHandler}
+	_, err := persister.AddViewToWorkspace(wsID, viewID)
+	if err != nil {
+		t.Fatalf("first add failed: %v", err)
+	}
+
+	_, err = persister.AddViewToWorkspace(wsID, viewID)
+	if err != nil {
+		t.Fatalf("second add failed: %v", err)
+	}
+
+	var count int64
+	dbHandler.Model(&workspace.WorkspacesViewsMapping{}).Where("workspace_id = ? AND view_id = ?", wsID, viewID).Count(&count)
+	if count != 1 {
+		t.Fatalf("expected 1 mapping after adding twice, got %d", count)
+	}
+}
+
+func TestWorkspacePersisterAddTeamToWorkspace_Deduplication(t *testing.T) {
+	dbHandler := newWorkspaceTestDB(t)
+	if err := dbHandler.AutoMigrate(&workspace.WorkspacesTeamsMapping{}); err != nil {
+		t.Fatalf("failed to auto-migrate: %v", err)
+	}
+
+	wsID := core.Uuid(uuid.Must(uuid.NewV4()))
+	teamID := core.Uuid(uuid.Must(uuid.NewV4()))
+
+	persister := &WorkspacePersister{DB: dbHandler}
+	_, err := persister.AddTeamToWorkspace(wsID, teamID)
+	if err != nil {
+		t.Fatalf("first add failed: %v", err)
+	}
+
+	_, err = persister.AddTeamToWorkspace(wsID, teamID)
+	if err != nil {
+		t.Fatalf("second add failed: %v", err)
+	}
+
+	var count int64
+	dbHandler.Model(&workspace.WorkspacesTeamsMapping{}).Where("workspace_id = ? AND team_id = ?", wsID, teamID).Count(&count)
+	if count != 1 {
+		t.Fatalf("expected 1 mapping after adding twice, got %d", count)
+	}
+}

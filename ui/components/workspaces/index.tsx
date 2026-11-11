@@ -475,6 +475,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
                   <SearchBar
                     onSearch={(value) => {
                       setSearch(value);
+                      setPage(0);
                     }}
                     placeholder="Search Workspaces..."
                     expanded={isSearchExpanded}

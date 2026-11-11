@@ -15,8 +15,11 @@
 package components
 
 import (
+	"fmt"
+
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +36,7 @@ var listComponentCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered components",
 	Long: `List all components registered in Meshery Server
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/component/list`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/component/list`,
 	Example: `
 // View list of components
 mesheryctl component list
@@ -49,6 +52,12 @@ mesheryctl component list --count
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentListFlag)
+	},
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg))
+		}
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		componentData := display.DisplayDataAsync{

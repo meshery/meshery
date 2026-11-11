@@ -43,8 +43,9 @@ mesheryctl system dashboard --port-forward
 
   kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "meshery.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -w
 
-3. Check health status (with detailed information):
-  kubectl exec --namespace {{ .Release.Namespace }} deployment/{{ include "meshery.name" . }} -- curl -s "http://localhost:8080/healthz/ready?verbose=1"
+3. Check health status (with detailed information). The Meshery Server image does not include curl, so port-forward and query from your workstation:
+  kubectl port-forward --namespace {{ .Release.Namespace }} deployment/{{ include "meshery.name" . }} 8080:8080
+  curl -s "http://localhost:8080/healthz/ready?verbose=1"
 
 For more information about health checks and probe configuration, see:
   https://github.com/meshery/meshery/blob/master/install/kubernetes/helm/meshery/HEALTHCHECKS.md

@@ -46,6 +46,16 @@ func TestListComponent(t *testing.T) {
 			ExpectedResponse: "components.list.count.empty.ouput.golden",
 			ExpectError:      false,
 		},
+		{
+			Name:             "list components with extra positional argument triggers error",
+			Args:             []string{"list", "extra-arg"},
+			URL:              testUrl,
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg)),
+		},
 	}
 
 	mesheryctlflags.InitValidators(ComponentCmd)

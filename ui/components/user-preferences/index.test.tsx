@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const notify = vi.fn();
@@ -25,6 +25,8 @@ let capabilitiesReturn: any = {
   isSuccess: false,
 };
 
+let catalogMutationReturn: any = {};
+
 vi.mock('@sistent/sistent', () => ({
   // This suite exercises preference toggles, not authorization: grant every
   // capability so the permission gate never masks the behaviour under test.
@@ -49,6 +51,7 @@ vi.mock('@sistent/sistent', () => ({
       type="checkbox"
       checked={!!checked}
       onChange={onChange}
+      disabled={rest.disabled}
       data-testid={rest['data-cy'] || 'switch'}
     />
   ),
@@ -153,7 +156,7 @@ vi.mock('@/utils/dimension', () => ({
 vi.mock('@/rtk-query/user', () => ({
   useGetProviderCapabilitiesQuery: () => capabilitiesReturn,
   useGetUserPrefQuery: () => userDataReturn,
-  useUpdateUserPrefMutation: () => [updateUserPref],
+  useUpdateUserPrefMutation: () => [updateUserPref, catalogMutationReturn],
   useUpdateUserPrefWithContextMutation: () => [updateUserPrefWithContext],
 }));
 
@@ -189,6 +192,7 @@ describe('UserPreference', () => {
     dispatch.mockReset();
     updateUserPref.mockClear();
     updateUserPrefWithContext.mockClear();
+    catalogMutationReturn = {};
 
     userDataReturn = {
       data: { usersExtensionPreferences: { catalogContent: true } },
@@ -228,5 +232,96 @@ describe('UserPreference', () => {
     fireEvent.click(toggle);
     expect(dispatch).toHaveBeenCalled();
     expect(updateUserPref).toHaveBeenCalled();
+  });
+
+  it.each([true, false])(
+    'restores the saved Catalog Content value %s on failure',
+    async (saved) => {
+      userDataReturn.data.usersExtensionPreferences.catalogContent = saved;
+      updateUserPref.mockImplementationOnce(() => ({
+        unwrap: () => Promise.reject(new Error('network down')),
+      }));
+      render(<UserPreference />);
+      fireEvent.click(screen.getByTestId('CatalogContentPreference'));
+
+      await waitFor(() =>
+        expect(notify).toHaveBeenCalledWith({
+          message: 'There was an error sending your preference',
+          event_type: 'error',
+        }),
+      );
+      expect(screen.getByTestId('CatalogContentPreference')).toHaveProperty('checked', saved);
+      expect(dispatch).toHaveBeenLastCalledWith({ catalogVisibility: saved });
+    },
+  );
+
+  it('rolls back to a value successfully saved earlier in this session', async () => {
+    render(<UserPreference />);
+    const toggle = screen.getByTestId('CatalogContentPreference');
+    fireEvent.click(toggle);
+    await waitFor(() =>
+      expect(notify).toHaveBeenCalledWith({
+        message: 'Catalog Content was disabled',
+        event_type: 'success',
+      }),
+    );
+
+    updateUserPref.mockImplementationOnce(() => ({
+      unwrap: () => Promise.reject(new Error('network down')),
+    }));
+    fireEvent.click(toggle);
+    await waitFor(() =>
+      expect(notify).toHaveBeenCalledWith({
+        message: 'There was an error sending your preference',
+        event_type: 'error',
+      }),
+    );
+    expect(toggle).not.toBeChecked();
+    expect(dispatch).toHaveBeenLastCalledWith({ catalogVisibility: false });
+  });
+
+  it('blocks repeated toggles until the active save finishes', async () => {
+    let resolveSave!: () => void;
+    const pendingSave = new Promise((resolve) => {
+      resolveSave = () => resolve({});
+    });
+    updateUserPref.mockImplementationOnce(() => ({ unwrap: () => pendingSave }));
+    const { rerender } = render(<UserPreference />);
+    const toggle = screen.getByTestId('CatalogContentPreference');
+    fireEvent.click(toggle);
+    fireEvent.click(toggle); // Exercise the ref guard before mutation state rerenders.
+    catalogMutationReturn = { isLoading: true, startedTimeStamp: 2 };
+    userDataReturn = {
+      ...userDataReturn,
+      data: { usersExtensionPreferences: { catalogContent: true, otherPreference: 'changed' } },
+    };
+    rerender(<UserPreference />);
+
+    try {
+      expect(toggle).toBeDisabled();
+      fireEvent.click(toggle);
+      expect(updateUserPref).toHaveBeenCalledTimes(1);
+      expect(toggle).not.toBeChecked();
+    } finally {
+      await act(async () => resolveSave());
+    }
+
+    catalogMutationReturn = { isLoading: false, fulfilledTimeStamp: 3 };
+    userDataReturn = {
+      ...userDataReturn,
+      data: { usersExtensionPreferences: { catalogContent: false } },
+      startedTimeStamp: 4,
+    };
+    rerender(<UserPreference />);
+    expect(toggle).toBeEnabled();
+  });
+
+  it('blocks a new toggle while saved preferences are being refetched', () => {
+    userDataReturn.isFetching = true;
+    render(<UserPreference />);
+    const toggle = screen.getByTestId('CatalogContentPreference');
+    expect(toggle).toBeDisabled();
+    fireEvent.click(toggle);
+    expect(updateUserPref).not.toHaveBeenCalled();
   });
 });

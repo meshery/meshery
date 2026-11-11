@@ -33,7 +33,7 @@ func ErrGenerateModel(err error, modelName string) error {
 }
 
 func ErrGenerateComponent(err error, modelName, compName string) error {
-	return errors.New(ErrGenerateComponentCode, errors.Alert, []string{"error generating comp %s of model %s", compName, modelName}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrGenerateComponentCode, errors.Alert, []string{"Error generating component", fmt.Sprintf("component %s of model %s", compName, modelName)}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrUpdateModel(err error, modelName string) error {

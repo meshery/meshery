@@ -17,14 +17,19 @@ package perf
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/ghodss/yaml"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	servermodels "github.com/meshery/meshery/server/models"
@@ -58,30 +63,34 @@ var linkDocPerfApply = map[string]string{
 	"caption": "Usage of mesheryctl perf apply",
 }
 
-func splitTestDuration(duration string) (string, string) {
-	duration = strings.TrimSpace(duration)
-	if duration == "" {
-		return "30", "s"
+// splitTestDuration converts a Go duration into the value and unit query
+// params of a test run. The server only reads a whole number of hours, minutes
+// or seconds, so the duration is always sent in seconds, and one that can't be
+// expressed that way is rejected rather than run for a different length.
+func splitTestDuration(duration string) (string, string, error) {
+	normalized := strings.ToLower(strings.TrimSpace(duration))
+	if normalized == "" {
+		return "30", "s", nil
 	}
 
-	unitStart := strings.IndexFunc(duration, func(r rune) bool {
-		return (r < '0' || r > '9') && r != '.'
-	})
-	if unitStart == -1 {
-		return duration, "s"
-	}
-	if unitStart == 0 {
-		return "30", strings.ToLower(strings.TrimSpace(duration))
+	// A number without a unit means seconds.
+	if _, err := strconv.Atoi(normalized); err == nil {
+		normalized += "s"
 	}
 
-	return strings.TrimSpace(duration[:unitStart]), strings.ToLower(strings.TrimSpace(duration[unitStart:]))
+	parsed, err := time.ParseDuration(normalized)
+	if err != nil || parsed < time.Second || parsed%time.Second != 0 {
+		return "", "", utils.ErrFlagsInvalid(fmt.Errorf("invalid test duration %q: use a whole number of seconds of at least 1s, such as 30s, 5m or 1h30m", duration))
+	}
+
+	return strconv.FormatInt(int64(parsed/time.Second), 10), "s", nil
 }
 
 var applyCmd = &cobra.Command{
 	Use:   "apply [profile-name]",
 	Short: "Run a Performance test",
 	Long: `Run Performance test using existing profiles or using flags.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/perf/apply`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/perf/apply`,
 	Args: cobra.MinimumNArgs(0),
 	Example: `
 // Execute a Performance test with the specified performance profile
@@ -119,6 +128,9 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 	Annotations: linkDocPerfApply,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		userResponse := false
+		isExistingProfile := false
+		// The server reads these only from the run request, not from the saved profile.
+		var requestHeaders, requestCookies, contentType string
 
 		// setting up for error formatting
 		cmdUsed = cmd.Name()
@@ -223,7 +235,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				userResponse = true
 			} else {
 				// ask user for confirmation
-				userResponse = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
+				userResponse, err = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
+				if err != nil {
+					return err
+				}
 			}
 
 			if userResponse {
@@ -245,6 +260,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				}
 				profileID = profiles[index].ID.String()
 			}
+			isExistingProfile = true
 			// what if user passed profile-name but didn't passed the url
 			// we use url from performance profile
 			if testURL == "" {
@@ -279,6 +295,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				if loadTestBody == "" {
 					loadTestBody = profiles[index].RequestBody
 				}
+
+				requestHeaders = profiles[index].RequestHeaders
+				requestCookies = profiles[index].RequestCookies
+				contentType = profiles[index].ContentType
 			}
 		}
 
@@ -310,8 +330,14 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		q.Add("url", testURL)
 		q.Add("qps", qps)
 		q.Add("reqBody", loadTestBody)
+		q.Add("headers", requestHeaders)
+		q.Add("cookies", requestCookies)
+		q.Add("contentType", contentType)
 
-		testDurationValue, testDurationUnit := splitTestDuration(testDuration)
+		testDurationValue, testDurationUnit, err := splitTestDuration(testDuration)
+		if err != nil {
+			return err
+		}
 		q.Add("dur", testDurationUnit)
 		q.Add("t", testDurationValue)
 
@@ -319,6 +345,14 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			q.Add("mesh", testMesh)
 		}
 		req.URL.RawQuery = q.Encode()
+
+		// Update the saved profile last, so a command that fails validation
+		// leaves it unchanged.
+		if isExistingProfile {
+			if err := applyMetadataFlagsToProfile(mctlCfg, profileID); err != nil {
+				return err
+			}
+		}
 
 		utils.Log.Info("Initiating Performance test ...")
 
@@ -354,6 +388,8 @@ func init() {
 	applyCmd.Flags().BoolVar(&disableCert, "disable-cert", false, "(optional) Do not use certificate present in the profile")
 }
 
+// createPerformanceProfile saves a new profile from the flag values, filling in
+// defaults for the ones that are not set, and returns its ID and name.
 func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string, error) {
 	utils.Log.Debug("Creating new performance profile inside function")
 
@@ -385,6 +421,11 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 
 	if testDuration == "" {
 		testDuration = "30s"
+	}
+
+	// Reject an invalid duration before it is saved in the profile.
+	if _, _, err := splitTestDuration(testDuration); err != nil {
+		return "", "", err
 	}
 
 	if loadGenerator == "" {
@@ -425,57 +466,118 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		"contentType":       "",
 	}
 
-	if additionalOptions != "" {
-		// Check if the additionalOptions is a filepath or a string
-		if _, err := os.Stat(additionalOptions); err == nil {
-			optFile, err := os.ReadFile(additionalOptions)
-			if err != nil {
-				return "", "", ErrReadFilepath(errors.Wrap(err, "unable to read options file. "))
-			}
-			additionalOptions = string(optFile)
-		}
-
-		// Check if the additionalOptions is a valid json
-		if !govalidator.IsJSON(additionalOptions) {
-			return "", "", ErrInvalidJSONFile()
-		}
-
-		values["metadata"] = map[string]interface{}{
-			"additional_options": additionalOptions,
-		}
+	metadata, err := profileMetadataFromFlags()
+	if err != nil {
+		return "", "", err
 	}
-
-	if fileInfo, err := os.Stat(certPath); err == nil {
-		certFile, err := os.ReadFile(certPath)
-		if err != nil {
-			return "", "", ErrReadFilepath(errors.New("Unable to read certificate file. " + err.Error()))
-		}
-		certData := string(certFile)
-		certName := fileInfo.Name()
-
-		// check if values["metadata"] is nil
-		if values["metadata"] == nil {
-			values["metadata"] = map[string]interface{}{}
-		}
-
-		values["metadata"].(map[string]interface{})["ca_certificate"] = map[string]interface{}{
-			"name":     certName,
-			"certName": certData,
-		}
+	if len(metadata) > 0 {
+		values["metadata"] = metadata
 	}
 
 	jsonValue, err := json.Marshal(values)
 	if err != nil {
 		return "", "", ErrFailMarshal(err)
 	}
-	req, err := utils.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/performance/profiles", bytes.NewBuffer(jsonValue))
+
+	response, err := savePerformanceProfile(mctlCfg, jsonValue)
 	if err != nil {
 		return "", "", err
 	}
 
+	profileID = response.ID.String()
+	profileName = response.Name
+
+	utils.Log.Debug("New profile created")
+	return profileID, profileName, nil
+}
+
+// profileMetadataFromFlags returns the profile metadata set by --options and
+// --cert-path. It is empty when neither flag is set.
+func profileMetadataFromFlags() (map[string]interface{}, error) {
+	metadata := map[string]interface{}{}
+
+	if additionalOptions != "" {
+		options := additionalOptions
+		// Check if the additional options are a filepath or a string
+		if _, err := os.Stat(options); err == nil {
+			optFile, err := os.ReadFile(options)
+			if err != nil {
+				return nil, ErrReadFilepath(errors.Wrap(err, "unable to read options file. "))
+			}
+			options = string(optFile)
+		}
+
+		// Check if the additional options are valid json
+		if !govalidator.IsJSON(options) {
+			return nil, ErrInvalidJSONFile()
+		}
+
+		metadata["additional_options"] = options
+	}
+
+	if certPath != "" {
+		certFile, err := os.ReadFile(certPath)
+		if err != nil {
+			return nil, ErrReadFilepath(errors.New("Unable to read certificate file. " + err.Error()))
+		}
+
+		metadata["ca_certificate"] = map[string]interface{}{
+			"name": filepath.Base(certPath),
+			"file": string(certFile),
+		}
+	}
+
+	return metadata, nil
+}
+
+// applyMetadataFlagsToProfile saves --options and --cert-path to an existing
+// profile. The server reads both from the saved profile when a test runs, so
+// they have no effect unless the profile is updated first.
+func applyMetadataFlagsToProfile(mctlCfg *config.MesheryCtlConfig, profileID string) error {
+	metadata, err := profileMetadataFromFlags()
+	if err != nil {
+		return err
+	}
+	if len(metadata) == 0 {
+		return nil
+	}
+
+	// Saving replaces the whole profile and the profile list leaves out fields
+	// such as the schedule, so start from the full profile.
+	profile, err := api.Fetch[perfprofile.PerformanceProfile]("api/performance/profiles/" + profileID)
+	if err != nil {
+		return err
+	}
+
+	updatedMetadata := make(map[string]any, len(profile.Metadata)+len(metadata))
+	maps.Copy(updatedMetadata, profile.Metadata)
+	maps.Copy(updatedMetadata, metadata)
+	profile.Metadata = updatedMetadata
+
+	jsonValue, err := json.Marshal(profile)
+	if err != nil {
+		return ErrFailMarshal(err)
+	}
+
+	if _, err := savePerformanceProfile(mctlCfg, jsonValue); err != nil {
+		return err
+	}
+
+	utils.Log.Infof("Updated performance profile %s with the provided options", profile.Name)
+	return nil
+}
+
+// savePerformanceProfile creates a profile, or updates the existing one when
+// the payload carries its id, and returns the profile the server saved.
+func savePerformanceProfile(mctlCfg *config.MesheryCtlConfig, payload []byte) (*perfprofile.PerformanceProfile, error) {
+	req, err := utils.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/performance/profiles", bytes.NewBuffer(payload))
+	if err != nil {
+		return nil, err
+	}
+
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return "", "", ErrPerfProfileServer(errors.New("failed to save performance profile on server"))
+		return nil, ErrPerfProfileServer(err)
 	}
 
 	var response *perfprofile.PerformanceProfile
@@ -483,15 +585,24 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	defer func() { _ = resp.Body.Close() }()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", "", utils.ErrReadResponseBody(err)
+		return nil, utils.ErrReadResponseBody(err)
 	}
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		serverErrMsg := strings.TrimSpace(string(body))
+		if serverErrMsg == "" {
+			serverErrMsg = fmt.Sprintf("server returned status: %s", resp.Status)
+		}
+		return nil, ErrPerfProfileServer(errors.New(serverErrMsg))
+	}
+
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return "", "", ErrFailUnmarshal(err)
+		return nil, ErrFailUnmarshal(err)
 	}
-	profileID = response.ID.String()
-	profileName = response.Name
 
-	utils.Log.Debug("New profile created")
-	return profileID, profileName, nil
+	if response == nil {
+		return nil, ErrPerfProfileServer(errors.New("server returned empty performance profile"))
+	}
+
+	return response, nil
 }

@@ -46,9 +46,9 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 		// saved before the schema-native PerformanceProfile introduced owner.
 		Select(`
 			id, name, COALESCE(owner, ?) as owner, load_generators,
-			endpoints, qps, service_mesh,
+			endpoints, service_mesh, concurrent_request, qps,
 			duration, request_headers, request_cookies,
-			request_body, content_type, created_at,
+			request_body, content_type, metadata, created_at,
 			updated_at, (?) as last_run, (?) as total_results`,
 			nilUUIDString,
 			ppp.DB.Table("meshery_results").Select("DATETIME(MAX(meshery_results.test_start_time))").Where("performance_profile = performance_profiles.id"),
@@ -89,8 +89,18 @@ func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id core.Uuid) (
 	return json.Marshal(&profile)
 }
 
+// SavePerformanceProfile updates the profile with this ID, or inserts it when
+// none is stored. An edit from the performance form carries every form field
+// but no createdAt, so an update writes every column except created_at.
 func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ core.Uuid, profile *PerformanceProfile) error {
-	return ppp.DB.Save(profile).Error
+	res := ppp.DB.Model(profile).Select("*").Omit("created_at").Updates(profile)
+	if res.Error != nil {
+		return res.Error
+	}
+	if res.RowsAffected > 0 {
+		return nil
+	}
+	return ppp.DB.Create(profile).Error
 }
 
 func (ppp *PerformanceProfilePersister) GetPerformanceProfile(id core.Uuid) (*PerformanceProfile, error) {
