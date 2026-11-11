@@ -144,7 +144,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
-        run: sudo apt-get update && sudo apt-get install -y lynx
+        run: sudo apt-get update && sudo apt-get install -y lynx || true
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
@@ -210,7 +210,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
-        run: sudo apt-get update && sudo apt-get install -y lynx
+        run: sudo apt-get update && sudo apt-get install -y lynx || true
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
@@ -236,7 +236,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
-        run: sudo apt-get update && sudo apt-get install -y lynx
+        run: sudo apt-get update && sudo apt-get install -y lynx || true
       - uses: actions/download-artifact@v7
         with:
           name: mesheryctl-binary

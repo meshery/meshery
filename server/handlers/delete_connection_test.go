@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
@@ -836,5 +837,197 @@ func TestDeleteConnection_KubernetesKindMetadataStaleContextFallsBackToLinkedCon
 
 	if _, err := provider.ConnectionPersister.GetConnection(saved.ID, ""); err == nil {
 		t.Error("expected connection to be deleted from database")
+	}
+}
+
+// TestDeleteConnection_KubernetesKindMetadataOwnershipMismatchFallsBackToLinkedContext
+// verifies that when metadata names a context belonging to a different connection,
+// DeleteConnection falls back to resolving the context linked via connectionID,
+// validates ownership, and triggers teardown.
+func TestDeleteConnection_KubernetesKindMetadataOwnershipMismatchFallsBackToLinkedContext(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+
+	// Create the connection being deleted.
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name:           "k8s-mismatch-cluster",
+		Kind:           "kubernetes",
+		ConnectionType: "platform",
+		Status:         connections.CONNECTED,
+	})
+	if err != nil {
+		t.Fatalf("save connection: %v", err)
+	}
+
+	// Create a different connection that "owns" a context.
+	otherConn, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name:           "k8s-other-cluster",
+		Kind:           "kubernetes",
+		ConnectionType: "platform",
+		Status:         connections.CONNECTED,
+	})
+	if err != nil {
+		t.Fatalf("save other connection: %v", err)
+	}
+
+	cluster := isql.Map{
+		"name": "test-cluster",
+		"cluster": map[string]interface{}{
+			"server": "https://127.0.0.1:6443",
+		},
+	}
+	auth := isql.Map{
+		"name": "test-user",
+		"user": map[string]interface{}{
+			"token": "fake-token",
+		},
+	}
+
+	// Context in metadata belongs to otherConn, not saved.
+	otherCtxID := "other-conn-context-id"
+	if err := provider.MesheryK8sContextPersister.DB.Create(&models.K8sContext{
+		ID:                otherCtxID,
+		Name:              "other-cluster",
+		ConnectionID:      otherConn.ID.String(),
+		MesheryInstanceID: h.SystemID,
+		Cluster:           cluster,
+		Auth:              auth,
+	}).Error; err != nil {
+		t.Fatalf("save other k8s context: %v", err)
+	}
+
+	// Context actually linked to the connection being deleted.
+	linkedCtxID := "linked-to-saved-context-id"
+	if err := provider.MesheryK8sContextPersister.DB.Create(&models.K8sContext{
+		ID:                linkedCtxID,
+		Name:              "saved-cluster",
+		ConnectionID:      saved.ID.String(),
+		MesheryInstanceID: h.SystemID,
+		Cluster:           cluster,
+		Auth:              auth,
+	}).Error; err != nil {
+		t.Fatalf("save linked k8s context: %v", err)
+	}
+
+	// Point metadata at the other connection's context.
+	saved.Metadata = map[string]interface{}{
+		"contextId": otherCtxID,
+	}
+	if _, err := provider.ConnectionPersister.SaveConnection(saved); err != nil {
+		t.Fatalf("update connection metadata: %v", err)
+	}
+
+	observingProvider := &teardownObservingProvider{
+		Provider: provider,
+		h:        h,
+	}
+
+	rec := deleteConnection(t, h, observingProvider, saved.ID)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusOK, rec.Body.String())
+	}
+
+	if !observingProvider.observedTransition {
+		t.Error("expected machine to be initialized via linked context after ownership mismatch and tracked during teardown")
+	}
+	if observingProvider.observedState != machines.DELETED {
+		t.Errorf("expected machine state to transition to DELETED, got %s", observingProvider.observedState)
+	}
+	if !observingProvider.hasContext {
+		t.Error("expected machine to carry context resolved from linked context fallback")
+	}
+
+	if _, ok := h.ConnectionToStateMachineInstanceTracker.Get(saved.ID); ok {
+		t.Error("expected state machine to be evicted from tracker after delete")
+	}
+
+	if _, err := provider.ConnectionPersister.GetConnection(saved.ID, ""); err == nil {
+		t.Error("expected connection to be deleted from database")
+	}
+}
+
+// deleteFailingOnceProvider fails the first DeleteConnection call, then delegates
+// to the underlying provider on subsequent calls.
+type deleteFailingOnceProvider struct {
+	models.Provider
+	callCount int
+}
+
+func (p *deleteFailingOnceProvider) DeleteConnection(req *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {
+	p.callCount++
+	if p.callCount == 1 {
+		return nil, fmt.Errorf("simulated transient provider failure")
+	}
+	return p.Provider.DeleteConnection(req, connectionID)
+}
+
+// TestDeleteConnection_ProviderDeleteFails_AllowsRetry verifies that when
+// provider.DeleteConnection fails after SendEvent(machines.Delete) has already
+// transitioned the machine to DELETED, the handler clears the tracker entry and
+// the connection row survives, allowing a retry that succeeds.
+func TestDeleteConnection_ProviderDeleteFails_AllowsRetry(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name:           "k8s-retry-cluster",
+		Kind:           "kubernetes",
+		ConnectionType: "platform",
+		Status:         connections.CONNECTED,
+	})
+	if err != nil {
+		t.Fatalf("save connection: %v", err)
+	}
+
+	cluster := isql.Map{
+		"name": "test-cluster",
+		"cluster": map[string]interface{}{
+			"server": "https://127.0.0.1:6443",
+		},
+	}
+	auth := isql.Map{
+		"name": "test-user",
+		"user": map[string]interface{}{
+			"token": "fake-token",
+		},
+	}
+
+	contextID := "retry-context-id"
+	if err := provider.MesheryK8sContextPersister.DB.Create(&models.K8sContext{
+		ID:                contextID,
+		Name:              "retry-cluster",
+		ConnectionID:      saved.ID.String(),
+		MesheryInstanceID: h.SystemID,
+		Cluster:           cluster,
+		Auth:              auth,
+	}).Error; err != nil {
+		t.Fatalf("save k8s context: %v", err)
+	}
+
+	failingProvider := &deleteFailingOnceProvider{Provider: provider}
+
+	// First attempt: provider.DeleteConnection fails.
+	rec := deleteConnection(t, h, failingProvider, saved.ID)
+	if rec.Code == http.StatusOK {
+		t.Fatal("expected first delete attempt to fail")
+	}
+
+	// Connection row must survive.
+	if _, err := provider.ConnectionPersister.GetConnection(saved.ID, ""); err != nil {
+		t.Fatalf("expected connection to survive after failed provider delete: %v", err)
+	}
+
+	// Tracker entry must be cleared so retry starts clean.
+	if _, ok := h.ConnectionToStateMachineInstanceTracker.Get(saved.ID); ok {
+		t.Error("expected tracker entry to be cleared after failed provider delete")
+	}
+
+	// Second attempt: provider.DeleteConnection succeeds.
+	rec2 := deleteConnection(t, h, failingProvider, saved.ID)
+	if rec2.Code != http.StatusOK {
+		t.Fatalf("retry status = %d, want %d. body: %s", rec2.Code, http.StatusOK, rec2.Body.String())
+	}
+
+	// Connection must now be gone.
+	if _, err := provider.ConnectionPersister.GetConnection(saved.ID, ""); err == nil {
+		t.Error("expected connection to be deleted after retry")
 	}
 }

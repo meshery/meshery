@@ -780,8 +780,23 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 			if ctxErr == nil {
 				connUUID := uuid.FromStringOrNil(k8scontext.ConnectionID)
 				if connUUID != uuid.Nil && connUUID != connectionID {
-					h.log.Warnf("resolved Kubernetes context %s does not belong to connection %s (linked to %s), skipping teardown", k8scontext.ID, connectionID, k8scontext.ConnectionID)
-				} else {
+					// Metadata named a context belonging to another connection.
+					// Try to resolve the context actually linked to the connection being deleted.
+					h.log.Warnf("resolved Kubernetes context %s does not belong to connection %s (linked to %s), retrying with linked context", k8scontext.ID, connectionID, k8scontext.ConnectionID)
+					linkedCtx, linkErr := provider.GetK8sContext(token, connectionID.String())
+					if linkErr != nil {
+						h.log.Warnf("no linked context found for connection %s, skipping teardown", connectionID)
+					} else {
+						linkedUUID := uuid.FromStringOrNil(linkedCtx.ConnectionID)
+						if linkedUUID != uuid.Nil && linkedUUID != connectionID {
+							h.log.Warnf("linked context %s also does not belong to connection %s, skipping teardown", linkedCtx.ID, connectionID)
+						} else {
+							k8scontext = linkedCtx
+							connUUID = linkedUUID
+						}
+					}
+				}
+				if connUUID == uuid.Nil || connUUID == connectionID {
 					var operatorTracker *models.OperatorTracker
 					var k8scontextChannel *models.K8scontextChan
 					var eventBroadcaster *models.Broadcast
