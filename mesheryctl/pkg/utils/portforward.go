@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -10,6 +11,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"sync"
 
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
@@ -24,19 +26,21 @@ import (
 
 // PortForward provides a port-forward connection into a Kubernetes cluster.
 type PortForward struct {
-	method     string
-	url        *url.URL
-	host       string
-	namespace  string
-	podName    string
-	localPort  int
-	remotePort int
-	emitLogs   bool
-	stopCh     chan struct{}
-	readyCh    chan struct{}
-	forwarder  *portforward.PortForwarder
-	dialer     httpstream.Dialer
-	config     *rest.Config
+	method         string
+	url            *url.URL
+	host           string
+	namespace      string
+	podName        string
+	localPort      int
+	remotePort     int
+	emitLogs       bool
+	stopCh         chan struct{}
+	stopOnce       sync.Once
+	readyCh        chan struct{}
+	forwarder      *portforward.PortForwarder
+	dialer         httpstream.Dialer
+	config         *rest.Config
+	listenerErrors bytes.Buffer
 }
 
 // NewPortForward returns an instance of the PortForward struct that can be used
@@ -122,15 +126,14 @@ func (pf *PortForward) run() error {
 
 	out := io.Discard
 	errOut := io.Discard
-	var portForwardErrors bytes.Buffer
 	if pf.emitLogs {
 		out = os.Stdout
-		errOut = os.Stderr
+		errOut = io.MultiWriter(&pf.listenerErrors, os.Stderr)
 	} else {
 		// client-go reports listener creation details to errOut, but returns a
 		// generic error from ForwardPorts. Keep those details so callers can
 		// distinguish a busy local port from other setup failures.
-		errOut = &portForwardErrors
+		errOut = &pf.listenerErrors
 	}
 
 	ports := []string{fmt.Sprintf("%d:%d", pf.localPort, pf.remotePort)}
@@ -143,8 +146,8 @@ func (pf *PortForward) run() error {
 
 	err = fw.ForwardPorts()
 	if err != nil {
-		if portForwardErrors.Len() > 0 {
-			err = fmt.Errorf("%w: %s", err, strings.TrimSpace(portForwardErrors.String()))
+		if pf.listenerErrors.Len() > 0 {
+			err = fmt.Errorf("%w: %s", err, strings.TrimSpace(pf.listenerErrors.String()))
 		}
 		err = fmt.Errorf("%w for %s/%s", err, pf.namespace, pf.podName)
 		return err
@@ -171,6 +174,11 @@ func (pf *PortForward) Init() error {
 	// 2) Return an err, causing a receive `<-failure`
 	select {
 	case <-pf.readyCh:
+		// client-go considers localhost ready when either address family binds.
+		if IsPortBusyError(errors.New(pf.listenerErrors.String())) {
+			pf.Stop()
+			return fmt.Errorf("local port %d is already in use on a localhost address: %s", pf.localPort, strings.TrimSpace(pf.listenerErrors.String()))
+		}
 		log.Debug("Port forward initialized")
 		ports, err := pf.forwarder.GetPorts()
 		if err != nil {
@@ -191,7 +199,7 @@ func (pf *PortForward) Init() error {
 // Stop terminates the port-forward connection.
 // It is the caller's responsibility to call Stop even in case of errors
 func (pf *PortForward) Stop() {
-	close(pf.stopCh)
+	pf.stopOnce.Do(func() { close(pf.stopCh) })
 }
 
 // GetStop returns the stopCh.
