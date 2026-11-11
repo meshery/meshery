@@ -320,6 +320,12 @@ func TestDeleteContext_SendEventError(t *testing.T) {
 	case <-time.After(2 * time.Second):
 		t.Fatal("timed out waiting for asynchronous DeleteAction error broadcast")
 	}
+
+	// The machine must be evicted from the instance tracker even when SendEvent fails,
+	// preventing deleted context instances from leaking in memory and being polled by middlewares.
+	if _, ok := h.ConnectionToStateMachineInstanceTracker.Get(contextID); ok {
+		t.Errorf("expected state machine %s to be evicted from tracker on SendEvent failure, but it was leaked", contextID)
+	}
 }
 
 type contextCheckingAction struct {
