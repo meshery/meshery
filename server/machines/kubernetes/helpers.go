@@ -101,8 +101,14 @@ func (m *MachineCtx) RefreshK8sContext(newCtx models.K8sContext, eventBuilder *e
 	if err != nil {
 		return false, err
 	}
+	// The replacement runs under the setup lock: ConnectAction's setup
+	// goroutine reads K8sContext under that lock (and snapshots it per
+	// iteration), so a refresh racing a setup cannot hand the goroutine a
+	// half-replaced context.
+	m.setupLock.Lock()
 	m.K8sContext = newCtx
 	m.clientset = handler
+	m.setupLock.Unlock()
 	return true, nil
 }
 

@@ -77,11 +77,10 @@ type notFoundProbeLoadScope struct {
 // load/probe starts rather than when it finishes, because the middleware
 // fires one goroutine per request and concurrent requests must not
 // double-probe a connection. Entries are dropped when a connection leaves
-// NOTFOUND (its probe resolves the condition, see forget) or disappears
-// from the NOTFOUND list (it left NOTFOUND or was deleted, see prune), so
-// the map cannot grow without bound. Load entries are likewise dropped once
-// they are older than the interval: a scope that has not loaded within the
-// interval would be allowed again anyway.
+// NOTFOUND (its probe resolves the condition, see forget) or when they
+// expire (see prune), so the map cannot grow without bound. Load entries
+// are likewise dropped once they are older than the interval: a scope that
+// has not loaded within the interval would be allowed again anyway.
 //
 // The clock is injected so tests can advance time without sleeping.
 type notFoundProbeThrottle struct {
@@ -140,18 +139,22 @@ func (t *notFoundProbeThrottle) forget(id core.Uuid) {
 	delete(t.lastProbed, id)
 }
 
-// prune drops probe entries for connections no longer in the NOTFOUND list:
-// they left NOTFOUND or were deleted. It also drops load entries older than
-// the interval: those scopes would be allowed to load again anyway.
-func (t *notFoundProbeThrottle) prune(keep map[core.Uuid]struct{}) {
+// prune drops throttle entries older than the interval: probe entries for
+// connections that left NOTFOUND or were deleted, and load entries for
+// scopes that would be allowed to load again anyway. It must not drop a
+// fresh probe entry for a connection absent from this load: the load is
+// scoped to one provider+user, but the probe map is global, so pruning by
+// this scope's page would delete another scope's active entries and let
+// its connections be probed again inside the interval.
+func (t *notFoundProbeThrottle) prune() {
 	t.mu.Lock()
 	defer t.mu.Unlock()
-	for id := range t.lastProbed {
-		if _, ok := keep[id]; !ok {
+	now := t.now()
+	for id, at := range t.lastProbed {
+		if now.Sub(at) >= t.interval {
 			delete(t.lastProbed, id)
 		}
 	}
-	now := t.now()
 	for scope, at := range t.lastLoad {
 		if now.Sub(at) >= t.interval {
 			delete(t.lastLoad, scope)
@@ -716,11 +719,11 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		if k8sContext == nil {
 			continue
 		}
-		inst := h.discoverK8sContext(ctx, provider, token, userUUID, k8sContext, nil)
+		inst := h.discoverK8sContext(ctx, provider, token, userUUID, k8sContext, nil, false)
 		if inst == nil {
 			continue
 		}
-		kubernesMachineCtx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
+		kubernesMachineCtx, err := utils.Cast[*kubernetes.MachineCtx](inst.GetContext())
 		if err != nil {
 			if h.log != nil {
 				h.log.Error(err)
@@ -786,7 +789,14 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 // nil when the machine could not be initialized. afterProbe, when non-nil,
 // runs in the discovery goroutine once the probe has reported; the NOTFOUND
 // probe uses it to forget a connection whose condition resolved.
-func (h *Handler) discoverK8sContext(ctx context.Context, provider models.Provider, token string, userUUID uuid.UUID, k8sContext *models.K8sContext, afterProbe func(event *events.Event, err error)) *machines.StateMachine {
+// skipProbeOnRefreshFailure, set by the NOTFOUND probe only, skips the
+// probe when the credential refresh fails instead of running Discovery
+// against the old clientset: a successful probe would report the connection
+// recovered even though the stored credentials cannot build a client. The
+// connected path leaves it false — a failed refresh there only maintains
+// the existing CONNECTED status, and skipping would freeze outage detection
+// for a connection whose rotated credentials are broken.
+func (h *Handler) discoverK8sContext(ctx context.Context, provider models.Provider, token string, userUUID uuid.UUID, k8sContext *models.K8sContext, afterProbe func(event *events.Event, err error), skipProbeOnRefreshFailure bool) *machines.StateMachine {
 	var operatorTracker *models.OperatorTracker
 	var k8scontextChannel *models.K8scontextChan
 	var eventBroadcaster *models.Broadcast
@@ -835,18 +845,28 @@ func (h *Handler) discoverK8sContext(ctx context.Context, provider models.Provid
 	// unreachable condition would stay open. Refresh the stored context when
 	// the newly loaded one carries different connection material. This runs
 	// here, in the helper both paths share, so the connected path benefits
-	// too. A rebuild failure keeps the old context and is logged; the probe
-	// then runs as before.
+	// too. A rebuild failure keeps the old context and is logged; when
+	// skipProbeOnRefreshFailure is set the probe is skipped this cycle,
+	// because probing with the old clientset could report the connection
+	// recovered when the stored credentials cannot connect. The next
+	// request retries the refresh.
+	var refreshErr error
 	inst.UpdateContext(func(oldCtx interface{}) interface{} {
 		stored, ok := oldCtx.(*kubernetes.MachineCtx)
 		if !ok || stored == nil {
 			return oldCtx
 		}
-		if _, err := stored.RefreshK8sContext(*k8sContext, models.NewServerEvent(ctx), h.log); err != nil && h.log != nil {
-			h.log.Error(err)
+		if _, err := stored.RefreshK8sContext(*k8sContext, models.NewServerEvent(ctx), h.log); err != nil {
+			refreshErr = err
+			if h.log != nil {
+				h.log.Error(err)
+			}
 		}
 		return oldCtx
 	})
+	if refreshErr != nil && skipProbeOnRefreshFailure {
+		return nil
+	}
 
 	inst.ResetState()
 	go func(inst *machines.StateMachine) {
@@ -941,16 +961,10 @@ func (h *Handler) probeNotFoundK8sContexts(ctx context.Context, provider models.
 		connectedIDs[uuid.FromStringOrNil(k8sContext.ConnectionID)] = struct{}{}
 	}
 
-	// Prune throttle entries for connections that left NOTFOUND or were
-	// deleted, so the map cannot leak entries for dead connections.
-	keep := make(map[core.Uuid]struct{}, len(notFoundContexts))
-	for _, k8sContext := range notFoundContexts {
-		if k8sContext == nil {
-			continue
-		}
-		keep[uuid.FromStringOrNil(k8sContext.ConnectionID)] = struct{}{}
-	}
-	throttle.prune(keep)
+	// Prune expired throttle entries, so the maps cannot grow without
+	// bound: a probe entry for a connection that left NOTFOUND or was
+	// deleted expires after the interval.
+	throttle.prune()
 
 	for _, k8sContext := range notFoundContexts {
 		if k8sContext == nil {
@@ -988,6 +1002,6 @@ func (h *Handler) probeNotFoundK8sContexts(ctx context.Context, provider models.
 			if err == nil && event != nil && event.ResolvedAt != nil {
 				throttle.forget(connectionUUID)
 			}
-		})
+		}, true)
 	}
 }

@@ -506,35 +506,44 @@ func TestNotFoundProbeThrottle(t *testing.T) {
 		t.Error("a different connection must be probed independently")
 	}
 
-	// forget drops one entry; prune drops entries absent from the list.
+	// forget drops one entry; prune drops only expired entries, so a fresh
+	// probe entry survives a prune from another scope whose load did not
+	// list that connection.
 	throttle.forget(id)
 	if !throttle.allowProbe(id) {
 		t.Error("probe must be allowed again after forget")
 	}
-	throttle.prune(map[core.Uuid]struct{}{other: {}})
-	if !throttle.allowProbe(id) {
-		t.Error("probe must be allowed again after prune dropped it")
+	throttle.prune()
+	if throttle.allowProbe(id) {
+		t.Error("prune must keep a fresh probe entry, even one absent from this scope's load")
 	}
 	if throttle.allowProbe(other) {
-		t.Error("prune must keep entries still in the NOTFOUND list")
+		t.Error("prune must keep a fresh probe entry for another connection too")
 	}
 
-	// Prune drops load entries older than the interval, but keeps a fresh
-	// one: scope loaded at the start, freshScope thirty seconds later, then
-	// forty more seconds pass — scope's entry is expired, freshScope's is
-	// still within the interval.
+	// Prune drops entries older than the interval, but keeps fresh ones:
+	// scope loaded at the start, freshScope thirty seconds later, then
+	// forty more seconds pass — scope's load entry is expired, freshScope's
+	// is still within the interval. The probe entries are expired by then
+	// too, so prune drops them as well.
 	freshScope := notFoundProbeLoadScope{providerName: "test-provider", providerURL: "test://provider", user: uuid.Must(uuid.NewV4())}
 	clock.advance(30 * time.Second)
 	if !throttle.allowLoad(freshScope) {
 		t.Fatal("a new scope must load independently")
 	}
 	clock.advance(40 * time.Second)
-	throttle.prune(map[core.Uuid]struct{}{other: {}})
+	throttle.prune()
 	if !throttle.allowLoad(scope) {
 		t.Error("load must be allowed again after prune dropped the expired entry")
 	}
 	if throttle.allowLoad(freshScope) {
 		t.Error("prune must keep a load entry that is still within the interval")
+	}
+	if !throttle.allowProbe(id) {
+		t.Error("probe must be allowed again after prune dropped the expired entry")
+	}
+	if !throttle.allowProbe(other) {
+		t.Error("probe must be allowed again after prune dropped the expired entry")
 	}
 
 	// Advancing the clock past the interval re-allows both gates.
@@ -731,6 +740,59 @@ func TestK8sFSMMiddlewareProbeRefreshesChangedCredentials(t *testing.T) {
 	}
 	if got := provider.connectionStatus(); got != connections.CONNECTED {
 		t.Errorf("connection status after resolving probe = %q, want %q", got, connections.CONNECTED)
+	}
+}
+
+// TestK8sFSMMiddlewareProbeSkipsRefreshFailure checks the failed-refresh
+// guard: when the newly loaded credentials cannot build a clientset, the
+// probe is skipped instead of reporting recovery through the old clientset,
+// which the stored credentials can no longer achieve.
+func TestK8sFSMMiddlewareProbeSkipsRefreshFailure(t *testing.T) {
+	probed := make(chan struct{}, 16)
+	action := &probeCountingAction{probed: probed}
+	h, provider, _, connectionID, user, _ := newNotFoundProbeFixture(t, action)
+
+	// The new credentials carry CA data that is not valid base64, so no
+	// clientset can be built from them.
+	newCtx := &models.K8sContext{
+		ID:           connectionID.String(),
+		Name:         "dead-ctx",
+		ConnectionID: connectionID.String(),
+		Server:       "https://new:6443",
+		Auth:         sql.Map{"name": "new-user", "user": sql.Map{"token": "new-token"}},
+		Cluster:      sql.Map{"name": "new-cluster", "cluster": sql.Map{"server": "https://new:6443", "insecure-skip-tls-verify": true, "certificate-authority-data": "!!!not-base64!!!"}},
+	}
+	setNotFoundPage(t, provider, newCtx)
+
+	// The machine was built with the old connection material.
+	machine, ok := h.ConnectionToStateMachineInstanceTracker.Get(connectionID)
+	if !ok {
+		t.Fatal("no tracked machine for the connection")
+	}
+	stored, ok := machine.Context.(*kubernetes.MachineCtx)
+	if !ok {
+		t.Fatal("tracked machine context is not a *kubernetes.MachineCtx")
+	}
+	stored.K8sContext = models.K8sContext{
+		ID:           connectionID.String(),
+		Name:         "dead-ctx",
+		ConnectionID: connectionID.String(),
+		Server:       "https://old:6443",
+		Auth:         sql.Map{"name": "old-user", "user": sql.Map{"token": "old-token"}},
+		Cluster:      sql.Map{"name": "old-cluster", "cluster": sql.Map{"server": "https://old:6443", "insecure-skip-tls-verify": true}},
+	}
+
+	runFSM(t, h, provider, user)
+	select {
+	case <-probed:
+		t.Error("probe ran after a failed credential refresh, want it skipped")
+	case <-time.After(500 * time.Millisecond):
+	}
+	if got := provider.persistedCount(); got != 0 {
+		t.Errorf("persisted events = %d, want 0 (no probe ran)", got)
+	}
+	if got := provider.connectionStatus(); got != connections.NOTFOUND {
+		t.Errorf("connection status after skipped probe = %q, want %q", got, connections.NOTFOUND)
 	}
 }
 

@@ -174,6 +174,17 @@ func (sm *StateMachine) UpdateContext(update func(oldCtx interface{}) interface{
 	sm.Context = update(sm.Context)
 }
 
+// GetContext returns the machine's stored context under the machine lock.
+// Readers outside SendEvent must use it instead of reading sm.Context
+// directly: UpdateContext writes the field under the same lock, so an
+// unlocked read would race a concurrent refresh.
+func (sm *StateMachine) GetContext() interface{} {
+	sm.mx.Lock()
+	defer sm.mx.Unlock()
+
+	return sm.Context
+}
+
 func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	state, ok := sm.States[sm.CurrentState]
 	sm.Log.Debug("inside getNextState: ", event, ok)
