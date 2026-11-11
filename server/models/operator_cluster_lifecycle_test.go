@@ -509,3 +509,45 @@ func TestOverlappingAliasLocksDoNotDeadlock(t *testing.T) {
 		t.Fatalf("%d holders of the server ID's lock overlapped, want them serialized", maxInFlight)
 	}
 }
+
+// panickingOperator is a handler whose Helm uninstall panics, as a fault deep
+// in a chart action can.
+type panickingOperator struct{ clusterOperator }
+
+func (o *panickingOperator) Undeploy() error { panic("helm uninstall faulted") }
+
+// TestPanickingHelmActionReleasesTheClusterLock: the cluster Helm lock is
+// scoped to the Helm call alone, so a call that panics must still release it.
+// Otherwise every later connection to that cluster blocks forever on connect,
+// holding its own setupLock.
+func TestPanickingHelmActionReleasesTheClusterLock(t *testing.T) {
+	ot := NewOperatorTracker(false)
+	cluster := newFakeCluster()
+	serverID := core.Uuid(uuid.Must(uuid.NewV4()))
+	faulty, faultyCtx := operatorModeConsumer(t, cluster), connectionTo(serverID, "faulty")
+	faulty.ctxControllerHandlers[MesheryOperator] = &panickingOperator{clusterOperator{cluster: cluster}}
+
+	func() {
+		defer func() {
+			if recover() == nil {
+				t.Fatal("the faulting uninstall did not panic")
+			}
+		}()
+		_ = faulty.SetOperatorDeployment(ot, faultyCtx, false)
+	}()
+
+	next, nextCtx := operatorModeConsumer(t, cluster), connectionTo(serverID, "next")
+	done := make(chan struct{})
+	go func() {
+		next.DeployUndeployedOperators(ot, nextCtx)
+		close(done)
+	}()
+	select {
+	case <-done:
+	case <-time.After(5 * time.Second):
+		t.Fatal("a panicking Helm action left the cluster lock held; the next connection never got to install")
+	}
+	if _, installs, _, _ := cluster.snapshot(); installs != 1 {
+		t.Fatalf("next connection ran %d installs, want 1", installs)
+	}
+}

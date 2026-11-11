@@ -43,8 +43,9 @@ import (
 
 // operatorCluster is the lifecycle state recorded under one cluster key.
 type operatorCluster struct {
-	// helm serializes Deploy and Undeploy against this cluster. It is held for
-	// the duration of a Helm action and is always the innermost lock taken.
+	// helm serializes Deploy and Undeploy against this cluster. It is held only
+	// around the Helm calls themselves and is always the innermost lock taken:
+	// nothing acquires OperatorTracker.mx, logs or emits an event while holding it.
 	helm sync.Mutex
 	// consumers is the set of operator-mode connections on this server that
 	// currently use this cluster's operator. Guarded by OperatorTracker.mx.
@@ -138,6 +139,15 @@ func (ot *OperatorTracker) lockOperatorCluster(k8sctx K8sContext) (unlock func()
 			cs[i].helm.Unlock()
 		}
 	}
+}
+
+// withOperatorClusterLock runs helmAction, and only helmAction, under k8sctx's
+// cluster Helm lock, releasing it even if helmAction panics. Callers keep
+// consumer lookups, error recording, logging and event emission outside it.
+func (ot *OperatorTracker) withOperatorClusterLock(k8sctx K8sContext, helmAction func()) {
+	unlock := ot.lockOperatorCluster(k8sctx)
+	defer unlock()
+	helmAction()
 }
 
 // claimOperator records k8sctx's connection as a consumer of its cluster's
