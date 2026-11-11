@@ -144,7 +144,8 @@ class MesheryDocument extends Document<MyDocumentProps> {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    justify-content: center;
+                    justify-content: safe center;
+                    overflow-y: auto;
                     background-color: #1e2529;
                     color: #ffffff;
                     font-family: 'Qanelas Soft', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;

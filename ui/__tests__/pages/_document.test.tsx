@@ -23,8 +23,9 @@ describe('MesheryDocument noscript fallback', () => {
     const doc = new MesheryDocument({ emotionStyleTags: [] } as any);
     const htmlString = renderToStaticMarkup(doc.render());
 
-    expect(htmlString).toContain('<noscript');
-    expect(htmlString).toContain('JavaScript is required');
+    const noscriptBlocks = htmlString.match(/<noscript>([\s\S]*?)<\/noscript>/g) ?? [];
+    const fallback = noscriptBlocks.find((block) => block.includes('JavaScript is required')) ?? '';
+    expect(fallback).toContain('JavaScript is required');
     expect(htmlString).toContain('#PRE_REACT_LOADER');
     expect(htmlString).toContain('display: none !important');
     expect(htmlString).toContain('https://docs.meshery.io');
