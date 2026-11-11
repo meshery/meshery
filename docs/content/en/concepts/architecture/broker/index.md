@@ -50,9 +50,15 @@ spec:
 - **`externalEndpointOverride`** — advertises a fixed `host:port` instead of
   the derived one, for Brokers behind an ingress/gateway, NAT, or in
   air-gapped topologies.
-- Invalid combinations (for example `loadBalancerClass` without
-  `type: LoadBalancer`) are rejected at admission by validation rules on the
-  CRD.
+- `loadBalancerClass` and `loadBalancerSourceRanges` apply only to
+  `type: LoadBalancer`. The CRD rejects them alongside any other explicit
+  `type`; with `type` omitted it admits them, and the Operator ignores them on
+  the resulting `ClusterIP` Service.
+- To set these fields at install time, use the `meshery-operator` Helm chart's
+  `meshery-broker.service.*` values (for example
+  `--set meshery-broker.service.type=NodePort`); unset values are left out of
+  the resource, and the chart refuses load-balancer fields without
+  `type: LoadBalancer`.
 
 The Operator publishes the resulting addresses on the resource's status:
 
