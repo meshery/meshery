@@ -8,35 +8,36 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrResolverInvalidRequestCode           = "meshery-server-1184"
-	ErrResolverNilClientCode                = "meshery-server-1185"
-	ErrResolverMeshsyncSubscriptionCode     = "meshery-server-1186"
-	ErrResolverOperatorSubscriptionCode     = "meshery-server-1187"
-	ErrAddonSubscriptionCode                = "meshery-server-1188"
-	ErrResolverControlPlaneSubscriptionCode = "meshery-server-1189"
-	ErrMesheryClientCode                    = "meshery-server-1190"
-	ErrResolverPublishBrokerCode            = "meshery-server-1191"
-	ErrNoMeshSyncCode                       = "meshery-server-1192"
-	ErrDataPlaneSubscriptionCode            = "meshery-server-1193"
-	ErrBrokerNotConnectedCode               = "meshery-server-1194"
-	ErrGettingNamespaceCode                 = "meshery-server-1195"
-	ErrFetchingPatternsCode                 = "meshery-server-1196"
-	ErrInvalidOAMTypeCode                   = "meshery-server-1197"
-	ErrKubectlDescribeCode                  = "meshery-server-1198"
-	ErrEmptyCurrentK8sContextCode           = "meshery-server-1199"
-	ErrK8sContextCode                       = "meshery-server-1203"
-	ErrGettingMeshModelSummaryCode          = "meshery-server-1207"
-	ErrGettingRegistryManagerCode           = "meshery-server-1208"
-	ErrGettingTelemetryComponentsCode       = "meshery-server-1209"
-	ErrAdapterInsufficientInformationCode   = "meshery-server-1210"
-	ErrGormDatabaseCode                     = "meshery-server-1213"
-	ErrResyncClusterCode                    = "meshery-server-1369"
-	ErrOperatorControllersHelperCode        = "meshery-server-1474"
+	ErrResolverInvalidRequestCode         = "meshery-server-1184"
+	ErrResolverNilClientCode              = "meshery-server-1185"
+	ErrResolverMeshsyncSubscriptionCode   = "meshery-server-1186"
+	ErrResolverOperatorSubscriptionCode   = "meshery-server-1187"
+	ErrMesheryClientCode                  = "meshery-server-1190"
+	ErrResolverPublishBrokerCode          = "meshery-server-1191"
+	ErrNoMeshSyncCode                     = "meshery-server-1192"
+	ErrBrokerNotConnectedCode             = "meshery-server-1194"
+	ErrGettingNamespaceCode               = "meshery-server-1195"
+	ErrFetchingPatternsCode               = "meshery-server-1196"
+	ErrInvalidOAMTypeCode                 = "meshery-server-1197"
+	ErrKubectlDescribeCode                = "meshery-server-1198"
+	ErrEmptyCurrentK8sContextCode         = "meshery-server-1199"
+	ErrK8sContextCode                     = "meshery-server-1203"
+	ErrGettingMeshModelSummaryCode        = "meshery-server-1207"
+	ErrGettingRegistryManagerCode         = "meshery-server-1208"
+	ErrGettingTelemetryComponentsCode     = "meshery-server-1209"
+	ErrAdapterInsufficientInformationCode = "meshery-server-1210"
+	ErrGormDatabaseCode                   = "meshery-server-1213"
+	ErrResyncClusterCode                  = "meshery-server-1369"
+	ErrOperatorControllersHelperCode      = "meshery-server-1474"
 
 	// Retired with the removal of every GraphQL subscription (subscribeConfiguration,
 	// subscribeClusterResources, subscribeMeshModelSummary, subscribePerfProfiles,
 	// subscribePerfResults). Error codes are stable identifiers — do not reuse
 	// 1200, 1201, 1202, 1204, 1205, 1206, 1211 or 1212 for new errors.
+	//
+	// Retired with the addon, control plane and data plane listeners that were
+	// left behind when those subscriptions went away. Do not reuse 1188, 1189
+	// or 1193 either.
 )
 
 var (
@@ -55,20 +56,8 @@ func ErrOperatorSubscription(err error) error {
 	return errors.New(ErrResolverOperatorSubscriptionCode, errors.Alert, []string{"Operator Subscription failed", err.Error()}, []string{"GraphQL subscription for Operator stopped"}, []string{"Could be a network issue"}, []string{"Check if meshery server is reachable from the browser"})
 }
 
-func ErrAddonSubscription(err error) error {
-	return errors.New(ErrAddonSubscriptionCode, errors.Alert, []string{"Addons Subscription failed", err.Error()}, []string{"GraphQL subscription for Addons stopped"}, []string{"Could be a network issue"}, []string{"Check if meshery server is reachable from the browser"})
-}
-
 func ErrGormDatabase(err error) error {
 	return errors.New(ErrGormDatabaseCode, errors.Alert, []string{"Database operation failed", err.Error()}, []string{"Database operation failed. Please ensure that the database isn't corrupted"}, []string{"Could be a db issue"}, []string{"Confirm that database connection is working as expected."})
-}
-
-func ErrControlPlaneSubscription(err error) error {
-	return errors.New(ErrResolverControlPlaneSubscriptionCode, errors.Alert, []string{"Control Plane Subscription failed", err.Error()}, []string{"GraphQL subscription for Control Plane stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
-}
-
-func ErrDataPlaneSubscription(err error) error {
-	return errors.New(ErrDataPlaneSubscriptionCode, errors.Alert, []string{"Data Plane Subscription failed", err.Error()}, []string{"GraphQL subscription for Data Plane stopped"}, []string{"Could be a network issue"}, []string{"Check if meshery server is reachable from the browser"})
 }
 
 func ErrPublishBroker(err error) error {

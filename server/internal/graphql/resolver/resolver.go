@@ -3,7 +3,6 @@ package resolver
 import (
 	"context"
 
-	"github.com/meshery/meshery/server/internal/graphql/model"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/logger"
@@ -38,8 +37,4 @@ type Resolver struct {
 	Broadcast                    broadcast.Broadcaster
 	// operatorChannel         chan *model.OperatorStatus
 	// performanceChannel  chan *model.PerfPageResult
-	brokerChannel       chan *broker.Message
-	addonChannel        chan []*model.AddonList        //nolint:unused // used by listenToAddonState
-	controlPlaneChannel chan []*model.ControlPlane     //nolint:unused // used by listenToControlPlaneState
-	dataPlaneChannel    chan []*model.DataPlane        //nolint:unused // used by listenToDataPlaneState
 }
