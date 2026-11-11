@@ -45,6 +45,11 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
+	machinectx.setupLock.Lock()
+	machinectx.disconnected = true
+	machinectx.retryPending = false
+	machinectx.setupLock.Unlock()
+
 	// If no active user was found in context (e.g. background deletion), resolve the owner
 	// from the persisted context so event attribution and MeshSync cleanup remain accurate.
 	if userUUID == core.Uuid(uuid.Nil) {
@@ -61,6 +66,8 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 	}
 
 	go func() {
+		machinectx.setupLock.Lock()
+		defer machinectx.setupLock.Unlock()
 		if machinectx.MesheryCtrlsHelper != nil {
 			machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 				UndeployDeployedOperators(machinectx.OperatorTracker, contextID).

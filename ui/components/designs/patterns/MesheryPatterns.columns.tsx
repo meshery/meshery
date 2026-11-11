@@ -1,5 +1,12 @@
 import React from 'react';
-import { Box, crimson, InfoOutlinedIcon, AccountTreeIcon, EditIcon } from '@sistent/sistent';
+import {
+  Box,
+  crimson,
+  InfoOutlinedIcon,
+  AccountTreeIcon,
+  EditIcon,
+  DeleteIcon,
+} from '@sistent/sistent';
 import { Keys } from '@meshery/schemas/permissions';
 import Moment from 'react-moment';
 import { GetApp as GetAppIcon } from '@/assets/icons';
@@ -30,6 +37,7 @@ export function buildPatternActions({
   tableMeta,
   handlers,
   permissions,
+  arePatternsReadOnly = false,
 }) {
   const {
     handleOpenInConfigurator,
@@ -43,6 +51,7 @@ export function buildPatternActions({
     handleUnpublishModal,
     handleEvaluateRelationship,
     userCanEdit,
+    handleDelete,
   } = handlers;
 
   return [
@@ -163,6 +172,17 @@ export function buildPatternActions({
       permissionKey: Keys.CatalogManagementUnpublishDesign,
       condition: visibility === VISIBILITY.PUBLISHED,
     },
+    {
+      label: 'Delete',
+      icon: <DeleteIcon fill={crimson[40]} data-cy="delete-button" />,
+      onClick: (e) => {
+        e.stopPropagation();
+        handleDelete?.(rowData);
+      },
+      disabled: !permissions.deleteDesign,
+      permissionKey: Keys.CatalogManagementDeleteADesign,
+      condition: !arePatternsReadOnly,
+    },
   ].filter((action) => action.condition === undefined || action.condition);
 }
 
@@ -186,7 +206,12 @@ export const PATTERN_COL_VIEWS = [
  * we therefore rebuild the columns inside the parent component on each
  * render (matching the original behavior).
  */
-export function buildPatternColumns({ patterns, handlers, permissions }) {
+export function buildPatternColumns({
+  patterns,
+  handlers,
+  permissions,
+  arePatternsReadOnly = false,
+}) {
   return [
     {
       name: 'name',
@@ -283,6 +308,7 @@ export function buildPatternColumns({ patterns, handlers, permissions }) {
             tableMeta,
             handlers,
             permissions,
+            arePatternsReadOnly,
           });
 
           return (
