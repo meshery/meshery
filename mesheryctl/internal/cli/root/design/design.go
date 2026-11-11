@@ -171,3 +171,33 @@ func fetchDesignFromGithub(fileURL string) ([]byte, error) {
 	}
 	return content, nil
 }
+
+func isGithubURL(fileURL string) bool {
+	return strings.HasPrefix(fileURL, "https://github.com") || strings.HasPrefix(fileURL, "https://raw.githubusercontent.com")
+}
+
+// fetchDesignFile downloads a design file from a URL. If the URL points to GitHub,
+// it is normalized and fetched via fetchDesignFromGithub. For other HTTP/HTTPS URLs,
+// it is fetched directly.
+func fetchDesignFile(fileURL string) ([]byte, error) {
+	if isGithubURL(fileURL) {
+		return fetchDesignFromGithub(fileURL)
+	}
+
+	client := &http.Client{Timeout: githubDownloadTimeout}
+	resp, err := client.Get(fileURL)
+	if err != nil {
+		return nil, utils.ErrFailRequest(err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, utils.ErrResponseStatus(resp.StatusCode)
+	}
+
+	content, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, utils.ErrReadFromBody(err)
+	}
+	return content, nil
+}
