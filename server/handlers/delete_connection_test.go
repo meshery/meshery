@@ -13,9 +13,11 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
+	isql "github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/events"
 )
@@ -330,6 +332,25 @@ func (a *recordingDeleteAction) ExecuteOnExit(context.Context, interface{}, inte
 	return machines.NoOp, nil, nil
 }
 
+// teardownObservingProvider intercepts DeleteConnection to inspect the in-memory
+// state machine instance before it is evicted from the tracker.
+type teardownObservingProvider struct {
+	models.Provider
+	h                  *Handler
+	observedTransition bool
+	observedState      machines.StateType
+	hasContext         bool
+}
+
+func (p *teardownObservingProvider) DeleteConnection(req *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {
+	if inst, ok := p.h.ConnectionToStateMachineInstanceTracker.Get(connectionID); ok && inst != nil {
+		p.observedTransition = true
+		p.observedState = inst.CurrentState
+		p.hasContext = helpers.HasMachineContext(inst)
+	}
+	return p.Provider.DeleteConnection(req, connectionID)
+}
+
 // TestDeleteConnection_KubernetesKindTriggersTeardown verifies that deleting an active
 // Kubernetes connection executes cluster teardown via machines.Delete on its state machine,
 // deletes database records, and evicts the machine from the tracker.
@@ -483,6 +504,8 @@ func TestDeleteConnection_KubernetesKindWithoutMachineContext_SafelyEvicts(t *te
 // TestDeleteConnection_KubernetesKindUntrackedWithPersistedContextTriggersTeardown verifies that
 // when a Kubernetes connection is not yet in the tracker, DeleteConnection resolves the context
 // via metadata / ConnectionID link, initializes the machine, and triggers cluster teardown.
+// The observable teardown side effect (machine initialized, carrying valid context, and transitioned
+// to DELETED) is asserted before the machine is evicted from the tracker.
 func TestDeleteConnection_KubernetesKindUntrackedWithPersistedContextTriggersTeardown(t *testing.T) {
 	h, provider := newDeleteConnectionFixture(t)
 
@@ -500,13 +523,27 @@ func TestDeleteConnection_KubernetesKindUntrackedWithPersistedContextTriggersTea
 		t.Fatalf("save connection: %v", err)
 	}
 
-	_, err = provider.SaveK8sContext("", models.K8sContext{
+	cluster := isql.Map{
+		"name": "test-cluster",
+		"cluster": map[string]interface{}{
+			"server": "https://127.0.0.1:6443",
+		},
+	}
+	auth := isql.Map{
+		"name": "test-user",
+		"user": map[string]interface{}{
+			"token": "fake-token",
+		},
+	}
+
+	if err := provider.MesheryK8sContextPersister.DB.Create(&models.K8sContext{
 		ID:                contextID,
 		Name:              "test-cluster",
 		ConnectionID:      saved.ID.String(),
 		MesheryInstanceID: h.SystemID,
-	}, nil)
-	if err != nil {
+		Cluster:           cluster,
+		Auth:              auth,
+	}).Error; err != nil {
 		t.Fatalf("save k8s context: %v", err)
 	}
 
@@ -515,9 +552,202 @@ func TestDeleteConnection_KubernetesKindUntrackedWithPersistedContextTriggersTea
 		t.Fatal("expected machine to not be in tracker prior to delete")
 	}
 
+	observingProvider := &teardownObservingProvider{
+		Provider: provider,
+		h:        h,
+	}
+
+	rec := deleteConnection(t, h, observingProvider, saved.ID)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusOK, rec.Body.String())
+	}
+
+	if !observingProvider.observedTransition {
+		t.Error("expected untracked machine to be initialized and tracked during teardown")
+	}
+	if observingProvider.observedState != machines.DELETED {
+		t.Errorf("expected machine state to transition to DELETED before eviction, got %s", observingProvider.observedState)
+	}
+	if !observingProvider.hasContext {
+		t.Error("expected machine to carry initialized context during teardown")
+	}
+
+	if _, ok := h.ConnectionToStateMachineInstanceTracker.Get(saved.ID); ok {
+		t.Error("expected state machine to be evicted from tracker after delete")
+	}
+
+	if _, err := provider.ConnectionPersister.GetConnection(saved.ID, ""); err == nil {
+		t.Error("expected connection to be deleted from database")
+	}
+}
+
+// TestDeleteConnection_KubernetesKindRegisteredState_TransitionsToDeleted verifies that
+// a Kubernetes connection tracked in the REGISTERED state can cleanly transition to DELETED
+// and execute its teardown action.
+func TestDeleteConnection_KubernetesKindRegisteredState_TransitionsToDeleted(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name:           "k8s-registered-cluster",
+		Kind:           "kubernetes",
+		ConnectionType: "platform",
+		Status:         connections.REGISTERED,
+	})
+	if err != nil {
+		t.Fatalf("save connection: %v", err)
+	}
+
+	deleteCh := make(chan struct{}, 1)
+	action := &recordingDeleteAction{deleted: deleteCh}
+	h.ConnectionToStateMachineInstanceTracker.Add(saved.ID, &machines.StateMachine{
+		ID:           saved.ID,
+		Name:         "kubernetes",
+		InitialState: machines.InitialState,
+		CurrentState: machines.REGISTERED,
+		Log:          h.log,
+		Provider:     provider,
+		Context: &kubernetes.MachineCtx{
+			K8sContext:         models.K8sContext{ID: saved.ID.String()},
+			MesheryCtrlsHelper: &models.MesheryControllersHelper{},
+		},
+		States: machines.States{
+			machines.REGISTERED: kubernetes.Registered(),
+			machines.DELETED:    machines.State{Action: action},
+		},
+	})
+
 	rec := deleteConnection(t, h, provider, saved.ID)
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusOK, rec.Body.String())
+	}
+
+	select {
+	case <-deleteCh:
+		// Teardown action executed as expected
+	case <-time.After(500 * time.Millisecond):
+		t.Fatal("expected teardown action to be executed from REGISTERED state, but none was triggered")
+	}
+
+	if _, ok := h.ConnectionToStateMachineInstanceTracker.Get(saved.ID); ok {
+		t.Error("expected state machine to be evicted from tracker after delete")
+	}
+
+	if _, err := provider.ConnectionPersister.GetConnection(saved.ID, ""); err == nil {
+		t.Error("expected connection to be deleted from database")
+	}
+}
+
+// TestDeleteConnection_KubernetesKindContextLookupFails_LogsWarningAndDeletes verifies that
+// when the Kubernetes context cannot be resolved, teardown is skipped with a warning and
+// the connection deletion still succeeds (returning HTTP 200) without crashing or leaving stray rows.
+func TestDeleteConnection_KubernetesKindContextLookupFails_LogsWarningAndDeletes(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name:           "k8s-orphan-connection",
+		Kind:           "kubernetes",
+		ConnectionType: "platform",
+		Status:         connections.CONNECTED,
+		Metadata: map[string]interface{}{
+			"contextId": "non-existent-context-id",
+		},
+	})
+	if err != nil {
+		t.Fatalf("save connection: %v", err)
+	}
+
+	// Verify machine is NOT in tracker
+	if _, ok := h.ConnectionToStateMachineInstanceTracker.Get(saved.ID); ok {
+		t.Fatal("expected machine to not be in tracker prior to delete")
+	}
+
+	rec := deleteConnection(t, h, provider, saved.ID)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusOK, rec.Body.String())
+	}
+
+	if _, ok := h.ConnectionToStateMachineInstanceTracker.Get(saved.ID); ok {
+		t.Error("expected tracker to remain empty after delete")
+	}
+
+	if _, err := provider.ConnectionPersister.GetConnection(saved.ID, ""); err == nil {
+		t.Error("expected connection to be deleted from database")
+	}
+}
+
+// TestDeleteConnection_KubernetesKindWithoutMachineContext_ReinitializesIfPersistedContextExists
+// verifies that if a tracked machine had no context, DeleteConnection replaces the uninitialized
+// tracker entry and reinitializes with the persisted context to execute cluster teardown.
+func TestDeleteConnection_KubernetesKindWithoutMachineContext_ReinitializesIfPersistedContextExists(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+
+	contextID := "persisted-k8s-ctx-for-broken-machine"
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name:           "k8s-broken-then-healed",
+		Kind:           "kubernetes",
+		ConnectionType: "platform",
+		Status:         connections.CONNECTED,
+		Metadata: map[string]interface{}{
+			"contextId": contextID,
+		},
+	})
+	if err != nil {
+		t.Fatalf("save connection: %v", err)
+	}
+
+	cluster := isql.Map{
+		"name": "test-cluster",
+		"cluster": map[string]interface{}{
+			"server": "https://127.0.0.1:6443",
+		},
+	}
+	auth := isql.Map{
+		"name": "test-user",
+		"user": map[string]interface{}{
+			"token": "fake-token",
+		},
+	}
+
+	if err := provider.MesheryK8sContextPersister.DB.Create(&models.K8sContext{
+		ID:                contextID,
+		Name:              "test-cluster",
+		ConnectionID:      saved.ID.String(),
+		MesheryInstanceID: h.SystemID,
+		Cluster:           cluster,
+		Auth:              auth,
+	}).Error; err != nil {
+		t.Fatalf("save k8s context: %v", err)
+	}
+
+	// Pre-seed the tracker with a context-less machine
+	h.ConnectionToStateMachineInstanceTracker.Add(saved.ID, &machines.StateMachine{
+		ID:           saved.ID,
+		Name:         "kubernetes",
+		InitialState: machines.InitialState,
+		CurrentState: machines.DISCONNECTED,
+		Log:          h.log,
+		Provider:     provider,
+		Context:      nil, // Broken/missing context
+	})
+
+	observingProvider := &teardownObservingProvider{
+		Provider: provider,
+		h:        h,
+	}
+
+	rec := deleteConnection(t, h, observingProvider, saved.ID)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusOK, rec.Body.String())
+	}
+
+	if !observingProvider.observedTransition {
+		t.Error("expected broken machine to be replaced and reinitialized for teardown")
+	}
+	if observingProvider.observedState != machines.DELETED {
+		t.Errorf("expected reinitialized machine state to transition to DELETED, got %s", observingProvider.observedState)
+	}
+	if !observingProvider.hasContext {
+		t.Error("expected reinitialized machine to carry context during teardown")
 	}
 
 	if _, ok := h.ConnectionToStateMachineInstanceTracker.Get(saved.ID); ok {

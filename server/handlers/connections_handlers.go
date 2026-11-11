@@ -744,18 +744,16 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	// For Kubernetes connections, trigger cluster teardown (undeploying deployed operators,
 	// removing controller handlers, stopping MeshSync, and flushing MeshSync data)
 	// before the connection and its context rows are deleted from the database.
-	isKubernetes := (existing != nil && strings.EqualFold(existing.Kind, "kubernetes"))
-	if !isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
-		if tracked, ok := h.ConnectionToStateMachineInstanceTracker.Get(connectionID); ok && tracked != nil {
-			isKubernetes = strings.EqualFold(tracked.Name, "kubernetes")
-		}
-	}
+	isKubernetes := (gerr == nil && existing != nil && strings.EqualFold(existing.Kind, "kubernetes"))
 
 	if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
 		var inst *machines.StateMachine
-		if tracked, ok := h.ConnectionToStateMachineInstanceTracker.Get(connectionID); ok && tracked != nil {
+		if tracked, ok := h.ConnectionToStateMachineInstanceTracker.Get(connectionID); ok && tracked != nil && helpers.HasMachineContext(tracked) {
 			inst = tracked
 		} else {
+			if h.ConnectionToStateMachineInstanceTracker != nil {
+				h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+			}
 			contextID := connectionID.String()
 			if existing != nil && existing.Metadata != nil && provider.GetProviderType() != models.RemoteProviderType {
 				for _, key := range []string{"contextId", "context_id", "k8sContextId", "k8s_context_id"} {
@@ -766,7 +764,8 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 				}
 			}
 
-			if k8scontext, ctxErr := provider.GetK8sContext(token, contextID); ctxErr == nil {
+			k8scontext, ctxErr := provider.GetK8sContext(token, contextID)
+			if ctxErr == nil {
 				var operatorTracker *models.OperatorTracker
 				var k8scontextChannel *models.K8scontextChan
 				var eventBroadcaster *models.Broadcast
@@ -785,7 +784,8 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 					EventBroadcaster:   eventBroadcaster,
 					RegistryManager:    h.registryManager,
 				}
-				inst, _ = helpers.InitializeMachineWithContext(
+				var initErr error
+				inst, initErr = helpers.InitializeMachineWithContext(
 					machineCtx,
 					req.Context(),
 					connectionID,
@@ -797,6 +797,11 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 					"kubernetes",
 					kubernetes.AssignInitialCtx,
 				)
+				if initErr != nil {
+					h.log.Warnf("failed to initialize Kubernetes machine for connection %s during teardown: %v", connectionID, initErr)
+				}
+			} else {
+				h.log.Warnf("failed to resolve Kubernetes context %s for connection %s during teardown: %v", contextID, connectionID, ctxErr)
 			}
 		}
 
@@ -814,6 +819,9 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
+		if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
+			h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+		}
 		// Deleting an id the provider never issued is "not found", not a
 		// failure to write. The local provider says so with ErrResultNotFound;
 		// the remote provider says so with its own 404, which ErrDelete now
