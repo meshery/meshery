@@ -323,8 +323,18 @@ func TestDeleteContext_SendEventError(t *testing.T) {
 
 	// The machine must be evicted from the instance tracker even when SendEvent fails,
 	// preventing deleted context instances from leaking in memory and being polled by middlewares.
-	if _, ok := h.ConnectionToStateMachineInstanceTracker.Get(contextID); ok {
-		t.Errorf("expected state machine %s to be evicted from tracker on SendEvent failure, but it was leaked", contextID)
+	// The deferred Remove runs when the teardown goroutine returns, after the
+	// broadcast above, so poll for eviction instead of asserting it immediately.
+	deadline := time.Now().Add(2 * time.Second)
+	for {
+		if _, ok := h.ConnectionToStateMachineInstanceTracker.Get(contextID); !ok {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Errorf("expected state machine %s to be evicted from tracker on SendEvent failure, but it was leaked", contextID)
+			break
+		}
+		time.Sleep(10 * time.Millisecond)
 	}
 }
 
