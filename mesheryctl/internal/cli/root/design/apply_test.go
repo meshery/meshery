@@ -123,6 +123,66 @@ func TestApplyCmd(t *testing.T) {
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a design name and the --file flag")),
 		},
+		{
+			Name:             "given empty design name when design apply then validation error is returned",
+			Args:             []string{"apply", ""},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("please provide a design name or specify a file using --file")),
+		},
+		{
+			Name:             "given whitespace design name when design apply then validation error is returned",
+			Args:             []string{"apply", "   "},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("please provide a design name or specify a file using --file")),
+		},
+		{
+			Name:             "given multi-word design name as separate arguments when design apply then design is applied",
+			Args:             []string{"apply", "Istio", "Service", "Mesh"},
+			ExpectedResponse: "apply.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=Istio%20Service%20Mesh",
+					Response:     "list.design.local.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "apply.designDeploy.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: false,
+		},
+		{
+			Name:             "given quoted multi-word design name when design apply then design is applied",
+			Args:             []string{"apply", "Istio Service Mesh"},
+			ExpectedResponse: "apply.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=Istio Service Mesh",
+					Response:     "list.design.local.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "apply.designDeploy.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: false,
+		},
 	}
 
 	// Run tests

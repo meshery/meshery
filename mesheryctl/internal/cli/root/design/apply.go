@@ -61,10 +61,13 @@ mesheryctl design apply [design-name]
 		if cmd.Flags().Changed("file") && strings.TrimSpace(file) == "" {
 			return utils.ErrInvalidArgument(fmt.Errorf("file path cannot be empty"))
 		}
-		if len(args) == 0 && strings.TrimSpace(file) == "" {
+		hasDesignName := strings.TrimSpace(strings.Join(args, " ")) != ""
+		hasFile := strings.TrimSpace(file) != ""
+
+		if !hasDesignName && !hasFile {
 			return utils.ErrInvalidArgument(fmt.Errorf("please provide a design name or specify a file using --file"))
 		}
-		if len(args) > 0 && strings.TrimSpace(file) != "" {
+		if len(args) > 0 && hasFile {
 			return utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a design name and the --file flag"))
 		}
 		return nil
