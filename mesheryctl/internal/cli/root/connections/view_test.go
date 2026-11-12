@@ -1,13 +1,19 @@
 package connections
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/url"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	"github.com/gofrs/uuid"
+	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas/models/v1beta3/connection"
 )
 
 func TestConnectionViewCmd(t *testing.T) {
@@ -128,5 +134,133 @@ func TestConnectionViewNoSaveWithBrokenHome(t *testing.T) {
 	run := connectionViewRun(utils.CallerDir(t), []string{"view", connectionId})
 	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
 		t.Fatalf("view without --save should succeed even with no HOME: %v", err)
+	}
+}
+
+func TestFetchConnectionByName(t *testing.T) {
+	conn1 := &connection.Connection{
+		ID:             uuid.Must(uuid.NewV4()),
+		Name:           "minikube-1",
+		ConnectionType: "platform",
+	}
+	conn2 := &connection.Connection{
+		ID:             uuid.Must(uuid.NewV4()),
+		Name:           "minikube-2",
+		ConnectionType: "platform",
+	}
+
+	tests := []struct {
+		name           string
+		page           connection.ConnectionPage
+		promptChoice   int
+		wantPromptCall bool
+		wantConn       *connection.Connection
+	}{
+		{
+			name: "TotalCount > 0 with empty Connections slice returns nil without panicking",
+			page: connection.ConnectionPage{
+				TotalCount:  1,
+				Connections: []*connection.Connection{},
+			},
+			wantPromptCall: false,
+			wantConn:       nil,
+		},
+		{
+			name: "TotalCount > 1 with empty Connections slice returns nil without prompting",
+			page: connection.ConnectionPage{
+				TotalCount:  2,
+				Connections: []*connection.Connection{},
+			},
+			wantPromptCall: false,
+			wantConn:       nil,
+		},
+		{
+			name: "zero results returns nil",
+			page: connection.ConnectionPage{
+				TotalCount:  0,
+				Connections: []*connection.Connection{},
+			},
+			wantPromptCall: false,
+			wantConn:       nil,
+		},
+		{
+			name: "exactly one connection returns it directly",
+			page: connection.ConnectionPage{
+				TotalCount:  1,
+				Connections: []*connection.Connection{conn1},
+			},
+			wantPromptCall: false,
+			wantConn:       conn1,
+		},
+		{
+			name: "inconsistent TotalCount > 1 with single connection skips prompt",
+			page: connection.ConnectionPage{
+				TotalCount:  2,
+				Connections: []*connection.Connection{conn1},
+			},
+			wantPromptCall: false,
+			wantConn:       conn1,
+		},
+		{
+			name: "multiple connections prompts user and returns selection",
+			page: connection.ConnectionPage{
+				TotalCount:  2,
+				Connections: []*connection.Connection{conn1, conn2},
+			},
+			promptChoice:   1,
+			wantPromptCall: true,
+			wantConn:       conn2,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			testContext := utils.InitTestEnvironment(t)
+			defer utils.StopMockery(t)
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
+			utils.TokenFlag = utils.GetToken(t)
+
+			origRunSelectPrompt := runSelectPrompt
+			defer func() {
+				runSelectPrompt = origRunSelectPrompt
+			}()
+
+			promptCalled := false
+			runSelectPrompt = func(label string, items []string) (int, error) {
+				promptCalled = true
+				if len(items) != len(tt.page.Connections) {
+					t.Fatalf("prompt items len = %d, want %d", len(items), len(tt.page.Connections))
+				}
+				return tt.promptChoice, nil
+			}
+
+			body, err := json.Marshal(tt.page)
+			if err != nil {
+				t.Fatalf("failed to marshal connection page: %v", err)
+			}
+
+			query := url.Values{}
+			query.Add("search", "minikube")
+			query.Add("pagesize", "all")
+			reqURL := fmt.Sprintf("%s/%s?%s", testContext.BaseURL, connectionApiPath, query.Encode())
+			httpmock.RegisterResponder(http.MethodGet, reqURL, httpmock.NewBytesResponder(http.StatusOK, body))
+
+			got, err := fetchConnectionByName("minikube")
+			if err != nil {
+				t.Fatalf("fetchConnectionByName returned unexpected error: %v", err)
+			}
+			if promptCalled != tt.wantPromptCall {
+				t.Fatalf("promptCalled = %v, want %v", promptCalled, tt.wantPromptCall)
+			}
+			if tt.wantConn == nil {
+				if got != nil {
+					t.Fatalf("got connection %+v, want nil", got)
+				}
+				return
+			}
+			if got == nil || got.ID != tt.wantConn.ID {
+				t.Fatalf("got connection = %+v, want ID %s", got, tt.wantConn.ID)
+			}
+		})
 	}
 }
