@@ -142,9 +142,9 @@ Using Scaffold (model init) | fa fa-folder-tree
 <code>
 digitalocean-icons/
 <br />└── v0.1.0/
-<br />&nbsp;&nbsp;&nbsp;&nbsp;├── model.json          # model definition (name, displayName and version are pre-filled from the argument and --version; v1.0.76 and earlier: see the warning below)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── model.json          # model definition (name, displayName and version are pre-filled from the argument and --version; releases without meshery/meshery#23362: see the warning below)
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── components/
-<br />&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── component.json  # sample component, already referencing this model (v1.0.76 and earlier: see the warning below); add one JSON file per component
+<br />&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── component.json  # sample component, already referencing this model (releases without meshery/meshery#23362: see the warning below); add one JSON file per component
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── relationships/
 <br />&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── relationship.json  # sample relationship (see the warning below)
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── connections/
@@ -157,7 +157,7 @@ digitalocean-icons/
   <li><code>category.name</code> and <code>subCategory</code> - e.g. <code>Platform</code> / <code>Cloud Provider</code>.</li>
   <li><code>registrant.kind</code> - e.g. <code>meshery</code>.</li>
   <li><code>description</code> - a short summary of what the model provides.</li>
-  <li><code>metadata.svgColor</code> and <code>metadata.svgWhite</code> - the model's display icon, as a JSON-escaped SVG string. The SVG's attribute quotes make raw markup invalid JSON, so generate the value with <code>sed '/^&lt;?xml/d' icon.svg | jq -Rs .</code>, which drops any <code>&lt;?xml ...?&gt;</code> header and escapes quotes and newlines, and paste the whole output, including its surrounding quotes.</li>
+  <li><code>metadata.svgColor</code> and <code>metadata.svgWhite</code> - the model's display icon, as a JSON-escaped SVG string. The SVG's attribute quotes make raw markup invalid JSON, so generate the value with <code>sed 's/&lt;?xml[^&gt;]*?&gt;//' icon.svg | jq -Rs .</code>, which drops any <code>&lt;?xml ...?&gt;</code> header and escapes quotes and newlines, and paste the whole output, including its surrounding quotes.</li>
   <li><code>metadata.isAnnotation</code> - set to <code>true</code> for an annotation-only (visual diagramming) model.</li>
 </ul>
 
@@ -170,8 +170,8 @@ digitalocean-icons/
   <li><code>metadata.isAnnotation</code> - <code>true</code> for annotation components.</li>
 </ul>
 
-{{% alert color="warning" title="Scaffold fixes required with mesheryctl and Meshery Server v1.0.76" %}}
-The v1.0.76 scaffold does not import as generated. Before building, fix these:
+{{% alert color="warning" title="Scaffold fixes required until the fixes below reach your release" %}}
+A scaffold from a mesheryctl and Meshery Server release that predates the fixes linked below does not import as generated. This is true of v1.0.76 and v1.0.77. Before building, fix these:
 <ul>
   <li><strong>Version and model name.</strong> <code>model.json</code> is written with version <code>v0.0.1</code> whatever you pass to <code>--version</code>, so set <code>version</code> and <code>model.version</code> yourself. The nested <code>model.name</code> in the sample component and relationship is <code>untitled-model</code>; set it to your model name. Fixed in <a href="https://github.com/meshery/meshery/pull/23362">meshery/meshery#23362</a>; drop this step once you run a <code>mesheryctl</code> release that includes it.</li>
   <li><strong>Component schemaVersion.</strong> Meshery Server rejects the scaffolded <code>components.meshery.io/v1beta3</code> component at import with "No valid component or relationship found in the Model provided". Set each component's <code>schemaVersion</code> to <code>components.meshery.io/v1beta1</code> (or <code>v1beta2</code>), and leave the model's at <code>models.meshery.io/v1beta2</code>. Fixed in <a href="https://github.com/meshery/meshkit/pull/1165">meshery/meshkit#1165</a>; drop this step once your Meshery Server includes a MeshKit release with it.</li>
