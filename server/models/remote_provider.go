@@ -524,6 +524,10 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 		l.Log.Error(ErrPost(err, "user preference data", 0))
 		return
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 	if resp.StatusCode != http.StatusCreated {
 		err = ErrPost(fmt.Errorf("status code: %d. ", resp.StatusCode), "user preference data", resp.StatusCode)
 		l.Log.Error(err)
@@ -2045,6 +2049,10 @@ func (l *RemoteProvider) UpdateEventStatus(token string, eventID core.Uuid, stat
 	if err != nil {
 		return ErrUnreachableRemoteProvider(err)
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		l.Log.Error(ErrPost(fmt.Errorf("error updating event status with the remote provider"), "event status", resp.StatusCode))
@@ -2080,6 +2088,10 @@ func (l *RemoteProvider) BulkUpdateEventStatus(token string, eventIDs []*core.Uu
 	if err != nil {
 		return ErrUnreachableRemoteProvider(err)
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		l.Log.Error(ErrPost(fmt.Errorf("error bulk updating event status with the remote provider"), "event status", resp.StatusCode))
@@ -2104,6 +2116,10 @@ func (l *RemoteProvider) DeleteEvent(token string, eventID core.Uuid) error {
 	if err != nil {
 		return ErrUnreachableRemoteProvider(err)
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		l.Log.Error(ErrPost(fmt.Errorf("error deleting event with the remote provider"), "event status", resp.StatusCode))
@@ -2137,6 +2153,10 @@ func (l *RemoteProvider) BulkDeleteEvent(token string, eventIDs []*core.Uuid) er
 	if err != nil {
 		return ErrUnreachableRemoteProvider(err)
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		l.Log.Error(ErrPost(fmt.Errorf("error bulk delete events with the remote provider"), "event status", resp.StatusCode))
@@ -3847,6 +3867,10 @@ func (l *RemoteProvider) ShareDesign(req *http.Request) (int, error) {
 		}
 		return http.StatusInternalServerError, ErrShareDesign(err)
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return resp.StatusCode, ErrShareDesign(fmt.Errorf("unable to share design"))
@@ -4823,6 +4847,9 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID c
 		l.Log.Error(err)
 		return nil, http.StatusInternalServerError, ErrUpdateConnectionStatus(err, http.StatusInternalServerError)
 	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, http.StatusInternalServerError, ErrDataRead(err, "Update Connection")
@@ -5451,6 +5478,10 @@ func (l *RemoteProvider) ShareFilter(req *http.Request) (int, error) {
 	if err != nil {
 		return http.StatusInternalServerError, ErrShareFilter(err)
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return resp.StatusCode, ErrShareFilter(fmt.Errorf("unable to share filter"))
