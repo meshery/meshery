@@ -185,6 +185,12 @@ The build needs a real **Dart Sass** first on `PATH` - `make -C docs check-deps`
 `TOCSS-DART ... unexpected EOF` error that blames permissions. See
 [build environment gotchas](./docs/content/en/project/contributing/contributing-build-environment.md).
 
+docs.meshery.io deploys from a GitHub Actions Pages artifact (`hugo.yml`); PR previews publish to the
+separate `meshery/docs-preview` Pages site. Every Pages site is capped at 1 GB and the docs have ~4,600
+pages, so never inline large, page-independent markup into every page (the sidebar tree is published
+once and fetched for this reason), and never put previews back on the production site. See
+[Publishing Meshery Docs](./docs/content/en/project/contributing/build-and-release.md#publishing-meshery-docs).
+
 A docs page that carries an image belongs in a leaf bundle (`<page>/index.md` plus
 `<page>/images/`) - a plain `<page>.md` publishes one level down, so its relative image paths
 404. See [contributing to Meshery Docs](./docs/content/en/project/contributing/contributing-docs/docs.md).
@@ -528,6 +534,7 @@ worked detail behind them — open the one that matches what you are working on.
 | MeshKit error codes | [How to write MeshKit compatible errors](./docs/content/en/project/contributing/contributing-error.md) |
 | A Go lint rule firing, or adding one | [Go Lint Rules](./docs/content/en/project/contributing/contributing-lint.md) |
 | Releases, CI secrets, the QA dashboard | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
+| Docs deployment, PR previews, the 1 GB Pages limit | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md#publishing-meshery-docs) |
 | A reusable workflow called from another repo | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
 | Connections and credential secrets | [Connections](./docs/content/en/project/contributing/models/connections.md) |
 | A permission-gated page, control or key | [Extensibility: Authorization](./docs/content/en/reference/extensibility/authorization/index.md) |

@@ -275,77 +275,33 @@ The following is a concise summary of the steps to contribute to Meshery documen
 5. Add redirect link on the old page (only when a new page is created that replaces the old page). In Hugo, use the `aliases` frontmatter field.
 6. Run site locally to preview changes.
    `make site`
+   Once you open the pull request, CI also builds a preview and comments its link on the pull request (`https://meshery.github.io/docs-preview/pr-preview/pr-<number>/`).
 7. Commit, [sign-off]({{< ref "project/contributing/_index.md" >}}), and push changes to your remote branch.
    `git push origin <my-changes>`
 8. Open a pull request (in your web browser) against the repo: https://github.com/meshery/meshery.
 
-### Navigation Table of Contents in Sidebar (toc)
+### Navigation Sidebar
 
-Sidebars use a data file at `data/toc.yml` to create a table of contents. It is written in the following manner:
+The sidebar is generated from the content tree; there is no table-of-contents data file to edit. Each section directory (one with an `_index.md`) becomes a parent entry, and its pages and subsections become its children, to any depth.
 
-```
-- title: Group 1
-  url: group1
-  links:
-    - title: Thing 1
-      url: group1/thing1
-    - title: Thing 2
-      url: group1/thing2
-    - title: Thing 3
-      url: group1/thing3
-```
+Control a page's place in the sidebar with its front matter:
 
-The output of the code snippet would be:
+| Front matter | Effect |
+|---|---|
+| `weight` | Sort order among siblings, lowest first. Siblings with equal weight sort by title. |
+| `linkTitle` | Shorter label for the sidebar entry (the page heading still uses `title`). |
+| `toc_hide: true` | Leaves the page out of the sidebar. It is still built and reachable by URL. |
+| `manualLink` | Points the sidebar entry at another URL instead of the page itself. |
 
-```
-    Group 1
-      Thing 1
-      Thing 2
-      Thing 3
+```yaml
+---
+title: Installing Meshery on Kubernetes
+linkTitle: Kubernetes
+weight: 20
+---
 ```
 
-In this example, **Group 1** is a ``parent`` section within the Table of Contents, and **Thing 1**, **Thing 2**, and **Thing 3** are ``children`` of **Group 1**. This is a direct hierarchy with a single level of children under the parent.
-
-``Grandchildren`` are added in the sidebars in the following manner:
-
-```
-- title: Group 1
-  url: group1
-  links:
-    - title: Thing 1
-      url: group1/thing1
-      children:
-        - title: Subthing 1.1
-          url: group1/thing1/subthing1_1
-        - title: Subthing 1.2
-          url: group1/thing1/subthing1_2
-    - title: Thing 2
-      url: group1/thing2
-    - title: Thing 3
-      url: group1/thing3
-```
-
-The output of the code snippet would be:
-
-```
-    Group 1
-      Thing 1
-       Subthing 1.1
-       Subthing 1.2
-      Thing 2
-      Thing 3
-```
-
-Here, **Subthing 1.1** and **Subthing 1.2** are the ``grandchildren`` of **Thing 1**.
-
-The sidebar template in `layouts/partials/sidebar.html` reads from `data/toc.yml` and supports up to four levels of navigation hierarchy.
-
-- **Parent**: It serves as a top level category for related content.
-- **Children** (`links`): They are immediate subsections or topics that fall under the parent section.
-- **Grandchildren** (`children`): They are nested under a link and provide a more detailed breakdown of information within the child section. Grandchildren are used to organize content further, offering a more detailed structure for a specific topic.
-- **Great-grandchildren** (`grandchildren`): An additional level of nesting for even finer-grained organization.
-
-These sections create a hierarchical and organized navigation experience for readers.
+The tree is rendered by `layouts/partials/sidebar-nav-tree.html`. Because it is the same on every page, the build publishes it once as `sidebar/nav-*.html`, and `layouts/partials/sidebar.html` fetches it, mounts it and marks the current page active in the browser. A sidebar change therefore shows up on every page at once, and a page's own HTML does not grow with the size of the docs. See [Publishing Meshery Docs]({{< ref "project/contributing/build-and-release.md#publishing-meshery-docs" >}}) for why this matters.
 
 ### Alerts
 

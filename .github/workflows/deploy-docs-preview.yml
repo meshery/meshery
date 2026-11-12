@@ -1,12 +1,21 @@
 name: Docs Preview Post-Build
 
+# Publishes (or, for a closed PR, removes) the docs preview that
+# build-docs-preview.yml built, on the gh-pages branch of meshery/docs-preview.
+# That repository's Pages site, https://meshery.github.io/docs-preview/, exists
+# only for previews: they used to share docs.meshery.io's gh-pages branch, and
+# a few full copies of the site there pushed it over the 1 GB GitHub Pages
+# limit, so production docs stopped publishing (#23221).
+
 on:
   workflow_run:
     workflows: ["Build Docs Preview"]
     types: [completed]
 
+# GITHUB_TOKEN only reads the build artifact and comments on PRs here. Writes to
+# meshery/docs-preview use GH_ACCESS_TOKEN.
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
   issues: write
   actions: read
@@ -16,7 +25,13 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PREVIEW_RETENTION_LIMIT: 6
+  PREVIEW_REPOSITORY: meshery/docs-preview
+  # Must match the base URL build-docs-preview.yml bakes into the build
+  # (/docs-preview/<umbrella-dir>/pr-<number>/).
+  PREVIEW_PAGES_BASE_URL: meshery.github.io/docs-preview
+  PREVIEW_UMBRELLA_DIR: pr-preview
+  # One preview is ~250 MB; the preview site has the same 1 GB Pages limit.
+  PREVIEW_RETENTION_LIMIT: 3
 
 jobs:
   read-metadata:
@@ -31,6 +46,17 @@ jobs:
         with:
           egress-policy: audit
 
+      - name: Require the preview repository token
+        # Fail loudly rather than let the deploy step fail later with an
+        # opaque authentication error.
+        env:
+          PREVIEW_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$PREVIEW_TOKEN" ]; then
+            echo "::error::secrets.GH_ACCESS_TOKEN is empty. It must be able to push to ${PREVIEW_REPOSITORY} to publish docs previews."
+            exit 1
+          fi
+
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -42,16 +68,31 @@ jobs:
       - name: Retrieve PR metadata
         id: pr
         run: |
-          echo "PULL_REQUEST=$(cat ./docs-preview-build/pr/number)" >> "$GITHUB_OUTPUT"
-          echo "ACTION=$(cat ./docs-preview-build/pr/action)" >> "$GITHUB_OUTPUT"
+          set -eu
+          number="$(cat ./docs-preview-build/pr/number)"
+          action="$(cat ./docs-preview-build/pr/action)"
+          # The artifact comes from a pull_request run; validate before use.
+          if ! [[ "$number" =~ ^[0-9]+$ ]]; then
+            echo "::error::PR number in the build artifact is not numeric: '$number'"
+            exit 1
+          fi
+          if ! [[ "$action" =~ ^[a-z_]+$ ]]; then
+            echo "::error::PR action in the build artifact is invalid: '$action'"
+            exit 1
+          fi
+          echo "PULL_REQUEST=$number" >> "$GITHUB_OUTPUT"
+          echo "ACTION=$action" >> "$GITHUB_OUTPUT"
 
   deploy:
     needs: read-metadata
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Download build artifact
+        if: needs.read-metadata.outputs.action != 'closed'
         uses: actions/download-artifact@v4
         with:
           name: docs-preview-build
@@ -63,15 +104,22 @@ jobs:
         id: preview
         uses: rossjrw/pr-preview-action@ffa7509e91a3ec8dfc2e5536c4d5c1acdf7a6de9 #1.8.1
         with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          deploy-repository: ${{ env.PREVIEW_REPOSITORY }}
           source-dir: ./docs-preview-build/docs/public
-          pages-base-url: docs.meshery.io # otherwise meshery.github.io/meshery is used as a default
-          umbrella-dir: pr-preview # must match the /pr-preview/ baseURL the build bakes
+          pages-base-url: ${{ env.PREVIEW_PAGES_BASE_URL }}
+          umbrella-dir: ${{ env.PREVIEW_UMBRELLA_DIR }}
           qr-code: false
           comment: false
           action: ${{ needs.read-metadata.outputs.action == 'closed' && 'remove' || 'deploy' }}
           pr-number: ${{ needs.read-metadata.outputs.pr-number }}
+          # The action's default message reads the PR number from the event,
+          # which a workflow_run event does not have.
+          deploy-commit-message: Deploy preview for PR #${{ needs.read-metadata.outputs.pr-number }}
+          remove-commit-message: Remove preview for PR #${{ needs.read-metadata.outputs.pr-number }}
 
       - name: Comment preview URL on the PR
+        if: needs.read-metadata.outputs.action != 'closed'
         uses: marocchino/sticky-pull-request-comment@67d0dec7b07ed060a405f9b2a64b8ab319fdd7db # v2.9.2
         with:
           header: pr-preview
@@ -79,21 +127,37 @@ jobs:
           message: |
             📖 Docs preview: ${{ steps.preview.outputs.preview-url }}
 
+      - name: Note the removed preview on the PR
+        if: needs.read-metadata.outputs.action == 'closed'
+        uses: marocchino/sticky-pull-request-comment@67d0dec7b07ed060a405f9b2a64b8ab319fdd7db # v2.9.2
+        with:
+          header: pr-preview
+          number: ${{ needs.read-metadata.outputs.pr-number }}
+          message: |
+            📖 Docs preview removed because this pull request was closed.
+
   prune:
-    needs: read-metadata
+    # After deploy, so the preview just published counts as the newest one.
+    needs: [read-metadata, deploy]
     runs-on: ubuntu-24.04
     if: needs.read-metadata.outputs.action != 'closed'
     outputs:
       removed_prs: ${{ steps.prune-previews.outputs.removed_prs }}
       removed_prs_json: ${{ steps.prune-previews.outputs.removed_prs_json }}
     steps:
-      - name: Checkout gh-pages for preview retention
+      - name: Checkout the preview site's gh-pages
         uses: actions/checkout@v6
         with:
+          repository: ${{ env.PREVIEW_REPOSITORY }}
           ref: gh-pages
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          # Full history for per-preview commit times, but no file contents:
+          # pruning only edits the index, so the ~250 MB previews are never
+          # downloaded. The sparse root keeps the working tree empty.
           fetch-depth: 0
-          sparse-checkout: |
-            pr-preview
+          filter: blob:none
+          sparse-checkout: .nojekyll
+          sparse-checkout-cone-mode: false
           path: gh-pages-maintenance
 
       - name: Prune old PR previews
@@ -125,15 +189,15 @@ jobs:
           attempts=5
 
           for attempt in $(seq 1 "$attempts"); do
-            git fetch --quiet origin gh-pages
+            git fetch --quiet --filter=blob:none origin gh-pages
             git reset --quiet --hard FETCH_HEAD
-            mkdir -p pr-preview
 
+            # Previews, newest first by the last commit that touched each one.
             mapfile -t previews < <(
               while IFS= read -r preview; do
-                timestamp="$(git log -1 --format=%ct -- "pr-preview/$preview" 2>/dev/null || echo 0)"
+                timestamp="$(git log -1 --format=%ct -- "$PREVIEW_UMBRELLA_DIR/$preview" 2>/dev/null || echo 0)"
                 printf '%s %s\n' "$timestamp" "$preview"
-              done < <(find pr-preview -mindepth 1 -maxdepth 1 -type d -name 'pr-*' -printf '%f\n') \
+              done < <(git ls-tree -d --name-only HEAD "$PREVIEW_UMBRELLA_DIR/" | sed "s|^$PREVIEW_UMBRELLA_DIR/||" | grep '^pr-[0-9]\+$') \
                 | sort -nr \
                 | awk '{print $2}'
             )
@@ -141,19 +205,18 @@ jobs:
             removed_prs=()
             if (( ${#previews[@]} > PREVIEW_RETENTION_LIMIT )); then
               for preview in "${previews[@]:PREVIEW_RETENTION_LIMIT}"; do
-                rm -rf "pr-preview/$preview"
+                git rm -r -q --cached --sparse "$PREVIEW_UMBRELLA_DIR/$preview"
                 removed_prs+=("${preview#pr-}")
               done
             fi
 
             # Within the retention limit, or another run already pruned: done.
-            if git diff --quiet -- pr-preview; then
+            if git diff --cached --quiet; then
               outcome="noop"
               break
             fi
 
-            git add pr-preview
-            git commit --quiet -m "Prune old PR previews"
+            git commit --quiet -m "Prune old PR previews: ${removed_prs[*]/#/#}"
 
             if git push origin HEAD:gh-pages; then
               outcome="pushed"
@@ -187,7 +250,7 @@ jobs:
           PREVIEW_RETENTION_LIMIT: ${{ env.PREVIEW_RETENTION_LIMIT }}
         with:
           script: |
-            const removedPrs = JSON.parse(process.env.REMOVED_PRS_JSON);
+            const removedPrs = JSON.parse(process.env.REMOVED_PRS_JSON || "[]");
             const retentionLimit = process.env.PREVIEW_RETENTION_LIMIT;
             const header = "pr-preview";
             const marker = `<!-- Sticky Pull Request Comment${header} -->`;
