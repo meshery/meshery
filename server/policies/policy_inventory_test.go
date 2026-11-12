@@ -3,11 +3,13 @@ package policies
 import (
 	"context"
 	"encoding/json"
+	"math"
 	"os"
 	"strings"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -162,6 +164,247 @@ func TestIdentifyInventoryAdditions_SkipsWhenParentAlreadyPresent(t *testing.T) 
 
 	actions := identifyInventoryAdditions(design, []*relationship.RelationshipDefinition{kubernetesInventoryRelationship()})
 	assert.Empty(t, actions, "must not emit add_component when a matching parent already exists in the design")
+}
+
+// makeDeploymentInNamespace builds a Deployment with metadata.namespace set
+// to the given value, for designs where several children share one parent.
+func makeDeploymentInNamespace(t *testing.T, ns string) *component.ComponentDefinition {
+	t.Helper()
+	id, err := uuid.NewV4()
+	require.NoError(t, err)
+	return &component.ComponentDefinition{
+		ID:             id,
+		Component:      component.Component{Kind: "Deployment", Version: "apps/v1"},
+		Model:          &modelv1beta1.ModelDefinition{Name: "kubernetes"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{
+				"namespace": ns,
+			},
+		},
+	}
+}
+
+// Issue #22778 regression: several Deployments in one namespace, evaluated
+// against several Namespace inventory relationships (the registry ships one
+// per kubernetes model version), must add exactly one Namespace. Each
+// candidate gets a fresh ID, so deduplicating by ID added one per pair.
+func TestIdentifyInventoryAdditions_SharedNamespaceAddedOnce(t *testing.T) {
+	t.Parallel()
+	design := makePatternFile([]*component.ComponentDefinition{
+		makeDeploymentInNamespace(t, "web"),
+		makeDeploymentInNamespace(t, "web"),
+		makeDeploymentInNamespace(t, "web"),
+	}, nil)
+	rels := []*relationship.RelationshipDefinition{
+		kubernetesInventoryRelationship(),
+		kubernetesInventoryRelationship(),
+	}
+
+	actions := identifyInventoryAdditions(design, rels)
+
+	require.Len(t, actions, 1, "one shared namespace must produce exactly one auto-added Namespace")
+	require.NotNil(t, actions[0].Component)
+	assert.Equal(t, "Namespace", actions[0].Component.Component.Kind)
+	assert.Equal(t, "web", string(actions[0].Component.DisplayName))
+}
+
+// Deduplication must not collapse distinct parents: Deployments in two
+// namespaces still get one Namespace each.
+func TestIdentifyInventoryAdditions_DistinctNamespacesAddedSeparately(t *testing.T) {
+	t.Parallel()
+	design := makePatternFile([]*component.ComponentDefinition{
+		makeDeploymentInNamespace(t, "web"),
+		makeDeploymentInNamespace(t, "web"),
+		makeDeploymentInNamespace(t, "db"),
+	}, nil)
+
+	actions := identifyInventoryAdditions(design, []*relationship.RelationshipDefinition{kubernetesInventoryRelationship()})
+
+	require.Len(t, actions, 2, "each distinct namespace must produce its own Namespace")
+	names := []string{}
+	for _, a := range actions {
+		require.NotNil(t, a.Component)
+		assert.Equal(t, "Namespace", a.Component.Component.Kind)
+		names = append(names, string(a.Component.DisplayName))
+	}
+	assert.ElementsMatch(t, []string{"web", "db"}, names)
+}
+
+// makeComponentInNamespace builds a namespaced component of the given kind
+// with metadata.namespace set, for designs where children of different
+// kinds share one parent.
+func makeComponentInNamespace(t *testing.T, kind, apiVersion, ns string) *component.ComponentDefinition {
+	t.Helper()
+	id, err := uuid.NewV4()
+	require.NoError(t, err)
+	return &component.ComponentDefinition{
+		ID:             id,
+		Component:      component.Component{Kind: kind, Version: apiVersion},
+		Model:          &modelv1beta1.ModelDefinition{Name: "kubernetes"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{
+				"namespace": ns,
+			},
+		},
+	}
+}
+
+// kubernetesModelVersions mirrors the registry, which ships one copy of
+// hierarchical-parent-inventory-kmjea.json per kubernetes model version.
+var kubernetesModelVersions = []string{
+	"v1.25.0", "v1.26.0", "v1.27.0", "v1.28.0", "v1.29.0", "v1.30.0", "v1.31.0",
+	"v1.32.0", "v1.33.0", "v1.34.0", "v1.35.0-alpha.1", "v1.35.0-alpha.2",
+}
+
+// kubernetesInventoryRelationshipsAcrossModelVersions returns one copy of the
+// Namespace inventory relationship per kubernetes model version, stamped the
+// way the shipped JSONs are: the relationship's own model carries the version
+// while the to-side (Namespace) selector's model version stays empty.
+func kubernetesInventoryRelationshipsAcrossModelVersions(versions []string) []*relationship.RelationshipDefinition {
+	rels := make([]*relationship.RelationshipDefinition, 0, len(versions))
+	for _, v := range versions {
+		rel := kubernetesInventoryRelationship()
+		rel.Model.Name = "kubernetes"
+		rel.Model.Model.Version = core.SemverString(v)
+		rels = append(rels, rel)
+	}
+	return rels
+}
+
+// kubernetesInventoryRelationshipsWithVersionedParents is the hypothetical
+// shape where each copy also pins its model version on the to-side Namespace
+// selector, so the version flows through buildInventoryParentCandidate into
+// the candidate's ModelReference.
+func kubernetesInventoryRelationshipsWithVersionedParents(versions []string) []*relationship.RelationshipDefinition {
+	rels := kubernetesInventoryRelationshipsAcrossModelVersions(versions)
+	for i, rel := range rels {
+		for si := range *rel.Selectors {
+			for ti := range (*rel.Selectors)[si].Allow.To {
+				to := &(*rel.Selectors)[si].Allow.To[ti]
+				if to.Model == nil {
+					continue
+				}
+				to.Model.Version = core.SemverString(versions[i])
+				to.Model.Model.Version = core.SemverString(versions[i])
+			}
+		}
+	}
+	return rels
+}
+
+// Issue #23360 regression: a Deployment and a Service in `default`, evaluated
+// against the registry's per-kubernetes-version copies of the Namespace
+// inventory relationship, must add exactly one Namespace. Each copy differs
+// only in its own model version; the to-side selector's model version is
+// empty, so every copy builds the same candidate and the key collapses them.
+func TestIdentifyInventoryAdditions_OneNamespaceAcrossKubernetesModelVersions(t *testing.T) {
+	t.Parallel()
+	design := makePatternFile([]*component.ComponentDefinition{
+		makeComponentInNamespace(t, "Deployment", "apps/v1", "default"),
+		makeComponentInNamespace(t, "Service", "v1", "default"),
+	}, nil)
+	rels := kubernetesInventoryRelationshipsAcrossModelVersions(kubernetesModelVersions)
+	require.Len(t, rels, len(kubernetesModelVersions))
+
+	actions := identifyInventoryAdditions(design, rels)
+
+	require.Len(t, actions, 1, "one missing namespace must produce exactly one add-Namespace action across all model-version copies")
+	require.NotNil(t, actions[0].Component)
+	assert.Equal(t, "Namespace", actions[0].Component.Component.Kind)
+	assert.Equal(t, "default", string(actions[0].Component.DisplayName))
+	assert.Equal(t, "kubernetes", actions[0].Component.ModelReference.Name)
+}
+
+// Collapsing across model-version copies must not collapse across
+// namespaces: children in two namespaces still get one Namespace each.
+func TestIdentifyInventoryAdditions_DistinctNamespacesAcrossKubernetesModelVersions(t *testing.T) {
+	t.Parallel()
+	design := makePatternFile([]*component.ComponentDefinition{
+		makeComponentInNamespace(t, "Deployment", "apps/v1", "web"),
+		makeComponentInNamespace(t, "Service", "v1", "web"),
+		makeComponentInNamespace(t, "Deployment", "apps/v1", "db"),
+	}, nil)
+	rels := kubernetesInventoryRelationshipsAcrossModelVersions(kubernetesModelVersions)
+
+	actions := identifyInventoryAdditions(design, rels)
+
+	require.Len(t, actions, 2, "each distinct namespace must produce its own Namespace, once")
+	names := []string{}
+	for _, a := range actions {
+		require.NotNil(t, a.Component)
+		assert.Equal(t, "Namespace", a.Component.Component.Kind)
+		names = append(names, string(a.Component.DisplayName))
+	}
+	assert.ElementsMatch(t, []string{"web", "db"}, names)
+}
+
+// The key carries the candidate's full ModelReference, not just its name:
+// if a to-side selector pins a distinct model version, that version reaches
+// the candidate and the candidates must stay distinct rather than being
+// merged across versions.
+func TestIdentifyInventoryAdditions_VersionedParentSelectorsStayDistinct(t *testing.T) {
+	t.Parallel()
+	versions := []string{"v1.33.0", "v1.34.0", "v1.35.0-alpha.2"}
+	design := makePatternFile([]*component.ComponentDefinition{
+		makeComponentInNamespace(t, "Deployment", "apps/v1", "default"),
+		makeComponentInNamespace(t, "Service", "v1", "default"),
+	}, nil)
+	rels := kubernetesInventoryRelationshipsWithVersionedParents(versions)
+
+	actions := identifyInventoryAdditions(design, rels)
+
+	require.Len(t, actions, len(versions), "a to-side selector pinning a distinct model version must yield a distinct Namespace candidate")
+	gotVersions := []string{}
+	for _, a := range actions {
+		require.NotNil(t, a.Component)
+		assert.Equal(t, "Namespace", a.Component.Component.Kind)
+		assert.Equal(t, "default", string(a.Component.DisplayName))
+		gotVersions = append(gotVersions, string(a.Component.ModelReference.Version))
+	}
+	assert.ElementsMatch(t, versions, gotVersions)
+}
+
+// inventoryCandidateKey must ignore the random component ID and key on the
+// candidate's kind, full ModelReference, displayName and configuration.
+func TestInventoryCandidateKey(t *testing.T) {
+	t.Parallel()
+	build := func(t *testing.T, modelVersion, displayName string) *component.ComponentDefinition {
+		t.Helper()
+		id, err := uuid.NewV4()
+		require.NoError(t, err)
+		return &component.ComponentDefinition{
+			ID:          id,
+			Component:   component.Component{Kind: "Namespace"},
+			DisplayName: core.InputString(displayName),
+			ModelReference: modelv1beta1.ModelReference{
+				Name:    "kubernetes",
+				Version: core.SemverString(modelVersion),
+			},
+		}
+	}
+
+	a := build(t, "", "default")
+	b := build(t, "", "default")
+	require.NotEqual(t, a.ID, b.ID)
+	assert.Equal(t, inventoryCandidateKey(a), inventoryCandidateKey(b), "the random ID must not be part of the key")
+
+	assert.NotEqual(t, inventoryCandidateKey(a), inventoryCandidateKey(build(t, "", "web")), "displayName must be part of the key")
+	assert.NotEqual(t, inventoryCandidateKey(a), inventoryCandidateKey(build(t, "v1.34.0", "default")), "the ModelReference version must be part of the key")
+
+	withConfig := build(t, "", "default")
+	withConfig.Configuration = map[string]interface{}{"metadata": map[string]interface{}{"labels": map[string]interface{}{"team": "web"}}}
+	assert.NotEqual(t, inventoryCandidateKey(a), inventoryCandidateKey(withConfig), "configuration must be part of the key")
+
+	// A configuration JSON cannot encode must still produce a deterministic
+	// key that distinguishes candidates rather than colliding on an error.
+	nan := build(t, "", "default")
+	nan.Configuration = map[string]interface{}{"weight": math.NaN()}
+	nan2 := build(t, "", "default")
+	nan2.Configuration = map[string]interface{}{"weight": math.NaN()}
+	assert.Equal(t, inventoryCandidateKey(nan), inventoryCandidateKey(nan2), "fallback key must be deterministic")
+	assert.NotEqual(t, inventoryCandidateKey(nan), inventoryCandidateKey(a), "fallback key must not collide with the JSON key of a different candidate")
 }
 
 // Cross-model regression: if the relationship has a different model on the
