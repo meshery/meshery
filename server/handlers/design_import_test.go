@@ -74,3 +74,14 @@ func TestResolveImportVariant_URLImportSSRF(t *testing.T) {
 		t.Errorf("unexpected error message: %v", err)
 	}
 }
+
+func TestConvertFileToDesignRejectsUnregisteredResources(t *testing.T) {
+	rm, _ := newTestRegistryDB(t)
+	_, _, err := ConvertFileToDesign(FileToImport{
+		FileName: "deployment.yaml",
+		Data:     []byte("apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: example\n"),
+	}, rm, newTestLogger(t))
+	if err == nil || !strings.Contains(err.Error(), "Deployment") || !strings.Contains(err.Error(), "apps/v1") {
+		t.Fatalf("expected an error identifying the unregistered resource, got %v", err)
+	}
+}
