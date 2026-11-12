@@ -6,7 +6,7 @@ LLMS index: [llms.txt](/llms.txt)
 
 Section pages:
 
-- [KubeCon Workshop: Build Your Own Meshery Model and Design](/guides/tutorials/playground/kubecon-build-your-own-model-and-design/): A 60-minute Meshery Playground workshop in which every attendee creates their own model and a design that uses it.
+- [KubeCon Workshop: Publish a Design and Build a Custom Model](/guides/tutorials/playground/kubecon-build-your-own-model-and-design/): A 60-minute Meshery Playground workshop in which every attendee publishes a simple Kubernetes design to the Catalog, then adds a custom KubeCon logo model to it.
 - [Deploy AWS EC2 Instances with Meshery](/guides/tutorials/aws/deploy-aws-ec2-instances-with-meshery/): Deploy an EC2 instance and its VPC from Meshery, using AWS Controllers for Kubernetes (ACK) and designs from the Meshery Catalog.
 - [Deploy Azure resources with Meshery](/guides/tutorials/azure/deploy-azure-resources-with-meshery/): Install Azure Service Operator in your cluster and deploy Azure resources, such as Storage Accounts and Key Vaults, from a Meshery Design.
 - [Deploy Azure Storage Account with Meshery](/guides/tutorials/azure/deploy-azure-storage-account-with-meshery/): Install Azure Service Operator in your cluster and deploy an Azure Storage Account from a Meshery Design.

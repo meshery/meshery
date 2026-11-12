@@ -8114,7 +8114,7 @@ You can now design and manage any infrastructure that Meshery supports. For the 
       <ul style="list-style-type: circle;">
       
     
-    <li><a href="/guides/tutorials/playground/kubecon-build-your-own-model-and-design/">KubeCon Workshop: Build Your Own Meshery Model and Design</a></li>
+    <li><a href="/guides/tutorials/playground/kubecon-build-your-own-model-and-design/">KubeCon Workshop: Publish a Design and Build a Custom Model</a></li>
   
     
       </ul>
