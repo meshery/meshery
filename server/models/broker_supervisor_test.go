@@ -30,10 +30,30 @@ type liveBroker struct {
 	endpoint string
 	token    string
 	up       bool
+	// acceptedToken is the token the broker actually accepts. It usually
+	// tracks token, but a test separates them to model a broker that rejects
+	// the token Meshery resolved (for example, the secret was rotated again
+	// after Meshery read it).
+	acceptedToken string
 	// onResolve runs inside GetPublicEndpoint, after the endpoint is read.
 	// A test uses it to change the world while the supervisor is
 	// re-resolving, between its stale check and its rebuild.
 	onResolve func()
+}
+
+// accepts reports whether the broker accepts a token for a new connection.
+func (b *liveBroker) accepts(token string) bool {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return token == b.acceptedToken
+}
+
+// setAcceptedToken changes which token the broker accepts, without changing
+// what its controller reports.
+func (b *liveBroker) setAcceptedToken(token string) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.acceptedToken = token
 }
 
 func (b *liveBroker) answers(endpoint string) bool {
@@ -70,6 +90,7 @@ func (b *liveBroker) recreate(endpoint, token string) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	b.endpoint, b.token = endpoint, token
+	b.acceptedToken = token
 }
 
 // natsConn is one NATS connection Meshery opened, standing in for the real
@@ -101,12 +122,20 @@ type brokerDialer struct {
 	mu         sync.Mutex
 	conns      []*natsConn
 	publishErr error
+	// acceptToken reports whether the broker accepts a token for a new
+	// connection. A nil func accepts every token. A connection dialed with an
+	// accepted token reports connected, standing in for the NATS client
+	// connecting; one dialed with a rejected token never connects.
+	acceptToken func(string) bool
 }
 
 func (d *brokerDialer) dial(opts nats.Options) (meshkitBroker.Handler, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	c := &natsConn{testMeshsyncBroker: &testMeshsyncBroker{}, opts: opts, publishErr: d.publishErr}
+	if d.acceptToken == nil || d.acceptToken(opts.Token) {
+		c.connected = true
+	}
 	d.conns = append(d.conns, c)
 	return c, nil
 }
@@ -138,11 +167,14 @@ func supervisedConnection(t *testing.T) (*MesheryControllersHelper, *liveBroker,
 	mch.brokerRecheckInterval = time.Hour
 	mch.brokerStaleAfter = time.Minute
 
-	broker := &liveBroker{endpoint: oldBrokerEndpoint, token: "old-token"}
+	broker := &liveBroker{endpoint: oldBrokerEndpoint, token: "old-token", acceptedToken: "old-token"}
 	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{MesheryBroker: broker}
 	mch.brokerReachable = broker.answers
-	dialer := &brokerDialer{}
+	dialer := &brokerDialer{acceptToken: broker.accepts}
 	mch.newBrokerConnection = dialer.dial
+	// A rebuild waits only briefly for its replacement to connect, so a test
+	// that rejects the replacement does not sit out the production wait.
+	mch.brokerConnectWait = 50 * time.Millisecond
 	t.Cleanup(func() { mch.RemoveMeshSyncDataHandler(context.Background(), "ctx-1") })
 	return mch, broker, dialer
 }
@@ -180,6 +212,8 @@ func TestRecreatedBrokerIsReconnectedWithItsNewEndpointAndToken(t *testing.T) {
 	}
 
 	broker.recreate(newBrokerEndpoint, "new-token")
+	// The recreated broker drops the old connection.
+	first.setConnected(false)
 	var since time.Time
 	t0 := time.Unix(1000, 0)
 	if mch.recheckBroker(target, t0, &since) {
@@ -225,8 +259,11 @@ func TestRecreatedBrokerIsReconnectedWithItsNewEndpointAndToken(t *testing.T) {
 func TestMovedBrokerWithTheSameTokenIsReconnected(t *testing.T) {
 	mch, broker, dialer := supervisedConnection(t)
 	target := attach(t, mch)
+	first := dialer.opened()[0]
 	broker.recreate(newBrokerEndpoint, "old-token")
 	broker.setUp(true)
+	// The recreated broker drops the old connection.
+	first.setConnected(false)
 
 	var since time.Time
 	t0 := time.Unix(1000, 0)
@@ -322,6 +359,8 @@ func TestFailedRebuildKeepsTheConnectionSupervised(t *testing.T) {
 	// The connected event was already emitted for this handler session.
 	mch.meshsyncConnectedEventEmitted.Store(true)
 	broker.recreate(newBrokerEndpoint, "new-token")
+	// The recreated broker drops the old connection.
+	first.setConnected(false)
 	dialer.mu.Lock()
 	dialer.publishErr = errors.New("publish failed")
 	dialer.mu.Unlock()
@@ -353,11 +392,15 @@ func TestFailedRebuildKeepsTheConnectionSupervised(t *testing.T) {
 	dialer.mu.Lock()
 	dialer.publishErr = nil
 	dialer.mu.Unlock()
+	// Clear the flag so the retry's emission is observable: after the retry
+	// the flag must be true because the rebuild emitted the connected event
+	// for the new handler, not because it was left over from the old session.
+	mch.meshsyncConnectedEventEmitted.Store(false)
 	if !mch.recheckBroker(target, t0.Add(2*mch.brokerStaleAfter), &since) {
 		t.Fatal("the supervisor did not retry the rebuild")
 	}
-	if mch.meshsyncConnectedEventEmitted.Load() {
-		t.Fatal("a successful rebuild did not reset the connected event flag for the new handler")
+	if !mch.meshsyncConnectedEventEmitted.Load() {
+		t.Fatal("a successful rebuild did not emit the connected event for the new handler")
 	}
 	conns = dialer.opened()
 	if len(conns) != 3 || conns[2].opts.Token != "new-token" {
@@ -365,6 +408,71 @@ func TestFailedRebuildKeepsTheConnectionSupervised(t *testing.T) {
 	}
 	if !first.isClosed() || !stopped(target) {
 		t.Fatal("the replaced connection or its supervisor outlived a successful rebuild")
+	}
+}
+
+// TestRejectedTokenKeepsTheOldHandler: the broker was recreated and Meshery
+// resolved a new token, but the broker rejects it - the secret was rotated
+// again after Meshery read it. The replacement attaches but never connects,
+// so the rebuild must discard it and keep the old handler and its supervisor:
+// stopping the old handler would leave the connection down until a restart,
+// because later ticks see the same endpoint and token and never rebuild again.
+func TestRejectedTokenKeepsTheOldHandler(t *testing.T) {
+	mch, broker, dialer := supervisedConnection(t)
+	target := attach(t, mch)
+	first := dialer.opened()[0]
+	// The connected event was already emitted for this handler session.
+	mch.meshsyncConnectedEventEmitted.Store(true)
+	broker.recreate(newBrokerEndpoint, "new-token")
+	// The broker rejects the resolved token.
+	broker.setAcceptedToken("old-token")
+	// The recreated broker drops the old connection.
+	first.setConnected(false)
+
+	var since time.Time
+	t0 := time.Unix(1000, 0)
+	mch.recheckBroker(target, t0, &since)
+	if mch.recheckBroker(target, t0.Add(mch.brokerStaleAfter), &since) {
+		t.Fatal("the supervisor finished although its rebuild never connected")
+	}
+	conns := dialer.opened()
+	if len(conns) != 2 {
+		t.Fatalf("%d connections opened, want the original and one rejected rebuild", len(conns))
+	}
+	if !conns[1].isClosed() {
+		t.Fatal("the replacement the broker rejected was left reconnecting in the background")
+	}
+	if first.isClosed() || stopped(target) {
+		t.Fatal("a rejected rebuild tore down the connection it was replacing")
+	}
+	if !mch.meshsyncConnectedEventEmitted.Load() {
+		t.Fatal("a rejected rebuild reset the connected event flag, so the kept handler's connected event would be emitted again")
+	}
+	mch.meshsyncMutex.Lock()
+	kept := mch.brokerTarget == target && mch.ctxMeshsyncDataHandler != nil &&
+		mch.ctxMeshsyncDataHandler.GetBrokerHandler() == meshkitBroker.Handler(first)
+	mch.meshsyncMutex.Unlock()
+	if !kept {
+		t.Fatal("a rejected rebuild left the connection without its handler or supervisor")
+	}
+
+	// The next tick retries the rebuild instead of leaving the connection down.
+	if mch.recheckBroker(target, t0.Add(2*mch.brokerStaleAfter), &since) {
+		t.Fatal("the supervisor finished although its rebuild never connected")
+	}
+	conns = dialer.opened()
+	if len(conns) != 3 || !conns[2].isClosed() {
+		t.Fatalf("%d connections opened, want a retried rebuild, rejected and closed", len(conns))
+	}
+	if first.isClosed() || stopped(target) {
+		t.Fatal("a retried rejected rebuild tore down the connection it was replacing")
+	}
+	mch.meshsyncMutex.Lock()
+	kept = mch.brokerTarget == target && mch.ctxMeshsyncDataHandler != nil &&
+		mch.ctxMeshsyncDataHandler.GetBrokerHandler() == meshkitBroker.Handler(first)
+	mch.meshsyncMutex.Unlock()
+	if !kept {
+		t.Fatal("a retried rejected rebuild left the connection without its handler or supervisor")
 	}
 }
 
@@ -390,6 +498,8 @@ func TestRecreatedBrokerWithNewTokenAndNoEndpointRebuildsOverPortForward(t *test
 		t.Fatalf("first connection built from %v, want it carried by the port-forward", first.opts.URLS)
 	}
 	broker.recreate("", "new-token")
+	// The recreated broker drops the old connection.
+	first.setConnected(false)
 
 	var since time.Time
 	t0 := time.Unix(1000, 0)
@@ -508,7 +618,10 @@ func TestSupervisorRebuildsOnItsOwnTicker(t *testing.T) {
 	mch.brokerRecheckInterval = 5 * time.Millisecond
 	mch.brokerStaleAfter = 20 * time.Millisecond
 	attach(t, mch)
+	first := dialer.opened()[0]
 	broker.recreate(newBrokerEndpoint, "new-token")
+	// The recreated broker drops the old connection.
+	first.setConnected(false)
 
 	deadline := time.Now().Add(5 * time.Second)
 	for len(dialer.opened()) < 2 {

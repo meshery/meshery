@@ -32,8 +32,41 @@ import (
 const (
 	defaultBrokerRecheckInterval = 15 * time.Second
 	defaultBrokerStaleAfter      = 45 * time.Second
-	brokerReachTimeout           = 5 * time.Second
+	// defaultBrokerConnectWait bounds how long a rebuild waits for its
+	// replacement handler to report connected before giving up on it and
+	// keeping the old handler. It stays well under staleAfter so the
+	// replacement's own supervisor cannot start a rebuild of its own while
+	// the wait is running.
+	defaultBrokerConnectWait = 10 * time.Second
+	brokerReachTimeout       = 5 * time.Second
 )
+
+// waitBrokerConnected reports whether handler reports connected within wait.
+// It polls without holding meshsyncMutex: the NATS client connects
+// asynchronously, so attachment - or a nil return from
+// MeshsyncDataHandler.Run - says nothing about connectivity.
+func waitBrokerConnected(handler *MeshsyncDataHandler, wait time.Duration) bool {
+	if handler.IsConnected() {
+		return true
+	}
+	if wait <= 0 {
+		return false
+	}
+	ticker := time.NewTicker(10 * time.Millisecond)
+	defer ticker.Stop()
+	deadline := time.NewTimer(wait)
+	defer deadline.Stop()
+	for {
+		select {
+		case <-deadline.C:
+			return handler.IsConnected()
+		case <-ticker.C:
+			if handler.IsConnected() {
+				return true
+			}
+		}
+	}
+}
 
 // brokerAnswers reports whether endpoint accepts a TCP connection.
 func brokerAnswers(endpoint string) bool {
@@ -111,6 +144,15 @@ func (mch *MesheryControllersHelper) brokerTimings() (interval, staleAfter time.
 	return interval, staleAfter
 }
 
+// brokerConnectWaitTimeout is how long a rebuild waits for its replacement
+// handler to report connected before giving up on it.
+func (mch *MesheryControllersHelper) brokerConnectWaitTimeout() time.Duration {
+	if mch.brokerConnectWait <= 0 {
+		return defaultBrokerConnectWait
+	}
+	return mch.brokerConnectWait
+}
+
 // superviseBroker records target as the attached connection's and starts its
 // supervisor. The caller holds meshsyncMutex.
 func (mch *MesheryControllersHelper) superviseBroker(target *brokerTarget, k8scontext K8sContext, userID core.Uuid, reattach func()) {
@@ -152,8 +194,9 @@ func (mch *MesheryControllersHelper) stopBrokerSupervisorLocked() {
 // recheckBroker is one supervisor tick. disconnectedSince carries how long the
 // connection has been down across ticks. It reports true once this supervisor
 // is finished: its connection was replaced, removed, or just rebuilt (which
-// starts a supervisor of its own). A rebuild that attaches nothing leaves the
-// old handler and this supervisor in place, so the next tick tries again.
+// starts a supervisor of its own). A rebuild that attaches nothing - or whose
+// replacement never connects - leaves the old handler and this supervisor in
+// place, so the next tick tries again.
 func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now time.Time, disconnectedSince *time.Time) (finished bool) {
 	mch.meshsyncMutex.Lock()
 	current, handler := mch.brokerTarget, mch.ctxMeshsyncDataHandler
@@ -180,19 +223,26 @@ func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now tim
 	if err != nil {
 		mch.log.Warn(err)
 	}
-	if !target.replacedBy(endpoint, token, mch.brokerReachable, mch.GetBrokerPortForwardAddr() != "") {
+	// RemoveMeshSyncDataHandler clears the managed port-forward under
+	// meshsyncMutex, so read it under the same mutex. GetBrokerPortForwardAddr
+	// itself takes no lock, because callers may already hold the mutex.
+	mch.meshsyncMutex.Lock()
+	hasForward := mch.GetBrokerPortForwardAddr() != ""
+	mch.meshsyncMutex.Unlock()
+	if !target.replacedBy(endpoint, token, mch.brokerReachable, hasForward) {
 		return false
 	}
 
 	mch.meshsyncMutex.Lock()
-	defer mch.meshsyncMutex.Unlock()
 	if mch.brokerTarget != target || mch.ctxMeshsyncDataHandler == nil {
+		mch.meshsyncMutex.Unlock()
 		return true
 	}
 	// The connection may have recovered while the endpoint and token were
 	// being re-resolved; a live handler must not be stopped.
 	if mch.ctxMeshsyncDataHandler.IsConnected() {
 		*disconnectedSince = time.Time{}
+		mch.meshsyncMutex.Unlock()
 		return false
 	}
 	k8scontext := target.k8scontext
@@ -205,6 +255,43 @@ func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now tim
 	mch.brokerTarget = nil
 	target.reattach()
 	if mch.ctxMeshsyncDataHandler == nil {
+		mch.ctxMeshsyncDataHandler = stale
+		mch.brokerTarget = target
+		mch.meshsyncMutex.Unlock()
+		return false
+	}
+	replacement := mch.ctxMeshsyncDataHandler
+	replacementTarget := mch.brokerTarget
+
+	// The replacement attaches before it connects: Run returns once the
+	// subscriptions are set up, without waiting for the broker connection, and
+	// a token the broker rejects is terminal for the NATS client, so the
+	// replacement may never connect. Keep the old handler until the
+	// replacement reports connected, waiting without holding meshsyncMutex:
+	// status readers and the replacement's own supervisor take it.
+	wait := mch.brokerConnectWaitTimeout()
+	mch.meshsyncMutex.Unlock()
+	connected := waitBrokerConnected(replacement, wait)
+	mch.meshsyncMutex.Lock()
+	defer mch.meshsyncMutex.Unlock()
+
+	if mch.ctxMeshsyncDataHandler != replacement {
+		// Someone else removed or replaced the handler while the rebuild
+		// waited: the old handler has no owner left, so stop it rather than
+		// leave it reconnecting in the background.
+		stale.Stop()
+		return true
+	}
+	if !connected {
+		// The replacement never connected - the broker rejected its token, or
+		// its endpoint never came up. Discard it and keep the old handler and
+		// its supervisor, so the next tick retries the rebuild instead of the
+		// connection staying down until a restart or another token change.
+		mch.log.Warnf("Rebuilt MeshSync data connection for Kubernetes context (%s) did not connect within %s; keeping the previous connection", k8scontext.ID, wait)
+		replacement.Stop()
+		if replacementTarget != nil {
+			replacementTarget.halt()
+		}
 		mch.ctxMeshsyncDataHandler = stale
 		mch.brokerTarget = target
 		return false
@@ -220,6 +307,9 @@ func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now tim
 		"brokerEndpoint": endpoint,
 	}, target.userID)
 	mch.meshsyncConnectedEventEmitted.Store(false)
+	// The replacement is connected, so emit its connected event now instead of
+	// waiting for a later reconcile call to notice it.
+	mch.emitMeshsyncConnectedEventLocked(k8scontext, target.userID)
 	target.halt()
 	stale.Stop()
 	return true

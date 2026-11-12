@@ -119,6 +119,11 @@ type MesheryControllersHelper struct {
 	brokerRecheckInterval time.Duration
 	brokerStaleAfter      time.Duration
 
+	// brokerConnectWait bounds how long a rebuild waits for its replacement
+	// handler to report connected before giving up on it. See
+	// defaultBrokerConnectWait; zero means the default.
+	brokerConnectWait time.Duration
+
 	log          logger.Handler
 	oprDepConfig controllers.OperatorDeploymentConfig
 	dbHandler    *database.Handler
@@ -468,8 +473,19 @@ func (mch *MesheryControllersHelper) addMeshsyncDataHandlersLocked(ctx context.C
 	// connecting in the background; in that case meshsyncDataHandlersNatsBroker has
 	// already surfaced the "unreachable, retrying" warning + remediation, and a
 	// later AddMeshsyncDataHandlers call (once IsConnected) emits the event once.
-	// Deduplicate so repeated reconcile calls do not spam the same snackbar.
-	// CompareAndSwap so concurrent AddMeshsyncDataHandlers callers emit once.
+	mch.emitMeshsyncConnectedEventLocked(k8scontext, userID)
+}
+
+// emitMeshsyncConnectedEventLocked publishes the "MeshSync connected" event
+// for the attached handler, once per handler session. The caller holds
+// meshsyncMutex. It emits only when the data path is actually up (see the
+// comment at the call site in addMeshsyncDataHandlersLocked). Deduplicate so
+// repeated reconcile calls do not spam the same snackbar. CompareAndSwap so
+// concurrent AddMeshsyncDataHandlers callers emit once. The broker supervisor
+// calls it too, after a rebuild resets the flag, so a replacement handler
+// that is already connected announces itself instead of waiting for a later
+// reconcile call.
+func (mch *MesheryControllersHelper) emitMeshsyncConnectedEventLocked(k8scontext K8sContext, userID core.Uuid) {
 	if mch.ctxMeshsyncDataHandler != nil &&
 		mch.ctxMeshsyncDataHandler.IsConnected() &&
 		mch.meshsyncConnectedEventEmitted.CompareAndSwap(false, true) {
