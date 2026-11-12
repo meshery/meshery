@@ -184,14 +184,12 @@ mesheryctl design deploy -f [filepath] -s [source type]
 func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
 	reader := bufio.NewReader(os.Stdin)
 
-	patternFileByt, _ := yaml.Marshal(designFile)
-
 	for index, a := range profiles {
 		fmt.Printf("Index: %v\n", index)
 		fmt.Printf("Name: %v\n", a.Name)
 		fmt.Printf("ID: %s\n", a.ID.String())
 		fmt.Printf("patternFile:\n")
-		fmt.Println(string(patternFileByt))
+		fmt.Println(a.PatternFile)
 		fmt.Println("---------------------")
 	}
 
