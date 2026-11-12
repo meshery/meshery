@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -253,7 +254,7 @@ func UpdateAuthDetails(filepath string) error {
 		return errors.New("invalid body")
 	}
 
-	return os.WriteFile(filepath, data, os.ModePerm)
+	return WriteTokenFile(filepath, data)
 }
 
 // ReadToken returns a map of the token passed in
@@ -434,24 +435,27 @@ func selectProviderPrompt(provs map[string]Provider) (Provider, error) {
 	return provArray[i], nil
 }
 
+// chooseDirectProvider returns the provider the user named with --provider.
+// The name matches, case-insensitively, either the provider's display name or
+// the key it is registered under in /api/providers; a server can report a key
+// that differs from the display name (for example a URL-style key). When
+// nothing matches, a structured error listing the available providers is
+// returned. It must never index into the provider list on that path: a server
+// pinned to a single provider would make any fixed index out of range.
 func chooseDirectProvider(provs map[string]Provider, option string) (Provider, error) {
-	provArray := []Provider{}
-	provNames := []string{}
-
-	for _, prov := range provs {
-		provArray = append(provArray, prov)
-	}
-
-	for _, prov := range provArray {
-		provNames = append(provNames, prov.ProviderName)
-	}
-
-	for i := range provNames {
-		if strings.EqualFold(provNames[i], option) {
-			return provArray[i], nil
+	available := make([]string, 0, len(provs))
+	for key, prov := range provs {
+		if strings.EqualFold(prov.ProviderName, option) || strings.EqualFold(key, option) {
+			return prov, nil
 		}
+		name := prov.ProviderName
+		if name == "" {
+			name = key
+		}
+		available = append(available, name)
 	}
-	return provArray[1], fmt.Errorf("the specified provider '%s' is not available. Please try giving correct provider name", option)
+	sort.Strings(available)
+	return Provider{}, ErrProviderNotFound(option, available)
 }
 
 func createProviderURI(provider Provider, host string, port int) (string, error) {
@@ -508,4 +512,19 @@ func IsServerRunning(serverAddr string) error {
 	}
 	defer func() { _ = conn.Close() }()
 	return nil
+}
+
+// tokenFileMode is the permission mode of a mesheryctl auth token file. The
+// file holds a bearer token for the user's provider account, so only the owner
+// may read it.
+const tokenFileMode os.FileMode = 0o600
+
+// WriteTokenFile writes an auth token file and restricts it to its owner.
+// os.WriteFile only applies a mode when it creates the file, so an existing
+// token file written by an older mesheryctl (0644 or 0666) is chmod-ed as well.
+func WriteTokenFile(path string, data []byte) error {
+	if err := os.WriteFile(path, data, tokenFileMode); err != nil {
+		return err
+	}
+	return os.Chmod(path, tokenFileMode)
 }

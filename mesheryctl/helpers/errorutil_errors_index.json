@@ -4018,6 +4018,25 @@
       "suggestedRemediation": [
         "Remove the orphaned token from meshconfig or run `mesheryctl system token delete \u003ctoken-name\u003e`, and verify the target context exists with `mesheryctl system context view`."
       ]
+    },
+    {
+      "code": "mesheryctl-1259",
+      "moniker": "ErrProviderNotFoundCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1259",
+      "severity": "alert",
+      "shortDescription": "Requested provider is not available on this Meshery Server",
+      "probableCause": [
+        "The provider name is misspelled",
+        "The Meshery Server is pinned to a different provider"
+      ],
+      "suggestedRemediation": [
+        "Run `mesheryctl system provider list` to see the providers this server offers",
+        "Omit --provider to choose one interactively"
+      ]
     }
   ],
   "schemaVersion": 2

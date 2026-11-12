@@ -84,6 +84,7 @@ var (
 	ErrDockerComposeStopCode          = "mesheryctl-1228"
 	ErrGitHubAPIResponseCode          = "mesheryctl-1255"
 	ErrAmbiguousIDCode                = "mesheryctl-1256"
+	ErrProviderNotFoundCode           = "mesheryctl-1259"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -989,4 +990,14 @@ func ErrDockerComposeStop(err error) error {
 		[]string{err.Error()},
 		[]string{"An error occurred while trying to stop Meshery containers using Docker Compose"},
 		[]string{"Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder."})
+}
+
+// ErrProviderNotFound is returned when the provider requested with
+// `mesheryctl system login --provider` is not offered by the Meshery Server.
+func ErrProviderNotFound(requested string, available []string) error {
+	return errors.New(ErrProviderNotFoundCode, errors.Alert,
+		[]string{"Requested provider is not available on this Meshery Server"},
+		[]string{fmt.Sprintf("Provider %q is not offered by this Meshery Server. Available providers: %s", requested, strings.Join(available, ", "))},
+		[]string{"The provider name is misspelled", "The Meshery Server is pinned to a different provider"},
+		[]string{"Run `mesheryctl system provider list` to see the providers this server offers", "Omit --provider to choose one interactively"})
 }

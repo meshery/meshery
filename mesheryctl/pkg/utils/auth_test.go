@@ -19,6 +19,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -242,4 +244,78 @@ func TestGetProviderInfo_BodyClosed(t *testing.T) {
 		}
 		assertBodyClosed(t, transport, "expected response body to be closed on decode error")
 	})
+}
+
+func TestChooseDirectProvider(t *testing.T) {
+	// A server pinned to one provider, reported under a key that differs from
+	// its display name - the shape playground.meshery.io returns.
+	single := map[string]Provider{
+		"cloud.meshery.io": {ProviderName: "Meshery", ProviderURL: "https://cloud.meshery.io"},
+	}
+
+	t.Run("matches display name case-insensitively", func(t *testing.T) {
+		got, err := chooseDirectProvider(single, "meshery")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got.ProviderURL != "https://cloud.meshery.io" {
+			t.Fatalf("got provider %+v", got)
+		}
+	})
+
+	t.Run("matches the registry key", func(t *testing.T) {
+		got, err := chooseDirectProvider(single, "cloud.meshery.io")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got.ProviderName != "Meshery" {
+			t.Fatalf("got provider %+v", got)
+		}
+	})
+
+	// Regression: an unmatched name used to return provArray[1], panicking
+	// with "index out of range [1] with length 1" on a single-provider server.
+	for name, provs := range map[string]map[string]Provider{
+		"single provider": single,
+		"no providers":    {},
+	} {
+		t.Run("unknown provider on "+name+" returns a structured error", func(t *testing.T) {
+			got, err := chooseDirectProvider(provs, "does-not-exist")
+			if err == nil {
+				t.Fatal("expected an error")
+			}
+			if code := errors.GetCode(err); code != ErrProviderNotFoundCode {
+				t.Fatalf("got error code %q, want %q", code, ErrProviderNotFoundCode)
+			}
+			if got != (Provider{}) {
+				t.Fatalf("expected zero Provider, got %+v", got)
+			}
+		})
+	}
+}
+
+func TestWriteTokenFile(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "auth.json")
+
+	// A token file left behind by an older mesheryctl is world-readable.
+	if err := os.WriteFile(path, []byte("old"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := WriteTokenFile(path, []byte(`{"token":"t"}`)); err != nil {
+		t.Fatalf("WriteTokenFile: %v", err)
+	}
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if mode := info.Mode().Perm(); mode != 0o600 {
+		t.Fatalf("token file mode = %o, want 600", mode)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(data) != `{"token":"t"}` {
+		t.Fatalf("token file content = %q", data)
+	}
 }
