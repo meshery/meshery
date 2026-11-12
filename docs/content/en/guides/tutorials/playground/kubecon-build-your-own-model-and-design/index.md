@@ -300,14 +300,14 @@ Confirm `mesheryctl system context view` shows the Playground endpoint before yo
 
    That creates `kubecon-<your-handle>-logo/v0.1.0/`, with `model.json`, a sample file under `components/`, a sample `relationship.json` under `relationships/` (you remove it in step 3), and empty `connections/` and `credentials/` directories.
 
-2. **Edit `model.json`.** Set `metadata.isAnnotation` to `true`. Set `registrant.kind` to `meshery`, give the model a short description, and paste the color SVG into `metadata.svgColor` and the white SVG into `metadata.svgWhite`. Strip any XML header (`<?xml ... ?>`) and collapse each SVG to a single line before pasting. Set both `version` and `model.version` to `v0.1.0`: `model init` names the folder after `--version` but writes `v0.0.1` into `model.json`. Leave `schemaVersion` as `models.meshery.io/v1beta2`. If you set a category, *Uncategorized* is a safe choice.
+2. **Edit `model.json`.** Set `metadata.isAnnotation` to `true`. Set `registrant.kind` to `meshery`, give the model a short description, and set `metadata.svgColor` to the color SVG and `metadata.svgWhite` to the white SVG. Each SVG must go in as a JSON-escaped string: its attributes contain `"` quotes, so pasting the raw markup, even on one line, makes `model.json` invalid. Generate each value with `sed '/^<?xml/d' kubecon-logo-color.svg | jq -Rs .` (and the same for `kubecon-logo-white.svg`), which drops the XML header and escapes quotes and newlines, then paste the whole output, including its surrounding quotes, as the field's value. Set both `version` and `model.version` to `v0.1.0`: `model init` names the folder after `--version` but writes `v0.0.1` into `model.json`. Leave `schemaVersion` as `models.meshery.io/v1beta2`. If you set a category, *Uncategorized* is a safe choice.
 
 3. **Replace the sample component.** In `components/`, keep a single JSON file (you can rename `component.json` to `kubecon-logo.json`). Set:
 
    - `displayName` to `KubeCon Logo`
    - `component.kind` to `kubecon-logo`
    - `metadata.isAnnotation` to `true`
-   - `styles.svgColor` and `styles.svgWhite` to the same inlined SVGs
+   - `styles.svgColor` and `styles.svgWhite` to the same JSON-escaped SVG strings
    - `schemaVersion` to `components.meshery.io/v1beta1`. This edit is required: the scaffold writes `components.meshery.io/v1beta3`, which the Playground's Meshery Server rejects, and `model import` then fails with *No valid component or relationship found in the Model provided*.
    - the nested `model.name` to the same name you passed to `model init` (the scaffold writes `untitled-model`)
 
@@ -451,7 +451,7 @@ Room-level target: at least 80% of attendees complete both labs. Track it with a
 | `mesheryctl` talks to the wrong server | Run `mesheryctl system context view` and confirm the endpoint is `https://playground.meshery.io` before import or delete. Recreate the context and token if it is not. |
 | `model import` says *No valid component or relationship found* | The component still has the scaffold's `schemaVersion: components.meshery.io/v1beta3`. Change it to `components.meshery.io/v1beta1`, then run `model build` and `model import` again. |
 | `model import` reports *encountered error for 1 entity (1 relationship)* | The scaffold's sample `relationships/relationship.json` is still there. Delete it, rebuild and re-import. The logo component itself imported. |
-| `model build` or `model import` fails | Open the Notification Center or the CLI error. Check that `metadata.isAnnotation` is `true`, that each SVG is a single-line string, and that the component `schemaVersion` is `components.meshery.io/v1beta1`. If it stays stuck, import the ready-made [kubecon-logo.tar.gz](kubecon-logo.tar.gz). |
+| `model build` or `model import` fails | Open the Notification Center or the CLI error. Check that `metadata.isAnnotation` is `true`, that each SVG is a JSON-escaped string (see step 2), and that the component `schemaVersion` is `components.meshery.io/v1beta1`. If it stays stuck, import the ready-made [kubecon-logo.tar.gz](kubecon-logo.tar.gz). |
 | Model not in the Kanvas component list | Refresh the Kanvas tab, then search by display name (`KubeCon Logo`). If you used Import Model, confirm the model is listed in the Registry first. |
 | Model not in the Design Configurator dropdowns | Refresh the configurator tab, then look under the category you chose (the ready-made archive uses *Uncategorized*). If it still does not appear, use the YAML export-and-update path. |
 | Service does not target the Deployment | The Service selector must match a label on the Deployment, for example `app: kubecon-<your-handle>` or `app: kubecon-demo` if you imported the ready-made manifest unchanged. Port and targetPort should both be `80`. |
