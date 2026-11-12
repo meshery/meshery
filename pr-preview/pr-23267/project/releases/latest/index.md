@@ -8,4 +8,4 @@ LLMS index: [llms.txt](/pr-preview/pr-23267/llms.txt)
 
 ---
 
-<h2>v1.0.75</h2>
+<h2>v1.0.76</h2>

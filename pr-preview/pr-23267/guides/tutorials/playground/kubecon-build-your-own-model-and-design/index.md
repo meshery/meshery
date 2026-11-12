@@ -16,7 +16,7 @@ Learning goals: explain what a Meshery model, component, relationship and design
 
 - **When:** Thursday, Nov 12, 2026, 90 minutes (America/Denver)
 - **Where attendees work:** https://playground.meshery.io (browser only, nothing to install)
-- **Outcome:** One model and one design per attendee, saved to their own account
+- **Outcome:** One model per attendee, registered in the shared Playground instance, and one design saved to the attendee's account
 - **Audience:** Kubernetes users; no Meshery experience needed
 - **Format:** Short talk, two guided labs, show and tell
 - **Staffing:** 1 instructor plus 1 helper per 20 to 25 attendees
@@ -135,7 +135,7 @@ The format is `git://github.com/[organization]/[repository]/[branch]/path/to/crd
 <div class="alert alert-warning" role="alert"><div class="h4 alert-heading" role="heading">Tell the room</div>
 
 
-A generated model cannot be deleted from the UI. That is why everyone uses their handle in the name. To stop using a model later, mark it as ignored.
+A generated model cannot be deleted from the UI. That is why everyone uses their handle in the name. To stop using a model later, mark it as ignored, or delete it with `mesheryctl model delete <model-name>`.
 </div>
 
 
@@ -157,7 +157,7 @@ Attendees build a design in Kanvas that combines their new model with core Kuber
 5. **Add your model's components inside it.** From your pinned model, drag an Issuer and a Certificate and drop them inside the Namespace. Dropping a child inside a parent creates a hierarchical relationship.
 6. **Configure.** Select each component and fill its configuration form. For cert-manager: give the Issuer a name and a self-signed spec; give the Certificate a `secretName` and an `issuerRef` naming that Issuer. Required fields are marked.
 7. **Add a workload and an edge.** Drag a Deployment and a Service into the Namespace. Tap the Service, pick a relationship type from the edge picker, and drag to the Deployment. Kanvas highlights compatible targets.
-8. **Validate.** Run Validate. It checks every component against its schema and does not contact a cluster. Fix anything it flags.
+8. **Validate.** Run Validate. It checks every component against its schema and does not contact a cluster. The count in the result comes from the design, so it includes components whose definitions could not be fetched; a clean result does not guarantee every component was checked. Fix anything it flags.
 
 ### Attendee steps (15 min)
 
@@ -168,7 +168,7 @@ Attendees build a design in Kanvas that combines their new model with core Kuber
 5. **Use your model.** Drag at least two components from your pinned model into the Namespace. Suggested pairs: cert-manager Issuer plus Certificate; Argo Rollouts Rollout plus AnalysisTemplate; KEDA ScaledObject plus TriggerAuthentication; Gateway API Gateway plus HTTPRoute; External Secrets SecretStore plus ExternalSecret.
 6. **Configure them.** Select each component and fill in its required fields in the configuration form. Give everything a name.
 7. **Add a workload and connect it.** Add a Deployment and a Service. Create an edge from the Service to the Deployment with the edge picker.
-8. **Validate.** Run Validate and fix anything it reports.
+8. **Validate.** Run Validate and fix anything it reports. The validated component count includes components whose definitions cannot be fetched, so a matching count does not confirm that every component was checked.
 9. **Confirm it is saved.** Check the save indicator shows a cloud with a tick. Kanvas saves automatically about 3 seconds after you stop editing.
 
 ### Stretch for fast finishers
@@ -181,7 +181,7 @@ Attendees build a design in Kanvas that combines their new model with core Kuber
 ## Show and tell, wrap-up (1:20 to 1:30)
 
 1. **Show two or three designs (7 min).** Invite volunteers to share their screen or have them share the design with you. Ask: which model did you build, which relationships did Kanvas create, what did Validate catch?
-2. **Recap (1 min).** Model in the Registry, design in Kanvas, both saved to your account. Deployments reset; designs do not.
+2. **Recap (1 min).** Model in the Registry on the shared Playground instance, design in Kanvas saved to your account. Deployments reset; designs do not.
 3. **Next steps (2 min).** Contribute a model upstream, try the CLI scaffold route at home, join the community Slack at https://slack.layer5.io, and keep using your Playground account.
 
 ## What success looks like
@@ -203,10 +203,10 @@ Room-level target: at least 80% of attendees complete both labs. Track it with a
 | Symptom | Fix |
 |---|---|
 | Stuck on the sign-in page | Try another provider (GitHub, Google or email). If the venue blocks it, pair with a neighbor and keep trying on a phone hotspot. |
-| Model name rejected | Use lowercase letters and hyphens only, no spaces or underscores. |
+| Model name rejected | Use lowercase letters and hyphens only, no spaces or underscores. If your handle contains digits, leave them out of the model name. |
 | Generate fails or never confirms | Open the Notification Center for the error. Re-check the source URL format and branch name. Switch to a different pick from the table. |
 | Model not in the Kanvas component list | Confirm Immediate Registration was on. Refresh the Kanvas tab, then search by display name. |
-| Name already taken | Someone else used it. Add a suffix such as `-2`. |
+| Name already taken | Someone else used it. Add a suffix such as `-two`. |
 | Save indicator shows Unable to save | Stop editing until it clears. Usually a dropped connection or an expired session; sign in again. |
 | Playground slow for the whole room | Instructor continues from the pre-built design. Attendees who already have a model move to Lab 2; others use an existing Registry model such as Kubernetes plus any model already listed, and still build their own design. |
 
