@@ -533,11 +533,9 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 	ctx = context.WithValue(ctx, models.AllKubeClusterKey, connectedK8sContexts)
 
 	var operatorTracker *models.OperatorTracker
-	var k8scontextChannel *models.K8scontextChan
 	var eventBroadcaster *models.Broadcast
 	if h.config != nil {
 		operatorTracker = h.config.OperatorTracker
-		k8scontextChannel = h.config.K8scontextChannel
 		eventBroadcaster = h.config.EventBroadcaster
 	}
 
@@ -550,7 +548,6 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 			K8sCompRegHelper:   h.K8sCompRegHelper,
 			OperatorTracker:    operatorTracker,
-			K8scontextChannel:  k8scontextChannel,
 			EventBroadcaster:   eventBroadcaster,
 			RegistryManager:    h.registryManager,
 		}
@@ -797,11 +794,9 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 // for a connection whose rotated credentials are broken.
 func (h *Handler) discoverK8sContext(ctx context.Context, provider models.Provider, token string, userUUID uuid.UUID, k8sContext *models.K8sContext, afterProbe func(event *events.Event, err error), skipProbeOnRefreshFailure bool) *machines.StateMachine {
 	var operatorTracker *models.OperatorTracker
-	var k8scontextChannel *models.K8scontextChan
 	var eventBroadcaster *models.Broadcast
 	if h.config != nil {
 		operatorTracker = h.config.OperatorTracker
-		k8scontextChannel = h.config.K8scontextChannel
 		eventBroadcaster = h.config.EventBroadcaster
 	}
 
@@ -810,7 +805,6 @@ func (h *Handler) discoverK8sContext(ctx context.Context, provider models.Provid
 		MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 		K8sCompRegHelper:   h.K8sCompRegHelper,
 		OperatorTracker:    operatorTracker,
-		K8scontextChannel:  k8scontextChannel,
 		EventBroadcaster:   eventBroadcaster,
 		RegistryManager:    h.registryManager,
 	}

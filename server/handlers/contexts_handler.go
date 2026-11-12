@@ -122,7 +122,6 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 		K8sCompRegHelper:   h.K8sCompRegHelper,
 		OperatorTracker:    h.config.OperatorTracker,
-		K8scontextChannel:  h.config.K8scontextChannel,
 		EventBroadcaster:   h.config.EventBroadcaster,
 		RegistryManager:    h.registryManager,
 	}
@@ -182,6 +181,4 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		h.persistAndPublish(provider, token, userID, event)
 	}
 	// go h.config.EventBroadcaster.Publish(userID, event)
-
-	// h.config.K8scontextChannel.PublishContext()
 }

@@ -102,11 +102,9 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 				}
 
 				var operatorTracker *models.OperatorTracker
-				var k8scontextChannel *models.K8scontextChan
 				var eventBroadcaster *models.Broadcast
 				if h.config != nil {
 					operatorTracker = h.config.OperatorTracker
-					k8scontextChannel = h.config.K8scontextChannel
 					eventBroadcaster = h.config.EventBroadcaster
 				}
 
@@ -115,7 +113,6 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 					MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 					K8sCompRegHelper:   h.K8sCompRegHelper,
 					OperatorTracker:    operatorTracker,
-					K8scontextChannel:  k8scontextChannel,
 					EventBroadcaster:   eventBroadcaster,
 					RegistryManager:    h.registryManager,
 				}
@@ -653,7 +650,6 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 			K8sCompRegHelper:   h.K8sCompRegHelper,
 			OperatorTracker:    h.config.OperatorTracker,
-			K8scontextChannel:  h.config.K8scontextChannel,
 			EventBroadcaster:   h.config.EventBroadcaster,
 			RegistryManager:    h.registryManager,
 		}
@@ -798,11 +794,9 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 				}
 				if connUUID == uuid.Nil || connUUID == connectionID {
 					var operatorTracker *models.OperatorTracker
-					var k8scontextChannel *models.K8scontextChan
 					var eventBroadcaster *models.Broadcast
 					if h.config != nil {
 						operatorTracker = h.config.OperatorTracker
-						k8scontextChannel = h.config.K8scontextChannel
 						eventBroadcaster = h.config.EventBroadcaster
 					}
 
@@ -811,7 +805,6 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 						MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 						K8sCompRegHelper:   h.K8sCompRegHelper,
 						OperatorTracker:    operatorTracker,
-						K8scontextChannel:  k8scontextChannel,
 						EventBroadcaster:   eventBroadcaster,
 						RegistryManager:    h.registryManager,
 					}
