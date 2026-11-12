@@ -1,7 +1,0 @@
-# Meshery-Consul Past Results
-
-> a complete compatibility matrix and project test status dashboard.
-
----
-
-LLMS index: [llms.txt](/docs-preview/pr-preview/pr-23341/llms.txt)
