@@ -9167,10 +9167,10 @@ scaling decisions safe.
 
 | Component | Failure behavior | Recovery |
 | :--- | :--- | :--- |
-| **Meshery Server** | Pod restarted by liveness probe / Kubernetes. Local cache rebuilt. | Durable state from Remote Provider; cluster snapshot rebuilt by MeshSync. |
+| **Meshery Server** | Pod restarted by liveness probe / Kubernetes. On `SIGTERM` (or `SIGINT`) it shuts down gracefully: it de-registers from and logs out of the Remote Provider and closes its database before exiting. Local cache rebuilt. | Durable state from Remote Provider; cluster snapshot rebuilt by MeshSync. |
 | **Meshery Operator** | Stateless; rescheduled by Kubernetes. | Reconciles Broker and MeshSync back to desired state on restart. |
 | **MeshSync** | Stateless; managed by the Operator. | Resumes discovery and re-syncs the snapshot on restart. |
-| **Meshery Broker** | Deployed as a StatefulSet; rescheduled on failure. In-memory messages not yet consumed may be lost. | NATS topic persistence bridges brief interruptions; MeshSync re-syncs to restore the snapshot. |
+| **Meshery Broker** | Deployed as a StatefulSet; rescheduled on failure. In-memory messages not yet consumed may be lost. | NATS topic persistence bridges brief interruptions; MeshSync re-syncs to restore the snapshot. If the Broker is recreated with a new endpoint or auth token, Meshery Server rebuilds its connection after about 45 seconds of outage - no Server restart. |
 | **Meshery Adapter** | Stateless; if the Server is unavailable it backs off and retries to reconnect perpetually. | Reconnects and re-registers capabilities automatically. |
 | **Remote Provider** | External dependency for auth and durable state. | Provided by the Remote Provider's own availability; see below. |
 
@@ -9799,7 +9799,7 @@ initiated, not just the ports.
 | :--- | :--- | :--- | :--- | :--- |
 | Clients (UI/browser, `mesheryctl`) | Meshery Server | 9081/tcp (HTTP/API/GraphQL); 80/tcp (WebSocket) | UI, REST, GraphQL, live updates | Front with ingress/TLS in production. |
 | Meshery Server | Managed cluster Kubernetes API | 443/tcp (typically) | Discovery, deploy/undeploy, Operator lifecycle | Uses kubeconfig context (out-of-cluster) or ServiceAccount (in-cluster). |
-| Meshery Server | Meshery Broker | 4222/tcp | Event/data streaming from each cluster | Reaches ClusterIP in-cluster; reaches an exposed endpoint out-of-cluster. |
+| Meshery Server | Meshery Broker | 4222/tcp (direct or exposed endpoint); Kubernetes API port from the kubeconfig server URL, typically 443/tcp (managed port-forward) | Event/data streaming from each cluster | Reaches the ClusterIP directly only for the cluster Meshery Server runs in; for every other cluster, reaches an exposed endpoint on 4222/tcp, or tunnels through that cluster's Kubernetes API port (typically 443/tcp) (managed port-forward), in which case no 4222/tcp egress leaves Meshery Server. |
 | Meshery Server | Remote Provider | 443/tcp (egress) | Authentication, capabilities, durable state | Must be allowed through egress firewalls/proxies. |
 | Meshery Server | Meshery Helm chart repository (`meshery.github.io`) | 443/tcp (egress) | Resolving and downloading the `meshery-operator` chart | Operator mode only; see [Egress requirements](#egress-requirements). |
 | Meshery Server | Meshery Adapters | adapter ports (e.g. 10000+/tcp) | Capability operations | Only when adapters are deployed. |
@@ -10079,7 +10079,6 @@ After deployment, validate connectivity end-to-end:
     </a>
   </p>
 </div>
-
 
 
 --------------------------------------------------------------------------------
@@ -14453,6 +14452,7 @@ built-in `Local` provider (legacy alias `None`) needs no base URL.
 | --- | --- | --- | --- |
 | `DISABLE_OPERATOR` | `false` | Prevents Meshery Server from automatically deploying Meshery Operator into connected clusters. | `DISABLE_OPERATOR=true make server-without-operator` |
 | `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` | `embedded` | Default MeshSync deployment mode for Kubernetes connections that do not already specify one. Accepted values are `embedded` and `operator`. | `MESHSYNC_DEFAULT_DEPLOYMENT_MODE=operator` |
+| `MESHERY_MANAGED_BROKER_PORTFORWARD` | `true` | Whether Meshery Server tunnels to an operator-mode connection's Meshery Broker through the Kubernetes API when that connection's cluster is not the one Meshery runs in. Set `false` to provide your own path to the Broker. See [Managed port-forward](/guides/infrastructure-management/kubernetes-connection-lifecycle/#managed-port-forward-automatic). | `MESHERY_MANAGED_BROKER_PORTFORWARD=false` |
 | `SKIP_DOWNLOAD_CONTENT` | `false` | Skips downloading bundled seed content such as patterns and filters before loading local content. | `SKIP_DOWNLOAD_CONTENT=true make server` |
 | `SKIP_COMP_GEN` | `false` | Skips background Kubernetes component generation during startup. Explicit API-triggered registration can still run. | `SKIP_COMP_GEN=true make server` |
 | `POLICY_EVAL_TIMEOUT` | `3m` | Maximum duration for a single relationship-policy evaluation. Uses Go duration syntax. | `POLICY_EVAL_TIMEOUT=5m make server` |
@@ -14476,7 +14476,7 @@ Meshery Server reads these values from the hosting environment when they are pre
 
 | Variable | Default | Description | Example |
 | --- | --- | --- | --- |
-| `KUBERNETES_SERVICE_HOST` | unset | Kubernetes service host used to detect in-cluster execution and to build in-cluster Kubernetes contexts. | `KUBERNETES_SERVICE_HOST=10.96.0.1` |
+| `KUBERNETES_SERVICE_HOST` | unset | Kubernetes service host used to detect in-cluster execution and to build in-cluster Kubernetes contexts. It identifies the cluster Meshery Server runs in; a connection to any other cluster still gets the managed Broker port-forward. | `KUBERNETES_SERVICE_HOST=10.96.0.1` |
 | `KUBERNETES_SERVICE_PORT` | unset | Kubernetes service port paired with `KUBERNETES_SERVICE_HOST` for in-cluster execution. | `KUBERNETES_SERVICE_PORT=443` |
 | `HOME` | Inherited from the process environment | Home directory used when Meshery resolves paths under `.meshery/` for local registry/model content. | `HOME=/home/appuser` |
 
@@ -17530,7 +17530,7 @@ kubectl -n meshery get broker meshery-broker -o jsonpath='{.status.endpoint}{"\n
 Which type you need follows from where Meshery Server runs relative to the cluster:
 
 - **Meshery Server in the same cluster**: the default `ClusterIP` is correct. The Broker acquires no external address.
-- **Meshery Server outside the cluster** (Docker host, another cluster, Meshery Cloud): the server must reach the Broker's *external* endpoint. Use `NodePort` or `LoadBalancer`, or front the Broker with your own ingress/gateway and pin the advertised address with `spec.service.externalEndpointOverride: <host:port>`.
+- **Meshery Server outside the cluster** (Docker host, a Pod in another cluster, Meshery Cloud): by default Meshery Server reaches a `ClusterIP` Broker through a [managed port-forward](/guides/infrastructure-management/kubernetes-connection-lifecycle/#managed-port-forward-automatic) over the Kubernetes API, so no exposure is needed. To connect directly instead (for example with `MESHERY_MANAGED_BROKER_PORTFORWARD=false`), the server must reach the Broker's *external* endpoint: use `NodePort` or `LoadBalancer`, or front the Broker with your own ingress/gateway and pin the advertised address with `spec.service.externalEndpointOverride: <host:port>`.
 
 Service annotations pass load-balancer hints through to your platform - for example, requesting an internal load balancer on AWS, or a MetalLB address pool on bare metal:
 
@@ -18133,27 +18133,52 @@ token in the `meshery-nats-auth` secret. Meshery Server reads that token and
 presents it when connecting; without it the Broker rejects the connection with an
 authorization violation. This is automatic - there is nothing to configure.
 
+If the Broker is recreated - the Operator reinstalled, or the `meshery`
+namespace rebuilt - it comes back with a new token and often a new endpoint,
+and the connection Meshery holds keeps presenting the old ones. Meshery notices:
+once a Broker connection has been down for about 45 seconds, it re-reads the
+Broker's endpoint and the `meshery-nats-auth` token, and if the token changed,
+or the Broker answers at a different endpoint, it rebuilds the MeshSync data
+connection with the new values and raises an informational **Meshery Broker
+changed; reconnecting MeshSync** event. A Broker
+that is only down, with the same endpoint and token, is left to reconnect on its
+own. No server restart or reconnect is needed.
+
 ### Reachability
 
-- **Meshery running in-cluster** (Helm / `mesheryctl system start --platform
-  kubernetes`): the Broker's `ClusterIP` is directly reachable. Nothing to do.
-- **Meshery running out-of-cluster** (a Docker host, your laptop, or managing a
-  _different_ cluster): the Broker is typically exposed as `ClusterIP` only, which
-  is **not reachable from outside the cluster**. Meshery needs a path to it.
+What matters is whether Meshery Server runs in **the connection's own cluster**,
+not whether it runs in a cluster at all:
+
+- **Meshery running in the connection's cluster** (Helm / `mesheryctl system
+  start --platform kubernetes`, managing the cluster it is installed in): the
+  Broker's `ClusterIP` is directly reachable. Nothing to do.
+- **Meshery running anywhere else** - a Docker host, your laptop, or a Pod in a
+  _different_ cluster: the Broker is typically exposed as `ClusterIP` only, which
+  is **not reachable from outside its cluster**. Meshery needs a path to it.
 
 ### Managed port-forward (automatic)
 
-When Meshery Server runs **out-of-cluster**, it automatically establishes a
-**self-healing port-forward** to the Broker's NATS pod through the Kubernetes API
-server (the same mechanism as `kubectl port-forward`, using the credentials
-Meshery already holds) and connects to NATS over it. It re-establishes the tunnel
-if the pod restarts or the connection drops, and tears it down when the connection
-is disconnected or deleted. **No manual `kubectl port-forward` is required.**
+Unless Meshery Server runs in the connection's own cluster, it automatically
+establishes a **self-healing port-forward** to the Broker's NATS pod through the
+Kubernetes API server (the same mechanism as `kubectl port-forward`, using the
+credentials Meshery already holds) and connects to NATS over it. It
+re-establishes the tunnel if the pod restarts or the connection drops, and tears
+it down when the connection is disconnected or deleted. **No manual `kubectl
+port-forward` is required.**
+
+Meshery recognizes its own cluster by Kubernetes server ID (the `kube-system`
+namespace UID), so a kubeconfig that names that cluster by an external address
+still counts as the same cluster. If the server ID cannot be read - for example,
+Meshery's service account may not read namespaces - only a connection that names
+the in-cluster API endpoint (`kubernetes.default.svc` or the
+`KUBERNETES_SERVICE_HOST` address) is treated as Meshery's own cluster; every
+other connection gets the port-forward, which costs at most a hop through the
+API server.
 
 | Behavior | Detail |
 |---|---|
-| Default | **On** when Meshery runs out-of-cluster. |
-| In-cluster | **Skipped** automatically (the `ClusterIP` is directly reachable). |
+| Default | **On** for every connection to a cluster other than the one Meshery runs in. |
+| Meshery's own cluster | **Skipped** automatically (the `ClusterIP` is directly reachable). |
 | Disable | Set `MESHERY_MANAGED_BROKER_PORTFORWARD=false` on Meshery Server. |
 
 Current releases treat a Meshery Server running inside *any* Kubernetes cluster as
@@ -18181,7 +18206,7 @@ controller status and Meshery's actual Broker connection. The codes it reports:
 | `connection_inactive` | No active session for the connection yet. | Connect the cluster. |
 | `operator_deploy_failed` | Meshery tried to deploy the Operator and could not; the underlying cause is carried in the diagnostic. | Read the cause. An unreadable kubeconfig or missing permissions in the `meshery` namespace need fixing first; an unresolvable chart version means the requested `operator.version` is not published, or the chart repository was unreachable. Redeploying the Operator re-resolves the version, so a transient repository outage clears on retry. |
 | `operator_not_deployed` | The Operator isn't deployed (operator mode). | Reconnect the cluster, or switch MeshSync mode; ensure Meshery can create resources in the `meshery` namespace. |
-| `broker_unreachable` | The Broker is up but Meshery can't reach/authenticate to it. | Make the Broker reachable (the managed port-forward normally handles this; otherwise port-forward it, expose it via NodePort/LoadBalancer, or run Meshery in-cluster). |
+| `broker_unreachable` | The Broker is up but Meshery can't reach/authenticate to it. | Make the Broker reachable (the managed port-forward normally handles this; otherwise port-forward it, expose it via NodePort/LoadBalancer, or run Meshery in that cluster). |
 | `broker_networking` | Informational: how Meshery reaches the Broker - managed port-forward, in-cluster ClusterIP, or a direct endpoint - and the address in use. | Nothing to fix; it reports the transport behind a Broker that Meshery can see. |
 
 The same diagnostics are available programmatically at
@@ -18210,9 +18235,9 @@ From the connection in Meshery UI you can:
   operator (quote it: `token: "$NATS_TOKEN"`). Redeploying often generates a token
   that parses.
 - **"MeshSync running but not connected to Broker."** Almost always a Broker
-  reachability or authentication problem for an out-of-cluster Meshery - see
-  [Broker connectivity](#broker-connectivity). The Diagnostics section will say
-  `broker_unreachable` with remediation.
+  reachability or authentication problem for a Meshery running outside the
+  connection's cluster - see [Broker connectivity](#broker-connectivity). The
+  Diagnostics section will say `broker_unreachable` with remediation.
 
 ## See Also
 
@@ -18611,10 +18636,11 @@ The logos are the official KubeCon + CloudNativeCon North America 2026 artwork f
 </li>
 <li>
 <p><strong>Apply the edits with <code>jq</code>.</strong> Run this from the directory where you ran <code>model init</code>. Set <code>HANDLE</code> to your handle and <code>DL</code> to the folder holding the two downloaded SVGs:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nv">HANDLE</span><span class="o">=</span>&lt;your-handle&gt;
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">(</span>
+</span></span><span class="line"><span class="cl"><span class="nv">HANDLE</span><span class="o">=</span>&lt;your-handle&gt;
 </span></span><span class="line"><span class="cl"><span class="nv">DL</span><span class="o">=</span>~/Downloads
 </span></span><span class="line"><span class="cl"><span class="nv">MODEL</span><span class="o">=</span>kubecon-<span class="nv">$HANDLE</span>-logo
-</span></span><span class="line"><span class="cl"><span class="nb">cd</span> <span class="s2">&#34;</span><span class="nv">$MODEL</span><span class="s2">/v0.1.0&#34;</span> <span class="o">||</span> <span class="nb">exit</span> <span class="m">1</span>
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> <span class="s2">&#34;</span><span class="nv">$MODEL</span><span class="s2">/v0.1.0&#34;</span> <span class="o">||</span> <span class="o">{</span> <span class="nb">echo</span> <span class="s2">&#34;model directory not found: </span><span class="nv">$MODEL</span><span class="s2">/v0.1.0&#34;</span><span class="p">;</span> <span class="nb">exit</span> 1<span class="p">;</span> <span class="o">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="nb">test</span> -r <span class="s2">&#34;</span><span class="nv">$DL</span><span class="s2">/kubecon-logo-color.svg&#34;</span> <span class="o">&amp;&amp;</span> <span class="nb">test</span> -r <span class="s2">&#34;</span><span class="nv">$DL</span><span class="s2">/kubecon-logo-white.svg&#34;</span> <span class="o">||</span> <span class="o">{</span> <span class="nb">echo</span> <span class="s2">&#34;SVG files not found in </span><span class="nv">$DL</span><span class="s2">&#34;</span><span class="p">;</span> <span class="nb">exit</span> 1<span class="p">;</span> <span class="o">}</span>
 </span></span><span class="line"><span class="cl">
@@ -18642,6 +18668,7 @@ The logos are the official KubeCon + CloudNativeCon North America 2026 artwork f
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">rm components/component.json relationships/relationship.json
 </span></span><span class="line"><span class="cl"><span class="nb">cd</span> ../..
+</span></span><span class="line"><span class="cl"><span class="o">)</span>
 </span></span></code></pre></div><p>You now have <code>model.json</code> and a single <code>components/kubecon-logo.json</code>. If you prefer to edit by hand, make the same changes in your editor. Generate each SVG value with <code>sed 's/&lt;?xml[^&gt;]*?&gt;//' kubecon-logo-color.svg | jq -Rs .</code> (and the same for the white SVG), then paste the whole output, including its surrounding quotes.</p>
 </li>
 <li>
@@ -28022,6 +28049,48 @@ MeshSync custom resource, which embedded-mode clusters never install.
 form clears them when the effective type changes away from `LoadBalancer`.
 Service changes reconcile in place and must not restart broker pods.
 
+#### How Meshery Server reaches the Broker
+
+`meshsyncDataHandlersNatsBroker` builds the operator-mode NATS connection. Two
+rules govern it:
+
+- **The managed port-forward is decided per target cluster.**
+  `ensureBrokerPortForward` skips it only when `TargetsHostCluster` says the
+  connection reaches the cluster Meshery Server itself runs in
+  (`server/models/host_cluster.go`). That compares the connection's Kubernetes
+  server ID with the host cluster's (the `kube-system` UID, read once through
+  the Pod's service account and cached; a failed read is retried after a
+  minute), falling back to whether the connection names the in-cluster API
+  endpoint. Anything not positively identified gets the port-forward. Never
+  decide this from `KUBERNETES_SERVICE_HOST` alone: it is set in every Pod, so a
+  Meshery Server in one cluster that managed another skipped the port-forward
+  and could not reach a ClusterIP-only Broker. The `broker_networking`
+  diagnostic uses the same predicate.
+- **A recreated Broker is followed.** The connection is built once from the
+  resolved endpoint and the `meshery-nats-auth` token, and the NATS client never
+  re-resolves either - an authorization rejection is terminal for it. Each
+  attached operator-mode data handler therefore has a supervisor
+  (`server/models/broker_supervisor.go`). Once the connection has been down for
+  `brokerStaleAfter` it re-reads the endpoint and token, and when either changed
+  it rebuilds the handler in place under `meshsyncMutex` with the inputs the
+  original was built from, and stops the old one only once the replacement is
+  attached; a rebuild that attaches nothing keeps the old handler and its
+  supervisor, which retries on the next tick. A merely-down Broker (same
+  endpoint and token), a token not provisioned yet, an endpoint that cannot be
+  resolved (even alongside a new token), and a live connection are left alone.
+  A changed endpoint counts only if it answers a TCP dial (`brokerReachable`):
+  `GetPublicEndpoint` returns the first published candidate that answers and
+  falls back to the internal one when none does, so a down Broker reached
+  through a NodePort, LoadBalancer or `host.docker.internal` resolves to a
+  different endpoint without having moved.
+  `brokerTarget` identifies the supervised connection: every supervisor action
+  is re-checked under the mutex against `MesheryControllersHelper.brokerTarget`,
+  so `RemoveMeshSyncDataHandler` stops a supervisor without waiting for it.
+  Re-resolving after a sustained outage was preferred over watching the Broker
+  resource and the Secret: it needs no watch RBAC, holds no watch stream per
+  remote cluster, and costs API calls only while the connection is already
+  broken.
+
 ## What each deployment mode can apply
 
 Meshery Operator manages MeshSync and Meshery Broker, so the deployment mode is
@@ -28172,6 +28241,17 @@ Unit coverage that exists today:
   mode precedence (a server-wide default reaching an inheriting connection),
   the wizard/editor convergence on one store, and the effective document
   reporting the mode a connection actually runs.
+- `server/models/host_cluster_test.go` - the per-target port-forward decision:
+  a Meshery Server in one cluster managing another gets the port-forward, its
+  own cluster (even named by an external address) does not, the address
+  fallback when a server ID is unknown, and caching/retry of the host identity.
+- `server/models/broker_supervisor_test.go` - a recreated Broker (new endpoint
+  and token) is reconnected after a sustained outage, the cases that must not
+  rebuild (merely down, live connection, token not provisioned, no endpoint),
+  the outage clock resetting on reconnect, a removed handler ending its
+  supervisor, the real ticker driving a rebuild, a failed rebuild keeping the
+  old handler and retrying, and a handler that fails to start closing its
+  broker connection.
 - `server/models/operator_chart_version_test.go` - `operator.version` selecting
   the operator Helm chart version, the layering it resolves through, and the
   cases where a chart-version reconcile must not touch the cluster.

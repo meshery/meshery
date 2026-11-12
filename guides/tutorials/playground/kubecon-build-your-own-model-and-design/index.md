@@ -303,10 +303,11 @@ The logos are the official KubeCon + CloudNativeCon North America 2026 artwork f
 </li>
 <li>
 <p><strong>Apply the edits with <code>jq</code>.</strong> Run this from the directory where you ran <code>model init</code>. Set <code>HANDLE</code> to your handle and <code>DL</code> to the folder holding the two downloaded SVGs:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nv">HANDLE</span><span class="o">=</span>&lt;your-handle&gt;
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">(</span>
+</span></span><span class="line"><span class="cl"><span class="nv">HANDLE</span><span class="o">=</span>&lt;your-handle&gt;
 </span></span><span class="line"><span class="cl"><span class="nv">DL</span><span class="o">=</span>~/Downloads
 </span></span><span class="line"><span class="cl"><span class="nv">MODEL</span><span class="o">=</span>kubecon-<span class="nv">$HANDLE</span>-logo
-</span></span><span class="line"><span class="cl"><span class="nb">cd</span> <span class="s2">&#34;</span><span class="nv">$MODEL</span><span class="s2">/v0.1.0&#34;</span> <span class="o">||</span> <span class="nb">exit</span> <span class="m">1</span>
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> <span class="s2">&#34;</span><span class="nv">$MODEL</span><span class="s2">/v0.1.0&#34;</span> <span class="o">||</span> <span class="o">{</span> <span class="nb">echo</span> <span class="s2">&#34;model directory not found: </span><span class="nv">$MODEL</span><span class="s2">/v0.1.0&#34;</span><span class="p">;</span> <span class="nb">exit</span> 1<span class="p">;</span> <span class="o">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="nb">test</span> -r <span class="s2">&#34;</span><span class="nv">$DL</span><span class="s2">/kubecon-logo-color.svg&#34;</span> <span class="o">&amp;&amp;</span> <span class="nb">test</span> -r <span class="s2">&#34;</span><span class="nv">$DL</span><span class="s2">/kubecon-logo-white.svg&#34;</span> <span class="o">||</span> <span class="o">{</span> <span class="nb">echo</span> <span class="s2">&#34;SVG files not found in </span><span class="nv">$DL</span><span class="s2">&#34;</span><span class="p">;</span> <span class="nb">exit</span> 1<span class="p">;</span> <span class="o">}</span>
 </span></span><span class="line"><span class="cl">
@@ -334,6 +335,7 @@ The logos are the official KubeCon + CloudNativeCon North America 2026 artwork f
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">rm components/component.json relationships/relationship.json
 </span></span><span class="line"><span class="cl"><span class="nb">cd</span> ../..
+</span></span><span class="line"><span class="cl"><span class="o">)</span>
 </span></span></code></pre></div><p>You now have <code>model.json</code> and a single <code>components/kubecon-logo.json</code>. If you prefer to edit by hand, make the same changes in your editor. Generate each SVG value with <code>sed 's/&lt;?xml[^&gt;]*?&gt;//' kubecon-logo-color.svg | jq -Rs .</code> (and the same for the white SVG), then paste the whole output, including its surrounding quotes.</p>
 </li>
 <li>
