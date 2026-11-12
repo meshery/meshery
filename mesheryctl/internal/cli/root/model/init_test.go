@@ -413,7 +413,7 @@ func TestInitModelInjectIdentity(t *testing.T) {
 				require.True(t, ok, "%s must reference its model", name)
 				assertIdentity(t, ref)
 				// The entity's own version is independent of the model's.
-				assert.NotEqual(t, id.Version, got["version"])
+				assert.Equal(t, decode(t, format, content)["version"], got["version"])
 			})
 		}
 	}

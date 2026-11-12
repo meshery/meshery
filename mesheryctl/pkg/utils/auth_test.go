@@ -21,6 +21,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -254,9 +255,12 @@ func TestChooseDirectProvider(t *testing.T) {
 	}
 
 	t.Run("matches display name case-insensitively", func(t *testing.T) {
-		got, err := chooseDirectProvider(single, "meshery")
+		got, key, err := chooseDirectProvider(single, "meshery")
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
+		}
+		if key != "cloud.meshery.io" {
+			t.Fatalf("got key %q, want %q", key, "cloud.meshery.io")
 		}
 		if got.ProviderURL != "https://cloud.meshery.io" {
 			t.Fatalf("got provider %+v", got)
@@ -264,12 +268,35 @@ func TestChooseDirectProvider(t *testing.T) {
 	})
 
 	t.Run("matches the registry key", func(t *testing.T) {
-		got, err := chooseDirectProvider(single, "cloud.meshery.io")
+		got, key, err := chooseDirectProvider(single, "cloud.meshery.io")
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
+		if key != "cloud.meshery.io" {
+			t.Fatalf("got key %q, want %q", key, "cloud.meshery.io")
+		}
 		if got.ProviderName != "Meshery" {
 			t.Fatalf("got provider %+v", got)
+		}
+	})
+
+	// An exact key match must win over a display-name match, deterministically:
+	// with key "cloud-a" named "Meshery" beside key "cloud-b" named "cloud-a",
+	// --provider cloud-a selects cloud-a, not whichever entry a map traversal
+	// happens to visit first.
+	t.Run("exact key beats another entry's display name", func(t *testing.T) {
+		provs := map[string]Provider{
+			"cloud-a": {ProviderName: "Meshery", ProviderURL: "https://cloud-a.example"},
+			"cloud-b": {ProviderName: "cloud-a", ProviderURL: "https://cloud-b.example"},
+		}
+		for i := 0; i < 20; i++ {
+			got, key, err := chooseDirectProvider(provs, "cloud-a")
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if key != "cloud-a" || got.ProviderURL != "https://cloud-a.example" {
+				t.Fatalf("attempt %d: got key %q provider %+v", i, key, got)
+			}
 		}
 	})
 
@@ -280,12 +307,15 @@ func TestChooseDirectProvider(t *testing.T) {
 		"no providers":    {},
 	} {
 		t.Run("unknown provider on "+name+" returns a structured error", func(t *testing.T) {
-			got, err := chooseDirectProvider(provs, "does-not-exist")
+			got, key, err := chooseDirectProvider(provs, "does-not-exist")
 			if err == nil {
 				t.Fatal("expected an error")
 			}
 			if code := errors.GetCode(err); code != ErrProviderNotFoundCode {
 				t.Fatalf("got error code %q, want %q", code, ErrProviderNotFoundCode)
+			}
+			if key != "" {
+				t.Fatalf("expected empty key, got %q", key)
 			}
 			if got != (Provider{}) {
 				t.Fatalf("expected zero Provider, got %+v", got)
@@ -308,8 +338,12 @@ func TestWriteTokenFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if mode := info.Mode().Perm(); mode != 0o600 {
-		t.Fatalf("token file mode = %o, want 600", mode)
+	// Windows only tracks the read-only attribute, so a mode check is
+	// meaningless there; the content check below still applies.
+	if runtime.GOOS != "windows" {
+		if mode := info.Mode().Perm(); mode != 0o600 {
+			t.Fatalf("token file mode = %o, want 600", mode)
+		}
 	}
 	data, err := os.ReadFile(path)
 	if err != nil {

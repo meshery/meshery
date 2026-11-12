@@ -310,9 +310,10 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 
 	// Let the user select a provider
 	var provider Provider
+	providerKey := ""
 	if option != "" {
 		// If option is given by user
-		provider, err = chooseDirectProvider(providers, option)
+		provider, providerKey, err = chooseDirectProvider(providers, option)
 	} else {
 		// Trigger prompt
 		provider, err = selectProviderPrompt(providers)
@@ -339,8 +340,17 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 		}
 	}
 
-	// Send request with the token to the meshery server
-	data, err := getTokenObjFromMesheryServer(mctlCfg, provider.ProviderName, token)
+	// Send request with the token to the meshery server. The meshery-provider
+	// cookie carries the registration key when the provider was named with
+	// --provider: /api/providers is keyed by registration key, and two
+	// providers can share a display name, so sending the display name could
+	// route the token request to the other provider. The interactive prompt
+	// path keeps the previous display-name behaviour.
+	cookieProvider := provider.ProviderName
+	if providerKey != "" {
+		cookieProvider = providerKey
+	}
+	data, err := getTokenObjFromMesheryServer(mctlCfg, cookieProvider, token)
 	if err != nil {
 		return nil, err
 	}
@@ -435,19 +445,37 @@ func selectProviderPrompt(provs map[string]Provider) (Provider, error) {
 	return provArray[i], nil
 }
 
-// chooseDirectProvider returns the provider the user named with --provider.
-// The name matches, case-insensitively, either the provider's display name or
-// the key it is registered under in /api/providers; a server can report a key
-// that differs from the display name (for example a URL-style key). When
-// nothing matches, a structured error listing the available providers is
-// returned. It must never index into the provider list on that path: a server
-// pinned to a single provider would make any fixed index out of range.
-func chooseDirectProvider(provs map[string]Provider, option string) (Provider, error) {
+// chooseDirectProvider returns the provider the user named with --provider,
+// plus the key it is registered under in /api/providers. The name matches,
+// case-insensitively, either the provider's display name or the key it is
+// registered under; a server can report a key that differs from the display
+// name (for example a URL-style key). When nothing matches, a structured
+// error listing the available providers is returned. It must never index
+// into the provider list on that path: a server pinned to a single provider
+// would make any fixed index out of range.
+//
+// Matching is done in passes, not in a single map traversal: an exact
+// registration-key match wins, then a case-insensitive key match, then a
+// case-insensitive display-name match. A single traversal is
+// nondeterministic when one entry's key equals another entry's display name
+// (for example key "cloud-a" named "Meshery" beside key "cloud-b" named
+// "cloud-a"), because Go map iteration order is random.
+func chooseDirectProvider(provs map[string]Provider, option string) (Provider, string, error) {
+	if prov, ok := provs[option]; ok {
+		return prov, option, nil
+	}
+	for key, prov := range provs {
+		if strings.EqualFold(key, option) {
+			return prov, key, nil
+		}
+	}
+	for key, prov := range provs {
+		if strings.EqualFold(prov.ProviderName, option) {
+			return prov, key, nil
+		}
+	}
 	available := make([]string, 0, len(provs))
 	for key, prov := range provs {
-		if strings.EqualFold(prov.ProviderName, option) || strings.EqualFold(key, option) {
-			return prov, nil
-		}
 		name := prov.ProviderName
 		if name == "" {
 			name = key
@@ -455,7 +483,7 @@ func chooseDirectProvider(provs map[string]Provider, option string) (Provider, e
 		available = append(available, name)
 	}
 	sort.Strings(available)
-	return Provider{}, ErrProviderNotFound(option, available)
+	return Provider{}, "", ErrProviderNotFound(option, available)
 }
 
 func createProviderURI(provider Provider, host string, port int) (string, error) {
@@ -521,14 +549,21 @@ const tokenFileMode os.FileMode = 0o600
 
 // WriteTokenFile writes an auth token file and restricts it to its owner.
 // The open mode only applies when the file is created, so an existing token
-// file written by an older mesheryctl (0644 or 0666) is chmod-ed before the
-// new token is written into it.
+// file written by an older mesheryctl (0644 or 0666) is chmod-ed to 0600
+// before the new token is written into it. The file is opened without
+// O_TRUNC and truncated only after the chmod succeeds, so a chmod failure
+// (for example a token file owned by another user) leaves the previous
+// credentials intact instead of emptying the file and then erroring.
 func WriteTokenFile(path string, data []byte) error {
-	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, tokenFileMode)
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, tokenFileMode)
 	if err != nil {
 		return err
 	}
 	if err := f.Chmod(tokenFileMode); err != nil {
+		_ = f.Close()
+		return err
+	}
+	if err := f.Truncate(0); err != nil {
 		_ = f.Close()
 		return err
 	}
