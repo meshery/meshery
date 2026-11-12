@@ -59,7 +59,7 @@ func TestRouterShutdownDrainsListener(t *testing.T) {
 	for {
 		conn, err := net.DialTimeout("tcp", addr, 100*time.Millisecond)
 		if err == nil {
-			conn.Close()
+			_ = conn.Close()
 			break
 		}
 		if time.Now().After(deadline) {
@@ -76,7 +76,7 @@ func TestRouterShutdownDrainsListener(t *testing.T) {
 			reqErr <- err
 			return
 		}
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 		if resp.StatusCode != http.StatusNoContent {
 			reqErr <- fmt.Errorf("GET /slow returned status %d, want %d", resp.StatusCode, http.StatusNoContent)
 			return
@@ -132,6 +132,6 @@ func freePort() (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	defer ln.Close()
+	defer func() { _ = ln.Close() }()
 	return ln.Addr().(*net.TCPAddr).Port, nil
 }
