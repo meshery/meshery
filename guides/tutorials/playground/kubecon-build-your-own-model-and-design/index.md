@@ -8,7 +8,7 @@ LLMS index: [llms.txt](/llms.txt)
 
 ---
 
-A 90-minute hands-on session for Meshery ContribFests. Every attendee creates their own Meshery model from real CRDs and then their own Meshery design that uses it, entirely in the Meshery Playground.
+This is a 60-minute hands-on session for Meshery ContribFests. Every attendee creates their own Meshery model from real CRDs and then their own Meshery design that uses it, entirely in the Meshery Playground.
 
 Learning goals: explain what a Meshery model, component, relationship and design are; generate a model from a CRD source with the Registry's Create Model wizard; build, configure and validate a design in Kanvas that uses that model; and keep the work after the session.
 
