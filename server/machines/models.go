@@ -161,6 +161,30 @@ func (sm *StateMachine) ResetState() {
 	sm.CurrentState = InitialState
 }
 
+// UpdateContext atomically replaces the machine's stored context. It runs
+// update under the machine lock, so no transition in flight can observe a
+// half-updated context; returning the current context leaves it unchanged.
+// Callers use it to refresh connection material (for example a rotated
+// credential) on a machine that was created with older material, without
+// re-creating the machine.
+func (sm *StateMachine) UpdateContext(update func(oldCtx interface{}) interface{}) {
+	sm.mx.Lock()
+	defer sm.mx.Unlock()
+
+	sm.Context = update(sm.Context)
+}
+
+// GetContext returns the machine's stored context under the machine lock.
+// Readers outside SendEvent must use it instead of reading sm.Context
+// directly: UpdateContext writes the field under the same lock, so an
+// unlocked read would race a concurrent refresh.
+func (sm *StateMachine) GetContext() interface{} {
+	sm.mx.Lock()
+	defer sm.mx.Unlock()
+
+	return sm.Context
+}
+
 func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	state, ok := sm.States[sm.CurrentState]
 	sm.Log.Debug("inside getNextState: ", event, ok)
