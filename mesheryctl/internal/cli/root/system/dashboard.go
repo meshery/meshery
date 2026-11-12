@@ -264,7 +264,7 @@ func keepConnectionAlive(url string) {
 
 func init() {
 	dashboardCmd.Flags().BoolVarP(&dashboardCmdFlags.PortForward, "port-forward", "", false, "(optional) Use port forwarding to access Meshery UI")
-	dashboardCmd.Flags().IntVarP(&dashboardCmdFlags.Port, "port", "p", 9081, "(optional) Local port that is not in use from which traffic is to be forwarded to the server running inside the Pod.")
+	dashboardCmd.Flags().IntVarP(&dashboardCmdFlags.Port, "port", "p", 9081, "(optional) Local port for forwarding to the server in the Pod. If the default port is in use and --port is not specified, an available port is chosen.")
 
 	dashboardCmd.Flags().BoolVarP(&dashboardCmdFlags.SkipBrowser, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
 }
