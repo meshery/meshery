@@ -1,3 +1,0 @@
-# ErrGetAllHelmPackagesCode-11137
-
-LLMS index: [llms.txt](/pr-preview/pr-21911/llms.txt)
