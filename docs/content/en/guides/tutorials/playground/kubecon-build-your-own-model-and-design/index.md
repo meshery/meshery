@@ -27,7 +27,7 @@ Path A: Kanvas
 
 **Path A** uses the [Kanvas](https://docs.layer5.io/kanvas/) extension on https://playground.meshery.io for both labs.
 
-- Lab 1: you build the Deployment and Service visually in [Kanvas Designer](https://playground.meshery.io/extension/meshmap), then Validate and Publish To Catalog.
+- Lab 1: you build the Deployment and Service visually in [Kanvas Designer](https://playground.meshery.io/extension/meshmap), then Validate and Publish to Catalog.
 - Lab 2: you open the Registry's **Create Model** wizard in the Playground, mark the model as visual annotation only, and upload the KubeCon logos. You then pin the component in Kanvas Designer and drop it onto your Lab 1 design.
 
 You work in the browser. You do not need `mesheryctl` on Path A.
@@ -37,7 +37,7 @@ Path B: Meshery UI and mesheryctl
 **Path B** uses only Meshery UI and/or `mesheryctl`. It does not use the Kanvas extension.
 
 - Lab 1: you import a ready-made Kubernetes manifest (a Deployment and a Service) from the Designs page or with `mesheryctl design import`, then Validate and publish from Meshery UI.
-- Lab 2: you scaffold, package, and import the KubeCon logo model with `mesheryctl` (or import the ready-made archive in the Registry), then add that component to your Lab 1 design by editing the design in the Design Configurator or by updating the design file.
+- Lab 2: you scaffold, package, and import the KubeCon logo model with `mesheryctl` (or import the ready-made archive in the Registry), then add that component to your Lab 1 design by appending it to the exported design file and updating the design.
 
 You will point `mesheryctl` at the Playground before the Path B labs.
 {{< /tabs >}}
@@ -55,7 +55,7 @@ You will point `mesheryctl` at the Playground before the Path B labs.
 - **Path B:**
     1. a laptop or desktop.
     1. [install `mesheryctl`](https://docs.meshery.io/installation/mesheryctl/) on your computer if you will use the CLI steps. You can complete Lab 1 with Meshery UI alone. Lab 2 is smoother with `mesheryctl`, and has a UI import fallback.
-    1. [`jq`](https://jqlang.org/download/) for Lab 2, which uses it to turn each logo SVG into a JSON string. macOS 15 and later include it.
+    1. [`jq`](https://jqlang.org/download/) for Lab 2, which uses it to turn each logo SVG into a JSON string. The Lab 2 CLI steps need a POSIX shell (macOS Terminal, Linux, or WSL / Git Bash on Windows). macOS 15 and later include `jq`; on Linux run `sudo apt install jq` or your distribution's equivalent.
 
 <details>
 <summary>Instructor prerequisites</summary>
@@ -147,7 +147,7 @@ chmod 600 ~/.meshery/playground-auth.json
 mesheryctl system context view
 ```
 
-The token file is separate so signing in does not overwrite the token your other contexts use. Confirm `mesheryctl system context view` shows the Playground endpoint before you import or delete anything.
+The token file is separate so signing in does not overwrite the token your other contexts use. `mesheryctl system login` opens your browser to sign in; finish there and return to the terminal. The token is a credential, so `chmod 600` keeps it readable only by you (`mesheryctl` v1.0.76 and earlier write it world-readable). Confirm `mesheryctl system context view` shows the Playground endpoint before you import or delete anything.
 
 ### Import the manifest as a design
 
@@ -155,7 +155,7 @@ Use the UI, or `mesheryctl`, or both.
 
 **Meshery UI**
 
-1. Go to **Configuration** > **Designs**, or open https://playground.meshery.io/configuration/designs.
+1. Go to **Configuration** > **Designs**, or open https://playground.meshery.io/configuration/designs?view=table. The page opens in grid view; the steps in this lab use the table view, so click **Switch View** (top right) if you see cards.
 2. Click **Import Design**.
 3. Enter the **Design Name** `kubecon-<your-handle>-design`, for example `kubecon-octocat-design`.
 4. Choose **File Upload**, then pick `kubecon-design.yaml` from your computer.
@@ -189,7 +189,7 @@ Instead of importing the manifest, you can create the design from forms in Meshe
 
 ### Validate and dry run
 
-On the Designs page, open the action menu for your design:
+On the Designs page in table view, open the action menu (⋮) for your design. In grid view the same actions are split across the card: **Action** holds Validate, Dry Run, Deploy and Evaluate; the pencil is Edit, the download icon is Download, and the info icon is Design Information.
 
 1. Choose **Validate Design**. This checks the design against component schemas and does not contact a cluster. Fix anything it reports, then validate again.
 2. Optionally choose **Dry Run**. Dry Run talks to a cluster and is not required to finish the lab.
@@ -301,18 +301,52 @@ Confirm `mesheryctl system context view` shows the Playground endpoint before yo
 
    That creates `kubecon-<your-handle>-logo/v0.1.0/`, with `model.json`, a sample file under `components/`, a sample `relationship.json` under `relationships/` (you remove it in step 3), and empty `connections/` and `credentials/` directories.
 
-2. **Edit `model.json`.** Set `metadata.isAnnotation` to `true`. Set `registrant.kind` to `meshery`, give the model a short description, and set `metadata.svgColor` to the color SVG and `metadata.svgWhite` to the white SVG. Each SVG must go in as a JSON-escaped string: its attributes contain `"` quotes, so pasting the raw markup, even on one line, makes `model.json` invalid. From the directory where you saved the two logo SVGs (see the downloads at the start of Lab 2), generate each value with `sed 's/<?xml[^>]*?>//' kubecon-logo-color.svg | jq -Rs .` (and the same for `kubecon-logo-white.svg`), which removes only the XML declaration (keeping any markup on the same line) and escapes quotes and newlines, then paste the whole output, including its surrounding quotes, as the field's value. Set both `version` and `model.version` to `v0.1.0`: `model init` names the folder after `--version` but writes `v0.0.1` into `model.json`. Leave `schemaVersion` as `models.meshery.io/v1beta2`. If you set a category, *Uncategorized* is a safe choice.
+2. **Know what you are changing.** You turn the scaffold into an annotation-only model with one component:
 
-3. **Replace the sample component.** In `components/`, keep a single JSON file (you can rename `component.json` to `kubecon-logo.json`). Set:
+   - In `model.json`: set `metadata.isAnnotation` to `true`, `registrant.kind` to `meshery`, a short `description`, `version` and `model.version` to `v0.1.0`, and put the color SVG in `metadata.svgColor` and the white SVG in `metadata.svgWhite`. Leave `schemaVersion` as `models.meshery.io/v1beta2` and the category as *Uncategorized*.
+   - In the component: set `displayName` to `KubeCon Logo`, `component.kind` to `kubecon-logo`, `metadata.isAnnotation` to `true`, the same SVGs in `styles.svgColor` and `styles.svgWhite`, the nested `model.name` to your model name, and `schemaVersion` to `components.meshery.io/v1beta1`. The scaffold writes `components.meshery.io/v1beta3`, which the Playground's Meshery Server rejects, so this change is required ([meshery#20901](https://github.com/meshery/meshery/issues/20901)).
+   - Delete the sample relationship. Its `relationships.meshery.io/v1beta3` schema version is also rejected, and the model only needs the component.
 
-   - `displayName` to `KubeCon Logo`
-   - `component.kind` to `kubecon-logo`
-   - `metadata.isAnnotation` to `true`
-   - `styles.svgColor` and `styles.svgWhite` to the same JSON-escaped SVG strings
-   - `schemaVersion` to `components.meshery.io/v1beta1`. This edit is required: the scaffold writes `components.meshery.io/v1beta3`, which the Playground's Meshery Server rejects, and `model import` then fails with *No valid component or relationship found in the Model provided*.
-   - the nested `model.name` to the same name you passed to `model init` (the scaffold writes `untitled-model`)
+   An SVG is full of double quotes and line breaks, so pasting it into a JSON string by hand breaks the file. Let `jq` do the escaping instead.
 
-   Delete the sample `relationships/relationship.json`. It uses `relationships.meshery.io/v1beta3`, which the server also rejects: the model still imports, but the import reports *encountered error for 1 entity (1 relationship)*. A model imports if it contains at least one valid component.
+3. **Apply the edits with `jq`.** Run this from the directory where you ran `model init`. Set `HANDLE` to your handle and `DL` to the folder holding the two downloaded SVGs:
+
+   ```sh
+   HANDLE=<your-handle>
+   DL=~/Downloads
+   MODEL=kubecon-$HANDLE-logo
+   cd "$MODEL/v0.1.0" || exit 1
+
+   test -r "$DL/kubecon-logo-color.svg" && test -r "$DL/kubecon-logo-white.svg" || { echo "SVG files not found in $DL"; exit 1; }
+
+   # Remove only the XML declaration; keep any markup on the same line.
+   COLOR=$(sed 's/<?xml[^>]*?>//' "$DL/kubecon-logo-color.svg")
+   WHITE=$(sed 's/<?xml[^>]*?>//' "$DL/kubecon-logo-white.svg")
+
+   jq --arg c "$COLOR" --arg w "$WHITE" '
+     .version = "v0.1.0" | .model.version = "v0.1.0"
+     | .description = "KubeCon logo annotation model"
+     | .registrant.kind = "meshery"
+     | .metadata.isAnnotation = true
+     | .metadata.svgColor = $c | .metadata.svgWhite = $w
+   ' model.json > model.json.tmp && mv model.json.tmp model.json
+
+   jq --arg c "$COLOR" --arg w "$WHITE" --arg name "$MODEL" '
+     .schemaVersion = "components.meshery.io/v1beta1"
+     | .version = "v0.1.0"
+     | .displayName = "KubeCon Logo"
+     | .component.kind = "kubecon-logo"
+     | .metadata.isAnnotation = true
+     | .styles.svgColor = $c | .styles.svgWhite = $w
+     | .model.name = $name | .model.version = "v0.1.0" | .model.model.version = "v0.1.0"
+   ' components/component.json > components/kubecon-logo.json
+
+   rm components/component.json relationships/relationship.json
+   cd ../..
+   ```
+
+   You now have `model.json` and a single `components/kubecon-logo.json`. If you prefer to edit by hand, make the same changes in your editor. Generate each SVG value with `sed 's/<?xml[^>]*?>//' kubecon-logo-color.svg | jq -Rs .` (and the same for the white SVG), then paste the whole output, including its surrounding quotes.
+
 
 4. **Package the model as an OCI archive:**
 
@@ -337,18 +371,13 @@ Download the [ready-made model archive](kubecon-logo.tar.gz) from this page and 
 
 ### Add the logo to your Lab 1 design (without Kanvas)
 
-Without Kanvas you will not see the logo on a canvas. You can still add the annotation component to the design document, save or update it, and confirm it with `mesheryctl design view`.
+Without Kanvas you will not see the logo on a canvas. You add the annotation component to the design document, update the design, and confirm it with `mesheryctl design view`.
 
-**Preferred: add it in the Design Configurator**
+{{% alert color="warning" title="The Design Configurator cannot add an annotation component" %}}
+The Design Configurator lists your model under *Uncategorized*, but shows the component as **KubeCon Logo (contains invalid schema)** and cannot expand it. An annotation component has no configuration schema (`component.schema` is empty), so there is no form to fill. Add it through the YAML path below instead.
+{{% /alert %}}
 
-1. Go to **Configuration** > **Designs**, open the action menu for your Lab 1 design, and choose **Edit**. The Design Configurator opens at `/configuration/designs/configurator?design_id=...`.
-2. In **Select Category**, look for the category you gave the model (the ready-made archive uses *Uncategorized*). In **Select Model**, choose your KubeCon logo model.
-3. Expand the **KubeCon Logo** component form, give it a name if prompted, and confirm it appears in the YAML editor next to the forms.
-4. Click the **Update Design** icon (not **Save Design as New File**, unless you want a copy).
-
-If the model does not appear in the category or model dropdowns, refresh the page and search again. Whether a just-imported annotation-only model always appears in the Design Configurator has not been verified in the Playground; if it does not, use the YAML path below.
-
-**YAML path: export, add a component, and update**
+**Export, add the component, and update**
 
 1. Export the design. In Meshery UI, on the Designs page, choose **Download** and pick **Meshery Design (yaml)**. Or run:
 
@@ -356,9 +385,9 @@ If the model does not appear in the category or model dropdowns, refresh the pag
    mesheryctl design export kubecon-<your-handle>-design
    ```
 
-   The default `--type` is `current` (the design as Meshery stores it now).
+   The default `--type` is `current` (the design as Meshery stores it now). The file is written as `kubecon-<your-handle>-design_<id>.yaml` in your current directory.
 
-2. Open the exported YAML. It should have a top-level `components:` list and a `schemaVersion` such as `designs.meshery.io/v1beta1`. Append this component to that list. Replace the model `name` with your handle-specific model name, or use `kubecon-logo` if you imported the fallback archive. Generate a fresh UUID for `id` (for example with `uuidgen`):
+2. Open the exported YAML. It should have a top-level `components:` list and a `schemaVersion` such as `designs.meshery.io/v1beta3`. Append this component to the end of that top-level list (not to a nested `components:` key inside a model), indented like the existing entries. Replace the model `name` with your handle-specific model name, or use `kubecon-logo` if you imported the fallback archive. Generate a fresh UUID for `id` (for example with `uuidgen`):
 
    ```yaml
    - id: 00000000-0000-0000-0000-000000000000
@@ -386,14 +415,14 @@ If the model does not appear in the category or model dropdowns, refresh the pag
      configuration: {}
    ```
 
-   This snippet matches the v1beta1 component shape used in published catalog designs and in the ready-made `kubecon-logo` model (`schemaVersion`, `component.kind`, nested `model.name` / `model.version`, and `metadata.isAnnotation`). It omits Kanvas-only `styles.position` fields. The Registry should supply the component's SVG styling when the referenced model is registered. This exact append-and-update path has been checked against the schema and against Meshery source, but it has not been dry-run in the Playground.
+   This is the v1beta1 component shape the ready-made `kubecon-logo` model uses. Meshery keeps the component as written: the import does not fill in the model's `id` or the SVG `styles` from the Registry.
 
-3. Update the existing design: open it in the Design Configurator, paste the edited YAML into the editor, and click **Update Design**.
+3. Update the existing design: on the Designs page click its Edit (pencil) action to open the Design Configurator, replace the YAML in the editor with your edited file, and click the **Update Design** icon (not **Save Design as New File**, unless you want a copy).
 
    `mesheryctl design import` always creates a **new** design (it posts to `/api/pattern/import` and does not update an existing ID). If you re-import the edited file, give it a new name, for example:
 
    ```sh
-   mesheryctl design import -f kubecon-<your-handle>-design-with-logo.yaml -s "Meshery Design" -n kubecon-<your-handle>-design-with-logo
+   mesheryctl design import -f kubecon-<your-handle>-design-with-logo.yaml -s design -n kubecon-<your-handle>-design-with-logo
    ```
 
 4. Confirm the logo component is in the design:
@@ -410,7 +439,7 @@ If the model does not appear in the category or model dropdowns, refresh the pag
 
 **Path A.** Show the logo downloads on this page. Open the Registry at https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models, walk through **Create Model** far enough to show Model Details, Styling (the two SVG uploads), Visual Annotation Only, and the required Source step. Tell the room, honestly, that Generate sources components from a GitHub or Artifact Hub URL and cannot create a single logo component from the SVGs alone. Switch to **Import Model** and import `kubecon-logo.tar.gz`. In Kanvas Designer, pin the component, drop it on the Lab 1 design, and save.
 
-**Path B.** Run `mesheryctl model init`, edit `isAnnotation` and the SVG fields, run `model build`, and `model import -f` against the Playground context. If the CLI path is slow for the room, switch early to the ready-made `kubecon-logo.tar.gz` and Import Model in the Registry. Show adding the component in the Design Configurator, or the YAML snippet and **Update Design**. Confirm with `mesheryctl design view`.
+**Path B.** Run `mesheryctl model init`, walk through the field changes in step 2, run the `jq` edits in step 3, then `model build` and `model import -f` against the Playground context. If the CLI path is slow for the room, switch early to the ready-made `kubecon-logo.tar.gz` and Import Model in the Registry. Show the export, the appended YAML snippet, and **Update Design** in the Design Configurator. Confirm with `mesheryctl design view`.
 
 Remind people that a pending Catalog request on the same design picks up the edit automatically.
 
@@ -452,9 +481,13 @@ Room-level target: at least 80% of attendees complete both labs. Track it with a
 | `mesheryctl` talks to the wrong server | Run `mesheryctl system context view` and confirm the endpoint is `https://playground.meshery.io` before import or delete. Recreate the context and token if it is not. |
 | `model import` says *No valid component or relationship found* | The component still has the scaffold's `schemaVersion: components.meshery.io/v1beta3`. Change it to `components.meshery.io/v1beta1`, then run `model build` and `model import` again. |
 | `model import` reports *encountered error for 1 entity (1 relationship)* | The scaffold's sample `relationships/relationship.json` is still there. Delete it, rebuild and re-import. The logo component itself imported. |
-| `model build` or `model import` fails | Open the Notification Center or the CLI error. Check that `metadata.isAnnotation` is `true`, that each SVG is a JSON-escaped string (see step 2), and that the component `schemaVersion` is `components.meshery.io/v1beta1`. If it stays stuck, import the ready-made [kubecon-logo.tar.gz](kubecon-logo.tar.gz). |
+| `model build` or `model import` fails | Open the Notification Center or the CLI error. Check that `metadata.isAnnotation` is `true`, that each SVG is a JSON-escaped string (see step 3), and that the component `schemaVersion` is `components.meshery.io/v1beta1`. If it stays stuck, import the ready-made [kubecon-logo.tar.gz](kubecon-logo.tar.gz). |
+| `jq: command not found` | Install `jq` (see Prerequisites), or use the ready-made [kubecon-logo.tar.gz](kubecon-logo.tar.gz). |
+| Model shows version `v0.0.1` | `model init` from `mesheryctl` v1.0.76 and earlier does not write `--version` into the files. Setting `version` and `model.version` in step 3 fixes it. |
 | Model not in the Kanvas component list | Refresh the Kanvas tab, then search by display name (`KubeCon Logo`). If you used Import Model, confirm the model is listed in the Registry first. |
-| Model not in the Design Configurator dropdowns | Refresh the configurator tab, then look under the category you chose (the ready-made archive uses *Uncategorized*). If it still does not appear, use the YAML export-and-update path. |
+| KubeCon Logo shows "(contains invalid schema)" in the Design Configurator | Expected: an annotation component has no configuration form. Use the export-and-update path in Lab 2, Path B. |
+| `design import` says "Invalid design source type" | Use `-s design` (or `kubernetes manifest`, `helm chart`, `docker compose`), or leave `-s` out and let Meshery Server detect the format. |
+| Validate Design or Design Information is not in the menu | You are in grid view. Click **Switch View**, or use the card's **Action** menu and info icon. |
 | Service does not target the Deployment | The Service selector must match a label on the Deployment, for example `app: kubecon-<your-handle>` or `app: kubecon-demo` if you imported the ready-made manifest unchanged. Port and targetPort should both be `80`. |
 | Publish to Catalog is disabled | Sign in again and reopen **Design Information**. Publish requires a signed-in account that owns the design and has the Publish Design permission. |
 | Catalog request still says it is queued or pending | That is expected for a regular user. The lab is complete once the request is submitted. Keep editing if you are still in Lab 2; a pending request on the same design updates automatically. |
