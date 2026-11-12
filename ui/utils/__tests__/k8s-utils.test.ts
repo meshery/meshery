@@ -207,6 +207,7 @@ describe('parseDiskSpace / parseRam (parseUnitsOfBytes)', () => {
 
   it('parses binary-suffix bytes', () => {
     expect(parseRam('1Ki')).toBe(1024);
+    expect(parseRam('1ki')).toBe(1024);
     expect(parseRam('1Mi')).toBe(1024 * 1024);
     expect(parseRam('1Gi')).toBe(1024 ** 3);
   });
