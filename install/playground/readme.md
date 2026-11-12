@@ -91,10 +91,19 @@ kubectl --context prod -n meshery logs deploy/playground -c meshery | grep 'Conn
    Do not pass `--atomic`: a rollback-uninstall recreates the stuck state in step 2.
    If a previous `--wait` install timed out, Helm keeps the failed release, and
    another `helm install` with the same name fails. Inspect it first with
-   `helm --kube-context staging list -n meshery -a`, then either roll it back
-   (`helm rollback meshery-operator -n meshery --kube-context staging`) or remove
-   it (`helm uninstall meshery-operator -n meshery --kube-context staging`)
-   before retrying the install.
+   `helm --kube-context staging list -n meshery -a`, then recover it according
+   to whether a previous revision exists:
+   - **Failed first install (no previous revision):** there is nothing to roll
+     back to, so remove the failed release
+     (`helm uninstall meshery-operator -n meshery --kube-context staging`),
+     then repeat step 2 and wait for the Broker and MeshSync custom resources
+     and their owned objects to be deleted before reinstalling.
+   - **Failed upgrade (a previous revision exists):** roll it back
+     (`helm rollback meshery-operator -n meshery --kube-context staging`) to
+     restore the previous revision. Do not retry `helm install` after a
+     rollback: the release still exists under that name, so the install still
+     fails. Use `helm upgrade` for a new attempt, or uninstall the release
+     first (and repeat step 2) if a fresh install is needed.
 4. **Re-apply the sandbox settings** with `kubernetes/sandbox-cluster/apply.sh <sandbox-context> <egress-ip>`.
 5. **Restart the playground Deployment** (`kubectl --context prod -n meshery rollout restart
    deploy/playground`). Its Broker connections keep the endpoint and token they resolved at
