@@ -58,7 +58,7 @@ func operatorControllersHelper(ctx context.Context, k8scontext models.K8sContext
 	if !ok || inst == nil || !mhelpers.HasMachineContext(inst) {
 		return nil, ErrOperatorControllersHelper(connectionDetail + " has no ready state machine.")
 	}
-	machinectx, castErr := utils.Cast[*kubernetes.MachineCtx](inst.Context)
+	machinectx, castErr := utils.Cast[*kubernetes.MachineCtx](inst.GetContext())
 	if castErr != nil {
 		return nil, ErrOperatorControllersHelper(castErr.Error())
 	}
