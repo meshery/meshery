@@ -18441,7 +18441,7 @@ The format is `git://github.com/[organization]/[repository]/[branch]/path/to/crd
 <div class="alert alert-warning" role="alert"><div class="h4 alert-heading" role="heading">Tell the room</div>
 
 
-A generated model cannot be deleted from the UI. That is why everyone uses their handle in the name. To stop using a model later, mark it as ignored, or delete it with `mesheryctl model delete <model-name>`.
+A generated model cannot be deleted from the UI. That is why everyone uses their handle in the name. To stop using a model later, mark it as ignored, or delete it with `mesheryctl model delete <model-name>`. Signing in to the Playground in your browser does not configure `mesheryctl`: point it at the Playground first with `mesheryctl system context create playground --url https://playground.meshery.io --set`, give the Playground its own token file with `mesheryctl system token create playground-token -f ~/.meshery/playground-auth.json --set` so signing in does not overwrite the token your other contexts use, sign in with `mesheryctl system login`, and confirm `mesheryctl system context view` shows the Playground endpoint before you delete anything, so the command does not target another server.
 </div>
 
 
@@ -99922,7 +99922,7 @@ The response is nil or does not contain a body.</td>
               <p class="error-details">Invalid system specified
 Publishing process encountered an error</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Ensure a valid system is provided (meshery, remote-provider, website)
+              <p class="error-details">Ensure a valid system is provided (remote-provider, website)
 Check the publishing configuration and try again</p>
             </td>
           </tr>
