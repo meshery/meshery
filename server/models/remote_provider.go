@@ -48,6 +48,15 @@ const (
 	SKIP_DOWNLOAD_EXTENSIONS_ENV       = "SKIP_DOWNLOAD_EXTENSIONS"
 )
 
+// unexpectedHTTPStatusError constructs a non-nil cause error when a remote
+// provider responds with an unexpected HTTP status code.
+func unexpectedHTTPStatusError(statusCode int) error {
+	if text := http.StatusText(statusCode); text != "" {
+		return fmt.Errorf("unexpected HTTP status %d %s", statusCode, text)
+	}
+	return fmt.Errorf("unexpected HTTP status %d", statusCode)
+}
+
 // statusOf reports the HTTP status carried by resp, or 0 when there is no
 // response to read one from.
 //
@@ -895,7 +904,7 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 		l.Log.Info("user data retrieved from remote provider")
 		return bd, nil
 	}
-	err = ErrFetch(err, "Users Data", resp.StatusCode)
+	err = ErrFetch(unexpectedHTTPStatusError(resp.StatusCode), "Users Data", resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -1402,7 +1411,7 @@ func (l *RemoteProvider) FetchResults(tokenVal string, page, pageSize, search, o
 		l.Log.Info("Retrieved results from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(err, string(bdr), resp.StatusCode)
+	err = ErrFetch(unexpectedHTTPStatusError(resp.StatusCode), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -1462,7 +1471,7 @@ func (l *RemoteProvider) FetchAllResults(tokenString string, page, pageSize, sea
 		l.Log.Info("Retrieved results from remote provider.")
 		return bdr, nil
 	}
-	err = ErrFetch(err, string(bdr), resp.StatusCode)
+	err = ErrFetch(unexpectedHTTPStatusError(resp.StatusCode), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -1518,7 +1527,7 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 		l.Log.Info("results retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(err, "SMI Result", resp.StatusCode)
+	err = ErrFetch(unexpectedHTTPStatusError(resp.StatusCode), "SMI Result", resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -1574,7 +1583,7 @@ func (l *RemoteProvider) FetchSmiResult(req *http.Request, page, pageSize, searc
 		l.Log.Info("Retrieved result from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(err, "SMI Result", resp.StatusCode)
+	err = ErrFetch(unexpectedHTTPStatusError(resp.StatusCode), "SMI Result", resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -1626,7 +1635,7 @@ func (l *RemoteProvider) GetResult(tokenVal string, resultID core.Uuid) (*Mesher
 		}
 		return res, nil
 	}
-	err = ErrFetch(err, string(bdr), resp.StatusCode)
+	err = ErrFetch(unexpectedHTTPStatusError(resp.StatusCode), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -1687,7 +1696,7 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 		}
 		return "", nil
 	}
-	err = ErrPost(err, string(bdr), resp.StatusCode)
+	err = ErrPost(unexpectedHTTPStatusError(resp.StatusCode), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return "", err
 }
@@ -1740,7 +1749,7 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 		}
 		return "", nil
 	}
-	return "", ErrPost(err, string(bdr), resp.StatusCode)
+	return "", ErrPost(unexpectedHTTPStatusError(resp.StatusCode), string(bdr), resp.StatusCode)
 }
 
 // PersistEvent persists a user-initiated event to the remote provider.
@@ -2189,8 +2198,9 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 	if err != nil {
 		return ErrDataRead(err, "metrics Data")
 	}
-	l.Log.Error(ErrPost(err, string(bdr), resp.StatusCode))
-	return ErrPost(err, string(bdr), resp.StatusCode)
+	err = ErrPost(unexpectedHTTPStatusError(resp.StatusCode), string(bdr), resp.StatusCode)
+	l.Log.Error(err)
+	return err
 }
 
 func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error) {
@@ -2220,7 +2230,10 @@ func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *Patt
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		err = ErrPost(err, "design", cReq.Response.StatusCode)
+		if resp.Body != nil {
+			_ = resp.Body.Close()
+		}
+		err = ErrPost(err, "design", resp.StatusCode)
 		l.Log.Error(err)
 		return nil, err
 	}
@@ -2239,7 +2252,13 @@ func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *Patt
 		return &pr, nil
 	}
 
-	return nil, ErrPost(err, fmt.Sprint(resp.Body), resp.StatusCode)
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Design resource")
+	}
+	err = ErrPost(unexpectedHTTPStatusError(resp.StatusCode), string(bdr), resp.StatusCode)
+	l.Log.Error(err)
+	return nil, err
 }
 
 func (l *RemoteProvider) GetMesheryPatternResource(token, resourceID string) (*PatternResource, error) {
@@ -2281,7 +2300,7 @@ func (l *RemoteProvider) GetMesheryPatternResource(token, resourceID string) (*P
 	if err != nil {
 		return nil, ErrDataRead(err, "Design resource")
 	}
-	err = ErrFetch(err, string(bdr), resp.StatusCode)
+	err = ErrFetch(unexpectedHTTPStatusError(resp.StatusCode), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
