@@ -117,7 +117,7 @@ The format is `git://github.com/[organization]/[repository]/[branch]/path/to/crd
 4. **Category and subcategory.** Pick the closest match. If nothing fits, choose Uncategorized.
 5. **Styling.** Optional: logos, primary and secondary colors, icon shape. Skipping uses Meshery's defaults. Suggest a distinctive color so it is easy to spot later.
 6. **Source.** Paste the Option A URL.
-7. **Additional settings.** Turn on Immediate Registration so the model is usable right away. Leave Visual Annotation Only off, because these are real infrastructure components.
+7. **Additional settings.** Leave Visual Annotation Only off, because these are real infrastructure components. Clicking Generate registers the model immediately; there is no separate Immediate Registration toggle.
 8. **Generate and verify.** Click Generate, show the confirmation and the Notification Center entry, then open the model in the Registry and show its components (Certificate, Issuer, ClusterIssuer and others).
 
 ### Attendee steps (15 min)
@@ -128,7 +128,7 @@ The format is `git://github.com/[organization]/[repository]/[branch]/path/to/crd
 4. **Choose a category.** Pick the closest Category and Subcategory, or Uncategorized.
 5. **Style it (optional).** Choose a color you will recognize in the designer.
 6. **Paste your source URL.** Use the URL for the pick your table group was assigned (A to E).
-7. **Register immediately.** Turn on Immediate Registration. Leave Visual Annotation Only off.
+7. **Additional settings.** Leave Visual Annotation Only off. Clicking Generate registers the model immediately.
 8. **Generate.** Click Generate and wait for the confirmation. Check the Notification Center if you miss it.
 9. **Verify.** Find your model in the Models list (search your handle). Open it and count its components. Raise your hand when you can see them.
 
@@ -203,9 +203,9 @@ Room-level target: at least 80% of attendees complete both labs. Track it with a
 | Symptom | Fix |
 |---|---|
 | Stuck on the sign-in page | Try another provider (GitHub, Google or email). If the venue blocks it, pair with a neighbor and keep trying on a phone hotspot. |
-| Model name rejected | Use lowercase letters and hyphens only, no spaces or underscores. If your handle contains digits, leave them out of the model name. |
+| Model name rejected | Use lowercase letters, digits, and hyphens only, no spaces or underscores. |
 | Generate fails or never confirms | Open the Notification Center for the error. Re-check the source URL format and branch name. Switch to a different pick from the table. |
-| Model not in the Kanvas component list | Confirm Immediate Registration was on. Refresh the Kanvas tab, then search by display name. |
+| Model not in the Kanvas component list | Refresh the Kanvas tab, then search by display name. Generate already registers the model; there is no Immediate Registration toggle. |
 | Name already taken | Someone else used it. Add a suffix such as `-two`. |
 | Save indicator shows Unable to save | Stop editing until it clears. Usually a dropped connection or an expired session; sign in again. |
 | Playground slow for the whole room | Instructor continues from the pre-built design. Attendees who already have a model move to Lab 2; others use an existing Registry model such as Kubernetes plus any model already listed, and still build their own design. |
