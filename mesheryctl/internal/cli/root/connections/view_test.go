@@ -61,6 +61,15 @@ func TestConnectionViewCmd(t *testing.T) {
 			ExpectError:      false,
 			IsOutputGolden:   true,
 		},
+		{
+			Name:             "given an uppercase --output-format argument provided when connection view then display detailed information in the specified format",
+			Args:             []string{"view", connectionId, "--output-format", "YAML"},
+			URL:              "/api/integrations/connections/" + connectionId,
+			Fixture:          "view.connection.api.response.golden",
+			ExpectedResponse: "view.connection.yaml.output.golden",
+			ExpectError:      false,
+			IsOutputGolden:   true,
+		},
 	}
 
 	utils.InvokeMesheryctlTestListCommand(t, update, ConnectionsCmd, tests, currDir, "connection")
@@ -94,6 +103,19 @@ func TestConnectionViewSaveCreatesFile(t *testing.T) {
 	}
 
 	utils.AssertFileExists(t, filepath.Join(mesheryDir, "connection_minikube.yaml"))
+}
+
+// TestConnectionViewSaveWithUppercaseOutputFormat verifies that an uppercase
+// --output-format saves the file with a lowercase extension.
+func TestConnectionViewSaveWithUppercaseOutputFormat(t *testing.T) {
+	mesheryDir := utils.IsolateMesheryHome(t)
+
+	run := connectionViewRun(utils.CallerDir(t), []string{"view", connectionId, "--output-format", "JSON", "--save"})
+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "connection_minikube.json"))
 }
 
 // TestConnectionViewNoSaveWithBrokenHome verifies that view without --save

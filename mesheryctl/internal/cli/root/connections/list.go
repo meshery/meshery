@@ -5,6 +5,7 @@ import (
 	"net/url"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/pkg/errors"
@@ -12,11 +13,11 @@ import (
 )
 
 type connectionListFlags struct {
-	count    bool
-	kind     []string
-	status   []string
-	pageSize int
-	page     int
+	Count    bool     `json:"count" validate:"boolean"`
+	Kind     []string `json:"kind"`
+	Status   []string `json:"status"`
+	PageSize int      `json:"pagesize" validate:"gte=1"`
+	Page     int      `json:"page" validate:"gte=1"`
 }
 
 var connectionListFlagsProvided connectionListFlags
@@ -51,16 +52,20 @@ mesheryctl connection list --count
 		return nil
 	},
 
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &connectionListFlagsProvided)
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		urlPath := connectionApiPath
 		querySearch := url.Values{}
 
 		// Filters are repeated query params (kind=a&kind=b, status=x&status=y),
 		// the standard convention across the API — no JSON encoding.
-		for _, kind := range connectionListFlagsProvided.kind {
+		for _, kind := range connectionListFlagsProvided.Kind {
 			querySearch.Add("kind", kind)
 		}
-		for _, status := range connectionListFlagsProvided.status {
+		for _, status := range connectionListFlagsProvided.Status {
 			querySearch.Add("status", status)
 		}
 
@@ -75,10 +80,10 @@ mesheryctl connection list --count
 			UrlPath:          urlPath,
 			DataType:         "connection",
 			Header:           header,
-			Page:             connectionListFlagsProvided.page,
-			PageSize:         connectionListFlagsProvided.pageSize,
+			Page:             connectionListFlagsProvided.Page,
+			PageSize:         connectionListFlagsProvided.PageSize,
 			IsPage:           cmd.Flags().Changed("page"),
-			DisplayCountOnly: connectionListFlagsProvided.count,
+			DisplayCountOnly: connectionListFlagsProvided.Count,
 		}
 
 		return display.ListAsyncPagination(data, processConnectionData)
@@ -117,9 +122,9 @@ func getConnectionDetail(connection *connection.Connection) []string {
 }
 
 func init() {
-	listConnectionsCmd.Flags().BoolVarP(&connectionListFlagsProvided.count, "count", "c", false, "Display the count of total available connections")
-	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.kind, "kind", "k", []string{}, "Filter connections by kind")
-	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.page, "page", "p", 1, "Page number")
-	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.pageSize, "pagesize", "", 10, "Number of connections per page")
-	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.status, "status", "s", []string{}, "Filter connections by status")
+	listConnectionsCmd.Flags().BoolVarP(&connectionListFlagsProvided.Count, "count", "c", false, "Display the count of total available connections")
+	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.Kind, "kind", "k", []string{}, "Filter connections by kind")
+	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.Page, "page", "p", 1, "Page number")
+	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.PageSize, "pagesize", "", 10, "Number of connections per page")
+	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.Status, "status", "s", []string{}, "Filter connections by status")
 }
