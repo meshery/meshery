@@ -46,14 +46,18 @@ The six blocks are 3, 7, 5, 18, 20 and 7 minutes, which add up to 60. If Lab 1 r
 - Optional but faster: sign in at https://playground.meshery.io before the session.
 - Basic Kubernetes vocabulary: Namespace, Deployment, Service, CRD.
 
-### Instructor
+<details>
+<summary>Instructor prerequisites</summary>
 
 - A Playground account that has completed both labs end to end within 24 hours of the session.
 - Projector at 1080p or better, browser zoom at 125% so the back row can read the Registry form.
 - This page open on a second screen, and the attendee steps (Labs 1 and 2) on a slide or QR code.
 - A note to the Meshery Playground maintainers that a room of attendees will generate models at roughly 0:15 to 0:33.
 
-## Instructor prep (morning of)
+</details>
+
+<details>
+<summary>Instructor prep (morning of)</summary>
 
 1. **Dry run both labs on the Playground.** Use a fresh model name such as `kubecon-instructor-certs` so you hit the same screens attendees will. Note any UI label that differs from this page and tell the room at the start.
 2. **Confirm the cert-manager CRD source still resolves.** Open `https://github.com/cert-manager/cert-manager/tree/master/deploy/crds` and confirm the folder exists on the default branch. It was verified on Nov 11, 2026. Also confirm the stretch-goal sources if you plan to point fast finishers at them.
@@ -61,14 +65,19 @@ The six blocks are 3, 7, 5, 18, 20 and 7 minutes, which add up to 60. If Lab 1 r
 4. **Prepare the handle list.** Ask attendees to use their GitHub handle (or first name plus last initial) in every name, so dozens of models and designs never collide.
 5. **Brief helpers.** Helpers own sign-in problems and Lab 1 errors so the instructor keeps the room moving. Agree on a raised-hand or sticky-note signal.
 
+</details>
+
 ## Module 1: Welcome and sign-in (0:00 to 0:10)
 
-### Instructor
+<details>
+<summary>Instructor guide: welcome and sign-in</summary>
 
 1. **Set the goal in one sentence (1 min).** "In 60 minutes you will publish your own Meshery model and use it in your own design."
 2. **Logistics (2 min).** Wi-Fi, the Playground URL, the helper signal, and the naming rule: put your handle in every name.
 3. **Live sign-in (1 min).** Open https://playground.meshery.io on the projector and sign in so the room sees the provider choice.
 4. **Hands-on sign-in (6 min).** Helpers walk the room. Anyone not signed in by 0:10 pairs with a neighbor for Lab 1 and keeps trying in parallel.
+
+</details>
 
 ### Attendees
 
@@ -78,9 +87,16 @@ The six blocks are 3, 7, 5, 18, 20 and 7 minutes, which add up to 60. If Lab 1 r
 
 ## Module 2: Concepts in five minutes (0:10 to 0:15)
 
-Teach only what the labs use. Draw it as one picture: a model is a package; a design is something you build from many packages.
+A model is a package; a design is something you build from many packages.
 
-| Term | Say this |
+<details>
+<summary>Instructor guide: concepts</summary>
+
+Teach only what the labs use. Draw it as one picture: a model is a package; a design is something you build from many packages. Use the right-hand column of the table below as your script.
+
+</details>
+
+| Term | Meaning |
 |---|---|
 | Model | A versioned package that teaches Meshery about one technology: its components, relationships and styling. Kubernetes is a model; cert-manager is a model. |
 | Component | One kind of thing inside a model, usually one Kubernetes kind or CRD: Deployment, Certificate, Issuer. |
@@ -99,9 +115,10 @@ Attendees generate a cert-manager model from a public folder of CRDs with the Re
 
 Source URL for the wizard: `git://github.com/cert-manager/cert-manager/master/deploy/crds`
 
-The format is `git://github.com/[organization]/[repository]/[branch]/path/to/crds`, as documented in [Create Models]({{< ref "guides/configuration-management/creating-models/index.md" >}}). This is the documented example and the one the instructor demos. Other CRD sources are listed under Stretch goals.
+The format is `git://github.com/[organization]/[repository]/[branch]/path/to/crds`, as documented in [Create Models]({{< ref "guides/configuration-management/creating-models/index.md" >}}). This is the documented example and the one shown in the live demo. Other CRD sources are listed under Stretch goals.
 
-### Instructor demo (5 min)
+<details>
+<summary>Instructor demo (5 min)</summary>
 
 1. **Open the Registry.** Avatar in the top right, then Registry (or Settings, then Registry). Stay on the Models tab. Direct link: https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models
 2. **Click Create Model.** Point out that this is the wizard; Import Model is for files you already have.
@@ -110,6 +127,8 @@ The format is `git://github.com/[organization]/[repository]/[branch]/path/to/crd
 5. **Source.** Paste the cert-manager URL above.
 6. **Additional settings.** Leave Visual Annotation Only off, because these are real infrastructure components. Clicking Generate registers the model immediately; there is no separate Immediate Registration toggle.
 7. **Generate and verify.** Click Generate, show the confirmation and the Notification Center entry, then open the model in the Registry and show its components (Certificate, Issuer, ClusterIssuer and others).
+
+</details>
 
 ### Attendee steps (13 min)
 
@@ -122,7 +141,7 @@ The format is `git://github.com/[organization]/[repository]/[branch]/path/to/crd
 7. **Generate.** Click Generate and wait for the confirmation. Check the Notification Center if you miss it.
 8. **Verify.** Find your model in the Models list (search your handle). Open it and count its components. Raise your hand when you can see them.
 
-{{% alert color="warning" title="Tell the room" %}}
+{{% alert color="warning" title="Model names are permanent" %}}
 A generated model cannot be deleted from the UI. That is why everyone uses their handle in the name. To stop using a model later, mark it as ignored, or delete it with `mesheryctl model delete <model-name>`. Signing in to the Playground in your browser does not configure `mesheryctl`: point it at the Playground first with `mesheryctl system context create playground --url https://playground.meshery.io --set`, give the Playground its own token file with `mesheryctl system token create playground-token -f ~/.meshery/playground-auth.json --set` so signing in does not overwrite the token your other contexts use, sign in with `mesheryctl system login`, run `chmod 600 ~/.meshery/playground-auth.json` so only you can read the token on a shared machine, and confirm `mesheryctl system context view` shows the Playground endpoint before you delete anything, so the command does not target another server.
 {{% /alert %}}
 
@@ -130,7 +149,8 @@ A generated model cannot be deleted from the UI. That is why everyone uses their
 
 Attendees build a design in Kanvas that combines their new cert-manager model with core Kubernetes components, configures them, adds relationships and validates the result.
 
-### Instructor demo (5 min)
+<details>
+<summary>Instructor demo (5 min)</summary>
 
 1. **Open Kanvas Designer.** Go to https://playground.meshery.io/extension/meshmap and choose the Designer tab.
 2. **Create and name the design.** Start a new design and name it `kubecon-instructor-design`. Point at the save indicator beside the name: a cloud with a tick means saved.
@@ -140,6 +160,8 @@ Attendees build a design in Kanvas that combines their new cert-manager model wi
 6. **Configure.** Select each component and fill its configuration form. For cert-manager: give the Issuer a name and a self-signed spec; give the Certificate a `secretName` and an `issuerRef` naming that Issuer. Required fields are marked.
 7. **Add a workload and an edge.** Drag a Deployment and a Service into the Namespace. Tap the Service, pick a relationship type from the edge picker, and drag to the Deployment. Kanvas highlights compatible targets.
 8. **Validate.** Run Validate. It checks every component against its schema and does not contact a cluster. The count in the result comes from the design, so it includes components whose definitions could not be fetched; a clean result does not guarantee every component was checked. Fix anything it flags.
+
+</details>
 
 ### Attendee steps (15 min)
 
@@ -156,7 +178,7 @@ Attendees build a design in Kanvas that combines their new cert-manager model wi
 ## Wrap-up and next steps (0:53 to 1:00)
 
 1. **Recap (1 min).** Model in the Registry on the shared Playground instance, design in Kanvas saved to your account. Deployments reset; designs do not.
-2. **One quick share if time (2 min).** If the labs finished early, invite one volunteer to show a design: which relationships did Kanvas create, and what did Validate catch?
+2. **One quick share if time (2 min).** If the labs finished early, one volunteer shows their design: which relationships did Kanvas create, and what did Validate catch?
 3. **Next steps (4 min).** Contribute a model upstream, try the stretch goals and the CLI scaffold route at home, join the community Slack at https://slack.layer5.io, and keep using your Playground account.
 
 ## Stretch goals (take-home)
@@ -181,7 +203,7 @@ These are optional. Use them if you finish a lab early, or after the session.
 
 ## What success looks like
 
-Each attendee can show all of the following before leaving. Helpers can use this as a walk-around check during the last seven minutes.
+Each attendee can show all of the following before leaving.
 
 - Signed in to the Playground with their own account (by 0:10)
 - A model named with their handle appears in Registry, Models, with its components listed (by 0:33)
@@ -191,7 +213,14 @@ Each attendee can show all of the following before leaving. Helpers can use this
 - Validate passes, or every remaining finding is understood (by 0:53)
 - The save indicator shows saved, and the design reopens from their design list (by 0:53)
 
+<details>
+<summary>Instructor and helper notes</summary>
+
+Helpers can use this list as a walk-around check during the last seven minutes.
+
 Room-level target: at least 80% of attendees complete both labs. Track it with a show of hands at 0:33 and 0:53.
+
+</details>
 
 ## Troubleshooting and fallbacks
 
@@ -203,11 +232,15 @@ Room-level target: at least 80% of attendees complete both labs. Track it with a
 | Model not in the Kanvas component list | Refresh the Kanvas tab, then search by display name. Generate already registers the model; there is no Immediate Registration toggle. |
 | Name already taken | Someone else used it. Add a suffix such as `-two`. |
 | Save indicator shows Unable to save | Stop editing until it clears. Usually a dropped connection or an expired session; sign in again. |
-| Playground slow for the whole room | Instructor continues from the pre-built design. Attendees who already have a model move to Lab 2; others use an existing Registry model such as Kubernetes plus any model already listed, and still build their own design. |
+| Playground slow for the whole room | Attendees who already have a model move to Lab 2; others use an existing Registry model such as Kubernetes plus any model already listed, and still build their own design. |
 
-{{% alert color="info" title="Instructor note" %}}
-The UI steps come from current Meshery and Kanvas documentation. The instructor's morning dry run is the check; update the session if a label differs.
-{{% /alert %}}
+<details>
+<summary>Instructor notes: fallbacks</summary>
+
+- If the Playground is slow for the whole room, continue teaching from the pre-built design.
+- The UI steps come from current Meshery and Kanvas documentation. The instructor's morning dry run is the check; update the session if a label differs.
+
+</details>
 
 ## Related docs
 
