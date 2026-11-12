@@ -9,23 +9,38 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	_events "github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 )
 
+// telemetrySpyProvider is a mock provider used for testing telemetry handlers.
 type telemetrySpyProvider struct {
 	models.DefaultLocalProvider
 	persistedEvents []*_events.Event
+	getConnectionFn func(token string, connectionID core.Uuid) (*connections.Connection, int, error)
 }
 
+// newTelemetrySpyProvider constructs an initialized telemetrySpyProvider.
 func newTelemetrySpyProvider() *telemetrySpyProvider {
 	return &telemetrySpyProvider{
 		persistedEvents: make([]*_events.Event, 0),
 	}
 }
 
+// PersistEvent records the event in persistedEvents and returns a default PersistedEvent.
 func (s *telemetrySpyProvider) PersistEvent(event _events.Event, _ string) (models.PersistedEvent, error) {
 	s.persistedEvents = append(s.persistedEvents, &event)
 	return models.PersistedEvent{}, nil
+}
+
+// GetConnectionByID dispatches to getConnectionFn when non-nil, or delegates to DefaultLocalProvider.
+func (s *telemetrySpyProvider) GetConnectionByID(token string, connectionID core.Uuid) (*connections.Connection, int, error) {
+	if s.getConnectionFn != nil {
+		return s.getConnectionFn(token, connectionID)
+	}
+	return s.DefaultLocalProvider.GetConnectionByID(token, connectionID)
 }
 
 // TestPrometheusTelemetryHandlers_RejectsInvalidConnectionID pins that malformed,
@@ -327,5 +342,321 @@ func TestGrafanaTelemetryQueryRangeBatchHandler_RejectsInvalidConnectionID(t *te
 				t.Errorf("Grafana Batch unexpectedly persisted failure event for invalid ID: %+v", provider.persistedEvents)
 			}
 		})
+	}
+}
+
+// TestTelemetryPingHandlers_NilUser_ReturnsUnauthorized verifies that both Grafana
+// and Prometheus ping handlers return 401 Unauthorized when user is nil, preventing
+// nil pointer dereferences.
+func TestTelemetryPingHandlers_NilUser_ReturnsUnauthorized(t *testing.T) {
+	connID := uuid.Must(uuid.NewV4()).String()
+	systemID := uuid.Must(uuid.NewV4())
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+	provider := newTelemetrySpyProvider()
+
+	// Test Grafana Ping with nil user
+	gReq := httptest.NewRequest(http.MethodGet, "/api/telemetry/grafana/"+connID+"/ping", nil)
+	gReq = mux.SetURLVars(gReq, map[string]string{"connectionID": connID})
+	gRec := httptest.NewRecorder()
+	h.GrafanaTelemetryPingHandler(gRec, gReq, nil, nil, provider)
+
+	if gRec.Code != http.StatusUnauthorized {
+		t.Errorf("Grafana Ping expected 401 Unauthorized for nil user, got %d (body=%q)", gRec.Code, gRec.Body.String())
+	}
+	if !strings.Contains(gRec.Body.String(), "user unauthorized") {
+		t.Errorf("Grafana Ping expected body to contain 'user unauthorized', got %q", gRec.Body.String())
+	}
+
+	// Test Prometheus Ping with nil user
+	pReq := httptest.NewRequest(http.MethodGet, "/api/telemetry/prometheus/"+connID+"/ping", nil)
+	pReq = mux.SetURLVars(pReq, map[string]string{"connectionID": connID})
+	pRec := httptest.NewRecorder()
+	h.PrometheusTelemetryPingHandler(pRec, pReq, nil, nil, provider)
+
+	if pRec.Code != http.StatusUnauthorized {
+		t.Errorf("Prometheus Ping expected 401 Unauthorized for nil user, got %d (body=%q)", pRec.Code, pRec.Body.String())
+	}
+	if !strings.Contains(pRec.Body.String(), "user unauthorized") {
+		t.Errorf("Prometheus Ping expected body to contain 'user unauthorized', got %q", pRec.Body.String())
+	}
+}
+
+// TestTelemetryPingHandlers_NilSystemID_DoesNotPanic verifies that both Grafana and
+// Prometheus ping handlers safely fall back to uuid.Nil when h.SystemID is nil.
+func TestTelemetryPingHandlers_NilSystemID_DoesNotPanic(t *testing.T) {
+	connUUID := uuid.Must(uuid.NewV4())
+	connID := connUUID.String()
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:      newTestLogger(t),
+		SystemID: nil,
+	}
+	provider := newTelemetrySpyProvider()
+	provider.getConnectionFn = func(_ string, _ core.Uuid) (*connections.Connection, int, error) {
+		return &connections.Connection{
+			ID:   connUUID,
+			Kind: "grafana",
+			Name: "test-grafana",
+		}, http.StatusOK, nil
+	}
+
+	gReq := httptest.NewRequest(http.MethodGet, "/api/telemetry/grafana/"+connID+"/ping", nil)
+	gReq = mux.SetURLVars(gReq, map[string]string{"connectionID": connID})
+	gRec := httptest.NewRecorder()
+	h.GrafanaTelemetryPingHandler(gRec, gReq, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
+
+	// Since upstream URL is empty, client.Health will fail, but handler must not panic on nil SystemID
+	if len(provider.persistedEvents) > 0 {
+		event := provider.persistedEvents[0]
+		if event.SystemID != uuid.Nil {
+			t.Errorf("expected event SystemID to be uuid.Nil when h.SystemID is nil, got %v", event.SystemID)
+		}
+	}
+
+	provider.getConnectionFn = func(_ string, _ core.Uuid) (*connections.Connection, int, error) {
+		return &connections.Connection{
+			ID:   connUUID,
+			Kind: "prometheus",
+			Name: "test-prometheus",
+		}, http.StatusOK, nil
+	}
+	pReq := httptest.NewRequest(http.MethodGet, "/api/telemetry/prometheus/"+connID+"/ping", nil)
+	pReq = mux.SetURLVars(pReq, map[string]string{"connectionID": connID})
+	pRec := httptest.NewRecorder()
+	h.PrometheusTelemetryPingHandler(pRec, pReq, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
+}
+
+// TestTelemetryHandlers_NilProvider_ReturnsServerError verifies that all Grafana
+// and Prometheus telemetry endpoints and client resolvers return 500 Internal Server
+// Error when provider is nil, preventing panics.
+func TestTelemetryHandlers_NilProvider_ReturnsServerError(t *testing.T) {
+	connID := uuid.Must(uuid.NewV4()).String()
+	connUUID := uuid.Must(uuid.NewV4())
+	systemID := uuid.Must(uuid.NewV4())
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	grafanaHandlers := []struct {
+		name   string
+		path   string
+		vars   map[string]string
+		invoke func(w http.ResponseWriter, req *http.Request)
+	}{
+		{"Ping", "/ping", nil, func(w http.ResponseWriter, req *http.Request) {
+			h.GrafanaTelemetryPingHandler(w, req, nil, user, nil)
+		}},
+		{"Boards", "/boards", nil, func(w http.ResponseWriter, req *http.Request) {
+			h.GrafanaTelemetryBoardsHandler(w, req, nil, user, nil)
+		}},
+		{"Board", "/boards/test-uid", map[string]string{"uid": "test-uid"}, func(w http.ResponseWriter, req *http.Request) {
+			h.GrafanaTelemetryBoardHandler(w, req, nil, user, nil)
+		}},
+		{"Datasources", "/datasources", nil, func(w http.ResponseWriter, req *http.Request) {
+			h.GrafanaTelemetryDatasourcesHandler(w, req, nil, user, nil)
+		}},
+		{"QueryRange", "/query_range", nil, func(w http.ResponseWriter, req *http.Request) {
+			h.GrafanaTelemetryQueryRangeHandler(w, req, nil, user, nil)
+		}},
+		{"PinnedBoards", "/pinned", nil, func(w http.ResponseWriter, req *http.Request) {
+			h.GrafanaTelemetryPinnedBoardsHandler(w, req, nil, user, nil)
+		}},
+	}
+
+	for _, target := range grafanaHandlers {
+		t.Run("Grafana_"+target.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "/api/telemetry/grafana/"+connID+target.path, nil)
+			reqVars := map[string]string{"connectionID": connID}
+			for k, v := range target.vars {
+				reqVars[k] = v
+			}
+			req = mux.SetURLVars(req, reqVars)
+			rec := httptest.NewRecorder()
+			target.invoke(rec, req)
+
+			if rec.Code != http.StatusInternalServerError {
+				t.Errorf("Grafana %s expected 500 for nil provider, got %d (body=%q)", target.name, rec.Code, rec.Body.String())
+			}
+		})
+	}
+
+	prometheusHandlers := []struct {
+		name   string
+		path   string
+		invoke func(w http.ResponseWriter, req *http.Request)
+	}{
+		{"Ping", "/ping", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryPingHandler(w, req, nil, user, nil)
+		}},
+		{"Metrics", "/metrics", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryMetricsHandler(w, req, nil, user, nil)
+		}},
+		{"Labels", "/labels", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryLabelsHandler(w, req, nil, user, nil)
+		}},
+		{"LabelValues", "/label_values", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryLabelValuesHandler(w, req, nil, user, nil)
+		}},
+		{"Metadata", "/metadata", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryMetadataHandler(w, req, nil, user, nil)
+		}},
+		{"Query", "/query", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryQueryHandler(w, req, nil, user, nil)
+		}},
+		{"QueryRange", "/query_range", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryQueryRangeHandler(w, req, nil, user, nil)
+		}},
+		{"Panels", "/panels", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryPanelsHandler(w, req, nil, user, nil)
+		}},
+	}
+
+	for _, target := range prometheusHandlers {
+		t.Run("Prometheus_"+target.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "/api/telemetry/prometheus/"+connID+target.path, nil)
+			req = mux.SetURLVars(req, map[string]string{"connectionID": connID})
+			rec := httptest.NewRecorder()
+			target.invoke(rec, req)
+
+			if rec.Code != http.StatusInternalServerError {
+				t.Errorf("Prometheus %s expected 500 for nil provider, got %d (body=%q)", target.name, rec.Code, rec.Body.String())
+			}
+		})
+	}
+
+	// Client constructor helpers with nil provider
+	_, _, gCode, gErr := h.grafanaClientForConnection("token", connUUID, nil)
+	if gCode != http.StatusInternalServerError || gErr == nil {
+		t.Errorf("grafanaClientForConnection expected 500 and error for nil provider, got code=%d, err=%v", gCode, gErr)
+	}
+
+	_, _, prCode, prErr := h.prometheusTelemetryClientForConnection("token", connUUID, nil)
+	if prCode != http.StatusInternalServerError || prErr == nil {
+		t.Errorf("prometheusTelemetryClientForConnection expected 500 and error for nil provider, got code=%d, err=%v", prCode, prErr)
+	}
+}
+
+// TestTelemetryHandlers_NilConnection_ReturnsNotFound verifies that all Grafana
+// and Prometheus telemetry endpoints and client resolvers return 404 Not Found when
+// the provider returns a nil connection without an error, preventing nil pointer
+// dereferences on connection.Kind.
+func TestTelemetryHandlers_NilConnection_ReturnsNotFound(t *testing.T) {
+	connUUID := uuid.Must(uuid.NewV4())
+	connID := connUUID.String()
+	systemID := uuid.Must(uuid.NewV4())
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := newTelemetrySpyProvider()
+	provider.getConnectionFn = func(_ string, _ core.Uuid) (*connections.Connection, int, error) {
+		return nil, http.StatusOK, nil
+	}
+
+	grafanaHandlers := []struct {
+		name   string
+		path   string
+		vars   map[string]string
+		invoke func(w http.ResponseWriter, req *http.Request)
+	}{
+		{"Ping", "/ping", nil, func(w http.ResponseWriter, req *http.Request) {
+			h.GrafanaTelemetryPingHandler(w, req, nil, user, provider)
+		}},
+		{"Boards", "/boards", nil, func(w http.ResponseWriter, req *http.Request) {
+			h.GrafanaTelemetryBoardsHandler(w, req, nil, user, provider)
+		}},
+		{"Board", "/boards/test-uid", map[string]string{"uid": "test-uid"}, func(w http.ResponseWriter, req *http.Request) {
+			h.GrafanaTelemetryBoardHandler(w, req, nil, user, provider)
+		}},
+		{"Datasources", "/datasources", nil, func(w http.ResponseWriter, req *http.Request) {
+			h.GrafanaTelemetryDatasourcesHandler(w, req, nil, user, provider)
+		}},
+		{"QueryRange", "/query_range", nil, func(w http.ResponseWriter, req *http.Request) {
+			h.GrafanaTelemetryQueryRangeHandler(w, req, nil, user, provider)
+		}},
+		{"PinnedBoards", "/pinned", nil, func(w http.ResponseWriter, req *http.Request) {
+			h.GrafanaTelemetryPinnedBoardsHandler(w, req, nil, user, provider)
+		}},
+	}
+
+	for _, target := range grafanaHandlers {
+		t.Run("Grafana_"+target.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "/api/telemetry/grafana/"+connID+target.path, nil)
+			reqVars := map[string]string{"connectionID": connID}
+			for k, v := range target.vars {
+				reqVars[k] = v
+			}
+			req = mux.SetURLVars(req, reqVars)
+			rec := httptest.NewRecorder()
+			target.invoke(rec, req)
+
+			if rec.Code != http.StatusNotFound {
+				t.Errorf("Grafana %s expected 404 for nil connection, got %d (body=%q)", target.name, rec.Code, rec.Body.String())
+			}
+		})
+	}
+
+	prometheusHandlers := []struct {
+		name   string
+		path   string
+		invoke func(w http.ResponseWriter, req *http.Request)
+	}{
+		{"Ping", "/ping", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryPingHandler(w, req, nil, user, provider)
+		}},
+		{"Metrics", "/metrics", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryMetricsHandler(w, req, nil, user, provider)
+		}},
+		{"Labels", "/labels", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryLabelsHandler(w, req, nil, user, provider)
+		}},
+		{"LabelValues", "/label_values", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryLabelValuesHandler(w, req, nil, user, provider)
+		}},
+		{"Metadata", "/metadata", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryMetadataHandler(w, req, nil, user, provider)
+		}},
+		{"Query", "/query", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryQueryHandler(w, req, nil, user, provider)
+		}},
+		{"QueryRange", "/query_range", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryQueryRangeHandler(w, req, nil, user, provider)
+		}},
+		{"Panels", "/panels", func(w http.ResponseWriter, req *http.Request) {
+			h.PrometheusTelemetryPanelsHandler(w, req, nil, user, provider)
+		}},
+	}
+
+	for _, target := range prometheusHandlers {
+		t.Run("Prometheus_"+target.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "/api/telemetry/prometheus/"+connID+target.path, nil)
+			req = mux.SetURLVars(req, map[string]string{"connectionID": connID})
+			rec := httptest.NewRecorder()
+			target.invoke(rec, req)
+
+			if rec.Code != http.StatusNotFound {
+				t.Errorf("Prometheus %s expected 404 for nil connection, got %d (body=%q)", target.name, rec.Code, rec.Body.String())
+			}
+		})
+	}
+
+	// Client constructor helpers
+	_, _, gCode, gErr := h.grafanaClientForConnection("token", connUUID, provider)
+	if gCode != http.StatusNotFound || meshkiterrors.GetCode(gErr) != models.ErrResultNotFoundCode {
+		t.Errorf("grafanaClientForConnection expected 404 and ErrResultNotFoundCode for nil connection, got code=%d, err=%v", gCode, gErr)
+	}
+
+	_, _, prCode, prErr := h.prometheusTelemetryClientForConnection("token", connUUID, provider)
+	if prCode != http.StatusNotFound || meshkiterrors.GetCode(prErr) != models.ErrResultNotFoundCode {
+		t.Errorf("prometheusTelemetryClientForConnection expected 404 and ErrResultNotFoundCode for nil connection, got code=%d, err=%v", prCode, prErr)
 	}
 }

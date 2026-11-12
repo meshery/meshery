@@ -31,9 +31,15 @@ func (h *Handler) grafanaClientForConnection(token string, connectionID uuid.UUI
 	if connectionID.IsNil() {
 		return nil, nil, http.StatusBadRequest, models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
 	}
+	if p == nil {
+		return nil, nil, http.StatusInternalServerError, errors.New("provider not initialized")
+	}
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		return nil, nil, statusCode, err
+	}
+	if connection == nil {
+		return nil, nil, http.StatusNotFound, models.ErrResultNotFound(fmt.Errorf("connection not found"))
 	}
 	if connection.Kind != "grafana" {
 		return nil, connection, http.StatusBadRequest, ErrInvalidConnectionKind(connection.Kind, "grafana")
@@ -68,6 +74,14 @@ func (h *Handler) writeJSON(w http.ResponseWriter, v interface{}) {
 //
 // GET /api/telemetry/grafana/{connectionID}/ping
 func (h *Handler) GrafanaTelemetryPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	userID := user.ID
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
@@ -78,10 +92,14 @@ func (h *Handler) GrafanaTelemetryPingHandler(w http.ResponseWriter, req *http.R
 		return
 	}
 
+	sysID := uuid.Nil
+	if h.SystemID != nil {
+		sysID = *h.SystemID
+	}
 	eventBuilder := events.NewEvent().
 		ActedUpon(connectionID).
 		FromOwner(userID).
-		FromSystem(*h.SystemID).
+		FromSystem(sysID).
 		WithCategory("connection").
 		WithAction("ping")
 
@@ -364,10 +382,18 @@ func (h *Handler) GrafanaTelemetryPinnedBoardsHandler(w http.ResponseWriter, req
 		writeMeshkitError(w, invalidID, http.StatusBadRequest)
 		return
 	}
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		writeMeshkitError(w, err, statusCode)
+		return
+	}
+	if connection == nil {
+		writeMeshkitError(w, models.ErrResultNotFound(fmt.Errorf("connection not found")), http.StatusNotFound)
 		return
 	}
 	if connection.Kind != "grafana" {
