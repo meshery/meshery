@@ -161,6 +161,30 @@ func (sm *StateMachine) ResetState() {
 	sm.CurrentState = InitialState
 }
 
+// UpdateContext atomically replaces the machine's stored context. It runs
+// update under the machine lock, so no transition in flight can observe a
+// half-updated context; returning the current context leaves it unchanged.
+// Callers use it to refresh connection material (for example a rotated
+// credential) on a machine that was created with older material, without
+// re-creating the machine.
+func (sm *StateMachine) UpdateContext(update func(oldCtx interface{}) interface{}) {
+	sm.mx.Lock()
+	defer sm.mx.Unlock()
+
+	sm.Context = update(sm.Context)
+}
+
+// GetContext returns the machine's stored context under the machine lock.
+// Readers outside SendEvent must use it instead of reading sm.Context
+// directly: UpdateContext writes the field under the same lock, so an
+// unlocked read would race a concurrent refresh.
+func (sm *StateMachine) GetContext() interface{} {
+	sm.mx.Lock()
+	defer sm.mx.Unlock()
+
+	return sm.Context
+}
+
 func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	state, ok := sm.States[sm.CurrentState]
 	sm.Log.Debug("inside getNextState: ", event, ok)
@@ -258,6 +282,9 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// CurrentState would corrupt the persisted status) and treat it as no-change
 	// so the repeated background failure is suppressed.
 	haltedWithoutTransition := false
+
+	initialState := sm.CurrentState
+	initialPreviousState := sm.PreviousState
 
 	for eventType != NoOp {
 		nextState, err := sm.getNextState(eventType)
@@ -379,11 +406,21 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// caller's intent is only visible in the captured original. A halt without
 	// transition skips this block too: nothing advanced, so nothing to persist.
 	if sm.Provider != nil && originalEventType != Exit && !haltedWithoutTransition {
+		// Roll back in-memory state to the pre-transition state so the machine
+		// does not claim a state that failed to persist to the database. Rollback
+		// does not undo side effects of actions that already ran. A retry re-runs
+		// them, so transition actions must be idempotent. Compensation hooks are
+		// out of scope here.
+		rollback := func() {
+			sm.CurrentState = initialState
+			sm.PreviousState = initialPreviousState
+		}
+
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 		connection, _, err := sm.Provider.GetConnectionByID(token, sm.ID)
 
 		if err != nil {
-
+			rollback()
 			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).FromSystem(systemID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
 		}
 
@@ -391,6 +428,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// connection would panic on the field access below. Treat it as a
 		// retrieval failure so the caller sees an error instead of a crash.
 		if connection == nil {
+			rollback()
 			err = ErrConnectionNotFound(sm.ID.String())
 			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).FromSystem(systemID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
 		}
@@ -402,11 +440,12 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		persistedStatus = connection.Status
 		persistedStatusKnown = true
 
+		targetState := sm.CurrentState
 		connectionPayload := &connections.ConnectionPayload{
 			ID:       sm.ID,
 			Kind:     connection.Kind,
 			MetaData: connection.Metadata,
-			Status:   connections.ConnectionStatus(sm.CurrentState)}
+			Status:   connections.ConnectionStatus(targetState)}
 
 		if connectionPayload.MetaData == nil {
 			connectionPayload.MetaData = map[string]interface{}{}
@@ -415,8 +454,17 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		connection, err = sm.Provider.UpdateConnectionById(token, connectionPayload, sm.ID.String())
 
 		if err != nil {
-			// In this case should the current state be again set to previous state i.e. should we rollback. But not only state should be rollback but other actions as well, rn we don't rollback state.
-			return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).FromSystem(systemID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			// An update error can be an ambiguous write (e.g. the database write succeeded,
+			// but a post-write read-back or response failed). Reconcile the persisted status
+			// before rolling back in-memory state: if the database already reflects targetState,
+			// keep in-memory state aligned with the database rather than rolling back.
+			if reconciled, _, getErr := sm.Provider.GetConnectionByID(token, sm.ID); getErr == nil && reconciled != nil && reconciled.Status == connections.ConnectionStatus(targetState) {
+				sm.Log.Debugf("%s: update reported error (%v) but database persisted target state %s", sm.Name, err, targetState)
+				connection = reconciled
+			} else {
+				rollback()
+				return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", targetState)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).FromSystem(systemID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			}
 		}
 
 		sm.Log.Debugf("%s: updated \"status\" for connection with id: %s to \"%s\"", sm.Name, connection.ID, sm.CurrentState)

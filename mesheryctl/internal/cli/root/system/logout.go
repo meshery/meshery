@@ -30,7 +30,7 @@ var logoutCmd = &cobra.Command{
 Remove authentication for Meshery Server
 
 This command removes the authentication token from the user's filesystem`,
-	Args: cobra.MinimumNArgs(0),
+	Args: cobra.NoArgs,
 	Example: `
 // Logout current session with your Meshery Provider.
 mesheryctl system logout
@@ -39,6 +39,11 @@ mesheryctl system logout
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
+		}
+
+		// if a temp context is set using the -c flag, use it as the current context
+		if err := mctlCfg.SetCurrentContext(tempContext); err != nil {
+			return ErrGetCurrentContext(err)
 		}
 
 		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())

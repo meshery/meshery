@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"sync"
 
 	"github.com/meshery/schemas/models/core"
 
@@ -36,6 +37,7 @@ func Registered() machines.State {
 			machines.Connect:  machines.CONNECTED,
 			machines.NotFound: machines.NOTFOUND,
 			machines.Ignore:   machines.IGNORED,
+			machines.Delete:   machines.DELETED,
 		},
 		Action: &RegisterAction{},
 	}
@@ -85,7 +87,9 @@ func NotFound() machines.State {
 
 func Delete() machines.State {
 	return machines.State{
-		Events: machines.Events{},
+		Events: machines.Events{
+			machines.Delete: machines.DELETED,
+		},
 		Action: &DeleteAction{},
 	}
 }
@@ -115,6 +119,42 @@ type MachineCtx struct {
 	OperatorTracker    *models.OperatorTracker
 	K8scontextChannel  *models.K8scontextChan
 	RegistryManager    *meshmodel.RegistryManager
+	setupLock          sync.Mutex
+	setupInProgress    bool
+	retryPending       bool
+	disconnected       bool
+}
+
+// IsSetupInProgress reports whether background connection setup is currently running.
+func (m *MachineCtx) IsSetupInProgress() bool {
+	m.setupLock.Lock()
+	defer m.setupLock.Unlock()
+	return m.setupInProgress
+}
+
+// IsRetryPending reports whether a connection setup retry has been queued.
+func (m *MachineCtx) IsRetryPending() bool {
+	m.setupLock.Lock()
+	defer m.setupLock.Unlock()
+	return m.retryPending
+}
+
+// IsDisconnected reports whether the connection has transitioned to disconnected or deleted.
+func (m *MachineCtx) IsDisconnected() bool {
+	m.setupLock.Lock()
+	defer m.setupLock.Unlock()
+	return m.disconnected
+}
+
+// K8sContextSnapshot returns a copy of K8sContext taken under setupLock, so a
+// reader outside the setup goroutine does not race a RefreshK8sContext write.
+// RefreshK8sContext replaces the whole struct (it never mutates the stored
+// value in place), so the copy's scalar fields stay consistent even if a
+// refresh lands after the snapshot is taken.
+func (m *MachineCtx) K8sContextSnapshot() models.K8sContext {
+	m.setupLock.Lock()
+	defer m.setupLock.Unlock()
+	return m.K8sContext
 }
 
 const (

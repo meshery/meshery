@@ -14,6 +14,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/meshery/schemas/models/core"
 	"k8s.io/client-go/util/homedir"
@@ -587,9 +588,26 @@ func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order s
 	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
 }
 
+// GetK8sContext returns the Kubernetes context associated with the given ID or ConnectionID.
+// It searches for an exact ID match first before falling back to a dash-normalized form.
+// Returns ErrDBConnection if MesheryK8sContextPersister is uninitialized.
 func (l *DefaultLocalProvider) GetK8sContext(_, id string) (K8sContext, error) {
+	if l.MesheryK8sContextPersister == nil {
+		return K8sContext{}, ErrDBConnection
+	}
+	// Try the exact ID (or ConnectionID fallback in persister) first.
+	k8sCtx, err := l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+	if err == nil {
+		return k8sCtx, nil
+	}
+	// Fall back to the legacy dash-normalized UUID form if different from the exact ID.
 	idStrWithoutDashes := strings.ReplaceAll(id, "-", "")
-	return l.MesheryK8sContextPersister.GetMesheryK8sContext(idStrWithoutDashes)
+	if idStrWithoutDashes != id {
+		if k8sCtxNorm, errNorm := l.MesheryK8sContextPersister.GetMesheryK8sContext(idStrWithoutDashes); errNorm == nil {
+			return k8sCtxNorm, nil
+		}
+	}
+	return K8sContext{}, err
 }
 
 func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
@@ -787,6 +805,8 @@ func (l *DefaultLocalProvider) PublishEventToProvider(_ string, _ events.Event) 
 
 // PublishMetrics - publishes metrics to the provider backend asynchronously
 func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
+	const maxPublishMetricsErrorBodyBytes = 1024
+
 	data, err := json.Marshal(result)
 	if err != nil {
 		return ErrMarshal(err, "Meshery Metrics for shipping")
@@ -813,12 +833,36 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		l.Log.Info("metrics published to remote provider")
 		return nil
 	}
-	_, err = io.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(io.LimitReader(resp.Body, maxPublishMetricsErrorBodyBytes+1))
 	if err != nil {
 		l.Log.Warn(ErrDataRead(err, "body"))
 		return nil
 	}
-	l.Log.Warn(ErrDoRequest(err, resp.Request.Method, remoteProviderURL.String()))
+	truncated := len(bdr) > maxPublishMetricsErrorBodyBytes
+	if truncated {
+		bdr = bdr[:maxPublishMetricsErrorBodyBytes]
+		for i := len(bdr) - 1; i >= 0 && len(bdr)-i < utf8.UTFMax; i-- {
+			if utf8.RuneStart(bdr[i]) {
+				if !utf8.FullRune(bdr[i:]) {
+					bdr = bdr[:i]
+				}
+				break
+			}
+		}
+	}
+	obj := "metrics"
+	if body := strings.TrimSpace(string(bdr)); body != "" {
+		if truncated {
+			obj = fmt.Sprintf("metrics: %s... (truncated)", body)
+		} else {
+			obj = fmt.Sprintf("metrics: %s", body)
+		}
+	}
+	l.Log.Warn(ErrPost(
+		fmt.Errorf("unexpected HTTP status %d %s from %s %s", resp.StatusCode, http.StatusText(resp.StatusCode), cReq.Method, remoteProviderURL.String()),
+		obj,
+		resp.StatusCode,
+	))
 	return nil
 }
 
@@ -1256,12 +1300,20 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfi
 		performanceProfile.Metadata = core.Map{}
 	}
 
-	data, err := json.Marshal(performanceProfile)
+	if err := l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile); err != nil {
+		return nil, err
+	}
+
+	// Respond with the stored profile: an edit does not carry createdAt.
+	stored, err := l.PerformanceProfilesPersister.GetPerformanceProfile(performanceProfile.ID)
+	if err != nil {
+		return nil, err
+	}
+	data, err := json.Marshal(stored)
 	if err != nil {
 		return nil, ErrMarshal(err, "Perf Profile for persisting")
 	}
-
-	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile)
+	return data, nil
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
@@ -1403,6 +1455,10 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 	return updatedConnection, http.StatusOK, nil
 }
 
+// UpdateConnectionById updates an existing connection identified by connId (or
+// conn.ID when connId is not set), backfilling any fields omitted by the
+// partial payload and preserving the connection's original creation time and
+// owner.
 func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
 	// Always persist against the connection identified by the URL id. A payload
 	// that omits `id` (e.g. an RTK mutation that only forwards status+metadata)
@@ -1421,10 +1477,16 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 	conn.ID = id
 	// A partial payload (e.g. the UI's connect action sending only {status}, or an
 	// FSM status transition sending only {kind, metadata, status}) must not
-	// clobber the columns it omits — UpdateConnection persists via GORM's Save(),
-	// which writes every column. Backfill omitted fields from the persisted row.
+	// clobber the columns it omits — UpdateConnection writes every column.
+	// Backfill omitted fields and immutable row metadata from the persisted row.
+	createdAt := time.Now()
+	var owner *core.Uuid
 	if existing, gerr := l.ConnectionPersister.GetConnection(id, ""); gerr == nil && existing != nil {
 		connections.MergePayloadOntoExisting(conn, existing)
+		if !existing.CreatedAt.IsZero() {
+			createdAt = existing.CreatedAt
+		}
+		owner = existing.Owner
 	}
 	connection := connections.Connection{
 		ID:             id,
@@ -1434,7 +1496,8 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 		Kind:           conn.Kind,
 		Metadata:       conn.MetaData,
 		Status:         conn.Status,
-		CreatedAt:      time.Now(),
+		Owner:          owner,
+		CreatedAt:      createdAt,
 		UpdatedAt:      time.Now(),
 		CredentialID:   conn.CredentialID,
 	}

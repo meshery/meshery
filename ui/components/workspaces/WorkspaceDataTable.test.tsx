@@ -1,11 +1,12 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { configureStore } from '@reduxjs/toolkit';
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { SistentThemeProvider } from '@sistent/sistent';
 import WorkspaceDataTable from './WorkspaceDataTable';
 import WorkspaceActionList from './WorkspaceActionList';
+import { ResponsiveDataTable } from '@sistent/sistent';
 import { describe, it, expect, vi, type Mock } from 'vitest';
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { useGetSelectedOrganization } from '@/rtk-query/user';
@@ -167,5 +168,50 @@ describe('WorkspaceDataTable customBodyRender', () => {
       }),
       undefined,
     );
+  });
+});
+
+describe('WorkspaceDataTable search paging', () => {
+  const renderTable = (search: string) => (
+    <Provider store={store}>
+      <SistentThemeProvider initialMode="light">
+        <WorkspaceDataTable
+          handleWorkspaceModalOpen={vi.fn()}
+          handleTeamsModalOpen={vi.fn()}
+          handleActivityModalOpen={vi.fn()}
+          handleDeleteWorkspaceConfirm={vi.fn()}
+          columnVisibility={{ actions: true }}
+          selectedWorkspace={{ id: '', name: '' }}
+          handleRowClick={vi.fn()}
+          setColumnVisibility={vi.fn()}
+          search={search}
+          viewType="table"
+        />
+      </SistentThemeProvider>
+    </Provider>
+  );
+
+  const lastQueryArgs = () => (useGetWorkspacesQuery as Mock).mock.calls.at(-1)?.[0];
+
+  it('goes back to the first page when the search changes', () => {
+    (useGetSelectedOrganization as Mock).mockReturnValue({
+      selectedOrganization: { id: 'org-1' },
+    });
+    (useGetWorkspacesQuery as Mock).mockReturnValue({
+      data: { workspaces: [{ id: '1', name: 'Alpha', ownerId: 'a' }], totalCount: 30 },
+      isLoading: false,
+    });
+
+    const { rerender } = render(renderTable(''));
+
+    const { onTableChange } = (ResponsiveDataTable as unknown as Mock).mock.calls.at(-1)[0].options;
+    act(() => {
+      onTableChange('changePage', { page: 2, selectedRows: { data: [] } });
+    });
+    expect(lastQueryArgs()).toMatchObject({ page: 2, search: '' });
+
+    rerender(renderTable('alpha'));
+
+    expect(lastQueryArgs()).toMatchObject({ page: 0, search: 'alpha' });
   });
 });
