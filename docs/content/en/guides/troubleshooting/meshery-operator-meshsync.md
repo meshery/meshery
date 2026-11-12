@@ -71,7 +71,7 @@ In this model Meshery Server must both **reach** and **authenticate to** the in-
 - **Authentication.** The Operator provisions NATS with token authentication (secret `meshery-nats-auth`); Meshery Server reads that token and presents it automatically. Without it the Broker rejects the connection with an authorization violation.
 
 {{% alert color="warning" title="Known issue: Meshery Server running in a different Kubernetes cluster" %}}
-Meshery Server decides it is "in-cluster" whenever it runs inside <em>any</em> Kubernetes cluster, so it also skips the managed port-forward for connections to <em>other</em> clusters. A Server deployed in cluster A that manages cluster B then reports <code>Meshery Broker unreachable</code> for cluster B. Until this is fixed, expose cluster B's Broker through its <code>Broker</code> resource - <code>spec.service.type: LoadBalancer</code> with <code>spec.service.loadBalancerSourceRanges</code> limited to the Server's egress address (the range restricts LoadBalancer traffic only, and only where the provider enforces it; for a <code>NodePort</code> exposure, restrict access with a firewall instead) - or run MeshSync in embedded mode for that connection. See <a href='{{< ref "concepts/architecture/broker/index.md" >}}'>Broker</a> for the service fields.
+Meshery Server decides it is "in-cluster" whenever it runs inside <em>any</em> Kubernetes cluster, so it also skips the managed port-forward for connections to <em>other</em> clusters. A Server deployed in cluster A that manages cluster B then reports <code>Meshery Broker unreachable</code> for cluster B. Until this is fixed, expose cluster B's Broker through its <code>Broker</code> resource - <code>spec.service.type: LoadBalancer</code> with <code>spec.service.loadBalancerSourceRanges</code> limited to the Server's egress address (the range restricts LoadBalancer traffic only, and only where the provider enforces it; for a <code>NodePort</code> exposure, restrict access with a firewall instead) - or run MeshSync in embedded mode for that connection. The source-range restriction limits who can connect; it does not encrypt the NATS token or cluster data, which cross this LoadBalancer in cleartext and a network observer can read both. Prefer the managed port-forward above where it applies, and expose the Broker only over a private network path. See <a href='{{< ref "concepts/architecture/broker/index.md" >}}'>Broker</a> for the service fields.
 {{% /alert %}}
 
 For the full walkthrough of the Kubernetes connection lifecycle, its components, and these connectivity behaviors, see [Kubernetes Connection Lifecycle]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md" >}}).
@@ -124,15 +124,19 @@ Some common failure situations that Meshery users might face are described below
          # Run only if meshery-broker is stuck in Terminating
          kubectl patch broker meshery-broker -n meshery -p '{"metadata":{"finalizers":null}}' --type=merge
          ```
-      4. Pull the latest Meshery container images and apply the Helm manifests upgrade:
+      4. Redeploy the Operator for the connection from Meshery UI (the connection's actions) or reconnect the cluster, so a fresh operator starts from the cleared resources instead of adopting the `Terminating` ones. Then confirm the Broker and MeshSync custom resources return:
+         ```bash
+         kubectl -n meshery get brokers,meshsyncs
+         ```
+      5. Pull the latest Meshery container images and apply the Helm manifests upgrade:
          ```bash
          mesheryctl system update
          ```
-      5. Restart the Meshery components:
+      6. Restart the Meshery components:
          ```bash
          mesheryctl system restart
          ```
-      6. Verify the operator components initialize successfully:
+      7. Verify the operator components initialize successfully:
          * Run the system check:
            ```bash
            mesheryctl system check --operator

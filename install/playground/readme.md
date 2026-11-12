@@ -34,8 +34,8 @@ today must be in place for discovery data to reach the playground:
 
 | Requirement | Why | Manifest (apply to the sandbox cluster) |
 | --- | --- | --- |
-| Broker reachable from the `prod` cluster | The Server runs out of the sandbox cluster, and current releases skip the managed kube-API port-forward whenever the Server itself runs in any Kubernetes cluster, so a `ClusterIP` Broker is unreachable | [`sandbox-cluster/broker-service-exposure.yaml`](kubernetes/sandbox-cluster/broker-service-exposure.yaml) - `LoadBalancer`, restricted to the `prod` cluster's NAT egress address; NATS still requires its token |
-| MeshSync can read the cluster | MeshSync runs as ServiceAccount `meshery/meshery-operator`, which the v1.0.x chart scopes to the operator's own needs, so every watch fails with `forbidden` | [`sandbox-cluster/meshsync-discovery-interim-rbac.yaml`](kubernetes/sandbox-cluster/meshsync-discovery-interim-rbac.yaml) - read-only, interim |
+| Broker reachable from the `prod` cluster | The Server runs out of the sandbox cluster, and current releases skip the managed kube-API port-forward whenever the Server itself runs in any Kubernetes cluster, so a `ClusterIP` Broker is unreachable | [`sandbox-cluster/broker-service-exposure.yaml`](kubernetes/sandbox-cluster/broker-service-exposure.yaml) - `LoadBalancer`, restricted to the `prod` cluster's NAT egress address; NATS still requires its token, but the traffic is not TLS-encrypted: the range and the token limit who can connect, not what a network observer can read. Prefer the managed port-forward where it applies; expose the Broker only over a private path |
+| MeshSync can read the cluster | MeshSync runs as ServiceAccount `meshery/meshery-operator`, which the v1.0.x chart scopes to the operator's own needs, so every watch fails with `forbidden` | [`sandbox-cluster/meshsync-discovery-interim-rbac.yaml`](kubernetes/sandbox-cluster/meshsync-discovery-interim-rbac.yaml) - read-only, interim: cluster-wide `get`/`list`/`watch`, including Secrets and their credentials. Remove it once the chart gives MeshSync its own ServiceAccount |
 
 Apply both from `install/playground` with
 [`kubernetes/sandbox-cluster/apply.sh <sandbox-context> <egress-ip>`](kubernetes/sandbox-cluster/apply.sh).
@@ -65,10 +65,9 @@ kubectl --context prod -n meshery logs deploy/playground -c meshery | grep 'Conn
 
 #### Recovering the operator on the sandbox cluster
 
-1. **Remove anything Meshery cannot see.** Meshery manages only `meshery/meshery-operator`.
-   A `meshery-operator` Deployment in any other namespace was applied by hand (its
-   `managedFields` show `kubectl-client-side-apply` and no Helm release exists); delete it
-   together with its ServiceAccount, Service, Role and RoleBinding.
+1. **Remove a stray operator only after confirming it is unmanaged.** Meshery manages only `meshery/meshery-operator`.
+   A `meshery-operator` Deployment in any other namespace can be a manual install or a Helm release in another namespace.
+   Run `helm list -A` and confirm that no release owns the Deployment. Confirm that its objects carry no `meta.helm.sh/release-name` annotation and that no other installation uses it. Then delete it together with its ServiceAccount, Service, Role and RoleBinding.
 2. **Clear stuck custom resources.** If `broker meshery-broker` or `meshsync meshery-meshsync`
    has a `deletionTimestamp` and no operator is running, remove their finalizers. Their
    owned objects (NATS StatefulSet, Services, ConfigMap, Secret, MeshSync Deployment) carry

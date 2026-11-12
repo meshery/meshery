@@ -51,11 +51,14 @@ if ! kubectl --context "$context" -n meshery get broker meshery-broker >/dev/nul
   exit 1
 fi
 
-"${apply[@]}" -f "$here/meshsync-discovery-interim-rbac.yaml"
 # Single quotes are deliberate: envsubst substitutes only the variable named literally.
 # shellcheck disable=SC2016
 PLAYGROUND_EGRESS_CIDR=$cidr envsubst '${PLAYGROUND_EGRESS_CIDR}' \
   <"$here/broker-service-exposure.yaml" | "${apply[@]}" -f -
+
+# Apply the discovery RBAC only after the Broker apply succeeds: with
+# set -euo pipefail a failed Broker step exits before the grant is active.
+"${apply[@]}" -f "$here/meshsync-discovery-interim-rbac.yaml"
 
 # MeshSync backs off between failed watches; restart it so read access takes effect now.
 kubectl --context "$context" -n meshery delete pod -l app=meshery,component=meshsync --wait=false
@@ -67,10 +70,12 @@ for _ in $(seq 1 60); do
     -o jsonpath='{.status.endpoint.external}' || true)
   # An external endpoint from before this apply does not prove the new source range
   # took effect; the operator updates the Service asynchronously. Only report
-  # success once the Service carries the new CIDR.
+  # success once the Service carries exactly the requested CIDR and nothing else:
+  # a substring match would accept a Service that still permits every source
+  # (for example [0.0.0.0/0, <cidr>]).
   ranges=$(kubectl --context "$context" -n meshery get svc meshery-nats \
-    -o jsonpath='{.spec.loadBalancerSourceRanges}' || true)
-  if [[ -n $endpoint && $ranges == *"$cidr"* ]]; then
+    -o jsonpath='{.spec.loadBalancerSourceRanges[*]}' || true)
+  if [[ -n $endpoint && $ranges == "$cidr" ]]; then
     echo "Broker external endpoint: $endpoint (reachable only from $cidr)"
     exit 0
   fi
