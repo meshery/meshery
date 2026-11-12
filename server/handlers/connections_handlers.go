@@ -988,6 +988,10 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context is nil for connection %s", connectionID)
 		}
 
+		// One snapshot for the teardown and redeploy below: both steps must
+		// use the same context even if a credential refresh lands in between.
+		k8sCtx := machineCtx.K8sContextSnapshot()
+
 		ctrlHelper := machineCtx.MesheryCtrlsHelper
 		if ctrlHelper == nil {
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context does not contain reference to MesheryCtrlsHelper for connection %s", connectionID)
@@ -1007,7 +1011,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 
 		// disconnect
 		{
-			contextID := machineCtx.K8sContext.ID
+			contextID := k8sCtx.ID
 			ctrlHelper.
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
 				UndeployDeployedOperators(machineCtx.OperatorTracker, contextID).
@@ -1024,10 +1028,10 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			ctrlHelper.SetControllersConfig(merged)
 			ctrlHelper.
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
-				AddCtxControllerHandlers(machineCtx.K8sContext).
+				AddCtxControllerHandlers(k8sCtx).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				DeployUndeployedOperators(machineCtx.OperatorTracker, machineCtx.K8sContext.ID).
-				AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
+				DeployUndeployedOperators(machineCtx.OperatorTracker, k8sCtx.ID).
+				AddMeshsyncDataHandlers(ctx, k8sCtx, userID, mesheryInstanceID, provider)
 		}
 
 	}
