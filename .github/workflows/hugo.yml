@@ -105,7 +105,7 @@ jobs:
           set -eu
           LIMIT=$((900 * 1024 * 1024))
           size_of() { du -sb "$1" | awk '{print $1}'; }
-          human() { du -sh "$1" | awk '{print $1}'; }
+          human() { du -sh --apparent-size "$1" | awk '{print $1}'; }
           echo "docs/public is $(human docs/public) ($(size_of docs/public) bytes)"
           trim() {
             local path="$1"
