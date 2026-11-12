@@ -85,8 +85,7 @@ Check the<code>sourceURL</code>column in the <a href='https://docs.google.com/sp
 
 <h4>Step 6: Additional Settings</h4>
 <ul>
-<li><strong>Immediate Registration:</strong> Enable this option to register your model instantly, making it available in your Meshery instance right away.</li>
-<li><strong>Visual Annotation Only:</strong> Mark this option if your model is intended solely for visual diagramming rather than infrastructure management.</li>
+<li><strong>Visual Annotation Only:</strong> Mark this option if your model is intended solely for visual diagramming rather than infrastructure management. Leave it off for models you will deploy. Clicking Generate registers the model immediately; the wizard has no separate Immediate Registration toggle.</li>
 </ul>
 
 <a href="./images/create-ui-details.png">
