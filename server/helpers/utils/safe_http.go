@@ -41,6 +41,7 @@ func IsRestrictedIP(ip net.IP) bool {
 			ip4.IsLinkLocalMulticast() ||
 			ip4.IsMulticast() ||
 			ip4.IsUnspecified() ||
+			ip4[0] == 0 ||
 			cgnatNet.Contains(ip4) ||
 			benchNet.Contains(ip4) {
 			return true

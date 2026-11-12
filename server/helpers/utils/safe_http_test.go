@@ -37,8 +37,9 @@ func TestIsRestrictedIP(t *testing.T) {
 		{"RFC 4193 IPv6 ULA fc00::1", "fc00::1", true},
 		{"RFC 4193 IPv6 ULA fd12:3456:789a::1", "fd12:3456:789a::1", true},
 
-		// Unspecified / Broadcast
+		// Unspecified / Broadcast / 0.0.0.0/8
 		{"IPv4 Unspecified 0.0.0.0", "0.0.0.0", true},
+		{"Current network 0.0.0.0/8 0.1.2.3", "0.1.2.3", true},
 		{"IPv6 Unspecified ::", "::", true},
 
 		// CGNAT / Benchmarking
@@ -195,13 +196,14 @@ func TestSafeHTTPClient_BlocksRedirectToRestrictedTarget(t *testing.T) {
 	}))
 	defer redirectServer.Close()
 
-	// Safe client should abort before following redirect to 127.0.0.1
-	client := NewSafeHTTPClient(2 * time.Second)
+	// Use the allowPrivate client so the first hop connects to the local
+	// redirect server, and the redirect to the loopback target is what gets blocked.
+	client := NewSafeHTTPClientWithAllowPrivate(2*time.Second, true)
 	_, err := client.Get(redirectServer.URL)
 	if err == nil {
 		t.Fatal("expected request following redirect to restricted host to fail, but it succeeded")
 	}
-	if !strings.Contains(err.Error(), "restricted") && !strings.Contains(err.Error(), "forbidden") {
-		t.Logf("connection failed as expected: %v", err)
+	if !strings.Contains(err.Error(), "redirect blocked") && !strings.Contains(err.Error(), "restricted") {
+		t.Errorf("expected redirect blocking error, got: %v", err)
 	}
 }

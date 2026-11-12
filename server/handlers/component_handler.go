@@ -1223,27 +1223,25 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	case "urlImport":
 		downloadFile := func(targetURL string) ([]byte, error) {
 			if _, err := utils.ValidateSafeURL(targetURL); err != nil {
-				return nil, fmt.Errorf("invalid or restricted URL: %w", err)
+				return nil, models.ErrDoRequest(err, "GET", targetURL)
 			}
 			client := utils.NewSafeHTTPClient(60 * time.Second)
 			resp, err := client.Get(targetURL)
 			if err != nil {
-				return nil, fmt.Errorf("error downloading file from URL: %v", err)
+				return nil, models.ErrDoRequest(err, "GET", targetURL)
 			}
-			fileData, err := io.ReadAll(resp.Body)
-			if err != nil {
-				if closeErr := resp.Body.Close(); closeErr != nil {
-					return nil, fmt.Errorf("error reading downloaded file: %v (close error: %v)", err, closeErr)
-				}
-				return nil, fmt.Errorf("error reading downloaded file: %v", err)
-			}
-
-			if err := resp.Body.Close(); err != nil {
-				return nil, fmt.Errorf("error closing response body: %v", err)
-			}
+			defer func() {
+				_ = resp.Body.Close()
+			}()
 
 			if resp.StatusCode != http.StatusOK {
-				return nil, fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode)
+				return nil, models.ErrDoRequest(fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode), "GET", targetURL)
+			}
+
+			const maxDownloadFileSize = 10 * 1024 * 1024
+			fileData, err := io.ReadAll(io.LimitReader(resp.Body, maxDownloadFileSize))
+			if err != nil {
+				return nil, models.ErrDoRequest(err, "GET", targetURL)
 			}
 
 			return fileData, nil
@@ -1252,7 +1250,8 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		// Download the file from the provided URL
 		fileData, err := downloadFile(importRequest.ImportBody.Url)
 		if err != nil {
-			h.handleError(rw, err, "Error downloading file from URL")
+			h.log.Error(err)
+			writeMeshkitError(rw, err, http.StatusBadRequest)
 			h.sendErrorEvent(userID, provider, "Error downloading file from URL", err, token)
 			return
 		}

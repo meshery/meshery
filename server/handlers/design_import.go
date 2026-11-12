@@ -118,7 +118,9 @@ func fetchFileFromURL(fileURL string) (FileToImport, error) {
 		// metadata, matching the http.Client.Get error path above.
 		return FileToImport{}, models.ErrDoRequest(fmt.Errorf("returned HTTP %d %s", resp.StatusCode, resp.Status), "GET", fileURL)
 	}
-	body, err := io.ReadAll(resp.Body)
+	// Cap read at 10 MB to prevent unbounded memory consumption from large remote responses.
+	const maxImportFileSize = 10 * 1024 * 1024
+	body, err := io.ReadAll(io.LimitReader(resp.Body, maxImportFileSize))
 	if err != nil {
 		return FileToImport{}, models.ErrDoRequest(err, "GET", fileURL)
 	}
