@@ -917,14 +917,20 @@ func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *p
 // SMPTestConfigGet gets the given PerformanceTestConfig from the local datastore
 func (l *DefaultLocalProvider) SMPTestConfigGet(_ *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error) {
 	uid, err := uuid.FromString(testUUID)
-	if err != nil {
-		return nil, ErrGenerateUUID(err)
+	if err != nil || uid == uuid.Nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid test config UUID: %q", testUUID))
 	}
 	return l.TestProfilesPersister.GetTestConfig(uid)
 }
 
 // SMPTestConfigFetch gets all the PerformanceTestConfigs from the local datastore
 func (l *DefaultLocalProvider) SMPTestConfigFetch(_ *http.Request, page, pageSize, _, _ string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -939,8 +945,8 @@ func (l *DefaultLocalProvider) SMPTestConfigFetch(_ *http.Request, page, pageSiz
 // SMPTestConfigDelete deletes the given PerformanceTestConfig from the local datastore
 func (l *DefaultLocalProvider) SMPTestConfigDelete(_ *http.Request, testUUID string) error {
 	uid, err := uuid.FromString(testUUID)
-	if err != nil {
-		return ErrGenerateUUID(err)
+	if err != nil || uid == uuid.Nil {
+		return ErrInvalidUUID(fmt.Errorf("invalid test config UUID: %q", testUUID))
 	}
 	return l.TestProfilesPersister.DeleteTestConfig(uid)
 }
