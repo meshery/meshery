@@ -13,6 +13,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
 
@@ -352,40 +353,73 @@ func TestInitModelDeriveDisplayName(t *testing.T) {
 	}
 }
 
-func TestInitModelInjectName(t *testing.T) {
-	// Verify that the scaffold's placeholder identifiers are replaced with the
-	// user-supplied model name while every other template field is preserved.
-	// Regression test for the model definition being left as "untitled-model".
-	modelName := "digitalocean-icons"
+func TestInitModelInjectIdentity(t *testing.T) {
+	// Every scaffolded definition must carry the user-supplied model name and
+	// --version instead of the schemas templates' placeholders
+	// ("untitled-model", "Untitled Model", "v0.0.1"). Regression test for
+	// `model init --version v0.1.0` writing "v0.0.1" into model.json, and for
+	// components/relationships referencing "untitled-model".
+	id := initModelIdentity{Name: "digitalocean-icons", Version: "v1.2.3"}
 
-	t.Run("json", func(t *testing.T) {
-		content, err := getTemplateInOutputFormat(initModelTemplatePathModel, "json")
-		assert.NoError(t, err)
-
-		out, err := initModelInjectName(content, "json", modelName)
-		assert.NoError(t, err)
-
+	decode := func(t *testing.T, format string, out []byte) map[string]interface{} {
+		t.Helper()
 		var got map[string]interface{}
-		assert.NoError(t, json.Unmarshal(out, &got))
-		assert.Equal(t, modelName, got["name"])
-		assert.Equal(t, "Digitalocean Icons", got["displayName"])
-		// a representative untouched field must survive the round-trip
-		assert.Contains(t, got, "schemaVersion")
-		assert.Contains(t, got, "metadata")
-		assert.Contains(t, string(out), "<svg")
-	})
+		if format == "json" {
+			require.NoError(t, json.Unmarshal(out, &got))
+		} else {
+			require.NoError(t, yaml.Unmarshal(out, &got))
+		}
+		return got
+	}
+	assertIdentity := func(t *testing.T, model map[string]interface{}) {
+		t.Helper()
+		assert.Equal(t, id.Name, model["name"])
+		assert.Equal(t, "Digitalocean Icons", model["displayName"])
+		assert.Equal(t, id.Version, model["version"])
+		nested, ok := model["model"].(map[string]interface{})
+		require.True(t, ok, "model.model must be an object")
+		assert.Equal(t, id.Version, nested["version"])
+	}
 
-	t.Run("yaml", func(t *testing.T) {
-		content, err := getTemplateInOutputFormat(initModelTemplatePathModel, "yaml")
-		assert.NoError(t, err)
+	templates := map[string]struct {
+		path    string
+		isModel bool
+	}{
+		"model":        {initModelTemplatePathModel, true},
+		"component":    {initModelTemplatePathComponent, false},
+		"relationship": {initModelTemplatePathRelationship, false},
+	}
 
-		out, err := initModelInjectName(content, "yaml", modelName)
-		assert.NoError(t, err)
+	for _, format := range []string{"json", "yaml"} {
+		for name, tc := range templates {
+			t.Run(format+"/"+name, func(t *testing.T) {
+				content, err := getTemplateInOutputFormat(tc.path, format)
+				require.NoError(t, err)
 
-		var got map[string]interface{}
-		assert.NoError(t, yaml.Unmarshal(out, &got))
-		assert.Equal(t, modelName, got["name"])
-		assert.Equal(t, "Digitalocean Icons", got["displayName"])
-		assert.Contains(t, got, "schemaVersion")
+				out, err := initModelInjectIdentity(content, format, tc.isModel, id)
+				require.NoError(t, err)
+				got := decode(t, format, out)
+
+				// Fields the injection must not touch survive the round-trip.
+				assert.Contains(t, got, "schemaVersion")
+				assert.Contains(t, got, "metadata")
+
+				if tc.isModel {
+					assertIdentity(t, got)
+					assert.Contains(t, string(out), "<svg", "SVG markup must not be HTML-escaped")
+					return
+				}
+				ref, ok := got["model"].(map[string]interface{})
+				require.True(t, ok, "%s must reference its model", name)
+				assertIdentity(t, ref)
+				// The entity's own version is independent of the model's.
+				assert.NotEqual(t, id.Version, got["version"])
+			})
+		}
+	}
+
+	t.Run("definition without a model reference is rejected", func(t *testing.T) {
+		_, err := initModelInjectIdentity([]byte(`{"schemaVersion":"x"}`), "json", false, id)
+		assert.Error(t, err)
 	})
 }
