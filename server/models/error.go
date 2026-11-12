@@ -173,6 +173,8 @@ const (
 	ErrOperatorChartNotPublishedCode      = "meshery-server-1470"
 	ErrOperatorChartSubstitutedCode       = "meshery-server-1471"
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
+	ErrInvalidExtensionProxyPathCode      = "meshery-server-1490"
+	ErrMigrateEventIndexesCode            = "meshery-server-1491"
 )
 
 var (
@@ -948,6 +950,25 @@ func ErrNoMesheryReleasesFound() error {
 	return errors.New(ErrNoMesheryReleasesFoundCode, errors.Alert, []string{"No Meshery releases were found"}, []string{"The GitHub releases listing for meshery/meshery returned no tags."}, []string{"GitHub returned an empty or filtered release listing, possibly because the request was rate-limited."}, []string{"Retry later. This only affects the reported latest-version comparison; Meshery continues to run."})
 }
 
+// ErrInvalidExtensionProxyPath is returned when a requested extension proxy path
+// does not match the expected '/api/extensions' prefix or contains malformed boundary characters.
+func ErrInvalidExtensionProxyPath(path string) error {
+	return errors.New(
+		ErrInvalidExtensionProxyPathCode,
+		errors.Alert,
+		[]string{"Invalid extension proxy path"},
+		[]string{fmt.Sprintf("The requested path '%s' is not a valid extension proxy path", path)},
+		[]string{
+			"The path does not start with '/api/extensions' or has an invalid delimiter",
+			"The URL format might be malformed or manipulated",
+		},
+		[]string{
+			"Ensure the request path starts with '/api/extensions' followed by a valid subpath (e.g. '/api/extensions/users')",
+			"Check client routing and extension configuration",
+		},
+	)
+}
+
 // ErrOperatorChartSubstituted reports that the Meshery Operator chart
 // version derived from this Meshery Server's release was replaced by one the
 // chart repository publishes and that can actually run. It is a warning, not a
@@ -973,6 +994,17 @@ func ErrMigrateEventCorrelationIndex(err error) error {
 		[]string{err.Error()},
 		[]string{"The events table has more than one open event (no resolved_at) with the same owner and correlation_key, which an earlier Meshery Server could have recorded", "The database is read-only, locked by another process or not reachable"},
 		[]string{"Resolve or delete the duplicate open events for that owner and correlation_key, then restart Meshery Server", "Make sure Meshery Server can write to its database, or perform a hard reset"},
+	)
+}
+
+func ErrMigrateEventIndexes(err error) error {
+	return errors.New(
+		ErrMigrateEventIndexesCode,
+		errors.Alert,
+		[]string{"Meshery Server could not create the indexes the Notification Center queries use"},
+		[]string{err.Error()},
+		[]string{"The database is read-only, locked by another process or not reachable"},
+		[]string{"Make sure Meshery Server can write to its database, then restart Meshery Server"},
 	)
 }
 

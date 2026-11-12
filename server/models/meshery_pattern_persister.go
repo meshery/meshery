@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm/clause"
 
 	"github.com/meshery/schemas/models/core"
+	schemasWorkspace "github.com/meshery/schemas/models/v1beta3/workspace"
 
 	"github.com/gofrs/uuid"
 	"gopkg.in/yaml.v2"
@@ -186,22 +187,50 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 	return mpp.SaveMesheryPattern(&mesheryPattern)
 }
 
-// DeleteMesheryPattern takes in a profile id and delete it if it already exists
+// DeleteMesheryPattern deletes a pattern by ID and removes any associated
+// workspace design mappings in a database transaction.
 func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, error) {
 	pattern := MesheryPattern{ID: &id}
-	mpp.DB.Delete(&pattern)
+	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Delete(&pattern).Error; err != nil {
+			return err
+		}
+		if tx.Migrator().HasTable(&schemasWorkspace.WorkspacesDesignsMapping{}) {
+			if err := tx.Where("design_id = ?", id).Delete(&schemasWorkspace.WorkspacesDesignsMapping{}).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, ErrDBDelete(err, "")
+	}
 
 	return marshalMesheryPattern(&pattern), nil
 }
 
-// DeleteMesheryPatterns takes in a meshery-patterns and delete those if exist
+// DeleteMesheryPatterns batch deletes the specified patterns and cleans up their
+// associated workspace design mappings within a database transaction.
 func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	var deletedMaptterns []MesheryPattern
-	for _, pObj := range patterns.Patterns {
-		id := uuid.FromStringOrNil(pObj.ID)
-		pattern := MesheryPattern{ID: &id}
-		mpp.DB.Delete(&pattern)
-		deletedMaptterns = append(deletedMaptterns, pattern)
+	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
+		for _, pObj := range patterns.Patterns {
+			id := uuid.FromStringOrNil(pObj.ID)
+			pattern := MesheryPattern{ID: &id}
+			if err := tx.Delete(&pattern).Error; err != nil {
+				return err
+			}
+			if tx.Migrator().HasTable(&schemasWorkspace.WorkspacesDesignsMapping{}) {
+				if err := tx.Where("design_id = ?", id).Delete(&schemasWorkspace.WorkspacesDesignsMapping{}).Error; err != nil {
+					return err
+				}
+			}
+			deletedMaptterns = append(deletedMaptterns, pattern)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, ErrDBDelete(err, "")
 	}
 
 	return marshalMesheryPatterns(deletedMaptterns), nil
