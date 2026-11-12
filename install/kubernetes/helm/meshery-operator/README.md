@@ -49,7 +49,9 @@ The chart's `version`/`appVersion` and the CRD bundles under `crds/` and
 
 The operator's own ClusterRole (`meshery-operator-role`, bound to the
 `meshery-operator` ServiceAccount) is least-privilege: it can manage the
-Broker and MeshSync workloads but grants no cluster-wide reads. MeshSync,
+Broker and MeshSync workloads, including the configmaps, secrets, and
+services those workloads need, but it grants no reads outside the resource
+types it manages. MeshSync,
 which the operator deploys from the `MeshSync` custom resource, needs the
 opposite: read access to everything it discovers, and no writes. The chart
 therefore gives it a separate role and ServiceAccount:

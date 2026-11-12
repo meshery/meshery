@@ -101,8 +101,8 @@ The practical implications across a fleet:
 - Ensure each cluster's Broker Service type (`LoadBalancer` or `NodePort`) is
   supported and that the resulting endpoint is reachable from the Server. Where
   you install the `meshery-operator` chart yourself, declare it per cluster with
-  `meshery-broker.service.type` (and `loadBalancerSourceRanges`) in that
-  cluster's values.
+  `meshery-broker.service.type` in that cluster's values (`loadBalancerSourceRanges`
+  applies only with `type: LoadBalancer`).
 - Restrict that exposure to the Server's network origin (security groups,
   load-balancer source ranges, private connectivity). See
   [Networking & Connectivity]({{< ref "installation/production/networking-and-connectivity.md" >}}).

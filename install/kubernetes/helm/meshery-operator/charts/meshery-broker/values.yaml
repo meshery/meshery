@@ -20,6 +20,11 @@ service:
   # -- Annotations merged onto the client Service (cloud load-balancer hints, MetalLB pools).
   annotations: {}
   # -- Load-balancer implementation to use. Requires `type: LoadBalancer`.
+  # To change or add it on an existing LoadBalancer Service, first set type
+  # ClusterIP and drop both load-balancer-only values, wait for the Service
+  # to reconcile, then set type LoadBalancer with the new class: the class
+  # is immutable, so a direct change fails the operator's Service update
+  # while Helm still reports success.
   loadBalancerClass: ""
   # -- CIDRs allowed to reach the Broker. Requires `type: LoadBalancer`.
   loadBalancerSourceRanges: []
