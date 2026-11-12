@@ -144,9 +144,9 @@ digitalocean-icons/
 <br />└── v0.1.0/
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── model.json          # model definition (name, displayName and version are pre-filled from the argument and --version; v1.0.76 and earlier: see the warning below)
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── components/
-<br />&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── component.json  # sample component, already referencing this model; add one JSON file per component
+<br />&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── component.json  # sample component, already referencing this model (v1.0.76 and earlier: see the warning below); add one JSON file per component
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── relationships/
-<br />&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── relationship.json  # sample relationship
+<br />&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── relationship.json  # sample relationship (see the warning below)
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── connections/
 <br />&nbsp;&nbsp;&nbsp;&nbsp;└── credentials/
 </code>
