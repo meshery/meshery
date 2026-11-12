@@ -8,4 +8,4 @@ LLMS index: [llms.txt](/llms.txt)
 
 ---
 
-<h2>v1.0.77</h2>
+<h2>v1.0.78</h2>

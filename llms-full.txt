@@ -5309,6 +5309,8 @@ You can now design and manage any infrastructure that Meshery supports. For the 
     
   
     
+  
+    
       
     
   
@@ -28770,6 +28772,35 @@ date: "2026-11-12"
 
 Thank you to our contributors for making this release possible:
 @AdityaChaudhary5412, @Amansingh0807, @Atharva-Mendhulkar, @ChackoPAbraham19, @Maanvi212006, @RajJasani, @Rohith-Saran, @Supersaiyan101, @Swarup-Banik, @ThakurUjjwal1706, @abhinavkdeval08-design, @alexquincy, @ayushbuilds-code, @ayushgade06, @carlosriosilva, @dropps07, @fitzergerald, @hortison, @leecalcote, @mayank609, @miacycle, @muskan-creates352, @piyxsh31, @pontusringblom, @ritzorama, @schizophrenicmaniac, @simihablo, @suttonskate, @tanav29, @winkletinkle, @yi-nuo426, Aditya Chaudhary and Ayush
+
+
+
+--------------------------------------------------------------------------------
+title: "v1.0.78"
+url: /project/releases/v1.0.78/index.md
+date: "2026-11-12"
+--------------------------------------------------------------------------------
+
+## What's New
+## 🔤 General
+## ⌨️ Meshery CLI
+
+- fix(mesheryctl): fix model init identity, login --provider panic, and token file permissions @leecalcote (#23362)
+
+## 🖥 Meshery UI
+
+- \[UI\] Restore validation error deep links in Kanvas Designer @yi-nuo426 (#23370)
+
+## 📖 Documentation
+
+- \[UI\] Restore validation error deep links in Kanvas Designer @yi-nuo426 (#23370)
+- docs: fix model scaffold guidance in KubeCon workshop and Create Models guide @leecalcote (#23361)
+- fix(mesheryctl): fix model init identity, login --provider panic, and token file permissions @leecalcote (#23362)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@leecalcote and @yi-nuo426
 
 
 
@@ -71311,7 +71342,7 @@ description: Return only the latest release of Meshery version information
 
 
 
-<h2>v1.0.77</h2>
+<h2>v1.0.78</h2>
 
 
 
@@ -73804,7 +73835,7 @@ Takes no parameters and no body.
 
 
 
-<h2>v1.0.77</h2>
+<h2>v1.0.78</h2>
 
 
 
