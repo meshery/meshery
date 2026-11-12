@@ -150,37 +150,44 @@ test.describe('Design Page Tests', () => {
     });
   });
 
-  test('opens details of design', async () => {
+  test('opens details of design', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
     const card = designPage.getFirstCardByVisibilityBadge('published');
     const cardElements = designPage.getCardElements(card, 'published');
 
     await cardElements.actionElements.info.click();
     await expect(
-      designPage.page.locator('[role="dialog"]').or(designPage.page.getByTestId('info-modal')),
+      designPage.page
+        .locator('[role="dialog"]')
+        .or(designPage.page.getByTestId('info-modal'))
+        .first(),
     ).toBeVisible();
   });
 
-  test('opens download design modal and displays export options', async () => {
+  test('opens download design modal and displays export options', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
     const card = designPage.getFirstCardByVisibilityBadge('published');
     const cardElements = designPage.getCardElements(card, 'published');
 
     await cardElements.actionElements.download.click();
-    await expect(designPage.page.getByRole('dialog')).toBeVisible();
+    await expect(designPage.page.getByRole('dialog').first()).toBeVisible();
     await expect(designPage.page.getByText('Meshery YAML')).toBeVisible();
   });
 
-  test('validates a design', async () => {
+  test('validates a design', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
     const card = designPage.getFirstCardByVisibilityBadge('published');
     const cardElements = designPage.getCardElements(card, 'published');
 
     await cardElements.actionToggleBtn.click();
     await cardElements.actionElements.validate.click();
 
-    await expect(designPage.page.getByRole('dialog')).toBeVisible();
+    await expect(designPage.page.getByRole('dialog').first()).toBeVisible();
     await expect(designPage.page.getByText(/Validate design/i)).toBeVisible();
   });
 
-  test('unpublishes a published design', async () => {
+  test('unpublishes a published design', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
     await designPage.applyVisibilityFilter('published');
     const card = designPage.getFirstCardByVisibilityBadge('published');
     const cardElements = designPage.getCardElements(card, 'published');
@@ -195,7 +202,8 @@ test.describe('Design Page Tests', () => {
     await waitForSnackBar(designPage.page, 'Design Unpublished');
   });
 
-  test('deletes a published design from the list', async () => {
+  test('deletes a published design from the list', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
     await designPage.applyVisibilityFilter('published');
     const card = designPage.getFirstCardByVisibilityBadge('published');
     const cardElements = designPage.getCardElements(card, 'published');
@@ -206,7 +214,8 @@ test.describe('Design Page Tests', () => {
     await designPage.deleteConfirmationBtn.click();
   });
 
-  test('deploys a published design to a connected cluster', async () => {
+  test('deploys a published design to a connected cluster', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
     await designPage.applyVisibilityFilter('published');
     const card = designPage.getFirstCardByVisibilityBadge('published');
     const cardElements = designPage.getCardElements(card, 'published');
@@ -235,7 +244,8 @@ test.describe('Design Page Tests', () => {
     await deployModal.goToNextStep();
   });
 
-  test('undeploys a published design from a connected cluster', async () => {
+  test('undeploys a published design from a connected cluster', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
     await designPage.applyVisibilityFilter('published');
     const card = designPage.getFirstCardByVisibilityBadge('published');
     const cardElements = designPage.getCardElements(card, 'published');
@@ -248,7 +258,8 @@ test.describe('Design Page Tests', () => {
     await expect(designPage.page.getByText(/Undeploy design/i)).toBeVisible();
   });
 
-  test('edits a design in the configurator', async () => {
+  test('edits a design in the configurator', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
     await designPage.applyVisibilityFilter('published');
     const card = designPage.getFirstCardByVisibilityBadge('published');
     const cardElements = designPage.getCardElements(card, 'published');
