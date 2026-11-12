@@ -49,6 +49,8 @@ func TestParseAndValidateMesh(t *testing.T) {
 	apiResponse := utils.NewGoldenFile(t, "sync.golden", fixturesDir).Load()
 	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/system/sync",
 		httpmock.NewStringResponder(200, apiResponse))
+	originalToken := utils.TokenFlag
+	t.Cleanup(func() { utils.TokenFlag = originalToken })
 	utils.TokenFlag = filepath.Join(fixturesDir, "token.golden")
 
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -75,7 +77,7 @@ func TestParseAndValidateMesh(t *testing.T) {
 	assert.Equal(t, ErrNoAdaptersCode, errors.GetCode(err))
 }
 
-func TestDeployAndRemovePreRunE(t *testing.T) {
+func TestSubcommandsPreRunE(t *testing.T) {
 	utils.SetupContextEnv(t)
 	utils.SetupMeshkitLoggerTesting(t, false)
 	utils.StartMockery(t)
@@ -92,6 +94,8 @@ func TestDeployAndRemovePreRunE(t *testing.T) {
 	apiResponse := utils.NewGoldenFile(t, "sync.golden", fixturesDir).Load()
 	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/system/sync",
 		httpmock.NewStringResponder(200, apiResponse))
+	originalToken := utils.TokenFlag
+	t.Cleanup(func() { utils.TokenFlag = originalToken })
 	utils.TokenFlag = filepath.Join(fixturesDir, "token.golden")
 
 	// Test deployCmd PreRunE parses positional args into meshName
@@ -103,6 +107,12 @@ func TestDeployAndRemovePreRunE(t *testing.T) {
 	// Test removeCmd PreRunE parses positional args into meshName
 	meshName = ""
 	err = removeCmd.PreRunE(removeCmd, []string{"istio"})
+	assert.NoError(t, err)
+	assert.Equal(t, "ISTIO", meshName)
+
+	// Test validateCmd PreRunE parses positional args into meshName
+	meshName = ""
+	err = validateCmd.PreRunE(validateCmd, []string{"istio"})
 	assert.NoError(t, err)
 	assert.Equal(t, "ISTIO", meshName)
 }
