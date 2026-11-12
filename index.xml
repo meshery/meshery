@@ -576,7 +576,98 @@ independently. For Kubernetes production deployments:&lt;/p&gt;</description></i
 	👨🏽‍💻 Contributors
 &lt;/h2&gt;
 &lt;p&gt;Thank you to our contributors for making this release possible:
-@0xmaster7, @1107-1108, @AdityaChaudhary5412, @Alehegne, @Amansingh0807, @Ankitavasudev, @Aravind226, @Asheesh7298, @Atharva-Mendhulkar, @BHAUMIK0711, @BarbieRajput, @ChackoPAbraham19, @CodeAhmedJamil, @Copilot, @Eternity0207, @Evico85, @ItsAbir005, @Karman580, @Lapnes, @Lk-ux, @Maanvi212006, @MuhammadFaizan-prog, @NerfedAce, @Nixantsingh943, @Om-Beast, @PRIYESHSINGH24, @Prakhar1Ojha, @RameshwariS, @SajanBisht, @SamuelAgbokpo, @ShubhiParashar-CSE, @Supersaiyan101, @SuryanshGarg04, @Swarup-Banik, @Swatantra-66, @ThakurUjjwal1706, @VimalN2005, @VrateshGhadge, @aarushdubey, @aditya-desale, @alexquincy, @amalsaidov, @ayanasarkar, @ayushbuilds-code, @ayushgade06, @bodapatisaikrishna, @carlosriosilva, @chellej, @dhananjaysharma2004, @dropps07, @etherift, @faneeshh, @fitzergerald, @harmanD-MAX, @harshiltewari2004, @harshitsaxena214, @hortison, @itsCodeTide, @jamieplu, @kkm121, @krishbuilds01, @leecalcote, @lekaf974, @lekha-saradhi, @lishfox, @madhavzanwar, @maindevhoon, @marblom007, @mayank609, @meshery-ci, @miacycle, @muskan-creates352, @nishant-devv, @onlyoneuche, @patelshivani2283-lab, @pontusringblom, @pranav718, @prashil0056, @rithulraveendran, @ritzorama, @rutujakulkarni895-spec, @sahillpaul, @simihablo, @spacenets7, @srishtimishra520-beep, @suttonskate, @tanav29, @winkletinkle, @yi-nuo426, Aarush Dubey, Aditya Chaudhary, Ayush, Pontus Ringblom, Prakhar1Ojha and Yi Nuo&lt;/p&gt;</description></item><item><title>v1.0.75</title><link>/project/releases/v1.0.75/</link><pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.75/</guid><description>&lt;h2 id="whats-new"&gt;
+@0xmaster7, @1107-1108, @AdityaChaudhary5412, @Alehegne, @Amansingh0807, @Ankitavasudev, @Aravind226, @Asheesh7298, @Atharva-Mendhulkar, @BHAUMIK0711, @BarbieRajput, @ChackoPAbraham19, @CodeAhmedJamil, @Copilot, @Eternity0207, @Evico85, @ItsAbir005, @Karman580, @Lapnes, @Lk-ux, @Maanvi212006, @MuhammadFaizan-prog, @NerfedAce, @Nixantsingh943, @Om-Beast, @PRIYESHSINGH24, @Prakhar1Ojha, @RameshwariS, @SajanBisht, @SamuelAgbokpo, @ShubhiParashar-CSE, @Supersaiyan101, @SuryanshGarg04, @Swarup-Banik, @Swatantra-66, @ThakurUjjwal1706, @VimalN2005, @VrateshGhadge, @aarushdubey, @aditya-desale, @alexquincy, @amalsaidov, @ayanasarkar, @ayushbuilds-code, @ayushgade06, @bodapatisaikrishna, @carlosriosilva, @chellej, @dhananjaysharma2004, @dropps07, @etherift, @faneeshh, @fitzergerald, @harmanD-MAX, @harshiltewari2004, @harshitsaxena214, @hortison, @itsCodeTide, @jamieplu, @kkm121, @krishbuilds01, @leecalcote, @lekaf974, @lekha-saradhi, @lishfox, @madhavzanwar, @maindevhoon, @marblom007, @mayank609, @meshery-ci, @miacycle, @muskan-creates352, @nishant-devv, @onlyoneuche, @patelshivani2283-lab, @pontusringblom, @pranav718, @prashil0056, @rithulraveendran, @ritzorama, @rutujakulkarni895-spec, @sahillpaul, @simihablo, @spacenets7, @srishtimishra520-beep, @suttonskate, @tanav29, @winkletinkle, @yi-nuo426, Aarush Dubey, Aditya Chaudhary, Ayush, Pontus Ringblom, Prakhar1Ojha and Yi Nuo&lt;/p&gt;</description></item><item><title>v1.0.77</title><link>/project/releases/v1.0.77/</link><pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.77/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Server] Guard nil dereferences for user, SystemID, provider, and connection in telemetry handlers @Amansingh0807 (#23338)&lt;/li&gt;
+&lt;li&gt;[Server] Guard against SSRF in remote URL imports @Supersaiyan101 (#23331)&lt;/li&gt;
+&lt;li&gt;[Server] Guard nil MesheryInstanceID and typed-nil INSTANCE_ID in K8s context paths @piyxsh31 (#23305)&lt;/li&gt;
+&lt;li&gt;[Server] Prevent nil pointer dereference on unauthenticated /user/logout @Supersaiyan101 (#23311)&lt;/li&gt;
+&lt;li&gt;[Server] Evict state machine from tracker on DeleteContext error @Atharva-Mendhulkar (#23256)&lt;/li&gt;
+&lt;li&gt;[Helm] Add env.MESHSYNC_DEFAULT_DEPLOYMENT_MODE with embedded default @ayushbuilds-code (#23291)&lt;/li&gt;
+&lt;li&gt;[Server] Implement MapPreferencePersister unit tests and safe logger handling @Rohith-Saran (#23293)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix broken help-wanted search links in README.md @ayushbuilds-code (#23289)&lt;/li&gt;
+&lt;li&gt;[Server] Probe NOTFOUND Kubernetes connections so their unreachable condition can resolve @dropps07 (#23235)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[mesheryctl] Fix nil dereference and slice bounds panic in &lt;code&gt;environment view&lt;/code&gt; @abhinavkdeval08-design (#23365)&lt;/li&gt;
+&lt;li&gt;fix(mesheryctl): sanitize spaces and path separators in relationship view &amp;ndash;save filename @ThakurUjjwal1706 (#23359)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Added Port Fallback To Unused Port @tanav29 (#22308)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Enforce exact argument validation in system provider view @ayushbuilds-code (#23352)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Use MeshKit errors for token assignment and rollback @piyxsh31 (#23340)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Guard nil timestamp and UUID fields across design and filter commands @Swarup-Banik (#23325)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Fix connection view empty-slice panic when TotalCount &amp;gt; 0 @Swarup-Banik (#23328)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Respect -c/&amp;ndash;context across system token create, set, and view @piyxsh31 (#23317)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Validate positional arguments in design undeploy @RajJasani (#23309)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Validate positional arguments in model export @RajJasani (#23304)&lt;/li&gt;
+&lt;li&gt;fix(mesheryctl): escape model path and validate input in relationship view @ThakurUjjwal1706 (#23302)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Replace path separators in file names saved by component view @RajJasani (#23300)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Fix Kubernetes log stream descriptor leak in system logs @muskan-creates352 (#22471)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Parse positional mesh name argument in adapter deploy and remove (#23275) @muskan-creates352 (#23276)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Fix file descriptor leak in model init @muskan-creates352 (#22438)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Honor the &amp;ndash;context flag in system dashboard, login and logout @mayank609 (#23280)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Return actionable error for unsupported meshery publish target @Rohith-Saran (#23270)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[UI] Handle empty component.schema in LazyComponentForm @abhinavkdeval08-design (#23357)&lt;/li&gt;
+&lt;li&gt;[UI] Offer every credential in the connection wizard and MeshSync stepper @ChackoPAbraham19 (#23334)&lt;/li&gt;
+&lt;li&gt;[UI] Paginate the Credentials table on the server @ChackoPAbraham19 (#23243)&lt;/li&gt;
+&lt;li&gt;[UI] Guard missing cluster context in Dashboard View and enforce RBAC query skip checks @piyxsh31 (#23319)&lt;/li&gt;
+&lt;li&gt;[UI] Keep failed notification page requests retryable @ayushgade06 (#22805)&lt;/li&gt;
+&lt;li&gt;[UI] Enforce RBAC skip guards on connections, preferences, and registry @piyxsh31 (#23295)&lt;/li&gt;
+&lt;li&gt;[UI] Disable LegacyRJSFModal submit while pending and add submitDisabled @piyxsh31 (#23299)&lt;/li&gt;
+&lt;li&gt;[UI] Fix search paging and Count sort in the database summary table @mayank609 (#23282)&lt;/li&gt;
+&lt;li&gt;[UI] Reset to the first page when searching performance results @mayank609 (#23284)&lt;/li&gt;
+&lt;li&gt;[UI] Skip unauthorized queries in Dashboard charts when view permissions are denied @piyxsh31 (#23272)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-bug-fixes"&gt;
+	🐛 Bug Fixes
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Server] Dedup inventory parent additions across relationship copies @yi-nuo426 (#23366)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Server] Dedup inventory parent additions across relationship copies @yi-nuo426 (#23366)&lt;/li&gt;
+&lt;li&gt;[CI] Restrict OSPS Baseline workflow to upstream repository @AdityaChaudhary5412 (#23308)&lt;/li&gt;
+&lt;li&gt;[CI] Restrict Hugo Pages deployment to upstream repository @AdityaChaudhary5412 (#23307)&lt;/li&gt;
+&lt;li&gt;[CI] Slim high-volume docs pages so GitHub Pages can publish again @yi-nuo426 (#23321)&lt;/li&gt;
+&lt;li&gt;[CI] Restrict Trivy image scan workflow to upstream repository @AdityaChaudhary5412 (#23306)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[mesheryctl] Added Port Fallback To Unused Port @tanav29 (#22308)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Use MeshKit errors for token assignment and rollback @piyxsh31 (#23340)&lt;/li&gt;
+&lt;li&gt;[Docs] KubeCon workshop: choose-your-own-adventure Kanvas or Meshery UI/mesheryctl paths @yi-nuo426 (#23350)&lt;/li&gt;
+&lt;li&gt;docs: restructure KubeCon workshop to publish a design, then add a logo model @yi-nuo426 (#23344)&lt;/li&gt;
+&lt;li&gt;[Docs] Collapse instructor guidance in KubeCon workshop page @leecalcote (#23339)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Respect -c/&amp;ndash;context across system token create, set, and view @piyxsh31 (#23317)&lt;/li&gt;
+&lt;li&gt;docs: restructure KubeCon ContribFest workshop for 60 minutes @yi-nuo426 (#23337)&lt;/li&gt;
+&lt;li&gt;docs(install): add playground sandbox-cluster Broker exposure, interim MeshSync RBAC and recovery runbook @yi-nuo426 (#23250)&lt;/li&gt;
+&lt;li&gt;[CI] Slim high-volume docs pages so GitHub Pages can publish again @yi-nuo426 (#23321)&lt;/li&gt;
+&lt;li&gt;[Docs] Stop telling Create Model users to turn on Immediate Registration @yi-nuo426 (#23323)&lt;/li&gt;
+&lt;li&gt;[Docs] Hide generated error-code pages from the sidebar @ChackoPAbraham19 (#23222)&lt;/li&gt;
+&lt;li&gt;[Docs] Add KubeCon Playground workshop: build your own model and design @ritzorama (#23267)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@AdityaChaudhary5412, @Amansingh0807, @Atharva-Mendhulkar, @ChackoPAbraham19, @Maanvi212006, @RajJasani, @Rohith-Saran, @Supersaiyan101, @Swarup-Banik, @ThakurUjjwal1706, @abhinavkdeval08-design, @alexquincy, @ayushbuilds-code, @ayushgade06, @carlosriosilva, @dropps07, @fitzergerald, @hortison, @leecalcote, @mayank609, @miacycle, @muskan-creates352, @piyxsh31, @pontusringblom, @ritzorama, @schizophrenicmaniac, @simihablo, @suttonskate, @tanav29, @winkletinkle, @yi-nuo426, Aditya Chaudhary and Ayush&lt;/p&gt;</description></item><item><title>v1.0.75</title><link>/project/releases/v1.0.75/</link><pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.75/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -37170,7 +37261,7 @@ This rule and the other repo-specific Go lint gates are listed in
 &lt;h2 id="hands-on-lab"&gt;
 	Hands-on Lab
 &lt;/h2&gt;
-&lt;p&gt;Follow these steps in order.&lt;/p&gt;</description></item><item><title>Kubevault</title><link>/extensions/models/kubevault/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault/</guid><description/></item><item><title>Kubevault Catalog</title><link>/extensions/models/kubevault-catalog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-catalog/</guid><description/></item><item><title>Kubevault Crds</title><link>/extensions/models/kubevault-crds/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-crds/</guid><description/></item><item><title>Kubevault Metrics</title><link>/extensions/models/kubevault-metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-metrics/</guid><description/></item><item><title>Kubevault Operator</title><link>/extensions/models/kubevault-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-operator/</guid><description/></item><item><title>Kubevela</title><link>/extensions/models/kubevela/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevela/</guid><description/></item><item><title>Kubevirt</title><link>/extensions/models/kubevirt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevirt/</guid><description/></item><item><title>Kuma</title><link>/extensions/models/kuma/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kuma/</guid><description/></item><item><title>Kured</title><link>/extensions/models/kured/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kured/</guid><description/></item><item><title>Kusk Gateway</title><link>/extensions/models/kusk-gateway/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kusk-gateway/</guid><description/></item><item><title>Kyverno</title><link>/extensions/models/kyverno/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno/</guid><description/></item><item><title>Kyverno Monitor</title><link>/extensions/models/kyverno-monitor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-monitor/</guid><description/></item><item><title>Kyverno Operator</title><link>/extensions/models/kyverno-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-operator/</guid><description/></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.76&lt;/h2&gt;</description></item><item><title>Linkerd</title><link>/extensions/models/linkerd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linkerd/</guid><description/></item><item><title>Linux</title><link>/extensions/models/linux/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linux/</guid><description/></item><item><title>Litmus Chaos</title><link>/extensions/models/litmus-core/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/litmus-core/</guid><description/></item><item><title>Loki</title><link>/extensions/models/loki/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki/</guid><description/></item><item><title>Loki Simple Scalable</title><link>/extensions/models/loki-simple-scalable/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki-simple-scalable/</guid><description/></item><item><title>Longhorn</title><link>/extensions/models/longhorn/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/longhorn/</guid><description/></item><item><title>LoxiLB</title><link>/extensions/models/loxilb/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loxilb/</guid><description/></item><item><title>Managing Connections</title><link>/guides/infrastructure-management/lifecycle-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/lifecycle-management/</guid><description>&lt;p&gt;&lt;a name="lifecycle-management"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Follow these steps in order.&lt;/p&gt;</description></item><item><title>Kubevault</title><link>/extensions/models/kubevault/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault/</guid><description/></item><item><title>Kubevault Catalog</title><link>/extensions/models/kubevault-catalog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-catalog/</guid><description/></item><item><title>Kubevault Crds</title><link>/extensions/models/kubevault-crds/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-crds/</guid><description/></item><item><title>Kubevault Metrics</title><link>/extensions/models/kubevault-metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-metrics/</guid><description/></item><item><title>Kubevault Operator</title><link>/extensions/models/kubevault-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-operator/</guid><description/></item><item><title>Kubevela</title><link>/extensions/models/kubevela/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevela/</guid><description/></item><item><title>Kubevirt</title><link>/extensions/models/kubevirt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevirt/</guid><description/></item><item><title>Kuma</title><link>/extensions/models/kuma/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kuma/</guid><description/></item><item><title>Kured</title><link>/extensions/models/kured/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kured/</guid><description/></item><item><title>Kusk Gateway</title><link>/extensions/models/kusk-gateway/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kusk-gateway/</guid><description/></item><item><title>Kyverno</title><link>/extensions/models/kyverno/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno/</guid><description/></item><item><title>Kyverno Monitor</title><link>/extensions/models/kyverno-monitor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-monitor/</guid><description/></item><item><title>Kyverno Operator</title><link>/extensions/models/kyverno-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-operator/</guid><description/></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.77&lt;/h2&gt;</description></item><item><title>Linkerd</title><link>/extensions/models/linkerd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linkerd/</guid><description/></item><item><title>Linux</title><link>/extensions/models/linux/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linux/</guid><description/></item><item><title>Litmus Chaos</title><link>/extensions/models/litmus-core/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/litmus-core/</guid><description/></item><item><title>Loki</title><link>/extensions/models/loki/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki/</guid><description/></item><item><title>Loki Simple Scalable</title><link>/extensions/models/loki-simple-scalable/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki-simple-scalable/</guid><description/></item><item><title>Longhorn</title><link>/extensions/models/longhorn/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/longhorn/</guid><description/></item><item><title>LoxiLB</title><link>/extensions/models/loxilb/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loxilb/</guid><description/></item><item><title>Managing Connections</title><link>/guides/infrastructure-management/lifecycle-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/lifecycle-management/</guid><description>&lt;p&gt;&lt;a name="lifecycle-management"&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Every cluster, metrics server, and source that Meshery manages is a &lt;a href="/concepts/logical/connections/"&gt;Connection&lt;/a&gt;. After you &lt;a href="/guides/infrastructure-management/registering-a-connection/"&gt;register a Connection&lt;/a&gt;, use this guide to keep it in the state you want: find it, check its status, change its state, reconfigure it, and remove it when you are done.&lt;/p&gt;
 &lt;p&gt;&lt;a href="/guides/infrastructure-management/lifecycle-management/images/states-for-kubernetes-cluster-connections.svg"&gt;&lt;img class="content-image" src="./images/states-for-kubernetes-cluster-connections.svg" alt="States of a Kubernetes cluster connection" /&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id="find-your-connections"&gt;

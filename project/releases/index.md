@@ -15,6 +15,7 @@ See also Meshery's [Compatibility Matrix](/installation/) and [Build and Release
 Section pages:
 
 - [v1.0.76](/project/releases/v1.0.76/)
+- [v1.0.77](/project/releases/v1.0.77/)
 - [v1.0.75](/project/releases/v1.0.75/)
 - [v1.0.73](/project/releases/v1.0.73/)
 - [v1.0.74](/project/releases/v1.0.74/)
