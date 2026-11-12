@@ -355,7 +355,42 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 		return nil, err
 	}
 
+	// The server answers /api/token with the provider's display name in
+	// meshery-provider, and login persists that response unchanged for later
+	// requests (AddAuthDetails sends the persisted value as the cookie). A
+	// display name shared by two providers would route those later requests
+	// nondeterministically, so when --provider named a registration key,
+	// persist the key instead: the key is what /api/providers is keyed by
+	// and what the server resolves first.
+	if providerKey != "" {
+		data = rewriteTokenProvider(data, providerKey)
+	}
+
 	return data, nil
+}
+
+// rewriteTokenProvider replaces the meshery-provider field of the token
+// JSON returned by /api/token with the registration key login selected,
+// preserving every other field. A response that is not a JSON object, or
+// that carries no meshery-provider field, is returned unchanged: login
+// must not fail a provider whose token endpoint answers in an unexpected
+// shape.
+func rewriteTokenProvider(data []byte, providerKey string) []byte {
+	var tokenObj map[string]interface{}
+	if err := json.Unmarshal(data, &tokenObj); err != nil {
+		return data
+	}
+	if _, ok := tokenObj["meshery-provider"]; !ok {
+		return data
+	}
+	tokenObj["meshery-provider"] = providerKey
+	var buf bytes.Buffer
+	enc := json.NewEncoder(&buf)
+	enc.SetEscapeHTML(false)
+	if err := enc.Encode(tokenObj); err != nil {
+		return data
+	}
+	return bytes.TrimRight(buf.Bytes(), "\n")
 }
 
 // GetProviderInfo queries meshery API for the provider info

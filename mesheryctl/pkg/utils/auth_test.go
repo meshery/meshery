@@ -364,6 +364,80 @@ func TestChooseDirectProvider(t *testing.T) {
 	}
 }
 
+func TestInitiateLogin_PersistsRegistrationKey(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	// Two providers share the display name "Meshery". The server answers
+	// /api/token with that display name, as RemoteProvider.ExtractToken
+	// does (meshery-provider is l.Name()), and login persists the response
+	// unchanged for later requests. Login must persist the registration
+	// key instead, or later requests would send the shared display name
+	// and route nondeterministically. The providers carry no URL so the
+	// test exercises the token exchange without the browser flow.
+	var tokenCookie string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/providers":
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = fmt.Fprint(w, `{"cloud-a":{"providerName":"Meshery"},"cloud-b":{"providerName":"Meshery"}}`)
+		case "/api/token":
+			for _, c := range r.Cookies() {
+				if c.Name == "meshery-provider" {
+					tokenCookie = c.Value
+				}
+			}
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = fmt.Fprint(w, `{"meshery-provider":"Meshery","meshery-token":"tok"}`)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	}))
+	defer server.Close()
+
+	mctCfg := newTestMctCfg(server.URL)
+	data, err := InitiateLogin(mctCfg, "cloud-b")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if tokenCookie != "cloud-b" {
+		t.Fatalf("/api/token got meshery-provider cookie %q, want %q", tokenCookie, "cloud-b")
+	}
+
+	var persisted map[string]string
+	if err := json.Unmarshal(data, &persisted); err != nil {
+		t.Fatalf("login returned invalid JSON: %v", err)
+	}
+	if persisted["meshery-provider"] != "cloud-b" {
+		t.Fatalf("persisted meshery-provider %q, want %q", persisted["meshery-provider"], "cloud-b")
+	}
+	if persisted["meshery-token"] != "tok" {
+		t.Fatalf("persisted meshery-token %q, want %q", persisted["meshery-token"], "tok")
+	}
+
+	// A later authenticated request built from the persisted token must
+	// carry the registration key, not the shared display name.
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tokenPath, data, 0o600); err != nil {
+		t.Fatalf("unexpected error writing token file: %v", err)
+	}
+	req, err := http.NewRequest(http.MethodGet, server.URL+"/api/user", nil)
+	if err != nil {
+		t.Fatalf("unexpected error creating request: %v", err)
+	}
+	if err := AddAuthDetails(req, tokenPath); err != nil {
+		t.Fatalf("unexpected error adding auth details: %v", err)
+	}
+	var providerCookie string
+	for _, c := range req.Cookies() {
+		if c.Name == "meshery-provider" {
+			providerCookie = c.Value
+		}
+	}
+	if providerCookie != "cloud-b" {
+		t.Fatalf("authenticated request got meshery-provider cookie %q, want %q", providerCookie, "cloud-b")
+	}
+}
+
 func TestWriteTokenFile(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "auth.json")
 
