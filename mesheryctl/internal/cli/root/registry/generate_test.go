@@ -371,4 +371,3 @@ func TestGenerateCmdArgs(t *testing.T) {
 		})
 	}
 }
-
