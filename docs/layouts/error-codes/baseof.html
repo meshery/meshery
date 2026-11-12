@@ -7,7 +7,7 @@
     {{ partialCached "scripts/google-tagmanager-body.html" . }}
     <main class="main-container" role="main" style="max-width: 56rem; margin: 1.5rem auto; padding: 0 1.25rem;">
       <p>
-        <a href="{{ "/" | relURL }}">Meshery Docs</a>
+        <a href="{{ .Site.Home.RelPermalink }}">Meshery Docs</a>
         {{- with .Parent }}
           · <a href="{{ .RelPermalink }}">{{ .LinkTitle | default .Title }}</a>
         {{- end }}
