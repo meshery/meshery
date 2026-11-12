@@ -38,6 +38,15 @@ func TestProfileCmd(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
+			Name: "given pagesize 10 when profile then display profiles",
+			Args: []string{"profile", "--pagesize", "10"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL + "?pagesize=10&page=0", Response: "profile.list.response.golden", ResponseCode: 200},
+			},
+			ExpectedResponse: "profile.list.output.golden",
+			ExpectError:      false,
+		},
+		{
 			Name: "given argument istio when profile then display istio profiles",
 			Args: []string{"profile", "istio"},
 			URLs: []utils.MockURL{

@@ -43,6 +43,16 @@ func TestResultCmd(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
+			Name: "standard results output with pagesize",
+			Args: []string{"result", "abhishek", "--pagesize", "10"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: "result.profile.response.golden", ResponseCode: 200},
+				{Method: "GET", URL: resultURL + "?pagesize=10&page=0", Response: "result.list.response.golden", ResponseCode: 200},
+			},
+			ExpectedResponse: "result.list.output.golden",
+			ExpectError:      false,
+		},
+		{
 			Name: "standard results in json output",
 			Args: []string{"result", "abhishek", "-o", "json"},
 			URLs: []utils.MockURL{
