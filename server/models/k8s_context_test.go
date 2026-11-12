@@ -649,6 +649,18 @@ func TestDiscoverKubeconfigContextsDistinguishesUnreadableEmptyAndSkipped(t *tes
 		}
 	})
 
+	t.Run("a manifest that only has an apiVersion is an error", func(t *testing.T) {
+		for _, doc := range []string{
+			"apiVersion: v1\n",
+			"apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: nginx\n",
+		} {
+			_, err := discoverForTest(t, []byte(doc))
+			if !errors.Is(err, ErrKubeconfigUnreadable) {
+				t.Fatalf("doc %q: err = %v, want ErrKubeconfigUnreadable", doc, err)
+			}
+		}
+	})
+
 	t.Run("a kubeconfig with no contexts is empty, not an error", func(t *testing.T) {
 		got, err := discoverForTest(t, []byte("apiVersion: v1\nkind: Config\ncontexts: []\nclusters: []\nusers: []\n"))
 		if err != nil {

@@ -126,7 +126,6 @@ func K8sContextFromConnection(provider Provider, token string, connection *conne
 }
 
 type InternalKubeConfig struct {
-	APIVersion     string                   `json:"apiVersion,omitempty" yaml:"apiVersion,omitempty"`
 	Kind           string                   `json:"kind,omitempty" yaml:"kind,omitempty"`
 	Clusters       []map[string]interface{} `json:"clusters,omitempty" yaml:"clusters,omitempty"`
 	Contexts       []map[string]interface{} `json:"contexts,omitempty" yaml:"contexts,omitempty"`
@@ -394,9 +393,6 @@ func DiscoverKubeconfigContexts(ctx context.Context, _ Provider, _ string, _ *Br
 // kubeconfig that happens to list no contexts.
 func looksLikeKubeconfig(kcfg InternalKubeConfig) bool {
 	if strings.EqualFold(strings.TrimSpace(kcfg.Kind), "Config") {
-		return true
-	}
-	if strings.TrimSpace(kcfg.APIVersion) != "" {
 		return true
 	}
 	if len(kcfg.Contexts) > 0 || len(kcfg.Clusters) > 0 || len(kcfg.Users) > 0 {
