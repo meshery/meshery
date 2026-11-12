@@ -8,8 +8,9 @@
 # The Broker CRD does not validate loadBalancerSourceRanges, so an unsubstituted or
 # malformed value would be accepted and only fail later inside the operator's reconcile.
 # This script refuses to apply anything until the address is a valid IPv4 address/CIDR
-# other than 0.0.0.0/0, and refuses the prod context, which is the cluster the
-# playground runs on rather than the sandbox cluster it manages.
+# other than 0.0.0.0/0, and accepts only the sandbox cluster's context (staging, unless
+# MESHERY_PLAYGROUND_SANDBOX_CONTEXT names another), so a mistyped context can never
+# apply the grant and the Broker exposure to the prod cluster the playground runs on.
 set -euo pipefail
 
 if [[ $# -ne 2 ]]; then
@@ -21,11 +22,16 @@ context=$1
 cidr=$2
 [[ $cidr == */* ]] || cidr="$cidr/32"
 
-# The playground Pod runs on the prod cluster, which also carries a
-# meshery-operator release. Applying here would grant cluster-wide RBAC and expose
-# the production Broker, so refuse it; the sandbox context is staging.
-if [[ $context == prod ]]; then
-  echo "error: context 'prod' is the cluster the playground runs on, not the sandbox cluster it manages; pass the sandbox context (staging)" >&2
+# The sandbox cluster is the one the playground manages, and its kubeconfig
+# context is staging. Accept only that context: the Broker existence check below
+# proves a Broker exists, not which cluster this is, and the playground's own
+# prod cluster also carries a meshery-operator release, so a mistyped context
+# would grant cluster-wide RBAC and expose the production Broker. A sandbox
+# whose context was renamed can opt in explicitly with
+# MESHERY_PLAYGROUND_SANDBOX_CONTEXT=<context>.
+sandbox_context=${MESHERY_PLAYGROUND_SANDBOX_CONTEXT:-staging}
+if [[ $context != "$sandbox_context" ]]; then
+  echo "error: context '$context' is not the sandbox cluster (expected '$sandbox_context'); refusing to apply" >&2
   exit 2
 fi
 

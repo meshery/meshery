@@ -9,9 +9,14 @@
 #
 # This grant is read-only (get/list/watch). The `*.*` scope is deliberately broad
 # because MeshSync watches many resource types, so it also covers Secrets: MeshSync
-# can read them cluster-wide while this interim grant is in place. Remove it once the
-# installed operator runs MeshSync under its own chart-managed ServiceAccount
-# (`meshery-meshsync`):
+# can read them cluster-wide while this interim grant is in place. It also grants
+# `get` on subresources, including `nodes/proxy`, which Kubernetes documents as
+# usable to execute commands in Pods through the kubelet API, so the interim grant
+# is broader than discovery read. Listing only the watched resource types would
+# close that gap, but MeshSync also tracks newly installed custom resources as CRDs
+# appear, so no static list covers its watch set; that enumeration is follow-up work
+# for the operator-side fix that gives MeshSync its own chart-managed ServiceAccount
+# (`meshery-meshsync`). Remove this grant once that chart is installed:
 #
 #   kubectl --context <sandbox> delete clusterrolebinding,clusterrole meshery-meshsync-discovery-interim
 #

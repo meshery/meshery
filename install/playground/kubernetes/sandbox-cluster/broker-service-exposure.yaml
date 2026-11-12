@@ -10,7 +10,13 @@
 # playground cluster's NAT egress address, and NATS still requires the token held in the
 # operator-managed `meshery-nats-auth` Secret. The source-range allowlist is access
 # control, not encryption: NATS traffic over this LoadBalancer is not TLS-encrypted,
-# so keep the range as narrow as possible.
+# so keep the range as narrow as possible. The operator renders the NATS Service with
+# both the client port 4222 and the monitoring port 8222, and the Broker resource offers
+# no port selection, so this LoadBalancer also exposes 8222, whose `/connz` endpoint has
+# no authentication: anyone in the source range can query it for client and subscription
+# details. Keeping 8222 off the LoadBalancer, and encrypting NATS traffic with TLS,
+# both need an operator-side change; until then the source range is the only restriction
+# on either.
 #
 # Apply with ./apply.sh <sandbox-context> <playground egress IP>, which validates the
 # address (the Broker CRD accepts any string here, including this unsubstituted
