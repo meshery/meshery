@@ -607,7 +607,7 @@ const tokenFileMode os.FileMode = 0o600
 // (for example a token file owned by another user) leaves the previous
 // credentials intact instead of emptying the file and then erroring.
 func WriteTokenFile(path string, data []byte) error {
-	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, tokenFileMode)
+	f, err := openTokenFile(path)
 	if err != nil {
 		return err
 	}
