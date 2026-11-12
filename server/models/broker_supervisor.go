@@ -80,20 +80,24 @@ func (t *brokerTarget) halt() {
 // replacedBy reports whether a freshly resolved endpoint and token describe a
 // different broker than the one this connection was built for. An empty token
 // means the operator has not provisioned the new broker yet, so there is
-// nothing to rebuild against; an empty endpoint means none could be resolved,
-// which is not evidence that it changed. The resolved endpoint is the first
+// nothing to rebuild against. An empty endpoint means none could be resolved,
+// which is not evidence that it changed - unless a managed port-forward is
+// carrying the connection: then the forward's local address is the transport
+// the rebuild connects through, so a new token alone is a different broker.
+// That mirrors the attach path, which only gives up when there is neither a
+// published endpoint nor a forward. The resolved endpoint is the first
 // published candidate that answers, falling back to the internal one when none
 // does, so a down broker resolves differently from the one the connection was
 // built for without having moved: a different endpoint counts only if it
 // answers.
-func (t *brokerTarget) replacedBy(endpoint, token string, answers func(string) bool) bool {
-	if token == "" || endpoint == "" {
+func (t *brokerTarget) replacedBy(endpoint, token string, answers func(string) bool, forwardUp bool) bool {
+	if token == "" {
 		return false
 	}
 	if token != t.token {
-		return true
+		return endpoint != "" || forwardUp
 	}
-	return endpoint != t.endpoint && answers(endpoint)
+	return endpoint != "" && endpoint != t.endpoint && answers(endpoint)
 }
 
 func (mch *MesheryControllersHelper) brokerTimings() (interval, staleAfter time.Duration) {
@@ -176,7 +180,7 @@ func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now tim
 	if err != nil {
 		mch.log.Warn(err)
 	}
-	if !target.replacedBy(endpoint, token, mch.brokerReachable) {
+	if !target.replacedBy(endpoint, token, mch.brokerReachable, mch.GetBrokerPortForwardAddr() != "") {
 		return false
 	}
 

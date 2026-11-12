@@ -14,6 +14,7 @@ import (
 	"github.com/meshery/meshkit/broker/nats"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/controllers"
+	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/core"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -364,6 +365,59 @@ func TestFailedRebuildKeepsTheConnectionSupervised(t *testing.T) {
 	}
 	if !first.isClosed() || !stopped(target) {
 		t.Fatal("the replaced connection or its supervisor outlived a successful rebuild")
+	}
+}
+
+// TestRecreatedBrokerWithNewTokenAndNoEndpointRebuildsOverPortForward: the
+// broker was recreated with a new token but publishes no endpoint, and the
+// connection is carried by a managed port-forward. The token change must still
+// rebuild the connection, through the forward - without one, the same change
+// is (correctly) left alone; see "new token, no endpoint published yet" in
+// TestBrokerSupervisorLeavesWhatItShouldNotTouch.
+func TestRecreatedBrokerWithNewTokenAndNoEndpointRebuildsOverPortForward(t *testing.T) {
+	mch, broker, dialer := supervisedConnection(t)
+	// Stand in a managed port-forward. Only LocalAddr is ever read on this
+	// path - GetBrokerPortForwardAddr, and ensureBrokerPortForward returns it
+	// without starting anything while one is recorded - so a zero-value
+	// forwarder carries the test without a Kubernetes client. Nil it before
+	// teardown so RemoveMeshSyncDataHandler never calls Stop on it.
+	mch.brokerPortForward = &mesherykube.PortForwarder{}
+	t.Cleanup(func() { mch.brokerPortForward = nil })
+
+	target := attach(t, mch)
+	first := dialer.opened()[0]
+	if !slices.Contains(first.opts.URLS, "127.0.0.1:0") {
+		t.Fatalf("first connection built from %v, want it carried by the port-forward", first.opts.URLS)
+	}
+	broker.recreate("", "new-token")
+
+	var since time.Time
+	t0 := time.Unix(1000, 0)
+	mch.recheckBroker(target, t0, &since)
+	if !mch.recheckBroker(target, t0.Add(mch.brokerStaleAfter), &since) {
+		t.Fatal("a sustained outage against a recreated broker did not rebuild the connection although a port-forward carries it")
+	}
+	conns := dialer.opened()
+	if len(conns) != 2 {
+		t.Fatalf("%d connections opened, want the original and one rebuilt", len(conns))
+	}
+	rebuilt := conns[1]
+	if rebuilt.opts.Token != "new-token" || !slices.Contains(rebuilt.opts.URLS, "127.0.0.1:0") {
+		t.Fatalf("rebuilt connection uses %v / %q, want the new token through the port-forward", rebuilt.opts.URLS, rebuilt.opts.Token)
+	}
+	if !first.isClosed() {
+		t.Fatal("the stale connection was left reconnecting in the background")
+	}
+	if !stopped(target) {
+		t.Fatal("the stale connection's supervisor was not stopped")
+	}
+	mch.meshsyncMutex.Lock()
+	defer mch.meshsyncMutex.Unlock()
+	if mch.ctxMeshsyncDataHandler == nil || mch.ctxMeshsyncDataHandler.GetBrokerHandler() != meshkitBroker.Handler(rebuilt) {
+		t.Fatal("the attached data handler is not the rebuilt one")
+	}
+	if mch.brokerTarget == nil || mch.brokerTarget == target || mch.brokerTarget.token != "new-token" {
+		t.Fatal("the rebuilt connection is not supervised against the new broker")
 	}
 }
 
