@@ -46,12 +46,15 @@ You will point `mesheryctl` at the Playground before the Path B labs.
 
 ### Attendees
 
-- A laptop with a current Chrome, Edge, Firefox or Safari.
-- A GitHub or Google account, or an email address, to sign in to the Playground. Sign-in is required: the Playground runs live clusters and every user needs a named account.
-- Optional but faster: sign in at https://playground.meshery.io before the session.
+- A laptop with a current Chrome or Safari.
+- A GitHub or Google account, or an email address, to sign in to the Playground. _Sign-in is required: the Playground runs live clusters and every user needs a named account._
+  - Optional but faster: sign in at https://playground.meshery.io before the session.
 - Basic Kubernetes vocabulary: Deployment, Service, label, selector.
-- **Path A:** a screen large enough for drag and drop in Kanvas. Tablets and phones are not enough.
-- **Path B:** [install `mesheryctl`](https://docs.meshery.io/installation/mesheryctl/) on your computer if you will use the CLI steps. You can complete Lab 1 with Meshery UI alone. Lab 2 is smoother with `mesheryctl`, and has a UI import fallback.
+- **Path A:**
+    1. a laptop or desktop with screen large enough for drag and drop in Kanvas. Tablets and phones are not enough.
+- **Path B:**
+    1. a laptop or desktop.
+    1. [install `mesheryctl`](https://docs.meshery.io/installation/mesheryctl/) on your computer if you will use the CLI steps. You can complete Lab 1 with Meshery UI alone. Lab 2 is smoother with `mesheryctl`, and has a UI import fallback.
 
 <details>
 <summary>Instructor prerequisites</summary>
@@ -64,7 +67,7 @@ You will point `mesheryctl` at the Playground before the Path B labs.
 </details>
 
 <details>
-<summary>Instructor prep (morning of)</summary>
+<summary>Instructor prep</summary>
 
 1. **Dry run both labs on both paths.** Use a fresh design name such as `kubecon-instructor-design` and, on Path B, a fresh model name such as `kubecon-instructor-logo` so you hit the same screens attendees will. Note any UI label that differs from this page and tell the room at the start.
 2. **Confirm the demo image still exists.** The Deployment uses `meshery/meshery-milestone:latest`. Docker Hub listed only the `latest` tag when this page was last checked on Nov 12, 2026.
