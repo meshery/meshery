@@ -69,6 +69,19 @@ func TestViewProviderCmd(t *testing.T) {
 			BreakupFunc()
 		})
 	}
+
+	t.Run("given extra positional arguments when provider view then throw error", func(t *testing.T) {
+		b := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(b)
+		SystemCmd.SetArgs([]string{"provider", "view", "extra-arg"})
+		err := SystemCmd.Execute()
+
+		if assert.Error(t, err) {
+			assert.Contains(t, err.Error(), "too many arguments specified")
+			assert.Contains(t, err.Error(), viewProviderUsageMsg)
+		}
+		BreakupFunc()
+	})
 }
 func TestRunProviderWithNoCmdOrFlag(t *testing.T) {
 	setupSystemOutCmdTest(t)
