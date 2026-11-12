@@ -14,6 +14,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -1220,8 +1221,12 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			}
 		}
 	case "urlImport":
-		downloadFile := func(url string) ([]byte, error) {
-			resp, err := http.Get(url)
+		downloadFile := func(targetURL string) ([]byte, error) {
+			if _, err := utils.ValidateSafeURL(targetURL); err != nil {
+				return nil, fmt.Errorf("invalid or restricted URL: %w", err)
+			}
+			client := utils.NewSafeHTTPClient(60 * time.Second)
+			resp, err := client.Get(targetURL)
 			if err != nil {
 				return nil, fmt.Errorf("error downloading file from URL: %v", err)
 			}
