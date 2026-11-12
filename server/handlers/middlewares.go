@@ -600,7 +600,69 @@ func (h *Handler) reportBackgroundDiscovery(provider models.Provider, token stri
 	if provider == nil || event == nil || (err == nil && event.ResolvedAt == nil && !machines.IsRecurrence(event, err)) {
 		return
 	}
+	// A Discovery resolution is reported only while the connection is
+	// still in the state the Discovery settled it in. SendEvent's
+	// conditional write (issue #23248) already refuses to move a
+	// connection the user has since disconnected, but the resolution is
+	// persisted later, in this goroutine, after SendEvent returns: a
+	// disconnect landing in between would otherwise close the
+	// unreachable condition and broadcast "reachable again" for a
+	// connection the user just disconnected. Re-read the stored status
+	// here and drop the resolution when it no longer matches the state
+	// the event says the Discovery settled in. Recurrences and failures
+	// are unaffected: they carry no resolution to drop.
+	if err == nil && event.ResolvedAt != nil && !discoveryResolutionStillCurrent(provider, token, event) {
+		return
+	}
 	h.reportMachineOutcome(provider, token, userUUID, event, err)
+}
+
+// discoveryResolutionStillCurrent reports whether a Discovery resolution
+// event may still be persisted: the connection's stored status must still
+// be the state the Discovery settled it in (the event's currentStatus
+// metadata, set by SendEvent). A disconnect, delete or ignore landing
+// after SendEvent wrote its state but before this report ran makes the
+// resolution stale, and persisting it would resolve the unreachable
+// condition for a connection the user just moved away (issue #23248).
+// A stored status that cannot be read, or an event that does not say what
+// state the Discovery settled in, fails open: the resolution is reported
+// as before rather than swallowed on a provider blip. A connection that
+// is gone (404) has no condition left to resolve, so its resolution is
+// dropped.
+func discoveryResolutionStillCurrent(provider models.Provider, token string, event *events.Event) bool {
+	settled, ok := eventCurrentStatus(event)
+	if !ok || event.ActedUpon.IsNil() {
+		return true
+	}
+	stored, statusCode, err := provider.GetConnectionByID(token, event.ActedUpon)
+	if err != nil {
+		if statusCode == http.StatusNotFound {
+			return false
+		}
+		return true
+	}
+	if stored == nil {
+		return false
+	}
+	return stored.Status == connections.ConnectionStatus(settled)
+}
+
+// eventCurrentStatus reads the state SendEvent settled in from a success
+// event's currentStatus metadata. The value is a machines.StateType
+// in-process and a plain string after a JSON round trip, so both shapes
+// are accepted.
+func eventCurrentStatus(event *events.Event) (machines.StateType, bool) {
+	if event == nil || event.Metadata == nil {
+		return "", false
+	}
+	switch v := event.Metadata["currentStatus"].(type) {
+	case string:
+		return machines.StateType(v), v != ""
+	case machines.StateType:
+		return v, v != ""
+	default:
+		return "", false
+	}
 }
 
 // reportMachineOutcome reports what a connection's StateMachine.SendEvent

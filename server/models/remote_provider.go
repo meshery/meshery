@@ -4839,6 +4839,35 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID c
 	return nil, resp.StatusCode, ErrUpdateConnectionStatus(fmt.Errorf("unable to update connection with id %s", connectionID), resp.StatusCode)
 }
 
+// UpdateConnectionStatusIf updates a connection's status to newStatus only
+// when its stored status is one of fromStatuses, and reports whether the
+// write applied. The remote provider has no conditional-update API, so
+// this is best-effort: the stored status is read and compared
+// immediately before the PUT, and a concurrent status change landing
+// between the read and the PUT can still slip through. Callers must not
+// rely on it alone for the remote path — the reporting path re-checks
+// the stored status before persisting a Discovery resolution
+// (issue #23248).
+func (l *RemoteProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	current, _, err := l.GetConnectionByID(token, connectionID)
+	if err != nil {
+		return false, nil, err
+	}
+	if current == nil {
+		return false, nil, nil
+	}
+	for _, fromStatus := range fromStatuses {
+		if current.Status == fromStatus {
+			updated, _, err := l.UpdateConnectionStatusByID(token, connectionID, newStatus)
+			if err != nil {
+				return false, nil, err
+			}
+			return true, updated, nil
+		}
+	}
+	return false, current, nil
+}
+
 // UpdateConnection - to update an existing connection
 func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connections.Connection) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
