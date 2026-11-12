@@ -175,6 +175,10 @@ You can now design and manage any infrastructure that Meshery supports. For the 
     
   
     
+      
+    
+  
+    
   
     
   
@@ -4948,6 +4952,8 @@ You can now design and manage any infrastructure that Meshery supports. For the 
   
     
       
+    
+  
     
   
     
@@ -8101,6 +8107,14 @@ You can now design and manage any infrastructure that Meshery supports. For the 
   
     
     <li><a href="/guides/tutorials/azure/deploy-azure-storage-account-with-meshery/">Deploy Azure Storage Account with Meshery</a></li>
+  
+    
+      </ul>
+      <strong>PLAYGROUND</strong>
+      <ul style="list-style-type: circle;">
+      
+    
+    <li><a href="/guides/tutorials/playground/kubecon-build-your-own-model-and-design/">KubeCon Workshop: Build Your Own Meshery Model and Design</a></li>
   
     
       </ul>

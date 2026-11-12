@@ -108,6 +108,7 @@
           <a href="/guides/tutorials/artifacthub/">Artifact Hub</a></li><li>
           <a href="/guides/tutorials/aws/">AWS</a></li><li>
           <a href="/guides/tutorials/azure/">Azure</a></li><li>
+          <a href="/guides/tutorials/playground/">Playground</a><span> - Hands-on tutorials and workshops that run entirely in the Meshery Playground.</span></li><li>
           <a href="/guides/tutorials/wordpress/">WordPress</a></li>
       </ul>
     </details>
