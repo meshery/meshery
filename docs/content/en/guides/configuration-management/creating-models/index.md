@@ -142,9 +142,11 @@ Using Scaffold (model init) | fa fa-folder-tree
 <code>
 digitalocean-icons/
 <br />└── v0.1.0/
-<br />&nbsp;&nbsp;&nbsp;&nbsp;├── model.json          # model definition (name, displayName and version are pre-filled from the argument and --version)
-<br />&nbsp;&nbsp;&nbsp;&nbsp;├── components/          # one sample component, already referencing this model; add one JSON file per component
-<br />&nbsp;&nbsp;&nbsp;&nbsp;├── relationships/       # one sample relationship; delete it unless you define relationships
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── model.json          # model definition (name, displayName and version are pre-filled from the argument and --version; releases without meshery/meshery#23362: see the warning below)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── components/
+<br />&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── component.json  # sample component, already referencing this model (releases without meshery/meshery#23362: see the warning below); add one JSON file per component
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── relationships/
+<br />&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── relationship.json  # sample relationship (see the warning below)
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── connections/
 <br />&nbsp;&nbsp;&nbsp;&nbsp;└── credentials/
 </code>
@@ -155,7 +157,7 @@ digitalocean-icons/
   <li><code>category.name</code> and <code>subCategory</code> - e.g. <code>Platform</code> / <code>Cloud Provider</code>.</li>
   <li><code>registrant.kind</code> - e.g. <code>meshery</code>.</li>
   <li><code>description</code> - a short summary of what the model provides.</li>
-  <li><code>metadata.svgColor</code> and <code>metadata.svgWhite</code> - the model's display icon, as an inline SVG string (strip any <code>&lt;?xml ...?&gt;</code> header and collapse the SVG to a single line). The SVG's double quotes must be escaped as <code>\"</code> inside the JSON string; <code>jq --arg svg "$(cat icon.svg)" '.metadata.svgColor = $svg'</code> does the escaping for you.</li>
+  <li><code>metadata.svgColor</code> and <code>metadata.svgWhite</code> - the model's display icon, as a JSON-escaped SVG string. The SVG's attribute quotes make raw markup invalid JSON, so generate the value with <a href="https://jqlang.org/download/" target="_blank" rel="noopener">jq</a> (install it first; macOS 15 and later include it): <code>sed 's/&lt;?xml[^&gt;]*?&gt;//' icon.svg | jq -Rs .</code>, which drops any <code>&lt;?xml ...?&gt;</code> header and escapes quotes and newlines, and paste the whole output, including its surrounding quotes.</li>
   <li><code>metadata.isAnnotation</code> - set to <code>true</code> for an annotation-only (visual diagramming) model.</li>
 </ul>
 
@@ -164,12 +166,17 @@ digitalocean-icons/
 <ul>
   <li><code>displayName</code> - the human-readable name shown in the UI (e.g. <code>DO Logo Icon Blue</code>).</li>
   <li><code>component.kind</code> - the unique identifier for the component (e.g. <code>do-logo-icon-blue</code>).</li>
-  <li><code>styles.svgColor</code> and <code>styles.svgWhite</code> - the component's inline SVG.</li>
+  <li><code>styles.svgColor</code> and <code>styles.svgWhite</code> - the component's SVG, JSON-escaped the same way.</li>
   <li><code>metadata.isAnnotation</code> - <code>true</code> for annotation components.</li>
 </ul>
 
-{{% alert color="warning" title="Component schemaVersion compatibility" %}}
-Set each component's <code>schemaVersion</code> to <code>components.meshery.io/v1beta1</code> and leave the model's as <code>models.meshery.io/v1beta2</code>. The scaffold writes <code>components.meshery.io/v1beta3</code>, which current Meshery Servers do not recognize: the import drops the component and fails with a generic "No valid component or relationship found in the Model provided" error (<a href="https://github.com/meshery/meshery/issues/20901">meshery#20901</a>). The sample relationship's <code>relationships.meshery.io/v1beta3</code> is rejected the same way, so delete it before you build.
+{{% alert color="warning" title="Scaffold fixes required until the fixes below reach your release" %}}
+A scaffold from a mesheryctl and Meshery Server release that predates the fixes linked below does not import as generated. This is true of v1.0.76 and v1.0.77. Before building, fix these:
+<ul>
+  <li><strong>Version and model name.</strong> <code>model.json</code> is written with version <code>v0.0.1</code> whatever you pass to <code>--version</code>, so set <code>version</code> and <code>model.version</code> yourself. The nested <code>model.name</code> in the sample component and relationship is <code>untitled-model</code>; set it to your model name. Fixed in <a href="https://github.com/meshery/meshery/pull/23362">meshery/meshery#23362</a>; drop this step once you run a <code>mesheryctl</code> release that includes it.</li>
+  <li><strong>Component schemaVersion.</strong> Meshery Server rejects the scaffolded <code>components.meshery.io/v1beta3</code> component at import with "No valid component or relationship found in the Model provided" (<a href="https://github.com/meshery/meshery/issues/20901">meshery#20901</a>). Set each component's <code>schemaVersion</code> to <code>components.meshery.io/v1beta1</code> (or <code>v1beta2</code>), and leave the model's at <code>models.meshery.io/v1beta2</code>. Fixed in <a href="https://github.com/meshery/meshkit/pull/1165">meshery/meshkit#1165</a>; drop this step once your Meshery Server includes a MeshKit release with it.</li>
+  <li><strong>Sample relationship.</strong> The scaffolded <code>relationships.meshery.io/v1beta3</code> relationship is also rejected, and the import reports "encountered error for 1 entity (1 relationship)". Delete <code>relationships/relationship.json</code>, or replace it with a <code>v1beta2</code> or <code>v1alpha3</code> relationship. Tracked in <a href="https://github.com/meshery/meshkit/issues/1164">meshery/meshkit#1164</a>.</li>
+</ul>
 {{% /alert %}}
 
 <h4>4. Package the model as an OCI image</h4>

@@ -55,7 +55,7 @@ You will point `mesheryctl` at the Playground before the Path B labs.
 - **Path B:**
     1. a laptop or desktop.
     1. [install `mesheryctl`](https://docs.meshery.io/installation/mesheryctl/) on your computer if you will use the CLI steps. You can complete Lab 1 with Meshery UI alone. Lab 2 is smoother with `mesheryctl`, and has a UI import fallback.
-    1. for the Lab 2 CLI steps, a POSIX shell (macOS Terminal, Linux, or WSL / Git Bash on Windows) with [`jq`](https://jqlang.org/download/). macOS 15 and later ship `jq`; on Linux run `sudo apt install jq` or your distribution's equivalent.
+    1. [`jq`](https://jqlang.org/download/) for Lab 2, which uses it to turn each logo SVG into a JSON string. The Lab 2 CLI steps need a POSIX shell (macOS Terminal, Linux, or WSL / Git Bash on Windows). macOS 15 and later include `jq`; on Linux run `sudo apt install jq` or your distribution's equivalent.
 
 <details>
 <summary>Instructor prerequisites</summary>
@@ -124,8 +124,8 @@ Attendees build an extremely simple design: one Kubernetes Deployment that runs 
 {{< tabs id="lab-1-paths" >}}
 Path A: Kanvas
 
-1. **Open Kanvas Designer.** Go to https://playground.meshery.io/extension/meshmap and choose the Designer tab.
-2. **Create and name the design.** Start a new design and name it `kubecon-<your-handle>-design`, for example `kubecon-octocat-design`. The save indicator beside the name is a cloud with a tick when the design is saved. Kanvas saves automatically about 3 seconds after you stop editing.
+1. **Open Kanvas Designer.** Go to https://playground.meshery.io/extension/meshmap. Kanvas opens in Designer mode, the first of the two mode icons at the top center of the canvas, on a new design named *Untitled Design*.
+2. **Create and name the design.** Click the name *Untitled Design* at the top, select all of its text (clicking only places the cursor, so typing appends to the old name), and type `kubecon-<your-handle>-design`, for example `kubecon-octocat-design`. The save indicator beside the name is a cloud with a tick when the design is saved. Kanvas saves automatically about 3 seconds after you stop editing.
 3. **Add a Deployment.** From the Kubernetes model, drag a Deployment onto the canvas. Open its configuration form, give it a name, and set the container image to `meshery/meshery-milestone:latest`. That image is a small Nginx app; Docker Hub currently publishes it under the `latest` tag only. Add a label such as `app: kubecon-<your-handle>`.
 4. **Add a Service.** Drag a Service onto the canvas. In its configuration form, set the selector to the same `app: kubecon-<your-handle>` value so the Service targets the Deployment, and set port and targetPort to `80`.
 5. **Connect them.** Tap the Service, pick a relationship type from the edge picker, and drag to the Deployment. Kanvas highlights compatible targets.
@@ -299,7 +299,7 @@ Confirm `mesheryctl system context view` shows the Playground endpoint before yo
    mesheryctl model init kubecon-<your-handle>-logo --version v0.1.0
    ```
 
-   That creates `kubecon-<your-handle>-logo/v0.1.0/`, with `model.json`, a sample `components/component.json`, a sample `relationships/relationship.json`, and empty `connections/` and `credentials/` directories.
+   That creates `kubecon-<your-handle>-logo/v0.1.0/`, with `model.json`, a sample file under `components/`, a sample `relationship.json` under `relationships/` (you remove it in step 3), and empty `connections/` and `credentials/` directories.
 
 2. **Know what you are changing.** You turn the scaffold into an annotation-only model with one component:
 
@@ -308,19 +308,19 @@ Confirm `mesheryctl system context view` shows the Playground endpoint before yo
    - Delete the sample relationship. Its `relationships.meshery.io/v1beta3` schema version is also rejected, and the model only needs the component.
 
    An SVG is full of double quotes and line breaks, so pasting it into a JSON string by hand breaks the file. Let `jq` do the escaping instead.
-
 3. **Apply the edits with `jq`.** Run this from the directory where you ran `model init`. Set `HANDLE` to your handle and `DL` to the folder holding the two downloaded SVGs:
 
    ```sh
    HANDLE=<your-handle>
    DL=~/Downloads
    MODEL=kubecon-$HANDLE-logo
-   cd $MODEL/v0.1.0
+   cd "$MODEL/v0.1.0" || exit 1
 
-   # Drop the XML header and comment, and flatten each SVG to one line.
-   svg() { sed -e 's/<?xml[^>]*?>//' -e 's/<!--[^>]*-->//' "$1" | tr '\n\t\r' '   '; }
-   COLOR=$(svg "$DL/kubecon-logo-color.svg")
-   WHITE=$(svg "$DL/kubecon-logo-white.svg")
+   test -r "$DL/kubecon-logo-color.svg" && test -r "$DL/kubecon-logo-white.svg" || { echo "SVG files not found in $DL"; exit 1; }
+
+   # Remove only the XML declaration; keep any markup on the same line.
+   COLOR=$(sed 's/<?xml[^>]*?>//' "$DL/kubecon-logo-color.svg")
+   WHITE=$(sed 's/<?xml[^>]*?>//' "$DL/kubecon-logo-white.svg")
 
    jq --arg c "$COLOR" --arg w "$WHITE" '
      .version = "v0.1.0" | .model.version = "v0.1.0"
@@ -344,7 +344,7 @@ Confirm `mesheryctl system context view` shows the Playground endpoint before yo
    cd ../..
    ```
 
-   You now have `model.json` and a single `components/kubecon-logo.json`. If you prefer to edit by hand, make the same changes in your editor and escape every `"` inside the SVG as `\"`.
+   You now have `model.json` and a single `components/kubecon-logo.json`. If you prefer to edit by hand, make the same changes in your editor. Generate each SVG value with `sed 's/<?xml[^>]*?>//' kubecon-logo-color.svg | jq -Rs .` (and the same for the white SVG), then paste the whole output, including its surrounding quotes.
 
 4. **Package the model as an OCI archive:**
 
@@ -477,7 +477,7 @@ Room-level target: at least 80% of attendees complete both labs. Track it with a
 | Model name rejected | Use lowercase letters, digits, and hyphens only, no spaces or underscores. |
 | Create Model will not leave the Source step | The wizard requires a GitHub or Artifact Hub URL and generates components from that URL. It cannot create a component from an SVG alone. Use **Import Model** with [kubecon-logo.tar.gz](kubecon-logo.tar.gz) instead. |
 | `mesheryctl` talks to the wrong server | Run `mesheryctl system context view` and confirm the endpoint is `https://playground.meshery.io` before import or delete. Recreate the context and token if it is not. |
-| `model build` or `model import` fails | Open the Notification Center or the CLI error. Check that each file is still valid JSON (`jq . model.json components/kubecon-logo.json`), that `metadata.isAnnotation` is `true`, and that the component `schemaVersion` is `components.meshery.io/v1beta1`. "No valid component or relationship found" almost always means the component kept the scaffold's `v1beta3` schema version. If it stays stuck, import the ready-made [kubecon-logo.tar.gz](kubecon-logo.tar.gz). |
+| `model build` or `model import` fails | Open the Notification Center or the CLI error. Check that each file is valid JSON (`jq . model.json components/kubecon-logo.json`), that `metadata.isAnnotation` is `true`, that each SVG is a JSON-escaped string (see step 3), and that the component `schemaVersion` is `components.meshery.io/v1beta1`. "No valid component or relationship found" almost always means the component kept the scaffold's `v1beta3` schema version. If it stays stuck, import the ready-made [kubecon-logo.tar.gz](kubecon-logo.tar.gz). |
 | `model import` reports an error for 1 relationship | The sample `relationships/relationship.json` was left in place. The component still imports; delete the file and rebuild to clear the error. |
 | `jq: command not found` | Install `jq` (see Prerequisites), or use the ready-made [kubecon-logo.tar.gz](kubecon-logo.tar.gz). |
 | Model shows version `v0.0.1` | `model init` from `mesheryctl` v1.0.76 and earlier does not write `--version` into the files. Setting `version` and `model.version` in step 3 fixes it. |
