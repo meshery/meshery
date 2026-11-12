@@ -155,7 +155,7 @@ Use the UI, or `mesheryctl`, or both.
 
 **Meshery UI**
 
-1. Go to **Configuration** > **Designs**, or open https://playground.meshery.io/configuration/designs?view=table. The page opens in grid view; the steps in this lab use the table view, so click **Switch View** (top right) if you see cards.
+1. Go to **Configuration** > **Designs**, or open https://playground.meshery.io/configuration/designs?view=table. The page opens in grid view; the steps in this lab use the table view, so if you see cards, click the view toggle at the top right (its tooltip reads **Grid View**).
 2. Click **Import Design**.
 3. Enter the **Design Name** `kubecon-<your-handle>-design`, for example `kubecon-octocat-design`.
 4. Choose **File Upload**, then pick `kubecon-design.yaml` from your computer.
@@ -484,7 +484,7 @@ Room-level target: at least 80% of attendees complete both labs. Track it with a
 | Model not in the Kanvas component list | Refresh the Kanvas tab, then search by display name (`KubeCon Logo`). If you used Import Model, confirm the model is listed in the Registry first. |
 | KubeCon Logo shows "(contains invalid schema)" in the Design Configurator | Expected: an annotation component has no configuration form. Use the export-and-update path in Lab 2, Path B. |
 | `design import` says "Invalid design source type" | Use `-s design` (or `kubernetes manifest`, `helm chart`, `docker compose`), or leave `-s` out and let Meshery Server detect the format. |
-| Validate Design or Design Information is not in the menu | You are in grid view. Click **Switch View**, or use the card's **Action** menu and info icon. |
+| Validate Design or Design Information is not in the menu | You are in grid view. Click the view toggle at the top right (its tooltip reads **Grid View**), or use the card's **Action** menu and info icon. |
 | Service does not target the Deployment | The Service selector must match a label on the Deployment, for example `app: kubecon-<your-handle>` or `app: kubecon-demo` if you imported the ready-made manifest unchanged. Port and targetPort should both be `80`. |
 | Publish to Catalog is disabled | Sign in again and reopen **Design Information**. Publish requires a signed-in account that owns the design and has the Publish Design permission. |
 | Catalog request still says it is queued or pending | That is expected for a regular user. The lab is complete once the request is submitted. Keep editing if you are still in Lab 2; a pending request on the same design updates automatically. |
