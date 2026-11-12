@@ -1,0 +1,47 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "kro",
+  "displayName": "Kro",
+  "status": "enabled",
+  "registrant": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Github",
+    "type": "registry",
+    "subType": "",
+    "kind": "github",
+    "status": "discovered",
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "deleted_at": null,
+    "schemaVersion": ""
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "category": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Orchestration & Management"
+  },
+  "subCategory": "Scheduling & Orchestration",
+  "metadata": {
+    "capabilities": null,
+    "isAnnotation": false,
+    "primaryColor": "#2563EB",
+    "secondaryColor": "#60A5FA",
+    "shape": "circle",
+    "source_uri": "git://github.com/kubernetes-sigs/kro/main/manifests",
+    "styleOverrides": "",
+    "svgColor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" height=\"20\" width=\"20\"><defs><linearGradient id=\"kro-grad\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\"><stop offset=\"0%\" stop-color=\"#3B82F6\"/><stop offset=\"100%\" stop-color=\"#1D4ED8\"/></linearGradient></defs><circle cx=\"50\" cy=\"50\" r=\"46\" fill=\"url(#kro-grad)\"/><path d=\"M50 22 L76 66 L24 66 Z\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"5\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"22\" r=\"9\" fill=\"#93C5FD\" stroke=\"#FFFFFF\" stroke-width=\"3\"/><circle cx=\"76\" cy=\"66\" r=\"9\" fill=\"#60A5FA\" stroke=\"#FFFFFF\" stroke-width=\"3\"/><circle cx=\"24\" cy=\"66\" r=\"9\" fill=\"#60A5FA\" stroke=\"#FFFFFF\" stroke-width=\"3\"/><path d=\"M50 22 L50 66\" stroke=\"#FFFFFF\" stroke-width=\"3\" stroke-dasharray=\"3,3\"/><circle cx=\"50\" cy=\"66\" r=\"5\" fill=\"#FFFFFF\"/></svg>",
+    "svgWhite": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" height=\"20\" width=\"20\"><circle cx=\"50\" cy=\"50\" r=\"46\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"6\"/><path d=\"M50 22 L76 66 L24 66 Z\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"5\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"22\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"76\" cy=\"66\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"24\" cy=\"66\" r=\"9\" fill=\"#FFFFFF\"/><path d=\"M50 22 L50 66\" stroke=\"#FFFFFF\" stroke-width=\"3\" stroke-dasharray=\"3,3\"/><circle cx=\"50\" cy=\"66\" r=\"5\" fill=\"#FFFFFF\"/></svg>",
+    "svgComplete": ""
+  },
+  "model": {
+    "version": "v0.10.0"
+  },
+  "components_count": 0,
+  "relationships_count": 0,
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z",
+  "components": null,
+  "relationships": null
+}

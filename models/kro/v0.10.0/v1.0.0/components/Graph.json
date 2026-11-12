@@ -1,0 +1,189 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta2",
+  "version": "v1.0.0",
+  "displayName": "Graph",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta2",
+    "version": "v1.0.0",
+    "name": "kro",
+    "displayName": "Kro",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "type": "registry",
+      "subType": "",
+      "kind": "github",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Orchestration & Management"
+    },
+    "subCategory": "Scheduling & Orchestration",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#2563EB",
+      "secondaryColor": "#60A5FA",
+      "shape": "circle",
+      "source_uri": "git://github.com/kubernetes-sigs/kro/main/manifests",
+      "styleOverrides": "",
+      "svgColor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" height=\"20\" width=\"20\"><defs><linearGradient id=\"kro-grad\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\"><stop offset=\"0%\" stop-color=\"#3B82F6\"/><stop offset=\"100%\" stop-color=\"#1D4ED8\"/></linearGradient></defs><circle cx=\"50\" cy=\"50\" r=\"46\" fill=\"url(#kro-grad)\"/><path d=\"M50 22 L76 66 L24 66 Z\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"5\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"22\" r=\"9\" fill=\"#93C5FD\" stroke=\"#FFFFFF\" stroke-width=\"3\"/><circle cx=\"76\" cy=\"66\" r=\"9\" fill=\"#60A5FA\" stroke=\"#FFFFFF\" stroke-width=\"3\"/><circle cx=\"24\" cy=\"66\" r=\"9\" fill=\"#60A5FA\" stroke=\"#FFFFFF\" stroke-width=\"3\"/><path d=\"M50 22 L50 66\" stroke=\"#FFFFFF\" stroke-width=\"3\" stroke-dasharray=\"3,3\"/><circle cx=\"50\" cy=\"66\" r=\"5\" fill=\"#FFFFFF\"/></svg>",
+      "svgComplete": "",
+      "svgWhite": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" height=\"20\" width=\"20\"><circle cx=\"50\" cy=\"50\" r=\"46\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"6\"/><path d=\"M50 22 L76 66 L24 66 Z\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"5\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"22\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"76\" cy=\"66\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"24\" cy=\"66\" r=\"9\" fill=\"#FFFFFF\"/><path d=\"M50 22 L50 66\" stroke=\"#FFFFFF\" stroke-width=\"3\" stroke-dasharray=\"3,3\"/><circle cx=\"50\" cy=\"66\" r=\"5\" fill=\"#FFFFFF\"/></svg>"
+    },
+    "model": {
+      "version": "v0.10.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for the component",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/kubernetes-sigs/kro/main/manifests"
+  },
+  "configuration": null,
+  "component": {
+    "version": "kro.run/v1alpha1",
+    "kind": "Graph",
+    "schema": "{\"description\":\"Graph is a scope of composable nodes that manage Kubernetes resources and\\nthe relationships between them. Nodes reference each other through CEL\\nexpressions; the controller derives an execution order from the implied\\ndependencies.\",\"properties\":{\"apiVersion\":{\"description\":\"APIVersion defines the versioned schema of this representation of an object.\\nServers should convert recognized schemas to the latest internal value, and\\nmay reject unrecognized values.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\",\"type\":\"string\"},\"kind\":{\"description\":\"Kind is a string value representing the REST resource this object represents.\\nServers may infer this from the endpoint the client submits requests to.\\nCannot be updated.\\nIn CamelCase.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\"type\":\"string\"},\"metadata\":{\"type\":\"object\"},\"spec\":{\"description\":\"GraphSpec defines the desired state of a Graph.\",\"properties\":{\"nodes\":{\"description\":\"Nodes is the unordered list of nodes that make up this Graph. Evaluation\\norder is derived from inter-node CEL references, not from list order.\\nNode IDs must be unique within the Graph.\",\"items\":{\"description\":\"Node is a single composable unit within a Graph. Each Node carries exactly\\none of the type-discriminating fields (Template, Ref, Def, Patch, Graph)\\nwhich determines its behavior. Node IDs are the handles other nodes use to\\nreference it via CEL expressions.\",\"properties\":{\"def\":{\"description\":\"Def introduces raw data into scope without reading or writing any\\nKubernetes resource. The value is a free-form object whose fields may\\ncontain CEL expressions.\",\"type\":\"object\",\"x-kubernetes-preserve-unknown-fields\":true},\"forEach\":{\"description\":\"ForEach expands this node into a collection. Each entry binds a\\nvariable name to a CEL expression that evaluates to an array; the\\ncontroller produces one instance per element. Multiple dimensions form\\nthe cartesian product of their bindings.\",\"items\":{\"additionalProperties\":{\"type\":\"string\"},\"description\":\"ForEachDimension defines a single expansion axis in a forEach block.\\nEach dimension is a map with exactly one entry where the key is the variable name\\nand the value is the CEL expression. Example: {\\\"region\\\": \\\"${schema.spec.regions}\\\"}\\nMultiple dimensions create a cartesian product of expansions.\",\"maxProperties\":1,\"minProperties\":1,\"type\":\"object\"},\"type\":\"array\"},\"graph\":{\"description\":\"Graph nests another Graph as a child scope under this node's ID. The\\nchild's nodes form a lexical frame: they may reference this Graph's\\nnodes (capture) and shadow their names, but a single CEL expression may\\nnot mix the two scopes — it references one frame or the other. The\\nchild's node outputs are addressable under this node's ID, e.g.\\n`${nodeID.childNode.field}`. Nesting has no depth limit. The payload is\\na GraphSpec (a `nodes:` list); it is parsed at compile time, so the CRD\\nstores it as an opaque object.\",\"type\":\"object\",\"x-kubernetes-preserve-unknown-fields\":true},\"id\":{\"description\":\"ID is the handle that other nodes use to reference this node from CEL\\nexpressions. Must be alphanumeric (case-insensitive) and unique within\\nthe Graph.\",\"pattern\":\"^[A-Za-z][A-Za-z0-9]*$\",\"type\":\"string\"},\"includeWhen\":{\"description\":\"IncludeWhen is a list of CEL expressions that must all evaluate to\\ntrue for this node to be applied. Evaluated against scope before\\napply, so expressions may reference upstream nodes. When any is\\nfalse the node is skipped entirely — no resolve, no apply, no scope\\npublication. The skip is contagious: nodes depending on a skipped\\nnode are themselves skipped (not evaluated, no error), so a disabled\\nbranch prunes cleanly instead of breaking its dependents.\",\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"patch\":{\"description\":\"Patch contributes fields to a resource this node does not own,\\nauthored as a raw partial manifest exactly like Template (apiVersion,\\nkind, metadata.name required, metadata.namespace optional, plus the\\ncontributed fields). The target identified by apiVersion, kind, and\\nmetadata.name (+ namespace) must already exist; the node applies the\\ncontributed fields under a dedicated field manager (server-side apply)\\nwithout taking ownership of the whole object. On prune the\\ncontributed fields are released — the field manager relinquishes them\\n— but the target object is never deleted.\\n\\nThe target subresource is derived from field presence rather than\\ndeclared explicitly: a top-level `status` key routes the apply\\nthrough the status subresource, while any other top-level key (or any\\nmetadata field beyond name/namespace) routes to the main resource. A\\nsingle patch node may not mix status fields with main-resource\\nfields, and it must contribute at least one field beyond identity.\",\"type\":\"object\",\"x-kubernetes-preserve-unknown-fields\":true},\"readyWhen\":{\"description\":\"ReadyWhen is a list of CEL expressions that must all evaluate to\\ntrue for this node to be considered ready. Evaluated against scope\\nafter the node has been applied and its value published, so\\nexpressions typically reference the node's own published state\\n(e.g. `cluster.status.phase == 'Active'`). Empty means the node is\\nready as soon as it is applied. For collection nodes (forEach) each\\nexpression is evaluated once per item with `each` bound to that item,\\nand the node is ready only when every item satisfies every expression\\n(use `each`, not an aggregate over the node's own name):\\n    readyWhen: [ \\\"${each.status.phase == 'Running'}\\\" ]\",\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"ref\":{\"description\":\"Ref imports a resource that exists outside this Graph into scope. The\\nreferenced resource is read-only; its fields become available to other\\nnodes through CEL expressions.\",\"properties\":{\"apiVersion\":{\"description\":\"APIVersion is the API version of the external resource.\\nExample: \\\"v1\\\" for core resources, \\\"apps/v1\\\" for Deployments.\",\"type\":\"string\"},\"kind\":{\"description\":\"Kind is the kind of the external resource.\\nExample: \\\"Service\\\", \\\"ConfigMap\\\", \\\"Deployment\\\".\",\"type\":\"string\"},\"metadata\":{\"description\":\"Metadata contains the name and optional namespace of the external resource.\",\"properties\":{\"name\":{\"description\":\"Name is the name of the external resource to reference.\\nMutually exclusive with Selector.\",\"minLength\":1,\"type\":\"string\"},\"namespace\":{\"description\":\"Namespace is the namespace of the external resource.\\nFor single external refs (Name), defaults to the instance's namespace.\\nFor external collections (Selector), empty means list across all namespaces.\",\"type\":\"string\"},\"selector\":{\"description\":\"Selector is a label selector for collection external references.\\nWhen set, all resources matching the selector are included.\\nThe selector may be a literal Kubernetes [metav1.LabelSelector] object or a full CEL\\nexpression that resolves to one at reconcile time.\\n\\nMutually exclusive with Name.\",\"x-kubernetes-preserve-unknown-fields\":true}},\"type\":\"object\"}},\"required\":[\"apiVersion\",\"kind\",\"metadata\"],\"type\":\"object\"},\"template\":{\"description\":\"Template declares that this node creates and manages a Kubernetes\\nresource. The controller applies the resource on create and on change,\\nand deletes it on prune.\",\"type\":\"object\",\"x-kubernetes-preserve-unknown-fields\":true}},\"required\":[\"id\"],\"type\":\"object\",\"x-kubernetes-validations\":[{\"message\":\"exactly one of template, ref, def, graph, patch must be set\",\"rule\":\"[has(self.template), has(self.ref), has(self.def), has(self.graph), has(self.patch)].exists_one(x, x)\"}]},\"minItems\":1,\"type\":\"array\",\"x-kubernetes-list-map-keys\":[\"id\"],\"x-kubernetes-list-type\":\"map\"},\"serviceAccountName\":{\"description\":\"ServiceAccountName, when set, causes kro to apply this Graph's resources\\nwhile impersonating the named ServiceAccount instead of using the kro\\ncontroller's own identity. The ServiceAccount is always resolved in the\\nGraph's own namespace (system:serviceaccount:<graph-namespace>:<name>), so\\na Graph can never escalate beyond the RBAC granted to a ServiceAccount in\\nits own namespace. When empty, kro impersonates the default ServiceAccount\\nof the Graph's namespace, confining resource access to that namespace by\\ndefault.\\n\\nThe kro controller ServiceAccount must be granted the \\\"impersonate\\\" verb\\non serviceaccounts for this to take effect.\",\"maxLength\":253,\"pattern\":\"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\"type\":\"string\"}},\"required\":[\"nodes\"],\"type\":\"object\"},\"status\":{\"description\":\"GraphStatus defines the observed state of a Graph.\",\"properties\":{\"appliedServiceAccount\":{\"description\":\"AppliedServiceAccount is the impersonation username\\n(system:serviceaccount:<namespace>:<name>) the Graph last applied its\\nresources under. Teardown resolves the executor from THIS identity rather\\nthan the current spec.serviceAccountName, so editing that field between\\napply and delete cannot strand resources under an identity that can no\\nlonger see them. Empty for a Graph that has never applied (or one last\\napplied by a kro version predating this field), in which case teardown\\nfalls back to the current spec.\",\"type\":\"string\"},\"conditions\":{\"description\":\"Conditions represent the latest available observations of the Graph's\\nstate.\",\"items\":{\"description\":\"Condition is the common struct used by all CRDs managed by ACK service\\ncontrollers to indicate terminal states  of the CR and its backend AWS\\nservice API resource\",\"properties\":{\"lastTransitionTime\":{\"description\":\"Last time the condition transitioned from one status to another.\",\"format\":\"date-time\",\"type\":\"string\"},\"message\":{\"description\":\"A human-readable message indicating details about the transition.\",\"type\":\"string\"},\"observedGeneration\":{\"description\":\"observedGeneration represents the .metadata.generation that the condition was set based upon.\\nFor instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date\\nwith respect to the current state of the instance.\",\"format\":\"int64\",\"minimum\":0,\"type\":\"integer\"},\"reason\":{\"description\":\"The reason for the condition's last transition.\",\"type\":\"string\"},\"status\":{\"description\":\"Status of the condition, one of True, False, Unknown.\",\"type\":\"string\"},\"type\":{\"description\":\"Type is the type of the Condition\",\"type\":\"string\"}},\"required\":[\"status\",\"type\"],\"type\":\"object\"},\"type\":\"array\",\"x-kubernetes-list-map-keys\":[\"type\"],\"x-kubernetes-list-type\":\"map\"},\"contributions\":{\"description\":\"Contributions is the authoritative release inventory for this Graph's\\npatch nodes: each entry records a field-manager contribution the Graph\\napplied to a resource it does not own. Because a patch never owns its\\ntarget, teardown/prune cannot rediscover these fields from ownership —\\nthe inventory is what lets Release relinquish exactly the fields the\\nGraph contributed. The controller write-aheads the intended set BEFORE\\napply and rewrites it with the observed set AFTER a clean apply, so a\\ncrash in that window still leaves teardown a superset to release from.\\n\\nPersisted on the status subresource (not a metadata annotation) so it is\\nRBAC-separable: a principal with only spec/metadata edit rights cannot\\nforge the release inventory.\",\"items\":{\"description\":\"Contribution is a lightweight record of a patch node's field-manager\\ncontribution to a resource this Graph does not own. It mirrors the\\nin-memory executor contribution: the tuple identifies the target\\n(APIVersion, Kind, Namespace, Name, Subresource) and FieldManager is the\\ndedicated server-side-apply manager the contributed fields were applied\\nunder. On prune/teardown the manager relinquishes exactly those fields;\\nthe target object is never deleted.\",\"properties\":{\"apiVersion\":{\"description\":\"APIVersion of the patched target (\\\"apps/v1\\\", \\\"v1\\\", ...).\",\"type\":\"string\"},\"fieldManager\":{\"description\":\"FieldManager is the dedicated server-side-apply field manager the\\ncontributed fields were applied under. Release relinquishes the fields\\nowned by this manager on the target.\",\"type\":\"string\"},\"kind\":{\"description\":\"Kind of the patched target (\\\"Deployment\\\", \\\"ConfigMap\\\", ...).\",\"type\":\"string\"},\"name\":{\"description\":\"Name of the patched target.\",\"type\":\"string\"},\"namespace\":{\"description\":\"Namespace of the patched target. Empty for cluster-scoped targets.\",\"type\":\"string\"},\"subresource\":{\"description\":\"Subresource the contribution was applied through (\\\"status\\\" for a\\nstatus patch, empty for the main resource).\",\"type\":\"string\"}},\"required\":[\"apiVersion\",\"fieldManager\",\"kind\",\"name\"],\"type\":\"object\"},\"type\":\"array\"},\"managedResources\":{\"description\":\"ManagedResources is the authoritative list of cluster resources this\\nGraph has applied. Entries are recorded in topological apply order so\\nreverse iteration gives reverse-apply order on delete + prune. Status\\nis persisted after reconciliation: on a fully-successful apply and\\nprune, it reflects the currently-applied set; on errors, it preserves\\nthe union of previously-known and newly-applied resources.\\n\\nMaxItems bounds the inventory so a runaway forEach expansion cannot push\\nthe Graph object past etcd's object-size limit (~1.5Mi) — which would fail\\nthe status write and, because teardown reads this list, jeopardize cleanup.\\nThe practical limiter is the per-node forEach cap\\n(runtime.DefaultMaxCollectionSize, default 1000); this ceiling is set well\\nabove any realistic aggregate (each entry is a few short strings + a UID,\\nso 5000 entries stays comfortably under the etcd limit even during the\\nwrite-ahead phase, which transiently holds previous ∪ next).\",\"items\":{\"description\":\"ManagedResource is a lightweight pointer to a cluster resource the Graph\\ncontroller has applied. The tuple of (APIVersion, Kind, Namespace, Name)\\nidentifies the resource; UID is captured post-apply for safe deletion\\n(preconditioned on UID so we never delete an impostor recreated by some\\nother actor between apply and prune).\",\"properties\":{\"apiVersion\":{\"description\":\"APIVersion of the resource (\\\"apps/v1\\\", \\\"v1\\\", ...).\",\"type\":\"string\"},\"kind\":{\"description\":\"Kind of the resource (\\\"Deployment\\\", \\\"ConfigMap\\\", ...).\",\"type\":\"string\"},\"name\":{\"description\":\"Name of the resource.\",\"type\":\"string\"},\"namespace\":{\"description\":\"Namespace of the resource. Empty for cluster-scoped resources.\",\"type\":\"string\"},\"nodeID\":{\"description\":\"NodeID is the Graph node that produced this resource. Multiple\\nresources may share a NodeID for forEach expansions.\",\"type\":\"string\"},\"uid\":{\"description\":\"UID returned by the API server when the resource was applied. Used\\nas a delete precondition so we don't remove a resource that was\\ndeleted-and-recreated out of band between apply and prune.\\n\\nA UID-less entry is a not-yet-observed intent (e.g. a pre-apply\\nwrite-ahead entry declared but not yet applied this cycle). Recovery\\nrequires a readable object with this Graph's template manager and no\\npeer template manager; deletion uses that snapshot's UID and\\nresourceVersion as preconditions.\",\"type\":\"string\"}},\"required\":[\"apiVersion\",\"kind\",\"name\",\"nodeID\"],\"type\":\"object\"},\"maxItems\":5000,\"type\":\"array\"}},\"type\":\"object\"}},\"required\":[\"spec\"],\"type\":\"object\"}"
+  },
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
+}
