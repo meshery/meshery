@@ -157,7 +157,7 @@ digitalocean-icons/
   <li><code>category.name</code> and <code>subCategory</code> - e.g. <code>Platform</code> / <code>Cloud Provider</code>.</li>
   <li><code>registrant.kind</code> - e.g. <code>meshery</code>.</li>
   <li><code>description</code> - a short summary of what the model provides.</li>
-  <li><code>metadata.svgColor</code> and <code>metadata.svgWhite</code> - the model's display icon, as an inline SVG string (strip any <code>&lt;?xml ...?&gt;</code> header and collapse the SVG to a single line).</li>
+  <li><code>metadata.svgColor</code> and <code>metadata.svgWhite</code> - the model's display icon, as a JSON-escaped SVG string. The SVG's attribute quotes make raw markup invalid JSON, so generate the value with <code>sed '/^&lt;?xml/d' icon.svg | jq -Rs .</code>, which drops any <code>&lt;?xml ...?&gt;</code> header and escapes quotes and newlines, and paste the whole output, including its surrounding quotes.</li>
   <li><code>metadata.isAnnotation</code> - set to <code>true</code> for an annotation-only (visual diagramming) model.</li>
 </ul>
 
@@ -166,7 +166,7 @@ digitalocean-icons/
 <ul>
   <li><code>displayName</code> - the human-readable name shown in the UI (e.g. <code>DO Logo Icon Blue</code>).</li>
   <li><code>component.kind</code> - the unique identifier for the component (e.g. <code>do-logo-icon-blue</code>).</li>
-  <li><code>styles.svgColor</code> and <code>styles.svgWhite</code> - the component's inline SVG.</li>
+  <li><code>styles.svgColor</code> and <code>styles.svgWhite</code> - the component's SVG, JSON-escaped the same way.</li>
   <li><code>metadata.isAnnotation</code> - <code>true</code> for annotation components.</li>
 </ul>
 
