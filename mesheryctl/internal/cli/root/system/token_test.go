@@ -760,12 +760,19 @@ tokens:
 			t.Run(tc.name, func(t *testing.T) {
 				configPath := setupTempConfig(t)
 				b := utils.SetupMeshkitLoggerTesting(t, false)
+				var errBuf bytes.Buffer
+				utils.Log.UpdateErrorLogOutput(&errBuf)
+				t.Cleanup(func() {
+					utils.Log.UpdateErrorLogOutput(os.Stderr)
+				})
 				SystemCmd.SetOut(b)
 				SystemCmd.SetArgs(tc.args)
 				err := SystemCmd.Execute()
 				if tc.wantErr {
 					assert.Error(t, err)
 					assert.Equal(t, ErrAssignTokenCode, meshkiterrors.GetCode(err))
+					assert.Contains(t, errBuf.String(), "Short Description: Unable to assign token to context")
+					assert.Contains(t, errBuf.String(), "Suggested Remediation:")
 					cfg := readMeshConfig(t, configPath)
 					assert.Equal(t, "token-local", cfg.Contexts["local"].Token)
 					assert.Equal(t, "token-local2", cfg.Contexts["local2"].Token)
@@ -812,11 +819,18 @@ tokens:
 		t.Run("create --set with unknown -c rolls back token", func(t *testing.T) {
 			configPath := setupTempConfig(t)
 			b := utils.SetupMeshkitLoggerTesting(t, false)
+			var errBuf bytes.Buffer
+			utils.Log.UpdateErrorLogOutput(&errBuf)
+			t.Cleanup(func() {
+				utils.Log.UpdateErrorLogOutput(os.Stderr)
+			})
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs([]string{"token", "create", "orphan-tok", "-f", "orphan.json", "--set", "-c", "missing-ctx"})
 			err := SystemCmd.Execute()
 			assert.Error(t, err)
 			assert.Equal(t, ErrAssignTokenCode, meshkiterrors.GetCode(err))
+			assert.Contains(t, errBuf.String(), "Short Description: Unable to assign token to context")
+			assert.Contains(t, errBuf.String(), "Suggested Remediation:")
 			assert.Contains(t, err.Error(), "orphan-tok")
 			assert.Contains(t, err.Error(), "missing-ctx")
 			cfg := readMeshConfig(t, configPath)

@@ -90,6 +90,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 		if set {
 			targetContext := resolveTokenTargetContext(cmd, configPath)
 			if err = assignTokenWithRollback(tokenName, configPath, targetContext, config.SetTokenToConfig, config.DeleteTokenFromConfig); err != nil {
+				utils.Log.Error(err)
 				return err
 			}
 			utils.Log.Info(fmt.Sprintf("Token: %s set on context %s.", tokenName, targetContext))
@@ -130,7 +131,9 @@ mesheryctl system token set [token-name]
 		targetContext := resolveTokenTargetContext(cmd, configPath)
 
 		if err = config.SetTokenToConfig(tokenName, configPath, targetContext); err != nil {
-			return ErrAssignToken(err, tokenName, targetContext)
+			assignErr := ErrAssignToken(err, tokenName, targetContext)
+			utils.Log.Error(assignErr)
+			return assignErr
 		}
 		utils.Log.Infof("Token %s set for context %s", tokenName, targetContext)
 		return nil
