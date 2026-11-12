@@ -60,7 +60,12 @@ vi.mock('@/components/layout/NotificationCenter', () => ({
 }));
 
 import { NotificationCenterContext } from '@/components/layout/NotificationCenter';
-import { FinishDeploymentStep, DEPLOYMENT_EVENT_TIMEOUT_MS } from './DeployStepper';
+import {
+  FinishDeploymentStep,
+  DEPLOYMENT_EVENT_TIMEOUT_MS,
+  EVENT_CLOCK_SKEW_TOLERANCE_MS,
+  isStaleDeploymentEvent,
+} from './DeployStepper';
 
 describe('FinishDeploymentStep', () => {
   let eventCallback: ((event: any) => void) | null = null;
@@ -128,7 +133,8 @@ describe('FinishDeploymentStep', () => {
   const errData = { error: 'Failed to deploy design', code: 'meshery-server-1234' };
   it.each([
     [401, 'Auth', 'Your session has expired. Please log in again.', 'Log In', true],
-    [403, 'Forbidden', 'Your session has expired. Please log in again.', 'Log In', true],
+    // A 403 is a signed-in user without permission, not an expired session.
+    [403, 'Forbidden', 'Error 403: Forbidden', 'Retry', false],
     [500, errData, 'Error 500: Failed to deploy design', 'Retry', false],
     ['PARSER', errData, 'Error 502: Failed to deploy design', 'Retry', false],
     ['NO_FIELD', { code: '1' }, 'Error 500: An unexpected error occurred.', 'Retry', false],
@@ -149,7 +155,50 @@ describe('FinishDeploymentStep', () => {
       vi.stubGlobal('location', { host: 'localhost:3000', href: 'http://localhost:3000/' });
       fireEvent.click(screen.getByText('Log In'));
       expect(window.location.href).toBe('/user/login');
+    } else {
+      expect(screen.queryByText('Log In')).not.toBeInTheDocument();
+      expect(screen.queryByText(/session has expired/i)).not.toBeInTheDocument();
     }
+  });
+
+  it('ignores a late event from an earlier attempt after Retry and shows the current one', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-12T10:00:00Z'));
+    let calls = 0;
+    const perform = vi.fn(() =>
+      calls++ === 0
+        ? Promise.reject({ status: 504, data: { error: 'Gateway Timeout' } })
+        : new Promise(() => {}),
+    );
+    renderWithContext({ perform_deployment: perform });
+    await act(async () => {});
+    expect(screen.getByText('Error 504: Gateway Timeout')).toBeInTheDocument();
+
+    vi.setSystemTime(new Date('2026-11-12T10:00:30Z'));
+    fireEvent.click(screen.getByText('Retry'));
+    expect(perform).toHaveBeenCalledTimes(2);
+
+    // The server finished attempt 1 after the gateway gave up on it.
+    emit({ actedUpon: 'd-1', description: 'Attempt 1', createdAt: '2026-11-12T10:00:20Z' });
+    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+    expect(screen.queryByTestId('deployment-summary')).not.toBeInTheDocument();
+
+    emit({ actedUpon: 'd-1', description: 'Attempt 2', createdAt: '2026-11-12T10:00:31Z' });
+    expect(screen.getByTestId('deployment-summary')).toHaveTextContent('Attempt 2');
+  });
+
+  it.each([
+    ['created after the attempt started', '2026-11-12T10:00:01.000Z', false],
+    ['created within the clock-skew allowance before it', '2026-11-12T09:59:58.500Z', false],
+    ['created earlier than the clock-skew allowance', '2026-11-12T09:59:57.999Z', true],
+    ['without createdAt', undefined, false],
+    ['with an unparseable createdAt', 'not-a-date', false],
+  ])('isStaleDeploymentEvent: an event %s', (_name, createdAt, stale) => {
+    const attemptStartedAt = Date.parse('2026-11-12T10:00:00.000Z');
+    expect(attemptStartedAt - EVENT_CLOCK_SKEW_TOLERANCE_MS).toBe(
+      Date.parse('2026-11-12T09:59:58.000Z'),
+    );
+    expect(isStaleDeploymentEvent({ createdAt }, attemptStartedAt)).toBe(stale);
   });
 
   it('handles timeout: fires after rerender with new perform_deployment, opens notification center, and late event recovers', async () => {

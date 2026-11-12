@@ -43,6 +43,20 @@ import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 export const DEPLOYMENT_EVENT_TIMEOUT_MS = 90000;
 
+// An event's createdAt is stamped by the server's clock while an attempt's
+// start time comes from the browser's, so an event is treated as stale only
+// when it predates the attempt by more than this allowance for clock skew.
+export const EVENT_CLOCK_SKEW_TOLERANCE_MS = 2000;
+
+// isStaleDeploymentEvent reports whether a server event was created before the
+// deployment attempt that started at attemptStartedAt, such as the late event
+// of an earlier attempt that arrives after Retry. An event without a parseable
+// createdAt is never treated as stale.
+export const isStaleDeploymentEvent = (event: any, attemptStartedAt: number) => {
+  const createdAt = Date.parse(event?.createdAt);
+  return Number.isFinite(createdAt) && createdAt < attemptStartedAt - EVENT_CLOCK_SKEW_TOLERANCE_MS;
+};
+
 export const ValidateContent = {
   btnText: 'Next',
   cancel: true,
@@ -85,6 +99,9 @@ export const FinishDeploymentStep = ({
   const eventReceivedRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const performRef = useRef(perform_deployment);
+  // When the current attempt started; events created before it belong to an
+  // earlier attempt and are ignored.
+  const attemptStartedAtRef = useRef(0);
 
   const startTimer = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -98,6 +115,7 @@ export const FinishDeploymentStep = ({
   }, []);
 
   const sendDeploymentRequest = useCallback(async () => {
+    attemptStartedAtRef.current = Date.now();
     setIsDeploying(true);
     setDeployError(null);
     setIsTimedOut(false);
@@ -126,9 +144,11 @@ export const FinishDeploymentStep = ({
                   : '';
       const s = err?.originalStatus ?? err?.status;
       const status = typeof s === 'number' ? s : undefined;
+      // Only a 401 means the session expired. A 403 is a signed-in user who
+      // lacks permission, so it is reported like any other HTTP error.
       setDeployError({
         status,
-        isAuthError: status === 401 || status === 403,
+        isAuthError: status === 401,
         message: msg,
       });
       return;
@@ -172,7 +192,11 @@ export const FinishDeploymentStep = ({
         const matchesDesign =
           serverEvent.actedUpon === design?.id || serverEvent.metadata?.designId === design?.id;
 
-        if (matchesDesign && serverEvent.action === deployment_type) {
+        if (
+          matchesDesign &&
+          serverEvent.action === deployment_type &&
+          !isStaleDeploymentEvent(serverEvent, attemptStartedAtRef.current)
+        ) {
           eventReceivedRef.current = true;
           pendingRef.current = false;
           if (timerRef.current) clearTimeout(timerRef.current);
