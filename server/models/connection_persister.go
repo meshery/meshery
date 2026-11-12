@@ -13,6 +13,7 @@ import (
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/database"
 	schemasConnection "github.com/meshery/schemas/models/v1beta3/connection"
+	schemasEnv "github.com/meshery/schemas/models/v1beta3/environment"
 	"gorm.io/gorm"
 )
 
@@ -210,6 +211,8 @@ func (cp *ConnectionPersister) SaveConnection(connection *connections.Connection
 	return connection, err
 }
 
+// DeleteConnectionById deletes a connection by its ID.
+// Any related Kubernetes context and environment connection mappings are also removed.
 func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*connections.Connection, error) {
 	connection := connections.Connection{}
 	err := cp.DB.Where("id = ?", connectionID).First(&connection).Error
@@ -223,7 +226,25 @@ func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*co
 		// never loaded.
 		return nil, ErrDBRead(err)
 	}
-	err = cp.DB.Delete(connection).Error
+	// A Kubernetes connection's context row lives in its own table, and
+	// LoadAllK8sContext lists every row of it. Left behind, the context keeps
+	// being probed by the Kubernetes middlewares after its connection is gone,
+	// and every probe records a "Failed to retrieve the connection" event. The
+	// connection and its context therefore go together or not at all.
+	err = cp.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Delete(connection).Error; err != nil {
+			return err
+		}
+		if tx.Migrator().HasTable(&schemasEnv.EnvironmentConnectionMapping{}) {
+			if err := tx.Where("connection_id = ?", connection.ID.String()).Delete(&schemasEnv.EnvironmentConnectionMapping{}).Error; err != nil {
+				return err
+			}
+		}
+		if connection.Kind != "kubernetes" {
+			return nil
+		}
+		return tx.Where("connection_id = ?", connection.ID.String()).Delete(&K8sContext{}).Error
+	})
 	if err != nil {
 		return nil, ErrDBDelete(err, cp.fetchUserDetails().ID.String())
 	}
@@ -250,22 +271,29 @@ func (cp *ConnectionPersister) UpdateConnectionStatusByID(connectionID core.Uuid
 	return &updatedConnection, nil
 }
 
+// UpdateConnectionByID persists updates to an existing connection while
+// preserving its original created_at timestamp, and returns the stored row.
 func (cp *ConnectionPersister) UpdateConnectionByID(connection *connections.Connection) (*connections.Connection, error) {
-	err := cp.DB.Save(connection).Error
-	if err != nil {
-		return nil, ErrDBPut(err)
+	res := cp.DB.Model(connection).Select("*").Omit("created_at").Updates(connection)
+	if res.Error != nil {
+		return nil, ErrDBPut(res.Error)
+	}
+	if res.RowsAffected == 0 {
+		if err := cp.DB.Save(connection).Error; err != nil {
+			return nil, ErrDBPut(err)
+		}
 	}
 
 	updatedConnection := connections.Connection{}
-	err = cp.DB.Model(&updatedConnection).Where("id = ?", connection.ID).First(&updatedConnection).Error
+	err := cp.DB.Model(&updatedConnection).Where("id = ?", connection.ID).First(&updatedConnection).Error
 	if err != nil {
 		return nil, ErrDBRead(err)
 	}
+	*connection = updatedConnection
 	return connection, nil
 }
 
-// Get connection by ID
-// If kind is provided filter with kind too
+// GetConnection gets a connection by ID. If kind is provided, it also filters by kind.
 func (cp *ConnectionPersister) GetConnection(id core.Uuid, kind string) (*connections.Connection, error) {
 	connection := connections.Connection{}
 	query := cp.DB.Where("id = ?", id)

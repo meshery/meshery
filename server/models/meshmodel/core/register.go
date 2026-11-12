@@ -56,10 +56,16 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	userUUID := uuid.FromStringOrNil(userID)
 
 	man, err := GetK8sMeshModelComponents(config)
+	genErr := err
 	eventMetadata := make(map[string]interface{}, 0)
 	ctx := models.K8sContextsFromKubeconfig(*provider, userID, ec, config, &mesheryInstanceID, eventMetadata, log)
-	if err != nil {
-		return ErrCreatingKubernetesComponents(err, ctxID)
+	if genErr != nil {
+		if len(man) == 0 {
+			return ErrCreatingKubernetesComponents(genErr, ctxID)
+		}
+		if log != nil {
+			log.Warn(ErrCreatingKubernetesComponents(genErr, ctxID))
+		}
 	}
 	if man == nil {
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
@@ -89,18 +95,31 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	if err != nil {
 		return err
 	}
-	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromOwner(userUUID).WithSeverity(events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)).WithMetadata(map[string]interface{}{
+
+	eventMeta := map[string]interface{}{
 		"doc": "https://docs.meshery.io/tasks/lifecycle-management",
-	}).Build()
+	}
+	eventSeverity := events.Informational
+	eventDescription := fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)
+	if genErr != nil {
+		eventSeverity = events.Warning
+		eventDescription = fmt.Sprintf("%d Kubernetes components registered with warnings for %s", count, ctxName)
+		eventMeta["partial"] = true
+		eventMeta["warning"] = genErr.Error()
+	}
+
+	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromOwner(userUUID).WithSeverity(eventSeverity).WithDescription(eventDescription).WithMetadata(eventMeta).Build()
 	_, err = helpers.FailedEventCompute("Kubernetes", mesheryInstanceID, provider, userID, ec)
 	if err != nil {
 		return err
 	}
 	//if want to log we can use the above function in future to log the error in terminal.
 
-	_ = (*provider).PersistSystemEvent(*event)
-	ec.Publish(userUUID, event)
-	return
+	_ = models.PersistAndPublishSystemEvent(*provider, ec, userUUID, event)
+	if genErr != nil {
+		return models.NewErrPartialRegistration(genErr)
+	}
+	return nil
 }
 
 func writeK8sMetadata(comp *component.ComponentDefinition, reg *registry.RegistryManager) {
@@ -132,10 +151,15 @@ type Entry struct {
 	URL string `json:"serverRelativeURL"`
 }
 
-func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
+type apiResult struct {
+	path    string
+	content []byte
+}
+
+func mergeAllAPIResults(content []byte, cli *kubernetes.Client) []apiResult {
 	var res OpenAPIV3Response
 	_ = json.Unmarshal(content, &res)
-	m := make([][]byte, 0)
+	m := make([]apiResult, 0)
 	for k, path := range res.Paths {
 		if !strings.HasPrefix(k, "api") {
 			continue
@@ -146,12 +170,44 @@ func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
 		if err != nil {
 			return nil
 		}
-		m = append(m, content)
+		apiPath := path.URL
+		if apiPath == "" {
+			apiPath = k
+		}
+		m = append(m, apiResult{
+			path:    apiPath,
+			content: content,
+		})
 	}
 	return m
 }
 
-// move to meshmodel
+// extractCRDsFromManifests extracts CRD schemas from manifest responses, preserving
+// the API path for any failures so errors identify the specific failing API group.
+func extractCRDsFromManifests(contents []apiResult, arrAPIResources []string) ([]crdResponse, error) {
+	var crds []crdResponse
+	var errs []error
+	for _, res := range contents {
+		extractedCRDs, err := getCRDsFromManifest(string(res.content), arrAPIResources)
+		if err != nil {
+			if res.path != "" {
+				errs = append(errs, fmt.Errorf("%s: %w", res.path, err))
+			} else {
+				errs = append(errs, err)
+			}
+			continue
+		}
+		crds = append(crds, extractedCRDs...)
+	}
+	if len(errs) > 0 {
+		return crds, patterncore.ErrGetK8sComponents(errors.Join(errs...))
+	}
+	return crds, nil
+}
+
+// GetK8sMeshModelComponents fetches Kubernetes CRDs and OpenAPI definitions using the given kubeconfig and converts them into MeshModel component definitions.
+//
+// TODO: move to meshmodel
 func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {
@@ -193,10 +249,7 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 		kindToNamespace[api.Kind] = api.Namespaced
 		arrAPIResources = append(arrAPIResources, res)
 	}
-	var crds []crdResponse
-	for _, content := range contents {
-		crds = append(crds, getCRDsFromManifest(string(content), arrAPIResources)...)
-	}
+	crds, extractErr := extractCRDsFromManifests(contents, arrAPIResources)
 	components := make([]component.ComponentDefinition, 0)
 	for _, crd := range crds {
 		m := make(map[string]interface{})
@@ -234,6 +287,9 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 		}
 		components = append(components, c)
 	}
+	if extractErr != nil {
+		return components, extractErr
+	}
 	return components, nil
 }
 
@@ -243,11 +299,11 @@ const namespacedKey = "isNamespaced"
 func getResolvedManifest(manifest string) (string, error) {
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
-	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
-	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	if err != nil {
 		return "", err
 	}
+	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
+	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	resol := manifests.ResolveOpenApiRefs{}
 	cache := make(map[string][]byte)
 	resolved, err := resol.ResolveReferences([]byte(manifest), definitions, cache)
@@ -265,27 +321,28 @@ type crdResponse struct {
 	schema     string
 }
 
-func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdResponse {
+func getCRDsFromManifest(manifest string, arrAPIResources []string) ([]crdResponse, error) {
 	var err error
 	res := make([]crdResponse, 0)
 	manifest, err = getResolvedManifest(manifest)
 	if err != nil {
-		fmt.Printf("%v", err)
-		return nil
+		return nil, fmt.Errorf("failed to resolve manifest: %w", err)
 	}
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract cue json from manifest: %w", err)
+	}
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
 	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
-	if err != nil {
-		return nil
-	}
 	for _, name := range arrAPIResources {
 		resource := strings.ToLower(name)
 		fields, err := definitions.Fields()
 		if err != nil {
-			fmt.Printf("%v\n", err)
-			continue
+			if !definitions.Exists() {
+				continue
+			}
+			return nil, fmt.Errorf("failed to get schema fields: %w", err)
 		}
 		for fields.Next() {
 			fieldVal := fields.Value()
@@ -338,7 +395,7 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 			}
 		}
 	}
-	return res
+	return res, nil
 }
 
 // TODO: To be moved in meshkit

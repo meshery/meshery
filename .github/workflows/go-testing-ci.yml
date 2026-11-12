@@ -108,7 +108,7 @@ jobs:
         if: ${{ !cancelled() && github.event_name == 'push' }}
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: "[Meshery] Sync Go Unit Test Results - ${GITHUB_SHA}"
+          commit_message: "[Meshery] Sync Go Unit Test Results - ${{ github.sha }}"
           commit_options: "--signoff"
           repository: qa
           commit_user_name: meshery-ci
@@ -143,8 +143,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 2
-      - name: Install lynx for xdg-open support
-        run: sudo apt-get install lynx
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
@@ -192,7 +190,7 @@ jobs:
         if: ${{ !cancelled() && github.event_name == 'push' }}
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: "[Mesheryctl] Sync Go Unit Test Results - ${GITHUB_SHA}"
+          commit_message: "[Mesheryctl] Sync Go Unit Test Results - ${{ github.sha }}"
           commit_options: "--signoff"
           repository: qa
           commit_user_name: meshery-ci
@@ -210,7 +208,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
-        run: sudo apt-get install lynx
+        run: sudo apt-get update && sudo apt-get install -y lynx || true
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
@@ -236,7 +234,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
-        run: sudo apt-get install lynx
+        run: sudo apt-get update && sudo apt-get install -y lynx || true
       - uses: actions/download-artifact@v7
         with:
           name: mesheryctl-binary

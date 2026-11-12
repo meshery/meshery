@@ -6,6 +6,7 @@ import {
   Button,
   CustomColumnVisibilityControl,
   CustomTooltip,
+  DeleteIcon,
   EditIcon,
   IconButton,
   Modal,
@@ -32,6 +33,7 @@ import {
   useGetPerformanceProfilesQuery,
 } from '@/rtk-query/performance-profile';
 import { useNotification } from '@/utils/hooks/useNotification';
+import { formatApiError } from '@/utils/helpers/meshkitError';
 import { updateVisibleColumns } from '@/utils/responsive-column';
 import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
@@ -59,7 +61,7 @@ import type { GetPerformanceProfilesApiResponse } from '@meshery/schemas/meshery
 type PerformanceProfileItem = GetPerformanceProfilesApiResponse['profiles'][number];
 type SelectablePerformanceProfile = PerformanceProfileItem & { runTest?: boolean };
 
-function PerformanceProfile({ handleDelete }) {
+function PerformanceProfile() {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     'grid',
@@ -137,16 +139,18 @@ function PerformanceProfile({ handleDelete }) {
         notify({ message: 'Performance Profile Deleted!', event_type: EVENT_TYPES.SUCCESS });
         refetchProfiles();
       })
-      .catch(() => handleError('Failed To Delete Profile'));
+      .catch(handleError('Failed To Delete Profile'));
   }
 
+  // Curried: call sites pass the failing operation and hand the raw error to
+  // the returned callback, e.g. `.catch(handleError('Failed To Delete Profile'))`.
   function handleError(msg) {
     return function (error) {
       dispatch(updateProgressAction({ showProgress: false }));
+      const { message } = formatApiError(error, msg);
       notify({
-        message: `${msg}: ${error}`,
+        message,
         event_type: EVENT_TYPES.ERROR,
-        details: error.toString(),
       });
     };
   }
@@ -291,7 +295,7 @@ function PerformanceProfile({ handleDelete }) {
                   <IconButton
                     onClick={(ev) => {
                       ev.stopPropagation();
-                      setSelectedProfile(testProfiles[tableMeta.rowIndex]);
+                      setProfileForModal({ ...testProfiles[tableMeta.rowIndex] });
                     }}
                     aria-label="edit"
                     permissionKey={Keys.PerformanceManagementEditPerformanceTest}
@@ -375,14 +379,68 @@ function PerformanceProfile({ handleDelete }) {
       },
     },
 
-    onRowsDelete: async function handleDeleteRow(row) {
-      let response = await showModal(Object.keys(row.lookup).length);
-      if (response === 'DELETE') {
-        const pids = Object.keys(row.lookup).map((idx) => testProfiles[idx]?.id);
-        pids.forEach((pid) => handleDelete(pid));
-      } else {
-        refetchProfiles();
-      }
+    customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
+      const handleBulkDelete = async () => {
+        const pids = selectedRows.data.map(({ index }) => testProfiles[index]?.id).filter(Boolean);
+
+        if (pids.length === 0) return;
+
+        let response = await showModal(pids.length);
+        if (response === 'DELETE') {
+          dispatch(updateProgressAction({ showProgress: true }));
+          Promise.allSettled(pids.map((pid) => deletePerformanceProfile({ id: pid }).unwrap()))
+            .then((results) => {
+              let successCount = 0;
+              let failureCount = 0;
+              let firstFailureReason;
+
+              results.forEach((result) => {
+                if (result.status === 'fulfilled') {
+                  successCount++;
+                } else {
+                  if (failureCount === 0) firstFailureReason = result.reason;
+                  failureCount++;
+                }
+              });
+
+              if (successCount > 0) {
+                notify({
+                  message: `${successCount} Performance Profile${successCount > 1 ? 's' : ''} Deleted!`,
+                  event_type: EVENT_TYPES.SUCCESS,
+                });
+              }
+              if (failureCount > 0) {
+                const summary = `Failed to delete ${failureCount} Profile${failureCount > 1 ? 's' : ''}`;
+                // Include the server's reason (from the first failure) when there is one.
+                const { message: reason } = formatApiError(firstFailureReason, summary);
+                notify({
+                  message: reason === summary ? summary : `${summary}: ${reason}`,
+                  event_type: EVENT_TYPES.ERROR,
+                });
+              }
+            })
+            .finally(() => {
+              dispatch(updateProgressAction({ showProgress: false }));
+              setSelectedRows([]);
+              refetchProfiles();
+            });
+        }
+      };
+
+      return (
+        <div style={{ marginRight: '24px' }}>
+          <CustomTooltip title={'Delete'}>
+            <div>
+              <IconButton
+                onClick={handleBulkDelete}
+                permissionKey={Keys.PerformanceManagementDeletePerformanceTest}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </div>
+          </CustomTooltip>
+        </div>
+      );
     },
 
     onTableChange: (action, tableState) => {
@@ -469,6 +527,7 @@ function PerformanceProfile({ handleDelete }) {
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
+                setPage(0);
               }}
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
@@ -491,6 +550,7 @@ function PerformanceProfile({ handleDelete }) {
             deleteHandler={deleteProfile}
             setProfileForModal={setProfileForModal}
             pages={Math.ceil(count / pageSize)}
+            page={page}
             setPage={setPage}
             testHandler={setSelectedProfile}
           />
@@ -530,6 +590,7 @@ function PerformanceProfile({ handleDelete }) {
           maxWidth="md"
         >
           <MesheryPerformanceComponent
+            key={profileForModal?.id}
             loadAsPerformanceProfile
             performanceProfileID={profileForModal?.id}
             profileName={profileForModal?.name}

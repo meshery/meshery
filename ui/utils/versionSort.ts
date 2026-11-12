@@ -15,16 +15,16 @@ export default function getMostRecentVersion(versionList) {
   const betaList = [];
 
   versionList.forEach((apiVersion) => {
-    const isStable = /^v[0-9]$/.test(apiVersion); // returns true if matches v1-v9
     const isAlpha = apiVersion.includes('alpha'); // returns true if matches alpha in string
     const isBeta = apiVersion.includes('beta'); // returns true if matches beta in string
+    const isStable = !isAlpha && !isBeta && /^v?[0-9]+(\.[0-9]+)*$/i.test(apiVersion);
 
     isStable && stableList.push(apiVersion);
     isAlpha && alphaList.push(apiVersion);
     isBeta && betaList.push(apiVersion);
   });
 
-  stableList.sort().reverse();
+  stableList.sort(versionSortComparatorFn).reverse();
   alphaList.sort().reverse();
   betaList.sort().reverse();
 
@@ -33,7 +33,7 @@ export default function getMostRecentVersion(versionList) {
 }
 
 /**
- * Sorts version in "INCREASING ORDER", apply reverse if wanted to sort in descreasing order
+ * Sorts version in "INCREASING ORDER", apply reverse if wanted to sort in decreasing order
  *
  * @param {string} versionA
  * @param {string} versionB
@@ -44,28 +44,52 @@ export function versionSortComparatorFn(versionA, versionB) {
     return;
   }
 
-  if (versionA === WILDCARD_V || versionB === WILDCARD_V) {
-    // wildcard support
+  if (versionA === versionB) {
+    return 0;
+  }
+
+  if (versionA === WILDCARD_V) {
     return -1;
+  }
+
+  if (versionB === WILDCARD_V) {
+    return 1;
   }
 
   const verA = versionA.split('.');
   const verB = versionB.split('.');
+  const maxLen = Math.max(verA.length, verB.length);
 
-  for (let i = 0; i < verA.length && i < verB.length; i++) {
-    let vA = verA[i];
-    let vB = verB[i];
+  for (let i = 0; i < maxLen; i++) {
+    let segA = verA[i];
+    let segB = verB[i];
+
     // index 0 is the start of the version, remove v if present for proper sorting
-    if (i == 0) {
-      vA = removeVFromVersion(vA);
-      vB = removeVFromVersion(vB);
+    if (i === 0) {
+      if (segA !== undefined) segA = removeVFromVersion(segA);
+      if (segB !== undefined) segB = removeVFromVersion(segB);
     }
-    // move to next comparison
-    if (vA - vB === 0) {
-      continue;
+
+    const numA = segA !== undefined ? Number(segA) : 0;
+    const numB = segB !== undefined ? Number(segB) : 0;
+
+    const diff = numA - numB;
+    if (diff !== 0 && !Number.isNaN(diff)) {
+      return diff;
     }
-    return vA - vB;
+    if (Number.isNaN(diff)) {
+      const cmp = String(segA ?? '').localeCompare(String(segB ?? ''));
+      if (cmp !== 0) {
+        return cmp;
+      }
+    }
   }
+
+  if (verA.length !== verB.length) {
+    return verA.length - verB.length;
+  }
+
+  return 0;
 }
 
 function removeVFromVersion(version) {
@@ -132,10 +156,15 @@ function groupModelsByVersion(models) {
   models.forEach((model) => {
     const modelMapCurr = modelMap[model.name];
     if (modelMapCurr) {
-      modelMap[model.name].version = [...new Set([...modelMapCurr.version, model.version])]; // remove duplicate entries for version
+      modelMap[model.name] = {
+        ...modelMapCurr,
+        version: [...new Set([...modelMapCurr.version, model.version])],
+      };
     } else {
-      model.version = [model.version]; // the version is a string, to derive consistency the version is changed to array
-      modelMap[model.name] = model;
+      modelMap[model.name] = {
+        ...model,
+        version: [model.version],
+      };
     }
   });
 

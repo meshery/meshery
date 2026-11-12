@@ -1,0 +1,4061 @@
+{
+  "errors": [
+    {
+      "code": "mesheryctl-1001",
+      "moniker": "ErrImportDesignCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1001",
+      "severity": "fatal",
+      "shortDescription": "Unable to import design",
+      "probableCause": [
+        "Invalid design file"
+      ],
+      "suggestedRemediation": [
+        "Check your design URL/file path"
+      ]
+    },
+    {
+      "code": "mesheryctl-1002",
+      "moniker": "ErrInValidSourceCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1002",
+      "severity": "fatal",
+      "longDescription": "Invalid design source type was provided",
+      "probableCause": [
+        "Provided design source type (-s) is invalid"
+      ],
+      "suggestedRemediation": [
+        "Ensure you pass a valid source type"
+      ]
+    },
+    {
+      "code": "mesheryctl-1003",
+      "moniker": "ErrDeployDesignCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1003",
+      "severity": "alert",
+      "shortDescription": "Deploying design failed",
+      "longDescription": "Unable to deploy design due to error during the processing",
+      "probableCause": [
+        "File path or design name not provided.",
+        "Meshery server failed to interact with the Kubernetes cluster.",
+        "There was an error connecting to the selected target platform (i.e. Kubernetes cluster(s))..This connection might not be assigned to the selected environment."
+      ],
+      "suggestedRemediation": [
+        "Provide a valid file path/design name.",
+        "Ensure the Meshery server can interact with the Kubernetes cluster.",
+        "Check if the selected target platform is assigned to the current environment."
+      ]
+    },
+    {
+      "code": "mesheryctl-1005",
+      "moniker": "ErrUndeployDesignCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1005",
+      "severity": "alert",
+      "shortDescription": "Undeploying design failed",
+      "longDescription": "Unable to undeploy design due to empty path",
+      "probableCause": [
+        "File path or design name not provided."
+      ],
+      "suggestedRemediation": [
+        "Provide a file path/design name.",
+        "Usage: mesheryctl design undeploy -f [filepath]\nExample: mesheryctl design undeploy -f ./pattern.yml\nDescription: Undeploy design"
+      ]
+    },
+    {
+      "code": "mesheryctl-1006",
+      "moniker": "ErrDesignFlagCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1006",
+      "severity": "alert",
+      "shortDescription": "Invalid command",
+      "longDescription": "Wrong use of command flags",
+      "probableCause": [
+        "-a/all flag is being used while an design is specified"
+      ],
+      "suggestedRemediation": [
+        "-a/-all cannot be used when [design name|id] is specified"
+      ]
+    },
+    {
+      "code": "mesheryctl-1007",
+      "moniker": "ErrDesignManifestCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1007",
+      "severity": "alert",
+      "shortDescription": "No file path detected",
+      "longDescription": "No manifest file path detected",
+      "probableCause": [
+        "Manifest path not provided"
+      ],
+      "suggestedRemediation": [
+        "Provide the path to the design manifest.",
+        "Usage: mesheryctl design import -f [file/url] -s [source-type]\nExample: mesheryctl design import -f ./pattern.yml -s \"Kubernetes Manifest\""
+      ]
+    },
+    {
+      "code": "mesheryctl-1008",
+      "moniker": "ErrInvalidMeshConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1008",
+      "severity": "alert",
+      "shortDescription": "Invalid Meshconfig",
+      "probableCause": [
+        "Loading the Invalid MeshConfig data caused error"
+      ],
+      "suggestedRemediation": [
+        "Make sure that your 'config.yaml' file in your '.meshery' is valid"
+      ]
+    },
+    {
+      "code": "mesheryctl-1009",
+      "moniker": "ErrUpdateConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1009",
+      "severity": "fatal",
+      "shortDescription": "Error in writing config",
+      "probableCause": [
+        "Unable to Update config file"
+      ],
+      "suggestedRemediation": [
+        "Ensure that you have the correct context in your meshconfig at `$HOME/.meshery/config.yaml`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1010",
+      "moniker": "ErrProcessingConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1010",
+      "severity": "alert",
+      "shortDescription": "Error processing config",
+      "longDescription": "Error processing config"
+    },
+    {
+      "code": "mesheryctl-1011",
+      "moniker": "ErrCreatingConfigFileCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1011",
+      "severity": "alert",
+      "shortDescription": "Unable to create config file",
+      "longDescription": "Unable to create config file"
+    },
+    {
+      "code": "mesheryctl-1012",
+      "moniker": "ErrAddingTokenToConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1012",
+      "severity": "alert",
+      "shortDescription": "Unable to add token to config",
+      "longDescription": "Unable to add token to config"
+    },
+    {
+      "code": "mesheryctl-1013",
+      "moniker": "ErrAddingContextToConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1013",
+      "severity": "alert",
+      "shortDescription": "Unable to add context to config",
+      "longDescription": "Unable to add context to config"
+    },
+    {
+      "code": "mesheryctl-1014",
+      "moniker": "ErrUnmarshallingConfigFileCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1014",
+      "severity": "alert",
+      "shortDescription": "Error processing json in config file",
+      "longDescription": "Error processing json in config file"
+    },
+    {
+      "code": "mesheryctl-1015",
+      "moniker": "ErrGettingRequestContextCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1015",
+      "severity": "fatal",
+      "shortDescription": "Unable to get request context",
+      "longDescription": "Unable to get request context"
+    },
+    {
+      "code": "mesheryctl-1016",
+      "moniker": "ErrUnmarshallingAPIDataCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1016",
+      "severity": "fatal",
+      "shortDescription": "Error processing json API data",
+      "longDescription": "Error processing json API data"
+    },
+    {
+      "code": "mesheryctl-1017",
+      "moniker": "ErrConnectingToServerCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1017",
+      "severity": "fatal",
+      "shortDescription": "Unable to communicate with Meshery server",
+      "longDescription": "Unable to communicate with Meshery server. See https://docs.meshery.io for help getting started with Meshery",
+      "suggestedRemediation": [
+        "See https://docs.meshery.io for help getting started with Meshery"
+      ]
+    },
+    {
+      "code": "mesheryctl-1018",
+      "moniker": "ErrDeleteFilterCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1018",
+      "severity": "alert",
+      "shortDescription": "Failed to delete filter",
+      "probableCause": [
+        "Unable to delete the specified filter"
+      ],
+      "suggestedRemediation": [
+        "Verify the filter exists using `mesheryctl filter list`"
+      ]
+    },
+    {
+      "code": "mesheryctl-1019",
+      "moniker": "ErrFetchFilterCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1019",
+      "severity": "alert",
+      "shortDescription": "Unable to Fetch Filter",
+      "probableCause": [
+        "Filter name or id doesn't exist"
+      ],
+      "suggestedRemediation": [
+        "Run `mesheryctl filter view -a` to view all available filters."
+      ]
+    },
+    {
+      "code": "mesheryctl-1020",
+      "moniker": "ErrGettingSessionDataCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1020",
+      "severity": "fatal",
+      "shortDescription": "Unable to fetch session data",
+      "probableCause": [
+        "Unable to get session from server"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1021",
+      "moniker": "ErrNoAdaptersCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1021",
+      "severity": "fatal",
+      "shortDescription": "Unable to validate adapter",
+      "longDescription": "Adapter for required mesh not found",
+      "probableCause": [
+        "Unable to fetch Mesh adapter, adapter not valid."
+      ],
+      "suggestedRemediation": [
+        "Run the appropriate Meshery Adapter for your specific use case. See https://docs.meshery.io/concepts/architecture/adapters for list of adapters"
+      ]
+    },
+    {
+      "code": "mesheryctl-1022",
+      "moniker": "ErrPromptCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1022",
+      "severity": "fatal",
+      "shortDescription": "Error while reading selected option",
+      "probableCause": [
+        "Unable to identify your selected component from the list"
+      ],
+      "suggestedRemediation": [
+        "Ensure you enter a component name"
+      ]
+    },
+    {
+      "code": "mesheryctl-1023",
+      "moniker": "ErrCreatingDeployRequestCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1023",
+      "severity": "fatal",
+      "shortDescription": "Error sending deploy request",
+      "probableCause": [
+        "There might be a connection failure with Meshery Server"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1024",
+      "moniker": "ErrCreatingDeployResponseRequestCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1024",
+      "severity": "fatal",
+      "shortDescription": "Failed to create a response",
+      "probableCause": [
+        "Error occurred while generating a response from deployed request"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1025",
+      "moniker": "ErrCreatingDeployResponseStreamCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1025",
+      "severity": "fatal",
+      "shortDescription": "Error creating deploy event response stream",
+      "probableCause": [
+        "Unable convert a connection to a stream of server sent events"
+      ],
+      "suggestedRemediation": [
+        "Ensure your connection is valid and verify the status of the Meshery server with `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1026",
+      "moniker": "ErrCreatingValidateResponseStreamCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1026",
+      "severity": "fatal",
+      "shortDescription": "Error creating validate event response stream",
+      "probableCause": [
+        "Meshery is not running or there is a network issue."
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1027",
+      "moniker": "ErrTimeoutWaitingForDeployResponseCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1027",
+      "severity": "fatal",
+      "shortDescription": "Timed out waiting for deploy event",
+      "longDescription": "Timed out waiting for deployment",
+      "probableCause": [
+        "Network error or wrong environment configurations"
+      ],
+      "suggestedRemediation": [
+        "Ensure your have a strong connection and the right environment configuration"
+      ]
+    },
+    {
+      "code": "mesheryctl-1028",
+      "moniker": "ErrFailedDeployingMeshCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1028",
+      "severity": "fatal",
+      "shortDescription": "Failed to deploy",
+      "longDescription": "Failed to deploy",
+      "probableCause": [
+        "Network error or wrong environment configurations"
+      ],
+      "suggestedRemediation": [
+        "Ensure your have a strong connection and the right environment configuration"
+      ]
+    },
+    {
+      "code": "mesheryctl-1029",
+      "moniker": "ErrCreatingValidateRequestCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1029",
+      "severity": "fatal",
+      "shortDescription": "Error sending Validate request",
+      "probableCause": [
+        "An HTTP error occurred due to network connection"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1030",
+      "moniker": "ErrCreatingValidateResponseRequestCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1030",
+      "severity": "fatal",
+      "shortDescription": "Error creating request for validate response",
+      "probableCause": [
+        "Unable to create response from request"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1031",
+      "moniker": "ErrTimeoutWaitingForValidateResponseCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1031",
+      "severity": "fatal",
+      "shortDescription": "Timed out waiting for validate response",
+      "longDescription": "Timed out waiting for validate response",
+      "probableCause": [
+        "Network error or wrong environment configurations"
+      ],
+      "suggestedRemediation": [
+        "Ensure your have a strong connection and the right environment configuration"
+      ]
+    },
+    {
+      "code": "mesheryctl-1032",
+      "moniker": "ErrSMIConformanceTestsFailedCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1032",
+      "severity": "fatal",
+      "shortDescription": "SMI conformance tests failed",
+      "longDescription": "SMI conformance tests failed",
+      "suggestedRemediation": [
+        "Join https://mesheryio.slack.com/archives/C010H0HE2E6"
+      ]
+    },
+    {
+      "code": "mesheryctl-1033",
+      "moniker": "ErrValidateAdapterCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1033",
+      "severity": "fatal",
+      "shortDescription": "Unable to validate adapter",
+      "probableCause": [
+        "Unable to fetch Mesh adapter, adapter not valid."
+      ],
+      "suggestedRemediation": [
+        "Enter a valid Mesh adapter."
+      ]
+    },
+    {
+      "code": "mesheryctl-1034",
+      "moniker": "ErrSendOperationCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1034",
+      "severity": "alert",
+      "shortDescription": "Unable to perform operation",
+      "probableCause": [
+        "Failed to perform an adapter operation due to network connection."
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and the status of Meshery Server via `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1035",
+      "moniker": "ErrValidMeshNameCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1035",
+      "severity": "alert",
+      "shortDescription": "Invalid mesh name",
+      "longDescription": "Unable to validate mesh name",
+      "probableCause": [
+        "The provided mesh name is not valid or is unsupported"
+      ],
+      "suggestedRemediation": [
+        "Enter a valid mesh name"
+      ]
+    },
+    {
+      "code": "mesheryctl-1036",
+      "moniker": "ErrWaitValidateResponseCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1036",
+      "severity": "fatal",
+      "shortDescription": "Unable to validate a response",
+      "probableCause": [
+        "Unable to create responses after verifying operation"
+      ],
+      "suggestedRemediation": [
+        "Ensure your connection is valid and verify the status of the Meshery server with `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1037",
+      "moniker": "ErrDesignsNotFoundCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1037",
+      "severity": "fatal",
+      "shortDescription": "Design Not Found",
+      "probableCause": [
+        "Design with the given name, ID or path is not present"
+      ],
+      "suggestedRemediation": [
+        "Please check if the given design name or ID is present via 'mesheryctl design list' or provide a valid file path"
+      ]
+    },
+    {
+      "code": "mesheryctl-1038",
+      "moniker": "ErrInvalidDesignFileCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1038",
+      "severity": "fatal",
+      "longDescription": "Design appears invalid. Could not parse provided design",
+      "probableCause": [
+        "Design file provided is not valid"
+      ],
+      "suggestedRemediation": [
+        "Please check that your design file is a valid yaml file"
+      ]
+    },
+    {
+      "code": "mesheryctl-1040",
+      "moniker": "ErrReadFilepathCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1040",
+      "severity": "alert",
+      "shortDescription": "Unable to read file",
+      "probableCause": [
+        "The provided file is not present or has an invalid path"
+      ],
+      "suggestedRemediation": [
+        "Provide a valid file path"
+      ]
+    },
+    {
+      "code": "mesheryctl-1041",
+      "moniker": "ErrNoProfileNameCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1041",
+      "severity": "alert",
+      "shortDescription": "No profile name",
+      "longDescription": "No profile name provided",
+      "probableCause": [
+        "No profile name provided to perform test"
+      ],
+      "suggestedRemediation": [
+        "Provide a profile-name"
+      ]
+    },
+    {
+      "code": "mesheryctl-1042",
+      "moniker": "ErrNoTestURLCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1042",
+      "severity": "alert",
+      "shortDescription": "No URL",
+      "longDescription": "Unable to get URL for performing test",
+      "probableCause": [
+        "No URL provided for performing tests"
+      ],
+      "suggestedRemediation": [
+        "Provide a test URL"
+      ]
+    },
+    {
+      "code": "mesheryctl-1043",
+      "moniker": "ErrNotValidURLCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1043",
+      "severity": "alert",
+      "shortDescription": "Invalid URL",
+      "longDescription": "Invalid URL for performing test",
+      "probableCause": [
+        "Invalid test URL provided"
+      ],
+      "suggestedRemediation": [
+        "Input a valid test URL"
+      ]
+    },
+    {
+      "code": "mesheryctl-1044",
+      "moniker": "ErrFailMarshalCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1044",
+      "severity": "alert",
+      "shortDescription": "Unable to convert JSON object.",
+      "probableCause": [
+        "Invalid JSON Format"
+      ],
+      "suggestedRemediation": [
+        "Check the data structure you are providing for marshalling"
+      ]
+    },
+    {
+      "code": "mesheryctl-1045",
+      "moniker": "ErrFailUnmarshalCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1045",
+      "severity": "alert",
+      "shortDescription": "Error unmarshalling response",
+      "longDescription": "Failed to unmarshal response body",
+      "probableCause": [
+        "The JSON format from the response body is not valid."
+      ],
+      "suggestedRemediation": [
+        "Ensure a valid JSON is provided for processing."
+      ]
+    },
+    {
+      "code": "mesheryctl-1046",
+      "moniker": "ErrNoProfileFoundCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1046",
+      "severity": "alert",
+      "shortDescription": "No profile found",
+      "longDescription": "No profile found with given name",
+      "probableCause": [
+        "Invalid profile name or no profile name provided"
+      ],
+      "suggestedRemediation": [
+        "Ensure a valid profile name is inputted. See https://docs.meshery.io/reference/mesheryctl/perf/apply for more details"
+      ]
+    },
+    {
+      "code": "mesheryctl-1047",
+      "moniker": "ErrInvalidOutputChoiceCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1047",
+      "severity": "alert",
+      "shortDescription": "Invalid output format choice",
+      "longDescription": "Output format choice is invalid, use [json|yaml]",
+      "probableCause": [
+        "Invalid JSON or YAML content"
+      ],
+      "suggestedRemediation": [
+        "Check the JSON or YAML structure."
+      ]
+    },
+    {
+      "code": "mesheryctl-1048",
+      "moniker": "ErrUnauthenticatedCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1048",
+      "severity": "alert",
+      "shortDescription": "Unauthenticated User",
+      "longDescription": "Access to this resource is unauthorized.",
+      "probableCause": [
+        "You haven't logged in to Meshery."
+      ],
+      "suggestedRemediation": [
+        "To proceed, log in using `mesheryctl system login`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1049",
+      "moniker": "ErrFailUnmarshalFileCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1049",
+      "severity": "alert",
+      "shortDescription": "Failed to unmarshal configuration file",
+      "probableCause": [
+        "Unable to covert JSON format from yml file"
+      ],
+      "suggestedRemediation": [
+        "Ensure a valid data is provided in your yml file"
+      ]
+    },
+    {
+      "code": "mesheryctl-1050",
+      "moniker": "ErrInvalidTestConfigFileCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1050",
+      "severity": "alert",
+      "shortDescription": "Invalid config file",
+      "longDescription": "Invalid test configuration file",
+      "probableCause": [
+        "The test configuration is outdated or incorrect"
+      ],
+      "suggestedRemediation": [
+        "See https://docs.meshery.io/guides/performance-management#running-performance-benchmarks-through-mesheryctl for a valid configuration file"
+      ]
+    },
+    {
+      "code": "mesheryctl-1051",
+      "moniker": "ErrArgumentOverflowCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1051",
+      "severity": "alert",
+      "shortDescription": "Invalid arguments",
+      "longDescription": "Invalid number of arguments",
+      "probableCause": [
+        "Too many arguments passed"
+      ],
+      "suggestedRemediation": [
+        "Use `mesheryctl perf --help` to display usage guide."
+      ]
+    },
+    {
+      "code": "mesheryctl-1052",
+      "moniker": "ErrInvalidJSONFileCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1052",
+      "severity": "alert",
+      "shortDescription": "Invalid JSON",
+      "longDescription": "Unable to create perf profile",
+      "probableCause": [
+        "Invalid JSON passed as options in file"
+      ],
+      "suggestedRemediation": [
+        "Provide a valid JSON object"
+      ]
+    },
+    {
+      "code": "mesheryctl-1053",
+      "moniker": "ErrHealthCheckerCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1053",
+      "severity": "alert",
+      "shortDescription": "Healthchecks Failed",
+      "probableCause": [
+        "Failed to initialize healthchecker"
+      ],
+      "suggestedRemediation": [
+        "Ensure Mesheryctl is running and has the right configurations. See https://docs.meshery.io/reference/mesheryctl/system/check for checking Meshery components"
+      ]
+    },
+    {
+      "code": "mesheryctl-1054",
+      "moniker": "ErrPerformanceProfileResultCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1054",
+      "severity": "alert",
+      "shortDescription": "Error displaying performance",
+      "probableCause": [
+        "Failed to fetch results for a specific profile"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and ensure Meshery is running ."
+      ]
+    },
+    {
+      "code": "mesheryctl-1055",
+      "moniker": "ErrGenerateModelCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1055",
+      "severity": "alert",
+      "probableCause": [
+        "Registrant used for the model is not supported",
+        "Verify the model's source URL.",
+        "Failed to create a local directory in the filesystem for this model."
+      ],
+      "suggestedRemediation": [
+        "Ensure that each kind of registrant used is a supported kind.",
+        "Ensure correct model source URL is provided and properly formatted.",
+        "Ensure sufficient permissions to allow creation of model directory."
+      ]
+    },
+    {
+      "code": "mesheryctl-1056",
+      "moniker": "ErrGenerateComponentCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1056",
+      "severity": "alert",
+      "shortDescription": "Error generating component"
+    },
+    {
+      "code": "mesheryctl-1057",
+      "moniker": "ErrUpdateModelCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1057",
+      "severity": "alert",
+      "shortDescription": "error updating model",
+      "probableCause": [
+        "Model does not exist"
+      ],
+      "suggestedRemediation": [
+        "Ensure existence of model, check for typo in model name"
+      ]
+    },
+    {
+      "code": "mesheryctl-1058",
+      "moniker": "ErrUpdateComponentCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1058",
+      "severity": "alert",
+      "probableCause": [
+        "Component does not exist",
+        "Component definition is corrupted"
+      ],
+      "suggestedRemediation": [
+        "Ensure existence of component, check for typo in component name",
+        "Regenerate corrupted component"
+      ]
+    },
+    {
+      "code": "mesheryctl-1059",
+      "moniker": "ErrUpdateRegistryCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1059",
+      "severity": "alert",
+      "shortDescription": "error updating registry at",
+      "probableCause": [
+        "Provided spreadsheet ID is incorrect",
+        "Provided credential is incorrect"
+      ],
+      "suggestedRemediation": [
+        "Ensure correct spreadsheet ID is provided",
+        "Ensure correct credential is used"
+      ]
+    },
+    {
+      "code": "mesheryctl-1060",
+      "moniker": "ErrHealthCheckFailedCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1060",
+      "severity": "alert",
+      "shortDescription": "Health checks failed",
+      "probableCause": [
+        "Health checks execution failed in starting Meshery server"
+      ],
+      "suggestedRemediation": [
+        "Ensure Mesheryctl is running and has the right configurations."
+      ]
+    },
+    {
+      "code": "mesheryctl-1062",
+      "moniker": "ErrStopMesheryCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1062",
+      "severity": "alert",
+      "shortDescription": "Error stopping Meshery",
+      "probableCause": [
+        "Meshery server is not stopped, some of the docker containers are still running"
+      ],
+      "suggestedRemediation": [
+        "Verify all docker containers of Meshery server are stopped"
+      ]
+    },
+    {
+      "code": "mesheryctl-1063",
+      "moniker": "ErrResetMeshconfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1063",
+      "severity": "alert",
+      "shortDescription": "Error resetting meshconfig to default settings",
+      "probableCause": [
+        "Meshery server config file is not reset to default settings"
+      ]
+    },
+    {
+      "code": "mesheryctl-1064",
+      "moniker": "ErrApplyManifestCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1064",
+      "severity": "alert",
+      "shortDescription": "Error applying manifest with update:. and delete:"
+    },
+    {
+      "code": "mesheryctl-1065",
+      "moniker": "ErrApplyOperatorManifestCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1065",
+      "severity": "alert",
+      "shortDescription": "Error applying operator manifests with update:. and delete:"
+    },
+    {
+      "code": "mesheryctl-1066",
+      "moniker": "ErrCreateDirCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1066",
+      "severity": "alert",
+      "shortDescription": "Error creating directory"
+    },
+    {
+      "code": "mesheryctl-1067",
+      "moniker": "ErrUnsupportedPlatformCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1067",
+      "severity": "alert",
+      "shortDescription": "Unsupported platform",
+      "longDescription": "The provided platform is not supported.",
+      "probableCause": [
+        "The platform",
+        "is not supported for the deployment of Meshery."
+      ],
+      "suggestedRemediation": [
+        "Supported platforms are:\n\n- docker\n- kubernetes\n\n Verify this setting in your meshconfig at",
+        "or verify by executing `mesheryctl system context view`"
+      ]
+    },
+    {
+      "code": "mesheryctl-1068",
+      "moniker": "ErrRetrievingCurrentContextCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1068",
+      "severity": "alert",
+      "shortDescription": "Error retrieving current-context",
+      "probableCause": [
+        "current-context is not retrieved"
+      ]
+    },
+    {
+      "code": "mesheryctl-1069",
+      "moniker": "ErrSettingDefaultContextToConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1069",
+      "severity": "alert",
+      "shortDescription": "Error setting default context to config",
+      "probableCause": [
+        "Mesheryctl config file may not exist or is invalid"
+      ],
+      "suggestedRemediation": [
+        "Make sure the Mesheryctl config file exists"
+      ]
+    },
+    {
+      "code": "mesheryctl-1070",
+      "moniker": "ErrSettingTemporaryContextCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1070",
+      "severity": "alert",
+      "shortDescription": "Error setting temporary context",
+      "probableCause": [
+        "temporary context is not set properly"
+      ],
+      "suggestedRemediation": [
+        "Verify the temporary context is set properly using the -c flag provided"
+      ]
+    },
+    {
+      "code": "mesheryctl-1072",
+      "moniker": "ErrRestartMesheryCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1072",
+      "severity": "alert",
+      "shortDescription": "Error restarting Meshery",
+      "probableCause": [
+        "Meshery is not running"
+      ],
+      "suggestedRemediation": [
+        "Restart Meshery instance"
+      ]
+    },
+    {
+      "code": "mesheryctl-1073",
+      "moniker": "ErrK8sQueryCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1073",
+      "severity": "alert",
+      "shortDescription": "The Kubernetes cluster is not accessible.",
+      "longDescription": "The Kubernetes cluster is not accessible. Please confirm that the token is valid. See https://docs.meshery.io/installation/quick-start for additional instructions",
+      "probableCause": [
+        "Kubernetes cluster is unavailable and that the token is invalid"
+      ],
+      "suggestedRemediation": [
+        "Please confirm that your cluster is available and that the token is valid. See https://docs.meshery.io/installation/quick-start for additional instructions"
+      ]
+    },
+    {
+      "code": "mesheryctl-1074",
+      "moniker": "ErrK8sConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1074",
+      "severity": "alert",
+      "shortDescription": "The Kubernetes cluster is not accessible.",
+      "longDescription": "The Kubernetes cluster is not accessible. Please confirm that the cluster is running. See https://docs.meshery.io/installation/quick-start for additional instructions.",
+      "probableCause": [
+        "Kubernetes cluster isn't running or inaccessible"
+      ],
+      "suggestedRemediation": [
+        "Verify kubernetes and Meshery connectivity or Verify kubeconfig certificates."
+      ]
+    },
+    {
+      "code": "mesheryctl-1075",
+      "moniker": "ErrInitPortForwardCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1075",
+      "severity": "alert",
+      "shortDescription": "Failed to initialize port-forward",
+      "longDescription": "Failed to create new Port Forward instance",
+      "probableCause": [
+        "Connection not established"
+      ],
+      "suggestedRemediation": [
+        "Ensure you have a strong network connection"
+      ]
+    },
+    {
+      "code": "mesheryctl-1076",
+      "moniker": "ErrRunPortForwardCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1076",
+      "severity": "fatal",
+      "shortDescription": "Failed to run port-forward",
+      "longDescription": "Error running port-forward for Meshery",
+      "probableCause": [
+        "Meshery pod is not in running phase",
+        "mesheryctl can't connect to kubernetes with client-go"
+      ],
+      "suggestedRemediation": [
+        "Make sure Meshery pod exists and is in running state",
+        "Check if mesheryctl is connected to kubernetes with `mesheryctl system check`"
+      ]
+    },
+    {
+      "code": "mesheryctl-1077",
+      "moniker": "ErrFailedGetEphemeralPortCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1077",
+      "severity": "fatal",
+      "shortDescription": "Failed to get a free port",
+      "longDescription": "Failed to start port-forwarding",
+      "probableCause": [
+        "Unable to provide a free port to connect to a kuberentes cluster"
+      ],
+      "suggestedRemediation": [
+        "Ensure your Meshery Server is running,",
+        "Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system check`"
+      ]
+    },
+    {
+      "code": "mesheryctl-1078",
+      "moniker": "ErrUnmarshalDockerComposeCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1078",
+      "severity": "alert",
+      "shortDescription": "Error processing JSON response from Meshery Server",
+      "probableCause": [
+        "Either the JSON response is invalid or the Response is distorted"
+      ],
+      "suggestedRemediation": [
+        "Ensure Meshery Server is running and you have a strong network connection"
+      ]
+    },
+    {
+      "code": "mesheryctl-1079",
+      "moniker": "ErrCreatingDockerClientCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1079",
+      "severity": "critical",
+      "shortDescription": "Failed to create Docker client",
+      "longDescription": "Error occurred while creating Docker client from config file",
+      "probableCause": [
+        "Missing or invalid docker config"
+      ],
+      "suggestedRemediation": [
+        "Please check the Docker config file for any errors or missing information. Make sure it is correctly formatted and contains all the required fields."
+      ]
+    },
+    {
+      "code": "mesheryctl-1080",
+      "moniker": "ErrWriteConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1080",
+      "severity": "fatal",
+      "shortDescription": "Error in writing config",
+      "probableCause": [
+        "Unable to write to config file"
+      ]
+    },
+    {
+      "code": "mesheryctl-1081",
+      "moniker": "ErrContextContentCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1081",
+      "severity": "fatal",
+      "shortDescription": "Failed to detect context",
+      "longDescription": "Unable to detect current-context",
+      "probableCause": [
+        "Error while trying to fetch current-context in YML file"
+      ],
+      "suggestedRemediation": [
+        "Ensure a valid context name is provided"
+      ]
+    },
+    {
+      "code": "mesheryctl-1082",
+      "moniker": "ErrSwitchChannelResponseCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1082",
+      "severity": "alert",
+      "shortDescription": "Unable to exectute command",
+      "longDescription": "Channel switch aborted",
+      "probableCause": [
+        "No user response provided"
+      ]
+    },
+    {
+      "code": "mesheryctl-1083",
+      "moniker": "ErrGetCurrentContextCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1083",
+      "severity": "fatal",
+      "shortDescription": "Unable to get current-context",
+      "probableCause": [
+        "Invalid context name provided"
+      ]
+    },
+    {
+      "code": "mesheryctl-1084",
+      "moniker": "ErrSetCurrentContextCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1084",
+      "severity": "fatal",
+      "shortDescription": "Unable to set current-context",
+      "probableCause": [
+        "Invalid context name provided"
+      ]
+    },
+    {
+      "code": "mesheryctl-1085",
+      "moniker": "ErrTokenContextCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1085",
+      "severity": "fatal",
+      "shortDescription": "Unable to get token",
+      "probableCause": [
+        "No token found for the Current context"
+      ]
+    },
+    {
+      "code": "mesheryctl-1086",
+      "moniker": "ErrProviderInfoCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1086",
+      "severity": "fatal",
+      "shortDescription": "Unable to verify provider",
+      "probableCause": [
+        "Unable to verify provider  as Meshery server was unreachable"
+      ]
+    },
+    {
+      "code": "mesheryctl-1087",
+      "moniker": "ErrValidProviderCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1087",
+      "severity": "fatal",
+      "shortDescription": "Invalid provider",
+      "longDescription": "Unable to validate provider",
+      "probableCause": [
+        "A wrong provider was specified"
+      ]
+    },
+    {
+      "code": "mesheryctl-1088",
+      "moniker": "ErrUnmarshallConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1088",
+      "severity": "fatal",
+      "shortDescription": "Invalid config",
+      "probableCause": [
+        "Unable to decode Meshconfig."
+      ]
+    },
+    {
+      "code": "mesheryctl-1089",
+      "moniker": "ErrUploadFileParamsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1089",
+      "severity": "fatal",
+      "shortDescription": "Unable to upload",
+      "probableCause": [
+        "Unable to upload parameters from config file with provided context"
+      ]
+    },
+    {
+      "code": "mesheryctl-1090",
+      "moniker": "ErrFailRequestCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1090",
+      "severity": "alert",
+      "shortDescription": "Failed to make a request",
+      "probableCause": [
+        "Meshery server is not reachable."
+      ],
+      "suggestedRemediation": [
+        "Please ensure that the Meshery server is running and accessible. You can try running 'mesheryctl system restart'."
+      ]
+    },
+    {
+      "code": "mesheryctl-1091",
+      "moniker": "ErrInvalidTokenCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1091",
+      "severity": "alert",
+      "shortDescription": "Invalid authentication Token",
+      "longDescription": "The authentication token has expired or is invalid.",
+      "probableCause": [
+        "The token in auth.json has expired or is invalid."
+      ],
+      "suggestedRemediation": [
+        "Provide a valid user token by logging in with `mesheryctl system login`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1092",
+      "moniker": "ErrFailReqStatusCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1092",
+      "severity": "alert",
+      "shortDescription": "Failed response server error",
+      "probableCause": [
+        "Invalid API call"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and the status of Meshery Server via `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1093",
+      "moniker": "ErrAttachAuthTokenCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1093",
+      "severity": "alert",
+      "shortDescription": "Authentication token Not Found",
+      "probableCause": [
+        "The user is not logged in to generate a token."
+      ],
+      "suggestedRemediation": [
+        "Log in with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."
+      ]
+    },
+    {
+      "code": "mesheryctl-1094",
+      "moniker": "ErrUnmarshalCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1094",
+      "severity": "alert",
+      "shortDescription": "Error unmarshalling response",
+      "probableCause": [
+        "The JSON format from the response body is not valid."
+      ],
+      "suggestedRemediation": [
+        "Ensure a valid JSON is provided for processing."
+      ]
+    },
+    {
+      "code": "mesheryctl-1095",
+      "moniker": "ErrFileReadCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1095",
+      "severity": "alert",
+      "shortDescription": "File read error",
+      "probableCause": [
+        "The provided file is not present or has an invalid path."
+      ],
+      "suggestedRemediation": [
+        "To proceed, provide a valid file path with a valid file."
+      ]
+    },
+    {
+      "code": "mesheryctl-1096",
+      "moniker": "ErrCreatingRequestCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1096",
+      "severity": "fatal",
+      "shortDescription": "Error occurred while making an HTTP request.",
+      "probableCause": [
+        "Meshery is not running or there is a network issue."
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and verify the status of the Meshery server using `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1097",
+      "moniker": "ErrMarshalCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1097",
+      "severity": "fatal",
+      "shortDescription": "Error while marshalling the content",
+      "probableCause": [
+        "The content provided for marshalling is invalid."
+      ],
+      "suggestedRemediation": [
+        "Check the data structure you are providing for marshalling."
+      ]
+    },
+    {
+      "code": "mesheryctl-1098",
+      "moniker": "ErrReadResponseBodyCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1098",
+      "severity": "alert",
+      "shortDescription": "Failed to read response body from request",
+      "probableCause": [
+        "There might be connection failure with Meshery Server"
+      ],
+      "suggestedRemediation": [
+        "Check the status via `mesheryctl system status`"
+      ]
+    },
+    {
+      "code": "mesheryctl-1099",
+      "moniker": "ErrParsingUrlCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1099",
+      "severity": "fatal",
+      "shortDescription": "Error parsing the URL",
+      "probableCause": [
+        "The provided URL does not exist or the relative path is incorrect."
+      ],
+      "suggestedRemediation": [
+        "Double-check the correctness of the URL you have inputted."
+      ]
+    },
+    {
+      "code": "mesheryctl-1100",
+      "moniker": "ErrNotFoundCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1100",
+      "severity": "alert",
+      "shortDescription": "Item Not Found",
+      "probableCause": [
+        "The item you are searching for is not present."
+      ],
+      "suggestedRemediation": [
+        "Check whether the item is present."
+      ]
+    },
+    {
+      "code": "mesheryctl-1101",
+      "moniker": "ErrUnauthenticatedCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1101",
+      "severity": "alert",
+      "shortDescription": "Unauthenticated User",
+      "longDescription": "Access to this resource is unauthorized.",
+      "probableCause": [
+        "You haven't logged in to Meshery."
+      ],
+      "suggestedRemediation": [
+        "To proceed, log in using `mesheryctl system login`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1102",
+      "moniker": "ErrInvalidFileCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1102",
+      "severity": "fatal",
+      "shortDescription": "Invalid File",
+      "probableCause": [
+        "File does not meet the criteria."
+      ],
+      "suggestedRemediation": [
+        "Check the file's validity."
+      ]
+    },
+    {
+      "code": "mesheryctl-1103",
+      "moniker": "ErrInvalidNameOrIDCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1103",
+      "severity": "fatal",
+      "shortDescription": "Invalid Name or ID Provided",
+      "probableCause": [
+        "The provided Name or ID is either not present or invalid."
+      ],
+      "suggestedRemediation": [
+        "Provide a valid Name or ID using the `list` command with the appropriate subcommand."
+      ]
+    },
+    {
+      "code": "mesheryctl-1104",
+      "moniker": "ErrInvalidAPIResponseCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1104",
+      "severity": "fatal",
+      "shortDescription": "Invalid API response encountered",
+      "probableCause": [
+        "Error occurred while generating a response body"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and the status of Meshery Server via `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1105",
+      "moniker": "ErrReadConfigFileCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1105",
+      "severity": "alert",
+      "shortDescription": "Unable to read meshconfig file",
+      "probableCause": [
+        "The provided file is not present or has an invalid path"
+      ],
+      "suggestedRemediation": [
+        "Provide a valid file path with a valid meshconfig file."
+      ]
+    },
+    {
+      "code": "mesheryctl-1106",
+      "moniker": "ErrMarshalIndentCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1106",
+      "severity": "alert",
+      "shortDescription": "Error indenting JSON body",
+      "probableCause": [
+        "Unable to format the JSON body filters due to invalid content"
+      ],
+      "suggestedRemediation": [
+        "Check the data structure provided for proper formatting."
+      ]
+    },
+    {
+      "code": "mesheryctl-1107",
+      "moniker": "ErrLoadConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1107",
+      "severity": "alert",
+      "shortDescription": "Error processing config",
+      "probableCause": [
+        "Unable to load meshconfig due to wrong configurations"
+      ],
+      "suggestedRemediation": [
+        "Ensure your `config.yaml` file in your `.meshery` is valid, or run `mesheryctl system config`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1108",
+      "moniker": "ErrResponseStatusBodyCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1108",
+      "severity": "alert",
+      "shortDescription": "Incorrect status code",
+      "probableCause": [
+        "Error occurred while generating a response body"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and the status of Meshery Server via `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1109",
+      "moniker": "ErrResponseStatusCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1109",
+      "severity": "alert",
+      "shortDescription": "Incorrect status code",
+      "probableCause": [
+        "Error occurred while generating a response"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and the status of Meshery Server via `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1110",
+      "moniker": "ErrJSONToYAMLCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1110",
+      "severity": "alert",
+      "shortDescription": "Failed to convert JSON to YAML",
+      "probableCause": [
+        "The content provided for marshalling is invalid."
+      ],
+      "suggestedRemediation": [
+        "Check the JSON structure you are providing for YAML conversion."
+      ]
+    },
+    {
+      "code": "mesheryctl-1111",
+      "moniker": "ErrOutFormatFlagCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1111",
+      "severity": "alert",
+      "shortDescription": "Invalid output format choice",
+      "longDescription": "Output format choice is invalid, use [json|yaml]",
+      "probableCause": [
+        "Invalid JSON or YAML content"
+      ],
+      "suggestedRemediation": [
+        "Check the JSON or YAML structure."
+      ]
+    },
+    {
+      "code": "mesheryctl-1112",
+      "moniker": "ErrParseGithubFileCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1112",
+      "severity": "alert",
+      "shortDescription": "Failed to parse github file",
+      "probableCause": [
+        "Unable to retrieve file from the given URL"
+      ],
+      "suggestedRemediation": [
+        "Ensure you have a github url in file path"
+      ]
+    },
+    {
+      "code": "mesheryctl-1113",
+      "moniker": "ErrReadTokenCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1113",
+      "severity": "alert",
+      "shortDescription": "Could not read token",
+      "probableCause": [
+        "Token file is invalid"
+      ],
+      "suggestedRemediation": [
+        "Provide a valid user token by logging in with `mesheryctl system login`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1114",
+      "moniker": "ErrRequestResponseCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1114",
+      "severity": "alert",
+      "shortDescription": "Failed to handle request",
+      "probableCause": [
+        "Error occurred while generating a response"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and the status of Meshery Server via `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1117",
+      "moniker": "ErrBadRequestCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1117",
+      "severity": "alert",
+      "shortDescription": "Failed to delete the connection",
+      "probableCause": [
+        "Error occurred while deleting the connection"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and the status of Meshery Server via `mesheryctl system status`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1118",
+      "moniker": "ErrInvalidArgumentCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1118",
+      "severity": "alert",
+      "shortDescription": "Invalid Argument",
+      "probableCause": [
+        "Invalid Argument"
+      ],
+      "suggestedRemediation": [
+        "Please check the arguments passed"
+      ]
+    },
+    {
+      "code": "mesheryctl-1119",
+      "moniker": "ErrGeneratingIconsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1119",
+      "severity": "alert",
+      "shortDescription": "error generating icons at",
+      "probableCause": [
+        "Model SVG data is missing",
+        "Model name formatting issue"
+      ],
+      "suggestedRemediation": [
+        "Ensure model SVG data is provided in model definition",
+        "Ensure model name formatting is correct"
+      ]
+    },
+    {
+      "code": "mesheryctl-1120",
+      "moniker": "ErrClearLineCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1120",
+      "severity": "alert",
+      "shortDescription": "Failed to clear terminal",
+      "probableCause": [
+        "Error occurred while attempting to clear the command-line interface"
+      ],
+      "suggestedRemediation": [
+        "Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"
+      ]
+    },
+    {
+      "code": "mesheryctl-1121",
+      "moniker": "ErrPatternSourceTypeCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1121",
+      "severity": "alert",
+      "shortDescription": "Source type for the design to import not specified",
+      "longDescription": "Empty  source type detected",
+      "probableCause": [
+        "Design source type not provided"
+      ],
+      "suggestedRemediation": [
+        "Provide one of the supported source type for the design to import.",
+        "Usage: mesheryctl design import -f [file/url] -s [source-type]\nExample: mesheryctl design import -f ./pattern.yml -s \"Kubernetes Manifest\""
+      ]
+    },
+    {
+      "code": "mesheryctl-1123",
+      "moniker": "ErrCreateFileCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1123",
+      "severity": "alert",
+      "shortDescription": "Error creating file",
+      "probableCause": [
+        "Insufficient disk space",
+        "Filepath could be invalid",
+        "Lack of permissions to create file at the specified path"
+      ],
+      "suggestedRemediation": [
+        "Verify that the file path is valid",
+        "Ensure there is sufficient disk space available",
+        "Check your permissions for the specified path"
+      ]
+    },
+    {
+      "code": "mesheryctl-1124",
+      "moniker": "ErrRetrieveHomeDirCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1124",
+      "severity": "alert",
+      "shortDescription": "Error retrieving user home/root directory",
+      "longDescription": "Failed to retrieve the home/root directory,",
+      "probableCause": [
+        "Operating system environment issue or insufficient permissions."
+      ],
+      "suggestedRemediation": [
+        "Ensure that the operating system environment is set up correctly and run the application with elevated privileges."
+      ]
+    },
+    {
+      "code": "mesheryctl-1125",
+      "moniker": "ErrReadFromBodyCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1125",
+      "severity": "alert",
+      "shortDescription": "Unable to read data from the response body",
+      "probableCause": [
+        "The data for the pattern (design) file might be corrupted."
+      ],
+      "suggestedRemediation": [
+        "Please ensure that your network connection is stable. If the issue continues, check the server response or data format for potential problems."
+      ]
+    },
+    {
+      "code": "mesheryctl-1126",
+      "moniker": "ErrMarkFlagRequireCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1126",
+      "severity": "alert",
+      "shortDescription": "Failed to mark the flag as required",
+      "probableCause": [
+        "The flag may not exist or there was some error while specifying the flag."
+      ]
+    },
+    {
+      "code": "mesheryctl-1127",
+      "moniker": "ErrExportModelCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1127",
+      "severity": "fatal",
+      "shortDescription": "Error exporting model",
+      "probableCause": [
+        "Model may not be present in the registry"
+      ],
+      "suggestedRemediation": [
+        "Ensure that there are no typos in the model name"
+      ]
+    },
+    {
+      "code": "mesheryctl-1128",
+      "moniker": "ErrParsingSheetCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1128",
+      "severity": "alert",
+      "probableCause": [
+        "provided sheet id for %s might be incorrect"
+      ],
+      "suggestedRemediation": [
+        "ensure the sheet id is correct"
+      ]
+    },
+    {
+      "code": "mesheryctl-1129",
+      "moniker": "ErrGenerationTimeoutCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1129",
+      "severity": "alert",
+      "probableCause": [
+        "The model source may be unresponsive",
+        "Network connectivity issues",
+        "Large number of components to generate"
+      ],
+      "suggestedRemediation": [
+        "Try generating a specific model using --model flag",
+        "Check network connectivity",
+        "Review the generation logs for problematic models"
+      ]
+    },
+    {
+      "code": "mesheryctl-1130",
+      "moniker": "ErrParsingRelationshipCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1130",
+      "severity": "alert",
+      "probableCause": [
+        "Invalid relationship definition format",
+        "Missing required relationship fields",
+        "Malformed selector in relationship"
+      ],
+      "suggestedRemediation": [
+        "Verify the relationship CSV format",
+        "Check that all required fields are present",
+        "Validate the selector JSON syntax"
+      ]
+    },
+    {
+      "code": "mesheryctl-1131",
+      "moniker": "ErrTemplateFileNotPresentCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1131",
+      "severity": "fatal",
+      "shortDescription": "error no template file provided",
+      "longDescription": "no template file is provided while using url for importing a model",
+      "probableCause": [
+        "template file not present"
+      ],
+      "suggestedRemediation": [
+        "ensure that the template file is present in the given path"
+      ]
+    },
+    {
+      "code": "mesheryctl-1132",
+      "moniker": "ErrGeneratesModelCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1132",
+      "severity": "alert",
+      "probableCause": [
+        "Registrant used for the model is not supported",
+        "Verify the model's source URL.",
+        "Failed to create a local directory in the filesystem for this model."
+      ],
+      "suggestedRemediation": [
+        "Ensure that each kind of registrant used is a supported kind.",
+        "Ensure correct model source URL is provided and properly formatted.",
+        "Ensure sufficient permissions to allow creation of model directory."
+      ]
+    },
+    {
+      "code": "mesheryctl-1134",
+      "moniker": "ErrUpdateComponentsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1134",
+      "severity": "alert",
+      "probableCause": [
+        "Component does not exist",
+        "Component definition is corrupted"
+      ],
+      "suggestedRemediation": [
+        "Ensure existence of component, check for typo in component name",
+        "Regenerate corrupted component"
+      ]
+    },
+    {
+      "code": "mesheryctl-1137",
+      "moniker": "ErrMissingCommandsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1137",
+      "severity": "alert",
+      "shortDescription": "Missing required commands",
+      "probableCause": [
+        "Required commands are not installed or not in PATH"
+      ],
+      "suggestedRemediation": [
+        "Install the missing commands and ensure they are in PATH"
+      ]
+    },
+    {
+      "code": "mesheryctl-1138",
+      "moniker": "ErrKubernetesConnectivityCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1138",
+      "severity": "alert",
+      "shortDescription": "Failed to connect to Kubernetes API server",
+      "probableCause": [
+        "Kubernetes API server is not reachable"
+      ],
+      "suggestedRemediation": [
+        "Ensure your Kubernetes cluster is running and accessible"
+      ]
+    },
+    {
+      "code": "mesheryctl-1139",
+      "moniker": "ErrKubernetesQueryCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1139",
+      "severity": "alert",
+      "shortDescription": "Failed to query Kubernetes API",
+      "probableCause": [
+        "Kubernetes API query failed"
+      ],
+      "suggestedRemediation": [
+        "Ensure your Kubernetes cluster is running and accessible"
+      ]
+    },
+    {
+      "code": "mesheryctl-1140",
+      "moniker": "ErrDesignFileNotProvidedCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1140",
+      "severity": "alert",
+      "shortDescription": "Design file path not provided",
+      "longDescription": "Design [File | File Path | URL] isn't specified",
+      "probableCause": [
+        "[File | File Path | URL] not detected. The '-f' flag is missing or empty in the 'mesheryctl design import' command"
+      ],
+      "suggestedRemediation": [
+        "Provide the path to the design file using the '-f' flag. Ensure that the file path or URL is correctly specified and accessible.",
+        "Usage: mesheryctl design import -f [file/url] -s [source-type]\nExample: mesheryctl design import -f ./pattern.yml -s \"Kubernetes Manifest\""
+      ]
+    },
+    {
+      "code": "mesheryctl-1141",
+      "moniker": "ErrCreateManifestsFolderCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1141",
+      "severity": "alert",
+      "shortDescription": "Error creating manifest folder",
+      "probableCause": [
+        "system error in creating manifest folder"
+      ],
+      "suggestedRemediation": [
+        "Make sure manifest folder (.meshery/manifests) is created properly"
+      ]
+    },
+    {
+      "code": "mesheryctl-1142",
+      "moniker": "ErrDownloadFileCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1142",
+      "severity": "alert",
+      "shortDescription": "Error downloading file",
+      "probableCause": [
+        "Failed to download docker-compose or manifest file due to system/config/network issues"
+      ],
+      "suggestedRemediation": [
+        "Make sure docker-compose or manifest file is downloaded"
+      ]
+    },
+    {
+      "code": "mesheryctl-1143",
+      "moniker": "ErrNoManifestFilesFoundCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1143",
+      "severity": "alert",
+      "shortDescription": "No manifest files found in the specified path",
+      "probableCause": [
+        "The provided directory may be empty, incorrect, or manifests were not properly downloaded."
+      ],
+      "suggestedRemediation": [
+        "Verify the specified path contains valid manifest files."
+      ]
+    },
+    {
+      "code": "mesheryctl-1144",
+      "moniker": "ErrWalkManifestsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1144",
+      "severity": "alert",
+      "shortDescription": "Error walking through manifests",
+      "probableCause": [
+        "Unable to traverse git repository or manifests due to filesystem or permission issues."
+      ],
+      "suggestedRemediation": [
+        "Ensure the repository and manifests directory are accessible and have proper permissions."
+      ]
+    },
+    {
+      "code": "mesheryctl-1145",
+      "moniker": "ErrGetChannelVersionCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1145",
+      "severity": "alert",
+      "shortDescription": "Unable to retrieve release channel and version information.",
+      "probableCause": [
+        "Failed to determine version from context or GitHub releases, possibly due to network or configuration issues."
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and context configuration; ensure GitHub is accessible."
+      ]
+    },
+    {
+      "code": "mesheryctl-1146",
+      "moniker": "ErrModelUnsupportedOutputFormatCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1146",
+      "severity": "fatal",
+      "shortDescription": "Error viewing model",
+      "probableCause": [
+        "Output format not supported"
+      ],
+      "suggestedRemediation": [
+        "Ensure giving a valid format"
+      ]
+    },
+    {
+      "code": "mesheryctl-1147",
+      "moniker": "ErrOutputToJsonCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1147",
+      "severity": "alert",
+      "shortDescription": "Failed to format output in JSON",
+      "longDescription": "Error occurred while formatting to JSON",
+      "probableCause": [
+        "The content provided for formatting failed."
+      ],
+      "suggestedRemediation": [
+        "Check the JSON structure you are providing for formatting."
+      ]
+    },
+    {
+      "code": "mesheryctl-1148",
+      "moniker": "ErrModelInitCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1148",
+      "severity": "fatal",
+      "shortDescription": "Error model init",
+      "probableCause": [
+        "Error during run of model init command"
+      ],
+      "suggestedRemediation": [
+        "Ensure passing all params according to the command description"
+      ]
+    },
+    {
+      "code": "mesheryctl-1149",
+      "moniker": "ErrModelUnsupportedVersionCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1149",
+      "severity": "fatal",
+      "shortDescription": "Error in model version format",
+      "probableCause": [
+        "Version format not supported"
+      ],
+      "suggestedRemediation": [
+        "Ensure giving a semver version format"
+      ]
+    },
+    {
+      "code": "mesheryctl-1150",
+      "moniker": "ErrInvalidModelCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1150",
+      "severity": "alert",
+      "shortDescription": "No valid component or relationship found in the model provided",
+      "longDescription": "No valid component or relationship found in the Model provided. A Model can be only imported if it contains at least one valid Component or Relationship.",
+      "probableCause": [
+        "Provided components or relationships might have incorrect format",
+        "Folder structure might be incorrect"
+      ],
+      "suggestedRemediation": [
+        "Know about Meshery Models and Importing instructions here: https://docs.meshery.io/guides/configuration-management/importing-models"
+      ]
+    },
+    {
+      "code": "mesheryctl-1151",
+      "moniker": "ErrModelBuildCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1151",
+      "severity": "fatal",
+      "shortDescription": "Error model build",
+      "probableCause": [
+        "Error during run of model build command"
+      ],
+      "suggestedRemediation": [
+        "Ensure passing all params according to the command description"
+      ]
+    },
+    {
+      "code": "mesheryctl-1152",
+      "moniker": "ErrInvalidUUIDCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1152",
+      "severity": "alert",
+      "shortDescription": "Invalid ID format",
+      "probableCause": [
+        "ID is not a valid UUID format",
+        "ID contains invalid characters"
+      ],
+      "suggestedRemediation": [
+        "Ensure the ID is a valid UUID format",
+        "Check the ID parameter for typos or formatting issues"
+      ]
+    },
+    {
+      "code": "mesheryctl-1153",
+      "moniker": "ErrFetchEnvironmentsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1153",
+      "severity": "alert",
+      "shortDescription": "Failed to fetch environments",
+      "probableCause": [
+        "Network connection issues",
+        "Meshery server is not reachable",
+        "Invalid API endpoint",
+        "Authentication issues"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection",
+        "Verify Meshery server status via `mesheryctl system status`",
+        "Ensure you have proper authentication credentials"
+      ]
+    },
+    {
+      "code": "mesheryctl-1154",
+      "moniker": "ErrTableRenderCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1154",
+      "severity": "alert",
+      "shortDescription": "Failed to display output in table format",
+      "probableCause": [
+        "Table rendering issue"
+      ],
+      "suggestedRemediation": [
+        "Ensure the data being rendered is valid and properly structured."
+      ]
+    },
+    {
+      "code": "mesheryctl-1155",
+      "moniker": "ErrFlagsInvalidCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1155",
+      "severity": "alert",
+      "shortDescription": "Invalid flag(s) provided",
+      "probableCause": [
+        "The value for one or more flags provided is invalid."
+      ],
+      "suggestedRemediation": [
+        "Provide valid flag value and try again."
+      ]
+    },
+    {
+      "code": "mesheryctl-1156",
+      "moniker": "ErrMesheryServerNotRunningCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1156",
+      "severity": "alert",
+      "shortDescription": "Meshery Server is not running",
+      "probableCause": [
+        "Meshery Server is not running or is unreachable",
+        "Docker or Kubernetes environment is not ready",
+        "Network connectivity issues"
+      ],
+      "suggestedRemediation": [
+        "Start Meshery Server with `mesheryctl system start`",
+        "Verify system readiness with `mesheryctl system check --preflight`",
+        "Check your network connection and firewall settings"
+      ]
+    },
+    {
+      "code": "mesheryctl-1157",
+      "moniker": "ErrPaginationCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1157",
+      "severity": "alert",
+      "shortDescription": "Failed to fetch paginated data from Meshery server.",
+      "probableCause": [
+        "An error occurred while fetching paginated data from Meshery server."
+      ],
+      "suggestedRemediation": [
+        "Please check if the server is running and the returned data is valid."
+      ]
+    },
+    {
+      "code": "mesheryctl-1158",
+      "moniker": "ErrOutputToYamlCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1158",
+      "severity": "alert",
+      "shortDescription": "Failed to format output in YAML",
+      "longDescription": "Error occurred while formatting to YAML",
+      "probableCause": [
+        "The content provided for formatting failed."
+      ],
+      "suggestedRemediation": [
+        "Check the Yaml structure you are providing for formatting."
+      ]
+    },
+    {
+      "code": "mesheryctl-1159",
+      "moniker": "ErrModelGenerationFailedCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1159",
+      "severity": "alert",
+      "probableCause": [
+        "Invalid model source URL",
+        "Unsupported registrant type",
+        "Network issues fetching model data"
+      ],
+      "suggestedRemediation": [
+        "Verify the model's source URL is accessible",
+        "Check the registrant type is supported",
+        "Review network connectivity"
+      ]
+    },
+    {
+      "code": "mesheryctl-1160",
+      "moniker": "ErrUserPromptCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1160",
+      "severity": "alert",
+      "shortDescription": "Prompt failed",
+      "probableCause": [
+        "User prompt was interrupted or failed to get input"
+      ],
+      "suggestedRemediation": [
+        "Try running the command again and complete the selection"
+      ]
+    },
+    {
+      "code": "mesheryctl-1161",
+      "moniker": "ErrConvertConcurrentRequestCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1161",
+      "severity": "alert",
+      "shortDescription": "Failed to convert concurrent-request",
+      "longDescription": "Invalid concurrent-request value provided",
+      "probableCause": [
+        "The concurrent-request flag value is not a valid integer"
+      ],
+      "suggestedRemediation": [
+        "Provide a valid integer value for concurrent-request"
+      ]
+    },
+    {
+      "code": "mesheryctl-1162",
+      "moniker": "ErrConvertQPSCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1162",
+      "severity": "alert",
+      "shortDescription": "Failed to convert qps",
+      "longDescription": "Invalid qps value provided",
+      "probableCause": [
+        "The qps flag value is not a valid integer"
+      ],
+      "suggestedRemediation": [
+        "Provide a valid integer value for qps"
+      ]
+    },
+    {
+      "code": "mesheryctl-1163",
+      "moniker": "ErrParseDesignFileCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1163",
+      "severity": "alert",
+      "shortDescription": "Failed to parse design file",
+      "probableCause": [
+        "The design file format is invalid or corrupted",
+        "The YAML/JSON syntax may be incorrect"
+      ],
+      "suggestedRemediation": [
+        "Ensure the design file is a valid Meshery design format",
+        "Check for YAML/JSON syntax errors",
+        "Validate the design file structure"
+      ]
+    },
+    {
+      "code": "mesheryctl-1164",
+      "moniker": "ErrDeleteDesignCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1164",
+      "severity": "alert",
+      "shortDescription": "Unable to delete design",
+      "probableCause": [
+        "Design may not exist",
+        "Network connection issue",
+        "Meshery server unreachable"
+      ],
+      "suggestedRemediation": [
+        "Verify the design exists using 'mesheryctl design list'",
+        "Check your network connection and Meshery server status"
+      ]
+    },
+    {
+      "code": "mesheryctl-1165",
+      "moniker": "ErrGetKubernetesContextsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1165",
+      "severity": "fatal",
+      "shortDescription": "Unable to get kubernetes contexts",
+      "probableCause": [
+        "No kubernetes contexts found"
+      ],
+      "suggestedRemediation": [
+        "Ensure you have at least one valid context in your meshconfig file."
+      ]
+    },
+    {
+      "code": "mesheryctl-1166",
+      "moniker": "ErrSetKubernetesContextCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1166",
+      "severity": "fatal",
+      "shortDescription": "Unable to set kubernetes context",
+      "probableCause": [
+        "The specified Kubernetes context does not exist."
+      ],
+      "suggestedRemediation": [
+        "Verify that the Kubernetes context provided is valid and try again."
+      ]
+    },
+    {
+      "code": "mesheryctl-1167",
+      "moniker": "ErrFilterNotFoundCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1167",
+      "severity": "alert",
+      "shortDescription": "Filter not found",
+      "probableCause": [
+        "The specified filter does not exist"
+      ],
+      "suggestedRemediation": [
+        "Use `mesheryctl filter list` to see available filters"
+      ]
+    },
+    {
+      "code": "mesheryctl-1168",
+      "moniker": "ErrFilterURIRequiredCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1168",
+      "severity": "alert",
+      "shortDescription": "URI is required",
+      "longDescription": "No URI provided for filter import",
+      "probableCause": [
+        "Filter import command requires a URI"
+      ],
+      "suggestedRemediation": [
+        "Provide a valid file path or URL"
+      ]
+    },
+    {
+      "code": "mesheryctl-1169",
+      "moniker": "ErrViewAllWithNameCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1169",
+      "severity": "alert",
+      "shortDescription": "Invalid flag combination",
+      "longDescription": "--all cannot be used when filter name or ID is specified",
+      "probableCause": [
+        "Conflicting options provided"
+      ],
+      "suggestedRemediation": [
+        "Use either --all flag OR specify a filter name/ID"
+      ]
+    },
+    {
+      "code": "mesheryctl-1170",
+      "moniker": "ErrMultiWordFilterNameCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1170",
+      "severity": "alert",
+      "shortDescription": "Invalid filter name format",
+      "longDescription": "multi-word filter names must be enclosed in double quotes",
+      "probableCause": [
+        "Filter name with spaces requires quoting"
+      ],
+      "suggestedRemediation": [
+        "Enclose multi-word filter names in double quotes"
+      ]
+    },
+    {
+      "code": "mesheryctl-1171",
+      "moniker": "ErrInvalidFilterCommandCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1171",
+      "severity": "alert",
+      "shortDescription": "Invalid command",
+      "probableCause": [
+        "The provided subcommand is not recognized"
+      ],
+      "suggestedRemediation": [
+        "Run `mesheryctl filter --help` to see available commands"
+      ]
+    },
+    {
+      "code": "mesheryctl-1172",
+      "moniker": "ErrHandlePaginationCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1172",
+      "severity": "alert",
+      "shortDescription": "Unable to display paginated results",
+      "probableCause": [
+        "Interactive pagination requires keyboard input support"
+      ],
+      "suggestedRemediation": [
+        "Ensure you are running in an interactive terminal",
+        "If running in a non-interactive environment, use '--page' flag to skip pagination"
+      ]
+    },
+    {
+      "code": "mesheryctl-1174",
+      "moniker": "ErrAwsCliNotFoundCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1174",
+      "severity": "alert",
+      "shortDescription": "AWS CLI not found",
+      "longDescription": "The AWS CLI is required to create an EKS connection but was not found on your system",
+      "suggestedRemediation": [
+        "Please install the AWS CLI from https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html and ensure it is accessible in your system's PATH"
+      ]
+    },
+    {
+      "code": "mesheryctl-1175",
+      "moniker": "ErrGcpGKEGetCredentialsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1175",
+      "severity": "alert",
+      "shortDescription": "Unable to get GKE cluster credentials",
+      "longDescription": "There was an error while fetching the GKE cluster credentials",
+      "suggestedRemediation": [
+        "Ensure that the GKE cluster name, zone, and project ID are correct, and that you have the necessary permissions to access the cluster"
+      ]
+    },
+    {
+      "code": "mesheryctl-1182",
+      "moniker": "ErrConnectionTypeCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1182",
+      "severity": "alert"
+    },
+    {
+      "code": "mesheryctl-1183",
+      "moniker": "ErrEncodingDataCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1183",
+      "severity": "alert",
+      "probableCause": [
+        "Non supported characters in the data"
+      ],
+      "suggestedRemediation": [
+        "Ensure the content of the data provided does not contain invalid supported characters"
+      ]
+    },
+    {
+      "code": "mesheryctl-1184",
+      "moniker": "ErrUnsupportedFormatCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1184",
+      "severity": "alert",
+      "probableCause": [
+        "An unsupported output format was requested."
+      ],
+      "suggestedRemediation": [
+        "Specify a supported output format. Choices are 'json' or 'yaml'."
+      ]
+    },
+    {
+      "code": "mesheryctl-1185",
+      "moniker": "ErrUploadFileWithParamsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1185",
+      "severity": "alert",
+      "probableCause": [
+        "File upload failed due to network issues or server errors"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and ensure the server is reachable."
+      ]
+    },
+    {
+      "code": "mesheryctl-1186",
+      "moniker": "ErrAwsEksGetCredentialsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1186",
+      "severity": "alert",
+      "shortDescription": "Unable to get EKS cluster credentials",
+      "longDescription": "There was an error while fetching the EKS cluster credentials",
+      "suggestedRemediation": [
+        "Ensure that the EKS cluster name and region are correct, and that you have the necessary permissions to access the cluster"
+      ]
+    },
+    {
+      "code": "mesheryctl-1187",
+      "moniker": "ErrReadKubeConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1187",
+      "severity": "alert",
+      "shortDescription": "Unable to read kubeconfig file",
+      "longDescription": "There was an error reading the kubeconfig file",
+      "suggestedRemediation": [
+        "Please ensure that the kubeconfig file exists, content is valid and is accessible"
+      ]
+    },
+    {
+      "code": "mesheryctl-1188",
+      "moniker": "ErrWriteKubeConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1188",
+      "severity": "alert",
+      "shortDescription": "Unable to write kubeconfig file",
+      "longDescription": "There was an error writing the kubeconfig file",
+      "suggestedRemediation": [
+        "Please ensure that you have the necessary permissions to write to the kubeconfig file location"
+      ]
+    },
+    {
+      "code": "mesheryctl-1189",
+      "moniker": "ErrAzureAksGetCredentialsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1189",
+      "severity": "alert",
+      "shortDescription": "Unable to get AKS cluster credentials",
+      "longDescription": "There was an error while fetching the AKS cluster credentials",
+      "suggestedRemediation": [
+        "Ensure that the AKS cluster name and resource group are correct, and that you have the necessary permissions to access the cluster"
+      ]
+    },
+    {
+      "code": "mesheryctl-1190",
+      "moniker": "ErrAzureCliNotFoundCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1190",
+      "severity": "alert",
+      "shortDescription": "Azure CLI not found",
+      "longDescription": "The Azure CLI is required to create an AKS connection but was not found on your system",
+      "suggestedRemediation": [
+        "Please install the Azure CLI from https://learn.microsoft.com/en-us/cli/azure/install-azure-cli and ensure it is accessible in your system's PATH"
+      ]
+    },
+    {
+      "code": "mesheryctl-1191",
+      "moniker": "ErrInvalidCommandCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1191",
+      "severity": "alert",
+      "shortDescription": "Invalid command",
+      "probableCause": [
+        "The provided command is not recognized"
+      ],
+      "suggestedRemediation": [
+        "Run 'mesheryctl design --help' to see available commands"
+      ]
+    },
+    {
+      "code": "mesheryctl-1192",
+      "moniker": "ErrDesignNameOrIDNotSpecifiedCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1192",
+      "severity": "alert",
+      "shortDescription": "Design name or ID not specified",
+      "longDescription": "No design name or ID was provided",
+      "probableCause": [
+        "Command requires a design name or ID as argument"
+      ],
+      "suggestedRemediation": [
+        "Provide a design name or ID, or use '-a' flag to view all designs.\nRun 'mesheryctl design view --help' for usage details"
+      ]
+    },
+    {
+      "code": "mesheryctl-1193",
+      "moniker": "ErrReadInputCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1193",
+      "severity": "fatal",
+      "shortDescription": "Unable to read the input",
+      "probableCause": [
+        "The provided input was invalid or could not be read"
+      ],
+      "suggestedRemediation": [
+        "Validate the input and try again."
+      ]
+    },
+    {
+      "code": "mesheryctl-1194",
+      "moniker": "ErrOutputFileNotSpecifiedCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1194",
+      "severity": "alert",
+      "shortDescription": "Output file path is not specified.",
+      "longDescription": "The output file path was not provided.",
+      "probableCause": [
+        "An output file path must be specified to save the output."
+      ],
+      "suggestedRemediation": [
+        "Provide a valid file path."
+      ]
+    },
+    {
+      "code": "mesheryctl-1195",
+      "moniker": "ErrCreateEnvironmentCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1195",
+      "severity": "alert",
+      "longDescription": "There was an error while creating the environment",
+      "probableCause": [
+        "Ensure Meshery server is running and reachable",
+        "Check if the organization ID is correct"
+      ],
+      "suggestedRemediation": [
+        "Start Meshery server and try again",
+        "Provide a valid organization ID"
+      ]
+    },
+    {
+      "code": "mesheryctl-1196",
+      "moniker": "ErrContextNotExistsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1196",
+      "severity": "fatal",
+      "shortDescription": "Unable to get context details",
+      "probableCause": [
+        "Non exists context name is provided"
+      ],
+      "suggestedRemediation": [
+        "Run `mesheryctl system context list` to see available context name"
+      ]
+    },
+    {
+      "code": "mesheryctl-1198",
+      "moniker": "ErrInvalidOutputFormatCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1198",
+      "severity": "alert",
+      "shortDescription": "Invalid Output Format",
+      "probableCause": [
+        "The specified output format is not supported"
+      ]
+    },
+    {
+      "code": "mesheryctl-1199",
+      "moniker": "ErrDesignInvalidApiResponseCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1199",
+      "severity": "alert",
+      "shortDescription": "Invalid API response",
+      "probableCause": [
+        "The API response is missing expected fields or has an unexpected format"
+      ],
+      "suggestedRemediation": [
+        "Ensure the Meshery server is running a compatible version",
+        "Check for any issues with the Meshery server that may cause it to return malformed responses"
+      ]
+    },
+    {
+      "code": "mesheryctl-1200",
+      "moniker": "ErrDeleteModelCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1200",
+      "severity": "alert",
+      "shortDescription": "Failed to delete model",
+      "probableCause": [
+        "The specified model name or ID may not exist"
+      ],
+      "suggestedRemediation": [
+        "Verify the model name or ID using 'mesheryctl model list' and try again"
+      ]
+    },
+    {
+      "code": "mesheryctl-1201",
+      "moniker": "ErrCommandContextMissingCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1201",
+      "severity": "alert",
+      "longDescription": "A required context for command is missing or not specified",
+      "probableCause": [
+        "The command may require a specific context to be set in order to function properly"
+      ],
+      "suggestedRemediation": [
+        "Ensure that the necessary contextis defined in the root command file and try again"
+      ]
+    },
+    {
+      "code": "mesheryctl-1202",
+      "moniker": "ErrPromptCancelledCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1202",
+      "severity": "alert",
+      "shortDescription": "Selection cancelled",
+      "longDescription": "Selection prompt has been cancelled",
+      "probableCause": [
+        "The selection prompt was interrupted"
+      ],
+      "suggestedRemediation": [
+        "Run the command again and complete the selection"
+      ]
+    },
+    {
+      "code": "mesheryctl-1203",
+      "moniker": "ErrMesheryServerInternalErrorCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1203",
+      "severity": "alert",
+      "shortDescription": "Internal Server Error",
+      "probableCause": [
+        "An unexpected error occurred on the server side"
+      ],
+      "suggestedRemediation": [
+        "Check the server logs using 'mesheryctl system logs' for more details and try again later"
+      ]
+    },
+    {
+      "code": "mesheryctl-1204",
+      "moniker": "ErrEmptySheetDataCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1204",
+      "severity": "alert",
+      "shortDescription": "Invalid or empty spreadsheet provided",
+      "probableCause": [
+        "The spreadsheet must contain valid relationship entries with the required headers."
+      ],
+      "suggestedRemediation": [
+        "Ensure the spreadsheet contains at least two headers and corresponding values for it's headers. Refer to the Meshery relationship csv for the expected spreadsheet format \"https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\""
+      ]
+    },
+    {
+      "code": "mesheryctl-1205",
+      "moniker": "ErrSystemSetInvalidReleaseChannelCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1205",
+      "severity": "fatal",
+      "shortDescription": "Invalid release channel",
+      "probableCause": [
+        "A wrong release channel was specified"
+      ],
+      "suggestedRemediation": [
+        "Specify a valid release channel. Valid channels are 'stable' and 'edge'."
+      ]
+    },
+    {
+      "code": "mesheryctl-1206",
+      "moniker": "ErrSystemSetInvalidEdgeReleaseCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1206",
+      "severity": "fatal",
+      "shortDescription": "Invalid edge release version",
+      "probableCause": [
+        "A wrong edge release version was specified"
+      ],
+      "suggestedRemediation": [
+        "The edge release channel only supports 'latest' as version argument."
+      ]
+    },
+    {
+      "code": "mesheryctl-1207",
+      "moniker": "ErrSystemCheckInvalidCliVersionCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1207",
+      "severity": "fatal",
+      "shortDescription": "Invalid CLI version",
+      "probableCause": [
+        "The CLI version is incompatible with the Meshery Server version"
+      ],
+      "suggestedRemediation": [
+        "Please upgrade your CLI to the latest version or to a version compatible with your Meshery Server."
+      ]
+    },
+    {
+      "code": "mesheryctl-1208",
+      "moniker": "ErrDockerNotRunningCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1208",
+      "severity": "fatal",
+      "shortDescription": "Docker is not running",
+      "probableCause": [
+        "Docker daemon is not running"
+      ],
+      "suggestedRemediation": [
+        "Please start Docker and run the command again."
+      ]
+    },
+    {
+      "code": "mesheryctl-1209",
+      "moniker": "ErrDockerContextCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1209",
+      "severity": "fatal",
+      "shortDescription": "Docker context issue",
+      "probableCause": [
+        "The Docker context selected is not configured properly to connect to the Docker daemon"
+      ],
+      "suggestedRemediation": [
+        "Please ensure that the correct Docker context is selected and configured properly to connect to the Docker daemon. Use `docker context ls` to list all available contexts and `docker context inspect [context-name]` to inspect the configuration of a specific context."
+      ]
+    },
+    {
+      "code": "mesheryctl-1210",
+      "moniker": "ErrDockerStartCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1210",
+      "severity": "fatal",
+      "shortDescription": "Failed to start Docker",
+      "probableCause": [
+        "Docker daemon failed to start"
+      ],
+      "suggestedRemediation": [
+        "Please check the Docker installation and try starting Docker manually. If the issue persists, refer to Docker's documentation or support for troubleshooting steps."
+      ]
+    },
+    {
+      "code": "mesheryctl-1211",
+      "moniker": "ErrDockerUnknownCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1211",
+      "severity": "fatal",
+      "shortDescription": "Docker error",
+      "probableCause": [
+        "An unknown error occurred while trying to connect / interact with Docker"
+      ],
+      "suggestedRemediation": [
+        "Please ensure Docker is installed and running. If the issue persists, check the Docker configuration and logs for more details."
+      ]
+    },
+    {
+      "code": "mesheryctl-1212",
+      "moniker": "ErrFailedToConnectAdapterCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1212",
+      "severity": "alert",
+      "probableCause": [
+        "The connection to the Meshery Adapter failed"
+      ],
+      "suggestedRemediation": [
+        "Ensure that the Meshery Adapter is running and accessible, and try again"
+      ]
+    },
+    {
+      "code": "mesheryctl-1213",
+      "moniker": "ErrAdapterNotReachableCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1213",
+      "severity": "alert",
+      "longDescription": "The Meshery Adapter is not responding to requests",
+      "probableCause": [
+        "The adapter may be down or there may be network issues"
+      ],
+      "suggestedRemediation": [
+        "Check the status of the adapter and your network connection, and try again"
+      ]
+    },
+    {
+      "code": "mesheryctl-1214",
+      "moniker": "ErrListMesheryPodsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1214",
+      "severity": "alert",
+      "shortDescription": "Failed to list Meshery pods",
+      "probableCause": [
+        "Unable to retrieve the list of Meshery pods from the Kubernetes cluster"
+      ],
+      "suggestedRemediation": [
+        "Ensure your Kubernetes cluster is running and accessible, and that you have the necessary permissions to list pods"
+      ]
+    },
+    {
+      "code": "mesheryctl-1215",
+      "moniker": "ErrNoMesheryPodsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1215",
+      "severity": "alert",
+      "suggestedRemediation": [
+        "Verify the namespace and ensure that Meshery pods are deployed and running"
+      ]
+    },
+    {
+      "code": "mesheryctl-1216",
+      "moniker": "ErrMissingMesheryPodCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1216",
+      "severity": "alert",
+      "probableCause": [
+        "The specified pod name may be incorrect or the pod may not be running"
+      ],
+      "suggestedRemediation": [
+        "Verify the pod name and ensure that the Meshery pod is deployed and running"
+      ]
+    },
+    {
+      "code": "mesheryctl-1217",
+      "moniker": "ErrK8sVersionInfoCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1217",
+      "severity": "alert",
+      "shortDescription": "Failed to get Kubernetes version information",
+      "probableCause": [
+        "Unable to retrieve Kubernetes version information from the cluster"
+      ],
+      "suggestedRemediation": [
+        "Ensure your Kubernetes cluster is running and accessible, and that you have the necessary permissions to query version information"
+      ]
+    },
+    {
+      "code": "mesheryctl-1218",
+      "moniker": "ErrK8sInvalidVersionFormatCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1218",
+      "severity": "alert",
+      "shortDescription": "Invalid Kubernetes version format",
+      "probableCause": [
+        "The Kubernetes version information retrieved is in an unexpected format"
+      ],
+      "suggestedRemediation": [
+        "Check the Kubernetes cluster for any issues and ensure it is running a supported version"
+      ]
+    },
+    {
+      "code": "mesheryctl-1219",
+      "moniker": "ErrOperatorUnsupportedPlatformCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1219",
+      "severity": "fatal",
+      "shortDescription": "Operator unsupported platform",
+      "probableCause": [
+        "The operator health checks can only be run on Kubernetes platform"
+      ],
+      "suggestedRemediation": [
+        "Please switch to a Kubernetes context to run operator health checks."
+      ]
+    },
+    {
+      "code": "mesheryctl-1220",
+      "moniker": "ErrReadMesheryConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1220",
+      "severity": "fatal",
+      "shortDescription": "Error in reading config",
+      "probableCause": [
+        "Unable to read config file"
+      ],
+      "suggestedRemediation": [
+        "Ensure that you have the correct context in your meshconfig at `$HOME/.meshery/config.yaml`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1221",
+      "moniker": "ErrDuplicateContextCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1221",
+      "severity": "fatal",
+      "shortDescription": "Duplicate Context",
+      "probableCause": [
+        "A context with the same name already exists in the config file"
+      ],
+      "suggestedRemediation": [
+        "Use a different name for the context or delete the existing context with the same name"
+      ]
+    },
+    {
+      "code": "mesheryctl-1222",
+      "moniker": "ErrWriteMeshConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1222",
+      "severity": "fatal",
+      "shortDescription": "Error in writing config",
+      "probableCause": [
+        "Unable to write to config file"
+      ],
+      "suggestedRemediation": [
+        "Ensure that you have the correct permissions to write to the config file at `$HOME/.meshery/config.yaml`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1223",
+      "moniker": "ErrDockerComposeFileMissingCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1223",
+      "severity": "fatal",
+      "shortDescription": "Docker Compose file not found",
+      "probableCause": [
+        "Docker Compose file is missing from the Meshery folder"
+      ],
+      "suggestedRemediation": [
+        "Run `mesheryctl system start` again to download and generate docker-compose file based on your context"
+      ]
+    },
+    {
+      "code": "mesheryctl-1224",
+      "moniker": "ErrDockerComposeClientCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1224",
+      "severity": "alert",
+      "shortDescription": "Failed to create Docker Compose client",
+      "probableCause": [
+        "Unable to initialize the Docker Compose client, which is required for managing Docker-based Meshery deployments"
+      ],
+      "suggestedRemediation": [
+        "Ensure that Docker is installed and running on your system, and that you have the necessary permissions to access the Docker API"
+      ]
+    },
+    {
+      "code": "mesheryctl-1225",
+      "moniker": "ErrDockerComposeRemoveCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1225",
+      "severity": "fatal",
+      "shortDescription": "Failed to delete Meshery containers",
+      "probableCause": [
+        "An error occurred while trying to delete Meshery containers using Docker Compose"
+      ],
+      "suggestedRemediation": [
+        "Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder. If the issue persists, check the Docker and Docker Compose configuration and logs for more details."
+      ]
+    },
+    {
+      "code": "mesheryctl-1226",
+      "moniker": "ErrDockerComposeLogsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1226",
+      "severity": "alert",
+      "shortDescription": "Failed to fetch logs from Meshery containers",
+      "probableCause": [
+        "An error occurred while trying to fetch logs from Meshery containers using Docker Compose"
+      ],
+      "suggestedRemediation": [
+        "Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder. If the issue persists, check the Docker and Docker Compose configuration and logs for more details."
+      ]
+    },
+    {
+      "code": "mesheryctl-1227",
+      "moniker": "ErrMesheryCheckRunningStatusCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1227",
+      "severity": "alert",
+      "shortDescription": "Failed to check if Meshery is running",
+      "probableCause": [
+        "You are not on correct context.",
+        "Meshery is not reachable.",
+        "There might be some issue with your Docker or Kubernetes environment."
+      ],
+      "suggestedRemediation": [
+        "Please ensure Meshery is installed.",
+        "Validate that you are in the correct context."
+      ]
+    },
+    {
+      "code": "mesheryctl-1228",
+      "moniker": "ErrDockerComposeStopCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1228",
+      "severity": "fatal",
+      "shortDescription": "Failed to stop Meshery containers",
+      "probableCause": [
+        "An error occurred while trying to stop Meshery containers using Docker Compose"
+      ],
+      "suggestedRemediation": [
+        "Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder."
+      ]
+    },
+    {
+      "code": "mesheryctl-1229",
+      "moniker": "ErrLogoutCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1229",
+      "severity": "fatal",
+      "shortDescription": "Logout failed",
+      "probableCause": [
+        "Unable to complete the logout operation"
+      ],
+      "suggestedRemediation": [
+        "Check the token file path and permissions. The underlying error will provide more details."
+      ]
+    },
+    {
+      "code": "mesheryctl-1232",
+      "moniker": "ErrGenerateDataForInvalidResponseCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1232",
+      "severity": "fatal",
+      "shortDescription": "Invalid response received from Meshery server. The response is nil or does not contain a body.",
+      "longDescription": "The response from the Meshery server is invalid and cannot be processed.",
+      "probableCause": [
+        "An error occurred while processing the response from the Meshery server."
+      ],
+      "suggestedRemediation": [
+        "Ensure that the Meshery server is running and returning valid responses."
+      ]
+    },
+    {
+      "code": "mesheryctl-1233",
+      "moniker": "ErrPublishCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1233",
+      "severity": "alert",
+      "probableCause": [
+        "Invalid system specified",
+        "Publishing process encountered an error"
+      ],
+      "suggestedRemediation": [
+        "Ensure a valid system is provided (remote-provider, website)",
+        "Check the publishing configuration and try again"
+      ]
+    },
+    {
+      "code": "mesheryctl-1234",
+      "moniker": "ErrSystemAzureAksGetCredentialsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1234",
+      "severity": "alert",
+      "shortDescription": "[System] Unable to get AKS cluster credentials",
+      "longDescription": "There was an error while fetching the AKS cluster credentials",
+      "suggestedRemediation": [
+        "Ensure that the AKS cluster name and resource group are correct, and that you have the necessary permissions to access the cluster"
+      ]
+    },
+    {
+      "code": "mesheryctl-1235",
+      "moniker": "ErrSystemAzureCliNotFoundCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1235",
+      "severity": "alert",
+      "shortDescription": "[System] Azure CLI not found",
+      "longDescription": "The Azure CLI is required but was not found on your system",
+      "suggestedRemediation": [
+        "Please install the Azure CLI from https://learn.microsoft.com/en-us/cli/azure/install-azure-cli and ensure it is accessible in your system's PATH"
+      ]
+    },
+    {
+      "code": "mesheryctl-1236",
+      "moniker": "ErrSystemAwsCliNotFoundCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1236",
+      "severity": "alert",
+      "shortDescription": "[System] AWS CLI not found",
+      "longDescription": "The AWS CLI is required to configure an EKS connection but was not found on your system",
+      "suggestedRemediation": [
+        "Please install the AWS CLI from https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html and ensure it is accessible in your system's PATH"
+      ]
+    },
+    {
+      "code": "mesheryctl-1237",
+      "moniker": "ErrSystemGkeGenerateConfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1237",
+      "severity": "alert",
+      "shortDescription": "[System] Failed to generate GKE config",
+      "longDescription": "There was an error while generating the GKE cluster configuration",
+      "suggestedRemediation": [
+        "Ensure you have the necessary Google Cloud permissions and that your gcloud CLI is authenticated properly"
+      ]
+    },
+    {
+      "code": "mesheryctl-1238",
+      "moniker": "ErrSystemEksGetCredentialsCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1238",
+      "severity": "alert",
+      "shortDescription": "[System] Unable to get EKS cluster credentials",
+      "longDescription": "There was an error while fetching the EKS cluster credentials or reading inputs",
+      "suggestedRemediation": [
+        "Ensure that the EKS cluster name and region are correct, and that you have the necessary AWS permissions"
+      ]
+    },
+    {
+      "code": "mesheryctl-1239",
+      "moniker": "ErrSystemMinikubeKubeconfigCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1239",
+      "severity": "alert",
+      "shortDescription": "[System] Minikube kubeconfig error",
+      "longDescription": "There was an error reading or processing the default minikube kubeconfig",
+      "suggestedRemediation": [
+        "Ensure minikube is running and that your local kubeconfig file is accessible at the default location"
+      ]
+    },
+    {
+      "code": "mesheryctl-1240",
+      "moniker": "ErrValidateVersionCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1240",
+      "severity": "alert",
+      "shortDescription": "Error validating Meshery version",
+      "probableCause": [
+        "The version in the context is invalid or unsupported"
+      ]
+    },
+    {
+      "code": "mesheryctl-1241",
+      "moniker": "ErrUpdateContainersCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1241",
+      "severity": "alert",
+      "shortDescription": "Error updating Meshery containers",
+      "probableCause": [
+        "Failed to update Meshery container images"
+      ],
+      "suggestedRemediation": [
+        "Ensure Docker is running and you have a stable network connection"
+      ]
+    },
+    {
+      "code": "mesheryctl-1242",
+      "moniker": "ErrFetchContainersCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1242",
+      "severity": "alert",
+      "shortDescription": "Error fetching container status",
+      "probableCause": [
+        "Failed to fetch the list of running containers"
+      ],
+      "suggestedRemediation": [
+        "Ensure Docker is running and docker-compose is available"
+      ]
+    },
+    {
+      "code": "mesheryctl-1243",
+      "moniker": "ErrInvalidComponentCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1243",
+      "severity": "alert",
+      "shortDescription": "Invalid component specified",
+      "probableCause": [
+        "An invalid or unsupported component name was provided in the context"
+      ],
+      "suggestedRemediation": [
+        "Verify the component name in your meshconfig context. Run `mesheryctl system context view` to check configured components."
+      ]
+    },
+    {
+      "code": "mesheryctl-1244",
+      "moniker": "ErrMesheryEndpointNotAccessibleCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1244",
+      "severity": "alert",
+      "shortDescription": "Meshery endpoint is not yet accessible",
+      "longDescription": "Meshery endpoint did not become accessible within the expected time",
+      "probableCause": [
+        "Meshery server may still be initializing or failed to start"
+      ],
+      "suggestedRemediation": [
+        "Check the status later with `mesheryctl system status`"
+      ]
+    },
+    {
+      "code": "mesheryctl-1245",
+      "moniker": "ErrPerfProfileServerCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1245",
+      "severity": "alert",
+      "shortDescription": "Server error while saving performance profile",
+      "probableCause": [
+        "Provider Database could be down or not reachable"
+      ],
+      "suggestedRemediation": [
+        "Make sure provider is up and reachable"
+      ]
+    },
+    {
+      "code": "mesheryctl-1246",
+      "moniker": "ErrEmptyCSVDataCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1246",
+      "severity": "alert",
+      "shortDescription": "Invalid or empty CSV file provided",
+      "probableCause": [
+        "The CSV file must contain valid relationship entries with the required headers."
+      ],
+      "suggestedRemediation": [
+        "Ensure the CSV file contains two header rows and at least one data row with a minimum of 15 columns. Refer to the Meshery relationship CSV template: \"https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\""
+      ]
+    },
+    {
+      "code": "mesheryctl-1247",
+      "moniker": "ErrEvaluateDesignCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1247",
+      "severity": "alert",
+      "shortDescription": "Design not specified for evaluation",
+      "longDescription": "Exactly one of a design file path (-f) or a design ID must be provided, not both",
+      "probableCause": [
+        "A design must be specified either by file path (-f) or by ID as an argument, but not both simultaneously"
+      ],
+      "suggestedRemediation": [
+        "Provide a design file using '-f' flag or pass a design ID as an argument (not both).\n\nUsage: mesheryctl design evaluate [ID] -o [output-file]\n       mesheryctl design evaluate -f [file] -o [output-file]"
+      ]
+    },
+    {
+      "code": "mesheryctl-1248",
+      "moniker": "ErrEvaluateDesignResponseCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1248",
+      "severity": "alert",
+      "shortDescription": "Failed to evaluate design",
+      "probableCause": [
+        "The Meshery server returned an error while evaluating the design",
+        "The design file may be invalid or the server may be experiencing issues"
+      ],
+      "suggestedRemediation": [
+        "Ensure the design file is valid",
+        "Check that the Meshery server is running and accessible",
+        "Verify that the server has the required policies loaded"
+      ]
+    },
+    {
+      "code": "mesheryctl-1249",
+      "moniker": "ErrPurgeInvalidRetainCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1249",
+      "severity": "alert",
+      "longDescription": "--retain must be a positive integer, but a value less than 1 was provided",
+      "probableCause": [
+        "A value less than 1 was passed to the --retain flag"
+      ],
+      "suggestedRemediation": [
+        "Pass --retain with a value of 1 or greater"
+      ]
+    },
+    {
+      "code": "mesheryctl-1250",
+      "moniker": "ErrPurgeReadModelsDirCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1250",
+      "severity": "alert",
+      "probableCause": [
+        "The ./models directory is not readable",
+        "Insufficient filesystem permissions"
+      ],
+      "suggestedRemediation": [
+        "Ensure ./models exists and is readable",
+        "Run mesheryctl registry purge from the root of a meshery/meshery fork"
+      ]
+    },
+    {
+      "code": "mesheryctl-1251",
+      "moniker": "ErrPurgeRemoveCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1251",
+      "severity": "alert",
+      "probableCause": [
+        "Insufficient filesystem permissions",
+        "The directory is in use by another process"
+      ],
+      "suggestedRemediation": [
+        "Ensure sufficient permissions to delete the directory",
+        "Retry the purge after closing any process using the directory"
+      ]
+    },
+    {
+      "code": "mesheryctl-1252",
+      "moniker": "ErrPurgeUnsafePathCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1252",
+      "severity": "alert",
+      "probableCause": [
+        "A model version directory name escapes the models directory",
+        "The models directory layout was modified while the purge was running"
+      ],
+      "suggestedRemediation": [
+        "Inspect the models directory for unexpected entries",
+        "Re-run mesheryctl registry purge from the root of a meshery/meshery fork"
+      ]
+    },
+    {
+      "code": "mesheryctl-1253",
+      "moniker": "ErrAmbiguousSelectionCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1253",
+      "severity": "alert",
+      "shortDescription": "Ambiguous match, and no terminal to resolve it on",
+      "probableCause": [
+        "The command is running in a script, pipeline or CI job where stdin or stdout is redirected"
+      ],
+      "suggestedRemediation": [
+        "Identify the item by its unique ID instead of its name",
+        "Narrow the search so exactly one item matches"
+      ]
+    },
+    {
+      "code": "mesheryctl-1254",
+      "moniker": "ErrModelNotFoundCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1254",
+      "severity": "alert",
+      "shortDescription": "Selected model not found",
+      "probableCause": [
+        "The model name does not match any entry in the CSV's \"model\" column, or contains a typo"
+      ],
+      "suggestedRemediation": [
+        "Check the model name against the \"model\" column in your Models CSV, or omit --model to generate all eligible models"
+      ]
+    },
+    {
+      "code": "mesheryctl-1255",
+      "moniker": "ErrGitHubAPIResponseCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1255",
+      "severity": "alert",
+      "shortDescription": "Unexpected response from GitHub API",
+      "probableCause": [
+        "GitHub API may be rate-limiting requests or the requested resource may not exist"
+      ],
+      "suggestedRemediation": [
+        "Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"
+      ]
+    },
+    {
+      "code": "mesheryctl-1256",
+      "moniker": "ErrAmbiguousIDCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1256",
+      "severity": "alert",
+      "shortDescription": "Ambiguous ID prefix",
+      "probableCause": [
+        "The provided ID prefix is shared by more than one item."
+      ],
+      "suggestedRemediation": [
+        "Provide more characters of the ID, or the full ID."
+      ]
+    },
+    {
+      "code": "mesheryctl-1257",
+      "moniker": "ErrAssignTokenCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1257",
+      "severity": "fatal",
+      "shortDescription": "Unable to assign token to context",
+      "probableCause": [
+        "The target context may not exist in meshconfig, or meshconfig could not be read or written."
+      ],
+      "suggestedRemediation": [
+        "Verify the target context exists with `mesheryctl system context view` and ensure your meshconfig file is accessible."
+      ]
+    },
+    {
+      "code": "mesheryctl-1258",
+      "moniker": "ErrTokenRollbackCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1258",
+      "severity": "fatal",
+      "shortDescription": "Unable to assign token or roll back created token",
+      "probableCause": [
+        "Assigning the token to the target context failed, and deleting the newly created token during rollback also failed."
+      ],
+      "suggestedRemediation": [
+        "Remove the orphaned token from meshconfig or run `mesheryctl system token delete \u003ctoken-name\u003e`, and verify the target context exists with `mesheryctl system context view`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1259",
+      "moniker": "ErrProviderNotFoundCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1259",
+      "severity": "alert",
+      "shortDescription": "Requested provider is not available on this Meshery Server",
+      "probableCause": [
+        "The provider name is misspelled",
+        "The Meshery Server is pinned to a different provider"
+      ],
+      "suggestedRemediation": [
+        "Run `mesheryctl system provider list` to see the providers this server offers",
+        "Omit --provider to choose one interactively"
+      ]
+    },
+    {
+      "code": "mesheryctl-1260",
+      "moniker": "ErrProviderAmbiguousCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1260",
+      "severity": "alert",
+      "shortDescription": "More than one provider matches that name",
+      "probableCause": [
+        "Two or more providers share the same display name"
+      ],
+      "suggestedRemediation": [
+        "Run `mesheryctl system provider list` to see the registration keys",
+        "Pass a registration key to --provider instead of the display name"
+      ]
+    }
+  ],
+  "schemaVersion": 2
+}

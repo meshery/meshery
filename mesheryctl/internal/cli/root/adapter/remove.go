@@ -27,8 +27,8 @@ import (
 var (
 	removeCmd = &cobra.Command{
 		Use:   "remove",
-		Short: "remove cloud and cloud native infrastructure",
-		Long:  `remove cloud and cloud native infrastructure`,
+		Short: "Remove cloud and cloud native infrastructure",
+		Long:  `Remove cloud and cloud native infrastructure`,
 		Example: `
 // Remove Linkerd deployment
 mesheryctl adapter remove linkerd
@@ -43,7 +43,7 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 				return err
 			}
 
-			if err = validateAdapter(mctlCfg, meshName); err != nil {
+			if err = parseAndValidateMesh(mctlCfg, args); err != nil {
 				return err
 			}
 			return nil

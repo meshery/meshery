@@ -9,6 +9,10 @@ const initialState = {
       initial: true,
     },
     has_more: true,
+    // Set when a page request fails so the UI can show an error + retry without
+    // treating the failure as the end of the list.
+    load_error: false,
+    failed_request: null,
   },
 
   // this is used to fetch the view when notification center is opened
@@ -43,6 +47,78 @@ const eventsEntityAdapter = createEntityAdapter({
   },
 });
 
+// An RFC 3339 time as Meshery Server's Go time.Time marshals one: whole
+// seconds, an optional fraction of up to nine digits, and a zone.
+const RFC3339 = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.(\d{1,9}))?(Z|[+-]\d{2}:\d{2})$/;
+
+const NANOSECONDS_PER_MILLISECOND = 1_000_000;
+
+// instantOf returns value as [whole seconds since the epoch, in milliseconds;
+// nanoseconds within that second], or undefined when it is not a time. Go
+// sends nanosecond precision, which Date.parse would cut to milliseconds, so
+// two revisions written within one millisecond would compare equal; the
+// fraction is therefore read as integer nanoseconds. A time in another format
+// falls back to Date.parse at millisecond precision.
+const instantOf = (value) => {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+  const match = RFC3339.exec(value);
+  if (match) {
+    const [, wholeSeconds, fraction = '', zone] = match;
+    const seconds = Date.parse(`${wholeSeconds}${zone}`);
+    return Number.isNaN(seconds) ? undefined : [seconds, Number(fraction.padEnd(9, '0'))];
+  }
+  const at = Date.parse(value);
+  if (Number.isNaN(at)) {
+    return undefined;
+  }
+  const seconds = Math.floor(at / 1000) * 1000;
+  return [seconds, (at - seconds) * NANOSECONDS_PER_MILLISECOND];
+};
+
+// compareTimes orders two times at full precision: negative when a is
+// earlier, positive when later, and 0 when they are equal or either is not a
+// time.
+const compareTimes = (a, b) => {
+  const x = instantOf(a);
+  const y = instantOf(b);
+  if (!x || !y) {
+    return 0;
+  }
+  return x[0] - y[0] || x[1] - y[1];
+};
+
+const compareCounts = (a, b) => (typeof a === 'number' && typeof b === 'number' ? a - b : 0);
+
+// compareRevisions orders two revisions of one stored event by when they were
+// updated. When both update times are known and equal it breaks the tie on
+// lastSeenAt and then occurrenceCount, which only grow from one revision to
+// the next, so the order does not depend on which broadcast arrived first. It
+// is negative when a is the earlier revision, and 0 when either update time is
+// unknown or neither revision is known to be earlier.
+const compareRevisions = (a, b) => {
+  if (!instantOf(a.updatedAt) || !instantOf(b.updatedAt)) {
+    return 0;
+  }
+  return (
+    compareTimes(a.updatedAt, b.updatedAt) ||
+    compareTimes(a.lastSeenAt, b.lastSeenAt) ||
+    compareCounts(a.occurrenceCount, b.occurrenceCount)
+  );
+};
+
+// isOlderRevision reports whether incoming is an earlier revision of the
+// stored event than existing: it shows open a condition existing already
+// shows resolved (a stored condition is never reopened), or compareRevisions
+// orders it before existing.
+const isOlderRevision = (incoming, existing) => {
+  if (existing.resolvedAt && !incoming.resolvedAt) {
+    return true;
+  }
+  return compareRevisions(incoming, existing) < 0;
+};
+
 export const eventsSlice = createSlice({
   name: 'events',
   initialState: eventsEntityAdapter.getInitialState(initialState),
@@ -57,12 +133,23 @@ export const eventsSlice = createSlice({
       eventsEntityAdapter.addMany(state, action.payload);
 
       state.current_view.has_more = action.payload.length == 0 ? false : true;
+      state.current_view.load_error = false;
+      state.current_view.failed_request = null;
     },
 
     pushEvents: (state, action) => {
       // state.events = [...state.events, ...action.payload]
       eventsEntityAdapter.addMany(state, action.payload);
       state.current_view.has_more = action.payload.length == 0 ? false : true;
+      state.current_view.load_error = false;
+      state.current_view.failed_request = null;
+    },
+
+    // A page request failed: flag the error and record the { page, filters } that
+    // failed so retry repeats that request, not the last page that loaded.
+    setLoadError: (state, action) => {
+      state.current_view.load_error = true;
+      state.current_view.failed_request = action.payload || null;
     },
 
     pushEvent: (state, action) => {
@@ -71,8 +158,26 @@ export const eventsSlice = createSlice({
         severity: action.payload?.severity?.trim() || defaultEventProperties.severity,
         status: action.payload?.status?.trim() || defaultEventProperties.status,
       };
-      eventsEntityAdapter.addOne(state, event);
-      // state.events = [event, ...state.events]
+      // The server broadcasts an occurrence counted on, or the resolution of,
+      // an open condition as the condition's stored event, so an event already
+      // shown is updated in place rather than ignored.
+      const existing = state.entities[event.id];
+      if (!existing) {
+        eventsEntityAdapter.addOne(state, event);
+        return;
+      }
+      // Broadcasts of one condition can arrive out of order, so an older
+      // revision of the stored event never replaces a newer one.
+      if (isOlderRevision(event, existing)) {
+        return;
+      }
+      // Whether the user has read the notification is the user's, not the
+      // broadcast's: a re-push keeps it, and the selection, as they were.
+      eventsEntityAdapter.upsertOne(state, {
+        ...event,
+        status: existing.status,
+        checked: existing.checked,
+      });
     },
 
     updateEvent: eventsEntityAdapter.updateOne,
@@ -147,6 +252,7 @@ export const {
   updateIsEventChecked,
   updateCheckAllEvents,
   pushEvents,
+  setLoadError,
   setCurrentView,
   updateEvent,
   toggleNotificationCenter,
@@ -156,15 +262,37 @@ export const {
 
 export default eventsSlice.reducer;
 
+// Monotonic token identifying the latest in-flight load. A filter change or a
+// newer page load claims a fresh token; any earlier request whose result
+// arrives late is superseded and its success/error is ignored, so a stale
+// failure cannot overwrite the current view (e.g. re-flag an obsolete filter).
+let latestRequestId = 0;
+
 export const loadEvents = (fetch, page, filters) => async (dispatch, getState) => {
   const currentView = getState().events.current_view;
+  const requestId = ++latestRequestId;
+  const isSuperseded = () => requestId !== latestRequestId;
   try {
-    const { data } = await fetch({ page, filters });
+    // RTK Query's lazy trigger resolves with { error } on failure instead of
+    // throwing, so a failed request must be detected here explicitly. Treating
+    // it as an empty page would set has_more=false and advance the page,
+    // making a transient failure look like the end of the list.
+    const { data, error } = await fetch({ page, filters });
+    if (isSuperseded()) {
+      return;
+    }
+    if (error) {
+      dispatch(setLoadError({ page, filters }));
+      console.error('Error while fetching events in store --loadEvents', error);
+      return;
+    }
     dispatch(
       setCurrentView({
         ...currentView,
         page,
         filters,
+        load_error: false,
+        failed_request: null,
       }),
     );
     if (page <= 0) {
@@ -173,6 +301,10 @@ export const loadEvents = (fetch, page, filters) => async (dispatch, getState) =
     }
     dispatch(pushEvents(data?.events || []));
   } catch (e) {
+    if (isSuperseded()) {
+      return;
+    }
+    dispatch(setLoadError({ page, filters }));
     console.error('Error while setting events in store --loadEvents', e);
     return;
   }
@@ -180,7 +312,23 @@ export const loadEvents = (fetch, page, filters) => async (dispatch, getState) =
 
 export const loadNextPage = (fetch) => async (dispatch, getState) => {
   const currentView = getState().events.current_view;
+  // Don't chase a page that failed to load as if it were the next one; let the
+  // user retry the failed page instead (see retryCurrentPage).
+  if (currentView.load_error) {
+    return;
+  }
   dispatch(loadEvents(fetch, currentView.page + 1, currentView.filters));
+};
+
+// Re-request the exact page + filters that failed (not the last page that
+// loaded), so a retry does not skip a page or duplicate notifications.
+export const retryCurrentPage = (fetch) => async (dispatch, getState) => {
+  const currentView = getState().events.current_view;
+  const failed = currentView.failed_request;
+  if (!failed) {
+    return;
+  }
+  dispatch(loadEvents(fetch, failed.page, failed.filters));
 };
 
 export const updateEventStatus =
@@ -225,6 +373,11 @@ export const deleteEvents =
 //select all events
 export const selectEvents = (state) => {
   return eventsEntityAdapter.getSelectors().selectAll(state.events);
+};
+
+// true when the last page request failed and can be retried
+export const selectLoadError = (state) => {
+  return Boolean(state.events.current_view.load_error);
 };
 
 export const selectCheckedEvents = (state) => {

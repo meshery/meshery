@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -32,9 +33,18 @@ const defaultMetricNamesLimit = 2000
 // credential (anonymous Prometheus). The returned int is an HTTP status to use
 // when err is non-nil.
 func (h *Handler) prometheusTelemetryClientForConnection(token string, connectionID uuid.UUID, p models.Provider) (*prometheus.Client, *connections.Connection, int, error) {
+	if connectionID.IsNil() {
+		return nil, nil, http.StatusBadRequest, models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
+	}
+	if p == nil {
+		return nil, nil, http.StatusInternalServerError, errors.New("provider not initialized")
+	}
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		return nil, nil, statusCode, err
+	}
+	if connection == nil {
+		return nil, nil, http.StatusNotFound, models.ErrResultNotFound(fmt.Errorf("connection not found"))
 	}
 	if connection.Kind != "prometheus" {
 		return nil, connection, http.StatusBadRequest, ErrInvalidConnectionKind(connection.Kind, "prometheus")
@@ -59,14 +69,32 @@ func (h *Handler) prometheusTelemetryClientForConnection(token string, connectio
 //
 // GET /api/telemetry/prometheus/{connectionID}/ping
 func (h *Handler) PrometheusTelemetryPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	userID := user.ID
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	if connectionID.IsNil() {
+		invalidID := models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
+		h.log.Error(invalidID)
+		writeMeshkitError(w, invalidID, http.StatusBadRequest)
+		return
+	}
 
+	sysID := uuid.Nil
+	if h.SystemID != nil {
+		sysID = *h.SystemID
+	}
 	eventBuilder := events.NewEvent().
 		ActedUpon(connectionID).
 		FromOwner(userID).
-		FromSystem(*h.SystemID).
+		FromSystem(sysID).
 		WithCategory("connection").
 		WithAction("ping")
 
@@ -96,8 +124,7 @@ func (h *Handler) PrometheusTelemetryPingHandler(w http.ResponseWriter, req *htt
 		metadata["url"] = connURL
 	}
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
-	_ = p.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(p, token, userID, event)
 
 	h.writeJSON(w, map[string]interface{}{
 		"reachable": true,
@@ -113,8 +140,7 @@ func (h *Handler) emitPrometheusPingFailure(p models.Provider, token string, use
 		WithDescription(fmt.Sprintf("Prometheus connection %q is unreachable.", label)).
 		WithMetadata(map[string]interface{}{"error": err}).
 		Build()
-	_ = p.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(p, token, userID, event)
 	h.log.Error(err)
 }
 
@@ -310,6 +336,12 @@ type prometheusBatchResultItem struct {
 func (h *Handler) PrometheusTelemetryQueryRangeBatchHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	if connectionID.IsNil() {
+		invalidID := models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
+		h.log.Error(invalidID)
+		writeMeshkitError(w, invalidID, http.StatusBadRequest)
+		return
+	}
 
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -373,10 +405,24 @@ func prometheusQueryError(err error) (int, error) {
 func (h *Handler) PrometheusTelemetryPanelsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	if connectionID.IsNil() {
+		invalidID := models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
+		h.log.Error(invalidID)
+		writeMeshkitError(w, invalidID, http.StatusBadRequest)
+		return
+	}
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		writeMeshkitError(w, err, statusCode)
+		return
+	}
+	if connection == nil {
+		writeMeshkitError(w, models.ErrResultNotFound(fmt.Errorf("connection not found")), http.StatusNotFound)
 		return
 	}
 	if connection.Kind != "prometheus" {

@@ -13,7 +13,7 @@ This guide offers comprehensive troubleshooting instructions for [Meshery Operat
 First, understand the [Meshery Operator Deployment Scenarios](#meshery-operator-deployment-scenarios) and the [Status of Meshery Operator, MeshSync, and Meshery Broker](#understanding-the-status-of-meshery-operator-meshsync-and-meshery-broker) to identify the deployment model fitting of your environment. Then, follow the guidance under the respective scenario to troubleshoot accordingly.
 
 {{% alert color="dark" title="Meshery Error Code Reference" %}}
-Have specific error with an error code? See the <a href='{{< ref "reference/references/error-codes.md" >}}'>Meshery Error Code Reference</a> for probable cause and suggested remediations.
+Have specific error with an error code? See the <a href='{{< ref "reference/error-codes.md" >}}'>Meshery Error Code Reference</a> for probable cause and suggested remediations.
 {{% /alert %}}
 
 ## Understanding the Status of Meshery Operator, MeshSync, and Meshery Broker
@@ -50,24 +50,29 @@ Because Meshery is versatile in its deployment models, there are different scena
 
 ### In-Cluster Deployment
 
-<!-- Meshery Operator, MeshSync, and Broker are deployed in the same cluster as Meshery Server. This is the default deployment scenario when using `mesheryctl system start` or `make run-local`. -->
+In this scenario, Meshery Server runs in the same Kubernetes cluster as Meshery Operator, MeshSync, and Broker. This is what you get when you deploy Meshery to Kubernetes with [`mesheryctl system start`]({{< ref "installation/_index.md" >}}) or [`helm install`]({{< ref "installation/kubernetes/helm.md" >}}). When Meshery Server connects to a cluster in operator mode, it deploys Meshery Operator there, unless the server runs with `DISABLE_OPERATOR=true`. The Operator then deploys Broker (NATS) and MeshSync.
 
-Whether using [`mesheryctl system start`]({{< ref "installation/_index.md" >}}), [`helm install`]({{< ref "installation/kubernetes/helm.md" >}}) or `make run-local`, Meshery Server will automatically connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`). Once connected, operator, broker(NATS) and meshsync will automatically get deployed in the same clusters.
+When everything is healthy, the cluster's connection in Meshery UI shows MeshSync as **CONNECTED**. If it does not, check the Operator's logs:
 
-If everything is fine, by viewing the connection in Meshery UI, MeshSync should be in **CONNECTED:** state. Otherwise, check the Operator's pod logs:
-
-`kubectl logs <meshery-operator-pod> -n meshery`
+```bash
+kubectl logs deploy/meshery-operator -n meshery -c manager
+```
 
 ### Out-of-Cluster Deployment
 
-1. Meshery Server is deployed on any Docker host (- Meshery Server is deployed on a Docker host, and Meshery Operator is deployed on a Kubernetes cluster).
-   _or_
-2. Meshery is managing multiple clusters, some of which are not the cluster unto which Meshery Server is deployed.
+This scenario applies when either of these is true:
+
+- Meshery Server runs on a Docker host, or on your workstation with `make server`, and Meshery Operator runs in a Kubernetes cluster.
+- Meshery manages several clusters, and some of them are not the cluster that Meshery Server runs in.
 
 In this model Meshery Server must both **reach** and **authenticate to** the in-cluster Meshery Broker (NATS):
 
 - **Reachability.** The Broker is usually exposed as `ClusterIP` only, which is not reachable from outside the cluster. When Meshery Server runs out-of-cluster it **automatically establishes a self-healing port-forward** to the Broker's NATS pod through the Kubernetes API server (like `kubectl port-forward`, using the credentials Meshery already holds) and connects over it - no manual step required. This is on by default out-of-cluster, skipped automatically in-cluster, and can be disabled with `MESHERY_MANAGED_BROKER_PORTFORWARD=false` (after which you must provide your own path, e.g. `kubectl port-forward -n meshery svc/meshery-nats 4222:4222`, or expose the Broker via NodePort/LoadBalancer).
 - **Authentication.** The Operator provisions NATS with token authentication (secret `meshery-nats-auth`); Meshery Server reads that token and presents it automatically. Without it the Broker rejects the connection with an authorization violation.
+
+{{% alert color="warning" title="Known issue: Meshery Server running in a different Kubernetes cluster" %}}
+Meshery Server decides it is "in-cluster" whenever it runs inside <em>any</em> Kubernetes cluster, so it also skips the managed port-forward for connections to <em>other</em> clusters. A Server deployed in cluster A that manages cluster B then reports <code>Meshery Broker unreachable</code> for cluster B. Until this is fixed, expose cluster B's Broker through its <code>Broker</code> resource - <code>spec.service.type: LoadBalancer</code> with <code>spec.service.loadBalancerSourceRanges</code> limited to the Server's egress address (the range restricts LoadBalancer traffic only, and only where the provider enforces it; for a <code>NodePort</code> exposure, restrict access with a firewall instead) - or run MeshSync in embedded mode for that connection. The source-range restriction limits who can connect; it does not encrypt the NATS token or cluster data, which cross this LoadBalancer in cleartext and a network observer can read both. Prefer the managed port-forward above where it applies, and expose the Broker only over a private network path. See <a href='{{< ref "concepts/architecture/broker/index.md" >}}'>Broker</a> for the service fields.
+{{% /alert %}}
 
 For the full walkthrough of the Kubernetes connection lifecycle, its components, and these connectivity behaviors, see [Kubernetes Connection Lifecycle]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md" >}}).
 
@@ -78,17 +83,32 @@ Some common failure situations that Meshery users might face are described below
 1. **Situation:** No deployment of Meshery Operator, MeshSync, and Broker.
    1. **Probable cause:** Meshery Server cannot connect to Kubernetes cluster; cluster unreachable or kubeconfig without proper permissions needed to deploy Meshery Operator; Kubernetes config initialization issues.
 1. **Situation:** Meshery Operator with MeshSync and Broker deployed, but Meshery Server is not receiving data from MeshSync or data the [Meshery Database]({{< ref "concepts/architecture/database/index.md" >}}) is stale.
-   1. **Probable cause:** 
-   2. Meshery Server lost subscription to Meshery Broker; Broker server not exposed to external IP; MeshSync not connected to Broker; MeshSync not running; Meshery Database is stale.
-   3. The SQL database in Meshery serves as a cache for cluster state. A single button allows users to dump/reset the Meshery Database.
-   4. Orphaned MeshSync and Broker controllers - Meshery Operator is not present, but MeshSync and Broker controllers are running.
-   5. **Broker unreachable / not authenticated (out-of-cluster Meshery):** the Broker is `ClusterIP`-only and unreachable, or Meshery is not presenting the NATS token. See [Out-of-Cluster Deployment](#out-of-cluster-deployment); the connection's [Diagnostics](#diagnostics-in-the-connection-detail-view) will report `broker_unreachable` with remediation.
+   1. **Probable causes:**
+      - Meshery Server lost its subscription to Meshery Broker, MeshSync is not connected to Broker, or MeshSync is not running.
+      - The Meshery Database is stale. Meshery Server's database is a cache of cluster state, and you can reset it from Meshery UI.
+      - MeshSync and Broker are orphaned: Meshery Operator is gone, but MeshSync and Broker are still running.
+      - **Broker unreachable / not authenticated (out-of-cluster Meshery):** the Broker is `ClusterIP`-only and unreachable, or Meshery is not presenting the NATS token. See [Out-of-Cluster Deployment](#out-of-cluster-deployment); the connection's [Diagnostics](#diagnostics-in-the-connection-detail-view) will report `broker_unreachable` with remediation.
 1. **Situation:** The `meshery-nats` (Broker) pod is in `CrashLoopBackOff` and never becomes ready.
    1. **Probable cause:** Some Meshery Operator versions inject the NATS token into `nats.conf` **unquoted** (`token: $NATS_TOKEN`). When the generated token happens to look like a number, the NATS config parser rejects it and the pod crash-loops. Confirm with `kubectl logs -n meshery meshery-nats-0 -c nats` (look for a `variable reference for 'NATS_TOKEN' ... could not be parsed` error). The fix belongs in the Operator (quote it: `token: "$NATS_TOKEN"`); redeploying often generates a token that parses.
 1. **Situation:** The `meshery-operator` pod never becomes ready after connecting a cluster. Its `kube-rbac-proxy` container is in `ImagePullBackOff`, and/or its `manager` container crash-loops with `open /tmp/k8s-webhook-server/serving-certs/tls.crt: no such file or directory`.
    1. **Probable cause:** An old Meshery Operator Helm chart was installed. See [Meshery Operator will not start: ImagePullBackOff and a missing webhook certificate](#meshery-operator-will-not-start-imagepullbackoff-and-a-missing-webhook-certificate).
-1. **Situation:** Terminating stuck resources during Meshery Operator upgrade.
-   1. **Probable cause:** During upgrade, the Meshery Operator may fail to upgrade smoothly if the previous version's MeshSync or Broker resources are stuck in a terminating state (typically due to finalizers).
+1. **Situation:** MeshSync is running and ready, but Meshery shows no resources for the cluster, and `kubectl -n meshery logs deploy/meshery-meshsync` repeats `forbidden: User "system:serviceaccount:meshery:meshery-operator" cannot list resource ...`.
+   1. **Probable cause:** Meshery Operator runs MeshSync under the operator's own ServiceAccount, and `meshery-operator` charts from `v1.0.0` on grant that ServiceAccount only what the operator itself needs. MeshSync has no read access to the resources it watches. Confirm with `kubectl auth can-i list <resource> -A --as=system:serviceaccount:meshery:meshery-operator` (`no`), using the resource named in the `forbidden` error (for example `deployments.apps`); checking only `pods` can return `yes` while another watched resource is still denied.
+   2. **Remediation (interim):** Grant MeshSync read-only access until a chart that gives MeshSync its own ServiceAccount is installed, then restart the MeshSync Pod:
+      ```bash
+      kubectl create clusterrole meshery-meshsync-discovery-interim --verb=get,list,watch --resource='*.*'
+      kubectl create clusterrolebinding meshery-meshsync-discovery-interim \
+        --clusterrole=meshery-meshsync-discovery-interim --serviceaccount=meshery:meshery-operator
+      kubectl -n meshery delete pod -l app=meshery,component=meshsync
+      ```
+      Remove both objects once the fixed chart is installed. Note the `*.*` grant is deliberately broad because MeshSync watches many resource types, so it also covers Secrets: MeshSync can read them cluster-wide while this interim grant is in place. It also grants `get` on subresources, including `nodes/proxy`, which Kubernetes documents as usable to execute commands in Pods through the kubelet API, so the grant is broader than discovery read. Listing only the watched resource types would close that gap, but MeshSync also tracks newly installed custom resources as CRDs appear, so no static list covers its watch set; that enumeration is follow-up work for the chart fix that gives MeshSync its own ServiceAccount.
+1. **Situation:** `kubectl get pods -A` shows a `meshery-operator` crash-looping in a namespace other than `meshery` (often `default`), while Meshery reports the operator as deployed or not deployed without mentioning it.
+   1. **Probable cause:** The chart was rendered and applied by hand (`helm template ... | kubectl apply -f -`) without `-n meshery`. Meshery Server manages only the `meshery-operator` Deployment in the `meshery` namespace, so it never sees, upgrades or removes this copy. The objects carry Helm labels but no `meta.helm.sh/release-name` annotation, no Helm release exists for them, and their `managedFields` name `kubectl-client-side-apply`.
+   2. **Remediation:** First confirm the copy is really stray: `helm list -A` should show no release owning it, and its objects should carry no `meta.helm.sh/release-name` annotation (the chart supports other release namespaces, so an operator outside `meshery` is not necessarily a manual install). Only then delete the Deployment and its ServiceAccount, Service, Role and RoleBinding in that namespace (check `kubectl get clusterrolebindings` for any that bind its ServiceAccount). A copy that pins a moving image tag such as `stable-latest` will also show the [ImagePullBackOff and missing webhook certificate](#meshery-operator-will-not-start-imagepullbackoff-and-a-missing-webhook-certificate) signature.
+1. **Situation:** Meshery Operator disappears from a cluster for every connection after one user switches their connection to embedded MeshSync, disconnects it, or deletes it.
+   1. **Probable cause:** Known issue: Meshery Server uninstalls the cluster-wide `meshery-operator` release on behalf of a single connection, even when other connections to the same cluster still use it. The next operator-mode connection reinstalls it, but see the next situation for the state the uninstall can leave behind.
+1. **Situation:** Terminating stuck resources during Meshery Operator upgrade or after Meshery Operator was uninstalled.
+   1. **Probable cause:** During upgrade, the Meshery Operator may fail to upgrade smoothly if the previous version's MeshSync or Broker resources are stuck in a terminating state (typically due to finalizers). An uninstall that removes the operator together with the `Broker` and `MeshSync` resources leaves them `Terminating` indefinitely, because the finalizers wait on the operator that was removed; the NATS StatefulSet and MeshSync Deployment they own keep running. Clear the finalizers before reinstalling - a reinstall that adopts the terminating resources lets the new operator delete them, leaving an operator with no Broker (`brokers.meshery.io "meshery-broker" not found`).
    2. **Remediation:** Follow these steps to clean up stuck resources and safely apply the upgrade:
       1. Upgrade the `mesheryctl` CLI binary first if it is outdated, as `mesheryctl system update` only updates Meshery container images and manifests (see the [Upgrading mesheryctl]({{< ref "installation/upgrades/index.md#upgrading-meshery-cli" >}}) guide).
       2. Check if the `MeshSync` and `Broker` custom resources are in a terminating state by inspecting their deletion timestamps:
@@ -104,15 +124,19 @@ Some common failure situations that Meshery users might face are described below
          # Run only if meshery-broker is stuck in Terminating
          kubectl patch broker meshery-broker -n meshery -p '{"metadata":{"finalizers":null}}' --type=merge
          ```
-      4. Pull the latest Meshery container images and apply the Helm manifests upgrade:
+      4. Redeploy the Operator for the connection from Meshery UI (the connection's actions) or reconnect the cluster, so a fresh operator starts from the cleared resources instead of adopting the `Terminating` ones. Then confirm the Broker and MeshSync custom resources return:
+         ```bash
+         kubectl -n meshery get brokers,meshsyncs
+         ```
+      5. Pull the latest Meshery container images and apply the Helm manifests upgrade:
          ```bash
          mesheryctl system update
          ```
-      5. Restart the Meshery components:
+      6. Restart the Meshery components:
          ```bash
          mesheryctl system restart
          ```
-      6. Verify the operator components initialize successfully:
+      7. Verify the operator components initialize successfully:
          * Run the system check:
            ```bash
            mesheryctl system check --operator
@@ -218,9 +242,7 @@ If the error names your own pin, the pin is the problem - correct `operator.vers
 
 ## Operating Meshery without Meshery Operator
 
-Meshery Operator, MeshSync, and Broker are crucial components in a Meshery deployment. Meshery can function without them, but some functions of Meshery will be disable / unusable. Whether Meshery Operator is initially deployed via `mesheryctl` command or via Meshery Server, you can monitor the health of the Meshery Operator deployment using either the CLI or UI clients.
-
-## Verifying the Status of Meshery Operator, MeshSync, and Meshery Broker
+Meshery Operator, MeshSync, and Broker are crucial components in a Meshery deployment. Meshery works without them, but it cannot discover or track the state of your clusters. Whether `mesheryctl` or Meshery Server deployed Meshery Operator, you can check its health from either the CLI or the UI.
 
 ## Troubleshooting using Meshery CLI
 
@@ -228,15 +250,15 @@ The following commands are available to troubleshoot Meshery Operator, MeshSync,
 
 **Meshery Server and Adapters**
 
-- `mesheryctl system status` - Displays the status of Meshery Server and Meshery Adapters.
+- `mesheryctl system status` shows the status of Meshery Server and Meshery Adapters.
 
 **Meshery Operator, MeshSync, and Broker**
 
-- `mesheryctl system check` - Displays the status of Meshery Operator, MeshSync, and Broker.
+- `mesheryctl system check --operator` shows whether Meshery Operator, MeshSync, and Broker are running in the cluster of your kubeconfig's current context. It works only when your `mesheryctl` context's platform is `kubernetes`.
 
 ## Troubleshooting using Meshery UI
 
-Based on discussed scenarios, the UI exposes tools to perform the following actions:
+Meshery UI lets you do the following from a Kubernetes connection:
 
 - (Re)deploy Operator, MeshSync, Broker.
 - Uninstall and Install MeshSync, Broker, Operator.
@@ -251,21 +273,6 @@ Based on discussed scenarios, the UI exposes tools to perform the following acti
 Click a Kubernetes connection's row in the Connections table to open its detail view. Below the Operator / MeshSync / Broker status chips, a **Diagnostics** section lists actionable problems and remediation, derived from the live controller status and Meshery's actual Broker connection. Every code it reports, and the remedy for each, is listed in [Diagnostics]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#diagnostics" >}}).
 
 The same data is available at `GET /api/system/controllers/diagnostics?connectionId=<id>`.
-
-### Synthetic Test for Ensuring Change in Cluster State
-
-Initiate a synthetic check to verify a fully functional Operator deployment, testing MeshSync/Broker connectivity.
-
-- Empty database shows the main-cluster node.
-- Corrupt database triggers an error snackbar with a link to the Settings screen.
-- Disconnected Kubernetes displays MeshSync logo pulsating when data is received.
-
-<div class="section">
-Future Enhancements for Troubleshooting:
-
-- NATS/MeshSync not running prompts a review of available operations in the Settings panel.
-
-</div>
 
 ## Inspecting MeshSync Directly
 
@@ -303,12 +310,6 @@ kubectl -n meshery get deploy meshery-meshsync \
 - **A new or changed CRD triggers a full re-discovery.** MeshSync watches the cluster's CustomResourceDefinitions and rebuilds its informers when the CRD set changes. On clusters where controllers rewrite CRDs frequently (for example, cert-manager's CA injector updating CRD `caBundle` fields), this can cause repeated re-discovery and transient load or gaps. If you observe this, scope discovery with a whitelist (see the [MeshSync configuration FAQ]({{< ref "concepts/architecture/meshsync.md#meshsync-faqs" >}})).
 - **Secrets are discovered by default.** MeshSync watches `secrets.v1.`, and the Secret objects it forwards to Meshery Server include their `data` and `stringData` payload. Those Secret contents are therefore transmitted over the Broker and persisted in the Meshery Database. In security-sensitive environments, either blacklist `secrets.v1.` (or use a whitelist that omits it) to keep Secrets out of discovery entirely, or set `MESHSYNC_REDACT_SECRETS=true` on the MeshSync Deployment to keep discovering Secrets while replacing their values with `[REDACTED]` (keys are preserved). See [Redacting Secret contents]({{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md#redacting-secret-contents" >}}).
 - **Discovery is watch-driven with no periodic re-list.** MeshSync relies on the Kubernetes watch stream rather than polling. If you suspect the in-memory snapshot has drifted, force a re-list with `kubectl -n meshery rollout restart deploy/meshery-meshsync` or reset the Meshery Database from the UI.
-
-## See Also
-
-- [Kubernetes Connection Lifecycle]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md" >}})
-- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation.md" >}})
-- [Troubleshooting Errors while running Meshery]({{< ref "guides/troubleshooting/meshery-server.md" >}})
 
 {{< related-discussions tag="meshery" >}}
 

@@ -29,7 +29,8 @@ vi.mock('@sistent/sistent', () => ({
     ) : null,
   helpAndSupportModalSchema: { type: 'object' },
   helpAndSupportModalUiSchema: {},
-  useTheme: () => ({ palette: { text: { default: '#000' } } }),
+  Box: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+  styled: (component: any) => () => component,
 }));
 
 vi.mock('../Modal/Modal', () => ({
@@ -67,14 +68,16 @@ vi.mock('../../general/style', () => ({
       {children}
     </button>
   ),
-  FallbackWrapper: ({ children }: any) => <div data-testid="fallback-wrapper">{children}</div>,
-  TextButton: ({ children }: any) => <span>{children}</span>,
-  ToolBarButtonContainer: ({ children }: any) => <div>{children}</div>,
   TryAgainButton: ({ children, onClick, color }: any) => (
     <button onClick={onClick} data-color={color} data-testid="try-again-btn">
       {children}
     </button>
   ),
+}));
+
+vi.mock('./style', () => ({
+  FallbackWrapper: ({ children }: any) => <div data-testid="fallback-wrapper">{children}</div>,
+  ErrorPageActions: ({ children }: any) => <div data-testid="error-page-actions">{children}</div>,
 }));
 
 vi.mock('../../general/feedback', () => ({

@@ -30,7 +30,7 @@ var initModelCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Generates scaffolding for convenient model creation",
 	Long: `Generates a folder structure and guides user on model creation
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/model/init`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/init`,
 	Example: `
 // generates a folder structure
 mesheryctl model init [model-name]
@@ -125,14 +125,18 @@ mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 						return ErrModelInit(err)
 					}
 					// The scaffold templates ship with placeholder identifiers
-					// ("untitled-model"/"Untitled Model"). Write the user-supplied
-					// model name into the generated model definition so the model
-					// is usable without a manual find-and-replace.
-					if templatePath == initModelTemplatePathModel {
-						content, err = initModelInjectName(content, modelInitFlags.OutputFormat, modelName)
-						if err != nil {
-							return ErrModelInit(err)
-						}
+					// ("untitled-model"/"Untitled Model", version "v0.0.1").
+					// Write the user-supplied model name and --version into
+					// every generated definition so the model is usable
+					// without a manual find-and-replace.
+					content, err = initModelInjectIdentity(
+						content,
+						modelInitFlags.OutputFormat,
+						templatePath == initModelTemplatePathModel,
+						initModelIdentity{Name: modelName, Version: modelInitFlags.Version},
+					)
+					if err != nil {
+						return ErrModelInit(err)
 					}
 					filePath := filepath.Join(
 
@@ -142,13 +146,7 @@ mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 							".",
 						),
 					)
-					file, err := os.Create(filePath)
-					if err != nil {
-						return ErrModelInit(err)
-					}
-					defer func() { _ = file.Close() }() // Ensure the file is closed when the function exits
-
-					_, err = file.Write(content)
+					err = os.WriteFile(filePath, content, initModelFilePerm)
 					if err != nil {
 						return ErrModelInit(err)
 					}
@@ -189,41 +187,77 @@ mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 	},
 }
 
-// initModelInjectName sets the top-level name (system identifier) and a derived,
-// human-readable displayName on the scaffolded model definition. The scaffold
-// templates ship with placeholder values, so without this the generated model
-// would register as "untitled-model"/"Untitled Model" regardless of the name the
-// user passed to `model init`. Decode/encode via a generic map so every template
-// field is preserved and only the two identity fields are overwritten.
-func initModelInjectName(content []byte, outputFormat string, modelName string) ([]byte, error) {
-	displayName := initModelDeriveDisplayName(modelName)
+// initModelIdentity is the user-supplied identity of the model being scaffolded.
+type initModelIdentity struct {
+	Name    string
+	Version string
+}
 
-	var model map[string]interface{}
+// initModelInjectIdentity writes the model identity into a scaffolded
+// definition. The schemas templates ship with placeholder values
+// ("untitled-model", "Untitled Model", "v0.0.1"), so without this the generated
+// model would register under the placeholder name and version regardless of
+// what the user passed to `model init`.
+//
+// For the model definition itself (isModel), the top-level name, displayName
+// and version, and the nested model.version, are set. For a component or
+// relationship, the same fields are set on its nested `model` reference, which
+// is what ties the entity to its model at registration time.
+//
+// Content is decoded into a generic map so every other template field survives
+// the round-trip untouched.
+func initModelInjectIdentity(content []byte, outputFormat string, isModel bool, id initModelIdentity) ([]byte, error) {
+	var def map[string]interface{}
 	switch outputFormat {
 	case "json":
-		if err := json.Unmarshal(content, &model); err != nil {
+		if err := json.Unmarshal(content, &def); err != nil {
 			return nil, err
 		}
-		model["name"] = modelName
-		model["displayName"] = displayName
-		var buf bytes.Buffer
-		enc := json.NewEncoder(&buf)
-		enc.SetEscapeHTML(false)
-		enc.SetIndent("", "  ")
-		if err := enc.Encode(model); err != nil {
-			return nil, err
-		}
-		return buf.Bytes(), nil
 	case "yaml":
-		if err := yaml.Unmarshal(content, &model); err != nil {
+		if err := yaml.Unmarshal(content, &def); err != nil {
 			return nil, err
 		}
-		model["name"] = modelName
-		model["displayName"] = displayName
-		return yaml.Marshal(model)
+	default:
+		// Output format is validated in PreRunE; any other value is unreachable.
+		return nil, ErrModelUnsupportedOutputFormat(outputFormat)
 	}
-	// Output format is validated in PreRunE; any other value is unreachable.
-	return content, nil
+
+	target := def
+	if !isModel {
+		ref, ok := def["model"].(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("scaffold template has no model reference to set the model identity on")
+		}
+		target = ref
+	}
+	initModelSetIdentity(target, id)
+
+	if outputFormat == "yaml" {
+		return yaml.Marshal(def)
+	}
+	var buf bytes.Buffer
+	enc := json.NewEncoder(&buf)
+	enc.SetEscapeHTML(false)
+	enc.SetIndent("", "  ")
+	if err := enc.Encode(def); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+// initModelSetIdentity sets name, displayName and version on a model
+// definition (or a model reference), plus the nested model.version that
+// records the version of the packaged model.
+func initModelSetIdentity(model map[string]interface{}, id initModelIdentity) {
+	model["name"] = id.Name
+	model["displayName"] = initModelDeriveDisplayName(id.Name)
+	model["version"] = id.Version
+	nested, ok := model["model"].(map[string]interface{})
+	if !ok {
+		nested = map[string]interface{}{}
+		model["model"] = nested
+	}
+	nested["version"] = id.Version
 }
 
 // initModelDeriveDisplayName turns a system model name (e.g. "digitalocean-icons")
@@ -248,6 +282,7 @@ func init() {
 
 const (
 	initModelDirPerm                  = 0o755
+	initModelFilePerm                 = 0o644
 	initModelModelSchema              = "schemas/constructs/v1beta2/model/model.yaml"
 	initModelTemplatePathModel        = "schemas/constructs/v1beta2/model/templates/model_template"
 	initModelTemplatePathComponent    = "schemas/constructs/v1beta3/component/templates/component_template"
@@ -276,7 +311,7 @@ $ mesheryctl model import {modelFolder}
 To export this model as OCI image:
 $ mesheryctl model build {modelName}/{modelVersion} --path {path}
 
-Detailed guide: https://docs.meshery.io/reference/references/mesheryctl/model/init/`
+Detailed guide: https://docs.meshery.io/reference/mesheryctl/model/init/`
 
 // TODO
 // initModelData fits well for json and yaml format

@@ -28,7 +28,6 @@ import (
 
 var (
 	tokenPath     string
-	ctx           string
 	viewAllTokens bool
 	set           bool
 )
@@ -65,7 +64,7 @@ var createTokenCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a token in your meshconfig",
 	Long: `Create the token with provided token name (optionally token path) to your meshconfig tokens.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/token/create`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/token/create`,
 	Example: `
 mesheryctl system token create [token-name] -f [token-path]
 mesheryctl system token create [token-name] (default path is auth.json)
@@ -75,26 +74,26 @@ mesheryctl system token create [token-name] -f [token-path] --set
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
 		configPath := utils.GetActiveConfigPath()
-		if tokenPath == "" {
-			tokenPath = "auth.json"
+		resolvedTokenPath := tokenPath
+		if resolvedTokenPath == "" {
+			resolvedTokenPath = "auth.json"
 		}
 
 		token := config.Token{
 			Name:     tokenName,
-			Location: tokenPath,
+			Location: resolvedTokenPath,
 		}
 		if err := config.AddTokenToConfig(token, configPath); err != nil {
 			return errors.Wrap(err, "Could not create specified token to config")
 		}
 		utils.Log.Info(fmt.Sprintf("Token %s created.", tokenName))
 		if set {
-			if ctx == "" {
-				ctx = viper.GetString("current-context")
+			targetContext := resolveTokenTargetContext(cmd, configPath)
+			if err = assignTokenWithRollback(tokenName, configPath, targetContext, config.SetTokenToConfig, config.DeleteTokenFromConfig); err != nil {
+				utils.Log.Error(err)
+				return err
 			}
-			if err = config.SetTokenToConfig(tokenName, configPath, ctx); err != nil {
-				return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
-			}
-			utils.Log.Info(fmt.Sprintf("Token: %s set on context %s.", tokenName, ctx))
+			utils.Log.Info(fmt.Sprintf("Token: %s set on context %s.", tokenName, targetContext))
 		}
 		return nil
 	},
@@ -129,15 +128,14 @@ mesheryctl system token set [token-name]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
 		configPath := utils.GetActiveConfigPath()
-		if ctx == "" {
-			ctx = viper.GetString("current-context")
-		}
+		targetContext := resolveTokenTargetContext(cmd, configPath)
 
-		if err = config.SetTokenToConfig(tokenName, configPath, ctx); err != nil {
-			return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
-
+		if err = config.SetTokenToConfig(tokenName, configPath, targetContext); err != nil {
+			assignErr := ErrAssignToken(err, tokenName, targetContext)
+			utils.Log.Error(assignErr)
+			return assignErr
 		}
-		utils.Log.Infof("Token %s set for context %s", tokenName, ctx)
+		utils.Log.Infof("Token %s set for context %s", tokenName, targetContext)
 		return nil
 	},
 }
@@ -158,14 +156,12 @@ mesheryctl system token list
 		viper.SetConfigFile(configPath)
 		err := viper.ReadInConfig()
 		if err != nil {
-			utils.Log.Error(utils.ErrReadConfigFile(err))
-			return nil
+			return utils.ErrReadConfigFile(err)
 		}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		utils.Log.Info("Available tokens: ")
 		for _, t := range *mctlCfg.GetTokens() {
@@ -174,14 +170,31 @@ mesheryctl system token list
 		return nil
 	},
 }
+var viewTokenUsageMsg = "Usage: mesheryctl system token view [token-name]\nRun 'mesheryctl system token view --help' to see detailed help message"
+
 var viewTokenCmd = &cobra.Command{
-	Use:   "view",
+	Use:   "view [token-name]",
 	Short: "View token",
 	Long:  "View a specific token in meshery config",
 	Example: `
+// View a specific token
 mesheryctl system token view [token-name]
-mesheryctl system token view (show token of current context)
+
+// View token of current context
+mesheryctl system token view
+
+// View all available tokens
+mesheryctl system token view --all
 	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", viewTokenUsageMsg))
+		}
+		if len(args) > 0 && viewAllTokens {
+			return utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a token name and --all flag\n\n%s", viewTokenUsageMsg))
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		configPath := utils.GetActiveConfigPath()
 		if _, err := os.Stat(configPath); os.IsNotExist(err) {
@@ -191,14 +204,12 @@ mesheryctl system token view (show token of current context)
 		viper.SetConfigFile(configPath)
 		err := viper.ReadInConfig()
 		if err != nil {
-			utils.Log.Error(utils.ErrReadConfigFile(err))
-			return nil
+			return utils.ErrReadConfigFile(err)
 		}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		if viewAllTokens {
 			utils.Log.Info("Listing all available tokens...\n")
@@ -210,12 +221,12 @@ mesheryctl system token view (show token of current context)
 		}
 		tokenName := ""
 		if len(args) == 0 {
-			token, err := mctlCfg.GetTokenForContext(viper.GetString("current-context"))
+			targetContext := focusedSystemContext(cmd, mctlCfg.CurrentContext)
+			token, err := mctlCfg.GetTokenForContext(targetContext)
 			if err != nil {
-				utils.Log.Error(ErrTokenContext(err))
-				return nil
+				return ErrTokenContext(err)
 			}
-			utils.Log.Warnf("Token unspecified. Displaying token for current context \"%s\"\n", viper.GetString("current-context"))
+			utils.Log.Warnf("Token unspecified. Displaying token for current context \"%s\"\n", targetContext)
 			utils.Log.Info("token: ", token.Name)
 			utils.Log.Info("location: ", token.Location)
 			return nil
@@ -230,6 +241,10 @@ mesheryctl system token view (show token of current context)
 			}
 			// Collecting token names in case the provided token name is invalid and a prompt is to be shown.
 			tokenNames = append(tokenNames, t.Name)
+		}
+
+		if len(tokenNames) == 0 || utils.SilentFlag {
+			return fmt.Errorf("token %q not found in config", tokenName)
 		}
 
 		utils.Log.Info("Invalid token name. Select from available tokens-")
@@ -247,10 +262,43 @@ mesheryctl system token view (show token of current context)
 	},
 }
 
+func assignTokenWithRollback(
+	tokenName, configPath, targetContext string,
+	setFn func(tokenName, configPath, ctxName string) error,
+	deleteFn func(tokenName, configPath string) error,
+) error {
+	if err := setFn(tokenName, configPath, targetContext); err != nil {
+		// Avoid leaving an orphaned token in meshconfig when --set fails
+		// (for example, when -c/--context names a non-existent context).
+		if cleanupErr := deleteFn(tokenName, configPath); cleanupErr != nil {
+			return ErrTokenRollback(tokenName, targetContext, err, cleanupErr)
+		}
+		return ErrAssignToken(err, tokenName, targetContext)
+	}
+	return nil
+}
+
+func resolveTokenTargetContext(cmd *cobra.Command, configPath string) string {
+	if targetContext := focusedSystemContext(cmd, ""); targetContext != "" {
+		return targetContext
+	}
+	// Read active configPath with an isolated viper instance so default
+	// current-context lookup stays accurate without mutating global viper state.
+	if _, err := os.Stat(configPath); err == nil {
+		v := viper.New()
+		v.SetConfigFile(configPath)
+		if err := v.ReadInConfig(); err == nil {
+			if currentContext := v.GetString("current-context"); currentContext != "" {
+				return currentContext
+			}
+		}
+	}
+	return viper.GetString("current-context")
+}
+
 func init() {
 	tokenCmd.AddCommand(createTokenCmd, deleteTokenCmd, setTokenCmd, listTokenCmd, viewTokenCmd)
 	createTokenCmd.Flags().StringVarP(&tokenPath, "filepath", "f", "", "Add the token location")
 	createTokenCmd.Flags().BoolVarP(&set, "set", "s", false, "Set as current token")
-	setTokenCmd.Flags().StringVar(&ctx, "context", "", "Pass the context")
 	viewTokenCmd.Flags().BoolVar(&viewAllTokens, "all", false, "set the flag to view all the tokens.")
 }

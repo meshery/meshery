@@ -169,12 +169,7 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		}
 		successCreatingDirectory = true
 
-		f, err := os.Create(filepath.Join(path, filename+"-color.svg"))
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		_, err = f.WriteString(svgColor)
+		err = os.WriteFile(filepath.Join(path, filename+"-color.svg"), []byte(svgColor), 0644)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -192,12 +187,7 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		}
 		successCreatingDirectory = true
 
-		f, err := os.Create(filepath.Join(path, filename+"-white.svg"))
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		_, err = f.WriteString(svgWhite)
+		err = os.WriteFile(filepath.Join(path, filename+"-white.svg"), []byte(svgWhite), 0644)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -214,12 +204,7 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		}
 		successCreatingDirectory = true
 
-		f, err := os.Create(filepath.Join(path, filename+"-complete.svg"))
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		_, err = f.WriteString(svgComplete)
+		err = os.WriteFile(filepath.Join(path, filename+"-complete.svg"), []byte(svgComplete), 0644)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -326,7 +311,7 @@ func GetComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
 	return fmt.Sprintf("%s.%s", "settings", path)
 }
 
-// Prunes the diff part present in the k8s response message.
+// FormatK8sMessage prunes the diff part present in the k8s response message.
 // Diff corresponds to the previous change and applied change, and doesn't contain any info which can be helpful to the user.
 // If we want we can show this in a CodeEditor component.
 func FormatK8sMessage(message string) string {

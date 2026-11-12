@@ -263,7 +263,10 @@ func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 	return true
 }
 
-// max number of time to keep revaluating the design till there are no reval triggering actions in the response
+// MAX_RE_EVALUATION_DEPTH is the maximum number of re-evaluation passes. The loop also
+// stops early when the caller's evalIterations limit is reached, or when the response
+// contains no further re-evaluation-triggering actions. Reaching this depth limit logs a
+// warning and returns a partial result.
 const MAX_RE_EVALUATION_DEPTH = 5
 
 // defaultPolicyEvalTimeout bounds a single evaluation. Override via POLICY_EVAL_TIMEOUT.
@@ -271,20 +274,56 @@ const defaultPolicyEvalTimeout = 3 * time.Minute
 
 var errEvalTimeout = errors.New("relationship policy evaluation timed out")
 
-// buildPolicyEvaluationEventMetadata builds the metadata map emitted on
-// the relationship-evaluation success event. Extracted into a named
-// function so the canonical camelCase keys (`historyTitle`, `trace`,
-// `evaluationResponse`, `evaluatedAt`) are pinned by a focused unit test
-// — see TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys.
-// Drift here would silently re-introduce the snake_case keys that
-// production carried for 125,840 rows pre-flip.
-func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse) map[string]interface{} {
-	return map[string]interface{}{
-		"historyTitle":       fmt.Sprintf("%d changes made at version %s", len(resp.Actions), resp.Design.Version),
-		"trace":              resp.Trace,
-		"evaluationResponse": resp,
-		"evaluatedAt":        *resp.Timestamp,
+// relationshipChangeCounts classifies the relationship actions an evaluation
+// produced. The ops are the gopolicies action constants carried in
+// pattern.Action.Op:
+//
+//   - add_relationship    -> relationshipsAdded
+//   - delete_relationship -> relationshipsRemoved
+//   - update_relationship -> relationshipsUpdated
+//
+// Component ops (add_component, delete_component, update_component,
+// update_component_configuration, remove_component_configuration) are not
+// relationship changes and are not counted.
+func relationshipChangeCounts(actions []pattern.Action) (added, removed, updated int) {
+	for _, action := range actions {
+		switch action.Op {
+		case gopolicies.AddRelationshipOp:
+			added++
+		case gopolicies.DeleteRelationshipOp:
+			removed++
+		case gopolicies.UpdateRelationshipOp:
+			updated++
+		}
 	}
+	return added, removed, updated
+}
+
+// policyEvaluationStatusCompleted is the evaluationStatus of an evaluation
+// that returned a response. Failed or timed-out evaluations do not emit the
+// success event this status belongs to.
+const policyEvaluationStatusCompleted = "completed"
+
+// buildPolicyEvaluationEventMetadata builds the metadata map emitted on
+// the relationship-evaluation success event. It carries the design's
+// identity and a summary of the evaluation - never the evaluated design,
+// its trace or the raw evaluation response (#22764). Keys are camelCase
+// and pinned by TestBuildPolicyEvaluationEventMetadata_*.
+func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse, serverURL string, duration time.Duration) map[string]interface{} {
+	design := resp.Design
+	metadata := models.DesignEventIdentity(serverURL, design.ID, design.Name, string(design.Version))
+
+	added, removed, updated := relationshipChangeCounts(resp.Actions)
+	metadata[models.EventMetadataHistoryTitle] = fmt.Sprintf("%d changes made at version %s", len(resp.Actions), design.Version)
+	metadata["relationshipsAdded"] = added
+	metadata["relationshipsRemoved"] = removed
+	metadata["relationshipsUpdated"] = updated
+	metadata["evaluationStatus"] = policyEvaluationStatusCompleted
+	metadata["evaluationDurationMs"] = duration.Milliseconds()
+	if resp.Timestamp != nil {
+		metadata["evaluatedAt"] = *resp.Timestamp
+	}
+	return metadata
 }
 
 func policyEvalTimeout() time.Duration {
@@ -294,8 +333,9 @@ func policyEvalTimeout() time.Duration {
 	return defaultPolicyEvalTimeout
 }
 
-// Helper method to make design evaluation based on the relationship policies.
-// evalIterations is num of passes the evaluator needs to go through to do complete evaluation
+// EvaluateDesign evaluates the design based on the relationship policies.
+// evalIterations is an upper bound on evaluation passes; the loop may stop earlier if no
+// re-evaluation-triggering actions remain.
 func (h *Handler) EvaluateDesign(
 	relationshipPolicyEvalPayload pattern.EvaluationRequest,
 	evalIterations int,
@@ -477,7 +517,11 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 		}
 
 		defaultCapabilities := []capability.Capability{} // only assign empty capabilities for component declarations
-		_component.Metadata.IsAnnotation = _c.Metadata.IsAnnotation
+		// Preserve authoritative classification from the component registry definition.
+		// Propagate annotation status only when explicitly marked on the synthesized component.
+		if _c.Metadata.IsAnnotation {
+			_component.Metadata.IsAnnotation = true
+		}
 		_component.Configuration = _c.Configuration
 		_component.Capabilities = &defaultCapabilities
 		if originalStyles != nil && originalStyles.Position != nil {
@@ -797,6 +841,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		}
 	}
 
+	evalStart := time.Now()
 	evalRespChan := make(chan pattern.EvaluationResponse, 1)
 	evalErrChan := make(chan error, 1)
 
@@ -821,13 +866,14 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		return
 
 	case evaluationResponse := <-evalRespChan:
-		// include trace instead of design file in the event
+		evalDuration := time.Since(evalStart)
+		// the event carries the design's identity and an evaluation summary, never the design itself
 		description := fmt.Sprintf("Relationship evaluation complete: %d changes in '%s' at version '%s'", len(evaluationResponse.Actions), evaluationResponse.Design.Name, evaluationResponse.Design.Version)
 		event := eventBuilder.WithDescription(description).
-			WithMetadata(buildPolicyEvaluationEventMetadata(evaluationResponse)).
+			WithMetadata(buildPolicyEvaluationEventMetadata(evaluationResponse, models.ServerURLFromRequest(r), evalDuration)).
 			WithSeverity(events.Informational).Build()
 		go func() {
-			_ = provider.PersistEvent(*event, token)
+			_, _ = provider.PersistEvent(*event, token)
 		}()
 
 		h.writeEvaluationResult(rw, evalResult{resp: evaluationResponse})
@@ -933,10 +979,11 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 		greedy = true
 	}
 
-	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
+	entities, totalCount, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		Kind:      name,
 		ModelName: typ,
 		Greedy:    greedy,
+		Limit:     limit,
 		Offset:    offset,
 		OrderOn:   order,
 		Sort:      sort,
@@ -952,7 +999,7 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	response := models.MeshmodelPoliciesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount: 0,
+		TotalCount: totalCount,
 		Policies:   entities,
 	}
 
@@ -976,9 +1023,10 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 		greedy = true
 	}
 
-	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
+	entities, totalCount, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		ModelName: typ,
 		Greedy:    greedy,
+		Limit:     limit,
 		Offset:    offset,
 		OrderOn:   order,
 		Sort:      sort,
@@ -995,7 +1043,7 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	response := models.MeshmodelPoliciesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount: 0,
+		TotalCount: totalCount,
 		Policies:   entities,
 	}
 

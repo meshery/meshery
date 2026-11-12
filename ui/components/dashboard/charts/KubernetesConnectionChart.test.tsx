@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
 let connectionsQueryReturn: {
@@ -13,8 +14,10 @@ let connectionsQueryReturn: {
   isLoading: false,
   isError: false,
 };
-const canSpy = vi.fn(() => true);
+const canSpy = vi.fn((_key?: unknown) => true);
 const bbChartSpy = vi.fn();
+const routerPushSpy = vi.fn();
+const useGetConnectionsQuery = vi.fn();
 
 vi.mock('billboard.js', () => ({
   donut: () => 'donut',
@@ -49,7 +52,7 @@ vi.mock('next/link', () => ({
 }));
 
 vi.mock('@/rtk-query/connection', () => ({
-  useGetConnectionsQuery: () => connectionsQueryReturn,
+  useGetConnectionsQuery: (...args: unknown[]) => useGetConnectionsQuery(...args),
 }));
 
 vi.mock('@/utils/can', () => ({
@@ -57,7 +60,7 @@ vi.mock('@/utils/can', () => ({
 }));
 
 vi.mock('next/router', () => ({
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({ push: routerPushSpy }),
 }));
 
 vi.mock('./ConnectCluster', () => ({
@@ -92,14 +95,16 @@ vi.mock('@sistent/sistent', () => ({
   useTheme: () => ({
     palette: { mode: 'light', icon: { default: '#000', disabled: '#777' } },
   }),
-  useHasPermission: () => canSpy(),
+  useHasPermission: (key: unknown) => canSpy(key),
 }));
 
+import { Keys } from '@meshery/schemas/permissions';
 import KubernetesConnectionStatsChart from './KubernetesConnectionChart';
 
 describe('KubernetesConnectionStatsChart', () => {
   beforeEach(() => {
     bbChartSpy.mockReset();
+    routerPushSpy.mockReset();
     canSpy.mockClear();
     canSpy.mockReturnValue(true);
     connectionsQueryReturn = {
@@ -108,6 +113,8 @@ describe('KubernetesConnectionStatsChart', () => {
       isLoading: false,
       isError: false,
     };
+    useGetConnectionsQuery.mockReset();
+    useGetConnectionsQuery.mockImplementation(() => connectionsQueryReturn);
   });
 
   it('shows ConnectCluster fallback when there are no kubernetes connections', () => {
@@ -115,6 +122,81 @@ describe('KubernetesConnectionStatsChart', () => {
     expect(screen.getByTestId('connect-cluster')).toHaveTextContent(
       'No connections found in your clusters',
     );
+    // #20617: plain ?kind=kubernetes, not JSON.stringify(['kubernetes'])
+    expect(useGetConnectionsQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'kubernetes', pageSize: 'all' }),
+      { skip: false },
+    );
+  });
+
+  it('authorizes against WorkspaceManagementViewConnections', () => {
+    render(<KubernetesConnectionStatsChart />);
+    expect(canSpy).toHaveBeenCalledWith(Keys.WorkspaceManagementViewConnections);
+  });
+
+  it('skips useGetConnectionsQuery and renders ConnectCluster fallback when view permission is denied', () => {
+    canSpy.mockReturnValue(false);
+    connectionsQueryReturn = {
+      data: undefined,
+      isFetching: false,
+      isLoading: false,
+      isError: false,
+    };
+    render(<KubernetesConnectionStatsChart />);
+    expect(useGetConnectionsQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'kubernetes', pageSize: 'all' }),
+      { skip: true },
+    );
+    expect(screen.getByTestId('connect-cluster')).toHaveTextContent(
+      'No connections found in your clusters',
+    );
+    expect(screen.queryByTestId('widget-error-fallback')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('bb-chart')).not.toBeInTheDocument();
+  });
+
+  it('hides retained connections, errors, and Links when view permission is denied', async () => {
+    const user = userEvent.setup();
+    connectionsQueryReturn = {
+      data: {
+        connections: [{ status: 'connected' }],
+      },
+      isLoading: false,
+      isError: false,
+    };
+    canSpy.mockReturnValue(false);
+    render(<KubernetesConnectionStatsChart />);
+    expect(useGetConnectionsQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'kubernetes', pageSize: 'all' }),
+      { skip: true },
+    );
+    expect(screen.getByTestId('connect-cluster')).toBeInTheDocument();
+    expect(screen.queryByTestId('bb-chart')).not.toBeInTheDocument();
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    await user.tab();
+    expect(document.activeElement).toBe(document.body);
+
+    connectionsQueryReturn = {
+      data: undefined,
+      isLoading: false,
+      isError: true,
+    };
+    render(<KubernetesConnectionStatsChart />);
+    expect(screen.queryByTestId('widget-error-fallback')).not.toBeInTheDocument();
+  });
+
+  it('renders Link and navigates on chart onclick when view permission is granted', () => {
+    connectionsQueryReturn = {
+      data: {
+        connections: [{ status: 'connected' }],
+      },
+    };
+    render(<KubernetesConnectionStatsChart />);
+    expect(screen.getByRole('link')).toHaveAttribute('href', '/management/connections');
+    const options = bbChartSpy.mock.calls.at(-1)?.[0] as {
+      data: { onclick: () => void };
+    };
+    options.data.onclick();
+    expect(routerPushSpy).toHaveBeenCalledWith('/management/connections');
   });
 
   it('renders BBChart with normalized status counts when connections exist', () => {
@@ -141,7 +223,7 @@ describe('KubernetesConnectionStatsChart', () => {
     expect(options.donut.title).toBe('Clusters\n  Status');
   });
 
-  it('applies pointer-events:none to the Link when the user lacks permission', () => {
+  it('omits BBChart and Link when the user lacks permission even with retained data', () => {
     connectionsQueryReturn = {
       data: {
         connections: [{ status: 'connected' }],
@@ -149,7 +231,9 @@ describe('KubernetesConnectionStatsChart', () => {
     };
     canSpy.mockReturnValue(false);
     render(<KubernetesConnectionStatsChart />);
-    expect(screen.getByRole('link')).toHaveStyle({ pointerEvents: 'none' });
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('bb-chart')).not.toBeInTheDocument();
+    expect(screen.getByTestId('connect-cluster')).toBeInTheDocument();
   });
 
   it('renders the Kubernetes header regardless of data state', () => {

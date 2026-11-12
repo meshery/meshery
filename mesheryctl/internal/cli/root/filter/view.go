@@ -24,9 +24,9 @@ import (
 	"github.com/meshery/meshery/server/models"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/viewoutput"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
@@ -45,7 +45,7 @@ var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View filter(s)",
 	Long: `Displays the contents of a specific filter based on name or id.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/filter/view`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/filter/view`,
 	Example: `
 // View the specified WASM filter
 // A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
@@ -60,7 +60,7 @@ mesheryctl filter view --all --output-format json
 // View all filter files in json and save it to a file
 mesheryctl filter view --all --output-format json -s
 
-//View multi-word named filter files. Multi-word filter names should be enclosed in quotes
+// View multi-word named filter files. Multi-word filter names should be enclosed in quotes
 mesheryctl filter view "filter name"
         `,
 	Args: func(_ *cobra.Command, args []string) error {
@@ -132,7 +132,6 @@ mesheryctl filter view "filter name"
 			}
 		}
 
-		outputFormatterFactory := display.OutputFormatterFactory[any]{}
 		var data any
 
 		if filterViewFlagsProvided.ViewAllFlag {
@@ -141,57 +140,41 @@ mesheryctl filter view "filter name"
 			data = selectedFilter
 		}
 
-		outputFormatter, err := outputFormatterFactory.New(filterViewFlagsProvided.OutputFormat, data)
-		if err != nil {
-			return err
-		}
-
-		err = outputFormatter.Display()
-		if err != nil {
-			return err
-		}
+		savePath := ""
 
 		if filterViewFlagsProvided.Save {
-			err := saveToFile(
-				filterViewFlagsProvided.OutputFormat,
-				outputFormatter,
-				selectedFilter,
-				filterViewFlagsProvided.ViewAllFlag,
-			)
-			if err != nil {
-				return err
+			var fileName string
+
+			if filterViewFlagsProvided.ViewAllFlag {
+				fileName = fmt.Sprintf(
+					"filters_all.%s",
+					strings.ToLower(filterViewFlagsProvided.OutputFormat),
+				)
+			} else {
+				shortID := utils.TruncateID(utils.FormatUUID(selectedFilter.ID, "unknown"))
+
+				sanitizer := strings.NewReplacer("/", "_", " ", "_")
+				sanitizedName := sanitizer.Replace(selectedFilter.Name)
+
+				fileName = fmt.Sprintf(
+					"filter_%s_%s.%s",
+					sanitizedName,
+					shortID,
+					strings.ToLower(filterViewFlagsProvided.OutputFormat),
+				)
 			}
+
+			savePath = filepath.Join(utils.MesheryFolder, fileName)
 		}
-		return nil
+
+		return viewoutput.HandleViewOutput(
+			filterViewFlagsProvided.OutputFormat,
+			data,
+			cmd.OutOrStdout(),
+			savePath,
+		)
+
 	},
-}
-
-func saveToFile(
-	outputFormat string,
-	outputFormatter display.OutputFormatter[any],
-	selectedFilter *models.MesheryFilter,
-	isAll bool,
-) error {
-	var fileName string
-
-	if isAll {
-		fileName = "filters_all"
-	} else {
-		shortID := selectedFilter.ID.String()[:8]
-		sanitizer := strings.NewReplacer("/", "_", " ", "_")
-		sanitizedName := sanitizer.Replace(selectedFilter.Name)
-		fileName = fmt.Sprintf("filter_%s_%s", sanitizedName, shortID)
-	}
-
-	file := filepath.Join(utils.MesheryFolder, fileName)
-
-	outputFormatterSaverFactory := display.OutputFormatterSaverFactory[any]{}
-	outputFormatterSaver, err := outputFormatterSaverFactory.New(outputFormat, outputFormatter)
-	if err != nil {
-		return err
-	}
-	outputFormatterSaver = outputFormatterSaver.WithFilePath(file)
-	return outputFormatterSaver.Save()
 }
 
 func init() {
