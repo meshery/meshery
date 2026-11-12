@@ -156,6 +156,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), defaultFSMTransitionTimeout)
 		go func(inst *machines.StateMachine) {
 			defer cancel()
+			defer smInstanceTracker.Remove(connectionUUID)
 			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
 			if err != nil {
 				h.log.Error(err)
@@ -170,7 +171,6 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			if event != nil && event.ResolvedAt != nil {
 				h.persistAndPublish(provider, token, userID, event)
 			}
-			smInstanceTracker.Remove(connectionUUID)
 		}(inst)
 	}
 
