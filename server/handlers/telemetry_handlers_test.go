@@ -413,11 +413,12 @@ func TestTelemetryPingHandlers_NilSystemID_DoesNotPanic(t *testing.T) {
 	if len(provider.persistedEvents) > 0 {
 		event := provider.persistedEvents[0]
 		if event.SystemID != uuid.Nil {
-			t.Errorf("expected event SystemID to be uuid.Nil when h.SystemID is nil, got %v", event.SystemID)
+			t.Errorf("expected Grafana event SystemID to be uuid.Nil when h.SystemID is nil, got %v", event.SystemID)
 		}
 	}
 
-	provider.getConnectionFn = func(_ string, _ core.Uuid) (*connections.Connection, int, error) {
+	promProvider := newTelemetrySpyProvider()
+	promProvider.getConnectionFn = func(_ string, _ core.Uuid) (*connections.Connection, int, error) {
 		return &connections.Connection{
 			ID:   connUUID,
 			Kind: "prometheus",
@@ -427,7 +428,14 @@ func TestTelemetryPingHandlers_NilSystemID_DoesNotPanic(t *testing.T) {
 	pReq := httptest.NewRequest(http.MethodGet, "/api/telemetry/prometheus/"+connID+"/ping", nil)
 	pReq = mux.SetURLVars(pReq, map[string]string{"connectionID": connID})
 	pRec := httptest.NewRecorder()
-	h.PrometheusTelemetryPingHandler(pRec, pReq, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
+	h.PrometheusTelemetryPingHandler(pRec, pReq, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, promProvider)
+
+	if len(promProvider.persistedEvents) > 0 {
+		event := promProvider.persistedEvents[0]
+		if event.SystemID != uuid.Nil {
+			t.Errorf("expected Prometheus event SystemID to be uuid.Nil when h.SystemID is nil, got %v", event.SystemID)
+		}
+	}
 }
 
 // TestTelemetryHandlers_NilProvider_ReturnsServerError verifies that all Grafana
