@@ -444,8 +444,9 @@ func SetFileLocation() error {
 	return nil
 }
 
-var openURL = browser.OpenURL
-
++ /* openURL opens the given URL in the browser. It is a variable (rather than a direct call to browser.OpenURL) so tests can substitute a fake.
++  It must not be swapped from parallel tests.*/
++ var openURL = browser. OpenURL
 // NavigateToBrowser navigates to the endpoint displaying the Meshery UI in the browser.
 func NavigateToBrowser(endpoint string) error {
 	return openURL(endpoint)

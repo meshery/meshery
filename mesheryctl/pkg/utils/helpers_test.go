@@ -205,7 +205,7 @@ func TestNavigateToBrowser(t *testing.T) {
 				receivedURL, testURL)
 		}
 
-		if err != expectedErr {
+	if !errors.Is(err, expectedErr) {
 			t.Errorf("got error %v, want %v",
 				err, expectedErr)
 		}
