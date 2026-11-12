@@ -111,7 +111,6 @@ export class DesignPage {
           `[data-testid="design-visibility-${visibility}"], [data-testid="visibility-chip-menu"]:has-text("${visibility}")`,
         ),
       })
-      .or(this.designCards)
       .first();
   }
 

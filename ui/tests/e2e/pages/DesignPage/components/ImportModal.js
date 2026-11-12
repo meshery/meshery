@@ -8,7 +8,7 @@ export class ImportModal {
       .locator('#root_name, input[placeholder="Untitled Design"], input[name="name"]')
       .first();
     this.urlInput = page.locator('#root_url, input[type="url"], input[name="url"]').first();
-    this.fileInput = page.locator('input[type="file"]');
+    this.fileInput = page.locator('input[type="file"]').first();
     this.importBtn = page.getByRole('button', { name: /^import/i });
   }
 

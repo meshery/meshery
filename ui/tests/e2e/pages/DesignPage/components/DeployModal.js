@@ -13,9 +13,9 @@ export class DeployModal {
 
   getStepLabel(index, name) {
     if (name) {
-      return this.page.getByText(name, { exact: false });
+      return this.modalContent.getByText(name, { exact: false });
     }
-    return this.page
+    return this.modalContent
       .locator(`[data-testid="step-label-${index}"], [data-testid="step-${index}"]`)
       .first();
   }
@@ -56,7 +56,9 @@ export class DeployModal {
   async deployWithBypass() {
     const errorMessage = this.page.getByTestId('dry-run-summary-errors');
     if (await errorMessage.isVisible()) {
-      await this.toggleBypassDryRun();
+      if (await this.checkboxBypassDryRun.isVisible()) {
+        await this.toggleBypassDryRun();
+      }
     }
     await this.goToNextStep();
   }

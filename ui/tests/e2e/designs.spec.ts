@@ -119,8 +119,8 @@ test.describe('Design Page Tests', () => {
   DESIGN_TYPES.forEach(({ type }) => {
     test(`displays ${type} design card correctly`, async ({ provider }) => {
       test.skip(
-        provider === 'Local' && type === 'public',
-        `Skipping public design test for provider: ${provider}`,
+        provider === 'Local' && type === 'published',
+        `Skipping published design test for provider: ${provider}`,
       );
 
       await designPage.applyVisibilityFilter(type);
@@ -185,14 +185,14 @@ test.describe('Design Page Tests', () => {
     const card = designPage.getFirstCardByVisibilityBadge('published');
     const cardElements = designPage.getCardElements(card, 'published');
 
-    if (await cardElements.actionElements.unpublish.isVisible()) {
-      await cardElements.actionElements.unpublish.click();
-      await expect(designPage.page.getByText(/Unpublish Catalog item\?/i)).toBeVisible();
-      const unpublishConfirmBtn = designPage.page.locator('button:has-text("UNPUBLISH")').first();
-      await expect(unpublishConfirmBtn).toBeVisible();
-      await unpublishConfirmBtn.click();
-      await waitForSnackBar(designPage.page, 'Design Unpublished');
-    }
+    await cardElements.actionToggleBtn.click();
+    await expect(cardElements.actionElements.unpublish).toBeVisible();
+    await cardElements.actionElements.unpublish.click();
+    await expect(designPage.page.getByText(/Unpublish Catalog item\?/i)).toBeVisible();
+    const unpublishConfirmBtn = designPage.page.locator('button:has-text("UNPUBLISH")').first();
+    await expect(unpublishConfirmBtn).toBeVisible();
+    await unpublishConfirmBtn.click();
+    await waitForSnackBar(designPage.page, 'Design Unpublished');
   });
 
   test('deletes a published design from the list', async () => {
@@ -253,9 +253,9 @@ test.describe('Design Page Tests', () => {
     const card = designPage.getFirstCardByVisibilityBadge('published');
     const cardElements = designPage.getCardElements(card, 'published');
 
-    if (await cardElements.actionElements.edit.isVisible()) {
-      await cardElements.actionElements.edit.click();
-      await expect(designPage.page).toHaveURL(/.*pattern.*/);
-    }
+    await cardElements.actionToggleBtn.click();
+    await expect(cardElements.actionElements.edit).toBeVisible();
+    await cardElements.actionElements.edit.click();
+    await expect(designPage.page).toHaveURL(/.*(pattern|design|configuration).*/);
   });
 });

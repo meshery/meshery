@@ -2,6 +2,7 @@
   "page": 0,
   "page_size": 10,
   "total_count": 2,
+  "totalCount": 2,
   "patterns": [
     {
       "id": "design-test-published-1",
