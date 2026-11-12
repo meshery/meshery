@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Documentation</title>
+    <description>As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
+</description>
+    <link>https://docs.meshery.io/</link>
+    <atom:link href="https://docs.meshery.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Thu, 05 Mar 2026 03:18:12 +0530</pubDate>
+    <lastBuildDate>Thu, 05 Mar 2026 03:18:12 +0530</lastBuildDate>
+    <generator>Jekyll v3.10.0</generator>
+    
+  </channel>
+</rss>

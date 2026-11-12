@@ -1,0 +1,117 @@
+import { expect } from '@playwright/test';
+import { DashboardPage } from './DashboardPage';
+
+export class ExtensionsPage {
+  constructor(page) {
+    this.page = page;
+    this.extensionNavRegion = page.getByTestId('extension-navigation-region');
+    this.extensionRootNavItems = page.getByTestId('extension-nav-root-item');
+    this.extensionRegionTopLevelLists = this.extensionNavRegion.locator(':scope > ul');
+
+    this.performanceHeading = page.getByTestId('performance-analysis-heading');
+    this.performanceEnableBtn = page.getByTestId('performance-analysis-enable-btn');
+
+    this.dockerExtensionHeading = page.getByTestId('docker-extension-heading');
+    this.dockerExtensionDownloadBtn = page.getByTestId('docker-extension-download-btn');
+
+    this.designEmbedLearnMoreBtn = page.getByTestId('design-embed-learn-more-btn');
+
+    this.catalogSectionHeading = page.getByTestId('catalog-section-heading');
+    this.catalogToggleSwitch = page.getByTestId('catalog-toggle-switch');
+    this.catalogLink = page.getByTestId('catalog-link');
+
+    this.adapterDocsIstioLink = page.getByTestId('adapter-docs-istio');
+  }
+
+  async goto() {
+    const dashboardPage = new DashboardPage(this.page);
+    await dashboardPage.navigateToDashboard();
+    await dashboardPage.navigateToExtensions();
+  }
+
+  async hasExtensionNavigation() {
+    return (
+      (await this.extensionNavRegion.count()) > 0 && (await this.extensionRootNavItems.count()) > 0
+    );
+  }
+
+  async hasPerformanceAnalysis() {
+    return (await this.performanceHeading.count()) > 0;
+  }
+
+  async hasDockerExtension() {
+    return (await this.dockerExtensionHeading.count()) > 0;
+  }
+
+  async hasDesignEmbed() {
+    return (await this.designEmbedLearnMoreBtn.count()) > 0;
+  }
+
+  async hasIstioAdapterDocs() {
+    return (await this.adapterDocsIstioLink.count()) > 0;
+  }
+
+  async hasCatalogSection() {
+    return (await this.catalogSectionHeading.count()) > 0;
+  }
+
+  async verifyPerformanceAnalysisDetails() {
+    await expect(this.performanceHeading).toBeVisible();
+    await expect(this.performanceEnableBtn).toBeVisible();
+    await expect(this.performanceEnableBtn).toBeEnabled();
+  }
+
+  async toggleCatalog() {
+    await this.catalogToggleSwitch.click();
+  }
+
+  async verifyExtensionNavItemsUseTopLevelLayout() {
+    await expect(this.extensionNavRegion).toBeVisible();
+    await expect(this.extensionRootNavItems.first()).toBeVisible();
+    await expect(this.extensionRegionTopLevelLists).toHaveCount(0);
+  }
+
+  normalizeUrl(url) {
+    const parsedUrl = new URL(url);
+    const normalizedPath = parsedUrl.pathname.replace(/\/+$/, '') || '/';
+    return `${parsedUrl.origin}${normalizedPath}${parsedUrl.search}${parsedUrl.hash}`;
+  }
+
+  async verifyNewTab(locator, expectedUrl) {
+    const href = await locator.getAttribute('href');
+
+    if (href) {
+      expect(href).not.toBe('');
+      expect(this.normalizeUrl(href)).toBe(this.normalizeUrl(expectedUrl));
+      return;
+    }
+
+    await this.page.evaluate(() => {
+      window.__mesheryOpenedUrl = null;
+      // Save original window.open so it can be restored after the check.
+      window.__mesheryOriginalOpen = window.open;
+      window.open = (...args) => {
+        window.__mesheryOpenedUrl = args[0] ?? null;
+        return null;
+      };
+    });
+
+    await locator.click();
+
+    try {
+      await expect
+        .poll(async () => {
+          const openedUrl = await this.page.evaluate(() => window.__mesheryOpenedUrl);
+          return openedUrl ? this.normalizeUrl(openedUrl) : null;
+        })
+        .toBe(this.normalizeUrl(expectedUrl));
+    } finally {
+      await this.page.evaluate(() => {
+        if (window.__mesheryOriginalOpen) {
+          window.open = window.__mesheryOriginalOpen;
+          delete window.__mesheryOriginalOpen;
+        }
+      });
+    }
+  }
+}

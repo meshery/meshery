@@ -1,0 +1,20 @@
+version: 0.0.1
+name: persistence-volume-claim
+displayName: Persistence-volume-claim
+createdAt: "2023-11-03T07:14:08Z"
+description: Defines a Kubernetes PersistentVolumeClaim (PVC) requesting 10Gi storage with 'manual' storage class. Supports both ReadWriteMany and ReadWriteOnce access modes, with optional label-based PV selection. Carefully adjust storage size for specific storage solutions, and consider annotations, security, monitoring, and scalability needs.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2649785a-6cb1-4671-b625-a790ac375043/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure that the chosen storageClassName is properly configured and available in your cluster. Be cautious about the ReadWriteMany and ReadWriteOnce access modes, as they impact compatibility with PersistentVolumes (PVs). The selector should match existing PVs in your cluster if used. Adjust the storage size to align with your storage solution, keeping in mind the AWS EFS special case. Review the need for annotations, confirm the namespace, and implement security measures. Monitor and set up alerts for your PVC, and plan for backup and disaster recovery. Lastly, ensure scalability to meet your application's storage requirements. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9cb4bfce-ad8f-4a8e-8647-bb138fa07e7f
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,0 +1,59 @@
+{{- if .Values.leaderElection.enabled }}
+---
+# Mirrors config/rbac/leader_election_role.yaml in meshery/meshery-operator.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: meshery-leader-election-role
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{- include "meshery-operator.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: meshery-leader-election-rolebinding
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{- include "meshery-operator.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: meshery-leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "meshery-operator.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+{{- end }}

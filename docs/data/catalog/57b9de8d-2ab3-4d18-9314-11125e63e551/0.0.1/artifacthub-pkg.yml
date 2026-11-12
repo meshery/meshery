@@ -1,0 +1,20 @@
+version: 0.0.1
+name: pod-volumes-projected
+displayName: Pod Volumes Projected
+createdAt: "2024-01-17T05:47:13Z"
+description: "Kubernetes involves the configuration of projected volumes within pods, allowing them to access multiple sources of data simultaneously. \n\nThis design enhances the flexibility and functionality of pods by aggregating information from various Kubernetes and non-Kubernetes sources into a unified view accessible within the pod's filesystem."
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/57b9de8d-2ab3-4d18-9314-11125e63e551/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Projected volumes may include sensitive information such as secrets and service account tokens. Care must be taken to ensure that only authorized pods have access to these volumes and that access is tightly controlled to prevent unauthorized access. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

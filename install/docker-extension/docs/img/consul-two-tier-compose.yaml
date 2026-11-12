@@ -1,0 +1,61 @@
+version: "3.3"
+
+services:
+
+  consul:
+    image: consul:1.11.1
+    command: ["consul", "agent", "-config-file=/config/config.hcl", "-config-dir=/config"]
+    volumes:
+    - "./consul_config:/config"
+    ports:
+    - 8500:8500
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.2
+
+  # Define web service and envoy sidecar proxy
+  web:
+    image: nicholasjackson/consul-envoy:v1.6.0-v0.10.0
+    environment:
+      LISTEN_ADDR: 0.0.0.0:9090
+      UPSTREAM_URIS: "http://localhost:9091"
+      MESSAGE: "WEB VERSION"
+      NAME: "web"
+      SERVER_TYPE: "http"
+      CONSUL_SERVER: 10.5.0.2
+      CONSUL_DATACENTER: "dc1"
+      CENTRAL_CONFIG_DIR: /central
+      SERVICE_ID: "web-v1"
+    volumes:
+    - "./service_config/web_v1.hcl:/config/web_v1.hcl"
+    - "./central_config:/central"
+    ports:
+    - "9001:9001"
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.3
+
+  # Define api service and envoy sidecar proxy
+  api:
+    image: nicholasjackson/consul-envoy:v1.6.0-v0.10.0
+    environment:
+      LISTEN_ADDR: 0.0.0.0:9090
+      MESSAGE: "API VERSION"
+      NAME: "api"
+      SERVER_TYPE: "http"
+      CONSUL_SERVER: 10.5.0.2
+      CONSUL_DATACENTER: "dc1"
+      SERVICE_ID: "api-v1"
+      DATACENTER: "dc1"
+    volumes:
+    - "./service_config/api_v1.hcl:/config/api_v1.hcl"
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.4
+
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 10.5.0.0/16

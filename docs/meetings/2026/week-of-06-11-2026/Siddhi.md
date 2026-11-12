@@ -1,0 +1,1 @@
+Hello I'm Siddhi Tripathi. I am 2nd year CSE (AI & ML) undergrad at Newton School Of Technology,Pune.I have experience contributing to Apache NuttX, and my tech stack includes Go, React, Next.js, and Docker. I ran the install script before this meeting , Meshery is running on my mac. I'm targeting LFX Fall 2026 with Meshery and would love to be paired with a MeshMate.

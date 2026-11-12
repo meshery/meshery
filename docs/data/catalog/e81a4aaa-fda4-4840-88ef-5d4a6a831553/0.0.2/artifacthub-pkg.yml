@@ -1,0 +1,21 @@
+version: 0.0.2
+name: datadog-3.127.1.tgz
+displayName: datadog-3.127.1.tgz
+createdAt: "2025-10-30T14:39:04Z"
+description: |
+    Datadog monitoring and observability platform for cloud-scale applications. Provides infrastructure monitoring, application performance monitoring (APM), log management, and security monitoring capabilities for Kubernetes environments.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e81a4aaa-fda4-4840-88ef-5d4a6a831553/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Requires Datadog API and APP keys for authentication. Resource-intensive deployment; review resource requests/limits for your cluster. Consider enabling only required Datadog agents (APM, logs, metrics) based on needs. \n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 0f2ea3e8-17e5-43cb-9484-47d586f9dbe5
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

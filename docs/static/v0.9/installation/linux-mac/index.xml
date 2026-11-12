@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Install Meshery CLI on Linux or macOS on Documentation</title>
+    <link>/v0.9/installation/linux-mac/</link>
+    <description>Recent content in Install Meshery CLI on Linux or macOS on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/installation/linux-mac/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Bash</title>
+      <link>/v0.9/installation/linux-mac/bash/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/linux-mac/bash/</guid>
+      <description>&lt;h1 id=&#34;install-meshery-cli-with-bash&#34;&gt;&#xA;&#x9;Install Meshery CLI with Bash&#xA;&lt;/h1&gt;&#xA;&lt;p&gt;To install or upgrade &lt;code&gt;mesheryctl&lt;/code&gt; using &lt;code&gt;bash&lt;/code&gt;, execute anyone of the following commands.&lt;/p&gt;&#xA;&lt;h4 id=&#34;option-1-only-install-mesheryctl-binary&#34;&gt;&#xA;&#x9;Option 1: Only install &lt;code&gt;mesheryctl&lt;/code&gt; binary&#xA;&lt;/h4&gt;&#xA; &lt;pre class=&#34;codeblock-pre&#34;&gt;&#xA; &lt;div class=&#34;codeblock&#34;&gt;&#xA; &lt;div class=&#34;clipboardjs&#34;&gt;&#xA;  $ curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -&#xA; &lt;/div&gt;&lt;/div&gt;&#xA; &lt;/pre&gt;&#xA;&lt;br /&gt;&#xA;&lt;br /&gt;&#xA;#### Option 2: Install `mesheryctl` binary and deploy Meshery on Docker&#xA; &lt;pre class=&#34;codeblock-pre&#34;&gt;&#xA; &lt;div class=&#34;codeblock&#34;&gt;&#xA; &lt;div class=&#34;clipboardjs&#34;&gt;&#xA;  $ curl -L https://meshery.io/install | PLATFORM=docker bash -&#xA; &lt;/div&gt;&lt;/div&gt;&#xA; &lt;/pre&gt;&#xA;&lt;br /&gt;&#xA;&lt;br /&gt;&#xA;#### Option 3: Install `mesheryctl` binary and deploy Meshery on Kubernetes&#xA; &lt;pre class=&#34;codeblock-pre&#34;&gt;&#xA; &lt;div class=&#34;codeblock&#34;&gt;&#xA; &lt;div class=&#34;clipboardjs&#34;&gt;&#xA;  $ curl -L https://meshery.io/install | PLATFORM=kubernetes bash -&#xA; &lt;/div&gt;&lt;/div&gt;&#xA; &lt;/pre&gt;&#xA;&lt;br /&gt;&#xA;&lt;br /&gt;&#xA;#### Option 4: Install `mesheryctl` binary and Meshery adapter(s)&#xA;&lt;p&gt;Install &lt;code&gt;mesheryctl&lt;/code&gt; binary and include one or more &lt;a href=&#34;/v0.9/concepts/architecture/adapters/&#34;&gt;adapters&lt;/a&gt; to be deployed&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Brew</title>
+      <link>/v0.9/installation/linux-mac/brew/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/linux-mac/brew/</guid>
+      <description>&lt;h1 id=&#34;install-meshery-cli-with-homebrew&#34;&gt;&#xA;&#x9;Install Meshery CLI with Homebrew&#xA;&lt;/h1&gt;&#xA;&lt;h3 id=&#34;prerequisites&#34;&gt;&#xA;&#x9;Prerequisites&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;You need to have &lt;code&gt;Brew&lt;/code&gt; installed on your &lt;strong&gt;Linux&lt;/strong&gt; or &lt;strong&gt;macOS&lt;/strong&gt; system to perform these actions.&lt;/p&gt;&#xA;&lt;h3 id=&#34;install-mesheryctl-using-brew&#34;&gt;&#xA;&#x9;Install &lt;code&gt;mesheryctl&lt;/code&gt; using Brew&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;To install &lt;code&gt;mesheryctl&lt;/code&gt; using homebrew, execute the following commands.&lt;/p&gt;&#xA;&lt;pre class=&#34;codeblock-pre&#34;&gt;&lt;div class=&#34;codeblock&#34;&gt;&#xA; &lt;div class=&#34;clipboardjs&#34;&gt;&#xA; $ brew install mesheryctl&#xA; &lt;/div&gt;&lt;/div&gt;&#xA;&lt;/pre&gt;&#xA;&lt;p&gt;You&amp;rsquo;re ready to run Meshery. To do so, execute the following command.&lt;/p&gt;&#xA;&lt;pre class=&#34;codeblock-pre&#34;&gt;&lt;div class=&#34;codeblock&#34;&gt;&#xA;&lt;div class=&#34;clipboardjs&#34;&gt;&#xA; $ mesheryctl system start&#xA;&#xA;&lt;/div&gt;&lt;/div&gt;&#xA;&lt;/pre&gt;&#xA;&lt;p&gt;If you are running Meshery on Docker, execute the following command.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

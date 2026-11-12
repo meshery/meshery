@@ -1,0 +1,919 @@
+name: Istio 1.13.3 SPIRE
+services:
+  Cluster Role Binding:
+    name: Cluster Role Binding
+    type: ClusterRoleBinding.K8s
+    namespace: kube-system
+    dependsOn:
+    - kube-system
+    settings:
+      name: Cluster Role Binding
+      namespace: kube-system
+    traits:
+      meshmap:
+        edges: []
+        id: 99cc847b-4806-48ec-a820-1b1d52a4a977
+        label: Cluster Role Binding
+        parent: a6297b89-3d53-44d0-95bd-bb3f9ad202a8
+        position:
+          posX: 350
+          posY: 770
+  Daemon Set:
+    name: Daemon Set
+    type: DaemonSet.K8s
+    namespace: kube-system
+    dependsOn:
+    - kube-system
+    settings:
+      name: Daemon Set
+      namespace: kube-system
+    traits:
+      meshmap:
+        edges: []
+        id: 7f836470-69de-4d91-852a-d15308610ca9
+        label: Daemon Set
+        parent: a6297b89-3d53-44d0-95bd-bb3f9ad202a8
+        position:
+          posX: 410
+          posY: 770
+  Gateway:
+    name: Gateway
+    type: Gateway.Istio
+    namespace: default
+    settings:
+      name: Gateway
+      namespace: default
+    traits:
+      meshmap:
+        edges: []
+        id: c54b76d8-38b4-4a16-9efd-a00ec956d2e6
+        label: Gateway
+        parent: a46cc5d7-62fb-40cc-a5ce-c9792571fafe
+        position:
+          posX: 330
+          posY: 450
+  Meshery:
+    name: Meshery
+    type: Application
+    namespace: kube-system
+    dependsOn:
+    - kube-system
+    settings:
+      advanced:
+        create_service: true
+      name: Meshery
+      namespace: kube-system
+      replicas: 0
+    traits:
+      meshmap:
+        edges: []
+        id: d1e9217a-7999-4495-90f3-17b020b8796e
+        label: Meshery
+        parent: a6297b89-3d53-44d0-95bd-bb3f9ad202a8
+        position:
+          posX: 490
+          posY: 770
+  Persistent Volume:
+    name: Persistent Volume
+    type: PersistentVolume.K8s
+    namespace: ratings-v1
+    dependsOn:
+    - ratings-v1
+    settings:
+      name: Persistent Volume
+      namespace: ratings-v1
+    traits:
+      meshmap:
+        edges: []
+        id: b3a65444-c4e1-49c1-9ec2-0b918e1a99b9
+        label: Persistent Volume
+        parent: d683062e-b2a6-46e8-af01-08b8e5926bda
+        position:
+          posX: 770
+          posY: 770
+  Virtual Service:
+    name: Virtual Service
+    type: VirtualService.Istio
+    namespace: default
+    settings:
+      gateways:
+      - bookinfo
+      hosts:
+      - bookinfo.meshery.io
+      name: Virtual Service
+      namespace: default
+    traits:
+      meshmap:
+        edges: []
+        id: 045d127b-82a8-4a0f-aa5a-3978107f2f55
+        label: Virtual Service
+        parent: a46cc5d7-62fb-40cc-a5ce-c9792571fafe
+        position:
+          posX: 390
+          posY: 450
+  bookinfo-details:
+    name: bookinfo-details
+    type: Secret.K8s
+    namespace: default
+    dependsOn:
+    - details-v1
+    settings:
+      immutable: ""
+      name: bookinfo-details
+      namespace: details-v1
+      type: ""
+    traits:
+      meshmap:
+        edges: []
+        id: 9a454b75-38ca-4e2d-8466-82b522695148
+        label: bookinfo-details
+        parent: b5da9bdc-218a-4c6b-9fe8-7744749f013b
+        position:
+          posX: 730
+          posY: 290
+  bookinfo-productpage:
+    name: bookinfo-productpage
+    type: Secret.K8s
+    namespace: productpage-v1
+    dependsOn:
+    - productpage-v1
+    settings:
+      immutable: ""
+      name: bookinfo-productpage
+      namespace: productpage-v1
+      type: ""
+    traits:
+      meshmap:
+        edges: []
+        id: 193dabe4-88ed-4133-ae04-f83615d79d48
+        label: bookinfo-productpage
+        parent: b569c14d-1d95-4cc6-a1a5-69c16b19bd03
+        position:
+          posX: 590
+          posY: 530
+  bookinfo-ratings:
+    name: bookinfo-ratings
+    type: Secret.K8s
+    namespace: default
+    dependsOn:
+    - ratings-v1
+    settings:
+      immutable: ""
+      name: bookinfo-ratings
+      namespace: ratings-v1
+      type: ""
+    traits:
+      meshmap:
+        edges: []
+        id: 21c21269-a2cb-45d6-920e-bf62cd9cdcb7
+        label: bookinfo-ratings
+        parent: d683062e-b2a6-46e8-af01-08b8e5926bda
+        position:
+          posX: 690
+          posY: 770
+  details:
+    name: details
+    type: Service.K8s
+    namespace: default
+    settings:
+      name: details
+      namespace: default
+      spec:
+        ports:
+        - name: http
+          port: 9080
+        selector:
+          app: details
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 4dd2c215-73da-4450-b65a-035f18d8781b
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: 24d63f33-e37c-496c-8fc1-878109e69392
+            target: b5da9bdc-218a-4c6b-9fe8-7744749f013b
+          from: $(#ref.services.24d63f33-e37c-496c-8fc1-878109e69392.id)
+          to: $(#ref.services.b5da9bdc-218a-4c6b-9fe8-7744749f013b.id)
+        - data:
+            id: 73a16a7d-f581-4440-b959-3c6b370cf0df
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: b569c14d-1d95-4cc6-a1a5-69c16b19bd03
+            target: 24d63f33-e37c-496c-8fc1-878109e69392
+          from: $(#ref.services.b569c14d-1d95-4cc6-a1a5-69c16b19bd03.id)
+          to: $(#ref.services.24d63f33-e37c-496c-8fc1-878109e69392.id)
+        id: 24d63f33-e37c-496c-8fc1-878109e69392
+        label: details
+        position:
+          posX: 730
+          posY: 390
+  details-v1:
+    name: details-v1
+    type: Deployment.K8s
+    namespace: default
+    settings:
+      name: details-v1
+      namespace: default
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: details
+            version: v1
+        template:
+          metadata:
+            labels:
+              app: details
+              version: v1
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-details-v1:1.16.2
+              imagePullPolicy: IfNotPresent
+              name: details
+              ports:
+              - containerPort: 9080
+              securityContext:
+                runAsUser: 1000
+            serviceAccountName: bookinfo-details
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 4dd2c215-73da-4450-b65a-035f18d8781b
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: 24d63f33-e37c-496c-8fc1-878109e69392
+            target: b5da9bdc-218a-4c6b-9fe8-7744749f013b
+          from: $(#ref.services.24d63f33-e37c-496c-8fc1-878109e69392.id)
+          to: $(#ref.services.b5da9bdc-218a-4c6b-9fe8-7744749f013b.id)
+        id: b5da9bdc-218a-4c6b-9fe8-7744749f013b
+        label: details-v1
+        position:
+          posX: 727.5
+          posY: 235
+  kube-system:
+    name: kube-system
+    type: Namespace.K8s
+    namespace: default
+    settings:
+      name: kube-system
+      namespace: default
+    traits:
+      meshmap:
+        edges: []
+        id: a6297b89-3d53-44d0-95bd-bb3f9ad202a8
+        label: kube-system
+        position:
+          posX: 415.75
+          posY: 778.5
+  pod-ddmqm:
+    name: pod-ddmqm
+    type: Pod.K8s
+    namespace: default
+    dependsOn:
+    - reviews-v2
+    settings:
+      name: Pod
+      namespace: reviews-v2
+    traits:
+      meshmap:
+        edges: []
+        id: 667c7449-3638-4386-a886-e54cda3cda34
+        label: Pod
+        parent: c33cc433-c227-4ad1-aeaa-3b9212a3e10b
+        position:
+          posX: 910
+          posY: 430
+  pod-duyui:
+    name: pod-duyui
+    type: Pod.K8s
+    namespace: default
+    dependsOn:
+    - reviews-v1
+    settings:
+      name: Pod
+      namespace: reviews-v1
+    traits:
+      meshmap:
+        edges: []
+        id: 2f4a35cd-6869-45bd-a2ef-89d954d53975
+        label: Pod
+        parent: 52db5a38-c732-440f-b254-43c83ff1309f
+        position:
+          posX: 910
+          posY: 250
+  pod-edifj:
+    name: pod-edifj
+    type: Pod.K8s
+    namespace: default
+    dependsOn:
+    - reviews-v3
+    settings:
+      name: Pod
+      namespace: reviews-v3
+    traits:
+      meshmap:
+        edges: []
+        id: f1125dc9-463b-4511-8bbc-570fb0926009
+        label: Pod
+        parent: d18695e1-9e39-4169-8b0f-5edd4c30bf0c
+        position:
+          posX: 910
+          posY: 610
+  pod-ktjbr:
+    name: pod-ktjbr
+    type: Pod.K8s
+    namespace: productpage-v1
+    dependsOn:
+    - productpage-v1
+    settings:
+      name: Pod
+      namespace: productpage-v1
+    traits:
+      meshmap:
+        edges: []
+        id: 6719c447-9a5f-4abf-a3a1-18230b47d8c1
+        label: Pod
+        parent: b569c14d-1d95-4cc6-a1a5-69c16b19bd03
+        position:
+          posX: 590
+          posY: 410
+  pod-nrxxy:
+    name: pod-nrxxy
+    type: Pod.K8s
+    namespace: ratings-v1
+    dependsOn:
+    - ratings-v1
+    settings:
+      name: Pod
+      namespace: ratings-v1
+    traits:
+      meshmap:
+        edges: []
+        id: fde61a40-5a23-43da-99fd-5f7a47bd1447
+        label: Pod
+        parent: d683062e-b2a6-46e8-af01-08b8e5926bda
+        position:
+          posX: 730
+          posY: 650
+  pod-vifpj:
+    name: pod-vifpj
+    type: Pod.K8s
+    namespace: default
+    dependsOn:
+    - details-v1
+    settings:
+      name: Pod
+      namespace: details-v1
+    traits:
+      meshmap:
+        edges: []
+        id: 1a90b567-049b-4274-918a-fd8cd43f9283
+        label: Pod
+        parent: b5da9bdc-218a-4c6b-9fe8-7744749f013b
+        position:
+          posX: 730
+          posY: 170
+  productpage:
+    name: productpage
+    type: Service.K8s
+    namespace: default
+    settings:
+      name: productpage
+      namespace: default
+      spec:
+        ports:
+        - name: http
+          port: 9080
+        selector:
+          app: productpage
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: d978dc7a-1116-40aa-a5bd-e2881f9aecf3
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: c83bd745-df8a-43e5-b154-90a974d3aace
+            target: b569c14d-1d95-4cc6-a1a5-69c16b19bd03
+          from: $(#ref.services.c83bd745-df8a-43e5-b154-90a974d3aace.id)
+          to: $(#ref.services.b569c14d-1d95-4cc6-a1a5-69c16b19bd03.id)
+        - data:
+            id: b2136bb1-c9e1-44a6-9a8e-a6f48f63313a
+            meatadata:
+              port: 9080
+              protocol: tcp
+            source: a46cc5d7-62fb-40cc-a5ce-c9792571fafe
+            target: c83bd745-df8a-43e5-b154-90a974d3aace
+          from: $(#ref.services.a46cc5d7-62fb-40cc-a5ce-c9792571fafe.id)
+          to: $(#ref.services.c83bd745-df8a-43e5-b154-90a974d3aace.id)
+        id: c83bd745-df8a-43e5-b154-90a974d3aace
+        label: productpage
+        position:
+          posX: 490
+          posY: 470
+  productpage-v1:
+    name: productpage-v1
+    type: Deployment.K8s
+    namespace: default
+    settings:
+      name: productpage-v1
+      namespace: default
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: productpage
+            version: v1
+        template:
+          metadata:
+            labels:
+              app: productpage
+              version: v1
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-productpage-v1:1.16.2
+              imagePullPolicy: IfNotPresent
+              name: productpage
+              ports:
+              - containerPort: 9080
+              securityContext:
+                runAsUser: 1000
+              volumeMounts:
+              - mountPath: /tmp
+                name: tmp
+            serviceAccountName: bookinfo-productpage
+            volumes:
+            - name: tmp
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: d978dc7a-1116-40aa-a5bd-e2881f9aecf3
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: c83bd745-df8a-43e5-b154-90a974d3aace
+            target: b569c14d-1d95-4cc6-a1a5-69c16b19bd03
+          from: $(#ref.services.c83bd745-df8a-43e5-b154-90a974d3aace.id)
+          to: $(#ref.services.b569c14d-1d95-4cc6-a1a5-69c16b19bd03.id)
+        - data:
+            id: 67a36eec-5cf8-4fca-92db-3fb01091f937
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: b569c14d-1d95-4cc6-a1a5-69c16b19bd03
+            target: b3d1f0fd-89c7-4f55-8e86-778517ae8630
+          from: $(#ref.services.b569c14d-1d95-4cc6-a1a5-69c16b19bd03.id)
+          to: $(#ref.services.b3d1f0fd-89c7-4f55-8e86-778517ae8630.id)
+        - data:
+            id: 73a16a7d-f581-4440-b959-3c6b370cf0df
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: b569c14d-1d95-4cc6-a1a5-69c16b19bd03
+            target: 24d63f33-e37c-496c-8fc1-878109e69392
+          from: $(#ref.services.b569c14d-1d95-4cc6-a1a5-69c16b19bd03.id)
+          to: $(#ref.services.24d63f33-e37c-496c-8fc1-878109e69392.id)
+        - data:
+            id: eb2b2550-d9fb-4ae3-8e51-173bea0109de
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: b569c14d-1d95-4cc6-a1a5-69c16b19bd03
+            target: 026dbe27-ce53-4e7c-bff6-985480d3cf13
+          from: $(#ref.services.b569c14d-1d95-4cc6-a1a5-69c16b19bd03.id)
+          to: $(#ref.services.026dbe27-ce53-4e7c-bff6-985480d3cf13.id)
+        id: b569c14d-1d95-4cc6-a1a5-69c16b19bd03
+        label: productpage-v1
+        position:
+          posX: 590
+          posY: 475
+  ratings:
+    name: ratings
+    type: Service.K8s
+    namespace: default
+    settings:
+      name: ratings
+      namespace: default
+      spec:
+        ports:
+        - name: http
+          port: 9080
+        selector:
+          app: ratings
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 28d3f58a-04c7-41a5-9d07-beb561ec334d
+            meatadata:
+              port: 80
+              protocol: tcp
+            source: b3d1f0fd-89c7-4f55-8e86-778517ae8630
+            target: d683062e-b2a6-46e8-af01-08b8e5926bda
+          from: $(#ref.services.b3d1f0fd-89c7-4f55-8e86-778517ae8630.id)
+          to: $(#ref.services.d683062e-b2a6-46e8-af01-08b8e5926bda.id)
+        - data:
+            id: 67a36eec-5cf8-4fca-92db-3fb01091f937
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: b569c14d-1d95-4cc6-a1a5-69c16b19bd03
+            target: b3d1f0fd-89c7-4f55-8e86-778517ae8630
+          from: $(#ref.services.b569c14d-1d95-4cc6-a1a5-69c16b19bd03.id)
+          to: $(#ref.services.b3d1f0fd-89c7-4f55-8e86-778517ae8630.id)
+        id: b3d1f0fd-89c7-4f55-8e86-778517ae8630
+        label: ratings
+        position:
+          posX: 730
+          posY: 550
+  ratings-v1:
+    name: ratings-v1
+    type: Deployment.K8s
+    namespace: default
+    settings:
+      name: ratings-v1
+      namespace: default
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: ratings
+            version: v1
+        template:
+          metadata:
+            labels:
+              app: ratings
+              version: v1
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-ratings-v1:1.16.2
+              imagePullPolicy: IfNotPresent
+              name: ratings
+              ports:
+              - containerPort: 9080
+              securityContext:
+                runAsUser: 1000
+            serviceAccountName: bookinfo-ratings
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 28d3f58a-04c7-41a5-9d07-beb561ec334d
+            meatadata:
+              port: 80
+              protocol: tcp
+            source: b3d1f0fd-89c7-4f55-8e86-778517ae8630
+            target: d683062e-b2a6-46e8-af01-08b8e5926bda
+          from: $(#ref.services.b3d1f0fd-89c7-4f55-8e86-778517ae8630.id)
+          to: $(#ref.services.d683062e-b2a6-46e8-af01-08b8e5926bda.id)
+        id: d683062e-b2a6-46e8-af01-08b8e5926bda
+        label: ratings-v1
+        position:
+          posX: 731.25
+          posY: 716.75
+  reviews:
+    name: reviews
+    type: Service.K8s
+    namespace: default
+    settings:
+      name: reviews
+      namespace: default
+      spec:
+        ports:
+        - name: http
+          port: 9080
+        selector:
+          app: reviews
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: bc0aa9bf-1ec9-400d-9581-c154fa19c930
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: 026dbe27-ce53-4e7c-bff6-985480d3cf13
+            target: c33cc433-c227-4ad1-aeaa-3b9212a3e10b
+          from: $(#ref.services.026dbe27-ce53-4e7c-bff6-985480d3cf13.id)
+          to: $(#ref.services.c33cc433-c227-4ad1-aeaa-3b9212a3e10b.id)
+        - data:
+            id: 651c614d-428c-47d8-8f2a-74053611876f
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: 026dbe27-ce53-4e7c-bff6-985480d3cf13
+            target: d18695e1-9e39-4169-8b0f-5edd4c30bf0c
+          from: $(#ref.services.026dbe27-ce53-4e7c-bff6-985480d3cf13.id)
+          to: $(#ref.services.d18695e1-9e39-4169-8b0f-5edd4c30bf0c.id)
+        - data:
+            id: c0f9c3c7-7ee4-4a87-8ad4-c5a6540d3d19
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: 026dbe27-ce53-4e7c-bff6-985480d3cf13
+            target: 52db5a38-c732-440f-b254-43c83ff1309f
+          from: $(#ref.services.026dbe27-ce53-4e7c-bff6-985480d3cf13.id)
+          to: $(#ref.services.52db5a38-c732-440f-b254-43c83ff1309f.id)
+        - data:
+            id: eb2b2550-d9fb-4ae3-8e51-173bea0109de
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: b569c14d-1d95-4cc6-a1a5-69c16b19bd03
+            target: 026dbe27-ce53-4e7c-bff6-985480d3cf13
+          from: $(#ref.services.b569c14d-1d95-4cc6-a1a5-69c16b19bd03.id)
+          to: $(#ref.services.026dbe27-ce53-4e7c-bff6-985480d3cf13.id)
+        id: 026dbe27-ce53-4e7c-bff6-985480d3cf13
+        label: reviews
+        position:
+          posX: 730
+          posY: 470
+  reviews-v1:
+    name: reviews-v1
+    type: Deployment.K8s
+    namespace: default
+    settings:
+      name: reviews-v1
+      namespace: default
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: reviews
+            version: v1
+        template:
+          metadata:
+            labels:
+              app: reviews
+              version: v1
+          spec:
+            containers:
+            - env:
+              - name: LOG_DIR
+                value: /tmp/logs
+              image: docker.io/istio/examples-bookinfo-reviews-v1:1.16.2
+              imagePullPolicy: IfNotPresent
+              name: reviews
+              ports:
+              - containerPort: 9080
+              securityContext:
+                runAsUser: 1000
+              volumeMounts:
+              - mountPath: /tmp
+                name: tmp
+              - mountPath: /opt/ibm/wlp/output
+                name: wlp-output
+            serviceAccountName: bookinfo-reviews
+            volumes:
+            - name: wlp-output
+            - name: tmp
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: c0f9c3c7-7ee4-4a87-8ad4-c5a6540d3d19
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: 026dbe27-ce53-4e7c-bff6-985480d3cf13
+            target: 52db5a38-c732-440f-b254-43c83ff1309f
+          from: $(#ref.services.026dbe27-ce53-4e7c-bff6-985480d3cf13.id)
+          to: $(#ref.services.52db5a38-c732-440f-b254-43c83ff1309f.id)
+        id: 52db5a38-c732-440f-b254-43c83ff1309f
+        label: reviews-v1
+        position:
+          posX: 910
+          posY: 286.5
+  reviews-v2:
+    name: reviews-v2
+    type: Deployment.K8s
+    namespace: default
+    settings:
+      name: reviews-v2
+      namespace: default
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: reviews
+            version: v2
+        template:
+          metadata:
+            labels:
+              app: reviews
+              version: v2
+          spec:
+            containers:
+            - env:
+              - name: LOG_DIR
+                value: /tmp/logs
+              image: docker.io/istio/examples-bookinfo-reviews-v2:1.16.2
+              imagePullPolicy: IfNotPresent
+              name: reviews
+              ports:
+              - containerPort: 9080
+              securityContext:
+                runAsUser: 1000
+              volumeMounts:
+              - mountPath: /tmp
+                name: tmp
+              - mountPath: /opt/ibm/wlp/output
+                name: wlp-output
+            serviceAccountName: bookinfo-reviews
+            volumes:
+            - name: wlp-output
+            - name: tmp
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: bc0aa9bf-1ec9-400d-9581-c154fa19c930
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: 026dbe27-ce53-4e7c-bff6-985480d3cf13
+            target: c33cc433-c227-4ad1-aeaa-3b9212a3e10b
+          from: $(#ref.services.026dbe27-ce53-4e7c-bff6-985480d3cf13.id)
+          to: $(#ref.services.c33cc433-c227-4ad1-aeaa-3b9212a3e10b.id)
+        id: c33cc433-c227-4ad1-aeaa-3b9212a3e10b
+        label: reviews-v2
+        position:
+          posX: 910
+          posY: 459
+  reviews-v3:
+    name: reviews-v3
+    type: Deployment.K8s
+    namespace: default
+    settings:
+      name: reviews-v3
+      namespace: default
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: reviews
+            version: v3
+        template:
+          metadata:
+            labels:
+              app: reviews
+              version: v3
+          spec:
+            containers:
+            - env:
+              - name: LOG_DIR
+                value: /tmp/logs
+              image: docker.io/istio/examples-bookinfo-reviews-v3:1.16.2
+              imagePullPolicy: IfNotPresent
+              name: reviews
+              ports:
+              - containerPort: 9080
+              securityContext:
+                runAsUser: 1000
+              volumeMounts:
+              - mountPath: /tmp
+                name: tmp
+              - mountPath: /opt/ibm/wlp/output
+                name: wlp-output
+            serviceAccountName: bookinfo-reviews
+            volumes:
+            - name: wlp-output
+            - name: tmp
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 651c614d-428c-47d8-8f2a-74053611876f
+            meatadata:
+              port: 8080
+              protocol: tcp
+            source: 026dbe27-ce53-4e7c-bff6-985480d3cf13
+            target: d18695e1-9e39-4169-8b0f-5edd4c30bf0c
+          from: $(#ref.services.026dbe27-ce53-4e7c-bff6-985480d3cf13.id)
+          to: $(#ref.services.d18695e1-9e39-4169-8b0f-5edd4c30bf0c.id)
+        id: d18695e1-9e39-4169-8b0f-5edd4c30bf0c
+        label: reviews-v3
+        position:
+          posX: 910
+          posY: 646.5
+  sidecar-ahets:
+    name: sidecar-ahets
+    type: Sidecar.Istio
+    namespace: default
+    dependsOn:
+    - reviews-v1
+    settings:
+      name: Sidecar
+      namespace: reviews-v1
+    traits:
+      meshmap:
+        edges: []
+        id: 817dcef6-52eb-4e0a-b4e2-e5b811fe152a
+        label: Sidecar
+        parent: 52db5a38-c732-440f-b254-43c83ff1309f
+        position:
+          posX: 910
+          posY: 310
+  sidecar-bxlay:
+    name: sidecar-bxlay
+    type: Sidecar.Istio
+    namespace: default
+    dependsOn:
+    - reviews-v2
+    settings:
+      name: Sidecar
+      namespace: reviews-v2
+    traits:
+      meshmap:
+        edges: []
+        id: 3f723439-4f36-4edf-90bd-1622a127b026
+        label: Sidecar
+        parent: c33cc433-c227-4ad1-aeaa-3b9212a3e10b
+        position:
+          posX: 910
+          posY: 490
+  sidecar-fczhf:
+    name: sidecar-fczhf
+    type: Sidecar.Istio
+    namespace: default
+    dependsOn:
+    - details-v1
+    settings:
+      name: Sidecar
+      namespace: details-v1
+    traits:
+      meshmap:
+        edges: []
+        id: 2bb78169-b36b-4a64-9989-2d4c40d4d3cd
+        label: Sidecar
+        parent: b5da9bdc-218a-4c6b-9fe8-7744749f013b
+        position:
+          posX: 730
+          posY: 230
+  sidecar-iymua:
+    name: sidecar-iymua
+    type: Sidecar.Istio
+    namespace: productpage-v1
+    dependsOn:
+    - productpage-v1
+    settings:
+      name: Sidecar
+      namespace: productpage-v1
+      outboundTrafficPolicy:
+        egressProxy:
+          host: bookinfo.meshery.io
+          subset: v1
+        mode: ALLOW_ANY
+    traits:
+      meshmap:
+        edges: []
+        id: 1205c568-a459-4a69-8bfc-5ba7827de50b
+        label: Sidecar
+        parent: b569c14d-1d95-4cc6-a1a5-69c16b19bd03
+        position:
+          posX: 590
+          posY: 470
+  sidecar-qmoih:
+    name: sidecar-qmoih
+    type: Sidecar.Istio
+    namespace: default
+    dependsOn:
+    - ratings-v1
+    settings:
+      name: Sidecar
+      namespace: ratings-v1
+    traits:
+      meshmap:
+        edges: []
+        id: b572e0af-94f0-4b78-a25e-ff6b41063568
+        label: Sidecar
+        parent: d683062e-b2a6-46e8-af01-08b8e5926bda
+        position:
+          posX: 730
+          posY: 710
+  sidecar-vnlvw:
+    name: sidecar-vnlvw
+    type: Sidecar.Istio
+    namespace: default
+    dependsOn:
+    - reviews-v3
+    settings:
+      name: Sidecar
+      namespace: reviews-v3
+    traits:
+      meshmap:
+        edges: []
+        id: ae841a98-2d49-495a-a7c7-9ed560c9117f
+        label: Sidecar
+        parent: d18695e1-9e39-4169-8b0f-5edd4c30bf0c
+        position:
+          posX: 910
+          posY: 670
+

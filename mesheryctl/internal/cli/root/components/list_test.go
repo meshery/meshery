@@ -1,0 +1,104 @@
+package components
+
+import (
+	"fmt"
+	"path/filepath"
+	"runtime"
+	"testing"
+
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+)
+
+func TestListComponent(t *testing.T) {
+	t.Cleanup(func() {
+		cmdComponentListFlag = componentListFlag{Page: 1, PageSize: 10}
+	})
+
+	mesheryctlflags.InitValidators(ComponentCmd)
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currentDirectory := filepath.Dir(filename)
+	testUrl := fmt.Sprintf("/%s?page=0&pagesize=10", componentApiPath)
+	// test scenarios for fetching data
+	tests := []utils.MesheryListCommandTest{
+		{
+			Name:             "list components with page number",
+			Args:             []string{"list", "--page", "1"},
+			URL:              testUrl,
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.list.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "list components non empty count",
+			Args:             []string{"list", "--count"},
+			URL:              testUrl,
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.list.count.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "list components empty count",
+			Args:             []string{"list", "--count"},
+			URL:              testUrl,
+			Fixture:          "components.empty.api.response.golden",
+			ExpectedResponse: "components.list.count.empty.ouput.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "list components with extra positional argument triggers error",
+			Args:             []string{"list", "extra-arg"},
+			URL:              testUrl,
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg)),
+		},
+		{
+			Name:             "list registered components with --page 0",
+			Args:             []string{"list", "--page", "0"},
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
+		},
+		{
+			Name:             "list registered components with a negative --page",
+			Args:             []string{"list", "--page", "-1"},
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '-1'")),
+		},
+		{
+			Name:             "list registered components with --pagesize 0",
+			Args:             []string{"list", "--pagesize", "0"},
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '0'")),
+		},
+		{
+			Name:             "list components with invalid pagesize reports actual flag name",
+			Args:             []string{"list", "--pagesize", "-1"},
+			URL:              testUrl,
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '-1'")),
+		},
+	}
+
+	mesheryctlflags.InitValidators(ComponentCmd)
+	utils.InvokeMesheryctlTestListCommand(t, update, ComponentCmd, tests, currentDirectory, "component")
+
+}

@@ -1,0 +1,213 @@
+import React, { useEffect, useState } from 'react';
+import { isNil, isUndefined } from 'lodash';
+import { CardContainer, FrontSideDescription, ImageWrapper } from '../../../css/icons.styles';
+import { ADAPTER_STATUS, adaptersList, AdaptersListType } from './constants';
+import changeAdapterState from '@/graphql/mutations/AdapterStatusMutation';
+import { LARGE_6_MED_12_GRID_STYLE } from '../../../css/grid.style';
+import { useNotification } from '../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../lib/event-types';
+import { useLazyGetSystemSyncQuery } from '../../../rtk-query/system';
+import { Grid2, Switch, Typography, useTheme } from '@sistent/sistent';
+import { updateProgress } from '@/store/slices/mesheryUi';
+
+interface AdapterPayload {
+  status: string;
+  adapter: string;
+  targetPort: number;
+}
+
+interface MeshAdapter {
+  name: string;
+  adapter_location: string;
+}
+
+interface SyncResult {
+  meshAdapters: MeshAdapter[];
+}
+
+const Adapters: React.FC = () => {
+  // States.
+  const [availableAdapters, setAvailableAdapters] = useState<AdaptersListType>(adaptersList);
+  // Adapters with a deploy/undeploy request still in flight. Their switch is
+  // disabled so a second toggle can't race the first one's rollback.
+  const [pendingAdapters, setPendingAdapters] = useState<Record<string, boolean>>({});
+
+  // Hooks.
+  const { notify } = useNotification();
+  const [fetchSystemSync] = useLazyGetSystemSyncQuery();
+
+  // useEffects.
+  useEffect(() => {
+    handleAdapterSync();
+  }, []);
+
+  const theme = useTheme();
+
+  // Handlers.
+  const handleAdapterSync = async (showLoader = true): Promise<void> => {
+    showLoader && updateProgress({ showProgress: true });
+
+    fetchSystemSync()
+      .unwrap()
+      .then((result: SyncResult) => {
+        showLoader && updateProgress({ showProgress: false });
+
+        if (!isUndefined(result)) {
+          // Deep copying to avoid mutability.
+          const currentAdaptersList = structuredClone(adaptersList);
+
+          result.meshAdapters.forEach((element) => {
+            const adapterId = element.name;
+            if (adapterId && currentAdaptersList[adapterId]) {
+              currentAdaptersList[adapterId].enabled = true;
+              currentAdaptersList[adapterId].url = element.adapter_location;
+            }
+          });
+          setAvailableAdapters(currentAdaptersList);
+        }
+      })
+      .catch((error) => handleError('Unable to fetch list of adapters.')(error));
+  };
+
+  const handleAdapterDeployment = (
+    payload: AdapterPayload,
+    msg: string,
+    selectedAdapter: AdaptersListType[string],
+    adapterId: string,
+  ): void => {
+    updateProgress({ showProgress: true });
+    setPendingAdapters((prev) => ({ ...prev, [adapterId]: true }));
+
+    changeAdapterState((response: unknown, errors: unknown) => {
+      updateProgress({ showProgress: false });
+      setPendingAdapters((prev) => ({ ...prev, [adapterId]: false }));
+
+      if (!isNil(errors)) {
+        // Put the switch back to where it was before the toggle. selectedAdapter
+        // still holds that original state.
+        setAvailableAdapters((prev) => ({
+          ...prev,
+          [adapterId]: { ...prev[adapterId], enabled: selectedAdapter.enabled },
+        }));
+        handleError(msg)(errors);
+      } else {
+        const actionText = payload.status.toLowerCase();
+        notify({
+          message: `${selectedAdapter.name} adapter ${actionText}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      }
+    }, payload);
+  };
+
+  const handleError =
+    (msg: string) =>
+    (error?: unknown): void => {
+      updateProgress({ showProgress: false });
+      notify({
+        message: msg,
+        event_type: EVENT_TYPES.ERROR,
+        details: isNil(error) ? undefined : String(error),
+      });
+    };
+
+  const handleToggle = (selectedAdapter: AdaptersListType[string], adapterId: string): void => {
+    if (pendingAdapters[adapterId]) return;
+    setAvailableAdapters({
+      ...availableAdapters,
+      [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled },
+    });
+    let payload: AdapterPayload;
+    let msg: string;
+    if (!selectedAdapter.enabled) {
+      payload = {
+        status: ADAPTER_STATUS.ENABLED,
+        adapter: selectedAdapter.label,
+        targetPort: selectedAdapter.defaultPort,
+      };
+      msg = 'Unable to deploy adapter';
+    } else {
+      payload = {
+        status: ADAPTER_STATUS.DISABLED,
+        adapter: selectedAdapter.label,
+        targetPort: selectedAdapter.defaultPort,
+      };
+      msg = 'Unable to undeploy adapter';
+    }
+    handleAdapterDeployment(payload, msg, selectedAdapter, adapterId);
+  };
+
+  // Render.
+  return (
+    <>
+      {Object.entries(availableAdapters).map(([adapterId, adapter]) => (
+        <Grid2 size={LARGE_6_MED_12_GRID_STYLE} key={adapterId}>
+          <CardContainer>
+            <Typography variant="h5" component="div">
+              Meshery Adapter for {adapter.name}
+            </Typography>
+
+            <FrontSideDescription variant="body">
+              <ImageWrapper
+                src={
+                  theme.palette.mode === 'dark' && adapter.darkImageSrc
+                    ? adapter.darkImageSrc
+                    : adapter.imageSrc
+                }
+              />
+              <div
+                style={{
+                  display: 'inline',
+                  position: 'relative',
+                }}
+              >
+                {adapter.description}
+              </div>
+            </FrontSideDescription>
+
+            <Grid2
+              container
+              spacing={2}
+              direction="row"
+              size="grow"
+              justifyContent="space-between"
+              alignItems="baseline"
+              style={{
+                paddingRight: '3rem',
+                paddingLeft: '.5rem',
+                bottom: '1.5rem',
+              }}
+            >
+              <Typography variant="subtitle2" style={{ fontStyle: 'italic' }}>
+                <a
+                  href="https://docs.meshery.io/concepts/architecture/adapters"
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    textDecoration: 'none',
+                    color: theme.palette.text.brand,
+                  }}
+                  data-testid={`adapter-docs-${String(adapter.name).toLowerCase()}`}
+                >
+                  Open Adapter docs
+                </a>
+              </Typography>
+
+              <div style={{ textAlign: 'right' }}>
+                <Switch
+                  checked={adapter.enabled}
+                  disabled={!!pendingAdapters[adapterId]}
+                  onChange={() => handleToggle(adapter, adapterId)}
+                  name="OperatorSwitch"
+                  color="primary"
+                />
+              </div>
+            </Grid2>
+          </CardContainer>
+        </Grid2>
+      ))}
+    </>
+  );
+};
+
+export default Adapters;

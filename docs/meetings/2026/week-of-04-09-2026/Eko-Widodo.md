@@ -1,0 +1,1 @@
+I’m a third-year student from Indonesia. This is my first time participating in an open-source project, and I joined Meshery last month, but since I’ve been busy, I need a refresher. I want to learn more about the Meshery server and help make Meshery even better.

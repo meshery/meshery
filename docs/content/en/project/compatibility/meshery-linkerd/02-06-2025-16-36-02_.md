@@ -1,0 +1,15 @@
+---
+timestamp: "2025-02-06 16:32:26 UTC Thu"
+meshery-component: meshery-linkerd
+meshery-component-version: edge
+meshery-server-version: "v0.8.26"
+k8s-distro: minikube
+k8s-version: "v1.31.4"
+service-mesh: Linkerd
+service-mesh-version: ""
+tests:
+  pod/linkerd-destination: "Not Running"
+  pod/linkerd-identity: "Not Running"
+  pod/linkerd-proxy-injector:  "Not Running"
+overall-status: "failing"
+---

@@ -1,0 +1,20 @@
+version: 0.0.1
+name: pod-life-cycle
+displayName: Pod Life Cycle
+createdAt: "2024-01-14T10:02:22Z"
+description: This design emphasizes Kubernetes' ability to manage Pod life cycles autonomously, ensuring efficient resource utilization and application availability. It addresses considerations such as Pod initialization, readiness, liveness, scaling, and graceful termination, providing a comprehensive framework for deploying and managing containerized applications on Kubernetes clusters.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/86545f65-1034-437a-ac9b-ed85fe4dcdc8/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Developers and operators need to carefully configure readiness and liveness probes to accurately reflect application health. Improper configuration may lead to unnecessary restarts or erroneous scaling decisions, impacting application stability and performance. Additionally, managing Pod life cycles across large-scale deployments requires efficient monitoring and logging frameworks to diagnose and resolve issues promptly. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

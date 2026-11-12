@@ -1,0 +1,22 @@
+Meshery Operator {{ .Chart.AppVersion }} deployed to namespace {{ .Release.Namespace }}.
+
+Check the manager:
+
+  kubectl -n {{ .Release.Namespace }} rollout status deploy/{{ include "meshery-operator.fullname" . }}
+
+The Broker and MeshSync CRDs were applied by the CRD update Job
+({{ if .Values.crds.updateJob.enabled }}enabled{{ else }}DISABLED — only Helm's install-time crds/ copy applies; upgrades will NOT refresh CRDs{{ end }}):
+
+  kubectl get crds brokers.meshery.io meshsyncs.meshery.io
+
+Metrics are served over TLS with authentication/authorization on port
+{{ .Values.service.port }} of Service {{ include "meshery-operator.fullname" . }};
+bind your scraper's ServiceAccount to the meshery-metrics-reader ClusterRole.
+{{- if .Values.webhook.enabled }}
+
+Conversion webhook: ENABLED ({{ if .Values.webhook.certManager.enabled }}cert-manager{{ else }}chart-generated self-signed{{ end }} certificate).
+{{- else }}
+
+Conversion webhook: disabled (CRDs use conversion strategy None, exact while
+the v1alpha1/v1alpha2 schemas are field-identical).
+{{- end }}

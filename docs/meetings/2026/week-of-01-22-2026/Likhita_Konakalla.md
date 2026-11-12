@@ -1,0 +1,1 @@
+Hi All! My name is Likhita Konakalla and I am currently working as an Associate Site Reliability Engineer Intern at Infracloud Technologies - An Improving Company. I am a 2025 Computer Science graduate and am quite passionate about Cloud and Devops. This is my first time contributing to the open source ecosystem and I am hoping to learn a lot!!

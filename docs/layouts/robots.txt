@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /pr-preview/
+
+# Previous documentation versions are crawlable but emit a
+# `<meta name="robots" content="noindex, follow">` tag in each page's HTML
+# head so search engines drop them from indexes while still following links
+# back to current docs. See meshery/meshery#19250.

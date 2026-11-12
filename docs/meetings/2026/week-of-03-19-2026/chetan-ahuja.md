@@ -1,0 +1,1 @@
+Hi everyone! I’m Chetan Ahuja, a 3rd-year BTech + MTech IT student at IIIT Gwalior. I’m fairly new to open-source and cloud-based systems, so I’m looking forward to learning, contributing, and collaborating with the community. Excited to get started and work on something meaningful here!

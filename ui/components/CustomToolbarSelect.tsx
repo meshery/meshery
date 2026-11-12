@@ -1,0 +1,124 @@
+import React, { useState } from 'react';
+import {
+  IndeterminateCheckBoxIcon as IndeterminateCheckBox,
+  CompareArrowsIcon as CompareArrows,
+  GetAppIcon as GetApp,
+  IconButton,
+  Tooltip,
+  styled,
+  NoSsr,
+} from '@sistent/sistent';
+import MesheryChartDialog from './general/MesheryChartDialog';
+import MesheryChart from './MesheryChart';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearResultsSelection } from '@/store/slices/prefTest';
+
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+  marginRight: theme.spacing(3),
+  top: '50%',
+  display: 'inline-block',
+  position: 'relative',
+}));
+
+const StyledIcon = styled('span')(({ theme }) => ({
+  color:
+    theme.palette.mode === 'dark'
+      ? theme.palette.background.brand.pressed
+      : theme.palette.text.default,
+}));
+
+function CustomToolbarSelect({ setSelectedRows }) {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [data, setData] = useState([]);
+  const fullData = [];
+  const dispatch = useDispatch();
+  const { results_selection } = useSelector((state) => state.prefTest);
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  // Never been used
+  // const handleDialogOpen = () => {
+  //   setDialogOpen(true);
+  // };
+
+  const handleClickDeselectAll = () => {
+    setSelectedRows([]);
+    dispatch(clearResultsSelection());
+  };
+
+  const handleCompareSelected = () => {
+    const rs = results_selection;
+
+    // Reset the data state.
+    setData([]);
+
+    Object.keys(rs).forEach((k1) => {
+      Object.keys(rs[k1]).forEach((k2) => {
+        if (typeof rs[k1][k2] !== 'undefined') {
+          // Directly update the data state.
+          setData((prevData) => [...prevData, rs[k1][k2].runner_results]);
+        }
+      });
+    });
+    setDialogOpen(true);
+  };
+
+  const rs = results_selection;
+  Object.keys(rs).forEach((k1) => {
+    Object.keys(rs[k1]).forEach((k2) => {
+      if (typeof rs[k1][k2] !== 'undefined') {
+        fullData.push(rs[k1][k2]);
+      }
+    });
+  });
+
+  return (
+    <>
+      <NoSsr>
+        <div className="custom-toolbar-select">
+          <Tooltip title="Deselect ALL">
+            <StyledIconButton aria-label="deselect all" onClick={handleClickDeselectAll}>
+              <StyledIcon>
+                <IndeterminateCheckBox />
+              </StyledIcon>
+            </StyledIconButton>
+          </Tooltip>
+          {fullData.length === 1 && (
+            <Tooltip title="Download">
+              <StyledIconButton
+                key="download"
+                aria-label="download"
+                color="inherit"
+                href={`/api/perf/profile/result/${encodeURIComponent(fullData[0].meshery_id)}`}
+                download={`${fullData[0].name}_test_result.json`}
+              >
+                <StyledIcon>
+                  <GetApp />
+                </StyledIcon>
+              </StyledIconButton>
+            </Tooltip>
+          )}
+          <Tooltip title="Compare selected">
+            <StyledIconButton aria-label="compare selected" onClick={handleCompareSelected}>
+              <StyledIcon>
+                <CompareArrows />
+              </StyledIcon>
+            </StyledIconButton>
+          </Tooltip>
+        </div>
+        <MesheryChartDialog
+          handleClose={handleDialogClose}
+          open={dialogOpen}
+          content={
+            <div>
+              <MesheryChart data={data} />
+            </div>
+          }
+        />
+      </NoSsr>
+    </>
+  );
+}
+
+export default CustomToolbarSelect;

@@ -1,0 +1,60 @@
+{{ define "main" }}
+
+{{ .Content }}
+
+{{ $currentSection := .Section }}
+{{ $models := where site.RegularPages "Section" $currentSection }}
+{{ $modelPages := slice }}
+{{ $modelGroups := newScratch }}
+{{ $groupOrder := slice "#" "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z" }}
+
+{{ range sort $models "Title" }}
+  {{ if and (ne .Kind "section") (strings.Contains .File.Dir "/models/") }}
+    {{ $modelPages = $modelPages | append . }}
+
+    {{ $groupKey := "#" }}
+    {{ $firstCharacter := upper (substr .Title 0 1) }}
+    {{ if gt (len (findRE "^[A-Z]" $firstCharacter)) 0 }}
+      {{ $groupKey = $firstCharacter }}
+    {{ end }}
+
+    {{ $existingGroup := $modelGroups.Get $groupKey }}
+    {{ if $existingGroup }}
+      {{ $modelGroups.Set $groupKey ($existingGroup | append .) }}
+    {{ else }}
+      {{ $modelGroups.Set $groupKey (slice .) }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ if gt (len $modelPages) 0 }}
+<div class="models-list" id="models-top">
+  <nav aria-label="Browse models alphabetically">
+    <p>
+      Jump to:
+      {{ range $group := $groupOrder }}
+        {{ with $modelGroups.Get $group }}
+          <a href="#models-group-{{ lower (replace $group "#" "symbols") }}">{{ $group }}</a>
+        {{ end }}
+      {{ end }}
+    </p>
+  </nav>
+
+  {{ range $group := $groupOrder }}
+    {{ with $modelGroups.Get $group }}
+      <section id="models-group-{{ lower (replace $group "#" "symbols") }}">
+        <h3>{{ if eq $group "#" }}0-9 and Symbols{{ else }}{{ $group }}{{ end }}</h3>
+        <ul>
+          {{ range . }}
+            <li style="list-style-type: disc !important; margin: 2px 0 !important">
+              <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+            </li>
+          {{ end }}
+        </ul>
+        <p><a href="#models-top">Back to Top</a></p>
+      </section>
+    {{ end }}
+  {{ end }}
+</div>
+{{ end }}
+{{ end }}
