@@ -14,4 +14,4 @@ Tutorials and workshops in this section run entirely in the [Meshery Playground]
 
 Section pages:
 
-- [KubeCon Workshop: Publish a Design and Build a Custom Model](/guides/tutorials/playground/kubecon-build-your-own-model-and-design/): A 60-minute Meshery Playground workshop in which every attendee publishes a simple Kubernetes design to the Catalog, then adds a custom KubeCon logo model to it.
+- [KubeCon Workshop: Publish a Design and Build a Custom Model](/guides/tutorials/playground/kubecon-build-your-own-model-and-design/): A 60-minute Meshery Playground workshop. Choose Path A (Kanvas) or Path B (Meshery UI and mesheryctl). Every attendee publishes a simple Kubernetes design to the Catalog, then adds a custom KubeCon logo model to it.
