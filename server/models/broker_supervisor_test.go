@@ -311,11 +311,15 @@ func TestBrokerSupervisorLeavesWhatItShouldNotTouch(t *testing.T) {
 
 // TestFailedRebuildKeepsTheConnectionSupervised: a rebuild that attaches no
 // handler must not leave the connection without one, nor without a supervisor
-// to try again.
+// to try again. It must also not announce the rebuild or reset the connected
+// event flag: those belong to a rebuild that actually replaced the handler,
+// or a failing rebuild repeats the "Broker changed" event on every retry tick.
 func TestFailedRebuildKeepsTheConnectionSupervised(t *testing.T) {
 	mch, broker, dialer := supervisedConnection(t)
 	target := attach(t, mch)
 	first := dialer.opened()[0]
+	// The connected event was already emitted for this handler session.
+	mch.meshsyncConnectedEventEmitted.Store(true)
 	broker.recreate(newBrokerEndpoint, "new-token")
 	dialer.mu.Lock()
 	dialer.publishErr = errors.New("publish failed")
@@ -326,6 +330,9 @@ func TestFailedRebuildKeepsTheConnectionSupervised(t *testing.T) {
 	mch.recheckBroker(target, t0, &since)
 	if mch.recheckBroker(target, t0.Add(mch.brokerStaleAfter), &since) {
 		t.Fatal("the supervisor finished although its rebuild attached nothing")
+	}
+	if !mch.meshsyncConnectedEventEmitted.Load() {
+		t.Fatal("a failed rebuild reset the connected event flag, so the stale handler's connected event would be emitted again")
 	}
 	conns := dialer.opened()
 	if len(conns) != 2 || !conns[1].isClosed() {
@@ -347,6 +354,9 @@ func TestFailedRebuildKeepsTheConnectionSupervised(t *testing.T) {
 	dialer.mu.Unlock()
 	if !mch.recheckBroker(target, t0.Add(2*mch.brokerStaleAfter), &since) {
 		t.Fatal("the supervisor did not retry the rebuild")
+	}
+	if mch.meshsyncConnectedEventEmitted.Load() {
+		t.Fatal("a successful rebuild did not reset the connected event flag for the new handler")
 	}
 	conns = dialer.opened()
 	if len(conns) != 3 || conns[2].opts.Token != "new-token" {

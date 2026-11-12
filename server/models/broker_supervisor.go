@@ -193,25 +193,29 @@ func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now tim
 	}
 	k8scontext := target.k8scontext
 	mch.log.Info(fmt.Sprintf("Meshery Broker for Kubernetes context (%s) was recreated with a new endpoint or token; rebuilding the MeshSync data connection", k8scontext.ID))
-	mch.emitEvent("Meshery Broker changed; reconnecting MeshSync", events.Informational, map[string]any{
-		"k8sContextID":   k8scontext.ID,
-		"k8sContextName": k8scontext.Name,
-		"connectionID":   k8scontext.ConnectionID,
-		"brokerEndpoint": endpoint,
-	}, target.userID)
 
 	// The managed port-forward is kept: it re-resolves the NATS pod by label,
 	// so it already follows a recreated broker.
 	stale := mch.ctxMeshsyncDataHandler
 	mch.ctxMeshsyncDataHandler = nil
 	mch.brokerTarget = nil
-	mch.meshsyncConnectedEventEmitted.Store(false)
 	target.reattach()
 	if mch.ctxMeshsyncDataHandler == nil {
 		mch.ctxMeshsyncDataHandler = stale
 		mch.brokerTarget = target
 		return false
 	}
+	// Only a rebuild that actually replaced the handler announces itself:
+	// announcing before the reattach repeats the event on every retry tick
+	// while the rebuild keeps failing, and resetting the flag then would
+	// re-emit the connected event for the stale handler.
+	mch.emitEvent("Meshery Broker changed; reconnecting MeshSync", events.Informational, map[string]any{
+		"k8sContextID":   k8scontext.ID,
+		"k8sContextName": k8scontext.Name,
+		"connectionID":   k8scontext.ConnectionID,
+		"brokerEndpoint": endpoint,
+	}, target.userID)
+	mch.meshsyncConnectedEventEmitted.Store(false)
 	target.halt()
 	stale.Stop()
 	return true
