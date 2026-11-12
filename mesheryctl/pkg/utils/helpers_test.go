@@ -157,11 +157,59 @@ func TestSetFileLocation(t *testing.T) {
 }
 
 func TestNavigateToBrowser(t *testing.T) {
-	// opens up a browser window whenever this test runs
-	err := NavigateToBrowser("https://meshery.io")
-	if err != nil {
-		t.Errorf("NavigateToBrowser error: %v", err)
-	}
+	// Save the original function.
+	originalOpenURL := openURL
+
+	// Restore it after this test finishes.
+	t.Cleanup(func() {
+		openURL = originalOpenURL
+	})
+
+	const testURL = "https://meshery.io"
+
+	t.Run("success", func(t *testing.T) {
+		var receivedURL string
+
+		// Replace the real browser opener with a fake.
+		openURL = func(url string) error {
+			receivedURL = url
+			return nil
+		}
+
+		err := NavigateToBrowser(testURL)
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		if receivedURL != testURL {
+			t.Errorf("got URL %q, want %q",
+				receivedURL, testURL)
+		}
+	})
+
+	t.Run("error", func(t *testing.T) {
+		expectedErr := errors.New("browser unavailable")
+		var receivedURL string
+
+		// Simulate the browser opener failing.
+		openURL = func(url string) error {
+			receivedURL = url
+			return expectedErr
+		}
+
+		err := NavigateToBrowser(testURL)
+
+		if receivedURL != testURL {
+			t.Errorf("got URL %q, want %q",
+				receivedURL, testURL)
+		}
+
+		if err != expectedErr {
+			t.Errorf("got error %v, want %v",
+				err, expectedErr)
+		}
+	})
 }
 
 func TestContentTypeIsHTML(t *testing.T) {

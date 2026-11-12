@@ -444,10 +444,11 @@ func SetFileLocation() error {
 	return nil
 }
 
+var openURL = browser.OpenURL
+
 // NavigateToBrowser navigates to the endpoint displaying the Meshery UI in the browser.
 func NavigateToBrowser(endpoint string) error {
-	err := browser.OpenURL(endpoint)
-	return err
+	return openURL(endpoint)
 }
 
 // UploadFileWithParams returns a request configured to upload files with other values
