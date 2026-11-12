@@ -41,6 +41,11 @@ mesheryctl system logout
 			return err
 		}
 
+		// if a temp context is set using the -c flag, use it as the current context
+		if err := mctlCfg.SetCurrentContext(tempContext); err != nil {
+			return ErrGetCurrentContext(err)
+		}
+
 		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
 		if err != nil {
 			return ErrGetCurrentContext(err)
