@@ -7,8 +7,11 @@
 # v1.0.0 and later), that ServiceAccount has no cluster-wide read, so MeshSync fails with
 # `forbidden` on every resource it watches and operator-mode discovery returns nothing.
 #
-# This grant is read-only (get/list/watch). Remove it once the installed operator runs
-# MeshSync under its own chart-managed ServiceAccount (`meshery-meshsync`):
+# This grant is read-only (get/list/watch). The `*.*` scope is deliberately broad
+# because MeshSync watches many resource types, so it also covers Secrets: MeshSync
+# can read them cluster-wide while this interim grant is in place. Remove it once the
+# installed operator runs MeshSync under its own chart-managed ServiceAccount
+# (`meshery-meshsync`):
 #
 #   kubectl --context <sandbox> delete clusterrolebinding,clusterrole meshery-meshsync-discovery-interim
 #

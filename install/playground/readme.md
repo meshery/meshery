@@ -37,8 +37,8 @@ today must be in place for discovery data to reach the playground:
 | Broker reachable from the `prod` cluster | The Server runs out of the sandbox cluster, and current releases skip the managed kube-API port-forward whenever the Server itself runs in any Kubernetes cluster, so a `ClusterIP` Broker is unreachable | [`sandbox-cluster/broker-service-exposure.yaml`](kubernetes/sandbox-cluster/broker-service-exposure.yaml) - `LoadBalancer`, restricted to the `prod` cluster's NAT egress address; NATS still requires its token |
 | MeshSync can read the cluster | MeshSync runs as ServiceAccount `meshery/meshery-operator`, which the v1.0.x chart scopes to the operator's own needs, so every watch fails with `forbidden` | [`sandbox-cluster/meshsync-discovery-interim-rbac.yaml`](kubernetes/sandbox-cluster/meshsync-discovery-interim-rbac.yaml) - read-only, interim |
 
-Apply both with
-[`sandbox-cluster/apply.sh <sandbox-context> <egress-ip>`](kubernetes/sandbox-cluster/apply.sh).
+Apply both from `install/playground` with
+[`kubernetes/sandbox-cluster/apply.sh <sandbox-context> <egress-ip>`](kubernetes/sandbox-cluster/apply.sh).
 It validates the address, applies with server-side apply under the
 `meshery-playground-ops` field manager (which Meshery Server's own applies, field manager
 `meshery-server`, never withdraw), restarts MeshSync and waits for the Broker's external
@@ -78,9 +78,9 @@ kubectl --context prod -n meshery logs deploy/playground -c meshery | grep 'Conn
 3. **Reinstall the chart Meshery Server expects** (the version matching the playground
    release, from `https://meshery.github.io/meshery.io/charts`), using Helm v3 - the major
    version Meshery Server embeds:
-   `helm install meshery-operator <chart> -n meshery --set fullnameOverride=meshery-operator --wait`.
+   `helm install meshery-operator <chart> -n meshery --kube-context staging --set fullnameOverride=meshery-operator --wait`.
    Do not pass `--atomic`: a rollback-uninstall recreates the stuck state in step 2.
-4. **Re-apply the sandbox settings** with `sandbox-cluster/apply.sh`.
+4. **Re-apply the sandbox settings** with `kubernetes/sandbox-cluster/apply.sh <sandbox-context> <egress-ip>`.
 5. **Restart the playground Deployment** (`kubectl --context prod -n meshery rollout restart
    deploy/playground`). Its Broker connections keep the endpoint and token they resolved at
    connect time, so a recreated Broker is not picked up until they reconnect.

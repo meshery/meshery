@@ -7,7 +7,9 @@
 #
 # The Broker CRD does not validate loadBalancerSourceRanges, so an unsubstituted or
 # malformed value would be accepted and only fail later inside the operator's reconcile.
-# This script refuses to apply anything until the address is a valid IPv4 address/CIDR.
+# This script refuses to apply anything until the address is a valid IPv4 address/CIDR
+# other than 0.0.0.0/0, and refuses the prod context, which is the cluster the
+# playground runs on rather than the sandbox cluster it manages.
 set -euo pipefail
 
 if [[ $# -ne 2 ]]; then
@@ -19,9 +21,24 @@ context=$1
 cidr=$2
 [[ $cidr == */* ]] || cidr="$cidr/32"
 
+# The playground Pod runs on the prod cluster, which also carries a
+# meshery-operator release. Applying here would grant cluster-wide RBAC and expose
+# the production Broker, so refuse it; the sandbox context is staging.
+if [[ $context == prod ]]; then
+  echo "error: context 'prod' is the cluster the playground runs on, not the sandbox cluster it manages; pass the sandbox context (staging)" >&2
+  exit 2
+fi
+
 ipv4_cidr='^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])/(3[0-2]|[12]?[0-9])$'
 if [[ ! $cidr =~ $ipv4_cidr ]]; then
   echo "error: '$2' is not an IPv4 address or CIDR" >&2
+  exit 2
+fi
+
+# 0.0.0.0/0 passes the format check but opens the Broker to every address,
+# including the unauthenticated NATS monitoring port. Refuse it.
+if [[ $cidr == 0.0.0.0/* ]]; then
+  echo "error: '$2' opens the Broker to every address; pass the playground cluster's NAT egress address instead" >&2
   exit 2
 fi
 
@@ -45,9 +62,15 @@ kubectl --context "$context" -n meshery delete pod -l app=meshery,component=mesh
 
 echo "Waiting for the Broker to publish an external endpoint..."
 for _ in $(seq 1 60); do
+  # A transient kubectl failure must retry until the timeout, not exit under set -e.
   endpoint=$(kubectl --context "$context" -n meshery get broker meshery-broker \
-    -o jsonpath='{.status.endpoint.external}')
-  if [[ -n $endpoint ]]; then
+    -o jsonpath='{.status.endpoint.external}' || true)
+  # An external endpoint from before this apply does not prove the new source range
+  # took effect; the operator updates the Service asynchronously. Only report
+  # success once the Service carries the new CIDR.
+  ranges=$(kubectl --context "$context" -n meshery get svc meshery-nats \
+    -o jsonpath='{.spec.loadBalancerSourceRanges}' || true)
+  if [[ -n $endpoint && $ranges == *"$cidr"* ]]; then
     echo "Broker external endpoint: $endpoint (reachable only from $cidr)"
     exit 0
   fi
