@@ -306,7 +306,7 @@ const initModelNextStepsText = `Next steps:
 7. Use 'mesheryctl model build' to package your model
 
 To import this model into Meshery:
-$ mesheryctl model import {modelFolder}
+$ mesheryctl model import -f {modelFolder}
 
 To export this model as OCI image:
 $ mesheryctl model build {modelName}/{modelVersion} --path {path}
