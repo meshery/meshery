@@ -55,6 +55,7 @@ You will point `mesheryctl` at the Playground before the Path B labs.
 - **Path B:**
     1. a laptop or desktop.
     1. [install `mesheryctl`](https://docs.meshery.io/installation/mesheryctl/) on your computer if you will use the CLI steps. You can complete Lab 1 with Meshery UI alone. Lab 2 is smoother with `mesheryctl`, and has a UI import fallback.
+    1. [`jq`](https://jqlang.org/download/) for Lab 2, which uses it to turn each logo SVG into a JSON string. macOS 15 and later include it.
 
 <details>
 <summary>Instructor prerequisites</summary>
@@ -300,7 +301,7 @@ Confirm `mesheryctl system context view` shows the Playground endpoint before yo
 
    That creates `kubecon-<your-handle>-logo/v0.1.0/`, with `model.json`, a sample file under `components/`, a sample `relationship.json` under `relationships/` (you remove it in step 3), and empty `connections/` and `credentials/` directories.
 
-2. **Edit `model.json`.** Set `metadata.isAnnotation` to `true`. Set `registrant.kind` to `meshery`, give the model a short description, and set `metadata.svgColor` to the color SVG and `metadata.svgWhite` to the white SVG. Each SVG must go in as a JSON-escaped string: its attributes contain `"` quotes, so pasting the raw markup, even on one line, makes `model.json` invalid. Generate each value with `sed '/^<?xml/d' kubecon-logo-color.svg | jq -Rs .` (and the same for `kubecon-logo-white.svg`), which drops the XML header and escapes quotes and newlines, then paste the whole output, including its surrounding quotes, as the field's value. Set both `version` and `model.version` to `v0.1.0`: `model init` names the folder after `--version` but writes `v0.0.1` into `model.json`. Leave `schemaVersion` as `models.meshery.io/v1beta2`. If you set a category, *Uncategorized* is a safe choice.
+2. **Edit `model.json`.** Set `metadata.isAnnotation` to `true`. Set `registrant.kind` to `meshery`, give the model a short description, and set `metadata.svgColor` to the color SVG and `metadata.svgWhite` to the white SVG. Each SVG must go in as a JSON-escaped string: its attributes contain `"` quotes, so pasting the raw markup, even on one line, makes `model.json` invalid. From the directory where you saved the two logo SVGs (see the downloads at the start of Lab 2), generate each value with `sed '/^<?xml/d' kubecon-logo-color.svg | jq -Rs .` (and the same for `kubecon-logo-white.svg`), which drops the XML header and escapes quotes and newlines, then paste the whole output, including its surrounding quotes, as the field's value. Set both `version` and `model.version` to `v0.1.0`: `model init` names the folder after `--version` but writes `v0.0.1` into `model.json`. Leave `schemaVersion` as `models.meshery.io/v1beta2`. If you set a category, *Uncategorized* is a safe choice.
 
 3. **Replace the sample component.** In `components/`, keep a single JSON file (you can rename `component.json` to `kubecon-logo.json`). Set:
 
