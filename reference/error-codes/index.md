@@ -22217,6 +22217,59 @@ Narrow the search so exactly one item matches</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrProviderNotFoundCode-1259" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrProviderNotFoundCode-more-info" onclick="toggle_visibility('mesheryctl-ErrProviderNotFoundCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1259" class="error-name-code">
+              <a href="/reference/error-codes/client-mesheryctl/errprovidernotfoundcode-1259/"><code>ErrProviderNotFoundCode-1259</code></a>
+            </td>
+            <td>Requested provider is not available on this Meshery Server</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrProviderNotFoundCode-1259" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="mesheryctl-ErrProviderNotFoundCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The provider name is misspelled
+The Meshery Server is pinned to a different provider</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Run `mesheryctl system provider list` to see the providers this server offers
+Omit --provider to choose one interactively</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrProviderAmbiguousCode-1260" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrProviderAmbiguousCode-more-info" onclick="toggle_visibility('mesheryctl-ErrProviderAmbiguousCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1260" class="error-name-code">
+              <a href="/reference/error-codes/client-mesheryctl/errproviderambiguouscode-1260/"><code>ErrProviderAmbiguousCode-1260</code></a>
+            </td>
+            <td>More than one provider matches that name</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrProviderAmbiguousCode-1260" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="mesheryctl-ErrProviderAmbiguousCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Two or more providers share the same display name</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Run `mesheryctl system provider list` to see the registration keys
+Pass a registration key to --provider instead of the display name</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
