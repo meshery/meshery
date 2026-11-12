@@ -60,7 +60,8 @@ jobs:
                 - osps-baseline
               applicability:
                 - maturity-1
+                - maturity-2
             vars:
               owner: meshery
               repo: meshery
-              token: ${{ secrets.GITHUB_TOKEN }}
+              token: ${{ secrets.GH_ACCESS_TOKEN }}

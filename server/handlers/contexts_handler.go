@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -13,6 +15,12 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
 )
+
+// defaultFSMTransitionTimeout is the maximum duration permitted for asynchronous
+// state machine transitions triggered during request handling (discovery, connect,
+// delete). Bounding the detached context prevents leaked goroutines and indefinite
+// lock retention on unresponsive clusters.
+const defaultFSMTransitionTimeout = 2 * time.Minute
 
 // Deprecated: GetAllContexts (GET /api/system/kubernetes/contexts) is being
 // retired in favor of the connections API (kind=kubernetes) — everything is now
@@ -75,7 +83,10 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	userID := user.ID
 	contextID := mux.Vars(req)["id"]
 
-	eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(contextID)).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+	// Each event of the deletion starts from its own builder.
+	newEvent := func() *events.EventBuilder {
+		return events.NewEvent().ActedUpon(uuid.FromStringOrNil(contextID)).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+	}
 
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
@@ -90,15 +101,12 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		if ctxName == "" {
 			ctxName = contextID
 		}
-		event := eventBuilder.WithSeverity(events.Error).
+		event := newEvent().WithSeverity(events.Error).
 			WithDescription(fmt.Sprintf("Failed to delete connection for %s", ctxName)).
 			WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
-		_ = provider.PersistEvent(*event, token)
-		if h.config != nil && h.config.EventBroadcaster != nil {
-			go h.config.EventBroadcaster.Publish(userID, event)
-		}
+		h.persistAndPublish(provider, token, userID, event)
 		h.log.Error(ErrGetK8sContexts(err))
 		writeMeshkitError(w, ErrGetK8sContexts(err), http.StatusInternalServerError)
 		return
@@ -106,8 +114,8 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 
 	description := fmt.Sprintf("Delete request received for kubernetes context \"%s\"", k8scontext.Name)
 
-	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(*event, token)
+	event := newEvent().WithSeverity(events.Informational).WithDescription(description).Build()
+	_, _ = provider.PersistEvent(*event, token)
 
 	machineCtx := &kubernetes.MachineCtx{
 		K8sContext:         k8scontext,
@@ -143,28 +151,35 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	if !mhelpers.HasMachineContext(inst) {
 		smInstanceTracker.Remove(connectionUUID)
 	} else {
+		// Detach from the request context so cancellation on HTTP handler exit
+		// does not abort background state machine transitions, bounded by a timeout.
+		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), defaultFSMTransitionTimeout)
 		go func(inst *machines.StateMachine) {
-			event, err := inst.SendEvent(req.Context(), machines.Delete, nil)
+			defer cancel()
+			defer smInstanceTracker.Remove(connectionUUID)
+			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
 			if err != nil {
 				h.log.Error(err)
+				h.reportMachineOutcome(provider, token, userID, event, err)
 				h.log.Debug(event)
 				return
 			}
 
-			smInstanceTracker.Remove(connectionUUID)
+			// Deleting a connection that was NOTFOUND resolves its
+			// unreachable condition; the routine outcome is already
+			// reported by the request's own event.
+			if event != nil && event.ResolvedAt != nil {
+				h.persistAndPublish(provider, token, userID, event)
+			}
 		}(inst)
 	}
 
 	if err != nil {
 		h.log.Error(err)
-		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", contextID)).WithMetadata(map[string]interface{}{
+		event := newEvent().WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", contextID)).WithMetadata(map[string]interface{}{
 			"error": err,
-		})
-		event := eventBuilder.Build()
-		_ = provider.PersistEvent(*event, token)
-		if h.config != nil && h.config.EventBroadcaster != nil {
-			go h.config.EventBroadcaster.Publish(userID, event)
-		}
+		}).Build()
+		h.persistAndPublish(provider, token, userID, event)
 	}
 	// go h.config.EventBroadcaster.Publish(userID, event)
 

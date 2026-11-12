@@ -594,7 +594,9 @@ const Extensions = () => {
   const [updateUserPref] = useUpdateUserPrefMutation();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { data: userData } = useGetUserPrefQuery();
+  const { data: userData } = useGetUserPrefQuery(undefined, {
+    skip: !hasPermission,
+  });
 
   const serverCatalogContent = userData?.usersExtensionPreferences?.catalogContent;
   const [catalogContentOverride, setCatalogContentOverride] = useState<boolean | null>(null);

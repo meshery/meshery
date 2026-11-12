@@ -15,7 +15,9 @@
 package adapter
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -27,10 +29,12 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var availableSubcommands []*cobra.Command
+
+// errEventStreamClosed is the cause when the stream ends without a result.
+var errEventStreamClosed = errors.New("event stream closed before the operation finished")
 
 // AdapterCmd represents the Performance Management CLI command
 var (
@@ -43,39 +47,11 @@ var (
 		Use:   "adapter",
 		Short: "Connect and use Meshery adapters",
 		Long: `Provisioning, configuration, and on-going operational management of cloud and cloud native infrastructure.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl#command-reference`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			// if `mesh` command is ran without any subcommands, show Help and exit
+			// if `adapter` command is run without any subcommands, show Help and exit
 			if cmd.HasSubCommands() {
 				return cmd.Help()
-			}
-
-			// get the meshery config
-			mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
-			if err != nil {
-				return err
-			}
-
-			if len(args) > 0 {
-				// if a mesh name was provided, convert it the same format as adapter.Name
-				// all args are joined, converted to upper case, and non-word characters replaced with "_"
-				// examples:
-				//     args = Linkerd -> ["LINKERD"] -> "LINKERD"
-				//     args = nginx service mesh -> ["nginx", "service", "mesh"] -> "NGINX_SERVICE_MESH"
-				r, _ := regexp.Compile(`\W`)
-				meshName = r.ReplaceAllString(strings.ToUpper(strings.Join(args, "_")), "_")
-			}
-
-			// verify the specified mesh is valid
-			// if no mesh was specified, the user will be prompted to select one
-			meshName, err = validateMesh(mctlCfg, meshName)
-			if err != nil {
-				return err
-			}
-
-			// ensure the mesh's adapter is available and update adapterURL if so
-			if err = validateAdapter(mctlCfg, meshName); err != nil {
-				return err
 			}
 			return nil
 		},
@@ -150,6 +126,31 @@ func validateMesh(mctlCfg *config.MesheryCtlConfig, meshName string) (string, er
 	return meshNames[i], nil
 }
 
+// parseAndValidateMesh parses positional args into a normalized mesh name,
+// prompts the user if no mesh was specified, and validates that an adapter is available.
+func parseAndValidateMesh(mctlCfg *config.MesheryCtlConfig, args []string) error {
+	meshName = ""
+	if len(args) > 0 {
+		// if a mesh name was provided, convert it to the same format as adapter.Name
+		// all args are joined, converted to upper case, and non-word characters replaced with "_"
+		// examples:
+		//     args = Linkerd -> ["LINKERD"] -> "LINKERD"
+		//     args = nginx service mesh -> ["nginx", "service", "mesh"] -> "NGINX_SERVICE_MESH"
+		r, _ := regexp.Compile(`\W`)
+		meshName = r.ReplaceAllString(strings.ToUpper(strings.Join(args, "_")), "_")
+	}
+
+	var err error
+	// verify the specified mesh is valid; if no mesh was specified, prompt the user
+	meshName, err = validateMesh(mctlCfg, meshName)
+	if err != nil {
+		return err
+	}
+
+	// ensure the mesh's adapter is available and update adapterURL if so
+	return validateAdapter(mctlCfg, meshName)
+}
+
 func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool, spec string) (string, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation"
 	method := "POST"
@@ -211,11 +212,49 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 	if err != nil {
 		return "", utils.ErrReadResponseBody(err)
 	}
+	// A rejected request carries no operation ID, so without this check
+	// --watch would follow another operation's events.
+	if res.StatusCode < 200 || res.StatusCode >= 300 {
+		return "", utils.ErrResponseStatus(res.StatusCode)
+	}
 	return string(body), nil
 }
 
-func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_deploy"
+// operationIDFromResponse returns the operation ID in the response to an
+// adapter operation request, or "" when the server doesn't send one.
+func operationIDFromResponse(body string) string {
+	var response struct {
+		OperationID string `json:"operationId"`
+	}
+	if err := json.Unmarshal([]byte(body), &response); err != nil {
+		return ""
+	}
+	return response.OperationID
+}
+
+// isOperationEvent reports whether an event may be the result of the
+// operation. Without an operation ID on both sides, every event may be.
+func isOperationEvent(data utils.EventData, operationID string) bool {
+	return operationID == "" || data.OperationID == "" || data.OperationID == operationID
+}
+
+// checkEventStream returns an error unless res is an open event stream, so a
+// response that can never carry a result fails right away.
+func checkEventStream(res *http.Response) error {
+	if res.StatusCode != http.StatusOK {
+		return utils.ErrResponseStatus(res.StatusCode)
+	}
+	if contentType := res.Header.Get("Content-Type"); !strings.HasPrefix(contentType, "text/event-stream") {
+		return fmt.Errorf("expected an event stream, got content type %q", contentType)
+	}
+	return nil
+}
+
+// waitForDeployResponse waits on the event stream for the result of an adapter
+// operation whose event details contain query. When operationID is set, events
+// of other operations are ignored.
+func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query, operationID string) (string, error) {
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/events?client=cli_deploy"
 	method := "GET"
 	client := &http.Client{}
 	req, err := utils.NewRequest(method, path, nil)
@@ -229,6 +268,10 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	}
 	defer func() { _ = res.Body.Close() }()
 
+	if err := checkEventStream(res); err != nil {
+		return "", ErrCreatingDeployResponseStream(err)
+	}
+
 	event, err := utils.ConvertRespToSSE(res)
 	if err != nil {
 		return "", ErrCreatingDeployResponseStream(err)
@@ -240,6 +283,9 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	// Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
+			if !isOperationEvent(i.Data, operationID) {
+				continue
+			}
 			if strings.Contains(i.Data.Details, query) {
 				eventChan <- "successful"
 				utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
@@ -248,12 +294,16 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 				utils.Log.Infof("%s\n", i.Data.Summary)
 			}
 		}
+		close(eventChan)
 	}()
 
 	select {
 	case <-timer.C:
 		return "", ErrTimeoutWaitingForDeployResponse
-	case event := <-eventChan:
+	case event, ok := <-eventChan:
+		if !ok {
+			return "", ErrCreatingDeployResponseStream(errEventStreamClosed)
+		}
 		if event != "successful" {
 			return "", ErrFailedDeployingMesh
 		}
@@ -262,8 +312,11 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	return "", nil
 }
 
-func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_validate"
+// waitForValidateResponse waits on the event stream for the result of a
+// validation whose event summary contains query. When operationID is set,
+// events of other operations are ignored.
+func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query, operationID string) (string, error) {
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/events?client=cli_validate"
 	method := "GET"
 	client := &http.Client{}
 	req, err := utils.NewRequest(method, path, nil)
@@ -278,6 +331,10 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	}
 	defer func() { _ = res.Body.Close() }()
 
+	if err := checkEventStream(res); err != nil {
+		return "", ErrCreatingValidateResponseStream(err)
+	}
+
 	event, err := utils.ConvertRespToSSE(res)
 	if err != nil {
 		return "", ErrCreatingValidateResponseStream(err)
@@ -289,6 +346,9 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	// Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
+			if !isOperationEvent(i.Data, operationID) {
+				continue
+			}
 			if strings.Contains(i.Data.Summary, query) {
 				eventChan <- "successful"
 				utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
@@ -297,12 +357,16 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 				utils.Log.Infof("%s", i.Data.Summary)
 			}
 		}
+		close(eventChan)
 	}()
 
 	select {
 	case <-timer.C:
 		return "", ErrTimeoutWaitingForValidateResponse
-	case event := <-eventChan:
+	case event, ok := <-eventChan:
+		if !ok {
+			return "", ErrCreatingValidateResponseStream(errEventStreamClosed)
+		}
 		if event != "successful" {
 			return "", ErrSMIConformanceTestsFailed
 		}

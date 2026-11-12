@@ -46,7 +46,7 @@ type UserProfile struct {
 }
 
 var exportCmd = &cobra.Command{
-	Use:   "export [pattern-name | ID]",
+	Use:   "export [design-name | ID]",
 	Short: "Export a design from Meshery",
 	Long: `The 'export' command allows you to export a specific design from your Meshery server.
 You can specify the design by its name or ID and optionally define the type of design.
@@ -55,16 +55,16 @@ By default, the exported design will be saved in the current directory. The diff
 type allowed are oci, original, and current. The default design type is current.`,
 	Example: `
 // Export a design with a specific ID
-mesheryctl design export [pattern-name | ID]
+mesheryctl design export [design-name | ID]
 
 // Export a design with a specific ID and type
-mesheryctl design export [pattern-name | ID] --type [design-type]
+mesheryctl design export [design-name | ID] --type [design-type]
 
 // Export a design and save it to a specific directory
-mesheryctl design export [pattern-name | ID] --output ./designs
+mesheryctl design export [design-name | ID] --output ./designs
 
 // Export a design with a specific type and save it to a directory
-mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exports
+mesheryctl design export [design-name | ID] --type [design-type] --output ./exports
 	`,
 	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -99,6 +99,8 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 	},
 }
 
+// fetchPatternIDByName returns the ID of the design matching patternName, and
+// asks the user to choose when several designs match.
 func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	patternUrl := fmt.Sprintf("%s/api/pattern?search=%s", baseUrl, url.QueryEscape(patternName))
 	req, err := utils.NewRequest(http.MethodGet, patternUrl, nil)
@@ -113,21 +115,18 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", models.ErrDoRequest(err, resp.Request.Method, patternUrl)
+		return "", fmt.Errorf("failed to fetch design %q by name: %w", patternName, utils.ErrResponseStatus(resp.StatusCode))
 	}
 	buf, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", utils.ErrReadFromBody(err)
 	}
-	var response struct {
-		TotalCount int                     `json:"total_count"`
-		Patterns   []models.MesheryPattern `json:"patterns"`
-	}
+	var response models.PatternsAPIResponse
 	if err := encoding.Unmarshal(buf, &response); err != nil {
 		return "", err
 	}
 
-	switch response.TotalCount {
+	switch len(response.Patterns) {
 	case 0:
 		return "", ErrDesignNotFound(patternName)
 	case 1:
@@ -163,7 +162,7 @@ func exportDesign(baseUrl, design, designType string) error {
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return models.ErrDoRequest(err, resp.Request.Method, url)
+		return fmt.Errorf("failed to export design %q: %w", design, utils.ErrResponseStatus(resp.StatusCode))
 	}
 
 	buf := new(bytes.Buffer)
@@ -190,7 +189,7 @@ func fetchPatternData(dataURL string) (*models.MesheryPattern, error) {
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, models.ErrDoRequest(err, resp.Request.Method, dataURL)
+		return nil, fmt.Errorf("failed to fetch design data: %w", utils.ErrResponseStatus(resp.StatusCode))
 	}
 
 	buf := new(bytes.Buffer)
@@ -253,7 +252,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 	}
 	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
-		return "", models.ErrDoRequest(err, resp.Request.Method, url)
+		return "", fmt.Errorf("failed to fetch owner profile for %q: %w", ownerID, utils.ErrResponseStatus(resp.StatusCode))
 	}
 
 	var userProfile models.User

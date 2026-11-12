@@ -23,6 +23,12 @@ The following is a list of top-level frameworks, libraries, design system used i
 
 Meshery UI and Provider UI use [Next.js](https://nextjs.org/) with [SWC](https://swc.rs/) (Speedy Web Compiler) for fast builds and optimal performance.
 
+### Catalog Content preference saves
+
+If a Catalog Content preference save fails, the switch and catalog visibility return to the last successfully saved value. The switch is disabled while its save or a preference refetch is active, preventing overlapping choices from being rolled back out of order.
+
+Catalog-only saves use the shared `CATALOG_CONTENT_PREFERENCE_KEY` mutation cache key. The application shell syncs changed saved catalog values through `useSyncCatalogContentPreference`, separately from asynchronous bootstrap work. It skips values received during an active save, and ending a save does not replay an older cached value over the page's optimistic choice or explicit rollback. Keep this coordination when changing either preference controls or shell initialization.
+
 ## Schema-Driven UI Development
 
 Meshery UI uses a schema-driven approach where components and forms are generated from JSON schemas. This enables dynamic UI adaptation, consistent validation, and type-safety across the application.
@@ -39,11 +45,11 @@ The [API overview]({{< ref "reference/extensibility/api.md" >}}) in the Extensib
 
 ### REST API
 
-Meshery provides a REST API available through the default port of `9081/tcp` at `<hostname>:<port>/api/`. See the [REST API Reference]({{< ref "reference/references/rest-apis/_index.md" >}}) for a complete list of endpoints available with short description of their purpose and example code.
+Meshery provides a REST API available through the default port of `9081/tcp` at `<hostname>:<port>/api/`. See the [REST API Reference]({{< ref "reference/rest-apis/_index.md" >}}) for a complete list of endpoints available with short description of their purpose and example code.
 
 ### GraphQL API
 
-Meshery provides a GraphQl API available through the default port of `9081/tcp` at `<hostname>:<port>/api/graphql/query`. See the [GraphQL API Reference]({{< ref "reference/references/graphql-apis.md" >}}) [Relay](https://relay.dev) is the client used.
+Meshery provides a GraphQl API available through the default port of `9081/tcp` at `<hostname>:<port>/api/system/graphql/query`. See the [GraphQL API Reference]({{< ref "reference/graphql-apis.md" >}}) [Relay](https://relay.dev) is the client used.
 
 ## Design
 

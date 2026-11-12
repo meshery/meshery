@@ -30,7 +30,7 @@ var initModelCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Generates scaffolding for convenient model creation",
 	Long: `Generates a folder structure and guides user on model creation
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/model/init`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/init`,
 	Example: `
 // generates a folder structure
 mesheryctl model init [model-name]
@@ -142,13 +142,7 @@ mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 							".",
 						),
 					)
-					file, err := os.Create(filePath)
-					if err != nil {
-						return ErrModelInit(err)
-					}
-					defer func() { _ = file.Close() }() // Ensure the file is closed when the function exits
-
-					_, err = file.Write(content)
+					err = os.WriteFile(filePath, content, initModelFilePerm)
 					if err != nil {
 						return ErrModelInit(err)
 					}
@@ -248,6 +242,7 @@ func init() {
 
 const (
 	initModelDirPerm                  = 0o755
+	initModelFilePerm                 = 0o644
 	initModelModelSchema              = "schemas/constructs/v1beta2/model/model.yaml"
 	initModelTemplatePathModel        = "schemas/constructs/v1beta2/model/templates/model_template"
 	initModelTemplatePathComponent    = "schemas/constructs/v1beta3/component/templates/component_template"
@@ -276,7 +271,7 @@ $ mesheryctl model import {modelFolder}
 To export this model as OCI image:
 $ mesheryctl model build {modelName}/{modelVersion} --path {path}
 
-Detailed guide: https://docs.meshery.io/reference/references/mesheryctl/model/init/`
+Detailed guide: https://docs.meshery.io/reference/mesheryctl/model/init/`
 
 // TODO
 // initModelData fits well for json and yaml format

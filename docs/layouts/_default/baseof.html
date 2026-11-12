@@ -12,23 +12,36 @@
 
   <body class="td-{{ .Kind }}{{ with .Params.body_class }} {{ . }}{{ end }}{{ block "body_class" . }}{{ end }}">
     <script>
-      (function() {
+      (function () {
         const savedMode = localStorage.getItem("mode");
-        const isLight = savedMode === "light-mode";
-        if (isLight) {
-          document.body.classList.remove("dark-mode");
+        const systemPreference = window.matchMedia
+          ? window.matchMedia("(prefers-color-scheme: dark)").matches
+          : true;
+
+        let isDark;
+
+        if (savedMode === "light-mode") {
+          isDark = false;
+        } else if (savedMode === "dark-mode") {
+          isDark = true;
         } else {
-          document.body.classList.add("dark-mode");
+          isDark = systemPreference;
         }
-        // Update logos immediately
-        document.querySelectorAll(".logo-dark-light").forEach(logo => {
-          if (isLight) {
-            logo.src = logo.dataset.logoForLight;
-          } else {
-            logo.src = logo.dataset.logoForDark;
-          }
-          logo.style.visibility = "visible";
-        });
+
+        function applyTheme(dark) {
+          document.body.classList.toggle("dark-mode", dark);
+
+          document.querySelectorAll(".logo-dark-light").forEach(logo => {
+            logo.src = dark
+              ? logo.dataset.logoForDark
+              : logo.dataset.logoForLight;
+
+            logo.style.visibility = "visible";
+          });
+        }
+
+        window.applyDocsTheme = applyTheme;
+        applyTheme(isDark);
       })();
     </script>
 

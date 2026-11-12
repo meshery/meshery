@@ -24,6 +24,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/viewoutput"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/pkg/errors"
@@ -41,7 +42,7 @@ var viewConnectionCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View a connection",
 	Long: `View a connection by its ID or name.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/connection/view`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/connection/view`,
 	Example: `
 // View details of a specific connection in default format (yaml)
 mesheryctl connection view [connection-name|connection-id]
@@ -89,48 +90,41 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 			selectedConnection = fetchedConnection
 		}
 
-		// Get the home directory of the user to save the output file
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
-		}
-
-		outputFormatterFactory := display.OutputFormatterFactory[connection.Connection]{}
-		outputFormatter, err := outputFormatterFactory.New(connectionViewFlagsProvided.outputFormat, *selectedConnection)
-		if err != nil {
-			return err
-		}
-
-		err = outputFormatter.Display()
-		if err != nil {
-			return err
-		}
+		savePath := ""
 
 		if connectionViewFlagsProvided.save {
-			// Prepare the connection string for file naming since connection from local provider
-			// can be created without a name.
+			// Get the home directory of the user to save the output file.
+			homeDir, err := os.UserHomeDir()
+			if err != nil {
+				return utils.ErrRetrieveHomeDir(
+					errors.Wrap(err, "failed to determine user home directory"),
+				)
+			}
+
+			// Connections from local providers can exist without a name.
 			connectionString := func(c connection.Connection) string {
 				if c.Name == "" {
 					return c.ID.String()
 				}
+
 				return strings.ReplaceAll(fmt.Sprintf("%v", c.Name), " ", "_")
 			}(*selectedConnection)
 
-			fileName := fmt.Sprintf("connection_%s.%s", connectionString, strings.ToLower(connectionViewFlagsProvided.outputFormat))
-			file := filepath.Join(homeDir, ".meshery", fileName)
-			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[connection.Connection]{}
-			outputFormatterSaver, err := outputFormatterSaverFactory.New(connectionViewFlagsProvided.outputFormat, outputFormatter)
-			if err != nil {
-				return err
-			}
-			outputFormatterSaver = outputFormatterSaver.WithFilePath(file)
-			err = outputFormatterSaver.Save()
-			if err != nil {
-				return err
-			}
+			fileName := fmt.Sprintf(
+				"connection_%s.%s",
+				connectionString,
+				strings.ToLower(connectionViewFlagsProvided.outputFormat),
+			)
+
+			savePath = filepath.Join(homeDir, ".meshery", fileName)
 		}
 
-		return nil
+		return viewoutput.HandleViewOutput(
+			connectionViewFlagsProvided.outputFormat,
+			*selectedConnection,
+			cmd.OutOrStdout(),
+			savePath,
+		)
 	},
 }
 

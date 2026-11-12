@@ -28,6 +28,9 @@ import (
 // kind "grafana" and tolerates connections without a credential (anonymous
 // Grafana). The returned int is an HTTP status to use when err is non-nil.
 func (h *Handler) grafanaClientForConnection(token string, connectionID uuid.UUID, p models.Provider) (*grafana.Client, *connections.Connection, int, error) {
+	if connectionID.IsNil() {
+		return nil, nil, http.StatusBadRequest, models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
+	}
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		return nil, nil, statusCode, err
@@ -68,6 +71,12 @@ func (h *Handler) GrafanaTelemetryPingHandler(w http.ResponseWriter, req *http.R
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	userID := user.ID
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	if connectionID.IsNil() {
+		invalidID := models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
+		h.log.Error(invalidID)
+		writeMeshkitError(w, invalidID, http.StatusBadRequest)
+		return
+	}
 
 	eventBuilder := events.NewEvent().
 		ActedUpon(connectionID).
@@ -103,8 +112,7 @@ func (h *Handler) GrafanaTelemetryPingHandler(w http.ResponseWriter, req *http.R
 		metadata["url"] = connURL
 	}
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
-	_ = p.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(p, token, userID, event)
 
 	h.writeJSON(w, map[string]interface{}{
 		"reachable": true,
@@ -121,8 +129,7 @@ func (h *Handler) emitGrafanaPingFailure(p models.Provider, token string, userID
 		WithDescription(fmt.Sprintf("Grafana connection %q is unreachable.", label)).
 		WithMetadata(map[string]interface{}{"error": err}).
 		Build()
-	_ = p.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(p, token, userID, event)
 	h.log.Error(err)
 }
 
@@ -277,6 +284,12 @@ type grafanaBatchResultItem struct {
 func (h *Handler) GrafanaTelemetryQueryRangeBatchHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	if connectionID.IsNil() {
+		invalidID := models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
+		h.log.Error(invalidID)
+		writeMeshkitError(w, invalidID, http.StatusBadRequest)
+		return
+	}
 
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -345,6 +358,12 @@ func grafanaQueryError(err error, dsRef string) (int, error) {
 func (h *Handler) GrafanaTelemetryPinnedBoardsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	if connectionID.IsNil() {
+		invalidID := models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
+		h.log.Error(invalidID)
+		writeMeshkitError(w, invalidID, http.StatusBadRequest)
+		return
+	}
 
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {

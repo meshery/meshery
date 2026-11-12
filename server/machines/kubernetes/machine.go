@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"sync"
 
 	"github.com/meshery/schemas/models/core"
 
@@ -36,6 +37,7 @@ func Registered() machines.State {
 			machines.Connect:  machines.CONNECTED,
 			machines.NotFound: machines.NOTFOUND,
 			machines.Ignore:   machines.IGNORED,
+			machines.Delete:   machines.DELETED,
 		},
 		Action: &RegisterAction{},
 	}
@@ -85,7 +87,9 @@ func NotFound() machines.State {
 
 func Delete() machines.State {
 	return machines.State{
-		Events: machines.Events{},
+		Events: machines.Events{
+			machines.Delete: machines.DELETED,
+		},
 		Action: &DeleteAction{},
 	}
 }
@@ -115,11 +119,59 @@ type MachineCtx struct {
 	OperatorTracker    *models.OperatorTracker
 	K8scontextChannel  *models.K8scontextChan
 	RegistryManager    *meshmodel.RegistryManager
+	setupLock          sync.Mutex
+	setupInProgress    bool
+	retryPending       bool
+	disconnected       bool
+}
+
+// IsSetupInProgress reports whether background connection setup is currently running.
+func (m *MachineCtx) IsSetupInProgress() bool {
+	m.setupLock.Lock()
+	defer m.setupLock.Unlock()
+	return m.setupInProgress
+}
+
+// IsRetryPending reports whether a connection setup retry has been queued.
+func (m *MachineCtx) IsRetryPending() bool {
+	m.setupLock.Lock()
+	defer m.setupLock.Unlock()
+	return m.retryPending
+}
+
+// IsDisconnected reports whether the connection has transitioned to disconnected or deleted.
+func (m *MachineCtx) IsDisconnected() bool {
+	m.setupLock.Lock()
+	defer m.setupLock.Unlock()
+	return m.disconnected
+}
+
+// K8sContextSnapshot returns a copy of K8sContext taken under setupLock, so a
+// reader outside the setup goroutine does not race a RefreshK8sContext write.
+// RefreshK8sContext replaces the whole struct (it never mutates the stored
+// value in place), so the copy's scalar fields stay consistent even if a
+// refresh lands after the snapshot is taken.
+func (m *MachineCtx) K8sContextSnapshot() models.K8sContext {
+	m.setupLock.Lock()
+	defer m.setupLock.Unlock()
+	return m.K8sContext
 }
 
 const (
 	machineName = "kubernetes"
+
+	// conditionComponent is the component segment of the correlationKey of a
+	// Kubernetes connection's conditions, for example
+	// meshery-server/k8s-connection/<connectionId>/unreachable.
+	conditionComponent = "k8s-connection"
 )
+
+// UnreachableConditionKey is the correlationKey of a Kubernetes connection's
+// unreachable condition, for code that resolves it without driving the
+// connection's machine (deleting the connection).
+func UnreachableConditionKey(connectionID core.Uuid) string {
+	return models.ConditionKey(conditionComponent, connectionID.String(), machines.ConditionUnreachable)
+}
 
 func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
@@ -129,13 +181,14 @@ func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachin
 	}
 
 	return &machines.StateMachine{
-		ID:            connectionID,
-		UserID:        userID,
-		Name:          machineName,
-		PreviousState: machines.DefaultState,
-		InitialState:  machines.InitialState,
-		CurrentState:  machines.InitialState,
-		Log:           log,
+		ID:                 connectionID,
+		UserID:             userID,
+		Name:               machineName,
+		ConditionComponent: conditionComponent,
+		PreviousState:      machines.DefaultState,
+		InitialState:       machines.InitialState,
+		CurrentState:       machines.InitialState,
+		Log:                log,
 		States: machines.States{
 			machines.DISCOVERED:   Discovered(),
 			machines.REGISTERED:   Registered(),
@@ -149,13 +202,12 @@ func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachin
 	}, nil
 }
 
+// AssignInitialCtx initializes the MachineCtx with loggers, client sets, and controller handlers.
 func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	userUUID, systemID := machines.ResolveUserAndSystemID(ctx)
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	userUUID := user.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromOwner(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(systemID).FromOwner(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
 		return nil, eventBuilder.Build(), err
@@ -170,6 +222,6 @@ func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Ha
 	if err != nil {
 		return nil, eventBuilder.Build(), err
 	}
-	AssignControllerHandlers(machinectx, sysID, provider)
+	AssignControllerHandlers(machinectx, &systemID, provider)
 	return machinectx, nil, nil
 }

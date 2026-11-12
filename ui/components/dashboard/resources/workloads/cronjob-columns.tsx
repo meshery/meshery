@@ -101,8 +101,8 @@ export const buildCronJobColumns = ({
         },
         customBodyRender: function CustomBody(val) {
           let attribute = JSON.parse(val);
-          let suspend = attribute?.suspend;
-          return <>{suspend}</>;
+          // spec.suspend is a boolean (omitted means false); React renders booleans as nothing.
+          return <>{attribute?.suspend ? 'True' : 'False'}</>;
         },
       },
     },
