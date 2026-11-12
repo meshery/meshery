@@ -2,13 +2,18 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
+	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	meshkiterrors "github.com/meshery/meshkit/errors"
@@ -321,4 +326,100 @@ func TestLoadTestHandler_CertificateUnsetParam_DoesNotCreateTempFile(t *testing.
 	matches, err := filepath.Glob(filepath.Join(tempDir, "meshery-nocert-test-*.crt"))
 	require.NoError(t, err)
 	assert.Empty(t, matches)
+}
+
+// TestLoadTestHandler_ClientDisconnect_NoPanic verifies that when a client cancels or disconnects
+// mid-stream during an active performance test, loadTestHelperHandler exits cleanly without
+// panicking on a closed channel or leaking background producer/consumer goroutines (Issue #18503).
+func TestLoadTestHandler_ClientDisconnect_NoPanic(t *testing.T) {
+	t.Run("MidStreamClientDisconnect", func(t *testing.T) {
+		var once sync.Once
+		clientCtx, cancelClient := context.WithCancel(context.Background())
+		defer cancelClient()
+
+		// Target server simulates the service under load.
+		// When Fortio issues its first request, we cancel the client request context
+		// to simulate the client closing their browser tab mid-test.
+		target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			once.Do(func() {
+				cancelClient()
+			})
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer target.Close()
+
+		profile, err := json.Marshal(models.PerformanceProfile{
+			Name:     "client-disconnect-profile",
+			Metadata: map[string]interface{}{},
+		})
+		require.NoError(t, err)
+
+		provider := &savedProfileProvider{profile: profile}
+		h := &Handler{
+			config: &models.HandlerConfig{},
+			log:    newTestLogger(t),
+		}
+
+		query := url.Values{
+			"name": {"disconnect-midstream-test"},
+			"url":  {target.URL},
+			"t":    {"1"},
+			"dur":  {"s"},
+			"c":    {"1"},
+			"qps":  {"5"},
+		}
+		profileID := uuid.Must(uuid.NewV4()).String()
+		req := httptest.NewRequest(http.MethodGet, "/api/user/performance/profiles/"+profileID+"/run?"+query.Encode(), nil).WithContext(clientCtx)
+		req = mux.SetURLVars(req, map[string]string{"id": profileID})
+		rec := httptest.NewRecorder()
+
+		assert.NotPanics(t, func() {
+			h.LoadTestHandler(rec, req, &models.Preference{}, &models.User{}, provider)
+		})
+
+		// Give background producer and consumer goroutines time to complete Fortio run
+		// and finish draining before closing target server
+		time.Sleep(1200 * time.Millisecond)
+	})
+
+	t.Run("PreCancelledClientContext", func(t *testing.T) {
+		clientCtx, cancelClient := context.WithCancel(context.Background())
+		cancelClient() // Already cancelled before request handler executes
+
+		target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer target.Close()
+
+		profile, err := json.Marshal(models.PerformanceProfile{
+			Name:     "client-precancel-profile",
+			Metadata: map[string]interface{}{},
+		})
+		require.NoError(t, err)
+
+		provider := &savedProfileProvider{profile: profile}
+		h := &Handler{
+			config: &models.HandlerConfig{},
+			log:    newTestLogger(t),
+		}
+
+		query := url.Values{
+			"name": {"disconnect-precancel-test"},
+			"url":  {target.URL},
+			"t":    {"1"},
+			"dur":  {"s"},
+			"c":    {"1"},
+			"qps":  {"5"},
+		}
+		profileID := uuid.Must(uuid.NewV4()).String()
+		req := httptest.NewRequest(http.MethodGet, "/api/user/performance/profiles/"+profileID+"/run?"+query.Encode(), nil).WithContext(clientCtx)
+		req = mux.SetURLVars(req, map[string]string{"id": profileID})
+		rec := httptest.NewRecorder()
+
+		assert.NotPanics(t, func() {
+			h.LoadTestHandler(rec, req, &models.Preference{}, &models.User{}, provider)
+		})
+
+		time.Sleep(1200 * time.Millisecond)
+	})
 }

@@ -360,14 +360,22 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 
 	notify := req.Context()
 
+	// Channel ownership contract:
+	// - The producer goroutine owns and closes respChan after executeLoadTest completes (deferred).
+	// - The streaming goroutine drains respChan and closes endChan to signal completion (deferred).
+	// - The main handler waits for client disconnect (notify.Done()) or completion (endChan),
+	//   and never closes endChan itself, eliminating send-on-closed-channel races.
 	respChan := make(chan *models.LoadTestResponse, 100)
 	endChan := make(chan struct{})
-	defer close(endChan)
 
 	go func() {
+		defer close(endChan)
 		defer func() {
 			if r := recover(); r != nil {
 				h.log.Error(ErrPanicRecovery(r))
+				// Drain respChan in recovery path so producer cannot block if it continues sending
+				for range respChan {
+				}
 			}
 		}()
 		for data := range respChan {
@@ -407,22 +415,25 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 			flusher.Flush()
 			h.log.Debug("Flushed the messages on the wire...")
 		}
-		endChan <- struct{}{}
 		h.log.Debug("response channel closed")
 	}()
 	go func() {
+		defer close(respChan)
+		defer func() {
+			if r := recover(); r != nil {
+				h.log.Error(ErrPanicRecovery(r))
+			}
+		}()
 		ctx := context.Background()
 		h.executeLoadTest(ctx, req, profileID, testName, meshName, testUUID, prefObj, provider, loadTestOptions, respChan)
-		close(respChan)
 	}()
 	select {
 	case <-notify.Done():
 		h.log.Debug("received signal to close connection and channels")
-		break
 	case <-endChan:
 		h.log.Debug("load test completed")
-		_ = req.Body.Close()
 	}
+	_ = req.Body.Close()
 }
 
 func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profileID, testName, meshName, testUUID string, prefObj *models.Preference, provider models.Provider, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
