@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -35,9 +36,15 @@ func (h *Handler) prometheusTelemetryClientForConnection(token string, connectio
 	if connectionID.IsNil() {
 		return nil, nil, http.StatusBadRequest, models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
 	}
+	if p == nil {
+		return nil, nil, http.StatusInternalServerError, errors.New("provider not initialized")
+	}
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		return nil, nil, statusCode, err
+	}
+	if connection == nil {
+		return nil, nil, http.StatusNotFound, models.ErrResultNotFound(fmt.Errorf("connection not found"))
 	}
 	if connection.Kind != "prometheus" {
 		return nil, connection, http.StatusBadRequest, ErrInvalidConnectionKind(connection.Kind, "prometheus")
@@ -62,6 +69,14 @@ func (h *Handler) prometheusTelemetryClientForConnection(token string, connectio
 //
 // GET /api/telemetry/prometheus/{connectionID}/ping
 func (h *Handler) PrometheusTelemetryPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	userID := user.ID
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
@@ -72,10 +87,14 @@ func (h *Handler) PrometheusTelemetryPingHandler(w http.ResponseWriter, req *htt
 		return
 	}
 
+	sysID := uuid.Nil
+	if h.SystemID != nil {
+		sysID = *h.SystemID
+	}
 	eventBuilder := events.NewEvent().
 		ActedUpon(connectionID).
 		FromOwner(userID).
-		FromSystem(*h.SystemID).
+		FromSystem(sysID).
 		WithCategory("connection").
 		WithAction("ping")
 
@@ -392,10 +411,18 @@ func (h *Handler) PrometheusTelemetryPanelsHandler(w http.ResponseWriter, req *h
 		writeMeshkitError(w, invalidID, http.StatusBadRequest)
 		return
 	}
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		writeMeshkitError(w, err, statusCode)
+		return
+	}
+	if connection == nil {
+		writeMeshkitError(w, models.ErrResultNotFound(fmt.Errorf("connection not found")), http.StatusNotFound)
 		return
 	}
 	if connection.Kind != "prometheus" {
