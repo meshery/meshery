@@ -422,4 +422,61 @@ func TestLoadTestHandler_ClientDisconnect_NoPanic(t *testing.T) {
 
 		time.Sleep(1200 * time.Millisecond)
 	})
+
+	t.Run("RealHTTPServerDisconnect", func(t *testing.T) {
+		profile, err := json.Marshal(models.PerformanceProfile{
+			Name:     "client-disconnect-realhttp-profile",
+			Metadata: map[string]interface{}{},
+		})
+		require.NoError(t, err)
+
+		provider := &savedProfileProvider{profile: profile}
+		h := &Handler{
+			config: &models.HandlerConfig{},
+			log:    newTestLogger(t),
+		}
+
+		profileID := uuid.Must(uuid.NewV4()).String()
+
+		var once sync.Once
+		clientCtx, cancelClient := context.WithCancel(context.Background())
+		defer cancelClient()
+
+		// Target server simulates the destination under load.
+		target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			once.Do(func() {
+				cancelClient()
+			})
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer target.Close()
+
+		// Host LoadTestHandler on a real HTTP server to verify the net/http ResponseWriter
+		// lifecycle does not encounter writes after handler return on disconnect.
+		handlerServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+			req = mux.SetURLVars(req, map[string]string{"id": profileID})
+			h.LoadTestHandler(w, req, &models.Preference{}, &models.User{}, provider)
+		}))
+		defer handlerServer.Close()
+
+		query := url.Values{
+			"name": {"disconnect-realhttp-test"},
+			"url":  {target.URL},
+			"t":    {"1"},
+			"dur":  {"s"},
+			"c":    {"1"},
+			"qps":  {"5"},
+		}
+
+		req, err := http.NewRequestWithContext(clientCtx, http.MethodGet, handlerServer.URL+"/api/user/performance/profiles/"+profileID+"/run?"+query.Encode(), nil)
+		require.NoError(t, err)
+
+		resp, err := http.DefaultClient.Do(req)
+		if err == nil && resp != nil {
+			_ = resp.Body.Close()
+		}
+
+		// Wait for Fortio and background draining to finish cleanly
+		time.Sleep(1200 * time.Millisecond)
+	})
 }

@@ -365,6 +365,14 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	// - The streaming goroutine drains respChan and closes endChan to signal completion (deferred).
 	// - The main handler waits for client disconnect (notify.Done()) or completion (endChan),
 	//   and never closes endChan itself, eliminating send-on-closed-channel races.
+	// - writeMu synchronizes writes to ResponseWriter (w). On client disconnect, disconnected is set
+	//   under writeMu so no subsequent writes to w occur after the handler returns, satisfying the
+	//   Go HTTP contract while continuing to drain respChan to let the producer finish.
+	var (
+		writeMu      sync.Mutex
+		disconnected bool
+	)
+
 	respChan := make(chan *models.LoadTestResponse, 100)
 	endChan := make(chan struct{})
 
@@ -379,41 +387,44 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 			}
 		}()
 		for data := range respChan {
-			bd, err := json.Marshal(data)
-			if err != nil {
-				// We are inside an active SSE connection — Content-Type:
-				// text/event-stream has already been committed above. Calling
-				// http.Error here would silently corrupt the stream (it tries
-				// to set text/plain after headers are flushed, then writes a
-				// trailing newline that breaks SSE framing). Instead, emit an
-				// in-protocol error event using the same LoadTestResponse
-				// envelope the client already understands (status="error" is
-				// handled by the EventSource onmessage consumer in the UI).
-				//
-				// We deliberately do NOT return here: the worker goroutine
-				// will keep writing into respChan until executeLoadTest
-				// exits, and an early return would block the worker once
-				// the buffered slots fill. Continue draining so the worker
-				// can finish and close(respChan) terminates this loop.
-				h.log.Error(models.ErrMarshal(err, "meshery result for shipping"))
-				errPayload, mErr := json.Marshal(&models.LoadTestResponse{
-					Status:  models.LoadTestError,
-					Message: models.ErrMarshal(err, "meshery result for shipping").Error(),
-				})
-				if mErr != nil {
-					// Last-resort: a static, hand-rolled JSON literal so the
-					// stream stays well-formed even if envelope marshal fails.
-					errPayload = []byte(`{"status":"error","message":"failed to marshal load test result"}`)
+			writeMu.Lock()
+			if !disconnected {
+				bd, err := json.Marshal(data)
+				if err != nil {
+					// We are inside an active SSE connection — Content-Type:
+					// text/event-stream has already been committed above. Calling
+					// http.Error here would silently corrupt the stream (it tries
+					// to set text/plain after headers are flushed, then writes a
+					// trailing newline that breaks SSE framing). Instead, emit an
+					// in-protocol error event using the same LoadTestResponse
+					// envelope the client already understands (status="error" is
+					// handled by the EventSource onmessage consumer in the UI).
+					//
+					// We deliberately do NOT return here: the worker goroutine
+					// will keep writing into respChan until executeLoadTest
+					// exits, and an early return would block the worker once
+					// the buffered slots fill. Continue draining so the worker
+					// can finish and close(respChan) terminates this loop.
+					h.log.Error(models.ErrMarshal(err, "meshery result for shipping"))
+					errPayload, mErr := json.Marshal(&models.LoadTestResponse{
+						Status:  models.LoadTestError,
+						Message: models.ErrMarshal(err, "meshery result for shipping").Error(),
+					})
+					if mErr != nil {
+						// Last-resort: a static, hand-rolled JSON literal so the
+						// stream stays well-formed even if envelope marshal fails.
+						errPayload = []byte(`{"status":"error","message":"failed to marshal load test result"}`)
+					}
+					_, _ = fmt.Fprintf(w, "data: %s\n\n", errPayload)
+					flusher.Flush()
+				} else {
+					h.log.Debug("received new data on response channel")
+					_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
+					flusher.Flush()
+					h.log.Debug("Flushed the messages on the wire...")
 				}
-				_, _ = fmt.Fprintf(w, "data: %s\n\n", errPayload)
-				flusher.Flush()
-				continue
 			}
-
-			h.log.Debug("received new data on response channel")
-			_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
-			flusher.Flush()
-			h.log.Debug("Flushed the messages on the wire...")
+			writeMu.Unlock()
 		}
 		h.log.Debug("response channel closed")
 	}()
@@ -430,6 +441,9 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	select {
 	case <-notify.Done():
 		h.log.Debug("received signal to close connection and channels")
+		writeMu.Lock()
+		disconnected = true
+		writeMu.Unlock()
 	case <-endChan:
 		h.log.Debug("load test completed")
 	}
