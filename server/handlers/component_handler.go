@@ -1239,9 +1239,12 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			}
 
 			const maxDownloadFileSize = 10 * 1024 * 1024
-			fileData, err := io.ReadAll(io.LimitReader(resp.Body, maxDownloadFileSize))
+			fileData, err := io.ReadAll(io.LimitReader(resp.Body, int64(maxDownloadFileSize)+1))
 			if err != nil {
 				return nil, models.ErrDoRequest(err, "GET", targetURL)
+			}
+			if len(fileData) > maxDownloadFileSize {
+				return nil, models.ErrDoRequest(fmt.Errorf("file size exceeds maximum allowed limit of %d bytes", maxDownloadFileSize), "GET", targetURL)
 			}
 
 			return fileData, nil

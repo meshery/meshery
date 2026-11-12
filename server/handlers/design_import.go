@@ -119,10 +119,15 @@ func fetchFileFromURL(fileURL string) (FileToImport, error) {
 		return FileToImport{}, models.ErrDoRequest(fmt.Errorf("returned HTTP %d %s", resp.StatusCode, resp.Status), "GET", fileURL)
 	}
 	// Cap read at 10 MB to prevent unbounded memory consumption from large remote responses.
+	// Reading up to maxImportFileSize+1 allows detecting whether the remote stream exceeds the cap,
+	// rejecting truncated downloads instead of accepting partial files.
 	const maxImportFileSize = 10 * 1024 * 1024
-	body, err := io.ReadAll(io.LimitReader(resp.Body, maxImportFileSize))
+	body, err := io.ReadAll(io.LimitReader(resp.Body, int64(maxImportFileSize)+1))
 	if err != nil {
 		return FileToImport{}, models.ErrDoRequest(err, "GET", fileURL)
+	}
+	if len(body) > maxImportFileSize {
+		return FileToImport{}, models.ErrDoRequest(fmt.Errorf("file size exceeds maximum allowed limit of %d bytes", maxImportFileSize), "GET", fileURL)
 	}
 	return FileToImport{Data: body, FileName: getFileNameFromResponse(resp, fileURL)}, nil
 }
