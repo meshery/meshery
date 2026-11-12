@@ -2,6 +2,7 @@ package policies
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -232,16 +233,40 @@ func jsonValuesEqual(a, b interface{}) bool {
 
 // inventoryCandidateKey identifies a candidate parent by what it is rather
 // than by its ID, which buildInventoryParentCandidate generates fresh for
-// every candidate. The configuration is part of the key so parents that
-// differ in a configuration patch (e.g. metadata.namespace) stay distinct.
+// every candidate. The key is the candidate's kind, its full ModelReference
+// (name, version and the rest of the reference, as the to-side selector
+// supplied it), displayName and configuration.
+//
+// The configuration is part of the key so parents that differ in a
+// configuration patch (e.g. metadata.namespace) stay distinct. The full
+// ModelReference is part of the key so a to-side selector that pins a
+// distinct model version yields a distinct parent; the relationship's own
+// model version is deliberately not part of the key, which is what lets
+// the registry's one-Namespace-relationship-per-kubernetes-version copies
+// collapse onto a single add_component action.
 func inventoryCandidateKey(candidate *component.ComponentDefinition) string {
-	config, _ := json.Marshal(candidate.Configuration)
-	return strings.Join([]string{
-		candidate.Component.Kind,
-		candidate.ModelReference.Name,
-		string(candidate.DisplayName),
-		string(config),
-	}, "\x00")
+	content := struct {
+		Kind          string                      `json:"kind"`
+		Model         modelv1beta1.ModelReference `json:"model"`
+		DisplayName   string                      `json:"displayName"`
+		Configuration map[string]interface{}      `json:"configuration"`
+	}{
+		Kind:          candidate.Component.Kind,
+		Model:         candidate.ModelReference,
+		DisplayName:   string(candidate.DisplayName),
+		Configuration: candidate.Configuration,
+	}
+	key, err := json.Marshal(content)
+	if err != nil {
+		// Configuration values come from JSON-decoded design content, so
+		// marshaling only fails on values JSON cannot represent (e.g. NaN).
+		// fmt's textual form is also deterministic (map keys print in
+		// sorted order), so distinct candidates keep distinct keys and
+		// identical ones still collapse.
+		return fmt.Sprintf("%v|%#v|%v|%#v",
+			candidate.Component.Kind, candidate.ModelReference, candidate.DisplayName, candidate.Configuration)
+	}
+	return string(key)
 }
 
 // buildInventoryParentCandidate constructs the new component that would be
