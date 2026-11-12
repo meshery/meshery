@@ -18304,18 +18304,17 @@ url: /guides/tutorials/playground/kubecon-build-your-own-model-and-design/index.
 description: A 90-minute Meshery Playground workshop in which every attendee creates their own model and a design that uses it.
 --------------------------------------------------------------------------------
 
-A 90-minute hands-on session for Thursday, Nov 12, 2026 (Mountain Time). Every attendee creates their own Meshery model from real CRDs and then their own Meshery design that uses it, entirely in the Meshery Playground.
+A 90-minute hands-on session for Meshery ContribFests. Every attendee creates their own Meshery model from real CRDs and then their own Meshery design that uses it, entirely in the Meshery Playground.
 
 Learning goals: explain what a Meshery model, component, relationship and design are; generate a model from a CRD source with the Registry's Create Model wizard; build, configure and validate a design in Kanvas that uses that model; and keep the work after the session.
 
 ## At a glance
 
-- **When:** Thursday, Nov 12, 2026, 90 minutes (America/Denver)
-- **Where attendees work:** https://playground.meshery.io (browser only, nothing to install)
+- **Where attendees work:** https://playground.meshery.io (browser only, optionally install `mesheryctl`)
 - **Outcome:** One model per attendee, registered in the shared Playground instance, and one design saved to the attendee's account
 - **Audience:** Kubernetes users; no Meshery experience needed
 - **Format:** Short talk, two guided labs, show and tell
-- **Staffing:** 1 instructor plus 1 helper per 20 to 25 attendees
+- **Resources:** Meshery Models explainers ([architecture slides](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit?slide=id.g28d3a0f18b4_0_292#slide=id.g28d3a0f18b4_0_292))
 
 ## Timed agenda
 
@@ -18330,13 +18329,12 @@ Learning goals: explain what a Meshery model, component, relationship and design
 | 1:20 | 7 | Show and tell | Two or three designs shown live |
 | 1:27 | 3 | Wrap-up and next steps | Links to keep going |
 
-The 5-minute buffer at 0:50 is deliberate. If Lab 1 runs long, take it from there and from show and tell, never from Lab 2.
-
 ## Prerequisites
 
 ### Attendees
 
 - A laptop with a current Chrome, Edge, Firefox or Safari. Tablets and phones are not enough for drag and drop.
+- [Install `mesheryctl`](https://docs.meshery.io/installation/mesheryctl/) on your computer.
 - A GitHub or Google account, or an email address, to sign in to the Playground. Sign-in is required: the Playground runs live clusters and every user needs a named account.
 - Optional but faster: sign in at https://playground.meshery.io before the session.
 - Basic Kubernetes vocabulary: Namespace, Deployment, Service, CRD.
