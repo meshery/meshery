@@ -144,7 +144,7 @@ digitalocean-icons/
 <br />└── v0.1.0/
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── model.json          # model definition (name, displayName and version are pre-filled from the argument and --version)
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── components/          # one sample component, already referencing this model; add one JSON file per component
-<br />&nbsp;&nbsp;&nbsp;&nbsp;├── relationships/
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── relationships/       # one sample relationship; delete it unless you define relationships
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── connections/
 <br />&nbsp;&nbsp;&nbsp;&nbsp;└── credentials/
 </code>
@@ -155,7 +155,7 @@ digitalocean-icons/
   <li><code>category.name</code> and <code>subCategory</code> - e.g. <code>Platform</code> / <code>Cloud Provider</code>.</li>
   <li><code>registrant.kind</code> - e.g. <code>meshery</code>.</li>
   <li><code>description</code> - a short summary of what the model provides.</li>
-  <li><code>metadata.svgColor</code> and <code>metadata.svgWhite</code> - the model's display icon, as an inline SVG string (strip any <code>&lt;?xml ...?&gt;</code> header and collapse the SVG to a single line).</li>
+  <li><code>metadata.svgColor</code> and <code>metadata.svgWhite</code> - the model's display icon, as an inline SVG string (strip any <code>&lt;?xml ...?&gt;</code> header and collapse the SVG to a single line). The SVG's double quotes must be escaped as <code>\"</code> inside the JSON string; <code>jq --arg svg "$(cat icon.svg)" '.metadata.svgColor = $svg'</code> does the escaping for you.</li>
   <li><code>metadata.isAnnotation</code> - set to <code>true</code> for an annotation-only (visual diagramming) model.</li>
 </ul>
 
@@ -169,7 +169,7 @@ digitalocean-icons/
 </ul>
 
 {{% alert color="warning" title="Component schemaVersion compatibility" %}}
-For the widest server compatibility, set each component's <code>schemaVersion</code> to <code>components.meshery.io/v1beta1</code> and the model's to <code>models.meshery.io/v1beta2</code>. Meshery Servers only accept the <code>v1beta3</code> component wire format once they ship a MeshKit new enough to recognize it; a released server that predates that support rejects <code>v1beta3</code> components with a generic "No valid component or relationship found in the Model provided" error at import time.
+Set each component's <code>schemaVersion</code> to <code>components.meshery.io/v1beta1</code> and leave the model's as <code>models.meshery.io/v1beta2</code>. The scaffold writes <code>components.meshery.io/v1beta3</code>, which current Meshery Servers do not recognize: the import drops the component and fails with a generic "No valid component or relationship found in the Model provided" error (<a href="https://github.com/meshery/meshery/issues/20901">meshery#20901</a>). The sample relationship's <code>relationships.meshery.io/v1beta3</code> is rejected the same way, so delete it before you build.
 {{% /alert %}}
 
 <h4>4. Package the model as an OCI image</h4>
