@@ -37,6 +37,7 @@ func Registered() machines.State {
 			machines.Connect:  machines.CONNECTED,
 			machines.NotFound: machines.NOTFOUND,
 			machines.Ignore:   machines.IGNORED,
+			machines.Delete:   machines.DELETED,
 		},
 		Action: &RegisterAction{},
 	}
@@ -86,7 +87,9 @@ func NotFound() machines.State {
 
 func Delete() machines.State {
 	return machines.State{
-		Events: machines.Events{},
+		Events: machines.Events{
+			machines.Delete: machines.DELETED,
+		},
 		Action: &DeleteAction{},
 	}
 }
