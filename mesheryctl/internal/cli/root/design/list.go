@@ -117,21 +117,21 @@ mesheryctl design list --count
 }
 
 func processDesignData(data *models.PatternsAPIResponse) ([][]string, int64) {
+	if data == nil {
+		return nil, 0
+	}
 	var displayData [][]string
 	for _, v := range data.Patterns {
-		designId := v.ID.String()
+		designId := utils.FormatUUID(v.ID, "N/A")
 
 		designName := utils.TrimFileExtension(v.Name)
 		createdAt := formatTimeToString(v.CreatedAt, verbose)
 		updatedAt := formatTimeToString(v.UpdatedAt, verbose)
 
 		if !utils.IsLocalProvider(provider) {
-			owner := "null"
-			if v.UserID != nil {
-				owner = v.UserID.String()
-				if !verbose {
-					owner = utils.TruncateID(owner)
-				}
+			owner := utils.FormatUUID(v.UserID, "null")
+			if !verbose {
+				owner = utils.TruncateID(owner)
 			}
 			displayData = append(displayData, []string{designId, owner, designName, createdAt, updatedAt})
 		} else {
@@ -143,9 +143,9 @@ func processDesignData(data *models.PatternsAPIResponse) ([][]string, int64) {
 
 func formatTimeToString(t *time.Time, isVerbose bool) string {
 	if isVerbose {
-		return t.Format("01-02-2006 15:04:05") // M-D-YYYY HH:MM:SS
+		return utils.FormatTime(t, "01-02-2006 15:04:05", "N/A")
 	}
-	return t.Format("01-02-2006") // MM-DD-YYYY
+	return utils.FormatTime(t, "01-02-2006", "N/A")
 }
 
 func init() {

@@ -1,6 +1,6 @@
 ---
-title: "KubeCon Workshop: Build Your Own Meshery Model and Design"
-description: A 60-minute Meshery Playground workshop in which every attendee creates their own model and a design that uses it.
+title: "KubeCon Workshop: Publish a Design and Build a Custom Model"
+description: A 60-minute Meshery Playground workshop. Choose Path A (Kanvas) or Path B (Meshery UI and mesheryctl). Every attendee publishes a simple Kubernetes design to the Catalog, then adds a custom KubeCon logo model to it.
 model: playground
 params:
     kind: workshop
@@ -10,188 +10,450 @@ aliases:
 - /guides/tutorials/kubecon-build-your-own-model-and-design
 ---
 
-This is a 60-minute hands-on session for Meshery ContribFests. Every attendee creates their own Meshery model from real CRDs and then their own Meshery design that uses it, entirely in the Meshery Playground.
+This is a 60-minute hands-on session for Meshery ContribFests. Every attendee first creates a very simple Kubernetes design in the Meshery Playground, publishes it to the Catalog, then builds a custom annotation-only model with the KubeCon logo and adds that component to the same design.
 
-Learning goals: explain what a Meshery model, component, relationship and design are; generate a model from a CRD source with the Registry's Create Model wizard; build, configure and validate a design in Kanvas that uses that model; and keep the work after the session.
+This page is a choose-your-own-adventure. Pick **Path A** or **Path B** at the start, and stay on that path for both labs. The outcome is the same: a published design, and a KubeCon logo model on that design.
+
+Learning goals: build and validate a Design; publish it to the Meshery Catalog; create or import an annotation-only Model; and incorporate one of that model's components into the design.
+
+## Choose your path
+
+{{< tabs id="choose-workshop-path" >}}
+Path A: Kanvas
+
+**Path A** uses the [Kanvas](https://docs.layer5.io/kanvas/) extension on https://playground.meshery.io for both labs.
+
+- Lab 1: you build the Deployment and Service visually in [Kanvas Designer](https://playground.meshery.io/extension/meshmap), then Validate and Publish To Catalog.
+- Lab 2: you open the Registry's **Create Model** wizard in the Playground, mark the model as visual annotation only, and upload the KubeCon logos. You then pin the component in Kanvas Designer and drop it onto your Lab 1 design.
+
+You work in the browser. You do not need `mesheryctl` on Path A.
+<!-- tab -->
+Path B: Meshery UI and mesheryctl
+
+**Path B** uses only Meshery UI and/or `mesheryctl`. It does not use the Kanvas extension.
+
+- Lab 1: you import a ready-made Kubernetes manifest (a Deployment and a Service) from the Designs page or with `mesheryctl design import`, then Validate and publish from Meshery UI.
+- Lab 2: you scaffold, package, and import the KubeCon logo model with `mesheryctl` (or import the ready-made archive in the Registry), then add that component to your Lab 1 design by editing the design in the Design Configurator or by updating the design file.
+
+You will point `mesheryctl` at the Playground before the Path B labs.
+{{< /tabs >}}
 
 ## At a glance
 
 - **Duration:** 60 minutes
-- **Where attendees work:** https://playground.meshery.io (browser only, optionally install `mesheryctl`)
-- **Outcome:** One model per attendee, registered in the shared Playground instance, and one design saved to the attendee's account
+- **Where attendees work:** https://playground.meshery.io in a browser. Path A uses [Kanvas Designer](https://playground.meshery.io/extension/meshmap) and the [Registry](https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models). Path B uses **Configuration** > **Designs** and, for Lab 2, `mesheryctl`.
+- **Outcome:** A saved design (a Kubernetes Deployment and Service) submitted to the Catalog, and a custom KubeCon logo model registered in the Playground and added to that design
 - **Audience:** Kubernetes users; no Meshery experience needed
-- **Format:** Short talk, two guided labs, wrap-up
+- **Format:** Short talk, two guided labs (each with Path A and Path B), wrap-up
 - **Resources:** Meshery Models explainers ([architecture slides](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit?slide=id.g28d3a0f18b4_0_292#slide=id.g28d3a0f18b4_0_292))
 
 ## Timed agenda
 
-| Clock | Min | Block | Attendees leave with |
-|---|---|---|---|
-| 0:00 | 3 | Welcome, goals, logistics | Wi-Fi, Playground link, helper flag |
-| 0:03 | 7 | Sign in to the Playground | A working Playground session |
-| 0:10 | 5 | Concepts: models, components, relationships, designs | The mental model for the labs |
-| 0:15 | 18 | Lab 1: Create your model | Their own model in the Registry |
-| 0:33 | 20 | Lab 2: Create your design | A saved, validated design using their model |
-| 0:53 | 7 | Wrap-up and next steps | Links to keep going |
+| Min | Block | Attendees leave with |
+|---|---|---|
+| 8 | Welcome, goals, logistics, path choice, and sign-in | A working Playground session and a chosen path |
+| 5 | Concepts: designs, the Catalog, models and annotations | The mental model for the labs |
+| 22 | Lab 1: Create and publish your design | A saved, validated Deployment and Service, submitted to the Catalog |
+| 20 | Lab 2: Create a custom model and add it to your design | The KubeCon logo on that design |
+| 5 | Wrap-up and next steps | Links to keep going |
 
-The six blocks are 3, 7, 5, 18, 20 and 7 minutes, which add up to 60. If Lab 1 runs long, take the time from wrap-up, never from Lab 2.
+The five blocks are 8, 5, 22, 20 and 5 minutes, which add up to 60. If Lab 1 runs long, take the time from wrap-up, never from Lab 2.
 
 ## Prerequisites
 
 ### Attendees
 
-- A laptop with a current Chrome, Edge, Firefox or Safari. Tablets and phones are not enough for drag and drop.
-- [Install `mesheryctl`](https://docs.meshery.io/installation/mesheryctl/) on your computer.
+- A laptop with a current Chrome, Edge, Firefox or Safari.
 - A GitHub or Google account, or an email address, to sign in to the Playground. Sign-in is required: the Playground runs live clusters and every user needs a named account.
 - Optional but faster: sign in at https://playground.meshery.io before the session.
-- Basic Kubernetes vocabulary: Namespace, Deployment, Service, CRD.
+- Basic Kubernetes vocabulary: Deployment, Service, label, selector.
+- **Path A:** a screen large enough for drag and drop in Kanvas. Tablets and phones are not enough.
+- **Path B:** [install `mesheryctl`](https://docs.meshery.io/installation/mesheryctl/) on your computer if you will use the CLI steps. You can complete Lab 1 with Meshery UI alone. Lab 2 is smoother with `mesheryctl`, and has a UI import fallback.
 
-### Instructor
+<details>
+<summary>Instructor prerequisites</summary>
 
-- A Playground account that has completed both labs end to end within 24 hours of the session.
-- Projector at 1080p or better, browser zoom at 125% so the back row can read the Registry form.
-- This page open on a second screen, and the attendee steps (Labs 1 and 2) on a slide or QR code.
-- A note to the Meshery Playground maintainers that a room of attendees will generate models at roughly 0:15 to 0:33.
+- A Playground account that has completed both labs, on both paths, within 24 hours of the session, including a Catalog publish request. On Path A, walk through Create Model and Import Model in the Registry, then pin and drop the logo in Kanvas. On Path B, import the ready-made manifest and run `mesheryctl model import` into the Playground.
+- Projector at 1080p or better, browser zoom at 125% so the back row can read the Kanvas form and the Registry wizard.
+- This page open on a second screen, and the attendee steps (Labs 1 and 2, both paths) on a slide or QR code.
+- A note to the Meshery Playground maintainers that a room of attendees will submit Catalog publish requests and import a small annotation model.
 
-## Instructor prep (morning of)
+</details>
 
-1. **Dry run both labs on the Playground.** Use a fresh model name such as `kubecon-instructor-certs` so you hit the same screens attendees will. Note any UI label that differs from this page and tell the room at the start.
-2. **Confirm the cert-manager CRD source still resolves.** Open `https://github.com/cert-manager/cert-manager/tree/master/deploy/crds` and confirm the folder exists on the default branch. It was verified on Nov 11, 2026. Also confirm the stretch-goal sources if you plan to point fast finishers at them.
-3. **Pre-build a finished design.** Keep a completed Lab 2 design open in a second tab. If the network or Playground stalls, you can keep teaching from it.
-4. **Prepare the handle list.** Ask attendees to use their GitHub handle (or first name plus last initial) in every name, so dozens of models and designs never collide.
-5. **Brief helpers.** Helpers own sign-in problems and Lab 1 errors so the instructor keeps the room moving. Agree on a raised-hand or sticky-note signal.
+<details>
+<summary>Instructor prep (morning of)</summary>
 
-## Module 1: Welcome and sign-in (0:00 to 0:10)
+1. **Dry run both labs on both paths.** Use a fresh design name such as `kubecon-instructor-design` and, on Path B, a fresh model name such as `kubecon-instructor-logo` so you hit the same screens attendees will. Note any UI label that differs from this page and tell the room at the start.
+2. **Confirm the demo image still exists.** The Deployment uses `meshery/meshery-milestone:latest`. Docker Hub listed only the `latest` tag when this page was last checked on Nov 12, 2026.
+3. **Confirm the logo files and the Path B manifest on this page download.** [Color SVG](kubecon-logo-color.svg), [white SVG](kubecon-logo-white.svg), the [ready-made model archive](kubecon-logo.tar.gz), and [kubecon-design.yaml](kubecon-design.yaml) should all open or download from the published docs page.
+4. **Pre-build a finished design.** Keep a completed Lab 2 design open in a second tab. If the network or Playground stalls, you can keep teaching from it.
+5. **Prepare the handle list.** Ask attendees to use their GitHub handle (or first name plus last initial) in every name, so dozens of designs and models never collide.
+6. **Brief helpers.** Helpers own sign-in problems, path choice, Kanvas configuration, the Registry wizard, and `mesheryctl` login so the instructor keeps the room moving. Agree on a raised-hand or sticky-note signal.
 
-### Instructor
+</details>
 
-1. **Set the goal in one sentence (1 min).** "In 60 minutes you will publish your own Meshery model and use it in your own design."
-2. **Logistics (2 min).** Wi-Fi, the Playground URL, the helper signal, and the naming rule: put your handle in every name.
-3. **Live sign-in (1 min).** Open https://playground.meshery.io on the projector and sign in so the room sees the provider choice.
-4. **Hands-on sign-in (6 min).** Helpers walk the room. Anyone not signed in by 0:10 pairs with a neighbor for Lab 1 and keeps trying in parallel.
+## Welcome and sign-in
+
+<details>
+<summary>Instructor guide: welcome and sign-in</summary>
+
+1. **Set the goal in one sentence.** "In 60 minutes you will publish a simple Kubernetes design to the Catalog, then add your own KubeCon logo model to it."
+2. **Logistics.** Wi-Fi, the Playground URL, the helper signal, and the naming rule: put your handle in every name.
+3. **Path choice.** Point at Path A (Kanvas, first tab) and Path B (Meshery UI and mesheryctl). Ask the room to pick one and stay on it for both labs.
+4. **Live sign-in.** Open https://playground.meshery.io on the projector and sign in so the room sees the provider choice.
+5. **Hands-on sign-in.** Helpers walk the room. Anyone not signed in by the end of this block pairs with a neighbor for Lab 1 and keeps trying in parallel.
+
+</details>
 
 ### Attendees
 
 1. **Open the Playground.** Go to https://playground.meshery.io. You are sent to the Meshery Cloud sign-in page.
 2. **Sign in.** Continue with GitHub or Google, or create an account with email. You land back in Meshery.
 3. **Check you are in.** You see the Meshery dashboard with your avatar in the top right. Raise your hand if you do not.
+4. **Pick your path.** Stay on Path A or Path B for both labs. You can switch later if you need to, but you will save time by picking one now.
 
-## Module 2: Concepts in five minutes (0:10 to 0:15)
+## Concepts
 
-Teach only what the labs use. Draw it as one picture: a model is a package; a design is something you build from many packages.
+A design is something you build and can publish. A model is a package of components you can drop into a design. Today's custom model is annotation-only: it is a logo, not a workload.
 
-| Term | Say this |
+| Term | Meaning |
 |---|---|
-| Model | A versioned package that teaches Meshery about one technology: its components, relationships and styling. Kubernetes is a model; cert-manager is a model. |
-| Component | One kind of thing inside a model, usually one Kubernetes kind or CRD: Deployment, Certificate, Issuer. |
-| Relationship | How components connect: parent and child (a Pod inside a Namespace), edges (a Service to a Deployment), and shared labels. |
-| Registry | Where Meshery keeps every model it knows. You will add yours to it in Lab 1. |
-| Design | A declarative document of the components you want, their configuration and their relationships. You can validate, dry run, deploy, share and export it. |
-| Kanvas | The visual designer in the Playground where you drag components onto a canvas to build a design. |
+| Design | A declarative document of the components you want, their configuration and their relationships. You can validate, dry run, deploy, share and publish it. |
+| Catalog | The public library of published designs. Publishing submits your design for review so others can find and clone it. |
+| Model | A versioned package that teaches Meshery about a set of components and their styling. Kubernetes is a model; today's KubeCon logo will be a model too. |
+| Component | One kind of thing inside a model. In Lab 1 that is a Deployment or a Service. In Lab 2 it is a KubeCon logo (or, on Path A, the component registered with your model). |
+| Annotation | A visual-only component. It appears on a design for diagramming and is not deployed to a cluster. |
+| Kanvas | The visual designer in the Playground (Path A) where you drag components onto a canvas to build a design. |
+| Registry | Where Meshery keeps every model it knows. You will create or import yours into it in Lab 2. |
 
 {{% alert color="info" title="Key message" %}}
-Designs are saved to your account and survive. Deployments in the Playground clusters are reset daily. Today's real artifact is the model and the design, not a running workload.
+Designs are saved to your account and survive. Deployments in the Playground clusters are reset daily. Today's real artifacts are the design you publish and the model you import, not a running workload.
 {{% /alert %}}
 
-## Lab 1: Create your model (0:15 to 0:33)
+## Lab 1: Create and publish your design
 
-Attendees generate a cert-manager model from a public folder of CRDs with the Registry's Create Model wizard. Everyone uses the same source so the room stays on one demo path.
+Attendees build an extremely simple design: one Kubernetes Deployment that runs the Meshery milestone Nginx image, and one Kubernetes Service that targets it. They save, validate, and publish the design to the Catalog.
 
-Source URL for the wizard: `git://github.com/cert-manager/cert-manager/master/deploy/crds`
-
-The format is `git://github.com/[organization]/[repository]/[branch]/path/to/crds`, as documented in [Create Models]({{< ref "guides/configuration-management/creating-models/index.md" >}}). This is the documented example and the one the instructor demos. Other CRD sources are listed under Stretch goals.
-
-### Instructor demo (5 min)
-
-1. **Open the Registry.** Avatar in the top right, then Registry (or Settings, then Registry). Stay on the Models tab. Direct link: https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models
-2. **Click Create Model.** Point out that this is the wizard; Import Model is for files you already have.
-3. **Fill in names.** Model Name `kubecon-instructor-certs` (lowercase letters, digits and hyphens only), Model Display Name `Cert Manager (instructor)`.
-4. **Category and subcategory.** Pick the closest match. If nothing fits, choose Uncategorized. Styling is optional: skip it or pick a distinctive color so the model is easy to spot later.
-5. **Source.** Paste the cert-manager URL above.
-6. **Additional settings.** Leave Visual Annotation Only off, because these are real infrastructure components. Clicking Generate registers the model immediately; there is no separate Immediate Registration toggle.
-7. **Generate and verify.** Click Generate, show the confirmation and the Notification Center entry, then open the model in the Registry and show its components (Certificate, Issuer, ClusterIssuer and others).
-
-### Attendee steps (13 min)
-
-1. **Open the Registry.** Click your avatar (top right), choose Registry, and stay on the Models tab.
-2. **Start the wizard.** Click Create Model.
-3. **Name it with your handle.** Model Name: `kubecon-<your-handle>-certs`, for example `kubecon-octocat-certs`. Display Name: something readable, for example `Cert Manager (octocat)`.
-4. **Choose a category.** Pick the closest Category and Subcategory, or Uncategorized. Style is optional; choose a color you will recognize in the designer if you have time.
-5. **Paste the cert-manager source URL.** Use the URL from the start of this lab.
-6. **Additional settings.** Leave Visual Annotation Only off. Clicking Generate registers the model immediately.
-7. **Generate.** Click Generate and wait for the confirmation. Check the Notification Center if you miss it.
-8. **Verify.** Find your model in the Models list (search your handle). Open it and count its components. Raise your hand when you can see them.
-
-{{% alert color="warning" title="Tell the room" %}}
-A generated model cannot be deleted from the UI. That is why everyone uses their handle in the name. To stop using a model later, mark it as ignored, or delete it with `mesheryctl model delete <model-name>`. Signing in to the Playground in your browser does not configure `mesheryctl`: point it at the Playground first with `mesheryctl system context create playground --url https://playground.meshery.io --set`, give the Playground its own token file with `mesheryctl system token create playground-token -f ~/.meshery/playground-auth.json --set` so signing in does not overwrite the token your other contexts use, sign in with `mesheryctl system login`, run `chmod 600 ~/.meshery/playground-auth.json` so only you can read the token on a shared machine, and confirm `mesheryctl system context view` shows the Playground endpoint before you delete anything, so the command does not target another server.
-{{% /alert %}}
-
-## Lab 2: Create your design (0:33 to 0:53)
-
-Attendees build a design in Kanvas that combines their new cert-manager model with core Kubernetes components, configures them, adds relationships and validates the result.
-
-### Instructor demo (5 min)
+{{< tabs id="lab-1-paths" >}}
+Path A: Kanvas
 
 1. **Open Kanvas Designer.** Go to https://playground.meshery.io/extension/meshmap and choose the Designer tab.
-2. **Create and name the design.** Start a new design and name it `kubecon-instructor-design`. Point at the save indicator beside the name: a cloud with a tick means saved.
-3. **Find your model.** Search the component list for your display name. Hover it and click the pin icon (Pin To Dock) so it sits in the dock at the bottom.
-4. **Add a Namespace.** From the Kubernetes model, drag a Namespace onto the canvas and name it `kubecon-demo`.
-5. **Add your model's components inside it.** From your pinned model, drag an Issuer and a Certificate and drop them inside the Namespace. Dropping a child inside a parent creates a hierarchical relationship.
-6. **Configure.** Select each component and fill its configuration form. For cert-manager: give the Issuer a name and a self-signed spec; give the Certificate a `secretName` and an `issuerRef` naming that Issuer. Required fields are marked.
-7. **Add a workload and an edge.** Drag a Deployment and a Service into the Namespace. Tap the Service, pick a relationship type from the edge picker, and drag to the Deployment. Kanvas highlights compatible targets.
-8. **Validate.** Run Validate. It checks every component against its schema and does not contact a cluster. The count in the result comes from the design, so it includes components whose definitions could not be fetched; a clean result does not guarantee every component was checked. Fix anything it flags.
+2. **Create and name the design.** Start a new design and name it `kubecon-<your-handle>-design`, for example `kubecon-octocat-design`. The save indicator beside the name is a cloud with a tick when the design is saved. Kanvas saves automatically about 3 seconds after you stop editing.
+3. **Add a Deployment.** From the Kubernetes model, drag a Deployment onto the canvas. Open its configuration form, give it a name, and set the container image to `meshery/meshery-milestone:latest`. That image is a small Nginx app; Docker Hub currently publishes it under the `latest` tag only. Add a label such as `app: kubecon-<your-handle>`.
+4. **Add a Service.** Drag a Service onto the canvas. In its configuration form, set the selector to the same `app: kubecon-<your-handle>` value so the Service targets the Deployment, and set port and targetPort to `80`.
+5. **Connect them.** Tap the Service, pick a relationship type from the edge picker, and drag to the Deployment. Kanvas highlights compatible targets.
+6. **Validate.** Run Validate and fix anything it reports. Validate checks every component against its schema and does not contact a cluster. The count in the result comes from the design, so it includes components whose definitions could not be fetched; a clean result does not guarantee every component was checked.
+7. **Confirm it is saved.** Check the save indicator shows a cloud with a tick.
+8. **Publish to the Catalog.** Open Details for the design: click the info ("i") button, or choose Details from the File menu, or go to **Configuration** > **Designs** and open the design's **Design Information**. Fill in Type, Technology, Description and Caveats (for example: Type "Workload", Technology "Kubernetes", a one-sentence description of your Deployment and Service). Click **Publish to Catalog**.
+<!-- tab -->
+Path B: Meshery UI and mesheryctl
 
-### Attendee steps (15 min)
+Download the ready-made manifest first: [kubecon-design.yaml](kubecon-design.yaml). It defines a Deployment that uses `meshery/meshery-milestone:latest` and a Service that selects it on port 80. You can edit the resource names and the `app: kubecon-demo` label to include your handle before you import, or leave them as they are and just give the design a unique name.
 
-1. **Open Kanvas Designer.** Go to https://playground.meshery.io/extension/meshmap and choose Designer.
-2. **New design.** Create a design named `kubecon-<your-handle>-design`.
-3. **Pin your model.** Search the component list for your model's display name, hover it and click Pin To Dock.
-4. **Add a Namespace.** Drag a Namespace from the Kubernetes model onto the canvas and name it.
-5. **Use your model.** Drag an Issuer and a Certificate from your pinned model into the Namespace.
-6. **Configure them.** Select each component and fill in its required fields in the configuration form. Give everything a name. For cert-manager: give the Issuer a self-signed spec; give the Certificate a `secretName` and an `issuerRef` naming that Issuer.
-7. **Add a workload and connect it.** Add a Deployment and a Service. Create an edge from the Service to the Deployment with the edge picker.
-8. **Validate.** Run Validate and fix anything it reports. The validated component count includes components whose definitions cannot be fetched, so a matching count does not confirm that every component was checked.
-9. **Confirm it is saved.** Check the save indicator shows a cloud with a tick. Kanvas saves automatically about 3 seconds after you stop editing.
+If you will use `mesheryctl` in this lab or in Lab 2, point it at the Playground once, before you import anything. Signing in to the Playground in your browser does not configure `mesheryctl`.
 
-## Wrap-up and next steps (0:53 to 1:00)
+```sh
+mesheryctl system context create playground --url https://playground.meshery.io --set
+mesheryctl system token create playground-token -f ~/.meshery/playground-auth.json --set
+mesheryctl system login
+chmod 600 ~/.meshery/playground-auth.json
+mesheryctl system context view
+```
 
-1. **Recap (1 min).** Model in the Registry on the shared Playground instance, design in Kanvas saved to your account. Deployments reset; designs do not.
-2. **One quick share if time (2 min).** If the labs finished early, invite one volunteer to show a design: which relationships did Kanvas create, and what did Validate catch?
-3. **Next steps (4 min).** Contribute a model upstream, try the stretch goals and the CLI scaffold route at home, join the community Slack at https://slack.layer5.io, and keep using your Playground account.
+The token file is separate so signing in does not overwrite the token your other contexts use. Confirm `mesheryctl system context view` shows the Playground endpoint before you import or delete anything.
 
-## Stretch goals (take-home)
+### Import the manifest as a design
 
-These are optional. Use them if you finish a lab early, or after the session.
+Use the UI, or `mesheryctl`, or both.
 
-- **Generate a model from a different CRD source** and compare component counts with your cert-manager model:
+**Meshery UI**
 
-  | Pick | Technology | Source URL for the wizard |
-  |---|---|---|
-  | B | Argo Rollouts | `git://github.com/argoproj/argo-rollouts/master/manifests/crds` |
-  | C | KEDA | `git://github.com/kedacore/keda/main/config/crd/bases` |
-  | D | Gateway API | `git://github.com/kubernetes-sigs/gateway-api/main/config/crd/standard` |
-  | E | External Secrets | `git://github.com/external-secrets/external-secrets/main/config/crds/bases` |
+1. Go to **Configuration** > **Designs**, or open https://playground.meshery.io/configuration/designs.
+2. Click **Import Design**.
+3. Enter the **Design Name** `kubecon-<your-handle>-design`, for example `kubecon-octocat-design`.
+4. Choose **File Upload**, then pick `kubecon-design.yaml` from your computer.
+5. Click **Import**. Importing does not deploy anything.
 
-  Suggested design pairs if you use one of these in Kanvas: Argo Rollouts Rollout plus AnalysisTemplate; KEDA ScaledObject plus TriggerAuthentication; Gateway API Gateway plus HTTPRoute; External Secrets SecretStore plus ExternalSecret.
-- Read the CLI scaffold route for hand-authored models: `mesheryctl model init`, `mesheryctl model build`, then `mesheryctl model import`. This needs a local Meshery Server, so it is homework, not part of today's lab.
-- Dry run the design against the Playground cluster. A dry run sends the design to the cluster without applying it. Custom resources fail if the cluster lacks that CRD, which is a good discussion point.
-- Deploy only the Namespace, Deployment and Service, then look at them in Operator mode. Remind yourself that the Playground clusters reset daily.
-- Export the design to keep a file copy, or open Details from the File menu to share it with a neighbor.
-- Alternative route without Kanvas: in Meshery UI go to Configuration, then Designs, then Create Design, pick your model in Select Model and fill the generated forms while the YAML updates beside them.
+**mesheryctl**
+
+```sh
+mesheryctl design import -f kubecon-design.yaml -n kubecon-<your-handle>-design
+```
+
+`-f` is a local path or a direct URL. `-n` names the design; without it, `mesheryctl` uses the file name. `-s` is optional because Meshery Server detects the format. If you pass it, use `-s "Kubernetes Manifest"` (the value is case-insensitive). Confirm the import:
+
+```sh
+mesheryctl design list
+mesheryctl design view kubecon-<your-handle>-design
+```
+
+`mesheryctl design view` prints YAML by default. Use `-o json` if you want JSON.
+
+### Optional: build the design in the Design Configurator
+
+Instead of importing the manifest, you can create the design from forms in Meshery UI (still without Kanvas):
+
+1. Go to **Configuration** > **Designs** and click **Create Design**. The Design Configurator opens at `/configuration/designs/configurator`.
+2. Enter the **Design Name** `kubecon-<your-handle>-design`.
+3. In **Select Category**, choose *Orchestration & Management*. In **Select Model**, choose *Kubernetes*.
+4. Expand the Deployment form, set the container image to `meshery/meshery-milestone:latest`, and add a label such as `app: kubecon-<your-handle>`.
+5. Expand the Service form, set the selector to that same label, and set port and targetPort to `80`.
+6. Click the **Save Design as New File** icon. The design appears on the Designs page.
+
+### Validate and dry run
+
+On the Designs page, open the action menu for your design:
+
+1. Choose **Validate Design**. This checks the design against component schemas and does not contact a cluster. Fix anything it reports, then validate again.
+2. Optionally choose **Dry Run**. Dry Run talks to a cluster and is not required to finish the lab.
+
+There is no `mesheryctl design validate` or `mesheryctl design check` command. `mesheryctl design evaluate` runs relationship-evaluation policies and writes an evaluated design to a file; it is not a substitute for **Validate Design** and is not required in this lab.
+
+### Publish to the Catalog
+
+The Designs table does not have a separate Publish action. Publish from Design Information:
+
+1. On **Configuration** > **Designs**, open the action menu for your design and choose **Design Information**.
+2. Fill in Type, Technology, Description and Caveats (for example: Type "Workload", Technology "Kubernetes", a one-sentence description of your Deployment and Service). Technology maps to the form's compatibility field; pick at least one.
+3. Click **Publish to Catalog**. You must be signed in, you must own the design, and you need the Publish Design permission.
+
+There is no `mesheryctl` command that publishes a design to the Catalog.
+{{< /tabs >}}
+
+{{% alert color="info" title="What 'published' means in this room" %}}
+If your account is an Organization Admin or Provider Admin, the design is published immediately, and the UI reports that the design was published. For a regular user, the request is queued for review (catalog request status `pending`). The UI reports that the design is queued for publishing and that maintainers have been notified. The design stays in My Designs, with its existing visibility (private or public), until an Organization Admin or Provider Admin approves or rejects the request. You will get an email when that happens. While the request is pending, you can keep editing the same design; the submitted request updates automatically, and you do not need to publish again. After a design is approved it is locked, its visibility becomes published, and it is listed in the Catalog. You would clone it to make a new version. For this lab, success is submitting the publish request, not waiting for approval.
+{{% /alert %}}
+
+<details>
+<summary>Instructor guide: Lab 1</summary>
+
+**Path A.** Open Kanvas Designer at https://playground.meshery.io/extension/meshmap and start a design named `kubecon-instructor-design`. Point at the save indicator. Drag a Deployment, set the image to `meshery/meshery-milestone:latest`, and apply a label such as `app: kubecon-instructor`. Drag a Service, set the selector to that same label, and set port and targetPort to 80. Draw an edge from the Service to the Deployment. Run Validate and show a saved state. Open Details and click Publish to Catalog.
+
+**Path B.** Open https://playground.meshery.io/configuration/designs, import [kubecon-design.yaml](kubecon-design.yaml) with **Import Design**, or run `mesheryctl design import -f kubecon-design.yaml -n kubecon-instructor-design`. Show **Validate Design** in the action menu, then **Design Information** and **Publish to Catalog**.
+
+Tell the room about a queued request versus an admin publish, and that submitting the request is the lab goal.
+
+</details>
+
+## Lab 2: Create a custom model and add it to your design
+
+Attendees create an annotation-only model whose visual identity is the KubeCon logo, import or register that model in the Playground, and add it to the Lab 1 design.
+
+Download these files from this page first:
+
+- [KubeCon logo, color](kubecon-logo-color.svg) (`svgColor`, Path A: Logo (Light Theme))
+- [KubeCon logo, white](kubecon-logo-white.svg) (`svgWhite`, Path A: Logo (Dark Theme))
+- Fallback (and the working Path A model file): [ready-made model archive](kubecon-logo.tar.gz)
+
+The logos are the official KubeCon + CloudNativeCon North America 2026 artwork from the [CNCF artwork repository](https://github.com/cncf/artwork).
+
+{{< tabs id="lab-2-paths" >}}
+Path A: Kanvas
+
+Path A builds the model in the Playground Registry, then adds the component in Kanvas Designer. You do not need `mesheryctl`.
+
+### Open the Create Model wizard
+
+1. Open the Registry: click your avatar in the top right and choose **Registry**, or go to **Settings** > **Registry**, or open https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models.
+2. On the **Models** tab, click **Create Model**. The modal title is **Create Model**.
+
+### Walk through the wizard
+
+The stepper labels are **Model Details**, **Model Categorization**, **Styling**, **Source**, **Additional Details**, and **Finalize Generation**. Use **Next** to advance. **Generate** runs on the summary step and registers the model immediately. The wizard has no separate Immediate Registration toggle.
+
+1. **Model Details.** Enter a unique **Model Name** such as `kubecon-<your-handle>-logo` (lowercase letters, digits, and hyphens only, no spaces) and a **Model Display Name** such as `KubeCon Logo (<your-handle>)`.
+2. **Model Categorization.** Choose a **Category** and **Subcategory**. If nothing fits, choose *Uncategorized* for both, so the model is easy to find later.
+3. **Styling.** Upload [kubecon-logo-color.svg](kubecon-logo-color.svg) as **Logo (Light Theme)** and [kubecon-logo-white.svg](kubecon-logo-white.svg) as **Logo (Dark Theme)**. The inputs accept `.svg` files only (the browser reports `image/svg+xml`). Optionally set **Primary Color**, **Secondary Color**, and **Shape**. If you leave colors and shape empty, Meshery uses its defaults. Light Theme maps to `svgColor`; Dark Theme maps to `svgWhite`.
+4. **Source.** Choose **GitHub** or **Artifact Hub**, then enter a **Model URL**. This step is required: **Next** stays disabled until the source and a valid URL are set.
+5. **Additional Details.** Check **The components in this model are visual annotations only.** The wizard's help text and the generation summary call this option **Visual Annotation Only**.
+6. **Finalize Generation.** Review the summary, including **Visual Annotation Only: Yes**, then click **Generate**. When it finishes, click **Finish**.
+
+{{% alert color="warning" title="The wizard cannot create a component from an SVG alone" %}}
+Create Model always sources components from a GitHub or Artifact Hub URL. On Generate, Meshery processes that URL, extracts component definitions (for example, CRDs), and registers the model. Your uploaded logos and colors style those sourced components. Checking Visual Annotation Only marks those sourced components as annotations; it does not invent a new component from the SVGs. There is no wizard field for a single custom component kind, and **Source** cannot be skipped.
+
+Do not invent a dummy URL just to click Generate. That would either fail, or register unrelated components styled with the KubeCon logo, which is not the lab goal.
+
+The working Path A step for a single KubeCon Logo component is **Import Model** with the ready-made archive, next.
+{{% /alert %}}
+
+### Import the ready-made KubeCon logo model
+
+1. Stay on the Registry **Models** tab and click **Import Model**.
+2. Choose **File Import**, pick [kubecon-logo.tar.gz](kubecon-logo.tar.gz) from your computer, and import it.
+3. Confirm the model appears in the Registry. This fallback model is named `kubecon-logo` and is shared, so prefer a handle-specific model when you have one. The archive already has `isAnnotation` set to `true` and the SVGs inlined, with a single component whose kind and display name are `kubecon-logo` and `KubeCon Logo`.
+
+### Add the logo to your Lab 1 design in Kanvas
+
+1. **Reopen your design** in Kanvas Designer at https://playground.meshery.io/extension/meshmap.
+2. **Find the component.** Search the component list for `KubeCon Logo` or your model display name. Hover it and click the pin icon (Pin To Dock) so it sits in the dock at the bottom. If it does not appear, refresh the Kanvas tab and search again.
+3. **Drop it on the canvas.** Drag the KubeCon Logo component onto the design near your Deployment and Service. It is annotation-only, so it is a visual label, not a workload.
+4. **Save.** Wait for the cloud-with-a-tick save indicator.
+5. **Optional: update the Catalog request.** If your Lab 1 publish request is still pending review, this save is enough; the submitted design updates automatically. If the design was already approved and is locked in the Catalog, clone it, add the logo to the clone, and publish the new design.
+<!-- tab -->
+Path B: Meshery UI and mesheryctl
+
+Path B builds the model with `mesheryctl` (or imports the ready-made archive in the Registry) and adds the component without Kanvas. If you did not already point `mesheryctl` at the Playground in Lab 1, do that first. Signing in to the Playground in your browser does not configure `mesheryctl`.
+
+```sh
+mesheryctl system context create playground --url https://playground.meshery.io --set
+mesheryctl system token create playground-token -f ~/.meshery/playground-auth.json --set
+mesheryctl system login
+chmod 600 ~/.meshery/playground-auth.json
+mesheryctl system context view
+```
+
+Confirm `mesheryctl system context view` shows the Playground endpoint before you import or delete anything.
+
+### Scaffold, edit, package and import
+
+1. **Scaffold the model.** Pick a unique model name that includes your handle, using lowercase letters, digits and hyphens only:
+
+   ```sh
+   mesheryctl model init kubecon-<your-handle>-logo --version v0.1.0
+   ```
+
+   That creates `kubecon-<your-handle>-logo/v0.1.0/`, with `model.json`, a sample file under `components/`, and empty `relationships/`, `connections/` and `credentials/` directories.
+
+2. **Edit `model.json`.** Set `metadata.isAnnotation` to `true`. Set `registrant.kind` to `meshery`, give the model a short description, and paste the color SVG into `metadata.svgColor` and the white SVG into `metadata.svgWhite`. Strip any XML header (`<?xml ... ?>`) and collapse each SVG to a single line before pasting. Leave `schemaVersion` as `models.meshery.io/v1beta2`. If you set a category, *Uncategorized* is a safe choice.
+
+3. **Replace the sample component.** In `components/`, keep a single JSON file (you can rename `component.json` to `kubecon-logo.json`). Set:
+
+   - `displayName` to `KubeCon Logo`
+   - `component.kind` to `kubecon-logo`
+   - `metadata.isAnnotation` to `true`
+   - `styles.svgColor` and `styles.svgWhite` to the same inlined SVGs
+   - `schemaVersion` to `components.meshery.io/v1beta1` (this wire format is the most widely accepted by current Meshery Servers)
+   - the nested `model.name` to the same name you passed to `model init`
+
+   You can delete the sample file under `relationships/` if you do not need it. A model imports if it contains at least one valid component.
+
+4. **Package the model as an OCI archive:**
+
+   ```sh
+   mesheryctl model build kubecon-<your-handle>-logo/v0.1.0
+   ```
+
+   This writes `kubecon-<your-handle>-logo-v0-1-0.tar` in your current directory.
+
+5. **Import it into the Playground:**
+
+   ```sh
+   mesheryctl model import -f kubecon-<your-handle>-logo-v0-1-0.tar
+   mesheryctl model view kubecon-<your-handle>-logo
+   ```
+
+   You can also import from the UI: avatar, then **Registry**, then **Import Model**, then **File Import**, and choose the `.tar` file. Either route registers the model in the shared Playground instance.
+
+{{% alert color="info" title="Fallback if init or build fails" %}}
+Download the [ready-made model archive](kubecon-logo.tar.gz) from this page and import it with `mesheryctl model import -f kubecon-logo.tar.gz`, or use Import Model in the Registry. This fallback model is named `kubecon-logo` and is shared, so prefer the handle-specific path above when you can. The archive is a model directory with `model.json` and one annotation component; `isAnnotation` is already set to `true` and the SVGs are already inlined.
+{{% /alert %}}
+
+### Add the logo to your Lab 1 design (without Kanvas)
+
+Without Kanvas you will not see the logo on a canvas. You can still add the annotation component to the design document, save or update it, and confirm it with `mesheryctl design view`.
+
+**Preferred: add it in the Design Configurator**
+
+1. Go to **Configuration** > **Designs**, open the action menu for your Lab 1 design, and choose **Edit**. The Design Configurator opens at `/configuration/designs/configurator?design_id=...`.
+2. In **Select Category**, look for the category you gave the model (the ready-made archive uses *Uncategorized*). In **Select Model**, choose your KubeCon logo model.
+3. Expand the **KubeCon Logo** component form, give it a name if prompted, and confirm it appears in the YAML editor next to the forms.
+4. Click the **Update Design** icon (not **Save Design as New File**, unless you want a copy).
+
+If the model does not appear in the category or model dropdowns, refresh the page and search again. Whether a just-imported annotation-only model always appears in the Design Configurator has not been verified in the Playground; if it does not, use the YAML path below.
+
+**YAML path: export, add a component, and update**
+
+1. Export the design. In Meshery UI, on the Designs page, choose **Download** and pick **Meshery Design (yaml)**. Or run:
+
+   ```sh
+   mesheryctl design export kubecon-<your-handle>-design
+   ```
+
+   The default `--type` is `current` (the design as Meshery stores it now).
+
+2. Open the exported YAML. It should have a top-level `components:` list and a `schemaVersion` such as `designs.meshery.io/v1beta1`. Append this component to that list. Replace the model `name` with your handle-specific model name, or use `kubecon-logo` if you imported the fallback archive. Generate a fresh UUID for `id` (for example with `uuidgen`):
+
+   ```yaml
+   - id: 00000000-0000-0000-0000-000000000000
+     schemaVersion: components.meshery.io/v1beta1
+     version: v0.1.0
+     displayName: KubeCon Logo
+     format: JSON
+     status: enabled
+     model:
+       schemaVersion: models.meshery.io/v1beta2
+       version: v0.1.0
+       name: kubecon-<your-handle>-logo
+       displayName: KubeCon Logo
+       status: enabled
+       metadata:
+         isAnnotation: true
+       model:
+         version: v0.1.0
+     metadata:
+       isAnnotation: true
+     component:
+       kind: kubecon-logo
+       version: v0.1.0
+       schema: ""
+     configuration: {}
+   ```
+
+   This snippet matches the v1beta1 component shape used in published catalog designs and in the ready-made `kubecon-logo` model (`schemaVersion`, `component.kind`, nested `model.name` / `model.version`, and `metadata.isAnnotation`). It omits Kanvas-only `styles.position` fields. The Registry should supply the component's SVG styling when the referenced model is registered. This exact append-and-update path has been checked against the schema and against Meshery source, but it has not been dry-run in the Playground.
+
+3. Update the existing design: open it in the Design Configurator, paste the edited YAML into the editor, and click **Update Design**.
+
+   `mesheryctl design import` always creates a **new** design (it posts to `/api/pattern/import` and does not update an existing ID). If you re-import the edited file, give it a new name, for example:
+
+   ```sh
+   mesheryctl design import -f kubecon-<your-handle>-design-with-logo.yaml -s "Meshery Design" -n kubecon-<your-handle>-design-with-logo
+   ```
+
+4. Confirm the logo component is in the design:
+
+   ```sh
+   mesheryctl design view kubecon-<your-handle>-design
+   ```
+
+5. **Optional: update the Catalog request.** If your Lab 1 publish request is still pending review, updating the same design is enough; the submitted request updates automatically. If you created a new design by re-importing, publish that new design. If the original design was already approved and is locked, clone it, add the logo to the clone, and publish the new design.
+{{< /tabs >}}
+
+<details>
+<summary>Instructor guide: Lab 2</summary>
+
+**Path A.** Show the logo downloads on this page. Open the Registry at https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models, walk through **Create Model** far enough to show Model Details, Styling (the two SVG uploads), Visual Annotation Only, and the required Source step. Tell the room, honestly, that Generate sources components from a GitHub or Artifact Hub URL and cannot create a single logo component from the SVGs alone. Switch to **Import Model** and import `kubecon-logo.tar.gz`. In Kanvas Designer, pin the component, drop it on the Lab 1 design, and save.
+
+**Path B.** Run `mesheryctl model init`, edit `isAnnotation` and the SVG fields, run `model build`, and `model import -f` against the Playground context. If the CLI path is slow for the room, switch early to the ready-made `kubecon-logo.tar.gz` and Import Model in the Registry. Show adding the component in the Design Configurator, or the YAML snippet and **Update Design**. Confirm with `mesheryctl design view`.
+
+Remind people that a pending Catalog request on the same design picks up the edit automatically.
+
+</details>
+
+## Wrap-up and next steps
+
+1. **Recap.** A Deployment and Service design, submitted to the Catalog; a custom annotation-only KubeCon logo model registered in the Playground and added to that design. Deployments in the Playground reset daily; designs and models you own do not.
+2. **One quick share if time.** If the labs finished early, one volunteer shows their design. On Path A, show the Service-to-Deployment edge and the logo on the canvas. On Path B, show the design on the Designs page and the logo component in **Design Information** or `mesheryctl design view`.
+3. **Next steps.** Contribute a model upstream, try the stretch goals at home, join the community Slack at https://slack.layer5.io, and keep using your Playground account.
 
 ## What success looks like
 
-Each attendee can show all of the following before leaving. Helpers can use this as a walk-around check during the last seven minutes.
+Each attendee can show all of the following before leaving.
 
-- Signed in to the Playground with their own account (by 0:10)
-- A model named with their handle appears in Registry, Models, with its components listed (by 0:33)
-- That model is pinned to the Kanvas dock (Lab 2)
-- A design named with their handle contains a Namespace, at least two components from their model, a Deployment and a Service (Lab 2)
-- At least one parent and child relationship and one edge relationship are visible (Lab 2)
-- Validate passes, or every remaining finding is understood (by 0:53)
-- The save indicator shows saved, and the design reopens from their design list (by 0:53)
+- Signed in to the Playground with their own account
+- A design named with their handle contains a Deployment using `meshery/meshery-milestone:latest` and a Service that selects it on port 80
+- Validate has been run (Kanvas Validate on Path A, or **Validate Design** on the Designs page on Path B), and the design is saved
+- A Catalog publish request has been submitted (the design is published, or the request is queued / pending review)
+- A KubeCon logo model is listed in the Registry (their handle-specific model, or the shared fallback)
+- The logo component has been added to the Lab 1 design, and the design has been saved or updated again (visible on the Kanvas canvas on Path A, or in the design file / `mesheryctl design view` on Path B)
 
-Room-level target: at least 80% of attendees complete both labs. Track it with a show of hands at 0:33 and 0:53.
+<details>
+<summary>Instructor and helper notes</summary>
+
+Helpers can use this list as a walk-around check during the last few minutes.
+
+Room-level target: at least 80% of attendees complete both labs. Track it with a show of hands after Lab 1 and after Lab 2. If useful, also ask how many are on Path A versus Path B.
+
+</details>
 
 ## Troubleshooting and fallbacks
 
@@ -199,21 +461,51 @@ Room-level target: at least 80% of attendees complete both labs. Track it with a
 |---|---|
 | Stuck on the sign-in page | Try another provider (GitHub, Google or email). If the venue blocks it, pair with a neighbor and keep trying on a phone hotspot. |
 | Model name rejected | Use lowercase letters, digits, and hyphens only, no spaces or underscores. |
-| Generate fails or never confirms | Open the Notification Center for the error. Re-check the cert-manager source URL format and branch name. If it stays stuck, try a stretch-goal source. |
-| Model not in the Kanvas component list | Refresh the Kanvas tab, then search by display name. Generate already registers the model; there is no Immediate Registration toggle. |
+| Create Model will not leave the Source step | The wizard requires a GitHub or Artifact Hub URL and generates components from that URL. It cannot create a component from an SVG alone. Use **Import Model** with [kubecon-logo.tar.gz](kubecon-logo.tar.gz) instead. |
+| `mesheryctl` talks to the wrong server | Run `mesheryctl system context view` and confirm the endpoint is `https://playground.meshery.io` before import or delete. Recreate the context and token if it is not. |
+| `model build` or `model import` fails | Open the Notification Center or the CLI error. Check that `metadata.isAnnotation` is `true`, that each SVG is a single-line string, and that the component `schemaVersion` is `components.meshery.io/v1beta1`. If it stays stuck, import the ready-made [kubecon-logo.tar.gz](kubecon-logo.tar.gz). |
+| Model not in the Kanvas component list | Refresh the Kanvas tab, then search by display name (`KubeCon Logo`). If you used Import Model, confirm the model is listed in the Registry first. |
+| Model not in the Design Configurator dropdowns | Refresh the configurator tab, then look under the category you chose (the ready-made archive uses *Uncategorized*). If it still does not appear, use the YAML export-and-update path. |
+| Service does not target the Deployment | The Service selector must match a label on the Deployment, for example `app: kubecon-<your-handle>` or `app: kubecon-demo` if you imported the ready-made manifest unchanged. Port and targetPort should both be `80`. |
+| Publish to Catalog is disabled | Sign in again and reopen **Design Information**. Publish requires a signed-in account that owns the design and has the Publish Design permission. |
+| Catalog request still says it is queued or pending | That is expected for a regular user. The lab is complete once the request is submitted. Keep editing if you are still in Lab 2; a pending request on the same design updates automatically. |
 | Name already taken | Someone else used it. Add a suffix such as `-two`. |
 | Save indicator shows Unable to save | Stop editing until it clears. Usually a dropped connection or an expired session; sign in again. |
-| Playground slow for the whole room | Instructor continues from the pre-built design. Attendees who already have a model move to Lab 2; others use an existing Registry model such as Kubernetes plus any model already listed, and still build their own design. |
+| Playground slow for the whole room | Attendees who already have a design move to publish or to Lab 2. If model import is slow, use the ready-made archive or pin any already-imported `kubecon-logo` model. |
 
-{{% alert color="info" title="Instructor note" %}}
-The UI steps come from current Meshery and Kanvas documentation. The instructor's morning dry run is the check; update the session if a label differs.
-{{% /alert %}}
+<details>
+<summary>Instructor notes: fallbacks</summary>
+
+- If the Playground is slow for the whole room, continue teaching from the pre-built design.
+- The UI steps come from current Meshery, Kanvas, and Registry source. The instructor's morning dry run is the check; update the session if a label differs.
+- Path A attendees who cannot use Kanvas can switch to Path B mid-session. Path B attendees who want a canvas can switch to Path A after the model is imported and pick up at "Add the logo to your Lab 1 design in Kanvas."
+
+</details>
+
+## Stretch goals
+
+These are optional. Use them if you finish a lab early, or after the session.
+
+- Finish the Create Model wizard with a real CRD source, such as `git://github.com/cert-manager/cert-manager/master/deploy/crds`, to see how Generate builds components from a URL. This is separate from the KubeCon logo component.
+- Dry run or deploy only the Deployment and Service, then look at them in Operator mode (Path A) or from the Designs page **Dry Run** / **Deploy** actions (Path B). The Playground clusters reset daily.
+- Export the design to keep a file copy. On Path A, open Details from the File menu to share it with a neighbor. On Path B, use **Download** on the Designs page or `mesheryctl design export`.
+- Path A: wrap the Deployment and Service in a Namespace and let Kanvas create the parent-child relationship.
 
 ## Related docs
 
+- [Creating a Meshery Design]({{< ref "guides/configuration-management/creating-a-meshery-design.md" >}})
+- [Importing and Exporting Designs]({{< ref "guides/configuration-management/import-export-designs.md" >}})
+- [Catalog]({{< ref "concepts/architecture/catalog/index.md" >}})
+- [Publishing Designs](https://docs.layer5.io/kanvas/designer/publishing-designs/)
 - [Create Models]({{< ref "guides/configuration-management/creating-models/index.md" >}})
 - [Importing Models]({{< ref "guides/configuration-management/importing-models/index.md" >}})
-- [Creating a Meshery Design]({{< ref "guides/configuration-management/creating-a-meshery-design.md" >}})
+- [mesheryctl design import]({{< ref "reference/mesheryctl/design/import.md" >}})
+- [mesheryctl design list]({{< ref "reference/mesheryctl/design/list.md" >}})
+- [mesheryctl design view]({{< ref "reference/mesheryctl/design/view.md" >}})
+- [mesheryctl design export]({{< ref "reference/mesheryctl/design/export.md" >}})
+- [mesheryctl model init]({{< ref "reference/mesheryctl/model/init.md" >}})
+- [mesheryctl model build]({{< ref "reference/mesheryctl/model/build.md" >}})
+- [mesheryctl model import]({{< ref "reference/mesheryctl/model/import.md" >}})
 - [Using Meshery Playground]({{< ref "installation/playground.md" >}})
 - Kanvas: [Getting started](https://docs.layer5.io/kanvas/getting-started/), [Creating relationships](https://docs.layer5.io/kanvas/getting-started/creating-relationships/), [Pin a model to the dock](https://docs.layer5.io/kanvas/designer/pin-model-to-dock/), [Saving designs](https://docs.layer5.io/kanvas/designer/saving-designs/)
 - [Contributor Training](https://layer5.io/learn/workshops)
