@@ -329,3 +329,45 @@ func TestPreRunEValidation(t *testing.T) {
 		})
 	}
 }
+
+func TestGenerateCmdArgs(t *testing.T) {
+	tests := []struct {
+		name        string
+		args        []string
+		expectError bool
+		errorMsg    string
+	}{
+		{
+			name:        "Zero arguments succeeds",
+			args:        []string{},
+			expectError: false,
+		},
+		{
+			name:        "One unexpected argument returns error",
+			args:        []string{"extra-arg"},
+			expectError: true,
+			errorMsg:    "too many arguments specified",
+		},
+		{
+			name:        "Multiple unexpected arguments returns error",
+			args:        []string{"arg1", "arg2"},
+			expectError: true,
+			errorMsg:    "too many arguments specified",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := generateCmd.Args(generateCmd, tt.args)
+			if tt.expectError {
+				assert.Error(t, err)
+				if tt.errorMsg != "" {
+					assert.Contains(t, err.Error(), tt.errorMsg)
+				}
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
