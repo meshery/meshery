@@ -317,4 +317,29 @@ describe('MeshModelComponent RBAC guard', () => {
       expect(screen.getByTestId('meshery-tree-view')).toHaveAttribute('data-count', '1'),
     );
   });
+
+  it('unsubscribes settled single and registrant handles when permission is revoked', async () => {
+    const settledRegistrants = createControllableQueryPromise<any>();
+    const settledRegistrantModels = createControllableQueryPromise<any>();
+    settledRegistrants.resolve({ data: { registrants: [{ hostname: 'ArtifactHub' }] } });
+    settledRegistrantModels.resolve({ data: { models: [{ id: 'r1-m1' }] } });
+
+    mockGetRegistrantsData.mockReturnValueOnce(settledRegistrants.promise);
+    mockGetMeshModelsData.mockReturnValueOnce(settledRegistrantModels.promise);
+
+    const { rerender } = render(<MeshModelComponent externalView="Registrants" />);
+
+    await waitFor(() =>
+      expect(screen.getByTestId('meshery-tree-view')).toHaveAttribute('data-count', '1'),
+    );
+    expect(settledRegistrants.promise.unsubscribe).not.toHaveBeenCalled();
+    expect(settledRegistrantModels.promise.unsubscribe).not.toHaveBeenCalled();
+
+    mockUseHasPermission.mockReturnValue(false);
+    rerender(<MeshModelComponent externalView="Registrants" />);
+
+    expect(settledRegistrants.promise.unsubscribe).toHaveBeenCalledTimes(1);
+    expect(settledRegistrantModels.promise.unsubscribe).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('default-error')).toBeInTheDocument();
+  });
 });

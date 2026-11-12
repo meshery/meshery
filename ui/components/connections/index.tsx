@@ -56,6 +56,12 @@ function ConnectionManagementPage(props) {
     setCreateConnectionModal({ open: false });
   };
 
+  useEffect(() => {
+    if (!hasViewConnections) {
+      setCreateConnectionModal((prev) => (prev.open ? { open: false } : prev));
+    }
+  }, [hasViewConnections]);
+
   const handleCreateConnectionSubmit = () => {};
 
   return (
@@ -85,7 +91,8 @@ function Connections({ hasViewConnections }) {
   const theme = useTheme();
   const router = useRouter();
   const { query, pathname, push, isReady, replace } = router;
-  const { openCreateConnection } = useConnectionWizardModal();
+  const { openCreateConnection, closeCreateConnection } = useConnectionWizardModal();
+  const prevHasViewConnectionsRef = useRef(hasViewConnections);
   const tabParam = typeof query.tab === 'string' ? query.tab.toLowerCase() : undefined;
   const connectionId = typeof query.connectionId === 'string' ? query.connectionId : undefined;
 
@@ -115,6 +122,13 @@ function Connections({ hasViewConnections }) {
     delete nextQuery[CREATE_CONNECTION_QUERY.kind];
     replace({ pathname, query: nextQuery }, undefined, { shallow: true });
   }, [hasViewConnections, isReady, createFlag, kindFromQuery, openCreateConnection]);
+
+  useEffect(() => {
+    if (prevHasViewConnectionsRef.current && !hasViewConnections) {
+      closeCreateConnection();
+    }
+    prevHasViewConnectionsRef.current = hasViewConnections;
+  }, [hasViewConnections, closeCreateConnection]);
 
   // Next.js's pages-router `router.query` and `router.push` get fresh
   // references on each render, which previously cascaded into a new

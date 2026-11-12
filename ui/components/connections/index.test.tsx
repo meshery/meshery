@@ -5,13 +5,19 @@ import { Keys } from '@meshery/schemas/permissions';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ConnectionManagementPageWithErrorBoundary from './index';
 
-const { mockUseHasPermission, mockUseGetSchemaQuery, mockOpenCreateConnection, mockReplace } =
-  vi.hoisted(() => ({
-    mockUseHasPermission: vi.fn(),
-    mockUseGetSchemaQuery: vi.fn(),
-    mockOpenCreateConnection: vi.fn(),
-    mockReplace: vi.fn(),
-  }));
+const {
+  mockUseHasPermission,
+  mockUseGetSchemaQuery,
+  mockOpenCreateConnection,
+  mockCloseCreateConnection,
+  mockReplace,
+} = vi.hoisted(() => ({
+  mockUseHasPermission: vi.fn(),
+  mockUseGetSchemaQuery: vi.fn(),
+  mockOpenCreateConnection: vi.fn(),
+  mockCloseCreateConnection: vi.fn(),
+  mockReplace: vi.fn(),
+}));
 
 const router = {
   query: {} as Record<string, unknown>,
@@ -74,7 +80,7 @@ vi.mock('./ConnectionTable', () => ({
 vi.mock('@/utils/context/ConnectionWizardContextProvider', () => ({
   useConnectionWizardModal: () => ({
     openCreateConnection: mockOpenCreateConnection,
-    closeCreateConnection: vi.fn(),
+    closeCreateConnection: mockCloseCreateConnection,
     open: false,
   }),
 }));
@@ -129,6 +135,7 @@ describe('connections index page', () => {
     router.isReady = true;
     connectionTableCallbackRefs.length = 0;
     mockOpenCreateConnection.mockReset();
+    mockCloseCreateConnection.mockReset();
     mockUseHasPermission.mockReset();
     mockUseHasPermission.mockReturnValue(true);
     mockUseGetSchemaQuery.mockReset();
@@ -250,10 +257,11 @@ describe('connections index page', () => {
     expect(screen.queryByTestId('meshsync-table')).not.toBeInTheDocument();
     expect(screen.queryByTestId('create-connection-modal')).not.toBeInTheDocument();
     expect(mockOpenCreateConnection).not.toHaveBeenCalled();
+    expect(mockCloseCreateConnection).not.toHaveBeenCalled();
     expect(router.replace).not.toHaveBeenCalled();
   });
 
-  it('hides tables and skips schema query when permission is revoked mid-session', () => {
+  it('hides tables, skips schema query, and closes wizard when permission is revoked mid-session', () => {
     const { rerender } = render(<ConnectionManagementPageWithErrorBoundary />);
 
     expect(screen.getByTestId('connection-table')).toBeInTheDocument();
@@ -261,10 +269,12 @@ describe('connections index page', () => {
       { schemaName: 'helmRepo' },
       { skip: false },
     );
+    expect(mockCloseCreateConnection).not.toHaveBeenCalled();
 
     mockUseHasPermission.mockReturnValue(false);
     rerender(<ConnectionManagementPageWithErrorBoundary />);
 
+    expect(mockCloseCreateConnection).toHaveBeenCalledTimes(1);
     expect(mockUseGetSchemaQuery).toHaveBeenLastCalledWith(
       { schemaName: 'helmRepo' },
       { skip: true },

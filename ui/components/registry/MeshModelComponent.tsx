@@ -58,11 +58,16 @@ const MeshModelComponent_ = ({
 }: MeshModelComponentProps) => {
   const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
   const canViewRegistryRef = useRef(canViewRegistry);
-  canViewRegistryRef.current = canViewRegistry;
   const fetchRequestIdRef = useRef(0);
-  const activeQueryHandleRef = useRef<{ unsubscribe?: () => void; abort?: () => void } | null>(
-    null,
+  const trackedQueryHandlesRef = useRef<Set<{ unsubscribe?: () => void; abort?: () => void }>>(
+    new Set(),
   );
+
+  // Sync after commit (and before the passive fetch effect below) so aborted
+  // concurrent renders never leave the ref stale relative to committed UI.
+  useEffect(() => {
+    canViewRegistryRef.current = canViewRegistry;
+  }, [canViewRegistry]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
@@ -226,23 +231,16 @@ const MeshModelComponent_ = ({
 
   const cancelActiveFetch = useCallback(() => {
     fetchRequestIdRef.current += 1;
-    const handle = activeQueryHandleRef.current;
-    if (handle) {
+    for (const handle of trackedQueryHandlesRef.current) {
       handle.unsubscribe?.();
       handle.abort?.();
-      activeQueryHandleRef.current = null;
     }
+    trackedQueryHandlesRef.current.clear();
   }, []);
 
-  const runTrackedQuery = useCallback(async (queryPromise) => {
-    activeQueryHandleRef.current = queryPromise;
-    try {
-      return await queryPromise;
-    } finally {
-      if (activeQueryHandleRef.current === queryPromise) {
-        activeQueryHandleRef.current = null;
-      }
-    }
+  const runTrackedQuery = useCallback((queryPromise) => {
+    trackedQueryHandlesRef.current.add(queryPromise);
+    return queryPromise;
   }, []);
 
   const fetchData = useCallback(async () => {
