@@ -484,7 +484,10 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// not a separate read: a user disconnect, delete or ignore
 		// landing any time before the write leaves the stored status
 		// outside that set, so the write applies to zero rows instead of
-		// moving the connection back to connected. Without this, the
+		// moving the connection back to connected. A remote provider has
+		// no conditional-update API, so there the read and the PUT are
+		// separate calls and a disconnect landing between them can still
+		// slip through; see UpdateConnectionStatusIf. Without this, the
 		// disconnect's save and this send's write race freely — the
 		// disconnect saves first and then drives its own SendEvent in a
 		// detached goroutine, so an in-flight Discovery can overwrite

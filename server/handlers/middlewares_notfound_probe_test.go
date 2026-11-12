@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/http"
 	"sync"
 	"testing"
 	"time"
@@ -46,7 +47,9 @@ type notFoundProbeTestProvider struct {
 	filterByStatus   bool
 	contextsErr      error // when set, GetK8sContexts fails the load
 
-	// conditionalCalls counts UpdateConnectionStatusIf calls.
+	// conditionalCalls counts UpdateConnectionStatusIf calls, counted
+	// when the call returns, so waiting for the count means the write
+	// has already been evaluated.
 	// flipStatusOnStatusWrite, when set, moves the stored status to that
 	// value at the start of the next UpdateConnectionStatusIf call, before
 	// the condition is evaluated: it simulates a user disconnect landing
@@ -54,6 +57,14 @@ type notFoundProbeTestProvider struct {
 	// (issue #23248). It is cleared after one use.
 	conditionalCalls        int
 	flipStatusOnStatusWrite connections.ConnectionStatus
+
+	// connectionErr, when set, makes GetConnectionByID fail with this
+	// error for the next connectionErrCalls calls, reported with
+	// connectionErrCode as the status code, so a test can pin how the
+	// reporting gate treats a status it cannot read.
+	connectionErr      error
+	connectionErrCode  int
+	connectionErrCalls int
 }
 
 func (p *notFoundProbeTestProvider) Name() string {
@@ -96,6 +107,10 @@ func (p *notFoundProbeTestProvider) GetK8sContexts(_, _, _, _, _, withStatus str
 func (p *notFoundProbeTestProvider) GetConnectionByID(_ string, _ core.Uuid) (*connections.Connection, int, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
+	if p.connectionErrCalls > 0 {
+		p.connectionErrCalls--
+		return nil, p.connectionErrCode, p.connectionErr
+	}
 	return p.connection, 0, nil
 }
 
@@ -116,7 +131,9 @@ func (p *notFoundProbeTestProvider) UpdateConnectionById(_ string, conn *connect
 func (p *notFoundProbeTestProvider) UpdateConnectionStatusIf(_ string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	p.conditionalCalls++
+	// Counted on return, so a test waiting for the count knows the
+	// write has been evaluated, not merely started.
+	defer func() { p.conditionalCalls++ }()
 	if p.flipStatusOnStatusWrite != "" {
 		p.connection.Status = p.flipStatusOnStatusWrite
 		p.flipStatusOnStatusWrite = ""
@@ -361,10 +378,10 @@ func waitForPersisted(t *testing.T, provider *notFoundProbeTestProvider, n int) 
 	}
 }
 
-// waitForConditionalWrites blocks until the provider has taken n
-// conditional status writes, or fails the test. The write happens inside
-// SendEvent on the probe goroutine, after the probe action has run, so
-// waiting for the probe alone is not enough.
+// waitForConditionalWrites blocks until the provider has finished
+// evaluating n conditional status writes, or fails the test. The write
+// happens inside SendEvent on the probe goroutine, after the probe
+// action has run, so waiting for the probe alone is not enough.
 func waitForConditionalWrites(t *testing.T, provider *notFoundProbeTestProvider, n int) {
 	t.Helper()
 	deadline := time.Now().Add(10 * time.Second)
@@ -977,8 +994,12 @@ func TestK8sFSMMiddlewareProbeDoesNotResolveDisconnectedConnection(t *testing.T)
 	runFSM(t, h, provider, user)
 	waitForProbes(t, probed, 1)
 	waitForConditionalWrites(t, provider, 1)
-	// Give the reporting path time to persist anything it would persist.
-	time.Sleep(500 * time.Millisecond)
+	// No sleep is needed here: the conditional write is the probe
+	// goroutine's last provider interaction. After it, SendEvent
+	// returns no event (the write refused), so the reporting path has
+	// nothing to persist or broadcast. The write is counted when it
+	// returns, so waiting for it means the stored status has already
+	// been evaluated and the disconnect has won.
 
 	if got := provider.persistedCount(); got != 0 {
 		t.Errorf("persisted events = %d, want 0 (no resolution for a disconnected connection)", got)
@@ -1007,15 +1028,28 @@ func TestReportBackgroundDiscoveryDropsStaleResolution(t *testing.T) {
 		storedStatus  connections.ConnectionStatus
 		settledStatus interface{} // machines.StateType in-process, string after a JSON round trip
 		wantPersisted bool
+		// failReads makes GetConnectionByID fail this many times with
+		// a non-404 error before it answers: the gate must retry a
+		// transient failure, and drop the resolution when the status
+		// stays unreadable.
+		failReads int
 	}{
-		{"stored connected, settled connected", connections.CONNECTED, machines.CONNECTED, true},
-		{"stored connected, settled connected as a string", connections.CONNECTED, string(machines.CONNECTED), true},
-		{"stored disconnected, settled connected", connections.DISCONNECTED, machines.CONNECTED, false},
-		{"stored not found, settled connected", connections.NOTFOUND, machines.CONNECTED, false},
+		{"stored connected, settled connected", connections.CONNECTED, machines.CONNECTED, true, 0},
+		{"stored connected, settled connected as a string", connections.CONNECTED, string(machines.CONNECTED), true, 0},
+		{"stored disconnected, settled connected", connections.DISCONNECTED, machines.CONNECTED, false, 0},
+		{"stored not found, settled connected", connections.NOTFOUND, machines.CONNECTED, false, 0},
+		{"status read fails once, then stored connected, settled connected", connections.CONNECTED, machines.CONNECTED, true, 1},
+		{"status read keeps failing, stored connected, settled connected", connections.CONNECTED, machines.CONNECTED, false, 10},
+		{"status read fails once, then stored disconnected, settled connected", connections.DISCONNECTED, machines.CONNECTED, false, 1},
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			h, provider, _, connectionID, user, broadcastCh := newNotFoundProbeFixture(t, &resolvingProbeAction{probed: make(chan struct{}, 1)})
 			provider.setConnectionStatus(c.storedStatus)
+			if c.failReads > 0 {
+				provider.connectionErr = errors.New("provider unavailable")
+				provider.connectionErrCode = http.StatusInternalServerError
+				provider.connectionErrCalls = c.failReads
+			}
 
 			now := time.Now()
 			key := models.ConditionKey("k8s-connection", connectionID.String(), "unreachable")

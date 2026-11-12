@@ -283,7 +283,7 @@ func (cp *ConnectionPersister) UpdateConnectionStatusByID(connectionID core.Uuid
 func (cp *ConnectionPersister) UpdateConnectionStatusIf(connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
 	res := cp.DB.Model(&connections.Connection{}).Where("id = ? AND status IN ?", connectionID, fromStatuses).UpdateColumn("status", newStatus)
 	if res.Error != nil {
-		return false, nil, fmt.Errorf("error updating connection status: %v", res.Error)
+		return false, nil, ErrDBPut(res.Error)
 	}
 	if res.RowsAffected == 0 {
 		return false, nil, nil
@@ -292,7 +292,7 @@ func (cp *ConnectionPersister) UpdateConnectionStatusIf(connectionID core.Uuid, 
 	updatedConnection := connections.Connection{}
 	err := cp.DB.Model(&updatedConnection).Where("id = ?", connectionID).First(&updatedConnection).Error
 	if err != nil {
-		return false, nil, fmt.Errorf("error retrieving updated connection: %v", err)
+		return false, nil, ErrDBRead(err)
 	}
 
 	return true, &updatedConnection, nil

@@ -4843,11 +4843,14 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID c
 // when its stored status is one of fromStatuses, and reports whether the
 // write applied. The remote provider has no conditional-update API, so
 // this is best-effort: the stored status is read and compared
-// immediately before the PUT, and a concurrent status change landing
-// between the read and the PUT can still slip through. Callers must not
-// rely on it alone for the remote path — the reporting path re-checks
-// the stored status before persisting a Discovery resolution
-// (issue #23248).
+// immediately before the PUT, and a status change landing between the
+// read and the PUT can still slip through. The reporting-path re-check
+// does not cover that window: the PUT overwrites the intervening
+// change, so the gate re-reads the status the PUT already wrote and
+// passes. The gate only covers the window after the PUT, up to the
+// report. Closing the read-to-PUT window needs a conditional-update API
+// on the remote side, tracked as a follow-up to issue #23248; until
+// then, callers must not rely on this alone for the remote path.
 func (l *RemoteProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
 	current, _, err := l.GetConnectionByID(token, connectionID)
 	if err != nil {

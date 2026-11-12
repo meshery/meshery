@@ -54,6 +54,16 @@ func backgroundDiscoveryContext(ctx context.Context) (context.Context, context.C
 // per minute, and at most one reload per minute.
 const notFoundProbeInterval = time.Minute
 
+// discoveryResolutionStatusReadAttempts bounds how often the reporting
+// path re-reads a connection's stored status before giving up on a
+// resolution whose status cannot be verified, and
+// discoveryResolutionStatusReadRetryDelay is the pause between attempts.
+// The reporting path runs in a goroutine, so a brief retry costs nothing
+// on the request path.
+const discoveryResolutionStatusReadAttempts = 3
+
+const discoveryResolutionStatusReadRetryDelay = 50 * time.Millisecond
+
 // notFoundProbeLoadScope identifies one NOTFOUND load budget: a provider
 // deployment serving one user. A single Handler serves every user and every
 // provider, so a single global load gate would let one user's requests block
@@ -624,22 +634,36 @@ func (h *Handler) reportBackgroundDiscovery(provider models.Provider, token stri
 // after SendEvent wrote its state but before this report ran makes the
 // resolution stale, and persisting it would resolve the unreachable
 // condition for a connection the user just moved away (issue #23248).
-// A stored status that cannot be read, or an event that does not say what
-// state the Discovery settled in, fails open: the resolution is reported
-// as before rather than swallowed on a provider blip. A connection that
-// is gone (404) has no condition left to resolve, so its resolution is
-// dropped.
+// A stored status that cannot be read is not treated as matching: the
+// lookup is retried briefly, so a transient provider blip does not
+// swallow a legitimate recovery, but a lookup that keeps failing drops
+// the resolution rather than resolving a condition for a connection
+// whose state is unknown — the safer side for a disconnect race. A
+// connection that is gone (404) has no condition left to resolve, so
+// its resolution is dropped without a retry. An event that does not say
+// what state the Discovery settled in fails open, as before.
 func discoveryResolutionStillCurrent(provider models.Provider, token string, event *events.Event) bool {
 	settled, ok := eventCurrentStatus(event)
 	if !ok || event.ActedUpon.IsNil() {
 		return true
 	}
-	stored, statusCode, err := provider.GetConnectionByID(token, event.ActedUpon)
-	if err != nil {
+	var stored *connections.Connection
+	var statusCode int
+	var err error
+	for attempt := 0; attempt < discoveryResolutionStatusReadAttempts; attempt++ {
+		if attempt > 0 {
+			time.Sleep(discoveryResolutionStatusReadRetryDelay)
+		}
+		stored, statusCode, err = provider.GetConnectionByID(token, event.ActedUpon)
+		if err == nil {
+			break
+		}
 		if statusCode == http.StatusNotFound {
 			return false
 		}
-		return true
+	}
+	if err != nil {
+		return false
 	}
 	if stored == nil {
 		return false
