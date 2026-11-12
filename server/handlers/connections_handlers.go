@@ -981,7 +981,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("instance tracker does not contain machine for connection %s", connectionID)
 		}
 
-		machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
+		machineCtx, err := kubernetes.GetMachineCtx(machine.GetContext(), nil)
 		if err != nil {
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("failed to get machine context for connection %s: %w", connectionID, err)
 		}
@@ -989,6 +989,10 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 		if machineCtx == nil {
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context is nil for connection %s", connectionID)
 		}
+
+		// One snapshot for the teardown and redeploy below: both steps must
+		// use the same context even if a credential refresh lands in between.
+		k8sCtx := machineCtx.K8sContextSnapshot()
 
 		ctrlHelper := machineCtx.MesheryCtrlsHelper
 		if ctrlHelper == nil {
@@ -1010,7 +1014,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 		// disconnect. The cluster's Meshery Operator stays installed: it is
 		// cluster-scoped, and this connection's mode change does not speak for
 		// the others using it.
-		ctrlHelper.DetachFromCluster(ctx, machineCtx.OperatorTracker, machineCtx.K8sContext)
+		ctrlHelper.DetachFromCluster(ctx, machineCtx.OperatorTracker, k8sCtx)
 		// connect. The controllers configuration is refreshed and stashed
 		// before AddCtxControllerHandlers, which constructs the operator
 		// controller handler with the Helm chart version that document
@@ -1021,10 +1025,10 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			ctrlHelper.SetControllersConfig(merged)
 			ctrlHelper.
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
-				AddCtxControllerHandlers(machineCtx.K8sContext).
+				AddCtxControllerHandlers(k8sCtx).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				DeployUndeployedOperators(machineCtx.OperatorTracker, machineCtx.K8sContext).
-				AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
+				DeployUndeployedOperators(machineCtx.OperatorTracker, k8sCtx).
+				AddMeshsyncDataHandlers(ctx, k8sCtx, userID, mesheryInstanceID, provider)
 		}
 
 	}

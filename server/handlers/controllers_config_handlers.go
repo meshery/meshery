@@ -333,7 +333,7 @@ func (h *Handler) applyControllersConfigToConnection(
 		// nothing to apply now; ConnectAction applies on connect.
 		return
 	}
-	machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
+	machineCtx, err := kubernetes.GetMachineCtx(machine.GetContext(), nil)
 	if err != nil || machineCtx == nil {
 		h.log.Warnf("controllers config: no machine context for connection %s; configuration applies on next connect", connectionID)
 		return
