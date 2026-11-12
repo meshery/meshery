@@ -132,7 +132,7 @@ The format is `git://github.com/[organization]/[repository]/[branch]/path/to/crd
 9. **Verify.** Find your model in the Models list (search your handle). Open it and count its components. Raise your hand when you can see them.
 
 {{% alert color="warning" title="Tell the room" %}}
-A generated model cannot be deleted from the UI. That is why everyone uses their handle in the name. To stop using a model later, mark it as ignored, or delete it with `mesheryctl model delete <model-name>`. Signing in to the Playground in your browser does not configure `mesheryctl`: point it at the Playground first with `mesheryctl system context create playground --url https://playground.meshery.io --set`, sign in with `mesheryctl system login`, and confirm `mesheryctl system context view` shows the Playground endpoint before you delete anything, so the command does not target another server.
+A generated model cannot be deleted from the UI. That is why everyone uses their handle in the name. To stop using a model later, mark it as ignored, or delete it with `mesheryctl model delete <model-name>`. Signing in to the Playground in your browser does not configure `mesheryctl`: point it at the Playground first with `mesheryctl system context create playground --url https://playground.meshery.io --set`, give the Playground its own token file with `mesheryctl system token create playground-token -f ~/.meshery/playground-auth.json --set` so signing in does not overwrite the token your other contexts use, sign in with `mesheryctl system login`, and confirm `mesheryctl system context view` shows the Playground endpoint before you delete anything, so the command does not target another server.
 {{% /alert %}}
 
 ### Stretch for fast finishers
