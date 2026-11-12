@@ -130,7 +130,7 @@ mesheryctl system token set [token-name]
 		targetContext := resolveTokenTargetContext(cmd, configPath)
 
 		if err = config.SetTokenToConfig(tokenName, configPath, targetContext); err != nil {
-			return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, targetContext)
+			return ErrAssignToken(err, tokenName, targetContext)
 		}
 		utils.Log.Infof("Token %s set for context %s", tokenName, targetContext)
 		return nil
@@ -265,13 +265,12 @@ func assignTokenWithRollback(
 	deleteFn func(tokenName, configPath string) error,
 ) error {
 	if err := setFn(tokenName, configPath, targetContext); err != nil {
-		assignErr := errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, targetContext)
 		// Avoid leaving an orphaned token in meshconfig when --set fails
 		// (for example, when -c/--context names a non-existent context).
 		if cleanupErr := deleteFn(tokenName, configPath); cleanupErr != nil {
-			return fmt.Errorf("%w; additionally failed to remove created token %q (manual cleanup may be required): %w", assignErr, tokenName, cleanupErr)
+			return ErrTokenRollback(tokenName, targetContext, err, cleanupErr)
 		}
-		return assignErr
+		return ErrAssignToken(err, tokenName, targetContext)
 	}
 	return nil
 }
