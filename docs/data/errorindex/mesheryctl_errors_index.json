@@ -3984,6 +3984,40 @@
       "suggestedRemediation": [
         "Provide more characters of the ID, or the full ID."
       ]
+    },
+    {
+      "code": "mesheryctl-1257",
+      "moniker": "ErrAssignTokenCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1257",
+      "severity": "fatal",
+      "shortDescription": "Unable to assign token to context",
+      "probableCause": [
+        "The target context may not exist in meshconfig, or meshconfig could not be read or written."
+      ],
+      "suggestedRemediation": [
+        "Verify the target context exists with `mesheryctl system context view` and ensure your meshconfig file is accessible."
+      ]
+    },
+    {
+      "code": "mesheryctl-1258",
+      "moniker": "ErrTokenRollbackCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1258",
+      "severity": "fatal",
+      "shortDescription": "Unable to assign token or roll back created token",
+      "probableCause": [
+        "Assigning the token to the target context failed, and deleting the newly created token during rollback also failed."
+      ],
+      "suggestedRemediation": [
+        "Remove the orphaned token from meshconfig or run `mesheryctl system token delete <token-name>`, and verify the target context exists with `mesheryctl system context view`."
+      ]
     }
   ],
   "schemaVersion": 2
