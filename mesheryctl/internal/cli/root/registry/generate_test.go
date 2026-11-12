@@ -364,6 +364,7 @@ func TestGenerateCmdArgs(t *testing.T) {
 				if tt.errorMsg != "" {
 					assert.Contains(t, err.Error(), tt.errorMsg)
 				}
+				assert.Contains(t, err.Error(), "Usage: mesheryctl registry generate")
 			} else {
 				assert.NoError(t, err)
 			}
