@@ -33,7 +33,7 @@ func ErrGenerateModel(err error, modelName string) error {
 }
 
 func ErrGenerateComponent(err error, modelName, compName string) error {
-	return errors.New(ErrGenerateComponentCode, errors.Alert, []string{"error generating comp %s of model %s", compName, modelName}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrGenerateComponentCode, errors.Alert, []string{"Error generating component", fmt.Sprintf("component %s of model %s", compName, modelName)}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrUpdateModel(err error, modelName string) error {
@@ -57,7 +57,7 @@ func ErrParsingRelationship(err error, modelName string) error {
 }
 
 func ErrPublish(err error, system string) error {
-	return errors.New(ErrPublishCode, errors.Alert, []string{fmt.Sprintf("error publishing to %s", system)}, []string{err.Error()}, []string{"Invalid system specified", "Publishing process encountered an error"}, []string{"Ensure a valid system is provided (meshery, remote-provider, website)", "Check the publishing configuration and try again"})
+	return errors.New(ErrPublishCode, errors.Alert, []string{fmt.Sprintf("error publishing to %s", system)}, []string{err.Error()}, []string{"Invalid system specified", "Publishing process encountered an error"}, []string{"Ensure a valid system is provided (remote-provider, website)", "Check the publishing configuration and try again"})
 }
 
 func ErrModelGenerationFailed(modelName string, err error) error {

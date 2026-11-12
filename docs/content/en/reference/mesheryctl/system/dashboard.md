@@ -81,7 +81,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help           help for dashboard
-  -p, --port int       (optional) Local port that is not in use from which traffic is to be forwarded to the server running inside the Pod. (default 9081)
+  -p, --port int       (optional) Local port for forwarding to the server in the Pod. If the default port is in use and --port is not specified, an available port is chosen. (default 9081)
       --port-forward   (optional) Use port forwarding to access Meshery UI
       --skip-browser   (optional) skip opening of MesheryUI in browser.
 
@@ -92,7 +92,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -102,4 +102,4 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

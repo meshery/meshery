@@ -652,9 +652,9 @@ func ChangeManifestVersion(channel, version, filePath string) error {
 
 // CreateManifestsFolder creates a new folder (.meshery/manifests)
 func CreateManifestsFolder() error {
-	log.Debug("Deleting " + ManifestsFolder + " folder...")
+	log.Debug("Deleting " + filepath.Join(MesheryFolder, ManifestsFolder) + " folder...")
 	// delete manifests folder if it already exists
-	if err := os.RemoveAll(ManifestsFolder); err != nil {
+	if err := os.RemoveAll(filepath.Join(MesheryFolder, ManifestsFolder)); err != nil {
 		return err
 	}
 	log.Debug("Creating " + ManifestsFolder + " folder...")
@@ -729,7 +729,11 @@ func Startdockerdaemon(subcommand string) error {
 	if SilentFlag {
 		userResponse = true
 	} else {
-		userResponse = AskForConfirmation("Start Docker now")
+		var promptErr error
+		userResponse, promptErr = AskForConfirmation("Start Docker now")
+		if promptErr != nil {
+			return promptErr
+		}
 	}
 	if !userResponse {
 		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
@@ -772,6 +776,9 @@ func InstallprereqDocker() error {
 	dockerComposeBinaryURL := dockerComposeBinaryURL
 	//checks for the latest docker-compose
 	resp, err := http.Get(dockerComposeWebURL)
+	if resp != nil {
+		defer SafeClose(resp.Body)
+	}
 	if err != nil {
 		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
 	} else {

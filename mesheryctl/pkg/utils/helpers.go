@@ -29,6 +29,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/core"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -384,10 +385,11 @@ func BackupConfigFile(cfgFile string) {
 	if err != nil {
 		Log.Fatal(err)
 	}
-	_, err = os.Create(cfgFile)
+	f, err := os.Create(cfgFile)
 	if err != nil {
 		Log.Fatal(err)
 	}
+	_ = f.Close()
 }
 
 const (
@@ -444,10 +446,13 @@ func SetFileLocation() error {
 	return nil
 }
 
+// openURL opens the given URL in the browser. It is a variable (rather than a direct call to browser.OpenURL) so tests can substitute a fake.
+// It must not be swapped from parallel tests.
+var openURL = browser.OpenURL
+
 // NavigateToBrowser navigates to the endpoint displaying the Meshery UI in the browser.
 func NavigateToBrowser(endpoint string) error {
-	err := browser.OpenURL(endpoint)
-	return err
+	return openURL(endpoint)
 }
 
 // UploadFileWithParams returns a request configured to upload files with other values
@@ -456,15 +461,15 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path 
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		_ = file.Close()
+	}()
 	fileContents, err := io.ReadAll(file)
 	if err != nil {
 		return nil, err
 	}
 	fi, err := file.Stat()
 	if err != nil {
-		return nil, err
-	}
-	if err = file.Close(); err != nil {
 		return nil, err
 	}
 
@@ -551,7 +556,8 @@ func UpdateMesheryContainers() error {
 }
 
 // AskForConfirmation asks the user for confirmation. A user must type in "yes" or "no" and then press enter. It has fuzzy matching, so "y", "Y", "yes", "YES", and "Yes" all count as confirmations. If the input is not recognized, it will ask again. The function does not return until it gets a valid response from the user.
-func AskForConfirmation(s string) bool {
+// A failure to read from stdin (for example EOF in a non-interactive shell) is returned as an error instead of terminating the process.
+func AskForConfirmation(s string) (bool, error) {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
@@ -559,16 +565,16 @@ func AskForConfirmation(s string) bool {
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			Log.Fatal(err)
+			return false, ErrReadInput(err)
 		}
 
 		response = strings.ToLower(strings.TrimSpace(response))
 
 		switch response {
 		case "y", "yes":
-			return true
+			return true, nil
 		case "n", "no":
-			return false
+			return false, nil
 		}
 	}
 }
@@ -576,10 +582,11 @@ func AskForConfirmation(s string) bool {
 // CreateConfigFile creates config file in Meshery Folder
 func CreateConfigFile() error {
 	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
-		_, err := os.Create(DefaultConfigPath)
+		f, err := os.Create(DefaultConfigPath)
 		if err != nil {
 			return err
 		}
+		_ = f.Close()
 	}
 	return nil
 }
@@ -596,10 +603,28 @@ func ValidateURL(URL string) error {
 	return nil
 }
 
-// TruncateID shortens an id to 8 characters
+// TruncateID shortens an id to at most 8 characters.
 func TruncateID(id string) string {
-	ShortenedID := id[0:8]
-	return ShortenedID
+	if len(id) <= 8 {
+		return id
+	}
+	return id[:8]
+}
+
+// FormatTime formats a nullable timestamp with layout, returning fallback when t is nil.
+func FormatTime(t *time.Time, layout, fallback string) string {
+	if t == nil {
+		return fallback
+	}
+	return t.Format(layout)
+}
+
+// FormatUUID returns the string form of a nullable UUID, or fallback when id is nil.
+func FormatUUID(id *core.Uuid, fallback string) string {
+	if id == nil {
+		return fallback
+	}
+	return id.String()
 }
 
 func BoldString(s string) string {
@@ -647,7 +672,7 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 	if configuration == "pattern" {
 		url += "populate=pattern_file&"
 	}
-	url += "page_size=10000"
+	url += "pagesize=10000"
 	configType := configuration + "s"
 	var idList []string
 	req, err := NewRequest("GET", url, nil)
@@ -725,22 +750,38 @@ func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
 		return err
 	}
 
-	_, err = MakeRequest(req)
+	res, err := MakeRequest(req)
 	if err != nil {
 		return err
 	}
+	defer SafeClose(res.Body)
 	return nil
 }
 
-// ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID
+// ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID.
+// An exact ID match wins; a prefix shared by more than one ID is rejected as ambiguous.
 func ValidId(mesheryServerUrl, args string, configuration string) (string, bool, error) {
 	isID := false
+	if strings.TrimSpace(args) == "" {
+		return "", false, ErrInvalidArgument(errors.New("name or ID cannot be empty"))
+	}
 	configID, err := GetID(mesheryServerUrl, configuration)
 	if err == nil {
+		var matches []string
 		for _, id := range configID {
-			if strings.HasPrefix(id, args) {
-				args = id
+			if id == args {
+				matches = []string{id}
+				break
 			}
+			if strings.HasPrefix(id, args) {
+				matches = append(matches, id)
+			}
+		}
+		if len(matches) > 1 {
+			return "", false, ErrAmbiguousID(args, matches)
+		}
+		if len(matches) == 1 {
+			args = matches[0]
 		}
 	} else {
 		return "", false, err
@@ -774,8 +815,9 @@ func ValidName(mesheryServerUrl, args string, configuration string) (string, str
 	return fullName, ID, isName, nil
 }
 
-// AskForInput asks the user for an input and checks if it is in the available values
-func AskForInput(prompt string, allowed []string) string {
+// AskForInput asks the user for an input and checks if it is in the available values.
+// It asks again when the input is not one of the allowed values. A failure to read from stdin is returned as an error instead of terminating the process.
+func AskForInput(prompt string, allowed []string) (string, error) {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
@@ -783,15 +825,15 @@ func AskForInput(prompt string, allowed []string) string {
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			Log.Fatal(err)
+			return "", ErrReadInput(err)
 		}
 
 		response = strings.ToLower(strings.TrimSpace(response))
 
 		if StringInSlice(response, allowed) {
-			return response
+			return response, nil
 		}
-		Log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
+		fmt.Printf("Invalid response %q. Allowed responses: %s\n", response, allowed)
 	}
 }
 
@@ -1362,4 +1404,9 @@ func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 		return "", err
 	}
 	return config.CurrentContext, nil
+}
+
+// TrimFileExtension returns name with its final file extension removed
+func TrimFileExtension(name string) string {
+	return strings.TrimSuffix(name, filepath.Ext(name))
 }

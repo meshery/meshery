@@ -20,6 +20,17 @@ func TestCreateWorkspace(t *testing.T) {
 
 	tests := []utils.MesheryCommandTest{
 		{
+			Name:             "given unexpected positional argument when workspace create then throw error",
+			Args:             []string{"create", "extra-arg", "-n", validWorkspaceName, "-d", workspaceDescription, "--orgId", testOrgId},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg)),
+		},
+		{
 			Name:             "given no flags provided when workspace create throw error",
 			Args:             []string{"create"},
 			URL:              "/api/workspaces",

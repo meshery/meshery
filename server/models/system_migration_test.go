@@ -2,6 +2,7 @@ package models
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -83,4 +84,42 @@ func TestAutoMigrateSystemTablesSurvivesConnectionsQuery(t *testing.T) {
 	if page.TotalCount != 1 {
 		t.Fatalf("expected the seeded connection on the page, got TotalCount=%d", page.TotalCount)
 	}
+}
+
+// TestAutoMigrateSystemTablesIndexesEventQueries pins the indexes behind the
+// Notification Center queries. events.Event comes from meshkit without these
+// index tags, so AutoMigrateSystemTables creates them itself; dropping that
+// step would leave GetEvents and getCountBySeverity without them. Migrating
+// twice mirrors a boot followed by a reset, which must not fail on indexes
+// that already exist.
+func TestAutoMigrateSystemTablesIndexesEventQueries(t *testing.T) {
+	db, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
+	if err != nil {
+		t.Fatalf("open database: %v", err)
+	}
+
+	for i := 0; i < 2; i++ {
+		if err := AutoMigrateSystemTables(&db); err != nil {
+			t.Fatalf("AutoMigrateSystemTables run %d: %v", i+1, err)
+		}
+	}
+
+	for _, index := range []string{"idx_events_owner_created_at", "idx_events_owner_status_severity"} {
+		if !db.Migrator().HasIndex("events", index) {
+			t.Errorf("AutoMigrateSystemTables did not create the %q index", index)
+		}
+	}
+
+	var plan []struct{ Detail string }
+	err = db.Raw("EXPLAIN QUERY PLAN SELECT severity, count(severity) as count FROM events WHERE status = ? AND (owner = ? OR owner = ?) GROUP BY severity",
+		"unread", "owner-a", "owner-b").Scan(&plan).Error
+	if err != nil {
+		t.Fatalf("explain the severity count query: %v", err)
+	}
+	for _, step := range plan {
+		if strings.Contains(step.Detail, "idx_events_owner_status_severity") {
+			return
+		}
+	}
+	t.Fatalf("the severity count query does not use idx_events_owner_status_severity; plan: %+v", plan)
 }

@@ -4,14 +4,17 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -788,6 +791,15 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 			writeMeshkitError(rw, models.ErrUnmarshal(err, "component definition"), http.StatusBadRequest)
 			return
 		}
+		// Reject a model version that could escape the export working
+		// directory. Registration is unauthenticated, so a hostile version
+		// planted here would otherwise reach ExportModel (CWE-22).
+		if c.Model != nil && (!isSafePathComponent(c.Model.Version) || !isSafePathComponent(c.Model.Model.Version)) {
+			err := fmt.Errorf("invalid model version: must be a single path component")
+			h.log.Error(ErrRequestBody(err))
+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+			return
+		}
 		utils.WriteSVGsOnFileSystem(&c)
 		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &c)
 		helpers.HandleError(registry.RegistrantHostToV1beta1(cc.Connection), &c, err, isModelError, isRegistranError)
@@ -889,8 +901,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 			"error": wrappedErr,
 		})
 		_event := eventBuilder.Build()
-		_ = provider.PersistEvent(*_event, token)
-		go h.config.EventBroadcaster.Publish(userID, _event)
+		h.persistAndPublish(provider, token, userID, _event)
 		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
@@ -898,8 +909,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	description := fmt.Sprintf("Status of '%s' updated to %s.", updateData.DisplayName, updateData.Status)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 
 	// Respond with success status
 	rw.WriteHeader(http.StatusNoContent)
@@ -928,7 +938,7 @@ func processComponentDefinitions(entities []entity.Entity) []component.Component
 func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	var response models.RegistryAPIResponse
 	regErrorStore := models.NewRegistrationFailureLogHandler()
-	var tempFile *os.File
+	var tempFilePath string
 	var mu sync.Mutex
 	defer func() {
 		_ = r.Body.Close()
@@ -1190,7 +1200,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			writeMeshkitError(rw, ErrInvalidBase64Data(err), http.StatusBadRequest)
 			return
 		}
-		tempFile, err = CreateTemp(importRequest.ImportBody.FileName, decodedBytes)
+		tempFilePath, err = CreateTemp(importRequest.ImportBody.FileName, decodedBytes)
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
 			h.handleError(rw, err, err.Error())
@@ -1198,38 +1208,40 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 		defer func() {
-			if err := os.Remove(tempFile.Name()); err != nil {
+			if err := os.Remove(tempFilePath); err != nil {
 				h.log.Error(err)
 			}
 		}()
 
-		dir = registration.NewDir(tempFile.Name())
+		dir = registration.NewDir(tempFilePath)
 		if importRequest.Register {
 			registrationHelper.Register(dir)
-			if err := tempFile.Close(); err != nil {
-				h.log.Error(err)
-			}
 		}
 	case "urlImport":
-		downloadFile := func(url string) ([]byte, error) {
-			resp, err := http.Get(url)
+		downloadFile := func(targetURL string) ([]byte, error) {
+			if _, err := utils.ValidateSafeURL(targetURL); err != nil {
+				return nil, models.ErrDoRequest(err, "GET", targetURL)
+			}
+			client := utils.NewSafeHTTPClient(60 * time.Second)
+			resp, err := client.Get(targetURL)
 			if err != nil {
-				return nil, fmt.Errorf("error downloading file from URL: %v", err)
+				return nil, models.ErrDoRequest(err, "GET", targetURL)
 			}
-			fileData, err := io.ReadAll(resp.Body)
-			if err != nil {
-				if closeErr := resp.Body.Close(); closeErr != nil {
-					return nil, fmt.Errorf("error reading downloaded file: %v (close error: %v)", err, closeErr)
-				}
-				return nil, fmt.Errorf("error reading downloaded file: %v", err)
-			}
-
-			if err := resp.Body.Close(); err != nil {
-				return nil, fmt.Errorf("error closing response body: %v", err)
-			}
+			defer func() {
+				_ = resp.Body.Close()
+			}()
 
 			if resp.StatusCode != http.StatusOK {
-				return nil, fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode)
+				return nil, models.ErrDoRequest(fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode), "GET", targetURL)
+			}
+
+			const maxDownloadFileSize = 10 * 1024 * 1024
+			fileData, err := io.ReadAll(io.LimitReader(resp.Body, int64(maxDownloadFileSize)+1))
+			if err != nil {
+				return nil, models.ErrDoRequest(err, "GET", targetURL)
+			}
+			if len(fileData) > maxDownloadFileSize {
+				return nil, models.ErrDoRequest(fmt.Errorf("file size exceeds maximum allowed limit of %d bytes", maxDownloadFileSize), "GET", targetURL)
 			}
 
 			return fileData, nil
@@ -1238,7 +1250,8 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		// Download the file from the provided URL
 		fileData, err := downloadFile(importRequest.ImportBody.Url)
 		if err != nil {
-			h.handleError(rw, err, "Error downloading file from URL")
+			h.log.Error(err)
+			writeMeshkitError(rw, err, http.StatusBadRequest)
 			h.sendErrorEvent(userID, provider, "Error downloading file from URL", err, token)
 			return
 		}
@@ -1249,7 +1262,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 		name := "model" + fileType
 		//write the file to a temp file
-		tempFile, err = CreateTemp(name, fileData)
+		tempFilePath, err = CreateTemp(name, fileData)
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
 			h.handleError(rw, err, "Error creating temp file")
@@ -1257,17 +1270,14 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 		defer func() {
-			if err := os.Remove(tempFile.Name()); err != nil {
+			if err := os.Remove(tempFilePath); err != nil {
 				h.log.Error(err)
 			}
 		}()
 
-		dir = registration.NewDir(tempFile.Name())
+		dir = registration.NewDir(tempFilePath)
 		if importRequest.Register {
 			registrationHelper.Register(dir)
-			if err := tempFile.Close(); err != nil {
-				h.log.Error(err)
-			}
 		}
 	}
 
@@ -1280,6 +1290,48 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 
 	h.sendSuccessResponse(rw, userID, provider, message, errMsg, &response, token)
 
+}
+
+var (
+	ociRepositoryNamePattern = regexp.MustCompile(`^[a-z0-9]+(?:(?:[._]|__|-+)[a-z0-9]+)*$`)
+	ociRepositoryNameInvalid = regexp.MustCompile(`[^a-z0-9]+`)
+)
+
+const (
+	ociRepositoryNameMinLength = 2
+	ociRepositoryNameMaxLength = 255
+)
+
+// ociRepositoryName maps a model name to a valid OCI repository name. The
+// mapping is lossy: distinct names can sanitize to the same repository name
+// (for example "foo bar" and "foo-bar"), so callers pushing to a shared
+// registry should be aware of possible collisions.
+func ociRepositoryName(modelName string) string {
+	if len(modelName) >= ociRepositoryNameMinLength && len(modelName) <= ociRepositoryNameMaxLength &&
+		ociRepositoryNamePattern.MatchString(modelName) {
+		return modelName
+	}
+	sanitized := strings.Trim(ociRepositoryNameInvalid.ReplaceAllString(strings.ToLower(modelName), "-"), "-")
+	if len(sanitized) > ociRepositoryNameMaxLength {
+		sanitized = strings.TrimRight(sanitized[:ociRepositoryNameMaxLength], "-")
+	}
+	switch {
+	case sanitized == "":
+		return "model"
+	case len(sanitized) < ociRepositoryNameMinLength:
+		return sanitized + "-model"
+	}
+	return sanitized
+}
+
+// isSafePathComponent reports whether s can be interpolated into a filesystem
+// path as a single component without escaping its parent directory. An empty
+// string is harmless (filepath.Join drops it) and is accepted.
+func isSafePathComponent(s string) bool {
+	if s == "" {
+		return true
+	}
+	return s != "." && s != ".." && filepath.Base(s) == s
 }
 
 func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
@@ -1358,10 +1410,53 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.log.Error(err)
 	}
+	// The model name is interpolated into filesystem paths below. Reject anything
+	// that is not a single path component so a hostile name cannot escape the
+	// per-request temp directory (CWE-22).
+	if model.Name == "." || model.Name == ".." || filepath.Base(model.Name) != model.Name {
+		err := fmt.Errorf("invalid model name %q: must be a single path component", model.Name)
+		writeMeshkitError(rw, ErrExportModel(err, "model name validation"), http.StatusBadRequest)
+		return
+	}
+	// The model versions are interpolated into the same paths. Apply the same
+	// single-component check to both, so a hostile version cannot escape the
+	// per-request temp directory either (CWE-22).
+	if !isSafePathComponent(model.Model.Version) {
+		err := fmt.Errorf("invalid model version %q: must be a single path component", model.Model.Version)
+		writeMeshkitError(rw, ErrExportModel(err, "model version validation"), http.StatusBadRequest)
+		return
+	}
+	if !isSafePathComponent(model.Version) {
+		err := fmt.Errorf("invalid model version %q: must be a single path component", model.Version)
+		writeMeshkitError(rw, ErrExportModel(err, "model version validation"), http.StatusBadRequest)
+		return
+	}
 	// 2. Convert it to oci
-	temp := os.TempDir()
-	modelDir := filepath.Join(temp, model.Name)
+	// Fixed pattern: the model name is already preserved in modelDir inside the
+	// temp root, and embedding it here risks exceeding filesystem name limits.
+	tempDir, err := os.MkdirTemp("", "meshery-model-export-*")
+	if err != nil {
+		err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
+		h.log.Error(err)
+		writeMeshkitError(rw, ErrExportModel(err, "temp directory creation"), http.StatusInternalServerError)
+		return
+	}
+	defer func() {
+		if err := os.RemoveAll(tempDir); err != nil {
+			h.log.Error(ErrExportModel(err, "temp directory cleanup"))
+		}
+	}()
+
+	modelDir := filepath.Join(tempDir, model.Name)
 	versionDir := filepath.Join(modelDir, model.Model.Version, model.Version)
+
+	// Defense in depth: even if a version slips past the checks above, the
+	// working directory must stay inside the per-request temp directory.
+	if versionDir != modelDir && !strings.HasPrefix(versionDir, modelDir+string(filepath.Separator)) {
+		err := fmt.Errorf("invalid model version: resolved path %q escapes the export directory", versionDir)
+		writeMeshkitError(rw, ErrExportModel(err, "model version validation"), http.StatusBadRequest)
+		return
+	}
 
 	// Create necessary directories: {modelName}/v1.0.0/1.0.0/{components, relationships}
 	dirs := []string{
@@ -1379,11 +1474,6 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	defer func() {
-		if err := os.RemoveAll(modelDir); err != nil {
-			h.log.Error(err)
-		}
-	}()
 
 	components := []component.ComponentDefinition{}
 	// Components can be nil if hasComponents is false
@@ -1447,7 +1537,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 		// Save OCI artifact into a tar file
 		tarfileName := filepath.Join(modelDir, "model.tar")
-		err = meshkitOci.SaveOCIArtifact(img, tarfileName, model.Name)
+		err = meshkitOci.SaveOCIArtifact(img, tarfileName, ociRepositoryName(model.Name))
 		if err != nil {
 			h.log.Error(err)
 			writeMeshkitError(rw, ErrExportModel(err, "OCI artifact save"), http.StatusInternalServerError)
@@ -1524,6 +1614,16 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 	return meshkitutils.ErrInvalidSchemaVersion
 }
 
+// DeleteModel deletes a model and its associated components, relationships, policies,
+// and registry entries by UUID. Returns HTTP 404 if no matching model exists.
+//
+// swagger:route DELETE /api/meshmodels/models/{id} DeleteModel
+// responses:
+//
+//	204:
+//	400:
+//	404:
+//	500:
 func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	modelID := mux.Vars(r)["id"]
 	modelUUID, err := uuid.FromString(modelID)
@@ -1580,11 +1680,18 @@ func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models
 		}
 
 		// Delete the model itself
-		return tx.Where("id = ?", modelUUID).Delete(&_model.ModelDefinition{}).Error
+		res := tx.Where("id = ?", modelUUID).Delete(&_model.ModelDefinition{})
+		if res.Error != nil {
+			return res.Error
+		}
+		if res.RowsAffected == 0 {
+			return gorm.ErrRecordNotFound
+		}
+		return nil
 	})
 
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			writeJSONError(rw, fmt.Sprintf("model with id %s not found", modelID), http.StatusNotFound)
 			return
 		}

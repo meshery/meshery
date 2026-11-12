@@ -74,6 +74,8 @@ const (
 	ErrFetchContainersCode                = "mesheryctl-1242"
 	ErrInvalidComponentCode               = "mesheryctl-1243"
 	ErrMesheryEndpointNotAccessibleCode   = "mesheryctl-1244"
+	ErrAssignTokenCode                    = "mesheryctl-1257"
+	ErrTokenRollbackCode                  = "mesheryctl-1258"
 )
 
 var (
@@ -127,7 +129,7 @@ func ErrHealthCheckFailed(err error) error {
 	return errors.New(ErrHealthCheckFailedCode,
 		errors.Alert,
 		[]string{"Health checks failed"},
-		[]string{"Failed to initialize healthchecker" + err.Error()},
+		[]string{"Failed to initialize healthchecker: " + err.Error()},
 		[]string{"Health checks execution failed in starting Meshery server"},
 		[]string{"Ensure Mesheryctl is running and has the right configurations."})
 }
@@ -521,4 +523,78 @@ func ErrMesheryEndpointNotAccessible() error {
 		[]string{"Meshery endpoint did not become accessible within the expected time"},
 		[]string{"Meshery server may still be initializing or failed to start"},
 		[]string{"Check the status later with `mesheryctl system status`"})
+}
+
+// wrappedMeshkitError pairs a MeshKit error with one or more underlying causes
+// so callers can inspect causes with errors.Is/As while MeshKit utilities
+// (errors.GetCode, utils.Log.Error) still read the MeshKit metadata via Unwrap.
+type wrappedMeshkitError struct {
+	meshkitErr error
+	causes     []error
+}
+
+func wrapMeshkitError(meshkitErr error, causes ...error) error {
+	if meshkitErr == nil {
+		return nil
+	}
+	nonNil := make([]error, 0, len(causes))
+	for _, cause := range causes {
+		if cause != nil {
+			nonNil = append(nonNil, cause)
+		}
+	}
+	if len(nonNil) == 0 {
+		return meshkitErr
+	}
+	return &wrappedMeshkitError{
+		meshkitErr: meshkitErr,
+		causes:     nonNil,
+	}
+}
+
+func (e *wrappedMeshkitError) Error() string {
+	return e.meshkitErr.Error()
+}
+
+func (e *wrappedMeshkitError) Unwrap() []error {
+	errs := make([]error, 0, 1+len(e.causes))
+	errs = append(errs, e.meshkitErr)
+	errs = append(errs, e.causes...)
+	return errs
+}
+
+func ErrAssignToken(err error, tokenName, targetContext string) error {
+	if err == nil {
+		return nil
+	}
+	return wrapMeshkitError(
+		errors.New(
+			ErrAssignTokenCode,
+			errors.Fatal,
+			[]string{"Unable to assign token to context"},
+			[]string{fmt.Sprintf("Could not set token %q on context %s: %v", tokenName, targetContext, err)},
+			[]string{"The target context may not exist in meshconfig, or meshconfig could not be read or written."},
+			[]string{"Verify the target context exists with `mesheryctl system context view` and ensure your meshconfig file is accessible."}),
+		err,
+	)
+}
+
+func ErrTokenRollback(tokenName, targetContext string, assignErr, cleanupErr error) error {
+	if assignErr == nil && cleanupErr == nil {
+		return nil
+	}
+	return wrapMeshkitError(
+		errors.New(
+			ErrTokenRollbackCode,
+			errors.Fatal,
+			[]string{"Unable to assign token or roll back created token"},
+			[]string{fmt.Sprintf(
+				"Could not set token %q on context %s: %v; additionally failed to remove created token %q (manual cleanup may be required): %v",
+				tokenName, targetContext, assignErr, tokenName, cleanupErr,
+			)},
+			[]string{"Assigning the token to the target context failed, and deleting the newly created token during rollback also failed."},
+			[]string{"Remove the orphaned token from meshconfig or run `mesheryctl system token delete <token-name>`, and verify the target context exists with `mesheryctl system context view`."}),
+		assignErr,
+		cleanupErr,
+	)
 }

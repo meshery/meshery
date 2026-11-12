@@ -454,7 +454,7 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 	if err != nil {
 		return errors.Wrap(err, "error processing config")
 	}
-	context, err := mctlCfg.GetContext(ctxName)
+	context, err := mctlCfg.CheckIfGivenContextIsValid(ctxName)
 	if err != nil {
 		return err
 	}
