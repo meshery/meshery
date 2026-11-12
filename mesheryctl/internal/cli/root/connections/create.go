@@ -59,6 +59,10 @@ mesheryctl connection create --type minikube
 mesheryctl connection create --type gke --token auth.json
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl connection create --type [aks|eks|gke|minikube]\nRun 'mesheryctl connection create --help' to see detailed help message"
+		if len(args) > 0 {
+			return utils.ErrInvalidArgument(errors.New(errMsg))
+		}
 		if connectionType == "" {
 			return utils.ErrInvalidArgument(fmt.Errorf("connection type is required. Use --type flag to specify the type (%s)", strings.Join(supportedConnectionTypes, "|")))
 		}
