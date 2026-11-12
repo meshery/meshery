@@ -38,7 +38,7 @@ var loginCmd = &cobra.Command{
 Authenticate to the Local or a Remote Provider of a Meshery Server
 
 The authentication mode is web-based browser flow`,
-	Args: cobra.MinimumNArgs(0),
+	Args: cobra.NoArgs,
 	Example: `
 // Login with the Meshery Provider of your choice: the Local Provider or a Remote Provider.
 mesheryctl system login
@@ -53,6 +53,11 @@ mesheryctl system login -p Meshery
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
+		}
+
+		// if a temp context is set using the -c flag, use it as the current context
+		if err := mctlCfg.SetCurrentContext(tempContext); err != nil {
+			return ErrGetCurrentContext(err)
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
