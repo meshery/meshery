@@ -22167,6 +22167,56 @@ Narrow the search so exactly one item matches</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrAssignTokenCode-1257" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrAssignTokenCode-more-info" onclick="toggle_visibility('mesheryctl-ErrAssignTokenCode-more-info');">
+            <td class="tbl-severity-fatal">Fatal</td>
+            <td id=" -1257" class="error-name-code">
+              <a href="/reference/error-codes/client-mesheryctl/errassigntokencode-1257/"><code>ErrAssignTokenCode-1257</code></a>
+            </td>
+            <td>Unable to assign token to context</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrAssignTokenCode-1257" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="mesheryctl-ErrAssignTokenCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The target context may not exist in meshconfig, or meshconfig could not be read or written.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Verify the target context exists with `mesheryctl system context view` and ensure your meshconfig file is accessible.</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrTokenRollbackCode-1258" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrTokenRollbackCode-more-info" onclick="toggle_visibility('mesheryctl-ErrTokenRollbackCode-more-info');">
+            <td class="tbl-severity-fatal">Fatal</td>
+            <td id=" -1258" class="error-name-code">
+              <a href="/reference/error-codes/client-mesheryctl/errtokenrollbackcode-1258/"><code>ErrTokenRollbackCode-1258</code></a>
+            </td>
+            <td>Unable to assign token or roll back created token</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrTokenRollbackCode-1258" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="mesheryctl-ErrTokenRollbackCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Assigning the token to the target context failed, and deleting the newly created token during rollback also failed.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Remove the orphaned token from meshconfig or run `mesheryctl system token delete &lt;token-name&gt;`, and verify the target context exists with `mesheryctl system context view`.</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
