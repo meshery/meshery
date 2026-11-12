@@ -74,11 +74,27 @@ kubectl --context prod -n meshery logs deploy/playground -c meshery | grep 'Conn
    ownerReferences, so garbage collection removes them exactly as the finalizer would.
    Reinstalling first instead makes Helm adopt the terminating resources, and the new
    operator then finalizes them away, leaving an operator with no Broker.
+   Wait until the custom resources are gone and their owned objects are deleted
+   before reinstalling - garbage collection removes them asynchronously, so an
+   immediate reinstall can race it:
+   ```bash
+   kubectl --context staging -n meshery wait --for=delete broker/meshery-broker meshsync/meshery-meshsync --timeout=5m
+   kubectl --context staging -n meshery wait --for=delete sts/meshery-nats deploy/meshery-meshsync --timeout=5m
+   kubectl --context staging -n meshery get svc
+   ```
+   Only proceed once the Broker and MeshSync custom resources are absent and the
+   NATS StatefulSet, MeshSync Deployment and their Services are deleted.
 3. **Reinstall the chart Meshery Server expects** (the version matching the playground
    release, from `https://meshery.github.io/meshery.io/charts`), using Helm v3 - the major
    version Meshery Server embeds:
    `helm install meshery-operator <chart> -n meshery --kube-context staging --set fullnameOverride=meshery-operator --wait`.
    Do not pass `--atomic`: a rollback-uninstall recreates the stuck state in step 2.
+   If a previous `--wait` install timed out, Helm keeps the failed release, and
+   another `helm install` with the same name fails. Inspect it first with
+   `helm --kube-context staging list -n meshery -a`, then either roll it back
+   (`helm rollback meshery-operator -n meshery --kube-context staging`) or remove
+   it (`helm uninstall meshery-operator -n meshery --kube-context staging`)
+   before retrying the install.
 4. **Re-apply the sandbox settings** with `kubernetes/sandbox-cluster/apply.sh <sandbox-context> <egress-ip>`.
 5. **Restart the playground Deployment** (`kubectl --context prod -n meshery rollout restart
    deploy/playground`). Its Broker connections keep the endpoint and token they resolved at
