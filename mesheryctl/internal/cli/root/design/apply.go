@@ -137,7 +137,7 @@ mesheryctl design apply [design-name]
 
 			// if --skip-save is not passed we save the pattern first
 			if !skipSave {
-				fileName := filepath.Base(file)
+				fileName := designFileName(file)
 				if _, err := importDesignFile(patternURL+"/import", fileName, fileName, content); err != nil {
 					return err
 				}
