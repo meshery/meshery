@@ -28,7 +28,6 @@ import (
 
 var (
 	tokenPath     string
-	ctx           string
 	viewAllTokens bool
 	set           bool
 )
@@ -75,26 +74,28 @@ mesheryctl system token create [token-name] -f [token-path] --set
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
 		configPath := utils.GetActiveConfigPath()
-		if tokenPath == "" {
-			tokenPath = "auth.json"
+		resolvedTokenPath := tokenPath
+		if resolvedTokenPath == "" {
+			resolvedTokenPath = "auth.json"
 		}
 
 		token := config.Token{
 			Name:     tokenName,
-			Location: tokenPath,
+			Location: resolvedTokenPath,
 		}
 		if err := config.AddTokenToConfig(token, configPath); err != nil {
 			return errors.Wrap(err, "Could not create specified token to config")
 		}
 		utils.Log.Info(fmt.Sprintf("Token %s created.", tokenName))
 		if set {
-			if ctx == "" {
-				ctx = viper.GetString("current-context")
+			targetContext := resolveTokenTargetContext(cmd, configPath)
+			if err = config.SetTokenToConfig(tokenName, configPath, targetContext); err != nil {
+				// Avoid leaving an orphaned token in meshconfig when --set fails
+				// (for example, when -c/--context names a non-existent context).
+				_ = config.DeleteTokenFromConfig(tokenName, configPath)
+				return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, targetContext)
 			}
-			if err = config.SetTokenToConfig(tokenName, configPath, ctx); err != nil {
-				return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
-			}
-			utils.Log.Info(fmt.Sprintf("Token: %s set on context %s.", tokenName, ctx))
+			utils.Log.Info(fmt.Sprintf("Token: %s set on context %s.", tokenName, targetContext))
 		}
 		return nil
 	},
@@ -129,15 +130,12 @@ mesheryctl system token set [token-name]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
 		configPath := utils.GetActiveConfigPath()
-		if ctx == "" {
-			ctx = viper.GetString("current-context")
-		}
+		targetContext := resolveTokenTargetContext(cmd, configPath)
 
-		if err = config.SetTokenToConfig(tokenName, configPath, ctx); err != nil {
-			return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
-
+		if err = config.SetTokenToConfig(tokenName, configPath, targetContext); err != nil {
+			return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, targetContext)
 		}
-		utils.Log.Infof("Token %s set for context %s", tokenName, ctx)
+		utils.Log.Infof("Token %s set for context %s", tokenName, targetContext)
 		return nil
 	},
 }
@@ -223,11 +221,12 @@ mesheryctl system token view --all
 		}
 		tokenName := ""
 		if len(args) == 0 {
-			token, err := mctlCfg.GetTokenForContext(viper.GetString("current-context"))
+			targetContext := focusedSystemContext(cmd, mctlCfg.CurrentContext)
+			token, err := mctlCfg.GetTokenForContext(targetContext)
 			if err != nil {
 				return ErrTokenContext(err)
 			}
-			utils.Log.Warnf("Token unspecified. Displaying token for current context \"%s\"\n", viper.GetString("current-context"))
+			utils.Log.Warnf("Token unspecified. Displaying token for current context \"%s\"\n", targetContext)
 			utils.Log.Info("token: ", token.Name)
 			utils.Log.Info("location: ", token.Location)
 			return nil
@@ -263,10 +262,22 @@ mesheryctl system token view --all
 	},
 }
 
+func resolveTokenTargetContext(cmd *cobra.Command, configPath string) string {
+	if targetContext := focusedSystemContext(cmd, ""); targetContext != "" {
+		return targetContext
+	}
+	// Populate viper from the active configPath when -c/--context was omitted so
+	// default current-context lookup stays accurate even if viper has not loaded it.
+	if _, err := os.Stat(configPath); err == nil {
+		viper.SetConfigFile(configPath)
+		_ = viper.ReadInConfig()
+	}
+	return viper.GetString("current-context")
+}
+
 func init() {
 	tokenCmd.AddCommand(createTokenCmd, deleteTokenCmd, setTokenCmd, listTokenCmd, viewTokenCmd)
 	createTokenCmd.Flags().StringVarP(&tokenPath, "filepath", "f", "", "Add the token location")
 	createTokenCmd.Flags().BoolVarP(&set, "set", "s", false, "Set as current token")
-	setTokenCmd.Flags().StringVar(&ctx, "context", "", "Pass the context")
 	viewTokenCmd.Flags().BoolVar(&viewAllTokens, "all", false, "set the flag to view all the tokens.")
 }
