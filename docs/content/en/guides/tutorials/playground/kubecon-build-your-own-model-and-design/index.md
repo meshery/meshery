@@ -374,7 +374,7 @@ Download the [ready-made model archive](kubecon-logo.tar.gz) from this page and 
 Without Kanvas you will not see the logo on a canvas. You add the annotation component to the design document, update the design, and confirm it with `mesheryctl design view`.
 
 {{% alert color="warning" title="The Design Configurator cannot add an annotation component" %}}
-The Design Configurator lists your model under *Uncategorized*, but shows the component as **KubeCon Logo (contains invalid schema)** and cannot expand it. An annotation component has no configuration schema (`component.schema` is empty), so there is no form to fill. Add it through the YAML path below instead.
+The Design Configurator lists your model under *Uncategorized*, but shows the component as **KubeCon Logo (contains invalid schema)** and cannot expand it. An annotation component has no configuration schema (`component.schema` is empty), so there is no form to fill. Add it with the export-and-update steps below instead.
 {{% /alert %}}
 
 **Export, add the component, and update**
