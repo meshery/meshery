@@ -23,7 +23,7 @@ import { selectCompSchema } from '@/components/shared/FormFields/rjsf-utils/comm
 import { JsonParse, randomPatternNameGenerator } from '../../../../utils/utils';
 import Notification from './Notification';
 import { useProcessConnectionRegistrationMutation } from '@/rtk-query/connection';
-import { useGetCredentialsQuery } from '@/rtk-query/credentials';
+import { useAllUserCredentials } from '@/utils/hooks/useAllUserCredentials';
 import { resolveCredentialAuthSecret } from '@/utils/credentialSecret';
 
 const CONNECTION_TYPES = ['Prometheus Connection', 'Grafana Connection'];
@@ -217,7 +217,7 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
 };
 
 export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationComplete }) => {
-  const { data: credentialsData } = useGetCredentialsQuery();
+  const { credentials: existingCredentials } = useAllUserCredentials();
   const [processConnectionRegistration] = useProcessConnectionRegistrationMutation();
   const [selectedCredential, setSelectedCredential] = useState(null);
   const [prevSelectedCredential, setPrevSelectedCredential] = useState(null);
@@ -321,8 +321,6 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
       setDisableVerify(true);
     }
   }, [selectedCredential, formState]);
-
-  const existingCredentials = credentialsData?.credentials || [];
 
   return (
     <StepperContent
