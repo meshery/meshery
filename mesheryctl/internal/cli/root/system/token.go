@@ -89,11 +89,8 @@ mesheryctl system token create [token-name] -f [token-path] --set
 		utils.Log.Info(fmt.Sprintf("Token %s created.", tokenName))
 		if set {
 			targetContext := resolveTokenTargetContext(cmd, configPath)
-			if err = config.SetTokenToConfig(tokenName, configPath, targetContext); err != nil {
-				// Avoid leaving an orphaned token in meshconfig when --set fails
-				// (for example, when -c/--context names a non-existent context).
-				_ = config.DeleteTokenFromConfig(tokenName, configPath)
-				return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, targetContext)
+			if err = assignTokenWithRollback(tokenName, configPath, targetContext, config.SetTokenToConfig, config.DeleteTokenFromConfig); err != nil {
+				return err
 			}
 			utils.Log.Info(fmt.Sprintf("Token: %s set on context %s.", tokenName, targetContext))
 		}
@@ -262,15 +259,37 @@ mesheryctl system token view --all
 	},
 }
 
+func assignTokenWithRollback(
+	tokenName, configPath, targetContext string,
+	setFn func(tokenName, configPath, ctxName string) error,
+	deleteFn func(tokenName, configPath string) error,
+) error {
+	if err := setFn(tokenName, configPath, targetContext); err != nil {
+		assignErr := errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, targetContext)
+		// Avoid leaving an orphaned token in meshconfig when --set fails
+		// (for example, when -c/--context names a non-existent context).
+		if cleanupErr := deleteFn(tokenName, configPath); cleanupErr != nil {
+			return fmt.Errorf("%w; additionally failed to remove created token %q (manual cleanup may be required): %w", assignErr, tokenName, cleanupErr)
+		}
+		return assignErr
+	}
+	return nil
+}
+
 func resolveTokenTargetContext(cmd *cobra.Command, configPath string) string {
 	if targetContext := focusedSystemContext(cmd, ""); targetContext != "" {
 		return targetContext
 	}
-	// Populate viper from the active configPath when -c/--context was omitted so
-	// default current-context lookup stays accurate even if viper has not loaded it.
+	// Read active configPath with an isolated viper instance so default
+	// current-context lookup stays accurate without mutating global viper state.
 	if _, err := os.Stat(configPath); err == nil {
-		viper.SetConfigFile(configPath)
-		_ = viper.ReadInConfig()
+		v := viper.New()
+		v.SetConfigFile(configPath)
+		if err := v.ReadInConfig(); err == nil {
+			if currentContext := v.GetString("current-context"); currentContext != "" {
+				return currentContext
+			}
+		}
 	}
 	return viper.GetString("current-context")
 }

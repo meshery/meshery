@@ -2,6 +2,7 @@ package system
 
 import (
 	"bytes"
+	stderrors "errors"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -862,5 +863,23 @@ tokens:
 			assert.Error(t, err)
 			assert.Equal(t, ErrTokenContextCode, meshkiterrors.GetCode(err))
 		})
+	})
+
+	t.Run("assignTokenWithRollback propagates cleanup failure alongside assign error", func(t *testing.T) {
+		setErr := stderrors.New("context missing-ctx does not exist")
+		cleanupErr := stderrors.New("permission denied")
+
+		err := assignTokenWithRollback(
+			"orphan-tok",
+			"/tmp/config.yaml",
+			"missing-ctx",
+			func(_, _, _ string) error { return setErr },
+			func(_, _ string) error { return cleanupErr },
+		)
+		assert.Error(t, err)
+		assert.ErrorIs(t, err, setErr)
+		assert.ErrorIs(t, err, cleanupErr)
+		assert.Contains(t, err.Error(), "orphan-tok")
+		assert.Contains(t, err.Error(), `Could not set token "orphan-tok" on context missing-ctx`)
 	})
 }
