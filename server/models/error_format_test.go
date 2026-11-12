@@ -87,8 +87,8 @@ func assertProviderErrorNilSafeBehavior(t *testing.T, fn func(error, string, int
 
 		mkErr := assertMeshKitErrorStruct(t, err)
 		longDesc := strings.Join(mkErr.LongDescription, " ")
-		if !strings.Contains(longDesc, "599") {
-			t.Errorf("long description %q does not contain status %d", longDesc, customStatus)
+		if !strings.Contains(longDesc, "599") || !strings.Contains(longDesc, "unexpected HTTP status 599") {
+			t.Errorf("long description %q does not contain unexpected HTTP status %d fallback", longDesc, customStatus)
 		}
 	})
 
@@ -123,4 +123,31 @@ func TestErrFetch_NilError(t *testing.T) {
 // without panicking while preserving its MeshKit code and provider status tag.
 func TestErrPost_NilError(t *testing.T) {
 	assertProviderErrorNilSafeBehavior(t, ErrPost, ErrPostCode, "Perf Result")
+}
+
+// TestHTTPStatusFallbackAndUnexpectedError protects the shared status-text
+// fallback helper used by providerErrorCause and unexpectedHTTPStatusError.
+func TestHTTPStatusFallbackAndUnexpectedError(t *testing.T) {
+	if got := httpStatusFallback(http.StatusBadGateway, false); got != "Bad Gateway" {
+		t.Errorf("httpStatusFallback(502, false) = %q, want %q", got, "Bad Gateway")
+	}
+	if got := httpStatusFallback(http.StatusBadGateway, true); got != "unexpected HTTP status 502 Bad Gateway" {
+		t.Errorf("httpStatusFallback(502, true) = %q, want %q", got, "unexpected HTTP status 502 Bad Gateway")
+	}
+	if got := httpStatusFallback(599, false); got != "unexpected HTTP status 599" {
+		t.Errorf("httpStatusFallback(599, false) = %q, want %q", got, "unexpected HTTP status 599")
+	}
+	if got := httpStatusFallback(599, true); got != "unexpected HTTP status 599" {
+		t.Errorf("httpStatusFallback(599, true) = %q, want %q", got, "unexpected HTTP status 599")
+	}
+
+	if got := providerErrorCause(errors.New("dial timeout"), 502); got != "dial timeout" {
+		t.Errorf("providerErrorCause(non-nil) = %q, want %q", got, "dial timeout")
+	}
+	if got := unexpectedHTTPStatusError(http.StatusForbidden).Error(); got != "unexpected HTTP status 403 Forbidden" {
+		t.Errorf("unexpectedHTTPStatusError(403) = %q, want %q", got, "unexpected HTTP status 403 Forbidden")
+	}
+	if got := unexpectedHTTPStatusError(599).Error(); got != "unexpected HTTP status 599" {
+		t.Errorf("unexpectedHTTPStatusError(599) = %q, want %q", got, "unexpected HTTP status 599")
+	}
 }

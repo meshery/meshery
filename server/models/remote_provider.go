@@ -51,10 +51,7 @@ const (
 // unexpectedHTTPStatusError constructs a non-nil cause error when a remote
 // provider responds with an unexpected HTTP status code.
 func unexpectedHTTPStatusError(statusCode int) error {
-	if text := http.StatusText(statusCode); text != "" {
-		return fmt.Errorf("unexpected HTTP status %d %s", statusCode, text)
-	}
-	return fmt.Errorf("unexpected HTTP status %d", statusCode)
+	return errors.New(httpStatusFallback(statusCode, true))
 }
 
 // statusOf reports the HTTP status carried by resp, or 0 when there is no

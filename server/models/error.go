@@ -296,16 +296,28 @@ func ErrEncoding(err error, obj string) error {
 	return errors.New(ErrEncodingCode, errors.Alert, []string{"Error encoding the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})
 }
 
+// httpStatusFallback formats an HTTP status fallback description for nil or
+// unexpected-status error paths. When includeCodeForKnown is true, known HTTP
+// statuses format as "unexpected HTTP status <code> <text>"; otherwise only
+// http.StatusText(statusCode) is returned. Unknown status codes always fall
+// back to "unexpected HTTP status <code>".
+func httpStatusFallback(statusCode int, includeCodeForKnown bool) string {
+	if text := http.StatusText(statusCode); text != "" {
+		if includeCodeForKnown {
+			return fmt.Sprintf("unexpected HTTP status %d %s", statusCode, text)
+		}
+		return text
+	}
+	return fmt.Sprintf("unexpected HTTP status %d", statusCode)
+}
+
 // providerErrorCause formats the provider error cause without panicking when
 // err is nil (e.g. a non-success HTTP status after a clean round trip).
 func providerErrorCause(err error, statusCode int) string {
 	if err != nil {
 		return err.Error()
 	}
-	if text := http.StatusText(statusCode); text != "" {
-		return text
-	}
-	return fmt.Sprintf("unexpected HTTP status %d", statusCode)
+	return httpStatusFallback(statusCode, false)
 }
 
 // ErrFetch and ErrPost are the two provider-layer constructors that know the
