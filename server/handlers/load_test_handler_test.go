@@ -442,10 +442,14 @@ func TestLoadTestHandler_ClientDisconnect_NoPanic(t *testing.T) {
 		clientCtx, cancelClient := context.WithCancel(context.Background())
 		defer cancelClient()
 
+		targetHit := make(chan struct{})
+
 		// Target server simulates the destination under load.
+		// Signals targetHit on the first request so the test can order client cancellation
+		// after http.DefaultClient.Do has successfully received response headers.
 		target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			once.Do(func() {
-				cancelClient()
+				close(targetHit)
 			})
 			w.WriteHeader(http.StatusOK)
 		}))
@@ -478,6 +482,15 @@ func TestLoadTestHandler_ClientDisconnect_NoPanic(t *testing.T) {
 		defer func() {
 			_ = resp.Body.Close()
 		}()
+
+		// Wait until Fortio is actively making requests to the target server after Do returns headers,
+		// then cancel the client context mid-stream.
+		select {
+		case <-targetHit:
+		case <-time.After(5 * time.Second):
+			t.Fatal("timed out waiting for target to receive request")
+		}
+		cancelClient()
 
 		// Wait for Fortio and background draining to finish cleanly
 		time.Sleep(1200 * time.Millisecond)
