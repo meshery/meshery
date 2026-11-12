@@ -123,8 +123,8 @@ Attendees build an extremely simple design: one Kubernetes Deployment that runs 
 {{< tabs id="lab-1-paths" >}}
 Path A: Kanvas
 
-1. **Open Kanvas Designer.** Go to https://playground.meshery.io/extension/meshmap and choose the Designer tab.
-2. **Create and name the design.** Start a new design and name it `kubecon-<your-handle>-design`, for example `kubecon-octocat-design`. The save indicator beside the name is a cloud with a tick when the design is saved. Kanvas saves automatically about 3 seconds after you stop editing.
+1. **Open Kanvas Designer.** Go to https://playground.meshery.io/extension/meshmap. Kanvas opens in Designer mode, the first of the two mode icons at the top center of the canvas, on a new design named *Untitled Design*.
+2. **Create and name the design.** Click the name *Untitled Design* at the top, select all of its text (clicking only places the cursor, so typing appends to the old name), and type `kubecon-<your-handle>-design`, for example `kubecon-octocat-design`. The save indicator beside the name is a cloud with a tick when the design is saved. Kanvas saves automatically about 3 seconds after you stop editing.
 3. **Add a Deployment.** From the Kubernetes model, drag a Deployment onto the canvas. Open its configuration form, give it a name, and set the container image to `meshery/meshery-milestone:latest`. That image is a small Nginx app; Docker Hub currently publishes it under the `latest` tag only. Add a label such as `app: kubecon-<your-handle>`.
 4. **Add a Service.** Drag a Service onto the canvas. In its configuration form, set the selector to the same `app: kubecon-<your-handle>` value so the Service targets the Deployment, and set port and targetPort to `80`.
 5. **Connect them.** Tap the Service, pick a relationship type from the edge picker, and drag to the Deployment. Kanvas highlights compatible targets.
@@ -300,7 +300,7 @@ Confirm `mesheryctl system context view` shows the Playground endpoint before yo
 
    That creates `kubecon-<your-handle>-logo/v0.1.0/`, with `model.json`, a sample file under `components/`, and empty `relationships/`, `connections/` and `credentials/` directories.
 
-2. **Edit `model.json`.** Set `metadata.isAnnotation` to `true`. Set `registrant.kind` to `meshery`, give the model a short description, and paste the color SVG into `metadata.svgColor` and the white SVG into `metadata.svgWhite`. Strip any XML header (`<?xml ... ?>`) and collapse each SVG to a single line before pasting. Leave `schemaVersion` as `models.meshery.io/v1beta2`. If you set a category, *Uncategorized* is a safe choice.
+2. **Edit `model.json`.** Set `metadata.isAnnotation` to `true`. Set `registrant.kind` to `meshery`, give the model a short description, and paste the color SVG into `metadata.svgColor` and the white SVG into `metadata.svgWhite`. Strip any XML header (`<?xml ... ?>`) and collapse each SVG to a single line before pasting. Set both `version` and `model.version` to `v0.1.0`: `model init` names the folder after `--version` but writes `v0.0.1` into `model.json`. Leave `schemaVersion` as `models.meshery.io/v1beta2`. If you set a category, *Uncategorized* is a safe choice.
 
 3. **Replace the sample component.** In `components/`, keep a single JSON file (you can rename `component.json` to `kubecon-logo.json`). Set:
 
@@ -308,10 +308,10 @@ Confirm `mesheryctl system context view` shows the Playground endpoint before yo
    - `component.kind` to `kubecon-logo`
    - `metadata.isAnnotation` to `true`
    - `styles.svgColor` and `styles.svgWhite` to the same inlined SVGs
-   - `schemaVersion` to `components.meshery.io/v1beta1` (this wire format is the most widely accepted by current Meshery Servers)
-   - the nested `model.name` to the same name you passed to `model init`
+   - `schemaVersion` to `components.meshery.io/v1beta1`. This edit is required: the scaffold writes `components.meshery.io/v1beta3`, which the Playground's Meshery Server rejects, and `model import` then fails with *No valid component or relationship found in the Model provided*.
+   - the nested `model.name` to the same name you passed to `model init` (the scaffold writes `untitled-model`)
 
-   You can delete the sample file under `relationships/` if you do not need it. A model imports if it contains at least one valid component.
+   Delete the sample `relationships/relationship.json`. It uses `relationships.meshery.io/v1beta3`, which the server also rejects: the model still imports, but the import reports *encountered error for 1 entity (1 relationship)*. A model imports if it contains at least one valid component.
 
 4. **Package the model as an OCI archive:**
 
@@ -449,6 +449,8 @@ Room-level target: at least 80% of attendees complete both labs. Track it with a
 | Model name rejected | Use lowercase letters, digits, and hyphens only, no spaces or underscores. |
 | Create Model will not leave the Source step | The wizard requires a GitHub or Artifact Hub URL and generates components from that URL. It cannot create a component from an SVG alone. Use **Import Model** with [kubecon-logo.tar.gz](kubecon-logo.tar.gz) instead. |
 | `mesheryctl` talks to the wrong server | Run `mesheryctl system context view` and confirm the endpoint is `https://playground.meshery.io` before import or delete. Recreate the context and token if it is not. |
+| `model import` says *No valid component or relationship found* | The component still has the scaffold's `schemaVersion: components.meshery.io/v1beta3`. Change it to `components.meshery.io/v1beta1`, then run `model build` and `model import` again. |
+| `model import` reports *encountered error for 1 entity (1 relationship)* | The scaffold's sample `relationships/relationship.json` is still there. Delete it, rebuild and re-import. The logo component itself imported. |
 | `model build` or `model import` fails | Open the Notification Center or the CLI error. Check that `metadata.isAnnotation` is `true`, that each SVG is a single-line string, and that the component `schemaVersion` is `components.meshery.io/v1beta1`. If it stays stuck, import the ready-made [kubecon-logo.tar.gz](kubecon-logo.tar.gz). |
 | Model not in the Kanvas component list | Refresh the Kanvas tab, then search by display name (`KubeCon Logo`). If you used Import Model, confirm the model is listed in the Registry first. |
 | Model not in the Design Configurator dropdowns | Refresh the configurator tab, then look under the category you chose (the ready-made archive uses *Uncategorized*). If it still does not appear, use the YAML export-and-update path. |
