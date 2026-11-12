@@ -94,6 +94,10 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		if err != nil {
 			return err
 		}
+		// if a temp context is set using the -c flag, use it as the current context
+		if err := mctlCfg.SetCurrentContext(tempContext); err != nil {
+			return ErrGetCurrentContext(err)
+		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return ErrGetCurrentContext(err)
@@ -112,6 +116,10 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
+		}
+		// if a temp context is set using the -c flag, use it as the current context
+		if err := mctlCfg.SetCurrentContext(tempContext); err != nil {
+			return ErrGetCurrentContext(err)
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
@@ -174,12 +182,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 					}
 				}()
 				utils.Log.Infof("Forwarding port %v -> %v", options.podPort, dashboardCmdFlags.Port)
-				utils.Log.Infof("Meshery UI available at: %s", mesheryURL)
-				utils.Log.Info("Opening Meshery UI in default browser...")
-				err = utils.NavigateToBrowser(mesheryURL)
-				if err != nil {
-					utils.Log.Warnf("Opening Meshery UI in browser at %s.", currCtx.GetEndpoint())
-				}
+				openMesheryUI(mesheryURL, "")
 
 				<-portforward.GetStop()
 				return nil
@@ -224,27 +227,43 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 		}
 
-		if !dashboardCmdFlags.SkipBrowser {
-			utils.Log.Infof("Opening Meshery UI in browser at %s", currCtx.GetEndpoint())
-			err = utils.NavigateToBrowser(currCtx.GetEndpoint())
-			if err != nil {
-				utils.Log.Warnf("Failed to open Meshery UI in your browser, please point your browser to %s to access Meshery UI.\n\nOr run `mesheryctl system dashboard --port-forward` to access Meshery UI via port-forwarding.", currCtx.GetEndpoint())
-			}
-		} else {
-			utils.Log.Infof("Meshery UI available at: %s", currCtx.GetEndpoint())
-		}
+		openMesheryUI(currCtx.GetEndpoint(), "\n\nOr run `mesheryctl system dashboard --port-forward` to access Meshery UI via port-forwarding.")
 
 		return nil
 	},
 }
 
-// keepConnectionAlive to stop being timed out with port forwarding
+// keepConnectionAlive sends a periodic HTTP GET request to prevent port-forwarding timeouts and ensures the response body is safely closed.
 func keepConnectionAlive(url string) {
-	_, err := http.Get(url)
+	resp, err := http.Get(url)
 	if err != nil {
-		utils.Log.Debugf("connection request failed %v", err)
+		if utils.Log != nil {
+			utils.Log.Debugf("connection request failed %v", err)
+		}
+		return
 	}
-	utils.Log.Debug("connection request success")
+	defer utils.SafeClose(resp.Body)
+	if utils.Log != nil {
+		utils.Log.Debug("connection request success")
+	}
+}
+
+// navigateToBrowser opens a URL in the default browser. Tests replace it.
+var navigateToBrowser = utils.NavigateToBrowser
+
+// openMesheryUI opens the Meshery UI at mesheryURL in the default browser,
+// unless --skip-browser is set, and tells the user where to find it either
+// way. hint is added to the message shown when the browser can't be opened.
+func openMesheryUI(mesheryURL, hint string) {
+	if dashboardCmdFlags.SkipBrowser {
+		utils.Log.Infof("Meshery UI available at: %s", mesheryURL)
+		return
+	}
+
+	utils.Log.Infof("Opening Meshery UI in browser at %s", mesheryURL)
+	if err := navigateToBrowser(mesheryURL); err != nil {
+		utils.Log.Warnf("Failed to open Meshery UI in your browser, please point your browser to %s to access Meshery UI.%s", mesheryURL, hint)
+	}
 }
 
 func init() {

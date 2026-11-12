@@ -87,6 +87,7 @@ service:
 ingress:
   enabled: false
   ingressClassName:
+  # className: # fallback alias for ingressClassName
   apiVersion:
   annotations:
     {}

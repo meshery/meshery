@@ -139,6 +139,44 @@ describe('CustomSelectWidget', () => {
     expect(screen.getByTestId('error-icon')).toBeInTheDocument();
   });
 
+  it('hides the error icon and error state when hideError is true', () => {
+    render(
+      <CustomSelectWidget
+        id="s1"
+        label="Pick"
+        options={{ enumOptions }}
+        schema={{}}
+        rawErrors={['required']}
+        hideError={true}
+        value="a"
+        onChange={vi.fn()}
+        onBlur={vi.fn()}
+        onFocus={vi.fn()}
+      />,
+    );
+    expect(screen.getByTestId('textfield')).toHaveAttribute('data-error', 'false');
+    expect(screen.queryByTestId('error-icon')).not.toBeInTheDocument();
+  });
+
+  it('shows the error icon when hideError is false', () => {
+    render(
+      <CustomSelectWidget
+        id="s1"
+        label="Pick"
+        options={{ enumOptions }}
+        schema={{}}
+        rawErrors={['required']}
+        hideError={false}
+        value="a"
+        onChange={vi.fn()}
+        onBlur={vi.fn()}
+        onFocus={vi.fn()}
+      />,
+    );
+    expect(screen.getByTestId('textfield')).toHaveAttribute('data-error', 'true');
+    expect(screen.getByTestId('error-icon')).toBeInTheDocument();
+  });
+
   it('shows a help tooltip when schema.description is provided', () => {
     render(
       <CustomSelectWidget

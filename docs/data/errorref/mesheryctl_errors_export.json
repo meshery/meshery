@@ -28,7 +28,7 @@
         "long_description": "Unable to deploy design due to error during the processing",
         "short_description": "Deploying design failed",
         "probable_cause": "File path or design name not provided. \nMeshery server failed to interact with the Kubernetes cluster. \nThere was an error connecting to the selected target platform (i.e. Kubernetes cluster(s))..This connection might not be assigned to the selected environment.",
-        "suggested_remediation": "Provide a valid file path/design name. \nEnsure the Meshery server can interact with the Kubernetes cluster. \nCheck if the selected target platform is assigned to the current environment.\\n"
+        "suggested_remediation": "Provide a valid file path/design name. \nEnsure the Meshery server can interact with the Kubernetes cluster. \nCheck if the selected target platform is assigned to the current environment.\n"
       },
       "1005": {
         "name": "ErrUndeployDesignCode",
@@ -37,7 +37,7 @@
         "long_description": "Unable to undeploy design due to empty path",
         "short_description": "Undeploying design failed",
         "probable_cause": "File path or design name not provided.",
-        "suggested_remediation": "Provide a file path/design name. \\n\\n%v"
+        "suggested_remediation": "Provide a file path/design name.\nUsage: mesheryctl design undeploy -f [filepath]\nExample: mesheryctl design undeploy -f ./pattern.yml\nDescription: Undeploy design"
       },
       "1006": {
         "name": "ErrDesignFlagCode",
@@ -55,7 +55,7 @@
         "long_description": "No manifest file path detected",
         "short_description": "No file path detected",
         "probable_cause": "Manifest path not provided",
-        "suggested_remediation": "Provide the path to the design manifest. \\n\\n%v"
+        "suggested_remediation": "Provide the path to the design manifest.\nUsage: mesheryctl design import -f [file/url] -s [source-type]\nExample: mesheryctl design import -f ./pattern.yml -s \"Kubernetes Manifest\""
       },
       "1008": {
         "name": "ErrInvalidMeshConfigCode",
@@ -306,7 +306,7 @@
         "severity": "Alert",
         "long_description": "Unable to validate mesh name",
         "short_description": "Invalid mesh name",
-        "probable_cause": "%s is not a valid mesh name or is unsupported",
+        "probable_cause": "The provided mesh name is not valid or is unsupported",
         "suggested_remediation": "Enter a valid mesh name"
       },
       "1036": {
@@ -485,7 +485,7 @@
         "code": "1056",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "error generating comp %s of model %s",
+        "short_description": "Error generating component",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -577,7 +577,7 @@
         "long_description": "The provided platform is not supported.",
         "short_description": "Unsupported platform",
         "probable_cause": "The platform \n is not supported for the deployment of Meshery. ",
-        "suggested_remediation": "Supported platforms are:\\n\\n- docker\\n- kubernetes\\n\\n Verify this setting in your meshconfig at \n or verify by executing `mesheryctl system context view`"
+        "suggested_remediation": "Supported platforms are:\n\n- docker\n- kubernetes\n\n Verify this setting in your meshconfig at \n or verify by executing `mesheryctl system context view`"
       },
       "1068": {
         "name": "ErrRetrievingCurrentContextCode",
@@ -619,7 +619,7 @@
         "name": "ErrK8sQueryCode",
         "code": "1073",
         "severity": "Alert",
-        "long_description": "\\nThe Kubernetes cluster is not accessible\n Please confirm that the token is valid\n See https://docs.meshery.io/installation/quick-start for additional instructions",
+        "long_description": "\nThe Kubernetes cluster is not accessible\n Please confirm that the token is valid\n See https://docs.meshery.io/installation/quick-start for additional instructions",
         "short_description": "The Kubernetes cluster is not accessible.",
         "probable_cause": "Kubernetes cluster is unavailable and that the token is invalid",
         "suggested_remediation": "Please confirm that your cluster is available and that the token is valid. See https://docs.meshery.io/installation/quick-start for additional instructions"
@@ -628,7 +628,7 @@
         "name": "ErrK8sConfigCode",
         "code": "1074",
         "severity": "Alert",
-        "long_description": "\\nThe Kubernetes cluster is not accessible\n Please confirm that the cluster is running\n See https://docs.meshery.io/installation/quick-start for additional instructions.",
+        "long_description": "\nThe Kubernetes cluster is not accessible\n Please confirm that the cluster is running\n See https://docs.meshery.io/installation/quick-start for additional instructions.",
         "short_description": "The Kubernetes cluster is not accessible.",
         "probable_cause": "Kubernetes cluster isn't running or inaccessible",
         "suggested_remediation": "Verify kubernetes and Meshery connectivity or Verify kubeconfig certificates."
@@ -972,7 +972,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Failed to parse github file",
-        "probable_cause": "Unable to retrieve file from URL: %s",
+        "probable_cause": "Unable to retrieve file from the given URL",
         "suggested_remediation": "Ensure you have a github url in file path"
       },
       "1113": {
@@ -1036,7 +1036,7 @@
         "long_description": "Empty  source type detected",
         "short_description": "Source type for the design to import not specified",
         "probable_cause": "Design source type not provided",
-        "suggested_remediation": "Provide one of the supported source type for the design to import. \\n\\n%v"
+        "suggested_remediation": "Provide one of the supported source type for the design to import.\nUsage: mesheryctl design import -f [file/url] -s [source-type]\nExample: mesheryctl design import -f ./pattern.yml -s \"Kubernetes Manifest\""
       },
       "1123": {
         "name": "ErrCreateFileCode",
@@ -1070,9 +1070,9 @@
         "code": "1126",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "",
+        "short_description": "Failed to mark the flag as required",
         "probable_cause": "The flag may not exist or there was some error while specifying the flag.",
-        "suggested_remediation": "Please ensure that the required flag '%s' is correctly specified and set before running the command."
+        "suggested_remediation": ""
       },
       "1127": {
         "name": "ErrExportModelCode",
@@ -1171,7 +1171,7 @@
         "long_description": "Design [File | File Path | URL] isn't specified",
         "short_description": "Design file path not provided",
         "probable_cause": "[File | File Path | URL] not detected. The '-f' flag is missing or empty in the 'mesheryctl design import' command",
-        "suggested_remediation": "Provide the path to the design file using the '-f' flag. Ensure that the file path or URL is correctly specified and accessible. \\n\\n%v"
+        "suggested_remediation": "Provide the path to the design file using the '-f' flag. Ensure that the file path or URL is correctly specified and accessible.\nUsage: mesheryctl design import -f [file/url] -s [source-type]\nExample: mesheryctl design import -f ./pattern.yml -s \"Kubernetes Manifest\""
       },
       "1141": {
         "name": "ErrCreateManifestsFolderCode",
@@ -1576,7 +1576,7 @@
         "long_description": "No design name or ID was provided",
         "short_description": "Design name or ID not specified",
         "probable_cause": "Command requires a design name or ID as argument",
-        "suggested_remediation": "Provide a design name or ID, or use '-a' flag to view all designs.\\nRun 'mesheryctl design view --help' for usage details"
+        "suggested_remediation": "Provide a design name or ID, or use '-a' flag to view all designs.\nRun 'mesheryctl design view --help' for usage details"
       },
       "1193": {
         "name": "ErrReadInputCode",
@@ -1675,7 +1675,7 @@
         "long_description": "",
         "short_description": "Invalid or empty spreadsheet provided",
         "probable_cause": "The spreadsheet must contain valid relationship entries with the required headers.",
-        "suggested_remediation": "Ensure the spreadsheet contains at least two headers and corresponding values for it's headers. Refer to the Meshery relationship csv for the expected spreadsheet format \\\"https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\\"
+        "suggested_remediation": "Ensure the spreadsheet contains at least two headers and corresponding values for it's headers. Refer to the Meshery relationship csv for the expected spreadsheet format \"https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\""
       },
       "1205": {
         "name": "ErrSystemSetInvalidReleaseChannelCode",
@@ -1918,7 +1918,7 @@
         "long_description": "",
         "short_description": "",
         "probable_cause": "Invalid system specified\nPublishing process encountered an error",
-        "suggested_remediation": "Ensure a valid system is provided (meshery, remote-provider, website)\nCheck the publishing configuration and try again"
+        "suggested_remediation": "Ensure a valid system is provided (remote-provider, website)\nCheck the publishing configuration and try again"
       },
       "1234": {
         "name": "ErrSystemAzureAksGetCredentialsCode",
@@ -2035,7 +2035,7 @@
         "long_description": "",
         "short_description": "Invalid or empty CSV file provided",
         "probable_cause": "The CSV file must contain valid relationship entries with the required headers.",
-        "suggested_remediation": "Ensure the CSV file contains two header rows and at least one data row with a minimum of 15 columns. Refer to the Meshery relationship CSV template: \\\"https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\\"
+        "suggested_remediation": "Ensure the CSV file contains two header rows and at least one data row with a minimum of 15 columns. Refer to the Meshery relationship CSV template: \"https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\""
       },
       "1247": {
         "name": "ErrEvaluateDesignCode",
@@ -2044,7 +2044,7 @@
         "long_description": "Exactly one of a design file path (-f) or a design ID must be provided, not both",
         "short_description": "Design not specified for evaluation",
         "probable_cause": "A design must be specified either by file path (-f) or by ID as an argument, but not both simultaneously",
-        "suggested_remediation": "Provide a design file using '-f' flag or pass a design ID as an argument (not both).\\n\\nUsage: mesheryctl design evaluate [ID] -o [output-file]\\n       mesheryctl design evaluate -f [file] -o [output-file]"
+        "suggested_remediation": "Provide a design file using '-f' flag or pass a design ID as an argument (not both).\n\nUsage: mesheryctl design evaluate [ID] -o [output-file]\n       mesheryctl design evaluate -f [file] -o [output-file]"
       },
       "1248": {
         "name": "ErrEvaluateDesignResponseCode",
@@ -2106,8 +2106,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Selected model not found",
-        "probable_cause": "The model name does not match any entry in the CSV's \\\"model\\\" column, or contains a typo",
-        "suggested_remediation": "Check the model name against the \\\"model\\\" column in your Models CSV, or omit --model to generate all eligible models"
+        "probable_cause": "The model name does not match any entry in the CSV's \"model\" column, or contains a typo",
+        "suggested_remediation": "Check the model name against the \"model\" column in your Models CSV, or omit --model to generate all eligible models"
       },
       "1255": {
         "name": "ErrGitHubAPIResponseCode",
@@ -2117,6 +2117,15 @@
         "short_description": "Unexpected response from GitHub API",
         "probable_cause": "GitHub API may be rate-limiting requests or the requested resource may not exist",
         "suggested_remediation": "Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"
+      },
+      "1256": {
+        "name": "ErrAmbiguousIDCode",
+        "code": "1256",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Ambiguous ID prefix",
+        "probable_cause": "The provided ID prefix is shared by more than one item.",
+        "suggested_remediation": "Provide more characters of the ID, or the full ID."
       }
     }
   }

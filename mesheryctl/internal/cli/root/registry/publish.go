@@ -22,6 +22,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"google.golang.org/api/sheets/v4"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
@@ -100,50 +101,55 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 			return errors.New(utils.RegistryError("Invalid JWT Token: Ensure the provided token is a base64-encoded, valid Google Spreadsheets API token.", "publish"))
 		}
 		resp, err := srv.Spreadsheets.Get(sheetID).Fields().Do()
-		if err != nil || resp.HTTPStatusCode != 200 {
-			errMsg := fmt.Sprintf("Request to Google Spreadsheet did not succeed.\n\nReturned error: %s", err.Error())
-			return errors.New(utils.RegistryError(errMsg, "publish"))
+		if err != nil || resp == nil || resp.HTTPStatusCode != 200 {
+			return errors.New(utils.RegistryError(spreadsheetRequestError(resp, err), "publish"))
 		}
 
 		modelCSVHelper := &meshkitRegistryUtils.ModelCSVHelper{}
 		componentCSVHelper := &meshkitRegistryUtils.ComponentCSVHelper{}
 		relationshipCSVHelper := &meshkitRegistryUtils.RelationshipCSVHelper{}
-		GoogleSpreadSheetURL += sheetID
+		url := GoogleSpreadSheetURL + sheetID
 
 		for _, v := range resp.Sheets {
 			switch v.Properties.Title {
 			case "Models":
-				modelCSVHelper, err = meshkitRegistryUtils.NewModelCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, modelCSVFilePath)
+				modelCSVHelper, err = meshkitRegistryUtils.NewModelCSVHelper(url, v.Properties.Title, v.Properties.SheetId, modelCSVFilePath)
 				if err != nil {
+					err = ErrPublish(err, system)
 					utils.Log.Error(err)
-					return nil
+					return err
 				}
-				err := modelCSVHelper.ParseModelsSheet(true, modelName)
+				err = modelCSVHelper.ParseModelsSheet(true, modelName)
 				if err != nil {
+					err = ErrPublish(err, system)
 					utils.Log.Error(err)
-					return nil
+					return err
 				}
 			case "Components":
-				componentCSVHelper, err = meshkitRegistryUtils.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, componentCSVFilePath)
+				componentCSVHelper, err = meshkitRegistryUtils.NewComponentCSVHelper(url, v.Properties.Title, v.Properties.SheetId, componentCSVFilePath)
 				if err != nil {
+					err = ErrPublish(err, system)
 					utils.Log.Error(err)
-					return nil
+					return err
 				}
-				err := componentCSVHelper.ParseComponentsSheet(modelName)
+				err = componentCSVHelper.ParseComponentsSheet(modelName)
 				if err != nil {
+					err = ErrPublish(err, system)
 					utils.Log.Error(err)
-					return nil
+					return err
 				}
 			case "Relationships":
-				relationshipCSVHelper, err = meshkitRegistryUtils.NewRelationshipCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, relationshipCSVFilePath)
+				relationshipCSVHelper, err = meshkitRegistryUtils.NewRelationshipCSVHelper(url, v.Properties.Title, v.Properties.SheetId, relationshipCSVFilePath)
 				if err != nil {
+					err = ErrPublish(err, system)
 					utils.Log.Error(err)
-					return nil
+					return err
 				}
 				err = relationshipCSVHelper.ParseRelationshipsSheet(modelName)
 				if err != nil {
+					err = ErrPublish(err, system)
 					utils.Log.Error(err)
-					return nil
+					return err
 				}
 			}
 		}
@@ -184,9 +190,23 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 	},
 }
 
-// TODO
+// spreadsheetRequestError builds the error reported when a request to the
+// Google Spreadsheet API does not succeed, preserving the underlying cause.
+func spreadsheetRequestError(resp *sheets.Spreadsheet, err error) string {
+	if err == nil {
+		if resp != nil {
+			err = fmt.Errorf("HTTP status %d", resp.HTTPStatusCode)
+		} else {
+			err = fmt.Errorf("empty response")
+		}
+	}
+	return fmt.Sprintf("Request to Google Spreadsheet did not succeed.\n\nReturned error: %s", err.Error())
+}
+
+// mesherySystem handles publishing to the meshery system target.
+// Publishing directly to meshery server via registry publish is currently unsupported.
 func mesherySystem() error {
-	return nil
+	return fmt.Errorf("publishing directly to system 'meshery' is not supported; use 'remote-provider' or 'website'")
 }
 
 // Create models definitions to remote provider path
@@ -265,7 +285,7 @@ func websiteSystem() error {
 		mOut, _ := filepath.Abs(filepath.Join(modelsOutputPath, "data.js"))
 		if err := meshkitUtils.WriteToFile(mOut, docsJSON); err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 	}
 

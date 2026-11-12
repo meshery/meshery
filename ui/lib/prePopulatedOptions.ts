@@ -10,5 +10,5 @@ export const durationOptions = [
   '2h',
   '5h',
   '10h',
-  '1d',
+  '24h',
 ];
