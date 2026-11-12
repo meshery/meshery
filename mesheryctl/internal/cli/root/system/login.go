@@ -55,6 +55,11 @@ mesheryctl system login -p Meshery
 			return err
 		}
 
+		// if a temp context is set using the -c flag, use it as the current context
+		if err := mctlCfg.SetCurrentContext(tempContext); err != nil {
+			return ErrGetCurrentContext(err)
+		}
+
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return ErrGetCurrentContext(err)
