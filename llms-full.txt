@@ -19243,7 +19243,7 @@ digitalocean-icons/
   <li><code>category.name</code> and <code>subCategory</code> - e.g. <code>Platform</code> / <code>Cloud Provider</code>.</li>
   <li><code>registrant.kind</code> - e.g. <code>meshery</code>.</li>
   <li><code>description</code> - a short summary of what the model provides.</li>
-  <li><code>metadata.svgColor</code> and <code>metadata.svgWhite</code> - the model's display icon, as a JSON-escaped SVG string. The SVG's attribute quotes make raw markup invalid JSON, so generate the value with <code>sed 's/&lt;?xml[^&gt;]*?&gt;//' icon.svg | jq -Rs .</code>, which drops any <code>&lt;?xml ...?&gt;</code> header and escapes quotes and newlines, and paste the whole output, including its surrounding quotes.</li>
+  <li><code>metadata.svgColor</code> and <code>metadata.svgWhite</code> - the model's display icon, as a JSON-escaped SVG string. The SVG's attribute quotes make raw markup invalid JSON, so generate the value with <a href="https://jqlang.org/download/" target="_blank" rel="noopener">jq</a> (install it first; macOS 15 and later include it): <code>sed 's/&lt;?xml[^&gt;]*?&gt;//' icon.svg | jq -Rs .</code>, which drops any <code>&lt;?xml ...?&gt;</code> header and escapes quotes and newlines, and paste the whole output, including its surrounding quotes.</li>
   <li><code>metadata.isAnnotation</code> - set to <code>true</code> for an annotation-only (visual diagramming) model.</li>
 </ul>
 <h4>3. Add one component per capability</h4>
