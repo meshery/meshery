@@ -99665,7 +99665,7 @@ The response is nil or does not contain a body.</td>
               <p class="error-details">Invalid system specified
 Publishing process encountered an error</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Ensure a valid system is provided (meshery, remote-provider, website)
+              <p class="error-details">Ensure a valid system is provided (remote-provider, website)
 Check the publishing configuration and try again</p>
             </td>
           </tr>
