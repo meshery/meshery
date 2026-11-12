@@ -29,16 +29,24 @@ import { useRouter } from 'next/router';
  * - Keep the component's responsibilities focused on connection management. Avoid adding unrelated functionality and state.
  */
 
+/**
+ * Renders the Connections and MeshSync management views with RBAC gating and
+ * deferred schema loading.
+ */
 function ConnectionManagementPage(props) {
+  const hasViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
   const [createConnectionModal, setCreateConnectionModal] = useState({
     open: false,
   });
 
-  const { data: schemaResponse } = useGetSchemaQuery({
-    schemaName: 'helmRepo',
-  });
+  const { data: schemaResponse } = useGetSchemaQuery(
+    {
+      schemaName: 'helmRepo',
+    },
+    { skip: !hasViewConnections },
+  );
 
-  const createConnection = schemaResponse ?? {};
+  const createConnection = (hasViewConnections ? schemaResponse : undefined) ?? {};
 
   const handleCreateConnectionModalOpen = () => {
     setCreateConnectionModal({ open: true });
@@ -53,12 +61,13 @@ function ConnectionManagementPage(props) {
   return (
     <>
       <Connections
+        hasViewConnections={hasViewConnections}
         createConnectionModal={createConnectionModal}
         onOpenCreateConnectionModal={handleCreateConnectionModalOpen}
         onCloseCreateConnectionModal={handleCreateConnectionModalClose}
         {...props}
       />
-      {createConnectionModal.open && (
+      {hasViewConnections && createConnectionModal.open && (
         <Modal
           open={true}
           schema={createConnection.rjsfSchema}
@@ -72,8 +81,7 @@ function ConnectionManagementPage(props) {
     </>
   );
 }
-function Connections() {
-  const hasViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
+function Connections({ hasViewConnections }) {
   const theme = useTheme();
   const router = useRouter();
   const { query, pathname, push, isReady, replace } = router;
@@ -95,7 +103,7 @@ function Connections() {
         : null;
 
   useEffect(() => {
-    if (!isReady || !isCreateConnectionQuery(createFlag)) {
+    if (!hasViewConnections || !isReady || !isCreateConnectionQuery(createFlag)) {
       return;
     }
     openCreateConnection({
@@ -106,7 +114,7 @@ function Connections() {
     delete nextQuery[CREATE_CONNECTION_QUERY.create];
     delete nextQuery[CREATE_CONNECTION_QUERY.kind];
     replace({ pathname, query: nextQuery }, undefined, { shallow: true });
-  }, [isReady, createFlag, kindFromQuery, openCreateConnection]);
+  }, [hasViewConnections, isReady, createFlag, kindFromQuery, openCreateConnection]);
 
   // Next.js's pages-router `router.query` and `router.push` get fresh
   // references on each render, which previously cascaded into a new
