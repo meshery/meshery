@@ -141,6 +141,11 @@ is disconnected or deleted. **No manual `kubectl port-forward` is required.**
 | In-cluster | **Skipped** automatically (the `ClusterIP` is directly reachable). |
 | Disable | Set `MESHERY_MANAGED_BROKER_PORTFORWARD=false` on Meshery Server. |
 
+Current releases treat a Meshery Server running inside *any* Kubernetes cluster as
+in-cluster, so a Server that manages a different cluster skips the port-forward
+too - see the known issue under
+[Out-of-Cluster Deployment]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#out-of-cluster-deployment" >}}).
+
 When disabled, Meshery falls back to the resolved Broker endpoint (and
 `127.0.0.1` / `host.docker.internal` on the Broker port), so you can provide your
 own path, for example:
