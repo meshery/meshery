@@ -656,9 +656,8 @@ func persistAndPublishEvent(log logger.Handler, provider models.Provider, token 
 	if provider == nil || event == nil {
 		return
 	}
-	// Prepare the event here, not only on the provider's copy, so the event
-	// broadcast when persisting fails has its own ID too: events that share
-	// the zero ID overwrite one another in the UI's store.
+	// Prepare the event here, not only on the provider's copy, so the
+	// preparation mints the ID for the persisted copy.
 	prepared := models.PrepareEventForPersistence(*event, log)
 	event = &prepared
 	persisted, err := provider.PersistEvent(*event, token)
