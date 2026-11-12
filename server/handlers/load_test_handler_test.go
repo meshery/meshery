@@ -472,9 +472,10 @@ func TestLoadTestHandler_ClientDisconnect_NoPanic(t *testing.T) {
 		require.NoError(t, err)
 
 		resp, err := http.DefaultClient.Do(req)
-		if err == nil && resp != nil {
-			_ = resp.Body.Close()
-		}
+		require.NoError(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+		defer resp.Body.Close()
 
 		// Wait for Fortio and background draining to finish cleanly
 		time.Sleep(1200 * time.Millisecond)
