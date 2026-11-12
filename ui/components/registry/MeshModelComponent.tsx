@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } from 'react';
 import {
   MODELS,
   COMPONENTS,
@@ -63,9 +63,9 @@ const MeshModelComponent_ = ({
     new Set(),
   );
 
-  // Sync after commit (and before the passive fetch effect below) so aborted
-  // concurrent renders never leave the ref stale relative to committed UI.
-  useEffect(() => {
+  // Sync synchronously in commit phase (before paint or promise continuations) so
+  // neither aborted renders nor pre-passive-effect microtasks read a stale ref.
+  useLayoutEffect(() => {
     canViewRegistryRef.current = canViewRegistry;
   }, [canViewRegistry]);
   const theme = useTheme();
