@@ -273,3 +273,92 @@ func TestUICacheHeaders(t *testing.T) {
 		})
 	}
 }
+func TestIsDynamicUIEndpoint(t *testing.T) {
+	tests := []struct {
+		name   string
+		reqURL string
+		want   bool
+	}{
+		{
+			name:   "extension root",
+			reqURL: "/extension",
+			want:   true,
+		},
+		{
+			name:   "extension subroute",
+			reqURL: "/extension/meshmap",
+			want:   true,
+		},
+		{
+			name:   "extensions page",
+			reqURL: "/extensions",
+			want:   false,
+		},
+		{
+			name:   "extension asset",
+			reqURL: "/extension/meshmap.js",
+			want:   false,
+		},
+		{
+			name:   "unrelated route",
+			reqURL: "/settings",
+			want:   false,
+		},
+		{
+			name:   "extension-extra is not a dynamic extension endpoint",
+			reqURL: "/extension-extra",
+			want:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := isDynamicUIEndpoint(tt.reqURL); got != tt.want {
+				t.Errorf(
+					"isDynamicUIEndpoint(%q) = %v, want %v",
+					tt.reqURL, got, tt.want,
+				)
+			}
+		})
+	}
+}
+
+func TestGetDynamicUIEndpoint(t *testing.T) {
+	tests := []struct {
+		name   string
+		reqURL string
+		want   string
+	}{
+		{
+			name:   "extension root",
+			reqURL: "/extension",
+			want:   "/extension/[...component].html",
+		},
+		{
+			name:   "extension subroute",
+			reqURL: "/extension/meshmap",
+			want:   "/extension/[...component].html",
+		},
+		{
+			name:   "extensions page",
+			reqURL: "/extensions",
+			want:   "",
+		},
+		{
+			name:   "extension-extra does not map to a dynamic endpoint",
+			reqURL: "/extension-extra",
+			want:   "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getDynamicUIEndpoint(tt.reqURL); got != tt.want {
+				t.Errorf(
+					"getDynamicUIEndpoint(%q) = %q, want %q",
+					tt.reqURL, got, tt.want,
+				)
+			}
+		})
+	}
+}
