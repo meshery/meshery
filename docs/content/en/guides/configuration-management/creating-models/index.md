@@ -142,8 +142,8 @@ Using Scaffold (model init) | fa fa-folder-tree
 <code>
 digitalocean-icons/
 <br />└── v0.1.0/
-<br />&nbsp;&nbsp;&nbsp;&nbsp;├── model.json          # model definition (name and displayName are pre-filled from the argument)
-<br />&nbsp;&nbsp;&nbsp;&nbsp;├── components/          # one sample component; add one JSON file per component
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── model.json          # model definition (name, displayName and version are pre-filled from the argument and --version)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── components/          # one sample component, already referencing this model; add one JSON file per component
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── relationships/
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── connections/
 <br />&nbsp;&nbsp;&nbsp;&nbsp;└── credentials/
