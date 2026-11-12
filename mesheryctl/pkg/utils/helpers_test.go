@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -14,6 +15,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"k8s.io/client-go/tools/clientcmd/api"
 )
 
@@ -52,6 +54,41 @@ type trackingBody struct {
 func (b *trackingBody) Close() error {
 	b.closed = true
 	return b.ReadCloser.Close()
+}
+
+func installTrackingTransport(t *testing.T) *trackingTransport {
+	t.Helper()
+	transport := &trackingTransport{base: http.DefaultTransport}
+	previous := http.DefaultTransport
+	http.DefaultTransport = transport
+	t.Cleanup(func() { http.DefaultTransport = previous })
+	return transport
+}
+
+func assertBodyClosed(t *testing.T, transport *trackingTransport, msg string) {
+	t.Helper()
+	if transport.body == nil || !transport.body.closed {
+		t.Fatal(msg)
+	}
+}
+
+func setupAuthenticatedContext(t *testing.T, endpoint string) {
+	t.Helper()
+	origToken := TokenFlag
+	t.Cleanup(func() { TokenFlag = origToken })
+	TokenFlag = GetToken(t)
+	origEndpoint := viper.GetString("contexts.local.endpoint")
+	t.Cleanup(func() { viper.Set("contexts.local.endpoint", origEndpoint) })
+	viper.Set("contexts.local.endpoint", endpoint)
+	tokenData, err := os.ReadFile(GetToken(t))
+	if err != nil {
+		return
+	}
+	tempAuth := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tempAuth, tokenData, 0o600); err != nil {
+		return
+	}
+	viper.Set("tokens", []map[string]string{{"name": "default", "location": tempAuth}})
 }
 
 func TestIsLocalProvider(t *testing.T) {
@@ -262,6 +299,7 @@ func TestAskForConfirmation(t *testing.T) {
 		question string
 		input    string
 		want     bool
+		wantErr  bool
 	}{
 		{
 			name:     "test with input 'yes'",
@@ -274,6 +312,24 @@ func TestAskForConfirmation(t *testing.T) {
 			question: "question?",
 			input:    "no\n",
 			want:     false,
+		},
+		{
+			name:     "unrecognized input is asked again until a valid answer",
+			question: "question?",
+			input:    "maybe\ny\n",
+			want:     true,
+		},
+		{
+			name:     "stdin closed without an answer returns an error",
+			question: "question?",
+			input:    "",
+			wantErr:  true,
+		},
+		{
+			name:     "stdin closed after an unrecognized answer returns an error",
+			question: "question?",
+			input:    "maybe\n",
+			wantErr:  true,
 		},
 	}
 	for _, tt := range tests {
@@ -293,7 +349,19 @@ func TestAskForConfirmation(t *testing.T) {
 			defer func() { os.Stdin = stdin }()
 			os.Stdin = r
 
-			got := AskForConfirmation(tt.question)
+			got, err := AskForConfirmation(tt.question)
+			if tt.wantErr {
+				if err == nil {
+					t.Fatalf("AskForConfirmation error = nil, want an error")
+				}
+				if got {
+					t.Errorf("AskForConfirmation got = true on error, want false")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("AskForConfirmation unexpected error = %v", err)
+			}
 			if got != tt.want {
 				t.Errorf("AskForConfirmation got = %v want = %v", got, tt.want)
 			}
@@ -438,9 +506,53 @@ func TestAskForInput(t *testing.T) {
 	defer func() { os.Stdin = stdin }()
 	os.Stdin = r
 
-	got := AskForInput("Prompt", []string{"data1", "data2"})
+	got, err := AskForInput("Prompt", []string{"data1", "data2"})
+	if err != nil {
+		t.Fatalf("AskForInput unexpected error = %v", err)
+	}
 	if got != input {
 		t.Errorf("AskForInput got = %v want = %v", got, input)
+	}
+}
+
+func TestAskForInputInvalidThenValid(t *testing.T) {
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err = w.WriteString("nope\ndata2\n"); err != nil {
+		t.Fatal(err)
+	}
+	_ = w.Close()
+	stdin := os.Stdin
+	defer func() { os.Stdin = stdin }()
+	os.Stdin = r
+
+	got, err := AskForInput("Prompt", []string{"data1", "data2"})
+	if err != nil {
+		t.Fatalf("AskForInput unexpected error = %v", err)
+	}
+	if got != "data2" {
+		t.Errorf("AskForInput got = %v want = data2", got)
+	}
+}
+
+func TestAskForInputStdinClosed(t *testing.T) {
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	_ = w.Close()
+	stdin := os.Stdin
+	defer func() { os.Stdin = stdin }()
+	os.Stdin = r
+
+	got, err := AskForInput("Prompt", []string{"data1", "data2"})
+	if err == nil {
+		t.Fatalf("AskForInput error = nil, want an error; got %q", got)
+	}
+	if got != "" {
+		t.Errorf("AskForInput got = %q on error, want an empty string", got)
 	}
 }
 
@@ -495,6 +607,138 @@ func TestContainsStringPrefix(t *testing.T) {
 			got := ContainsStringPrefix(tt.slice, tt.str)
 			if got != tt.want {
 				t.Errorf("ContainsStringPrefix got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestValidId(t *testing.T) {
+	const (
+		idA = "dc76a1b2-0000-4000-8000-000000000001"
+		idB = "d4e5f6a7-0000-4000-8000-000000000002"
+		idC = "1a2b3c4d-0000-4000-8000-000000000003"
+	)
+	manyIDs := make([]string, 12)
+	for i := range manyIDs {
+		manyIDs[i] = fmt.Sprintf("e0000000-0000-4000-8000-0000000000%02d", i)
+	}
+	tests := []struct {
+		name         string
+		ids          []string
+		input        string
+		wantID       string
+		wantIsID     bool
+		wantErr      error
+		wantErrText  string
+		wantRequests int
+	}{
+		{
+			name:         "given an exact ID when ValidId then that ID is returned",
+			ids:          []string{idA, idB, idC},
+			input:        idB,
+			wantID:       idB,
+			wantIsID:     true,
+			wantRequests: 1,
+		},
+		{
+			name:         "given a prefix of one ID when ValidId then the full ID is returned",
+			ids:          []string{idA, idB, idC},
+			input:        "dc",
+			wantID:       idA,
+			wantIsID:     true,
+			wantRequests: 1,
+		},
+		{
+			name:         "given a prefix of several IDs when ValidId then an ambiguity error lists them",
+			ids:          []string{idA, idB, idC},
+			input:        "d",
+			wantErr:      ErrAmbiguousID("d", []string{idA, idB}),
+			wantRequests: 1,
+		},
+		{
+			name:         "given a prefix of more than 10 IDs when ValidId then the error lists only the first 10",
+			ids:          manyIDs,
+			input:        "e",
+			wantErr:      ErrAmbiguousID("e", manyIDs),
+			wantErrText:  `"e" matches 12 IDs, including: ` + strings.Join(manyIDs[:10], ", "),
+			wantRequests: 1,
+		},
+		{
+			name:         "given input matching no ID when ValidId then the input is returned unchanged",
+			ids:          []string{idA, idB, idC},
+			input:        "my-design",
+			wantID:       "my-design",
+			wantIsID:     false,
+			wantRequests: 1,
+		},
+		{
+			name:         "given an exact ID that is also a prefix of another ID when ValidId then the exact ID wins",
+			ids:          []string{idA + "0", idA},
+			input:        idA,
+			wantID:       idA,
+			wantIsID:     true,
+			wantRequests: 1,
+		},
+		{
+			name:         "given an empty ID list when ValidId then the input is returned unchanged",
+			ids:          []string{},
+			input:        "d",
+			wantID:       "d",
+			wantIsID:     false,
+			wantRequests: 1,
+		},
+		{
+			name:         "given empty input when ValidId then it is rejected without a request",
+			ids:          []string{idA, idB, idC},
+			input:        "",
+			wantErr:      ErrInvalidArgument(errors.New("name or ID cannot be empty")),
+			wantRequests: 0,
+		},
+		{
+			name:         "given whitespace input when ValidId then it is rejected without a request",
+			ids:          []string{idA, idB, idC},
+			input:        "   ",
+			wantErr:      ErrInvalidArgument(errors.New("name or ID cannot be empty")),
+			wantRequests: 0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			requests := 0
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				requests++
+				if got := r.URL.Query().Get("pagesize"); got != "10000" {
+					t.Errorf("GetID sent pagesize=%q, want %q", got, "10000")
+				}
+				patterns := make([]string, 0, len(tt.ids))
+				for _, id := range tt.ids {
+					patterns = append(patterns, fmt.Sprintf(`{"id":%q}`, id))
+				}
+				_, _ = fmt.Fprintf(w, `{"patterns":[%s]}`, strings.Join(patterns, ","))
+			}))
+			defer server.Close()
+			setupAuthenticatedContext(t, server.URL)
+
+			gotID, gotIsID, err := ValidId(server.URL, tt.input, "pattern")
+
+			if tt.wantErr != nil {
+				if err == nil {
+					t.Fatalf("expected error %v, got nil", tt.wantErr)
+				}
+				AssertMeshkitErrorsEqual(t, err, tt.wantErr)
+				if tt.wantErrText != "" && !strings.HasPrefix(err.Error(), tt.wantErrText+" | ") {
+					t.Errorf("ValidId error = %q, want it to start with %q", err.Error(), tt.wantErrText)
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("unexpected error: %v", err)
+				}
+				if gotID != tt.wantID || gotIsID != tt.wantIsID {
+					t.Errorf("ValidId got = (%q, %v), want (%q, %v)", gotID, gotIsID, tt.wantID, tt.wantIsID)
+				}
+			}
+			if requests != tt.wantRequests {
+				t.Errorf("ValidId made %d requests, want %d", requests, tt.wantRequests)
 			}
 		})
 	}
@@ -814,4 +1058,85 @@ func TestSubcommandNames(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestTrimFileExtension checks that only the final extension is removed.
+// Regression test: strings.Trim(name, ext) strips a character set from both
+// ends, turning "my-app.yaml" into "-app". Use strings.TrimSuffix instead.
+func TestTrimFileExtension(t *testing.T) {
+	tests := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{"leading chars match extension", "my-app.yaml", "my-app"},
+		{"mostly extension letters", "mail.yaml", "mail"},
+		{"json extension", "sample.json", "sample"},
+		{"multiple dots", "app.v2.yaml", "app.v2"},
+		{"no extension", "Test Design", "Test Design"},
+		{"empty name", "", ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := TrimFileExtension(tt.in); got != tt.want {
+				t.Errorf("TrimFileExtension(%q) = %q, want %q", tt.in, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestUploadFileWithParams(t *testing.T) {
+	origToken := TokenFlag
+	defer func() { TokenFlag = origToken }()
+	TokenFlag = GetToken(t)
+
+	tmpDir := t.TempDir()
+	sampleFile := filepath.Join(tmpDir, "sample.txt")
+	err := os.WriteFile(sampleFile, []byte("sample content for upload"), 0o600)
+	if err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
+
+	params := map[string]string{
+		"token": "valid-token",
+		"org":   "meshery",
+	}
+
+	req, err := UploadFileWithParams("http://localhost:9081/api/upload", params, "file", sampleFile)
+	if err != nil {
+		t.Fatalf("UploadFileWithParams returned unexpected error: %v", err)
+	}
+	if req == nil {
+		t.Fatal("UploadFileWithParams returned nil request")
+	}
+	if req.Method != http.MethodPost {
+		t.Errorf("expected POST method, got %s", req.Method)
+	}
+	if !strings.HasPrefix(req.Header.Get("Content-Type"), "multipart/form-data") {
+		t.Errorf("expected multipart/form-data content type, got %s", req.Header.Get("Content-Type"))
+	}
+
+	nonExistent := filepath.Join(tmpDir, "does-not-exist.txt")
+	_, err = UploadFileWithParams("http://localhost:9081/api/upload", params, "file", nonExistent)
+	if err == nil {
+		t.Error("expected error for non-existent file, got nil")
+	}
+}
+
+func TestDeleteConfiguration_BodyClosed(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	t.Run("closes body on success", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = fmt.Fprint(w, `{"status":"deleted"}`)
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+		transport := installTrackingTransport(t)
+		if err := DeleteConfiguration(server.URL, "test-id", "pattern"); err != nil {
+			t.Fatalf("expected no error, got: %v", err)
+		}
+		assertBodyClosed(t, transport, "expected response body to be closed on delete configuration")
+	})
 }

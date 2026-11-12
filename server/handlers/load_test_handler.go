@@ -146,7 +146,10 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 	return &headers
 }
 
-// LoadTestHandler runs the load test with the given parameters
+// LoadTestHandler executes a performance load test with the provided parameters.
+// It parses query parameters and performance profile metadata, safely writes temporary
+// CA certificate files when cert=true, ensures their file descriptors are closed and
+// unlinked upon exit, and invokes the underlying load generator.
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	cleanUpFiles := make([]string, 0)
 
@@ -199,11 +202,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 		return
 	}
 
-	options, ok := performanceProfile.Metadata["additional_options"].(string)
-
-	if ok {
-		loadTestOptions.Options = options
-	}
+	loadTestOptions.Options = savedAdditionalOptions(performanceProfile.Metadata)
 
 	if isSSLCertificateProvided {
 		var isErrLoadingCertificate bool
@@ -220,8 +219,20 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 					writeMeshkitError(w, ErrCreateFile(err, certificateName), http.StatusInternalServerError)
 					return
 				}
+				defer func() {
+					if err := file.Close(); err != nil && err != os.ErrClosed {
+						h.log.Error(fmt.Errorf("failed to close temp certificate file %s: %w", file.Name(), err))
+					}
+				}()
 				cleanUpFiles = append(cleanUpFiles, file.Name())
-				certificateData := caCertificate["file"].(string)
+
+				certificateData, ok := caCertificate["file"].(string)
+				if !ok {
+					createErr := ErrCreateFile(fmt.Errorf("certificate file data is invalid or missing"), certificateName)
+					h.log.Error(createErr)
+					writeMeshkitError(w, createErr, http.StatusBadRequest)
+					return
+				}
 
 				_, err = file.Write([]byte(certificateData))
 				if err != nil {
@@ -571,6 +582,24 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 		Status: models.LoadTestSuccess,
 		Result: result,
 	}
+}
+
+// savedAdditionalOptions returns the load generator options saved on a
+// performance profile. mesheryctl saves them as a string and the UI as a
+// one-element list of strings, so both shapes are read. An empty value means
+// no options.
+func savedAdditionalOptions(metadata map[string]interface{}) string {
+	switch options := metadata["additional_options"].(type) {
+	case string:
+		return options
+	case []interface{}:
+		for _, option := range options {
+			if s, ok := option.(string); ok && s != "" {
+				return s
+			}
+		}
+	}
+	return ""
 }
 
 func assignCertificatePath(key, path string, loadTestOptions *models.LoadTestOptions) {

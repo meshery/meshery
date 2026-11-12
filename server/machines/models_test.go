@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
@@ -24,6 +25,7 @@ type stubAction struct {
 	execNext  EventType
 	execEvent *events.Event
 	execErr   error
+	execCount int
 }
 
 func (a *stubAction) ExecuteOnEntry(context.Context, interface{}, interface{}) (EventType, *events.Event, error) {
@@ -31,6 +33,7 @@ func (a *stubAction) ExecuteOnEntry(context.Context, interface{}, interface{}) (
 }
 
 func (a *stubAction) Execute(context.Context, interface{}, interface{}) (EventType, *events.Event, error) {
+	a.execCount++
 	return a.execNext, a.execEvent, a.execErr
 }
 
@@ -580,5 +583,336 @@ func TestSendEvent_ExitActionFailureHaltsWithoutTransition(t *testing.T) {
 	}
 	if provider.status != connections.CONNECTED {
 		t.Fatalf("expected persisted status to remain CONNECTED, got %q", provider.status)
+	}
+}
+
+func TestResolveUserAndSystemID(t *testing.T) {
+	t.Run("empty context returns nil uuids", func(t *testing.T) {
+		userUUID, sysUUID := ResolveUserAndSystemID(context.Background())
+		if userUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected userUUID to be Nil, got %v", userUUID)
+		}
+		if sysUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected sysUUID to be Nil, got %v", sysUUID)
+		}
+	})
+
+	t.Run("populated context returns correct uuids", func(t *testing.T) {
+		expectedUser := core.Uuid(uuid.Must(uuid.NewV4()))
+		expectedSys := core.Uuid(uuid.Must(uuid.NewV4()))
+		ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: expectedUser})
+		ctx = context.WithValue(ctx, models.SystemIDKey, &expectedSys)
+
+		userUUID, sysUUID := ResolveUserAndSystemID(ctx)
+		if userUUID != expectedUser {
+			t.Errorf("expected userUUID %v, got %v", expectedUser, userUUID)
+		}
+		if sysUUID != expectedSys {
+			t.Errorf("expected sysUUID %v, got %v", expectedSys, sysUUID)
+		}
+	})
+
+	t.Run("typed nil pointers in context return nil uuids without panic", func(t *testing.T) {
+		var nilUser *models.User
+		var nilSys *core.Uuid
+		ctx := context.WithValue(context.Background(), models.UserCtxKey, nilUser)
+		ctx = context.WithValue(ctx, models.SystemIDKey, nilSys)
+
+		userUUID, sysUUID := ResolveUserAndSystemID(ctx)
+		if userUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected userUUID to be Nil, got %v", userUUID)
+		}
+		if sysUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected sysUUID to be Nil, got %v", sysUUID)
+		}
+	})
+
+	t.Run("invalid types in context return nil uuids without panic", func(t *testing.T) {
+		ctx := context.WithValue(context.Background(), models.UserCtxKey, "not-a-user")
+		ctx = context.WithValue(ctx, models.SystemIDKey, 12345)
+
+		userUUID, sysUUID := ResolveUserAndSystemID(ctx)
+		if userUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected userUUID to be Nil, got %v", userUUID)
+		}
+		if sysUUID != core.Uuid(uuid.Nil) {
+			t.Errorf("expected sysUUID to be Nil, got %v", sysUUID)
+		}
+	})
+}
+
+func TestSendEvent_NilContextKeysDoNotPanic(t *testing.T) {
+	provider := &fakeProvider{status: connections.CONNECTED}
+	sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+
+	// 1. Invalid transition with context.Background() (no user or sysID)
+	// Triggers invalidTransitionEvent which previously dereferenced *sysID and user.ID
+	event, err := sm.SendEvent(context.Background(), Delete, nil)
+	if err == nil {
+		t.Fatal("expected error on invalid transition Delete from InitialState, got nil")
+	}
+	if event == nil {
+		t.Fatal("expected non-nil event on invalid transition")
+	}
+	if event.Severity != events.Error {
+		t.Errorf("expected Error severity, got %v", event.Severity)
+	}
+
+	// 2. Valid transition with context.Background()
+	// Advances InitialState -> DISCOVERED, triggering status update event
+	_, err = sm.SendEvent(context.Background(), Discovery, nil)
+	if err != nil {
+		t.Fatalf("expected nil error on valid transition, got %v", err)
+	}
+	if sm.CurrentState != DISCOVERED {
+		t.Errorf("expected CurrentState DISCOVERED, got %v", sm.CurrentState)
+	}
+}
+
+// The unreachable condition (meshery/schemas event correlation contract): a
+// background Discovery failure that moves the connection to NOTFOUND reports
+// it, the de-duplication of repeats is unchanged, and the Discovery that later
+// moves the connection out of NOTFOUND resolves it.
+func TestSendEvent_DiscoveryFailureReportsUnreachableCondition(t *testing.T) {
+	provider := &fakeProvider{status: connections.CONNECTED}
+	failing := &stubAction{
+		execNext:  NotFound,
+		execEvent: events.NewEvent().WithSeverity(events.Error).WithDescription("cluster down").Build(),
+		execErr:   errors.New("dial tcp: connection refused"),
+	}
+	sm := newTestMachine(t, provider, failing)
+	sm.ConditionComponent = "k8s-connection"
+	ctx := newTestContext(t)
+
+	event, err := sm.SendEvent(ctx, Discovery, nil)
+	if err == nil || event == nil {
+		t.Fatalf("got event %v, err %v; want the failure", event, err)
+	}
+	want := models.ConditionKey("k8s-connection", sm.ID.String(), ConditionUnreachable)
+	if event.CorrelationKey == nil || *event.CorrelationKey != want {
+		t.Fatalf("correlationKey = %v, want %q", event.CorrelationKey, want)
+	}
+	if event.ResolvedAt != nil {
+		t.Fatalf("a failure carries resolvedAt %v", event.ResolvedAt)
+	}
+
+	// The connection is NOTFOUND now; the same failure again changes nothing,
+	// so it is not reported to the user again (issue #20818), but it comes back
+	// as a Recurrence, without an error, to count on the open condition.
+	sm.ResetState()
+	failing.execEvent = events.NewEvent().WithSeverity(events.Error).WithDescription("cluster down").Build()
+	event, err = sm.SendEvent(ctx, Discovery, nil)
+	if !IsRecurrence(event, err) {
+		t.Fatalf("repeat failure = event %v, err %v; want a Recurrence", event, err)
+	}
+	if *event.CorrelationKey != want {
+		t.Fatalf("recurrence key = %q, want %q", *event.CorrelationKey, want)
+	}
+
+	// The cluster answers again: the Discovery that leaves NOTFOUND resolves the
+	// condition, under its key, with a success severity.
+	sm.ResetState()
+	failing.execNext, failing.execEvent, failing.execErr = NoOp, nil, nil
+	event, err = sm.SendEvent(ctx, Discovery, nil)
+	if err != nil || event == nil {
+		t.Fatalf("got event %v, err %v; want the resolution", event, err)
+	}
+	if event.CorrelationKey == nil || *event.CorrelationKey != want || event.ResolvedAt == nil {
+		t.Fatalf("got key %v resolvedAt %v; want a resolution of %q", event.CorrelationKey, event.ResolvedAt, want)
+	}
+	if event.Severity != events.Success || event.Category != "connection" {
+		t.Fatalf("resolution severity %q category %q, want success and connection", event.Severity, event.Category)
+	}
+
+	// A healthy Discovery afterwards is routine: no second resolution.
+	sm.ResetState()
+	event, err = sm.SendEvent(ctx, Discovery, nil)
+	if err != nil || event == nil {
+		t.Fatalf("got event %v, err %v", event, err)
+	}
+	if event.ResolvedAt != nil || event.CorrelationKey != nil {
+		t.Fatalf("a routine Discovery carries key %v resolvedAt %v", event.CorrelationKey, event.ResolvedAt)
+	}
+}
+
+// A machine that does not opt in keeps its events uncorrelated.
+func TestSendEvent_WithoutConditionComponentReportsNoCondition(t *testing.T) {
+	provider := &fakeProvider{status: connections.CONNECTED}
+	sm := newTestMachine(t, provider, &stubAction{
+		execNext:  NotFound,
+		execEvent: events.NewEvent().WithSeverity(events.Error).Build(),
+		execErr:   errors.New("down"),
+	})
+	event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err == nil || event == nil {
+		t.Fatalf("got event %v, err %v; want the failure", event, err)
+	}
+	if event.CorrelationKey != nil {
+		t.Fatalf("correlationKey = %q on a machine without ConditionComponent", *event.CorrelationKey)
+	}
+}
+
+// Deleting a connection that is NOTFOUND resolves its unreachable condition.
+func TestSendEvent_DeleteFromNotFoundResolvesTheCondition(t *testing.T) {
+	provider := &fakeProvider{status: connections.ConnectionStatus(NOTFOUND)}
+	sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+	sm.ConditionComponent = "k8s-connection"
+	sm.States[DELETED] = State{Events: Events{}, Action: &stubAction{execNext: NoOp}}
+	sm.CurrentState = NOTFOUND
+
+	event, err := sm.SendEvent(newTestContext(t), Delete, nil)
+	if err != nil || event == nil {
+		t.Fatalf("got event %v, err %v; want the resolution", event, err)
+	}
+	want := models.ConditionKey("k8s-connection", sm.ID.String(), ConditionUnreachable)
+	if event.CorrelationKey == nil || *event.CorrelationKey != want || event.ResolvedAt == nil {
+		t.Fatalf("got key %v resolvedAt %v; want a resolution of %q", event.CorrelationKey, event.ResolvedAt, want)
+	}
+	if IsRecurrence(event, err) {
+		t.Fatal("a resolution is not a Recurrence")
+	}
+}
+
+// A request that saved the new status before driving the machine names the
+// old one with WithPriorStatus: a connection that left NOTFOUND resolves its
+// condition although the status the machine reads is already the new one, and
+// one that was not NOTFOUND resolves nothing.
+func TestSendEvent_PriorStatusResolvesAManualReconnect(t *testing.T) {
+	for _, c := range []struct {
+		prior       connections.ConnectionStatus
+		wantResolve bool
+	}{
+		{connections.ConnectionStatus(NOTFOUND), true},
+		{connections.CONNECTED, false},
+		{"", false},
+	} {
+		provider := &fakeProvider{status: connections.ConnectionStatus(DISCOVERED)}
+		sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+		sm.ConditionComponent = "k8s-connection"
+		ctx := newTestContext(t)
+		if c.prior != "" {
+			ctx = WithPriorStatus(ctx, c.prior)
+		}
+		event, err := sm.SendEvent(ctx, Discovery, nil)
+		if err != nil || event == nil {
+			t.Fatalf("prior %q: got event %v, err %v", c.prior, event, err)
+		}
+		if got := event.ResolvedAt != nil; got != c.wantResolve {
+			t.Errorf("prior %q: resolved = %v, want %v", c.prior, got, c.wantResolve)
+		}
+	}
+}
+
+// IsRecurrence holds only for an event without an error that carries an open
+// condition's key.
+func TestIsRecurrence(t *testing.T) {
+	key := "k"
+	now := time.Now()
+	open := &events.Event{CorrelationKey: &key}
+	resolved := &events.Event{CorrelationKey: &key, ResolvedAt: &now}
+	for _, c := range []struct {
+		name  string
+		event *events.Event
+		err   error
+		want  bool
+	}{
+		{"open key, no error", open, nil, true},
+		{"open key with an error", open, errors.New("down"), false},
+		{"resolution", resolved, nil, false},
+		{"no key", &events.Event{}, nil, false},
+		{"no event", nil, nil, false},
+	} {
+		if got := IsRecurrence(c.event, c.err); got != c.want {
+			t.Errorf("%s: IsRecurrence = %v, want %v", c.name, got, c.want)
+		}
+	}
+}
+
+// A status update that cannot read or write the connection is a failure, and
+// says so: without a severity its event used to land in the Notification
+// Center as informational.
+func TestSendEvent_StatusUpdateFailureIsAnError(t *testing.T) {
+	for name, provider := range map[string]*fakeProvider{
+		"retrieve": {status: connections.CONNECTED, getErr: errors.New("record not found")},
+		"update":   {status: connections.CONNECTED, updateErr: errors.New("database is locked")},
+	} {
+		sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+		initialState := sm.CurrentState
+		initialPrevState := sm.PreviousState
+
+		event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+		if err == nil || event == nil {
+			t.Fatalf("%s: SendEvent = (%v, %v), want a failure event and an error", name, event, err)
+		}
+		if event.Severity != events.Error {
+			t.Errorf("%s: severity = %q, want %q", name, event.Severity, events.Error)
+		}
+		if sm.CurrentState != initialState {
+			t.Errorf("%s: currentState = %q, want rolled back state %q", name, sm.CurrentState, initialState)
+		}
+		if sm.PreviousState != initialPrevState {
+			t.Errorf("%s: previousState = %q, want rolled back state %q", name, sm.PreviousState, initialPrevState)
+		}
+	}
+}
+
+// TestSendEvent_StatusUpdateFailureRollbackEnablesRetry verifies that when a
+// database status update fails, in-memory state rolls back so subsequent retry
+// events do not fail with ErrInvalidTransitionEvent.
+func TestSendEvent_StatusUpdateFailureRollbackEnablesRetry(t *testing.T) {
+	provider := &fakeProvider{status: connections.CONNECTED, updateErr: errors.New("database is locked")}
+	action := &stubAction{execNext: NoOp}
+	sm := newTestMachine(t, provider, action)
+
+	// First attempt fails during status persistence.
+	_, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err == nil {
+		t.Fatal("expected SendEvent to fail when DB update errors")
+	}
+	if sm.CurrentState != InitialState {
+		t.Fatalf("expected state to roll back to %q, got %q", InitialState, sm.CurrentState)
+	}
+	if action.execCount != 1 {
+		t.Fatalf("expected action to have executed once on first attempt, got %d", action.execCount)
+	}
+
+	// Resolve the transient database error and retry the same event.
+	provider.updateErr = nil
+	event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err != nil {
+		t.Fatalf("expected retry SendEvent to succeed after DB recovery, got error: %v", err)
+	}
+	if event == nil || event.Severity != events.Informational {
+		t.Fatalf("expected informational success event on retry, got %v", event)
+	}
+	if sm.CurrentState != DISCOVERED {
+		t.Fatalf("expected currentState = %q after successful retry, got %q", DISCOVERED, sm.CurrentState)
+	}
+	if action.execCount != 2 {
+		t.Fatalf("expected action to have re-executed safely on retry, got %d", action.execCount)
+	}
+}
+
+// TestSendEvent_AmbiguousUpdateSucceededDoesNotRollback verifies that when
+// UpdateConnectionById returns an error (e.g. read-back or transport error) but
+// the database write actually succeeded, SendEvent reconciles the persisted state
+// and does not roll back in-memory state.
+func TestSendEvent_AmbiguousUpdateSucceededDoesNotRollback(t *testing.T) {
+	provider := &fakeProvider{
+		status:    connections.DISCOVERED, // simulated state persisted in database
+		updateErr: errors.New("read-back failed after write"),
+	}
+	action := &stubAction{execNext: NoOp}
+	sm := newTestMachine(t, provider, action)
+
+	event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err != nil {
+		t.Fatalf("expected SendEvent to reconcile and succeed without error, got %v", err)
+	}
+	if sm.CurrentState != DISCOVERED {
+		t.Fatalf("expected currentState to remain %q, got %q", DISCOVERED, sm.CurrentState)
+	}
+	if event == nil || event.Severity != events.Informational {
+		t.Fatalf("expected informational success event, got %v", event)
 	}
 }
