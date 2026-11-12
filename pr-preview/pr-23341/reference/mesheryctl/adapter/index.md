@@ -1,0 +1,45 @@
+# mesheryctl-adapter
+
+LLMS index: [llms.txt](/docs-preview/pr-preview/pr-23341/llms.txt)
+
+---
+
+# mesheryctl adapter
+
+Connect and use Meshery adapters
+
+## Synopsis
+
+Provisioning, configuration, and on-going operational management of cloud and cloud native infrastructure.
+	
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  -h, --help           help for adapter
+  -t, --token string   Path to token for authenticating to Meshery API
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string   path to config file (default "~/.meshery/config.yaml")
+  -v, --verbose         verbose output
+
+</div>
+</pre>
+
+## See Also
+
+Go back to [command reference index](/docs-preview/pr-preview/pr-23341/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/docs-preview/pr-preview/pr-23341/project/contributing/cli/cli/#documenting) for guidance.
+
+---
+
+Section pages:
+
+- [mesheryctl-adapter-deploy](/docs-preview/pr-preview/pr-23341/reference/mesheryctl/adapter/deploy/)
+- [mesheryctl-adapter-remove](/docs-preview/pr-preview/pr-23341/reference/mesheryctl/adapter/remove/)
+- [mesheryctl-adapter-validate](/docs-preview/pr-preview/pr-23341/reference/mesheryctl/adapter/validate/)
