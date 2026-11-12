@@ -12,11 +12,15 @@ aliases:
 
 This is a 60-minute hands-on session for Meshery ContribFests. Every attendee first creates a very simple Kubernetes design in the Meshery Playground, publishes it to the Catalog, then builds a custom annotation-only model with the KubeCon logo and adds that component to the same design.
 
-This page is a choose-your-own-adventure. Pick **Path A** or **Path B** at the start, and stay on that path for both labs. The outcome is the same: a published design, and a KubeCon logo model on that design.
-
-Learning goals: build and validate a Design; publish it to the Meshery Catalog; create or import an annotation-only Model; and incorporate one of that model's components into the design.
+- **Where attendees work:** https://playground.meshery.io in a browser. Path A uses [Kanvas Designer](https://playground.meshery.io/extension/meshmap) and the [Registry](https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models). Path B uses **Configuration** > **Designs** and, for Lab 2, `mesheryctl`.
+- **Outcome:** A saved design (a Kubernetes Deployment and Service) submitted to the Catalog, and a custom KubeCon logo model registered in the Playground and added to that design
+- **Learning goals:** build and validate a Design; publish it to the Meshery Catalog; create or import an annotation-only Model; and incorporate one of that model's components into the design.
+- **Audience:** Kubernetes users; no Meshery experience needed
+- **Resources:** Meshery Models explainers ([architecture slides](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit?slide=id.g28d3a0f18b4_0_292#slide=id.g28d3a0f18b4_0_292), [Models and Components like Legos](https://meshery.io/blog/2024/03/2024-03-29-models-designs-legos/)).
 
 ## Choose your path
+
+This workshop is a choose-your-own-adventure. Pick **Path A** or **Path B** at the start, and stay on that path for both labs. The outcome is the same: a published design, and a KubeCon logo model on that design.
 
 {{< tabs id="choose-workshop-path" >}}
 Path A: Kanvas
@@ -37,27 +41,6 @@ Path B: Meshery UI and mesheryctl
 
 You will point `mesheryctl` at the Playground before the Path B labs.
 {{< /tabs >}}
-
-## At a glance
-
-- **Duration:** 60 minutes
-- **Where attendees work:** https://playground.meshery.io in a browser. Path A uses [Kanvas Designer](https://playground.meshery.io/extension/meshmap) and the [Registry](https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models). Path B uses **Configuration** > **Designs** and, for Lab 2, `mesheryctl`.
-- **Outcome:** A saved design (a Kubernetes Deployment and Service) submitted to the Catalog, and a custom KubeCon logo model registered in the Playground and added to that design
-- **Audience:** Kubernetes users; no Meshery experience needed
-- **Format:** Short talk, two guided labs (each with Path A and Path B), wrap-up
-- **Resources:** Meshery Models explainers ([architecture slides](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit?slide=id.g28d3a0f18b4_0_292#slide=id.g28d3a0f18b4_0_292))
-
-## Timed agenda
-
-| Min | Block | Attendees leave with |
-|---|---|---|
-| 8 | Welcome, goals, logistics, path choice, and sign-in | A working Playground session and a chosen path |
-| 5 | Concepts: designs, the Catalog, models and annotations | The mental model for the labs |
-| 22 | Lab 1: Create and publish your design | A saved, validated Deployment and Service, submitted to the Catalog |
-| 20 | Lab 2: Create a custom model and add it to your design | The KubeCon logo on that design |
-| 5 | Wrap-up and next steps | Links to keep going |
-
-The five blocks are 8, 5, 22, 20 and 5 minutes, which add up to 60. If Lab 1 runs long, take the time from wrap-up, never from Lab 2.
 
 ## Prerequisites
 
