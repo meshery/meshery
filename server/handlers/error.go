@@ -241,7 +241,7 @@ const (
 	ErrFetchProfilesCode         = "meshery-server-1464"
 	ErrResetInProgressCode       = "meshery-server-1481"
 	ErrInvalidClientEventCode    = "meshery-server-1489"
-	ErrInvalidEventIDCode        = "meshery-server-1490"
+	ErrInvalidEventIDCode        = "meshery-server-1492"
 )
 
 var (
