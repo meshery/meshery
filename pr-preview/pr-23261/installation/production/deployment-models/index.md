@@ -164,6 +164,10 @@ deployment, harden it, make it resilient, and observe it.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -190,10 +194,6 @@ deployment, harden it, make it resilient, and observe it.
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">

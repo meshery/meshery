@@ -14,6 +14,7 @@ See also Meshery's [Compatibility Matrix](/pr-preview/pr-23261/installation/) an
 
 Section pages:
 
+- [v1.0.76](/pr-preview/pr-23261/project/releases/v1.0.76/)
 - [v1.0.75](/pr-preview/pr-23261/project/releases/v1.0.75/)
 - [v1.0.73](/pr-preview/pr-23261/project/releases/v1.0.73/)
 - [v1.0.74](/pr-preview/pr-23261/project/releases/v1.0.74/)

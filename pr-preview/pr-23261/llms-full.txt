@@ -5314,6 +5314,8 @@ You can now design and manage any infrastructure that Meshery supports. For the 
     
   
     
+  
+    
       
     
   
@@ -8751,6 +8753,10 @@ deployment, harden it, make it resilient, and observe it.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -8777,10 +8783,6 @@ deployment, harden it, make it resilient, and observe it.
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -8969,6 +8971,10 @@ data and events between each cluster and the Server. Production guidance:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -8995,10 +9001,6 @@ data and events between each cluster and the Server. Production guidance:
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -9231,6 +9233,10 @@ deployment; the provider restores user data; MeshSync restores the live view.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -9257,10 +9263,6 @@ deployment; the provider restores user data; MeshSync restores the live view.
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -9579,6 +9581,10 @@ Remote Provider, and the local database is a rebuildable cache. Two notes:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -9605,10 +9611,6 @@ Remote Provider, and the local database is a rebuildable cache. Two notes:
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10027,6 +10029,10 @@ After deployment, validate connectivity end-to-end:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -10053,10 +10059,6 @@ After deployment, validate connectivity end-to-end:
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10437,6 +10439,10 @@ extension before enabling it, and enable only what your deployment actually need
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -10463,10 +10469,6 @@ extension before enabling it, and enable only what your deployment actually need
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10660,6 +10662,10 @@ Remote Provider is required for multi-user production.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -10686,10 +10692,6 @@ Remote Provider is required for multi-user production.
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10860,6 +10862,10 @@ that matter:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -10886,10 +10892,6 @@ that matter:
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11084,6 +11086,10 @@ When a KPI trips, these guides are the fastest path to resolution:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -11110,10 +11116,6 @@ When a KPI trips, these guides are the fastest path to resolution:
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11364,6 +11366,10 @@ Work through these before going live. Each group links to its source page.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -11390,10 +11396,6 @@ Work through these before going live. Each group links to its source page.
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11732,6 +11734,10 @@ Managing a service mesh through an adapter additionally requires that mesh's own
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -11758,10 +11764,6 @@ Managing a service mesh through an adapter additionally requires that mesh's own
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11939,6 +11941,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -11965,10 +11971,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -12345,6 +12347,10 @@ To reach Meshery UI from your browser, forward its port from the codespace. See 
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -12371,10 +12377,6 @@ To reach Meshery UI from your browser, forward its port from the codespace. See 
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -12623,6 +12625,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -12649,10 +12655,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -12797,6 +12799,10 @@ Meshery creates its own Docker networks, which can remain after you uninstall th
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -12823,10 +12829,6 @@ Meshery creates its own Docker networks, which can remain after you uninstall th
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -13032,6 +13034,10 @@ Meshery UI is available on your local machine at [`http://localhost:9081`](http:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -13058,10 +13064,6 @@ Meshery UI is available on your local machine at [`http://localhost:9081`](http:
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -13266,6 +13268,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -13292,10 +13298,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -13569,6 +13571,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -13595,10 +13601,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -13815,6 +13817,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -13841,10 +13847,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -13925,6 +13927,10 @@ Follow these steps in order.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -13951,10 +13957,6 @@ Follow these steps in order.
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -14293,6 +14295,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -14319,10 +14325,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -18241,6 +18243,10 @@ From the connection in Meshery UI you can:
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -18267,10 +18273,6 @@ From the connection in Meshery UI you can:
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -21241,6 +21243,10 @@ For how the Notification Center is built, see the [contributor guide](/pr-previe
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -21267,10 +21273,6 @@ For how the Notification Center is built, see the [contributor guide](/pr-previe
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -21625,6 +21627,10 @@ kubectl -n meshery get deploy meshery-meshsync \
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -21651,10 +21657,6 @@ kubectl -n meshery get deploy meshery-meshsync \
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -28000,6 +28002,258 @@ description: General commonly asked questions and answers about Meshery.
 
 
 <!--Add other questions-->
+
+
+--------------------------------------------------------------------------------
+title: "v1.0.76"
+url: /pr-preview/pr-23261/project/releases/v1.0.76/index.md
+date: "2026-11-12"
+--------------------------------------------------------------------------------
+
+## What's New
+## 🔤 General
+- \[Server\] Exclude soft-deleted connections and mappings in GetEnvironmentConnections @harmanD-MAX (#23263)
+- \[Server\] Retain API group paths in manifest errors and record partial registration @Supersaiyan101 (#23249)
+- \[mesheryctl\] Update kubectl reference link and clean up README @AdityaChaudhary5412 (#23255)
+- \[Server\] Guard nil dereferences, detached goroutines, and unmarshal errors in events streamer @Amansingh0807 (#23233)
+- \[Server\] Propagate manifest extraction errors and add positive CRD test @Supersaiyan101 (#23232)
+- \[Server\] Fix missing metrics query parameter in GetMesheryPattern @Swarup-Banik (#23227)
+- fix: correct meshmodel policies pagination @Nixantsingh943 (#23231)
+- \[Server\] Fix runtime panic in getResolvedManifest (MeshModel) @Supersaiyan101 (#23228)
+- \[Server\] Fix HTTP error handling in DefaultLocalProvider.PublishMetrics @Swarup-Banik (#23218)
+- \[Server\] Initialize valid MachineCtx for Kubernetes connection registration @Atharva-Mendhulkar (#23210)
+- \[Models\] Seed cert-manager and dapr relationships on newest model version @BarbieRajput (#23204)
+- fix(server): preserve correct annotation classification for alias components @VimalN2005 (#23177)
+- \[Server\] Do not route non-Kubernetes status updates through the Kubernetes machine @sahillpaul (#23201)
+- \[Server\] Resolve unused function and unchecked error lint failures @Atharva-Mendhulkar (#23181)
+- \[Server\] Fix connection definition updates @0xmaster7 (#23192)
+- \[Server\] Rollback in-memory state machine on database update failure @Atharva-Mendhulkar (#23155)
+- \[Server\] Return HTTP 404 when deleting non-existent model or connection definition @Amansingh0807 (#22821)
+- \[Server\] Handle registry lookup errors during connection registration @Nixantsingh943 (#23072)
+- fix(handlers): preserve context for background FSM transitions @Atharva-Mendhulkar (#23146)
+- \[Server\] Report Kubernetes context conversion failures instead of silently skipping connections @Nixantsingh943 (#23171)
+- \[Server\] Cancel stalled Kubernetes discovery requests @0xmaster7 (#23166)
+- \[Server\] Propagate database and marshal errors from GetMesheryK8sContexts @RameshwariS (#22967)
+- fix(server): report asynchronous context deletion errors @Nixantsingh943 (#23145)
+- \[Server\] Validate connection ID path parameter in telemetry handlers @bodapatisaikrishna (#23126)
+- \[Server\] Align DeleteUserCredential invalid UUID error with ErrInvalidUUID @Supersaiyan101 (#23125)
+- \[Server\] Validate multi-selector relationships and prevent ghost relationship bleed (#23111) @nishant-devv (#23113)
+- \[Server\] Validate credential ID path parameter in GetUserCredentialByID @Supersaiyan101 (#23115)
+- \[Server\] Resolve Kubernetes unreachable condition after connection deletion @Nixantsingh943 (#23101)
+- \[Server\] Preserve composite string formatting and non-greedy reference matching in pattern filler @nishant-devv (#23090)
+- \[Server\] Prevent index out-of-bounds panic in ExtensionProxy router @Supersaiyan101 (#23088)
+- \[Server\] Dynamically size planner channels and eliminate mutex deadlock on fan-in @nishant-devv (#23085)
+- \[Server\] Return HTTP 400 for malformed and 404 for non-existent filter deletion @pranav718 (#23087)
+- \[Server\] Prevent send on closed channel panic in ProviderTracker @Supersaiyan101 (#23086)
+- \[Helm\] Fix ingressClassName rendering in meshery chart @madhavzanwar (#23064)
+- \[Server\] Reset registration status on component generation failure and allow retries @nishant-devv (#23081)
+- \[Server\] Cascade mapping deletions on workspace and member removal and deduplicate designs @nishant-devv (#23077)
+- \[Server\] Deduplicate environment connection mappings and cascade delete on removal @nishant-devv (#23048)
+- \[Server\] Parse Content-Disposition when naming a design imported from a URL @BarbieRajput (#23045)
+- \[Server\] Stop repeated workspace assignments from surviving removal @BarbieRajput (#23043)
+- \[Server\] Match every label in MeshSync resource filters @BarbieRajput (#23041)
+- \[Server\] Fix unauthenticated path traversal in model export via version fields @yi-nuo426 (#23031)
+- \[Server\] Deduplicate workspace environment, view, and team mappings @nishant-devv (#23034)
+- \[Server\] Keep a connection's created_at and owner when updating it @maindevhoon (#23027)
+- \[Server\] Return 404 instead of creating a connection when updating an unknown ID @BarbieRajput (#23004)
+- \[Server\] Prevent unchecked type assertions and detached goroutine nil panics in GraphQL resolvers @Amansingh0807 (#23011)
+- \[Server\] Keep a performance profile's created_at when editing it @BarbieRajput (#23002)
+- \[Server\] Apply Additional Options saved from the UI to load tests @BarbieRajput (#22996)
+- \[Server\] Keep a filter's file, visibility and created_at when updating it @BarbieRajput (#22995)
+- \[Server\] Prevent caching uninitialized state machine on Start failure @nishant-devv (#22975)
+- \[Server\] Sum registration failure counts across models @Asheesh7298 (#22977)
+- \[Server\] Save performance results when anonymous sharing is off @BarbieRajput (#22952)
+- \[Server\] Retain ORDER BY clause in GetMeshSyncResources handler @Supersaiyan101 (#22829)
+- \[server\] Prevent nil pointer dereference on pattern clone and ErrRequestBody @Supersaiyan101 (#22768)
+- \[Server\] Prevent unchecked type assertion and detached goroutine nil panics in middlewares @Amansingh0807 (#22964)
+- fix(server): guard against nil patternData in pattern update handler (#22898) @VimalN2005 (#22946)
+- \[Server\] Fix file descriptor leaks in component SVG generation and OCI export (#22814) @muskan-creates352 (#22815)
+- \[Server\] Prevent unbounded goroutine leak in MeshSyncRegistrationQueue.Send @Amansingh0807 (#22901)
+- \[Server\] Close the gzip reader in TarXZ @Ankitavasudev (#22893)
+- \[Server\] Prevent nil pointer dereferences on missing context values in state machines @Amansingh0807 (#22885)
+- \[Docker Extension\] Fix nil-pointer panic in proxy ServeHTTP @BarbieRajput (#22691)
+- \[Server\] Keep stored design fields when re-saving through POST /api/pattern @Karman580 (#22843)
+- \[Server\] Use a valid OCI repository name when exporting models @kkm121 (#22862)
+- \[Server\] Close temp certificate file descriptor and guard type assertion in LoadTestHandler @Amansingh0807 (#22818)
+- \[Server\] Close file descriptor on all return paths in k8s_components_registration @Amansingh0807 (#22765)
+- \[Server\] Close each adapter client per host in Provision @harshitsaxena214 (#22839)
+
+## ⌨️ Meshery CLI
+
+- \[mesheryctl\] Reject --page 0 and --pagesize 0 in components list and … @AdityaChaudhary5412 (#23260)
+- \[mesheryctl\] Respect --skip-browser in system dashboard --port-forward @Eternity0207 (#23240)
+- \[mesheryctl\] Align flag struct json tags with Cobra flag names @ayushbuilds-code (#23236)
+- \[mesheryctl\] Enforce exact argument validation in registry purge @madhavzanwar (#23132)
+- \[mesheryctl\] Add input validation for design apply @BHAUMIK0711 (#23211)
+- \[mesheryctl\] Deprecate no-op --page flag on model export @ChackoPAbraham19 (#23214)
+- \[mesheryctl\] Reject unexpected positional arguments in system login @BHAUMIK0711 (#23209)
+- \[mesheryctl\] Reject ambiguous design ID prefixes @faneeshh (#23190)
+- \[mesheryctl\] Reject --page 0 and --pagesize 0 in relationship list an… @ChackoPAbraham19 (#23195)
+- \[Docs\] Correct invalid flags in mesheryctl command reference @0xmaster7 (#23191)
+- \[mesheryctl\] Enforce exact argument validation in system provider list @ayushbuilds-code (#23180)
+- \[mesheryctl\] Enforce exact argument validation in system context list @ayushbuilds-code (#23189)
+- \[mesheryctl\] Validate --page and --pagesize in design list and connec… @ChackoPAbraham19 (#23176)
+- \[mesheryctl\] Fix filter view example comment formatting in docs @ItsAbir005 (#23161)
+- \[mesheryctl\] Enforce argument validation in system token view @ayushbuilds-code (#23143)
+- \[mesheryctl\] Enforce maximum argument validation in system token view @madhavzanwar (#23123)
+- \[mesheryctl\] Enforce argument validation in filter list @ayushbuilds-code (#23140)
+- \[mesheryctl\] Show only the requested services in system logs on Docker @Eternity0207 (#23136)
+- docs(mesheryctl): update design command and subcommands help text @patelshivani2283-lab (#23128)
+- \[mesheryctl\] Enforce exact argument validation in environment create @madhavzanwar (#23119)
+- fix/Reduce duplicated formatting logic in view subcommands @Aravind226 (#22928)
+- \[mesheryctl\] Enforce exact argument validation in workspace create @madhavzanwar (#23121)
+- \[mesheryctl\] Enforce exact argument validation in environment view @madhavzanwar (#23117)
+- \[mesheryctl\] Enforce exact argument validation in environment list @ayushbuilds-code (#23105)
+- \[Server\] Scope adapter events to the user and operation that requested them @Eternity0207 (#23098)
+- \[mesheryctl\] Enforce exact argument validation in organization list @ayushbuilds-code (#23103)
+- \[mesheryctl\] Add subcommand examples and action overview to registry help text @madhavzanwar (#23053)
+- \[mesheryctl\] Fix invalid system channel view example @BHAUMIK0711 (#23100)
+- \[mesheryctl\] Enforce exact argument validation in workspace list @ayushbuilds-code (#23075)
+- \[mesheryctl\] Enforce exact argument validation in design list @ayushbuilds-code (#23069)
+- \[mesheryctl\] Enforce exact argument validation in component list @ayushbuilds-code (#23058)
+- \[mesheryctl\] Fix remaining HTTP response body leaks @ItsAbir005 (#23028)
+- \[mesheryctl\] Prevent hang on empty token view prompt and respect --yes flag @nishant-devv (#23036)
+- Fix/issue 22923 filter import url v2 @itsCodeTide (#23017)
+- \[mesheryctl\] Send the deploy payload from design delete -f @Asheesh7298 (#23021)
+- \[mesheryctl\] Reject unexpected positional arguments in system logout @1107-1108 (#23000)
+- \[mesheryctl\] Respect --follow for system logs on Docker @mayank609 (#22979)
+- fix(mesheryctl): use IsValidUrl to detect URLs in filter import @aditya-desale (#22969)
+- \[mesheryctl\] Preserve silent flag across system restart @Swatantra-66 (#22776)
+- feat(server): adopt the error and event condition contract from meshery/schemas @leecalcote (#22950)
+- \[mesheryctl\] Restore TestApplyCmd for perf apply @BarbieRajput (#22944)
+- \[mesheryctl\] Remove unused errPatternMsg constant @ayanasarkar (#22945)
+- \[mesheryctl\] Print perf result latencies in milliseconds @BarbieRajput (#22939)
+- \[mesheryctl\] Send saved headers, cookies and content type in perf apply @BarbieRajput (#22938)
+- \[mesheryctl\] Propagate errors and handle non-200 responses in registry update and publish @aarushdubey (#22926)
+- \[mesheryctl\] Restore the adapter event stream and fail fast without it @Eternity0207 (#22927)
+- \[mesheryctl\] Fix unclosed file descriptors in helpers (#22902) @muskan-creates352 (#22908)
+- fix: correct meshery performance CLI examples @aditya-desale (#22900)
+- \[mesheryctl\] Find designs by name in design export @Eternity0207 (#22890)
+- \[mesheryctl\] Save and fetch designs correctly in design apply and delete @Eternity0207 (#22887)
+- fix(mesheryctl): surface error detail in ErrUndeployDesign @ThakurUjjwal1706 (#22866)
+- refactor(mesheryctl): Update model to use schema instead of reference to server/models @lekaf974 (#22877)
+- \[mesheryctl\] Remove the workspace --count flag that always failed @Eternity0207 (#22871)
+- \[mesheryctl\] Prevent slice out-of-bounds panic and unchecked type assertions in model import @Swatantra-66 (#22867)
+- \[mesheryctl\] Fix design and filter list showing wrong names by using strings.TrimSuffix @NerfedAce (#22668)
+- \[mesheryctl\] Add perf delete command @harshitsaxena214 (#22840)
+- \[mesheryctl\] Apply perf apply --options and --cert-path to existing profiles @Eternity0207 (#22861)
+- \[mesheryctl\] Send perf apply durations in whole seconds and reject the rest @Eternity0207 (#22858)
+- \[mesheryctl\] Accept any case of --output-format in the output formatter factories @Eternity0207 (#22855)
+- fix(mesheryctl): support relative file paths in design undeploy @ThakurUjjwal1706 (#22838)
+- fix(mesheryctl): support positional file argument and validate input in design delete @ThakurUjjwal1706 (#22773)
+- \[mesheryctl\] Validate the provider before system provider switch asks for confirmation @Eternity0207 (#22789)
+- \[mesheryctl\] Return an error instead of exiting on stdin read failures in prompts @harshitsaxena214 (#22850)
+- \[mesheryctl\] Prevent nil pointer dereference panic and unhandled HTTP status in perf apply @Swatantra-66 (#22801)
+
+## 🖥 Meshery UI
+
+- \[UI\] Parse lowercase k quantity unit in memory and disk parsers @madhavzanwar (#23247)
+- \[UI\] Read camelCase catalogData.publishedVersion in getDesignVersion @ayushbuilds-code (#23241)
+- \[UI\] Fix Kubernetes dashboard columns that always render empty @MuhammadFaizan-prog (#23234)
+- \[UI\] Prevent wire-level data leakage when view permission is denied in Environments, Settings, Performance, and Extensions @Amansingh0807 (#23203)
+- \[UI\] Add accessible noscript fallback when JavaScript is disabled @Prakhar1Ojha (#23165)
+- \[UI\] Add quick-access Delete action to Designs @Prakhar1Ojha (#23151)
+- \[UI\] Use supported durations in performance preferences @0xmaster7 (#23107)
+- \[UI\] Honor hideError in widget error indicators @dropps07 (#23109)
+- \[UI\] Fix comparator contract, state mutation, and semver sorting in versionSort utility @madhavzanwar (#23055)
+- \[UI\] Report total successfully scanned files in MUI audit @prashil0056 (#23046)
+- \[mesheryctl\] Fix remaining HTTP response body leaks @ItsAbir005 (#23028)
+- \[UI\] Notify when the Designs publish schema fails to load @mayank609 (#22990)
+- \[Server\]\[UI\] Store and show filter configuration @Asheesh7298 (#23040)
+- \[UI\] Reset to the first page when searching or filtering resources @mayank609 (#22992)
+- \[UI\] Reset to the first page when searching environments, workspaces and profiles @mayank609 (#22982)
+- \[UI\] Roll back Catalog Content preference on save failure @spacenets7 (#23029)
+- \[UI\] List every environment in the environment pickers @Asheesh7298 (#23024)
+- \[UI\] Add stale MUI allowlist entry reporting @Nixantsingh943 (#23006)
+- \[UI\] Send the canonical filter import bodies @Asheesh7298 (#22983)
+- Fix typos in UI util comments @Evico85 (#23019)
+- \[UI\] Show an error when deleting a performance profile fails @mayank609 (#22986)
+- \[UI\] Notify when the SMP mesh list fails to load in the performance form @mayank609 (#22988)
+- \[UI\] Fix dashboard edit options overflow on small screens @ItsAbir005 (#22984)
+- \[UI\] Fix MUI audit false success on incomplete scans @Nixantsingh943 (#22972)
+- \[UI\] Forward pageSize in useLazyGetConnectionsQuery @krishbuilds01 (#22971)
+- fix: harden event replay, stale idempotency bindings, and revision ordering @leecalcote (#22965)
+- feat(server): insert events, replay idempotent creates and correlate repeated failures on MeshKit v1.0.29 @leecalcote (#22958)
+- \[UI\] Honor hideError in ObjectFieldTemplate error indicator @dropps07 (#22957)
+- \[UI\] Report adapter and preference save failures instead of failing silently @mayank609 (#22941)
+- feat(server): adopt the error and event condition contract from meshery/schemas @leecalcote (#22950)
+- \[UI\] Show error notifications when filter actions fail @mayank609 (#22930)
+- \[UI\] Show a single error toast when MeshSync resources fail to load @harshiltewari2004 (#22807)
+- \[UI\] Forward options through initiateQuery @krishbuilds01 (#22847)
+- \[UI\] Type ArrayFieldTemplate props and fix fixed-array detection @dropps07 (#22863)
+- \[UI\] Fix notification center infinite scroll loading past the last page @ayushgade06 (#22793)
+
+## 🧰 Maintenance
+
+- \[Server\] Trigger Kubernetes cluster teardown on connection deletion @Atharva-Mendhulkar (#23219)
+- feat(server): adopt the error and event condition contract from meshery/schemas @leecalcote (#22950)
+- \[CI\] Paginate changed-file validation in auto-merge-meeting-minutes (fixes #22684) @BarbieRajput (#22692)
+
+## 📖 Documentation
+
+- \[Docs\] Fix grammar, spelling, and formatting in mesheryctl E2E testing guide @amalsaidov (#23264)
+- \[Docs\] Fix duplicate response schema entry in REST API reference @amalsaidov (#23265)
+- \[mesheryctl\] Deprecate no-op --page flag on model export @ChackoPAbraham19 (#23214)
+- Fix/installation docs match install script @Aravind226 (#23168)
+- \[Docs\] Show full MESHERY_SERVER_CALLBACK_URL with /api/user/token path @amalsaidov (#23212)
+- \[mesheryctl\] Reject ambiguous design ID prefixes @faneeshh (#23190)
+- \[Docs\] Correct invalid flags in mesheryctl command reference @0xmaster7 (#23191)
+- \[Docs\] Fix broken help-wanted search link on Contributing page @lishfox (#23185)
+- \[Server\] Index the events table for Notification Center queries @ayushgade06 (#23174)
+- \[mesheryctl\] Fix filter view example comment formatting in docs @ItsAbir005 (#23161)
+- \[Docs\] Document model export flags in mesheryctl reference @ChackoPAbraham19 (#23169)
+- \[Docs\] Add perf delete and system delete to mesheryctl reference @ChackoPAbraham19 (#23158)
+- \[Docs\] Add design evaluate and registry purge to mesheryctl reference @ChackoPAbraham19 (#23148)
+- \[Docs\] Fix "Applilcation" typo in AWS Application Autoscaling model @prashil0056 (#23141)
+- \[Docs\] Support system theme preference and cross-tab synchronization @SajanBisht (#23137)
+- fix/Reduce duplicated formatting logic in view subcommands @Aravind226 (#22928)
+- \[mesheryctl\] Fix invalid system channel view example @BHAUMIK0711 (#23100)
+- \[Docs\] Define AI provider Connection contract @itsCodeTide (#23091)
+- \[Docs\] Add newcomer introduction for Rithul Raveendran @rithulraveendran (#23067)
+- \[mesheryctl\] Fix remaining HTTP response body leaks @ItsAbir005 (#23028)
+- Introduction - Lekha @lekha-saradhi (#23037)
+- Fix/issue 22923 filter import url v2 @itsCodeTide (#23017)
+- \[Docs\] Fix illegible contrast on primary alerts @Lk-ux (#23030)
+- \[UI\] Roll back Catalog Content preference on save failure @spacenets7 (#23029)
+- fix(docs): standardize OpenAPI schema URL @Om-Beast (#21638)
+- Introduction - Samuel Agbokpo @SamuelAgbokpo (#23001)
+- fix: harden event replay, stale idempotency bindings, and revision ordering @leecalcote (#22965)
+- feat(server): insert events, replay idempotent creates and correlate repeated failures on MeshKit v1.0.29 @leecalcote (#22958)
+- docs: fix Everytime typo in build and release guide @Ankitavasudev (#22777)
+- feat(server): adopt the error and event condition contract from meshery/schemas @leecalcote (#22950)
+- \[Docs\] Use the API paths the server registers @BarbieRajput (#22953)
+- \[Server\] Prevent nil pointer dereference on in-cluster context discovery @nishant-devv (#22823)
+- Create profile for Vratesh Ghadge @VrateshGhadge (#22919)
+- \[Catalog\] Migrate Kafka design to Apache Kafka 4.4.0 @spacenets7 (#22872)
+- \[docs\] Add introduction for Ragil Amirzaky in meeting notes @Lapnes (#22917)
+- Introduction-ShubhiParashar @ShubhiParashar-CSE (#22915)
+- Add introduction for Prashil in meeting notes @prashil0056 (#22916)
+- Add Suryansh Garg's introduction to meetings doc @SuryanshGarg04 (#22914)
+- Introduction - Rutuja.md @rutujakulkarni895-spec (#22912)
+- Introduction-Andrean @etherift (#22910)
+- Add Alehegne Geta's meeting notes @Alehegne (#22911)
+- Add Shubhi Parashar's introduction to meetings documentation @ShubhiParashar-CSE (#22913)
+- Introduction - Srishti Mishra @srishtimishra520-beep (#22909)
+- Create Siddeshwar.md with personal details @spacenets7 (#22906)
+- Create Dhananjay.md @dhananjaysharma2004 (#22905)
+- \[Docs\] Add Harshil Tewari introduction for week-of-11-05-2026 newcomers meeting @harshiltewari2004 (#22907)
+- Add Maanvi's introduction to meeting notes @Maanvi212006 (#22903)
+- Introduction - Uchechukwu Emmanuel @onlyoneuche (#22904)
+- docs: add Shape Builder extension guide @tanav29 (#22895)
+- fix: correct meshery performance CLI examples @aditya-desale (#22900)
+- Docs(meeting): add Nishant JS introduction for week-of-11-05-2026 @nishant-devv (#22892)
+- Create PRIYESHSINGH.md for personal introduction @PRIYESHSINGH24 (#22888)
+- Add newcomer meeting documentation for 2026 @Maanvi212006 (#22881)
+- \[Docs\] Add stable error code pages and index @itsCodeTide (#22879)
+- \[mesheryctl\] Remove the workspace --count flag that always failed @Eternity0207 (#22871)
+- \[mesheryctl\] Add perf delete command @harshitsaxena214 (#22840)
+- Add Maanvi Chetwanii's introduction to meetings doc @Maanvi212006 (#22828)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@0xmaster7, @1107-1108, @AdityaChaudhary5412, @Alehegne, @Amansingh0807, @Ankitavasudev, @Aravind226, @Asheesh7298, @Atharva-Mendhulkar, @BHAUMIK0711, @BarbieRajput, @ChackoPAbraham19, @CodeAhmedJamil, @Copilot, @Eternity0207, @Evico85, @ItsAbir005, @Karman580, @Lapnes, @Lk-ux, @Maanvi212006, @MuhammadFaizan-prog, @NerfedAce, @Nixantsingh943, @Om-Beast, @PRIYESHSINGH24, @Prakhar1Ojha, @RameshwariS, @SajanBisht, @SamuelAgbokpo, @ShubhiParashar-CSE, @Supersaiyan101, @SuryanshGarg04, @Swarup-Banik, @Swatantra-66, @ThakurUjjwal1706, @VimalN2005, @VrateshGhadge, @aarushdubey, @aditya-desale, @alexquincy, @amalsaidov, @ayanasarkar, @ayushbuilds-code, @ayushgade06, @bodapatisaikrishna, @carlosriosilva, @chellej, @dhananjaysharma2004, @dropps07, @etherift, @faneeshh, @fitzergerald, @harmanD-MAX, @harshiltewari2004, @harshitsaxena214, @hortison, @itsCodeTide, @jamieplu, @kkm121, @krishbuilds01, @leecalcote, @lekaf974, @lekha-saradhi, @lishfox, @madhavzanwar, @maindevhoon, @marblom007, @mayank609, @meshery-ci, @miacycle, @muskan-creates352, @nishant-devv, @onlyoneuche, @patelshivani2283-lab, @pontusringblom, @pranav718, @prashil0056, @rithulraveendran, @ritzorama, @rutujakulkarni895-spec, @sahillpaul, @simihablo, @spacenets7, @srishtimishra520-beep, @suttonskate, @tanav29, @winkletinkle, @yi-nuo426, Aarush Dubey, Aditya Chaudhary, Ayush, Pontus Ringblom, Prakhar1Ojha and Yi Nuo
+
 
 
 --------------------------------------------------------------------------------
@@ -64270,7 +64524,7 @@ End-to-end testing of `mesheryctl` uses the [Bash Automated Testing System](http
 Before diving into `mesheryctl`'s testing environment, certain prerequisites must be met to ensure a smooth testing experience. These prerequisites include:
 
 - A working installation of Meshery CLI and Meshery Server.
-  - A verified account in your chosen provider which integrate with Meshery.
+  - A verified account in your chosen provider that integrates with Meshery.
 - A working installation of the BATS testing framework.
   - `bash` as shell terminal.
 - [Optional] A working installation of a Kubernetes cluster (Minikube, Kind, etc.) for testing Kubernetes-related functionality.
@@ -64302,7 +64556,7 @@ cd bats-core
 ./install.sh $HOME
 ```
 
-Some tests could use bats libraires as helpers to create the tests suite.
+Some tests could use bats libraries as helpers to create the test suite.
 
 #### Setup Dependencies
 
@@ -64320,7 +64574,7 @@ There are a few ways to set up the Meshery server, but for end-to-end testing, w
 make server
 ```
 
-Be aware that some test cases require the availability of a Kubernetes cluster and one or more  Meshery Adapters. In those cases, please refer to the [installation guides](/pr-preview/pr-23261/installation/)) (like that of [installing Meshery on Minikube](/pr-preview/pr-23261/installation/kubernetes/minikube/)). 
+Be aware that some test cases require the availability of a Kubernetes cluster and one or more Meshery Adapters. In those cases, please refer to the [installation guides](/pr-preview/pr-23261/installation/) (like that of [installing Meshery on Minikube](/pr-preview/pr-23261/installation/kubernetes/minikube/)).
 
 ### Authentication
 
@@ -64345,7 +64599,7 @@ mesheryctl system login
 
 ## Writing End-to-End Test Cases
 
-Once all prerequisites have been met, you are setup to run, add, update new test cases.To keep the development of tests consistents and maintainable, we have put some guidance on implementation process which are describe above.
+Once all prerequisites have been met, you are set up to run, add, and update new test cases. To keep the development of tests consistent and maintainable, we have provided some guidance on the implementation process, which is described below.
 
 ### Folder structure
 
@@ -64405,7 +64659,7 @@ make e2e
 make e2e-no-build
 ```
 
-**Run a specific commmand tests suite**
+**Run a specific command test suite**
 
 
 ```bash
@@ -64421,7 +64675,7 @@ make e2e-no-build BATS_FOLDER_PATTERN=002-model
 ```bash
 make e2e-no-build BATS_FOLDER_PATTERN=<test folder name> BATS_FILE_PATTERN=<test command name>
 
-# Example to run mesheryctl model genereate tests
+# Example to run mesheryctl model generate tests
 make e2e-no-build BATS_FOLDER_PATTERN=002-model BATS_FILE_PATTERN=06-model-generate
 ```
 
@@ -64439,7 +64693,7 @@ To use these, ensure you are in the `meshery/mesheryctl/tests/e2e` directory.
 
 **Run tests with already built binary**
 
-This excludes the need to build the binary everytime there is an attempt to run all the tests.
+This excludes the need to build the binary every time there is an attempt to run all the tests.
 
 ```bash
   bash run_tests_local.sh
@@ -64447,7 +64701,7 @@ This excludes the need to build the binary everytime there is an attempt to run 
 
 NB: This works if there is an existing `mesheryctl` binary. If there isn't, the binary will be built. 
 
-**Enforce rebuilding the  binary**
+**Enforce rebuilding the binary**
 
 This involves parsing a flag for the binary to be built whether it exists or not. This comes in handy when you have local changes and possibly will like to test.
 
@@ -64592,7 +64846,7 @@ In the following example, we must have create a model with the name `model-test`
 
 Official documentation is available at [https://bats-core.readthedocs.io/en/stable/](https://bats-core.readthedocs.io/en/stable/)
 
-Github organization [https://github.com/bats-core](https://github.com/bats-core) contains bats-core repository and also bats libraries repositoires  
+Github organization [https://github.com/bats-core](https://github.com/bats-core) contains bats-core repository and also bats libraries repositories
 
 1.  **Basic Test Structure:** A Bats test file consists of one or more test cases defined using the `@test` keyword.
 
@@ -70522,7 +70776,7 @@ description: Return only the latest release of Meshery version information
 
 
 
-<h2>v1.0.75</h2>
+<h2>v1.0.76</h2>
 
 
 
@@ -73015,7 +73269,7 @@ Takes no parameters and no body.
 
 
 
-<h2>v1.0.75</h2>
+<h2>v1.0.76</h2>
 
 
 
@@ -73083,6 +73337,10 @@ Takes no body. Use the `{{< >}}` form.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -73109,10 +73367,6 @@ Takes no body. Use the `{{< >}}` form.
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -73453,6 +73707,10 @@ References for using Meshery's various features and components.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
+            Authorization Required , missing requisite key
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -73479,10 +73737,6 @@ References for using Meshery's various features and components.
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-for-a-meshmate-active-meshery-contributor/8158" target="_blank" rel="noopener noreferrer">
-            Request for a MeshMate — Active Meshery Contributor
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -99547,7 +99801,7 @@ The response is nil or does not contain a body.</td>
               <p class="error-details">Invalid system specified
 Publishing process encountered an error</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Ensure a valid system is provided (meshery, remote-provider, website)
+              <p class="error-details">Ensure a valid system is provided (remote-provider, website)
 Check the publishing configuration and try again</p>
             </td>
           </tr>
