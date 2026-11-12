@@ -29,6 +29,10 @@ type liveBroker struct {
 	endpoint string
 	token    string
 	up       bool
+	// onResolve runs inside GetPublicEndpoint, after the endpoint is read.
+	// A test uses it to change the world while the supervisor is
+	// re-resolving, between its stale check and its rebuild.
+	onResolve func()
 }
 
 func (b *liveBroker) answers(endpoint string) bool {
@@ -48,6 +52,9 @@ func (b *liveBroker) GetPublicEndpoint() (string, error) {
 	defer b.mu.Unlock()
 	if b.endpoint == "" {
 		return "", errors.New("broker has no published endpoint")
+	}
+	if b.onResolve != nil {
+		b.onResolve()
 	}
 	return b.endpoint, nil
 }
@@ -370,6 +377,43 @@ func TestOutageClockResetsOnReconnect(t *testing.T) {
 	}
 	if n := len(dialer.opened()); n != 1 {
 		t.Fatalf("%d connections opened, want no rebuild yet", n)
+	}
+}
+
+// TestRecoveredConnectionIsNotStoppedByASustainedOutage: the NATS client's own
+// reconnect loop can restore the connection while the supervisor is
+// re-resolving the endpoint and token of a recreated broker. The rebuild must
+// not stop a handler that is live again.
+func TestRecoveredConnectionIsNotStoppedByASustainedOutage(t *testing.T) {
+	mch, broker, dialer := supervisedConnection(t)
+	target := attach(t, mch)
+	first := dialer.opened()[0]
+	broker.recreate(newBrokerEndpoint, "new-token")
+	// The connection recovers while the supervisor re-resolves the endpoint
+	// and token, after the stale check and before the rebuild.
+	broker.onResolve = func() { first.setConnected(true) }
+
+	var since time.Time
+	t0 := time.Unix(1000, 0)
+	if mch.recheckBroker(target, t0, &since) {
+		t.Fatal("the supervisor finished on the first sign of an outage")
+	}
+	if mch.recheckBroker(target, t0.Add(mch.brokerStaleAfter), &since) {
+		t.Fatal("the supervisor finished although the connection had recovered")
+	}
+	if !since.IsZero() {
+		t.Fatal("the outage clock was not reset when the connection recovered")
+	}
+	if n := len(dialer.opened()); n != 1 {
+		t.Fatalf("%d connections opened, want the recovered one left alone", n)
+	}
+	if first.isClosed() || stopped(target) {
+		t.Fatal("a recovered connection or its supervisor was stopped")
+	}
+	mch.meshsyncMutex.Lock()
+	defer mch.meshsyncMutex.Unlock()
+	if mch.ctxMeshsyncDataHandler == nil || mch.brokerTarget != target {
+		t.Fatal("a recovered connection lost its handler or supervisor")
 	}
 }
 

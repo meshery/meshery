@@ -185,6 +185,12 @@ func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now tim
 	if mch.brokerTarget != target || mch.ctxMeshsyncDataHandler == nil {
 		return true
 	}
+	// The connection may have recovered while the endpoint and token were
+	// being re-resolved; a live handler must not be stopped.
+	if mch.ctxMeshsyncDataHandler.IsConnected() {
+		*disconnectedSince = time.Time{}
+		return false
+	}
 	k8scontext := target.k8scontext
 	mch.log.Info(fmt.Sprintf("Meshery Broker for Kubernetes context (%s) was recreated with a new endpoint or token; rebuilding the MeshSync data connection", k8scontext.ID))
 	mch.emitEvent("Meshery Broker changed; reconnecting MeshSync", events.Informational, map[string]any{
