@@ -249,3 +249,18 @@ func TestFetchDesignFile_GithubURL(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "github design content", string(content))
 }
+
+func TestIsGithubURL(t *testing.T) {
+	assert.True(t, isGithubURL(githubBlobURL))
+	assert.True(t, isGithubURL(githubRawURL))
+	assert.False(t, isGithubURL("https://github.com.evil.com/meshery/design.yaml"))
+	assert.False(t, isGithubURL("https://gitlab.com/meshery/design.yaml"))
+	assert.False(t, isGithubURL("https://example.com/design.yaml"))
+	assert.False(t, isGithubURL("not-a-url"))
+}
+
+func TestDesignFileName(t *testing.T) {
+	assert.Equal(t, "design.yaml", designFileName("https://example.com/designs/design.yaml?token=secret&sig=123"))
+	assert.Equal(t, "sample.yaml", designFileName("https://example.com/sample.yaml"))
+	assert.Equal(t, "local.yaml", designFileName("designs/local.yaml"))
+}

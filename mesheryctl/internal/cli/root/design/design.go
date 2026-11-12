@@ -19,6 +19,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"path/filepath"
 	"slices"
 	"strings"
 	"time"
@@ -173,7 +175,24 @@ func fetchDesignFromGithub(fileURL string) ([]byte, error) {
 }
 
 func isGithubURL(fileURL string) bool {
-	return strings.HasPrefix(fileURL, "https://github.com") || strings.HasPrefix(fileURL, "https://raw.githubusercontent.com")
+	u, err := url.Parse(fileURL)
+	if err != nil {
+		return false
+	}
+	return u.Hostname() == "github.com" || u.Hostname() == "raw.githubusercontent.com"
+}
+
+// designFileName derives a clean file name from a file path or URL, stripping query parameters.
+func designFileName(filePathOrURL string) string {
+	if utils.IsValidUrl(filePathOrURL) {
+		if u, err := url.Parse(filePathOrURL); err == nil && u.Path != "" {
+			base := filepath.Base(u.Path)
+			if base != "." && base != "/" && base != "" {
+				return base
+			}
+		}
+	}
+	return filepath.Base(filePathOrURL)
 }
 
 // fetchDesignFile downloads a design file from a URL. If the URL points to GitHub,
