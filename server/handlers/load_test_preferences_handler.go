@@ -88,7 +88,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 	q := req.URL.Query()
 	testUUID := q.Get("uuid")
 	h.log.Debug(testUUID)
-	if testUUID == "" {
+	if !q.Has("uuid") {
 		testPage := q.Get("page")
 		testPageSize := q.Get("pagesize")
 		testSearch := q.Get("search")
@@ -96,9 +96,9 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		h.log.Debug(testPage, testPageSize)
 		testObjJSON, err := provider.SMPTestConfigFetch(req, testPage, testPageSize, testSearch, testOrder)
 		if err != nil {
-			h.log.Error(err)
-			h.log.Error(ErrTestConfigs)
-			writeMeshkitError(w, ErrTestConfigs, testPreferenceErrorStatus(err))
+			fetchErr := ErrTestConfigs(err)
+			h.log.Error(fetchErr)
+			writeMeshkitError(w, fetchErr, testPreferenceErrorStatus(err))
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
@@ -123,9 +123,9 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 			writeMeshkitError(w, err, http.StatusNotFound)
 			return
 		}
-		h.log.Error(err)
-		h.log.Error(ErrTestConfigs)
-		writeMeshkitError(w, ErrTestConfigs, status)
+		fetchErr := ErrTestConfigs(err)
+		h.log.Error(fetchErr)
+		writeMeshkitError(w, fetchErr, status)
 		return
 	}
 	if testObj == nil {

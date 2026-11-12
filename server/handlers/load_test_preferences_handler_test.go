@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -86,7 +87,7 @@ func TestUserTestPreferenceInvalidUUIDsReturnBadRequest(t *testing.T) {
 	h, provider := newTestPreferenceFixture(t, true)
 	user := &models.User{ID: uuid.Must(uuid.NewV4())}
 
-	for _, badUUID := range []string{"not-a-uuid", uuid.Nil.String()} {
+	for _, badUUID := range []string{"", "not-a-uuid", uuid.Nil.String()} {
 		getReq := httptest.NewRequest(http.MethodGet, "/api/user/prefs/perf?uuid="+badUUID, nil)
 		getRec := httptest.NewRecorder()
 		h.UserTestPreferenceHandler(getRec, getReq, nil, user, provider)
@@ -170,12 +171,26 @@ func TestUserTestPreferenceLocalCRUDAndDefaultPagination(t *testing.T) {
 		t.Fatalf("list totalCount=%d len=%d, want 1", page.TotalCount, len(page.TestConfigs))
 	}
 
-	// Bad pagination parameters must return 400 Bad Request.
+	// Bad pagination parameters must return 400 Bad Request with the underlying cause in the body.
 	badPageReq := httptest.NewRequest(http.MethodGet, "/api/user/prefs/perf?page=abc", nil)
 	badPageRec := httptest.NewRecorder()
 	h.UserTestPreferenceHandler(badPageRec, badPageReq, nil, user, provider)
 	if badPageRec.Code != http.StatusBadRequest {
 		t.Fatalf("GET invalid page status = %d, want %d. body: %s", badPageRec.Code, http.StatusBadRequest, badPageRec.Body.String())
+	}
+	var badPageErr struct {
+		Code            string   `json:"code"`
+		Error           string   `json:"error"`
+		LongDescription []string `json:"longDescription"`
+	}
+	if err := json.Unmarshal(badPageRec.Body.Bytes(), &badPageErr); err != nil {
+		t.Fatalf("unmarshal bad page error: %v", err)
+	}
+	if badPageErr.Code != ErrTestConfigsCode {
+		t.Errorf("GET invalid page code = %q, want %q", badPageErr.Code, ErrTestConfigsCode)
+	}
+	if len(badPageErr.LongDescription) == 0 || !strings.Contains(strings.Join(badPageErr.LongDescription, " "), `parsing "abc"`) {
+		t.Errorf("GET invalid page longDescription = %v, want underlying invalid-page cause", badPageErr.LongDescription)
 	}
 
 	getReq := httptest.NewRequest(http.MethodGet, "/api/user/prefs/perf?uuid="+stored.TestUUID, nil)
@@ -255,12 +270,30 @@ func TestUserTestPreferenceHandlersPropagateProviderStatus(t *testing.T) {
 			if listRec.Code != tc.wantStatus {
 				t.Errorf("Fetch status = %d, want %d. body: %s", listRec.Code, tc.wantStatus, listRec.Body.String())
 			}
+			var listErrBody struct {
+				LongDescription []string `json:"longDescription"`
+			}
+			if err := json.Unmarshal(listRec.Body.Bytes(), &listErrBody); err != nil {
+				t.Errorf("Fetch unmarshal error body: %v", err)
+			} else if !strings.Contains(strings.Join(listErrBody.LongDescription, "\n"), tc.err.Error()) {
+				t.Errorf("Fetch longDescription = %v, want cause %q", listErrBody.LongDescription, tc.err.Error())
+			}
 
 			getReq := httptest.NewRequest(http.MethodGet, "/api/user/prefs/perf?uuid="+validID, nil)
 			getRec := httptest.NewRecorder()
 			h.UserTestPreferenceGet(getRec, getReq, nil, user, provider)
 			if getRec.Code != tc.wantStatus {
 				t.Errorf("Get status = %d, want %d. body: %s", getRec.Code, tc.wantStatus, getRec.Body.String())
+			}
+			if tc.wantStatus != http.StatusNotFound {
+				var getErrBody struct {
+					LongDescription []string `json:"longDescription"`
+				}
+				if err := json.Unmarshal(getRec.Body.Bytes(), &getErrBody); err != nil {
+					t.Errorf("Get unmarshal error body: %v", err)
+				} else if !strings.Contains(strings.Join(getErrBody.LongDescription, "\n"), tc.err.Error()) {
+					t.Errorf("Get longDescription = %v, want cause %q", getErrBody.LongDescription, tc.err.Error())
+				}
 			}
 
 			delReq := httptest.NewRequest(http.MethodDelete, "/api/user/prefs/perf?uuid="+validID, nil)
