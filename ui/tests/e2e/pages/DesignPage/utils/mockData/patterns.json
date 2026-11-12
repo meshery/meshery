@@ -1,0 +1,27 @@
+{
+  "page": 0,
+  "page_size": 10,
+  "total_count": 2,
+  "patterns": [
+    {
+      "id": "design-test-published-1",
+      "name": "Published Sample Design",
+      "visibility": "published",
+      "pattern_file": "name: Published Sample Design\nschemaVersion: designs.meshery.io/v1beta1\ncomponents: []",
+      "patternFile": "name: Published Sample Design\nschemaVersion: designs.meshery.io/v1beta1\ncomponents: []",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-02T00:00:00Z"
+    },
+    {
+      "id": "design-test-private-2",
+      "name": "Private Sample Design",
+      "visibility": "private",
+      "pattern_file": "name: Private Sample Design\nschemaVersion: designs.meshery.io/v1beta1\ncomponents: []",
+      "patternFile": "name: Private Sample Design\nschemaVersion: designs.meshery.io/v1beta1\ncomponents: []",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-02T00:00:00Z"
+    }
+  ]
+}
