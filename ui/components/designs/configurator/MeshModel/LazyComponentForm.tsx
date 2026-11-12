@@ -60,13 +60,17 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
           let parsedSchema = {};
           if (typeof rawSchema === 'string') {
             parsedSchema = rawSchema.trim() ? JSON.parse(rawSchema) : {};
-          } else if (rawSchema && typeof rawSchema === 'object') {
-            parsedSchema = rawSchema;
+          } else if (rawSchema && typeof rawSchema === 'object' && !Array.isArray(rawSchema)) {
+            parsedSchema = { ...rawSchema };
           }
           if (!parsedSchema || typeof parsedSchema !== 'object' || Array.isArray(parsedSchema)) {
             parsedSchema = {};
           }
-          if (!parsedSchema.properties || typeof parsedSchema.properties !== 'object') {
+          if (
+            !parsedSchema.properties ||
+            typeof parsedSchema.properties !== 'object' ||
+            Array.isArray(parsedSchema.properties)
+          ) {
             parsedSchema.properties = {};
           }
           if (!parsedSchema.type) {
