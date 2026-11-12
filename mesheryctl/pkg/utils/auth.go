@@ -615,6 +615,10 @@ func WriteTokenFile(path string, data []byte) error {
 		_ = f.Close()
 		return err
 	}
+	if err := restrictTokenFileToCurrentUser(f); err != nil {
+		_ = f.Close()
+		return err
+	}
 	if err := f.Truncate(0); err != nil {
 		_ = f.Close()
 		return err
