@@ -2,6 +2,8 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
@@ -34,8 +36,11 @@ type Handler struct {
 	GoEngine                                *gopolicies.GoEngine
 	ConnectionToStateMachineInstanceTracker *machines.ConnectionToStateMachineInstanceTracker
 	MeshsyncDefaultDeploymentMode           connections.MeshsyncDeploymentMode
-	evalTracker                             *evaluationTracker
-	adapterOperations                       *adapterOperationOwners
+	// notFoundProbeThrottle gates background Discovery probes of NOTFOUND
+	// Kubernetes connections; see notFoundProbeThrottle in middlewares.go.
+	notFoundProbeThrottle *notFoundProbeThrottle
+	evalTracker           *evaluationTracker
+	adapterOperations     *adapterOperationOwners
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -72,6 +77,7 @@ func NewHandlerInstance(
 		SystemID:                                viper.Get("INSTANCE_ID").(*core.Uuid),
 		ConnectionToStateMachineInstanceTracker: connToInstanceTracker,
 		MeshsyncDefaultDeploymentMode:           meshsyncDefaultDeploymentMode,
+		notFoundProbeThrottle:                   newNotFoundProbeThrottle(time.Now, notFoundProbeInterval),
 		evalTracker:                             newEvaluationTracker(),
 	}
 

@@ -124,7 +124,7 @@ func (h *Handler) machineCtxForConnection(connectionID string) (*kubernetes.Mach
 		h.log.Debug(fmt.Sprintf("machine instance for connection %s has no context assigned, treating as not-ready", connectionID))
 		return nil, false
 	}
-	machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
+	machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.GetContext())
 	if err != nil || machinectx.MesheryCtrlsHelper == nil {
 		if err != nil {
 			h.log.Error(err)
