@@ -96,9 +96,15 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		h.log.Debug(testPage, testPageSize)
 		testObjJSON, err := provider.SMPTestConfigFetch(req, testPage, testPageSize, testSearch, testOrder)
 		if err != nil {
+			status := testPreferenceErrorStatus(err)
+			if status == http.StatusBadRequest {
+				h.log.Warn(err)
+				writeMeshkitError(w, err, status)
+				return
+			}
 			fetchErr := ErrTestConfigs(err)
 			h.log.Error(fetchErr)
-			writeMeshkitError(w, fetchErr, testPreferenceErrorStatus(err))
+			writeMeshkitError(w, fetchErr, status)
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")

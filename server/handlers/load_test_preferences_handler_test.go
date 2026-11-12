@@ -171,26 +171,35 @@ func TestUserTestPreferenceLocalCRUDAndDefaultPagination(t *testing.T) {
 		t.Fatalf("list totalCount=%d len=%d, want 1", page.TotalCount, len(page.TestConfigs))
 	}
 
-	// Bad pagination parameters must return 400 Bad Request with the underlying cause in the body.
-	badPageReq := httptest.NewRequest(http.MethodGet, "/api/user/prefs/perf?page=abc", nil)
-	badPageRec := httptest.NewRecorder()
-	h.UserTestPreferenceHandler(badPageRec, badPageReq, nil, user, provider)
-	if badPageRec.Code != http.StatusBadRequest {
-		t.Fatalf("GET invalid page status = %d, want %d. body: %s", badPageRec.Code, http.StatusBadRequest, badPageRec.Body.String())
-	}
-	var badPageErr struct {
-		Code            string   `json:"code"`
-		Error           string   `json:"error"`
-		LongDescription []string `json:"longDescription"`
-	}
-	if err := json.Unmarshal(badPageRec.Body.Bytes(), &badPageErr); err != nil {
-		t.Fatalf("unmarshal bad page error: %v", err)
-	}
-	if badPageErr.Code != ErrTestConfigsCode {
-		t.Errorf("GET invalid page code = %q, want %q", badPageErr.Code, ErrTestConfigsCode)
-	}
-	if len(badPageErr.LongDescription) == 0 || !strings.Contains(strings.Join(badPageErr.LongDescription, " "), `parsing "abc"`) {
-		t.Errorf("GET invalid page longDescription = %v, want underlying invalid-page cause", badPageErr.LongDescription)
+	// Bad pagination parameters must return 400 Bad Request naming the invalid parameter in the body.
+	for _, tc := range []struct {
+		query    string
+		wantCode string
+		wantErr  string
+	}{
+		{query: "?page=abc", wantCode: models.ErrPageNumberCode, wantErr: "Page Numer"},
+		{query: "?pagesize=xyz", wantCode: models.ErrPageSizeCode, wantErr: "Page Size"},
+	} {
+		badPageReq := httptest.NewRequest(http.MethodGet, "/api/user/prefs/perf"+tc.query, nil)
+		badPageRec := httptest.NewRecorder()
+		h.UserTestPreferenceHandler(badPageRec, badPageReq, nil, user, provider)
+		if badPageRec.Code != http.StatusBadRequest {
+			t.Fatalf("GET %s status = %d, want %d. body: %s", tc.query, badPageRec.Code, http.StatusBadRequest, badPageRec.Body.String())
+		}
+		var badPageErr struct {
+			Code            string   `json:"code"`
+			Error           string   `json:"error"`
+			LongDescription []string `json:"longDescription"`
+		}
+		if err := json.Unmarshal(badPageRec.Body.Bytes(), &badPageErr); err != nil {
+			t.Fatalf("unmarshal bad pagination error (%s): %v", tc.query, err)
+		}
+		if badPageErr.Code != tc.wantCode {
+			t.Errorf("GET %s code = %q, want %q", tc.query, badPageErr.Code, tc.wantCode)
+		}
+		if !strings.Contains(badPageErr.Error, tc.wantErr) {
+			t.Errorf("GET %s error = %q, want substring %q", tc.query, badPageErr.Error, tc.wantErr)
+		}
 	}
 
 	getReq := httptest.NewRequest(http.MethodGet, "/api/user/prefs/perf?uuid="+stored.TestUUID, nil)
@@ -271,10 +280,15 @@ func TestUserTestPreferenceHandlersPropagateProviderStatus(t *testing.T) {
 				t.Errorf("Fetch status = %d, want %d. body: %s", listRec.Code, tc.wantStatus, listRec.Body.String())
 			}
 			var listErrBody struct {
+				Error           string   `json:"error"`
 				LongDescription []string `json:"longDescription"`
 			}
 			if err := json.Unmarshal(listRec.Body.Bytes(), &listErrBody); err != nil {
 				t.Errorf("Fetch unmarshal error body: %v", err)
+			} else if tc.wantStatus == http.StatusBadRequest {
+				if !strings.Contains(listErrBody.Error, tc.err.Error()) {
+					t.Errorf("Fetch error = %q, want cause %q", listErrBody.Error, tc.err.Error())
+				}
 			} else if !strings.Contains(strings.Join(listErrBody.LongDescription, "\n"), tc.err.Error()) {
 				t.Errorf("Fetch longDescription = %v, want cause %q", listErrBody.LongDescription, tc.err.Error())
 			}
