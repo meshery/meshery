@@ -35,6 +35,7 @@ import {
   SettingsIcon,
   FilterAllIcon,
   useHasPermission,
+  InputAdornment,
 } from '@sistent/sistent';
 import { Keys } from '@meshery/schemas/permissions';
 import OrganizationAndWorkSpaceSwitcher from '../../workspaces/SpacesSwitcher/SpaceSwitcher';
@@ -118,7 +119,11 @@ const K8sContextConnectionChip_ = ({
         >
           {selectable && (
             <>
-              <Checkbox checked={selected} onChange={() => onSelectChange(ctx.id)} />
+              <Checkbox
+                checked={selected}
+                onChange={() => onSelectChange(ctx.id)}
+                inputProps={{ 'aria-label': `Select ${ctx.name}` }}
+              />
             </>
           )}
           <ConnectionChip
@@ -177,7 +182,7 @@ function K8sContextMenu({
 
   const styleSlider = {
     position: 'absolute',
-    left: '-7rem',
+    right: '-0.5rem',
     zIndex: '-1',
     top: '60px',
   };
@@ -289,22 +294,44 @@ function K8sContextMenu({
                 }}
               >
                 <CMenuContainer id="menu-list-grow">
-                  <div>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'minmax(0, 1fr) auto',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                    }}
+                  >
                     <TextField
                       id="search-ctx"
-                      label="Search"
+                      placeholder="Search by cluster name..."
                       size="small"
                       variant="outlined"
                       onChange={(ev) => searchContexts(ev.target.value)}
                       style={{
                         width: '100%',
+                        minWidth: 0,
                         backgroundColor: 'rgba(102, 102, 102, 0.12)',
                         margin: '1px 0px',
                       }}
-                      InputProps={{
-                        endAdornment: <SearchIcon style={iconMedium} width={24} />,
+                      slotProps={{
+                        htmlInput: {
+                          'aria-label': 'Search clusters',
+                        },
+                        input: {
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon
+                                style={iconMedium}
+                                width={20}
+                                fill={theme?.palette?.text?.secondary || 'currentColor'}
+                              />
+                            </InputAdornment>
+                          ),
+                        },
                       }}
                     />
+                    <MesherySettingsEnvButtons onOpened={() => setShowFullContextMenu(false)} />
                   </div>
                   <div>
                     {contexts?.totalCount > 0 && (
@@ -340,15 +367,23 @@ function K8sContextMenu({
                         </div>
                         <CustomTooltip title="Configure Connections">
                           <div>
-                            <IconButton size="small" onClick={() => setIsConnectionOpenModal(true)}>
+                            <IconButton
+                              size="small"
+                              aria-label="Configure connections"
+                              onClick={() => setIsConnectionOpenModal(true)}
+                            >
                               <SettingsIcon style={{ ...iconSmall }} />
                             </IconButton>
                           </div>
                         </CustomTooltip>
                       </div>
                     )}
-                    {contexts?.contexts?.map((ctx) => {
-                      return (
+                    <div
+                      role="group"
+                      aria-label="Clusters"
+                      style={{ maxHeight: 'min(40vh, 280px)', overflowY: 'auto' }}
+                    >
+                      {contexts?.contexts?.map((ctx) => (
                         <K8sContextConnectionChip
                           key={ctx.id}
                           ctx={ctx}
@@ -360,11 +395,8 @@ function K8sContextMenu({
                           connectionMetadataState={connectionMetadataState}
                           connections={connections}
                         />
-                      );
-                    })}
-                    <Box sx={{ marginTop: '1rem' }}>
-                      <MesherySettingsEnvButtons onOpened={() => setShowFullContextMenu(false)} />
-                    </Box>
+                      ))}
+                    </div>
                   </div>
                 </CMenuContainer>
               </ClickAwayListener>
