@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -8,11 +9,14 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
+	"sync"
 
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/httpstream"
 	"k8s.io/client-go/rest"
 
 	"k8s.io/client-go/tools/portforward"
@@ -21,17 +25,21 @@ import (
 
 // PortForward provides a port-forward connection into a Kubernetes cluster.
 type PortForward struct {
-	method     string
-	url        *url.URL
-	host       string
-	namespace  string
-	podName    string
-	localPort  int
-	remotePort int
-	emitLogs   bool
-	stopCh     chan struct{}
-	readyCh    chan struct{}
-	config     *rest.Config
+	method         string
+	url            *url.URL
+	host           string
+	namespace      string
+	podName        string
+	localPort      int
+	remotePort     int
+	emitLogs       bool
+	stopCh         chan struct{}
+	stopOnce       sync.Once
+	readyCh        chan struct{}
+	forwarder      *portforward.PortForwarder
+	dialer         httpstream.Dialer
+	config         *rest.Config
+	listenerErrors bytes.Buffer
 }
 
 // NewPortForward returns an instance of the PortForward struct that can be used
@@ -84,16 +92,8 @@ func newPortForward(
 		Name(podName).
 		SubResource("portforward")
 
-	var err error
-	if localPort == 0 {
-		if host != "localhost" {
-			return nil, fmt.Errorf("local port must be specified when host is not localhost")
-		}
-
-		localPort, err = GetEphemeralPort()
-		if err != nil {
-			return nil, err
-		}
+	if localPort == 0 && host != "localhost" {
+		return nil, fmt.Errorf("local port must be specified when host is not localhost")
 	}
 
 	return &PortForward{
@@ -114,29 +114,41 @@ func newPortForward(
 // run creates and runs the port-forward connection.
 // When the connection is established it blocks until Stop() is called.
 func (pf *PortForward) run() error {
-	transport, upgrader, err := spdy.RoundTripperFor(pf.config)
-	if err != nil {
-		return err
+	dialer := pf.dialer
+	if dialer == nil {
+		transport, upgrader, err := spdy.RoundTripperFor(pf.config)
+		if err != nil {
+			return err
+		}
+		dialer = spdy.NewDialer(upgrader, &http.Client{Transport: transport}, pf.method, pf.url)
 	}
 
 	out := io.Discard
 	errOut := io.Discard
 	if pf.emitLogs {
 		out = os.Stdout
-		errOut = os.Stderr
+		errOut = io.MultiWriter(&pf.listenerErrors, os.Stderr)
+	} else {
+		// client-go reports listener creation details to errOut, but returns a
+		// generic error from ForwardPorts. Keep those details so callers can
+		// distinguish a busy local port from other setup failures.
+		errOut = &pf.listenerErrors
 	}
 
 	ports := []string{fmt.Sprintf("%d:%d", pf.localPort, pf.remotePort)}
-	dialer := spdy.NewDialer(upgrader, &http.Client{Transport: transport}, pf.method, pf.url)
 
 	fw, err := portforward.NewOnAddresses(dialer, []string{pf.host}, ports, pf.stopCh, pf.readyCh, out, errOut)
 	if err != nil {
 		return err
 	}
+	pf.forwarder = fw
 
 	err = fw.ForwardPorts()
 	if err != nil {
-		err = fmt.Errorf("%s for %s/%s", err, pf.namespace, pf.podName)
+		if pf.listenerErrors.Len() > 0 {
+			err = fmt.Errorf("%w: %s", err, strings.TrimSpace(pf.listenerErrors.String()))
+		}
+		err = fmt.Errorf("%w for %s/%s", err, pf.namespace, pf.podName)
 		return err
 	}
 	return nil
@@ -162,6 +174,14 @@ func (pf *PortForward) Init() error {
 	select {
 	case <-pf.readyCh:
 		log.Debug("Port forward initialized")
+		ports, err := pf.forwarder.GetPorts()
+		if err != nil {
+			return err
+		}
+		if len(ports) != 1 {
+			return fmt.Errorf("expected one forwarded port, got %d", len(ports))
+		}
+		pf.localPort = int(ports[0].Local)
 	case err := <-failure:
 		log.Debugf("Port forward failed: %v", err)
 		return err
@@ -173,7 +193,7 @@ func (pf *PortForward) Init() error {
 // Stop terminates the port-forward connection.
 // It is the caller's responsibility to call Stop even in case of errors
 func (pf *PortForward) Stop() {
-	close(pf.stopCh)
+	pf.stopOnce.Do(func() { close(pf.stopCh) })
 }
 
 // GetStop returns the stopCh.
@@ -185,6 +205,29 @@ func (pf *PortForward) GetStop() <-chan struct{} {
 // URLFor returns the URL for the port-forward connection.
 func (pf *PortForward) URLFor(path string) string {
 	return fmt.Sprintf("http://%s:%d%s", pf.host, pf.localPort, path)
+}
+
+// LocalPort returns the local port the port-forward connection listens on.
+func (pf *PortForward) LocalPort() int {
+	return pf.localPort
+}
+
+// IsPortBusyError reports whether err indicates the requested local port is
+// already in use.
+func IsPortBusyError(err error) bool {
+	if err == nil {
+		return false
+	}
+	msg := strings.ToLower(err.Error())
+	for _, s := range []string{
+		"address already in use",
+		"only one usage of each socket",
+	} {
+		if strings.Contains(msg, s) {
+			return true
+		}
+	}
+	return false
 }
 
 // AddressAndPort returns the address and port for the port-forward connection.
