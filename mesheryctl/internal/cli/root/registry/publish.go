@@ -203,9 +203,10 @@ func spreadsheetRequestError(resp *sheets.Spreadsheet, err error) string {
 	return fmt.Sprintf("Request to Google Spreadsheet did not succeed.\n\nReturned error: %s", err.Error())
 }
 
-// TODO
+// mesherySystem handles publishing to the meshery system target.
+// Publishing directly to meshery server via registry publish is currently unsupported.
 func mesherySystem() error {
-	return nil
+	return fmt.Errorf("publishing directly to system 'meshery' is not supported; use 'remote-provider' or 'website'")
 }
 
 // Create models definitions to remote provider path
