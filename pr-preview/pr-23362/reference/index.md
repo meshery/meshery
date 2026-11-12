@@ -871,6 +871,7 @@ Section pages:
 - [ErrPromptCode-1022](/pr-preview/pr-23362/reference/error-codes/client-mesheryctl/errpromptcode-1022/)
 - [ErrProtocolBasedMapCode-11210](/pr-preview/pr-23362/reference/error-codes/library-meshkit/errprotocolbasedmapcode-11210/)
 - [ErrProtocolCode-1279](/pr-preview/pr-23362/reference/error-codes/component-meshery-server/errprotocolcode-1279/)
+- [ErrProviderAmbiguousCode-1260](/pr-preview/pr-23362/reference/error-codes/client-mesheryctl/errproviderambiguouscode-1260/)
 - [ErrProviderInfoCode-1086](/pr-preview/pr-23362/reference/error-codes/client-mesheryctl/errproviderinfocode-1086/)
 - [ErrProviderNotFoundCode-1259](/pr-preview/pr-23362/reference/error-codes/client-mesheryctl/errprovidernotfoundcode-1259/)
 - [ErrPublishBrokerCode-1176](/pr-preview/pr-23362/reference/error-codes/component-meshery-server/errpublishbrokercode-1176/)
