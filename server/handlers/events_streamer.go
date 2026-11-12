@@ -164,7 +164,14 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
 		return
 	}
-	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
+	eventIDParam := mux.Vars(req)["id"]
+	eventID, err := uuid.FromString(eventIDParam)
+	if err != nil || eventID == uuid.Nil {
+		idErr := ErrInvalidEventID(eventIDParam)
+		h.log.Error(idErr)
+		writeMeshkitError(w, idErr, http.StatusBadRequest)
+		return
+	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 
 	defer func() {
@@ -289,9 +296,16 @@ func (h *Handler) DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj 
 		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
 		return
 	}
-	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
+	eventIDParam := mux.Vars(req)["id"]
+	eventID, err := uuid.FromString(eventIDParam)
+	if err != nil || eventID == uuid.Nil {
+		idErr := ErrInvalidEventID(eventIDParam)
+		h.log.Error(idErr)
+		writeMeshkitError(w, idErr, http.StatusBadRequest)
+		return
+	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	err := provider.DeleteEvent(token, eventID)
+	err = provider.DeleteEvent(token, eventID)
 
 	if err != nil {
 		_err := ErrDeleteEvent(err, eventID.String())
