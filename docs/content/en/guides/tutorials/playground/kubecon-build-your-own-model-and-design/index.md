@@ -298,7 +298,7 @@ Confirm `mesheryctl system context view` shows the Playground endpoint before yo
    mesheryctl model init kubecon-<your-handle>-logo --version v0.1.0
    ```
 
-   That creates `kubecon-<your-handle>-logo/v0.1.0/`, with `model.json`, a sample file under `components/`, and empty `relationships/`, `connections/` and `credentials/` directories.
+   That creates `kubecon-<your-handle>-logo/v0.1.0/`, with `model.json`, a sample file under `components/`, a sample `relationship.json` under `relationships/` (you remove it in step 3), and empty `connections/` and `credentials/` directories.
 
 2. **Edit `model.json`.** Set `metadata.isAnnotation` to `true`. Set `registrant.kind` to `meshery`, give the model a short description, and paste the color SVG into `metadata.svgColor` and the white SVG into `metadata.svgWhite`. Strip any XML header (`<?xml ... ?>`) and collapse each SVG to a single line before pasting. Set both `version` and `model.version` to `v0.1.0`: `model init` names the folder after `--version` but writes `v0.0.1` into `model.json`. Leave `schemaVersion` as `models.meshery.io/v1beta2`. If you set a category, *Uncategorized* is a safe choice.
 
