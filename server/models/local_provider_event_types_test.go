@@ -22,7 +22,7 @@ func TestGetEventTypesCoversUserAndSystemEvents(t *testing.T) {
 		events.NewEvent().FromOwner(otherUserID).FromSystem(sysID).WithCategory("design").WithAction("deploy").
 			WithSeverity(events.Informational).WithDescription("another user's event").Build(),
 	} {
-		if _, err := provider.EventsPersister.PersistEvent(*event, ""); err != nil {
+		if _, err := provider.PersistEvent(*event, ""); err != nil {
 			t.Fatalf("persist %q: %v", event.Description, err)
 		}
 	}
