@@ -22,7 +22,7 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -57,7 +57,21 @@ mesheryctl design apply -f [file | URL]
 mesheryctl design apply [design-name]
 	`,
 	Annotations: linkDocPatternApply,
-	Args:        cobra.MinimumNArgs(0),
+	Args: func(cmd *cobra.Command, args []string) error {
+		if cmd.Flags().Changed("file") && strings.TrimSpace(file) == "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("file path cannot be empty"))
+		}
+		hasDesignName := strings.TrimSpace(strings.Join(args, " ")) != ""
+		hasFile := strings.TrimSpace(file) != ""
+
+		if !hasDesignName && !hasFile {
+			return utils.ErrInvalidArgument(fmt.Errorf("please provide a design name or specify a file using --file"))
+		}
+		if len(args) > 0 && hasFile {
+			return utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a design name and the --file flag"))
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -110,117 +124,30 @@ mesheryctl design apply [design-name]
 		} else {
 			// Method to check if the entered file is a URL or not
 			validURL := strings.HasPrefix(file, "https://github.com") || strings.HasPrefix(file, "https://raw.githubusercontent.com")
-			if !validURL {
-				content, err := os.ReadFile(file)
+
+			var content []byte
+			if validURL {
+				content, err = fetchDesignFromGithub(file)
+				if err != nil {
+					return err
+				}
+			} else {
+				content, err = os.ReadFile(file)
 				if err != nil {
 					return utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, file))
 				}
-
-				// if --skip-save is not passed we save the pattern first
-				if !skipSave {
-					jsonValues, err := json.Marshal(map[string]interface{}{
-						"pattern_data": map[string]interface{}{
-							"name":         path.Base(file),
-							"pattern_file": content,
-						},
-						"save": true,
-					})
-					if err != nil {
-						return utils.ErrMarshal(err)
-					}
-					req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
-					if err != nil {
-						return err
-					}
-
-					resp, err := utils.MakeRequest(req)
-					if err != nil {
-						return err
-					}
-
-					var response []*models.MesheryPattern
-					defer func() { _ = resp.Body.Close() }()
-
-					body, err := io.ReadAll(resp.Body)
-					if err != nil {
-						return utils.ErrReadFromBody(err)
-					}
-					err = json.Unmarshal(body, &response)
-					if err != nil {
-						return utils.ErrUnmarshal(err)
-					}
-				}
-
-				// setup pattern file
-				designFile = string(content)
-			} else {
-				var jsonValues []byte
-				url, path, err := utils.ParseURLGithub(file)
-				if err != nil {
-					return utils.ErrParseGithubFile(err, file)
-				}
-
-				utils.Log.Debug(url)
-				utils.Log.Debug(path)
-
-				// save the pattern with Github URL
-				if !skipSave {
-					if path != "" {
-						jsonValues, _ = json.Marshal(map[string]interface{}{
-							"url":  url,
-							"path": path,
-							"save": true,
-						})
-					} else {
-						jsonValues, _ = json.Marshal(map[string]interface{}{
-							"url":  url,
-							"save": true,
-						})
-					}
-				} else { // we don't save the pattern
-					if path != "" {
-						jsonValues, _ = json.Marshal(map[string]interface{}{
-							"url":  url,
-							"path": path,
-							"save": false,
-						})
-					} else {
-						jsonValues, _ = json.Marshal(map[string]interface{}{
-							"url":  url,
-							"save": false,
-						})
-					}
-				}
-				req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
-				if err != nil {
-					return err
-				}
-
-				resp, err := utils.MakeRequest(req)
-				if err != nil {
-					return err
-				}
-				utils.Log.Debug("remote hosted pattern request success")
-				var response []*models.MesheryPattern
-				defer func() { _ = resp.Body.Close() }()
-
-				body, err := io.ReadAll(resp.Body)
-				if err != nil {
-					return utils.ErrReadFromBody(err)
-				}
-				err = json.Unmarshal(body, &response)
-				if err != nil {
-					return utils.ErrUnmarshal(err)
-				}
-
-				if len(response) == 0 || response[0] == nil {
-					return ErrDesignNotFound(file)
-				}
-
-				// setup pattern file here
-				designFile = response[0].PatternFile
 			}
 
+			// if --skip-save is not passed we save the pattern first
+			if !skipSave {
+				fileName := filepath.Base(file)
+				if _, err := importDesignFile(patternURL+"/import", fileName, fileName, content); err != nil {
+					return err
+				}
+			}
+
+			// setup pattern file
+			designFile = string(content)
 		}
 
 		payload := models.MesheryPatternFileDeployPayload{
