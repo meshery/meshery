@@ -500,7 +500,7 @@ The different types (Daily, Stable, LTS) represent different product quality lev
 | What | Workflow | Published to |
 |---|---|---|
 | Production docs, on every push to `master` except one confined to `.github/` (other than `hugo.yml` itself) or `archive/` | `.github/workflows/hugo.yml` | A GitHub Actions Pages artifact for `meshery/meshery` (Pages source: **GitHub Actions**), served at docs.meshery.io |
-| A preview build for each pull request that touches `docs/` | `.github/workflows/build-docs-preview.yml` | A workflow artifact, with base URL `/docs-preview/pr-preview/pr-<number>/` |
+| A preview build for each pull request that touches `docs/` or `mesheryctl/doc/` (or either preview workflow) | `.github/workflows/build-docs-preview.yml` | A workflow artifact, with base URL `/docs-preview/pr-preview/pr-<number>/` |
 | Publishing, pruning and removing previews | `.github/workflows/deploy-docs-preview.yml` | `pr-preview/pr-<number>/` on the `gh-pages` branch of [`meshery/docs-preview`](https://github.com/meshery/docs-preview), served at `https://meshery.github.io/docs-preview/pr-preview/pr-<number>/` |
 
 Constraints to keep in mind when changing any of these:
