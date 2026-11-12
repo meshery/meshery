@@ -144,6 +144,12 @@ spec:
               fi
               echo "finalizers not processed within 90s (operator not reconciling); removing them" >&2
               for cr in $owned; do
+                if ! ts="$(kubectl -n "$ns" get "$cr" -o 'jsonpath={.metadata.deletionTimestamp}' 2>/dev/null)"; then
+                  echo "$cr is already gone, skipping"; continue
+                fi
+                if [ -z "$ts" ]; then
+                  echo "error: $cr is not Terminating, leaving its finalizers in place" >&2; exit 1
+                fi
                 kubectl -n "$ns" patch "$cr" --type=merge -p '{"metadata":{"finalizers":null}}' \
                   || echo "warning: could not remove finalizers from $cr; checking whether it is gone" >&2
               done

@@ -69,7 +69,7 @@ them is added to the Service's endpoints while it runs.
 Usage: include "meshery-operator.hookPodLabels" (dict "context" . "component" "crd-update")
 */}}
 {{- define "meshery-operator.hookPodLabels" -}}
-app.kubernetes.io/name: {{ include "meshery-operator.name" .context }}-{{ .component }}
+app.kubernetes.io/name: {{ include "meshery-operator.name" .context | trunc 52 | trimSuffix "-" }}-{{ .component }}
 app.kubernetes.io/instance: {{ .context.Release.Name }}
 app.kubernetes.io/component: {{ .component }}
 {{- end -}}

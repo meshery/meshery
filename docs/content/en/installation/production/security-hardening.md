@@ -41,8 +41,9 @@ Grant only what is needed.
   to watch nodes for full discovery; enable `rbac.nodes: true` **only** on the
   clusters that need it rather than globally.
 - **Know the operator-mode identities.** On clusters running Meshery
-  Operator, the operator's `meshery-operator` ServiceAccount can manage only the
-  Broker and MeshSync workloads, and MeshSync reads the cluster through the
+  Operator, the operator's `meshery-operator` ServiceAccount manages the
+  Broker and MeshSync workloads (and the configmaps, secrets, and services
+  those workloads need), and MeshSync reads the cluster through the
   read-only `meshery-meshsync-role`, which can list and watch every type but
   write nothing (`pods/exec` is opt-in via `meshsync.rbac.extraRules`). Until
   the chart's `meshsync.serviceAccount.dedicated` is on (it needs an operator
