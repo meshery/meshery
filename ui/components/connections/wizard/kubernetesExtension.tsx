@@ -1,10 +1,8 @@
 import { useMemo, useState } from 'react';
-import Link from 'next/link';
 import {
   Alert,
   Box,
   Checkbox,
-  CheckCircleIcon,
   Chip,
   CircularProgress,
   CustomTooltip,
@@ -15,14 +13,18 @@ import {
   AssignmentTurnedInIcon,
   SettingsIcon,
 } from '@sistent/sistent';
-import { useSelector } from 'react-redux';
 import { alpha, styled } from '@/theme';
 import { EVENT_TYPES } from 'lib/event-types';
 import { CONNECTION_STATES } from '@/utils/Enum';
 import {
-  CONNECTIONS_PATH,
+  emptyKubeconfigMessage,
   getKubernetesContexts,
+  kubeconfigFileFingerprint,
+  kubernetesImportIssues,
+  kubernetesImportPresentation,
   kubernetesImportedNotify,
+  skippedKubeconfigMessage,
+  type SkippedKubeContext,
 } from '../ConnectionWizard.helpers';
 import { formatWizardError } from './errors';
 import {
@@ -31,8 +33,8 @@ import {
   MESHSYNC_DEPLOYMENT_MODE_OPTIONS,
   MESHSYNC_MODES_DOCS_URL,
 } from './kubernetesDeploymentMode';
+import { kubernetesReceiptStep } from './kubernetesImportResult';
 import { kubernetesSettingsStep } from './kubernetesSettings';
-import FormatConnectionMetadata from '../metadata';
 import { ConnectionStateChip } from '../ConnectionChip';
 import { KubernetesImportStep, StepHeader } from '../ConnectionWizardStepContent';
 import type {
@@ -74,29 +76,6 @@ const ConnectNotice = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1, 1.5),
 }));
 
-const SuccessBadge = styled(Box)(({ theme }) => ({
-  width: 88,
-  height: 88,
-  borderRadius: '50%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  background: alpha(theme.palette.background.brand?.default, 0.12),
-}));
-
-const SuccessIcon = styled(CheckCircleIcon)(({ theme }) => ({
-  width: 52,
-  height: 52,
-  fill: theme.palette.background.brand?.default,
-}));
-
-const ConnectionsLink = styled(Link)(({ theme }) => ({
-  color: theme.palette.background.brand?.default || theme.palette.primary.main,
-  fontWeight: 600,
-  textDecoration: 'underline',
-  textUnderlineOffset: 2,
-}));
-
 type ContextChoice = { selected: boolean; name: string; meshsyncDeploymentMode: string };
 
 // ---------------------------------------------------------------------------
@@ -126,14 +105,33 @@ const defaultChoice = (name: string): ContextChoice => ({
 // ---------------------------------------------------------------------------
 
 const KubeconfigStepBody = ({ ctx }: { ctx: WizardContext }) => (
-  <KubernetesImportStep
-    kubeconfigFile={ctx.data.kubeconfigFile}
-    onPickFile={(kubeconfigFile) => {
-      ctx.patch({ kubeconfigFile, registrationResult: null, registrationError: null });
-      // Drop any previously discovered contexts so a new file is re-discovered.
-      ctx.patchPostConfig({ discoveredContexts: undefined, contextChoices: undefined });
-    }}
-  />
+  <Box sx={{ display: 'grid', gap: 2 }}>
+    <KubernetesImportStep
+      kubeconfigFile={ctx.data.kubeconfigFile}
+      onPickFile={(kubeconfigFile) => {
+        const nextFingerprint = kubeconfigFile ? kubeconfigFileFingerprint(kubeconfigFile) : '';
+        const sameFile =
+          Boolean(kubeconfigFile) && nextFingerprint === ctx.data.postConfig.kubeconfigFingerprint;
+        ctx.patch({ kubeconfigFile, registrationResult: null, registrationError: null });
+        // A different file starts over. Re-selecting the same file keeps the
+        // review edits (names, MeshSync mode, connect checkbox).
+        if (!sameFile) {
+          ctx.patchPostConfig({
+            discoveredContexts: undefined,
+            contextChoices: undefined,
+            connectOnImport: undefined,
+            kubeconfigFingerprint: undefined,
+            skippedContexts: undefined,
+          });
+        }
+      }}
+    />
+    {Boolean(ctx.data.registrationError) && (
+      <Alert severity="error" variant="filled">
+        {formatWizardError(ctx.data.registrationError)}
+      </Alert>
+    )}
+  </Box>
 );
 
 const kubernetesDetailsStep: WizardStep = {
@@ -145,26 +143,51 @@ const kubernetesDetailsStep: WizardStep = {
   nextLabel: () => 'Continue',
   helpText: `Upload a kubeconfig with embedded certificates. Meshery reads the file's contexts, then registers the ones you select as Kubernetes connections. [Learn more about connecting Kubernetes](${KUBECONFIG_DOCS_URL}).`,
   onNext: async (ctx) => {
-    if (!ctx.data.kubeconfigFile) {
+    const file = ctx.data.kubeconfigFile;
+    if (!file) {
       return false;
+    }
+    const fingerprint = kubeconfigFileFingerprint(file);
+    // Back from Review and Continue on the same file must not rediscover:
+    // that reset renames, MeshSync mode, and the connect checkbox.
+    if (
+      fingerprint === ctx.data.postConfig.kubeconfigFingerprint &&
+      getDiscovered(ctx).length > 0
+    ) {
+      return true;
     }
     ctx.patch({ registrationError: null });
     try {
-      const discovered = await ctx.services.discoverKubeContexts(ctx.data.kubeconfigFile);
-      if (discovered.length === 0) {
+      const discovery = await ctx.services.discoverKubeContexts(file);
+      if (discovery.contexts.length === 0) {
+        const message =
+          discovery.skippedContexts.length > 0
+            ? skippedKubeconfigMessage(discovery.skippedContexts)
+            : emptyKubeconfigMessage;
+        ctx.patch({ registrationError: message });
         ctx.services.notify({
-          message: 'No Kubernetes contexts were found in the kubeconfig.',
-          event_type: EVENT_TYPES.WARNING,
+          message,
+          event_type:
+            discovery.skippedContexts.length > 0 ? EVENT_TYPES.ERROR : EVENT_TYPES.WARNING,
         });
         return false;
       }
+      const previousChoices = getChoices(ctx);
       const contextChoices = Object.fromEntries(
-        discovered.map((context) => [context.id, defaultChoice(context.name)]),
+        discovery.contexts.map((context) => [
+          context.id,
+          previousChoices[context.id]
+            ? { ...defaultChoice(context.name), ...previousChoices[context.id] }
+            : defaultChoice(context.name),
+        ]),
       );
+      const previousConnect = ctx.data.postConfig.connectOnImport;
       ctx.patchPostConfig({
-        discoveredContexts: discovered,
+        discoveredContexts: discovery.contexts,
         contextChoices,
-        connectOnImport: true,
+        connectOnImport: typeof previousConnect === 'boolean' ? previousConnect : true,
+        kubeconfigFingerprint: fingerprint,
+        skippedContexts: discovery.skippedContexts,
       });
       return true;
     } catch (error) {
@@ -190,6 +213,7 @@ const ReviewContextsStepBody = ({ ctx }: { ctx: WizardContext }) => {
   const choices = getChoices(ctx);
   const connectOnImport = getConnectOnImport(ctx);
   const hasReachable = discovered.some((context) => context.reachable);
+  const skipped = (ctx.data.postConfig.skippedContexts as SkippedKubeContext[]) || [];
 
   const updateChoice = (id: string, partial: Partial<ContextChoice>) =>
     ctx.patchPostConfig({
@@ -205,6 +229,16 @@ const ReviewContextsStepBody = ({ ctx }: { ctx: WizardContext }) => {
       {Boolean(ctx.data.registrationError) && (
         <Alert severity="error" variant="filled">
           {formatWizardError(ctx.data.registrationError)}
+        </Alert>
+      )}
+      {skipped.length > 0 && (
+        <Alert severity="warning">
+          <Typography variant="body2">Some contexts were skipped.</Typography>
+          {skipped.map((context) => (
+            <Typography key={`${context.name}-${context.reason}`} variant="body2">
+              {context.name || 'Unnamed context'}: {context.reason}
+            </Typography>
+          ))}
         </Alert>
       )}
       <Box sx={{ display: 'grid', gap: 1.5 }}>
@@ -272,10 +306,11 @@ const ReviewContextsStepBody = ({ ctx }: { ctx: WizardContext }) => {
                   </MenuItem>
                 ))}
               </TextField>
-              <ConnectionStateChip
-                status={
-                  context.reachable ? CONNECTION_STATES.DISCOVERED : CONNECTION_STATES.NOTFOUND
-                }
+              <Chip
+                size="small"
+                variant="outlined"
+                color={context.reachable ? 'success' : 'warning'}
+                label={context.reachable ? 'Reachable' : 'Unreachable'}
               />
             </ContextRow>
           );
@@ -365,6 +400,7 @@ const kubernetesReviewStep: WizardStep = {
           .filter((context) => context.alreadyConnected)
           .map((context) => context.connectionId),
       );
+      const failedConnects: { name: string; reason?: string }[] = [];
       if (getConnectOnImport(ctx)) {
         const toConnect = created.filter(
           (context) => context.reachable && !context.alreadyConnected && context.connectionId,
@@ -377,9 +413,16 @@ const kubernetesReviewStep: WizardStep = {
           ),
         );
         toConnect.forEach((context, index) => {
-          if (outcomes[index].status === 'fulfilled') {
+          const outcome = outcomes[index];
+          if (outcome.status === 'fulfilled') {
             connectedIds.add(context.connectionId);
+            return;
           }
+          const reason = formatWizardError(outcome.reason);
+          failedConnects.push({
+            name: context.name,
+            reason: reason && reason !== 'Unknown error' ? reason : undefined,
+          });
         });
       }
 
@@ -394,13 +437,28 @@ const kubernetesReviewStep: WizardStep = {
             : CONNECTION_STATES.NOTFOUND,
       }));
 
+      const issues = kubernetesImportIssues(result ?? {}, failedConnects);
+      const presentation = kubernetesImportPresentation(created.length, issues.length);
       ctx.patchPostConfig({
         importedContexts,
         createdCount: created.length,
         connectedCount: connectedIds.size,
         unreachableCount: created.filter((context) => !context.reachable).length,
+        importIssues: issues,
       });
-      ctx.services.notify(kubernetesImportedNotify(created.length));
+      if (presentation === 'failure') {
+        ctx.services.notify({
+          message: 'Kubernetes import failed. Nothing was imported.',
+          event_type: EVENT_TYPES.ERROR,
+        });
+      } else if (presentation === 'partial') {
+        ctx.services.notify({
+          message: `Imported ${created.length} Kubernetes ${created.length === 1 ? 'connection' : 'connections'}, with some contexts errored, ignored, or not connected.`,
+          event_type: EVENT_TYPES.WARNING,
+        });
+      } else {
+        ctx.services.notify(kubernetesImportedNotify(created.length));
+      }
       return true;
     } catch (error) {
       ctx.patch({ registrationError: error });
@@ -558,111 +616,6 @@ const kubernetesContextsStep: WizardStep = {
   // actually carries discovered contexts to manage.
   hidden: (ctx) =>
     ctx.mode === 'create' || collectContexts(ctx.data.registrationResult).length === 0,
-};
-
-// ---------------------------------------------------------------------------
-// 5. Receipt
-// ---------------------------------------------------------------------------
-
-const KubernetesReceiptBody = ({ ctx }: { ctx: WizardContext }) => {
-  const controllerState = useSelector(
-    (state: { ui: { controllerState: unknown } }) => state.ui.controllerState,
-  );
-
-  // Configure mode operates on a single connection: show the same live detail
-  // "receipt" that the Connections table renders when a row is expanded —
-  // status chips, controller versions, and the Diagnostics section.
-  const configuredConnection = (ctx.data.registrationResult as GenericRecord) || {};
-  if (
-    ctx.mode === 'configure' &&
-    configuredConnection.kind === 'kubernetes' &&
-    configuredConnection.id
-  ) {
-    return (
-      <Box sx={{ display: 'grid', gap: 2 }}>
-        <StepHeader
-          title="Connection details"
-          subtitle="Live status and diagnostics for this Kubernetes connection."
-        />
-        <FormatConnectionMetadata
-          connection={configuredConnection}
-          meshsyncControllerState={controllerState}
-        />
-      </Box>
-    );
-  }
-
-  const imported =
-    (ctx.data.postConfig.importedContexts as { name: string; status: string }[]) || [];
-  const created = Number(ctx.data.postConfig.createdCount ?? imported.length);
-  const connected = Number(ctx.data.postConfig.connectedCount ?? 0);
-  const unreachable = Number(ctx.data.postConfig.unreachableCount ?? 0);
-  const isImport = ctx.data.postConfig.createdCount !== undefined;
-
-  const summaryParts = [
-    `${created} imported`,
-    connected > 0 ? `${connected} connected` : null,
-    unreachable > 0 ? `${unreachable} not found` : null,
-  ].filter(Boolean);
-
-  return (
-    <Box
-      sx={{ display: 'grid', gap: 2, justifyItems: 'center', textAlign: 'center', py: 4, px: 2 }}
-    >
-      <SuccessBadge>
-        <SuccessIcon />
-      </SuccessBadge>
-      <Typography variant="h6" sx={{ fontWeight: 600 }}>
-        {isImport ? 'Kubernetes import complete' : 'Configuration saved'}
-      </Typography>
-      {isImport && (
-        <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 440 }}>
-          {summaryParts.join(' · ')}. Manage these anytime from{' '}
-          <ConnectionsLink href={CONNECTIONS_PATH}>connections</ConnectionsLink>.
-        </Typography>
-      )}
-      {imported.length > 0 && (
-        <Box sx={{ display: 'grid', gap: 1, width: '100%', maxWidth: 460, textAlign: 'left' }}>
-          {imported.map((context, index) => (
-            <Box
-              key={`${context.name}-${index}`}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 1.5,
-                minWidth: 0,
-              }}
-            >
-              <Chip
-                label={context.name || 'Unnamed context'}
-                size="small"
-                title={context.name}
-                sx={{
-                  minWidth: 0,
-                  flex: '1 1 auto',
-                  '& .MuiChip-label': {
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  },
-                }}
-              />
-              <ConnectionStateChip status={context.status} />
-            </Box>
-          ))}
-        </Box>
-      )}
-    </Box>
-  );
-};
-
-const kubernetesReceiptStep: WizardStep = {
-  id: 'kubernetes-receipt',
-  label: 'Done',
-  Component: KubernetesReceiptBody,
-  nextLabel: () => 'Finish',
-  helpText: `Import complete. Manage connections anytime from the Connections page. [Learn more about Kubernetes connection lifecycle](${KUBERNETES_CONNECTION_DOCS_URL}).`,
 };
 
 export const kubernetesExtension: ConnectionExtension = {

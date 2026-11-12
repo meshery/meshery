@@ -372,3 +372,49 @@ users:
 		t.Fatalf("expected context name 'ctx-0', got %q", contexts[0].Name)
 	}
 }
+
+func TestKubeconfigDiscoveryPayloadStaysAnArrayUnlessAsked(t *testing.T) {
+	discovery := models.KubeconfigDiscovery{
+		Contexts: []*models.K8sContext{{Name: "prod", Server: "https://cluster.example"}},
+		SkippedContexts: []models.SkippedKubeContext{{
+			Name:   "eks",
+			Reason: "Authentication method is not supported (exec plugin).",
+		}},
+	}
+
+	arrayBody, err := json.Marshal(kubeconfigDiscoveryPayload(false, discovery))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var asArray []map[string]interface{}
+	if err := json.Unmarshal(arrayBody, &asArray); err != nil {
+		t.Fatalf("default payload must stay a JSON array: %v (%s)", err, arrayBody)
+	}
+	if len(asArray) != 1 || asArray[0]["name"] != "prod" {
+		t.Fatalf("array = %#v, want the prod context", asArray)
+	}
+
+	emptyBody, err := json.Marshal(kubeconfigDiscoveryPayload(false, models.KubeconfigDiscovery{}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(emptyBody) != "[]" {
+		t.Fatalf("empty default payload = %s, want []", emptyBody)
+	}
+
+	detailBody, err := json.Marshal(kubeconfigDiscoveryPayload(true, discovery))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var asObject map[string]json.RawMessage
+	if err := json.Unmarshal(detailBody, &asObject); err != nil {
+		t.Fatalf("detail payload must be an object: %v (%s)", err, detailBody)
+	}
+	var skipped []map[string]interface{}
+	if err := json.Unmarshal(asObject["skippedContexts"], &skipped); err != nil {
+		t.Fatalf("skippedContexts: %v", err)
+	}
+	if len(skipped) != 1 || skipped[0]["name"] != "eks" {
+		t.Fatalf("skipped = %#v, want eks", skipped)
+	}
+}

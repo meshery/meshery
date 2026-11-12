@@ -8,7 +8,10 @@ import {
   useUpdateConnectionByIdMutation,
 } from '@/rtk-query/connection';
 import { useAllUserCredentials } from '@/utils/hooks/useAllUserCredentials';
-import type { ConnectionWizardKindConfig } from '../ConnectionWizard.helpers';
+import {
+  normalizeKubeconfigDiscovery,
+  type ConnectionWizardKindConfig,
+} from '../ConnectionWizard.helpers';
 import { buildSteps } from './registry';
 import { useKindPermission } from './useKindPermission';
 import type {
@@ -219,8 +222,11 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
       discoverKubeContexts: async (file) => {
         const formData = new FormData();
         formData.append('k8sfile', file);
+        // Ask for skipped contexts. Servers that still return a bare array are
+        // normalized the same way.
+        formData.append('discoveryDetail', 'true');
         const result = await discoverKubernetesContexts({ body: formData }).unwrap();
-        return Array.isArray(result) ? result : [];
+        return normalizeKubeconfigDiscovery(result);
       },
       uploadKubeconfig: (file, options) => {
         const formData = new FormData();
