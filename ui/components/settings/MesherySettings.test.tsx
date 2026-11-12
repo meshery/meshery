@@ -55,7 +55,7 @@ vi.mock('@sistent/sistent', () => ({
   PollIcon: () => <svg />,
   DatabaseIcon: () => <svg />,
   MendeleyIcon: () => <svg />,
-  FileIcon: () => <svg />,
+  AppRegistrationIcon: () => <svg />,
   SettingsIcon: () => <svg />,
   useTheme: () => ({
     palette: {
@@ -151,13 +151,24 @@ vi.mock('react-redux', () => ({
   useSelector: (fn: any) => fn(selectorReturn),
 }));
 
+const getProviderCapabilitiesQuerySpy = vi.fn();
+
 vi.mock('@/rtk-query/user', () => ({
-  useGetProviderCapabilitiesQuery: () => ({
-    data: { providerName: 'TestProv', providerType: 'cloud' },
-  }),
+  useGetProviderCapabilitiesQuery: (...args: any[]) => {
+    getProviderCapabilitiesQuerySpy(...args);
+    return {
+      data: { providerName: 'TestProv', providerType: 'cloud' },
+    };
+  },
 }));
 
 import { Keys } from '@meshery/schemas/permissions';
+import {
+  getComponentsDetail,
+  getMeshModels,
+  getMeshModelRegistrants,
+  getRelationshipsDetail,
+} from '../../api/meshmodel';
 import MesherySettings from './MesherySettings';
 
 describe('MesherySettings', () => {
@@ -165,6 +176,11 @@ describe('MesherySettings', () => {
     canMockReturn = true;
     permissionOverrides.clear();
     canSpy.mockClear();
+    getProviderCapabilitiesQuerySpy.mockClear();
+    vi.mocked(getMeshModels).mockClear();
+    vi.mocked(getComponentsDetail).mockClear();
+    vi.mocked(getRelationshipsDetail).mockClear();
+    vi.mocked(getMeshModelRegistrants).mockClear();
     routerState.query = {};
     routerState.push.mockReset();
     selectorReturn = {
@@ -196,13 +212,20 @@ describe('MesherySettings', () => {
     expect(screen.getByTestId('dashboard-graph')).toBeInTheDocument();
     expect(screen.getByTestId('config-charts')).toBeInTheDocument();
     expect(screen.getByTestId('connection-charts')).toBeInTheDocument();
+    expect(getProviderCapabilitiesQuerySpy).toHaveBeenCalledWith(undefined, { skip: false });
+    expect(getMeshModels).toHaveBeenCalled();
   });
 
-  it('renders the 404 fallback when only MesherySystemViewSettings is denied', () => {
+  it('renders the 404 fallback when only MesherySystemViewSettings is denied and skips queries and fetches', () => {
     permissionOverrides.set(Keys.MesherySystemViewSettings.id, false);
     render(<MesherySettings />);
     expect(screen.getByTestId('error-404')).toBeInTheDocument();
     expect(screen.queryByTestId('tabs')).not.toBeInTheDocument();
+    expect(getProviderCapabilitiesQuerySpy).toHaveBeenCalledWith(undefined, { skip: true });
+    expect(getMeshModels).not.toHaveBeenCalled();
+    expect(getComponentsDetail).not.toHaveBeenCalled();
+    expect(getRelationshipsDetail).not.toHaveBeenCalled();
+    expect(getMeshModelRegistrants).not.toHaveBeenCalled();
   });
 
   it('disables the Registry tab and its content when MesherySystemViewRegistry is denied', () => {

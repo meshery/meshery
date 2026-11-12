@@ -94,6 +94,20 @@ repository:
         evidence: https://github.com/meshery/meshery/blob/master/.github/security-self-assessment.md
         comment: |
           CNCF TAG Security based self-assessment.
+    tools:
+      - name: OSPS Baseline Scanner
+        type: other
+        rulesets:
+          - osps-baseline-2026-08
+        integration:
+          adhoc: true
+          ci: true
+          release: false
+        results:
+          ci:
+            name: OSPS Baseline evaluation
+            predicate-uri: https://github.com/revanite-io/osps-baseline-action
+            location: https://github.com/meshery/meshery/actions/workflows/osps-baseline.yml
   documentation:
     contributing-guide: https://docs.meshery.io/project/contributing
     governance: https://github.com/meshery/meshery/blob/master/GOVERNANCE.md

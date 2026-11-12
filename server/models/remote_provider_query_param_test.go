@@ -82,3 +82,65 @@ func TestRemoteProviderDeleteUserCredential_SendsCanonicalCredentialIdParam(t *t
 		t.Errorf("request still carries the legacy snake_case `credential_id`: %v", gotQuery)
 	}
 }
+
+// TestGetMesheryPattern_SendsMetricsQueryParam verifies that GetMesheryPattern
+// attaches the `metrics` query parameter (encoded back onto RawQuery) on
+// outbound requests to the remote provider.
+func TestGetMesheryPattern_SendsMetricsQueryParam(t *testing.T) {
+	const patternID = "pattern-123"
+
+	cases := []struct {
+		name           string
+		includeMetrics string
+	}{
+		{name: "metrics true", includeMetrics: "true"},
+		{name: "metrics false", includeMetrics: "false"},
+		{name: "metrics empty", includeMetrics: ""},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			var (
+				gotMethod   string
+				gotPath     string
+				gotRawQuery string
+				gotQuery    url.Values
+			)
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				gotMethod = r.Method
+				gotPath = r.URL.Path
+				gotRawQuery = r.URL.RawQuery
+				gotQuery = r.URL.Query()
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write([]byte(`{}`))
+			}))
+			defer server.Close()
+
+			provider := newTestRemoteProvider(t, server.URL)
+			provider.Capabilities = Capabilities{{Feature: PersistMesheryPatterns, Endpoint: "/patterns"}}
+
+			req := httptest.NewRequest(http.MethodGet, "/api/pattern/"+patternID, nil)
+			req.AddCookie(&http.Cookie{Name: TokenCookieName, Value: "token"})
+
+			if _, err := provider.GetMesheryPattern(req, patternID, tc.includeMetrics); err != nil {
+				t.Fatalf("GetMesheryPattern: %v", err)
+			}
+
+			if gotMethod != http.MethodGet {
+				t.Errorf("method = %q, want %q", gotMethod, http.MethodGet)
+			}
+			wantPath := "/patterns/" + patternID
+			if gotPath != wantPath {
+				t.Errorf("path = %q, want %q", gotPath, wantPath)
+			}
+			vals, ok := gotQuery["metrics"]
+			if !ok {
+				t.Fatalf("metrics query param missing from outbound request (rawQuery=%q)", gotRawQuery)
+			}
+			if len(vals) != 1 || vals[0] != tc.includeMetrics {
+				t.Errorf("metrics = %v, want [%q] (rawQuery=%q)", vals, tc.includeMetrics, gotRawQuery)
+			}
+		})
+	}
+}

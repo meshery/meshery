@@ -208,7 +208,12 @@ export const EnvironmentsEmptyState = ({ message, onButtonClick }) => {
 export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
   const theme = useTheme();
   const organization = useContext(DeploymentTargetContext).organization;
-  const { data, isLoading, isError } = useGetEnvironmentsQuery({ orgId: organization.id });
+  // Without a page size the server returns only its default first page of 10,
+  // which would hide every later environment as a deployment target.
+  const { data, isLoading, isError } = useGetEnvironmentsQuery({
+    orgId: organization.id,
+    pagesize: 'all',
+  });
   const environments = data?.environments || [];
   if (isLoading) {
     return <Loading />;

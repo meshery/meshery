@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
@@ -81,6 +82,57 @@ type StateMachine struct {
 	Log logger.Handler
 
 	Provider models.Provider
+
+	// ConditionComponent opts the machine's connection into condition
+	// correlation (meshery/schemas event correlation contract): when set, a
+	// background Discovery failure that moves the connection to NOTFOUND
+	// reports the condition models.ConditionKey(ConditionComponent, ID,
+	// ConditionUnreachable), and the Discovery that later moves it out of
+	// NOTFOUND resolves that condition. Empty leaves the machine's events
+	// uncorrelated.
+	ConditionComponent string
+}
+
+// ConditionUnreachable is the condition a connection is in while background
+// Discovery cannot reach it and its status is NOTFOUND.
+const ConditionUnreachable = "unreachable"
+
+type priorStatusCtxKey struct{}
+
+// WithPriorStatus returns ctx naming status as the connection's status before
+// the request that drives SendEvent changed it. A request that saves a new
+// status and then drives the machine (a manual reconnect, a delete through the
+// status API) passes it, so SendEvent can tell that the connection left
+// NOTFOUND and resolve its unreachable condition: the status SendEvent reads
+// is already the new one.
+func WithPriorStatus(ctx context.Context, status connections.ConnectionStatus) context.Context {
+	return context.WithValue(ctx, priorStatusCtxKey{}, status)
+}
+
+func priorStatusFrom(ctx context.Context) (connections.ConnectionStatus, bool) {
+	status, ok := ctx.Value(priorStatusCtxKey{}).(connections.ConnectionStatus)
+	return status, ok && status != ""
+}
+
+// IsRecurrence reports whether what SendEvent returned is a Recurrence: a
+// repeat of a failure that left the connection in an open condition. It comes
+// back without an error, carrying the condition's correlationKey and no
+// resolvedAt, and the caller persists it, so the condition's occurrenceCount
+// and lastSeenAt grow, without broadcasting it: the user was already told. No
+// other event SendEvent returns without an error carries an open condition's
+// key.
+func IsRecurrence(event *events.Event, err error) bool {
+	return err == nil && event != nil && event.CorrelationKey != nil && *event.CorrelationKey != "" && event.ResolvedAt == nil
+}
+
+// conditionKey returns the correlationKey of the named condition of the
+// machine's connection, or "" when the machine does not take part in condition
+// correlation or has no connection id.
+func (sm *StateMachine) conditionKey(condition string) string {
+	if sm.ConditionComponent == "" || sm.ID.IsNil() {
+		return ""
+	}
+	return models.ConditionKey(sm.ConditionComponent, sm.ID.String(), condition)
 }
 
 func (sm *StateMachine) AssignProvider(provider models.Provider) *StateMachine {
@@ -109,6 +161,30 @@ func (sm *StateMachine) ResetState() {
 	sm.CurrentState = InitialState
 }
 
+// UpdateContext atomically replaces the machine's stored context. It runs
+// update under the machine lock, so no transition in flight can observe a
+// half-updated context; returning the current context leaves it unchanged.
+// Callers use it to refresh connection material (for example a rotated
+// credential) on a machine that was created with older material, without
+// re-creating the machine.
+func (sm *StateMachine) UpdateContext(update func(oldCtx interface{}) interface{}) {
+	sm.mx.Lock()
+	defer sm.mx.Unlock()
+
+	sm.Context = update(sm.Context)
+}
+
+// GetContext returns the machine's stored context under the machine lock.
+// Readers outside SendEvent must use it instead of reading sm.Context
+// directly: UpdateContext writes the field under the same lock, so an
+// unlocked read would race a concurrent refresh.
+func (sm *StateMachine) GetContext() interface{} {
+	sm.mx.Lock()
+	defer sm.mx.Unlock()
+
+	return sm.Context
+}
+
 func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	state, ok := sm.States[sm.CurrentState]
 	sm.Log.Debug("inside getNextState: ", event, ok)
@@ -125,13 +201,25 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	return DefaultState, ErrInvalidTransitionEvent(sm.CurrentState, event)
 }
 
+// ResolveUserAndSystemID safely retrieves the user and system ID from ctx.
+// If either is missing or nil, it defaults to a zero-value UUID (uuid.Nil).
+func ResolveUserAndSystemID(ctx context.Context) (core.Uuid, core.Uuid) {
+	var userUUID core.Uuid
+	if user, ok := ctx.Value(models.UserCtxKey).(*models.User); ok && user != nil {
+		userUUID = user.ID
+	}
+	var systemID core.Uuid
+	if sysID, ok := ctx.Value(models.SystemIDKey).(*core.Uuid); ok && sysID != nil {
+		systemID = *sysID
+	}
+	return userUUID, systemID
+}
+
 // SendEvent returns events.Event and error. The func invoking SendEvent should handle the error and publish the event.
 // Wherever possible use the userID and systemID from context as the events can be created from other comps or actors and not only user actors.
 // In cases when the event is received as part of some other event and not explicitly created by an actor, use the userID and systemID of the actor who initially invoked the machine.
 func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	userUUID := user.ID
+	userUUID, systemID := ResolveUserAndSystemID(ctx)
 	ctx = context.WithValue(ctx, models.ProviderCtxKey, sm.Provider)
 	sm.mx.Lock()
 	defer sm.mx.Unlock()
@@ -143,7 +231,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// follow-up event), and the description has to name the event that actually
 	// failed, not the one the caller originally sent.
 	invalidTransitionEvent := func(failedEventType EventType, err error) *events.Event {
-		return events.NewEvent().WithDescription(fmt.Sprintf("Invalid status change requested to %s for connection type %s.", failedEventType, sm.Name)).ActedUpon(sm.ID).FromOwner(userUUID).FromSystem(*sysID).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build()
+		return events.NewEvent().WithDescription(fmt.Sprintf("Invalid status change requested to %s for connection type %s.", failedEventType, sm.Name)).ActedUpon(sm.ID).FromOwner(userUUID).FromSystem(systemID).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build()
 	}
 
 	// eventType is reassigned inside the transition loop (to the recovery event,
@@ -194,6 +282,9 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// CurrentState would corrupt the persisted status) and treat it as no-change
 	// so the repeated background failure is suppressed.
 	haltedWithoutTransition := false
+
+	initialState := sm.CurrentState
+	initialPreviousState := sm.PreviousState
 
 	for eventType != NoOp {
 		nextState, err := sm.getNextState(eventType)
@@ -304,37 +395,57 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// (issue #20818).
 	statusChanged := !haltedWithoutTransition
 
+	// persistedStatus is the connection status recorded before this send, when
+	// the status block below read it. Condition correlation keys off it: a
+	// Discovery that leaves NOTFOUND resolves the unreachable condition.
+	var persistedStatus connections.ConnectionStatus
+	persistedStatusKnown := false
+
 	// originalEventType (not eventType) is compared against Exit here: by the
 	// time the loop finishes, eventType has been overwritten to NoOp, so the
 	// caller's intent is only visible in the captured original. A halt without
 	// transition skips this block too: nothing advanced, so nothing to persist.
 	if sm.Provider != nil && originalEventType != Exit && !haltedWithoutTransition {
+		// Roll back in-memory state to the pre-transition state so the machine
+		// does not claim a state that failed to persist to the database. Rollback
+		// does not undo side effects of actions that already ran. A retry re-runs
+		// them, so transition actions must be idempotent. Compensation hooks are
+		// out of scope here.
+		rollback := func() {
+			sm.CurrentState = initialState
+			sm.PreviousState = initialPreviousState
+		}
+
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 		connection, _, err := sm.Provider.GetConnectionByID(token, sm.ID)
 
 		if err != nil {
-
-			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			rollback()
+			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).FromSystem(systemID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
 		}
 
 		// Defensive guard: a provider that reports no error but hands back a nil
 		// connection would panic on the field access below. Treat it as a
 		// retrieval failure so the caller sees an error instead of a crash.
 		if connection == nil {
+			rollback()
 			err = ErrConnectionNotFound(sm.ID.String())
-			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).FromSystem(systemID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
 		}
 
 		// Compare the currently persisted status against the state the machine
 		// settled in. Only an actual change should produce a user-facing failure
 		// event (see statusChanged above).
 		statusChanged = connection.Status != connections.ConnectionStatus(sm.CurrentState)
+		persistedStatus = connection.Status
+		persistedStatusKnown = true
 
+		targetState := sm.CurrentState
 		connectionPayload := &connections.ConnectionPayload{
 			ID:       sm.ID,
 			Kind:     connection.Kind,
 			MetaData: connection.Metadata,
-			Status:   connections.ConnectionStatus(sm.CurrentState)}
+			Status:   connections.ConnectionStatus(targetState)}
 
 		if connectionPayload.MetaData == nil {
 			connectionPayload.MetaData = map[string]interface{}{}
@@ -343,8 +454,17 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		connection, err = sm.Provider.UpdateConnectionById(token, connectionPayload, sm.ID.String())
 
 		if err != nil {
-			// In this case should the current state be again set to previous state i.e. should we rollback. But not only state should be rollback but other actions as well, rn we don't rollback state.
-			return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			// An update error can be an ambiguous write (e.g. the database write succeeded,
+			// but a post-write read-back or response failed). Reconcile the persisted status
+			// before rolling back in-memory state: if the database already reflects targetState,
+			// keep in-memory state aligned with the database rather than rolling back.
+			if reconciled, _, getErr := sm.Provider.GetConnectionByID(token, sm.ID); getErr == nil && reconciled != nil && reconciled.Status == connections.ConnectionStatus(targetState) {
+				sm.Log.Debugf("%s: update reported error (%v) but database persisted target state %s", sm.Name, err, targetState)
+				connection = reconciled
+			} else {
+				rollback()
+				return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", targetState)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).FromSystem(systemID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			}
 		}
 
 		sm.Log.Debugf("%s: updated \"status\" for connection with id: %s to \"%s\"", sm.Name, connection.ID, sm.CurrentState)
@@ -369,9 +489,6 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// propagate their failure — a manual action that fails must be reported
 		// even when the persisted status does not change (e.g. it was already
 		// NOTFOUND/DISCONNECTED), otherwise the request silently "succeeds".
-		if !statusChanged && originalEventType == Discovery {
-			return nil, nil
-		}
 		// Guarantee a non-nil event on the error return: callers such as the K8s
 		// middleware and addK8SConfig dereference the event (*event) whenever the
 		// error is non-nil. Real actions always build an Error event on failure
@@ -379,7 +496,29 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// dedicated "connection action failed" Error event so a misbehaving
 		// action can never turn a surfaced failure into a nil-pointer panic.
 		if failureEvent == nil {
-			failureEvent = events.NewEvent().WithDescription(fmt.Sprintf("%s connection action failed.", sm.Name)).ActedUpon(sm.ID).FromOwner(userUUID).FromSystem(*sysID).WithCategory("connection").WithAction("update").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": failureErr}).Build()
+			failureEvent = events.NewEvent().WithDescription(fmt.Sprintf("%s connection action failed.", sm.Name)).ActedUpon(sm.ID).FromOwner(userUUID).FromSystem(systemID).WithCategory("connection").WithAction("update").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": failureErr}).Build()
+		}
+		if !statusChanged && originalEventType == Discovery {
+			// A repeat of a failure that left the connection NOTFOUND is not
+			// reported to the user again, but it is another occurrence of the
+			// open unreachable condition: it is returned without an error, as
+			// a Recurrence, for the caller to count without notifying.
+			if persistedStatusKnown && sm.CurrentState == NOTFOUND {
+				if key := sm.conditionKey(ConditionUnreachable); key != "" {
+					failureEvent.CorrelationKey = &key
+					return failureEvent, nil
+				}
+			}
+			return nil, nil
+		}
+		// A background Discovery failure that moved the connection to NOTFOUND
+		// opens (or, when concurrent requests both saw the status change, counts
+		// an occurrence of) the connection's unreachable condition. Repeats
+		// that left the status unchanged are Recurrences, returned above.
+		if originalEventType == Discovery && sm.CurrentState == NOTFOUND {
+			if key := sm.conditionKey(ConditionUnreachable); key != "" {
+				failureEvent.CorrelationKey = &key
+			}
 		}
 		return failureEvent, failureErr
 	}
@@ -387,10 +526,43 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// The action func only emits event when an error occurs.
 	// If "event" is nil, it indicates actions were execeuted successfully, hence send an confirmation that request was processed successsfully.
 	if event == nil {
-		event = events.NewEvent().WithDescription(fmt.Sprintf("%s connection changed to %s", sm.Name, sm.CurrentState)).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").WithMetadata(map[string]interface{}{
+		event = events.NewEvent().WithDescription(fmt.Sprintf("%s connection changed to %s", sm.Name, sm.CurrentState)).FromSystem(systemID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").WithMetadata(map[string]interface{}{
 			"previousStatus": sm.PreviousState,
 			"currentStatus":  sm.CurrentState,
 		}).WithSeverity(events.Informational).Build()
+	}
+
+	// A successful send that moves the connection out of NOTFOUND clears its
+	// unreachable condition, so the event announcing the change is the
+	// condition's resolution (the contract's resolution convention: the
+	// condition's key and category, resolvedAt, and a success severity and
+	// description saying what cleared). It is sent only on that change, never
+	// on every healthy check. The change can come from a background Discovery
+	// that finds the cluster reachable again, from a manual reconnect, or from
+	// deleting the connection, which retires the condition with it.
+	//
+	// A status-change request saves the new status before it drives the
+	// machine, so the status this send read is already the new one; such a
+	// request names the status the connection had with WithPriorStatus.
+	var leftNotFound bool
+	if prior, ok := priorStatusFrom(ctx); ok {
+		leftNotFound = prior == connections.ConnectionStatus(NOTFOUND)
+	} else {
+		leftNotFound = statusChanged && persistedStatusKnown && persistedStatus == connections.ConnectionStatus(NOTFOUND)
+	}
+	if leftNotFound && sm.CurrentState != NOTFOUND {
+		if key := sm.conditionKey(ConditionUnreachable); key != "" {
+			resolvedAt := time.Now().UTC()
+			event.CorrelationKey = &key
+			event.ResolvedAt = &resolvedAt
+			event.Category = "connection"
+			event.Severity = events.Success
+			if sm.CurrentState == DELETED {
+				event.Description = fmt.Sprintf("%s connection was deleted", sm.Name)
+			} else {
+				event.Description = fmt.Sprintf("%s connection is reachable again and changed to %s", sm.Name, sm.CurrentState)
+			}
+		}
 	}
 
 	return event, nil

@@ -19,6 +19,10 @@ export const ACTION_TYPES = {
     name: 'UPLOAD_FILTERS',
     error_msg: 'Failed to upload filter file',
   },
+  UPDATE_FILTERS: {
+    name: 'UPDATE_FILTERS',
+    error_msg: 'Failed to update filter file',
+  },
   CLONE_FILTERS: {
     name: 'CLONE_FILTER',
     error_msg: 'Failed to clone filter file',
