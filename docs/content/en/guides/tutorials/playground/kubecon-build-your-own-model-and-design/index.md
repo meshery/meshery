@@ -132,7 +132,7 @@ The format is `git://github.com/[organization]/[repository]/[branch]/path/to/crd
 9. **Verify.** Find your model in the Models list (search your handle). Open it and count its components. Raise your hand when you can see them.
 
 {{% alert color="warning" title="Tell the room" %}}
-A generated model cannot be deleted from the UI. That is why everyone uses their handle in the name. To stop using a model later, mark it as ignored.
+A generated model cannot be deleted from the UI. That is why everyone uses their handle in the name. To stop using a model later, mark it as ignored, or delete it with `mesheryctl model delete <model-name>`.
 {{% /alert %}}
 
 ### Stretch for fast finishers
@@ -153,7 +153,7 @@ Attendees build a design in Kanvas that combines their new model with core Kuber
 5. **Add your model's components inside it.** From your pinned model, drag an Issuer and a Certificate and drop them inside the Namespace. Dropping a child inside a parent creates a hierarchical relationship.
 6. **Configure.** Select each component and fill its configuration form. For cert-manager: give the Issuer a name and a self-signed spec; give the Certificate a `secretName` and an `issuerRef` naming that Issuer. Required fields are marked.
 7. **Add a workload and an edge.** Drag a Deployment and a Service into the Namespace. Tap the Service, pick a relationship type from the edge picker, and drag to the Deployment. Kanvas highlights compatible targets.
-8. **Validate.** Run Validate. It checks every component against its schema and does not contact a cluster. Check the validated component count in the result: a component whose definition cannot be fetched is skipped as valid, so a clean result does not guarantee every component was checked. Fix anything it flags.
+8. **Validate.** Run Validate. It checks every component against its schema and does not contact a cluster. The count in the result comes from the design, so it includes components whose definitions could not be fetched; a clean result does not guarantee every component was checked. Fix anything it flags.
 
 ### Attendee steps (15 min)
 
@@ -164,7 +164,7 @@ Attendees build a design in Kanvas that combines their new model with core Kuber
 5. **Use your model.** Drag at least two components from your pinned model into the Namespace. Suggested pairs: cert-manager Issuer plus Certificate; Argo Rollouts Rollout plus AnalysisTemplate; KEDA ScaledObject plus TriggerAuthentication; Gateway API Gateway plus HTTPRoute; External Secrets SecretStore plus ExternalSecret.
 6. **Configure them.** Select each component and fill in its required fields in the configuration form. Give everything a name.
 7. **Add a workload and connect it.** Add a Deployment and a Service. Create an edge from the Service to the Deployment with the edge picker.
-8. **Validate.** Run Validate and fix anything it reports. Check the validated component count matches the components in your design.
+8. **Validate.** Run Validate and fix anything it reports. The validated component count includes components whose definitions cannot be fetched, so a matching count does not confirm that every component was checked.
 9. **Confirm it is saved.** Check the save indicator shows a cloud with a tick. Kanvas saves automatically about 3 seconds after you stop editing.
 
 ### Stretch for fast finishers
