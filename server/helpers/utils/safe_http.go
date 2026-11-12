@@ -183,7 +183,7 @@ func SafeCheckRedirect(req *http.Request, via []*http.Request) error {
 // local httptest.Server instances.
 func NewSafeHTTPClientWithAllowPrivate(timeout time.Duration, allowPrivate bool) *http.Client {
 	transport := &http.Transport{
-		Proxy:                 http.ProxyFromEnvironment,
+		Proxy:                 nil, // No proxy: a proxy would resolve the destination itself, bypassing SafeDialContext's destination validation.
 		DialContext:           SafeDialContext(timeout, allowPrivate),
 		ForceAttemptHTTP2:     true,
 		MaxIdleConns:          100,
