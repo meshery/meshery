@@ -476,6 +476,127 @@ func TestRejectedTokenKeepsTheOldHandler(t *testing.T) {
 	}
 }
 
+// TestRebuildPausesTheOldHandlerUntilRollback: during the replacement wait the
+// old handler is detached but not stopped, and its NATS client reconnects
+// forever - if it kept its MeshSync subscriptions it would receive the same
+// messages as the replacement and persist them twice. The rebuild must pause
+// the old handler's subscriptions for the wait and resume them only when the
+// rebuild rolls back.
+func TestRebuildPausesTheOldHandlerUntilRollback(t *testing.T) {
+	mch, broker, dialer := supervisedConnection(t)
+	// The wait runs long enough for the test to observe the paused state.
+	mch.brokerConnectWait = 2 * time.Second
+	target := attach(t, mch)
+	first := dialer.opened()[0]
+	// The broker rejects the resolved token, so the replacement never
+	// connects and the rebuild rolls back to the old handler.
+	broker.recreate(newBrokerEndpoint, "new-token")
+	broker.setAcceptedToken("old-token")
+	// The recreated broker drops the old connection.
+	first.setConnected(false)
+
+	var since time.Time
+	t0 := time.Unix(1000, 0)
+	mch.recheckBroker(target, t0, &since)
+	done := make(chan bool, 1)
+	go func() { done <- mch.recheckBroker(target, t0.Add(mch.brokerStaleAfter), &since) }()
+
+	// The rebuild is waiting for its replacement to connect: the old handler
+	// must have no MeshSync subscription in that window.
+	paused := false
+	deadline := time.Now().Add(2 * time.Second)
+	for time.Now().Before(deadline) {
+		if !first.subscribed(meshsyncEventsSubject) && !first.subscribed(MeshsyncStoreUpdatesSubject) {
+			paused = true
+			break
+		}
+		time.Sleep(time.Millisecond)
+	}
+	if !paused {
+		t.Fatal("the old handler kept its MeshSync subscriptions during the replacement wait")
+	}
+	if finished := <-done; finished {
+		t.Fatal("the supervisor finished although its rebuild never connected")
+	}
+	// The rebuild rolled back: the old handler is attached again, and its
+	// subscriptions are back so it receives MeshSync data.
+	if !first.subscribed(meshsyncEventsSubject) || !first.subscribed(MeshsyncStoreUpdatesSubject) {
+		t.Fatal("the rollback did not resume the old handler's MeshSync subscriptions")
+	}
+	if first.isClosed() || stopped(target) {
+		t.Fatal("a rejected rebuild tore down the connection it was replacing")
+	}
+	mch.meshsyncMutex.Lock()
+	kept := mch.brokerTarget == target && mch.ctxMeshsyncDataHandler != nil &&
+		mch.ctxMeshsyncDataHandler.GetBrokerHandler() == meshkitBroker.Handler(first)
+	mch.meshsyncMutex.Unlock()
+	if !kept {
+		t.Fatal("a rejected rebuild left the connection without its handler or supervisor")
+	}
+}
+
+// TestRemovalDuringRebuildStopsBothHandlers: if the data handler is removed
+// while a rebuild waits for its replacement to connect, removal must cancel
+// the wait and stop both handlers - the old handler is only stopped when the
+// wait expires otherwise, and a connection that recovers in that window would
+// persist updates after removal returned.
+func TestRemovalDuringRebuildStopsBothHandlers(t *testing.T) {
+	mch, broker, dialer := supervisedConnection(t)
+	// The wait would run long without a cancellation, so a removal that
+	// waits it out is observable.
+	mch.brokerConnectWait = 5 * time.Second
+	target := attach(t, mch)
+	first := dialer.opened()[0]
+	broker.recreate(newBrokerEndpoint, "new-token")
+	// The replacement never connects, so the rebuild stays in its wait.
+	broker.setAcceptedToken("old-token")
+	// The recreated broker drops the old connection.
+	first.setConnected(false)
+
+	var since time.Time
+	t0 := time.Unix(1000, 0)
+	mch.recheckBroker(target, t0, &since)
+	done := make(chan bool, 1)
+	go func() { done <- mch.recheckBroker(target, t0.Add(mch.brokerStaleAfter), &since) }()
+
+	// Wait until the rebuild attached its replacement and is waiting.
+	deadline := time.Now().Add(2 * time.Second)
+	for len(dialer.opened()) < 2 && time.Now().Before(deadline) {
+		time.Sleep(time.Millisecond)
+	}
+	if n := len(dialer.opened()); n != 2 {
+		t.Fatalf("%d connections opened, want the original and one rebuilding", n)
+	}
+
+	started := time.Now()
+	mch.RemoveMeshSyncDataHandler(context.Background(), "ctx-1")
+	if elapsed := time.Since(started); elapsed > 2*time.Second {
+		t.Fatalf("removal took %s, want it to cancel the replacement wait instead of waiting it out", elapsed)
+	}
+	replacement := dialer.opened()[1]
+	if !first.isClosed() {
+		t.Fatal("removal returned with the old handler still running")
+	}
+	if !replacement.isClosed() {
+		t.Fatal("removal returned with the replacement handler still running")
+	}
+	mch.meshsyncMutex.Lock()
+	attached := mch.ctxMeshsyncDataHandler
+	mch.meshsyncMutex.Unlock()
+	if attached != nil {
+		t.Fatal("removal left a data handler attached")
+	}
+
+	select {
+	case finished := <-done:
+		if !finished {
+			t.Fatal("the interrupted rebuild did not finish")
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("the interrupted rebuild did not return after removal")
+	}
+}
+
 // TestRecreatedBrokerWithNewTokenAndNoEndpointRebuildsOverPortForward: the
 // broker was recreated with a new token but publishes no endpoint, and the
 // connection is carried by a managed port-forward. The token change must still

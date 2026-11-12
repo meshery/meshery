@@ -44,8 +44,10 @@ const (
 // waitBrokerConnected reports whether handler reports connected within wait.
 // It polls without holding meshsyncMutex: the NATS client connects
 // asynchronously, so attachment - or a nil return from
-// MeshsyncDataHandler.Run - says nothing about connectivity.
-func waitBrokerConnected(handler *MeshsyncDataHandler, wait time.Duration) bool {
+// MeshsyncDataHandler.Run - says nothing about connectivity. It returns false
+// at once when cancel closes, so removal of the handler does not wait out the
+// replacement wait.
+func waitBrokerConnected(handler *MeshsyncDataHandler, wait time.Duration, cancel <-chan struct{}) bool {
 	if handler.IsConnected() {
 		return true
 	}
@@ -58,6 +60,8 @@ func waitBrokerConnected(handler *MeshsyncDataHandler, wait time.Duration) bool 
 	defer deadline.Stop()
 	for {
 		select {
+		case <-cancel:
+			return false
 		case <-deadline.C:
 			return handler.IsConnected()
 		case <-ticker.C:
@@ -253,8 +257,16 @@ func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now tim
 	stale := mch.ctxMeshsyncDataHandler
 	mch.ctxMeshsyncDataHandler = nil
 	mch.brokerTarget = nil
+	// Pause the old handler's subscriptions now, before the replacement is
+	// built: the old handler stays alive until the replacement connects, and
+	// its NATS client reconnects forever, so while the rebuild waits it would
+	// otherwise receive the same messages as the replacement and persist them
+	// twice. Resumed only if the rebuild rolls back; a replacement that
+	// connects ends with the old handler stopped.
+	stale.PauseSubscriptions()
 	target.reattach()
 	if mch.ctxMeshsyncDataHandler == nil {
+		stale.ResumeSubscriptions()
 		mch.ctxMeshsyncDataHandler = stale
 		mch.brokerTarget = target
 		mch.meshsyncMutex.Unlock()
@@ -270,10 +282,18 @@ func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now tim
 	// replacement reports connected, waiting without holding meshsyncMutex:
 	// status readers and the replacement's own supervisor take it.
 	wait := mch.brokerConnectWaitTimeout()
+	cancel := make(chan struct{})
+	mch.brokerRebuildCancel = cancel
+	mch.brokerRebuildStale = stale
 	mch.meshsyncMutex.Unlock()
-	connected := waitBrokerConnected(replacement, wait)
+	connected := waitBrokerConnected(replacement, wait, cancel)
 	mch.meshsyncMutex.Lock()
 	defer mch.meshsyncMutex.Unlock()
+	// The wait is over: removal can no longer cancel it, and a later removal
+	// finds nothing to cancel. Either this wait or the removal already stopped
+	// the old handler, so clearing the fields is the only cleanup left here.
+	mch.brokerRebuildCancel = nil
+	mch.brokerRebuildStale = nil
 
 	if mch.ctxMeshsyncDataHandler != replacement {
 		// Someone else removed or replaced the handler while the rebuild
@@ -292,6 +312,7 @@ func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now tim
 		if replacementTarget != nil {
 			replacementTarget.halt()
 		}
+		stale.ResumeSubscriptions()
 		mch.ctxMeshsyncDataHandler = stale
 		mch.brokerTarget = target
 		return false

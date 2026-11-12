@@ -103,6 +103,16 @@ type MesheryControllersHelper struct {
 	// no such handler is attached. Guarded by meshsyncMutex.
 	brokerTarget *brokerTarget
 
+	// brokerRebuildCancel cancels the replacement wait of an in-flight broker
+	// rebuild, if one is running, and brokerRebuildStale is the old handler
+	// that wait is keeping alive. Both are guarded by meshsyncMutex:
+	// recheckBroker sets them before it waits for the replacement to connect
+	// and clears them when the wait ends, and RemoveMeshSyncDataHandler
+	// closes the channel and stops the old handler, so removal does not leave
+	// it running until the wait expires. nil when no rebuild is waiting.
+	brokerRebuildCancel chan struct{}
+	brokerRebuildStale  *MeshsyncDataHandler
+
 	// newBrokerConnection opens the NATS connection to the broker. It is
 	// nats.New; injected so tests need no NATS server. Never nil once
 	// constructed.
@@ -848,6 +858,19 @@ func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Conte
 	defer mch.meshsyncMutex.Unlock()
 
 	mch.stopBrokerSupervisorLocked()
+	// A rebuild may be waiting for its replacement to connect while its old
+	// handler is still alive: cancel the wait and stop the old handler here,
+	// so it cannot persist updates after removal returns. The wait itself
+	// ends at once on the cancelled channel, and the replacement is stopped
+	// below as the attached handler.
+	if mch.brokerRebuildCancel != nil {
+		close(mch.brokerRebuildCancel)
+		mch.brokerRebuildCancel = nil
+	}
+	if mch.brokerRebuildStale != nil {
+		mch.brokerRebuildStale.Stop()
+		mch.brokerRebuildStale = nil
+	}
 	if mch.ctxMeshsyncDataHandler != nil {
 		mch.log.Infof("MesheryControllersHelper::RemoveMeshSyncDataHandler for contextID = %s", contextID)
 		mch.ctxMeshsyncDataHandler.Stop()
