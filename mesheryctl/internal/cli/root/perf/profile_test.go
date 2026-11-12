@@ -95,6 +95,33 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --page '0'")),
 		},
 		{
+			Name:             "given pagesize 0 when profile then throw invalid flag error",
+			Args:             []string{"profile", "--pagesize", "0"},
+			URLs:             []utils.MockURL{},
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --pagesize '0'")),
+		},
+		{
+			Name:             "given negative pagesize when profile then throw invalid flag error",
+			Args:             []string{"profile", "--pagesize", "-1"},
+			URLs:             []utils.MockURL{},
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --pagesize '-1'")),
+		},
+		{
+			Name:             "given pagesize 0 with shorthand flag when profile then throw invalid flag error",
+			Args:             []string{"profile", "-s", "0"},
+			URLs:             []utils.MockURL{},
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --pagesize '0'")),
+		},
+		{
 			Name: "given invalid output format when profile then throw error",
 			Args: []string{"profile", "-o", "invalid"},
 			URLs: []utils.MockURL{

@@ -59,6 +59,9 @@ mesheryctl perf profile test --view
 		if pageNumber < 1 {
 			return utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --page '%d'", pageNumber))
 		}
+		if pageSize < 1 {
+			return utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --pagesize '%d'", pageSize))
+		}
 		// Check for valid output Format
 		if outputFormatFlag != "" {
 			return display.ValidateOutputFormat(outputFormatFlag)
@@ -262,4 +265,7 @@ func userPrompt(key string, label string, data [][]string) (int, error) {
 func init() {
 	profileCmd.Flags().BoolVarP(&viewSingleProfile, "view", "", false, "(optional) View single performance profile with more info")
 	profileCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of performance results with --page (default = 1)")
+	profileCmd.Flags().IntVarP(&pageSize, "pagesize", "s", 25, "(optional) Number of performance profiles to be displayed per page (default = 25)")
+	profileCmd.Flags().IntVar(&pageSize, "page-size", 25, "(optional) Number of performance profiles to be displayed per page")
+	_ = profileCmd.Flags().MarkHidden("page-size")
 }
