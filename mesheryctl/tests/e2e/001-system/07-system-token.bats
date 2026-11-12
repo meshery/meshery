@@ -68,3 +68,23 @@ teardown_file() {
     assert_success
     refute_output --partial "$TOKEN"
 }
+
+# bats test_tags=system:token
+@test "[cut=System][tg=Token Management] mesheryctl system token view fails when current context has no token" {
+    local isolated_config="$BATS_TEST_TMPDIR/isolated-config.yaml"
+    cat > "$isolated_config" <<'EOF'
+contexts:
+  local:
+    endpoint: http://localhost:9081
+token: <redacted>
+    platform: docker
+    provider: Meshery
+current-context: local
+tokens:
+  - location: auth.json
+    name: default
+EOF
+    run "$MESHERYCTL_BIN" --config "$isolated_config" system token view
+    assert_failure
+    assert_output --partial "No token found for the Current context"
+}

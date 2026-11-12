@@ -370,7 +370,7 @@ export const getProviderCapabilities = async () => {
 };
 
 export const getUserAccessToken = async () => {
-  const accessToken = await initiateQuery(userApi.endpoints.getAccessToken, {}, {});
+  const accessToken = await initiateQuery(userApi.endpoints.getAccessToken, {});
   return accessToken;
 };
 
@@ -385,11 +385,20 @@ export const getSystemVersion = async () => {
 };
 
 export const getAllUsers = async ({ page, pagesize, search }) => {
-  const users = await initiateQuery(
-    userApi.endpoints.getAllUsers,
-    { page, pagesize, search },
-    { skip: !search },
-  );
+  // `skip` is a hook option and is not honored by the imperative
+  // `query.initiate` call, so an empty search used to dispatch a users request
+  // anyway. Return the empty result up front instead; the shape mirrors the
+  // endpoint response the autocomplete caller reads (`data.data`).
+  if (!search) {
+    return {
+      data: { data: [] },
+      isSuccess: true,
+      isError: false,
+      isLoading: false,
+      isFetching: false,
+    };
+  }
+  const users = await initiateQuery(userApi.endpoints.getAllUsers, { page, pagesize, search });
   return users;
 };
 

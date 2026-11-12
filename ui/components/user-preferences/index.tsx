@@ -59,6 +59,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
+import { CATALOG_CONTENT_PREFERENCE_KEY } from '@/utils/hooks/useSyncCatalogContentPreference';
 
 interface ThemeTogglerProps {
   handleUpdateUserPref: (_theme: string) => void;
@@ -133,6 +134,8 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const [tabVal, setTabVal] = useState(0);
   const [userPrefs, setUserPrefs] = useState(ExtensionPointSchemaValidator('userPrefs')());
   const [catalogContent, setCatalogContent] = useState(true);
+  const lastSavedCatalogContentRef = useRef(true);
+  const catalogSaveInFlightRef = useRef(false);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
   const { width } = useWindowDimensions();
@@ -145,6 +148,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const {
     data: userData,
     isSuccess: isUserDataFetched,
+    isFetching: isUserDataFetching,
     isError: isUserDataError,
     error: userDataError,
   } = useGetUserPrefQuery(undefined, { skip: !canViewUserPreferences });
@@ -153,6 +157,9 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
     useGetProviderCapabilitiesQuery(undefined, { skip: !canViewUserPreferences });
 
   const [updateUserPref] = useUpdateUserPrefMutation();
+  const [updateCatalogPreference, { isLoading: isCatalogSaving }] = useUpdateUserPrefMutation({
+    fixedCacheKey: CATALOG_CONTENT_PREFERENCE_KEY,
+  });
   const [updateUserPrefWithContext] = useUpdateUserPrefWithContextMutation();
 
   const { notify } = useNotification();
@@ -162,6 +169,15 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   };
 
   const handleCatalogContentToggle = () => {
+    if (
+      catalogSaveInFlightRef.current ||
+      isCatalogSaving ||
+      isUserDataFetching ||
+      !isUserDataFetched
+    ) {
+      return;
+    }
+    catalogSaveInFlightRef.current = true;
     dispatch(toggleCatalogContent({ catalogVisibility: !catalogContent }));
     setCatalogContent(!catalogContent);
     handleCatalogPreference(!catalogContent);
@@ -170,16 +186,23 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const handleCatalogPreference = (catalogContent) => {
     let body = Object.assign({}, extensionPreferences);
     body['catalogContent'] = catalogContent;
-    updateUserPref({ usersExtensionPreferences: body })
+    updateCatalogPreference({ usersExtensionPreferences: body })
       .unwrap()
       .then(() => {
+        lastSavedCatalogContentRef.current = catalogContent;
         notify({
           message: `Catalog Content was ${catalogContent ? 'enab' : 'disab'}led`,
           event_type: EVENT_TYPES.SUCCESS,
         });
       })
       .catch(() => {
-        handleError('There was an error sending your preference');
+        const saved = lastSavedCatalogContentRef.current;
+        setCatalogContent(saved);
+        dispatch(toggleCatalogContent({ catalogVisibility: saved }));
+        handleError('There was an error sending your preference')();
+      })
+      .finally(() => {
+        catalogSaveInFlightRef.current = false;
       });
   };
 
@@ -226,7 +249,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
         }
       })
       .catch(() => {
-        handleError('There was an error sending your preference');
+        handleError('There was an error sending your preference')();
       });
   };
 
@@ -246,11 +269,22 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   useEffect(() => {
     if (isUserDataFetched && userData) {
       setExtensionPreferences(userData?.usersExtensionPreferences);
-      setCatalogContent(userData?.usersExtensionPreferences?.catalogContent);
     } else if (isUserDataError) {
       console.error(userDataError);
     }
   }, [isUserDataFetched, userData]);
+
+  const savedCatalogContent = userData?.usersExtensionPreferences?.catalogContent;
+  useEffect(() => {
+    if (
+      isUserDataFetched &&
+      typeof savedCatalogContent === 'boolean' &&
+      !catalogSaveInFlightRef.current
+    ) {
+      lastSavedCatalogContentRef.current = savedCatalogContent;
+      setCatalogContent(savedCatalogContent);
+    }
+  }, [isUserDataFetched, savedCatalogContent]);
 
   useEffect(() => {
     if (isCapabilitiesDataFetched && capabilitiesData) {
@@ -609,6 +643,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                         <Switch
                           checked={catalogContent}
                           onChange={handleCatalogContentToggle}
+                          disabled={isCatalogSaving || isUserDataFetching || !isUserDataFetched}
                           color="primary"
                           data-cy="CatalogContentPreference"
                         />

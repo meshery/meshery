@@ -46,6 +46,16 @@ func TestListWorkspaces(t *testing.T) {
 			ExpectedResponse: "list.workspace.empty.output.golden",
 			ExpectError:      false,
 		},
+		{
+			Name:             "given extra positional arguments when workspace list then throw error",
+			Args:             []string{"list", "extra-arg", "--orgId", testOrgId},
+			URL:              "",
+			Fixture:          "list.workspace.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\nUsage: mesheryctl workspace list --orgId [orgId]\nRun 'mesheryctl workspace list --help' to see detailed help message")),
+		},
 	}
 
 	mesheryctlflags.InitValidators(WorkSpaceCmd)

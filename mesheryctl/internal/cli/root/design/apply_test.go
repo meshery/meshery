@@ -2,6 +2,7 @@ package design
 
 import (
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -11,6 +12,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// TestApplyCmd verifies the output and errors of design apply for local files.
 func TestApplyCmd(t *testing.T) {
 	// create a test helper
 	testContext := utils.NewTestHelper(t)
@@ -32,7 +34,7 @@ func TestApplyCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern",
+					URL:          testContext.BaseURL + "/api/pattern/import",
 					Response:     "apply.designSave.response.golden",
 					ResponseCode: 200,
 				},
@@ -78,7 +80,7 @@ func TestApplyCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern",
+					URL:          testContext.BaseURL + "/api/pattern/import",
 					Response:     "apply.invalidJSON.response.golden",
 					ResponseCode: 200,
 				},
@@ -93,6 +95,93 @@ func TestApplyCmd(t *testing.T) {
 
 				return utils.ErrUnmarshal(innerErr)
 			}(),
+		},
+		{
+			Name:             "given no args and no file flag when design apply then validation error is returned",
+			Args:             []string{"apply"},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("please provide a design name or specify a file using --file")),
+		},
+		{
+			Name:             "given empty file flag when design apply then error is returned",
+			Args:             []string{"apply", "-f", ""},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("file path cannot be empty")),
+		},
+		{
+			Name:             "given both design name and file flag when design apply then error is returned",
+			Args:             []string{"apply", "my-design", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a design name and the --file flag")),
+		},
+		{
+			Name:             "given empty design name when design apply then validation error is returned",
+			Args:             []string{"apply", ""},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("please provide a design name or specify a file using --file")),
+		},
+		{
+			Name:             "given whitespace design name when design apply then validation error is returned",
+			Args:             []string{"apply", "   "},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("please provide a design name or specify a file using --file")),
+		},
+		{
+			Name:             "given multi-word design name as separate arguments when design apply then design is applied",
+			Args:             []string{"apply", "Istio", "Service", "Mesh"},
+			ExpectedResponse: "apply.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=Istio+Service+Mesh",
+					Response:     "list.design.local.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "apply.designDeploy.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: false,
+		},
+		{
+			Name:             "given quoted multi-word design name when design apply then design is applied",
+			Args:             []string{"apply", "Istio Service Mesh"},
+			ExpectedResponse: "apply.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=Istio+Service+Mesh",
+					Response:     "list.design.local.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "apply.designDeploy.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: false,
 		},
 		{
 			Name:             "given non-existent design name when design apply then throw error",

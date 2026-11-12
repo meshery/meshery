@@ -17,6 +17,9 @@ package utils
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
+	"runtime"
 	"testing"
 )
 
@@ -154,5 +157,87 @@ func TestGetCleanPodName(t *testing.T) {
 				t.Errorf("GetCleanPodName(%q) = %q, want %q", tc.podName, got, tc.expected)
 			}
 		})
+	}
+}
+
+func TestCreateManifestsFolder(t *testing.T) {
+	// a manifests folder in the working directory belongs to the user, not mesheryctl
+	t.Chdir(t.TempDir())
+	if err := os.MkdirAll(filepath.Join(ManifestsFolder, "keep"), os.ModePerm); err != nil {
+		t.Fatalf("expected no error, got: %v", err)
+	}
+
+	originalMesheryFolder := MesheryFolder
+	defer func() { MesheryFolder = originalMesheryFolder }()
+	MesheryFolder = t.TempDir()
+	stale := filepath.Join(MesheryFolder, ManifestsFolder, "stale")
+	if err := os.MkdirAll(stale, os.ModePerm); err != nil {
+		t.Fatalf("expected no error, got: %v", err)
+	}
+
+	if err := CreateManifestsFolder(); err != nil {
+		t.Fatalf("expected no error, got: %v", err)
+	}
+
+	if _, err := os.Stat(filepath.Join(ManifestsFolder, "keep")); err != nil {
+		t.Errorf("expected ./%s in the working directory to be untouched, got: %v", ManifestsFolder, err)
+	}
+	if _, err := os.Stat(stale); !os.IsNotExist(err) {
+		t.Errorf("expected stale files in %s to be removed, got: %v", filepath.Join(MesheryFolder, ManifestsFolder), err)
+	}
+	if _, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder)); err != nil {
+		t.Errorf("expected %s to exist, got: %v", filepath.Join(MesheryFolder, ManifestsFolder), err)
+	}
+}
+
+type interceptingTransport struct {
+	body    *trackingBody
+	handler func(req *http.Request) (*http.Response, error)
+}
+
+func (t *interceptingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	if t.handler != nil {
+		resp, err := t.handler(req)
+		if err == nil && resp != nil && resp.Body != nil {
+			t.body = &trackingBody{ReadCloser: resp.Body}
+			resp.Body = t.body
+		}
+		return resp, err
+	}
+	return http.DefaultTransport.RoundTrip(req)
+}
+
+func TestInstallprereqDocker_BodyClosed(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("InstallprereqDocker shells out to uname, which is not available on Windows")
+	}
+
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	tmpDir := t.TempDir()
+	unameSh := filepath.Join(tmpDir, "uname")
+	if err := os.WriteFile(unameSh, []byte("#!/bin/sh\necho test\n"), 0o755); err != nil {
+		t.Fatalf("failed to create mock uname: %v", err)
+	}
+	t.Setenv("PATH", tmpDir+string(os.PathListSeparator)+os.Getenv("PATH"))
+
+	transport := &interceptingTransport{
+		handler: func(req *http.Request) (*http.Response, error) {
+			rec := httptest.NewRecorder()
+			rec.WriteHeader(http.StatusOK)
+			_, _ = rec.WriteString("invalid json")
+			return rec.Result(), nil
+		},
+	}
+	previousTransport := http.DefaultTransport
+	http.DefaultTransport = transport
+	t.Cleanup(func() { http.DefaultTransport = previousTransport })
+
+	err := InstallprereqDocker()
+	if err == nil {
+		t.Fatal("expected error from unmarshal, got nil")
+	}
+	if transport.body == nil || !transport.body.closed {
+		t.Fatal("expected response body to be closed in InstallprereqDocker")
 	}
 }
