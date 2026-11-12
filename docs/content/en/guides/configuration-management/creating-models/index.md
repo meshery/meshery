@@ -142,9 +142,11 @@ Using Scaffold (model init) | fa fa-folder-tree
 <code>
 digitalocean-icons/
 <br />└── v0.1.0/
-<br />&nbsp;&nbsp;&nbsp;&nbsp;├── model.json          # model definition (name, displayName and version are pre-filled from the argument and --version)
-<br />&nbsp;&nbsp;&nbsp;&nbsp;├── components/          # one sample component, already referencing this model; add one JSON file per component
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── model.json          # model definition (name, displayName and version are pre-filled from the argument and --version; v1.0.76 and earlier: see the warning below)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── components/
+<br />&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── component.json  # sample component, already referencing this model; add one JSON file per component
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── relationships/
+<br />&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── relationship.json  # sample relationship
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── connections/
 <br />&nbsp;&nbsp;&nbsp;&nbsp;└── credentials/
 </code>
@@ -168,8 +170,13 @@ digitalocean-icons/
   <li><code>metadata.isAnnotation</code> - <code>true</code> for annotation components.</li>
 </ul>
 
-{{% alert color="warning" title="Component schemaVersion compatibility" %}}
-For the widest server compatibility, set each component's <code>schemaVersion</code> to <code>components.meshery.io/v1beta1</code> and the model's to <code>models.meshery.io/v1beta2</code>. Meshery Servers only accept the <code>v1beta3</code> component wire format once they ship a MeshKit new enough to recognize it; a released server that predates that support rejects <code>v1beta3</code> components with a generic "No valid component or relationship found in the Model provided" error at import time.
+{{% alert color="warning" title="Scaffold fixes required with mesheryctl and Meshery Server v1.0.76" %}}
+The v1.0.76 scaffold does not import as generated. Before building, fix these:
+<ul>
+  <li><strong>Version and model name.</strong> <code>model.json</code> is written with version <code>v0.0.1</code> whatever you pass to <code>--version</code>, so set <code>version</code> and <code>model.version</code> yourself. The nested <code>model.name</code> in the sample component and relationship is <code>untitled-model</code>; set it to your model name. A forthcoming <code>mesheryctl</code> release fixes this.</li>
+  <li><strong>Component schemaVersion.</strong> Meshery Server rejects the scaffolded <code>components.meshery.io/v1beta3</code> component at import with "No valid component or relationship found in the Model provided". Set each component's <code>schemaVersion</code> to <code>components.meshery.io/v1beta1</code> (or <code>v1beta2</code>), and leave the model's at <code>models.meshery.io/v1beta2</code>. A forthcoming MeshKit / Meshery Server release fixes this.</li>
+  <li><strong>Sample relationship.</strong> The scaffolded <code>relationships.meshery.io/v1beta3</code> relationship is also rejected, and the import reports "encountered error for 1 entity (1 relationship)". Delete <code>relationships/relationship.json</code>, or replace it with a <code>v1beta2</code> or <code>v1alpha3</code> relationship. Tracked in <a href="https://github.com/meshery/meshkit/issues/1164">meshery/meshkit#1164</a>.</li>
+</ul>
 {{% /alert %}}
 
 <h4>4. Package the model as an OCI image</h4>
