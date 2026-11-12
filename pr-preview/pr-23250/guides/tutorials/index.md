@@ -17,4 +17,5 @@ Section pages:
 - [Artifact Hub](/pr-preview/pr-23250/guides/tutorials/artifacthub/)
 - [AWS](/pr-preview/pr-23250/guides/tutorials/aws/)
 - [Azure](/pr-preview/pr-23250/guides/tutorials/azure/)
+- [Playground](/pr-preview/pr-23250/guides/tutorials/playground/): Hands-on tutorials and workshops that run entirely in the Meshery Playground.
 - [WordPress](/pr-preview/pr-23250/guides/tutorials/wordpress/)

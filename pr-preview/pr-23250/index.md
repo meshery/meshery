@@ -112,6 +112,7 @@
           <a href="/pr-preview/pr-23250/guides/tutorials/artifacthub/">Artifact Hub</a></li><li>
           <a href="/pr-preview/pr-23250/guides/tutorials/aws/">AWS</a></li><li>
           <a href="/pr-preview/pr-23250/guides/tutorials/azure/">Azure</a></li><li>
+          <a href="/pr-preview/pr-23250/guides/tutorials/playground/">Playground</a><span> - Hands-on tutorials and workshops that run entirely in the Meshery Playground.</span></li><li>
           <a href="/pr-preview/pr-23250/guides/tutorials/">Tutorials</a><span> - Explore the tutorials to learn how to use Meshery for collaboratively managing infrastructure.</span></li><li>
           <a href="/pr-preview/pr-23250/guides/tutorials/wordpress/">WordPress</a></li>
       </ul>
