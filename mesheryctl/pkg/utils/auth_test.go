@@ -300,6 +300,46 @@ func TestChooseDirectProvider(t *testing.T) {
 		}
 	})
 
+	// Regression: two providers sharing a display name used to resolve to
+	// whichever entry a map traversal visited first. --provider with that
+	// display name must now fail and ask for a registration key.
+	t.Run("ambiguous display name returns an error naming the keys", func(t *testing.T) {
+		provs := map[string]Provider{
+			"cloud-a": {ProviderName: "Acme", ProviderURL: "https://cloud-a.example"},
+			"cloud-b": {ProviderName: "Acme", ProviderURL: "https://cloud-b.example"},
+		}
+		for i := 0; i < 20; i++ {
+			got, key, err := chooseDirectProvider(provs, "Acme")
+			if err == nil {
+				t.Fatalf("attempt %d: expected an error, got key %q provider %+v", i, key, got)
+			}
+			if code := errors.GetCode(err); code != ErrProviderAmbiguousCode {
+				t.Fatalf("attempt %d: got error code %q, want %q", i, code, ErrProviderAmbiguousCode)
+			}
+			if key != "" {
+				t.Fatalf("attempt %d: expected empty key, got %q", i, key)
+			}
+			if got != (Provider{}) {
+				t.Fatalf("attempt %d: expected empty provider, got %+v", i, got)
+			}
+		}
+	})
+
+	// A display name nobody else shares still resolves.
+	t.Run("unique display name still resolves", func(t *testing.T) {
+		provs := map[string]Provider{
+			"cloud-a": {ProviderName: "Acme", ProviderURL: "https://cloud-a.example"},
+			"cloud-b": {ProviderName: "Other", ProviderURL: "https://cloud-b.example"},
+		}
+		got, key, err := chooseDirectProvider(provs, "acme")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if key != "cloud-a" || got.ProviderURL != "https://cloud-a.example" {
+			t.Fatalf("got key %q provider %+v", key, got)
+		}
+	})
+
 	// Regression: an unmatched name used to return provArray[1], panicking
 	// with "index out of range [1] with length 1" on a single-provider server.
 	for name, provs := range map[string]map[string]Provider{

@@ -459,7 +459,10 @@ func selectProviderPrompt(provs map[string]Provider) (Provider, error) {
 // case-insensitive display-name match. A single traversal is
 // nondeterministic when one entry's key equals another entry's display name
 // (for example key "cloud-a" named "Meshery" beside key "cloud-b" named
-// "cloud-a"), because Go map iteration order is random.
+// "cloud-a"), because Go map iteration order is random. The display-name
+// pass likewise collects every match: a display name shared by two
+// providers is rejected instead of returning whichever entry the traversal
+// happens to visit first.
 func chooseDirectProvider(provs map[string]Provider, option string) (Provider, string, error) {
 	if prov, ok := provs[option]; ok {
 		return prov, option, nil
@@ -469,10 +472,24 @@ func chooseDirectProvider(provs map[string]Provider, option string) (Provider, s
 			return prov, key, nil
 		}
 	}
+	// A display name is not a unique key: two providers can share one, so
+	// collect every match instead of returning the first the traversal
+	// visits. Exactly one match selects that provider; several is an error
+	// asking for a registration key.
+	var displayMatches []string
+	var displayProv Provider
 	for key, prov := range provs {
 		if strings.EqualFold(prov.ProviderName, option) {
-			return prov, key, nil
+			displayMatches = append(displayMatches, key)
+			displayProv = prov
 		}
+	}
+	if len(displayMatches) == 1 {
+		return displayProv, displayMatches[0], nil
+	}
+	if len(displayMatches) > 1 {
+		sort.Strings(displayMatches)
+		return Provider{}, "", ErrProviderAmbiguous(option, displayMatches)
 	}
 	available := make([]string, 0, len(provs))
 	for key, prov := range provs {

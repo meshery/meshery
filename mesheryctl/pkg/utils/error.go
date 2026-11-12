@@ -85,6 +85,7 @@ var (
 	ErrGitHubAPIResponseCode          = "mesheryctl-1255"
 	ErrAmbiguousIDCode                = "mesheryctl-1256"
 	ErrProviderNotFoundCode           = "mesheryctl-1259"
+	ErrProviderAmbiguousCode          = "mesheryctl-1260"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -1000,4 +1001,15 @@ func ErrProviderNotFound(requested string, available []string) error {
 		[]string{fmt.Sprintf("Provider %q is not offered by this Meshery Server. Available providers: %s", requested, strings.Join(available, ", "))},
 		[]string{"The provider name is misspelled", "The Meshery Server is pinned to a different provider"},
 		[]string{"Run `mesheryctl system provider list` to see the providers this server offers", "Omit --provider to choose one interactively"})
+}
+
+// ErrProviderAmbiguous is returned when the provider requested with
+// `mesheryctl system login --provider` matches more than one provider's
+// display name, so no single provider can be selected deterministically.
+func ErrProviderAmbiguous(requested string, keys []string) error {
+	return errors.New(ErrProviderAmbiguousCode, errors.Alert,
+		[]string{"More than one provider matches that name"},
+		[]string{fmt.Sprintf("Provider name %q matches %d providers. Specify a registration key: %s", requested, len(keys), strings.Join(keys, ", "))},
+		[]string{"Two or more providers share the same display name"},
+		[]string{"Run `mesheryctl system provider list` to see the registration keys", "Pass a registration key to --provider instead of the display name"})
 }

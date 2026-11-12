@@ -4037,6 +4037,24 @@
         "Run `mesheryctl system provider list` to see the providers this server offers",
         "Omit --provider to choose one interactively"
       ]
+    },
+    {
+      "code": "mesheryctl-1260",
+      "moniker": "ErrProviderAmbiguousCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1260",
+      "severity": "alert",
+      "shortDescription": "More than one provider matches that name",
+      "probableCause": [
+        "Two or more providers share the same display name"
+      ],
+      "suggestedRemediation": [
+        "Run `mesheryctl system provider list` to see the registration keys",
+        "Pass a registration key to --provider instead of the display name"
+      ]
     }
   ],
   "schemaVersion": 2
