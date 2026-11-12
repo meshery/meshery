@@ -760,11 +760,19 @@ tokens:
 			t.Run(tc.name, func(t *testing.T) {
 				configPath := setupTempConfig(t)
 				b := utils.SetupMeshkitLoggerTesting(t, false)
+				var errBuf bytes.Buffer
+				utils.Log.UpdateErrorLogOutput(&errBuf)
+				t.Cleanup(func() {
+					utils.Log.UpdateErrorLogOutput(os.Stderr)
+				})
 				SystemCmd.SetOut(b)
 				SystemCmd.SetArgs(tc.args)
 				err := SystemCmd.Execute()
 				if tc.wantErr {
 					assert.Error(t, err)
+					assert.Equal(t, ErrAssignTokenCode, meshkiterrors.GetCode(err))
+					assert.Contains(t, errBuf.String(), "Short Description: Unable to assign token to context")
+					assert.Contains(t, errBuf.String(), "Suggested Remediation:")
 					cfg := readMeshConfig(t, configPath)
 					assert.Equal(t, "token-local", cfg.Contexts["local"].Token)
 					assert.Equal(t, "token-local2", cfg.Contexts["local2"].Token)
@@ -811,10 +819,20 @@ tokens:
 		t.Run("create --set with unknown -c rolls back token", func(t *testing.T) {
 			configPath := setupTempConfig(t)
 			b := utils.SetupMeshkitLoggerTesting(t, false)
+			var errBuf bytes.Buffer
+			utils.Log.UpdateErrorLogOutput(&errBuf)
+			t.Cleanup(func() {
+				utils.Log.UpdateErrorLogOutput(os.Stderr)
+			})
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs([]string{"token", "create", "orphan-tok", "-f", "orphan.json", "--set", "-c", "missing-ctx"})
 			err := SystemCmd.Execute()
 			assert.Error(t, err)
+			assert.Equal(t, ErrAssignTokenCode, meshkiterrors.GetCode(err))
+			assert.Contains(t, errBuf.String(), "Short Description: Unable to assign token to context")
+			assert.Contains(t, errBuf.String(), "Suggested Remediation:")
+			assert.Contains(t, err.Error(), "orphan-tok")
+			assert.Contains(t, err.Error(), "missing-ctx")
 			cfg := readMeshConfig(t, configPath)
 			assert.Len(t, cfg.Tokens, 2, "failed create --set -c should not leave an orphaned token")
 			assert.Equal(t, "token-local", cfg.Contexts["local"].Token)
@@ -865,7 +883,51 @@ tokens:
 		})
 	})
 
-	t.Run("assignTokenWithRollback propagates cleanup failure alongside assign error", func(t *testing.T) {
+	t.Run("assignTokenWithRollback succeeds without calling deleteFn", func(t *testing.T) {
+		deleteCalled := false
+		err := assignTokenWithRollback(
+			"orphan-tok",
+			"/tmp/config.yaml",
+			"local2",
+			func(_, _, _ string) error { return nil },
+			func(_, _ string) error {
+				deleteCalled = true
+				return nil
+			},
+		)
+		assert.NoError(t, err)
+		assert.False(t, deleteCalled)
+	})
+
+	t.Run("assignTokenWithRollback returns MeshKit assign error when rollback succeeds", func(t *testing.T) {
+		setErr := stderrors.New("context missing-ctx does not exist")
+		var deletedToken, deletedConfigPath string
+
+		err := assignTokenWithRollback(
+			"orphan-tok",
+			"/tmp/config.yaml",
+			"missing-ctx",
+			func(_, _, _ string) error { return setErr },
+			func(tokenName, configPath string) error {
+				deletedToken = tokenName
+				deletedConfigPath = configPath
+				return nil
+			},
+		)
+		assert.Error(t, err)
+		assert.Equal(t, "orphan-tok", deletedToken)
+		assert.Equal(t, "/tmp/config.yaml", deletedConfigPath)
+		assert.ErrorIs(t, err, setErr)
+		assert.Equal(t, ErrAssignTokenCode, meshkiterrors.GetCode(err))
+		assert.NotEqual(t, "None", meshkiterrors.GetCause(err))
+		assert.NotEqual(t, "None", meshkiterrors.GetRemedy(err))
+		assert.Contains(t, err.Error(), "orphan-tok")
+		assert.Contains(t, err.Error(), "missing-ctx")
+		assert.Contains(t, err.Error(), `Could not set token "orphan-tok" on context missing-ctx`)
+		assert.NotContains(t, err.Error(), "manual cleanup may be required")
+	})
+
+	t.Run("assignTokenWithRollback returns MeshKit rollback error preserving both causes", func(t *testing.T) {
 		setErr := stderrors.New("context missing-ctx does not exist")
 		cleanupErr := stderrors.New("permission denied")
 
@@ -879,7 +941,17 @@ tokens:
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, setErr)
 		assert.ErrorIs(t, err, cleanupErr)
+		assert.Equal(t, ErrTokenRollbackCode, meshkiterrors.GetCode(err))
+		assert.NotEqual(t, "None", meshkiterrors.GetCause(err))
+		assert.Contains(t, meshkiterrors.GetRemedy(err), "token delete")
 		assert.Contains(t, err.Error(), "orphan-tok")
+		assert.Contains(t, err.Error(), "missing-ctx")
+		assert.Contains(t, err.Error(), "manual cleanup may be required")
 		assert.Contains(t, err.Error(), `Could not set token "orphan-tok" on context missing-ctx`)
+	})
+
+	t.Run("token MeshKit error builders handle nil inputs safely", func(t *testing.T) {
+		assert.NoError(t, ErrAssignToken(nil, "tok", "local"))
+		assert.NoError(t, ErrTokenRollback("tok", "local", nil, nil))
 	})
 }
