@@ -150,11 +150,12 @@ func TestFetchConnectionByName(t *testing.T) {
 	}
 
 	tests := []struct {
-		name           string
-		page           connection.ConnectionPage
-		promptChoice   int
-		wantPromptCall bool
-		wantConn       *connection.Connection
+		name            string
+		page            connection.ConnectionPage
+		promptChoice    int
+		wantPromptCall  bool
+		wantPromptItems []string
+		wantConn        *connection.Connection
 	}{
 		{
 			name: "TotalCount > 0 with empty Connections slice returns nil without panicking",
@@ -184,6 +185,33 @@ func TestFetchConnectionByName(t *testing.T) {
 			wantConn:       nil,
 		},
 		{
+			name: "single nil entry returns nil without panicking",
+			page: connection.ConnectionPage{
+				TotalCount:  1,
+				Connections: []*connection.Connection{nil},
+			},
+			wantPromptCall: false,
+			wantConn:       nil,
+		},
+		{
+			name: "all nil entries return nil without prompting",
+			page: connection.ConnectionPage{
+				TotalCount:  2,
+				Connections: []*connection.Connection{nil, nil},
+			},
+			wantPromptCall: false,
+			wantConn:       nil,
+		},
+		{
+			name: "mixed nil and single valid connection skips prompt and returns valid connection",
+			page: connection.ConnectionPage{
+				TotalCount:  2,
+				Connections: []*connection.Connection{nil, conn1},
+			},
+			wantPromptCall: false,
+			wantConn:       conn1,
+		},
+		{
 			name: "exactly one connection returns it directly",
 			page: connection.ConnectionPage{
 				TotalCount:  1,
@@ -209,7 +237,25 @@ func TestFetchConnectionByName(t *testing.T) {
 			},
 			promptChoice:   1,
 			wantPromptCall: true,
-			wantConn:       conn2,
+			wantPromptItems: []string{
+				fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn1.ID.String(), conn1.Name, conn1.ConnectionType),
+				fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn2.ID.String(), conn2.Name, conn2.ConnectionType),
+			},
+			wantConn: conn2,
+		},
+		{
+			name: "mixed nil and multiple valid connections filters nil entries and preserves order",
+			page: connection.ConnectionPage{
+				TotalCount:  3,
+				Connections: []*connection.Connection{conn1, nil, conn2},
+			},
+			promptChoice:   1,
+			wantPromptCall: true,
+			wantPromptItems: []string{
+				fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn1.ID.String(), conn1.Name, conn1.ConnectionType),
+				fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn2.ID.String(), conn2.Name, conn2.ConnectionType),
+			},
+			wantConn: conn2,
 		},
 	}
 
@@ -228,8 +274,13 @@ func TestFetchConnectionByName(t *testing.T) {
 			promptCalled := false
 			runSelectPrompt = func(label string, items []string) (int, error) {
 				promptCalled = true
-				if len(items) != len(tt.page.Connections) {
-					t.Fatalf("prompt items len = %d, want %d", len(items), len(tt.page.Connections))
+				if len(items) != len(tt.wantPromptItems) {
+					t.Fatalf("prompt items len = %d, want %d", len(items), len(tt.wantPromptItems))
+				}
+				for i := range tt.wantPromptItems {
+					if items[i] != tt.wantPromptItems[i] {
+						t.Fatalf("prompt item[%d] = %q, want %q", i, items[i], tt.wantPromptItems[i])
+					}
 				}
 				return tt.promptChoice, nil
 			}
@@ -251,6 +302,107 @@ func TestFetchConnectionByName(t *testing.T) {
 			}
 			if promptCalled != tt.wantPromptCall {
 				t.Fatalf("promptCalled = %v, want %v", promptCalled, tt.wantPromptCall)
+			}
+			if tt.wantConn == nil {
+				if got != nil {
+					t.Fatalf("got connection %+v, want nil", got)
+				}
+				return
+			}
+			if got == nil || got.ID != tt.wantConn.ID {
+				t.Fatalf("got connection = %+v, want ID %s", got, tt.wantConn.ID)
+			}
+		})
+	}
+}
+
+func TestSelectConnectionPromptNilEntries(t *testing.T) {
+	conn1 := &connection.Connection{
+		ID:             uuid.Must(uuid.NewV4()),
+		Name:           "minikube-1",
+		ConnectionType: "platform",
+	}
+	conn2 := &connection.Connection{
+		ID:             uuid.Must(uuid.NewV4()),
+		Name:           "minikube-2",
+		ConnectionType: "platform",
+	}
+
+	tests := []struct {
+		name            string
+		input           []*connection.Connection
+		promptChoice    int
+		wantPromptCall  bool
+		wantPromptItems []string
+		wantConn        *connection.Connection
+	}{
+		{
+			name:           "all nil entries return nil without prompting",
+			input:          []*connection.Connection{nil, nil},
+			wantPromptCall: false,
+			wantConn:       nil,
+		},
+		{
+			name:           "mixed nil and valid entries filter nil entries without mutating input",
+			input:          []*connection.Connection{nil, conn1, nil, conn2},
+			promptChoice:   1,
+			wantPromptCall: true,
+			wantPromptItems: []string{
+				fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn1.ID.String(), conn1.Name, conn1.ConnectionType),
+				fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn2.ID.String(), conn2.Name, conn2.ConnectionType),
+			},
+			wantConn: conn2,
+		},
+		{
+			name:           "multiple valid entries preserve order and selection",
+			input:          []*connection.Connection{conn1, conn2},
+			promptChoice:   0,
+			wantPromptCall: true,
+			wantPromptItems: []string{
+				fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn1.ID.String(), conn1.Name, conn1.ConnectionType),
+				fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn2.ID.String(), conn2.Name, conn2.ConnectionType),
+			},
+			wantConn: conn1,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			snapshot := append([]*connection.Connection(nil), tt.input...)
+
+			origRunSelectPrompt := runSelectPrompt
+			defer func() {
+				runSelectPrompt = origRunSelectPrompt
+			}()
+
+			promptCalled := false
+			runSelectPrompt = func(label string, items []string) (int, error) {
+				promptCalled = true
+				if len(items) != len(tt.wantPromptItems) {
+					t.Fatalf("prompt items len = %d, want %d", len(items), len(tt.wantPromptItems))
+				}
+				for i := range tt.wantPromptItems {
+					if items[i] != tt.wantPromptItems[i] {
+						t.Fatalf("prompt item[%d] = %q, want %q", i, items[i], tt.wantPromptItems[i])
+					}
+				}
+				return tt.promptChoice, nil
+			}
+
+			got, err := selectConnectionPrompt(tt.input)
+			if err != nil {
+				t.Fatalf("selectConnectionPrompt returned unexpected error: %v", err)
+			}
+			if promptCalled != tt.wantPromptCall {
+				t.Fatalf("promptCalled = %v, want %v", promptCalled, tt.wantPromptCall)
+			}
+			if len(tt.input) != len(snapshot) {
+				t.Fatalf("input slice len mutated: got %d, want %d", len(tt.input), len(snapshot))
+			}
+			for i := range snapshot {
+				if tt.input[i] != snapshot[i] {
+					t.Fatalf("input slice element[%d] mutated: got %v, want %v", i, tt.input[i], snapshot[i])
+				}
 			}
 			if tt.wantConn == nil {
 				if got != nil {

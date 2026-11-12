@@ -130,10 +130,25 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 
 var runSelectPrompt = utils.RunSelectPrompt
 
-func selectConnectionPrompt(connectionsList []*connection.Connection) (*connection.Connection, error) {
-	connectionNames := make([]string, len(connectionsList))
+func filterNonNilConnections(connectionsList []*connection.Connection) []*connection.Connection {
+	valid := make([]*connection.Connection, 0, len(connectionsList))
+	for _, conn := range connectionsList {
+		if conn != nil {
+			valid = append(valid, conn)
+		}
+	}
+	return valid
+}
 
-	for i, conn := range connectionsList {
+func selectConnectionPrompt(connectionsList []*connection.Connection) (*connection.Connection, error) {
+	validConnections := filterNonNilConnections(connectionsList)
+	if len(validConnections) == 0 {
+		return nil, nil
+	}
+
+	connectionNames := make([]string, len(validConnections))
+
+	for i, conn := range validConnections {
 		connectionNames[i] = fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn.ID.String(), conn.Name, conn.ConnectionType)
 	}
 
@@ -142,7 +157,7 @@ func selectConnectionPrompt(connectionsList []*connection.Connection) (*connecti
 		return nil, err
 	}
 
-	return connectionsList[i], nil
+	return validConnections[i], nil
 }
 
 func isArgumentUUID(arg string) bool {
@@ -175,13 +190,14 @@ func fetchConnectionByName(connectionName string) (*connection.Connection, error
 		return nil, nil
 	}
 
-	switch len(connectionsResponse.Connections) {
+	validConnections := filterNonNilConnections(connectionsResponse.Connections)
+	switch len(validConnections) {
 	case 0:
 		return nil, nil
 	case 1:
-		return connectionsResponse.Connections[0], nil
+		return validConnections[0], nil
 	default:
-		return selectConnectionPrompt(connectionsResponse.Connections)
+		return selectConnectionPrompt(validConnections)
 	}
 }
 
