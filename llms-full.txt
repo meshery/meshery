@@ -114825,7 +114825,7 @@ mesheryctl design export [design-name | ID] --type [design-type] --output ./expo
 <div class='codeblock'>
   -h, --help            help for export
   -o, --output string   Specify the output directory to save the design
-      --type string     Specify the design type to export
+      --type string     Type of export: current (Meshery design YAML), original (the source the design was imported from) or oci (OCI image tarball)
 
 </div>
 </pre>
