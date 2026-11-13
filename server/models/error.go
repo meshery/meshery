@@ -4,6 +4,7 @@ package models
 import (
 	stderrors "errors"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/meshery/meshery/server/models/httputil"
@@ -295,6 +296,30 @@ func ErrEncoding(err error, obj string) error {
 	return errors.New(ErrEncodingCode, errors.Alert, []string{"Error encoding the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})
 }
 
+// httpStatusFallback formats an HTTP status fallback description for nil or
+// unexpected-status error paths. When includeCodeForKnown is true, known HTTP
+// statuses format as "unexpected HTTP status <code> <text>"; otherwise only
+// http.StatusText(statusCode) is returned. Unknown status codes always fall
+// back to "unexpected HTTP status <code>".
+func httpStatusFallback(statusCode int, includeCodeForKnown bool) string {
+	if text := http.StatusText(statusCode); text != "" {
+		if includeCodeForKnown {
+			return fmt.Sprintf("unexpected HTTP status %d %s", statusCode, text)
+		}
+		return text
+	}
+	return fmt.Sprintf("unexpected HTTP status %d", statusCode)
+}
+
+// providerErrorCause formats the provider error cause without panicking when
+// err is nil (e.g. a non-success HTTP status after a clean round trip).
+func providerErrorCause(err error, statusCode int) string {
+	if err != nil {
+		return err.Error()
+	}
+	return httpStatusFallback(statusCode, false)
+}
+
 // ErrFetch and ErrPost are the two provider-layer constructors that know the
 // HTTP status the remote provider actually responded with. Both tag the error
 // with that status via httputil.WithProviderStatus so handlers can propagate
@@ -302,14 +327,14 @@ func ErrEncoding(err error, obj string) error {
 // one. Without the tag a provider 403 surfaced to the browser as a 404.
 func ErrFetch(err error, obj string, statusCode int) error {
 	return httputil.WithProviderStatus(
-		errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{}),
+		errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", providerErrorCause(err, statusCode)}, []string{}, []string{}),
 		statusCode,
 	)
 }
 
 func ErrPost(err error, obj string, statusCode int) error {
 	return httputil.WithProviderStatus(
-		errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{}),
+		errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", providerErrorCause(err, statusCode)}, []string{}, []string{}),
 		statusCode,
 	)
 }
