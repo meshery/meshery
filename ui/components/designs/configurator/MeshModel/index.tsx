@@ -93,25 +93,25 @@ export default function DesignConfigurator() {
             <FormControl>
               <TextField
                 select={true}
-                SelectProps={{
-                  MenuProps: {
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
+                slotProps={{
+                  select: {
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                      },
                     },
-                    getContentAnchorEl: null,
-                  },
-                  renderValue: (selected) => {
-                    if (!selected || selected.length === 0) {
-                      return <em>Select Category</em>;
-                    }
+                    renderValue: (selected) => {
+                      if (!selected) {
+                        return <em>Select Category</em>;
+                      }
 
-                    return selected;
+                      return String(selected);
+                    },
+                    displayEmpty: true,
                   },
-                  displayEmpty: true,
+                  input: { disableUnderline: true },
                 }}
-                InputProps={{ disableUnderline: true }}
-                labelId="category-selector"
                 id="category-selector"
                 data-testid="category-selector"
                 value={selectedCategory}
@@ -133,25 +133,25 @@ export default function DesignConfigurator() {
                 <TextField
                   placeholder="select Model"
                   select={true}
-                  SelectProps={{
-                    MenuProps: {
-                      anchorOrigin: {
-                        vertical: 'bottom',
-                        horizontal: 'left',
+                  slotProps={{
+                    select: {
+                      MenuProps: {
+                        anchorOrigin: {
+                          vertical: 'bottom',
+                          horizontal: 'left',
+                        },
                       },
-                      getContentAnchorEl: null,
-                    },
-                    renderValue: (selected) => {
-                      if (!selected || selected.length === 0) {
-                        return <em>Select Model</em>;
-                      }
+                      renderValue: (selected) => {
+                        if (!selected) {
+                          return <em>Select Model</em>;
+                        }
 
-                      return removeHyphenAndCapitalise(selected);
+                        return removeHyphenAndCapitalise(String(selected));
+                      },
+                      displayEmpty: true,
                     },
-                    displayEmpty: true,
+                    input: { disableUnderline: true },
                   }}
-                  InputProps={{ disableUnderline: true }}
-                  labelId="model-selector"
                   id="model-selector"
                   data-testid="model-selector"
                   value={selectedModel}
