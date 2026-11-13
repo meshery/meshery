@@ -1410,3 +1410,25 @@ func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 func TrimFileExtension(name string) string {
 	return strings.TrimSuffix(name, filepath.Ext(name))
 }
+
+var fileNameSanitizer = strings.NewReplacer(
+	"/", "_",
+	"\\", "_",
+	":", "_",
+	"*", "_",
+	"?", "_",
+	"\"", "_",
+	"<", "_",
+	">", "_",
+	"|", "_",
+	"\r", "_",
+	"\n", "_",
+	"\t", "_",
+	" ", "_",
+)
+
+// SanitizeFileName sanitizes filesystem-unsafe characters and whitespace into underscores and trims leading/trailing whitespace.
+func SanitizeFileName(name string) string {
+	return fileNameSanitizer.Replace(strings.TrimSpace(name))
+}
+
