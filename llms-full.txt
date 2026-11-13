@@ -18661,6 +18661,7 @@ The logos are the official KubeCon + CloudNativeCon North America 2026 artwork f
 </span></span></span><span class="line"><span class="cl"><span class="s1">  | .version = &#34;v0.1.0&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s1">  | .displayName = &#34;KubeCon Logo&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s1">  | .component.kind = &#34;kubecon-logo&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s1">  | .component.version = &#34;v0.1.0&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s1">  | .metadata.isAnnotation = true
 </span></span></span><span class="line"><span class="cl"><span class="s1">  | .styles.svgColor = $c | .styles.svgWhite = $w
 </span></span></span><span class="line"><span class="cl"><span class="s1">  | .model.name = $name | .model.version = &#34;v0.1.0&#34; | .model.model.version = &#34;v0.1.0&#34;
