@@ -15942,7 +15942,7 @@ Models introduce various core constructs that form the foundation of the model. 
 
 #### Evaluation of Relationships
 
-Meshery provides a relationship evaluation algorithm to ensure desired behavior enforcement. [Policies](policies) can be applied to components and relationships, defining rules and actions based on predefined conditions.
+Meshery provides a relationship evaluation algorithm to ensure desired behavior enforcement. [Policies](/concepts/logical/policies/) can be applied to components and relationships, defining rules and actions based on predefined conditions.
 
 <div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Model Schema</div>
 
@@ -15957,7 +15957,7 @@ Model constructs are defined using a schema language called Cue. Cue is a powerf
 
 ### Patterns
 
-[Patterns](patterns) are reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
+[Patterns](/concepts/logical/patterns/) are reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
 
 <div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Metadata</div>
 
@@ -66053,7 +66053,7 @@ For contributing `mesheryctl` reference section, refer [Contributing CLI](/proje
 
 The following is a concise summary of the steps to contribute to Meshery documentation.
 
-1. Create a fork, if you have not already, by following the steps described [here](CONTRIBUTING-gitflow.md)
+1. Create a fork, if you have not already, by following the steps described [here](/project/contributing/contributing-gitflow/)
 2. In the local copy of your fork, navigate to the docs folder.
    `cd docs`
 3. Create and checkout a new branch to make changes within
@@ -111577,7 +111577,7 @@ Meshery keeps the implementation of Remote Providers separate so that they are b
 
 ### Verifying Compatibility With Golang Version Update
 
-When Meshery is updated to a newer version of Golang, extension providers need to ensure their integrations remain compatible with the updated version. Changes in the Golang version can lead to compatibility issues, so it’s important to update your extension to align with Meshery’s new environment. For a detailed guide on how to verify and address any compatibility issues, refer to this [guide on verifying compatibility](./verify-compatibility).
+When Meshery is updated to a newer version of Golang, extension providers need to ensure their integrations remain compatible with the updated version. Changes in the Golang version can lead to compatibility issues, so it’s important to update your extension to align with Meshery’s new environment. For a detailed guide on how to verify and address any compatibility issues, refer to this [guide on verifying compatibility](/reference/extensibility/verify-compatibility/).
 
 ### Remote Provider Extension Points
 

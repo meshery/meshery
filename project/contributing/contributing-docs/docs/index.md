@@ -310,7 +310,7 @@ For contributing `mesheryctl` reference section, refer [Contributing CLI](/proje
 
 The following is a concise summary of the steps to contribute to Meshery documentation.
 
-1. Create a fork, if you have not already, by following the steps described [here](CONTRIBUTING-gitflow.md)
+1. Create a fork, if you have not already, by following the steps described [here](/project/contributing/contributing-gitflow/)
 2. In the local copy of your fork, navigate to the docs folder.
    `cd docs`
 3. Create and checkout a new branch to make changes within
