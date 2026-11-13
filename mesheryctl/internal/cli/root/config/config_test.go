@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -497,5 +498,23 @@ func TestGetBaseMesheryURLTrimsTrailingSlash(t *testing.T) {
 	}
 	if got, want := mctl.GetBaseMesheryURL(), "http://localhost:9081"; got != want {
 		t.Errorf("GetBaseMesheryURL() = %q, want %q", got, want)
+	}
+}
+
+func TestAddContextRejectsDotBeforeWriting(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "config.yaml")
+	original := []byte("contexts: {}\ncurrent-context: local\n")
+	if err := os.WriteFile(path, original, 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := AddContextToConfig("local.dev", Context{}, path, true, false); err == nil || !strings.Contains(err.Error(), "cannot contain") {
+		t.Fatalf("expected invalid name error, got %v", err)
+	}
+	got, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got) != string(original) {
+		t.Fatalf("config changed: %s", got)
 	}
 }

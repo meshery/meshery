@@ -473,6 +473,10 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 // AddContextToConfig adds context passed to it to mesheryctl config file. If overwrite is set to true, existing
 // context with the contextName is overwritten
 func AddContextToConfig(contextName string, context Context, configPath string, set bool, overwrite bool) error {
+	if strings.Contains(contextName, ".") {
+		return fmt.Errorf("context name cannot contain %q", ".")
+	}
+
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return err
 	}

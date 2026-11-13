@@ -80,8 +80,11 @@ func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, log log
 func (mrp *MesheryResultsPersister) GetResult(key core.Uuid, log logger.Handler) (*MesheryResult, error) {
 	var lres localMesheryResultDBRepresentation
 
-	err := mrp.DB.Table("meshery_results").Find(&lres).Where("id = ?", key).Error
-	res := convertLocalRepresentationToMesheryResult(&lres, log)
+	err := mrp.DB.Table("meshery_results").Where("id = ?", key).First(&lres).Error
+	if err != nil {
+		return nil, err
+	}
+	res, err := convertLocalRepresentationToMesheryResult(&lres, log)
 	return res, err
 }
 
@@ -106,18 +109,23 @@ func marshalMesheryResultsPage(mrp *MesheryResultPage) []byte {
 
 func convertLocalRepresentationSliceToMesheryResultSlice(local []*localMesheryResultDBRepresentation, log logger.Handler) (res []*MesheryResult) {
 	for _, val := range local {
-		res = append(res, convertLocalRepresentationToMesheryResult(val, log))
+		r, _ := convertLocalRepresentationToMesheryResult(val, log)
+		if r != nil {
+			res = append(res, r)
+		}
 	}
 
 	return
 }
 
-func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepresentation, log logger.Handler) *MesheryResult {
+func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepresentation, log logger.Handler) (*MesheryResult, error) {
 	var jsonmap map[string]interface{}
 	if err := json.Unmarshal(local.Result, &jsonmap); err != nil {
 		err = ErrUnmarshal(err, "MesheryResult")
-		log.Error(err)
-		return nil
+		if log != nil {
+			log.Error(err)
+		}
+		return nil, err
 	}
 
 	res := &MesheryResult{
@@ -131,7 +139,7 @@ func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepres
 		TestStartTime:      local.TestStartTime,
 	}
 
-	return res
+	return res, nil
 }
 
 func convertMesheryResultToLocalRepresentation(mr *MesheryResult) *localMesheryResultDBRepresentation {
