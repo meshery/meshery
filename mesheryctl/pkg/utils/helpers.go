@@ -1435,4 +1435,3 @@ func SanitizeFileName(name string) string {
 		return r
 	}, fileNameSanitizer.Replace(strings.TrimSpace(name)))
 }
-
