@@ -64,6 +64,46 @@ func TestEnvironmentPayloadWire_UnmarshalJSON(t *testing.T) {
 	}
 }
 
+// TestEnvironmentPayloadWire_RejectsAdministrativePurpose exercises the
+// invariant that Purpose is never client-settable: incoming request bodies
+// carrying "purpose": "administrative" must be refused at decode time.
+func TestEnvironmentPayloadWire_RejectsAdministrativePurpose(t *testing.T) {
+	cases := []struct {
+		name      string
+		body      string
+		wantError bool
+	}{
+		{
+			name:      "administrative purpose rejected",
+			body:      `{"name":"env","organizationId":"11111111-1111-1111-1111-111111111111","purpose":"administrative"}`,
+			wantError: true,
+		},
+		{
+			name:      "user purpose accepted",
+			body:      `{"name":"env","organizationId":"11111111-1111-1111-1111-111111111111","purpose":"user"}`,
+			wantError: false,
+		},
+		{
+			name:      "omitted purpose accepted",
+			body:      `{"name":"env","organizationId":"11111111-1111-1111-1111-111111111111"}`,
+			wantError: false,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			var wire environmentPayloadWire
+			err := json.Unmarshal([]byte(tc.body), &wire)
+			if tc.wantError && err == nil {
+				t.Fatalf("expected error for body %s, got nil", tc.body)
+			}
+			if !tc.wantError && err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+		})
+	}
+}
+
 // TestEnvironmentPayloadWire_MarshalsCanonicalCamelCase is the regression
 // test for the bug where environment creation failed for every Layer5 Cloud
 // user: the handler previously wrapped the deprecated v1beta1
