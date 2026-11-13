@@ -38,9 +38,17 @@ const flushMeshsyncAction schemasConnection.ConnectionActionRequestAction = "flu
 // client sends only the intent and the server reads the connection by its URL
 // id, so persistence always targets the correct row.
 func (h *Handler) PerformConnectionAction(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
+	connectionID, err := uuid.FromString(mux.Vars(req)["connectionId"])
+	if err != nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %w", err))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
 	if connectionID == uuid.Nil {
-		writeJSONError(w, "invalid or missing connection id", http.StatusBadRequest)
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %s", connectionID))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
 
@@ -61,8 +69,16 @@ func (h *Handler) PerformConnectionAction(w http.ResponseWriter, req *http.Reque
 
 	switch actionReq.Action {
 	case schemasConnection.SetMeshsyncMode:
+		if provider == nil {
+			writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+			return
+		}
 		h.setMeshsyncDeploymentModeAction(w, req, connectionID, actionReq, user, provider)
 	case flushMeshsyncAction:
+		if provider == nil {
+			writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+			return
+		}
 		h.flushMeshsyncAction(w, req, connectionID, user, provider)
 	default:
 		writeJSONError(w, fmt.Sprintf("unsupported connection action %q", actionReq.Action), http.StatusBadRequest)
@@ -81,9 +97,16 @@ func (h *Handler) setMeshsyncDeploymentModeAction(
 	user *models.User,
 	provider models.Provider,
 ) {
-	userID := user.ID
+	var userID core.Uuid
+	if user != nil {
+		userID = user.ID
+	}
+	var systemID uuid.UUID
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(systemID).WithCategory("connection").WithAction("update")
 
 	if actionReq.Mode == nil {
 		writeJSONError(w, "mode is required for the setMeshsyncMode action", http.StatusBadRequest)
@@ -224,9 +247,16 @@ func (h *Handler) flushMeshsyncAction(
 	user *models.User,
 	provider models.Provider,
 ) {
-	userID := user.ID
+	var userID core.Uuid
+	if user != nil {
+		userID = user.ID
+	}
+	var systemID uuid.UUID
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(systemID).WithCategory("connection").WithAction("update")
 
 	existing, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil || existing == nil {

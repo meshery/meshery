@@ -7658,6 +7658,24 @@
       "suggestedRemediation": [
         "Make sure Meshery Server can write to its database, then restart Meshery Server"
       ]
+    },
+    {
+      "code": "meshery-server-1492",
+      "moniker": "ErrNilProviderCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1492",
+      "severity": "alert",
+      "shortDescription": "Provider not initialized",
+      "longDescription": "Provider instance passed to the handler is nil",
+      "probableCause": [
+        "The handler was invoked without an initialized provider instance"
+      ],
+      "suggestedRemediation": [
+        "Ensure the provider is properly initialized before handling the request"
+      ]
     }
   ],
   "schemaVersion": 2

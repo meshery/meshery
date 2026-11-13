@@ -471,3 +471,31 @@ func TestSetOperatorStatus(t *testing.T) {
 // 		})
 // 	}
 // }
+
+// TestGetEndpointTrimsTrailingSlashes guards issue #23389: an endpoint stored with a trailing slash
+// (which `system context create --url http://host:9081/` accepts) made every request path start with
+// "//api/...". Meshery Server redirects that, and the client re-sent a redirected DELETE as a GET.
+func TestGetEndpointTrimsTrailingSlashes(t *testing.T) {
+	cases := map[string]string{
+		"http://localhost:9081/":  "http://localhost:9081",
+		"http://localhost:9081//": "http://localhost:9081",
+		"http://localhost:9081":   "http://localhost:9081",
+		"":                        "",
+	}
+	for stored, want := range cases {
+		ctx := Context{Endpoint: stored}
+		if got := ctx.GetEndpoint(); got != want {
+			t.Errorf("GetEndpoint() with endpoint %q = %q, want %q", stored, got, want)
+		}
+	}
+}
+
+func TestGetBaseMesheryURLTrimsTrailingSlash(t *testing.T) {
+	mctl := MesheryCtlConfig{
+		Contexts:       map[string]Context{"local": {Endpoint: "http://localhost:9081/"}},
+		CurrentContext: "local",
+	}
+	if got, want := mctl.GetBaseMesheryURL(), "http://localhost:9081"; got != want {
+		t.Errorf("GetBaseMesheryURL() = %q, want %q", got, want)
+	}
+}
