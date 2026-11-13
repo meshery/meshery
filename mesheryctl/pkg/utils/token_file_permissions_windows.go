@@ -36,7 +36,7 @@ func createPrivateTokenFile(path string) (*os.File, error) {
 		return nil, err
 	}
 	sa := windows.SecurityAttributes{Length: uint32(unsafe.Sizeof(windows.SecurityAttributes{})), SecurityDescriptor: sd}
-	handle, err := windows.CreateFile(name, windows.GENERIC_WRITE|windows.WRITE_DAC|windows.READ_CONTROL,
+	handle, err := windows.CreateFile(name, windows.GENERIC_WRITE|windows.WRITE_DAC|windows.READ_CONTROL|windows.DELETE,
 		0, &sa, windows.CREATE_NEW, windows.FILE_ATTRIBUTE_NORMAL, 0)
 	if err != nil {
 		return nil, err
@@ -69,30 +69,44 @@ func writeTokenFile(path string, data []byte) error {
 	if _, err := f.Write(data); err != nil {
 		return err
 	}
-	if err := f.Close(); err != nil {
-		return err
-	}
-	fromPath, err := tokenFileLongPath(tempPath)
-	if err != nil {
-		return err
-	}
 	toPath, err := tokenFileLongPath(path)
 	if err != nil {
 		return err
 	}
-	from, err := windows.UTF16PtrFromString(fromPath)
-	if err != nil {
+	if err := f.Sync(); err != nil {
 		return err
 	}
-	to, err := windows.UTF16PtrFromString(toPath)
-	if err != nil {
-		return err
-	}
-	if err := windows.MoveFileEx(from, to, windows.MOVEFILE_REPLACE_EXISTING|windows.MOVEFILE_WRITE_THROUGH); err != nil {
+	if err := replaceTokenFile(f, toPath); err != nil {
 		return fmt.Errorf("replace token file: %w", err)
 	}
 	moved = true
-	return nil
+	return f.Close()
+}
+
+// replaceTokenFile uses POSIX rename semantics so a destination with a
+// delete-sharing metadata handle can be replaced without reusing its object.
+func replaceTokenFile(file *os.File, destination string) error {
+	name, err := windows.UTF16FromString(destination)
+	if err != nil {
+		return err
+	}
+	name = name[:len(name)-1]
+	type renameInfo struct {
+		Flags          uint32
+		RootDirectory  windows.Handle
+		FileNameLength uint32
+		FileName       [1]uint16
+	}
+	const replaceIfExists = 0x1
+	const posixSemantics = 0x2
+	var info renameInfo
+	offset := int(unsafe.Offsetof(info.FileName))
+	buffer := make([]byte, offset+len(name)*2)
+	entry := (*renameInfo)(unsafe.Pointer(&buffer[0]))
+	entry.Flags = replaceIfExists | posixSemantics
+	entry.FileNameLength = uint32(len(name) * 2)
+	copy(unsafe.Slice((*uint16)(unsafe.Pointer(&buffer[offset])), len(name)), name)
+	return windows.SetFileInformationByHandle(windows.Handle(file.Fd()), windows.FileRenameInfoEx, &buffer[0], uint32(len(buffer)))
 }
 
 func tokenFileLongPath(path string) (string, error) {
