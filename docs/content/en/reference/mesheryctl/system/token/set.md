@@ -14,7 +14,7 @@ Set token for context
 
 ## Synopsis
 
-Set token for current context or context specified with --context flag.
+Set token for current context or context specified with --context flag. The token must already exist in your meshconfig tokens.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
