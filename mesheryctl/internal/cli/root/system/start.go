@@ -104,6 +104,13 @@ mesheryctl system start --provider Meshery
 		if err != nil {
 			return err
 		}
+		// Validate the version of the context Meshery will start with, which is
+		// the one given by --context when it is set.
+		if tempContext != "" {
+			if err := cfg.SetCurrentContext(tempContext); err != nil {
+				return ErrGetCurrentContext(err)
+			}
+		}
 		ctx, err := cfg.GetCurrentContext()
 		if err != nil {
 			return ErrGetCurrentContext(err)
