@@ -13,12 +13,12 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	isql "github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
-	isql "github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/events"
 )
@@ -81,6 +81,76 @@ func deleteConnection(t *testing.T, h *Handler, provider models.Provider, connec
 
 	h.DeleteConnection(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
 	return rec
+}
+
+func deleteConnectionWithRawID(t *testing.T, h *Handler, provider models.Provider, rawID string, user *models.User) *httptest.ResponseRecorder {
+	t.Helper()
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/integrations/connections/"+rawID, nil)
+	req = mux.SetURLVars(req, map[string]string{"connectionId": rawID})
+	rec := httptest.NewRecorder()
+
+	h.DeleteConnection(rec, req, nil, user, provider)
+	return rec
+}
+
+func TestDeleteConnection_InvalidUUID_ReturnsBadRequest(t *testing.T) {
+	h := &Handler{
+		config: &models.HandlerConfig{},
+		log:    newTestLogger(t),
+	}
+
+	rec := deleteConnectionWithRawID(t, h, nil, "not-a-valid-uuid", &models.User{ID: uuid.Must(uuid.NewV4())})
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusBadRequest, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+		t.Errorf("expected error body to contain %s, got: %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+	}
+}
+
+func TestDeleteConnection_NilUUID_ReturnsBadRequest(t *testing.T) {
+	h := &Handler{
+		config: &models.HandlerConfig{},
+		log:    newTestLogger(t),
+	}
+
+	rec := deleteConnectionWithRawID(t, h, nil, uuid.Nil.String(), &models.User{ID: uuid.Must(uuid.NewV4())})
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusBadRequest, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+		t.Errorf("expected error body to contain %s, got: %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+	}
+}
+
+func TestDeleteConnection_NilProvider_ReturnsErrorWithoutPanic(t *testing.T) {
+	h := &Handler{
+		config: &models.HandlerConfig{},
+		log:    newTestLogger(t),
+	}
+
+	validID := uuid.Must(uuid.NewV4()).String()
+	rec := deleteConnectionWithRawID(t, h, nil, validID, &models.User{ID: uuid.Must(uuid.NewV4())})
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusInternalServerError, rec.Body.String())
+	}
+}
+
+func TestDeleteConnection_NilUser_DoesNotPanic(t *testing.T) {
+	h := &Handler{
+		config: &models.HandlerConfig{},
+		log:    newTestLogger(t),
+	}
+
+	rec := deleteConnectionWithRawID(t, h, nil, "not-a-valid-uuid", nil)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusBadRequest, rec.Body.String())
+	}
 }
 
 // TestDeleteConnectionNotFound pins the status `mesheryctl connection delete`
