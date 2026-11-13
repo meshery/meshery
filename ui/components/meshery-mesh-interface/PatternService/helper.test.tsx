@@ -109,12 +109,12 @@ describe('calculateGrid', () => {
     expect(grid.lg).toBe(12);
   });
 
-  it('returns a normal grid for primitive types', () => {
+  it('gives primitive fields the full panel width', () => {
     const grid = calculateGrid({
       type: 'string',
       content: { props: { schema: {} } },
     });
-    expect(grid.lg).toBe(6);
+    expect(grid.lg).toBe(12);
   });
 
   it('honors x-rjsf-grid-area overrides', () => {

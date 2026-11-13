@@ -1465,6 +1465,19 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 	return updatedConnection, http.StatusOK, nil
 }
 
+// UpdateConnectionStatusIf updates a connection's status to newStatus only
+// when its stored status is one of fromStatuses, and reports whether the
+// write applied. The check and the write are a single UPDATE ... WHERE
+// status IN (...) statement in the local store, so no concurrent status
+// change can slip between them (issue #23248).
+func (l *DefaultLocalProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	applied, updatedConnection, err := l.ConnectionPersister.UpdateConnectionStatusIf(connectionID, fromStatuses, newStatus)
+	if err != nil {
+		return false, nil, err
+	}
+	return applied, updatedConnection, nil
+}
+
 // UpdateConnectionById updates an existing connection identified by connId (or
 // conn.ID when connId is not set), backfilling any fields omitted by the
 // partial payload and preserving the connection's original creation time and

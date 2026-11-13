@@ -153,8 +153,10 @@ mesheryctl filter view "filter name"
 			} else {
 				shortID := utils.TruncateID(utils.FormatUUID(selectedFilter.ID, "unknown"))
 
-				sanitizer := strings.NewReplacer("/", "_", " ", "_")
-				sanitizedName := sanitizer.Replace(selectedFilter.Name)
+				sanitizedName := utils.SanitizeFileName(selectedFilter.Name)
+				if sanitizedName == "" {
+					sanitizedName = shortID
+				}
 
 				fileName = fmt.Sprintf(
 					"filter_%s_%s.%s",

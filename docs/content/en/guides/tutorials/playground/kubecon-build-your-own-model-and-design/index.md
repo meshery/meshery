@@ -312,10 +312,11 @@ Confirm `mesheryctl system context view` shows the Playground endpoint before yo
 3. **Apply the edits with `jq`.** Run this from the directory where you ran `model init`. Set `HANDLE` to your handle and `DL` to the folder holding the two downloaded SVGs:
 
    ```sh
+   (
    HANDLE=<your-handle>
    DL=~/Downloads
    MODEL=kubecon-$HANDLE-logo
-   cd "$MODEL/v0.1.0" || exit 1
+   cd "$MODEL/v0.1.0" || { echo "model directory not found: $MODEL/v0.1.0"; exit 1; }
 
    test -r "$DL/kubecon-logo-color.svg" && test -r "$DL/kubecon-logo-white.svg" || { echo "SVG files not found in $DL"; exit 1; }
 
@@ -336,6 +337,7 @@ Confirm `mesheryctl system context view` shows the Playground endpoint before yo
      | .version = "v0.1.0"
      | .displayName = "KubeCon Logo"
      | .component.kind = "kubecon-logo"
+     | .component.version = "v0.1.0"
      | .metadata.isAnnotation = true
      | .styles.svgColor = $c | .styles.svgWhite = $w
      | .model.name = $name | .model.version = "v0.1.0" | .model.model.version = "v0.1.0"
@@ -343,10 +345,10 @@ Confirm `mesheryctl system context view` shows the Playground endpoint before yo
 
    rm components/component.json relationships/relationship.json
    cd ../..
+   )
    ```
 
    You now have `model.json` and a single `components/kubecon-logo.json`. If you prefer to edit by hand, make the same changes in your editor. Generate each SVG value with `sed 's/<?xml[^>]*?>//' kubecon-logo-color.svg | jq -Rs .` (and the same for the white SVG), then paste the whole output, including its surrounding quotes.
-
 
 4. **Package the model as an OCI archive:**
 
