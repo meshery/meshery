@@ -84,10 +84,10 @@ var (
 	ErrDockerComposeStopCode          = "mesheryctl-1228"
 	ErrGitHubAPIResponseCode          = "mesheryctl-1255"
 	ErrAmbiguousIDCode                = "mesheryctl-1256"
-	ErrIDLookupIncompleteCode         = "mesheryctl-1257"
-	ErrIDLookupPageLimitCode          = "mesheryctl-1258"
 	ErrProviderNotFoundCode           = "mesheryctl-1259"
 	ErrProviderAmbiguousCode          = "mesheryctl-1260"
+	ErrIDLookupIncompleteCode         = "mesheryctl-1261"
+	ErrIDLookupPageLimitCode          = "mesheryctl-1262"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
