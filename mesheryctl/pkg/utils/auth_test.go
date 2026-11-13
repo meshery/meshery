@@ -454,7 +454,8 @@ func TestWriteTokenFile(t *testing.T) {
 		t.Fatal(err)
 	}
 	// Windows only tracks the read-only attribute, so a mode check is
-	// meaningless there; the content check below still applies.
+	// meaningless there; its ACL is checked in tokenfile_windows_test.go. The
+	// content check below applies everywhere.
 	if runtime.GOOS != "windows" {
 		if mode := info.Mode().Perm(); mode != 0o600 {
 			t.Fatalf("token file mode = %o, want 600", mode)
