@@ -63,7 +63,7 @@ section[class*="tabbed"] {
 }
 
 /* Active tab styling for all levels */
-input:checked + label {
+[class*="tab-container"] > input:checked + label {
   color: var(--color-secondary-dark);
   border: 1px solid #ddd;
   border-top: 2px solid var(--brand-color);
@@ -74,12 +74,12 @@ input:checked + label {
 }
 
 /* Show content for active tabs at any level */
-input:checked + label + section[class*="tabbed"] {
+[class*="tab-container"] > input:checked + label + section[class*="tabbed"] {
   display: block;
 }
 
 /* Nested tab specific styling */
-section[class*="tabbed"] input:checked + label {
+section[class*="tabbed"] [class*="tab-container"] > input:checked + label {
   font-size: 0.95em;
   padding: 10px 20px 10px 10px;
   border-bottom-color: #fff;  /* Match content background */
