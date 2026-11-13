@@ -337,6 +337,7 @@ Confirm `mesheryctl system context view` shows the Playground endpoint before yo
      | .version = "v0.1.0"
      | .displayName = "KubeCon Logo"
      | .component.kind = "kubecon-logo"
+     | .component.version = "v0.1.0"
      | .metadata.isAnnotation = true
      | .styles.svgColor = $c | .styles.svgWhite = $w
      | .model.name = $name | .model.version = "v0.1.0" | .model.model.version = "v0.1.0"
