@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"gopkg.in/yaml.v2"
+	"gorm.io/gorm"
 )
 
 // FetchResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
@@ -20,18 +22,35 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 
 	err := req.ParseForm()
 	if err != nil {
-		h.log.Error(ErrParseForm(err))
-		writeMeshkitError(w, ErrParseForm(err), http.StatusForbidden)
+		if h.log != nil {
+			h.log.Error(ErrParseForm(err))
+		}
+		writeMeshkitError(w, ErrParseForm(err), http.StatusBadRequest)
 		return
 	}
 	q := req.Form
 
-	tokenString := req.Context().Value(models.TokenCtxKey).(string)
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+
+	tokenString, ok := req.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		fetchTokenErr := ErrFetchToken(fmt.Errorf("token not found in request context"))
+		if h.log != nil {
+			h.log.Error(fetchTokenErr)
+		}
+		writeMeshkitError(w, fetchTokenErr, http.StatusInternalServerError)
+		return
+	}
 
 	bdr, err := p.FetchResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), profileID)
 	if err != nil {
-		h.log.Error(ErrFetchResults(err))
-		writeMeshkitError(w, ErrFetchResults(err), http.StatusInternalServerError)
+		if h.log != nil {
+			h.log.Error(ErrFetchResults(err))
+		}
+		writeMeshkitError(w, ErrFetchResults(err), providerStatusOrInternal(err))
 		return
 	}
 	w.Header().Set("content-type", "application/json")
@@ -42,18 +61,35 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	err := req.ParseForm()
 	if err != nil {
-		h.log.Error(ErrParseForm(err))
-		writeMeshkitError(w, ErrParseForm(err), http.StatusForbidden)
+		if h.log != nil {
+			h.log.Error(ErrParseForm(err))
+		}
+		writeMeshkitError(w, ErrParseForm(err), http.StatusBadRequest)
 		return
 	}
 	q := req.Form
 
-	tokenString := req.Context().Value(models.TokenCtxKey).(string)
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+
+	tokenString, ok := req.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		fetchTokenErr := ErrFetchToken(fmt.Errorf("token not found in request context"))
+		if h.log != nil {
+			h.log.Error(fetchTokenErr)
+		}
+		writeMeshkitError(w, fetchTokenErr, http.StatusInternalServerError)
+		return
+	}
 
 	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
 	if err != nil {
-		h.log.Error(ErrFetchResults(err))
-		writeMeshkitError(w, ErrFetchResults(err), http.StatusInternalServerError)
+		if h.log != nil {
+			h.log.Error(ErrFetchResults(err))
+		}
+		writeMeshkitError(w, ErrFetchResults(err), providerStatusOrInternal(err))
 		return
 	}
 	w.Header().Set("content-type", "application/json")
@@ -62,35 +98,64 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 
 // GetResultHandler gets an individual result from provider
 func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
-	// if req.Method != http.MethodGet {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
-	// TODO: may be force login if token not found?????
 	id := mux.Vars(req)["id"]
 	if id == "" {
-		h.log.Error(ErrQueryGet("id"))
+		if h.log != nil {
+			h.log.Error(ErrQueryGet("id"))
+		}
 		writeMeshkitError(w, ErrMissingResultID(), http.StatusBadRequest)
 		return
 	}
-	key := uuid.FromStringOrNil(id)
-	if key == uuid.Nil {
-		h.log.Error(ErrQueryGet("key"))
+	key, err := uuid.FromString(id)
+	if err != nil || key == uuid.Nil {
+		if h.log != nil {
+			h.log.Error(ErrQueryGet("key"))
+		}
 		writeMeshkitError(w, models.ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)
 		return
 	}
 
-	tokenString := req.Context().Value(models.TokenCtxKey).(string)
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+
+	tokenString, ok := req.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		fetchTokenErr := ErrFetchToken(fmt.Errorf("token not found in request context"))
+		if h.log != nil {
+			h.log.Error(fetchTokenErr)
+		}
+		writeMeshkitError(w, fetchTokenErr, http.StatusInternalServerError)
+		return
+	}
 
 	bdr, err := p.GetResult(tokenString, key)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
+		if h.log != nil {
+			h.log.Error(ErrGetResult(err))
+		}
+		status := providerStatusOrInternal(err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			status = http.StatusNotFound
+		}
+		writeMeshkitError(w, ErrGetResult(err), status)
 		return
 	}
+	if bdr == nil {
+		notFoundErr := ErrGetResult(fmt.Errorf("result not found for id: %s", key))
+		if h.log != nil {
+			h.log.Error(notFoundErr)
+		}
+		writeMeshkitError(w, notFoundErr, http.StatusNotFound)
+		return
+	}
+
 	sp, err := bdr.ConvertToSpec(h.log)
 	if err != nil {
-		h.log.Error(ErrConvertToSpec(err))
+		if h.log != nil {
+			h.log.Error(ErrConvertToSpec(err))
+		}
 		writeMeshkitError(w, ErrConvertToSpec(err), http.StatusInternalServerError)
 		return
 	}
@@ -98,7 +163,9 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="result_%s.yaml"`, bdr.ID))
 	b, err := yaml.Marshal(sp)
 	if err != nil {
-		h.log.Error(models.ErrMarshal(err, "test result"))
+		if h.log != nil {
+			h.log.Error(models.ErrMarshal(err, "test result"))
+		}
 		// yaml.Marshal failed before we wrote the body; send JSON error with
 		// the marshal failure context. Override content-type back to JSON.
 		w.Header().Set("content-type", "application/json")
@@ -112,16 +179,25 @@ func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Reques
 	w.Header().Set("content-type", "application/json")
 	err := req.ParseForm()
 	if err != nil {
-		h.log.Error(ErrParseForm(err))
-		writeMeshkitError(w, ErrParseForm(err), http.StatusForbidden)
+		if h.log != nil {
+			h.log.Error(ErrParseForm(err))
+		}
+		writeMeshkitError(w, ErrParseForm(err), http.StatusBadRequest)
 		return
 	}
 	q := req.Form
 
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+
 	bdr, err := p.FetchSmiResults(req, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
-		h.log.Error(ErrFetchSMIResults(err))
-		writeMeshkitError(w, ErrFetchSMIResults(err), http.StatusInternalServerError)
+		if h.log != nil {
+			h.log.Error(ErrFetchSMIResults(err))
+		}
+		writeMeshkitError(w, ErrFetchSMIResults(err), providerStatusOrInternal(err))
 		return
 	}
 	_, _ = w.Write(bdr)
@@ -132,22 +208,47 @@ func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.R
 	w.Header().Set("content-type", "application/json")
 	err := req.ParseForm()
 	if err != nil {
-		h.log.Error(ErrParseForm(err))
-		writeMeshkitError(w, ErrParseForm(err), http.StatusForbidden)
+		if h.log != nil {
+			h.log.Error(ErrParseForm(err))
+		}
+		writeMeshkitError(w, ErrParseForm(err), http.StatusBadRequest)
 		return
 	}
 	q := req.Form
+
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+
 	id := mux.Vars(req)["id"]
-	key := uuid.FromStringOrNil(id)
-	if key == uuid.Nil {
-		h.log.Error(ErrQueryGet("key"))
+	key, err := uuid.FromString(id)
+	if err != nil || key == uuid.Nil {
+		if h.log != nil {
+			h.log.Error(ErrQueryGet("key"))
+		}
 		writeMeshkitError(w, models.ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)
 		return
 	}
+
 	bdr, err := p.FetchSmiResult(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), key)
 	if err != nil {
-		h.log.Error(ErrFetchSMIResults(err))
-		writeMeshkitError(w, ErrFetchSMIResults(err), http.StatusInternalServerError)
+		if h.log != nil {
+			h.log.Error(ErrFetchSMIResults(err))
+		}
+		status := providerStatusOrInternal(err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			status = http.StatusNotFound
+		}
+		writeMeshkitError(w, ErrFetchSMIResults(err), status)
+		return
+	}
+	if len(bdr) == 0 {
+		notFoundErr := ErrFetchSMIResults(fmt.Errorf("SMI result not found for id: %s", key))
+		if h.log != nil {
+			h.log.Error(notFoundErr)
+		}
+		writeMeshkitError(w, notFoundErr, http.StatusNotFound)
 		return
 	}
 	_, _ = w.Write(bdr)
