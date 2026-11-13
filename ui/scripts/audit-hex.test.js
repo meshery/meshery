@@ -20,10 +20,7 @@ function createFixture(t) {
   t.after(() => fs.rmSync(fixture, { recursive: true, force: true }));
 
   fs.mkdirSync(path.join(fixture, 'ui', 'scripts'), { recursive: true });
-  fs.copyFileSync(
-    productionScript,
-    path.join(fixture, 'ui', 'scripts', 'audit-hex.js'),
-  );
+  fs.copyFileSync(productionScript, path.join(fixture, 'ui', 'scripts', 'audit-hex.js'));
 
   fs.mkdirSync(path.join(fixture, 'ui', 'components'), { recursive: true });
 
