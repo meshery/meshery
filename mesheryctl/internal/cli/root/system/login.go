@@ -97,15 +97,9 @@ mesheryctl system login -p Meshery
 
 		utils.Log.Info("authenticated")
 
-		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
+		token, err := utils.EnsureContextToken(mctlCfg, mctlCfg.GetCurrentContextName())
 		if err != nil {
-			// Attempt to create token if it doesn't already exists
-			token.Location = utils.AuthConfigFile
-
-			// Write new entry in the config
-			if err := config.AddTokenToConfig(token, utils.DefaultConfigPath); err != nil {
-				return utils.ErrAttachAuthToken(err)
-			}
+			return utils.ErrAttachAuthToken(err)
 		}
 
 		if err := utils.WriteTokenFile(token.GetLocation(), tokenData); err != nil {

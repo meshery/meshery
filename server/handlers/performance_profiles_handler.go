@@ -57,6 +57,11 @@ func (h *Handler) SavePerformanceProfileHandler(
 	j, _ := json.Marshal(parsedBody)
 	h.log.Info("performance profile is ", string(j))
 
+	if provider == nil {
+		writeJSONError(rw, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
 		//unable to save user config data
@@ -91,7 +96,11 @@ func (h *Handler) GetPerformanceProfilesHandler(
 ) {
 	q := r.URL.Query()
 
-	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+	if provider == nil {
+		writeJSONError(rw, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+	tokenString, _ := r.Context().Value(models.TokenCtxKey).(string)
 
 	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
@@ -116,6 +125,14 @@ func (h *Handler) DeletePerformanceProfileHandler(
 	provider models.Provider,
 ) {
 	performanceProfileID := performanceProfileIDFromRequest(r)
+	if performanceProfileID == "" {
+		writeJSONError(rw, "performanceProfileId is required", http.StatusBadRequest)
+		return
+	}
+	if provider == nil {
+		writeJSONError(rw, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 
 	resp, err := provider.DeletePerformanceProfile(r, performanceProfileID)
 	if err != nil {
@@ -140,6 +157,14 @@ func (h *Handler) GetPerformanceProfileHandler(
 	provider models.Provider,
 ) {
 	performanceProfileID := performanceProfileIDFromRequest(r)
+	if performanceProfileID == "" {
+		writeJSONError(rw, "performanceProfileId is required", http.StatusBadRequest)
+		return
+	}
+	if provider == nil {
+		writeJSONError(rw, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 
 	resp, err := provider.GetPerformanceProfile(r, performanceProfileID)
 	if err != nil {
