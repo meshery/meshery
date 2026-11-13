@@ -178,6 +178,12 @@ func EnsureContextToken(mctlCfg *config.MesheryCtlConfig, contextName string) (c
 	if err == nil {
 		return token, nil
 	}
+	// GetTokenForContext also errors when the context itself does not exist,
+	// and then token is empty. Only auto-create the entry when the context
+	// names a token; otherwise surface the original error.
+	if token.Name == "" {
+		return config.Token{}, err
+	}
 
 	token.Location = AuthConfigFile
 	if err := config.AddTokenToConfig(token, GetActiveConfigPath()); err != nil {

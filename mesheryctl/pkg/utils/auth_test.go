@@ -563,3 +563,62 @@ tokens:
 		t.Errorf("second GetCurrentAuthToken: %v", err)
 	}
 }
+
+// A context that does not exist names no token, so there is nothing to add:
+// EnsureContextToken must return GetTokenForContext's error and leave the
+// meshconfig untouched instead of appending a token with an empty name.
+func TestEnsureContextTokenRejectsUnknownContext(t *testing.T) {
+	mesheryDir := IsolateMesheryHome(t)
+
+	activeConfig := filepath.Join(mesheryDir, "config.yaml")
+	contents := []byte(`contexts:
+  local:
+    endpoint: http://127.0.0.1:19999
+    token: default
+    platform: docker
+current-context: local
+tokens:
+- name: default
+  location: auth.json
+`)
+	if err := os.WriteFile(activeConfig, contents, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	origDefaultConfigPath, origCfgFile, origAuthConfigFile := DefaultConfigPath, CfgFile, AuthConfigFile
+	t.Cleanup(func() {
+		DefaultConfigPath, CfgFile, AuthConfigFile = origDefaultConfigPath, origCfgFile, origAuthConfigFile
+		viper.Reset()
+	})
+	DefaultConfigPath = activeConfig
+	CfgFile = activeConfig
+	AuthConfigFile = filepath.Join(mesheryDir, "auth.json")
+
+	viper.Reset()
+	viper.SetConfigFile(activeConfig)
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token, err := EnsureContextToken(mctlCfg, "no-such-context")
+	if err == nil {
+		t.Errorf("EnsureContextToken(no-such-context) = %+v, nil; want an error", token)
+	} else if want := "no token is associated with context: no-such-context"; err.Error() != want {
+		t.Errorf("error = %q, want %q", err, want)
+	}
+	if token != (config.Token{}) {
+		t.Errorf("token = %+v, want the zero Token", token)
+	}
+
+	got, err := os.ReadFile(activeConfig)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got) != string(contents) {
+		t.Errorf("meshconfig was rewritten:\n%s", got)
+	}
+}
