@@ -717,7 +717,7 @@ func (h *Handler) reportMachineOutcome(provider models.Provider, token string, u
 // counted on, or the resolution of, an open condition is broadcast as the
 // condition's stored event, so a client updates that notification in place
 // instead of showing one whose ID was never recorded. When persisting fails the
-// event is still broadcast, as sent.
+// event is logged and not broadcast to avoid ghost notifications and 404s.
 //
 // Every server site that persists an event and broadcasts it goes through this
 // helper (or persistAndPublishEvent, outside a Handler; a system event goes
@@ -742,9 +742,8 @@ func persistAndPublishEvent(log logger.Handler, provider models.Provider, token 
 	if provider == nil || event == nil {
 		return
 	}
-	// Prepare the event here, not only on the provider's copy, so the event
-	// broadcast when persisting fails has its own ID too: events that share
-	// the zero ID overwrite one another in the UI's store.
+	// Prepare the event here, not only on the provider's copy, so the
+	// preparation mints the ID for the persisted copy.
 	prepared := models.PrepareEventForPersistence(*event, log)
 	event = &prepared
 	persisted, err := provider.PersistEvent(*event, token)
@@ -752,13 +751,13 @@ func persistAndPublishEvent(log logger.Handler, provider models.Provider, token 
 		if log != nil {
 			log.Error(err)
 		}
-	} else {
-		if persisted.Event == nil {
-			// Nothing new was recorded and the stored event is unknown.
-			return
-		}
-		event = persisted.Event
+		return
 	}
+	if persisted.Event == nil {
+		// Nothing new was recorded and the stored event is unknown.
+		return
+	}
+	event = persisted.Event
 	if broadcaster != nil {
 		broadcaster.Publish(userID, event)
 	}

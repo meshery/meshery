@@ -37,12 +37,12 @@ description: Log in to Meshery Server from mesheryctl and get an authentication 
     ```
 
     ```text
-    -rw-rw-r-- 1 ubuntu ubuntu  39 Dec 21 06:13 auth.json
+    -rw------- 1 ubuntu ubuntu  39 Dec 21 06:13 auth.json
     -rw-rw-r-- 1 ubuntu ubuntu 260 Dec 21 06:04 config.yaml
     -rw-rw-r-- 1 ubuntu ubuntu 988 Dec 21 06:04 meshery.yaml
     ```
 
-    `mesheryctl` writes the token to the file that the current context's token entry points to in `~/.meshery/config.yaml`. That file is `~/.meshery/auth.json` unless you changed it with `mesheryctl system token`.
+    `mesheryctl` writes the token to the file that the current context's token entry points to in `~/.meshery/config.yaml`. That file is `~/.meshery/auth.json` unless you changed it with `mesheryctl system token`. The token file is readable only by you (mode `0600`); `mesheryctl system login` also tightens an existing token file that an older release left readable by other users.
 
 ## Log in from a machine without a browser
 

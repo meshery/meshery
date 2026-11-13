@@ -97,10 +97,8 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 		savePath := ""
 
 		if cmdComponentViewFlags.Save {
-			componentString := strings.ReplaceAll(
+			componentString := strings.NewReplacer(" ", "_", "/", "_", "\\", "_").Replace(
 				fmt.Sprintf("%v", selectedComponent.DisplayName),
-				" ",
-				"_",
 			)
 
 			savePath = filepath.Join(

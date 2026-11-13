@@ -17,6 +17,7 @@ package relationships
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"path/filepath"
 	"strings"
 
@@ -49,7 +50,7 @@ mesheryctl relationship view [model-name] --output-format json
 mesheryctl relationship view [model-name] --output-format json --save
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
+		if len(args) != 1 || strings.TrimSpace(args[0]) == "" {
 			return utils.ErrInvalidArgument(errors.New(errInvalidArg))
 		}
 
@@ -59,7 +60,7 @@ mesheryctl relationship view [model-name] --output-format json --save
 	RunE: func(cmd *cobra.Command, args []string) error {
 		model := args[0]
 
-		relationshipAPIPath := fmt.Sprintf("api/registry/models/%s/relationships", model)
+		relationshipAPIPath := fmt.Sprintf("api/registry/models/%s/relationships", url.PathEscape(model))
 
 		selectedModel := new(relationship.RelationshipDefinition)
 
@@ -89,11 +90,7 @@ mesheryctl relationship view [model-name] --output-format json --save
 		}
 
 		if relationshipViewFlagsProvided.save {
-
-			shortID := selectedModel.ID.String()[:8]
-			sanitizer := strings.NewReplacer("/", "_")
-			sanitizedName := sanitizer.Replace(selectedModel.Model.Name)
-			fileName := fmt.Sprintf("relationship_%s_%s.%s", sanitizedName, shortID, strings.ToLower(relationshipViewFlagsProvided.outputFormat))
+			fileName := formatSaveFileName(selectedModel.Model.Name, selectedModel.ID.String(), relationshipViewFlagsProvided.outputFormat)
 			file := filepath.Join(utils.MesheryFolder, fileName)
 
 			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[relationship.RelationshipDefinition]{}
@@ -112,6 +109,23 @@ mesheryctl relationship view [model-name] --output-format json --save
 
 		return nil
 	},
+}
+
+func formatSaveFileName(modelName string, id string, outputFormat string) string {
+	shortID := id
+	if len(shortID) > 8 {
+		shortID = shortID[:8]
+	}
+	if shortID == "" {
+		shortID = "unknown"
+	}
+	sanitizer := strings.NewReplacer("/", "_", "\\", "_", " ", "_")
+	sanitizedName := sanitizer.Replace(strings.TrimSpace(modelName))
+	if sanitizedName == "" {
+		return fmt.Sprintf("relationship_%s.%s", shortID, strings.ToLower(outputFormat))
+	}
+
+	return fmt.Sprintf("relationship_%s_%s.%s", sanitizedName, shortID, strings.ToLower(outputFormat))
 }
 
 func formatLabel(rows []relationship.RelationshipDefinition) []string {

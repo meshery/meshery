@@ -15,11 +15,12 @@
 package system
 
 import (
-	"os"
+	stderrors "errors"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitErrors "github.com/meshery/meshkit/errors"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -83,6 +84,14 @@ mesheryctl system login -p Meshery
 		}
 
 		if err != nil {
+			// A structured MeshKit error (for example an unknown --provider)
+			// already names its cause and remediation; wrapping it as a
+			// connectivity failure would mislabel it.
+			var structured *meshkitErrors.Error
+			if stderrors.As(err, &structured) {
+				utils.Log.Error(err)
+				return err
+			}
 			return errors.Wrap(err, "authentication failed: Unable to reach Meshery Server. Verify system readiness with `mesheryctl system check`.")
 		}
 
@@ -99,7 +108,7 @@ mesheryctl system login -p Meshery
 			}
 		}
 
-		if err := os.WriteFile(token.GetLocation(), tokenData, 0o666); err != nil {
+		if err := utils.WriteTokenFile(token.GetLocation(), tokenData); err != nil {
 			return utils.ErrCreateFile(token.GetLocation(), err)
 		}
 
