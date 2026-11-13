@@ -10,9 +10,13 @@
   width: 100%;
 }
 
-/* Hide all radio inputs */
-input[type="radio"] {
-  display: none;
+/* Visually hide radio inputs for tabs while preserving keyboard accessibility */
+[class*="tab-container"] > input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
 }
 
 /* Generic tabbed section styling - applies to all levels */
@@ -26,8 +30,8 @@ section[class*="tabbed"] {
   z-index: 0;
 }
 
-/* Tab label styling - applies to all levels */
-label {
+/* Tab label styling - scoped to tab containers */
+[class*="tab-container"] > label {
   display: inline-flex;
   align-items: center;
   padding: 15px 25px 15px 15px;
@@ -37,25 +41,29 @@ label {
   position: relative;
   z-index: 1;
   gap: 10px;
-}
 
-/* Hover state for all labels */
-label:hover {
-  color: #888;
-  background-color: var(--brand-color-secondary-50);
+  &:hover {
+    color: #888;
+    background-color: var(--brand-color-secondary-50);
+  }
 }
 
 /* Icon styling using pseudo-element */
-label:before {
+[class*="tab-container"] > label:before {
   font-family: 'FontAwesome';
   content: attr(data-icon);
   display: inline-block;
   flex-shrink: 0;
 }
 
+/* Keyboard focus indicator on tab label */
+[class*="tab-container"] > input[type="radio"]:focus-visible + label {
+  outline: 2px solid var(--brand-color, #00d3a9);
+  outline-offset: 2px;
+}
 
 /* Active tab styling for all levels */
-input:checked + label {
+[class*="tab-container"] > input:checked + label {
   color: var(--color-secondary-dark);
   border: 1px solid #ddd;
   border-top: 2px solid var(--brand-color);
@@ -66,17 +74,17 @@ input:checked + label {
 }
 
 /* Show content for active tabs at any level */
-input:checked + label + section[class*="tabbed"] {
+[class*="tab-container"] > input:checked + label + section[class*="tabbed"] {
   display: block;
 }
 
 /* Nested tab specific styling */
-section[class*="tabbed"] input:checked + label {
+section[class*="tabbed"] [class*="tab-container"] > input:checked + label {
   font-size: 0.95em;
   padding: 10px 20px 10px 10px;
   border-bottom-color: #fff;  /* Match content background */
   position: relative;
-  z-index: 2;  /* Ensure tab appears above content border 
+  z-index: 2;  /* Ensure tab appears above content border */
 }
 
 section[class*="tabbed"] section[class*="tabbed"] {
@@ -87,12 +95,12 @@ section[class*="tabbed"] section[class*="tabbed"] {
 
 /* Mobile responsiveness */
 @media screen and (max-width: 650px) {
-  label {
+  [class*="tab-container"] > label {
     font-size: 0.75rem;
     padding: 10px 8px;
   }
   
-  label i {
+  [class*="tab-container"] > label i {
     font-size: 18px;
     margin: 0;
   }
