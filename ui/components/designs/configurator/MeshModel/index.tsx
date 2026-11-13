@@ -69,7 +69,6 @@ export default function DesignConfigurator() {
 
   function handleCategoryChange(event) {
     setSelectedCategory(event.target.value);
-    setSelectedModel('');
     getModelFromCategory(event.target.value);
   }
 
