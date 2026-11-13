@@ -72,6 +72,8 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
             Array.isArray(parsedSchema.properties)
           ) {
             parsedSchema.properties = {};
+          } else {
+            parsedSchema.properties = { ...parsedSchema.properties };
           }
           if (!parsedSchema.type) {
             parsedSchema.type = 'object';
