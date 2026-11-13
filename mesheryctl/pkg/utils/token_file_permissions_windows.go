@@ -33,6 +33,9 @@ func openTokenFile(path string) (*os.File, error) {
 		return nil, err
 	}
 	sa := windows.SecurityAttributes{Length: uint32(unsafe.Sizeof(windows.SecurityAttributes{})), SecurityDescriptor: sd}
+	// Open with no sharing: a handle opened under the previous, permissive
+	// DACL keeps its granted access even after the DACL is replaced, so the
+	// write must not start while any other handle has the file open.
 	handle, err := windows.CreateFile(name, windows.GENERIC_WRITE|windows.WRITE_DAC|windows.READ_CONTROL,
 		0, &sa, windows.OPEN_ALWAYS, windows.FILE_ATTRIBUTE_NORMAL, 0)
 	if err != nil {
