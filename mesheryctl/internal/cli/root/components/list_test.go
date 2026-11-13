@@ -11,6 +11,9 @@ import (
 )
 
 func TestListComponent(t *testing.T) {
+	t.Cleanup(func() {
+		cmdComponentListFlag = componentListFlag{Page: 1, PageSize: 10}
+	})
 
 	mesheryctlflags.InitValidators(ComponentCmd)
 	// get current directory
@@ -55,6 +58,43 @@ func TestListComponent(t *testing.T) {
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg)),
+		},
+		{
+			Name:             "list registered components with --page 0",
+			Args:             []string{"list", "--page", "0"},
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
+		},
+		{
+			Name:             "list registered components with a negative --page",
+			Args:             []string{"list", "--page", "-1"},
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '-1'")),
+		},
+		{
+			Name:             "list registered components with --pagesize 0",
+			Args:             []string{"list", "--pagesize", "0"},
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '0'")),
+		},
+		{
+			Name:             "list components with invalid pagesize reports actual flag name",
+			Args:             []string{"list", "--pagesize", "-1"},
+			URL:              testUrl,
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '-1'")),
 		},
 	}
 

@@ -38,9 +38,17 @@ const flushMeshsyncAction schemasConnection.ConnectionActionRequestAction = "flu
 // client sends only the intent and the server reads the connection by its URL
 // id, so persistence always targets the correct row.
 func (h *Handler) PerformConnectionAction(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
+	connectionID, err := uuid.FromString(mux.Vars(req)["connectionId"])
+	if err != nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %w", err))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
 	if connectionID == uuid.Nil {
-		writeJSONError(w, "invalid or missing connection id", http.StatusBadRequest)
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %s", connectionID))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
 
@@ -61,8 +69,16 @@ func (h *Handler) PerformConnectionAction(w http.ResponseWriter, req *http.Reque
 
 	switch actionReq.Action {
 	case schemasConnection.SetMeshsyncMode:
+		if provider == nil {
+			writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+			return
+		}
 		h.setMeshsyncDeploymentModeAction(w, req, connectionID, actionReq, user, provider)
 	case flushMeshsyncAction:
+		if provider == nil {
+			writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+			return
+		}
 		h.flushMeshsyncAction(w, req, connectionID, user, provider)
 	default:
 		writeJSONError(w, fmt.Sprintf("unsupported connection action %q", actionReq.Action), http.StatusBadRequest)
@@ -81,9 +97,16 @@ func (h *Handler) setMeshsyncDeploymentModeAction(
 	user *models.User,
 	provider models.Provider,
 ) {
-	userID := user.ID
+	var userID core.Uuid
+	if user != nil {
+		userID = user.ID
+	}
+	var systemID uuid.UUID
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(systemID).WithCategory("connection").WithAction("update")
 
 	if actionReq.Mode == nil {
 		writeJSONError(w, "mode is required for the setMeshsyncMode action", http.StatusBadRequest)
@@ -224,9 +247,16 @@ func (h *Handler) flushMeshsyncAction(
 	user *models.User,
 	provider models.Provider,
 ) {
-	userID := user.ID
+	var userID core.Uuid
+	if user != nil {
+		userID = user.ID
+	}
+	var systemID uuid.UUID
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(systemID).WithCategory("connection").WithAction("update")
 
 	existing, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil || existing == nil {
@@ -250,17 +280,22 @@ func (h *Handler) flushMeshsyncAction(
 		writeJSONError(w, fmt.Sprintf("no active session for connection %s; connect the cluster before flushing MeshSync", connectionID), http.StatusConflict)
 		return
 	}
-	machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
+	machineCtx, err := kubernetes.GetMachineCtx(machine.GetContext(), nil)
 	if err != nil || machineCtx == nil {
 		writeJSONError(w, fmt.Sprintf("failed to resolve machine context for connection %s", connectionID), http.StatusInternalServerError)
 		return
 	}
 
+	// One snapshot of the context under setupLock: a credential refresh can
+	// replace machineCtx.K8sContext while this handler runs, so every read
+	// below uses the same copy instead of re-reading a field that may change.
+	k8sCtx := machineCtx.K8sContextSnapshot()
+
 	// Clear the cached cluster state. Keyed on the Kubernetes server id so only
 	// this cluster's rows are removed (matches the resolver's per-cluster path).
-	if serverID := machineCtx.K8sContext.KubernetesServerID; serverID != nil {
+	if serverID := k8sCtx.KubernetesServerID; serverID != nil {
 		if perr := models.FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), serverID.String()); perr != nil {
-			_err := models.ErrFlushMeshSyncData(perr, machineCtx.K8sContext.Name, machineCtx.K8sContext.Server)
+			_err := models.ErrFlushMeshSyncData(perr, k8sCtx.Name, k8sCtx.Server)
 			event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to flush MeshSync data").WithMetadata(map[string]any{"error": _err, "connectionId": connectionID}).Build()
 			h.persistAndPublish(provider, token, userID, event)
 			h.log.Error(_err)
@@ -310,7 +345,7 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 	if !ok || machine == nil {
 		return ErrMeshsyncReconcile(fmt.Sprintf("no state machine for connection %s", connectionID))
 	}
-	machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
+	machineCtx, err := kubernetes.GetMachineCtx(machine.GetContext(), nil)
 	if err != nil {
 		return ErrMeshsyncReconcile(err.Error())
 	}
@@ -319,7 +354,10 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 	}
 
 	ctrlHelper := machineCtx.MesheryCtrlsHelper
-	contextID := machineCtx.K8sContext.ID
+	// One snapshot for the whole reconcile: teardown and redeploy must agree
+	// on the same context even if a credential refresh lands mid-reconcile.
+	k8sCtx := machineCtx.K8sContextSnapshot()
+	contextID := k8sCtx.ID
 
 	// Undeploy the previous MeshSync setup for this context.
 	ctrlHelper.
@@ -336,10 +374,10 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 	}
 	ctrlHelper.
 		SetMeshsyncDeploymentMode(newMode).
-		AddCtxControllerHandlers(machineCtx.K8sContext).
+		AddCtxControllerHandlers(k8sCtx).
 		UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
 		DeployUndeployedOperators(machineCtx.OperatorTracker, contextID).
-		AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
+		AddMeshsyncDataHandlers(ctx, k8sCtx, userID, mesheryInstanceID, provider)
 
 	return nil
 }

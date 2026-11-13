@@ -541,7 +541,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*core.Uuid)
-	if !ok {
+	if !ok || mid == nil {
 		return contexts, models.ErrMesheryInstanceID
 	}
 

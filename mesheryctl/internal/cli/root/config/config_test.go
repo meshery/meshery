@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -471,3 +472,49 @@ func TestSetOperatorStatus(t *testing.T) {
 // 		})
 // 	}
 // }
+
+// TestGetEndpointTrimsTrailingSlashes guards issue #23389: an endpoint stored with a trailing slash
+// (which `system context create --url http://host:9081/` accepts) made every request path start with
+// "//api/...". Meshery Server redirects that, and the client re-sent a redirected DELETE as a GET.
+func TestGetEndpointTrimsTrailingSlashes(t *testing.T) {
+	cases := map[string]string{
+		"http://localhost:9081/":  "http://localhost:9081",
+		"http://localhost:9081//": "http://localhost:9081",
+		"http://localhost:9081":   "http://localhost:9081",
+		"":                        "",
+	}
+	for stored, want := range cases {
+		ctx := Context{Endpoint: stored}
+		if got := ctx.GetEndpoint(); got != want {
+			t.Errorf("GetEndpoint() with endpoint %q = %q, want %q", stored, got, want)
+		}
+	}
+}
+
+func TestGetBaseMesheryURLTrimsTrailingSlash(t *testing.T) {
+	mctl := MesheryCtlConfig{
+		Contexts:       map[string]Context{"local": {Endpoint: "http://localhost:9081/"}},
+		CurrentContext: "local",
+	}
+	if got, want := mctl.GetBaseMesheryURL(), "http://localhost:9081"; got != want {
+		t.Errorf("GetBaseMesheryURL() = %q, want %q", got, want)
+	}
+}
+
+func TestAddContextRejectsDotBeforeWriting(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "config.yaml")
+	original := []byte("contexts: {}\ncurrent-context: local\n")
+	if err := os.WriteFile(path, original, 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := AddContextToConfig("local.dev", Context{}, path, true, false); err == nil || !strings.Contains(err.Error(), "cannot contain") {
+		t.Fatalf("expected invalid name error, got %v", err)
+	}
+	got, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got) != string(original) {
+		t.Fatalf("config changed: %s", got)
+	}
+}

@@ -248,8 +248,9 @@ func (e *EventsPersister) PersistSystemEvent(event events.Event) (PersistedEvent
 // PersistAndPublishSystemEvent persists a system event and broadcasts it to
 // userID as stored: with the stored row's ID, and, for an occurrence counted on or the
 // resolution of an open condition, as the condition's stored event. When
-// persisting fails, or there is no persister, the event is still broadcast, as
-// sent, and the persistence error is returned for the caller to report.
+// persisting fails, the persistence error is returned and broadcast is skipped
+// to prevent ghost notifications. A nil persister skips persistence and
+// broadcasts the event as sent. A nil broadcaster skips the broadcast.
 //
 // It is the system-event counterpart of the handlers' persistAndPublish: every
 // site that persists a system event and broadcasts it goes through it, never
@@ -260,18 +261,19 @@ func PersistAndPublishSystemEvent(persister SystemEventPersister, broadcaster *B
 	if persister != nil {
 		var persisted PersistedEvent
 		persisted, err = persister.PersistSystemEvent(*event)
-		if err == nil {
-			if persisted.Event == nil {
-				// Nothing new was recorded and the stored event is unknown.
-				return nil
-			}
-			event = persisted.Event
+		if err != nil {
+			return err
 		}
+		if persisted.Event == nil {
+			// Nothing new was recorded and the stored event is unknown.
+			return nil
+		}
+		event = persisted.Event
 	}
 	if broadcaster != nil {
 		broadcaster.Publish(userID, event)
 	}
-	return err
+	return nil
 }
 
 // correlatedEventsMu serializes correlated creates and resolutions within this

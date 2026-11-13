@@ -123,7 +123,7 @@ func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
 		mesheryctllogger.Log.Fatal(err)
 	}
 
-	return currentContext.Endpoint
+	return currentContext.GetEndpoint()
 }
 
 func (mc *MesheryCtlConfig) GetCurrentContextName() string {
@@ -186,9 +186,13 @@ func (mc *MesheryCtlConfig) GetTokens() *[]Token {
 	return &mc.Tokens
 }
 
-// GetEndpoint returns the endpoint of the current context
+// GetEndpoint returns the endpoint of the current context, without trailing slashes.
+// Request paths are appended as "<endpoint>/api/...", so a stored endpoint ending in "/" (which
+// `system context create --url` accepts) produced "//api/...". Meshery Server redirects that path, and
+// Go's HTTP client re-sends a redirected DELETE, POST or PUT as a GET, so the request silently did
+// something else. Trimming here covers existing configs as well as new ones.
 func (ctx *Context) GetEndpoint() string {
-	return ctx.Endpoint
+	return strings.TrimRight(ctx.Endpoint, "/")
 }
 
 // SetEndpoint sets the endpoint of the current context
@@ -454,7 +458,7 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 	if err != nil {
 		return errors.Wrap(err, "error processing config")
 	}
-	context, err := mctlCfg.GetContext(ctxName)
+	context, err := mctlCfg.CheckIfGivenContextIsValid(ctxName)
 	if err != nil {
 		return err
 	}
@@ -469,6 +473,10 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 // AddContextToConfig adds context passed to it to mesheryctl config file. If overwrite is set to true, existing
 // context with the contextName is overwritten
 func AddContextToConfig(contextName string, context Context, configPath string, set bool, overwrite bool) error {
+	if strings.Contains(contextName, ".") {
+		return fmt.Errorf("context name cannot contain %q", ".")
+	}
+
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return err
 	}

@@ -37,6 +37,7 @@ func Registered() machines.State {
 			machines.Connect:  machines.CONNECTED,
 			machines.NotFound: machines.NOTFOUND,
 			machines.Ignore:   machines.IGNORED,
+			machines.Delete:   machines.DELETED,
 		},
 		Action: &RegisterAction{},
 	}
@@ -86,7 +87,9 @@ func NotFound() machines.State {
 
 func Delete() machines.State {
 	return machines.State{
-		Events: machines.Events{},
+		Events: machines.Events{
+			machines.Delete: machines.DELETED,
+		},
 		Action: &DeleteAction{},
 	}
 }
@@ -141,6 +144,17 @@ func (m *MachineCtx) IsDisconnected() bool {
 	m.setupLock.Lock()
 	defer m.setupLock.Unlock()
 	return m.disconnected
+}
+
+// K8sContextSnapshot returns a copy of K8sContext taken under setupLock, so a
+// reader outside the setup goroutine does not race a RefreshK8sContext write.
+// RefreshK8sContext replaces the whole struct (it never mutates the stored
+// value in place), so the copy's scalar fields stay consistent even if a
+// refresh lands after the snapshot is taken.
+func (m *MachineCtx) K8sContextSnapshot() models.K8sContext {
+	m.setupLock.Lock()
+	defer m.setupLock.Unlock()
+	return m.K8sContext
 }
 
 const (

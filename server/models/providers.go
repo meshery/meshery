@@ -714,6 +714,20 @@ type Provider interface {
 	UpdateConnection(req *http.Request, conn *connections.Connection) (*connections.Connection, error)
 	UpdateConnectionById(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error)
 	UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
+
+	// UpdateConnectionStatusIf updates a connection's status to newStatus
+	// only when its stored status is one of fromStatuses, and reports
+	// whether the write applied. The check and the write are one atomic
+	// step in the store, so no status change can slip between them: a
+	// background Discovery uses it to refuse to move a connection the
+	// user has since disconnected, deleted or ignored back to connected
+	// (issue #23248). A local provider evaluates the condition in a
+	// single UPDATE ... WHERE status IN (...) statement; a remote
+	// provider has no conditional-update API and evaluates it
+	// best-effort by reading the stored status immediately before the
+	// write, so callers must not rely on it alone for the remote path.
+	UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error)
+
 	DeleteConnection(req *http.Request, connID core.Uuid) (*connections.Connection, error)
 	DeleteMesheryConnection() error
 	// LogoutMesheryServer revokes the server-cached user session against the

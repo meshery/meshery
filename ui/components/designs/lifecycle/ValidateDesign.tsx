@@ -1,12 +1,10 @@
 import React, { useRef, useEffect } from 'react';
-import { useSelector } from '@xstate/react';
 import { List, ListItemText, ListItemIcon, Typography, Collapse } from '@sistent/sistent';
 import { ExpandLess, ExpandMore } from '@/assets/icons';
 import { ComponentIcon, Loading, getSvgWhiteForComponent, processDesign } from './common';
 import {
   designValidatorCommands,
   designValidatorEvents,
-  selectValidator,
   useDesignSchemaValidationResults,
   useIsValidatingDesignSchema,
 } from '../../../machines/validator/designValidator';
@@ -20,14 +18,14 @@ import {
   ValidationSubHeader,
 } from './styles';
 
-const ComponentErrorList = ({ component, errors, validatorActor, canTapErrors }) => {
+// Each error deep-links into the designer: tapping it sends TAP_ON_ERROR to the
+// validation machine, which emits it to the embedding designer. Kanvas Designer
+// listens for that event and opens the component's configurator focused on the
+// failing property. Without a designer to navigate into, an error is plain text.
+const ComponentErrorList = ({ component, errors, validatorActor, canNavigateToErrors }) => {
   const theme = useTheme();
 
-  const onErrorTap = (error) => {
-    if (!canTapErrors) {
-      return;
-    }
-
+  const navigateToError = (error) => {
     validatorActor.send(
       designValidatorEvents.tapOnError({ error, type: 'schemaValidation', component }),
     );
@@ -40,14 +38,32 @@ const ComponentErrorList = ({ component, errors, validatorActor, canTapErrors })
     return fieldPath ? `Field "${fieldPath}" ${error.message}` : error.message;
   };
 
+  const navigationProps = (error) =>
+    canNavigateToErrors
+      ? {
+          role: 'button',
+          tabIndex: 0,
+          onClick: () => navigateToError(error),
+          onKeyDown: (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              navigateToError(error);
+            }
+          },
+        }
+      : {};
+
   return (
     <List>
-      {errors.map((error) => (
+      {errors.map((error, index) => (
         <ValidationErrorListItem
           disablePadding
-          clickable={canTapErrors}
-          key={error.instancePath}
-          onClick={() => onErrorTap(error)}
+          clickable={canNavigateToErrors}
+          // instancePath alone is not unique: every `required` error on one
+          // object shares it.
+          key={`${error.instancePath}-${error.keyword}-${index}`}
+          data-testid="validation-error"
+          {...navigationProps(error)}
         >
           <ListItemIcon>
             {' '}
@@ -74,11 +90,11 @@ const ValidationResults_ = (props) => {
     validationResults,
     currentNodeId,
     validationMachine,
-    canTapErrors,
+    canNavigateToErrors = false,
   } = props;
 
   const componentsWithErrors = Object.values(validationResults).filter(
-    (result) => result.errors?.length && !result?.component?.metatadata?.isAnnotation,
+    (result) => result.errors?.length && !result?.component?.metadata?.isAnnotation,
   );
 
   const isCurrentComponent = (err) => err.component.id == currentNodeId;
@@ -150,7 +166,7 @@ const ValidationResults_ = (props) => {
                 component={componentResult.component}
                 validatorActor={validationMachine}
                 errors={componentResult.errors}
-                canTapErrors={canTapErrors}
+                canNavigateToErrors={canNavigateToErrors}
               />
             </Collapse>
           </ValidatedComponent>
@@ -163,16 +179,28 @@ const ValidationResults_ = (props) => {
 export const ValidationResults = ValidationResults_;
 
 /**
+ * ValidateDesign validates a design's component configurations against their
+ * schemas and lists the failures per component.
  *
- * @param {Design} design is the design file to be validated
- * @returns
+ * @param design the design to validate
+ * @param currentNodeId the component whose errors start expanded and scrolled into view
+ * @param validationMachine the design validation machine; Meshery UI injects the same
+ *   machine into extensions as `designValidationMachine`
+ * @param canNavigateToErrors whether each error deep-links to its component and
+ *   property. True by default because the component's purpose when injected into an
+ *   extension is Kanvas Designer, which handles TAP_ON_ERROR. A surface with no designer
+ *   to navigate into - every Meshery UI page - passes false so errors do not look
+ *   clickable. Never derive this from the validator's returnAddress: that names who
+ *   receives validation replies, and this component's own validation request clears it.
  */
-export const ValidateDesign = ({ design, currentNodeId, validationMachine }) => {
+export const ValidateDesign = ({
+  design,
+  currentNodeId,
+  validationMachine,
+  canNavigateToErrors = true,
+}) => {
   const validationResults = useDesignSchemaValidationResults(validationMachine);
   const isValidating = useIsValidatingDesignSchema(validationMachine);
-  const hasReturnAddress = useSelector(validationMachine, (state) =>
-    Boolean(selectValidator(state, 'schemaValidator')?.getSnapshot?.()?.context?.returnAddress),
-  );
 
   const designName = design.name;
   const { configurableComponents, annotationComponents } = processDesign(design);
@@ -203,7 +231,7 @@ export const ValidateDesign = ({ design, currentNodeId, validationMachine }) => 
       annotationCount={annotationComponents.length}
       design={designName}
       validationMachine={validationMachine}
-      canTapErrors={hasReturnAddress}
+      canNavigateToErrors={canNavigateToErrors}
     />
   );
 };

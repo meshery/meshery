@@ -722,8 +722,34 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 }
 
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
-	userID := user.ID
+	connectionID, err := uuid.FromString(mux.Vars(req)["connectionId"])
+	if err != nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %w", err))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
+	// No connection has the nil ID, so there is nothing to delete. Like a
+	// malformed ID, it is a client error: issue #22999 requires a nil ID
+	// to answer 400, not 404.
+	if connectionID == uuid.Nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %s", connectionID))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
+
+	if provider == nil {
+		nilProviderErr := ErrNilProvider()
+		h.log.Error(nilProviderErr)
+		writeMeshkitError(w, nilProviderErr, http.StatusInternalServerError)
+		return
+	}
+
+	var userID core.Uuid
+	if user != nil {
+		userID = user.ID
+	}
 
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
@@ -731,17 +757,134 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+
+	var systemID uuid.UUID
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(systemID).WithCategory("connection").WithAction("delete")
 
 	// A Kubernetes connection deleted while NOTFOUND retires its unreachable
 	// condition, so the deletion event resolves it.
 	resolvesUnreachable := false
-	if existing, _, gerr := provider.GetConnectionByID(token, connectionID); gerr == nil && existing != nil {
+	existing, _, gerr := provider.GetConnectionByID(token, connectionID)
+	if gerr == nil && existing != nil {
 		resolvesUnreachable = existing.Kind == "kubernetes" && existing.Status == connections.ConnectionStatus(machines.NOTFOUND)
+	}
+
+	// For Kubernetes connections, trigger cluster teardown (undeploying deployed operators,
+	// removing controller handlers, stopping MeshSync, and flushing MeshSync data)
+	// before the connection and its context rows are deleted from the database.
+	isKubernetes := (gerr == nil && existing != nil && strings.EqualFold(existing.Kind, "kubernetes"))
+
+	if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
+		var inst *machines.StateMachine
+		if tracked, ok := h.ConnectionToStateMachineInstanceTracker.Get(connectionID); ok && tracked != nil && helpers.HasMachineContext(tracked) {
+			inst = tracked
+		} else {
+			if h.ConnectionToStateMachineInstanceTracker != nil {
+				h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+			}
+			contextID := connectionID.String()
+			hasMetadataContextID := false
+			if existing != nil && existing.Metadata != nil && provider.GetProviderType() != models.RemoteProviderType {
+				for _, key := range []string{"contextId", "context_id", "k8sContextId", "k8s_context_id"} {
+					if val, ok := existing.Metadata[key].(string); ok && val != "" {
+						contextID = val
+						hasMetadataContextID = true
+						break
+					}
+				}
+			}
+
+			k8scontext, ctxErr := provider.GetK8sContext(token, contextID)
+			if ctxErr != nil && hasMetadataContextID {
+				// If metadata named a missing context, fall back to resolving the context
+				// linked to the connection by its connectionID before skipping teardown.
+				var linkErr error
+				k8scontext, linkErr = provider.GetK8sContext(token, connectionID.String())
+				if linkErr == nil {
+					ctxErr = nil
+				}
+			}
+
+			if ctxErr == nil {
+				connUUID := uuid.FromStringOrNil(k8scontext.ConnectionID)
+				if connUUID != uuid.Nil && connUUID != connectionID {
+					// Metadata named a context belonging to another connection.
+					// Try to resolve the context actually linked to the connection being deleted.
+					h.log.Warnf("resolved Kubernetes context %s does not belong to connection %s (linked to %s), retrying with linked context", k8scontext.ID, connectionID, k8scontext.ConnectionID)
+					linkedCtx, linkErr := provider.GetK8sContext(token, connectionID.String())
+					if linkErr != nil {
+						h.log.Warnf("no linked context found for connection %s, skipping teardown", connectionID)
+					} else {
+						linkedUUID := uuid.FromStringOrNil(linkedCtx.ConnectionID)
+						if linkedUUID != uuid.Nil && linkedUUID != connectionID {
+							h.log.Warnf("linked context %s also does not belong to connection %s, skipping teardown", linkedCtx.ID, connectionID)
+						} else {
+							k8scontext = linkedCtx
+							connUUID = linkedUUID
+						}
+					}
+				}
+				if connUUID == uuid.Nil || connUUID == connectionID {
+					var operatorTracker *models.OperatorTracker
+					var k8scontextChannel *models.K8scontextChan
+					var eventBroadcaster *models.Broadcast
+					if h.config != nil {
+						operatorTracker = h.config.OperatorTracker
+						k8scontextChannel = h.config.K8scontextChannel
+						eventBroadcaster = h.config.EventBroadcaster
+					}
+
+					machineCtx := &kubernetes.MachineCtx{
+						K8sContext:         k8scontext,
+						MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+						K8sCompRegHelper:   h.K8sCompRegHelper,
+						OperatorTracker:    operatorTracker,
+						K8scontextChannel:  k8scontextChannel,
+						EventBroadcaster:   eventBroadcaster,
+						RegistryManager:    h.registryManager,
+					}
+					var initErr error
+					inst, initErr = helpers.InitializeMachineWithContext(
+						machineCtx,
+						req.Context(),
+						connectionID,
+						userID,
+						h.ConnectionToStateMachineInstanceTracker,
+						h.log,
+						provider,
+						machines.InitialState,
+						"kubernetes",
+						kubernetes.AssignInitialCtx,
+					)
+					if initErr != nil {
+						h.log.Warnf("failed to initialize Kubernetes machine for connection %s during teardown: %v", connectionID, initErr)
+					}
+				}
+			} else {
+				h.log.Warnf("failed to resolve Kubernetes context %s for connection %s during teardown: %v", contextID, connectionID, ctxErr)
+			}
+		}
+
+		if inst != nil && helpers.HasMachineContext(inst) {
+			detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), defaultFSMTransitionTimeout)
+			defer cancel()
+			event, sendErr := inst.SendEvent(detachedCtx, machines.Delete, nil)
+			if sendErr != nil {
+				h.log.Warnf("failed to transition Kubernetes connection %s to deleted during teardown: %v", connectionID, sendErr)
+			} else if event != nil && event.ResolvedAt != nil {
+				resolvesUnreachable = true
+			}
+		}
 	}
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
+		if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
+			h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+		}
 		// Deleting an id the provider never issued is "not found", not a
 		// failure to write. The local provider says so with ErrResultNotFound;
 		// the remote provider says so with its own 404, which ErrDelete now
@@ -867,7 +1010,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("instance tracker does not contain machine for connection %s", connectionID)
 		}
 
-		machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
+		machineCtx, err := kubernetes.GetMachineCtx(machine.GetContext(), nil)
 		if err != nil {
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("failed to get machine context for connection %s: %w", connectionID, err)
 		}
@@ -875,6 +1018,10 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 		if machineCtx == nil {
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context is nil for connection %s", connectionID)
 		}
+
+		// One snapshot for the teardown and redeploy below: both steps must
+		// use the same context even if a credential refresh lands in between.
+		k8sCtx := machineCtx.K8sContextSnapshot()
 
 		ctrlHelper := machineCtx.MesheryCtrlsHelper
 		if ctrlHelper == nil {
@@ -895,7 +1042,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 
 		// disconnect
 		{
-			contextID := machineCtx.K8sContext.ID
+			contextID := k8sCtx.ID
 			ctrlHelper.
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
 				UndeployDeployedOperators(machineCtx.OperatorTracker, contextID).
@@ -912,10 +1059,10 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			ctrlHelper.SetControllersConfig(merged)
 			ctrlHelper.
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
-				AddCtxControllerHandlers(machineCtx.K8sContext).
+				AddCtxControllerHandlers(k8sCtx).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				DeployUndeployedOperators(machineCtx.OperatorTracker, machineCtx.K8sContext.ID).
-				AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
+				DeployUndeployedOperators(machineCtx.OperatorTracker, k8sCtx.ID).
+				AddMeshsyncDataHandlers(ctx, k8sCtx, userID, mesheryInstanceID, provider)
 		}
 
 	}

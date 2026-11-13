@@ -3,6 +3,11 @@
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   margin-top: 3rem;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
 }
 
 .toc-card {
@@ -19,10 +24,16 @@
   &:hover {
     border-color: var(--brand-color-secondary);
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--brand-color-secondary);
+    outline-offset: 2px;
+    border-color: var(--brand-color-secondary);
+  }
 }
 
 .toc-label {
-  color: var(--color-white);
+  color: var(--color-secondary-medium, #868e96);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
 }
@@ -49,6 +60,10 @@
 .toc-card.next {
   text-align: right;
   grid-column: 2; /* Force into empty right hand space safely when isolated */
+
+  @media (max-width: 600px) {
+    grid-column: 1;
+  }
 
   .toc-title {
     justify-content: flex-end;

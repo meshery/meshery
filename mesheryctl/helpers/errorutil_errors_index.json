@@ -3596,7 +3596,7 @@
         "Publishing process encountered an error"
       ],
       "suggestedRemediation": [
-        "Ensure a valid system is provided (meshery, remote-provider, website)",
+        "Ensure a valid system is provided (remote-provider, website)",
         "Check the publishing configuration and try again"
       ]
     },
@@ -3983,6 +3983,77 @@
       ],
       "suggestedRemediation": [
         "Provide more characters of the ID, or the full ID."
+      ]
+    },
+    {
+      "code": "mesheryctl-1257",
+      "moniker": "ErrAssignTokenCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1257",
+      "severity": "fatal",
+      "shortDescription": "Unable to assign token to context",
+      "probableCause": [
+        "The target context may not exist in meshconfig, or meshconfig could not be read or written."
+      ],
+      "suggestedRemediation": [
+        "Verify the target context exists with `mesheryctl system context view` and ensure your meshconfig file is accessible."
+      ]
+    },
+    {
+      "code": "mesheryctl-1258",
+      "moniker": "ErrTokenRollbackCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1258",
+      "severity": "fatal",
+      "shortDescription": "Unable to assign token or roll back created token",
+      "probableCause": [
+        "Assigning the token to the target context failed, and deleting the newly created token during rollback also failed."
+      ],
+      "suggestedRemediation": [
+        "Remove the orphaned token from meshconfig or run `mesheryctl system token delete \u003ctoken-name\u003e`, and verify the target context exists with `mesheryctl system context view`."
+      ]
+    },
+    {
+      "code": "mesheryctl-1259",
+      "moniker": "ErrProviderNotFoundCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1259",
+      "severity": "alert",
+      "shortDescription": "Requested provider is not available on this Meshery Server",
+      "probableCause": [
+        "The provider name is misspelled",
+        "The Meshery Server is pinned to a different provider"
+      ],
+      "suggestedRemediation": [
+        "Run `mesheryctl system provider list` to see the providers this server offers",
+        "Omit --provider to choose one interactively"
+      ]
+    },
+    {
+      "code": "mesheryctl-1260",
+      "moniker": "ErrProviderAmbiguousCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1260",
+      "severity": "alert",
+      "shortDescription": "More than one provider matches that name",
+      "probableCause": [
+        "Two or more providers share the same display name"
+      ],
+      "suggestedRemediation": [
+        "Run `mesheryctl system provider list` to see the registration keys",
+        "Pass a registration key to --provider instead of the display name"
       ]
     }
   ],
