@@ -26,7 +26,11 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	}
 	q := req.Form
 
-	tokenString := req.Context().Value(models.TokenCtxKey).(string)
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+	tokenString, _ := req.Context().Value(models.TokenCtxKey).(string)
 
 	bdr, err := p.FetchResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), profileID)
 	if err != nil {
@@ -48,7 +52,11 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 	}
 	q := req.Form
 
-	tokenString := req.Context().Value(models.TokenCtxKey).(string)
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+	tokenString, _ := req.Context().Value(models.TokenCtxKey).(string)
 
 	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
 	if err != nil {
@@ -73,14 +81,18 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 		writeMeshkitError(w, ErrMissingResultID(), http.StatusBadRequest)
 		return
 	}
-	key := uuid.FromStringOrNil(id)
-	if key == uuid.Nil {
+	key, err := uuid.FromString(id)
+	if err != nil || key == uuid.Nil {
 		h.log.Error(ErrQueryGet("key"))
 		writeMeshkitError(w, models.ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)
 		return
 	}
 
-	tokenString := req.Context().Value(models.TokenCtxKey).(string)
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+	tokenString, _ := req.Context().Value(models.TokenCtxKey).(string)
 
 	bdr, err := p.GetResult(tokenString, key)
 	if err != nil {
@@ -118,6 +130,11 @@ func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Reques
 	}
 	q := req.Form
 
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+
 	bdr, err := p.FetchSmiResults(req, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		h.log.Error(ErrFetchSMIResults(err))
@@ -137,9 +154,15 @@ func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.R
 		return
 	}
 	q := req.Form
+
+	if p == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+
 	id := mux.Vars(req)["id"]
-	key := uuid.FromStringOrNil(id)
-	if key == uuid.Nil {
+	key, err := uuid.FromString(id)
+	if err != nil || key == uuid.Nil {
 		h.log.Error(ErrQueryGet("key"))
 		writeMeshkitError(w, models.ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)
 		return
