@@ -17,6 +17,7 @@ package system
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 	"path"
 	"strconv"
@@ -369,14 +370,20 @@ func resolveDockerEndpoint(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 		}
 	}
 
+	// endpoint is dialed by TcpCheck as "<Address>:<Port>", so Address holds
+	// the host only. The endpoint saved in the context keeps its scheme.
 	if userResponse {
-		endpoint.Address = utils.EndpointProtocol + "://localhost"
-		currCtx.SetEndpoint(endpoint.Address + ":" + userPort[len(userPort)-1])
+		endpoint.Address = "localhost"
+		currCtx.SetEndpoint(utils.EndpointProtocol + "://localhost:" + userPort[len(userPort)-1])
 		if err := config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName()); err != nil {
 			return endpoint, err
 		}
 	} else {
-		endpoint.Address = userPort[0]
+		parsed, err := url.Parse(currCtx.GetEndpoint())
+		if err != nil || parsed.Hostname() == "" {
+			return endpoint, utils.ErrInvalidArgument(fmt.Errorf("invalid Meshery endpoint %q in the current context", currCtx.GetEndpoint()))
+		}
+		endpoint.Address = parsed.Hostname()
 	}
 
 	tempPort, err := strconv.Atoi(userPort[len(userPort)-1])
