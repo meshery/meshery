@@ -34,6 +34,15 @@ func TestDesignView(t *testing.T) {
 					ResponseCode: 200,
 				},
 				{
+					// GetID paginates: the page-0 fixture reports
+					// totalCount 318 with 10 items, so a second page is
+					// requested. The empty page lets the lookup conclude.
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000&page=1",
+					Response:     "pattern.empty.response.golden",
+					ResponseCode: 200,
+				},
+				{
 					Method:       "GET",
 					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=desgin",
 					Response:     "view.design.api.response.golden",
@@ -51,6 +60,15 @@ func TestDesignView(t *testing.T) {
 					Method:       "GET",
 					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
 					Response:     "view.design.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					// GetID paginates: the page-0 fixture reports
+					// totalCount 318 with 10 items, so a second page is
+					// requested. The empty page lets the lookup conclude.
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000&page=1",
+					Response:     "pattern.empty.response.golden",
 					ResponseCode: 200,
 				},
 				{
@@ -83,6 +101,15 @@ func TestDesignView(t *testing.T) {
 					ResponseCode: 200,
 				},
 				{
+					// GetID paginates: the page-0 fixture reports
+					// totalCount 318 with 10 items, so a second page is
+					// requested. The empty page lets the lookup conclude.
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000&page=1",
+					Response:     "pattern.empty.response.golden",
+					ResponseCode: 200,
+				},
+				{
 					Method:       "GET",
 					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=nonexistent-design",
 					Response:     "pattern.empty.response.golden",
@@ -102,6 +129,15 @@ func TestDesignView(t *testing.T) {
 					Method:       "GET",
 					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
 					Response:     "view.design.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					// GetID paginates: the page-0 fixture reports
+					// totalCount 318 with 10 items, so a second page is
+					// requested. The empty page lets the lookup conclude.
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000&page=1",
+					Response:     "pattern.empty.response.golden",
 					ResponseCode: 200,
 				},
 				{
