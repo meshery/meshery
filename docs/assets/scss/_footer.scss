@@ -15,12 +15,12 @@ html {
   padding: min(2vh, 2vw);
   gap: min(2vh, 5vw);
 
-  @media (max-width: 600px) {
-    height: calc(var(--footer-height) - 4.0rem);
-  }
-
   @media (max-width: 1200px) {
     height: var(--footer-height);
+  }
+
+  @media (max-width: 600px) {
+    height: calc(var(--footer-height) - 4.0rem);
   }
 
   & * {
