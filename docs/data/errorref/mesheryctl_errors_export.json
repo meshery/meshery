@@ -2144,6 +2144,24 @@
         "short_description": "Unable to assign token or roll back created token",
         "probable_cause": "Assigning the token to the target context failed, and deleting the newly created token during rollback also failed.",
         "suggested_remediation": "Remove the orphaned token from meshconfig or run `mesheryctl system token delete <token-name>`, and verify the target context exists with `mesheryctl system context view`."
+      },
+      "1259": {
+        "name": "ErrProviderNotFoundCode",
+        "code": "1259",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Requested provider is not available on this Meshery Server",
+        "probable_cause": "The provider name is misspelled\nThe Meshery Server is pinned to a different provider",
+        "suggested_remediation": "Run `mesheryctl system provider list` to see the providers this server offers\nOmit --provider to choose one interactively"
+      },
+      "1260": {
+        "name": "ErrProviderAmbiguousCode",
+        "code": "1260",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "More than one provider matches that name",
+        "probable_cause": "Two or more providers share the same display name",
+        "suggested_remediation": "Run `mesheryctl system provider list` to see the registration keys\nPass a registration key to --provider instead of the display name"
       }
     }
   }
