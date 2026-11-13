@@ -573,8 +573,8 @@ func ErrAssignToken(err error, tokenName, targetContext string) error {
 			errors.Fatal,
 			[]string{"Unable to assign token to context"},
 			[]string{fmt.Sprintf("Could not set token %q on context %s: %v", tokenName, targetContext, err)},
-			[]string{"The target context may not exist in meshconfig, or meshconfig could not be read or written."},
-			[]string{"Verify the target context exists with `mesheryctl system context view` and ensure your meshconfig file is accessible."}),
+			[]string{"The token or the target context may not exist in meshconfig, or meshconfig could not be read or written."},
+			[]string{"Verify the token exists with `mesheryctl system token list` (create it with `mesheryctl system token create <token-name>`), verify the target context exists with `mesheryctl system context view`, and ensure your meshconfig file is accessible."}),
 		err,
 	)
 }
