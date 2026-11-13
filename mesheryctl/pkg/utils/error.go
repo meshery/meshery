@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"net/http"
 	"strconv"
 	"strings"
 
@@ -86,6 +87,7 @@ var (
 	ErrAmbiguousIDCode                = "mesheryctl-1256"
 	ErrProviderNotFoundCode           = "mesheryctl-1259"
 	ErrProviderAmbiguousCode          = "mesheryctl-1260"
+	ErrRedirectChangesMethodCode      = "mesheryctl-1261"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -1012,4 +1014,17 @@ func ErrProviderAmbiguous(requested string, keys []string) error {
 		[]string{fmt.Sprintf("Provider name %q matches %d providers. Specify a registration key: %s", requested, len(keys), strings.Join(keys, ", "))},
 		[]string{"Two or more providers share the same display name"},
 		[]string{"Run `mesheryctl system provider list` to see the registration keys", "Pass a registration key to --provider instead of the display name"})
+}
+
+// ErrRedirectChangesMethod is returned when the server, or a proxy in front of
+// it, answers a request with a redirect that net/http would follow by
+// re-sending the request as a GET without its body. Following it could run a
+// different handler and report success for work that never happened, so the
+// redirect is not followed.
+func ErrRedirectChangesMethod(method, from string, statusCode int, to string) error {
+	return errors.New(ErrRedirectChangesMethodCode, errors.Alert,
+		[]string{"Redirect would change the request method"},
+		[]string{fmt.Sprintf("The server answered %s %s with %d %s, redirecting to %s. Following it would re-send the request as a GET without its body, so it was not followed.", method, from, statusCode, http.StatusText(statusCode), to)},
+		[]string{"The current context's endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)"},
+		[]string{"Set the current context's endpoint to the address the redirect points to; check it with `mesheryctl system context view`"})
 }

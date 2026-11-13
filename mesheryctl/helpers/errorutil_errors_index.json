@@ -4055,6 +4055,23 @@
         "Run `mesheryctl system provider list` to see the registration keys",
         "Pass a registration key to --provider instead of the display name"
       ]
+    },
+    {
+      "code": "mesheryctl-1261",
+      "moniker": "ErrRedirectChangesMethodCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1261",
+      "severity": "alert",
+      "shortDescription": "Redirect would change the request method",
+      "probableCause": [
+        "The current context's endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)"
+      ],
+      "suggestedRemediation": [
+        "Set the current context's endpoint to the address the redirect points to; check it with `mesheryctl system context view`"
+      ]
     }
   ],
   "schemaVersion": 2

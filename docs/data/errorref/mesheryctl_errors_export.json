@@ -2162,6 +2162,15 @@
         "short_description": "More than one provider matches that name",
         "probable_cause": "Two or more providers share the same display name",
         "suggested_remediation": "Run `mesheryctl system provider list` to see the registration keys\nPass a registration key to --provider instead of the display name"
+      },
+      "1261": {
+        "name": "ErrRedirectChangesMethodCode",
+        "code": "1261",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Redirect would change the request method",
+        "probable_cause": "The current context's endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)",
+        "suggested_remediation": "Set the current context's endpoint to the address the redirect points to; check it with `mesheryctl system context view`"
       }
     }
   }
