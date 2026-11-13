@@ -404,6 +404,18 @@ describe('isSerializable', () => {
     expect(isSerializable(list)).toBe(false);
   });
 
+  it('rejects an array carrying a non-serializable named property', () => {
+    const list = ['a'];
+    list.onSelect = () => {};
+    expect(isSerializable(list)).toBe(false);
+  });
+
+  it('accepts an array carrying only serializable named properties', () => {
+    const list = ['a'];
+    list.label = 'first';
+    expect(isSerializable(list)).toBe(true);
+  });
+
   it('accepts a shared reference that is not circular', () => {
     const shared = { page: 0 };
     expect(isSerializable({ a: shared, b: shared })).toBe(true);

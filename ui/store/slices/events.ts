@@ -48,7 +48,9 @@ export const isSerializable = (value, seen = new Set()) => {
     return false;
   }
   seen.add(value);
-  const entries = isArray ? value : Object.values(value);
+  // Arrays can also carry named properties (e.g. list.onSelect = fn), which
+  // iterating the array itself would miss, so read them through its keys.
+  const entries = isArray ? Object.keys(value).map((key) => value[key]) : Object.values(value);
   const result = entries.every((entry) => isSerializable(entry, seen));
   seen.delete(value);
   return result;
