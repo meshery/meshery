@@ -23,6 +23,7 @@ type credentialSpyProvider struct {
 	observedUpdate atomic.Pointer[models.Credential]
 	observedDelete atomic.Pointer[uuid.UUID]
 	observedGet    atomic.Pointer[uuid.UUID]
+	observedList   atomic.Pointer[[2]int] // page, pageSize
 }
 
 func newCredentialSpyProvider() *credentialSpyProvider {
@@ -51,6 +52,54 @@ func (m *credentialSpyProvider) DeleteUserCredential(_ *http.Request, id uuid.UU
 func (m *credentialSpyProvider) GetCredentialByID(_ string, id uuid.UUID) (*models.Credential, int, error) {
 	m.observedGet.Store(&id)
 	return &models.Credential{ID: id}, http.StatusOK, nil
+}
+
+func (m *credentialSpyProvider) GetUserCredentials(_ *http.Request, _ string, page, pageSize int, _, _ string) (*models.CredentialsPage, error) {
+	m.observedList.Store(&[2]int{page, pageSize})
+	return &models.CredentialsPage{Page: page, PageSize: pageSize}, nil
+}
+
+// TestGetUserCredentials_PageSizeQueryParamContract pins the list page size to
+// the canonical camelCase `pageSize` that schemas' generated getUserCredentials
+// sends, while keeping the legacy `page_size` spelling working. The handler
+// read only `page_size`, so the Credentials table's page sizes 20 and 25 were
+// ignored and every page held the default 10.
+func TestGetUserCredentials_PageSizeQueryParamContract(t *testing.T) {
+	for _, tc := range []struct {
+		name         string
+		query        string
+		wantPageSize int
+	}{
+		{"canonical camelCase", "page=1&pageSize=20", 20},
+		{"legacy snake_case", "page=1&page_size=20", 20},
+		{"camelCase wins when both are sent", "page=1&pageSize=20&page_size=25", 20},
+		{"default when neither is sent", "page=1", 10},
+		{"capped at 25", "page=1&pageSize=50", 25},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			p := newCredentialSpyProvider()
+
+			req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials?"+tc.query, nil)
+			rec := httptest.NewRecorder()
+
+			h.GetUserCredentials(rec, req, nil, &models.User{}, p)
+
+			if rec.Code != http.StatusOK {
+				t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
+			}
+			got := p.observedList.Load()
+			if got == nil {
+				t.Fatal("provider GetUserCredentials was not invoked")
+			}
+			if got[0] != 1 {
+				t.Errorf("page = %d, want 1", got[0])
+			}
+			if got[1] != tc.wantPageSize {
+				t.Errorf("pageSize = %d, want %d", got[1], tc.wantPageSize)
+			}
+		})
+	}
 }
 
 // TestDeleteUserCredential_QueryParamContract pins the delete param to the

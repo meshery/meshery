@@ -11,9 +11,11 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/schemas/models/core"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -195,11 +197,59 @@ func TestSetFileLocation(t *testing.T) {
 }
 
 func TestNavigateToBrowser(t *testing.T) {
-	// opens up a browser window whenever this test runs
-	err := NavigateToBrowser("https://meshery.io")
-	if err != nil {
-		t.Errorf("NavigateToBrowser error: %v", err)
-	}
+	// Save the original function.
+	originalOpenURL := openURL
+
+	// Restore it after this test finishes.
+	t.Cleanup(func() {
+		openURL = originalOpenURL
+	})
+
+	const testURL = "https://meshery.io"
+
+	t.Run("success", func(t *testing.T) {
+		var receivedURL string
+
+		// Replace the real browser opener with a fake.
+		openURL = func(url string) error {
+			receivedURL = url
+			return nil
+		}
+
+		err := NavigateToBrowser(testURL)
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		if receivedURL != testURL {
+			t.Errorf("got URL %q, want %q",
+				receivedURL, testURL)
+		}
+	})
+
+	t.Run("error", func(t *testing.T) {
+		expectedErr := errors.New("browser unavailable")
+		var receivedURL string
+
+		// Simulate the browser opener failing.
+		openURL = func(url string) error {
+			receivedURL = url
+			return expectedErr
+		}
+
+		err := NavigateToBrowser(testURL)
+
+		if receivedURL != testURL {
+			t.Errorf("got URL %q, want %q",
+				receivedURL, testURL)
+		}
+
+		if !errors.Is(err, expectedErr) {
+			t.Errorf("got error %v, want %v",
+				err, expectedErr)
+		}
+	})
 }
 
 func TestContentTypeIsHTML(t *testing.T) {
@@ -371,11 +421,65 @@ func TestValidateURL(t *testing.T) {
 // }
 
 func TestTruncateID(t *testing.T) {
-	id := "1234567890"
-	want := "12345678"
-	got := TruncateID(id)
-	if got != want {
-		t.Errorf("TruncateID got = %v want = %v", got, want)
+	tests := []struct {
+		name string
+		id   string
+		want string
+	}{
+		{name: "long id truncated to 8 chars", id: "1234567890", want: "12345678"},
+		{name: "exact 8 char id unchanged", id: "12345678", want: "12345678"},
+		{name: "short fallback unchanged", id: "N/A", want: "N/A"},
+		{name: "empty string unchanged", id: "", want: ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := TruncateID(tt.id); got != tt.want {
+				t.Errorf("TruncateID(%q) = %q, want %q", tt.id, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFormatTime(t *testing.T) {
+	ts := time.Date(2025, time.January, 2, 3, 4, 5, 0, time.UTC)
+	tests := []struct {
+		name     string
+		ts       *time.Time
+		layout   string
+		fallback string
+		want     string
+	}{
+		{name: "nil timestamp returns fallback", ts: nil, layout: "01-02-2006", fallback: "N/A", want: "N/A"},
+		{name: "non-nil date formatted", ts: &ts, layout: "01-02-2006", fallback: "N/A", want: "01-02-2025"},
+		{name: "non-nil datetime formatted", ts: &ts, layout: "01-02-2006 15:04:05", fallback: "N/A", want: "01-02-2025 03:04:05"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := FormatTime(tt.ts, tt.layout, tt.fallback); got != tt.want {
+				t.Errorf("FormatTime() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFormatUUID(t *testing.T) {
+	id := core.Uuid{0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef, 0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef}
+	tests := []struct {
+		name     string
+		id       *core.Uuid
+		fallback string
+		want     string
+	}{
+		{name: "nil uuid returns fallback", id: nil, fallback: "N/A", want: "N/A"},
+		{name: "nil uuid returns null fallback", id: nil, fallback: "null", want: "null"},
+		{name: "non-nil uuid formatted", id: &id, fallback: "N/A", want: "12345678-90ab-cdef-1234-567890abcdef"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := FormatUUID(tt.id, tt.fallback); got != tt.want {
+				t.Errorf("FormatUUID() = %q, want %q", got, tt.want)
+			}
+		})
 	}
 }
 

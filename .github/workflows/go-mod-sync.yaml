@@ -76,20 +76,17 @@ jobs:
           server_port: 465
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Go Mod Sync Failed - ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+          subject: Go Mod Sync Failed - sync job of ${{ github.repository }} has ${{ needs.sync.result }}
           to: maintainers@meshery.io
           from: Meshery extensions go.mod sync workflow
           body: |
-            The workflow (https://github.com/meshery/meshery/actions/workflows/go-mod-sync.yml) encountered error(s). This mainly occurs when the go.mod file in the meshery-extensions repository is not in sync with the go.mod file in the meshery/meshery repository. The workflow attempts to update the go.mod file in the meshery-extensions repository to ensure it matches the go.mod file in the meshery/meshery repository.
+            The workflow (https://github.com/meshery/meshery/actions/workflows/go-mod-sync.yaml) encountered error(s). This mainly occurs when the go.mod file in the meshery-extensions repository is not in sync with the go.mod file in the meshery/meshery repository. The workflow attempts to update the go.mod file in the meshery-extensions repository to ensure it matches the go.mod file in the meshery/meshery repository.
 
             The workflow failed. Here are the details:
 
-            Job Status: ${{ job.status }}
+            Job Status: ${{ needs.sync.result }}
             Repository: ${{ github.repository }}
             Run ID: ${{ github.run_id }}
             Workflow Name: ${{ github.workflow }}
-
-            Steps and their outcomes:
-            ${{ toJson(job.steps) }}
 
             Refer to the GitHub Actions log for more details: https://github.com/meshery/meshery/actions/runs/${{ github.run_id }}

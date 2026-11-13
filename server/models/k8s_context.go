@@ -379,10 +379,17 @@ func NewK8sContext(
 //
 // If the context remains the same, it is guaranteed that the ID will be same
 func K8sContextGenerateID(kc K8sContext) (string, error) {
+	// MesheryInstanceID is optional (e.g., redacted contexts or direct callers
+	// may leave it nil), so guard before formatting rather than panicking.
+	var mesheryInstanceID string
+	if kc.MesheryInstanceID != nil {
+		mesheryInstanceID = kc.MesheryInstanceID.String()
+	}
+
 	data := map[string]interface{}{
 		"cluster": kc.Cluster,
 		"auth":    kc.Auth,
-		"meshery": kc.MesheryInstanceID.String(),
+		"meshery": mesheryInstanceID,
 		"name":    kc.Name,
 	}
 

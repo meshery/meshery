@@ -29,6 +29,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/core"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -445,10 +446,13 @@ func SetFileLocation() error {
 	return nil
 }
 
+// openURL opens the given URL in the browser. It is a variable (rather than a direct call to browser.OpenURL) so tests can substitute a fake.
+// It must not be swapped from parallel tests.
+var openURL = browser.OpenURL
+
 // NavigateToBrowser navigates to the endpoint displaying the Meshery UI in the browser.
 func NavigateToBrowser(endpoint string) error {
-	err := browser.OpenURL(endpoint)
-	return err
+	return openURL(endpoint)
 }
 
 // UploadFileWithParams returns a request configured to upload files with other values
@@ -599,10 +603,28 @@ func ValidateURL(URL string) error {
 	return nil
 }
 
-// TruncateID shortens an id to 8 characters
+// TruncateID shortens an id to at most 8 characters.
 func TruncateID(id string) string {
-	ShortenedID := id[0:8]
-	return ShortenedID
+	if len(id) <= 8 {
+		return id
+	}
+	return id[:8]
+}
+
+// FormatTime formats a nullable timestamp with layout, returning fallback when t is nil.
+func FormatTime(t *time.Time, layout, fallback string) string {
+	if t == nil {
+		return fallback
+	}
+	return t.Format(layout)
+}
+
+// FormatUUID returns the string form of a nullable UUID, or fallback when id is nil.
+func FormatUUID(id *core.Uuid, fallback string) string {
+	if id == nil {
+		return fallback
+	}
+	return id.String()
 }
 
 func BoldString(s string) string {
