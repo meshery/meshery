@@ -1,6 +1,7 @@
 package policies
 
 import (
+	"regexp"
 	"testing"
 	"time"
 
@@ -55,6 +56,21 @@ func TestMatchName(t *testing.T) {
 		{"Namespace", "Namespace", true},
 		{"Namespace", "Service", false},
 		{"Deployment", "Deploy.*", true},
+		// The literal fast path must keep the existing unanchored semantics.
+		{"PodDisruptionBudget", "Pod", true},
+		{"ConfigMapList", "ConfigMap", true},
+		{"Pod", "PodDisruptionBudget", false},
+		// Empty pattern: a regex matches at position 0, so this stays true.
+		{"Namespace", "", true},
+		// Patterns that fail to compile keep returning false.
+		{"Namespace", "[", false},
+		{"Namespace", "a{2,1}", false},
+		// Metacharacter patterns still go through the regex path.
+		{"Service", "^Serv", true},
+		{"Service", "Serv$", false},
+		{"Service", "Pod|Service", true},
+		{"über", "über", true},
+		{"日本語", "日本", true},
 	}
 
 	for _, tt := range tests {
@@ -64,6 +80,44 @@ func TestMatchName(t *testing.T) {
 				t.Errorf("matchName(%q, %q) = %v, want %v", tt.name, tt.pattern, result, tt.expected)
 			}
 		})
+	}
+}
+
+// matchNameLegacy is the implementation this replaced. TestMatchNameEquivalence
+// pins the fast path to it so the optimisation cannot drift in behaviour.
+func matchNameLegacy(name, pattern string) bool {
+	if pattern == "*" {
+		return true
+	}
+	if name == pattern {
+		return true
+	}
+	matched, err := regexp.MatchString(pattern, name)
+	return err == nil && matched
+}
+
+// TestMatchNameEquivalence walks a corpus built from an alphabet of regex
+// metacharacters and asserts the fast path never disagrees with the original.
+func TestMatchNameEquivalence(t *testing.T) {
+	alphabet := []string{
+		"", "a", "b", "Pod", "ConfigMap", "Deployment", ".", "*", "+", "?",
+		"^", "$", "[", "]", "(", ")", "{", "}", "|", "\\\\", "-", "über", "日本",
+	}
+
+	var corpus []string
+	for _, a := range alphabet {
+		corpus = append(corpus, a)
+		for _, b := range alphabet {
+			corpus = append(corpus, a+b)
+		}
+	}
+
+	for _, name := range corpus {
+		for _, pattern := range corpus {
+			if got, want := matchName(name, pattern), matchNameLegacy(name, pattern); got != want {
+				t.Fatalf("matchName(%q, %q) = %v, legacy = %v", name, pattern, got, want)
+			}
+		}
 	}
 }
 

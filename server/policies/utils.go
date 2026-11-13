@@ -103,12 +103,22 @@ func staticUUID(seed interface{}) uuid.UUID {
 
 // matchName checks if a component name matches a selector pattern.
 // Supports wildcards ("*"), exact match, and regex match.
+//
+// Patterns carrying no regex metacharacters, which is nearly all of them since
+// they are component kinds, take a substring fast path. regexp.MatchString
+// compiles its pattern on every call, and this is called once per component per
+// kind test, so the mismatch path dominated both time and allocations. An
+// unanchored literal regex is exactly a substring match, so this keeps the
+// existing semantics, including matching "Pod" inside "PodDisruptionBudget".
 func matchName(name, pattern string) bool {
 	if pattern == "*" {
 		return true
 	}
 	if name == pattern {
 		return true
+	}
+	if regexp.QuoteMeta(pattern) == pattern {
+		return strings.Contains(name, pattern)
 	}
 	matched, err := regexp.MatchString(pattern, name)
 	return err == nil && matched
