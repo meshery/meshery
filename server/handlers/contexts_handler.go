@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -13,6 +15,12 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
 )
+
+// defaultFSMTransitionTimeout is the maximum duration permitted for asynchronous
+// state machine transitions triggered during request handling (discovery, connect,
+// delete). Bounding the detached context prevents leaked goroutines and indefinite
+// lock retention on unresponsive clusters.
+const defaultFSMTransitionTimeout = 2 * time.Minute
 
 // Deprecated: GetAllContexts (GET /api/system/kubernetes/contexts) is being
 // retired in favor of the connections API (kind=kubernetes) — everything is now
@@ -143,10 +151,16 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	if !mhelpers.HasMachineContext(inst) {
 		smInstanceTracker.Remove(connectionUUID)
 	} else {
+		// Detach from the request context so cancellation on HTTP handler exit
+		// does not abort background state machine transitions, bounded by a timeout.
+		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), defaultFSMTransitionTimeout)
 		go func(inst *machines.StateMachine) {
-			event, err := inst.SendEvent(req.Context(), machines.Delete, nil)
+			defer cancel()
+			defer smInstanceTracker.Remove(connectionUUID)
+			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
 			if err != nil {
 				h.log.Error(err)
+				h.reportMachineOutcome(provider, token, userID, event, err)
 				h.log.Debug(event)
 				return
 			}
@@ -157,7 +171,6 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			if event != nil && event.ResolvedAt != nil {
 				h.persistAndPublish(provider, token, userID, event)
 			}
-			smInstanceTracker.Remove(connectionUUID)
 		}(inst)
 	}
 

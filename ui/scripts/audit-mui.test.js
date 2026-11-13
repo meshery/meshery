@@ -203,6 +203,23 @@ test('--fail-on-new exits 1 when non-allowlisted offending imports exist', (t) =
   assert.equal(result.json.files, 1);
 });
 
+test('side-effect MUI imports are reported as offenders', (t) => {
+  const fixture = createFixture(t);
+  writeFile(fixture, 'ui/components/side-effect.js', "import '@mui/material/Button';\n");
+
+  const result = runAudit(fixture, ['--fail-on-new']);
+
+  assert.equal(result.status, 1);
+  assert.equal(result.json.scanComplete, true);
+  assert.equal(result.json.files, 1);
+  assert.equal(result.json.matches, 1);
+  assert.ok(
+    result.json.scans[0].offenders.some(
+      (offender) => offender.file === 'components/side-effect.js',
+    ),
+  );
+});
+
 test('allowlisted imports are excluded from offender counts', (t) => {
   const fixture = createFixture(t);
   writeFile(fixture, 'ui/theme/index.ts', "import { darken } from '@mui/material/styles';\n");
