@@ -60,7 +60,7 @@ mesheryctl filter view --all --output-format json
 // View all filter files in json and save it to a file
 mesheryctl filter view --all --output-format json -s
 
-//View multi-word named filter files. Multi-word filter names should be enclosed in quotes
+// View multi-word named filter files. Multi-word filter names should be enclosed in quotes
 mesheryctl filter view "filter name"
         `,
 	Args: func(_ *cobra.Command, args []string) error {
@@ -151,7 +151,7 @@ mesheryctl filter view "filter name"
 					strings.ToLower(filterViewFlagsProvided.OutputFormat),
 				)
 			} else {
-				shortID := selectedFilter.ID.String()[:8]
+				shortID := utils.TruncateID(utils.FormatUUID(selectedFilter.ID, "unknown"))
 
 				sanitizer := strings.NewReplacer("/", "_", " ", "_")
 				sanitizedName := sanitizer.Replace(selectedFilter.Name)

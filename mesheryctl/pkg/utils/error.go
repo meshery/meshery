@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/meshery/meshkit/errors"
 )
@@ -82,6 +83,9 @@ var (
 	ErrMesheryCheckRunningStatusCode  = "mesheryctl-1227"
 	ErrDockerComposeStopCode          = "mesheryctl-1228"
 	ErrGitHubAPIResponseCode          = "mesheryctl-1255"
+	ErrAmbiguousIDCode                = "mesheryctl-1256"
+	ErrProviderNotFoundCode           = "mesheryctl-1259"
+	ErrProviderAmbiguousCode          = "mesheryctl-1260"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -476,6 +480,14 @@ func ErrInvalidNameOrID(err error) error {
 		[]string{err.Error()},
 		[]string{"The provided Name or ID is either not present or invalid."},
 		[]string{"Provide a valid Name or ID using the `list` command with the appropriate subcommand."})
+}
+
+func ErrAmbiguousID(prefix string, matches []string) error {
+	return errors.New(ErrAmbiguousIDCode, errors.Alert,
+		[]string{"Ambiguous ID prefix"},
+		[]string{fmt.Sprintf("%q matches %d IDs, including: %s", prefix, len(matches), strings.Join(matches[:min(10, len(matches))], ", "))},
+		[]string{"The provided ID prefix is shared by more than one item."},
+		[]string{"Provide more characters of the ID, or the full ID."})
 }
 
 func ErrAttachAuthToken(err error) error {
@@ -979,4 +991,25 @@ func ErrDockerComposeStop(err error) error {
 		[]string{err.Error()},
 		[]string{"An error occurred while trying to stop Meshery containers using Docker Compose"},
 		[]string{"Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder."})
+}
+
+// ErrProviderNotFound is returned when the provider requested with
+// `mesheryctl system login --provider` is not offered by the Meshery Server.
+func ErrProviderNotFound(requested string, available []string) error {
+	return errors.New(ErrProviderNotFoundCode, errors.Alert,
+		[]string{"Requested provider is not available on this Meshery Server"},
+		[]string{fmt.Sprintf("Provider %q is not offered by this Meshery Server. Available providers: %s", requested, strings.Join(available, ", "))},
+		[]string{"The provider name is misspelled", "The Meshery Server is pinned to a different provider"},
+		[]string{"Run `mesheryctl system provider list` to see the providers this server offers", "Omit --provider to choose one interactively"})
+}
+
+// ErrProviderAmbiguous is returned when the provider requested with
+// `mesheryctl system login --provider` matches more than one provider's
+// display name, so no single provider can be selected deterministically.
+func ErrProviderAmbiguous(requested string, keys []string) error {
+	return errors.New(ErrProviderAmbiguousCode, errors.Alert,
+		[]string{"More than one provider matches that name"},
+		[]string{fmt.Sprintf("Provider name %q matches %d providers. Specify a registration key: %s", requested, len(keys), strings.Join(keys, ", "))},
+		[]string{"Two or more providers share the same display name"},
+		[]string{"Run `mesheryctl system provider list` to see the registration keys", "Pass a registration key to --provider instead of the display name"})
 }

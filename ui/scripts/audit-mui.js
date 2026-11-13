@@ -142,7 +142,7 @@ const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
 //   import '@mui/material/Button'
 //   const X = require('@mui/material')
 const IMPORT_PATTERN =
-  /(?:from\s+|require\(\s*)['"](@mui\/[^'"]+|@material-ui\/[^'"]+|@rjsf\/mui)['"]/g;
+  /(?:import\s+|from\s+|require\(\s*)['"](@mui\/[^'"]+|@material-ui\/[^'"]+|@rjsf\/mui)['"]/g;
 
 function walk(dir, out, scanErrors) {
   let entries;

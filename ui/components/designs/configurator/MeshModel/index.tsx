@@ -37,8 +37,8 @@ const ScrollContainer = styled('div')({
 });
 
 export default function DesignConfigurator() {
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedModel, setSelectedModel] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedModel, setSelectedModel] = useState('');
   const { models, meshmodelComponents, getModelFromCategory, getComponentsFromModel, categories } =
     useMeshModelComponents();
   const {
@@ -93,6 +93,7 @@ export default function DesignConfigurator() {
             <FormControl>
               <TextField
                 select={true}
+                label="Select Category"
                 SelectProps={{
                   MenuProps: {
                     anchorOrigin: {
@@ -101,14 +102,6 @@ export default function DesignConfigurator() {
                     },
                     getContentAnchorEl: null,
                   },
-                  renderValue: (selected) => {
-                    if (!selected || selected.length === 0) {
-                      return <em>Select Category</em>;
-                    }
-
-                    return selected;
-                  },
-                  displayEmpty: true,
                 }}
                 InputProps={{ disableUnderline: true }}
                 labelId="category-selector"
@@ -131,7 +124,7 @@ export default function DesignConfigurator() {
             {selectedCategory && (
               <FormControl>
                 <TextField
-                  placeholder="select Model"
+                  label="Select Model"
                   select={true}
                   SelectProps={{
                     MenuProps: {
@@ -142,13 +135,8 @@ export default function DesignConfigurator() {
                       getContentAnchorEl: null,
                     },
                     renderValue: (selected) => {
-                      if (!selected || selected.length === 0) {
-                        return <em>Select Model</em>;
-                      }
-
                       return removeHyphenAndCapitalise(selected);
                     },
-                    displayEmpty: true,
                   }}
                   InputProps={{ disableUnderline: true }}
                   labelId="model-selector"

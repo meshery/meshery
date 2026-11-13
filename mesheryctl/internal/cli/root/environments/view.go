@@ -72,14 +72,19 @@ mesheryctl environment view --orgId [orgId]
 			return err
 		}
 
+		if environmentResponse == nil {
+			utils.Log.Info("No environment(s) found for the given ID: ", environmentViewFlagsProvided.orgId)
+			return nil
+		}
+
 		var selectedEnvironment environment.Environment
 
-		switch environmentResponse.TotalCount {
+		switch len(environmentResponse.Environments) {
 		case 0:
 			utils.Log.Info("No environment(s) found for the given ID: ", environmentViewFlagsProvided.orgId)
 			return nil
 		case 1:
-			selectedEnvironment = environmentResponse.Environments[0] // Update the type of selectedModel
+			selectedEnvironment = environmentResponse.Environments[0]
 		default:
 			selectedEnvironment, err = selectEnvironmentPrompt(environmentResponse.Environments)
 			if err != nil {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import {
   useGetRegistryModelsQuery,
@@ -195,33 +195,70 @@ export const useImportMeshModelMutation = () => {
   return [wrapped, ...rest] as const;
 };
 
-export const useGetCategoriesSummary = () => {
+type CategorySummaryOptions = {
+  skip?: boolean;
+};
+
+/**
+ * Fetches registry categories and model counts per category. Pass `{ skip: true }`
+ * when the caller lacks `Keys.MesherySystemViewRegistry` so unauthorized views do
+ * not trigger category or per-category model requests.
+ */
+export const useGetCategoriesSummary = (options: CategorySummaryOptions = {}) => {
+  const { skip = false } = options;
   const [getModelFromCategory] = useLazyGetModelFromCategoryQuery();
-  const { data: categories } = useGetModelCategoriesQuery();
-  const [categoryMap, setCategoryMap] = useState({});
+  const { data: categories } = useGetModelCategoriesQuery(undefined, { skip });
+  const [categoryMap, setCategoryMap] = useState<Record<string, number>>({});
+  const categorySubscriptionsRef = useRef<Array<{ unsubscribe?: () => void }>>([]);
 
-  const fetchModelsForCategories = async () => {
-    const categoryMap = {};
-    if (!categories) return categoryMap;
-
-    const requests = categories.categories.map(async (category) => {
-      const { data } = await getModelFromCategory(
-        { category: category.name, params: { page: 1, pagesize: 1 } },
-        true,
-      );
-      categoryMap[category.name] = data?.totalCount ?? data?.total_count ?? 0;
+  const unsubscribeCategories = useCallback(() => {
+    categorySubscriptionsRef.current.forEach((subscription) => {
+      subscription?.unsubscribe?.();
     });
-    await Promise.allSettled(requests);
-    return categoryMap;
-  };
+    categorySubscriptionsRef.current = [];
+  }, []);
 
   useEffect(() => {
+    if (skip) {
+      unsubscribeCategories();
+      setCategoryMap((prev) => (Object.keys(prev).length === 0 ? prev : {}));
+      return;
+    }
+
+    let isCancelled = false;
+    unsubscribeCategories();
+
+    const fetchModelsForCategories = async () => {
+      const nextCategoryMap: Record<string, number> = {};
+      if (!categories?.categories) return nextCategoryMap;
+
+      const requests = categories.categories.map(async (category) => {
+        const subscription = getModelFromCategory(
+          { category: category.name, params: { page: 1, pagesize: 1 } },
+          true,
+        );
+        categorySubscriptionsRef.current.push(subscription);
+        const { data } = await subscription;
+        nextCategoryMap[category.name] = data?.totalCount ?? data?.total_count ?? 0;
+      });
+      await Promise.allSettled(requests);
+      return nextCategoryMap;
+    };
+
     const fetchData = async () => {
-      const categoryMap = await fetchModelsForCategories();
-      setCategoryMap(categoryMap);
+      const nextCategoryMap = await fetchModelsForCategories();
+      if (!isCancelled) {
+        setCategoryMap(nextCategoryMap);
+      }
     };
     fetchData();
-  }, [categories]);
+
+    return () => {
+      isCancelled = true;
+      unsubscribeCategories();
+    };
+  }, [categories, getModelFromCategory, skip, unsubscribeCategories]);
+
   return categoryMap;
 };
 
