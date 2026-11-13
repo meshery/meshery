@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta3/environment"
 	"gorm.io/driver/sqlite"
@@ -143,5 +144,21 @@ func TestDefaultLocalProvider_UpdateEnvironmentPreservesPurpose(t *testing.T) {
 	}
 	if got := legacyUpdated.EffectivePurpose(); got != environment.EnvironmentPurposeUser {
 		t.Fatalf("expected EffectivePurpose() %q, got %q", environment.EnvironmentPurposeUser, got)
+	}
+}
+
+func TestDefaultLocalProvider_UpdateNonExistentEnvironmentReturnsNotFound(t *testing.T) {
+	provider := newTestLocalProviderWithEnvironmentDB(t)
+	nonExistentID := uuid.Must(uuid.NewV4()).String()
+	payload := &environment.EnvironmentPayload{
+		Name:  "updated",
+		OrgID: core.Uuid(uuid.Must(uuid.NewV4())),
+	}
+	_, err := provider.UpdateEnvironment(nil, payload, nonExistentID)
+	if err == nil {
+		t.Fatal("expected error when updating non-existent environment, got nil")
+	}
+	if mkerrors.GetCode(err) != ErrResultNotFoundCode {
+		t.Fatalf("expected ErrResultNotFoundCode (%s), got: %v", ErrResultNotFoundCode, err)
 	}
 }

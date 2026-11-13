@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta3/environment"
+	"gorm.io/gorm"
 )
 
 // TestEnvironmentPayloadWire_UnmarshalJSON exercises the dual-accept body
@@ -186,6 +187,10 @@ func (m *environmentFailingProvider) GetEnvironments(_, _, _, _, _, _, _ string)
 }
 
 func (m *environmentFailingProvider) DeleteEnvironment(_ *http.Request, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *environmentFailingProvider) UpdateEnvironment(_ *http.Request, _ *environment.EnvironmentPayload, _ string) (*environment.Environment, error) {
 	return nil, m.err
 }
 
@@ -394,5 +399,53 @@ func TestDeleteEnvironmentHandler_PropagatesProviderStatus(t *testing.T) {
 	}
 	if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != ErrDeleteEnvironmentCode {
 		t.Errorf("code = %q, want %q", decoded.Code, ErrDeleteEnvironmentCode)
+	}
+}
+
+// TestUpdateEnvironmentHandler_NotFound confirms that updating a nonexistent
+// environment (when the provider returns ErrResultNotFound) maps to HTTP 404
+// rather than a 500 or 502, carrying ErrUpdateEnvironmentCode.
+func TestUpdateEnvironmentHandler_NotFound(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := newEnvironmentFailingProvider(
+		models.ErrResultNotFound(gorm.ErrRecordNotFound),
+	)
+
+	body := `{"name":"updated","organizationId":"11111111-1111-1111-1111-111111111111"}`
+	req := httptest.NewRequest(http.MethodPut, "/api/environments/22222222-2222-2222-2222-222222222222", strings.NewReader(body))
+	req = mux.SetURLVars(req, map[string]string{"id": "22222222-2222-2222-2222-222222222222"})
+	rec := httptest.NewRecorder()
+
+	h.UpdateEnvironmentHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusNotFound, rec.Body.String())
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrUpdateEnvironmentCode {
+		t.Errorf("code = %q, want %q", decoded.Code, ErrUpdateEnvironmentCode)
+	}
+}
+
+// TestUpdateEnvironmentHandler_RawGormRecordNotFoundMapsTo404 confirms that even if
+// a provider returns raw gorm.ErrRecordNotFound, UpdateEnvironmentHandler still maps
+// it defensively to HTTP 404 rather than 500/502.
+func TestUpdateEnvironmentHandler_RawGormRecordNotFoundMapsTo404(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := newEnvironmentFailingProvider(gorm.ErrRecordNotFound)
+
+	body := `{"name":"updated","organizationId":"11111111-1111-1111-1111-111111111111"}`
+	req := httptest.NewRequest(http.MethodPut, "/api/environments/22222222-2222-2222-2222-222222222222", strings.NewReader(body))
+	req = mux.SetURLVars(req, map[string]string{"id": "22222222-2222-2222-2222-222222222222"})
+	rec := httptest.NewRecorder()
+
+	h.UpdateEnvironmentHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusNotFound, rec.Body.String())
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrUpdateEnvironmentCode {
+		t.Errorf("code = %q, want %q", decoded.Code, ErrUpdateEnvironmentCode)
 	}
 }

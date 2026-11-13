@@ -4,6 +4,7 @@ package models
 import (
 	stderrors "errors"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/meshery/meshery/server/models/httputil"
@@ -658,7 +659,10 @@ func ErrUpdateConnectionStatus(err error, statusCode int) error {
 }
 
 func ErrResultNotFound(err error) error {
-	return errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""})
+	return httputil.WithProviderStatus(
+		errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""}),
+		http.StatusNotFound,
+	)
 }
 
 func ErrPersistCredential(err error) error {
