@@ -35,13 +35,22 @@ func TestResolveDockerEndpointReturnsDialableHost(t *testing.T) {
 			wantAddress:  "meshery.example.com",
 			wantEndpoint: "http://meshery.example.com:9081",
 		},
+		{
+			name:         "remote endpoint stored without a scheme",
+			endpoint:     "meshery.example.com:9081",
+			answer:       "n\n",
+			wantAddress:  "meshery.example.com",
+			wantEndpoint: "meshery.example.com:9081",
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			setupContextTestEnv(t)
 			t.Cleanup(BreakupFunc)
+			prevSilent := utils.SilentFlag
 			utils.SilentFlag = tt.silent
+			t.Cleanup(func() { utils.SilentFlag = prevSilent })
 
 			if tt.answer != "" {
 				r, w, err := os.Pipe()

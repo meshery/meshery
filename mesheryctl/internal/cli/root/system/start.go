@@ -379,11 +379,11 @@ func resolveDockerEndpoint(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 			return endpoint, err
 		}
 	} else {
-		parsed, err := url.Parse(currCtx.GetEndpoint())
-		if err != nil || parsed.Hostname() == "" {
-			return endpoint, utils.ErrInvalidArgument(fmt.Errorf("invalid Meshery endpoint %q in the current context", currCtx.GetEndpoint()))
+		host, err := endpointHost(currCtx.GetEndpoint())
+		if err != nil {
+			return endpoint, err
 		}
-		endpoint.Address = parsed.Hostname()
+		endpoint.Address = host
 	}
 
 	tempPort, err := strconv.Atoi(userPort[len(userPort)-1])
@@ -393,6 +393,22 @@ func resolveDockerEndpoint(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 	endpoint.Port = int32(tempPort)
 
 	return endpoint, nil
+}
+
+// endpointHost returns the host of a Meshery endpoint. Contexts normally store
+// a URL with a scheme, such as "http://meshery.example.com:9081", but an
+// endpoint saved as "meshery.example.com:9081" is accepted too.
+func endpointHost(endpoint string) (string, error) {
+	raw := endpoint
+	if !strings.Contains(raw, "://") {
+		// Without "//", url.Parse reads the host as the scheme.
+		raw = "//" + raw
+	}
+	parsed, err := url.Parse(raw)
+	if err != nil || parsed.Hostname() == "" {
+		return "", utils.ErrInvalidArgument(fmt.Errorf("invalid Meshery endpoint %q in the current context", endpoint))
+	}
+	return parsed.Hostname(), nil
 }
 
 func startDockerCompose(composeClient *utils.ComposeClient) error {
