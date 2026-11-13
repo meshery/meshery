@@ -64,30 +64,89 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 		connectionRegisterPayload := registrationEventToConnectionPayload(&registrationEvent)
 
-		machineCtx := make(map[string]string, 0)
-		inst, err := helpers.InitializeMachineWithContext(
-			machineCtx,
-			req.Context(),
-			connectionRegisterPayload.ID,
-			userUUID,
-			smInstanceTracker,
-			h.log,
-			provider,
-			machines.DISCOVERED,
-			strings.ToLower(connectionRegisterPayload.Kind),
-			nil,
-		)
-		if err != nil {
-			wrappedErr := ErrInitializeMachine(err)
-			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to persist the \"%s\" connection details", connectionRegisterPayload.Kind)).WithMetadata(map[string]interface{}{
-				"error": wrappedErr,
-			}).Build()
-			if event != nil {
-				h.persistAndPublish(provider, token, userUUID, event)
+		var inst *machines.StateMachine
+		if smInstanceTracker != nil {
+			if tracked, ok := smInstanceTracker.Get(connectionRegisterPayload.ID); ok {
+				inst = tracked
 			}
-			h.log.Error(wrappedErr)
-			writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
-			return
+		}
+
+		if inst == nil {
+			var machineCtx any
+			var initFunc connections.InitFunc
+
+			if strings.EqualFold(connectionRegisterPayload.Kind, "kubernetes") {
+				contextID := connectionRegisterPayload.ID.String()
+				if provider.GetProviderType() != models.RemoteProviderType && connectionRegisterPayload.MetaData != nil {
+					for _, key := range []string{"contextId", "context_id", "k8sContextId", "k8s_context_id"} {
+						if val, ok := connectionRegisterPayload.MetaData[key].(string); ok && val != "" {
+							contextID = val
+							break
+						}
+					}
+				}
+
+				k8scontext, err := provider.GetK8sContext(token, contextID)
+				if err != nil {
+					_err := ErrGetK8sContexts(err)
+					h.log.Error(_err)
+					writeMeshkitError(w, _err, http.StatusInternalServerError)
+					return
+				}
+
+				if k8scontext.ConnectionID == "" {
+					k8scontext.ConnectionID = connectionRegisterPayload.ID.String()
+					if persister := provider.GetGenericPersister(); persister != nil {
+						_ = persister.Model(&models.K8sContext{}).Where("id = ? AND (connection_id IS NULL OR connection_id = '')", k8scontext.ID).Update("connection_id", k8scontext.ConnectionID).Error
+					}
+				}
+
+				var operatorTracker *models.OperatorTracker
+				var k8scontextChannel *models.K8scontextChan
+				var eventBroadcaster *models.Broadcast
+				if h.config != nil {
+					operatorTracker = h.config.OperatorTracker
+					k8scontextChannel = h.config.K8scontextChannel
+					eventBroadcaster = h.config.EventBroadcaster
+				}
+
+				machineCtx = &kubernetes.MachineCtx{
+					K8sContext:         k8scontext,
+					MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+					K8sCompRegHelper:   h.K8sCompRegHelper,
+					OperatorTracker:    operatorTracker,
+					K8scontextChannel:  k8scontextChannel,
+					EventBroadcaster:   eventBroadcaster,
+					RegistryManager:    h.registryManager,
+				}
+				initFunc = kubernetes.AssignInitialCtx
+			}
+
+			var err error
+			inst, err = helpers.InitializeMachineWithContext(
+				machineCtx,
+				req.Context(),
+				connectionRegisterPayload.ID,
+				userUUID,
+				smInstanceTracker,
+				h.log,
+				provider,
+				machines.DISCOVERED,
+				strings.ToLower(connectionRegisterPayload.Kind),
+				initFunc,
+			)
+			if err != nil {
+				wrappedErr := ErrInitializeMachine(err)
+				event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to persist the \"%s\" connection details", connectionRegisterPayload.Kind)).WithMetadata(map[string]interface{}{
+					"error": wrappedErr,
+				}).Build()
+				if event != nil {
+					h.persistAndPublish(provider, token, userUUID, event)
+				}
+				h.log.Error(wrappedErr)
+				writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
+				return
+			}
 		}
 
 		event, err := inst.SendEvent(req.Context(), machines.EventType(registrationEvent.Status), connectionRegisterPayload)
@@ -532,7 +591,16 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	eventBuilder = eventBuilder.WithDescription(description)
 
 	if connection.Status != "" {
-		event, _ := h.NotifySmOfConnectionStatusChange(statusCtx, userID, provider, token, connection)
+		kind := updatedConnection.Kind
+		if kind == "" && existing != nil {
+			kind = existing.Kind
+		}
+		event, notifyErr := h.NotifySmOfConnectionStatusChange(statusCtx, userID, provider, token, connection, kind)
+		if notifyErr != nil {
+			// The new status is already saved, so the response stays 200, but the
+			// failure must not vanish: log it as well as persisting the event.
+			h.log.Error(notifyErr)
+		}
 		_, _ = provider.PersistEvent(event, token)
 	}
 
@@ -542,12 +610,26 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID core.Uuid, provider models.Provider, token string, connection *connections.ConnectionPayload) (events.Event, error) {
+func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID core.Uuid, provider models.Provider, token string, connection *connections.ConnectionPayload, kind string) (events.Event, error) {
 	connectionID := connection.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
 	if connection.Status != "" {
+		// Everything below is Kubernetes specific: the K8s context lookup, the
+		// kubernetes.MachineCtx and the "kubernetes" machine. The caller has
+		// already persisted the new status, so any other kind must not enter
+		// this path. On the local provider it fails the context lookup (and the
+		// caller used to discard that error); on a remote provider it would run
+		// Kubernetes actions against a non-Kubernetes connection.
+		// An empty kind keeps the previous behaviour.
+		if kind != "" && !strings.EqualFold(kind, "kubernetes") {
+			h.log.Debug(fmt.Sprintf("status of %s connection %s changed to %q, no Kubernetes machine to notify", kind, connectionID, connection.Status))
+			return *eventBuilder.
+				WithSeverity(events.Informational).
+				WithDescription(fmt.Sprintf("Status of %s connection %s updated to %q", kind, connectionID, connection.Status)).
+				Build(), nil
+		}
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 		// token, _ := req.Context().Value(models.TokenCtxKey).(string)
 		k8scontext, err := provider.GetK8sContext(token, connectionID.String())
@@ -654,12 +736,124 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	// A Kubernetes connection deleted while NOTFOUND retires its unreachable
 	// condition, so the deletion event resolves it.
 	resolvesUnreachable := false
-	if existing, _, gerr := provider.GetConnectionByID(token, connectionID); gerr == nil && existing != nil {
+	existing, _, gerr := provider.GetConnectionByID(token, connectionID)
+	if gerr == nil && existing != nil {
 		resolvesUnreachable = existing.Kind == "kubernetes" && existing.Status == connections.ConnectionStatus(machines.NOTFOUND)
+	}
+
+	// For Kubernetes connections, trigger cluster teardown (undeploying deployed operators,
+	// removing controller handlers, stopping MeshSync, and flushing MeshSync data)
+	// before the connection and its context rows are deleted from the database.
+	isKubernetes := (gerr == nil && existing != nil && strings.EqualFold(existing.Kind, "kubernetes"))
+
+	if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
+		var inst *machines.StateMachine
+		if tracked, ok := h.ConnectionToStateMachineInstanceTracker.Get(connectionID); ok && tracked != nil && helpers.HasMachineContext(tracked) {
+			inst = tracked
+		} else {
+			if h.ConnectionToStateMachineInstanceTracker != nil {
+				h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+			}
+			contextID := connectionID.String()
+			hasMetadataContextID := false
+			if existing != nil && existing.Metadata != nil && provider.GetProviderType() != models.RemoteProviderType {
+				for _, key := range []string{"contextId", "context_id", "k8sContextId", "k8s_context_id"} {
+					if val, ok := existing.Metadata[key].(string); ok && val != "" {
+						contextID = val
+						hasMetadataContextID = true
+						break
+					}
+				}
+			}
+
+			k8scontext, ctxErr := provider.GetK8sContext(token, contextID)
+			if ctxErr != nil && hasMetadataContextID {
+				// If metadata named a missing context, fall back to resolving the context
+				// linked to the connection by its connectionID before skipping teardown.
+				var linkErr error
+				k8scontext, linkErr = provider.GetK8sContext(token, connectionID.String())
+				if linkErr == nil {
+					ctxErr = nil
+				}
+			}
+
+			if ctxErr == nil {
+				connUUID := uuid.FromStringOrNil(k8scontext.ConnectionID)
+				if connUUID != uuid.Nil && connUUID != connectionID {
+					// Metadata named a context belonging to another connection.
+					// Try to resolve the context actually linked to the connection being deleted.
+					h.log.Warnf("resolved Kubernetes context %s does not belong to connection %s (linked to %s), retrying with linked context", k8scontext.ID, connectionID, k8scontext.ConnectionID)
+					linkedCtx, linkErr := provider.GetK8sContext(token, connectionID.String())
+					if linkErr != nil {
+						h.log.Warnf("no linked context found for connection %s, skipping teardown", connectionID)
+					} else {
+						linkedUUID := uuid.FromStringOrNil(linkedCtx.ConnectionID)
+						if linkedUUID != uuid.Nil && linkedUUID != connectionID {
+							h.log.Warnf("linked context %s also does not belong to connection %s, skipping teardown", linkedCtx.ID, connectionID)
+						} else {
+							k8scontext = linkedCtx
+							connUUID = linkedUUID
+						}
+					}
+				}
+				if connUUID == uuid.Nil || connUUID == connectionID {
+					var operatorTracker *models.OperatorTracker
+					var k8scontextChannel *models.K8scontextChan
+					var eventBroadcaster *models.Broadcast
+					if h.config != nil {
+						operatorTracker = h.config.OperatorTracker
+						k8scontextChannel = h.config.K8scontextChannel
+						eventBroadcaster = h.config.EventBroadcaster
+					}
+
+					machineCtx := &kubernetes.MachineCtx{
+						K8sContext:         k8scontext,
+						MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+						K8sCompRegHelper:   h.K8sCompRegHelper,
+						OperatorTracker:    operatorTracker,
+						K8scontextChannel:  k8scontextChannel,
+						EventBroadcaster:   eventBroadcaster,
+						RegistryManager:    h.registryManager,
+					}
+					var initErr error
+					inst, initErr = helpers.InitializeMachineWithContext(
+						machineCtx,
+						req.Context(),
+						connectionID,
+						userID,
+						h.ConnectionToStateMachineInstanceTracker,
+						h.log,
+						provider,
+						machines.InitialState,
+						"kubernetes",
+						kubernetes.AssignInitialCtx,
+					)
+					if initErr != nil {
+						h.log.Warnf("failed to initialize Kubernetes machine for connection %s during teardown: %v", connectionID, initErr)
+					}
+				}
+			} else {
+				h.log.Warnf("failed to resolve Kubernetes context %s for connection %s during teardown: %v", contextID, connectionID, ctxErr)
+			}
+		}
+
+		if inst != nil && helpers.HasMachineContext(inst) {
+			detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), defaultFSMTransitionTimeout)
+			defer cancel()
+			event, sendErr := inst.SendEvent(detachedCtx, machines.Delete, nil)
+			if sendErr != nil {
+				h.log.Warnf("failed to transition Kubernetes connection %s to deleted during teardown: %v", connectionID, sendErr)
+			} else if event != nil && event.ResolvedAt != nil {
+				resolvesUnreachable = true
+			}
+		}
 	}
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
+		if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
+			h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+		}
 		// Deleting an id the provider never issued is "not found", not a
 		// failure to write. The local provider says so with ErrResultNotFound;
 		// the remote provider says so with its own 404, which ErrDelete now
@@ -785,7 +979,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("instance tracker does not contain machine for connection %s", connectionID)
 		}
 
-		machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
+		machineCtx, err := kubernetes.GetMachineCtx(machine.GetContext(), nil)
 		if err != nil {
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("failed to get machine context for connection %s: %w", connectionID, err)
 		}
@@ -793,6 +987,10 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 		if machineCtx == nil {
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context is nil for connection %s", connectionID)
 		}
+
+		// One snapshot for the teardown and redeploy below: both steps must
+		// use the same context even if a credential refresh lands in between.
+		k8sCtx := machineCtx.K8sContextSnapshot()
 
 		ctrlHelper := machineCtx.MesheryCtrlsHelper
 		if ctrlHelper == nil {
@@ -813,7 +1011,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 
 		// disconnect
 		{
-			contextID := machineCtx.K8sContext.ID
+			contextID := k8sCtx.ID
 			ctrlHelper.
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
 				UndeployDeployedOperators(machineCtx.OperatorTracker, contextID).
@@ -830,10 +1028,10 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			ctrlHelper.SetControllersConfig(merged)
 			ctrlHelper.
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
-				AddCtxControllerHandlers(machineCtx.K8sContext).
+				AddCtxControllerHandlers(k8sCtx).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				DeployUndeployedOperators(machineCtx.OperatorTracker, machineCtx.K8sContext.ID).
-				AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
+				DeployUndeployedOperators(machineCtx.OperatorTracker, k8sCtx.ID).
+				AddMeshsyncDataHandlers(ctx, k8sCtx, userID, mesheryInstanceID, provider)
 		}
 
 	}

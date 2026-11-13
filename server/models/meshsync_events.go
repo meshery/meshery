@@ -21,6 +21,11 @@ import (
 const (
 	MeshsyncStoreUpdatesSubject = "meshery-server.meshsync.store"
 	MeshsyncRequestSubject      = "meshery.meshsync.request"
+	// meshsyncEventsSubject carries the MeshSync resource events the handler
+	// persists. Both MeshSync subjects are subscribed with an empty queue
+	// name, so pausing one handler while another connects must unsubscribe
+	// them, or both handlers receive - and persist - the same message.
+	meshsyncEventsSubject = "meshery.meshsync.core"
 )
 
 type MeshsyncDataHandler struct {
@@ -36,6 +41,23 @@ type MeshsyncDataHandler struct {
 	stopCh       chan struct{}
 	stopOnce     *sync.Once
 	listenerWg   *sync.WaitGroup
+	// eventsChan and storeChan carry the broker's MeshSync messages to the
+	// listener goroutines. Kept on the handler so PauseSubscriptions and
+	// ResumeSubscriptions can unsubscribe and re-subscribe the same channels.
+	// Each is written once by its listener goroutine before its first
+	// subscribe, so a pause - which runs through the broker's own locking -
+	// only ever reads a channel that is already stored.
+	eventsChan chan *broker.Message
+	storeChan  chan *broker.Message
+	// paused reports whether the MeshSync subscriptions are paused: the
+	// listener goroutines are still running, but the broker delivers nothing
+	// to them until ResumeSubscriptions re-subscribes. PauseSubscriptions and
+	// ResumeSubscriptions are called only from the broker supervisor's
+	// rebuild path, one goroutine, so no lock guards it - and none can be
+	// added: MeshsyncDataHandler is copied by value into
+	// MeshSyncRegistrationData, and a lock value in it trips the vet
+	// copylocks check on those copies.
+	paused bool
 }
 
 func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, userID, connID, instanceID core.Uuid, token string, stopFunc func()) *MeshsyncDataHandler {
@@ -97,7 +119,10 @@ func (mh *MeshsyncDataHandler) Run() error {
 func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 	defer mh.listenerWg.Done()
 
+	// The channel lives on the handler so ResumeSubscriptions can
+	// re-subscribe it after a pause.
 	eventsChan := make(chan *broker.Message, 1)
+	mh.eventsChan = eventsChan
 	err := mh.ListenToMeshSyncEvents(eventsChan)
 	if err != nil {
 		mh.log.Error(ErrBrokerSubscription(err))
@@ -133,7 +158,7 @@ func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 }
 
 func (mh *MeshsyncDataHandler) ListenToMeshSyncEvents(out chan *broker.Message) error {
-	err := mh.broker.SubscribeWithChannel("meshery.meshsync.core", "", out)
+	err := mh.broker.SubscribeWithChannel(meshsyncEventsSubject, "", out)
 	if err != nil {
 		return err
 	}
@@ -143,7 +168,10 @@ func (mh *MeshsyncDataHandler) ListenToMeshSyncEvents(out chan *broker.Message) 
 func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 	defer mh.listenerWg.Done()
 
+	// The channel lives on the handler so ResumeSubscriptions can
+	// re-subscribe it after a pause.
 	storeChan := make(chan *broker.Message, 1)
+	mh.storeChan = storeChan
 	mh.log.Info("subscribing to store updates from meshsync on NATS subject: ", MeshsyncStoreUpdatesSubject)
 	err := mh.broker.SubscribeWithChannel(MeshsyncStoreUpdatesSubject, "", storeChan)
 	if err != nil {
@@ -426,4 +454,55 @@ func (mh *MeshsyncDataHandler) Stop() {
 
 		mh.listenerWg.Wait()
 	})
+}
+
+// PauseSubscriptions unsubscribes the handler's MeshSync subjects so a
+// reconnecting broker connection stops delivering messages to it, without
+// stopping the handler itself: the listener goroutines keep running, and the
+// subscriptions are restored by ResumeSubscriptions. The broker supervisor
+// pauses the old handler while a replacement connects, so the two handlers
+// cannot receive - and persist - the same message. Idempotent, and safe to
+// call on a handler whose subscriptions never started.
+func (mh *MeshsyncDataHandler) PauseSubscriptions() {
+	if mh == nil || mh.broker == nil {
+		return
+	}
+	if mh.paused {
+		return
+	}
+	mh.paused = true
+	for _, subject := range []string{meshsyncEventsSubject, MeshsyncStoreUpdatesSubject} {
+		if err := mh.broker.Unsubscribe(subject); err != nil {
+			mh.log.Error(ErrBrokerSubscription(err))
+		}
+	}
+}
+
+// ResumeSubscriptions re-subscribes the MeshSync subjects paused by
+// PauseSubscriptions, so the handler receives messages again. A no-op unless
+// the handler is paused, and a no-op once the handler is stopped: a stopped
+// handler's broker connection is closed, so re-subscribing would only fail.
+func (mh *MeshsyncDataHandler) ResumeSubscriptions() {
+	if mh == nil || mh.broker == nil {
+		return
+	}
+	if !mh.paused {
+		return
+	}
+	mh.paused = false
+	select {
+	case <-mh.stopSignal():
+		return
+	default:
+	}
+	if mh.eventsChan != nil {
+		if err := mh.broker.SubscribeWithChannel(meshsyncEventsSubject, "", mh.eventsChan); err != nil {
+			mh.log.Error(ErrBrokerSubscription(err))
+		}
+	}
+	if mh.storeChan != nil {
+		if err := mh.broker.SubscribeWithChannel(MeshsyncStoreUpdatesSubject, "", mh.storeChan); err != nil {
+			mh.log.Error(ErrBrokerSubscription(err))
+		}
+	}
 }

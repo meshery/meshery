@@ -1141,10 +1141,15 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 		k8sServerID = *k8sContext.KubernetesServerID
 	}
 
+	var mesheryInstanceID string
+	if k8sContext.MesheryInstanceID != nil {
+		mesheryInstanceID = k8sContext.MesheryInstanceID.String()
+	}
+
 	_metadata := map[string]string{
 		"id":                 k8sContext.ID,
 		"server":             k8sContext.Server,
-		"mesheryInstanceId":  k8sContext.MesheryInstanceID.String(),
+		"mesheryInstanceId":  mesheryInstanceID,
 		"deploymentType":     k8sContext.DeploymentType,
 		"version":            k8sContext.Version,
 		"name":               k8sContext.Name,
@@ -1203,7 +1208,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 
 func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*core.Uuid)
-	if !ok {
+	if !ok || MesheryInstanceID == nil {
 		return nil, ErrMesheryInstanceID
 	}
 	mi := MesheryInstanceID.String()
@@ -2695,6 +2700,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, patternID))
 	q := remoteProviderURL.Query()
 	q.Set("metrics", includeMetrics)
+	remoteProviderURL.RawQuery = q.Encode()
 
 	l.Log.Debug("constructed design url: ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)

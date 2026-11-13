@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -60,20 +61,22 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model export [model-name]\nRun 'mesheryctl model export --help' to see detailed help message"
-		if len(args) == 0 {
+		if len(args) == 0 || strings.TrimSpace(args[0]) == "" {
 			return utils.ErrInvalidArgument(errors.New("Please provide a model name. " + errMsg))
+		}
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		modelName := args[0]
+		modelName := strings.TrimSpace(args[0])
 		queryParams := url.Values{}
 		queryParams.Set("name", modelName)
 		queryParams.Set("outputFormat", exportModelFlagsProvided.OutputFormat)
 		queryParams.Set("fileType", exportModelFlagsProvided.OutputType)
 		queryParams.Set("components", fmt.Sprintf("%t", !exportModelFlagsProvided.DiscardComponents))
 		queryParams.Set("relationships", fmt.Sprintf("%t", !exportModelFlagsProvided.DiscardRelationships))
-		queryParams.Set("page", fmt.Sprintf("%d", exportModelFlagsProvided.Page))
 		if exportModelFlagsProvided.Version != "" {
 			queryParams.Set("version", exportModelFlagsProvided.Version)
 		}
@@ -118,5 +121,8 @@ func init() {
 	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.OutputLocation, "output-location", "l", "./", "(optional) output location (default = current directory)")
 	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.OutputType, "output-type", "o", "oci", "(optional) format to display in [oci|tar] (default = oci)")
 	exportModelCmd.Flags().IntVarP(&exportModelFlagsProvided.Page, "page", "p", 1, "(optional) page number for paginated results (default = 1)")
+	// The export API does not paginate: it always exports a single model, so
+	// --page never had an effect. Keep it, deprecated, so existing scripts keep working.
+	_ = exportModelCmd.Flags().MarkDeprecated("page", "it has no effect, because model export always exports a single model; it will be removed in a future release")
 	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.Version, "version", "", "", "(optional) model version to export (default = \"\", format: vX.X.X)")
 }

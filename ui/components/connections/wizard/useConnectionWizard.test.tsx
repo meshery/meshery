@@ -24,10 +24,17 @@ vi.mock('@/rtk-query/connection', () => {
   return {
     useAddKubernetesConfigMutation: noopMutation,
     useDiscoverKubernetesContextsMutation: noopMutation,
-    useGetCredentialsQuery: () => ({ data: { credentials: [] } }),
     usePerformConnectionActionMutation: noopMutation,
     useProcessConnectionRegistrationMutation: noopMutation,
     useUpdateConnectionByIdMutation: noopMutation,
+  };
+});
+
+vi.mock('@/utils/hooks/useAllUserCredentials', () => {
+  // One array for every render, as the real hook memoizes its result.
+  const none: never[] = [];
+  return {
+    useAllUserCredentials: () => ({ credentials: none, isLoading: false, isError: false }),
   };
 });
 
