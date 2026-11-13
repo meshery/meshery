@@ -90,14 +90,15 @@ test('detects case-insensitive RGB functions without matching identifier suffixe
 
   const result = runAudit(fixture);
   const actual = Object.fromEntries(
-    Object.entries(result.offenders).map(([index, offender]) => [
+    Object.entries(result.offenders).map(([, offender]) => [
       offender.file.split('/').pop(),
       offender.rgb,
     ]),
   );
 
   const expected = Object.fromEntries(
-    Object.entries(cases).filter(([, [, count]]) => count > 0)
+    Object.entries(cases)
+      .filter(([, [, count]]) => count > 0)
       .map(([filename, [, count]]) => [filename, count]),
   );
 
