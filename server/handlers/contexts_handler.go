@@ -14,6 +14,7 @@ import (
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 // defaultFSMTransitionTimeout is the maximum duration permitted for asynchronous
@@ -30,6 +31,13 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		writeMeshkitError(w, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
+		return
+	}
+
+	if provider == nil {
+		err := ErrGetK8sContexts(fmt.Errorf("provider not initialized"))
+		h.log.Error(err)
+		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -59,13 +67,34 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 // GetContext serves GET /api/system/kubernetes/contexts/{id}, returning the
 // single Kubernetes context for the given connection id.
 func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	contextID, err := uuid.FromString(mux.Vars(req)["id"])
+	if err != nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid context ID: %w", err))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
+	if contextID == uuid.Nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid context ID: %s", contextID))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
+
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		writeMeshkitError(w, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
 		return
 	}
 
-	val, err := provider.GetK8sContext(token, mux.Vars(req)["id"])
+	if provider == nil {
+		err := ErrGetK8sContexts(fmt.Errorf("provider not initialized"))
+		h.log.Error(err)
+		writeMeshkitError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	val, err := provider.GetK8sContext(token, contextID.String())
 	if err != nil {
 		h.log.Error(ErrGetK8sContexts(err))
 		writeMeshkitError(w, ErrGetK8sContexts(err), http.StatusInternalServerError)
@@ -80,17 +109,46 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 }
 
 func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	userID := user.ID
-	contextID := mux.Vars(req)["id"]
+	contextUUID, err := uuid.FromString(mux.Vars(req)["id"])
+	if err != nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid context ID: %w", err))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
+	if contextUUID == uuid.Nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid context ID: %s", contextUUID))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
+
+	var userID core.Uuid
+	if user != nil {
+		userID = user.ID
+	}
+	var systemID uuid.UUID
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+
+	contextID := contextUUID.String()
 
 	// Each event of the deletion starts from its own builder.
 	newEvent := func() *events.EventBuilder {
-		return events.NewEvent().ActedUpon(uuid.FromStringOrNil(contextID)).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+		return events.NewEvent().ActedUpon(contextUUID).FromOwner(userID).FromSystem(systemID).WithCategory("connection").WithAction("delete")
 	}
 
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		writeMeshkitError(w, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
+		return
+	}
+
+	if provider == nil {
+		err := ErrGetK8sContexts(fmt.Errorf("provider not initialized"))
+		h.log.Error(err)
+		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -127,7 +185,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		RegistryManager:    h.registryManager,
 	}
 
-	connectionUUID := uuid.FromStringOrNil(contextID)
+	connectionUUID := contextUUID
 
 	inst, err := mhelpers.InitializeMachineWithContext(
 		machineCtx,
@@ -149,14 +207,18 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	// the tracker entry for a connection the user just deleted - so drop the
 	// entry directly instead. See mhelpers.HasMachineContext.
 	if !mhelpers.HasMachineContext(inst) {
-		smInstanceTracker.Remove(connectionUUID)
+		if smInstanceTracker != nil {
+			smInstanceTracker.Remove(connectionUUID)
+		}
 	} else {
 		// Detach from the request context so cancellation on HTTP handler exit
 		// does not abort background state machine transitions, bounded by a timeout.
 		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), defaultFSMTransitionTimeout)
 		go func(inst *machines.StateMachine) {
 			defer cancel()
-			defer smInstanceTracker.Remove(connectionUUID)
+			if smInstanceTracker != nil {
+				defer smInstanceTracker.Remove(connectionUUID)
+			}
 			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
 			if err != nil {
 				h.log.Error(err)
@@ -181,7 +243,4 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		}).Build()
 		h.persistAndPublish(provider, token, userID, event)
 	}
-	// go h.config.EventBroadcaster.Publish(userID, event)
-
-	// h.config.K8scontextChannel.PublishContext()
 }
