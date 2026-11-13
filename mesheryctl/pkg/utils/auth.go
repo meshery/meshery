@@ -149,23 +149,16 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 	return resp, nil
 }
 
-// GetTokenLocation checks the location of token and returns appropriate location of the token
+// GetTokenLocation returns the path of the file a meshconfig token entry names.
+// Absolute and "~/" locations resolve through config.Token.GetLocation, so
+// requests read the same file system login and logout write. A bare file name
+// is joined to MesheryFolder, which is ~/.meshery at runtime, as GetLocation
+// does, and which tests point at their fixtures.
 func GetTokenLocation(token config.Token) (string, error) {
-	// Find home directory.
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", errors.Wrap(err, "failed to get users home directory")
+	if filepath.IsAbs(token.Location) || strings.HasPrefix(token.Location, "~/") {
+		return token.GetLocation(), nil
 	}
-
-	location := token.Location
-	// if location contains /home/nectar in path we return exact location
-	ok := strings.Contains(location, home)
-	if ok {
-		return location, nil
-	}
-
-	// else we add the home directory with the path
-	return filepath.Join(MesheryFolder, location), nil
+	return filepath.Join(MesheryFolder, token.Location), nil
 }
 
 // EnsureContextToken returns the token entry the named context refers to. When

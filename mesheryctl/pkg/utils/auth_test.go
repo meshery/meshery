@@ -491,6 +491,99 @@ func TestWriteTokenFileNewFileMode(t *testing.T) {
 	}
 }
 
+// Requests must read a token from the file system login and logout write it
+// to, which they find with config.Token.GetLocation.
+func TestGetTokenLocationMatchesTokenGetLocation(t *testing.T) {
+	mesheryDir := IsolateMesheryHome(t)
+	home := filepath.Dir(mesheryDir)
+	outside := filepath.Join(t.TempDir(), "meshery.json")
+	inside := filepath.Join(home, "tok", "auth.json")
+
+	tests := []struct {
+		name     string
+		location string
+		want     string
+	}{
+		{"relative name", "auth.json", filepath.Join(mesheryDir, "auth.json")},
+		{"absolute path outside home", outside, outside},
+		{"home-relative path", "~/tok/auth.json", inside},
+		{"absolute path inside home", inside, inside},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			token := config.Token{Name: "default", Location: tc.location}
+			got, err := GetTokenLocation(token)
+			if err != nil {
+				t.Fatalf("GetTokenLocation(%q): %v", tc.location, err)
+			}
+			if got != tc.want {
+				t.Errorf("GetTokenLocation(%q) = %q, want %q", tc.location, got, tc.want)
+			}
+			if login := token.GetLocation(); got != login {
+				t.Errorf("requests read %q, but system login writes %q", got, login)
+			}
+		})
+	}
+}
+
+// A token kept outside HOME, such as a secret mounted into a CI job or a
+// container, must be the file a request attaches.
+func TestNewRequestReadsTokenOutsideHome(t *testing.T) {
+	mesheryDir := IsolateMesheryHome(t)
+
+	tokenFile := filepath.Join(t.TempDir(), "meshery.json")
+	if err := os.WriteFile(tokenFile, []byte(`{"token":"secret","meshery-provider":"Meshery"}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	cfgFile := filepath.Join(mesheryDir, "config.yaml")
+	contents := fmt.Sprintf(`contexts:
+  local:
+    endpoint: http://127.0.0.1:19999
+    token: default
+    platform: docker
+current-context: local
+tokens:
+- name: default
+  location: %q
+`, tokenFile)
+	if err := os.WriteFile(cfgFile, []byte(contents), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	origDefaultConfigPath, origCfgFile, origTokenFlag := DefaultConfigPath, CfgFile, TokenFlag
+	t.Cleanup(func() {
+		DefaultConfigPath, CfgFile, TokenFlag = origDefaultConfigPath, origCfgFile, origTokenFlag
+		viper.Reset()
+	})
+	DefaultConfigPath, CfgFile, TokenFlag = cfgFile, cfgFile, ""
+
+	viper.Reset()
+	viper.SetConfigFile(cfgFile)
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatal(err)
+	}
+	token, err := mctlCfg.GetTokenForContext("local")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := token.GetLocation(); got != tokenFile {
+		t.Fatalf("system login would write %q, want %q", got, tokenFile)
+	}
+
+	req, err := NewRequest(http.MethodGet, "http://127.0.0.1:19999/api/system/version", nil)
+	if err != nil {
+		t.Fatalf("NewRequest: %v", err)
+	}
+	cookie, err := req.Cookie(tokenName)
+	if err != nil || cookie.Value != "secret" {
+		t.Errorf("request token cookie = %v, %v; want the one in %s", cookie, err, tokenFile)
+	}
+}
+
 // A context passed with --config that names a token its file does not define
 // must get that token added to the same file, and later requests must keep
 // using that file's server rather than the default meshconfig's.
