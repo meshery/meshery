@@ -612,17 +612,19 @@ const tokenFileMode os.FileMode = 0o600
 
 // WriteTokenFile writes an auth token file and restricts it to its owner.
 // The open mode only applies when the file is created, so an existing token
-// file written by an older mesheryctl (0644 or 0666) is chmod-ed to 0600
-// before the new token is written into it. The file is opened without
-// O_TRUNC and truncated only after the chmod succeeds, so a chmod failure
-// (for example a token file owned by another user) leaves the previous
-// credentials intact instead of emptying the file and then erroring.
+// file written by an older mesheryctl (0644 or 0666) is restricted with
+// restrictTokenFile before the new token is written into it: chmod to 0600 on
+// Unix and, on Windows where chmod does not touch ACLs, a protected DACL that
+// grants only the current user access. The file is opened without O_TRUNC and
+// truncated only after the restriction succeeds, so a failure (for example a
+// token file owned by another user) leaves the previous credentials intact
+// instead of emptying the file and then erroring.
 func WriteTokenFile(path string, data []byte) error {
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, tokenFileMode)
 	if err != nil {
 		return err
 	}
-	if err := f.Chmod(tokenFileMode); err != nil {
+	if err := restrictTokenFile(f); err != nil {
 		_ = f.Close()
 		return err
 	}
