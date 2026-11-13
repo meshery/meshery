@@ -111846,7 +111846,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
 Every Meshery server is capable of registering itself with the remote provider, considering that remote provider supports this feature as a capability.
 On successful authentication with the remote provider, Meshery server registers itself by sending a POST request to the remote provider through the `persist-connection` capability. The body of the request should include information so as to uniquely indentify Meshery server and its status.
 
-Example of the request body:
+Example of the request body. The `id` is the zero UUID serialized for the unset connection ID; the Meshery server ID is in `metadata.serverId`:
 
 
 
