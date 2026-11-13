@@ -4363,6 +4363,15 @@
         "short_description": "Meshery Server could not create the indexes the Notification Center queries use",
         "probable_cause": "The database is read-only, locked by another process or not reachable",
         "suggested_remediation": "Make sure Meshery Server can write to its database, then restart Meshery Server"
+      },
+      "1492": {
+        "name": "ErrNilProviderCode",
+        "code": "1492",
+        "severity": "Alert",
+        "long_description": "Provider instance passed to the handler is nil",
+        "short_description": "Provider not initialized",
+        "probable_cause": "The handler was invoked without an initialized provider instance",
+        "suggested_remediation": "Ensure the provider is properly initialized before handling the request"
       }
     }
   }
