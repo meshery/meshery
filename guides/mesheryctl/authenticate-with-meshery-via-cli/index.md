@@ -46,7 +46,7 @@ LLMS index: [llms.txt](/llms.txt)
     -rw-rw-r-- 1 ubuntu ubuntu 988 Dec 21 06:04 meshery.yaml
     ```
 
-    `mesheryctl` writes the token to the file that the current context's token entry points to in `~/.meshery/config.yaml`. That file is `~/.meshery/auth.json` unless you changed it with `mesheryctl system token`. The token file is readable only by you (mode `0600`); `mesheryctl system login` also tightens an existing token file that an older release left readable by other users.
+    `mesheryctl` writes the token to the file that the current context's token entry points to in `~/.meshery/config.yaml`. That file is `~/.meshery/auth.json` unless you changed it with `mesheryctl system token`. The token file is readable only by you (mode `0600`); `mesheryctl system login` also tightens an existing token file that an older release left readable by other users. On Windows, where file modes do not control access, `mesheryctl` instead replaces the file's access control list so that only your user account can access it, stops it inheriting permissions from its folder, and checks the result before reporting success.
 
 ## Log in from a machine without a browser
 
