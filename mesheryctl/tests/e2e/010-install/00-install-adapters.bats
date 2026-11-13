@@ -176,7 +176,7 @@ assert_installed_with_components() {
 }
 
 @test "[TC-6][cut=Installer / Bash Script][tg=Installation] given ADAPTERS without PLATFORM when the platform prompt is answered then mesheryctl is installed and started with a new context holding only that adapter" {
-    if ! command -v script > /dev/null; then
+    if ! script --version 2>/dev/null | grep -q util-linux; then
         skip "script (util-linux) is required to answer the prompt from a terminal"
     fi
 
