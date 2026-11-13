@@ -68,3 +68,39 @@ test('does not exclude production files merely containing the word test', (t) =>
   assert.equal(result.matches, 1);
   assert.equal(result.offenders[0].file, 'components/test-helper.tsx');
 });
+
+test('detects case-insensitive RGB functions without matching identifier suffixes', (t) => {
+  const fixture = createFixture(t);
+
+  const cases = {
+    'lowercase.tsx': ['rgb(255, 0, 0)', 1],
+    'uppercase.tsx': ['RGB(255, 0, 0)', 1],
+    'mixed-case.tsx': ['Rgb(255, 0, 0)', 1],
+    'rgba.tsx': ['rgba(0, 0, 0, .5)', 1],
+    'uppercase-rgba.tsx': ['RGBA(0, 0, 0, .5)', 1],
+    'member-call.tsx': ['theme.rgb(255, 0, 0)', 1],
+    'identifier.tsx': ['myrgb(255, 0, 0)', 0],
+    'dollar-identifier.tsx': ['$rgb(255, 0, 0)', 0],
+    'hyphen-identifier.tsx': ['-rgb(255, 0, 0)', 0],
+  };
+
+  for (const [filename, [content]] of Object.entries(cases)) {
+    writeFile(fixture, `ui/components/${filename}`, content);
+  }
+
+  const result = runAudit(fixture);
+  const actual = Object.fromEntries(
+    Object.entries(result.offenders).map(([index, offender]) => [
+      offender.file.split('/').pop(),
+      offender.rgb,
+    ]),
+  );
+
+  const expected = Object.fromEntries(
+    Object.entries(cases).filter(([, [, count]]) => count > 0)
+      .map(([filename, [, count]]) => [filename, count]),
+  );
+
+  assert.deepEqual(actual, expected);
+  assert.equal(result.rgb, 6);
+});
