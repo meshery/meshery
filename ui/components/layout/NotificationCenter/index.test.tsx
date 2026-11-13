@@ -35,6 +35,7 @@ const sliceState = {
   checkedEvents: [],
   selectedSeverity: 'informational',
   hasMore: false,
+  loadError: false,
   view_to_fetch_on_open: { page: 0, filters: {} },
   uiConfig: { title: 'Notifications', history_mode: false, icon: null },
 };
@@ -46,7 +47,7 @@ vi.mock('react-redux', () => ({
       events: {
         ui: sliceState.uiConfig,
         isNotificationCenterOpen: sliceState.isNotificationCenterOpen,
-        current_view: { has_more: sliceState.hasMore, page: 0 },
+        current_view: { has_more: sliceState.hasMore, page: 0, load_error: sliceState.loadError },
         view_to_fetch_on_open: sliceState.view_to_fetch_on_open,
       },
     }),
@@ -57,9 +58,11 @@ vi.mock('../../../store/slices/events', () => ({
   closeNotificationCenter: () => ({ type: 'events/closeNotificationCenter' }),
   loadEvents: (...args: unknown[]) => ({ type: 'events/loadEvents', args }),
   loadNextPage: (...args: unknown[]) => ({ type: 'events/loadNextPage', args }),
+  retryCurrentPage: (...args: unknown[]) => ({ type: 'events/retryCurrentPage', args }),
   selectAreAllEventsChecked: () => sliceState.areAllChecked,
   selectCheckedEvents: () => sliceState.checkedEvents,
   selectEvents: () => sliceState.events,
+  selectLoadError: () => sliceState.loadError,
   selectSeverity: () => sliceState.selectedSeverity,
   toggleNotificationCenter: () => ({ type: 'events/toggleNotificationCenter' }),
   updateCheckAllEvents: (payload: any) => ({
@@ -257,6 +260,7 @@ beforeEach(() => {
   sliceState.checkedEvents = [];
   sliceState.selectedSeverity = 'informational';
   sliceState.hasMore = false;
+  sliceState.loadError = false;
   sliceState.view_to_fetch_on_open = { page: 0, filters: {} };
   sliceState.uiConfig = { title: 'Notifications', history_mode: false, icon: null };
 });
@@ -295,6 +299,17 @@ describe('NotificationCenter (default export)', () => {
     fireEvent.click(screen.getByTestId('filter-button'));
     expect(dispatchMock.mock.calls.some(([action]) => action?.type === 'events/loadEvents')).toBe(
       true,
+    );
+  });
+
+  it('shows a retry control and re-requests the page after a failed load', () => {
+    sliceState.loadError = true;
+    render(<NotificationCenter />);
+    const retry = screen.getByText('Retry');
+    expect(retry).toBeInTheDocument();
+    fireEvent.click(retry);
+    expect(dispatchMock).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'events/retryCurrentPage' }),
     );
   });
 

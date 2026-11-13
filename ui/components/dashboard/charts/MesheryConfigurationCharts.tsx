@@ -16,33 +16,52 @@ import { Box, InfoOutlinedIcon, Typography, useHasPermission, useTheme } from '@
 
 type ChartColumn = [string, number];
 
+/**
+ * Displays summary counts of Meshery Designs and WASM Filters.
+ * Skips each query unless its respective view permission (`CatalogManagementViewDesigns`
+ * / `CatalogManagementViewFilters`) is granted.
+ */
 export default function MesheryConfigurationChart() {
   const router = useRouter();
   const theme = useTheme();
+  const canViewDesigns = useHasPermission(Keys.CatalogManagementViewDesigns);
+  const canViewFilters = useHasPermission(Keys.CatalogManagementViewFilters);
 
-  const { data: patternsData, error: patternsError } = useGetPatternsQuery({
-    page: 0,
-    pagesize: 1,
-  });
+  const { data: patternsData, error: patternsError } = useGetPatternsQuery(
+    {
+      page: 0,
+      pagesize: 1,
+    },
+    {
+      skip: !canViewDesigns,
+    },
+  );
 
-  const { data: filtersData, error: filtersError } = useGetFiltersQuery({
-    page: 0,
-    pagesize: 1,
-  });
+  const { data: filtersData, error: filtersError } = useGetFiltersQuery(
+    {
+      page: 0,
+      pagesize: 1,
+    },
+    {
+      skip: !canViewFilters,
+    },
+  );
 
   const chartData = useMemo<ChartColumn[]>(() => {
     const nextChartData: ChartColumn[] = [];
 
-    if (!patternsError && patternsData?.patterns) {
+    if (canViewDesigns && !patternsError && patternsData?.patterns) {
       nextChartData.push(['Designs', patternsData.totalCount ?? 0]);
     }
 
-    if (!filtersError && filtersData?.filters) {
+    if (canViewFilters && !filtersError && filtersData?.filters) {
       nextChartData.push(['Filters', filtersData.totalCount ?? 0]);
     }
 
     return nextChartData;
   }, [
+    canViewDesigns,
+    canViewFilters,
     filtersData?.filters,
     filtersData?.totalCount,
     filtersError,
@@ -58,6 +77,13 @@ export default function MesheryConfigurationChart() {
         type: donut(),
         colors: dataToColors(chartData, theme),
         onclick: (dataPoint: { name: string }) => {
+          const isAllowed =
+            dataPoint.name === 'Designs'
+              ? canViewDesigns
+              : dataPoint.name === 'Filters'
+                ? canViewFilters
+                : false;
+          if (!isAllowed) return;
           const routeName = dataPoint.name.charAt(0).toLowerCase() + dataPoint.name.slice(1);
           router.push(`/configuration/${routeName}`);
         },
@@ -80,54 +106,63 @@ export default function MesheryConfigurationChart() {
         },
       },
     }),
-    [chartData, router, theme],
+    [chartData, canViewDesigns, canViewFilters, router, theme],
   );
 
-  const canViewDesigns = useHasPermission(Keys.CatalogManagementViewDesigns);
-
-  return (
-    <Link
-      href="/configuration/designs"
-      style={{
-        textDecoration: 'none',
-        pointerEvents: !canViewDesigns ? 'none' : 'auto',
-      }}
-    >
-      <DashboardSection>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" gutterBottom>
-            Configuration
-          </Typography>
-          <div onClick={(e) => e.stopPropagation()}>
-            <CustomTextTooltip
-              placement="left"
-              title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
-            >
-              <div>
-                <InfoOutlinedIcon
-                  color={theme.palette.icon.default}
-                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                />
-              </div>
-            </CustomTextTooltip>
-          </div>
+  const section = (
+    <DashboardSection>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography variant="h6" gutterBottom>
+          Configuration
+        </Typography>
+        <div onClick={(e) => e.stopPropagation()}>
+          <CustomTextTooltip
+            placement="left"
+            title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
+          >
+            <div>
+              <InfoOutlinedIcon
+                color={theme.palette.icon.default}
+                style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+              />
+            </div>
+          </CustomTextTooltip>
         </div>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignContent: 'center',
-            height: '100%',
-          }}
-        >
-          {chartData.length > 0 ? (
-            <BBChart options={chartOptions} />
-          ) : (
-            <ConnectCluster message={'No connections found in your clusters'} />
-          )}
-        </Box>
-      </DashboardSection>
+      </div>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignContent: 'center',
+          height: '100%',
+        }}
+      >
+        {!canViewDesigns && !canViewFilters ? (
+          <Typography variant="body1" align="center">
+            You do not have permission to view Designs or Filters.
+          </Typography>
+        ) : chartData.length > 0 ? (
+          <BBChart options={chartOptions} />
+        ) : (
+          <ConnectCluster message={'No connections found in your clusters'} />
+        )}
+      </Box>
+    </DashboardSection>
+  );
+
+  let configurationHref: string | null = null;
+  if (canViewDesigns) {
+    configurationHref = '/configuration/designs';
+  } else if (canViewFilters) {
+    configurationHref = '/configuration/filters';
+  }
+
+  return configurationHref ? (
+    <Link href={configurationHref} style={{ textDecoration: 'none' }}>
+      {section}
     </Link>
+  ) : (
+    section
   );
 }

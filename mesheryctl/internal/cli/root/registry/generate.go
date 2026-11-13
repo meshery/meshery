@@ -55,9 +55,9 @@ var (
 	modelTimeout time.Duration
 	// Whether to generate only the latest version of each model
 	latestVersionOnly bool
-
-	generateUsageMsg = "Usage: mesheryctl registry generate [flags]\nRun 'mesheryctl registry generate --help' to see detailed help message"
 )
+
+var generateUsageMsg = "Usage: mesheryctl registry generate [flags]\nRun 'mesheryctl registry generate --help' to see detailed help message"
 
 var generateCmd = &cobra.Command{
 	Use:   "generate",
