@@ -9,6 +9,10 @@ import (
 )
 
 func TestApplyConfigResolution(t *testing.T) {
+	oldName, oldURL, oldMesh, oldQPS, oldConcurrent, oldDuration, oldGenerator, oldBody, oldProfile := testName, testURL, testMesh, qps, concurrentRequests, testDuration, loadGenerator, loadTestBody, profileName
+	defer func() {
+		testName, testURL, testMesh, qps, concurrentRequests, testDuration, loadGenerator, loadTestBody, profileName = oldName, oldURL, oldMesh, oldQPS, oldConcurrent, oldDuration, oldGenerator, oldBody, oldProfile
+	}()
 	for _, tc := range []struct {
 		url   string
 		valid bool
@@ -36,10 +40,7 @@ func TestApplyConfigResolution(t *testing.T) {
 		if !tc.valid {
 			continue
 		}
-		oldName, oldURL, oldMesh, oldQPS, oldConcurrent, oldDuration, oldGenerator, oldBody, oldProfile := testName, testURL, testMesh, qps, concurrentRequests, testDuration, loadGenerator, loadTestBody, profileName
-		defer func() {
-			testName, testURL, testMesh, qps, concurrentRequests, testDuration, loadGenerator, loadTestBody, profileName = oldName, oldURL, oldMesh, oldQPS, oldConcurrent, oldDuration, oldGenerator, oldBody, oldProfile
-		}()
+
 		testName, testURL, testMesh, qps, concurrentRequests, testDuration, loadGenerator, loadTestBody = "flag", "", "", "", "", "", "", ""
 		consolidateSMPConfig(cfg)
 		if testName != "flag" || qps != "7" || concurrentRequests != "2" || testMesh != "istio" {
@@ -51,6 +52,13 @@ func TestApplyConfigResolution(t *testing.T) {
 		if testURL != "https://example.com" || qps != "7" || headers != "headers" {
 			t.Fatalf("profile precedence failed: %q %q %q", testURL, qps, headers)
 		}
+		testName, testURL, testMesh, qps, concurrentRequests, testDuration, loadGenerator, loadTestBody, profileName = "", "", "", "", "", "", "", "", ""
+		profile = &perfprofile.PerformanceProfile{Name: "saved", Endpoints: []string{"https://example.com"}, QPS: 100, ConcurrentRequest: 5, Duration: "1m", ServiceMesh: "istio", LoadGenerators: []string{"fortio"}, RequestBody: "payload"}
+		consolidateExistingProfileConfig(profile, false)
+		if profileName != "saved" || testURL != "https://example.com" || qps != "100" || concurrentRequests != "5" || testDuration != "1m" || testMesh != "istio" || loadGenerator != "fortio" || loadTestBody != "payload" {
+			t.Fatalf("profile defaults not applied: name=%q url=%q qps=%q concurrency=%q duration=%q mesh=%q generator=%q body=%q", profileName, testURL, qps, concurrentRequests, testDuration, testMesh, loadGenerator, loadTestBody)
+		}
+
 	}
 	if _, err := loadSMPConfigFile(filepath.Join(dir, "missing")); err == nil {
 		t.Fatal("expected missing file error")
