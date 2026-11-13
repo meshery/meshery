@@ -15,6 +15,7 @@ const listenerBufferSize = 256
 type clients struct {
 	listeners []chan interface{}
 	mu        *sync.Mutex
+	evicted   bool
 }
 
 type Broadcast struct {
@@ -28,31 +29,46 @@ type Broadcast struct {
 // slice - no stale copy can outlive a concurrent mutation. The channel is
 // buffered (listenerBufferSize); the caller must drain it or unsubscribe,
 // otherwise a full buffer makes Publish drop the newest events for this listener.
+// When all listeners for id unsubscribe, the entry is pruned from the clients
+// map to prevent memory leaks across disconnected sessions.
 func (c *Broadcast) Subscribe(id core.Uuid) (chan interface{}, func()) {
-	actual, _ := c.clients.LoadOrStore(id, &clients{mu: &sync.Mutex{}})
-	cl := actual.(*clients)
-
 	ch := make(chan interface{}, listenerBufferSize)
 
-	cl.mu.Lock()
-	cl.listeners = append(cl.listeners, ch)
-	cl.mu.Unlock()
+	for {
+		actual, ok := c.clients.Load(id)
+		if !ok {
+			actual, _ = c.clients.LoadOrStore(id, &clients{mu: &sync.Mutex{}})
+		}
+		cl := actual.(*clients)
 
-	var once sync.Once
-	unsubscribe := func() {
-		once.Do(func() {
-			cl.mu.Lock()
-			defer cl.mu.Unlock()
-			for i, listener := range cl.listeners {
-				if listener == ch {
-					cl.listeners = append(cl.listeners[:i], cl.listeners[i+1:]...)
-					close(ch)
-					break
+		cl.mu.Lock()
+		if cl.evicted {
+			cl.mu.Unlock()
+			continue
+		}
+		cl.listeners = append(cl.listeners, ch)
+		cl.mu.Unlock()
+
+		var once sync.Once
+		unsubscribe := func() {
+			once.Do(func() {
+				cl.mu.Lock()
+				defer cl.mu.Unlock()
+				for i, listener := range cl.listeners {
+					if listener == ch {
+						cl.listeners = append(cl.listeners[:i], cl.listeners[i+1:]...)
+						close(ch)
+						break
+					}
 				}
-			}
-		})
+				if len(cl.listeners) == 0 {
+					cl.evicted = true
+					c.clients.CompareAndDelete(id, actual)
+				}
+			})
+		}
+		return ch, unsubscribe
 	}
-	return ch, unsubscribe
 }
 
 // Publish delivers data to every current listener for id. Sends are
@@ -73,6 +89,9 @@ func (c *Broadcast) Publish(id core.Uuid, data interface{}) {
 
 	cl.mu.Lock()
 	defer cl.mu.Unlock()
+	if cl.evicted {
+		return
+	}
 	for _, listener := range cl.listeners {
 		select {
 		case listener <- data:
