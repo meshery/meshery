@@ -21,10 +21,10 @@ To build and run Meshery server from source:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-setup
 make ui-build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -33,9 +33,9 @@ make ui-build</code>
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make server</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66,9 +66,9 @@ To build a Docker image of Meshery, please ensure you have `Docker` installed to
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make docker-build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -79,9 +79,9 @@ Every Golang-based component within the Meshery ecosystem incorporates a utility
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make error</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -92,9 +92,9 @@ For more details, <a href="/project/contributing/contributing-error/">Error Util
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make golangci</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -136,10 +136,10 @@ Use the canonical reference instead: [Meshery Server Environment Variables](/ins
     
     
     <pre class="codeblock-pre">
-    	<div class="codeblock">
+    	<span class="codeblock">
     		<code class="clipboardjs">$ git clone https://github.com/meshery/meshery.git
         $ git clone https://github.com/meshery/meshkit.git</code>
-    	</div>
+    	</span>
     </pre>
 
   </li>
@@ -148,9 +148,9 @@ Use the canonical reference instead: [Meshery Server Environment Variables](/ins
     
     
     <pre class="codeblock-pre">
-    	<div class="codeblock">
+    	<span class="codeblock">
     		<code class="clipboardjs">github.com/meshery/meshkit =&gt; ../meshkit</code>
-    	</div>
+    	</span>
     </pre>
 
     <p>Remember to remove this go.mod change when creating pull requests.</p>

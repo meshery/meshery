@@ -37201,19 +37201,19 @@ from:&lt;/p&gt;</description></item><item><title>Google Cloud Platform</title><l
 
 
 &lt;pre class="codeblock-pre"&gt;
-	&lt;div class="codeblock"&gt;
+	&lt;span class="codeblock"&gt;
 		&lt;code class="clipboardjs"&gt;helm repo add meshery https://meshery.io/charts/
 helm install meshery meshery/meshery --namespace meshery --create-namespace&lt;/code&gt;
-	&lt;/div&gt;
+	&lt;/span&gt;
 &lt;/pre&gt;
 
 &lt;p&gt;Optionally, customize the callback URL that your Remote Provider redirects to after sign-in:&lt;/p&gt;
 
 
 &lt;pre class="codeblock-pre"&gt;
-	&lt;div class="codeblock"&gt;
+	&lt;span class="codeblock"&gt;
 		&lt;code class="clipboardjs"&gt;helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token --create-namespace&lt;/code&gt;
-	&lt;/div&gt;
+	&lt;/span&gt;
 &lt;/pre&gt;
 
 &lt;h3 id="customizing-mesherys-installation-with-valuesyaml"&gt;

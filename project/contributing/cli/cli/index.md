@@ -52,7 +52,7 @@ The documentation pages for `mesheryctl` reference are made with the help of the
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">var startCmd = &amp;cobra.Command{
 Use:   &#34;start&#34;,
 Short: &#34;Start Meshery&#34;,
@@ -66,7 +66,7 @@ mesheryctl system start
 mesheryctl system context create k8s -p kubernetes -s,
 Annotations: linkScreenshot,
 ...</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -77,7 +77,7 @@ Also, if the screenshot is present in the command, an `Annotation` macro variabl
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">var linkDocPatternApply = map[string]string{
  &#34;link&#34;:    &#34;![pattern-apply-usage](../../../images/patternApply.png)&#34;,
  &#34;caption&#34;: &#34;Usage of mesheryctl design apply&#34;,
@@ -91,7 +91,7 @@ mesheryctl design apply -f [file | URL]
 mesheryctl design apply [design-name]
 Annotations: linkDocPatternApply,
 ...</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -116,7 +116,7 @@ If your mesheryctl docs end like this, add a shortcode at the end of the file. A
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">Example:
 // apply a pattern file
 mesheryctl design apply -f [file | URL]
@@ -134,7 +134,7 @@ Annotations: linkDocPatternApply,
 &lt;/div&gt;
 &lt;/pre&gt;
 {{&lt; permalink-of-file &gt;}}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -147,9 +147,9 @@ Annotations: linkDocPatternApply,
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make lint</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -194,14 +194,14 @@ Since there is no straightforward way to mark unit tests and integration tests d
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">func TestPreflightCmdIntegration(t *testing.T) {
    // skipping this integration test with --short flag
    if testing.Short() {
        t.Skip(&#34;skipping integration test&#34;)
    }
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -214,9 +214,9 @@ In the above code sample, the test is marked with **“Integration”** in the t
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -225,9 +225,9 @@ In the above code sample, the test is marked with **“Integration”** in the t
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -238,9 +238,9 @@ Test packages that compare against golden files declare an `update` flag:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">var update = flag.Bool(&#34;update&#34;, false, &#34;update golden files&#34;)</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -250,9 +250,9 @@ interpreting it itself. Regenerate only the package you are changing:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">cd mesheryctl &amp;&amp; go test --short ./internal/cli/root/relationships/ -args -update</code>
-	</div>
+	</span>
 </pre>
 
 

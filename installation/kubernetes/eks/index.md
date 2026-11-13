@@ -46,9 +46,9 @@ Use the AWS CLI to connect `kubectl` to your Elastic Kubernetes Service (EKS) cl
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">aws eks update-kubeconfig --name [YOUR_CLUSTER_NAME] --region [YOUR_REGION]</code>
-	</div>
+	</span>
 </pre>
 
 3. _Optional:_ If you use `eksctl`, follow the [AWS documentation](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html).
@@ -57,9 +57,9 @@ Use the AWS CLI to connect `kubectl` to your Elastic Kubernetes Service (EKS) cl
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl config current-context</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70,9 +70,9 @@ Run <a href='/reference/mesheryctl/system/start/'>mesheryctl system start</a> to
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -175,9 +175,9 @@ Install Meshery on Docker (out-of-cluster) and connect it to your EKS cluster.
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p docker</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -186,10 +186,10 @@ Once Meshery is running, sign in and connect it to your cluster. `mesheryctl con
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system login
 mesheryctl connection create --type eks</code>
-	</div>
+	</span>
 </pre>
 
 

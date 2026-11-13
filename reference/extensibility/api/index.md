@@ -64,9 +64,9 @@ Using Meshery CLI, you can get a copy of your authentication token by executing 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system login</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -81,10 +81,10 @@ Download your token from Meshery UI and copy the token value from the downloaded
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">meshery-provider: Meshery
 token: your token</code>
-	</div>
+	</span>
 </pre>
 
 <div class="alert alert-dark" role="alert">

@@ -19,9 +19,9 @@ Any toolchain at or above the version in `go.mod` works - `go 1.26.4` there does
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">env -u GOROOT PATH=&#34;$HOME/.gvm/gos/go1.26.4/bin:$PATH&#34; go test ./...</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -60,9 +60,9 @@ Confirm which one you have, and that it speaks the protocol:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">which -a sass &amp;&amp; sass --embedded --version</code>
-	</div>
+	</span>
 </pre>
 
 

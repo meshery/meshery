@@ -51,9 +51,9 @@ Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) c
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">gcloud config set project [PROJECT_ID]</code>
-	</div>
+	</span>
 </pre>
 
 3. Download the cluster's credentials and make it your current context:
@@ -61,9 +61,9 @@ Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) c
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">gcloud container clusters get-credentials [CLUSTER_NAME] --location [CLUSTER_LOCATION]</code>
-	</div>
+	</span>
 </pre>
 
 4. Verify your kubeconfig's current context:
@@ -71,9 +71,9 @@ Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) c
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl config current-context</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -86,9 +86,9 @@ Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) c
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -101,9 +101,9 @@ With your GKE cluster as the current context, start Meshery on Kubernetes:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 

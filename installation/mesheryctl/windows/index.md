@@ -54,9 +54,9 @@ Download the `mesheryctl_<version>_Windows_x86_64.zip` archive from a [Meshery r
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">.\mesheryctl.exe system start</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65,9 +65,9 @@ To run Meshery on Docker instead, run:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">.\mesheryctl.exe system start -p docker</code>
-	</div>
+	</span>
 </pre>
 
 

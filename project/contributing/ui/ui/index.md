@@ -99,9 +99,9 @@ To install/update the UI dependencies:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-setup</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -112,9 +112,9 @@ To build and export the UI code:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -127,9 +127,9 @@ To build and export the UI code _and_ build and run Meshery Server:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-server</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -140,9 +140,9 @@ To start running Meshery Server locally:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make server</code>
-	</div>
+	</span>
 </pre>
 
 Now, Meshery will run on the default port `http://localhost:9081`.
@@ -171,9 +171,9 @@ If you want to work on the UI, it will be a good idea to use the included UI dev
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -233,9 +233,9 @@ For accessing the svg file as data-url, the utf8 encoding should be used in plac
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">let svg = &#39;data:image/svg+xml;utf8,&#39; + encodeURIComponent(svgFile);</code>
-	</div>
+	</span>
 </pre>
 
 

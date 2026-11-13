@@ -28,9 +28,9 @@ Start Meshery:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p docker</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -45,14 +45,14 @@ By default, Meshery Server looks for Kubernetes configuration in the `$HOME/.kub
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">services:
   meshery:
     environment:
       - &#34;KUBECONFIG_FOLDER=/custom/path/to/.kube&#34;
     volumes:
       - /custom/path/to/.kube:/custom/path/to/.kube:ro</code>
-	</div>
+	</span>
 </pre>
 
 

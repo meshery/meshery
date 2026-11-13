@@ -54,9 +54,9 @@ Start Minikube if it is not already running:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">minikube start --cpus 4 --memory 4096</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65,9 +65,9 @@ Set `--cpus` and `--memory` to fit the machine type you chose in GitHub Codespac
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">minikube status</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -76,9 +76,9 @@ Verify that `kubectl` can reach the cluster:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl cluster-info</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -89,9 +89,9 @@ Start Meshery in your Minikube cluster:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -108,9 +108,9 @@ You can also generate a self-contained kubeconfig for your Minikube cluster and 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl config view --minify --flatten --context minikube &gt; config_minikube.yaml</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -119,7 +119,7 @@ The file looks like this, with your own server address and certificate data:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">apiVersion: v1
 kind: Config
 clusters:
@@ -139,7 +139,7 @@ users:
   user:
     client-certificate-data: &lt;certificate data&gt;
     client-key-data: &lt;key data&gt;</code>
-	</div>
+	</span>
 </pre>
 
 

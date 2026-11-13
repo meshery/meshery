@@ -246,7 +246,7 @@ In the CRD below, the `spec.group` field has the value `cloudquota.cnrm.cloud.go
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -268,7 +268,7 @@ spec:
               type: string
             kind:
               type: string</code>
-	</div>
+	</span>
 </pre>
 
 **CSV Model Definition Example:**

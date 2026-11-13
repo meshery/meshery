@@ -63,9 +63,9 @@ Takes no body. Use the `{{< >}}` form.
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make site</code>
-	</div>
+	</span>
 </pre>
 
 

@@ -34,9 +34,9 @@ Generate manifests and deepcopy code, then build the manager binary:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -45,9 +45,9 @@ Run the controller against the cluster in your current `~/.kube/config`:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make run</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -57,9 +57,9 @@ automatically, so no cluster is required:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make test</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -68,9 +68,9 @@ Lint the codebase (and auto-fix where possible with `make lint-fix`):
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make lint</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -79,9 +79,9 @@ Lint the codebase (and auto-fix where possible with `make lint-fix`):
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make docker-build docker-push IMG=&lt;registry&gt;/meshery-operator:&lt;tag&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -92,10 +92,10 @@ Install the CRDs and deploy the operator into your current kube context:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make install
 make deploy IMG=&lt;registry&gt;/meshery-operator:&lt;tag&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -104,10 +104,10 @@ To remove it:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make undeploy
 make uninstall</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -118,9 +118,9 @@ To generate and build the Operator Lifecycle Manager bundle image:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make bundle bundle-build bundle-push BUNDLE_IMG=&lt;registry&gt;/meshery-operator-bundle:&lt;tag&gt;</code>
-	</div>
+	</span>
 </pre>
 
 

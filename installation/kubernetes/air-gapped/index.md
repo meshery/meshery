@@ -57,9 +57,9 @@ Tags change with each operator release. Before mirroring, render the chart with 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm template meshery ./meshery-&lt;chart-version&gt;.tgz --namespace meshery -f air-gapped-values.yaml | grep -E &#39;^\s+image:&#39; | sort -u</code>
-	</div>
+	</span>
 </pre>
 
 </div>
@@ -74,7 +74,7 @@ On a machine with internet access, pull each image, retag it for your registry, 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">registry=registry.example.local
 # If your registry requires authentication, log the Docker client in before pushing:
 docker login &#34;$registry&#34;
@@ -89,7 +89,7 @@ done
 docker pull nats:2.14.2-alpine
 docker tag nats:2.14.2-alpine &#34;$registry/library/nats:2.14.2-alpine&#34;
 docker push &#34;$registry/library/nats:2.14.2-alpine&#34;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -98,18 +98,18 @@ If your registry requires authentication, create the `meshery` namespace first, 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl create namespace meshery --dry-run=client -o yaml | kubectl apply -f -</code>
-	</div>
+	</span>
 </pre>
 
 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl create secret docker-registry private-registry --namespace meshery --docker-server=registry.example.local --docker-username=&lt;username&gt; --docker-password=&lt;password&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -120,12 +120,12 @@ If you have no registry, archive the images, transfer the archive, and load it o
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">for image in meshery/meshery:&lt;release-tag&gt; meshery/meshery-operator:1.0.6 alpine/k8s:1.35.6 meshery/meshery-istio:&lt;release-tag&gt; meshery/meshsync:1.0.3 nats:2.14.2-alpine natsio/nats-server-config-reloader:0.23.0; do
   docker pull &#34;$image&#34;
 done
 docker save -o meshery-images.tar meshery/meshery:&lt;release-tag&gt; meshery/meshery-operator:1.0.6 alpine/k8s:1.35.6 meshery/meshery-istio:&lt;release-tag&gt; meshery/meshsync:1.0.3 nats:2.14.2-alpine natsio/nats-server-config-reloader:0.23.0</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -134,9 +134,9 @@ On each node, import the archive into the container runtime. For containerd (the
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">sudo ctr --namespace k8s.io images import meshery-images.tar</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -149,11 +149,11 @@ The usual `helm repo add` fetches the chart index from the internet, so transfer
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm repo add meshery https://meshery.io/charts/
 helm repo update
 helm pull meshery/meshery --version &lt;chart-version&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -226,10 +226,10 @@ MeshSync and Broker images cannot be repointed in `values.yaml` or in their cust
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm install meshery ./meshery-&lt;chart-version&gt;.tgz --namespace meshery --create-namespace -f air-gapped-values.yaml
 kubectl get pods --namespace meshery -w</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -238,9 +238,9 @@ A pod stuck in `ImagePullBackOff` names an image that was not mirrored or loaded
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl describe pod --namespace meshery &lt;pod-name&gt;</code>
-	</div>
+	</span>
 </pre>
 
 

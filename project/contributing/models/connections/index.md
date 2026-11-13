@@ -37,7 +37,7 @@ Below is a complete, minimal definition for a hypothetical telemetry backend. It
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{
   &#34;schemaVersion&#34;: &#34;connections.meshery.io/v1beta3&#34;,
   &#34;name&#34;: &#34;Grafana&#34;,
@@ -86,7 +86,7 @@ Below is a complete, minimal definition for a hypothetical telemetry backend. It
     &#34;svgWhite&#34;: &#34;&lt;svg ...&gt;...&lt;/svg&gt;&#34;
   }
 }</code>
-	</div>
+	</span>
 </pre>
 
 

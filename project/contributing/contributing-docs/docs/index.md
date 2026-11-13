@@ -277,9 +277,9 @@ Don't use `code` shortcode when the snippet is in between an ordered list, this 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">`code snippet`: `code snippet`</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -288,11 +288,11 @@ Don't use `code` shortcode when the snippet is in between an ordered list, this 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">(language name)
 code snippet
 </code>
-	</div>
+	</span>
 </pre>
 
 
@@ -404,10 +404,10 @@ An alert is a box that can stand out to indicate important information. You can 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{% alert color=&#34;info&#34; title=&#34;Here is another!&#34; %}}
 {{% /alert %}}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -472,10 +472,10 @@ To use the `alert` shortcode feature in our documentation include the following 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{% alert color=&#34;info&#34; title=&#34;Here is another!&#34; %}}
 {{% /alert %}}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -494,9 +494,9 @@ Using the Markdown image syntax:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">[![Image Title](../../../assets/img/your-image.png)](../../../assets/img/your-image.png)</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -505,11 +505,11 @@ This renders as:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">&lt;a href=\&#34;/assets/img/your-image.png\&#34;&gt;
     &lt;img src=\&#34;/assets/img/your-image.png\&#34; alt=\&#34;Image Title\&#34;&gt;
 &lt;/a&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -525,11 +525,11 @@ If you need to specify dimensions, use:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">&lt;a href=\&#34;/assets/img/your-image.png\&#34;&gt;
     &lt;img src=\&#34;/assets/img/your-image.png\&#34; style=\&#34;width:500px; height:auto;\&#34; alt=\&#34;Image Title\&#34;&gt;
 &lt;/a&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -591,11 +591,11 @@ In Hugo templates, conditionals are written using Go template syntax:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{ if eq .Params.title &#34;Awesome Shoes&#34; }}
   These shoes are awesome!
 {{ end }}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -612,11 +612,11 @@ The `range` action iterates over a collection. It is written in the following ma
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{ range .Pages }}
   {{ .Title }}
 {{ end }}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -629,9 +629,9 @@ In Hugo templates, comments are written using Go template comment syntax:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{/* This is a comment */}}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -644,9 +644,9 @@ Partials are used to include reusable template fragments. They are written in th
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{ partial &#34;header.html&#34; . }}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -657,9 +657,9 @@ Shortcodes are reusable content snippets that can be used in Markdown files. The
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{&lt;/* shortcode-name param=&#34;value&#34; */&gt;}}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -670,9 +670,9 @@ In Hugo templates, variables are defined using the `:=` operator:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{ $variable1 := true }}</code>
-	</div>
+	</span>
 </pre>
 
 

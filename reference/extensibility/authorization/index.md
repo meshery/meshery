@@ -56,9 +56,9 @@ Generate a unique, lowercase UUID v4 for the new permission key:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">uuidgen | tr &#39;[:upper:]&#39; &#39;[:lower:]&#39;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -125,9 +125,9 @@ Simply import the `Keys` object directly from `@meshery/schemas/permissions` in 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { Keys } from &#39;@meshery/schemas/permissions&#39;;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -136,7 +136,7 @@ Prefer the `useHasPermission` hook from [Sistent](https://github.com/layer5io/si
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { useHasPermission } from &#39;@sistent/sistent&#39;;
 import { Keys } from &#39;@meshery/schemas/permissions&#39;;
 
@@ -147,7 +147,7 @@ return (
     Evaluate Relationships
   &lt;/Button&gt;
 );</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -155,11 +155,11 @@ Sistent controls also accept the key directly as a `permissionKey` prop, which i
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">&lt;Button permissionKey={Keys.CatalogManagementEvaluateRelationships} onClick={handleEvaluate}&gt;
   Evaluate Relationships
 &lt;/Button&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -180,14 +180,14 @@ This example shows how the **Evaluate Relationships** key is wired across each l
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{
   &#34;id&#34;: &#34;c7752be7-5c0f-465d-a8ba-5594acd08b93&#34;,
   &#34;function&#34;: &#34;Evaluate Relationships&#34;,
   &#34;category&#34;: &#34;Catalog Management&#34;,
   &#34;subcategory&#34;: &#34;Designs&#34;
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -195,7 +195,7 @@ This example shows how the **Evaluate Relationships** key is wired across each l
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">export const Keys = {
   CatalogManagementEvaluateRelationships: {
     id: &#34;c7752be7-5c0f-465d-a8ba-5594acd08b93&#34;,
@@ -205,7 +205,7 @@ This example shows how the **Evaluate Relationships** key is wired across each l
     description: &#34;Evaluate relationships inside a design&#34;
   }
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -213,9 +213,9 @@ This example shows how the **Evaluate Relationships** key is wired across each l
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{ action: &#34;c7752be7-5c0f-465d-a8ba-5594acd08b93&#34;, subject: &#34;evaluate relationships&#34; }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -223,13 +223,13 @@ This example shows how the **Evaluate Relationships** key is wired across each l
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { useHasPermission } from &#39;@sistent/sistent&#39;;
 import { Keys } from &#39;@meshery/schemas/permissions&#39;;
 
 const canEvaluate = useHasPermission(Keys.CatalogManagementEvaluateRelationships);
 return canEvaluate ? &lt;EvaluateRelationshipsButton /&gt; : null;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -255,10 +255,10 @@ Inspect keys in DevTools (**Application → Session Storage**):
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">JSON.parse(sessionStorage.getItem(&#39;keys&#39;))
 JSON.parse(sessionStorage.getItem(&#39;currentOrg&#39;))</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -280,10 +280,10 @@ Meshery reuses `sessionStorage.keys` until the org changes or keys are refetched
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">sessionStorage.removeItem(&#39;keys&#39;);
 location.reload();</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -347,14 +347,14 @@ Three spellings exist, and they are equivalent - all three end up calling the sa
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { useHasPermission } from &#39;@sistent/sistent&#39;;
 import { Keys } from &#39;@meshery/schemas/permissions&#39;;
 
 const canDelete = useHasPermission(Keys.LifecycleManagementDeleteAConnection);
 
 return canDelete ? &lt;Button id=&#34;delete-connection&#34;&gt;Delete&lt;/Button&gt; : null;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -362,13 +362,13 @@ return canDelete ? &lt;Button id=&#34;delete-connection&#34;&gt;Delete&lt;/Butto
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { Keys } from &#39;@meshery/schemas/permissions&#39;;
 
 &lt;Button id=&#34;delete-connection&#34; permissionKey={Keys.LifecycleManagementDeleteAConnection}&gt;
   Delete
 &lt;/Button&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -376,13 +376,13 @@ return canDelete ? &lt;Button id=&#34;delete-connection&#34;&gt;Delete&lt;/Butto
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import CAN from &#39;@/utils/can&#39;;
 import { Keys } from &#39;@meshery/schemas/permissions&#39;;
 
 const key = Keys.LifecycleManagementDeleteAConnection;
 const canDelete = CAN(key.id, key.function);</code>
-	</div>
+	</span>
 </pre>
 
 

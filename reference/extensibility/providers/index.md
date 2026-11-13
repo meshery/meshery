@@ -387,12 +387,12 @@ Example configuration in the capabilities response:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">&#34;redirects&#34;: {
   &#34;/&#34;: &#34;/extension/meshmap&#34;,
   &#34;/dashboard&#34;: &#34;/extension/meshmap/dashboard&#34;
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -417,7 +417,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{
   &#34;providerType&#34;: &#34;remote&#34;,
   &#34;packageVersion&#34;: &#34;v0.1.0&#34;,
@@ -579,7 +579,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
     }
   ]
 }</code>
-	</div>
+	</span>
 </pre>
 
 </details>
@@ -594,14 +594,14 @@ Example of the request body:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{
   &#34;server_id&#34;: &#34;xxxx-xxxxx-xxxx-xxxx&#34;,
   &#34;server_version&#34;: &#34;vx.x.x&#34;,
   &#34;server_build-sha&#34;: &#34;xxxx-xxxxx&#34;,
   &#34;server_location&#34;: &#34;&lt;protocol&gt;://&lt;hostname&gt;:&lt;port&gt;&#34;
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -641,9 +641,9 @@ Next, set the `MESHERY_SERVER_CALLBACK_URL` variable when running the `helm inst
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://k8s-staging.test.io/api/user/token</code>
-	</div>
+	</span>
 </pre>
 
 

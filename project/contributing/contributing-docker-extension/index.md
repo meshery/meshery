@@ -41,9 +41,9 @@ Meshery runs as a set of containers inside your Docker Desktop virtual machine.
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">docker extension install meshery/docker-extension-meshery</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -56,9 +56,9 @@ In the root directory of meshery, run the following command:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-setup</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -67,9 +67,9 @@ In the root directory of meshery, run the following command:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make server</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -81,9 +81,9 @@ Open another terminal while the server is running,
 Go inside the docker-extension directory 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">cd install/docker-extension</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -92,9 +92,9 @@ Go inside the docker-extension directory
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -105,9 +105,9 @@ If you want to work on the Docker UI, it will be a good idea to use the included
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -118,9 +118,9 @@ To see the changes reflected in the docker extension locally and open the devToo
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make link</code>
-	</div>
+	</span>
 </pre>
 
 

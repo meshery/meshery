@@ -46,9 +46,9 @@ Create an Ubuntu Droplet from the [DigitalOcean Control Panel](https://docs.digi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">doctl compute droplet create meshery --image ubuntu-22-04-x64 --size s-2vcpu-4gb --region nyc1 --ssh-keys [YOUR_SSH_KEY_FINGERPRINT]</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -57,9 +57,9 @@ Give the Droplet at least 2 vCPUs and 4 GB of memory. When the Droplet is ready,
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">ssh root@[DROPLET_IP]</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -72,9 +72,9 @@ On the Droplet, start Meshery on Docker:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p docker</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -87,9 +87,9 @@ By default, Meshery UI listens on port `9081`. To reach it from your browser, al
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">doctl compute firewall create --name meshery-ui --inbound-rules &#34;protocol:tcp,ports:9081,address:[YOUR_IP]/32&#34; --droplet-ids [DROPLET_ID]</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -113,9 +113,9 @@ Follow the steps below to install Meshery into your DigitalOcean Kubernetes (DOK
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">doctl auth init</code>
-	</div>
+	</span>
 </pre>
 
 2. Download your cluster's credentials and make it the current `kubectl` context. Replace `[CLUSTER_NAME]` with the name or ID of your DOKS cluster.
@@ -123,9 +123,9 @@ Follow the steps below to install Meshery into your DigitalOcean Kubernetes (DOK
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">doctl kubernetes cluster kubeconfig save [CLUSTER_NAME]</code>
-	</div>
+	</span>
 </pre>
 
 3. Verify your kubeconfig's current context.
@@ -133,9 +133,9 @@ Follow the steps below to install Meshery into your DigitalOcean Kubernetes (DOK
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl config current-context</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -146,9 +146,9 @@ Run <a href='/reference/mesheryctl/system/start/'>mesheryctl system start</a> to
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 

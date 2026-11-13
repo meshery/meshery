@@ -23,10 +23,10 @@ LLMS index: [llms.txt](/llms.txt)
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm repo add meshery https://meshery.io/charts/
 helm install meshery meshery/meshery --namespace meshery --create-namespace</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -35,9 +35,9 @@ Optionally, customize the callback URL that your Remote Provider redirects to af
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token --create-namespace</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -52,9 +52,9 @@ By default, Meshery Server looks for Kubernetes configuration in the `/home/appu
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm install meshery meshery/meshery --namespace meshery --set env.KUBECONFIG_FOLDER=/custom/path/to/.kube --create-namespace</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -71,10 +71,10 @@ To upgrade an existing Meshery deployment:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm repo update
 helm upgrade meshery meshery/meshery --namespace meshery</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -83,9 +83,9 @@ Alternatively, run this command instead to use the upgrade-specific values file,
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm upgrade meshery meshery/meshery --namespace meshery -f https://raw.githubusercontent.com/meshery/meshery/master/install/kubernetes/helm/meshery/values-upgrade.yaml --wait --timeout 10m</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110,9 +110,9 @@ Watch the status of your Meshery pods:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl get pods --namespace meshery -w</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -123,9 +123,9 @@ To see each health check's result, query the readiness endpoint in verbose mode.
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl port-forward --namespace meshery deployment/meshery 8080:8080</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -134,9 +134,9 @@ Then, in another terminal:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">curl -s &#39;http://localhost:8080/healthz/ready?verbose=1&#39;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -165,7 +165,7 @@ To customize the probes, set them in your `values.yaml`:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">probe:
   livenessProbe:
     enabled: true
@@ -180,7 +180,7 @@ To customize the probes, set them in your `values.yaml`:
     periodSeconds: 4
     failureThreshold: 4
     timeoutSeconds: 3</code>
-	</div>
+	</span>
 </pre>
 
 

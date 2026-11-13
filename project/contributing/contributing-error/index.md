@@ -46,9 +46,9 @@ Use the `errors.New()` function to create a new instance of the error object and
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">errors.New(ErrExampleCode, errors.Alert, []string{&#34;&lt;short-description&gt;&#34;}, []string{&#34;&lt;long-description&gt;&#34;}, []string{&#34;&lt;probable-cause&gt;&#34;}, []string{&#34;&lt;suggested remediation&gt;&#34;})</code>
-	</div>
+	</span>
 </pre>
 
 ## Example
@@ -58,7 +58,7 @@ In this example we are creating an Error for being unable to marshal JSON
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">var (
 	// Error code
     ErrMarshalCode= &#34;replace_me&#34;
@@ -72,7 +72,7 @@ In this example we are creating an Error for being unable to marshal JSON
 func ErrMarshal(err error, obj string) error {
 	return errors.New(ErrMarshalCode, errors.Alert, []string{&#34;Unable to marshal the : &#34;, obj}, []string{err.Error()}, []string{}, []string{})
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -83,13 +83,13 @@ Old
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">bd, err := json.Marshal(providers)
 	if err != nil {
 		http.Error(w, &#34;unable to marshal the providers&#34;, http.StatusInternalServerError)
 		return
 	}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -98,7 +98,7 @@ New
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">bd, err := json.Marshal(providers)
   if err != nil {
           marshalErr := ErrMarshal(err, &#34;providers&#34;)
@@ -106,7 +106,7 @@ New
           writeMeshkitError(w, marshalErr, http.StatusInternalServerError)
           return
       }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -123,7 +123,7 @@ how to choose the status code.
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">// remRetryConnection answers every cause, so it is declared once.
 var remRetryConnection = errors.Remediation{
 	ID:          &#34;retry-connection&#34;,
@@ -159,7 +159,7 @@ func ErrUnreachableCluster(err error, server string) error {
 	e.LongDescription = append(e.LongDescription, fmt.Sprintf(&#34;API server: %s&#34;, server), err.Error())
 	return e
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -193,11 +193,11 @@ To enforce the use of meshkit errors, the meshkit logger reads its structured fi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">type Logger struct {
 	log   logger.Handler
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -208,9 +208,9 @@ To enforce the use of meshkit errors, the meshkit logger reads its structured fi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">logrus.Debugf(&#34;meshLocationURL: %s&#34;, meshLocationURL)</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -219,9 +219,9 @@ To enforce the use of meshkit errors, the meshkit logger reads its structured fi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">l.log.Debug(&#34;meshLocationURL: &#34;, meshLocationURL)</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -232,9 +232,9 @@ To enforce the use of meshkit errors, the meshkit logger reads its structured fi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">logrus.Errorf(&#34;error marshaling data: %v.&#34;, err)</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -243,9 +243,9 @@ To enforce the use of meshkit errors, the meshkit logger reads its structured fi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">l.log.Error(ErrMarshal(err, obj))</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -254,7 +254,7 @@ To enforce the use of meshkit errors, the meshkit logger reads its structured fi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">package main
 
 import (
@@ -326,7 +326,7 @@ func ErrOpeningFile(err error) error {
 		[]string{&#34;empty string passed as argument &#34;, &#34;file with this name doesn&#39;t exist&#34;},
 		[]string{&#34;pass a non-empty string as filename &#34;, &#34;create file before opening it&#34;})
 }</code>
-	</div>
+	</span>
 </pre>
 
 

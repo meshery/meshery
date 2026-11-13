@@ -58,9 +58,9 @@ Start Minikube if it is not already running:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">minikube start</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -69,9 +69,9 @@ Check the status of your Minikube cluster:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">minikube status</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -80,9 +80,9 @@ Verify that your current context is `minikube`:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl config current-context</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -99,9 +99,9 @@ To install Meshery inside your Minikube cluster, run:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 This command deploys the Meshery Helm chart into the `meshery` namespace.
@@ -111,9 +111,9 @@ To verify the deployment, run:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm list -A -n meshery</code>
-	</div>
+	</span>
 </pre>
 
 After deployment, reach Meshery UI through port forwarding:
@@ -121,9 +121,9 @@ After deployment, reach Meshery UI through port forwarding:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system dashboard --port-forward</code>
-	</div>
+	</span>
 </pre>
 
 For details, see the [port-forwarding](/reference/mesheryctl/system/dashboard/) guide.
@@ -133,9 +133,9 @@ Meshery Server running in the cluster connects to it automatically. If the conne
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl connection create --type minikube</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -158,9 +158,9 @@ Start Meshery on Docker:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p docker</code>
-	</div>
+	</span>
 </pre>
 
 This command starts Meshery in Docker containers. To verify that Meshery is running, run:
@@ -168,9 +168,9 @@ This command starts Meshery in Docker containers. To verify that Meshery is runn
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">docker ps</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -181,9 +181,9 @@ Sign in with `mesheryctl system login`, then connect Meshery to your Minikube cl
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl connection create --type minikube</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -212,9 +212,9 @@ Open your kubeconfig (`~/.kube/config`) in an editor and change the `server` fie
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">server: https://{minikubeIP}:8443</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -223,9 +223,9 @@ Then connect Meshery to your cluster:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl connection create --type minikube</code>
-	</div>
+	</span>
 </pre>
 
 

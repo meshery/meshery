@@ -50,9 +50,9 @@ Use the Azure CLI to connect `kubectl` to your Azure Kubernetes Service (AKS) cl
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">az account set --subscription [SUBSCRIPTION_ID]</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -61,9 +61,9 @@ Use the Azure CLI to connect `kubectl` to your Azure Kubernetes Service (AKS) cl
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">az aks get-credentials --resource-group [RESOURCE_GROUP] --name [AKS_SERVICE_NAME]</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -74,9 +74,9 @@ With your AKS cluster as the current context, start Meshery on Kubernetes:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 

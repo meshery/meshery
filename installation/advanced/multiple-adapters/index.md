@@ -23,9 +23,9 @@ Each `mesheryctl` context in your meshconfig (`~/.meshery/config.yaml`) lists th
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system context create my-context --components meshery-istio --components meshery-linkerd --set</code>
-	</div>
+	</span>
 </pre>
 
 

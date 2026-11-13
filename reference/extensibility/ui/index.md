@@ -30,7 +30,7 @@ RJSFWrapperComponent provides customizations for RJSF forms, overriding the defa
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">&lt;RJSFWrapperComponent {...props}&gt;
   &lt;RJSFForm
     isLoading={isLoading}
@@ -42,7 +42,7 @@ RJSFWrapperComponent provides customizations for RJSF forms, overriding the defa
     jsonSchema={jsonSchema}
   /&gt;
 &lt;/RJSFWrapperComponent&gt;</code>
-	</div>
+	</span>
 </pre>
 
 See this [RJSF Component](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L91) as an example of how these properties are received.
@@ -125,7 +125,7 @@ The `randomLoadingMessage` export automatically retrieves the persisted value fr
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">function RJSFWrapperComponent(props) {
 // Clone the child to pass in additional props
 const children = React.cloneElement(props.children, {
@@ -135,7 +135,7 @@ customComponent: YOUR_NEW_CUSTOM_COMPONENT_OR_PROP
 
 return children
 }</code>
-	</div>
+	</span>
 </pre>
 
 Extract the props in the [RJSFForm Component](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L91)
@@ -157,7 +157,7 @@ Meshery exposes a custom RJSF Form component which is capable of generating "Pat
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">&lt;PatternServiceFormCore
 formData={formData}
 schemaSet={schemaSet}
@@ -182,7 +182,7 @@ namespace={namespace}
     }}
 
 &lt;/PatternServiceFormCore&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -197,7 +197,7 @@ from _ui/components/MesheryMeshInterface/PatternService/index.js_
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent })</code>
-	</div>
+	</span>
 </pre>

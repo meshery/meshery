@@ -37,9 +37,9 @@ Build the MeshSync binary to `bin/meshsync`:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -53,10 +53,10 @@ and run MeshSync against it:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make nats-run
 make run</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -71,9 +71,9 @@ Run the unit tests with the race detector (linting runs first):
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make test</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -82,9 +82,9 @@ Generate an HTML coverage report (`cover.html`):
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make coverage-report</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -94,20 +94,20 @@ provisions NATS and a kind cluster. Run the full cycle, or drive the phases indi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make integration-tests</code>
-	</div>
+	</span>
 </pre>
 
 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make integration-tests-setup
 make integration-tests-run
 make integration-tests-cleanup</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -121,10 +121,10 @@ Lint the codebase with golangci-lint, and tidy Go module dependencies:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make lint-run
 make mod-tidy</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -133,9 +133,9 @@ make mod-tidy</code>
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make docker-build</code>
-	</div>
+	</span>
 </pre>
 
 

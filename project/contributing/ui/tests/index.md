@@ -68,9 +68,9 @@ This approach is very quick to build, but also dependent on your operating syste
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -79,9 +79,9 @@ This approach is very quick to build, but also dependent on your operating syste
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make build-server</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -90,9 +90,9 @@ This approach is very quick to build, but also dependent on your operating syste
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make server-binary</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -109,9 +109,9 @@ Alternatively, a Docker-based setup can be utilized, simplifying the process, an
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make docker-testing-env-build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -120,9 +120,9 @@ Alternatively, a Docker-based setup can be utilized, simplifying the process, an
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make docker-testing-env</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -137,9 +137,9 @@ Setup playwright:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-test-setup</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -148,9 +148,9 @@ Run the all project and test cases:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-test</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -161,9 +161,9 @@ The first step is to pull the docker image from [Azure Container Registry](http
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">docker pull mcr.microsoft.com/playwright:&lt;version&gt;-&lt;base-image&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -179,9 +179,9 @@ Here is the example of pulling playwright v1.44.0 with Ubuntu 22.04 LTS
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">docker pull mcr.microsoft.com/playwright:v1.44.0-jammy</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -190,9 +190,9 @@ Starting up playwright docker server:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">docker run --rm --network host --init -it mcr.microsoft.com/playwright:v1.44.0-jammy /bin/sh -c &#34;cd /home/pwuser &amp;&amp; npx -y playwright@1.44.0 run-server --port 8080&#34;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -207,9 +207,9 @@ In the last step go to ui folder,
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">cd ui;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -227,9 +227,9 @@ To run playwright UI mode using the browser, you can add `--ui` in the cli, for 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">npx playwright test --ui</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -237,9 +237,9 @@ If you are using playwright from docker, you can use `--ui-port=<playwright-dock
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">npx playwright test --ui-port=8080</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -247,9 +247,9 @@ To run playwright for specific project only, for example meshery-provider, you c
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">npx playwright test --ui --project=chromium-meshery-provider</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -257,9 +257,9 @@ To run specific test, you can add the test file location, for example:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">npx playwright test --ui --project=chromium-meshery-provider tests/e2e/connections.spec.ts</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -277,7 +277,7 @@ By default our test cases is running against both Meshery and Local Provider, we
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { expect, test } from &#39;./fixtures/project&#39;;
 
 test(&#39;Random test&#39;, async ({ provider }) =&gt; {
@@ -289,7 +289,7 @@ test(&#39;Random test&#39;, async ({ provider }) =&gt; {
     // Run this for testing Local provider
   }
 });</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -302,14 +302,14 @@ After merging into the master branch, monitor the GitHub workflow that executes 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { expect, test } from &#39;./fixtures/project&#39;;
 
 test(&#39;Random test&#39;,  { tag: &#39;@unstable&#39; }, async ({ provider }) =&gt; {
   // Test cases here
   // ...
 });</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -387,7 +387,7 @@ connections suite that map is
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { annotateConnCase, connTags } from &#39;./connections.testmap&#39;;
 
 test(
@@ -398,7 +398,7 @@ test(
     // ...
   },
 );</code>
-	</div>
+	</span>
 </pre>
 
 

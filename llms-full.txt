@@ -11577,9 +11577,9 @@ Tags change with each operator release. Before mirroring, render the chart with 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm template meshery ./meshery-&lt;chart-version&gt;.tgz --namespace meshery -f air-gapped-values.yaml | grep -E &#39;^\s+image:&#39; | sort -u</code>
-	</div>
+	</span>
 </pre>
 
 </div>
@@ -11594,7 +11594,7 @@ On a machine with internet access, pull each image, retag it for your registry, 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">registry=registry.example.local
 # If your registry requires authentication, log the Docker client in before pushing:
 docker login &#34;$registry&#34;
@@ -11609,7 +11609,7 @@ done
 docker pull nats:2.14.2-alpine
 docker tag nats:2.14.2-alpine &#34;$registry/library/nats:2.14.2-alpine&#34;
 docker push &#34;$registry/library/nats:2.14.2-alpine&#34;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -11618,18 +11618,18 @@ If your registry requires authentication, create the `meshery` namespace first, 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl create namespace meshery --dry-run=client -o yaml | kubectl apply -f -</code>
-	</div>
+	</span>
 </pre>
 
 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl create secret docker-registry private-registry --namespace meshery --docker-server=registry.example.local --docker-username=&lt;username&gt; --docker-password=&lt;password&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -11640,12 +11640,12 @@ If you have no registry, archive the images, transfer the archive, and load it o
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">for image in meshery/meshery:&lt;release-tag&gt; meshery/meshery-operator:1.0.6 alpine/k8s:1.35.6 meshery/meshery-istio:&lt;release-tag&gt; meshery/meshsync:1.0.3 nats:2.14.2-alpine natsio/nats-server-config-reloader:0.23.0; do
   docker pull &#34;$image&#34;
 done
 docker save -o meshery-images.tar meshery/meshery:&lt;release-tag&gt; meshery/meshery-operator:1.0.6 alpine/k8s:1.35.6 meshery/meshery-istio:&lt;release-tag&gt; meshery/meshsync:1.0.3 nats:2.14.2-alpine natsio/nats-server-config-reloader:0.23.0</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -11654,9 +11654,9 @@ On each node, import the archive into the container runtime. For containerd (the
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">sudo ctr --namespace k8s.io images import meshery-images.tar</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -11669,11 +11669,11 @@ The usual `helm repo add` fetches the chart index from the internet, so transfer
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm repo add meshery https://meshery.io/charts/
 helm repo update
 helm pull meshery/meshery --version &lt;chart-version&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -11746,10 +11746,10 @@ MeshSync and Broker images cannot be repointed in `values.yaml` or in their cust
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm install meshery ./meshery-&lt;chart-version&gt;.tgz --namespace meshery --create-namespace -f air-gapped-values.yaml
 kubectl get pods --namespace meshery -w</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -11758,9 +11758,9 @@ A pod stuck in `ImagePullBackOff` names an image that was not mirrored or loaded
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl describe pod --namespace meshery &lt;pod-name&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -11860,9 +11860,9 @@ Use the Azure CLI to connect `kubectl` to your Azure Kubernetes Service (AKS) cl
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">az account set --subscription [SUBSCRIPTION_ID]</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -11871,9 +11871,9 @@ Use the Azure CLI to connect `kubectl` to your Azure Kubernetes Service (AKS) cl
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">az aks get-credentials --resource-group [RESOURCE_GROUP] --name [AKS_SERVICE_NAME]</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -11884,9 +11884,9 @@ With your AKS cluster as the current context, start Meshery on Kubernetes:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12209,9 +12209,9 @@ Start Minikube if it is not already running:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">minikube start --cpus 4 --memory 4096</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12220,9 +12220,9 @@ Set `--cpus` and `--memory` to fit the machine type you chose in GitHub Codespac
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">minikube status</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12231,9 +12231,9 @@ Verify that `kubectl` can reach the cluster:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl cluster-info</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12244,9 +12244,9 @@ Start Meshery in your Minikube cluster:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12263,9 +12263,9 @@ You can also generate a self-contained kubeconfig for your Minikube cluster and 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl config view --minify --flatten --context minikube &gt; config_minikube.yaml</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12274,7 +12274,7 @@ The file looks like this, with your own server address and certificate data:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">apiVersion: v1
 kind: Config
 clusters:
@@ -12294,7 +12294,7 @@ users:
   user:
     client-certificate-data: &lt;certificate data&gt;
     client-key-data: &lt;key data&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12468,9 +12468,9 @@ Create an Ubuntu Droplet from the [DigitalOcean Control Panel](https://docs.digi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">doctl compute droplet create meshery --image ubuntu-22-04-x64 --size s-2vcpu-4gb --region nyc1 --ssh-keys [YOUR_SSH_KEY_FINGERPRINT]</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12479,9 +12479,9 @@ Give the Droplet at least 2 vCPUs and 4 GB of memory. When the Droplet is ready,
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">ssh root@[DROPLET_IP]</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12494,9 +12494,9 @@ On the Droplet, start Meshery on Docker:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p docker</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12509,9 +12509,9 @@ By default, Meshery UI listens on port `9081`. To reach it from your browser, al
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">doctl compute firewall create --name meshery-ui --inbound-rules &#34;protocol:tcp,ports:9081,address:[YOUR_IP]/32&#34; --droplet-ids [DROPLET_ID]</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12535,9 +12535,9 @@ Follow the steps below to install Meshery into your DigitalOcean Kubernetes (DOK
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">doctl auth init</code>
-	</div>
+	</span>
 </pre>
 
 2. Download your cluster's credentials and make it the current `kubectl` context. Replace `[CLUSTER_NAME]` with the name or ID of your DOKS cluster.
@@ -12545,9 +12545,9 @@ Follow the steps below to install Meshery into your DigitalOcean Kubernetes (DOK
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">doctl kubernetes cluster kubeconfig save [CLUSTER_NAME]</code>
-	</div>
+	</span>
 </pre>
 
 3. Verify your kubeconfig's current context.
@@ -12555,9 +12555,9 @@ Follow the steps below to install Meshery into your DigitalOcean Kubernetes (DOK
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl config current-context</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12568,9 +12568,9 @@ Run <a href='/reference/mesheryctl/system/start/'>mesheryctl system start</a> to
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12795,9 +12795,9 @@ To remove the extension from the command line, run `docker extension rm`:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">$ docker extension rm meshery/docker-extension-meshery</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12812,9 +12812,9 @@ The extension pulls Docker images, and depending on how you configured Meshery, 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">docker rmi meshery/meshery:stable-latest</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12826,9 +12826,9 @@ Meshery creates its own Docker networks, which can remain after you uninstall th
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">docker network rm meshery_default</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12921,9 +12921,9 @@ Use the AWS CLI to connect `kubectl` to your Elastic Kubernetes Service (EKS) cl
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">aws eks update-kubeconfig --name [YOUR_CLUSTER_NAME] --region [YOUR_REGION]</code>
-	</div>
+	</span>
 </pre>
 
 3. _Optional:_ If you use `eksctl`, follow the [AWS documentation](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html).
@@ -12932,9 +12932,9 @@ Use the AWS CLI to connect `kubectl` to your Elastic Kubernetes Service (EKS) cl
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl config current-context</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -12945,9 +12945,9 @@ Run <a href='/reference/mesheryctl/system/start/'>mesheryctl system start</a> to
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13050,9 +13050,9 @@ Install Meshery on Docker (out-of-cluster) and connect it to your EKS cluster.
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p docker</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13061,10 +13061,10 @@ Once Meshery is running, sign in and connect it to your cluster. `mesheryctl con
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system login
 mesheryctl connection create --type eks</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13161,9 +13161,9 @@ Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) c
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">gcloud config set project [PROJECT_ID]</code>
-	</div>
+	</span>
 </pre>
 
 3. Download the cluster's credentials and make it your current context:
@@ -13171,9 +13171,9 @@ Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) c
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">gcloud container clusters get-credentials [CLUSTER_NAME] --location [CLUSTER_LOCATION]</code>
-	</div>
+	</span>
 </pre>
 
 4. Verify your kubeconfig's current context:
@@ -13181,9 +13181,9 @@ Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) c
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl config current-context</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13196,9 +13196,9 @@ Use the gcloud CLI to connect `kubectl` to your Google Kubernetes Engine (GKE) c
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13211,9 +13211,9 @@ With your GKE cluster as the current context, start Meshery on Kubernetes:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13365,10 +13365,10 @@ description: Install Meshery on Kubernetes using Helm. Deploy Meshery in Kuberne
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm repo add meshery https://meshery.io/charts/
 helm install meshery meshery/meshery --namespace meshery --create-namespace</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13377,9 +13377,9 @@ Optionally, customize the callback URL that your Remote Provider redirects to af
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token --create-namespace</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13394,9 +13394,9 @@ By default, Meshery Server looks for Kubernetes configuration in the `/home/appu
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm install meshery meshery/meshery --namespace meshery --set env.KUBECONFIG_FOLDER=/custom/path/to/.kube --create-namespace</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13413,10 +13413,10 @@ To upgrade an existing Meshery deployment:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm repo update
 helm upgrade meshery meshery/meshery --namespace meshery</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13425,9 +13425,9 @@ Alternatively, run this command instead to use the upgrade-specific values file,
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm upgrade meshery meshery/meshery --namespace meshery -f https://raw.githubusercontent.com/meshery/meshery/master/install/kubernetes/helm/meshery/values-upgrade.yaml --wait --timeout 10m</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13452,9 +13452,9 @@ Watch the status of your Meshery pods:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl get pods --namespace meshery -w</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13465,9 +13465,9 @@ To see each health check's result, query the readiness endpoint in verbose mode.
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl port-forward --namespace meshery deployment/meshery 8080:8080</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13476,9 +13476,9 @@ Then, in another terminal:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">curl -s &#39;http://localhost:8080/healthz/ready?verbose=1&#39;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13507,7 +13507,7 @@ To customize the probes, set them in your `values.yaml`:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">probe:
   livenessProbe:
     enabled: true
@@ -13522,7 +13522,7 @@ To customize the probes, set them in your `values.yaml`:
     periodSeconds: 4
     failureThreshold: 4
     timeoutSeconds: 3</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13693,9 +13693,9 @@ If you don't have a KinD cluster yet, create one:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kind create cluster</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13704,9 +13704,9 @@ List your KinD clusters:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kind get clusters</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13715,9 +13715,9 @@ Verify your kubeconfig's current context.
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl config current-context</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13732,9 +13732,9 @@ Verify that your current Meshery context is set for an in-cluster deployment (<c
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system context view</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13745,9 +13745,9 @@ If the platform is not <code>kubernetes</code>, create a new context with Kubern
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system context create context-name --platform kubernetes --url http://localhost:9081 --set --yes</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -13758,9 +13758,9 @@ With your KinD cluster as your current context, start Meshery:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -14061,9 +14061,9 @@ Start Minikube if it is not already running:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">minikube start</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -14072,9 +14072,9 @@ Check the status of your Minikube cluster:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">minikube status</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -14083,9 +14083,9 @@ Verify that your current context is `minikube`:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl config current-context</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -14102,9 +14102,9 @@ To install Meshery inside your Minikube cluster, run:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 This command deploys the Meshery Helm chart into the `meshery` namespace.
@@ -14114,9 +14114,9 @@ To verify the deployment, run:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm list -A -n meshery</code>
-	</div>
+	</span>
 </pre>
 
 After deployment, reach Meshery UI through port forwarding:
@@ -14124,9 +14124,9 @@ After deployment, reach Meshery UI through port forwarding:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system dashboard --port-forward</code>
-	</div>
+	</span>
 </pre>
 
 For details, see the [port-forwarding](/reference/mesheryctl/system/dashboard/) guide.
@@ -14136,9 +14136,9 @@ Meshery Server running in the cluster connects to it automatically. If the conne
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl connection create --type minikube</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -14161,9 +14161,9 @@ Start Meshery on Docker:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p docker</code>
-	</div>
+	</span>
 </pre>
 
 This command starts Meshery in Docker containers. To verify that Meshery is running, run:
@@ -14171,9 +14171,9 @@ This command starts Meshery in Docker containers. To verify that Meshery is runn
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">docker ps</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -14184,9 +14184,9 @@ Sign in with `mesheryctl system login`, then connect Meshery to your Minikube cl
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl connection create --type minikube</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -14215,9 +14215,9 @@ Open your kubeconfig (`~/.kube/config`) in an editor and change the `server` fie
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">server: https://{minikubeIP}:8443</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -14226,9 +14226,9 @@ Then connect Meshery to your cluster:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl connection create --type minikube</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -14559,9 +14559,9 @@ Each `mesheryctl` context in your meshconfig (`~/.meshery/config.yaml`) lists th
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system context create my-context --components meshery-istio --components meshery-linkerd --set</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -26738,7 +26738,7 @@ In the CRD below, the `spec.group` field has the value `cloudquota.cnrm.cloud.go
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -26760,7 +26760,7 @@ spec:
               type: string
             kind:
               type: string</code>
-	</div>
+	</span>
 </pre>
 
 **CSV Model Definition Example:**
@@ -27025,7 +27025,7 @@ Below is a complete, minimal definition for a hypothetical telemetry backend. It
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{
   &#34;schemaVersion&#34;: &#34;connections.meshery.io/v1beta3&#34;,
   &#34;name&#34;: &#34;Grafana&#34;,
@@ -27074,7 +27074,7 @@ Below is a complete, minimal definition for a hypothetical telemetry backend. It
     &#34;svgWhite&#34;: &#34;&lt;svg ...&gt;...&lt;/svg&gt;&#34;
   }
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -64285,9 +64285,9 @@ Any toolchain at or above the version in `go.mod` works - `go 1.26.4` there does
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">env -u GOROOT PATH=&#34;$HOME/.gvm/gos/go1.26.4/bin:$PATH&#34; go test ./...</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -64326,9 +64326,9 @@ Confirm which one you have, and that it speaks the protocol:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">which -a sass &amp;&amp; sass --embedded --version</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -64940,7 +64940,7 @@ The documentation pages for `mesheryctl` reference are made with the help of the
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">var startCmd = &amp;cobra.Command{
 Use:   &#34;start&#34;,
 Short: &#34;Start Meshery&#34;,
@@ -64954,7 +64954,7 @@ mesheryctl system start
 mesheryctl system context create k8s -p kubernetes -s,
 Annotations: linkScreenshot,
 ...</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -64965,7 +64965,7 @@ Also, if the screenshot is present in the command, an `Annotation` macro variabl
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">var linkDocPatternApply = map[string]string{
  &#34;link&#34;:    &#34;![pattern-apply-usage](../../../images/patternApply.png)&#34;,
  &#34;caption&#34;: &#34;Usage of mesheryctl design apply&#34;,
@@ -64979,7 +64979,7 @@ mesheryctl design apply -f [file | URL]
 mesheryctl design apply [design-name]
 Annotations: linkDocPatternApply,
 ...</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65004,7 +65004,7 @@ If your mesheryctl docs end like this, add a shortcode at the end of the file. A
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">Example:
 // apply a pattern file
 mesheryctl design apply -f [file | URL]
@@ -65022,7 +65022,7 @@ Annotations: linkDocPatternApply,
 &lt;/div&gt;
 &lt;/pre&gt;
 {{&lt; permalink-of-file &gt;}}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65035,9 +65035,9 @@ Annotations: linkDocPatternApply,
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make lint</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65082,14 +65082,14 @@ Since there is no straightforward way to mark unit tests and integration tests d
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">func TestPreflightCmdIntegration(t *testing.T) {
    // skipping this integration test with --short flag
    if testing.Short() {
        t.Skip(&#34;skipping integration test&#34;)
    }
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65102,9 +65102,9 @@ In the above code sample, the test is marked with **“Integration”** in the t
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65113,9 +65113,9 @@ In the above code sample, the test is marked with **“Integration”** in the t
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65126,9 +65126,9 @@ Test packages that compare against golden files declare an `update` flag:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">var update = flag.Bool(&#34;update&#34;, false, &#34;update golden files&#34;)</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65138,9 +65138,9 @@ interpreting it itself. Regenerate only the package you are changing:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">cd mesheryctl &amp;&amp; go test --short ./internal/cli/root/relationships/ -args -update</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65653,9 +65653,9 @@ Meshery runs as a set of containers inside your Docker Desktop virtual machine.
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">docker extension install meshery/docker-extension-meshery</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65668,9 +65668,9 @@ In the root directory of meshery, run the following command:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-setup</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65679,9 +65679,9 @@ In the root directory of meshery, run the following command:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make server</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65693,9 +65693,9 @@ Open another terminal while the server is running,
 Go inside the docker-extension directory 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">cd install/docker-extension</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65704,9 +65704,9 @@ Go inside the docker-extension directory
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65717,9 +65717,9 @@ If you want to work on the Docker UI, it will be a good idea to use the included
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -65730,9 +65730,9 @@ To see the changes reflected in the docker extension locally and open the devToo
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make link</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66014,9 +66014,9 @@ Don't use `code` shortcode when the snippet is in between an ordered list, this 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">`code snippet`: `code snippet`</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66025,11 +66025,11 @@ Don't use `code` shortcode when the snippet is in between an ordered list, this 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">(language name)
 code snippet
 </code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66141,10 +66141,10 @@ An alert is a box that can stand out to indicate important information. You can 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{% alert color=&#34;info&#34; title=&#34;Here is another!&#34; %}}
 {{% /alert %}}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66209,10 +66209,10 @@ To use the `alert` shortcode feature in our documentation include the following 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{% alert color=&#34;info&#34; title=&#34;Here is another!&#34; %}}
 {{% /alert %}}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66231,9 +66231,9 @@ Using the Markdown image syntax:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">[![Image Title](../../../assets/img/your-image.png)](../../../assets/img/your-image.png)</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66242,11 +66242,11 @@ This renders as:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">&lt;a href=\&#34;/assets/img/your-image.png\&#34;&gt;
     &lt;img src=\&#34;/assets/img/your-image.png\&#34; alt=\&#34;Image Title\&#34;&gt;
 &lt;/a&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66262,11 +66262,11 @@ If you need to specify dimensions, use:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">&lt;a href=\&#34;/assets/img/your-image.png\&#34;&gt;
     &lt;img src=\&#34;/assets/img/your-image.png\&#34; style=\&#34;width:500px; height:auto;\&#34; alt=\&#34;Image Title\&#34;&gt;
 &lt;/a&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66328,11 +66328,11 @@ In Hugo templates, conditionals are written using Go template syntax:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{ if eq .Params.title &#34;Awesome Shoes&#34; }}
   These shoes are awesome!
 {{ end }}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66349,11 +66349,11 @@ The `range` action iterates over a collection. It is written in the following ma
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{ range .Pages }}
   {{ .Title }}
 {{ end }}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66366,9 +66366,9 @@ In Hugo templates, comments are written using Go template comment syntax:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{/* This is a comment */}}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66381,9 +66381,9 @@ Partials are used to include reusable template fragments. They are written in th
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{ partial &#34;header.html&#34; . }}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66394,9 +66394,9 @@ Shortcodes are reusable content snippets that can be used in Markdown files. The
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{&lt;/* shortcode-name param=&#34;value&#34; */&gt;}}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66407,9 +66407,9 @@ In Hugo templates, variables are defined using the `:=` operator:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{{ $variable1 := true }}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66451,9 +66451,9 @@ Generate manifests and deepcopy code, then build the manager binary:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66462,9 +66462,9 @@ Run the controller against the cluster in your current `~/.kube/config`:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make run</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66474,9 +66474,9 @@ automatically, so no cluster is required:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make test</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66485,9 +66485,9 @@ Lint the codebase (and auto-fix where possible with `make lint-fix`):
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make lint</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66496,9 +66496,9 @@ Lint the codebase (and auto-fix where possible with `make lint-fix`):
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make docker-build docker-push IMG=&lt;registry&gt;/meshery-operator:&lt;tag&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66509,10 +66509,10 @@ Install the CRDs and deploy the operator into your current kube context:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make install
 make deploy IMG=&lt;registry&gt;/meshery-operator:&lt;tag&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66521,10 +66521,10 @@ To remove it:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make undeploy
 make uninstall</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66535,9 +66535,9 @@ To generate and build the Operator Lifecycle Manager bundle image:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make bundle bundle-build bundle-push BUNDLE_IMG=&lt;registry&gt;/meshery-operator-bundle:&lt;tag&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66592,9 +66592,9 @@ The relationship policy engine is implemented in Go as a module under `server/po
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make policy-test</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -66603,9 +66603,9 @@ To format and lint the Rego policy files, run:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make policy-lint</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -67907,10 +67907,10 @@ To build and run Meshery server from source:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-setup
 make ui-build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -67919,9 +67919,9 @@ make ui-build</code>
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make server</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -67952,9 +67952,9 @@ To build a Docker image of Meshery, please ensure you have `Docker` installed to
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make docker-build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -67965,9 +67965,9 @@ Every Golang-based component within the Meshery ecosystem incorporates a utility
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make error</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -67978,9 +67978,9 @@ For more details, <a href="/project/contributing/contributing-error/">Error Util
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make golangci</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -68022,10 +68022,10 @@ Use the canonical reference instead: [Meshery Server Environment Variables](/ins
     
     
     <pre class="codeblock-pre">
-    	<div class="codeblock">
+    	<span class="codeblock">
     		<code class="clipboardjs">$ git clone https://github.com/meshery/meshery.git
         $ git clone https://github.com/meshery/meshkit.git</code>
-    	</div>
+    	</span>
     </pre>
 
   </li>
@@ -68034,9 +68034,9 @@ Use the canonical reference instead: [Meshery Server Environment Variables](/ins
     
     
     <pre class="codeblock-pre">
-    	<div class="codeblock">
+    	<span class="codeblock">
     		<code class="clipboardjs">github.com/meshery/meshkit =&gt; ../meshkit</code>
-    	</div>
+    	</span>
     </pre>
 
     <p>Remember to remove this go.mod change when creating pull requests.</p>
@@ -68369,9 +68369,9 @@ To install/update the UI dependencies:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-setup</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -68382,9 +68382,9 @@ To build and export the UI code:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -68397,9 +68397,9 @@ To build and export the UI code _and_ build and run Meshery Server:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-server</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -68410,9 +68410,9 @@ To start running Meshery Server locally:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make server</code>
-	</div>
+	</span>
 </pre>
 
 Now, Meshery will run on the default port `http://localhost:9081`.
@@ -68441,9 +68441,9 @@ If you want to work on the UI, it will be a good idea to use the included UI dev
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -68503,9 +68503,9 @@ For accessing the svg file as data-url, the utf8 encoding should be used in plac
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">let svg = &#39;data:image/svg+xml;utf8,&#39; + encodeURIComponent(svgFile);</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70056,9 +70056,9 @@ This approach is very quick to build, but also dependent on your operating syste
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70067,9 +70067,9 @@ This approach is very quick to build, but also dependent on your operating syste
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make build-server</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70078,9 +70078,9 @@ This approach is very quick to build, but also dependent on your operating syste
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make server-binary</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70097,9 +70097,9 @@ Alternatively, a Docker-based setup can be utilized, simplifying the process, an
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make docker-testing-env-build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70108,9 +70108,9 @@ Alternatively, a Docker-based setup can be utilized, simplifying the process, an
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make docker-testing-env</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70125,9 +70125,9 @@ Setup playwright:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-test-setup</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70136,9 +70136,9 @@ Run the all project and test cases:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make ui-test</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70149,9 +70149,9 @@ The first step is to pull the docker image from [Azure Container Registry](http
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">docker pull mcr.microsoft.com/playwright:&lt;version&gt;-&lt;base-image&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70167,9 +70167,9 @@ Here is the example of pulling playwright v1.44.0 with Ubuntu 22.04 LTS
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">docker pull mcr.microsoft.com/playwright:v1.44.0-jammy</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70178,9 +70178,9 @@ Starting up playwright docker server:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">docker run --rm --network host --init -it mcr.microsoft.com/playwright:v1.44.0-jammy /bin/sh -c &#34;cd /home/pwuser &amp;&amp; npx -y playwright@1.44.0 run-server --port 8080&#34;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70195,9 +70195,9 @@ In the last step go to ui folder,
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">cd ui;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70215,9 +70215,9 @@ To run playwright UI mode using the browser, you can add `--ui` in the cli, for 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">npx playwright test --ui</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70225,9 +70225,9 @@ If you are using playwright from docker, you can use `--ui-port=<playwright-dock
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">npx playwright test --ui-port=8080</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70235,9 +70235,9 @@ To run playwright for specific project only, for example meshery-provider, you c
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">npx playwright test --ui --project=chromium-meshery-provider</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70245,9 +70245,9 @@ To run specific test, you can add the test file location, for example:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">npx playwright test --ui --project=chromium-meshery-provider tests/e2e/connections.spec.ts</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70265,7 +70265,7 @@ By default our test cases is running against both Meshery and Local Provider, we
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { expect, test } from &#39;./fixtures/project&#39;;
 
 test(&#39;Random test&#39;, async ({ provider }) =&gt; {
@@ -70277,7 +70277,7 @@ test(&#39;Random test&#39;, async ({ provider }) =&gt; {
     // Run this for testing Local provider
   }
 });</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70290,14 +70290,14 @@ After merging into the master branch, monitor the GitHub workflow that executes 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { expect, test } from &#39;./fixtures/project&#39;;
 
 test(&#39;Random test&#39;,  { tag: &#39;@unstable&#39; }, async ({ provider }) =&gt; {
   // Test cases here
   // ...
 });</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70375,7 +70375,7 @@ connections suite that map is
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { annotateConnCase, connTags } from &#39;./connections.testmap&#39;;
 
 test(
@@ -70386,7 +70386,7 @@ test(
     // ...
   },
 );</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70558,9 +70558,9 @@ Build the MeshSync binary to `bin/meshsync`:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70574,10 +70574,10 @@ and run MeshSync against it:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make nats-run
 make run</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70592,9 +70592,9 @@ Run the unit tests with the race detector (linting runs first):
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make test</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70603,9 +70603,9 @@ Generate an HTML coverage report (`cover.html`):
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make coverage-report</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70615,20 +70615,20 @@ provisions NATS and a kind cluster. Run the full cycle, or drive the phases indi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make integration-tests</code>
-	</div>
+	</span>
 </pre>
 
 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make integration-tests-setup
 make integration-tests-run
 make integration-tests-cleanup</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70642,10 +70642,10 @@ Lint the codebase with golangci-lint, and tidy Go module dependencies:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make lint-run
 make mod-tidy</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70654,9 +70654,9 @@ make mod-tidy</code>
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make docker-build</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -70987,9 +70987,9 @@ Use the `errors.New()` function to create a new instance of the error object and
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">errors.New(ErrExampleCode, errors.Alert, []string{&#34;&lt;short-description&gt;&#34;}, []string{&#34;&lt;long-description&gt;&#34;}, []string{&#34;&lt;probable-cause&gt;&#34;}, []string{&#34;&lt;suggested remediation&gt;&#34;})</code>
-	</div>
+	</span>
 </pre>
 
 ## Example
@@ -70999,7 +70999,7 @@ In this example we are creating an Error for being unable to marshal JSON
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">var (
 	// Error code
     ErrMarshalCode= &#34;replace_me&#34;
@@ -71013,7 +71013,7 @@ In this example we are creating an Error for being unable to marshal JSON
 func ErrMarshal(err error, obj string) error {
 	return errors.New(ErrMarshalCode, errors.Alert, []string{&#34;Unable to marshal the : &#34;, obj}, []string{err.Error()}, []string{}, []string{})
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -71024,13 +71024,13 @@ Old
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">bd, err := json.Marshal(providers)
 	if err != nil {
 		http.Error(w, &#34;unable to marshal the providers&#34;, http.StatusInternalServerError)
 		return
 	}</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -71039,7 +71039,7 @@ New
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">bd, err := json.Marshal(providers)
   if err != nil {
           marshalErr := ErrMarshal(err, &#34;providers&#34;)
@@ -71047,7 +71047,7 @@ New
           writeMeshkitError(w, marshalErr, http.StatusInternalServerError)
           return
       }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -71064,7 +71064,7 @@ how to choose the status code.
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">// remRetryConnection answers every cause, so it is declared once.
 var remRetryConnection = errors.Remediation{
 	ID:          &#34;retry-connection&#34;,
@@ -71100,7 +71100,7 @@ func ErrUnreachableCluster(err error, server string) error {
 	e.LongDescription = append(e.LongDescription, fmt.Sprintf(&#34;API server: %s&#34;, server), err.Error())
 	return e
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -71134,11 +71134,11 @@ To enforce the use of meshkit errors, the meshkit logger reads its structured fi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">type Logger struct {
 	log   logger.Handler
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -71149,9 +71149,9 @@ To enforce the use of meshkit errors, the meshkit logger reads its structured fi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">logrus.Debugf(&#34;meshLocationURL: %s&#34;, meshLocationURL)</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -71160,9 +71160,9 @@ To enforce the use of meshkit errors, the meshkit logger reads its structured fi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">l.log.Debug(&#34;meshLocationURL: &#34;, meshLocationURL)</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -71173,9 +71173,9 @@ To enforce the use of meshkit errors, the meshkit logger reads its structured fi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">logrus.Errorf(&#34;error marshaling data: %v.&#34;, err)</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -71184,9 +71184,9 @@ To enforce the use of meshkit errors, the meshkit logger reads its structured fi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">l.log.Error(ErrMarshal(err, obj))</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -71195,7 +71195,7 @@ To enforce the use of meshkit errors, the meshkit logger reads its structured fi
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">package main
 
 import (
@@ -71267,7 +71267,7 @@ func ErrOpeningFile(err error) error {
 		[]string{&#34;empty string passed as argument &#34;, &#34;file with this name doesn&#39;t exist&#34;},
 		[]string{&#34;pass a non-empty string as filename &#34;, &#34;create file before opening it&#34;})
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -73669,9 +73669,9 @@ Takes no body. Use the `{{< >}}` form.
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make site</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110511,9 +110511,9 @@ Using Meshery CLI, you can get a copy of your authentication token by executing 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system login</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110528,10 +110528,10 @@ Download your token from Meshery UI and copy the token value from the downloaded
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">meshery-provider: Meshery
 token: your token</code>
-	</div>
+	</span>
 </pre>
 
 <div class="alert alert-dark" role="alert">
@@ -110608,9 +110608,9 @@ Generate a unique, lowercase UUID v4 for the new permission key:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">uuidgen | tr &#39;[:upper:]&#39; &#39;[:lower:]&#39;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110677,9 +110677,9 @@ Simply import the `Keys` object directly from `@meshery/schemas/permissions` in 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { Keys } from &#39;@meshery/schemas/permissions&#39;;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110688,7 +110688,7 @@ Prefer the `useHasPermission` hook from [Sistent](https://github.com/layer5io/si
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { useHasPermission } from &#39;@sistent/sistent&#39;;
 import { Keys } from &#39;@meshery/schemas/permissions&#39;;
 
@@ -110699,7 +110699,7 @@ return (
     Evaluate Relationships
   &lt;/Button&gt;
 );</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110707,11 +110707,11 @@ Sistent controls also accept the key directly as a `permissionKey` prop, which i
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">&lt;Button permissionKey={Keys.CatalogManagementEvaluateRelationships} onClick={handleEvaluate}&gt;
   Evaluate Relationships
 &lt;/Button&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110732,14 +110732,14 @@ This example shows how the **Evaluate Relationships** key is wired across each l
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{
   &#34;id&#34;: &#34;c7752be7-5c0f-465d-a8ba-5594acd08b93&#34;,
   &#34;function&#34;: &#34;Evaluate Relationships&#34;,
   &#34;category&#34;: &#34;Catalog Management&#34;,
   &#34;subcategory&#34;: &#34;Designs&#34;
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110747,7 +110747,7 @@ This example shows how the **Evaluate Relationships** key is wired across each l
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">export const Keys = {
   CatalogManagementEvaluateRelationships: {
     id: &#34;c7752be7-5c0f-465d-a8ba-5594acd08b93&#34;,
@@ -110757,7 +110757,7 @@ This example shows how the **Evaluate Relationships** key is wired across each l
     description: &#34;Evaluate relationships inside a design&#34;
   }
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110765,9 +110765,9 @@ This example shows how the **Evaluate Relationships** key is wired across each l
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{ action: &#34;c7752be7-5c0f-465d-a8ba-5594acd08b93&#34;, subject: &#34;evaluate relationships&#34; }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110775,13 +110775,13 @@ This example shows how the **Evaluate Relationships** key is wired across each l
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { useHasPermission } from &#39;@sistent/sistent&#39;;
 import { Keys } from &#39;@meshery/schemas/permissions&#39;;
 
 const canEvaluate = useHasPermission(Keys.CatalogManagementEvaluateRelationships);
 return canEvaluate ? &lt;EvaluateRelationshipsButton /&gt; : null;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110807,10 +110807,10 @@ Inspect keys in DevTools (**Application → Session Storage**):
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">JSON.parse(sessionStorage.getItem(&#39;keys&#39;))
 JSON.parse(sessionStorage.getItem(&#39;currentOrg&#39;))</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110832,10 +110832,10 @@ Meshery reuses `sessionStorage.keys` until the org changes or keys are refetched
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">sessionStorage.removeItem(&#39;keys&#39;);
 location.reload();</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110899,14 +110899,14 @@ Three spellings exist, and they are equivalent - all three end up calling the sa
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { useHasPermission } from &#39;@sistent/sistent&#39;;
 import { Keys } from &#39;@meshery/schemas/permissions&#39;;
 
 const canDelete = useHasPermission(Keys.LifecycleManagementDeleteAConnection);
 
 return canDelete ? &lt;Button id=&#34;delete-connection&#34;&gt;Delete&lt;/Button&gt; : null;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110914,13 +110914,13 @@ return canDelete ? &lt;Button id=&#34;delete-connection&#34;&gt;Delete&lt;/Butto
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import { Keys } from &#39;@meshery/schemas/permissions&#39;;
 
 &lt;Button id=&#34;delete-connection&#34; permissionKey={Keys.LifecycleManagementDeleteAConnection}&gt;
   Delete
 &lt;/Button&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -110928,13 +110928,13 @@ return canDelete ? &lt;Button id=&#34;delete-connection&#34;&gt;Delete&lt;/Butto
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">import CAN from &#39;@/utils/can&#39;;
 import { Keys } from &#39;@meshery/schemas/permissions&#39;;
 
 const key = Keys.LifecycleManagementDeleteAConnection;
 const canDelete = CAN(key.id, key.function);</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -111529,12 +111529,12 @@ Example configuration in the capabilities response:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">&#34;redirects&#34;: {
   &#34;/&#34;: &#34;/extension/meshmap&#34;,
   &#34;/dashboard&#34;: &#34;/extension/meshmap/dashboard&#34;
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -111559,7 +111559,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{
   &#34;providerType&#34;: &#34;remote&#34;,
   &#34;packageVersion&#34;: &#34;v0.1.0&#34;,
@@ -111721,7 +111721,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
     }
   ]
 }</code>
-	</div>
+	</span>
 </pre>
 
 </details>
@@ -111736,14 +111736,14 @@ Example of the request body:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">{
   &#34;server_id&#34;: &#34;xxxx-xxxxx-xxxx-xxxx&#34;,
   &#34;server_version&#34;: &#34;vx.x.x&#34;,
   &#34;server_build-sha&#34;: &#34;xxxx-xxxxx&#34;,
   &#34;server_location&#34;: &#34;&lt;protocol&gt;://&lt;hostname&gt;:&lt;port&gt;&#34;
 }</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -111783,9 +111783,9 @@ Next, set the `MESHERY_SERVER_CALLBACK_URL` variable when running the `helm inst
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://k8s-staging.test.io/api/user/token</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -111897,7 +111897,7 @@ RJSFWrapperComponent provides customizations for RJSF forms, overriding the defa
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">&lt;RJSFWrapperComponent {...props}&gt;
   &lt;RJSFForm
     isLoading={isLoading}
@@ -111909,7 +111909,7 @@ RJSFWrapperComponent provides customizations for RJSF forms, overriding the defa
     jsonSchema={jsonSchema}
   /&gt;
 &lt;/RJSFWrapperComponent&gt;</code>
-	</div>
+	</span>
 </pre>
 
 See this [RJSF Component](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L91) as an example of how these properties are received.
@@ -111992,7 +111992,7 @@ The `randomLoadingMessage` export automatically retrieves the persisted value fr
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">function RJSFWrapperComponent(props) {
 // Clone the child to pass in additional props
 const children = React.cloneElement(props.children, {
@@ -112002,7 +112002,7 @@ customComponent: YOUR_NEW_CUSTOM_COMPONENT_OR_PROP
 
 return children
 }</code>
-	</div>
+	</span>
 </pre>
 
 Extract the props in the [RJSFForm Component](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L91)
@@ -112024,7 +112024,7 @@ Meshery exposes a custom RJSF Form component which is capable of generating "Pat
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">&lt;PatternServiceFormCore
 formData={formData}
 schemaSet={schemaSet}
@@ -112049,7 +112049,7 @@ namespace={namespace}
     }}
 
 &lt;/PatternServiceFormCore&gt;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -112064,9 +112064,9 @@ from _ui/components/MesheryMeshInterface/PatternService/index.js_
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent })</code>
-	</div>
+	</span>
 </pre>
 
 

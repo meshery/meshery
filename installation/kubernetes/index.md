@@ -48,9 +48,9 @@ Verify that your kubeconfig's current context points at the cluster you want to 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl config current-context</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -61,9 +61,9 @@ Start Meshery. `mesheryctl` deploys to the platform of your current `mesheryctl`
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -161,9 +161,9 @@ On a managed Kubernetes offering, such as GKE, EKS, AKS, or DigitalOcean Kuberne
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl get service meshery --namespace meshery</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -174,9 +174,9 @@ If the `Service` was previously set to another type (for example, `ClusterIP`), 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl patch service meshery --namespace meshery --type merge -p &#39;{&#34;spec&#34;:{&#34;type&#34;:&#34;LoadBalancer&#34;}}&#39;</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -210,9 +210,9 @@ If you expose Meshery through an ingress on Minikube, the following steps set up
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">minikube addons enable ingress</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -221,9 +221,9 @@ If you expose Meshery through an ingress on Minikube, the following steps set up
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl get pods -n ingress-nginx</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -234,9 +234,9 @@ If you expose Meshery through an ingress on Minikube, the following steps set up
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.15.3/cert-manager.yaml</code>
-	</div>
+	</span>
 </pre>
 
 

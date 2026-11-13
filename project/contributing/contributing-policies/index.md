@@ -36,9 +36,9 @@ The relationship policy engine is implemented in Go as a module under `server/po
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make policy-test</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -47,7 +47,7 @@ To format and lint the Rego policy files, run:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">make policy-lint</code>
-	</div>
+	</span>
 </pre>

@@ -46,9 +46,9 @@ If you don't have a KinD cluster yet, create one:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kind create cluster</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -57,9 +57,9 @@ List your KinD clusters:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kind get clusters</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -68,9 +68,9 @@ Verify your kubeconfig's current context.
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">kubectl config current-context</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -85,9 +85,9 @@ Verify that your current Meshery context is set for an in-cluster deployment (<c
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system context view</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -98,9 +98,9 @@ If the platform is not <code>kubernetes</code>, create a new context with Kubern
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system context create context-name --platform kubernetes --url http://localhost:9081 --set --yes</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -111,9 +111,9 @@ With your KinD cluster as your current context, start Meshery:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">mesheryctl system start -p kubernetes</code>
-	</div>
+	</span>
 </pre>
 
 

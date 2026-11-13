@@ -94,9 +94,9 @@ To remove the extension from the command line, run `docker extension rm`:
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">$ docker extension rm meshery/docker-extension-meshery</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -111,9 +111,9 @@ The extension pulls Docker images, and depending on how you configured Meshery, 
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">docker rmi meshery/meshery:stable-latest</code>
-	</div>
+	</span>
 </pre>
 
 
@@ -125,9 +125,9 @@ Meshery creates its own Docker networks, which can remain after you uninstall th
 
 
 <pre class="codeblock-pre">
-	<div class="codeblock">
+	<span class="codeblock">
 		<code class="clipboardjs">docker network rm meshery_default</code>
-	</div>
+	</span>
 </pre>
 
 
