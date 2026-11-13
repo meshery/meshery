@@ -74,7 +74,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Delete the token with provided token name from your meshconfig tokens.&lt;/p&gt;
+&lt;p&gt;Delete the token with provided token name from your meshconfig tokens. A token that a context still uses cannot be deleted; set another token on that context first.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
@@ -176,7 +176,7 @@ mesheryctl system token list
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Set token for current context or context specified with &amp;ndash;context flag.&lt;/p&gt;
+&lt;p&gt;Set token for current context or context specified with &amp;ndash;context flag. The token must already exist in your meshconfig tokens.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;

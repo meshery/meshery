@@ -1,3 +1,0 @@
-# ErrOperatorChartNotPublishedCode-1470
-
-LLMS index: [llms.txt](/pr-preview/pr-23457/llms.txt)

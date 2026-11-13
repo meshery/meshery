@@ -22211,9 +22211,9 @@ Narrow the search so exactly one item matches</p>
               <div class="error-heading">Long Description</div>
               <p class="error-details"></p>
               <div class="error-heading">Probable Cause</div>
-              <p class="error-details">The target context may not exist in meshconfig, or meshconfig could not be read or written.</p>
+              <p class="error-details">The token or the target context may not exist in meshconfig, or meshconfig could not be read or written.</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Verify the target context exists with `mesheryctl system context view` and ensure your meshconfig file is accessible.</p>
+              <p class="error-details">Verify the token exists with `mesheryctl system token list` (create it with `mesheryctl system token create &lt;token-name&gt;`), verify the target context exists with `mesheryctl system context view`, and ensure your meshconfig file is accessible.</p>
             </td>
           </tr>
         

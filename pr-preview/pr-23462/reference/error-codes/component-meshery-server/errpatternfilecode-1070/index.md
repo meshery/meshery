@@ -1,3 +1,0 @@
-# ErrPatternFileCode-1070
-
-LLMS index: [llms.txt](/pr-preview/pr-23462/llms.txt)
