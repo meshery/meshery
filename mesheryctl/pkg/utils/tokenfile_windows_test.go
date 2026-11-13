@@ -5,6 +5,7 @@ package utils
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"golang.org/x/sys/windows"
@@ -64,6 +65,17 @@ func everyoneSID(t *testing.T) *windows.SID {
 func grantEveryoneRead(t *testing.T, path string) {
 	t.Helper()
 
+	ownerSID := mustCurrentUserSID(t)
+	everyone := everyoneSID(t)
+
+	// TrusteeValueFromSID only keeps the SID's address, so pin both SIDs
+	// until ACLFromEntries has read them; otherwise the garbage collector
+	// may reclaim the buffers first.
+	var pinner runtime.Pinner
+	pinner.Pin(ownerSID)
+	pinner.Pin(everyone)
+	defer pinner.Unpin()
+
 	entry := func(sid *windows.SID, access windows.ACCESS_MASK) windows.EXPLICIT_ACCESS {
 		return windows.EXPLICIT_ACCESS{
 			AccessPermissions: access,
@@ -77,8 +89,8 @@ func grantEveryoneRead(t *testing.T, path string) {
 		}
 	}
 	acl, err := windows.ACLFromEntries([]windows.EXPLICIT_ACCESS{
-		entry(mustCurrentUserSID(t), tokenFileAccess),
-		entry(everyoneSID(t), windows.GENERIC_READ),
+		entry(ownerSID, tokenFileAccess),
+		entry(everyone, windows.GENERIC_READ),
 	}, nil)
 	if err != nil {
 		t.Fatalf("ACLFromEntries: %v", err)
