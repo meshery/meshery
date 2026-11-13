@@ -165,6 +165,7 @@ function findMuiImports(file, src) {
   const matches = [];
 
   function visit(node) {
+    // Detect ES module imports and re-exports.
     if (
       (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
       node.moduleSpecifier &&
@@ -174,6 +175,19 @@ function findMuiImports(file, src) {
       matches.push(node.moduleSpecifier.text);
     }
 
+    // Detect TypeScript import-equals declarations.
+    // Example: import Mui = require('@mui/material/Button');
+    if (
+      ts.isImportEqualsDeclaration(node) &&
+      ts.isExternalModuleReference(node.moduleReference) &&
+      node.moduleReference.expression &&
+      ts.isStringLiteralLike(node.moduleReference.expression) &&
+      isMuiModuleSpecifier(node.moduleReference.expression.text)
+    ) {
+      matches.push(node.moduleReference.expression.text);
+    }
+
+    // Detect CommonJS require() calls.
     if (
       ts.isCallExpression(node) &&
       ts.isIdentifier(node.expression) &&

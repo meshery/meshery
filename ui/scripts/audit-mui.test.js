@@ -294,6 +294,27 @@ test('MUI require calls are reported', (t) => {
   assert.equal(result.json.matches, 1);
 });
 
+test('TypeScript import-equals MUI imports are reported', (t) => {
+  const fixture = createFixture(t);
+
+  writeFile(
+    fixture,
+    'ui/components/import-equals.ts',
+    "import Mui = require('@mui/material/Button');\n",
+  );
+
+  const result = runAudit(fixture, ['--fail-on-new']);
+
+  assert.equal(result.status, 1);
+  assert.equal(result.json.matches, 1);
+
+  assert.ok(
+    result.json.scans[0].offenders.some(
+      (offender) => offender.file === 'components/import-equals.ts',
+    ),
+  );
+});
+
 test('allowlisted imports are excluded from offender counts', (t) => {
   const fixture = createFixture(t);
   writeFile(fixture, 'ui/theme/index.ts', "import { darken } from '@mui/material/styles';\n");
