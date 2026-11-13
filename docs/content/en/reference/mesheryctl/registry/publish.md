@@ -10,11 +10,11 @@ aliases:
 
 # mesheryctl registry publish
 
-Publish Meshery Models to Websites, Remote Provider, Meshery Server
+Publish Meshery Models to Websites or Remote Provider
 
 ## Synopsis
 
-Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery Server, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.
+Publishes metadata about Meshery Models to Websites or Remote Provider, including model and component icons by reading from a Google Spreadsheet and outputting to markdown or json format.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -32,16 +32,6 @@ Publish To System
 <div class='codeblock'>
 <div class='clipboardjs'>
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
-
-</div>
-</div>
-</pre> 
-
-Publish To Meshery
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-<div class='clipboardjs'>
-mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/models
 
 </div>
 </div>
