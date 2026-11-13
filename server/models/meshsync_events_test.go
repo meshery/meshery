@@ -11,6 +11,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	meshkitErrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/stretchr/testify/assert"
@@ -572,5 +573,32 @@ func TestMeshsyncStoreUpdatesNonErrorObjectWrapped(t *testing.T) {
 		assert.Equal(t, ErrMeshsyncStoreUpdatesCode, mkErr.Code)
 	} else {
 		t.Fatalf("expected logged error to be a *meshkitErrors.Error, got %T", logged[0])
+	}
+}
+
+func TestReplaceMeshsyncResourceMetadata(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = db.AutoMigrate(&meshsyncmodel.KubernetesResource{}, &meshsyncmodel.KubernetesResourceObjectMeta{}, &meshsyncmodel.KubernetesKeyValue{}, &meshsyncmodel.KubernetesResourceSpec{}, &meshsyncmodel.KubernetesResourceStatus{}); err != nil {
+		t.Fatal(err)
+	}
+	handler := &MeshsyncDataHandler{dbHandler: database.Handler{DB: db}}
+	obj := &meshsyncmodel.KubernetesResource{APIVersion: "v1", Kind: "Pod", ClusterID: "cluster", KubernetesResourceMeta: &meshsyncmodel.KubernetesResourceObjectMeta{Name: "pod", Namespace: "default", Labels: []*meshsyncmodel.KubernetesKeyValue{{Kind: "label", Key: "app", Value: "v1"}, {Kind: "label", Key: "tier", Value: "front"}}, Annotations: []*meshsyncmodel.KubernetesKeyValue{{Kind: "annotation", Key: "old", Value: "value"}}}}
+	if err := db.Create(obj).Error; err != nil {
+		t.Fatal(err)
+	}
+	obj.KubernetesResourceMeta.Labels = []*meshsyncmodel.KubernetesKeyValue{{Kind: "label", Key: "app", Value: "v2"}}
+	obj.KubernetesResourceMeta.Annotations = nil
+	if err := handler.replaceMeshsyncResource(obj); err != nil {
+		t.Fatal(err)
+	}
+	var rows []meshsyncmodel.KubernetesKeyValue
+	if err := db.Where("id = ?", obj.ID).Find(&rows).Error; err != nil {
+		t.Fatal(err)
+	}
+	if len(rows) != 1 || rows[0].Key != "app" || rows[0].Value != "v2" {
+		t.Fatalf("unexpected metadata: %+v", rows)
 	}
 }
