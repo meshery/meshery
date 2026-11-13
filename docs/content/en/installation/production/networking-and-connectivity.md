@@ -62,9 +62,31 @@ NodePort exposure. See [Broker exposure](#exposing-the-broker) below.
 
 ## Exposing Meshery securely (ingress, TLS, WebSocket)
 
-In production, do not expose the raw `LoadBalancer` Service. Front Meshery with
-an ingress controller that terminates TLS and proxies both HTTP and WebSocket
-traffic.
+In production, do not expose the raw `LoadBalancer` Service. Use a certificate manager and front Meshery with an ingress controller that terminates TLS and proxies both HTTP and WebSocket traffic.
+
+### TLS and Certificate Management
+Production deployments of Meshery require an external certificate management strategy. Rather than embedding an internal Certificate Authority (CA), generating self-signed certificates, or handling certificate rotation within the application pods, Meshery delegates Public Key Infrastructure (PKI) and certificate lifecycle operations to standard cluster or cloud infrastructure.
+
+Operators are expected to provision certificates via an automated certificate controller (such as [cert-manager](https://cert-manager.io/), HashiCorp Vault, or cloud-native solutions like AWS Certificate Manager / Google Cloud Certificate Manager) terminating at the Ingress controller or API Gateway.
+
+When exposing Meshery Server through an Ingress controller, annotate the Ingress resource with your `ClusterIssuer` or `Issuer`. This allows `cert-manager` to automatically issue, bind, and rotate TLS certificates. 
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: meshery-ingress
+  namespace: meshery
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" 
+... # Rest of the Ingess definition goes here
+```
+
+Note: When TLS termination is offloaded to the Ingress layer, ensure the Meshery Server callback URL matches your public HTTPS domain:
+
+```bash
+--set env.MESHERY_SERVER_CALLBACK_URL="[https://meshery.example.com](https://meshery.example.com)"`
+```
 
 ### Ingress with the Helm chart
 

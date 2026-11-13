@@ -335,6 +335,19 @@ responsibility of its author and of the operator who enables it. Review a third-
 extension before enabling it, and enable only what your deployment actually needs.
 {{% /alert %}}
 
+## Certificate Governance & Transport Encryption
+
+Meshery intentionally avoids bundling an internal Certificate Authority (CA) or generating self-signed certificates for production deployments. Running an embedded CA inside control plane pods introduces high blast-radius risks around key compromise and leads to service downtime caused by unmanaged certificate expiration.
+
+### Bring Your Own Certificate Infrastructure (BYO-CA)
+
+Production deployments must delegate certificate lifecycle management to automated external infrastructure:
+
+* **Ingress & Edge TLS:** All inbound traffic to Meshery Server, UI, and Broker must terminate at an Ingress Controller, API Gateway, or Load Balancer backed by automated certificate issuance and rotation.
+* **Zero Self-Signed Certificates in Production Routes:** Endpoints exposed to users, proxies, or remote clusters must use certificates signed by an enterprise-trusted or publicly-trusted CA.
+* **Internal Pod-to-Pod Traffic:** Service-to-service communication between Meshery Server, Broker, MeshSync, and local adapters relies on the underlying platform for data-in-transit protection. Enforce this via CNI wire encryption (such as WireGuard or IPsec in Cilium/Calico) or by enrolling the `meshery` namespace into a service mesh for transparent mTLS.
+* **Multi-Cluster API Communication:** Traffic between the Server and managed clusters strictly validates the embedded CA bundles and credentials specified in the cluster context. Never bypass certificate validation (`insecure-skip-tls-verify: false`).
+
 ## Hardening checklist
 
 - [ ] Remote Provider preselected; Local Provider disabled in production.
@@ -347,7 +360,8 @@ extension before enabling it, and enable only what your deployment actually need
 - [ ] Operator hardened with equivalent security context.
 - [ ] kubeconfig and provider secrets sourced from Kubernetes Secrets / external
       manager, never committed.
-- [ ] TLS terminated at ingress; provider egress over verified HTTPS.
+- [ ] TLS terminated at ingress via automated PKI (`cert-manager`, Vault, or cloud ACM); zero self-signed certificates in production paths; provider egress over verified HTTPS.
+- [ ] Pod-to-pod and cross-cluster transport secured via CNI wire encryption (WireGuard/IPsec), service mesh mTLS, and strict kubeconfig CA validation.
 - [ ] Broker exposure restricted to the Server's origin; private connectivity
       preferred.
 - [ ] Dedicated namespace with network policies, quotas, and restricted Pod
