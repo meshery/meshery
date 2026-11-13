@@ -19,7 +19,6 @@ import DefaultError from './general/error-404/index';
 import Modal from './shared/Modal/Modal';
 import _PromptComponent, { PromptRef } from './general/PromptComponent';
 import { CON_OPS, CoreConnectionKinds } from '../utils/Enum';
-import Moment from 'react-moment';
 import LoadingScreen from './shared/LoadingState/LoadingComponent';
 import { useNotification, useNotificationHandlers } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
@@ -186,8 +185,8 @@ const MesheryCredentialComponent: React.FC = () => {
   const colViews: [string, string][] = [
     ['name', 'xs'],
     ['type', 'l'],
-    ['created_at', 'xl'],
-    ['updated_at', 'xl'],
+    ['createdAt', 'xl'],
+    ['updatedAt', 'xl'],
     ['actions', 'xs'],
   ];
 
@@ -252,7 +251,9 @@ const MesheryCredentialComponent: React.FC = () => {
       },
     },
     {
-      name: 'created_at',
+      // Named after the camelCase wire fields so the cell gets a value;
+      // Sistent's ResponsiveDataTable formats createdAt/updatedAt itself.
+      name: 'createdAt',
       label: 'Creation Date',
       options: {
         filter: true,
@@ -274,13 +275,10 @@ const MesheryCredentialComponent: React.FC = () => {
             </CustomTableCell>
           );
         },
-        customBodyRender: function CustomBody(value: string) {
-          return <Moment format="LLLL">{value}</Moment>;
-        },
       },
     },
     {
-      name: 'updated_at',
+      name: 'updatedAt',
       label: 'Updation Date',
       options: {
         filter: true,
@@ -301,9 +299,6 @@ const MesheryCredentialComponent: React.FC = () => {
               </TableSortLabel>
             </CustomTableCell>
           );
-        },
-        customBodyRender: function CustomBody(value: string) {
-          return <Moment format="LLLL">{value}</Moment>;
         },
       },
     },
