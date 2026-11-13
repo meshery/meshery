@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -74,6 +75,48 @@ func TestDeletePerformanceProfileHandler_NilProvider_ReturnsInternalServerError(
 	}
 	if !strings.Contains(rec.Body.String(), "provider not initialized") {
 		t.Errorf("expected 'provider not initialized', got %s", rec.Body.String())
+	}
+}
+
+// deletePerfProfileErrProvider fails performance profile deletes with err.
+type deletePerfProfileErrProvider struct {
+	*models.DefaultLocalProvider
+	err error
+}
+
+func (p *deletePerfProfileErrProvider) DeletePerformanceProfile(_ *http.Request, _ string) ([]byte, error) {
+	return nil, p.err
+}
+
+func TestDeletePerformanceProfileHandler_NotFoundIs404(t *testing.T) {
+	cases := []struct {
+		name     string
+		err      error
+		wantCode int
+	}{
+		{"local provider not found", models.ErrResultNotFound(fmt.Errorf("performance profile not found")), http.StatusNotFound},
+		{"remote provider 404", models.ErrFetch(fmt.Errorf("failed to delete the profile"), "not found", http.StatusNotFound), http.StatusNotFound},
+		{"other failure", fmt.Errorf("database is locked"), http.StatusInternalServerError},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			base := &models.DefaultLocalProvider{}
+			base.Initialize()
+			provider := &deletePerfProfileErrProvider{DefaultLocalProvider: base, err: tc.err}
+
+			id := "abcdefab-abcd-abcd-abcd-abcdefabcdef"
+			req := httptest.NewRequest(http.MethodDelete, "/api/user/performance/profiles/"+id, nil)
+			req = mux.SetURLVars(req, map[string]string{"performanceProfileId": id})
+			rec := httptest.NewRecorder()
+
+			h.DeletePerformanceProfileHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != tc.wantCode {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, tc.wantCode, rec.Body.String())
+			}
+		})
 	}
 }
 
