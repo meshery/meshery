@@ -232,7 +232,7 @@ Control a page's place in the sidebar with its front matter:
 | `toc_hide: true` | Leaves the page out of the sidebar. It is still built and reachable by URL. |
 | `manualLink` | Points the sidebar entry at another URL instead of the page itself. |
 
-The tree is rendered by `docs/layouts/partials/sidebar-nav-tree.html`, published once per build as `sidebar/nav-*.html`, and mounted by `docs/layouts/partials/sidebar.html`.
+The tree is rendered by `docs/layouts/partials/sidebar-tree.html` and mounted by `docs/layouts/partials/sidebar.html`.
 
 ## Documentation Contribution Workflow
 
@@ -508,7 +508,7 @@ make docs
 - **Prevention**: Run `make site` locally before committing; Hugo reports the offending file and line number on build failure
 
 #### Problem: Navigation not updating
-- **Solution**: Check that the parent directory has an `_index.md`, that the page does not have `toc_hide: true`, and adjust `weight` in front matter to control sibling ordering
+- **Solution**: Check that the parent directory has an `_index.md`, that neither the page nor any ancestor sections have `toc_hide: true`, and adjust `weight` in front matter to control sibling ordering
 - **Prevention**: Set appropriate `weight` and `linkTitle` in page front matter when adding or renaming a page
 
 #### Problem: Images not displaying
