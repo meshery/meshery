@@ -1,0 +1,23 @@
+<svg version="1.1" id="Capa_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+         viewBox="0 0 500 500" style="enable-background:new 0 0 500 500;" xml:space="preserve" width='500' height='500'>
+<style type="text/css">
+        .st0{fill:#FFFFFF;}
+        .st1{opacity:0.8;fill:#FFFFFF;}
+        .st2{opacity:0.9;fill:#FFFFFF;}
+</style>
+<g>
+        <path class="st0" d="M5.2,273.7l110.7,126.8h268.2l110.7-126.8L384.1,146.9H115.9L5.2,273.7z"/>
+        <path class="st1" d="M115.9,400.5h268.4v56.4H115.9V400.5z"/>
+        <path class="st2" d="M115.9,456.8L5.2,330v-56.3l110.7,126.8L115.9,456.8z"/>
+        <path class="st2" d="M384.1,456.8L494.8,330v-56.3L384.1,400.5V456.8z"/>
+        <path class="st0" d="M465.7,253.4c0-47-96.6-85.2-215.7-85.2S34.4,206.3,34.4,253.4s96.5,85.2,215.6,85.2S465.7,300.4,465.7,253.4
+                L465.7,253.4z"/>
+        <path class="st1" d="M465.7,253.4c0,47-96.6,85.2-215.7,85.2S34.4,300.4,34.4,253.4v46.9c14.9,41.3,106.5,85.2,215.6,85.2
+                s200.8-43.9,215.7-85.2V253.4z"/>
+        <path class="st0" d="M16.3,178.6L250,314.1l233.8-135.5L250,43.2L16.3,178.6z"/>
+        <path class="st2" d="M16.3,178.6v52.8L250,366.9v-52.8L16.3,178.6z"/>
+        <path class="st1" d="M483.8,178.6L250,314.1v52.8l233.8-135.5V178.6z"/>
+        <path class="st0" d="M68,212.4l364.1-53l-92.4-106L68,212.4z"/>
+        <path class="st1" d="M68,212.4l364.1-53v47.8L68,260.1V212.4z"/>
+</g>
+</svg>
