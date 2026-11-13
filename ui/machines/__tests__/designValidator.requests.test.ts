@@ -410,4 +410,38 @@ describe('designValidationMachine overlapping requests', () => {
     },
     TEST_TIMEOUT,
   );
+
+  it(
+    'removes the definition resolver from its children once the request settles',
+    async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+      const resolverChildren = () =>
+        Object.keys(validator.getSnapshot().children).filter((id) =>
+          id.startsWith('resolveDefinitions-'),
+        );
+      const { actor: kanvas, replies } = sender();
+      const component = deployment('c1', 1);
+
+      validator.send(
+        designValidatorCommands.validateDesignComponent({ component, returnAddress: kanvas }),
+      );
+      await until(() => definitionCalls.length === 1);
+      expect(resolverChildren()).toEqual(['resolveDefinitions-1']);
+      resolveDefinitions([0]);
+      await until(() => replies.length === 1);
+      expect(replies[0].type).toBe('DESIGN_VALIDATION_DONE');
+      expect(resolverChildren()).toEqual([]);
+
+      validator.send(
+        designValidatorCommands.validateDesignComponent({ component, returnAddress: kanvas }),
+      );
+      await until(() => definitionCalls.length === 2);
+      expect(resolverChildren()).toEqual(['resolveDefinitions-2']);
+      definitionCalls[1]?.deferred.reject(new Error('registry unavailable'));
+      await until(() => replies.length === 2);
+      expect(replies[1].type).toBe('DESIGN_VALIDATION_FAILED');
+      expect(resolverChildren()).toEqual([]);
+    },
+    TEST_TIMEOUT,
+  );
 });

@@ -378,9 +378,15 @@ const acceptRequest = (lane, kind) =>
 const settleRequest = (settle) =>
   enqueueActions(({ context, event, enqueue, self, system }) => {
     const seq = seqFromResolveDefinitionsActorId(event.actorId);
+    if (seq === null) {
+      return;
+    }
+    // A settled resolver otherwise stays in snapshot.children. Stopping a child
+    // that is already stopped or unknown is a no-op.
+    enqueue.stopChild(resolveDefinitionsActorId(seq));
     const { queueKey, inFlightKey } = VALIDATOR_LANES.schema;
     const queue = context[queueKey] || [];
-    if (seq === null || !queue.some((request) => request.seq === seq)) {
+    if (!queue.some((request) => request.seq === seq)) {
       return;
     }
     commitLane(
