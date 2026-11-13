@@ -1,3 +1,0 @@
-# Kubedb Grafana Dashboards
-
-LLMS index: [llms.txt](/pr-preview/pr-23445/llms.txt)
