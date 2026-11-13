@@ -19,6 +19,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/briandowns/spinner"
 	"github.com/eiannone/keyboard"
@@ -1496,4 +1497,28 @@ func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 // TrimFileExtension returns name with its final file extension removed
 func TrimFileExtension(name string) string {
 	return strings.TrimSuffix(name, filepath.Ext(name))
+}
+
+var fileNameSanitizer = strings.NewReplacer(
+	"/", "_",
+	"\\", "_",
+	":", "_",
+	"*", "_",
+	"?", "_",
+	"\"", "_",
+	"<", "_",
+	">", "_",
+	"|", "_",
+	" ", "_",
+)
+
+// SanitizeFileName sanitizes filesystem-unsafe characters, control characters (0x00-0x1F and 0x7F),
+// and whitespace into underscores and trims leading/trailing whitespace.
+func SanitizeFileName(name string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.IsControl(r) {
+			return '_'
+		}
+		return r
+	}, fileNameSanitizer.Replace(strings.TrimSpace(name)))
 }

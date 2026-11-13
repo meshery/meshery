@@ -4844,6 +4844,38 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID c
 	return nil, resp.StatusCode, ErrUpdateConnectionStatus(fmt.Errorf("unable to update connection with id %s", connectionID), resp.StatusCode)
 }
 
+// UpdateConnectionStatusIf updates a connection's status to newStatus only
+// when its stored status is one of fromStatuses, and reports whether the
+// write applied. The remote provider has no conditional-update API, so
+// this is best-effort: the stored status is read and compared
+// immediately before the PUT, and a status change landing between the
+// read and the PUT can still slip through. The reporting-path re-check
+// does not cover that window: the PUT overwrites the intervening
+// change, so the gate re-reads the status the PUT already wrote and
+// passes. The gate only covers the window after the PUT, up to the
+// report. Closing the read-to-PUT window needs a conditional-update API
+// on the remote side, tracked as a follow-up to issue #23248; until
+// then, callers must not rely on this alone for the remote path.
+func (l *RemoteProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	current, _, err := l.GetConnectionByID(token, connectionID)
+	if err != nil {
+		return false, nil, err
+	}
+	if current == nil {
+		return false, nil, nil
+	}
+	for _, fromStatus := range fromStatuses {
+		if current.Status == fromStatus {
+			updated, _, err := l.UpdateConnectionStatusByID(token, connectionID, newStatus)
+			if err != nil {
+				return false, nil, err
+			}
+			return true, updated, nil
+		}
+	}
+	return false, current, nil
+}
+
 // UpdateConnection - to update an existing connection
 func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connections.Connection) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {

@@ -134,11 +134,14 @@ export const ViewInfoModal_: FC<ViewInfoModalProps> = ({
   metadata,
   refetch,
 }) => {
-  const [formState, setFormState] = useState(metadata);
   const viewRes = useGetViewQuery({ viewId }, { skip: !viewId });
   const userRes = useGetLoggedInUserQuery();
   const view = viewRes.data;
   const user = userRes.data;
+  // Untouched notes come from the fetched view: `metadata` is the list row the
+  // modal was opened from, which is stale once the notes have been saved.
+  const [editedMetadata, setEditedMetadata] = useState<unknown>(null);
+  const formState = editedMetadata ?? view?.metadata ?? metadata;
 
   const isLoading =
     viewRes.isLoading || userRes.isLoading || viewRes.isFetching || userRes.isFetching;
@@ -197,7 +200,7 @@ export const ViewInfoModal_: FC<ViewInfoModalProps> = ({
             </Row>
             <Row justifyContent="start">
               <Title>Visibility: </Title>
-              <ViewVisibilityMenu view={view} />
+              <ViewVisibilityMenu view={view} onUpdated={refetch} />
             </Row>
           </OuterRow>
           <RJSFWrapper
@@ -210,7 +213,7 @@ export const ViewInfoModal_: FC<ViewInfoModalProps> = ({
               markdown: MarkdownInput,
             }}
             onChange={(formData: unknown) => {
-              setFormState(formData);
+              setEditedMetadata(formData);
             }}
             RJSFWrapperComponent={StyledRJSFWrapper}
           />
@@ -256,19 +259,23 @@ const formatUsername = ({ firstName, lastName }: { firstName?: string; lastName?
 
 type ViewLike = { id?: string; userId?: string; visibility?: string } | undefined;
 
-const ViewVisibilityMenu: FC<{ view: ViewLike }> = ({ view }) => {
+const ViewVisibilityMenu: FC<{ view: ViewLike; onUpdated?: () => void }> = ({
+  view,
+  onUpdated,
+}) => {
   const { data: userData } = useGetLoggedInUserQuery();
   const [updateView] = useUpdateViewVisibilityMutation();
   return (
     <VisibilityChipMenu
       value={view?.visibility || VIEW_VISIBILITY.PUBLIC}
-      onChange={(value: string) =>
-        handleUpdateViewVisibility({
+      onChange={async (value: string) => {
+        await handleUpdateViewVisibility({
           value: value,
           updateView: updateView,
           selectedResource: view,
-        })
-      }
+        });
+        onUpdated?.();
+      }}
       enabled={view?.userId === userData?.id}
       options={[
         [VIEW_VISIBILITY.PUBLIC, Public],
