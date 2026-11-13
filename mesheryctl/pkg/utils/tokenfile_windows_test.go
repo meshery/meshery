@@ -102,6 +102,39 @@ func grantEveryoneRead(t *testing.T, path string) {
 	}
 }
 
+// grantOwnerAccess replaces the file's DACL with a protected one holding a
+// single entry for the current user with the given access mask.
+func grantOwnerAccess(t *testing.T, path string, access windows.ACCESS_MASK) {
+	t.Helper()
+
+	sid := mustCurrentUserSID(t)
+
+	// TrusteeValueFromSID only keeps the SID's address, so pin it until
+	// ACLFromEntries has read it.
+	var pinner runtime.Pinner
+	pinner.Pin(sid)
+	defer pinner.Unpin()
+
+	acl, err := windows.ACLFromEntries([]windows.EXPLICIT_ACCESS{{
+		AccessPermissions: access,
+		AccessMode:        windows.GRANT_ACCESS,
+		Inheritance:       windows.NO_INHERITANCE,
+		Trustee: windows.TRUSTEE{
+			TrusteeForm:  windows.TRUSTEE_IS_SID,
+			TrusteeType:  windows.TRUSTEE_IS_USER,
+			TrusteeValue: windows.TrusteeValueFromSID(sid),
+		},
+	}}, nil)
+	if err != nil {
+		t.Fatalf("ACLFromEntries: %v", err)
+	}
+	if err := windows.SetNamedSecurityInfo(path, windows.SE_FILE_OBJECT,
+		windows.DACL_SECURITY_INFORMATION|windows.PROTECTED_DACL_SECURITY_INFORMATION,
+		nil, nil, acl, nil); err != nil {
+		t.Fatalf("SetNamedSecurityInfo: %v", err)
+	}
+}
+
 func assertOnlyCurrentUser(t *testing.T, path string) {
 	t.Helper()
 
@@ -188,6 +221,17 @@ func TestVerifyOwnerOnlyRejectsOpenFiles(t *testing.T) {
 		grantEveryoneRead(t, path)
 		if err := verifyOwnerOnly(path, sid); err == nil {
 			t.Fatal("verifyOwnerOnly accepted a file that Everyone can read")
+		}
+	})
+
+	t.Run("grants the current user read-only access", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "auth.json")
+		if err := os.WriteFile(path, []byte("x"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		grantOwnerAccess(t, path, windows.GENERIC_READ)
+		if err := verifyOwnerOnly(path, sid); err == nil {
+			t.Fatal("verifyOwnerOnly accepted a file that grants the current user read-only access")
 		}
 	})
 

@@ -78,9 +78,11 @@ func sidOfACE(ace *windows.ACCESS_ALLOWED_ACE) *windows.SID {
 }
 
 // verifyOwnerOnly reports an error unless the file's DACL is protected from
-// inheritance and consists only of ACEs that allow access to sid, with at
-// least one such ACE. A missing (NULL) DACL means everyone has full access, so
-// it fails the check as well.
+// inheritance and consists only of ACEs that grant sid the full token-file
+// access, with at least one such ACE. A missing (NULL) DACL means everyone
+// has full access, so it fails the check as well. The mask matters as well
+// as the SID: a read-only grant to the current user would pass a SID-only
+// check but leave the next login unable to rewrite the token.
 func verifyOwnerOnly(path string, sid *windows.SID) error {
 	sd, err := windows.GetNamedSecurityInfo(path, windows.SE_FILE_OBJECT, windows.DACL_SECURITY_INFORMATION)
 	if err != nil {
@@ -115,6 +117,9 @@ func verifyOwnerOnly(path string, sid *windows.SID) error {
 		aceSID := sidOfACE(ace)
 		if !aceSID.Equals(sid) {
 			return fmt.Errorf("token file %q grants access to %s besides the current user", path, aceSID.String())
+		}
+		if ace.Mask != tokenFileAccess {
+			return fmt.Errorf("token file %q grants the current user access %#x, want %#x", path, ace.Mask, tokenFileAccess)
 		}
 		granted = true
 	}
