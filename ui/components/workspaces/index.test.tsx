@@ -30,6 +30,7 @@ const {
   EMPTY_QUERY_RESULT,
   NOOP_MUTATION,
   UI_STATE,
+  ColumnVisibilityControl,
 } = vi.hoisted(() => ({
   notify: vi.fn(),
   createWorkspace: vi.fn(),
@@ -39,6 +40,7 @@ const {
   EMPTY_QUERY_RESULT: { data: undefined, isLoading: false },
   NOOP_MUTATION: [vi.fn()],
   UI_STATE: { ui: { organization: { id: 'org-1' } } },
+  ColumnVisibilityControl: vi.fn<(props: any) => null>(() => null),
 }));
 
 vi.mock('../../utils/hooks/useNotification', () => ({
@@ -139,7 +141,7 @@ vi.mock('@sistent/sistent', () => ({
       {children}
     </button>
   ),
-  CustomColumnVisibilityControl: () => null,
+  CustomColumnVisibilityControl: ColumnVisibilityControl,
   ErrorBoundary: ({ children }: any) => <>{children}</>,
   Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
   ModalFooter: ({ children }: any) => <div>{children}</div>,
@@ -312,5 +314,32 @@ describe('Workspaces search paging', () => {
     } finally {
       WORKSPACES_QUERY_RESULT.data = originalData;
     }
+  });
+});
+
+describe('Workspaces column visibility menu', () => {
+  it("toggles the table's camelCase column names", () => {
+    render(<Workspaces onSelectWorkspace={undefined} />);
+    const { columns } = ColumnVisibilityControl.mock.calls.at(-1)[0];
+    // The keys the menu writes into columnVisibility must be the column names
+    // WorkspaceDataTable declares (pinned in WorkspaceDataTable.test.tsx),
+    // or toggling them changes nothing.
+    expect(columns.map((c: any) => c.name)).toEqual([
+      'id',
+      'ownerEmail',
+      'ownerId',
+      'orgName',
+      'name',
+      'description',
+      'owner',
+      'teamCount',
+      'designCount',
+      'viewCount',
+      'environmentCount',
+      'environments',
+      'createdAt',
+      'updatedAt',
+      'actions',
+    ]);
   });
 });
