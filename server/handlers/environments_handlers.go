@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta3/environment"
 )
 
@@ -181,7 +182,11 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 	if err != nil {
 		handlerErr := ErrUpdateEnvironment(err)
 		h.log.Error(handlerErr)
-		writeMeshkitError(w, handlerErr, providerStatus(err))
+		status := providerStatus(err)
+		if meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode {
+			status = http.StatusNotFound
+		}
+		writeMeshkitError(w, handlerErr, status)
 		return
 	}
 
