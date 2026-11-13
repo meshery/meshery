@@ -516,10 +516,15 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 		connID = uuid.FromStringOrNil(id)
 	}
 
+	var mesheryInstanceID string
+	if k8sContext.MesheryInstanceID != nil {
+		mesheryInstanceID = k8sContext.MesheryInstanceID.String()
+	}
+
 	_metadata := map[string]string{
 		"id":                 k8sContext.ID,
 		"server":             k8sContext.Server,
-		"mesheryInstanceId":  k8sContext.MesheryInstanceID.String(),
+		"mesheryInstanceId":  mesheryInstanceID,
 		"deploymentType":     k8sContext.DeploymentType,
 		"version":            k8sContext.Version,
 		"name":               k8sContext.Name,
@@ -560,10 +565,15 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	if err != nil {
 		return connections.Connection{}, fmt.Errorf("error in saving k8s context %v", err)
 	}
+	if connectionCreated == nil {
+		return connections.Connection{}, ErrPersistConnection(fmt.Errorf("error in saving k8s context: nil connection returned"))
+	}
 
 	k8sContext.ConnectionID = connID.String()
 
-	_, _ = l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+	if l.MesheryK8sContextPersister != nil {
+		_, _ = l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+	}
 	return *connectionCreated, nil
 }
 

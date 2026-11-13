@@ -1,13 +1,29 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Keys } from '@meshery/schemas/permissions';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ConnectionManagementPageWithErrorBoundary from './index';
+
+const {
+  mockUseHasPermission,
+  mockUseGetSchemaQuery,
+  mockOpenCreateConnection,
+  mockCloseCreateConnection,
+  mockReplace,
+} = vi.hoisted(() => ({
+  mockUseHasPermission: vi.fn(),
+  mockUseGetSchemaQuery: vi.fn(),
+  mockOpenCreateConnection: vi.fn(),
+  mockCloseCreateConnection: vi.fn(),
+  mockReplace: vi.fn(),
+}));
 
 const router = {
   query: {} as Record<string, unknown>,
   pathname: '/connections',
   push: vi.fn(),
+  replace: mockReplace,
   isReady: true,
 };
 
@@ -20,7 +36,7 @@ vi.mock('@sistent/sistent', () => ({
   ErrorBoundary: ({ children }) => <>{children}</>,
   AppBar: ({ children }) => <div>{children}</div>,
   InfoTooltip: () => <svg data-testid="info-icon" />,
-  useHasPermission: () => true,
+  useHasPermission: (permissionKey) => mockUseHasPermission(permissionKey),
   useTheme: () => ({ palette: { icon: { default: '#000' } } }),
 }));
 
@@ -63,8 +79,8 @@ vi.mock('./ConnectionTable', () => ({
 
 vi.mock('@/utils/context/ConnectionWizardContextProvider', () => ({
   useConnectionWizardModal: () => ({
-    openCreateConnection: vi.fn(),
-    closeCreateConnection: vi.fn(),
+    openCreateConnection: mockOpenCreateConnection,
+    closeCreateConnection: mockCloseCreateConnection,
     open: false,
   }),
 }));
@@ -90,11 +106,13 @@ vi.mock('@/utils/can', () => ({
 }));
 
 vi.mock('@/rtk-query/schema', () => ({
-  useGetSchemaQuery: () => ({ data: undefined }),
+  useGetSchemaQuery: (args, options) => mockUseGetSchemaQuery(args, options),
 }));
 
 vi.mock('../general/error-404/index', () => ({
-  default: () => <div data-testid="default-error" />,
+  default: ({ permissionKey }) => (
+    <div data-testid="default-error" data-permission-key={JSON.stringify(permissionKey)} />
+  ),
 }));
 
 vi.mock('../shared/ErrorBoundary/ErrorBoundary', () => ({
@@ -113,8 +131,15 @@ describe('connections index page', () => {
   beforeEach(() => {
     router.query = {};
     router.push.mockReset();
+    router.replace.mockReset();
     router.isReady = true;
     connectionTableCallbackRefs.length = 0;
+    mockOpenCreateConnection.mockReset();
+    mockCloseCreateConnection.mockReset();
+    mockUseHasPermission.mockReset();
+    mockUseHasPermission.mockReturnValue(true);
+    mockUseGetSchemaQuery.mockReset();
+    mockUseGetSchemaQuery.mockReturnValue({ data: undefined });
   });
 
   it('defaults to the connections tab and ignores non-string connection ids', () => {
@@ -125,6 +150,7 @@ describe('connections index page', () => {
 
     render(<ConnectionManagementPageWithErrorBoundary />);
 
+    expect(mockUseGetSchemaQuery).toHaveBeenCalledWith({ schemaName: 'helmRepo' }, { skip: false });
     expect(screen.getByTestId('connection-table')).toHaveTextContent('connection:none');
     expect(screen.queryByTestId('meshsync-table')).not.toBeInTheDocument();
   });
@@ -207,5 +233,56 @@ describe('connections index page', () => {
     for (const ref of rest) {
       expect(ref).toBe(first);
     }
+  });
+
+  it('skips schema query, ignores cached schema data, blocks deep links, and renders DefaultError when permission is denied', () => {
+    mockUseHasPermission.mockReturnValue(false);
+    mockUseGetSchemaQuery.mockReturnValue({
+      data: { rjsfSchema: { title: 'Cached Helm Repo' }, uiSchema: {} },
+    });
+    router.query = {
+      create: 'true',
+      kind: 'kubernetes',
+    };
+
+    render(<ConnectionManagementPageWithErrorBoundary />);
+
+    expect(mockUseHasPermission).toHaveBeenCalledWith(Keys.WorkspaceManagementViewConnections);
+    expect(mockUseGetSchemaQuery).toHaveBeenCalledWith({ schemaName: 'helmRepo' }, { skip: true });
+    expect(screen.getByTestId('default-error')).toHaveAttribute(
+      'data-permission-key',
+      JSON.stringify(Keys.WorkspaceManagementViewConnections),
+    );
+    expect(screen.queryByTestId('connection-table')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('meshsync-table')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('create-connection-modal')).not.toBeInTheDocument();
+    expect(mockOpenCreateConnection).not.toHaveBeenCalled();
+    expect(mockCloseCreateConnection).not.toHaveBeenCalled();
+    expect(router.replace).not.toHaveBeenCalled();
+  });
+
+  it('hides tables, skips schema query, and closes wizard when permission is revoked mid-session', () => {
+    const { rerender } = render(<ConnectionManagementPageWithErrorBoundary />);
+
+    expect(screen.getByTestId('connection-table')).toBeInTheDocument();
+    expect(mockUseGetSchemaQuery).toHaveBeenLastCalledWith(
+      { schemaName: 'helmRepo' },
+      { skip: false },
+    );
+    expect(mockCloseCreateConnection).not.toHaveBeenCalled();
+
+    mockUseHasPermission.mockReturnValue(false);
+    rerender(<ConnectionManagementPageWithErrorBoundary />);
+
+    expect(mockCloseCreateConnection).toHaveBeenCalledTimes(1);
+    expect(mockUseGetSchemaQuery).toHaveBeenLastCalledWith(
+      { schemaName: 'helmRepo' },
+      { skip: true },
+    );
+    expect(screen.getByTestId('default-error')).toHaveAttribute(
+      'data-permission-key',
+      JSON.stringify(Keys.WorkspaceManagementViewConnections),
+    );
+    expect(screen.queryByTestId('connection-table')).not.toBeInTheDocument();
   });
 });

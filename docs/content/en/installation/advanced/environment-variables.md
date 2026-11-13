@@ -61,6 +61,7 @@ built-in `Local` provider (legacy alias `None`) needs no base URL.
 | --- | --- | --- | --- |
 | `DISABLE_OPERATOR` | `false` | Prevents Meshery Server from automatically deploying Meshery Operator into connected clusters. | `DISABLE_OPERATOR=true make server-without-operator` |
 | `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` | `embedded` | Default MeshSync deployment mode for Kubernetes connections that do not already specify one. Accepted values are `embedded` and `operator`. | `MESHSYNC_DEFAULT_DEPLOYMENT_MODE=operator` |
+| `MESHERY_MANAGED_BROKER_PORTFORWARD` | `true` | Whether Meshery Server tunnels to an operator-mode connection's Meshery Broker through the Kubernetes API when that connection's cluster is not the one Meshery runs in. Set `false` to provide your own path to the Broker. See [Managed port-forward]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#managed-port-forward-automatic" >}}). | `MESHERY_MANAGED_BROKER_PORTFORWARD=false` |
 | `SKIP_DOWNLOAD_CONTENT` | `false` | Skips downloading bundled seed content such as patterns and filters before loading local content. | `SKIP_DOWNLOAD_CONTENT=true make server` |
 | `SKIP_COMP_GEN` | `false` | Skips background Kubernetes component generation during startup. Explicit API-triggered registration can still run. | `SKIP_COMP_GEN=true make server` |
 | `POLICY_EVAL_TIMEOUT` | `3m` | Maximum duration for a single relationship-policy evaluation. Uses Go duration syntax. | `POLICY_EVAL_TIMEOUT=5m make server` |
@@ -84,7 +85,7 @@ Meshery Server reads these values from the hosting environment when they are pre
 
 | Variable | Default | Description | Example |
 | --- | --- | --- | --- |
-| `KUBERNETES_SERVICE_HOST` | unset | Kubernetes service host used to detect in-cluster execution and to build in-cluster Kubernetes contexts. | `KUBERNETES_SERVICE_HOST=10.96.0.1` |
+| `KUBERNETES_SERVICE_HOST` | unset | Kubernetes service host used to detect in-cluster execution and to build in-cluster Kubernetes contexts. It identifies the cluster Meshery Server runs in; a connection to any other cluster still gets the managed Broker port-forward. | `KUBERNETES_SERVICE_HOST=10.96.0.1` |
 | `KUBERNETES_SERVICE_PORT` | unset | Kubernetes service port paired with `KUBERNETES_SERVICE_HOST` for in-cluster execution. | `KUBERNETES_SERVICE_PORT=443` |
 | `HOME` | Inherited from the process environment | Home directory used when Meshery resolves paths under `.meshery/` for local registry/model content. | `HOME=/home/appuser` |
 

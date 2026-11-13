@@ -14,11 +14,15 @@ export const ValidationErrorListItem = styled(ListItem, {
   },
 }));
 
-export const DryRunErrorContainer = styled(ListItem)(({ theme }) => ({
+export const DryRunErrorContainer = styled(ListItem, {
+  shouldForwardProp: (prop) => prop !== 'clickable',
+})(({ theme, clickable = true }) => ({
   backgroundColor: theme.palette.background.card,
-  cursor: 'pointer',
+  cursor: clickable ? 'pointer' : 'default',
   '&:hover': {
-    backgroundColor: alpha(theme.palette.error.dark, 0.25),
+    backgroundColor: clickable
+      ? alpha(theme.palette.error.dark, 0.25)
+      : theme.palette.background.card,
   },
 }));
 
