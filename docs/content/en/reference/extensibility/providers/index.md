@@ -315,7 +315,7 @@ Meshery keeps the implementation of Remote Providers separate so that they are b
 
 ### Verifying Compatibility With Golang Version Update
 
-When Meshery is updated to a newer version of Golang, extension providers need to ensure their integrations remain compatible with the updated version. Changes in the Golang version can lead to compatibility issues, so it’s important to update your extension to align with Meshery’s new environment. For a detailed guide on how to verify and address any compatibility issues, refer to this [guide on verifying compatibility](./verify-compatibility).
+When Meshery is updated to a newer version of Golang, extension providers need to ensure their integrations remain compatible with the updated version. Changes in the Golang version can lead to compatibility issues, so it’s important to update your extension to align with Meshery’s new environment. For a detailed guide on how to verify and address any compatibility issues, refer to this [guide on verifying compatibility]({{< ref "reference/extensibility/verify-compatibility.md" >}}).
 
 ### Remote Provider Extension Points
 

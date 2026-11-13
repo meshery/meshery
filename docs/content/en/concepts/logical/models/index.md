@@ -90,7 +90,7 @@ Models introduce various core constructs that form the foundation of the model. 
 
 #### Evaluation of Relationships
 
-Meshery provides a relationship evaluation algorithm to ensure desired behavior enforcement. [Policies](policies) can be applied to components and relationships, defining rules and actions based on predefined conditions.
+Meshery provides a relationship evaluation algorithm to ensure desired behavior enforcement. [Policies]({{< ref "concepts/logical/policies/index.md" >}}) can be applied to components and relationships, defining rules and actions based on predefined conditions.
 
 {{% alert title="Model Schema" color="info" %}}
 Model constructs are defined using a schema language called Cue. Cue is a powerful and expressive language that is well-suited for defining cloud-native constructs.
@@ -102,7 +102,7 @@ Model constructs are defined using a schema language called Cue. Cue is a powerf
 
 ### Patterns
 
-[Patterns](patterns) are reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
+[Patterns]({{< ref "concepts/logical/patterns.md" >}}) are reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
 
 {{% alert title="Metadata" color="info" %}}
 Metadata provide additional details about a component in Meshery. They offer specific functionality or characteristics associated with a component, enhancing its capabilities. Metadata can be attached to components to customize their behavior.
