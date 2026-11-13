@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
 )
 
 func TestErrMissingResultID_Remediation(t *testing.T) {
@@ -69,6 +69,77 @@ func TestGetResultHandler_InvalidUUID(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	h.GetResultHandler(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+}
+
+func TestGetResultHandler_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	validID := "11111111-1111-1111-1111-111111111111"
+	req := httptest.NewRequest(http.MethodGet, "/api/perf/profile/result/"+validID, nil)
+	req = mux.SetURLVars(req, map[string]string{"id": validID})
+	rec := httptest.NewRecorder()
+
+	h.GetResultHandler(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected status 500 Internal Server Error, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "provider not initialized") {
+		t.Errorf("expected 'provider not initialized', got %s", rec.Body.String())
+	}
+}
+
+func TestFetchAllResultsHandler_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	req := httptest.NewRequest(http.MethodGet, "/api/perf/profile/results", nil)
+	rec := httptest.NewRecorder()
+
+	h.FetchAllResultsHandler(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected status 500 Internal Server Error, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "provider not initialized") {
+		t.Errorf("expected 'provider not initialized', got %s", rec.Body.String())
+	}
+}
+
+func TestFetchSingleSmiResultHandler_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	validID := "11111111-1111-1111-1111-111111111111"
+	req := httptest.NewRequest(http.MethodGet, "/api/perf/service-mesh-interface/result/"+validID, nil)
+	req = mux.SetURLVars(req, map[string]string{"id": validID})
+	rec := httptest.NewRecorder()
+
+	h.FetchSingleSmiResultHandler(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected status 500 Internal Server Error, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "provider not initialized") {
+		t.Errorf("expected 'provider not initialized', got %s", rec.Body.String())
+	}
+}
+
+type resultsTestProvider struct {
+	models.Provider
+}
+
+func TestFetchSingleSmiResultHandler_InvalidUUID_ReturnsBadRequest(t *testing.T) {
+	fakeProvider := &resultsTestProvider{}
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	req := httptest.NewRequest(http.MethodGet, "/api/perf/service-mesh-interface/result/invalid-uuid", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": "invalid-uuid"})
+	rec := httptest.NewRecorder()
+
+	h.FetchSingleSmiResultHandler(rec, req, nil, nil, fakeProvider)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("expected status 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
