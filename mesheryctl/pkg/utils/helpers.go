@@ -19,6 +19,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/briandowns/spinner"
 	"github.com/eiannone/keyboard"
@@ -1421,14 +1422,17 @@ var fileNameSanitizer = strings.NewReplacer(
 	"<", "_",
 	">", "_",
 	"|", "_",
-	"\r", "_",
-	"\n", "_",
-	"\t", "_",
 	" ", "_",
 )
 
-// SanitizeFileName sanitizes filesystem-unsafe characters and whitespace into underscores and trims leading/trailing whitespace.
+// SanitizeFileName sanitizes filesystem-unsafe characters, control characters (0x00-0x1F and 0x7F),
+// and whitespace into underscores and trims leading/trailing whitespace.
 func SanitizeFileName(name string) string {
-	return fileNameSanitizer.Replace(strings.TrimSpace(name))
+	return strings.Map(func(r rune) rune {
+		if unicode.IsControl(r) {
+			return '_'
+		}
+		return r
+	}, fileNameSanitizer.Replace(strings.TrimSpace(name)))
 }
 
