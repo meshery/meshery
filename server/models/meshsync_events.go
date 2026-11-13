@@ -316,7 +316,7 @@ func (mh *MeshsyncDataHandler) replaceMeshsyncResource(obj *meshsyncmodel.Kubern
 	if obj.ID == "" || obj.KubernetesResourceMeta == nil {
 		return fmt.Errorf("cannot update MeshSync resource without an identity and metadata")
 	}
-	return mh.dbHandler.DB.Transaction(func(tx *gorm.DB) error {
+	return mh.dbHandler.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Where("id = ?", obj.ID).Delete(&meshsyncmodel.KubernetesKeyValue{}).Error; err != nil {
 			return err
 		}
