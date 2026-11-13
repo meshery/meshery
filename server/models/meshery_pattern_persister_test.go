@@ -11,6 +11,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
+	"github.com/meshery/meshkit/models/patterns"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -264,9 +265,15 @@ func TestSaveMesheryPattern_NewDesignKeepsImportedSource(t *testing.T) {
 	}
 }
 
+// A clone is a new design: it takes the source's content, but not its creation
+// time, usage counters, catalog data or design-file identity.
 func TestCloneMesheryPattern_InsertsNewRow(t *testing.T) {
 	db, mpp := newPatternPersisterTestDB(t)
-	id, _ := seedImportedPattern(t, db)
+	id, seed := seedImportedPattern(t, db)
+	if err := db.Model(&MesheryPattern{}).Where("id = ?", id).
+		Updates(map[string]interface{}{"share_count": 3, "download_count": 7, "deployment_count": 4}).Error; err != nil {
+		t.Fatalf("set counters: %v", err)
+	}
 
 	if _, err := mpp.CloneMesheryPattern(id.String(), &MesheryClonePatternRequestBody{Name: "copy"}); err != nil {
 		t.Fatalf("clone: %v", err)
@@ -282,8 +289,27 @@ func TestCloneMesheryPattern_InsertsNewRow(t *testing.T) {
 	if clone.Visibility != Private {
 		t.Errorf("clone visibility = %q, want %q", clone.Visibility, Private)
 	}
-	if original := loadPattern(t, db, id); original.Name != "persister-test" {
-		t.Errorf("original renamed to %q by the clone", original.Name)
+	if clone.CreatedAt == nil || clone.CreatedAt.Equal(persisterTestCreatedAt) {
+		t.Errorf("clone created_at = %v, want the clone's own creation time", clone.CreatedAt)
+	}
+	if counts := [5]int{clone.ViewCount, clone.ShareCount, clone.DownloadCount, clone.CloneCount, clone.DeploymentCount}; counts != [5]int{} {
+		t.Errorf("clone counters (view, share, download, clone, deploy) = %v, want all zero", counts)
+	}
+	if clone.CatalogData.PatternInfo != "" || clone.CatalogData.PatternCaveats != "" {
+		t.Errorf("clone catalog_data = %+v, want empty", clone.CatalogData)
+	}
+	if string(clone.SourceContent) != string(seed.SourceContent) || clone.Type != seed.Type {
+		t.Errorf("clone type/source = %q/%q, want the source's", clone.Type.String, clone.SourceContent)
+	}
+	pf, err := patterns.GetPatternFormat(clone.PatternFile)
+	if err != nil {
+		t.Fatalf("parse clone design file: %v", err)
+	}
+	if pf.ID != *clone.ID || pf.Name != "copy" || pf.Version != "0.0.1" {
+		t.Errorf("clone design file id/name/version = %s/%q/%s, want %s/%q/0.0.1", pf.ID, pf.Name, pf.Version, clone.ID, "copy")
+	}
+	if original := loadPattern(t, db, id); original.Name != "persister-test" || original.PatternFile != seed.PatternFile {
+		t.Errorf("original changed by the clone: name %q, design file %q", original.Name, original.PatternFile)
 	}
 }
 
