@@ -56,6 +56,11 @@ var (
 	additionalOptions  string
 	certPath           string
 	disableCert        bool
+	requestHeaderFlags []string
+	requestCookieFlags []string
+	requestHeaders     string
+	requestCookies     string
+	contentType        string
 )
 
 var linkDocPerfApply = map[string]string{
@@ -124,18 +129,29 @@ mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --m
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options path/to/options.json
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator fortio --options '{"MethodOverride": "POST"}'
+
+// Execute a Performance test with request headers, cookies and a content type
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --header "Authorization: Bearer token" --cookie "session=abc" --content-type "application/json"
 	`,
 	Annotations: linkDocPerfApply,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		userResponse := false
 		isExistingProfile := false
-		// The server reads these only from the run request, not from the saved profile.
-		var requestHeaders, requestCookies, contentType string
 
 		// setting up for error formatting
 		cmdUsed = cmd.Name()
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
+
+		// The server reads these only from the run request, not from the saved profile.
+		requestHeaders, err = flagValuesToJSON("header", ":", requestHeaderFlags)
+		if err != nil {
+			return err
+		}
+		requestCookies, err = flagValuesToJSON("cookie", "=", requestCookieFlags)
 		if err != nil {
 			return err
 		}
@@ -296,9 +312,17 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 					loadTestBody = profiles[index].RequestBody
 				}
 
-				requestHeaders = profiles[index].RequestHeaders
-				requestCookies = profiles[index].RequestCookies
-				contentType = profiles[index].ContentType
+				if requestHeaders == "" {
+					requestHeaders = profiles[index].RequestHeaders
+				}
+
+				if requestCookies == "" {
+					requestCookies = profiles[index].RequestCookies
+				}
+
+				if contentType == "" {
+					contentType = profiles[index].ContentType
+				}
 			}
 		}
 
@@ -386,6 +410,44 @@ func init() {
 	applyCmd.Flags().StringVar(&additionalOptions, "options", "", "(optional) Additional options to be passed to the load generator. Can be a json string or a filepath containing json")
 	applyCmd.Flags().StringVar(&certPath, "cert-path", "", "(optional) Path to the certificate to be used for the load test")
 	applyCmd.Flags().BoolVar(&disableCert, "disable-cert", false, "(optional) Do not use certificate present in the profile")
+	applyCmd.Flags().StringArrayVar(&requestHeaderFlags, "header", nil, "(optional) Request header to send during the test, as \"Name: value\". Can be used more than once")
+	applyCmd.Flags().StringArrayVar(&requestCookieFlags, "cookie", nil, "(optional) Request cookie to send during the test, as \"name=value\". Can be used more than once")
+	applyCmd.Flags().StringVar(&contentType, "content-type", "", "(optional) Content type of the load test body")
+}
+
+// flagValuesToJSON encodes repeated name and value flags as the JSON object the
+// server reads. Each one is split at its first separator, so a value may contain it.
+func flagValuesToJSON(flag, separator string, flagValues []string) (string, error) {
+	if len(flagValues) == 0 {
+		return "", nil
+	}
+
+	encoded := make(map[string]string, len(flagValues))
+	seen := make(map[string]struct{}, len(flagValues))
+	for _, flagValue := range flagValues {
+		name, value, found := strings.Cut(flagValue, separator)
+		name = strings.TrimSpace(name)
+		if !found || name == "" {
+			return "", utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --%s: expected name%svalue", flag, separator))
+		}
+		// Header names are case-insensitive, cookie names are not.
+		key := name
+		if flag == "header" {
+			key = strings.ToLower(name)
+		}
+		if _, exists := seen[key]; exists {
+			return "", utils.ErrFlagsInvalid(fmt.Errorf("duplicate value for --%s: %q", flag, name))
+		}
+		seen[key] = struct{}{}
+		encoded[name] = strings.TrimSpace(value)
+	}
+
+	data, err := json.Marshal(encoded)
+	if err != nil {
+		return "", ErrFailMarshal(err)
+	}
+
+	return string(data), nil
 }
 
 // createPerformanceProfile saves a new profile from the flag values, filling in
@@ -461,9 +523,9 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		"qps":               convQPS,
 		"serviceMesh":       testMesh,
 		"requestBody":       loadTestBody,
-		"requestCookies":    "",
-		"requestHeaders":    "",
-		"contentType":       "",
+		"requestCookies":    requestCookies,
+		"requestHeaders":    requestHeaders,
+		"contentType":       contentType,
 	}
 
 	metadata, err := profileMetadataFromFlags()

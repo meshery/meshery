@@ -138,6 +138,16 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 </div>
 </pre> 
 
+Execute a Performance test with request headers, cookies and a content type
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --header "Authorization: Bearer token" --cookie "session=abc" --content-type "application/json"
+
+</div>
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
@@ -145,9 +155,12 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
   -b, --body string                  (optional) Load test body. Can be a filepath/string
       --cert-path string             (optional) Path to the certificate to be used for the load test
       --concurrent-requests string   (optional) Number of Parallel Requests
+      --content-type string          (optional) Content type of the load test body
+      --cookie stringArray           (optional) Request cookie to send during the test, as "name=value". Can be used more than once
       --disable-cert                 (optional) Do not use certificate present in the profile
       --duration string              (optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration
   -f, --file string                  (optional) File containing SMP-compatible test configuration. For more, see https://smp-spec.io
+      --header stringArray           (optional) Request header to send during the test, as "Name: value". Can be used more than once
   -h, --help                         help for apply
       --load-generator string        (optional) Load-Generator to be used (fortio)
       --mesh string                  (optional) Name of the infrastructure
