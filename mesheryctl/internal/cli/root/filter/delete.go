@@ -33,7 +33,7 @@ var deleteCmd = &cobra.Command{
 // A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be deleted.
 mesheryctl filter delete [filter-name | ID]
 	`,
-	Args: cobra.MinimumNArgs(0),
+	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// for formatting errors
 		subCmdUsed := cmd.Use
