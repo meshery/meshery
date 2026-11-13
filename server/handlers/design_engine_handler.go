@@ -455,8 +455,9 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
 // used by one component is kept as is, the format UI consumers already read. Several components often share
 // a display name (a Deployment and a Service both named "web"), and keying them all by that name made each
 // result overwrite the previous one, so a rejected component could be reported as valid. Shared names are
-// qualified with the kind, and with the component ID when the kind is shared too. A final check keeps every
-// key unique even if a qualified key happens to equal another component's display name.
+// qualified with the kind, and with the component ID when the kind is shared too. Unique display names are
+// reserved before any qualified key is chosen, and a qualified key is numbered until it is unused, so keys
+// are always distinct and a unique display name is never renamed, whatever order the components come in.
 func dryRunResultKeys(comps []*component.ComponentDefinition) []string {
 	nameCount := make(map[string]int, len(comps))
 	nameKindCount := make(map[string]int, len(comps))
@@ -470,19 +471,29 @@ func dryRunResultKeys(comps []*component.ComponentDefinition) []string {
 
 	keys := make([]string, len(comps))
 	used := make(map[string]bool, len(comps))
+
+	// Reserve every display name only one component uses first, so a qualified key chosen below can
+	// never take a key that a uniquely named component needs, whatever order the components come in.
 	for i, cmp := range comps {
-		if cmp == nil {
+		if cmp != nil && nameCount[cmp.DisplayName] == 1 {
+			keys[i] = cmp.DisplayName
+			used[cmp.DisplayName] = true
+		}
+	}
+
+	// Qualify shared names with the kind, then with the component ID, and number the key until it is
+	// unused, so it cannot collide with another component's display name or qualified key.
+	for i, cmp := range comps {
+		if cmp == nil || nameCount[cmp.DisplayName] == 1 {
 			continue
 		}
-		key := cmp.DisplayName
-		if nameCount[cmp.DisplayName] > 1 {
-			key = fmt.Sprintf("%s (%s)", cmp.DisplayName, cmp.Component.Kind)
-			if nameKindCount[cmp.DisplayName+"\x00"+cmp.Component.Kind] > 1 {
-				key = fmt.Sprintf("%s (%s, %s)", cmp.DisplayName, cmp.Component.Kind, cmp.ID.String())
-			}
+		key := fmt.Sprintf("%s (%s)", cmp.DisplayName, cmp.Component.Kind)
+		if nameKindCount[cmp.DisplayName+"\x00"+cmp.Component.Kind] > 1 || used[key] {
+			key = fmt.Sprintf("%s (%s, %s)", cmp.DisplayName, cmp.Component.Kind, cmp.ID.String())
 		}
-		if used[key] {
-			key = fmt.Sprintf("%s (%s)", key, cmp.ID.String())
+		base := key
+		for n := 2; used[key]; n++ {
+			key = fmt.Sprintf("%s #%d", base, n)
 		}
 		used[key] = true
 		keys[i] = key

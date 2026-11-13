@@ -542,13 +542,57 @@ func TestDryRunResultKeys(t *testing.T) {
 	t.Run("keys are unique even when a qualified key equals another display name", func(t *testing.T) {
 		literal := mutateTestComponent("web (Service)", "ConfigMap")
 		comps := []*component.ComponentDefinition{literal, service, mutateTestComponent("web", "Deployment")}
-		got := dryRunResultKeys(comps)
-		seen := map[string]bool{}
-		for _, k := range got {
-			if seen[k] {
-				t.Fatalf("duplicate key %q in %v", k, got)
-			}
-			seen[k] = true
+		assertDistinctKeysKeepingUniqueNames(t, comps)
+	})
+
+	// A shared name qualified early must not take a key that a later component uses as its own
+	// display name: unique display names are reserved before any qualified key is chosen.
+	t.Run("a unique display name is kept even when a qualified key would claim it first", func(t *testing.T) {
+		svc := mutateTestComponent("web", "Service")
+		deploy := mutateTestComponent("web", "Deployment")
+		literal := mutateTestComponent("web (Service)", "ConfigMap")
+		got := assertDistinctKeysKeepingUniqueNames(t, []*component.ComponentDefinition{svc, deploy, literal})
+		if got[2] != "web (Service)" {
+			t.Errorf("the ConfigMap named %q was renamed to %q", literal.DisplayName, got[2])
 		}
 	})
+
+	// The ID-qualified fallback can itself equal another component's display name; it must be checked
+	// again rather than overwrite that component's result.
+	t.Run("an id-qualified fallback never collides with another display name", func(t *testing.T) {
+		svc := mutateTestComponent("web", "Service")
+		literal := mutateTestComponent("web (Service)", "ConfigMap")
+		// Display names spelled like the ID-qualified keys a shared name can fall back to.
+		literalFallback := mutateTestComponent("web (Service) ("+svc.ID.String()+")", "Secret")
+		literalWithID := mutateTestComponent("web (Service, "+svc.ID.String()+")", "Secret")
+		deploy := mutateTestComponent("web", "Deployment")
+		assertDistinctKeysKeepingUniqueNames(t, []*component.ComponentDefinition{literal, literalFallback, literalWithID, svc, deploy})
+	})
+}
+
+// assertDistinctKeysKeepingUniqueNames checks the two guarantees DryRun relies on: every component gets a
+// key of its own, so no result overwrites another, and a display name no other component shares is kept
+// exactly. It returns the keys for further checks.
+func assertDistinctKeysKeepingUniqueNames(t *testing.T, comps []*component.ComponentDefinition) []string {
+	t.Helper()
+	got := dryRunResultKeys(comps)
+	if len(got) != len(comps) {
+		t.Fatalf("got %d keys for %d components", len(got), len(comps))
+	}
+
+	nameCount := map[string]int{}
+	for _, c := range comps {
+		nameCount[c.DisplayName]++
+	}
+	seen := map[string]bool{}
+	for i, k := range got {
+		if seen[k] {
+			t.Fatalf("duplicate key %q in %v", k, got)
+		}
+		seen[k] = true
+		if name := comps[i].DisplayName; nameCount[name] == 1 && k != name {
+			t.Errorf("unique display name %q was renamed to %q", name, k)
+		}
+	}
+	return got
 }
