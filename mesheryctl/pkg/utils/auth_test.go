@@ -441,8 +441,13 @@ func TestInitiateLogin_PersistsRegistrationKey(t *testing.T) {
 func TestWriteTokenFile(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "auth.json")
 
-	// A token file left behind by an older mesheryctl is world-readable.
-	if err := os.WriteFile(path, []byte("old"), 0o644); err != nil {
+	// On Unix, simulate a token file left world-readable by an older version.
+	// Windows creates it with an explicit user owner for the ACL test.
+	if runtime.GOOS == "windows" {
+		if err := WriteTokenFile(path, []byte("old")); err != nil {
+			t.Fatal(err)
+		}
+	} else if err := os.WriteFile(path, []byte("old"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	if err := WriteTokenFile(path, []byte(`{"token":"t"}`)); err != nil {
@@ -465,5 +470,22 @@ func TestWriteTokenFile(t *testing.T) {
 	}
 	if string(data) != `{"token":"t"}` {
 		t.Fatalf("token file content = %q", data)
+	}
+}
+
+func TestWriteTokenFileNewFileMode(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Windows access is controlled by a DACL")
+	}
+	path := filepath.Join(t.TempDir(), "auth.json")
+	if err := WriteTokenFile(path, []byte("token")); err != nil {
+		t.Fatal(err)
+	}
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if mode := info.Mode().Perm(); mode != 0600 {
+		t.Fatalf("token file mode = %o, want 600", mode)
 	}
 }

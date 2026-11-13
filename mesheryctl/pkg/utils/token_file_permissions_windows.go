@@ -5,6 +5,8 @@ package utils
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
@@ -17,21 +19,43 @@ func openTokenFile(path string) (*os.File, error) {
 	if err != nil {
 		return nil, fmt.Errorf("get current user SID: %w", err)
 	}
-	sd, err := windows.SecurityDescriptorFromString("D:P(A;;FA;;;" + user.User.Sid.String() + ")")
+	sid := user.User.Sid.String()
+	sd, err := windows.SecurityDescriptorFromString("O:" + sid + "D:P(A;;FA;;;" + sid + ")")
 	if err != nil {
 		return nil, fmt.Errorf("create token file security descriptor: %w", err)
 	}
-	name, err := windows.UTF16PtrFromString(path)
+	longPath, err := tokenFileLongPath(path)
+	if err != nil {
+		return nil, err
+	}
+	name, err := windows.UTF16PtrFromString(longPath)
 	if err != nil {
 		return nil, err
 	}
 	sa := windows.SecurityAttributes{Length: uint32(unsafe.Sizeof(windows.SecurityAttributes{})), SecurityDescriptor: sd}
 	handle, err := windows.CreateFile(name, windows.GENERIC_WRITE|windows.WRITE_DAC|windows.READ_CONTROL,
-		windows.FILE_SHARE_READ|windows.FILE_SHARE_WRITE|windows.FILE_SHARE_DELETE, &sa, windows.OPEN_ALWAYS, windows.FILE_ATTRIBUTE_NORMAL, 0)
+		0, &sa, windows.OPEN_ALWAYS, windows.FILE_ATTRIBUTE_NORMAL, 0)
 	if err != nil {
 		return nil, err
 	}
 	return os.NewFile(uintptr(handle), path), nil
+}
+
+func tokenFileLongPath(path string) (string, error) {
+	if strings.HasPrefix(path, `\\?\`) || strings.HasPrefix(path, `\??\`) {
+		return path, nil
+	}
+	path, err := filepath.Abs(path)
+	if err != nil {
+		return "", err
+	}
+	if len(path) < 248 {
+		return path, nil
+	}
+	if strings.HasPrefix(path, `\\`) {
+		return `\\?\UNC\` + strings.TrimPrefix(path, `\\`), nil
+	}
+	return `\\?\` + path, nil
 }
 
 // restrictTokenFileToCurrentUser replaces inherited ACL entries with an ACL
@@ -40,6 +64,9 @@ func restrictTokenFileToCurrentUser(file *os.File) error {
 	user, err := windows.GetCurrentProcessToken().GetTokenUser()
 	if err != nil {
 		return fmt.Errorf("get current user SID: %w", err)
+	}
+	if err := verifyTokenFileOwner(file, user.User.Sid); err != nil {
+		return err
 	}
 
 	acl, err := windows.ACLFromEntries([]windows.EXPLICIT_ACCESS{{
@@ -66,6 +93,18 @@ func restrictTokenFileToCurrentUser(file *os.File) error {
 	return verifyTokenFileACL(file, user.User.Sid)
 }
 
+func verifyTokenFileOwner(file *os.File, sid *windows.SID) error {
+	descriptor, err := windows.GetSecurityInfo(windows.Handle(file.Fd()), windows.SE_FILE_OBJECT, windows.OWNER_SECURITY_INFORMATION)
+	if err != nil {
+		return fmt.Errorf("read token file owner: %w", err)
+	}
+	owner, _, err := descriptor.Owner()
+	if err != nil || owner == nil || !windows.EqualSid(owner, sid) {
+		return fmt.Errorf("token file is not owned by the current user")
+	}
+	return nil
+}
+
 func verifyTokenFileACL(file *os.File, sid *windows.SID) error {
 	actual, err := windows.GetSecurityInfo(windows.Handle(file.Fd()), windows.SE_FILE_OBJECT, windows.DACL_SECURITY_INFORMATION)
 	if err != nil {
@@ -85,6 +124,10 @@ func verifyTokenFileACL(file *os.File, sid *windows.SID) error {
 	}
 	if ace.Header.AceType != windows.ACCESS_ALLOWED_ACE_TYPE || !windows.EqualSid((*windows.SID)(unsafe.Pointer(&ace.SidStart)), sid) {
 		return fmt.Errorf("token file ACL grants access to an unexpected account")
+	}
+	const fileAllAccess = 0x001f01ff
+	if ace.Mask != windows.GENERIC_ALL && ace.Mask != fileAllAccess {
+		return fmt.Errorf("token file ACL does not grant the current user full access")
 	}
 	return nil
 }
