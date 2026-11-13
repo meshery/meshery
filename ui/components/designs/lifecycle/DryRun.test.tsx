@@ -106,6 +106,7 @@ vi.mock('./styles', () => ({
 
 import { FormatDryRunResponse, DryRunDesign, getTotalCountOfDeploymentErrors } from './DryRun';
 import {
+  designValidatorCommands,
   useDryRunValidationResults,
   useIsValidatingDryRun,
   useDryRunRawResponse,
@@ -316,5 +317,52 @@ describe('dry-run error deep links', () => {
     const error = screen.getByTestId('dry-run-error');
     expect(error).not.toHaveAttribute('role');
     expect(error).toHaveAttribute('data-clickable', 'false');
+  });
+});
+
+describe('DryRunDesign mount-time request', () => {
+  const props = {
+    handleClose: vi.fn(),
+    design: { name: 'test-design' },
+    selectedK8sContexts: ['ctx-1'],
+    includeDependencies: true,
+  };
+
+  beforeEach(() => {
+    vi.mocked(useDryRunValidationResults).mockReturnValue([]);
+    vi.mocked(useIsValidatingDryRun).mockReturnValue(false);
+    vi.mocked(useDryRunRawResponse).mockReturnValue(null);
+  });
+
+  it('puts the returnAddress prop on its dry-run request', () => {
+    const returnAddress = { id: 'designValidationManager' };
+    const send = vi.fn();
+    render(
+      <DryRunDesign
+        {...props}
+        deployment_type="deploy"
+        validationMachine={{ send }}
+        returnAddress={returnAddress}
+      />,
+    );
+    expect(designValidatorCommands.dryRunDesignDeployment).toHaveBeenCalledWith({
+      design: props.design,
+      k8sContexts: ['ctx-1'],
+      includeDependencies: true,
+      returnAddress,
+    });
+    expect(send).toHaveBeenCalledTimes(1);
+  });
+
+  it('still requests an undeploy dry run when no returnAddress is given', () => {
+    const send = vi.fn();
+    render(<DryRunDesign {...props} deployment_type="undeploy" validationMachine={{ send }} />);
+    expect(designValidatorCommands.dryRunDesignUnDeployment).toHaveBeenCalledWith({
+      design: props.design,
+      k8sContexts: ['ctx-1'],
+      includeDependencies: true,
+      returnAddress: undefined,
+    });
+    expect(send).toHaveBeenCalledTimes(1);
   });
 });

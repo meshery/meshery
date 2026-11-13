@@ -1,7 +1,9 @@
-import { createMachine, fromPromise, sendTo, assign, emit } from 'xstate';
+import { createMachine, fromPromise, assign, emit, enqueueActions } from 'xstate';
 import { getComponentDefinition } from '@/rtk-query/meshModel';
 import {
+  DATA_VALIDATOR_EVENTS,
   dataValidatorCommands,
+  dataValidatorEvents,
   dataValidatorMachine,
   selectIsValidating,
   selectValidationResults,
@@ -183,10 +185,288 @@ const getAllComponentsDefsInDesign = async (design) => {
   return componentStore;
 };
 
+const REQUEST_STATUS = {
+  RESOLVING: 'resolving',
+  READY: 'ready',
+  FAILED: 'failed',
+};
+
+const REQUEST_KIND = {
+  DESIGN: 'design',
+  COMPONENT: 'component',
+  DRY_RUN: 'dryRun',
+};
+
+const VALIDATOR_LANES = {
+  schema: {
+    validatorId: 'schemaValidator',
+    queueKey: 'schemaRequests',
+    inFlightKey: 'schemaRequestInFlight',
+  },
+  dryRun: {
+    validatorId: 'dryRunValidator',
+    queueKey: 'dryRunRequests',
+    inFlightKey: 'dryRunRequestInFlight',
+  },
+};
+
+const RESOLVE_DEFINITIONS_ACTOR_PREFIX = 'resolveDefinitions-';
+
+const resolveDefinitionsActorId = (seq) => `${RESOLVE_DEFINITIONS_ACTOR_PREFIX}${seq}`;
+
+const seqFromResolveDefinitionsActorId = (actorId) => {
+  if (typeof actorId !== 'string' || !actorId.startsWith(RESOLVE_DEFINITIONS_ACTOR_PREFIX)) {
+    return null;
+  }
+  const seq = Number(actorId.slice(RESOLVE_DEFINITIONS_ACTOR_PREFIX.length));
+  return Number.isInteger(seq) ? seq : null;
+};
+
+const isDefinitionResolverEvent = ({ event }) =>
+  seqFromResolveDefinitionsActorId(event.actorId) !== null;
+
+const supersedeKeyFor = (kind, data) => {
+  if (kind === REQUEST_KIND.COMPONENT) {
+    return `${REQUEST_KIND.COMPONENT}:${data?.component?.id}`;
+  }
+  if (kind === REQUEST_KIND.DRY_RUN) {
+    return `${REQUEST_KIND.DRY_RUN}:${data?.dryRunType}`;
+  }
+  return REQUEST_KIND.DESIGN;
+};
+
+const ResolveDefinitionsActor = fromPromise(async ({ input: { kind, data } }) => {
+  if (kind === REQUEST_KIND.COMPONENT) {
+    const { component } = data;
+    const def = await getComponentDefinition(
+      component.component.kind,
+      component.modelReference.name,
+      {
+        apiVersion: component.component.version,
+        annotations: 'include',
+      },
+    );
+    return {
+      validationPayload: {
+        ...data,
+        componentDef: def,
+        validationType: 'schema',
+        component: component,
+      },
+    };
+  }
+  const defs = await getAllComponentsDefsInDesign(data.design);
+  return {
+    validationPayload: {
+      ...data,
+      validationType: 'schema',
+      componentDefs: defs,
+    },
+  };
+});
+
+const resolveRecipient = (system, address) =>
+  typeof address === 'string' ? system.get(address) : address;
+
+const recipientsOf = (system, request) => {
+  const recipients = [];
+  for (const address of request?.replyTo || []) {
+    const recipient = resolveRecipient(system, address);
+    if (recipient && !recipients.includes(recipient)) {
+      recipients.push(recipient);
+    }
+  }
+  return recipients;
+};
+
+const planLane = ({ lane, queue, inFlight, self, system }) => {
+  const { validatorId } = VALIDATOR_LANES[lane];
+  const sends = [];
+  let pending = queue;
+  let current = inFlight;
+  while (!current && pending.length > 0) {
+    const [head, ...rest] = pending;
+    if (head.status === REQUEST_STATUS.RESOLVING) {
+      break;
+    }
+    pending = rest;
+    if (head.status === REQUEST_STATUS.FAILED) {
+      const failure = dataValidatorEvents.dataValidationFailed({
+        validationPayload: { ...head.data, validationType: 'schema' },
+        systemErrors: head.error,
+      });
+      for (const recipient of recipientsOf(system, head)) {
+        sends.push({ to: recipient, event: failure });
+      }
+      continue;
+    }
+    current = head;
+    sends.push({
+      to: validatorId,
+      event: dataValidatorCommands.validateData({
+        validationPayload: head.validationPayload,
+        returnAddress: self,
+      }),
+    });
+  }
+  return { queue: pending, inFlight: current, sends };
+};
+
+const commitLane = (enqueue, lane, plan) => {
+  const { queueKey, inFlightKey } = VALIDATOR_LANES[lane];
+  enqueue.assign({ [queueKey]: plan.queue, [inFlightKey]: plan.inFlight });
+  for (const { to, event } of plan.sends) {
+    enqueue.sendTo(to, event);
+  }
+};
+
+const acceptRequest = (lane, kind) =>
+  enqueueActions(({ context, event, enqueue, self, system }) => {
+    const { queueKey, inFlightKey } = VALIDATOR_LANES[lane];
+    const seq = (context.requestSeq || 0) + 1;
+    const supersedeKey = supersedeKeyFor(kind, event.data);
+    const needsDefinitions = kind !== REQUEST_KIND.DRY_RUN;
+    const queue = context[queueKey] || [];
+    const superseded = queue.filter((request) => request.supersedeKey === supersedeKey);
+    const request = {
+      seq,
+      kind,
+      supersedeKey,
+      status: needsDefinitions ? REQUEST_STATUS.RESOLVING : REQUEST_STATUS.READY,
+      data: event.data,
+      validationPayload: needsDefinitions ? null : event.data,
+      error: null,
+      replyTo: [...superseded.flatMap((older) => older.replyTo), event.returnAddress].filter(
+        Boolean,
+      ),
+    };
+    enqueue.assign({ requestSeq: seq });
+    for (const older of superseded) {
+      if (older.status === REQUEST_STATUS.RESOLVING) {
+        enqueue.stopChild(resolveDefinitionsActorId(older.seq));
+      }
+    }
+    if (needsDefinitions) {
+      enqueue.spawnChild(ResolveDefinitionsActor, {
+        id: resolveDefinitionsActorId(seq),
+        input: { kind, data: event.data },
+      });
+    }
+    commitLane(
+      enqueue,
+      lane,
+      planLane({
+        lane,
+        queue: [...queue.filter((older) => older.supersedeKey !== supersedeKey), request],
+        inFlight: context[inFlightKey],
+        self,
+        system,
+      }),
+    );
+  });
+
+const settleRequest = (settle) =>
+  enqueueActions(({ context, event, enqueue, self, system }) => {
+    const seq = seqFromResolveDefinitionsActorId(event.actorId);
+    const { queueKey, inFlightKey } = VALIDATOR_LANES.schema;
+    const queue = context[queueKey] || [];
+    if (seq === null || !queue.some((request) => request.seq === seq)) {
+      return;
+    }
+    commitLane(
+      enqueue,
+      'schema',
+      planLane({
+        lane: 'schema',
+        queue: queue.map((request) => (request.seq === seq ? settle(request, event) : request)),
+        inFlight: context[inFlightKey],
+        self,
+        system,
+      }),
+    );
+  });
+
+const laneOfReply = (context, event) => {
+  const payload = event.data?.validationPayload;
+  const lanes = Object.keys(VALIDATOR_LANES);
+  const byPayload = lanes.find(
+    (lane) => context[VALIDATOR_LANES[lane].inFlightKey]?.validationPayload === payload,
+  );
+  if (byPayload) {
+    return byPayload;
+  }
+  const lane = payload?.validationType === 'schema' ? 'schema' : 'dryRun';
+  return context[VALIDATOR_LANES[lane].inFlightKey] ? lane : null;
+};
+
+const relayValidatorReply = enqueueActions(({ context, event, enqueue, self, system }) => {
+  const lane = laneOfReply(context, event);
+  if (!lane) {
+    return;
+  }
+  const { queueKey, inFlightKey } = VALIDATOR_LANES[lane];
+  for (const recipient of recipientsOf(system, context[inFlightKey])) {
+    enqueue.sendTo(recipient, event);
+  }
+  commitLane(
+    enqueue,
+    lane,
+    planLane({ lane, queue: context[queueKey] || [], inFlight: null, self, system }),
+  );
+});
+
+const hasResolvingRequest = (context, kind) =>
+  (context[VALIDATOR_LANES.schema.queueKey] || []).some(
+    (request) => request.kind === kind && request.status === REQUEST_STATUS.RESOLVING,
+  );
+
 export const designValidationMachine = createMachine({
   id: 'designValidationMachine',
   initial: 'init',
-  context: {},
+  context: {
+    requestSeq: 0,
+    schemaRequests: [],
+    schemaRequestInFlight: null,
+    dryRunRequests: [],
+    dryRunRequestInFlight: null,
+  },
+  on: {
+    [DESIGN_VALIDATOR_COMMANDS.VALIDATE_DESIGN_SCHEMA]: {
+      actions: acceptRequest('schema', REQUEST_KIND.DESIGN),
+    },
+    [DESIGN_VALIDATOR_COMMANDS.VALIDATE_DESING_COMPONENT]: {
+      actions: acceptRequest('schema', REQUEST_KIND.COMPONENT),
+    },
+    [DESIGN_VALIDATOR_COMMANDS.DRY_RUN_DESIGN]: {
+      actions: acceptRequest('dryRun', REQUEST_KIND.DRY_RUN),
+    },
+    'xstate.done.actor.*': {
+      guard: isDefinitionResolverEvent,
+      actions: settleRequest((request, event) => ({
+        ...request,
+        status: REQUEST_STATUS.READY,
+        validationPayload: event.output.validationPayload,
+      })),
+    },
+    'xstate.error.actor.*': {
+      guard: isDefinitionResolverEvent,
+      actions: [
+        ({ event }) =>
+          console.error('Failed to resolve component definitions for validation', event.error),
+        settleRequest((request, event) => ({
+          ...request,
+          status: REQUEST_STATUS.FAILED,
+          error: event.error,
+        })),
+      ],
+    },
+    [DATA_VALIDATOR_EVENTS.DESIGN_VALIDATION_DONE]: {
+      actions: relayValidatorReply,
+    },
+    [DATA_VALIDATOR_EVENTS.DESIGN_VALIDATION_FAILED]: {
+      actions: relayValidatorReply,
+    },
+  },
 
   states: {
     init: {
@@ -211,98 +491,41 @@ export const designValidationMachine = createMachine({
     },
 
     idle: {
-      on: {
-        [DESIGN_VALIDATOR_COMMANDS.VALIDATE_DESIGN_SCHEMA]: {
+      always: [
+        {
+          guard: ({ context }) => hasResolvingRequest(context, REQUEST_KIND.DESIGN),
           target: 'validateDesignSchema',
         },
-        [DESIGN_VALIDATOR_COMMANDS.VALIDATE_DESING_COMPONENT]: {
+        {
+          guard: ({ context }) => hasResolvingRequest(context, REQUEST_KIND.COMPONENT),
           target: 'validateComponentSchema',
         },
-        [DESIGN_VALIDATOR_COMMANDS.DRY_RUN_DESIGN]: {
-          actions: sendTo('dryRunValidator', ({ event }) =>
-            dataValidatorCommands.validateData({
-              validationPayload: event.data,
-              returnAddress: event.returnAddress,
-            }),
-          ),
-        },
-
+      ],
+      on: {
         [DESIGN_VALIDATOR_EVENTS.TAP_ON_ERROR]: {
           actions: [emit(({ event }) => event)],
         },
       },
     },
 
-    validateComponentSchema: {
-      invoke: {
-        input: ({ context, event }) => ({ context, event }),
-        src: fromPromise(async ({ input }) => {
-          const { component } = input.event.data;
-
-          const def = await getComponentDefinition(
-            component.component.kind,
-            component.modelReference.name,
-            {
-              apiVersion: component.component.version,
-              annotations: 'include',
-            },
-          );
-
-          return {
-            validationPayload: {
-              ...input.event.data,
-              componentDef: def,
-              validationType: 'schema',
-              component: component,
-            },
-            returnAddress: input.event.returnAddress,
-          };
-        }),
-        onDone: {
-          actions: [
-            sendTo('schemaValidator', ({ event }) =>
-              dataValidatorCommands.validateData(event.output),
-            ),
-          ],
-          target: 'idle',
-        },
-        onError: {
-          target: 'idle',
-          actions: ({ event }) =>
-            console.log('error while relaying validateComponentSchema', event),
-        },
+    validateDesignSchema: {
+      always: {
+        guard: ({ context }) => !hasResolvingRequest(context, REQUEST_KIND.DESIGN),
+        target: 'idle',
       },
     },
 
-    validateDesignSchema: {
-      invoke: {
-        input: ({ context, event }) => ({ context, event }),
-        src: fromPromise(async ({ input }) => {
-          const { event } = input;
-          const def = await getAllComponentsDefsInDesign(event.data.design);
-          return {
-            validationPayload: {
-              ...event.data,
-              validationType: 'schema',
-              componentDefs: def,
-            },
-            returnAddress: event.returnAddress,
-          };
-        }),
-
-        onDone: {
-          actions: [
-            sendTo('schemaValidator', ({ event }) =>
-              dataValidatorCommands.validateData(event.output),
-            ),
-          ],
+    validateComponentSchema: {
+      always: [
+        {
+          guard: ({ context }) => hasResolvingRequest(context, REQUEST_KIND.DESIGN),
+          target: 'validateDesignSchema',
+        },
+        {
+          guard: ({ context }) => !hasResolvingRequest(context, REQUEST_KIND.COMPONENT),
           target: 'idle',
         },
-        onError: {
-          target: 'idle',
-          actions: ({ event }) => console.log('error while relaying validateDesignSchema', event),
-        },
-      },
+      ],
     },
   },
 });

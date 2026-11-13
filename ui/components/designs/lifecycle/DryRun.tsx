@@ -282,6 +282,7 @@ const DryRunComponent = (props) => {
     selectedK8sContexts,
     deployment_type,
     includeDependencies,
+    returnAddress,
   } = props;
 
   const dryRunErrors = useDryRunValidationResults(validationMachine);
@@ -302,6 +303,7 @@ const DryRunComponent = (props) => {
         design,
         k8sContexts: selectedK8sContexts,
         includeDependencies,
+        returnAddress,
       }),
     );
   };
@@ -387,6 +389,7 @@ export const DryRunDesign = ({
   selectedK8sContexts,
   deployment_type,
   includeDependencies,
+  returnAddress = undefined,
 }) => {
   if (!design) {
     return null;
@@ -403,6 +406,7 @@ export const DryRunDesign = ({
       selectedK8sContexts={selectedK8sContexts}
       currentComponentId={currentComponentId}
       currentComponentName={currentComponentName}
+      returnAddress={returnAddress}
     />
   );
 };

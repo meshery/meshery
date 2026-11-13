@@ -92,6 +92,7 @@ vi.mock('./styles', () => ({
 }));
 
 import { ValidateDesign, ValidationResults } from './ValidateDesign';
+import { designValidatorCommands } from '../../../machines/validator/designValidator';
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -287,5 +288,39 @@ describe('ValidateDesign error deep links', () => {
     expect(errors[0]).not.toHaveAttribute('role');
     fireEvent.click(errors[0]);
     expect(send).not.toHaveBeenCalled();
+  });
+});
+
+describe('ValidateDesign mount-time request', () => {
+  it('puts the returnAddress prop on its validation request', () => {
+    useDesignSchemaValidationResultsMock.mockReturnValue({});
+    const design = { name: 'D1' };
+    const returnAddress = { id: 'designValidationManager' };
+    const send = vi.fn();
+    render(
+      <ValidateDesign
+        design={design}
+        currentNodeId="n1"
+        validationMachine={{ send }}
+        returnAddress={returnAddress}
+      />,
+    );
+    expect(designValidatorCommands.validateDesignSchema).toHaveBeenCalledWith({
+      design,
+      returnAddress,
+    });
+    expect(send).toHaveBeenCalledWith({ type: 'VALIDATE' });
+  });
+
+  it('still requests validation when no returnAddress is given', () => {
+    useDesignSchemaValidationResultsMock.mockReturnValue({});
+    const design = { name: 'D1' };
+    const send = vi.fn();
+    render(<ValidateDesign design={design} currentNodeId="n1" validationMachine={{ send }} />);
+    expect(designValidatorCommands.validateDesignSchema).toHaveBeenCalledWith({
+      design,
+      returnAddress: undefined,
+    });
+    expect(send).toHaveBeenCalledTimes(1);
   });
 });
