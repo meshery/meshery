@@ -44,6 +44,32 @@ func TestErrParseBoolNilError(t *testing.T) {
 	}
 }
 
+func TestLoadTestBlankName(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	provider := &fakeLoadTestProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
+	tests := []struct {
+		name string
+		req  *http.Request
+	}{
+		{"query parameter", httptest.NewRequest(http.MethodGet, "/api/perf/profile/run?name=", nil)},
+		{"SMP configuration", httptest.NewRequest(http.MethodPost, "/api/perf/profile/run", bytes.NewBufferString(`{"test":{"name":"","clients":[{"load_generator":"fortio"}]}}`))},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			h.LoadTestHandler(rec, tc.req, nil, nil, provider)
+			require.Equal(t, http.StatusBadRequest, rec.Code, rec.Body.String())
+			var body struct {
+				Code  string `json:"code"`
+				Error string `json:"error"`
+			}
+			require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &body))
+			assert.Equal(t, ErrBlankNameCode, body.Code)
+			assert.Contains(t, body.Error, "name field is blank")
+		})
+	}
+}
+
 // TestLoadTestHandlerInvalidURL verifies that LoadTestHandler returns HTTP 400 with
 // ErrInvalidLTURLCode when supplied with a schemeless or relative URL, without panicking.
 func TestLoadTestHandlerInvalidURL(t *testing.T) {
