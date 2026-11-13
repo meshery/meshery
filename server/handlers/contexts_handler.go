@@ -149,14 +149,18 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	// the tracker entry for a connection the user just deleted - so drop the
 	// entry directly instead. See mhelpers.HasMachineContext.
 	if !mhelpers.HasMachineContext(inst) {
-		smInstanceTracker.Remove(connectionUUID)
+		if smInstanceTracker != nil {
+			smInstanceTracker.Remove(connectionUUID)
+		}
 	} else {
-		// Detach from the request context so cancellation on HTTP handler exit
+// Detach from the request context so cancellation on HTTP handler exit
 		// does not abort background state machine transitions, bounded by a timeout.
 		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), defaultFSMTransitionTimeout)
 		go func(inst *machines.StateMachine) {
 			defer cancel()
-			defer smInstanceTracker.Remove(connectionUUID)
+			if smInstanceTracker != nil {
+				defer smInstanceTracker.Remove(connectionUUID)
+			}
 			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
 			if err != nil {
 				h.log.Error(err)

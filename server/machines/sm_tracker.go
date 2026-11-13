@@ -12,6 +12,9 @@ type ConnectionToStateMachineInstanceTracker struct {
 }
 
 func (smt *ConnectionToStateMachineInstanceTracker) Get(id core.Uuid) (*StateMachine, bool) {
+	if smt == nil {
+		return nil, false
+	}
 	smt.mx.Lock()
 	defer smt.mx.Unlock()
 	inst, ok := smt.ConnectToInstanceMap[id]
@@ -19,6 +22,9 @@ func (smt *ConnectionToStateMachineInstanceTracker) Get(id core.Uuid) (*StateMac
 }
 
 func (smt *ConnectionToStateMachineInstanceTracker) Remove(id core.Uuid) {
+	if smt == nil {
+		return
+	}
 	smt.mx.Lock()
 	defer smt.mx.Unlock()
 	delete(smt.ConnectToInstanceMap, id)
@@ -27,6 +33,9 @@ func (smt *ConnectionToStateMachineInstanceTracker) Remove(id core.Uuid) {
 func (smt *ConnectionToStateMachineInstanceTracker) Add(id core.Uuid, inst *StateMachine) {
 	smt.mx.Lock()
 	defer smt.mx.Unlock()
+	if smt.ConnectToInstanceMap == nil {
+		smt.ConnectToInstanceMap = make(map[core.Uuid]*StateMachine)
+	}
 	smt.ConnectToInstanceMap[id] = inst
 }
 

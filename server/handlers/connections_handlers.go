@@ -698,7 +698,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 			return *eventBuilder.Build(), nil
 		}
 
-		// detach from the http request lifecycle so that the goroutine isn't cancelled when
+// detach from the http request lifecycle so that the goroutine isn't cancelled when
 		// the handler returns, while preserving context values and enforcing a bounded execution deadline.
 		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), defaultFSMTransitionTimeout)
 		go func(inst *machines.StateMachine, status connections.ConnectionStatus) {

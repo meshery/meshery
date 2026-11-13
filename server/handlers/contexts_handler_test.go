@@ -451,3 +451,98 @@ func TestDeleteContext_DetachesContextFromRequest(t *testing.T) {
 		time.Sleep(10 * time.Millisecond)
 	}
 }
+
+func TestDeleteContext_NilTrackerDoesNotPanic(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	userID := uuid.Must(uuid.NewV4())
+	contextID := uuid.Must(uuid.NewV4())
+
+	// Handler with nil ConnectionToStateMachineInstanceTracker must not panic
+	h := &Handler{
+		config:                                  &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:                                     newTestLogger(t),
+		SystemID:                                &systemID,
+		ConnectionToStateMachineInstanceTracker: nil,
+	}
+
+	provider := &mockContextsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		getK8sContextFn: func(token, id string) (models.K8sContext, error) {
+			return models.K8sContext{
+				ID:   id,
+				Name: "unreachable-cluster",
+			}, nil
+		},
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+contextID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+	ctx := context.WithValue(req.Context(), models.TokenCtxKey, "test-token")
+	ctx = context.WithValue(ctx, models.UserCtxKey, &models.User{ID: userID})
+	ctx = context.WithValue(ctx, models.SystemIDKey, &systemID)
+	req = req.WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("DeleteContext panicked on nil tracker: %v", r)
+		}
+	}()
+
+	h.DeleteContext(rec, req, nil, &models.User{ID: userID}, provider)
+}
+
+func TestDeleteContext_NilStateMachineDoesNotPanic(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	userID := uuid.Must(uuid.NewV4())
+	contextID := uuid.Must(uuid.NewV4())
+
+	// Tracker with an instance without context simulates an uninitialized machine
+	tracker := &machines.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: map[uuid.UUID]*machines.StateMachine{
+			contextID: {
+				ID:      contextID,
+				Context: nil,
+			},
+		},
+	}
+
+	h := &Handler{
+		config:                                  &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:                                     newTestLogger(t),
+		SystemID:                                &systemID,
+		ConnectionToStateMachineInstanceTracker: tracker,
+	}
+
+	provider := &mockContextsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		getK8sContextFn: func(token, id string) (models.K8sContext, error) {
+			return models.K8sContext{
+				ID:   id,
+				Name: "unreachable-cluster",
+			}, nil
+		},
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+contextID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+	ctx := context.WithValue(req.Context(), models.TokenCtxKey, "test-token")
+	ctx = context.WithValue(ctx, models.UserCtxKey, &models.User{ID: userID})
+	ctx = context.WithValue(ctx, models.SystemIDKey, &systemID)
+	req = req.WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	// Must not panic even if machine instance has no context or is nil (#20817)
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("DeleteContext panicked on nil state machine: %v", r)
+		}
+	}()
+
+	h.DeleteContext(rec, req, nil, &models.User{ID: userID}, provider)
+
+	// Since HasMachineContext was false, SendEvent was skipped and tracker entry removed directly
+	if _, ok := tracker.Get(contextID); ok {
+		t.Fatalf("expected connection %s to be cleaned up from tracker", contextID)
+	}
+}
