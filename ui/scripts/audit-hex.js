@@ -51,6 +51,7 @@ const SCAN_DIRS = [
 // assets, and tests.
 const IGNORED_DIRS = new Set([
   'node_modules',
+  '__tests__',
   '.next',
   'out',
   'playground',
@@ -66,6 +67,7 @@ const IGNORED_DIRS = new Set([
 ]);
 
 const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
+const TEST_FILE_PATTERN = /\.test\.(?:ts|tsx|js|jsx)$/;
 
 // Hex colors: #RGB, #RGBA, #RRGGBB, #RRGGBBAA. Valid CSS hex lengths only.
 // Uses a word boundary so #abcde (5 chars) does not match as #abc.
@@ -86,7 +88,11 @@ function walk(dir, out) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       walk(full, out);
-    } else if (entry.isFile() && EXTENSIONS.has(path.extname(entry.name))) {
+    } else if (
+      entry.isFile() &&
+      EXTENSIONS.has(path.extname(entry.name)) &&
+      !TEST_FILE_PATTERN.test(entry.name)
+    ) {
       out.push(full);
     }
   }
@@ -153,7 +159,7 @@ function main() {
   process.stdout.write('==============================\n');
   process.stdout.write('Patterns: #RGB/#RGBA/#RRGGBB/#RRGGBBAA, rgb(), rgba()\n');
   process.stdout.write(`Scope:    ${SCAN_DIRS.join(', ')}\n`);
-  process.stdout.write('Ignored:  theme, assets, lib, public, tests, __generated__\n\n');
+  process.stdout.write('Ignored:  theme, assets, lib, public, tests, __tests__, __generated__\n\n');
 
   const limit = showAll ? offenders.length : Math.min(20, offenders.length);
   if (offenders.length === 0) {
