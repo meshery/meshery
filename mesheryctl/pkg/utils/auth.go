@@ -168,6 +168,24 @@ func GetTokenLocation(token config.Token) (string, error) {
 	return filepath.Join(MesheryFolder, location), nil
 }
 
+// EnsureContextToken returns the token entry the named context refers to. When
+// the meshconfig does not define that token yet, an entry pointing at
+// AuthConfigFile is added to the meshconfig this command is using (the --config
+// file when one is given). Writing it to any other file would also leave viper
+// reading that file, so later requests would go to its server.
+func EnsureContextToken(mctlCfg *config.MesheryCtlConfig, contextName string) (config.Token, error) {
+	token, err := mctlCfg.GetTokenForContext(contextName)
+	if err == nil {
+		return token, nil
+	}
+
+	token.Location = AuthConfigFile
+	if err := config.AddTokenToConfig(token, GetActiveConfigPath()); err != nil {
+		return config.Token{}, err
+	}
+	return token, nil
+}
+
 // GetCurrentAuthToken returns location of current context token
 func GetCurrentAuthToken() (string, error) {
 	// get config.yaml struct
@@ -176,15 +194,9 @@ func GetCurrentAuthToken() (string, error) {
 		log.Fatal(err)
 	}
 	// Get token of current-context
-	token, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
+	token, err := EnsureContextToken(mctlCfg, mctlCfg.CurrentContext)
 	if err != nil {
-		// Attempt to create token if it doesn't already exists
-		token.Location = AuthConfigFile
-
-		// Write new entry in the config
-		if err := config.AddTokenToConfig(token, DefaultConfigPath); err != nil {
-			return "", err
-		}
+		return "", err
 	}
 	// grab actual token location with home directory
 	TokenLocation, err := GetTokenLocation(token)

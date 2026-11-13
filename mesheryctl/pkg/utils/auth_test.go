@@ -26,6 +26,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshkit/errors"
+	"github.com/spf13/viper"
 )
 
 // testcases for auth.go
@@ -465,5 +466,100 @@ func TestWriteTokenFile(t *testing.T) {
 	}
 	if string(data) != `{"token":"t"}` {
 		t.Fatalf("token file content = %q", data)
+	}
+}
+
+// A context passed with --config that names a token its file does not define
+// must get that token added to the same file, and later requests must keep
+// using that file's server rather than the default meshconfig's.
+func TestGetCurrentAuthTokenAddsMissingTokenToActiveConfig(t *testing.T) {
+	mesheryDir := IsolateMesheryHome(t)
+
+	defaultConfig := filepath.Join(mesheryDir, "config.yaml")
+	defaultContents := []byte(`contexts:
+  local:
+    endpoint: http://127.0.0.1:19999
+    token: default
+    platform: docker
+current-context: local
+tokens:
+- name: default
+  location: auth.json
+`)
+	if err := os.WriteFile(defaultConfig, defaultContents, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	activeConfig := filepath.Join(t.TempDir(), "custom.yaml")
+	if err := os.WriteFile(activeConfig, []byte(`contexts:
+  staging:
+    endpoint: http://127.0.0.1:19181
+    token: missingtok
+    platform: docker
+current-context: staging
+tokens:
+- name: default
+  location: auth.json
+`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	origDefaultConfigPath, origCfgFile, origAuthConfigFile := DefaultConfigPath, CfgFile, AuthConfigFile
+	t.Cleanup(func() {
+		DefaultConfigPath, CfgFile, AuthConfigFile = origDefaultConfigPath, origCfgFile, origAuthConfigFile
+		viper.Reset()
+	})
+	DefaultConfigPath = defaultConfig
+	CfgFile = activeConfig
+	AuthConfigFile = filepath.Join(mesheryDir, "auth.json")
+
+	viper.Reset()
+	viper.SetConfigFile(activeConfig)
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+
+	location, err := GetCurrentAuthToken()
+	if err != nil {
+		t.Fatalf("GetCurrentAuthToken: %v", err)
+	}
+	if location != AuthConfigFile {
+		t.Errorf("token location = %q, want %q", location, AuthConfigFile)
+	}
+
+	if got := viper.ConfigFileUsed(); got != activeConfig {
+		t.Errorf("viper now reads %q, want the --config file %q: later requests would go to another server", got, activeConfig)
+	}
+
+	gotDefault, err := os.ReadFile(defaultConfig)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(gotDefault) != string(defaultContents) {
+		t.Errorf("default meshconfig was rewritten:\n%s", gotDefault)
+	}
+
+	v := viper.New()
+	v.SetConfigFile(activeConfig)
+	if err := v.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	active, err := config.GetMesheryCtl(v)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if token, err := active.GetTokenForContext("staging"); err != nil || token.Location != AuthConfigFile {
+		t.Errorf("--config file token for context staging = %+v, %v; want location %q", token, err, AuthConfigFile)
+	}
+
+	// The entry now exists, so a second command, which starts by reading the
+	// --config file afresh, must reuse it rather than fail on adding a duplicate.
+	viper.Reset()
+	viper.SetConfigFile(activeConfig)
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := GetCurrentAuthToken(); err != nil {
+		t.Errorf("second GetCurrentAuthToken: %v", err)
 	}
 }
