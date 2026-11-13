@@ -5,7 +5,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/meshery/meshery/server/models"
 	meshkiterrors "github.com/meshery/meshkit/errors"
+	"github.com/meshery/schemas/models/core"
+	"github.com/spf13/viper"
 )
 
 // TestK8sEventMetadataHasError guards the decision that raises a Kubernetes
@@ -131,5 +134,18 @@ func TestErrNilClusterContext(t *testing.T) {
 				t.Fatalf("expected error to contain %q, got %q", tc.err.Error(), res.Error())
 			}
 		})
+	}
+}
+
+func TestDiscoverK8SContextFromKubeConfigTypedNilInstanceID(t *testing.T) {
+	orig := viper.Get("INSTANCE_ID")
+	t.Cleanup(func() { viper.Set("INSTANCE_ID", orig) })
+
+	var typedNil *core.Uuid
+	viper.Set("INSTANCE_ID", typedNil)
+
+	_, err := (&Handler{}).DiscoverK8SContextFromKubeConfig("user-1", "tok", nil)
+	if !errors.Is(err, models.ErrMesheryInstanceID) {
+		t.Fatalf("err = %v, want models.ErrMesheryInstanceID", err)
 	}
 }

@@ -130,14 +130,14 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	case 0:
 		return "", ErrDesignNotFound(patternName)
 	case 1:
-		return response.Patterns[0].ID.String(), nil
+		return utils.FormatUUID(response.Patterns[0].ID, ""), nil
 	}
 
 	selectedPattern, err := selectPatternPrompt(response.Patterns, baseUrl)
 	if err != nil {
 		return "", err
 	}
-	return selectedPattern.ID.String(), nil
+	return utils.FormatUUID(selectedPattern.ID, ""), nil
 }
 
 func exportDesign(baseUrl, design, designType string) error {
@@ -281,24 +281,20 @@ func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) (mode
 	patternInfos := make([]string, len(patterns)+1)
 	patternInfos[0] = heading
 	for i, pattern := range patterns {
-		createdAt := "N/A"
-		updatedAt := "N/A"
+		createdAt := utils.FormatTime(pattern.CreatedAt, "2006-01-02 15:04:05", "N/A")
+		updatedAt := utils.FormatTime(pattern.UpdatedAt, "2006-01-02 15:04:05", "N/A")
 		owner := "N/A"
-
-		if pattern.CreatedAt != nil {
-			createdAt = pattern.CreatedAt.Format("2006-01-02 15:04:05")
-		}
-		if pattern.UpdatedAt != nil {
-			updatedAt = pattern.UpdatedAt.Format("2006-01-02 15:04:05")
-		}
 		if pattern.UserID != nil {
 			ownerName, err := getOwnerName(pattern.UserID.String(), baseURL)
 			if err == nil {
 				owner = ownerName
 			}
 		}
-		id := pattern.ID.String()
-		lastFourID := id[len(id)-4:]
+		id := utils.FormatUUID(pattern.ID, "N/A")
+		lastFourID := id
+		if len(id) > 4 {
+			lastFourID = id[len(id)-4:]
+		}
 
 		rowParts := []string{
 			centerAlign(pattern.Name, widths[0]),
