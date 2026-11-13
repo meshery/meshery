@@ -421,7 +421,8 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 		case "edge":
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/install/docker/docker-compose.yaml"
 		case "stable":
-			if ctx.Version == "latest" {
+			// An empty version means latest, as in Context.ValidateVersion.
+			if ctx.Version == "" || ctx.Version == "latest" {
 				versions, err := meshkitutils.GetLatestReleaseTagsSorted(constants.GetMesheryGitHubOrg(), constants.GetMesheryGitHubRepo())
 				if err != nil {
 					return errors.Wrapf(err, "failed to fetch latest stable release tag")
