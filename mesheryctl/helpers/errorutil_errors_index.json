@@ -4089,6 +4089,23 @@
       "suggestedRemediation": [
         "Provide the full ID instead of a short prefix, or retry the command."
       ]
+    },
+    {
+      "code": "mesheryctl-1263",
+      "moniker": "ErrAmbiguousDesignNameCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1263",
+      "severity": "alert",
+      "shortDescription": "More than one design has this name",
+      "probableCause": [
+        "Design names are not unique, so the name alone does not say which design to use."
+      ],
+      "suggestedRemediation": [
+        "Pass the design ID instead. Run 'mesheryctl design list' to see the IDs."
+      ]
     }
   ],
   "schemaVersion": 2

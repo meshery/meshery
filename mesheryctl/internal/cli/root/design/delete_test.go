@@ -197,6 +197,97 @@ func TestDeleteCmd(t *testing.T) {
 			IsOutputGolden: false,
 			ExpectedError:  utils.ErrAmbiguousID("a12", []string{"a12b3c4d-5e6f-4890-abcd-ef1234567890", "a12f9e8d-7c6b-4a59-8d4c-3b2a19087654"}),
 		},
+		{
+			Name:             "given design name when design delete then the design with that exact name is deleted",
+			Args:             []string{"delete", "test-design"},
+			ExpectedResponse: "delete.byName.output.golden",
+			// The search also returns "test-design-v2" (the server matches
+			// substrings); only the exact match may be deleted.
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-design&pagesize=10000",
+					Response:     "delete.nameSearch.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/a12b3c4d-5e6f-4890-abcd-ef1234567890",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
+		{
+			Name:             "given design name with no exact match when design delete then design not found error is thrown",
+			Args:             []string{"delete", "test-des"},
+			ExpectedResponse: "",
+			// "test-des" is a substring of both names but equal to neither.
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-des&pagesize=10000",
+					Response:     "delete.nameSearch.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/a12b3c4d-5e6f-4890-abcd-ef1234567890",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignNotFound("test-des"),
+		},
+		{
+			Name:             "given name shared by two designs when design delete then ambiguity error is thrown and nothing is deleted",
+			Args:             []string{"delete", "test-design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-design&pagesize=10000",
+					Response:     "delete.duplicateName.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/a12b3c4d-5e6f-4890-abcd-ef1234567890",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/c56d7e8f-9a01-4b23-8cde-f12345678901",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrAmbiguousDesignName("test-design", []string{"a12b3c4d-5e6f-4890-abcd-ef1234567890", "c56d7e8f-9a01-4b23-8cde-f12345678901"}),
+		},
 	}
 
 	// Run tests
