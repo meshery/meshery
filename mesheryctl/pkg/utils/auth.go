@@ -600,32 +600,6 @@ func IsServerRunning(serverAddr string) error {
 const tokenFileMode os.FileMode = 0o600
 
 // WriteTokenFile writes an auth token file and restricts it to its owner.
-// The open mode only applies when the file is created, so an existing token
-// file written by an older mesheryctl (0644 or 0666) is chmod-ed to 0600
-// before the new token is written into it. The file is opened without
-// O_TRUNC and truncated only after the chmod succeeds, so a chmod failure
-// (for example a token file owned by another user) leaves the previous
-// credentials intact instead of emptying the file and then erroring.
 func WriteTokenFile(path string, data []byte) error {
-	f, err := openTokenFile(path)
-	if err != nil {
-		return err
-	}
-	if err := f.Chmod(tokenFileMode); err != nil {
-		_ = f.Close()
-		return err
-	}
-	if err := restrictTokenFileToCurrentUser(f); err != nil {
-		_ = f.Close()
-		return err
-	}
-	if err := f.Truncate(0); err != nil {
-		_ = f.Close()
-		return err
-	}
-	if _, err := f.Write(data); err != nil {
-		_ = f.Close()
-		return err
-	}
-	return f.Close()
+	return writeTokenFile(path, data)
 }

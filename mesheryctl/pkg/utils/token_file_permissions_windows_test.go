@@ -90,12 +90,73 @@ func TestWriteTokenFileRejectsOpenReader(t *testing.T) {
 	}
 }
 
+func TestWriteTokenFileReplacesFileWithRetainedWriteDACHandle(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "token")
+	if err := WriteTokenFile(path, []byte("old token")); err != nil {
+		t.Fatal(err)
+	}
+	name, err := windows.UTF16PtrFromString(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	old, err := windows.CreateFile(name, windows.WRITE_DAC|windows.READ_CONTROL,
+		windows.FILE_SHARE_READ|windows.FILE_SHARE_WRITE|windows.FILE_SHARE_DELETE,
+		nil, windows.OPEN_EXISTING, windows.FILE_ATTRIBUTE_NORMAL, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer windows.CloseHandle(old)
+	if err := WriteTokenFile(path, []byte("new token")); err != nil {
+		t.Fatalf("replace token with old metadata handle open: %v", err)
+	}
+	// An attacker can still change the old file's DACL with the retained handle.
+	permissive, err := windows.SecurityDescriptorFromString("D:(A;;FA;;;WD)")
+	if err != nil {
+		t.Fatal(err)
+	}
+	oldACL, _, err := permissive.DACL()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := windows.SetSecurityInfo(old, windows.SE_FILE_OBJECT,
+		windows.DACL_SECURITY_INFORMATION, nil, nil, oldACL, nil); err != nil {
+		t.Fatalf("change old DACL: %v", err)
+	}
+	var read uint32
+	if err := windows.ReadFile(old, make([]byte, 32), &read, nil); err == nil {
+		t.Fatal("metadata-only handle unexpectedly read the replacement token")
+	}
+	data, err := os.ReadFile(path)
+	if err != nil || string(data) != "new token" {
+		t.Fatalf("read replacement token: %q, %v", data, err)
+	}
+	current, err := windows.GetNamedSecurityInfo(path, windows.SE_FILE_OBJECT, windows.DACL_SECURITY_INFORMATION)
+	if err != nil {
+		t.Fatal(err)
+	}
+	acl, _, err := current.DACL()
+	if err != nil || acl == nil || acl.AceCount != 1 {
+		t.Fatalf("unexpected replacement DACL: %v", err)
+	}
+	var ace *windows.ACCESS_ALLOWED_ACE
+	if err := windows.GetAce(acl, 0, &ace); err != nil {
+		t.Fatal(err)
+	}
+	user, err := windows.GetCurrentProcessToken().GetTokenUser()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ace.Header.AceType != windows.ACCESS_ALLOWED_ACE_TYPE || !windows.EqualSid((*windows.SID)(unsafe.Pointer(&ace.SidStart)), user.User.Sid) {
+		t.Fatal("old handle changed the replacement file's DACL")
+	}
+}
+
 func TestTokenFileOwnerRejectsDifferentSID(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "token")
 	if err := WriteTokenFile(path, []byte("old token")); err != nil {
 		t.Fatal(err)
 	}
-	file, err := openTokenFile(path)
+	file, err := os.Open(path)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -3,6 +3,8 @@
 package utils
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -13,10 +15,9 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-// openTokenFile requests the rights needed to inspect and replace the DACL.
-// New files receive a private DACL at creation, before any token is written.
+// createPrivateTokenFile creates a new file with a private DACL before any token is written.
 // Permission helpers return wrapped system errors for callers to add command context.
-func openTokenFile(path string) (*os.File, error) {
+func createPrivateTokenFile(path string) (*os.File, error) {
 	user, err := windows.GetCurrentProcessToken().GetTokenUser()
 	if err != nil {
 		return nil, fmt.Errorf("get current user SID: %w", err)
@@ -35,15 +36,63 @@ func openTokenFile(path string) (*os.File, error) {
 		return nil, err
 	}
 	sa := windows.SecurityAttributes{Length: uint32(unsafe.Sizeof(windows.SecurityAttributes{})), SecurityDescriptor: sd}
-	// Open with no sharing: a handle opened under the previous, permissive
-	// DACL keeps its granted access even after the DACL is replaced, so the
-	// write must not start while any other handle has the file open.
 	handle, err := windows.CreateFile(name, windows.GENERIC_WRITE|windows.WRITE_DAC|windows.READ_CONTROL,
-		0, &sa, windows.OPEN_ALWAYS, windows.FILE_ATTRIBUTE_NORMAL, 0)
+		0, &sa, windows.CREATE_NEW, windows.FILE_ATTRIBUTE_NORMAL, 0)
 	if err != nil {
 		return nil, err
 	}
 	return os.NewFile(uintptr(handle), path), nil
+}
+
+// writeTokenFile writes a newly created private file and atomically replaces
+// the destination. Existing handles retain access only to the old file.
+func writeTokenFile(path string, data []byte) error {
+	var random [16]byte
+	if _, err := rand.Read(random[:]); err != nil {
+		return fmt.Errorf("generate temporary token filename: %w", err)
+	}
+	tempPath := filepath.Join(filepath.Dir(path), ".meshery-token-"+hex.EncodeToString(random[:]))
+	f, err := createPrivateTokenFile(tempPath)
+	if err != nil {
+		return fmt.Errorf("create private token file: %w", err)
+	}
+	moved := false
+	defer func() {
+		_ = f.Close()
+		if !moved {
+			_ = os.Remove(tempPath)
+		}
+	}()
+	if err := restrictTokenFileToCurrentUser(f); err != nil {
+		return err
+	}
+	if _, err := f.Write(data); err != nil {
+		return err
+	}
+	if err := f.Close(); err != nil {
+		return err
+	}
+	fromPath, err := tokenFileLongPath(tempPath)
+	if err != nil {
+		return err
+	}
+	toPath, err := tokenFileLongPath(path)
+	if err != nil {
+		return err
+	}
+	from, err := windows.UTF16PtrFromString(fromPath)
+	if err != nil {
+		return err
+	}
+	to, err := windows.UTF16PtrFromString(toPath)
+	if err != nil {
+		return err
+	}
+	if err := windows.MoveFileEx(from, to, windows.MOVEFILE_REPLACE_EXISTING|windows.MOVEFILE_WRITE_THROUGH); err != nil {
+		return fmt.Errorf("replace token file: %w", err)
+	}
+	moved = true
+	return nil
 }
 
 func tokenFileLongPath(path string) (string, error) {
