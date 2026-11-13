@@ -42,11 +42,6 @@ vi.mock('../../assets/icons/CopyIcon', () => ({
   ),
 }));
 
-vi.mock('../../utils/objects', () => ({
-  isEmptyAtAllDepths: (val: any) =>
-    val == null || (typeof val === 'object' && Object.keys(val).length === 0),
-}));
-
 import {
   formatDate,
   formatTime,
@@ -236,6 +231,46 @@ describe('reorderObjectProperties', () => {
 });
 
 describe('FormatStructuredData', () => {
+  it.each([0, 42, true, false])('renders primitive %s', (value) => {
+    render(<FormatStructuredData data={value} />);
+    expect(screen.getByText(String(value))).toBeInTheDocument();
+  });
+
+  it('renders numeric and boolean object properties, including zero and false', () => {
+    render(<FormatStructuredData data={{ count: 0, enabled: false, total: 42, ready: true }} />);
+    for (const text of ['count', '0', 'enabled', 'false', 'total', '42', 'ready', 'true']) {
+      expect(screen.getByText(text)).toBeInTheDocument();
+    }
+  });
+
+  it('renders numeric and boolean leaves nested in arrays and objects', () => {
+    render(<FormatStructuredData data={{ results: [{ count: 0 }, false] }} />);
+    expect(screen.getByText('count')).toBeInTheDocument();
+    expect(screen.getByText('0')).toBeInTheDocument();
+    expect(screen.getByText('false')).toBeInTheDocument();
+  });
+
+  it('passes falsy scalar values to custom property formatters', () => {
+    render(
+      <FormatStructuredData
+        data={{ count: 0, enabled: false }}
+        propertyFormatters={{
+          count: (value) => <span>Count: {String(value)}</span>,
+          enabled: (value) => <span>Enabled: {String(value)}</span>,
+        }}
+      />,
+    );
+    expect(screen.getByText('Count: 0')).toBeInTheDocument();
+    expect(screen.getByText('Enabled: false')).toBeInTheDocument();
+  });
+
+  it('returns null for recursively empty data', () => {
+    const { container } = render(
+      <FormatStructuredData data={{ nested: [null, undefined, '', {}, []] }} />,
+    );
+    expect(container.firstChild).toBeNull();
+  });
+
   it('returns null for empty data', () => {
     const { container } = render(<FormatStructuredData data={{}} />);
     expect(container.firstChild).toBeNull();
