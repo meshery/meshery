@@ -1,4 +1,4 @@
-# Hey, I'm Hani! 👋
+# Hey, I'm Umme Hani! 👋
 
 I'm a Computer Science and Engineering graduate with an interest in **Backend Development, DevOps, Cloud Technologies, and Open Source**.
 
