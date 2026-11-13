@@ -17,14 +17,14 @@
 
 {{ if ge $index 0 }}
 
-<div class="toc-pagination-wrapper">
+<nav class="toc-pagination-wrapper" aria-label="Page navigation">
 
   {{ if gt $index 0 }}
     {{ $prev := index $pages (sub $index 1) }}
-    <a class="toc-card prev" href="{{ $prev.url }}">
+    <a class="toc-card prev" href="{{ $prev.url }}" rel="prev">
       <div class="toc-label">Previous</div>
       <div class="toc-title">
-        <span class="arrow"><i class="fa-solid fa-chevron-left"></i></span>
+        <span class="arrow" aria-hidden="true"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></span>
         {{ replaceRE "\\s*[ↆ↓]$" "" (replaceRE "^[^a-zA-Z0-9]+" "" $prev.title) }}
       </div>
     </a>
@@ -32,16 +32,16 @@
 
   {{ if lt $index (sub (len $pages) 1) }}
     {{ $next := index $pages (add $index 1) }}
-    <a class="toc-card next" href="{{ $next.url }}">
+    <a class="toc-card next" href="{{ $next.url }}" rel="next">
       <div class="toc-label">Next</div>
       <div class="toc-title">
         {{ replaceRE "\\s*[ↆ↓]$" "" (replaceRE "^[^a-zA-Z0-9]+" "" $next.title) }}
-        <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        <span class="arrow" aria-hidden="true"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span>
       </div>
     </a>
   {{ end }}
 
-</div>
+</nav>
 
 {{ end }}
 

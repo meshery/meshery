@@ -1465,6 +1465,19 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 	return updatedConnection, http.StatusOK, nil
 }
 
+// UpdateConnectionStatusIf updates a connection's status to newStatus only
+// when its stored status is one of fromStatuses, and reports whether the
+// write applied. The check and the write are a single UPDATE ... WHERE
+// status IN (...) statement in the local store, so no concurrent status
+// change can slip between them (issue #23248).
+func (l *DefaultLocalProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	applied, updatedConnection, err := l.ConnectionPersister.UpdateConnectionStatusIf(connectionID, fromStatuses, newStatus)
+	if err != nil {
+		return false, nil, err
+	}
+	return applied, updatedConnection, nil
+}
+
 // UpdateConnectionById updates an existing connection identified by connId (or
 // conn.ID when connId is not set), backfilling any fields omitted by the
 // partial payload and preserving the connection's original creation time and
@@ -1747,21 +1760,40 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 
 func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
 	updatedCredential := &Credential{}
-	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Updates(credential)
-	if db.Error != nil {
-		return nil, fmt.Errorf("error updating user credential: %v", db.Error)
-	}
-
-	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserId, credential.ID).First(updatedCredential).Error; err != nil {
-		return nil, fmt.Errorf("error getting updated user credential: %v", err)
+	err := l.GetGenericPersister().Transaction(func(tx *gorm.DB) error {
+		live := tx.Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Session(&gorm.Session{})
+		// Updates on a missing or deleted row matches nothing and is not an
+		// error, so look the credential up first.
+		if err := live.First(updatedCredential).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return ErrResultNotFound(fmt.Errorf("credential with id %s not found", credential.ID))
+			}
+			return fmt.Errorf("error getting user credential: %v", err)
+		}
+		if err := live.Updates(credential).Error; err != nil {
+			return fmt.Errorf("error updating user credential: %v", err)
+		}
+		if err := live.First(updatedCredential).Error; err != nil {
+			return fmt.Errorf("error getting updated user credential: %v", err)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 	return updatedCredential, nil
 }
 
 func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID core.Uuid) (*Credential, error) {
 	delCredential := &Credential{}
-	if err := l.GetGenericPersister().Model(&Credential{}).Where("id = ?", credentialID).Update("deleted_at", time.Now()).Error; err != nil {
-		return nil, err
+	// Only a live credential can be deleted. Matching deleted rows too would
+	// report success for an id that is already gone and move its deleted_at.
+	result := l.GetGenericPersister().Model(&Credential{}).Where("id = ? AND deleted_at is NULL", credentialID).Update("deleted_at", time.Now())
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return nil, ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
 	}
 	if err := l.GetGenericPersister().Where("id = ?", credentialID).First(delCredential).Error; err != nil {
 		return nil, err
