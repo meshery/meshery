@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"unsafe"
 
@@ -14,6 +15,7 @@ import (
 
 // openTokenFile requests the rights needed to inspect and replace the DACL.
 // New files receive a private DACL at creation, before any token is written.
+// Permission helpers return wrapped system errors for callers to add command context.
 func openTokenFile(path string) (*os.File, error) {
 	user, err := windows.GetCurrentProcessToken().GetTokenUser()
 	if err != nil {
@@ -102,10 +104,46 @@ func verifyTokenFileOwner(file *os.File, sid *windows.SID) error {
 		return fmt.Errorf("read token file owner: %w", err)
 	}
 	owner, _, err := descriptor.Owner()
-	if err != nil || owner == nil || !windows.EqualSid(owner, sid) {
+	if err != nil {
+		return fmt.Errorf("read token file owner: %w", err)
+	}
+	if owner == nil {
+		return fmt.Errorf("token file has no owner")
+	}
+	if windows.EqualSid(owner, sid) {
+		return nil
+	}
+
+	// Elevated Windows tokens may use the built-in Administrators group as
+	// their default owner. Do not accept any other non-user owner.
+	var size uint32
+	token := windows.GetCurrentProcessToken()
+	if err := windows.GetTokenInformation(token, windows.TokenOwner, nil, 0, &size); err != windows.ERROR_INSUFFICIENT_BUFFER {
+		return fmt.Errorf("query token default owner: %w", err)
+	}
+	if size == 0 {
+		return fmt.Errorf("token default owner is empty")
+	}
+	buf := make([]byte, size)
+	if err := windows.GetTokenInformation(token, windows.TokenOwner, &buf[0], size, &size); err != nil {
+		return fmt.Errorf("read token default owner: %w", err)
+	}
+	defaultOwner := *(**windows.SID)(unsafe.Pointer(&buf[0]))
+	administrators, err := windows.CreateWellKnownSid(windows.WinBuiltinAdministratorsSid)
+	if err != nil {
+		return fmt.Errorf("get Administrators SID: %w", err)
+	}
+	trusted := isTrustedTokenOwner(owner, sid, defaultOwner, administrators)
+	runtime.KeepAlive(buf)
+	if !trusted {
 		return fmt.Errorf("token file is not owned by the current user")
 	}
 	return nil
+}
+
+func isTrustedTokenOwner(owner, user, defaultOwner, administrators *windows.SID) bool {
+	return windows.EqualSid(owner, user) || (defaultOwner != nil &&
+		windows.EqualSid(owner, defaultOwner) && windows.EqualSid(owner, administrators))
 }
 
 func verifyTokenFileACL(file *os.File, sid *windows.SID) error {

@@ -109,6 +109,64 @@ func TestTokenFileOwnerRejectsDifferentSID(t *testing.T) {
 	}
 }
 
+func TestTokenFileOwnerTrust(t *testing.T) {
+	user, err := windows.GetCurrentProcessToken().GetTokenUser()
+	if err != nil {
+		t.Fatal(err)
+	}
+	admins, err := windows.CreateWellKnownSid(windows.WinBuiltinAdministratorsSid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	other, err := windows.StringToSid("S-1-1-0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tt := range []struct {
+		name                string
+		owner, defaultOwner *windows.SID
+		want                bool
+	}{
+		{"current user", user.User.Sid, admins, true},
+		{"default administrators", admins, admins, true},
+		{"administrators not default", admins, user.User.Sid, false},
+		{"other default owner", other, other, false},
+		{"other owner", other, admins, false},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := isTrustedTokenOwner(tt.owner, user.User.Sid, tt.defaultOwner, admins); got != tt.want {
+				t.Fatalf("isTrustedTokenOwner = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTokenFileOwnerDefaultAdministrator(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "token")
+	// Let Windows assign the token's default owner to an ordinary new file.
+	if err := os.WriteFile(path, []byte("old token"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	descriptor, err := windows.GetNamedSecurityInfo(path, windows.SE_FILE_OBJECT, windows.OWNER_SECURITY_INFORMATION)
+	if err != nil {
+		t.Fatal(err)
+	}
+	owner, _, err := descriptor.Owner()
+	if err != nil {
+		t.Fatal(err)
+	}
+	admins, err := windows.CreateWellKnownSid(windows.WinBuiltinAdministratorsSid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if owner == nil || !windows.EqualSid(owner, admins) {
+		t.Skip("this Windows token does not default to the Administrators owner")
+	}
+	if err := WriteTokenFile(path, []byte("new token")); err != nil {
+		t.Fatalf("write token with default Administrators owner: %v", err)
+	}
+}
+
 func TestWriteTokenFileLongPath(t *testing.T) {
 	dir := t.TempDir()
 	for len(dir) < 270 {
