@@ -5,6 +5,7 @@ package utils
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -77,7 +78,32 @@ func writeTokenFile(path string, data []byte) error {
 		return err
 	}
 	if err := replaceTokenFile(f, toPath); err != nil {
-		return fmt.Errorf("replace token file: %w", err)
+		// Some filesystems reject the extended rename operation. The legacy
+		// rename still replaces the file object and fails closed if an open
+		// handle prevents replacement; it never writes into the old file.
+		if !errors.Is(err, windows.ERROR_INVALID_NAME) && !errors.Is(err, windows.ERROR_INVALID_PARAMETER) && !errors.Is(err, windows.ERROR_NOT_SUPPORTED) {
+			return fmt.Errorf("replace token file: %w", err)
+		}
+		if closeErr := f.Close(); closeErr != nil {
+			return closeErr
+		}
+		fromPath, pathErr := tokenFileLongPath(tempPath)
+		if pathErr != nil {
+			return pathErr
+		}
+		from, pathErr := windows.UTF16PtrFromString(fromPath)
+		if pathErr != nil {
+			return pathErr
+		}
+		to, pathErr := windows.UTF16PtrFromString(toPath)
+		if pathErr != nil {
+			return pathErr
+		}
+		if moveErr := windows.MoveFileEx(from, to, windows.MOVEFILE_REPLACE_EXISTING|windows.MOVEFILE_WRITE_THROUGH); moveErr != nil {
+			return fmt.Errorf("replace token file: extended rename: %v; fallback: %w", err, moveErr)
+		}
+		moved = true
+		return nil
 	}
 	moved = true
 	return f.Close()
