@@ -757,6 +757,7 @@ Section pages:
 - [ErrNilConfigDataCode-1242](/reference/error-codes/component-meshery-server/errnilconfigdatacode-1242/)
 - [ErrNilJWKsCode-1258](/reference/error-codes/component-meshery-server/errniljwkscode-1258/)
 - [ErrNilKeysCode-1259](/reference/error-codes/component-meshery-server/errnilkeyscode-1259/)
+- [ErrNilProviderCode-1492](/reference/error-codes/component-meshery-server/errnilprovidercode-1492/)
 - [ErrNilQueryCode-1233](/reference/error-codes/component-meshery-server/errnilquerycode-1233/)
 - [ErrNoAdaptersCode-1021](/reference/error-codes/client-mesheryctl/errnoadapterscode-1021/)
 - [ErrNoFileInterceptorCode-11332](/reference/error-codes/library-meshkit/errnofileinterceptorcode-11332/)

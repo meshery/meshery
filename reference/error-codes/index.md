@@ -16137,6 +16137,31 @@ Check client routing and extension configuration</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrNilProviderCode-1492" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrNilProviderCode-more-info" onclick="toggle_visibility('meshery-server-ErrNilProviderCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1492" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errnilprovidercode-1492/"><code>ErrNilProviderCode-1492</code></a>
+            </td>
+            <td>Provider not initialized</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrNilProviderCode-1492" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrNilProviderCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">Provider instance passed to the handler is nil</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The handler was invoked without an initialized provider instance</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Ensure the provider is properly initialized before handling the request</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
