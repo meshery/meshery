@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"path/filepath"
 	"os"
 	"strings"
 	"sync"
@@ -99,7 +100,7 @@ func setNewDBInstance() {
 	}
 
 	dbHandler, err = database.New(database.Options{
-		Filename: fmt.Sprintf("file:%s/mesherydb.sql?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL", viper.GetString("USER_DATA_FOLDER")),
+		Filename: SystemDatabaseDSN(filepath.Join(viper.GetString("USER_DATA_FOLDER"), "mesherydb.sql")),
 		Engine:   database.SQLITE,
 		Logger:   log,
 	})
@@ -116,4 +117,9 @@ func GetNewDBInstance() *database.Handler {
 
 func GetDBInstance() *database.Handler {
 	return &dbHandler
+}
+
+// SystemDatabaseDSN formats the canonical SQLite connection string for a given db file path.
+func SystemDatabaseDSN(filePath string) string {
+	return fmt.Sprintf("file:%s?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL", filepath.ToSlash(filePath))
 }
