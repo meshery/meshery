@@ -3,17 +3,22 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
 	_events "github.com/meshery/meshkit/utils/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 const testTimeout = time.Second
@@ -453,5 +458,377 @@ func TestEventStreamHandler_FlushesHeadersBeforeFirstEvent(t *testing.T) {
 	}
 	if got := rec.Header().Get("Content-Type"); got != "text/event-stream" {
 		t.Errorf("expected content type text/event-stream, got %q", got)
+	}
+}
+
+// eventsSpyProvider mocks models.Provider to inspect event handling invocations and record arguments.
+type eventsSpyProvider struct {
+	*models.DefaultLocalProvider
+	getEventsCalled          atomic.Bool
+	getEventTypesCalled      atomic.Bool
+	updateEventStatusCalled  atomic.Bool
+	bulkUpdateCalled         atomic.Bool
+	bulkDeleteCalled         atomic.Bool
+	deleteEventCalled        atomic.Bool
+	persistClientEventCalled atomic.Bool
+
+	lastUserID core.Uuid
+	lastSysID  core.Uuid
+}
+
+// newEventsSpyProvider instantiates a new eventsSpyProvider with an embedded DefaultLocalProvider.
+func newEventsSpyProvider() *eventsSpyProvider {
+	base := &models.DefaultLocalProvider{}
+	return &eventsSpyProvider{DefaultLocalProvider: base}
+}
+
+// GetEvents mocks provider.GetEvents, capturing the user and system ID arguments.
+func (s *eventsSpyProvider) GetEvents(token string, filter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*models.EventsResponse, error) {
+	s.getEventsCalled.Store(true)
+	s.lastUserID = userID
+	s.lastSysID = sysID
+	return &models.EventsResponse{Events: []*events.Event{}}, nil
+}
+
+// GetEventTypes mocks provider.GetEventTypes, returning an EventTypesResponse with category1.
+func (s *eventsSpyProvider) GetEventTypes(token string, userID core.Uuid, sysID core.Uuid) (models.EventTypesResponse, error) {
+	s.getEventTypesCalled.Store(true)
+	s.lastUserID = userID
+	s.lastSysID = sysID
+	return models.EventTypesResponse{Category: []string{"category1"}}, nil
+}
+
+// UpdateEventStatus mocks provider.UpdateEventStatus, recording the call.
+func (s *eventsSpyProvider) UpdateEventStatus(token string, eventID core.Uuid, status string) error {
+	s.updateEventStatusCalled.Store(true)
+	return nil
+}
+
+// BulkUpdateEventStatus mocks provider.BulkUpdateEventStatus, recording the call.
+func (s *eventsSpyProvider) BulkUpdateEventStatus(token string, eventIDs []*core.Uuid, status string) error {
+	s.bulkUpdateCalled.Store(true)
+	return nil
+}
+
+// BulkDeleteEvent mocks provider.BulkDeleteEvent, recording the call.
+func (s *eventsSpyProvider) BulkDeleteEvent(token string, eventIDs []*core.Uuid) error {
+	s.bulkDeleteCalled.Store(true)
+	return nil
+}
+
+// DeleteEvent mocks provider.DeleteEvent, recording the call.
+func (s *eventsSpyProvider) DeleteEvent(token string, eventID core.Uuid) error {
+	s.deleteEventCalled.Store(true)
+	return nil
+}
+
+// GetProviderToken returns a mock provider token.
+func (s *eventsSpyProvider) GetProviderToken(req *http.Request) (string, error) {
+	return "test-token", nil
+}
+
+// PersistClientEvent mocks provider.PersistClientEvent, recording the call and returning a persisted event.
+func (s *eventsSpyProvider) PersistClientEvent(event events.Event, token string) (models.PersistedEvent, error) {
+	s.persistClientEventCalled.Store(true)
+	return models.PersistedEvent{
+		Event:       &event,
+		Disposition: "created",
+	}, nil
+}
+
+// TestGetAllEvents_NilUser verifies that GetAllEvents returns 401 Unauthorized when user is nil.
+func TestGetAllEvents_NilUser(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	spy := newEventsSpyProvider()
+	req := httptest.NewRequest(http.MethodGet, "/api/system/events", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetAllEvents(rec, req, nil, nil, spy)
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+	if spy.getEventsCalled.Load() {
+		t.Fatal("provider.GetEvents should not be called when user is nil")
+	}
+}
+
+// TestGetAllEvents_NilProvider verifies that GetAllEvents returns 500 when provider is nil.
+func TestGetAllEvents_NilProvider(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	req := httptest.NewRequest(http.MethodGet, "/api/system/events", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetAllEvents(rec, req, nil, user, nil)
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+}
+
+// TestGetAllEvents_NilSystemID verifies that GetAllEvents safely defaults to uuid.Nil when h.SystemID is nil.
+func TestGetAllEvents_NilSystemID(t *testing.T) {
+	h := &Handler{log: newTestLogger(t), SystemID: nil}
+	spy := newEventsSpyProvider()
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	req := httptest.NewRequest(http.MethodGet, "/api/system/events", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetAllEvents(rec, req, nil, user, spy)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200 OK, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	if !spy.getEventsCalled.Load() {
+		t.Fatal("provider.GetEvents should be called")
+	}
+	if spy.lastSysID != uuid.Nil {
+		t.Fatalf("expected sysID to be uuid.Nil when h.SystemID is nil, got %v", spy.lastSysID)
+	}
+	if spy.lastUserID != user.ID {
+		t.Fatalf("expected userID %v, got %v", user.ID, spy.lastUserID)
+	}
+}
+
+// TestGetEventTypes_NilUser verifies that GetEventTypes returns 401 Unauthorized when user is nil.
+func TestGetEventTypes_NilUser(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	spy := newEventsSpyProvider()
+	req := httptest.NewRequest(http.MethodGet, "/api/system/events/types", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetEventTypes(rec, req, nil, nil, spy)
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+	if spy.getEventTypesCalled.Load() {
+		t.Fatal("provider.GetEventTypes should not be called when user is nil")
+	}
+}
+
+// TestGetEventTypes_NilProvider verifies that GetEventTypes returns 500 when provider is nil.
+func TestGetEventTypes_NilProvider(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	req := httptest.NewRequest(http.MethodGet, "/api/system/events/types", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetEventTypes(rec, req, nil, user, nil)
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+}
+
+// TestGetEventTypes_NilSystemID verifies that GetEventTypes safely defaults to uuid.Nil when h.SystemID is nil.
+func TestGetEventTypes_NilSystemID(t *testing.T) {
+	h := &Handler{log: newTestLogger(t), SystemID: nil}
+	spy := newEventsSpyProvider()
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	req := httptest.NewRequest(http.MethodGet, "/api/system/events/types", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetEventTypes(rec, req, nil, user, spy)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200 OK, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	if !spy.getEventTypesCalled.Load() {
+		t.Fatal("provider.GetEventTypes should be called")
+	}
+	if spy.lastSysID != uuid.Nil {
+		t.Fatalf("expected sysID to be uuid.Nil when h.SystemID is nil, got %v", spy.lastSysID)
+	}
+}
+
+// TestUpdateEventStatus_NilProvider verifies that UpdateEventStatus returns 500 when provider is nil.
+func TestUpdateEventStatus_NilProvider(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	req := httptest.NewRequest(http.MethodPut, "/api/system/events/status/123", nil)
+	rec := httptest.NewRecorder()
+
+	h.UpdateEventStatus(rec, req, nil, nil, nil)
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 for nil provider, got %d", rec.Code)
+	}
+}
+
+// TestUpdateEventStatus_MalformedJSON verifies that UpdateEventStatus returns 400 Bad Request on invalid JSON.
+func TestUpdateEventStatus_MalformedJSON(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	spy := newEventsSpyProvider()
+	req := httptest.NewRequest(http.MethodPut, "/api/system/events/status/123", bytes.NewBufferString("not valid json"))
+	rec := httptest.NewRecorder()
+
+	h.UpdateEventStatus(rec, req, nil, nil, spy)
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 for malformed json, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	if spy.updateEventStatusCalled.Load() {
+		t.Fatal("provider.UpdateEventStatus should not be called on malformed json")
+	}
+}
+
+// TestUpdateEventStatus_MissingStatus verifies that UpdateEventStatus returns 400 Bad Request on empty status.
+func TestUpdateEventStatus_MissingStatus(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	spy := newEventsSpyProvider()
+	req := httptest.NewRequest(http.MethodPut, "/api/system/events/status/123", bytes.NewBufferString(`{"status":""}`))
+	rec := httptest.NewRecorder()
+
+	h.UpdateEventStatus(rec, req, nil, nil, spy)
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 for empty status, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	if spy.updateEventStatusCalled.Load() {
+		t.Fatal("provider.UpdateEventStatus should not be called on empty status")
+	}
+}
+
+// TestBulkUpdateEventStatus_NilProvider verifies that BulkUpdateEventStatus returns 500 when provider is nil.
+func TestBulkUpdateEventStatus_NilProvider(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	req := httptest.NewRequest(http.MethodPut, "/api/system/events/status/bulk", nil)
+	rec := httptest.NewRecorder()
+
+	h.BulkUpdateEventStatus(rec, req, nil, nil, nil)
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 for nil provider, got %d", rec.Code)
+	}
+}
+
+// TestBulkUpdateEventStatus_EmptyOrMalformed verifies that BulkUpdateEventStatus returns 400 on malformed or empty payloads.
+func TestBulkUpdateEventStatus_EmptyOrMalformed(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	spy := newEventsSpyProvider()
+
+	// Malformed JSON
+	req := httptest.NewRequest(http.MethodPut, "/api/system/events/status/bulk", bytes.NewBufferString("not json"))
+	rec := httptest.NewRecorder()
+	h.BulkUpdateEventStatus(rec, req, nil, nil, spy)
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 for malformed JSON, got %d", rec.Code)
+	}
+
+	// Empty IDs
+	req = httptest.NewRequest(http.MethodPut, "/api/system/events/status/bulk", bytes.NewBufferString(`{"status":"read","ids":[]}`))
+	rec = httptest.NewRecorder()
+	h.BulkUpdateEventStatus(rec, req, nil, nil, spy)
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 for empty IDs, got %d", rec.Code)
+	}
+
+	// Empty Status with non-empty IDs
+	validID := uuid.Must(uuid.NewV4()).String()
+	req = httptest.NewRequest(http.MethodPut, "/api/system/events/status/bulk", bytes.NewBufferString(fmt.Sprintf(`{"status":"","ids":["%s"]}`, validID)))
+	rec = httptest.NewRecorder()
+	h.BulkUpdateEventStatus(rec, req, nil, nil, spy)
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 for empty status, got %d", rec.Code)
+	}
+	if spy.bulkUpdateCalled.Load() {
+		t.Fatal("provider.BulkUpdateEventStatus should not be called on invalid input")
+	}
+}
+
+// TestBulkDeleteEvent_NilProvider verifies that BulkDeleteEvent returns 500 when provider is nil.
+func TestBulkDeleteEvent_NilProvider(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/events/bulk", nil)
+	rec := httptest.NewRecorder()
+
+	h.BulkDeleteEvent(rec, req, nil, nil, nil)
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 for nil provider, got %d", rec.Code)
+	}
+}
+
+// TestBulkDeleteEvent_EmptyOrMalformed verifies that BulkDeleteEvent returns 400 on malformed or empty payloads.
+func TestBulkDeleteEvent_EmptyOrMalformed(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	spy := newEventsSpyProvider()
+
+	// Malformed JSON
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/events/bulk", bytes.NewBufferString("{bad"))
+	rec := httptest.NewRecorder()
+	h.BulkDeleteEvent(rec, req, nil, nil, spy)
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 for malformed JSON, got %d", rec.Code)
+	}
+
+	// Empty IDs
+	req = httptest.NewRequest(http.MethodDelete, "/api/system/events/bulk", bytes.NewBufferString(`{"ids":[]}`))
+	rec = httptest.NewRecorder()
+	h.BulkDeleteEvent(rec, req, nil, nil, spy)
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 for empty IDs, got %d", rec.Code)
+	}
+	if spy.bulkDeleteCalled.Load() {
+		t.Fatal("provider.BulkDeleteEvent should not be called on invalid input")
+	}
+}
+
+// TestDeleteEvent_NilProvider verifies that DeleteEvent returns 500 when provider is nil.
+func TestDeleteEvent_NilProvider(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/events/123", nil)
+	rec := httptest.NewRecorder()
+
+	h.DeleteEvent(rec, req, nil, nil, nil)
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 for nil provider, got %d", rec.Code)
+	}
+}
+
+// TestClientEventHandler_NilUser verifies that ClientEventHandler returns 401 Unauthorized when user is nil.
+func TestClientEventHandler_NilUser(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	spy := newEventsSpyProvider()
+	req := httptest.NewRequest(http.MethodPost, "/api/system/events", nil)
+	rec := httptest.NewRecorder()
+
+	h.ClientEventHandler(rec, req, nil, nil, spy)
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+}
+
+// TestClientEventHandler_NilProvider verifies that ClientEventHandler returns 500 when provider is nil.
+func TestClientEventHandler_NilProvider(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	req := httptest.NewRequest(http.MethodPost, "/api/system/events", nil)
+	rec := httptest.NewRecorder()
+
+	h.ClientEventHandler(rec, req, nil, user, nil)
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+}
+
+// TestClientEventHandler_SuccessWithNilSystemIDAndNilBroadcaster verifies that ClientEventHandler safely handles nil SystemID and nil EventBroadcaster.
+func TestClientEventHandler_SuccessWithNilSystemIDAndNilBroadcaster(t *testing.T) {
+	h := &Handler{
+		log:      newTestLogger(t),
+		SystemID: nil,
+		config:   &models.HandlerConfig{EventBroadcaster: nil},
+	}
+	spy := newEventsSpyProvider()
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	targetID := uuid.Must(uuid.NewV4())
+
+	validEventJSON := fmt.Sprintf(`{
+		"actedUpon": "%s",
+		"action": "view",
+		"category": "system",
+		"severity": "informational",
+		"description": "test event"
+	}`, targetID.String())
+
+	req := httptest.NewRequest(http.MethodPost, "/api/system/events", strings.NewReader(validEventJSON))
+	rec := httptest.NewRecorder()
+
+	h.ClientEventHandler(rec, req, nil, user, spy)
+	if rec.Code != http.StatusOK && rec.Code != http.StatusCreated {
+		t.Fatalf("expected 200/201, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	if !spy.persistClientEventCalled.Load() {
+		t.Fatal("provider.PersistClientEvent should be called")
 	}
 }

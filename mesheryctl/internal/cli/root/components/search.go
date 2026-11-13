@@ -25,8 +25,8 @@ import (
 )
 
 type cmdComponentSearchFlags struct {
-	Page     int `json:"page" validate:"omitempty,gte=1"`
-	PageSize int `json:"pagesize" validate:"omitempty,gte=1"`
+	Page     int `json:"page" validate:"gte=1"`
+	PageSize int `json:"pagesize" validate:"gte=1"`
 }
 
 var componentSearchFlags cmdComponentSearchFlags

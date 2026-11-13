@@ -49,7 +49,7 @@ const WorkspaceDataTable = ({
   let colViews = [
     ['id', 'na'],
     ['name', 'xs'],
-    ['owner_email', 'na'],
+    ['ownerEmail', 'na'],
     ['description', 'na'],
     ['designCount', 'xs'],
     ['viewCount', 'xs'],
@@ -113,7 +113,7 @@ const WorkspaceDataTable = ({
       },
     },
     {
-      name: 'org_name',
+      name: 'orgName',
       label: 'Org Name',
       filter: false,
       options: {
@@ -142,7 +142,7 @@ const WorkspaceDataTable = ({
       label: 'Description',
     },
     {
-      name: 'owner_avatar',
+      name: 'ownerAvatar',
       label: 'Owner Avatar',
       options: {
         display: 'excluded',
@@ -157,13 +157,13 @@ const WorkspaceDataTable = ({
         searchable: true,
         customBodyRender: (value, tableMeta) => {
           if (!value) {
-            return <span>{getColumnValue(tableMeta.rowData, 'org_name', columns)}</span>;
+            return <span>{getColumnValue(tableMeta.rowData, 'orgName', columns)}</span>;
           }
           return (
             <AuthorCell
-              userId={getColumnValue(tableMeta.rowData, 'owner_id', columns)}
+              userId={getColumnValue(tableMeta.rowData, 'ownerId', columns)}
               firstName={value}
-              avatarUrl={getColumnValue(tableMeta.rowData, 'owner_avatar', columns)}
+              avatarUrl={getColumnValue(tableMeta.rowData, 'ownerAvatar', columns)}
             />
           );
         },

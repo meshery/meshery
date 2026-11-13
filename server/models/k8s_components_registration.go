@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"sync"
@@ -27,7 +28,28 @@ const (
 	RegistrationComplete RegistrationStatus = iota
 	NotRegistered
 	Registering
+	RegistrationPartial
 )
+
+// ErrPartialRegistration indicates that component registration completed partially with warnings.
+type ErrPartialRegistration struct {
+	Err error
+}
+
+func (e *ErrPartialRegistration) Error() string {
+	if e.Err != nil {
+		return e.Err.Error()
+	}
+	return "partial registration completed with warnings"
+}
+
+func (e *ErrPartialRegistration) Unwrap() error {
+	return e.Err
+}
+
+func NewErrPartialRegistration(err error) error {
+	return &ErrPartialRegistration{Err: err}
+}
 
 type ModelTemplate struct {
 	component.Styles
@@ -46,6 +68,8 @@ func (rs RegistrationStatus) String() string {
 		return "not_registered"
 	case Registering:
 		return "register"
+	case RegistrationPartial:
+		return "partial"
 	default:
 		return ""
 	}
@@ -135,9 +159,9 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 
 		cg.mx.Lock()
 		// do not do anything about the contexts that are not present in the ctxRegStatusMap
-		// only start registering components for contexts whose status is NotRegistered
+		// only start registering components for contexts whose status is NotRegistered or RegistrationPartial
 		status, ok := cg.ctxRegStatusMap[ctxID]
-		if !ok || status != NotRegistered {
+		if !ok || (status != NotRegistered && status != RegistrationPartial) {
 			cg.mx.Unlock()
 			continue
 		}
@@ -159,6 +183,8 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 
 		go func(ctx *K8sContext, ctxID string, connectionID core.Uuid, ctxName string, mesheryInstanceID core.Uuid, regToken uint64) {
 			var regErr error
+			var isPartial bool
+			var partialErr error
 			defer func() {
 				cg.mx.Lock()
 				// Only update status and emit events if context was not removed
@@ -170,6 +196,8 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 				}
 				if regErr != nil {
 					cg.ctxRegStatusMap[ctxID] = NotRegistered
+				} else if isPartial {
+					cg.ctxRegStatusMap[ctxID] = RegistrationPartial
 				} else {
 					cg.ctxRegStatusMap[ctxID] = RegistrationComplete
 				}
@@ -190,6 +218,8 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 					if perr := PersistAndPublishSystemEvent(provider, eventsBrodcaster, userUUID, failEvent); perr != nil {
 						cg.log.Warn(perr)
 					}
+				} else if isPartial {
+					cg.log.Warnf("components partially registered with warnings for context %s (ID: %s): %v", ctxName, ctxID, partialErr)
 				} else {
 					cg.log.Info("components registered for context ", ctxName, " ID:", ctxID)
 				}
@@ -205,6 +235,12 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 			for _, f := range regFunc {
 				err = f(&provider, context.Background(), cfg, ctxID, ctx.ConnectionID, userID, mesheryInstanceID, reg, eventsBrodcaster, cg.log, ctxName)
 				if err != nil {
+					var pErr *ErrPartialRegistration
+					if errors.As(err, &pErr) {
+						isPartial = true
+						partialErr = err
+						continue
+					}
 					regErr = ErrUnreachableKubeAPI(err, ctx.Server)
 					cg.log.Error(regErr)
 					return
