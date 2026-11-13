@@ -15,8 +15,6 @@
 package filter
 
 import (
-	"errors"
-
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
@@ -41,10 +39,6 @@ mesheryctl filter delete [filter-name | ID]
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
-		}
-
-		if len(args) == 0 {
-			return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
 		}
 
 		var filterID string
