@@ -8,11 +8,10 @@ describe('isEmptyAtAllDepths', () => {
     expect(isEmptyAtAllDepths(undefined)).toBe(true);
   });
 
-  it('treats lodash-non-empty primitives (numbers, booleans) as empty', () => {
-    // lodash's `isEmpty` returns true for numbers and booleans by design
-    expect(isEmptyAtAllDepths(0)).toBe(true);
-    expect(isEmptyAtAllDepths(42)).toBe(true);
-    expect(isEmptyAtAllDepths(true)).toBe(true);
+  it.each([0, 42, -1, true, false])('treats %s as non-empty data', (value) => {
+    expect(isEmptyAtAllDepths(value)).toBe(false);
+    expect(isEmptyAtAllDepths({ result: { value } })).toBe(false);
+    expect(isEmptyAtAllDepths([{}, { result: [value] }])).toBe(false);
   });
 
   it('treats populated strings as non-empty', () => {

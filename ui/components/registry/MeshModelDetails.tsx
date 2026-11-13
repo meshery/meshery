@@ -16,7 +16,7 @@ import { REGISTRY_ITEM_STATES } from '@/utils/Enum';
 import { normalizeStaticImagePath } from '@/utils/fallback';
 import {
   useUpdateEntityStatusMutation,
-  useGetComponentsQuery,
+  useGetComponentsByModelAndKindQuery,
   useGetMeshModelsQuery,
 } from '@/rtk-query/meshModel';
 import _ from 'lodash';
@@ -246,9 +246,12 @@ const ModelContents = ({ modelDef }: { modelDef: any }) => {
 };
 
 const ComponentContents = ({ componentDef }: { componentDef: any }) => {
-  const { data, isSuccess } = useGetComponentsQuery({
+  // The registry-wide component listing takes no `id`, so scope the request to
+  // this component's model, kind and apiVersion and pick it out by id below.
+  const { data, isSuccess } = useGetComponentsByModelAndKindQuery({
+    model: componentDef.model?.name,
+    component: componentDef.component.kind,
     params: {
-      id: componentDef.id,
       apiVersion: componentDef.component.version,
       trim: false,
     },
