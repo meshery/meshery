@@ -19,6 +19,9 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -242,4 +245,225 @@ func TestGetProviderInfo_BodyClosed(t *testing.T) {
 		}
 		assertBodyClosed(t, transport, "expected response body to be closed on decode error")
 	})
+}
+
+func TestChooseDirectProvider(t *testing.T) {
+	// A server pinned to one provider, reported under a key that differs from
+	// its display name - the shape playground.meshery.io returns.
+	single := map[string]Provider{
+		"cloud.meshery.io": {ProviderName: "Meshery", ProviderURL: "https://cloud.meshery.io"},
+	}
+
+	t.Run("matches display name case-insensitively", func(t *testing.T) {
+		got, key, err := chooseDirectProvider(single, "meshery")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if key != "cloud.meshery.io" {
+			t.Fatalf("got key %q, want %q", key, "cloud.meshery.io")
+		}
+		if got.ProviderURL != "https://cloud.meshery.io" {
+			t.Fatalf("got provider %+v", got)
+		}
+	})
+
+	t.Run("matches the registry key", func(t *testing.T) {
+		got, key, err := chooseDirectProvider(single, "cloud.meshery.io")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if key != "cloud.meshery.io" {
+			t.Fatalf("got key %q, want %q", key, "cloud.meshery.io")
+		}
+		if got.ProviderName != "Meshery" {
+			t.Fatalf("got provider %+v", got)
+		}
+	})
+
+	// An exact key match must win over a display-name match, deterministically:
+	// with key "cloud-a" named "Meshery" beside key "cloud-b" named "cloud-a",
+	// --provider cloud-a selects cloud-a, not whichever entry a map traversal
+	// happens to visit first.
+	t.Run("exact key beats another entry's display name", func(t *testing.T) {
+		provs := map[string]Provider{
+			"cloud-a": {ProviderName: "Meshery", ProviderURL: "https://cloud-a.example"},
+			"cloud-b": {ProviderName: "cloud-a", ProviderURL: "https://cloud-b.example"},
+		}
+		for i := 0; i < 20; i++ {
+			got, key, err := chooseDirectProvider(provs, "cloud-a")
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if key != "cloud-a" || got.ProviderURL != "https://cloud-a.example" {
+				t.Fatalf("attempt %d: got key %q provider %+v", i, key, got)
+			}
+		}
+	})
+
+	// Regression: two providers sharing a display name used to resolve to
+	// whichever entry a map traversal visited first. --provider with that
+	// display name must now fail and ask for a registration key.
+	t.Run("ambiguous display name returns an error naming the keys", func(t *testing.T) {
+		provs := map[string]Provider{
+			"cloud-a": {ProviderName: "Acme", ProviderURL: "https://cloud-a.example"},
+			"cloud-b": {ProviderName: "Acme", ProviderURL: "https://cloud-b.example"},
+		}
+		for i := 0; i < 20; i++ {
+			got, key, err := chooseDirectProvider(provs, "Acme")
+			if err == nil {
+				t.Fatalf("attempt %d: expected an error, got key %q provider %+v", i, key, got)
+			}
+			if code := errors.GetCode(err); code != ErrProviderAmbiguousCode {
+				t.Fatalf("attempt %d: got error code %q, want %q", i, code, ErrProviderAmbiguousCode)
+			}
+			if key != "" {
+				t.Fatalf("attempt %d: expected empty key, got %q", i, key)
+			}
+			if got != (Provider{}) {
+				t.Fatalf("attempt %d: expected empty provider, got %+v", i, got)
+			}
+		}
+	})
+
+	// A display name nobody else shares still resolves.
+	t.Run("unique display name still resolves", func(t *testing.T) {
+		provs := map[string]Provider{
+			"cloud-a": {ProviderName: "Acme", ProviderURL: "https://cloud-a.example"},
+			"cloud-b": {ProviderName: "Other", ProviderURL: "https://cloud-b.example"},
+		}
+		got, key, err := chooseDirectProvider(provs, "acme")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if key != "cloud-a" || got.ProviderURL != "https://cloud-a.example" {
+			t.Fatalf("got key %q provider %+v", key, got)
+		}
+	})
+
+	// Regression: an unmatched name used to return provArray[1], panicking
+	// with "index out of range [1] with length 1" on a single-provider server.
+	for name, provs := range map[string]map[string]Provider{
+		"single provider": single,
+		"no providers":    {},
+	} {
+		t.Run("unknown provider on "+name+" returns a structured error", func(t *testing.T) {
+			got, key, err := chooseDirectProvider(provs, "does-not-exist")
+			if err == nil {
+				t.Fatal("expected an error")
+			}
+			if code := errors.GetCode(err); code != ErrProviderNotFoundCode {
+				t.Fatalf("got error code %q, want %q", code, ErrProviderNotFoundCode)
+			}
+			if key != "" {
+				t.Fatalf("expected empty key, got %q", key)
+			}
+			if got != (Provider{}) {
+				t.Fatalf("expected zero Provider, got %+v", got)
+			}
+		})
+	}
+}
+
+func TestInitiateLogin_PersistsRegistrationKey(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	// Two providers share the display name "Meshery". The server answers
+	// /api/token with that display name, as RemoteProvider.ExtractToken
+	// does (meshery-provider is l.Name()), and login persists the response
+	// unchanged for later requests. Login must persist the registration
+	// key instead, or later requests would send the shared display name
+	// and route nondeterministically. The providers carry no URL so the
+	// test exercises the token exchange without the browser flow.
+	var tokenCookie string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/providers":
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = fmt.Fprint(w, `{"cloud-a":{"providerName":"Meshery"},"cloud-b":{"providerName":"Meshery"}}`)
+		case "/api/token":
+			for _, c := range r.Cookies() {
+				if c.Name == "meshery-provider" {
+					tokenCookie = c.Value
+				}
+			}
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = fmt.Fprint(w, `{"meshery-provider":"Meshery","meshery-token":"tok"}`)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	}))
+	defer server.Close()
+
+	mctCfg := newTestMctCfg(server.URL)
+	data, err := InitiateLogin(mctCfg, "cloud-b")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if tokenCookie != "cloud-b" {
+		t.Fatalf("/api/token got meshery-provider cookie %q, want %q", tokenCookie, "cloud-b")
+	}
+
+	var persisted map[string]string
+	if err := json.Unmarshal(data, &persisted); err != nil {
+		t.Fatalf("login returned invalid JSON: %v", err)
+	}
+	if persisted["meshery-provider"] != "cloud-b" {
+		t.Fatalf("persisted meshery-provider %q, want %q", persisted["meshery-provider"], "cloud-b")
+	}
+	if persisted["meshery-token"] != "tok" {
+		t.Fatalf("persisted meshery-token %q, want %q", persisted["meshery-token"], "tok")
+	}
+
+	// A later authenticated request built from the persisted token must
+	// carry the registration key, not the shared display name.
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tokenPath, data, 0o600); err != nil {
+		t.Fatalf("unexpected error writing token file: %v", err)
+	}
+	req, err := http.NewRequest(http.MethodGet, server.URL+"/api/user", nil)
+	if err != nil {
+		t.Fatalf("unexpected error creating request: %v", err)
+	}
+	if err := AddAuthDetails(req, tokenPath); err != nil {
+		t.Fatalf("unexpected error adding auth details: %v", err)
+	}
+	var providerCookie string
+	for _, c := range req.Cookies() {
+		if c.Name == "meshery-provider" {
+			providerCookie = c.Value
+		}
+	}
+	if providerCookie != "cloud-b" {
+		t.Fatalf("authenticated request got meshery-provider cookie %q, want %q", providerCookie, "cloud-b")
+	}
+}
+
+func TestWriteTokenFile(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "auth.json")
+
+	// A token file left behind by an older mesheryctl is world-readable.
+	if err := os.WriteFile(path, []byte("old"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := WriteTokenFile(path, []byte(`{"token":"t"}`)); err != nil {
+		t.Fatalf("WriteTokenFile: %v", err)
+	}
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Windows only tracks the read-only attribute, so a mode check is
+	// meaningless there; the content check below still applies.
+	if runtime.GOOS != "windows" {
+		if mode := info.Mode().Perm(); mode != 0o600 {
+			t.Fatalf("token file mode = %o, want 600", mode)
+		}
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(data) != `{"token":"t"}` {
+		t.Fatalf("token file content = %q", data)
+	}
 }

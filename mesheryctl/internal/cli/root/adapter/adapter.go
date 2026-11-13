@@ -39,8 +39,6 @@ var errEventStreamClosed = errors.New("event stream closed before the operation 
 // AdapterCmd represents the Performance Management CLI command
 var (
 	adapterURL string
-	err        error
-	mctlCfg    *config.MesheryCtlConfig
 	namespace  string
 	watch      bool
 	AdapterCmd = &cobra.Command{

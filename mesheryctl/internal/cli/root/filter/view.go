@@ -151,7 +151,7 @@ mesheryctl filter view "filter name"
 					strings.ToLower(filterViewFlagsProvided.OutputFormat),
 				)
 			} else {
-				shortID := selectedFilter.ID.String()[:8]
+				shortID := utils.TruncateID(utils.FormatUUID(selectedFilter.ID, "unknown"))
 
 				sanitizer := strings.NewReplacer("/", "_", " ", "_")
 				sanitizedName := sanitizer.Replace(selectedFilter.Name)
