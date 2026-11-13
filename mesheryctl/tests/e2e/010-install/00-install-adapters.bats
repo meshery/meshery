@@ -65,7 +65,9 @@ setup() {
 # run_installer <workdir> [VAR=value ...]
 # Runs the installer from <workdir> with a fresh HOME and install directory,
 # with ADAPTERS and PLATFORM taken only from the arguments. Set
-# INSTALL_LAUNCHER to prefix the command (e.g. "setsid -w").
+# INSTALL_LAUNCHER to prefix the command (e.g. "setsid -w"), or
+# INSTALL_TTY_INPUT to run it on a pseudo-terminal that this text is typed
+# into, which is where the installer reads its prompt answers from.
 run_installer() {
     local workdir="$1"
     shift
@@ -77,15 +79,21 @@ run_installer() {
     mkdir -p "$INSTALL_HOME" "$INSTALL_DIR"
     cd "$workdir"
 
-    run ${INSTALL_LAUNCHER:-} env -u ADAPTERS -u PLATFORM \
-        HOME="$INSTALL_HOME" \
-        PATH="$INSTALL_DIR:$STUB_BIN_DIR:$PATH" \
-        MESHERY_INSTALL_DIR="$INSTALL_DIR" \
-        MESHERY_VERSION=v0.0.0-e2e \
-        MESHERYCTL_CALL_LOG="$MESHERYCTL_CALL_LOG" \
-        CURL_CALL_LOG="$CURL_CALL_LOG" \
-        "$@" \
-        bash "$INSTALL_SCRIPT" < /dev/null
+    local cmd=(env -u ADAPTERS -u PLATFORM
+        HOME="$INSTALL_HOME"
+        PATH="$INSTALL_DIR:$STUB_BIN_DIR:$PATH"
+        MESHERY_INSTALL_DIR="$INSTALL_DIR"
+        MESHERY_VERSION=v0.0.0-e2e
+        MESHERYCTL_CALL_LOG="$MESHERYCTL_CALL_LOG"
+        CURL_CALL_LOG="$CURL_CALL_LOG"
+        "$@"
+        bash "$INSTALL_SCRIPT")
+
+    if [ -n "${INSTALL_TTY_INPUT:-}" ]; then
+        run script -qefc "$(printf '%q ' "${cmd[@]}")" /dev/null <<< "$INSTALL_TTY_INPUT"
+    else
+        run ${INSTALL_LAUNCHER:-} "${cmd[@]}" < /dev/null
+    fi
 }
 
 # assert_installed_with_components <json array>
@@ -165,4 +173,17 @@ assert_installed_with_components() {
 
     assert_file_not_exists "$CURL_CALL_LOG"
     assert_file_not_exists "$INSTALL_DIR/mesheryctl"
+}
+
+@test "[TC-6][cut=Installer / Bash Script][tg=Installation] given ADAPTERS without PLATFORM when the platform prompt is answered then mesheryctl is installed and started with a new context holding only that adapter" {
+    if ! command -v script > /dev/null; then
+        skip "script (util-linux) is required to answer the prompt from a terminal"
+    fi
+
+    INSTALL_TTY_INPUT="$PLATFORM_UNDER_TEST" run_installer "$BATS_TEST_TMPDIR/answered" ADAPTERS="consul"
+    assert_success
+    assert_output --partial "Enter a platform to deploy Meshery. Available platforms [docker, kubernetes]:"
+    refute_output --partial "Invalid platform"
+
+    assert_installed_with_components '["meshery-consul"]'
 }
