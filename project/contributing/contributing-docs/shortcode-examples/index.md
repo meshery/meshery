@@ -384,7 +384,7 @@ Takes no parameters and no body.
 
 
 
-<h2>v1.0.78</h2>
+<h2>v1.0.79</h2>
 
 
 
