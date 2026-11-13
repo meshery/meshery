@@ -27771,6 +27771,330 @@ Correct the code that builds the event so it sets the field as the schemas event
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInProcessCloudAuthUnavailableCode-11341" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInProcessCloudAuthUnavailableCode-more-info" onclick="toggle_visibility('meshkit-ErrInProcessCloudAuthUnavailableCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11341" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errinprocesscloudauthunavailablecode-11341/"><code>ErrInProcessCloudAuthUnavailableCode-11341</code></a>
+            </td>
+            <td>Unable to authenticate to the managed Kubernetes cluster</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInProcessCloudAuthUnavailableCode-11341" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrInProcessCloudAuthUnavailableCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">In-process token minting requires cloud credentials in the Meshery process; a kubeconfig alone is not enough</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The Meshery process has no cloud credentials for the cluster&#39;s account or project
+The exec credential plugin named in the kubeconfig is not installed where Meshery runs</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">For EKS, give the Meshery process AWS credentials: environment variables, a shared config profile, IAM Roles for Service Accounts, or an EC2/ECS instance role
+For GKE, give the Meshery process Application Default Credentials: GOOGLE_APPLICATION_CREDENTIALS pointing at a service-account key, or Workload Identity
+Alternatively install the exec credential plugin (the AWS CLI, aws-iam-authenticator, or gke-gcloud-auth-plugin) on the Meshery host&#39;s PATH
+If the Meshery server cannot hold cloud credentials, deploy the Meshery Operator into the cluster instead</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrAWSCredentialsUnavailableCode-11342" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrAWSCredentialsUnavailableCode-more-info" onclick="toggle_visibility('meshkit-ErrAWSCredentialsUnavailableCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11342" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errawscredentialsunavailablecode-11342/"><code>ErrAWSCredentialsUnavailableCode-11342</code></a>
+            </td>
+            <td>AWS credentials are not available for EKS token minting</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrAWSCredentialsUnavailableCode-11342" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrAWSCredentialsUnavailableCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">No AWS credentials are configured in the environment, shared config files, web identity (IRSA), or instance metadata
+The AWS profile named in the kubeconfig does not exist where Meshery runs
+The role named with --role-arn or -r cannot be assumed with the available credentials
+The profile uses an AWS IAM Identity Center (SSO) session that has expired, or an assume-role that requires MFA, neither of which is supported in process</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Configure AWS credentials for the Meshery process (for example AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY, AWS_PROFILE, IRSA, or an instance role)
+Verify that the credentials are allowed to assume the role referenced by the kubeconfig</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrEKSRegionUnresolvedCode-11343" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrEKSRegionUnresolvedCode-more-info" onclick="toggle_visibility('meshkit-ErrEKSRegionUnresolvedCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11343" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/erreksregionunresolvedcode-11343/"><code>ErrEKSRegionUnresolvedCode-11343</code></a>
+            </td>
+            <td>AWS region is not configured for EKS token minting</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrEKSRegionUnresolvedCode-11343" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrEKSRegionUnresolvedCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The exec stanza has no --region flag, no AWS_REGION or AWS_DEFAULT_REGION env entry, and the process environment and shared config name no region either</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Add --region to the exec stanza arguments, or set AWS_REGION for the Meshery process</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrMintEKSTokenCode-11344" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrMintEKSTokenCode-more-info" onclick="toggle_visibility('meshkit-ErrMintEKSTokenCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11344" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errmintekstokencode-11344/"><code>ErrMintEKSTokenCode-11344</code></a>
+            </td>
+            <td>Unable to mint EKS bearer token</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrMintEKSTokenCode-11344" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrMintEKSTokenCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The AWS credentials expired and could not be refreshed</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Verify that the AWS credentials available to the Meshery process are still valid</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrGCPCredentialsUnavailableCode-11345" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGCPCredentialsUnavailableCode-more-info" onclick="toggle_visibility('meshkit-ErrGCPCredentialsUnavailableCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11345" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errgcpcredentialsunavailablecode-11345/"><code>ErrGCPCredentialsUnavailableCode-11345</code></a>
+            </td>
+            <td>Google Cloud credentials are not available for GKE token minting</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrGCPCredentialsUnavailableCode-11345" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrGCPCredentialsUnavailableCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">Unable to obtain a token from Google Application Default Credentials to mint a GKE token</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">GOOGLE_APPLICATION_CREDENTIALS is unset, no gcloud application-default credentials file exists, and no GCE or GKE metadata server is reachable
+The Application Default Credentials were found but token exchange failed, for example because the refresh token was revoked or expired
+The credentials file is not a service_account key or an authorized_user (gcloud application-default login) file; external_account, impersonated_service_account and other types are not supported in process
+The credentials file names a token_uri other than https://oauth2.googleapis.com/token
+On a metadata server, the host&#39;s access scopes do not include cloud-platform and userinfo.email</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Set GOOGLE_APPLICATION_CREDENTIALS to a service-account key file, run on GKE with Workload Identity, or run gcloud auth application-default login
+On a Compute Engine host, enable the cloud-platform and userinfo.email access scopes</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrGCPServiceAccountKeyCode-11346" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrGCPServiceAccountKeyCode-more-info" onclick="toggle_visibility('meshkit-ErrGCPServiceAccountKeyCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11346" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errgcpserviceaccountkeycode-11346/"><code>ErrGCPServiceAccountKeyCode-11346</code></a>
+            </td>
+            <td>Unusable Google Cloud service-account key</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrGCPServiceAccountKeyCode-11346" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrGCPServiceAccountKeyCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The supplied JSON is malformed or is not a service_account key
+The key names a token_uri other than https://oauth2.googleapis.com/token
+Google rejected the key, for example because it was deleted or disabled, or the token endpoint could not be reached</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Supply a current JSON key file downloaded for a Google Cloud service account, unmodified</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrUnsupportedCloudProviderCode-11347" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUnsupportedCloudProviderCode-more-info" onclick="toggle_visibility('meshkit-ErrUnsupportedCloudProviderCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11347" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errunsupportedcloudprovidercode-11347/"><code>ErrUnsupportedCloudProviderCode-11347</code></a>
+            </td>
+            <td>Unsupported cloud provider for in-process token minting</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrUnsupportedCloudProviderCode-11347" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrUnsupportedCloudProviderCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The credential plugin specification was constructed with an unknown provider</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Use a Spec returned by Recognize</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+          <tr id="ErrInProcessCloudAuthFallbackCode-11348" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInProcessCloudAuthFallbackCode-more-info" onclick="toggle_visibility('meshkit-ErrInProcessCloudAuthFallbackCode-more-info');">
+            <td class="tbl-severity-info">None</td>
+            <td id=" -11348" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errinprocesscloudauthfallbackcode-11348/"><code>ErrInProcessCloudAuthFallbackCode-11348</code></a>
+            </td>
+            <td>Falling back to the exec credential plugin for the managed Kubernetes cluster</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInProcessCloudAuthFallbackCode-11348" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrInProcessCloudAuthFallbackCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The Meshery process has no usable cloud credentials for the cluster&#39;s account or project
+The cloud credentials are misconfigured, for example a mistyped role ARN or an expired Application Default Credentials login</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">No action is needed if the exec credential plugin is meant to authenticate
+To mint tokens in process, fix the cloud credentials available to the Meshery process; setup is retried periodically</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrUntrustedClusterEndpointCode-11349" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUntrustedClusterEndpointCode-more-info" onclick="toggle_visibility('meshkit-ErrUntrustedClusterEndpointCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11349" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/erruntrustedclusterendpointcode-11349/"><code>ErrUntrustedClusterEndpointCode-11349</code></a>
+            </td>
+            <td>Refusing to send cloud credentials to an unrecognized cluster endpoint</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrUntrustedClusterEndpointCode-11349" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrUntrustedClusterEndpointCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The kubeconfig server is not an EKS or GKE control plane endpoint, for example a proxy, a load balancer, or a host controlled by whoever wrote the kubeconfig
+The kubeconfig disables TLS verification (insecure-skip-tls-verify), uses http, or routes the connection through proxy-url
+For EKS, the exec stanza&#39;s --region differs from the region in the endpoint host name
+For a GKE IP endpoint, the kubeconfig has no certificate-authority data, or the GKE API did not confirm that this IP and CA certificate belong to a cluster in a trusted project (the ADC project, GOOGLE_CLOUD_PROJECT or GOOGLE_PROJECT)</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Use the cluster endpoint written by aws eks update-kubeconfig or gcloud container clusters get-credentials, with TLS verification enabled
+For a GKE IP endpoint, grant the Meshery process container.clusters.get or container.clusters.list on the cluster project, and set GOOGLE_CLOUD_PROJECT to that project unless it is the ADC project
+Alternatively install the exec credential plugin named in the kubeconfig on the Meshery host&#39;s PATH, so it authenticates instead
+To keep the exec plugin for a context, disable in-process cloud auth for that context&#39;s kubeconfig user; every context sharing that user switches with it
+If the Meshery server cannot hold cloud credentials, deploy the Meshery Operator into the cluster instead</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+          <tr id="ErrUntrustedClusterEndpointFallbackCode-11350" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrUntrustedClusterEndpointFallbackCode-more-info" onclick="toggle_visibility('meshkit-ErrUntrustedClusterEndpointFallbackCode-more-info');">
+            <td class="tbl-severity-info">None</td>
+            <td id=" -11350" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/erruntrustedclusterendpointfallbackcode-11350/"><code>ErrUntrustedClusterEndpointFallbackCode-11350</code></a>
+            </td>
+            <td>Using the exec credential plugin for an unrecognized cluster endpoint</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrUntrustedClusterEndpointFallbackCode-11350" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrUntrustedClusterEndpointFallbackCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The kubeconfig server is not an EKS or GKE control plane endpoint, or the kubeconfig disables TLS verification, uses http, or sets proxy-url
+For a GKE IP endpoint, no trusted project (the ADC project, GOOGLE_CLOUD_PROJECT or GOOGLE_PROJECT) was set, or the GKE API was unreachable, denied container.clusters.get and container.clusters.list, listed clusters only partially, or returned no cluster with this IP and CA certificate in those projects</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">No action is needed if the exec credential plugin is meant to authenticate
+To mint tokens in process, point the kubeconfig at the cluster&#39;s own EKS or GKE endpoint with TLS verification enabled
+For a GKE IP endpoint, grant the Meshery process container.clusters.get or container.clusters.list on the cluster project, and set GOOGLE_CLOUD_PROJECT to that project unless it is the ADC project</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrCloudAuthTimeoutCode-11351" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrCloudAuthTimeoutCode-more-info" onclick="toggle_visibility('meshkit-ErrCloudAuthTimeoutCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -11351" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errcloudauthtimeoutcode-11351/"><code>ErrCloudAuthTimeoutCode-11351</code></a>
+            </td>
+            <td>Timed out obtaining cloud credentials for the managed Kubernetes cluster</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrCloudAuthTimeoutCode-11351" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrCloudAuthTimeoutCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The cloud provider&#39;s token or credentials endpoint (AWS STS, Google OAuth2, or an instance metadata server) is unreachable or not responding
+A network proxy or firewall is blocking or stalling requests from the Meshery process to the cloud provider</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Verify that the Meshery host can reach the cloud provider&#39;s credential endpoints
+Retry the request; every new request starts a fresh attempt</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+          <tr id="ErrInProcessGKEIPMintingCode-11352" class="tbl-body-row hover-effect" data-details-id="meshkit-ErrInProcessGKEIPMintingCode-more-info" onclick="toggle_visibility('meshkit-ErrInProcessGKEIPMintingCode-more-info');">
+            <td class="tbl-severity-info">None</td>
+            <td id=" -11352" class="error-name-code">
+              <a href="/reference/error-codes/library-meshkit/errinprocessgkeipmintingcode-11352/"><code>ErrInProcessGKEIPMintingCode-11352</code></a>
+            </td>
+            <td>In-process GKE token minting is active for an IP endpoint</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInProcessGKEIPMintingCode-11352" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshkit-ErrInProcessGKEIPMintingCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The kubeconfig names a GKE control plane by IP address, and the GKE API confirmed that IP and CA certificate belong to a cluster in the ADC project, GOOGLE_CLOUD_PROJECT or GOOGLE_PROJECT</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">No action is needed if this cluster should use in-process token minting
+To use the exec plugin for this context instead, disable in-process cloud auth for that context&#39;s kubeconfig user (every context sharing that user switches with it), or set MESHKIT_DISABLE_INPROCESS_CLOUD_AUTH=true for the whole process</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
