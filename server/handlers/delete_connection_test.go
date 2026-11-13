@@ -126,6 +126,22 @@ func TestDeleteConnection_NilUUID_ReturnsBadRequest(t *testing.T) {
 	}
 }
 
+type nilGuardTestProvider struct {
+	models.Provider
+}
+
+func (p *nilGuardTestProvider) GetProviderToken(_ *http.Request) (string, error) {
+	return "test-token", nil
+}
+
+func (p *nilGuardTestProvider) GetConnectionByID(_ string, _ uuid.UUID) (*connections.Connection, int, error) {
+	return nil, http.StatusNotFound, models.ErrResultNotFound(errors.New("not found"))
+}
+
+func (p *nilGuardTestProvider) DeleteConnection(_ *http.Request, _ uuid.UUID) (*connections.Connection, error) {
+	return nil, models.ErrResultNotFound(errors.New("not found"))
+}
+
 func TestDeleteConnection_NilProvider_ReturnsErrorWithoutPanic(t *testing.T) {
 	h := &Handler{
 		config: &models.HandlerConfig{},
@@ -138,18 +154,44 @@ func TestDeleteConnection_NilProvider_ReturnsErrorWithoutPanic(t *testing.T) {
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusInternalServerError, rec.Body.String())
 	}
+	if !strings.Contains(rec.Body.String(), ErrNilProviderCode) {
+		t.Errorf("expected error body to contain %s, got: %s", ErrNilProviderCode, rec.Body.String())
+	}
 }
 
 func TestDeleteConnection_NilUser_DoesNotPanic(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
 	h := &Handler{
-		config: &models.HandlerConfig{},
-		log:    newTestLogger(t),
+		config:   &models.HandlerConfig{},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
 	}
 
-	rec := deleteConnectionWithRawID(t, h, nil, "not-a-valid-uuid", nil)
+	validID := uuid.Must(uuid.NewV4()).String()
+	provider := &nilGuardTestProvider{}
 
-	if rec.Code != http.StatusBadRequest {
-		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusBadRequest, rec.Body.String())
+	rec := deleteConnectionWithRawID(t, h, provider, validID, nil)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusNotFound, rec.Body.String())
+	}
+}
+
+func TestDeleteConnection_NilSystemID_DoesNotPanic(t *testing.T) {
+	h := &Handler{
+		config:   &models.HandlerConfig{},
+		log:      newTestLogger(t),
+		SystemID: nil,
+	}
+
+	validID := uuid.Must(uuid.NewV4()).String()
+	provider := &nilGuardTestProvider{}
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	rec := deleteConnectionWithRawID(t, h, provider, validID, user)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusNotFound, rec.Body.String())
 	}
 }
 

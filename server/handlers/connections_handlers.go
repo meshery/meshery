@@ -740,8 +740,9 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	}
 
 	if provider == nil {
-		h.log.Error(fmt.Errorf("provider is nil"))
-		writeMeshkitError(w, fmt.Errorf("provider is nil"), http.StatusInternalServerError)
+		nilProviderErr := ErrNilProvider()
+		h.log.Error(nilProviderErr)
+		writeMeshkitError(w, nilProviderErr, http.StatusInternalServerError)
 		return
 	}
 
