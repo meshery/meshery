@@ -44,9 +44,9 @@ type MeshsyncDataHandler struct {
 	// eventsChan and storeChan carry the broker's MeshSync messages to the
 	// listener goroutines. Kept on the handler so PauseSubscriptions and
 	// ResumeSubscriptions can unsubscribe and re-subscribe the same channels.
-	// Each is written once by its listener goroutine before its first
-	// subscribe, so a pause - which runs through the broker's own locking -
-	// only ever reads a channel that is already stored.
+	// Each is written once by its listener goroutine, and Run waits for both
+	// listeners to subscribe before it returns, so a pause or resume - which
+	// only happens after Run - always sees the stored channel.
 	eventsChan chan *broker.Message
 	storeChan  chan *broker.Message
 	// paused reports whether the MeshSync subscriptions are paused: the
@@ -92,15 +92,21 @@ func (mh *MeshsyncDataHandler) IsConnected() bool {
 
 func (mh *MeshsyncDataHandler) Run() error {
 	storeSubscriptionStatusChan := make(chan bool)
+	eventsSubscribed := make(chan struct{})
 	if mh.listenerWg == nil {
 		mh.listenerWg = &sync.WaitGroup{}
 	}
 	// this subscription is independent of whether or not the stale data in the database have been cleaned up
 	mh.listenerWg.Add(1)
-	go mh.subscribeToMeshsyncEvents()
+	go mh.subscribeToMeshsyncEvents(eventsSubscribed)
 
 	mh.listenerWg.Add(1)
 	go mh.subsribeToStoreUpdates(storeSubscriptionStatusChan)
+	// Do not return before the events listener has subscribed: the broker
+	// supervisor may pause this handler as soon as it is attached, and a
+	// subscription that lands after the pause would keep the paused handler
+	// receiving, and be doubled by the resume.
+	<-eventsSubscribed
 	// to make sure that we don't ask for data before we start listening
 	if <-storeSubscriptionStatusChan {
 		// err := mh.removeStaleObjects()
@@ -116,18 +122,24 @@ func (mh *MeshsyncDataHandler) Run() error {
 	return nil
 }
 
-func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
+// subscribeToMeshsyncEvents closes subscribed once its subscription attempt
+// is over, whether or not it succeeded.
+func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents(subscribed chan<- struct{}) {
 	defer mh.listenerWg.Done()
 
-	// The channel lives on the handler so ResumeSubscriptions can
-	// re-subscribe it after a pause.
 	eventsChan := make(chan *broker.Message, 1)
-	mh.eventsChan = eventsChan
 	err := mh.ListenToMeshSyncEvents(eventsChan)
 	if err != nil {
+		close(subscribed)
 		mh.log.Error(ErrBrokerSubscription(err))
 		return
 	}
+	// The channel lives on the handler so ResumeSubscriptions can
+	// re-subscribe it after a pause. It is stored only once subscribed: a
+	// failed subscription has no listener, and re-subscribing its channel
+	// would block the broker on a channel nobody reads.
+	mh.eventsChan = eventsChan
+	close(subscribed)
 	mh.log.Info("subscribed to meshery broker for meshsync events")
 
 	for {
