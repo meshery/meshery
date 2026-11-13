@@ -430,16 +430,8 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 					return fmt.Errorf("no versions found")
 				}
 				ReleaseTag = versions[len(versions)-1]
-			} else { // else we get version tag from the config file
-				mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-				if err != nil {
-					return errors.Wrap(err, "error processing meshconfig")
-				}
-				currCtx, err := mctlCfg.GetCurrentContext()
-				if err != nil {
-					return err
-				}
-				ReleaseTag = currCtx.GetVersion()
+			} else { // else we use the version pinned in the given context
+				ReleaseTag = ctx.GetVersion()
 			}
 
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ReleaseTag + "/install/docker/docker-compose.yaml"
