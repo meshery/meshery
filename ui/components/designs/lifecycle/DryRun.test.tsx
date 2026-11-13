@@ -1,6 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createActor, createMachine } from 'xstate';
 
 vi.mock('@sistent/sistent', () => {
   const styled = (_tag: any, _options?: any) => () => {
@@ -335,7 +336,7 @@ describe('DryRunDesign mount-time request', () => {
   });
 
   it('puts the returnAddress prop on its dry-run request', () => {
-    const returnAddress = { id: 'designValidationManager' };
+    const returnAddress = createActor(createMachine({ id: 'designValidationManager' }));
     const send = vi.fn();
     render(
       <DryRunDesign

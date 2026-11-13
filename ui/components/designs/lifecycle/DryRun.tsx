@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import type { AnyActorRef } from 'xstate';
 import { List, ListItemText, ListItemIcon, Typography, Collapse } from '@sistent/sistent';
 import { ExpandLess, ExpandMore } from '@/assets/icons';
 import { useState } from 'react';
@@ -379,6 +380,20 @@ const DryRunComponent = (props) => {
 
 // canNavigateToErrors: see ValidateDesign. True by default for Kanvas Designer;
 // Meshery UI pages, which have no designer to navigate into, pass false.
+// returnAddress: the actor ref, or registered system id, that receives the dry-run reply.
+type DryRunDesignProps = {
+  handleClose: any;
+  currentComponentId?: any;
+  currentComponentName?: any;
+  design: any;
+  validationMachine: any;
+  canNavigateToErrors?: boolean;
+  selectedK8sContexts: any;
+  deployment_type: any;
+  includeDependencies: any;
+  returnAddress?: AnyActorRef | string;
+};
+
 export const DryRunDesign = ({
   handleClose,
   currentComponentId = undefined,
@@ -390,7 +405,7 @@ export const DryRunDesign = ({
   deployment_type,
   includeDependencies,
   returnAddress = undefined,
-}) => {
+}: DryRunDesignProps) => {
   if (!design) {
     return null;
   }

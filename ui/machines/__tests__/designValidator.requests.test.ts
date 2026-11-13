@@ -359,6 +359,31 @@ describe('designValidationMachine overlapping requests', () => {
   );
 
   it(
+    'warns about an unregistered string address and still replies to the other recipients',
+    async () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const { actor: kanvas, replies } = sender();
+      const older = design('d-old', [deployment('c1', 1)]);
+      const newer = design('d-new', [deployment('c1', 2)]);
+      validator.send(
+        designValidatorCommands.validateDesignSchema({
+          design: older,
+          returnAddress: 'unregisteredListener',
+        }),
+      );
+      validator.send(
+        designValidatorCommands.validateDesignSchema({ design: newer, returnAddress: kanvas }),
+      );
+      await until(() => definitionCalls.length === 2);
+      resolveDefinitions([0, 1]);
+      await until(() => replies.length === 1);
+      expect(payloadOf(replies[0]).design).toBe(newer);
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('"unregisteredListener"'));
+    },
+    TEST_TIMEOUT,
+  );
+
+  it(
     'replies with a failure when component definitions cannot be resolved',
     async () => {
       const errorLog = vi.spyOn(console, 'error').mockImplementation(() => {});

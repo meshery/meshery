@@ -265,8 +265,18 @@ const ResolveDefinitionsActor = fromPromise(async ({ input: { kind, data } }) =>
   };
 });
 
-const resolveRecipient = (system, address) =>
-  typeof address === 'string' ? system.get(address) : address;
+const resolveRecipient = (system, address) => {
+  if (typeof address !== 'string') {
+    return address;
+  }
+  const recipient = system.get(address);
+  if (!recipient) {
+    console.warn(
+      `designValidator: no actor is registered as "${address}"; dropping its validation reply`,
+    );
+  }
+  return recipient;
+};
 
 const recipientsOf = (system, request) => {
   const recipients = [];
@@ -386,6 +396,10 @@ const settleRequest = (settle) =>
     );
   });
 
+// Matches a reply to its lane by object identity: the child dataValidatorMachine
+// (@sistent/sistent) echoes back the same validationPayload object it was sent.
+// validationType is only the fallback. Revisit this if Sistent starts cloning the
+// payload, since every reply would then fall through to the validationType guess.
 const laneOfReply = (context, event) => {
   const payload = event.data?.validationPayload;
   const lanes = Object.keys(VALIDATOR_LANES);

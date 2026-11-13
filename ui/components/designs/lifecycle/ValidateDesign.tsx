@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import type { AnyActorRef } from 'xstate';
 import { List, ListItemText, ListItemIcon, Typography, Collapse } from '@sistent/sistent';
 import { ExpandLess, ExpandMore } from '@/assets/icons';
 import { ComponentIcon, Loading, getSvgWhiteForComponent, processDesign } from './common';
@@ -178,6 +179,14 @@ const ValidationResults_ = (props) => {
 
 export const ValidationResults = ValidationResults_;
 
+type ValidateDesignProps = {
+  design: any;
+  currentNodeId: any;
+  validationMachine: any;
+  canNavigateToErrors?: boolean;
+  returnAddress?: AnyActorRef | string;
+};
+
 /**
  * ValidateDesign validates a design's component configurations against their
  * schemas and lists the failures per component.
@@ -192,6 +201,8 @@ export const ValidationResults = ValidationResults_;
  *   to navigate into - every Meshery UI page - passes false so errors do not look
  *   clickable. Never derive this from the validator's returnAddress: that names who
  *   receives validation replies, not who handles taps.
+ * @param returnAddress the actor ref, or registered system id, that receives the
+ *   validation reply
  */
 export const ValidateDesign = ({
   design,
@@ -199,7 +210,7 @@ export const ValidateDesign = ({
   validationMachine,
   canNavigateToErrors = true,
   returnAddress = undefined,
-}) => {
+}: ValidateDesignProps) => {
   const validationResults = useDesignSchemaValidationResults(validationMachine);
   const isValidating = useIsValidatingDesignSchema(validationMachine);
 
