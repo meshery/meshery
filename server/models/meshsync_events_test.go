@@ -602,3 +602,15 @@ func TestReplaceMeshsyncResourceMetadata(t *testing.T) {
 		t.Fatalf("unexpected metadata: %+v", rows)
 	}
 }
+
+func TestReplaceMeshsyncResourceRejectsMissingIdentity(t *testing.T) {
+	handler := &MeshsyncDataHandler{}
+	for _, obj := range []*meshsyncmodel.KubernetesResource{
+		{},
+		{ID: "existing-id"},
+	} {
+		if err := handler.replaceMeshsyncResource(obj); err == nil {
+			t.Fatalf("expected missing identity to be rejected: %+v", obj)
+		}
+	}
+}
