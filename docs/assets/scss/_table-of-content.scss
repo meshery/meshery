@@ -83,7 +83,7 @@
       }
 
       &:focus-visible {
-        outline: 2px solid var(--brand-color-secondary);
+        outline: 2px solid var(--color-secondary-dark);
         outline-offset: 2px;
         border-radius: 3px;
         color: var(--color-secondary-dark);
@@ -149,7 +149,7 @@
           }
 
           &:focus-visible {
-            outline: 2px solid var(--brand-color-secondary);
+            outline: 2px solid var(--color-secondary-dark);
             outline-offset: 2px;
             border-radius: 3px;
             color: var(--color-secondary-dark);
