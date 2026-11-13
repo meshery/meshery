@@ -32,8 +32,17 @@ func TestDeleteCmd(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/filter?page_size=10000",
+					URL:          testContext.BaseURL + "/api/filter?pagesize=10000",
 					Response:     "filter.list.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					// GetID paginates: the page-0 fixture reports
+					// totalCount 5 with 2 items, so a second page is
+					// requested. The empty page lets the lookup conclude.
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/filter?pagesize=10000&page=1",
+					Response:     "filter.list.empty.api.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -49,6 +58,22 @@ func TestDeleteCmd(t *testing.T) {
 					Response:     "delete.rollout.api.response.golden",
 					ResponseCode: 200,
 				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/filter?pagesize=10000",
+					Response:     "filter.list.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					// GetID paginates: the page-0 fixture reports
+					// totalCount 5 with 2 items, so a second page is
+					// requested. The empty page lets the lookup conclude.
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/filter?pagesize=10000&page=1",
+					Response:     "filter.list.empty.api.response.golden",
+					ResponseCode: 200,
+				},
+				// GetName, used for name lookup, still requests page_size.
 				{
 					Method:       "GET",
 					URL:          testContext.BaseURL + "/api/filter?page_size=10000",

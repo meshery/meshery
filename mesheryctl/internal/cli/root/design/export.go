@@ -46,7 +46,7 @@ type UserProfile struct {
 }
 
 var exportCmd = &cobra.Command{
-	Use:   "export [pattern-name | ID]",
+	Use:   "export [design-name | ID]",
 	Short: "Export a design from Meshery",
 	Long: `The 'export' command allows you to export a specific design from your Meshery server.
 You can specify the design by its name or ID and optionally define the type of design.
@@ -55,22 +55,32 @@ By default, the exported design will be saved in the current directory. The diff
 type allowed are oci, original, and current. The default design type is current.`,
 	Example: `
 // Export a design with a specific ID
-mesheryctl design export [pattern-name | ID]
+mesheryctl design export [design-name | ID]
 
 // Export a design with a specific ID and type
-mesheryctl design export [pattern-name | ID] --type [design-type]
+mesheryctl design export [design-name | ID] --type [design-type]
 
 // Export a design and save it to a specific directory
-mesheryctl design export [pattern-name | ID] --output ./designs
+mesheryctl design export [design-name | ID] --output ./designs
 
 // Export a design with a specific type and save it to a directory
-mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exports
+mesheryctl design export [design-name | ID] --type [design-type] --output ./exports
 	`,
 	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
+		}
+
+		designType, _ := cmd.Flags().GetString("type")
+		if designType == "" {
+			designType = "current"
+		}
+		switch designType {
+		case "current", "original", "oci":
+		default:
+			return utils.ErrInvalidArgument(fmt.Errorf("invalid --type %q: use one of current, original or oci", designType))
 		}
 
 		patternNameOrID := strings.Join(args, " ")
@@ -86,11 +96,6 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 			}
 		}
 
-		designType, _ := cmd.Flags().GetString("type")
-		if designType == "" {
-			designType = "current"
-		}
-
 		if err := exportDesign(baseUrl, design, designType); err != nil {
 			return err
 		}
@@ -99,6 +104,8 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 	},
 }
 
+// fetchPatternIDByName returns the ID of the design matching patternName, and
+// asks the user to choose when several designs match.
 func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	patternUrl := fmt.Sprintf("%s/api/pattern?search=%s", baseUrl, url.QueryEscape(patternName))
 	req, err := utils.NewRequest(http.MethodGet, patternUrl, nil)
@@ -119,26 +126,23 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	if err != nil {
 		return "", utils.ErrReadFromBody(err)
 	}
-	var response struct {
-		TotalCount int                     `json:"total_count"`
-		Patterns   []models.MesheryPattern `json:"patterns"`
-	}
+	var response models.PatternsAPIResponse
 	if err := encoding.Unmarshal(buf, &response); err != nil {
 		return "", err
 	}
 
-	switch response.TotalCount {
+	switch len(response.Patterns) {
 	case 0:
 		return "", ErrDesignNotFound(patternName)
 	case 1:
-		return response.Patterns[0].ID.String(), nil
+		return utils.FormatUUID(response.Patterns[0].ID, ""), nil
 	}
 
 	selectedPattern, err := selectPatternPrompt(response.Patterns, baseUrl)
 	if err != nil {
 		return "", err
 	}
-	return selectedPattern.ID.String(), nil
+	return utils.FormatUUID(selectedPattern.ID, ""), nil
 }
 
 func exportDesign(baseUrl, design, designType string) error {
@@ -171,7 +175,7 @@ func exportDesign(baseUrl, design, designType string) error {
 		return utils.ErrReadFromBody(err)
 	}
 
-	filename := generateFilename(pattern.Name, design, designType)
+	filename := generateFilename(pattern.Name, design, designType, pattern.Type.String)
 	outputFilePath := filepath.Join(outputDir, filename)
 	outputFilePath = getUniqueFilename(outputFilePath)
 
@@ -214,13 +218,22 @@ func makeRequest(method, url string) (*http.Response, error) {
 	return utils.MakeRequest(req)
 }
 
-func generateFilename(patternName, design, designType string) string {
+// generateFilename names the exported file after what the server sends back:
+// an OCI image tarball for "oci", the uploaded source for "original" (a
+// packaged chart for Helm, YAML for Kubernetes manifests and Docker Compose),
+// and a Meshery design YAML for "current".
+func generateFilename(patternName, design, designType, sourceType string) string {
 	lastPartOfID := strings.Split(design, "-")[len(strings.Split(design, "-"))-1]
 	filename := fmt.Sprintf("%s_%s", patternName, lastPartOfID)
 	switch designType {
 	case "oci":
+		filename += ".tar"
 	case "original":
-		filename += ".tar.gz"
+		if models.DesignType(sourceType) == models.HelmChart {
+			filename += ".tar.gz"
+		} else {
+			filename += ".yaml"
+		}
 	default:
 		filename += ".yaml"
 	}
@@ -282,24 +295,20 @@ func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) (mode
 	patternInfos := make([]string, len(patterns)+1)
 	patternInfos[0] = heading
 	for i, pattern := range patterns {
-		createdAt := "N/A"
-		updatedAt := "N/A"
+		createdAt := utils.FormatTime(pattern.CreatedAt, "2006-01-02 15:04:05", "N/A")
+		updatedAt := utils.FormatTime(pattern.UpdatedAt, "2006-01-02 15:04:05", "N/A")
 		owner := "N/A"
-
-		if pattern.CreatedAt != nil {
-			createdAt = pattern.CreatedAt.Format("2006-01-02 15:04:05")
-		}
-		if pattern.UpdatedAt != nil {
-			updatedAt = pattern.UpdatedAt.Format("2006-01-02 15:04:05")
-		}
 		if pattern.UserID != nil {
 			ownerName, err := getOwnerName(pattern.UserID.String(), baseURL)
 			if err == nil {
 				owner = ownerName
 			}
 		}
-		id := pattern.ID.String()
-		lastFourID := id[len(id)-4:]
+		id := utils.FormatUUID(pattern.ID, "N/A")
+		lastFourID := id
+		if len(id) > 4 {
+			lastFourID = id[len(id)-4:]
+		}
 
 		rowParts := []string{
 			centerAlign(pattern.Name, widths[0]),
@@ -352,6 +361,6 @@ func init() {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
 
-	exportCmd.Flags().StringVarP(&designType, "type", "", "", "Specify the design type to export")
+	exportCmd.Flags().StringVarP(&designType, "type", "", "", "Type of export: current (Meshery design YAML), original (the source the design was imported from) or oci (OCI image tarball)")
 	exportCmd.Flags().StringVarP(&outputDir, "output", "o", "", "Specify the output directory to save the design")
 }

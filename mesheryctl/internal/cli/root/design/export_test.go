@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -220,5 +223,141 @@ func TestExportDesignNonOKDownloadStatus(t *testing.T) {
 	}
 	if meshkiterrors.GetCode(err) != utils.ErrResponseStatusCode {
 		t.Fatalf("expected ErrResponseStatusCode (%s), got %s", utils.ErrResponseStatusCode, meshkiterrors.GetCode(err))
+	}
+}
+
+// TestFetchPatternIDByName verifies the lookup against the response the server
+// sends, built from its own type so the test can't drift from the wire format.
+func TestFetchPatternIDByName(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	utils.TokenFlag = utils.GetToken(t)
+
+	patternID := uuid.Must(uuid.NewV4())
+
+	tests := []struct {
+		name     string
+		patterns []models.MesheryPattern
+		wantID   string
+	}{
+		{name: "one match returns its ID", patterns: []models.MesheryPattern{{ID: &patternID, Name: "my-design"}}, wantID: patternID.String()},
+		{name: "no match returns an error", patterns: []models.MesheryPattern{}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			body, err := json.Marshal(models.PatternsAPIResponse{TotalCount: uint(len(tt.patterns)), Patterns: tt.patterns})
+			if err != nil {
+				t.Fatal(err)
+			}
+			searchURL := fmt.Sprintf("%s/api/pattern?search=%s", testContext.BaseURL, url.QueryEscape("my-design"))
+			httpmock.RegisterResponder("GET", searchURL, httpmock.NewStringResponder(http.StatusOK, string(body)))
+
+			id, err := fetchPatternIDByName(testContext.BaseURL, "my-design")
+			if tt.wantID == "" {
+				wantCode := meshkiterrors.GetCode(ErrDesignNotFound("my-design"))
+				if meshkiterrors.GetCode(err) != wantCode {
+					t.Fatalf("expected error code %s, got %v", wantCode, err)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if id != tt.wantID {
+				t.Fatalf("expected id %s, got %s", tt.wantID, id)
+			}
+		})
+	}
+}
+
+func TestGenerateFilename(t *testing.T) {
+	const id = "a12b3c4d-5e6f-4890-abcd-ef1234567890"
+	tests := []struct {
+		designType, sourceType, want string
+	}{
+		{"current", "", "my-design_ef1234567890.yaml"},
+		{"oci", "", "my-design_ef1234567890.tar"},
+		{"original", string(models.HelmChart), "my-design_ef1234567890.tar.gz"},
+		{"original", string(models.K8sManifest), "my-design_ef1234567890.yaml"},
+		{"original", string(models.DockerCompose), "my-design_ef1234567890.yaml"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.designType+"/"+tt.sourceType, func(t *testing.T) {
+			if got := generateFilename("my-design", id, tt.designType, tt.sourceType); got != tt.want {
+				t.Fatalf("generateFilename(%q, %q) = %q, want %q", tt.designType, tt.sourceType, got, tt.want)
+			}
+		})
+	}
+}
+
+// TestExportDesignFileExtension runs exportDesign end to end and checks the
+// name of the file it writes for each export type.
+func TestExportDesignFileExtension(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	utils.TokenFlag = utils.GetToken(t)
+
+	const design = "a12b3c4d-5e6f-4890-abcd-ef1234567890"
+	tests := []struct {
+		name, designType, sourceType, downloadPath, wantFile string
+	}{
+		{"oci image is a tar", "oci", string(models.Design), "?oci=true", "my-design_ef1234567890.tar"},
+		{"original kubernetes manifest is yaml", "original", string(models.K8sManifest), "/Kubernetes%20Manifest", "my-design_ef1234567890.yaml"},
+		{"original helm chart is a gzipped tar", "original", string(models.HelmChart), "/Helm%20Chart", "my-design_ef1234567890.tar.gz"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pattern := models.MesheryPattern{Name: "my-design"}
+			pattern.Type.String, pattern.Type.Valid = tt.sourceType, true
+			patternBytes, err := json.Marshal(pattern)
+			if err != nil {
+				t.Fatal(err)
+			}
+			httpmock.RegisterResponder("GET", fmt.Sprintf("%s/api/pattern/%s", testContext.BaseURL, design),
+				httpmock.NewBytesResponder(http.StatusOK, patternBytes))
+			httpmock.RegisterResponder("GET", fmt.Sprintf("%s/api/pattern/download/%s%s", testContext.BaseURL, design, tt.downloadPath),
+				httpmock.NewStringResponder(http.StatusOK, "content"))
+
+			prevOutputDir := outputDir
+			outputDir = t.TempDir()
+			defer func() { outputDir = prevOutputDir }()
+
+			if err := exportDesign(testContext.BaseURL, design, tt.designType); err != nil {
+				t.Fatalf("exportDesign: %v", err)
+			}
+			if _, err := os.Stat(filepath.Join(outputDir, tt.wantFile)); err != nil {
+				entries, _ := os.ReadDir(outputDir)
+				var got []string
+				for _, e := range entries {
+					got = append(got, e.Name())
+				}
+				t.Fatalf("expected %s to be written, directory has %v", tt.wantFile, got)
+			}
+		})
+	}
+}
+
+// TestExportCmdRejectsUnknownType checks that an unknown --type fails before
+// any request is made, instead of silently exporting the current design.
+func TestExportCmdRejectsUnknownType(t *testing.T) {
+	_ = utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer utils.ResetCommandFlags(DesignCmd, t)
+	utils.TokenFlag = utils.GetToken(t)
+
+	DesignCmd.SetArgs([]string{"export", "my-design", "--type", "helm"})
+	err := DesignCmd.Execute()
+	if err == nil {
+		t.Fatal("expected an error for --type helm, got nil")
+	}
+	if meshkiterrors.GetCode(err) != utils.ErrInvalidArgumentCode {
+		t.Fatalf("expected ErrInvalidArgument (%s), got %v", utils.ErrInvalidArgumentCode, err)
+	}
+	if n := httpmock.GetTotalCallCount(); n != 0 {
+		t.Fatalf("expected no requests before rejecting --type, got %d", n)
 	}
 }

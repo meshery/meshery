@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
 	"path"
 	"strings"
+	"syscall"
 	"time"
 
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -268,7 +271,7 @@ func main() {
 		EnvironmentPersister:            &models.EnvironmentPersister{DB: dbHandler},
 		WorkspacePersister:              &models.WorkspacePersister{DB: dbHandler},
 		KeyPersister:                    &models.KeyPersister{DB: dbHandler},
-		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
+		EventsPersister:                 &models.EventsPersister{DB: dbHandler, Log: log},
 		GenericPersister:                dbHandler,
 		Log:                             log,
 		MeshsyncDefaultDeploymentMode:   meshsyncDefaultDeploymentMode,
@@ -299,7 +302,7 @@ func main() {
 		// This is the same database handler every provider's own
 		// EventsPersister wraps, so the events land in the same table either
 		// way.
-		SystemEventPersister: &models.EventsPersister{DB: dbHandler},
+		SystemEventPersister: &models.EventsPersister{DB: dbHandler, Log: log},
 
 		K8scontextChannel: models.NewContextHelper(),
 		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
@@ -367,7 +370,7 @@ func main() {
 			ProviderVersion:               version,
 			SmiResultPersister:            &models.SMIResultsPersister{DB: dbHandler},
 			GenericPersister:              dbHandler,
-			EventsPersister:               &models.EventsPersister{DB: dbHandler},
+			EventsPersister:               &models.EventsPersister{DB: dbHandler, Log: log},
 			Log:                           log,
 			CookieDuration:                24 * time.Hour,
 			MeshsyncDefaultDeploymentMode: meshsyncDefaultDeploymentMode,
@@ -515,17 +518,35 @@ func main() {
 
 	port := viper.GetInt("PORT")
 	r := router.NewRouter(ctx, h, port, g, gp)
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
+	shutdown, stopShutdownNotify := notifyShutdown()
 
 	go func() {
 		log.Info("Meshery Server listening on: ", port)
 		if err := r.Run(); err != nil {
+			// ErrServerClosed is the expected return once Shutdown drains
+			// the listener after the signal, not a crash.
+			if errors.Is(err, http.ErrServerClosed) {
+				log.Info("Meshery Server HTTP listener closed")
+				return
+			}
 			log.Error(ErrListenAndServe(err))
 			os.Exit(1)
 		}
 	}()
-	<-c
+	sig := <-shutdown
+	// Restore default handling, so a second signal during cleanup terminates
+	// the process instead of being swallowed.
+	stopShutdownNotify()
+	log.Info(fmt.Sprintf("Received %s, shutting down Meshery Server gracefully", sig))
+	// Drain the HTTP listener before cleanup closes the resources in-flight
+	// requests use, so no request runs against a closed provider session or
+	// database. Shutdown waits up to httpShutdownTimeout for active requests
+	// to finish, then forces the listener closed.
+	shutdownCtx, cancelShutdown := context.WithTimeout(context.Background(), httpShutdownTimeout)
+	defer cancelShutdown()
+	if err := r.Shutdown(shutdownCtx); err != nil {
+		log.Error(fmt.Errorf("failed to shut down HTTP server gracefully: %w", err))
+	}
 	regManager.Cleanup()
 	log.Info("Doing seeded content cleanup...")
 
@@ -559,4 +580,22 @@ func main() {
 	}
 
 	log.Info("Shutting down Meshery Server...")
+}
+
+// httpShutdownTimeout bounds how long the HTTP listener drains in-flight
+// requests after the shutdown signal before it is forced closed.
+const httpShutdownTimeout = 30 * time.Second
+
+// shutdownSignals start a graceful shutdown: Ctrl-C (SIGINT) interactively,
+// and SIGTERM, which is how Kubernetes, Docker and systemd stop a process.
+// Trapping only SIGINT meant every Pod restart killed the server outright, so
+// provider de-registration, session logout and the database close never ran.
+var shutdownSignals = []os.Signal{os.Interrupt, syscall.SIGTERM}
+
+// notifyShutdown returns a channel that receives the first shutdown signal,
+// and the function that stops the trap again.
+func notifyShutdown() (<-chan os.Signal, func()) {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, shutdownSignals...)
+	return c, func() { signal.Stop(c) }
 }

@@ -41,7 +41,7 @@ initiated, not just the ports.
 | :--- | :--- | :--- | :--- | :--- |
 | Clients (UI/browser, `mesheryctl`) | Meshery Server | 9081/tcp (HTTP/API/GraphQL); 80/tcp (WebSocket) | UI, REST, GraphQL, live updates | Front with ingress/TLS in production. |
 | Meshery Server | Managed cluster Kubernetes API | 443/tcp (typically) | Discovery, deploy/undeploy, Operator lifecycle | Uses kubeconfig context (out-of-cluster) or ServiceAccount (in-cluster). |
-| Meshery Server | Meshery Broker | 4222/tcp | Event/data streaming from each cluster | Reaches ClusterIP in-cluster; reaches an exposed endpoint out-of-cluster. |
+| Meshery Server | Meshery Broker | 4222/tcp (direct or exposed endpoint); Kubernetes API port from the kubeconfig server URL, typically 443/tcp (managed port-forward) | Event/data streaming from each cluster | Reaches the ClusterIP directly only for the cluster Meshery Server runs in; for every other cluster, reaches an exposed endpoint on 4222/tcp, or tunnels through that cluster's Kubernetes API port (typically 443/tcp) (managed port-forward), in which case no 4222/tcp egress leaves Meshery Server. |
 | Meshery Server | Remote Provider | 443/tcp (egress) | Authentication, capabilities, durable state | Must be allowed through egress firewalls/proxies. |
 | Meshery Server | Meshery Helm chart repository (`meshery.github.io`) | 443/tcp (egress) | Resolving and downloading the `meshery-operator` chart | Operator mode only; see [Egress requirements](#egress-requirements). |
 | Meshery Server | Meshery Adapters | adapter ports (e.g. 10000+/tcp) | Capability operations | Only when adapters are deployed. |
@@ -176,11 +176,12 @@ Remote Provider OAuth flow to complete, set the callback URL to Meshery's
 
 ```bash
 helm install meshery meshery/meshery --namespace meshery --create-namespace \
-  --set env.MESHERY_SERVER_CALLBACK_URL=https://meshery.example.com
+  --set env.MESHERY_SERVER_CALLBACK_URL=https://meshery.example.com/api/user/token
 ```
 
-The callback path Meshery uses is `/api/user/token`, so the effective callback
-becomes `https://meshery.example.com/api/user/token`. If login redirects fail or
+The callback URL must include the `/api/user/token` path. Meshery uses the
+value as-is and does not append the path for you, so a bare host sends users
+back to the login screen in a loop after sign-in. If login redirects fail or
 loop when behind a proxy, a missing or incorrect callback URL is the usual
 cause. See
 [Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}})

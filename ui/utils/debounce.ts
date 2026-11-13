@@ -3,7 +3,7 @@
  * on the timeout reached.
  *
  * @param {Function} func
- * @param {Number} timeout time in miliseconds
+ * @param {Number} timeout time in milliseconds
  * @returns
  */
 export default function debounce(func, timeout = 500) {

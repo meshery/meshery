@@ -27,15 +27,74 @@ func newConnectionActionTestHandler(t *testing.T) *Handler {
 func TestPerformConnectionAction_InvalidConnectionID(t *testing.T) {
 	h := newConnectionActionTestHandler(t)
 
-	req := httptest.NewRequest(http.MethodPost, "/api/integrations/connections//actions",
+	req := httptest.NewRequest(http.MethodPost, "/api/integrations/connections/not-a-valid-uuid/actions",
 		strings.NewReader(`{"action":"setMeshsyncMode","mode":"operator"}`))
-	req = mux.SetURLVars(req, map[string]string{"connectionId": ""})
+	req = mux.SetURLVars(req, map[string]string{"connectionId": "not-a-valid-uuid"})
 	rec := httptest.NewRecorder()
 
 	h.PerformConnectionAction(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, nil)
 
 	if rec.Code != http.StatusBadRequest {
-		t.Fatalf("status = %d, want 400 for missing connection id; body: %s", rec.Code, rec.Body.String())
+		t.Fatalf("status = %d, want 400 for invalid connection id; body: %s", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+		t.Errorf("expected error body to contain %s, got: %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+	}
+}
+
+func TestPerformConnectionAction_NilConnectionID(t *testing.T) {
+	h := newConnectionActionTestHandler(t)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/integrations/connections/"+uuid.Nil.String()+"/actions",
+		strings.NewReader(`{"action":"setMeshsyncMode","mode":"operator"}`))
+	req = mux.SetURLVars(req, map[string]string{"connectionId": uuid.Nil.String()})
+	rec := httptest.NewRecorder()
+
+	h.PerformConnectionAction(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, nil)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want 400 for nil connection id; body: %s", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+		t.Errorf("expected error body to contain %s, got: %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+	}
+}
+
+func TestPerformConnectionAction_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newConnectionActionTestHandler(t)
+
+	connID := uuid.Must(uuid.NewV4())
+	req := httptest.NewRequest(http.MethodPost, "/api/integrations/connections/"+connID.String()+"/actions",
+		strings.NewReader(`{"action":"setMeshsyncMode","mode":"operator"}`))
+	req = mux.SetURLVars(req, map[string]string{"connectionId": connID.String()})
+	rec := httptest.NewRecorder()
+
+	h.PerformConnectionAction(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want 500 for nil provider; body: %s", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "provider not initialized") {
+		t.Errorf("expected 'provider not initialized', got: %s", rec.Body.String())
+	}
+}
+
+func TestPerformConnectionAction_FlushMeshsync_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newConnectionActionTestHandler(t)
+
+	connID := uuid.Must(uuid.NewV4())
+	req := httptest.NewRequest(http.MethodPost, "/api/integrations/connections/"+connID.String()+"/actions",
+		strings.NewReader(`{"action":"flushMeshsync"}`))
+	req = mux.SetURLVars(req, map[string]string{"connectionId": connID.String()})
+	rec := httptest.NewRecorder()
+
+	h.PerformConnectionAction(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want 500 for nil provider; body: %s", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "provider not initialized") {
+		t.Errorf("expected 'provider not initialized', got: %s", rec.Body.String())
 	}
 }
 
@@ -83,11 +142,11 @@ type lockedEventsProvider struct {
 	persisted []events.Event
 }
 
-func (p *lockedEventsProvider) PersistEvent(event events.Event, _ string) error {
+func (p *lockedEventsProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	p.persisted = append(p.persisted, event)
-	return nil
+	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
 }
 
 func (p *lockedEventsProvider) snapshot() []events.Event {
@@ -172,5 +231,45 @@ func TestSetMeshsyncMode_FailedRedeployEmitsIndependentEvents(t *testing.T) {
 		if persisted[0].OperationID != persisted[1].OperationID {
 			t.Errorf("events of one mode change no longer share an OperationID: %s vs %s", persisted[0].OperationID, persisted[1].OperationID)
 		}
+	}
+}
+
+func TestPerformConnectionAction_NilUser_DoesNotPanic(t *testing.T) {
+	h, fake := newControllersConfigTestHandler(t)
+	h.ConnectionToStateMachineInstanceTracker = &machines.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: map[core.Uuid]*machines.StateMachine{},
+	}
+	connID := seedKubernetesConnection(fake, nil)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/integrations/connections/"+connID.String()+"/actions",
+		strings.NewReader(`{"action":"setMeshsyncMode","mode":"operator"}`))
+	req = withToken(mux.SetURLVars(req, map[string]string{"connectionId": connID.String()}))
+	rec := httptest.NewRecorder()
+
+	h.PerformConnectionAction(rec, req, nil, nil, fake)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200; body: %s", rec.Code, rec.Body.String())
+	}
+}
+
+func TestPerformConnectionAction_NilSystemID_DoesNotPanic(t *testing.T) {
+	h, fake := newControllersConfigTestHandler(t)
+	h.SystemID = nil
+	h.ConnectionToStateMachineInstanceTracker = &machines.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: map[core.Uuid]*machines.StateMachine{},
+	}
+	connID := seedKubernetesConnection(fake, nil)
+	user := testUser()
+
+	req := httptest.NewRequest(http.MethodPost, "/api/integrations/connections/"+connID.String()+"/actions",
+		strings.NewReader(`{"action":"setMeshsyncMode","mode":"operator"}`))
+	req = withToken(mux.SetURLVars(req, map[string]string{"connectionId": connID.String()}))
+	rec := httptest.NewRecorder()
+
+	h.PerformConnectionAction(rec, req, nil, user, fake)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200; body: %s", rec.Code, rec.Body.String())
 	}
 }
