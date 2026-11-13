@@ -400,7 +400,8 @@ func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
 
 // DryRun executes server-side dry-run validation of the specified components across all target Kubernetes contexts.
 // It pre-scans declared namespaces in the design to handle dependencies and initializes discovery RESTMappers per cluster.
-// Returns ComponentName -> ContextID -> Response.
+// Returns ResultKey -> ContextID -> Response, where the result key is the component's display name, qualified
+// when several components share it (see dryRunResultKeys) so that no component's result is overwritten.
 func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition) (resp map[string]map[string]patterncore.DryRunResponseWrapper, err error) {
 	// 1. Scan all components in the design/pattern and collect declared namespaces
 	declaredNamespaces := collectDeclaredNamespaces(comps)
@@ -430,7 +431,9 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
 	}
 
 	// 3. Loop over components and dry-run them across initialized clusters
-	for _, cmp := range comps {
+	keys := dryRunResultKeys(comps)
+	for i, cmp := range comps {
+		key := keys[i]
 		for ctxID, cluster := range clusters {
 			dResp, err := dryRunComponent(cluster.client, cmp, sap.opIsDelete, cluster.mapper, declaredNamespaces)
 			if err != nil {
@@ -439,13 +442,52 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
 			if resp == nil {
 				resp = make(map[string]map[string]patterncore.DryRunResponseWrapper)
 			}
-			if resp[cmp.DisplayName] == nil {
-				resp[cmp.DisplayName] = make(map[string]patterncore.DryRunResponseWrapper)
+			if resp[key] == nil {
+				resp[key] = make(map[string]patterncore.DryRunResponseWrapper)
 			}
-			resp[cmp.DisplayName][ctxID] = dResp
+			resp[key][ctxID] = dResp
 		}
 	}
 	return
+}
+
+// dryRunResultKeys returns, for each component, the key DryRun reports its results under. A display name
+// used by one component is kept as is, the format UI consumers already read. Several components often share
+// a display name (a Deployment and a Service both named "web"), and keying them all by that name made each
+// result overwrite the previous one, so a rejected component could be reported as valid. Shared names are
+// qualified with the kind, and with the component ID when the kind is shared too. A final check keeps every
+// key unique even if a qualified key happens to equal another component's display name.
+func dryRunResultKeys(comps []*component.ComponentDefinition) []string {
+	nameCount := make(map[string]int, len(comps))
+	nameKindCount := make(map[string]int, len(comps))
+	for _, cmp := range comps {
+		if cmp == nil {
+			continue
+		}
+		nameCount[cmp.DisplayName]++
+		nameKindCount[cmp.DisplayName+"\x00"+cmp.Component.Kind]++
+	}
+
+	keys := make([]string, len(comps))
+	used := make(map[string]bool, len(comps))
+	for i, cmp := range comps {
+		if cmp == nil {
+			continue
+		}
+		key := cmp.DisplayName
+		if nameCount[cmp.DisplayName] > 1 {
+			key = fmt.Sprintf("%s (%s)", cmp.DisplayName, cmp.Component.Kind)
+			if nameKindCount[cmp.DisplayName+"\x00"+cmp.Component.Kind] > 1 {
+				key = fmt.Sprintf("%s (%s, %s)", cmp.DisplayName, cmp.Component.Kind, cmp.ID.String())
+			}
+		}
+		if used[key] {
+			key = fmt.Sprintf("%s (%s)", key, cmp.ID.String())
+		}
+		used[key] = true
+		keys[i] = key
+	}
+	return keys
 }
 
 // collectDeclaredNamespaces returns the names of the Namespace components declared in the design.
