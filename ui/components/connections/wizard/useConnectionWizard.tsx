@@ -3,11 +3,11 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import {
   useAddKubernetesConfigMutation,
   useDiscoverKubernetesContextsMutation,
-  useGetCredentialsQuery,
   usePerformConnectionActionMutation,
   useProcessConnectionRegistrationMutation,
   useUpdateConnectionByIdMutation,
 } from '@/rtk-query/connection';
+import { useAllUserCredentials } from '@/utils/hooks/useAllUserCredentials';
 import type { ConnectionWizardKindConfig } from '../ConnectionWizard.helpers';
 import { buildSteps } from './registry';
 import { useKindPermission } from './useKindPermission';
@@ -80,7 +80,9 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
   const [discoverKubernetesContexts] = useDiscoverKubernetesContextsMutation();
   const [updateConnectionById] = useUpdateConnectionByIdMutation();
   const [performConnectionAction] = usePerformConnectionActionMutation();
-  const { data: credentialsResponse } = useGetCredentialsQuery(undefined, { skip: !isOpen });
+  // The credential step filters by kind on the client, so it needs every
+  // credential, not only the first page the endpoint returns by default.
+  const { credentials } = useAllUserCredentials({ skip: !isOpen });
 
   const formRefs = useRef<WizardFormRefs>({
     connection: createRef(),
@@ -250,7 +252,7 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
           // once @meshery/schemas exposes the `flushMeshsync` action.
           body: { action: 'flushMeshsync' } as unknown as { action: 'setMeshsyncMode' },
         }).unwrap(),
-      credentials: credentialsResponse?.credentials || [],
+      credentials,
     }),
     [
       notify,
@@ -259,7 +261,7 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
       discoverKubernetesContexts,
       updateConnectionById,
       performConnectionAction,
-      credentialsResponse,
+      credentials,
     ],
   );
 

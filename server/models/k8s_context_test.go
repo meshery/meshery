@@ -316,3 +316,49 @@ func TestK8sContextsFromKubeconfigDiscoversAllContexts(t *testing.T) {
 		}
 	}
 }
+
+func TestK8sContextGenerateIDNilMesheryInstanceID(t *testing.T) {
+	ctxWithoutInstanceID := K8sContext{
+		Name:    "minikube",
+		Cluster: map[string]interface{}{"server": "https://127.0.0.1:6443"},
+		Auth:    map[string]interface{}{"token": "test-token"},
+	}
+
+	idWithoutInstance, err := K8sContextGenerateID(ctxWithoutInstanceID)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID returned error for nil MesheryInstanceID: %v", err)
+	}
+	if idWithoutInstance == "" {
+		t.Fatal("expected non-empty deterministic ID for context with nil MesheryInstanceID")
+	}
+
+	idRepeat, err := K8sContextGenerateID(ctxWithoutInstanceID)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID repeat call returned error: %v", err)
+	}
+	if idRepeat != idWithoutInstance {
+		t.Fatalf("expected deterministic ID %q, got %q", idWithoutInstance, idRepeat)
+	}
+
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+	ctxWithInstanceID := ctxWithoutInstanceID
+	ctxWithInstanceID.MesheryInstanceID = &instanceID
+
+	idWithInstance, err := K8sContextGenerateID(ctxWithInstanceID)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID returned error for populated MesheryInstanceID: %v", err)
+	}
+	if idWithInstance == idWithoutInstance {
+		t.Fatalf("expected ID with MesheryInstanceID (%q) to differ from nil MesheryInstanceID (%q)", idWithInstance, idWithoutInstance)
+	}
+
+	// RedactCredentialsForContext clears MesheryInstanceID to nil; calling
+	// K8sContextGenerateID afterward must remain panic-free.
+	redacted := RedactCredentialsForContext(&ctxWithInstanceID)
+	if redacted.MesheryInstanceID != nil {
+		t.Fatalf("expected RedactCredentialsForContext to nil MesheryInstanceID, got %v", redacted.MesheryInstanceID)
+	}
+	if _, err := K8sContextGenerateID(redacted); err != nil {
+		t.Fatalf("K8sContextGenerateID returned error after RedactCredentialsForContext: %v", err)
+	}
+}

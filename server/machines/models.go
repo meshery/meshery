@@ -161,6 +161,30 @@ func (sm *StateMachine) ResetState() {
 	sm.CurrentState = InitialState
 }
 
+// UpdateContext atomically replaces the machine's stored context. It runs
+// update under the machine lock, so no transition in flight can observe a
+// half-updated context; returning the current context leaves it unchanged.
+// Callers use it to refresh connection material (for example a rotated
+// credential) on a machine that was created with older material, without
+// re-creating the machine.
+func (sm *StateMachine) UpdateContext(update func(oldCtx interface{}) interface{}) {
+	sm.mx.Lock()
+	defer sm.mx.Unlock()
+
+	sm.Context = update(sm.Context)
+}
+
+// GetContext returns the machine's stored context under the machine lock.
+// Readers outside SendEvent must use it instead of reading sm.Context
+// directly: UpdateContext writes the field under the same lock, so an
+// unlocked read would race a concurrent refresh.
+func (sm *StateMachine) GetContext() interface{} {
+	sm.mx.Lock()
+	defer sm.mx.Unlock()
+
+	return sm.Context
+}
+
 func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	state, ok := sm.States[sm.CurrentState]
 	sm.Log.Debug("inside getNextState: ", event, ok)
@@ -189,6 +213,21 @@ func ResolveUserAndSystemID(ctx context.Context) (core.Uuid, core.Uuid) {
 		systemID = *sysID
 	}
 	return userUUID, systemID
+}
+
+// discoveryManagedStatuses are the stored statuses a background Discovery
+// may move a connection out of. They are the statuses
+// connections.ShouldConnectionBeManaged lists (discovered, registered,
+// connected, not found): the statuses a background process is allowed to
+// manage. A connection the user has moved to disconnected, deleted or
+// ignored — or put in maintenance — is not one of them, so a Discovery
+// that completes after such a move must not write its state back over
+// the user's change (issue #23248).
+var discoveryManagedStatuses = []connections.ConnectionStatus{
+	connections.DISCOVERED,
+	connections.REGISTERED,
+	connections.CONNECTED,
+	connections.NOTFOUND,
 }
 
 // SendEvent returns events.Event and error. The func invoking SendEvent should handle the error and publish the event.
@@ -259,6 +298,9 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// so the repeated background failure is suppressed.
 	haltedWithoutTransition := false
 
+	initialState := sm.CurrentState
+	initialPreviousState := sm.PreviousState
+
 	for eventType != NoOp {
 		nextState, err := sm.getNextState(eventType)
 		if err != nil {
@@ -268,6 +310,20 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			if failureErr == nil {
 				failureErr = err
 				failureEvent = event
+			}
+			// No transition advanced, so the status block below must not
+			// write the un-advanced CurrentState (e.g. "initialized") into
+			// the stored status: that would corrupt it, and — now that a
+			// background Discovery writes only while the stored status is
+			// one it may manage (issue #23248) — a corrupted stored status
+			// would make every later Discovery refuse, silently stranding
+			// the connection. The failure itself still propagates below.
+			// The machine may have advanced in an earlier iteration before
+			// this mid-loop error (a transition error after a successful
+			// step): then there IS a new state to persist, so the flag is
+			// set only when nothing advanced at all.
+			if sm.CurrentState == initialState {
+				haltedWithoutTransition = true
 			}
 			break
 		}
@@ -284,6 +340,12 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			if failureErr == nil {
 				failureErr = err
 				failureEvent = event
+			}
+			// Same halt as above: the machine never advanced into
+			// nextState, so there is no new state to persist — unless an
+			// earlier iteration already advanced it.
+			if sm.CurrentState == initialState {
+				haltedWithoutTransition = true
 			}
 			break
 		}
@@ -379,11 +441,21 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// caller's intent is only visible in the captured original. A halt without
 	// transition skips this block too: nothing advanced, so nothing to persist.
 	if sm.Provider != nil && originalEventType != Exit && !haltedWithoutTransition {
+		// Roll back in-memory state to the pre-transition state so the machine
+		// does not claim a state that failed to persist to the database. Rollback
+		// does not undo side effects of actions that already ran. A retry re-runs
+		// them, so transition actions must be idempotent. Compensation hooks are
+		// out of scope here.
+		rollback := func() {
+			sm.CurrentState = initialState
+			sm.PreviousState = initialPreviousState
+		}
+
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 		connection, _, err := sm.Provider.GetConnectionByID(token, sm.ID)
 
 		if err != nil {
-
+			rollback()
 			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).FromSystem(systemID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
 		}
 
@@ -391,6 +463,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// connection would panic on the field access below. Treat it as a
 		// retrieval failure so the caller sees an error instead of a crash.
 		if connection == nil {
+			rollback()
 			err = ErrConnectionNotFound(sm.ID.String())
 			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).FromSystem(systemID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
 		}
@@ -402,21 +475,82 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		persistedStatus = connection.Status
 		persistedStatusKnown = true
 
-		connectionPayload := &connections.ConnectionPayload{
-			ID:       sm.ID,
-			Kind:     connection.Kind,
-			MetaData: connection.Metadata,
-			Status:   connections.ConnectionStatus(sm.CurrentState)}
+		targetState := sm.CurrentState
 
-		if connectionPayload.MetaData == nil {
-			connectionPayload.MetaData = map[string]interface{}{}
-		}
+		// A background Discovery writes its state back only while the
+		// stored status is still one of the statuses a background
+		// Discovery may manage. The check is part of the write itself
+		// (UpdateConnectionStatusIf evaluates it atomically in the store),
+		// not a separate read: a user disconnect, delete or ignore
+		// landing any time before the write leaves the stored status
+		// outside that set, so the write applies to zero rows instead of
+		// moving the connection back to connected. A remote provider has
+		// no conditional-update API, so there the read and the PUT are
+		// separate calls and a disconnect landing between them can still
+		// slip through; see UpdateConnectionStatusIf. Without this, the
+		// disconnect's save and this send's write race freely — the
+		// disconnect saves first and then drives its own SendEvent in a
+		// detached goroutine, so an in-flight Discovery can overwrite
+		// DISCONNECTED with CONNECTED and resolve the unreachable
+		// condition for a connection the user just disconnected
+		// (issue #23248). Other events keep the existing unconditional
+		// write: a user-initiated action must always be able to move the
+		// connection it was asked to move.
+		if originalEventType == Discovery {
+			applied, updated, uerr := sm.Provider.UpdateConnectionStatusIf(token, sm.ID, discoveryManagedStatuses, connections.ConnectionStatus(targetState))
+			if uerr != nil {
+				// An update error can be an ambiguous write (e.g. the
+				// database write succeeded, but a post-write read-back or
+				// response failed). Reconcile the persisted status before
+				// rolling back in-memory state, as below: if the database
+				// already reflects targetState, keep in-memory state
+				// aligned with the database rather than rolling back.
+				if reconciled, _, getErr := sm.Provider.GetConnectionByID(token, sm.ID); getErr == nil && reconciled != nil && reconciled.Status == connections.ConnectionStatus(targetState) {
+					sm.Log.Debugf("%s: update reported error (%v) but database persisted target state %s", sm.Name, uerr, targetState)
+					connection = reconciled
+				} else {
+					rollback()
+					return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", targetState)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": uerr}).FromSystem(systemID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), uerr
+				}
+			} else if !applied {
+				// The stored status left the managed set after this send
+				// read it — the user disconnected, deleted or ignored the
+				// connection, or it was deleted, while this Discovery was
+				// in flight. Do not overwrite that change: roll back
+				// in-memory state and report nothing, so no resolution is
+				// built for a connection this send did not move and the
+				// reporting path drops a nil event.
+				rollback()
+				return nil, nil
+			} else {
+				connection = updated
+			}
+		} else {
+			connectionPayload := &connections.ConnectionPayload{
+				ID:       sm.ID,
+				Kind:     connection.Kind,
+				MetaData: connection.Metadata,
+				Status:   connections.ConnectionStatus(targetState)}
 
-		connection, err = sm.Provider.UpdateConnectionById(token, connectionPayload, sm.ID.String())
+			if connectionPayload.MetaData == nil {
+				connectionPayload.MetaData = map[string]interface{}{}
+			}
 
-		if err != nil {
-			// In this case should the current state be again set to previous state i.e. should we rollback. But not only state should be rollback but other actions as well, rn we don't rollback state.
-			return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).FromSystem(systemID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			connection, err = sm.Provider.UpdateConnectionById(token, connectionPayload, sm.ID.String())
+
+			if err != nil {
+				// An update error can be an ambiguous write (e.g. the database write succeeded,
+				// but a post-write read-back or response failed). Reconcile the persisted status
+				// before rolling back in-memory state: if the database already reflects targetState,
+				// keep in-memory state aligned with the database rather than rolling back.
+				if reconciled, _, getErr := sm.Provider.GetConnectionByID(token, sm.ID); getErr == nil && reconciled != nil && reconciled.Status == connections.ConnectionStatus(targetState) {
+					sm.Log.Debugf("%s: update reported error (%v) but database persisted target state %s", sm.Name, err, targetState)
+					connection = reconciled
+				} else {
+					rollback()
+					return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", targetState)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).FromSystem(systemID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+				}
+			}
 		}
 
 		sm.Log.Debugf("%s: updated \"status\" for connection with id: %s to \"%s\"", sm.Name, connection.ID, sm.CurrentState)

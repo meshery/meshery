@@ -231,7 +231,7 @@ unrelated store update.
 | Access control | `ProviderUiAccessControlClass` (and its legacy alias `CapabilitiesRegistryClass`) |
 | Legacy | `resolver` |
 
-Two of these deserve elaboration:
+Three of these deserve elaboration:
 
 **`mesheryStore` is getter-based, not a snapshot.**
 
@@ -253,6 +253,23 @@ the extension constructs it with the raw `/api/provider/capabilities` payload
 `isNavigatorComponentEnabled`, `isHeaderComponentEnabled`, `isExtensionComponentEnabled` —
 which in a restricted (playground) environment walk `restrictedAccess.allowedComponents` to
 decide whether a given piece of UI may render at all.
+
+**`ValidateDesign`, `DryRunDesign`, `DeployStepper` and `UnDeployStepper` deep-link each
+error by default.** Their `canNavigateToErrors` prop defaults to `true`: each listed error
+is a link (a keyboard-operable `role="button"`) that sends `TAP_ON_ERROR` to the
+`validationMachine` it was given, and the machine emits it to the embedding designer.
+Kanvas Designer listens for that event on the injected `designValidationMachine` and opens
+the failing component's configurator focused on the failing property. Kanvas passes no
+`canNavigateToErrors`, so the default is the contract. Meshery UI's own pages have no
+designer to navigate into, so they pass `canNavigateToErrors={false}` and render errors as
+plain text (`ui/components/designs/patterns/design-lifecycle-handlers.tsx`). The
+presentational `ValidationResults` and `FormatDryRunResponse`, which the notification center
+renders for stored events, default to `false`.
+
+Never infer navigability from the validator's state. It was once derived from the schema
+validator's `returnAddress`, which names who receives validation *replies*, not who handles
+*taps*, and which `ValidateDesign` clears with its own mount-time validation request. Every
+error in Kanvas Designer silently stopped linking for eight months.
 
 ### How the extension consumes it
 
@@ -602,6 +619,7 @@ is indistinguishable from an event nobody receives.
 | A host action does nothing in the extension | Event literal renamed on one side, or published while the extension was unmounted | `MESHERY_EXTENSION_EVENT`; the `isExtensionOpen()` guard |
 | An injected value is `undefined` in the extension | Capability renamed or dropped, or missing from the `useMemo` deps | `buildExtensionInjectProps`; run the gate test |
 | A feature works locally, fails in CI | `node_modules/@sistent/sistent` overwritten with a local dist | Re-run `npm ci` and retest |
+| Validation or dry-run errors in Kanvas Designer do not open the failing component | A host caller passed `canNavigateToErrors={false}`, or the designer stopped listening for `TAP_ON_ERROR` on `designValidationMachine` | `ValidateDesign.tsx`, `DryRun.tsx`; `validationUiEventsListener` in Kanvas |
 | Permission-gated UI misbehaves | `ProviderUiAccessControl` constructed from the wrong payload | `ui/utils/disabledComponents.js`; `capabilitiesRegistry` vs `providerCapabilities` |
 
 ## File reference

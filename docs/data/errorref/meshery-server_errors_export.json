@@ -4354,6 +4354,24 @@
         "short_description": "Invalid extension proxy path",
         "probable_cause": "The path does not start with '/api/extensions' or has an invalid delimiter\nThe URL format might be malformed or manipulated",
         "suggested_remediation": "Ensure the request path starts with '/api/extensions' followed by a valid subpath (e.g. '/api/extensions/users')\nCheck client routing and extension configuration"
+      },
+      "1491": {
+        "name": "ErrMigrateEventIndexesCode",
+        "code": "1491",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Server could not create the indexes the Notification Center queries use",
+        "probable_cause": "The database is read-only, locked by another process or not reachable",
+        "suggested_remediation": "Make sure Meshery Server can write to its database, then restart Meshery Server"
+      },
+      "1492": {
+        "name": "ErrNilProviderCode",
+        "code": "1492",
+        "severity": "Alert",
+        "long_description": "Provider instance passed to the handler is nil",
+        "short_description": "Provider not initialized",
+        "probable_cause": "The handler was invoked without an initialized provider instance",
+        "suggested_remediation": "Ensure the provider is properly initialized before handling the request"
       }
     }
   }

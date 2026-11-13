@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } from 'react';
 import {
   MODELS,
   COMPONENTS,
@@ -7,7 +7,6 @@ import {
   CONNECTIONS,
 } from '../../constants/navigator';
 import {
-  MeshModelToolbar,
   MainContainer,
   TreeWrapper,
   DetailsContainer,
@@ -17,7 +16,6 @@ import {
 import TabCard from './TabCard';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
-import { toLower } from 'lodash';
 import { useRouter } from 'next/router';
 import {
   useLazyGetMeshModelsQuery,
@@ -32,17 +30,13 @@ import {
   useGetConnectionDefinitionsQuery,
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
+import { MeshModelTabBar } from './MeshModelTabBar';
+import { fetchRegistryViewData } from './registryFetch';
 import _ from 'lodash';
-import {
-  Button,
-  NoSsr,
-  AddCircleIcon as AddIcon,
-  ExternalLinkIcon as LinkIcon,
-  FileUploadIcon as UploadIcon,
-  useMediaQuery,
-} from '@sistent/sistent';
+import { NoSsr, useHasPermission, useMediaQuery } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '../general/error-404/index';
 import { useTheme } from '@/theme';
-import { iconSmall } from 'css/icons.styles';
 import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
 import ImportModelModal from './ImportModelModal';
 import CreateModelModal from './CreateModelModal';
@@ -62,6 +56,18 @@ const MeshModelComponent_ = ({
   externalSearchText = null, // External search text from modal
   externalSelectedItemUUID = null, // External selected item UUID from modal
 }: MeshModelComponentProps) => {
+  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
+  const canViewRegistryRef = useRef(canViewRegistry);
+  const fetchRequestIdRef = useRef(0);
+  const trackedQueryHandlesRef = useRef<Set<{ unsubscribe?: () => void; abort?: () => void }>>(
+    new Set(),
+  );
+
+  // Sync synchronously in commit phase (before paint or promise continuations) so
+  // neither aborted renders nor pre-passive-effect microtasks read a stale ref.
+  useLayoutEffect(() => {
+    canViewRegistryRef.current = canViewRegistry;
+  }, [canViewRegistry]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
@@ -111,27 +117,42 @@ const MeshModelComponent_ = ({
   /**
    * RTK Queries for counts
    */
-  const { data: modelsCountData } = useGetMeshModelsQuery({
-    params: { page: 0, pagesize: 1, components: false, relationships: false },
-  });
-  const { data: componentsCountData } = useGetComponentsQuery({
-    params: { page: 0, pagesize: 1, trim: true },
-  });
-  const { data: relationshipsCountData } = useGetRelationshipsQuery({
-    params: { page: 0, pagesize: 1 },
-  });
-  const { data: registrantsCountData } = useGetRegistrantsQuery({
-    params: { page: 0, pagesize: 1 },
-  });
-  const { data: connectionsCountData } = useGetConnectionDefinitionsQuery({
-    params: { page: 0, pagesize: 1 },
-  });
+  const { data: modelsCountData } = useGetMeshModelsQuery(
+    {
+      params: { page: 0, pagesize: 1, components: false, relationships: false },
+    },
+    { skip: !canViewRegistry },
+  );
+  const { data: componentsCountData } = useGetComponentsQuery(
+    {
+      params: { page: 0, pagesize: 1, trim: true },
+    },
+    { skip: !canViewRegistry },
+  );
+  const { data: relationshipsCountData } = useGetRelationshipsQuery(
+    {
+      params: { page: 0, pagesize: 1 },
+    },
+    { skip: !canViewRegistry },
+  );
+  const { data: registrantsCountData } = useGetRegistrantsQuery(
+    {
+      params: { page: 0, pagesize: 1 },
+    },
+    { skip: !canViewRegistry },
+  );
+  const { data: connectionsCountData } = useGetConnectionDefinitionsQuery(
+    {
+      params: { page: 0, pagesize: 1 },
+    },
+    { skip: !canViewRegistry },
+  );
 
-  const modelsData = modelsRes.data;
-  const registrantsData = registrantsRes.data;
-  const componentsData = componentsRes.data;
-  const relationshipsData = relationshipsRes.data;
-  const connectionsData = connectionsRes.data;
+  const modelsData = canViewRegistry ? modelsRes.data : undefined;
+  const registrantsData = canViewRegistry ? registrantsRes.data : undefined;
+  const componentsData = canViewRegistry ? componentsRes.data : undefined;
+  const relationshipsData = canViewRegistry ? relationshipsRes.data : undefined;
+  const connectionsData = canViewRegistry ? connectionsRes.data : undefined;
 
   const hasMoreModels =
     modelsData?.totalCount > modelsData?.pageSize * ((modelsData?.page || 0) + 1);
@@ -146,39 +167,59 @@ const MeshModelComponent_ = ({
     connectionsData?.totalCount > connectionsData?.pageSize * ((connectionsData?.page || 0) + 1);
 
   const loadNextModelsPage = useCallback(() => {
-    if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
+    if (!canViewRegistry || modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
       return;
     }
     setModelsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
-  }, [modelsRes, hasMoreModels]);
+  }, [canViewRegistry, modelsRes, hasMoreModels]);
 
   const loadNextRegistrantsPage = useCallback(() => {
-    if (registrantsRes.isLoading || registrantsRes.isFetching || !hasMoreRegistrants) {
+    if (
+      !canViewRegistry ||
+      registrantsRes.isLoading ||
+      registrantsRes.isFetching ||
+      !hasMoreRegistrants
+    ) {
       return;
     }
     setRegistrantsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
-  }, [registrantsRes, hasMoreRegistrants]);
+  }, [canViewRegistry, registrantsRes, hasMoreRegistrants]);
 
   const loadNextComponentsPage = useCallback(() => {
-    if (componentsRes.isLoading || componentsRes.isFetching || !hasMoreComponents) {
+    if (
+      !canViewRegistry ||
+      componentsRes.isLoading ||
+      componentsRes.isFetching ||
+      !hasMoreComponents
+    ) {
       return;
     }
     setComponentsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
-  }, [componentsRes, hasMoreComponents]);
+  }, [canViewRegistry, componentsRes, hasMoreComponents]);
 
   const loadNextRelationshipsPage = useCallback(() => {
-    if (relationshipsRes.isLoading || relationshipsRes.isFetching || !hasMoreRelationships) {
+    if (
+      !canViewRegistry ||
+      relationshipsRes.isLoading ||
+      relationshipsRes.isFetching ||
+      !hasMoreRelationships
+    ) {
       return;
     }
     setRelationshipsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
-  }, [relationshipsRes, hasMoreRelationships]);
+  }, [canViewRegistry, relationshipsRes, hasMoreRelationships]);
 
   const loadNextConnectionsPage = useCallback(() => {
-    if (connectionsRes.isLoading || connectionsRes.isFetching || !hasMoreConnections) {
+    if (
+      !canViewRegistry ||
+      connectionsRes.isLoading ||
+      connectionsRes.isFetching ||
+      !hasMoreConnections
+    ) {
       return;
     }
     setConnectionsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
-  }, [connectionsRes, hasMoreConnections]);
+  }, [canViewRegistry, connectionsRes, hasMoreConnections]);
   /**
    * IntersectionObservers
    */
@@ -188,73 +229,52 @@ const MeshModelComponent_ = ({
   const lastRegistrantRef = useInfiniteScrollRef(loadNextRegistrantsPage);
   const lastConnectionRef = useInfiniteScrollRef(loadNextConnectionsPage);
 
-  const fetchData = useCallback(async () => {
-    try {
-      let response;
-      switch (view) {
-        case MODELS:
-          response = await getMeshModelsData(
-            {
-              params: {
-                page: searchText || checked ? 0 : modelFilters.page,
-                pagesize: searchText || checked ? 'all' : 25,
-                components: false,
-                relationships: false,
-                search: searchText || '',
-              },
-            },
-            true, // arg to use cache as default
-          );
-          break;
-        case COMPONENTS:
-          response = await getComponentsData(
-            {
-              params: {
-                page: searchText ? 0 : componentsFilters.page,
-                pagesize: searchText ? 'all' : rowsPerPage,
-                search: searchText || '',
-                trim: true,
-              },
-            },
-            true,
-          );
-          break;
-        case RELATIONSHIPS:
-          response = await getRelationshipsData(
-            {
-              params: {
-                page: searchText ? 0 : relationshipsFilters.page,
-                pagesize: 'all',
-                search: searchText || '',
-              },
-            },
-            true,
-          );
-          break;
-        case REGISTRANTS:
-          response = await getRegistrants();
+  const cancelActiveFetch = useCallback(() => {
+    fetchRequestIdRef.current += 1;
+    for (const handle of trackedQueryHandlesRef.current) {
+      handle.unsubscribe?.();
+      handle.abort?.();
+    }
+    trackedQueryHandlesRef.current.clear();
+  }, []);
 
-          break;
-        case CONNECTIONS: {
-          const res = await getConnectionDefinitionsData(
-            {
-              params: {
-                page: searchText ? 0 : connectionsFilters.page,
-                pagesize: searchText ? 'all' : rowsPerPage,
-                search: searchText || '',
-              },
-            },
-            true,
-          );
-          // The endpoint returns the page under `connectionDefinitions`; normalize
-          // it to the view key (`connections`) the generic handler below expects.
-          response = res?.data
-            ? { ...res, data: { ...res.data, connections: res.data.connectionDefinitions || [] } }
-            : res;
-          break;
-        }
-        default:
-          break;
+  const runTrackedQuery = useCallback((queryPromise) => {
+    trackedQueryHandlesRef.current.add(queryPromise);
+    return queryPromise;
+  }, []);
+
+  const fetchData = useCallback(async () => {
+    if (!canViewRegistryRef.current) {
+      return;
+    }
+    const requestId = ++fetchRequestIdRef.current;
+    const isStale = () => !canViewRegistryRef.current || requestId !== fetchRequestIdRef.current;
+
+    try {
+      const response = await fetchRegistryViewData({
+        view,
+        searchText,
+        checked,
+        rowsPerPage,
+        page,
+        modelFilters,
+        componentsFilters,
+        relationshipsFilters,
+        registrantFilters,
+        connectionsFilters,
+        getMeshModelsData,
+        getComponentsData,
+        getRelationshipsData,
+        getRegistrantsData,
+        getConnectionDefinitionsData,
+        runTrackedQuery,
+        isStale,
+      });
+      if (isStale()) {
+        return;
+      }
+      if (view === REGISTRANTS) {
+        setRowsPerPage(25);
       }
       if (response?.data && response.data[view.toLowerCase()]) {
         // When search or "show duplicates" functionality is active:
@@ -283,16 +303,22 @@ const MeshModelComponent_ = ({
         }
       }
     } catch (error) {
+      if (isStale()) {
+        return;
+      }
       console.error(`Failed to fetch ${view.toLowerCase()}:`, error);
       setResourcesDetail([]); // Set empty array on error
     }
   }, [
+    runTrackedQuery,
     getMeshModelsData,
     getComponentsData,
     getRelationshipsData,
     getRegistrantsData,
     getConnectionDefinitionsData,
     modelFilters,
+    componentsFilters,
+    relationshipsFilters,
     registrantFilters,
     connectionsFilters,
     view,
@@ -303,55 +329,6 @@ const MeshModelComponent_ = ({
     // to avoid stale-closure re-fetch loop and O(n²) _.isEqual dedup.
     checked,
   ]);
-
-  const getRegistrants = async () => {
-    let registrantResponse;
-    let response;
-    registrantResponse = await getRegistrantsData(
-      {
-        params: {
-          page: searchText ? 0 : registrantFilters.page,
-          pagesize: searchText ? 'all' : 25,
-          search: searchText || '',
-        },
-      },
-      true,
-    );
-    if (registrantResponse.data && registrantResponse.data.registrants) {
-      const registrants = registrantResponse.data.registrants;
-      const tempResourcesDetail = [];
-
-      for (let registrant of registrants) {
-        let hostname = toLower(registrant?.hostname);
-        const { data: modelRes } = await getMeshModelsData(
-          {
-            params: {
-              page: page?.Models,
-              pagesize: 'all',
-              registrant: hostname,
-              components: false,
-              relationships: false,
-            },
-          },
-          true,
-        );
-        if (modelRes.models && modelRes.models.length > 0) {
-          const updatedRegistrant = {
-            ...registrant,
-            models: removeDuplicateVersions(modelRes.models) || [],
-          };
-          tempResourcesDetail.push(updatedRegistrant);
-        }
-      }
-      response = {
-        data: {
-          registrants: tempResourcesDetail,
-        },
-      };
-    }
-    setRowsPerPage(25);
-    return response;
-  };
   const handleTabClick = (selectedView) => {
     // -> use settingsRouter when not in modal mode (Settings page)
     if (handleChangeSelectedTab && externalView === null) {
@@ -411,8 +388,22 @@ const MeshModelComponent_ = ({
   }, [searchText]);
 
   useEffect(() => {
+    if (!canViewRegistry) {
+      cancelActiveFetch();
+      setResourcesDetail([]);
+      setShowDetailsData({ type: '', data: {} });
+      setIsImportModalOpen(false);
+      setIsCreateModalOpen(false);
+      setIsRelationshipModalOpen(false);
+      return undefined;
+    }
     fetchData();
+    return () => {
+      cancelActiveFetch();
+    };
   }, [
+    canViewRegistry,
+    cancelActiveFetch,
     view,
     page,
     rowsPerPage,
@@ -454,6 +445,10 @@ const MeshModelComponent_ = ({
     }
   }, [externalSearchText]);
 
+  if (!canViewRegistry) {
+    return <DefaultError permissionKey={Keys.MesherySystemViewRegistry} />;
+  }
+
   return (
     <WorkloadsContainer data-test="workloads">
       <ImportModelModal
@@ -471,7 +466,7 @@ const MeshModelComponent_ = ({
 
       <MainContainer>
         {(view === MODELS || view === RELATIONSHIPS) && (
-          <TabBar
+          <MeshModelTabBar
             openImportModal={() => setIsImportModalOpen(true)}
             openCreateModal={() => setIsCreateModalOpen(true)}
             openRelationshipModal={() => setIsRelationshipModalOpen(true)}
@@ -577,71 +572,10 @@ const MeshModelComponent_ = ({
   );
 };
 
-const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal }) => {
-  return (
-    <MeshModelToolbar>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-          gap: '0.75rem',
-          flexWrap: 'wrap',
-        }}
-      >
-        {view === MODELS && (
-          <>
-            <Button
-              aria-label="Create Model"
-              variant="contained"
-              color="primary"
-              onClick={openCreateModal}
-              style={{ display: 'flex' }}
-              disabled={false} //TODO: Need to make key for this component
-              startIcon={<AddIcon style={iconSmall} />}
-              data-testid="TabBar-Button-CreateModel"
-            >
-              Create Model
-            </Button>
-            <Button
-              aria-label="Import Model"
-              variant="contained"
-              color="primary"
-              onClick={openImportModal}
-              style={{ display: 'flex' }}
-              disabled={false} //TODO: Need to make key for this component
-              startIcon={<UploadIcon />}
-              data-testid="TabBar-Button-ImportModel"
-            >
-              Import Model
-            </Button>
-          </>
-        )}
-
-        {view === RELATIONSHIPS && (
-          <Button
-            aria-label="Create Relationship"
-            variant="contained"
-            color="primary"
-            onClick={openRelationshipModal}
-            style={{ display: 'flex' }}
-            disabled={false}
-            startIcon={<LinkIcon />}
-            data-testid="TabBar-Button-CreateRelationship"
-          >
-            Create Relationship
-          </Button>
-        )}
-      </div>
-      {/*
-      This builk operation is not yet supported
-      <DisableButton disabled variant="contained" startIcon={<DoNotDisturbOnIcon />}>
-        Ignore
-      </DisableButton> */}
-    </MeshModelToolbar>
-  );
-};
-
+/**
+ * Renders the registry browser for models, components, relationships,
+ * registrants, and connection definitions when permitted.
+ */
 const MeshModelComponent = (props) => {
   return (
     <NoSsr>

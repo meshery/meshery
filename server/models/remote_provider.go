@@ -1141,10 +1141,15 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 		k8sServerID = *k8sContext.KubernetesServerID
 	}
 
+	var mesheryInstanceID string
+	if k8sContext.MesheryInstanceID != nil {
+		mesheryInstanceID = k8sContext.MesheryInstanceID.String()
+	}
+
 	_metadata := map[string]string{
 		"id":                 k8sContext.ID,
 		"server":             k8sContext.Server,
-		"mesheryInstanceId":  k8sContext.MesheryInstanceID.String(),
+		"mesheryInstanceId":  mesheryInstanceID,
 		"deploymentType":     k8sContext.DeploymentType,
 		"version":            k8sContext.Version,
 		"name":               k8sContext.Name,
@@ -1200,9 +1205,10 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 
 	return *connection, nil
 }
+
 func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*core.Uuid)
-	if !ok {
+	if !ok || MesheryInstanceID == nil {
 		return nil, ErrMesheryInstanceID
 	}
 	mi := MesheryInstanceID.String()
@@ -1260,8 +1266,14 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 			for _, c := range cp.Connections {
 				ctx, err := K8sContextFromConnection(Provider(l), token, c)
 				if err != nil {
-					l.Log.Error(err)
-					continue
+					if c == nil {
+						return nil, fmt.Errorf("failed to convert remote Kubernetes connection: %w", err)
+					}
+					return nil, fmt.Errorf(
+						"failed to convert remote Kubernetes connection %q: %w",
+						c.Name,
+						err,
+					)
 				}
 				contexts = append(contexts, &ctx)
 			}
@@ -2688,6 +2700,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, patternID))
 	q := remoteProviderURL.Query()
 	q.Set("metrics", includeMetrics)
+	remoteProviderURL.RawQuery = q.Encode()
 
 	l.Log.Debug("constructed design url: ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
@@ -4829,6 +4842,38 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID c
 
 	l.Log.Debug(string(bdr))
 	return nil, resp.StatusCode, ErrUpdateConnectionStatus(fmt.Errorf("unable to update connection with id %s", connectionID), resp.StatusCode)
+}
+
+// UpdateConnectionStatusIf updates a connection's status to newStatus only
+// when its stored status is one of fromStatuses, and reports whether the
+// write applied. The remote provider has no conditional-update API, so
+// this is best-effort: the stored status is read and compared
+// immediately before the PUT, and a status change landing between the
+// read and the PUT can still slip through. The reporting-path re-check
+// does not cover that window: the PUT overwrites the intervening
+// change, so the gate re-reads the status the PUT already wrote and
+// passes. The gate only covers the window after the PUT, up to the
+// report. Closing the read-to-PUT window needs a conditional-update API
+// on the remote side, tracked as a follow-up to issue #23248; until
+// then, callers must not rely on this alone for the remote path.
+func (l *RemoteProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	current, _, err := l.GetConnectionByID(token, connectionID)
+	if err != nil {
+		return false, nil, err
+	}
+	if current == nil {
+		return false, nil, nil
+	}
+	for _, fromStatus := range fromStatuses {
+		if current.Status == fromStatus {
+			updated, _, err := l.UpdateConnectionStatusByID(token, connectionID, newStatus)
+			if err != nil {
+				return false, nil, err
+			}
+			return true, updated, nil
+		}
+	}
+	return false, current, nil
 }
 
 // UpdateConnection - to update an existing connection

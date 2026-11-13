@@ -77,25 +77,35 @@ function Dashboard() {
     isFetching: isFetchingProfiles,
     isError: isProfilesError,
     error: profilesError,
-  } = useGetPerformanceProfilesQuery({
-    page: 0,
-    pagesize: 10,
-    search: '',
-    order: '',
-  });
+  } = useGetPerformanceProfilesQuery(
+    {
+      page: 0,
+      pagesize: 10,
+      search: '',
+      order: '',
+    },
+    {
+      skip: !hasViewPermission,
+    },
+  );
   const {
     data: performanceResultsData,
     isFetching: isFetchingResults,
     isError: isResultsError,
     error: resultsError,
-  } = useGetPerformanceResultsQuery({
-    page: '0',
-    pagesize: '10',
-    search: '',
-    order: '',
-    from: '',
-    to: '',
-  });
+  } = useGetPerformanceResultsQuery(
+    {
+      page: '0',
+      pagesize: '10',
+      search: '',
+      order: '',
+      from: '',
+      to: '',
+    },
+    {
+      skip: !hasViewPermission,
+    },
+  );
 
   useEffect(() => {
     dispatch(updateProgressAction({ showProgress: isFetchingProfiles || isFetchingResults }));

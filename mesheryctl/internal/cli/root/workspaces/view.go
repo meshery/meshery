@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/url"
 	"path/filepath"
-	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
@@ -115,10 +114,13 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 		savePath := ""
 
 		if workspaceViewFlagsProvided.Save {
-			workspaceString := strings.ReplaceAll(selectedWorkspace.Name, " ", "_")
+			workspaceString := utils.SanitizeFileName(selectedWorkspace.Name)
 
 			if workspaceString == "" {
-				workspaceString = selectedWorkspace.ID.String()
+				workspaceString = utils.SanitizeFileName(selectedWorkspace.ID.String())
+				if workspaceString == "" {
+					workspaceString = "unknown"
+				}
 			}
 
 			fileName := filepath.Join(

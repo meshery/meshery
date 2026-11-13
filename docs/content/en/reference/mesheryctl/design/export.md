@@ -22,7 +22,7 @@ type allowed are oci, original, and current. The default design type is current.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl design export [pattern-name | ID] [flags]
+mesheryctl design export [design-name | ID] [flags]
 
 </div>
 </div>
@@ -34,7 +34,7 @@ Export a design with a specific ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl design export [pattern-name | ID]
+mesheryctl design export [design-name | ID]
 
 </div>
 </div>
@@ -44,7 +44,7 @@ Export a design with a specific ID and type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl design export [pattern-name | ID] --type [design-type]
+mesheryctl design export [design-name | ID] --type [design-type]
 
 </div>
 </div>
@@ -54,7 +54,7 @@ Export a design and save it to a specific directory
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl design export [pattern-name | ID] --output ./designs
+mesheryctl design export [design-name | ID] --output ./designs
 
 </div>
 </div>
@@ -64,7 +64,7 @@ Export a design with a specific type and save it to a directory
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exports
+mesheryctl design export [design-name | ID] --type [design-type] --output ./exports
 
 </div>
 </div>
@@ -76,7 +76,7 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 <div class='codeblock'>
   -h, --help            help for export
   -o, --output string   Specify the output directory to save the design
-      --type string     Specify the design type to export
+      --type string     Type of export: current (Meshery design YAML), original (the source the design was imported from) or oci (OCI image tarball)
 
 </div>
 </pre>
