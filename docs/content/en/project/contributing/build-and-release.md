@@ -493,9 +493,27 @@ Once a 1.0 release has been made, Around once a month or so, the project maintai
 
 The different types (Daily, Stable, LTS) represent different product quality levels and different levels of support from the Meshery team. In this context, support means that we will produce patch releases for critical issues and offer technical assistance.
 
+## Publishing Meshery Docs
+
+[docs.meshery.io](https://docs.meshery.io) and the pull request previews of it are published by three workflows, onto two separate GitHub Pages sites.
+
+| What | Workflow | Published to |
+|---|---|---|
+| Production docs, on every push to `master` except one confined to `.github/` (other than `hugo.yml` itself) or `archive/` | `.github/workflows/hugo.yml` | A GitHub Actions Pages artifact for `meshery/meshery` (Pages source: **GitHub Actions**), served at docs.meshery.io |
+| A preview build for each pull request that touches `docs/` or `mesheryctl/doc/` (or either preview workflow) | `.github/workflows/build-docs-preview.yml` | A workflow artifact, with base URL `/docs-preview/pr-preview/pr-<number>/` |
+| Publishing, pruning and removing previews | `.github/workflows/deploy-docs-preview.yml` | `pr-preview/pr-<number>/` on the `gh-pages` branch of [`meshery/docs-preview`](https://github.com/meshery/docs-preview), served at `https://meshery.github.io/docs-preview/pr-preview/pr-<number>/` |
+
+Constraints to keep in mind when changing any of these:
+
+- **Every GitHub Pages site is capped at 1 GB.** One copy of the docs is about 250 MB, and the archived `v0.8` and `v0.9` snapshots add about 650 MB. `hugo.yml` drops the archives, oldest first, if the site passes 900 MB, and flags that in the run summary. A drop means those URLs 404, so treat the warning as a bug to fix, not a steady state.
+- **Previews never share the production site.** They used to live on `meshery/meshery`'s own `gh-pages` branch. A few full copies of the site there exceeded the cap, and every preview push started a Pages build that failed and cancelled the production one, so docs.meshery.io went unpublished for a week ([#23221](https://github.com/meshery/meshery/issues/23221)).
+- **Previews are capped by count.** `PREVIEW_RETENTION_LIMIT` in `deploy-docs-preview.yml` keeps the most recently updated previews (3, so that 3 x 250 MB fits under 1 GB), and the prune job comments on every pull request whose preview it removes. Closing a pull request removes its preview.
+- **Writes to `meshery/docs-preview` use the `GH_ACCESS_TOKEN` secret.** `GITHUB_TOKEN` cannot push to another repository. The workflow fails up front if the secret is empty.
+- **Per-page size is what multiplies.** The site has about 4,600 HTML pages, so anything rendered into every page is paid for 4,600 times. The docs sidebar tree (about 250 KB) is therefore published once, as a fingerprinted `sidebar/nav-*.html` file that `layouts/partials/sidebar.html` fetches and mounts. Before that change it made up 85% of every page, and one copy of the site was 570 MB. Don't inline large, page-independent markup into `baseof.html` or a partial on every page.
+
 ## Versioning Documentation
 
-The Meshery documentation site is built with [Hugo](https://gohugo.io/) using the [Docsy](https://www.docsy.dev/) theme. Hugo content lives under `docs/content/en/`, and the rendered site is published from the `master` branch via the docs site workflow. There is no longer a Jekyll/Bundler step or per-version `_site` checkout — Hugo serves the live docs directly from the content tree on `master`, and historical versions are accessible via the GitHub repository's release tags (no static-HTML snapshots are produced as part of the release process).
+The Meshery documentation site is built with [Hugo](https://gohugo.io/) using the [Docsy](https://www.docsy.dev/) theme. Hugo content lives under `docs/content/en/`, and the rendered site is published from the `master` branch via the docs site workflow. There is no longer a Jekyll/Bundler step or per-version `_site` checkout - Hugo serves the live docs directly from the content tree on `master`, and historical versions are accessible via the GitHub repository's release tags. The release process produces no new static-HTML snapshots; the only ones published are the archived `v0.8` and `v0.9` sites under `docs/static/`. See [Publishing Meshery Docs](#publishing-meshery-docs) for how the site is deployed.
 
 ### For a new major release
 

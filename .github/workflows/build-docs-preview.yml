@@ -9,7 +9,6 @@ on:
       - 'mesheryctl/doc/**'
       - '.github/workflows/build-docs-preview.yml'
       - '.github/workflows/deploy-docs-preview.yml'
-      - '.github/workflows/docs-preview-cleanup.yml'
 
 permissions:
   contents: read
@@ -21,7 +20,11 @@ concurrency:
 jobs:
   build-docs-preview:
     runs-on: ubuntu-24.04
-    if: github.event.action != 'closed'
+    # Runs on `closed` too, but only to hand the PR number and action to
+    # deploy-docs-preview.yml, which removes the preview. Skipping the whole job
+    # on `closed` left this run "skipped", so the post-build workflow (which
+    # needs a successful run) never fired and closed PRs' previews were never
+    # removed. Build steps are skipped individually instead.
     env:
       HUGO_VERSION: 0.157.0
 
@@ -32,6 +35,7 @@ jobs:
           egress-policy: audit
           
       - name: Checkout PR
+        if: github.event.action != 'closed'
         uses: actions/checkout@v6
         with:
           persist-credentials: false
@@ -41,14 +45,15 @@ jobs:
           # docs-only previews triggered from pull_request.
           sparse-checkout: |
             docs
-            pr-preview
 
       - name: Install Hugo CLI
+        if: github.event.action != 'closed'
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
 
       - name: Install Dart Sass
+        if: github.event.action != 'closed'
         # Direct download from the dart-sass GitHub release rather than
         # `sudo snap install dart-sass` (snap.io's storeserver was flaky
         # in GitHub-hosted runners and broke this workflow on unrelated
@@ -67,27 +72,34 @@ jobs:
           dart-sass --version
 
       - name: Setup Go
+        if: github.event.action != 'closed'
         uses: actions/setup-go@v5
         with:
           go-version-file: docs/go.mod
           cache: false
 
       - name: Setup Node
+        if: github.event.action != 'closed'
         uses: actions/setup-node@v6
         with:
           node-version: "22"
 
       - name: Install dependencies
+        if: github.event.action != 'closed'
         run: |
           cd docs
           npm ci
 
       - name: Build PR preview
+        if: github.event.action != 'closed'
         env:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
           HUGO_PREVIEW: "true"
-          PREVIEW_BASE_URL: "/pr-preview/pr-${{ github.event.pull_request.number }}/"
+          # Previews are served from the meshery/docs-preview Pages site
+          # (https://meshery.github.io/docs-preview/), under the umbrella-dir
+          # that deploy-docs-preview.yml publishes to. Keep the two in sync.
+          PREVIEW_BASE_URL: "/docs-preview/pr-preview/pr-${{ github.event.pull_request.number }}/"
         run: |
           cd docs
           npm run build:production -- --gc --baseURL "${PREVIEW_BASE_URL}"

@@ -1,27 +1,41 @@
 name: Deploy Hugo site to Pages
 
+# docs.meshery.io is published from a GitHub Actions Pages artifact, not from
+# the gh-pages branch. The artifact holds exactly the production site, so pull
+# request previews (published to meshery/docs-preview by
+# deploy-docs-preview.yml) can never push it over the 1 GB GitHub Pages limit
+# or race this workflow for a branch (#23221). The repository's Pages source
+# must be set to "GitHub Actions" for this to take effect.
+
 on:
   push:
     branches:
       - master
-    paths-ignore:
-      - '.github/**'
-      - 'archive/**'
+    # Every change except CI-only and archive-only ones, but including this
+    # workflow itself, so a change to how the site deploys is exercised on merge.
+    paths:
+      - '**'
+      - '!.github/**'
+      - '.github/workflows/hugo.yml'
+      - '!archive/**'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
+# One deployment at a time. A deployment in progress is never cancelled (that
+# can leave Pages without a live deployment); runs queued behind it collapse to
+# the newest, which already contains every earlier change.
 concurrency:
   group: pages-deployment
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 defaults:
   run:
     shell: bash
 
 jobs:
-  deploy:
+  build:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     env:
@@ -42,20 +56,6 @@ jobs:
             install
             docs
           sparse-checkout-cone-mode: true
-      - name: Checkout gh-pages for preview retention
-        if: github.event.action != 'closed'
-        uses: actions/checkout@v6
-        with:
-          ref: gh-pages
-          persist-credentials: false
-          fetch-depth: 1
-          # Blobless sparse checkout: we only read the existing pr-preview/
-          # umbrella so the full-site deploy below can carry it forward and
-          # avoid clobbering live PR previews. No history or other blobs needed.
-          filter: blob:none
-          sparse-checkout: |
-            pr-preview
-          path: gh-pages-maintenance
       - name: Install Hugo CLI
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
@@ -94,48 +94,51 @@ jobs:
           HUGO_ENV: production
         run: |
           make -C docs build-production BASE_URL="/"
-          cp docs/CNAME docs/public/CNAME
-          touch docs/public/.nojekyll
-          if [ -d gh-pages-maintenance/pr-preview ]; then
-            cp -a gh-pages-maintenance/pr-preview docs/public/pr-preview
-          fi
       - name: Fit the site under the GitHub Pages size limit
-        # GitHub Pages rejects an artifact over 1 GB. After #22879 a full copy
-        # of the site plus retained PR previews grew past that limit, and every
-        # pages build since Nov 6 has failed, so docs.meshery.io stopped
-        # updating (see #23221). Drop optional trees, largest first, until the
-        # publish dir is under 900 MB. Production docs still go out; dropped
-        # trees stay in git and can be published elsewhere later.
+        # GitHub Pages rejects a site over 1 GB. The current docs (~250 MB,
+        # since the sidebar tree is published once instead of inlined into
+        # every page) plus the archived v0.8 and v0.9 snapshots (~650 MB) fit.
+        # If growth pushes the site past 900 MB, drop the archives, oldest
+        # first, rather than fail to publish the current docs, and say so in
+        # the run summary so the regression is visible.
         run: |
           set -eu
           LIMIT=$((900 * 1024 * 1024))
           size_of() { du -sb "$1" | awk '{print $1}'; }
-          report() { echo "docs/public is now $(du -sh docs/public | awk '{print $1}') ($(size_of docs/public) bytes)"; }
-          report
+          human() { du -sh --apparent-size "$1" | awk '{print $1}'; }
+          echo "docs/public is $(human docs/public) ($(size_of docs/public) bytes)"
           trim() {
             local path="$1"
             local reason="$2"
             if [ -e "$path" ] && [ "$(size_of docs/public)" -gt "$LIMIT" ]; then
-              echo "Removing $path ($reason) to stay under the 1 GB Pages limit"
               rm -rf "$path"
-              report
+              msg="Dropped ${path#docs/public/} ($reason) to keep docs.meshery.io under the 1 GB GitHub Pages limit; the site is now $(human docs/public). Those URLs will 404 until the site is slimmed."
+              echo "::warning title=Docs site over size budget::$msg"
+              echo "- :warning: $msg" >> "$GITHUB_STEP_SUMMARY"
             fi
           }
-          trim docs/public/pr-preview "retained PR previews; each is a full copy of the site"
           trim docs/public/v0.8 "archived v0.8 snapshot; source remains in docs/static/v0.8"
           trim docs/public/v0.9 "archived v0.9 snapshot; source remains in docs/static/v0.9"
           if [ "$(size_of docs/public)" -gt "$LIMIT" ]; then
-            echo "::error::docs/public is still $(du -sh docs/public | awk '{print $1}') after dropping optional trees; it must be under 900 MB to publish to GitHub Pages."
+            echo "::error::docs/public is still $(human docs/public) after dropping the archived snapshots; it must be under 900 MB to publish to GitHub Pages."
             exit 1
           fi
-      - name: Deploy to GitHub Pages
-        # Pinned to v4.0.0 (node20) to avoid the intermittent crash introduced in
-        # v4.1.0 (node24). The @v4 floating tag now resolves to v4.1.0 which
-        # occasionally kills the runner process without a clean exit (step stays
-        # "in_progress" while the job concludes as "failure" in ~30 s). Downgrade
-        # to the last stable release until the upstream issue is resolved.
-        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0
+          echo "- Publishing $(human docs/public) to docs.meshery.io" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/public
-          publish_branch: gh-pages
+          path: docs/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
