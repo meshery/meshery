@@ -1141,6 +1141,35 @@ func TestTrimFileExtension(t *testing.T) {
 	}
 }
 
+func TestSanitizeFileName(t *testing.T) {
+	tests := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{"standard name without special characters", "kubernetes", "kubernetes"},
+		{"name with spaces", "Kubernetes Manifest", "Kubernetes_Manifest"},
+		{"name with path separators", "org/repo\\sub", "org_repo_sub"},
+		{"name with colon and question mark", "model:v1.0?query", "model_v1.0_query"},
+		{"name with wildcard asterisk", "filter*test", "filter_test"},
+		{"name with quotes, angle brackets and pipe", `<tag|"test">|value`, "_tag__test___value"},
+		{"name with control chars", "name\twith\nnewlines", "name_with_newlines"},
+		{"name with embedded NUL", "model\x00with\x00nul", "model_with_nul"},
+		{"name with unlisted control character", "a\u001fb", "a_b"},
+		{"name with escape and bell control chars", "alert\x07and\x1bescape", "alert_and_escape"},
+		{"name with leading and trailing whitespace", "   Kubernetes Manifest   ", "Kubernetes_Manifest"},
+		{"empty string", "", ""},
+		{"whitespace only", "     ", ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SanitizeFileName(tt.in); got != tt.want {
+				t.Errorf("SanitizeFileName(%q) = %q, want %q", tt.in, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestUploadFileWithParams(t *testing.T) {
 	origToken := TokenFlag
 	defer func() { TokenFlag = origToken }()
