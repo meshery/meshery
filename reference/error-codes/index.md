@@ -22295,6 +22295,56 @@ Pass a registration key to --provider instead of the display name</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrIDLookupIncompleteCode-1261" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrIDLookupIncompleteCode-more-info" onclick="toggle_visibility('mesheryctl-ErrIDLookupIncompleteCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1261" class="error-name-code">
+              <a href="/reference/error-codes/client-mesheryctl/erridlookupincompletecode-1261/"><code>ErrIDLookupIncompleteCode-1261</code></a>
+            </td>
+            <td>ID lookup incomplete</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrIDLookupIncompleteCode-1261" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="mesheryctl-ErrIDLookupIncompleteCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The server reported more items than mesheryctl could fetch within the page limit.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Provide the full ID instead of a short prefix, or retry the command.</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrIDLookupPageLimitCode-1262" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrIDLookupPageLimitCode-more-info" onclick="toggle_visibility('mesheryctl-ErrIDLookupPageLimitCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1262" class="error-name-code">
+              <a href="/reference/error-codes/client-mesheryctl/erridlookuppagelimitcode-1262/"><code>ErrIDLookupPageLimitCode-1262</code></a>
+            </td>
+            <td>ID lookup hit page limit</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrIDLookupPageLimitCode-1262" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="mesheryctl-ErrIDLookupPageLimitCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The server did not report a total count and every page was full, so mesheryctl stopped at the page limit without confirming the list is complete.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Provide the full ID instead of a short prefix, or retry the command.</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
