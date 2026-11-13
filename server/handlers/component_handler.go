@@ -938,7 +938,7 @@ func processComponentDefinitions(entities []entity.Entity) []component.Component
 func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	var response models.RegistryAPIResponse
 	regErrorStore := models.NewRegistrationFailureLogHandler()
-	var tempFile *os.File
+	var tempFilePath string
 	var mu sync.Mutex
 	defer func() {
 		_ = r.Body.Close()
@@ -1200,7 +1200,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			writeMeshkitError(rw, ErrInvalidBase64Data(err), http.StatusBadRequest)
 			return
 		}
-		tempFile, err = CreateTemp(importRequest.ImportBody.FileName, decodedBytes)
+		tempFilePath, err = CreateTemp(importRequest.ImportBody.FileName, decodedBytes)
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
 			h.handleError(rw, err, err.Error())
@@ -1208,17 +1208,14 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 		defer func() {
-			if err := os.Remove(tempFile.Name()); err != nil {
+			if err := os.Remove(tempFilePath); err != nil {
 				h.log.Error(err)
 			}
 		}()
 
-		dir = registration.NewDir(tempFile.Name())
+		dir = registration.NewDir(tempFilePath)
 		if importRequest.Register {
 			registrationHelper.Register(dir)
-			if err := tempFile.Close(); err != nil {
-				h.log.Error(err)
-			}
 		}
 	case "urlImport":
 		downloadFile := func(targetURL string) ([]byte, error) {
@@ -1265,7 +1262,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 		name := "model" + fileType
 		//write the file to a temp file
-		tempFile, err = CreateTemp(name, fileData)
+		tempFilePath, err = CreateTemp(name, fileData)
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
 			h.handleError(rw, err, "Error creating temp file")
@@ -1273,17 +1270,14 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 		defer func() {
-			if err := os.Remove(tempFile.Name()); err != nil {
+			if err := os.Remove(tempFilePath); err != nil {
 				h.log.Error(err)
 			}
 		}()
 
-		dir = registration.NewDir(tempFile.Name())
+		dir = registration.NewDir(tempFilePath)
 		if importRequest.Register {
 			registrationHelper.Register(dir)
-			if err := tempFile.Close(); err != nil {
-				h.log.Error(err)
-			}
 		}
 	}
 
