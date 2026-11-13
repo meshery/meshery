@@ -67,8 +67,8 @@ const SCANS = [
     ],
     // Top-level config files that aren't under any scanned `dirs` entry but
     // can still hold @mui imports. The next.config.js webpack alias keys
-    // (e.g. `'@mui/material': path.resolve(...)`) don't match the audit
-    // import declarations or require() calls, so this list is currently just
+    // (e.g. `'@mui/material': path.resolve(...)`) are not import declarations
+    // or require() calls, so this list is currently just
     // remote-component.config.js, which has many real require() calls.
     // Listed by relative path; resolved from `root`.
     files: ['remote-component.config.js'],
