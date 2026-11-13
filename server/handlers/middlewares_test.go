@@ -398,3 +398,85 @@ func TestKubernetesMiddleware_NilGuards(t *testing.T) {
 		}
 	})
 }
+
+// TestRegistrationAuthMiddleware pins the auth boundary for component
+// registration: selector-free posts on a PROVIDER-unset deployment must reach
+// the handler (adapters register with no provider selector and local mode has
+// no session to validate), while a remote selector or an enforced provider
+// must go through ProviderAuth instead of reaching the handler.
+func TestRegistrationAuthMiddleware(t *testing.T) {
+	local := &models.DefaultLocalProvider{}
+	local.Initialize()
+	providers := map[string]models.Provider{local.Name(): local}
+
+	tests := []struct {
+		name             string
+		providerOverride string
+		setup            func(*http.Request)
+		wantReached      bool
+	}{
+		{
+			name:        "no selector, no enforced provider reaches handler",
+			wantReached: true,
+		},
+		{
+			name: "Local cookie reaches handler",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: "meshery-provider", Value: "Local"})
+			},
+			wantReached: true,
+		},
+		{
+			name: "legacy None cookie reaches handler",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: "meshery-provider", Value: "None"})
+			},
+			wantReached: true,
+		},
+		{
+			name: "remote selector requires auth and does not reach handler",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: "meshery-provider", Value: "Meshery"})
+			},
+			wantReached: false,
+		},
+		{
+			name: "remote provider query param requires auth and does not reach handler",
+			setup: func(r *http.Request) {
+				r.URL.RawQuery = "provider=Meshery"
+			},
+			wantReached: false,
+		},
+		{
+			name:             "enforced provider requires auth and does not reach handler",
+			providerOverride: "Meshery",
+			wantReached:      false,
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			h := newTestHandler(t, providers, tc.providerOverride)
+			reached := false
+			inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				reached = true
+				w.WriteHeader(http.StatusOK)
+			})
+			chain := h.ProviderMiddleware(h.RegistrationAuthMiddleware(inner))
+			req := httptest.NewRequest(http.MethodPost, "/api/meshmodel/components/register", nil)
+			if tc.setup != nil {
+				tc.setup(req)
+			}
+			rec := httptest.NewRecorder()
+			chain.ServeHTTP(rec, req)
+			if reached != tc.wantReached {
+				t.Fatalf("reached = %v, want %v (status %d, location %q)", reached, tc.wantReached, rec.Result().StatusCode, rec.Header().Get("Location"))
+			}
+			if tc.wantReached && rec.Result().StatusCode != http.StatusOK {
+				t.Fatalf("expected 200 when handler is reached, got %d", rec.Result().StatusCode)
+			}
+		})
+	}
+}

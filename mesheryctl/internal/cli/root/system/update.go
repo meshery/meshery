@@ -32,6 +32,8 @@ var linkDocUpdate = map[string]string{
 	"caption": "Usage of mesheryctl system update",
 }
 
+var updateUsageMsg = "Usage: mesheryctl system update [flags]\nRun 'mesheryctl system update --help' to see detailed help message"
+
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
@@ -46,6 +48,12 @@ mesheryctl system update
 mesheryctl system update --skip-reset
 	`,
 	Annotations: linkDocUpdate,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", updateUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -60,10 +68,6 @@ mesheryctl system update --skip-reset
 		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "update"))
-		}
-
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

@@ -9,6 +9,10 @@ const initialState = {
       initial: true,
     },
     has_more: true,
+    // Set when a page request fails so the UI can show an error + retry without
+    // treating the failure as the end of the list.
+    load_error: false,
+    failed_request: null,
   },
 
   // this is used to fetch the view when notification center is opened
@@ -155,12 +159,23 @@ export const eventsSlice = createSlice({
       eventsEntityAdapter.addMany(state, action.payload);
 
       state.current_view.has_more = action.payload.length == 0 ? false : true;
+      state.current_view.load_error = false;
+      state.current_view.failed_request = null;
     },
 
     pushEvents: (state, action) => {
       // state.events = [...state.events, ...action.payload]
       eventsEntityAdapter.addMany(state, action.payload);
       state.current_view.has_more = action.payload.length == 0 ? false : true;
+      state.current_view.load_error = false;
+      state.current_view.failed_request = null;
+    },
+
+    // A page request failed: flag the error and record the { page, filters } that
+    // failed so retry repeats that request, not the last page that loaded.
+    setLoadError: (state, action) => {
+      state.current_view.load_error = true;
+      state.current_view.failed_request = action.payload || null;
     },
 
     pushEvent: (state, action) => {
@@ -265,6 +280,7 @@ export const {
   updateIsEventChecked,
   updateCheckAllEvents,
   pushEvents,
+  setLoadError,
   setCurrentView,
   updateEvent,
   toggleNotificationCenter,
@@ -275,15 +291,37 @@ export const {
 
 export default eventsSlice.reducer;
 
+// Monotonic token identifying the latest in-flight load. A filter change or a
+// newer page load claims a fresh token; any earlier request whose result
+// arrives late is superseded and its success/error is ignored, so a stale
+// failure cannot overwrite the current view (e.g. re-flag an obsolete filter).
+let latestRequestId = 0;
+
 export const loadEvents = (fetch, page, filters) => async (dispatch, getState) => {
   const currentView = getState().events.current_view;
+  const requestId = ++latestRequestId;
+  const isSuperseded = () => requestId !== latestRequestId;
   try {
-    const { data } = await fetch({ page, filters });
+    // RTK Query's lazy trigger resolves with { error } on failure instead of
+    // throwing, so a failed request must be detected here explicitly. Treating
+    // it as an empty page would set has_more=false and advance the page,
+    // making a transient failure look like the end of the list.
+    const { data, error } = await fetch({ page, filters });
+    if (isSuperseded()) {
+      return;
+    }
+    if (error) {
+      dispatch(setLoadError({ page, filters }));
+      console.error('Error while fetching events in store --loadEvents', error);
+      return;
+    }
     dispatch(
       setCurrentView({
         ...currentView,
         page,
         filters,
+        load_error: false,
+        failed_request: null,
       }),
     );
     if (page <= 0) {
@@ -292,6 +330,10 @@ export const loadEvents = (fetch, page, filters) => async (dispatch, getState) =
     }
     dispatch(pushEvents(data?.events || []));
   } catch (e) {
+    if (isSuperseded()) {
+      return;
+    }
+    dispatch(setLoadError({ page, filters }));
     console.error('Error while setting events in store --loadEvents', e);
     return;
   }
@@ -299,7 +341,23 @@ export const loadEvents = (fetch, page, filters) => async (dispatch, getState) =
 
 export const loadNextPage = (fetch) => async (dispatch, getState) => {
   const currentView = getState().events.current_view;
+  // Don't chase a page that failed to load as if it were the next one; let the
+  // user retry the failed page instead (see retryCurrentPage).
+  if (currentView.load_error) {
+    return;
+  }
   dispatch(loadEvents(fetch, currentView.page + 1, currentView.filters));
+};
+
+// Re-request the exact page + filters that failed (not the last page that
+// loaded), so a retry does not skip a page or duplicate notifications.
+export const retryCurrentPage = (fetch) => async (dispatch, getState) => {
+  const currentView = getState().events.current_view;
+  const failed = currentView.failed_request;
+  if (!failed) {
+    return;
+  }
+  dispatch(loadEvents(fetch, failed.page, failed.filters));
 };
 
 export const updateEventStatus =
@@ -344,6 +402,11 @@ export const deleteEvents =
 //select all events
 export const selectEvents = (state) => {
   return eventsEntityAdapter.getSelectors().selectAll(state.events);
+};
+
+// true when the last page request failed and can be retried
+export const selectLoadError = (state) => {
+  return Boolean(state.events.current_view.load_error);
 };
 
 export const selectCheckedEvents = (state) => {

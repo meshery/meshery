@@ -16,6 +16,7 @@ package design
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -24,6 +25,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -91,6 +93,9 @@ mesheryctl design delete -f [file | URL]
 					if errors.GetCode(err) == utils.ErrNotFoundCode {
 						return ErrDesignNotFound(target)
 					}
+					if errors.GetCode(err) == utils.ErrAmbiguousIDCode {
+						return err
+					}
 					// If the server is unreachable or another network error occurs,
 					// fall through to treat target as a file path so the descriptive
 					// file-read error is surfaced instead of an obscure ID error.
@@ -132,7 +137,17 @@ mesheryctl design delete -f [file | URL]
 			}
 		}
 
-		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer(patternFileByt))
+		// The server decodes this endpoint's body as a JSON
+		// MesheryPatternFileDeployPayload, so send the design the same way
+		// design deploy does rather than as raw file content.
+		payloadBytes, err := json.Marshal(models.MesheryPatternFileDeployPayload{
+			PatternFile: string(patternFileByt),
+		})
+		if err != nil {
+			return utils.ErrMarshal(err)
+		}
+
+		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer(payloadBytes))
 		if err != nil {
 			return utils.ErrCreatingRequest(err)
 		}

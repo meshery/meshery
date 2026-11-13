@@ -193,6 +193,7 @@ const legacyMaxLineSoftOffenders = [
   'components/registry/Stepper/UrlStepper.tsx',
   'components/user-preferences/index.tsx',
   'components/connections/meshSync/index.tsx',
+  'components/connections/ConnectionTable.test.tsx',
   'components/telemetry/grafana/GrafanaCustomChart.tsx',
   'components/telemetry/grafana/GrafanaDateRangePicker.tsx',
   // This config file itself: the legacy allowlists above push it past 600

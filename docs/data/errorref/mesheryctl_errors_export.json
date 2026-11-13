@@ -1918,7 +1918,7 @@
         "long_description": "",
         "short_description": "",
         "probable_cause": "Invalid system specified\nPublishing process encountered an error",
-        "suggested_remediation": "Ensure a valid system is provided (meshery, remote-provider, website)\nCheck the publishing configuration and try again"
+        "suggested_remediation": "Ensure a valid system is provided (remote-provider, website)\nCheck the publishing configuration and try again"
       },
       "1234": {
         "name": "ErrSystemAzureAksGetCredentialsCode",
@@ -2117,6 +2117,51 @@
         "short_description": "Unexpected response from GitHub API",
         "probable_cause": "GitHub API may be rate-limiting requests or the requested resource may not exist",
         "suggested_remediation": "Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"
+      },
+      "1256": {
+        "name": "ErrAmbiguousIDCode",
+        "code": "1256",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Ambiguous ID prefix",
+        "probable_cause": "The provided ID prefix is shared by more than one item.",
+        "suggested_remediation": "Provide more characters of the ID, or the full ID."
+      },
+      "1257": {
+        "name": "ErrAssignTokenCode",
+        "code": "1257",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to assign token to context",
+        "probable_cause": "The target context may not exist in meshconfig, or meshconfig could not be read or written.",
+        "suggested_remediation": "Verify the target context exists with `mesheryctl system context view` and ensure your meshconfig file is accessible."
+      },
+      "1258": {
+        "name": "ErrTokenRollbackCode",
+        "code": "1258",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to assign token or roll back created token",
+        "probable_cause": "Assigning the token to the target context failed, and deleting the newly created token during rollback also failed.",
+        "suggested_remediation": "Remove the orphaned token from meshconfig or run `mesheryctl system token delete <token-name>`, and verify the target context exists with `mesheryctl system context view`."
+      },
+      "1259": {
+        "name": "ErrProviderNotFoundCode",
+        "code": "1259",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Requested provider is not available on this Meshery Server",
+        "probable_cause": "The provider name is misspelled\nThe Meshery Server is pinned to a different provider",
+        "suggested_remediation": "Run `mesheryctl system provider list` to see the providers this server offers\nOmit --provider to choose one interactively"
+      },
+      "1260": {
+        "name": "ErrProviderAmbiguousCode",
+        "code": "1260",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "More than one provider matches that name",
+        "probable_cause": "Two or more providers share the same display name",
+        "suggested_remediation": "Run `mesheryctl system provider list` to see the registration keys\nPass a registration key to --provider instead of the display name"
       }
     }
   }

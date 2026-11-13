@@ -26,8 +26,15 @@ func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{},
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
+	machinectx.setupLock.Lock()
+	machinectx.disconnected = true
+	machinectx.retryPending = false
+	machinectx.setupLock.Unlock()
+
 	contextID := machinectx.K8sContext.ID
 	go func() {
+		machinectx.setupLock.Lock()
+		defer machinectx.setupLock.Unlock()
 		if machinectx.MesheryCtrlsHelper != nil {
 			machinectx.MesheryCtrlsHelper.
 				UpdateOperatorsStatusMap(machinectx.OperatorTracker).

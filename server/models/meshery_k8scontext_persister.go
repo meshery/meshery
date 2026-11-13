@@ -41,9 +41,13 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order stri
 		query = query.Where("(lower(name) like ?)", like)
 	}
 
-	query.Model(K8sContext{}).Count(&count)
+	if err := query.Model(K8sContext{}).Count(&count).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
 
-	Paginate(uint(page), uint(pageSize))(query).Find(&contexts)
+	if err := Paginate(uint(page), uint(pageSize))(query).Find(&contexts).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
 
 	mesheryK8sContextPage := MesheryK8sContextPage{
 		Page:       page,
@@ -52,10 +56,15 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order stri
 		Contexts:   contexts,
 	}
 
-	resp, _ := json.Marshal(mesheryK8sContextPage)
+	resp, err := json.Marshal(mesheryK8sContextPage)
+	if err != nil {
+		return nil, ErrMarshal(err, "k8s context page")
+	}
 	return resp, nil
 }
 
+// SaveMesheryK8sContext persists the context, deriving its ID when unset. It returns
+// ErrContextAlreadyPersisted when a context with that ID already exists.
 func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (connections.Connection, error) {
 	conn := connections.Connection{}
 	if mkc.ID == "" {
@@ -82,9 +91,15 @@ func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (c
 	return conn, err
 }
 
+// GetMesheryK8sContext returns the context matching the given ID, or falling back
+// to matching ConnectionID if no direct ID match is found.
 func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContext(id string) (K8sContext, error) {
 	var mesheryK8sContext K8sContext
 
-	err := mkcp.DB.First(&mesheryK8sContext, "id = ?", id).Error
+	err := mkcp.DB.Where("id = ?", id).First(&mesheryK8sContext).Error
+	if err == nil {
+		return mesheryK8sContext, nil
+	}
+	err = mkcp.DB.Where("connection_id = ?", id).First(&mesheryK8sContext).Error
 	return mesheryK8sContext, err
 }

@@ -15,15 +15,18 @@
 package components
 
 import (
+	"fmt"
+
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
 type componentListFlag struct {
 	Count    bool `json:"count" validate:"boolean"`
-	Page     int  `json:"page" validate:"omitempty,gte=1"`
-	PageSize int  `json:"page-size" validate:"omitempty,gte=1"`
+	Page     int  `json:"page" validate:"gte=1"`
+	PageSize int  `json:"pagesize" validate:"gte=1"`
 }
 
 var cmdComponentListFlag componentListFlag
@@ -49,6 +52,12 @@ mesheryctl component list --count
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentListFlag)
+	},
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg))
+		}
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		componentData := display.DisplayDataAsync{

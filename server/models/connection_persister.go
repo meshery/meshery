@@ -13,6 +13,7 @@ import (
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/database"
 	schemasConnection "github.com/meshery/schemas/models/v1beta3/connection"
+	schemasEnv "github.com/meshery/schemas/models/v1beta3/environment"
 	"gorm.io/gorm"
 )
 
@@ -210,6 +211,8 @@ func (cp *ConnectionPersister) SaveConnection(connection *connections.Connection
 	return connection, err
 }
 
+// DeleteConnectionById deletes a connection by its ID.
+// Any related Kubernetes context and environment connection mappings are also removed.
 func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*connections.Connection, error) {
 	connection := connections.Connection{}
 	err := cp.DB.Where("id = ?", connectionID).First(&connection).Error
@@ -231,6 +234,11 @@ func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*co
 	err = cp.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Delete(connection).Error; err != nil {
 			return err
+		}
+		if tx.Migrator().HasTable(&schemasEnv.EnvironmentConnectionMapping{}) {
+			if err := tx.Where("connection_id = ?", connection.ID.String()).Delete(&schemasEnv.EnvironmentConnectionMapping{}).Error; err != nil {
+				return err
+			}
 		}
 		if connection.Kind != "kubernetes" {
 			return nil
@@ -263,17 +271,52 @@ func (cp *ConnectionPersister) UpdateConnectionStatusByID(connectionID core.Uuid
 	return &updatedConnection, nil
 }
 
-func (cp *ConnectionPersister) UpdateConnectionByID(connection *connections.Connection) (*connections.Connection, error) {
-	err := cp.DB.Save(connection).Error
-	if err != nil {
-		return nil, ErrDBPut(err)
+// UpdateConnectionStatusIf updates a connection's status to newStatus only
+// when its stored status is one of fromStatuses, and reports whether the
+// write applied. The condition and the write are a single UPDATE ... WHERE
+// status IN (...) statement, so no concurrent status change can slip
+// between the check and the write: a background Discovery uses it to
+// refuse to move a connection the user has since disconnected, deleted or
+// ignored back to connected (issue #23248). Zero rows affected means the
+// stored status had already left the expected set, and nothing was
+// written.
+func (cp *ConnectionPersister) UpdateConnectionStatusIf(connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	res := cp.DB.Model(&connections.Connection{}).Where("id = ? AND status IN ?", connectionID, fromStatuses).UpdateColumn("status", newStatus)
+	if res.Error != nil {
+		return false, nil, ErrDBPut(res.Error)
+	}
+	if res.RowsAffected == 0 {
+		return false, nil, nil
 	}
 
 	updatedConnection := connections.Connection{}
-	err = cp.DB.Model(&updatedConnection).Where("id = ?", connection.ID).First(&updatedConnection).Error
+	err := cp.DB.Model(&updatedConnection).Where("id = ?", connectionID).First(&updatedConnection).Error
+	if err != nil {
+		return false, nil, ErrDBRead(err)
+	}
+
+	return true, &updatedConnection, nil
+}
+
+// UpdateConnectionByID persists updates to an existing connection while
+// preserving its original created_at timestamp, and returns the stored row.
+func (cp *ConnectionPersister) UpdateConnectionByID(connection *connections.Connection) (*connections.Connection, error) {
+	res := cp.DB.Model(connection).Select("*").Omit("created_at").Updates(connection)
+	if res.Error != nil {
+		return nil, ErrDBPut(res.Error)
+	}
+	if res.RowsAffected == 0 {
+		if err := cp.DB.Save(connection).Error; err != nil {
+			return nil, ErrDBPut(err)
+		}
+	}
+
+	updatedConnection := connections.Connection{}
+	err := cp.DB.Model(&updatedConnection).Where("id = ?", connection.ID).First(&updatedConnection).Error
 	if err != nil {
 		return nil, ErrDBRead(err)
 	}
+	*connection = updatedConnection
 	return connection, nil
 }
 

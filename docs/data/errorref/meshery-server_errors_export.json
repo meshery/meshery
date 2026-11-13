@@ -4345,6 +4345,33 @@
         "short_description": "The event's correlation, provenance, trace or metadata.error fields are not valid",
         "probable_cause": "A field breaks the meshery/schemas event contract: a correlationKey, source or type outside 1 to 255 characters, an occurrenceCount below 1, a lastSeenAt before firstSeenAt, a specversion other than 1.0, or a traceId or parentId that is not W3C Trace Context hex\nA metadata.error object carrying a lowercase code key breaks the schemas EventError contract: a value of the wrong JSON type or an unknown key, an empty code, a severity that is not an error severity, too many causes or remediations, a duplicate cause id, one remediation id naming two different remediations, an automatic or requiresApproval actionPolicy without an action, flat probableCause or suggestedRemediation lists that are not the ones derived from probableCauses, or a matchedCauses entry whose causeId is malformed, is not one of probableCauses, or whose confidence is outside 0 to 1. The long description names each failing field path",
         "suggested_remediation": "Send the fields as the schemas EventPayload defines them, or omit the ones the client does not set\nSend metadata.error as the schemas EventError shape (code, shortDescription and the other defined keys only), or drop it when the client has no structured error to attach"
+      },
+      "1490": {
+        "name": "ErrInvalidExtensionProxyPathCode",
+        "code": "1490",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid extension proxy path",
+        "probable_cause": "The path does not start with '/api/extensions' or has an invalid delimiter\nThe URL format might be malformed or manipulated",
+        "suggested_remediation": "Ensure the request path starts with '/api/extensions' followed by a valid subpath (e.g. '/api/extensions/users')\nCheck client routing and extension configuration"
+      },
+      "1491": {
+        "name": "ErrMigrateEventIndexesCode",
+        "code": "1491",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Server could not create the indexes the Notification Center queries use",
+        "probable_cause": "The database is read-only, locked by another process or not reachable",
+        "suggested_remediation": "Make sure Meshery Server can write to its database, then restart Meshery Server"
+      },
+      "1492": {
+        "name": "ErrNilProviderCode",
+        "code": "1492",
+        "severity": "Alert",
+        "long_description": "Provider instance passed to the handler is nil",
+        "short_description": "Provider not initialized",
+        "probable_cause": "The handler was invoked without an initialized provider instance",
+        "suggested_remediation": "Ensure the provider is properly initialized before handling the request"
       }
     }
   }

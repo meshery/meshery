@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Chip,
   CustomColumnVisibilityControl,
@@ -14,6 +14,7 @@ import {
   useTheme,
 } from '@sistent/sistent';
 import { Keys } from '@meshery/schemas/permissions';
+import { useGetUserCredentialsQuery } from '@meshery/schemas/mesheryApi';
 import DefaultError from './general/error-404/index';
 import Modal from './shared/Modal/Modal';
 import _PromptComponent, { PromptRef } from './general/PromptComponent';
@@ -29,7 +30,6 @@ import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   useCreateCredentialMutation,
   useDeleteCredentialMutation,
-  useGetCredentialsQuery,
   useUpdateCredentialMutation,
 } from '@/rtk-query/credentials';
 import { useSelector } from 'react-redux';
@@ -83,9 +83,26 @@ interface ColumnMeta {
 
 const MesheryCredentialComponent: React.FC = () => {
   const canViewCredentials = useHasPermission(Keys.SecurityManagementViewCredentials);
-  const { data: credentialsData, isLoading } = useGetCredentialsQuery(undefined, {
-    skip: !canViewCredentials,
-  });
+  // The table pages on the server: without page/pageSize the endpoint returns
+  // only its default first page (10), and credentials beyond it were unreachable.
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const { data: credentialsData, isLoading } = useGetUserCredentialsQuery(
+    { page, pageSize },
+    { skip: !canViewCredentials },
+  );
+
+  // Deleting the last credential on the last page leaves that page empty, so
+  // step back to the new last page once the server reports the smaller total.
+  useEffect(() => {
+    if (!credentialsData || credentialsData.page !== page) {
+      return;
+    }
+    const lastPage = Math.max(0, Math.ceil((credentialsData.totalCount ?? 0) / pageSize) - 1);
+    if (page > lastPage) {
+      setPage(lastPage);
+    }
+  }, [credentialsData, page, pageSize]);
   const [createCredential] = useCreateCredentialMutation();
   const [updateCredential] = useUpdateCredentialMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
@@ -326,7 +343,23 @@ const MesheryCredentialComponent: React.FC = () => {
 
   const options = {
     filter: false,
-    rowsPerPageOptions: [10, 20, 25],
+    serverSide: true,
+    count: credentialsData?.totalCount ?? 0,
+    page,
+    rowsPerPage: pageSize,
+    onTableChange: (action: string, tableState: { page: number; rowsPerPage: number }) => {
+      switch (action) {
+        case 'changePage':
+          setPage(tableState.page);
+          break;
+        case 'changeRowsPerPage':
+          setPageSize(tableState.rowsPerPage);
+          setPage(0);
+          break;
+        default:
+          break;
+      }
+    },
     filterType: 'textField' as const,
     responsive: 'standard' as const,
     print: false,
@@ -460,6 +493,10 @@ const MesheryCredentialComponent: React.FC = () => {
         columns={columns}
         data={credentialsData?.credentials || []}
         options={options}
+        // A prop, not an option: ResponsiveDataTable overwrites
+        // options.rowsPerPageOptions with this prop's default of 10/25/50/100,
+        // and the credentials endpoint serves at most 25 per page.
+        rowsPerPageOptions={[10, 20, 25]}
         tableCols={tableCols}
         updateCols={updateCols}
         columnVisibility={columnVisibility}

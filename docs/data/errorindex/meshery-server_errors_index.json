@@ -7622,6 +7622,60 @@
         "Send the fields as the schemas EventPayload defines them, or omit the ones the client does not set",
         "Send metadata.error as the schemas EventError shape (code, shortDescription and the other defined keys only), or drop it when the client has no structured error to attach"
       ]
+    },
+    {
+      "code": "meshery-server-1490",
+      "moniker": "ErrInvalidExtensionProxyPathCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1490",
+      "severity": "alert",
+      "shortDescription": "Invalid extension proxy path",
+      "probableCause": [
+        "The path does not start with '/api/extensions' or has an invalid delimiter",
+        "The URL format might be malformed or manipulated"
+      ],
+      "suggestedRemediation": [
+        "Ensure the request path starts with '/api/extensions' followed by a valid subpath (e.g. '/api/extensions/users')",
+        "Check client routing and extension configuration"
+      ]
+    },
+    {
+      "code": "meshery-server-1491",
+      "moniker": "ErrMigrateEventIndexesCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1491",
+      "severity": "alert",
+      "shortDescription": "Meshery Server could not create the indexes the Notification Center queries use",
+      "probableCause": [
+        "The database is read-only, locked by another process or not reachable"
+      ],
+      "suggestedRemediation": [
+        "Make sure Meshery Server can write to its database, then restart Meshery Server"
+      ]
+    },
+    {
+      "code": "meshery-server-1492",
+      "moniker": "ErrNilProviderCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1492",
+      "severity": "alert",
+      "shortDescription": "Provider not initialized",
+      "longDescription": "Provider instance passed to the handler is nil",
+      "probableCause": [
+        "The handler was invoked without an initialized provider instance"
+      ],
+      "suggestedRemediation": [
+        "Ensure the provider is properly initialized before handling the request"
+      ]
     }
   ],
   "schemaVersion": 2
