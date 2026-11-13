@@ -274,13 +274,48 @@ func PersistAndPublishSystemEvent(persister SystemEventPersister, broadcaster *B
 	return err
 }
 
-// correlatedEventsMu serializes correlated creates within this process. The
-// local provider's persister and the system event sink are separate
+// correlatedEventsMu serializes correlated creates and resolutions within this
+// process. The local provider's persister and the system event sink are separate
 // EventsPersister values over one SQLite database, and SQLite fails one of two
 // transactions that both read and then write ("database is locked") instead of
 // waiting. The partial unique index still guards the invariant against any
 // other writer.
 var correlatedEventsMu sync.Mutex
+
+// ResolveConnectionCondition closes the open rows for a server-generated
+// connection resolution. Each row keeps its owner, ID and occurrence history.
+// The remote provider uses its owner-scoped event API instead.
+func (l *DefaultLocalProvider) ResolveConnectionCondition(event events.Event) ([]events.Event, error) {
+	if event.CorrelationKey == nil || *event.CorrelationKey == "" || event.ResolvedAt == nil {
+		return nil, nil
+	}
+
+	correlatedEventsMu.Lock()
+	defer correlatedEventsMu.Unlock()
+
+	var resolved []events.Event
+	now := time.Now().UTC()
+	err := l.EventsPersister.DB.Transaction(func(tx *gorm.DB) error {
+		var open []events.Event
+		if err := tx.Where("correlation_key = ? AND resolved_at IS NULL AND owner IS NOT NULL AND owner <> ?",
+			*event.CorrelationKey, uuid.Nil).Find(&open).Error; err != nil {
+			return err
+		}
+		for i := range open {
+			var persisted PersistedEvent
+			updates := resolutionUpdates(&open[i], event, now)
+			if err := updateOpenEvent(tx, &open[i], updates, EventResolved, &persisted); err != nil {
+				return err
+			}
+			resolved = append(resolved, *persisted.Event)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, ErrPersistEvent(err)
+	}
+	return resolved, nil
+}
 
 // persistCorrelatedEvent applies the createEvent correlation steps to an event
 // for which correlatesEvent holds, in one transaction, and returns the event as
@@ -333,28 +368,7 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) (PersistedE
 		// The update runs on the stored row, whose status is valid, so the
 		// event's BeforeUpdate status check passes.
 		if event.ResolvedAt != nil {
-			resolvedAt := event.ResolvedAt.UTC()
-			// The resolution is the condition's latest observation, and it
-			// says what cleared: the closed event takes its time, severity and
-			// description (for example success, "Connection restored").
-			lastSeen := resolvedAt
-			if event.LastSeenAt != nil {
-				lastSeen = event.LastSeenAt.UTC()
-			}
-			if open.LastSeenAt != nil && open.LastSeenAt.After(lastSeen) {
-				lastSeen = open.LastSeenAt.UTC()
-			}
-			updates := map[string]interface{}{
-				"resolved_at":  resolvedAt,
-				"last_seen_at": lastSeen,
-				"updated_at":   now,
-			}
-			if event.Severity != "" {
-				updates["severity"] = event.Severity
-			}
-			if event.Description != "" {
-				updates["description"] = event.Description
-			}
+			updates := resolutionUpdates(&open, event, now)
 			if err := updateOpenEvent(tx, &open, updates, EventResolved, &persisted); err != nil {
 				return err
 			}
@@ -384,6 +398,30 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) (PersistedE
 		return PersistedEvent{}, err
 	}
 	return persisted, nil
+}
+
+// resolutionUpdates records what cleared and retains the latest observation.
+func resolutionUpdates(open *events.Event, event events.Event, now time.Time) map[string]interface{} {
+	resolvedAt := event.ResolvedAt.UTC()
+	lastSeen := resolvedAt
+	if event.LastSeenAt != nil {
+		lastSeen = event.LastSeenAt.UTC()
+	}
+	if open.LastSeenAt != nil && open.LastSeenAt.After(lastSeen) {
+		lastSeen = open.LastSeenAt.UTC()
+	}
+	updates := map[string]interface{}{
+		"resolved_at":  resolvedAt,
+		"last_seen_at": lastSeen,
+		"updated_at":   now,
+	}
+	if event.Severity != "" {
+		updates["severity"] = event.Severity
+	}
+	if event.Description != "" {
+		updates["description"] = event.Description
+	}
+	return updates
 }
 
 // updateOpenEvent applies updates to a condition's open event and reads it

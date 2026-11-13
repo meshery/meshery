@@ -494,6 +494,25 @@ func (h *Handler) reportMachineOutcome(provider models.Provider, token string, u
 		}
 		return
 	}
+	if err == nil && event.ResolvedAt != nil && event.CorrelationKey != nil {
+		// This is a server-generated recovery for shared connection state.
+		// Client-submitted resolutions still go through the owner-scoped API.
+		if localProvider, ok := provider.(*models.DefaultLocalProvider); ok {
+			resolved, resolveErr := localProvider.ResolveConnectionCondition(*event)
+			if resolveErr != nil {
+				if h.log != nil {
+					h.log.Error(resolveErr)
+				}
+				return
+			}
+			if h.config != nil && h.config.EventBroadcaster != nil {
+				for i := range resolved {
+					h.config.EventBroadcaster.Publish(*resolved[i].Owner, &resolved[i])
+				}
+			}
+			return
+		}
+	}
 	h.persistAndPublish(provider, token, userID, event)
 }
 

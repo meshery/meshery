@@ -20,9 +20,9 @@ import (
 	"github.com/meshery/meshkit/models/events"
 )
 
-// newDeleteConnectionFixture wires the handler the way the router does, over an
-// in-memory database. It deliberately goes through DefaultLocalProvider rather
-// than a stub: the behaviour under test is what the handler makes of a
+// newDeleteConnectionFixture wires the handler the way the router does, over a
+// temporary SQLite database. It deliberately goes through DefaultLocalProvider
+// rather than a stub: the behaviour under test is what the handler makes of a
 // provider's error, and the local provider is the one whose "not found" the
 // remote provider was taught to match.
 func newDeleteConnectionFixture(t *testing.T) (*Handler, *models.DefaultLocalProvider) {
@@ -35,6 +35,11 @@ func newDeleteConnectionFixture(t *testing.T) (*Handler, *models.DefaultLocalPro
 	if err != nil {
 		t.Fatalf("open database: %v", err)
 	}
+	t.Cleanup(func() {
+		if err := db.DBClose(); err != nil {
+			t.Errorf("close database: %v", err)
+		}
+	})
 	if err := db.AutoMigrate(connections.Connection{}, events.Event{}, models.K8sContext{}); err != nil {
 		t.Fatalf("migrate tables: %v", err)
 	}
