@@ -1796,12 +1796,18 @@ func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order
 		return nil, ErrPageNumber(err)
 	}
 
-	pgs, err := strconv.ParseUint(pageSize, 10, 32)
-	if err != nil {
-		return nil, ErrPageSize(err)
+	// "all" lists every organization unpaginated, as the workspace and
+	// environment listings already do. mesheryctl organization --count sends it.
+	all := pageSize == "all"
+	var pgs uint64
+	if !all {
+		pgs, err = strconv.ParseUint(pageSize, 10, 32)
+		if err != nil {
+			return nil, ErrPageSize(err)
+		}
 	}
 
-	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, updatedAfter)
+	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, all, updatedAfter)
 }
 
 // GetUsersKeys returns the list of keys
