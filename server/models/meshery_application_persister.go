@@ -2,12 +2,14 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"strings"
-
-	"github.com/meshery/schemas/models/core"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/schemas/models/core"
+	"gorm.io/gorm"
 )
 
 // MesheryApplicationPersister is the persister for persisting
@@ -42,9 +44,13 @@ func (maap *MesheryApplicationPersister) GetMesheryApplications(search, order st
 		query = query.Where("(lower(meshery_applications.name) like ?)", like)
 	}
 
-	query.Table("meshery_applications").Count(&count)
+	if err := query.Table("meshery_applications").Count(&count).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
 
-	Paginate(uint(page), uint(pageSize))(query).Find(&applications)
+	if err := Paginate(uint(page), uint(pageSize))(query).Find(&applications).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
 
 	mesheryApplicationPage := &MesheryApplicationPage{
 		Page:         page,
@@ -59,9 +65,15 @@ func (maap *MesheryApplicationPersister) GetMesheryApplications(search, order st
 // DeleteMesheryApplication takes in an application id and delete it if it already exists
 func (maap *MesheryApplicationPersister) DeleteMesheryApplication(id core.Uuid) ([]byte, error) {
 	application := MesheryApplication{ID: &id}
-	err := maap.DB.Delete(&application).Error
+	res := maap.DB.Delete(&application)
+	if res.Error != nil {
+		return nil, ErrDBDelete(res.Error, id.String())
+	}
+	if res.RowsAffected == 0 {
+		return nil, ErrResultNotFound(fmt.Errorf("application %s not found", id.String()))
+	}
 
-	return marshalMesheryApplication(&application), err
+	return marshalMesheryApplication(&application), nil
 }
 
 // SaveMesheryApplications batch inserts the given applications
@@ -80,19 +92,35 @@ func (maap *MesheryApplicationPersister) SaveMesheryApplications(applications []
 		finalApplications = append(finalApplications, application)
 	}
 
-	return marshalMesheryApplications(finalApplications), maap.DB.Create(finalApplications).Error
+	if err := maap.DB.Create(finalApplications).Error; err != nil {
+		return nil, ErrDBCreate(err)
+	}
+
+	return marshalMesheryApplications(finalApplications), nil
 }
 
 func (maap *MesheryApplicationPersister) GetMesheryApplication(id core.Uuid) ([]byte, error) {
 	var mesheryApplication MesheryApplication
 	err := maap.DB.First(&mesheryApplication, id).Error
-	return marshalMesheryApplication(&mesheryApplication), err
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(fmt.Errorf("application %s not found", id.String()))
+		}
+		return nil, ErrDBRead(err)
+	}
+	return marshalMesheryApplication(&mesheryApplication), nil
 }
 
 func (maap *MesheryApplicationPersister) GetMesheryApplicationSource(id core.Uuid) ([]byte, error) {
 	var mesheryApplication MesheryApplication
 	err := maap.DB.First(&mesheryApplication, id).Error
-	return mesheryApplication.SourceContent, err
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(fmt.Errorf("application %s not found", id.String()))
+		}
+		return nil, ErrDBRead(err)
+	}
+	return mesheryApplication.SourceContent, nil
 }
 
 func marshalMesheryApplicationPage(maap *MesheryApplicationPage) []byte {
