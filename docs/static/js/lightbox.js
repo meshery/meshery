@@ -39,7 +39,8 @@
         if (element.tagName !== "IMG") return false;
         if (element.dataset.noLightbox !== undefined) return false;
         var link = element.closest("a[href]");
-        if (link && !/\.(?:png|jpe?g|gif|webp|svg|avif|bmp)(?:[?#]|$)/i.test(link.getAttribute("href"))) return false;
+        if (link && link.hasAttribute("download")) return false;
+        if (link && !/\.(?:png|jpe?g|gif|webp|svg|avif|bmp)$/i.test(link.pathname)) return false;
         if (element.height < 50 && element.width < 50) return false;
         
         var contentSelectors = [
