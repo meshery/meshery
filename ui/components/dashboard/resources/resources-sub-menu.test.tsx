@@ -65,6 +65,12 @@ vi.mock('../utils', () => ({
   default: ({ kind }: { kind: string }) => <svg data-testid={`icon-${kind}`} />,
 }));
 
+vi.mock('@/components/shared/EmptyState/K8sContextEmptyState', () => ({
+  K8sEmptyState: ({ message }: { message: string }) => (
+    <div data-testid="crds-empty-state">{message}</div>
+  ),
+}));
+
 vi.mock('css/icons.styles', () => ({ iconMedium: {} }));
 
 vi.mock('@sistent/sistent', () => ({
@@ -186,5 +192,83 @@ describe('CRDsResourcesSubMenu', () => {
     expect(screen.getByTestId('tab-1')).toHaveTextContent('Bar');
     // The hook is called with the cluster args needed to fetch CRD kinds.
     expect(crdsArgs[0]).toEqual([null, null, { id: 'cluster-1' }, null, 'CRDS', ['ctx-1']]);
+  });
+
+  it('suggests connecting a cluster when no Kubernetes connection exists', () => {
+    const crdsResource = {
+      submenu: true,
+      useTableConfig: (...args: unknown[]) => {
+        return {};
+      },
+    };
+    render(
+      <CRDsResourcesSubMenu
+        k8sConfig={''}
+        resource={crdsResource}
+        selectedK8sContexts={[]}
+        selectedResource=""
+        handleChangeSelectedResource={vi.fn()}
+      />,
+    );
+
+    expect(screen.queryByTestId('tab-0')).not.toBeInTheDocument();
+    expect(screen.getByTestId('crds-empty-state')).toHaveTextContent(
+      'Connect a Kubernetes cluster to discover and view its custom resources.',
+    );
+    expect(screen.queryByTestId('resources-table')).not.toBeInTheDocument();
+  });
+
+  it('suggests selecting a connected cluster when none is selected', () => {
+    const crdsResource = { submenu: true, useTableConfig: () => ({}) };
+    render(
+      <ResourcesSubMenu
+        k8sConfig={[{ id: 'cluster-1', kubernetesServerId: 'server-1' }]}
+        resource={crdsResource}
+        selectedK8sContexts={[]}
+        selectedResource=""
+        handleChangeSelectedResource={vi.fn()}
+        isCRDS={true}
+      />,
+    );
+
+    expect(screen.getByTestId('crds-empty-state')).toHaveTextContent(
+      'Select a connected Kubernetes cluster to discover and view its custom resources.',
+    );
+  });
+
+  it('suggests checking connection health when the selection is unavailable', () => {
+    const crdsResource = { submenu: true, useTableConfig: () => ({}) };
+    render(
+      <ResourcesSubMenu
+        k8sConfig={[{ id: 'cluster-1' }]}
+        resource={crdsResource}
+        selectedK8sContexts={['cluster-1']}
+        selectedResource=""
+        handleChangeSelectedResource={vi.fn()}
+        isCRDS={true}
+      />,
+    );
+
+    expect(screen.getByTestId('crds-empty-state')).toHaveTextContent(
+      'The selected Kubernetes connection is unavailable. Check its health in Connections, then select it again.',
+    );
+  });
+
+  it('explains when the selected Kubernetes cluster has no custom resources', () => {
+    const crdsResource = { submenu: true, useTableConfig: () => ({}) };
+    render(
+      <ResourcesSubMenu
+        k8sConfig={[{ id: 'cluster-1', kubernetesServerId: 'server-1' }]}
+        resource={crdsResource}
+        selectedK8sContexts={['cluster-1']}
+        selectedResource=""
+        handleChangeSelectedResource={vi.fn()}
+        isCRDS={true}
+      />,
+    );
+
+    expect(screen.getByTestId('crds-empty-state')).toHaveTextContent(
+      'No custom resources are available for the selected Kubernetes cluster.',
+    );
   });
 });
