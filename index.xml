@@ -39050,7 +39050,7 @@ mesheryctl filter view [flags]
 	Examples
 &lt;/h2&gt;
 &lt;p&gt;View the specified WASM filter
-A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.&lt;/p&gt;
+Provide a full filter name or a unique ID prefix.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
@@ -39068,7 +39068,16 @@ mesheryctl filter view --all
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;View all filter files in json&lt;/p&gt;</description></item><item><title>mesheryctl-model-build</title><link>/reference/mesheryctl/model/build/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/model/build/</guid><description>&lt;h1 id="mesheryctl-model-build"&gt;
+&lt;p&gt;View all filter files in json&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
+mesheryctl filter view --all --output-format json
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View all filter files in json and save it to a file&lt;/p&gt;</description></item><item><title>mesheryctl-model-build</title><link>/reference/mesheryctl/model/build/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/model/build/</guid><description>&lt;h1 id="mesheryctl-model-build"&gt;
 	mesheryctl model build
 &lt;/h1&gt;
 &lt;p&gt;Create an OCI-compliant package from the model files&lt;/p&gt;
