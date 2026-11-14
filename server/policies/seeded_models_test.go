@@ -24,7 +24,9 @@ type seededModelDefDir struct {
 // newest version directory, picking the newest version with the same meshkit
 // ordering that server/models.GetModelDirectoryPaths uses for seeding. Seeding
 // takes the most recently modified definition directory of that version; every
-// one is returned here so the result does not depend on checkout timestamps.
+// one is returned here so the result does not depend on checkout timestamps,
+// and they must all register the same model name, so that whichever one is
+// seeded registers the model the tests check against.
 func seededModelDefDirs(t *testing.T, root string) []seededModelDefDir {
 	t.Helper()
 	modelsDir := filepath.Join(root, "models")
@@ -45,6 +47,7 @@ func seededModelDefDirs(t *testing.T, root string) []seededModelDefDir {
 		if err != nil {
 			t.Fatalf("reading %s: %v", versionDirs[0], err)
 		}
+		versionModel := ""
 		for _, defDir := range defDirs {
 			if !defDir.IsDir() {
 				continue
@@ -60,6 +63,10 @@ func seededModelDefDirs(t *testing.T, root string) []seededModelDefDir {
 			if err := json.Unmarshal(raw, &model); err != nil {
 				t.Fatalf("parsing model definition in %s: %v", dir, err)
 			}
+			if versionModel != "" && model.Name != versionModel {
+				t.Fatalf("definition directories in %s register different models (%q and %q), but seeding loads only one of them", versionDirs[0], versionModel, model.Name)
+			}
+			versionModel = model.Name
 			seeded = append(seeded, seededModelDefDir{name: model.Name, dir: dir})
 		}
 	}
