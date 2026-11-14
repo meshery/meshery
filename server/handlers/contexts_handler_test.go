@@ -673,10 +673,58 @@ func TestDeleteContext_SuccessWritesStatusOK(t *testing.T) {
 	req = req.WithContext(reqCtx)
 	req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
 	rec := httptest.NewRecorder()
+	// NewRecorder defaults Code to 200, so reset it: otherwise this
+	// assertion passes even if the handler never writes a status.
+	rec.Code = 0
 
 	h.DeleteContext(rec, req, nil, &models.User{ID: userID}, provider)
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("expected status %d, got %d. body: %s", http.StatusOK, rec.Code, rec.Body.String())
+	}
+}
+
+// TestDeleteContext_InitializationErrorReturns500 verifies that when state machine
+// initialization fails in DeleteContext, an HTTP 500 error is returned with a structured error.
+func TestDeleteContext_InitializationErrorReturns500(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	userID := uuid.Must(uuid.NewV4())
+	contextID := uuid.Must(uuid.NewV4())
+
+	provider := &mockContextsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		getK8sContextFn: func(token, id string) (models.K8sContext, error) {
+			return models.K8sContext{
+				ID:           contextID.String(),
+				Name:         "test-cluster",
+				ConnectionID: contextID.String(),
+			}, nil
+		},
+	}
+
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+
+	// Cancel the request context beforehand so InitializeMachineWithContext fails during start.
+	canceledCtx, cancel := context.WithCancel(context.Background())
+	cancel()
+	canceledCtx = context.WithValue(canceledCtx, models.TokenCtxKey, "secret-token")
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+contextID.String(), nil)
+	req = req.WithContext(canceledCtx)
+	req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+	rec := httptest.NewRecorder()
+	rec.Code = 0
+
+	h.DeleteContext(rec, req, nil, &models.User{ID: userID}, provider)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected status %d on initialization failure, got %d. body: %s", http.StatusInternalServerError, rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrFailToDeleteCode) {
+		t.Fatalf("expected error code %s in response body, got %s", ErrFailToDeleteCode, rec.Body.String())
 	}
 }
