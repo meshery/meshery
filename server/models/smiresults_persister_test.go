@@ -64,6 +64,9 @@ func TestSMIResultsPersister_WriteAndGetResult(t *testing.T) {
 	if got.MeshName != "istio" || got.Status != "passed" {
 		t.Errorf("got SmiResult = %+v, want meshName=istio, status=passed", got)
 	}
+	if got.ID != key {
+		t.Errorf("got SmiResult.ID = %s, want %s", got.ID, key)
+	}
 
 	// Update the result
 	result.Status = "failed"

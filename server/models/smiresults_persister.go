@@ -111,6 +111,7 @@ func (s *SMIResultsPersister) GetResult(key core.Uuid) ([]byte, error) {
 		}
 		return nil, ErrDBRead(err)
 	}
+	result.SmiResult.ID = result.ID
 	bd, err := json.Marshal(result.SmiResult)
 	if err != nil {
 		return nil, ErrMarshal(err, "smi result data")
