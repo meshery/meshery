@@ -801,7 +801,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 			return
 		}
 		if !isSafePathComponent(c.Model.Version) || !isSafePathComponent(c.Model.Model.Version) ||
-			!isSafePathComponent(c.Model.Name) || !isSafePathComponent(c.Component.Kind) {
+			!isSafePathComponent(c.Model.Name) || !isSafePathComponent(c.Component.Kind) || strings.Contains(c.Component.Kind, `\`) {
 			err := fmt.Errorf("invalid model version, name, or component kind: must be a single path component")
 			h.log.Error(ErrRequestBody(err))
 			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)

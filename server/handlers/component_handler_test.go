@@ -170,12 +170,14 @@ func TestRegisterMeshmodelComponents_VersionTraversal(t *testing.T) {
 		version      string
 		innerVersion string
 		nilModel     bool
+		wantReason   string
 	}{
-		{"outer version traverses", "traversal-model", "test-kind", "../../../escaped", "v1", false},
-		{"embedded version traverses", "traversal-model", "test-kind", "v1", "../../../escaped", false},
-		{"model name traverses", "../../../escaped-model", "test-kind", "v1", "v1", false},
-		{"component kind traverses", "traversal-model", "../../../escaped-kind", "v1", "v1", false},
-		{"nil model rejected", "", "test-kind", "", "", true},
+		{"outer version traverses", "traversal-model", "test-kind", "../../../escaped", "v1", false, "invalid model version, name, or component kind: must be a single path component"},
+		{"embedded version traverses", "traversal-model", "test-kind", "v1", "../../../escaped", false, "invalid model version, name, or component kind: must be a single path component"},
+		{"model name traverses", "../../../escaped-model", "test-kind", "v1", "v1", false, "invalid model version, name, or component kind: must be a single path component"},
+		{"component kind traverses", "traversal-model", "../../../escaped-kind", "v1", "v1", false, "invalid model version, name, or component kind: must be a single path component"},
+		{"component kind with backslash", "traversal-model", "test\\kind", "v1", "v1", false, "invalid model version, name, or component kind: must be a single path component"},
+		{"nil model rejected", "", "test-kind", "", "", true, "model is required in component definition"},
 	}
 
 	for _, tt := range tests {
@@ -220,6 +222,15 @@ func TestRegisterMeshmodelComponents_VersionTraversal(t *testing.T) {
 
 			resp := rw.Result()
 			assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+
+			var errResp struct {
+				Code            string   `json:"code"`
+				Error           string   `json:"error"`
+				LongDescription []string `json:"longDescription"`
+			}
+			require.NoError(t, json.NewDecoder(resp.Body).Decode(&errResp))
+			assert.Equal(t, ErrRequestBodyCode, errResp.Code)
+			assert.Contains(t, errResp.LongDescription, tt.wantReason)
 		})
 	}
 }

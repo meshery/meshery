@@ -164,7 +164,6 @@ func isSafePathComponent(s string) bool {
 
 func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename string) (svgColorPath, svgWhitePath, svgCompletePath string) {
 	filename = strings.ToLower(strings.TrimSpace(filename))
-	dirname = strings.TrimSpace(dirname)
 	if !isSafePathComponent(dirname) || !isSafePathComponent(filename) {
 		return
 	}
