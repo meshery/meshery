@@ -2,11 +2,13 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
 
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/schemas/models/core"
+	"gorm.io/gorm"
 )
 
 type MesheryResultsPersister struct {
@@ -28,14 +30,18 @@ type localMesheryResultDBRepresentation struct {
 	PerformanceProfile *core.Uuid `json:"performanceProfile,omitempty"`
 	Result             []byte     `json:"runnerResults,omitempty" gorm:"type:JSONB"`
 
-	ServerMetrics     interface{} `json:"serverMetrics,omitempty" gorm:"type:JSONB"`
-	ServerBoardConfig interface{} `json:"serverBoardConfig,omitempty" gorm:"type:JSONB"`
+	ServerMetrics     []byte `json:"serverMetrics,omitempty" gorm:"type:JSONB"`
+	ServerBoardConfig []byte `json:"serverBoardConfig,omitempty" gorm:"type:JSONB"`
 
 	TestStartTime          *time.Time         `json:"testStartTime,omitempty"`
 	PerformanceProfileInfo PerformanceProfile `json:"-" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
 }
 
 func (mrp *MesheryResultsPersister) GetResults(page, pageSize uint64, profileID string, log logger.Handler) ([]byte, error) {
+	if mrp == nil || mrp.DB == nil {
+		return nil, ErrDBConnection
+	}
+
 	var res []*localMesheryResultDBRepresentation
 	var count int64
 	query := mrp.DB.Where("performance_profile = ?", profileID)
@@ -45,6 +51,9 @@ func (mrp *MesheryResultsPersister) GetResults(page, pageSize uint64, profileID 
 		return nil, err
 	}
 	err = Paginate(uint(page), uint(pageSize))(query).Find(&res).Error
+	if err != nil {
+		return nil, err
+	}
 
 	resultPage := &MesheryResultPage{
 		Page:       page,
@@ -53,10 +62,14 @@ func (mrp *MesheryResultsPersister) GetResults(page, pageSize uint64, profileID 
 		Results:    convertLocalRepresentationSliceToMesheryResultSlice(res, log),
 	}
 
-	return marshalMesheryResultsPage(resultPage), err
+	return marshalMesheryResultsPage(resultPage), nil
 }
 
 func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, log logger.Handler) ([]byte, error) {
+	if mrp == nil || mrp.DB == nil {
+		return nil, ErrDBConnection
+	}
+
 	var res []*localMesheryResultDBRepresentation
 	var count int64
 	query := mrp.DB.Table("meshery_results")
@@ -66,6 +79,9 @@ func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, log log
 		return nil, err
 	}
 	err = Paginate(uint(page), uint(pageSize))(query).Find(&res).Error
+	if err != nil {
+		return nil, err
+	}
 
 	resultPage := &MesheryResultPage{
 		Page:       page,
@@ -74,14 +90,21 @@ func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, log log
 		Results:    convertLocalRepresentationSliceToMesheryResultSlice(res, log),
 	}
 
-	return marshalMesheryResultsPage(resultPage), err
+	return marshalMesheryResultsPage(resultPage), nil
 }
 
 func (mrp *MesheryResultsPersister) GetResult(key core.Uuid, log logger.Handler) (*MesheryResult, error) {
+	if mrp == nil || mrp.DB == nil {
+		return nil, ErrDBConnection
+	}
+
 	var lres localMesheryResultDBRepresentation
 
 	err := mrp.DB.Table("meshery_results").Where("id = ?", key).First(&lres).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
 		return nil, err
 	}
 	res, err := convertLocalRepresentationToMesheryResult(&lres, log)
@@ -89,6 +112,10 @@ func (mrp *MesheryResultsPersister) GetResult(key core.Uuid, log logger.Handler)
 }
 
 func (mrp *MesheryResultsPersister) WriteResult(key core.Uuid, result []byte) error {
+	if mrp == nil || mrp.DB == nil {
+		return ErrDBConnection
+	}
+
 	var data MesheryResult
 	if err := json.Unmarshal(result, &data); err != nil {
 		return err
@@ -118,6 +145,31 @@ func convertLocalRepresentationSliceToMesheryResultSlice(local []*localMesheryRe
 	return
 }
 
+func marshalJSONField(v interface{}) []byte {
+	if v == nil {
+		return nil
+	}
+	if b, ok := v.([]byte); ok {
+		return b
+	}
+	if s, ok := v.(string); ok && json.Valid([]byte(s)) {
+		return []byte(s)
+	}
+	b, _ := json.Marshal(v)
+	return b
+}
+
+func unmarshalJSONField(b []byte) interface{} {
+	if len(b) == 0 {
+		return nil
+	}
+	var out interface{}
+	if err := json.Unmarshal(b, &out); err == nil {
+		return out
+	}
+	return string(b)
+}
+
 func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepresentation, log logger.Handler) (*MesheryResult, error) {
 	var jsonmap map[string]interface{}
 	if err := json.Unmarshal(local.Result, &jsonmap); err != nil {
@@ -134,8 +186,8 @@ func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepres
 		Mesh:               local.Mesh,
 		PerformanceProfile: local.PerformanceProfile,
 		Result:             jsonmap,
-		ServerMetrics:      local.ServerMetrics,
-		ServerBoardConfig:  local.ServerMetrics,
+		ServerMetrics:      unmarshalJSONField(local.ServerMetrics),
+		ServerBoardConfig:  unmarshalJSONField(local.ServerBoardConfig),
 		TestStartTime:      local.TestStartTime,
 	}
 
@@ -151,8 +203,8 @@ func convertMesheryResultToLocalRepresentation(mr *MesheryResult) *localMesheryR
 		Mesh:               mr.Mesh,
 		PerformanceProfile: mr.PerformanceProfile,
 		Result:             byt,
-		ServerMetrics:      mr.ServerMetrics,
-		ServerBoardConfig:  mr.ServerMetrics,
+		ServerMetrics:      marshalJSONField(mr.ServerMetrics),
+		ServerBoardConfig:  marshalJSONField(mr.ServerBoardConfig),
 		TestStartTime:      mr.TestStartTime,
 	}
 

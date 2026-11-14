@@ -9,6 +9,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
 )
@@ -136,7 +137,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 			h.log.Error(ErrGetResult(err))
 		}
 		status := providerStatusOrInternal(err)
-		if errors.Is(err, gorm.ErrRecordNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) || meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode {
 			status = http.StatusNotFound
 		}
 		writeMeshkitError(w, ErrGetResult(err), status)
@@ -237,7 +238,7 @@ func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.R
 			h.log.Error(ErrFetchSMIResults(err))
 		}
 		status := providerStatusOrInternal(err)
-		if errors.Is(err, gorm.ErrRecordNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) || meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode {
 			status = http.StatusNotFound
 		}
 		writeMeshkitError(w, ErrFetchSMIResults(err), status)
