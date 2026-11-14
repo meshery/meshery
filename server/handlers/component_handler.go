@@ -46,7 +46,7 @@ import (
 	"gorm.io/gorm"
 )
 
-/**Meshmodel endpoints **/
+/** Registry and Model Endpoints **/
 
 // DefaultPageSizeForMeshModelComponents is the default page size used when listing Meshmodel components.
 const DefaultPageSizeForMeshModelComponents = 25

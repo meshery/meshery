@@ -953,9 +953,9 @@
         "code": "1106",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "could not get meshmodel entities",
-        "probable_cause": "Meshmodel entity could not be converted into valid json\ndata in the registry was inconsistent",
-        "suggested_remediation": "make sure correct and consistent data is present inside the registry\ndrop the Meshmodel tables and restart Meshery server"
+        "short_description": "could not retrieve model entities from registry",
+        "probable_cause": "model entity could not be converted into valid JSON\ndata in the registry is inconsistent",
+        "suggested_remediation": "check server logs and database connectivity\nensure model definitions in the registry are valid and consistent"
       },
       "1107": {
         "name": "ErrGetUserDetailsCode",
