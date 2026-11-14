@@ -704,6 +704,10 @@ func (h *Handler) GetMesheryPatternsHandler(
 	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics, populate)
 
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(rw, err, http.StatusBadRequest)
+			return
+		}
 		h.log.Error(ErrFetchPattern(err))
 		writeMeshkitError(rw, ErrFetchPattern(err), http.StatusInternalServerError)
 		return

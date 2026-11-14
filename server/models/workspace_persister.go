@@ -82,7 +82,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	workspacesFetched := []workspace.Workspace{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 	// Fetch all workspaces if pageSize is "all"
 	if pageSize == "all" {
@@ -91,7 +91,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		// Convert page and pageSize from string to uint
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
-			return nil, err
+			return nil, ErrPageSize(err)
 		}
 
 		// Fetch workspaces with pagination

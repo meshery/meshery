@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/core"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"gorm.io/driver/sqlite"
@@ -202,5 +203,35 @@ func TestWorkspacePersisterAddTeamToWorkspace_Deduplication(t *testing.T) {
 	dbHandler.Model(&workspace.WorkspacesTeamsMapping{}).Where("workspace_id = ? AND team_id = ?", wsID, teamID).Count(&count)
 	if count != 1 {
 		t.Fatalf("expected 1 mapping after adding twice, got %d", count)
+	}
+}
+
+func TestWorkspacePersisterGetWorkspaces_InvalidPagination(t *testing.T) {
+	dbHandler := newWorkspaceTestDB(t)
+	if err := dbHandler.AutoMigrate(&workspace.Workspace{}); err != nil {
+		t.Fatalf("failed to auto-migrate schemas workspace: %v", err)
+	}
+	persister := &WorkspacePersister{DB: dbHandler}
+	orgID := uuid.Must(uuid.NewV4()).String()
+
+	tests := []struct {
+		name     string
+		page     string
+		pageSize string
+		wantCode string
+	}{
+		{"invalid page", "-1", "10", ErrPageNumberCode},
+		{"invalid pagesize", "0", "abc", ErrPageSizeCode},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := persister.GetWorkspaces(orgID, "", "", tc.page, tc.pageSize, "")
+			if err == nil {
+				t.Fatalf("expected an error for page=%q pagesize=%q, got nil", tc.page, tc.pageSize)
+			}
+			if got := meshkiterrors.GetCode(err); got != tc.wantCode {
+				t.Errorf("error code = %q, want %q (err: %v)", got, tc.wantCode, err)
+			}
+		})
 	}
 }

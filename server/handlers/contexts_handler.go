@@ -45,6 +45,10 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	// Don't fetch credentials as UI has no use case.
 	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), "", false)
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
 		h.log.Error(ErrGetK8sContexts(err))
 		writeMeshkitError(w, ErrGetK8sContexts(err), http.StatusInternalServerError)
 		return

@@ -225,6 +225,27 @@ func TestGetAllContexts_DatabaseFailure(t *testing.T) {
 	}
 }
 
+// A rejected page or pagesize is a client error. Uses the real local provider,
+// which parses both values before it touches the database.
+func TestGetAllContexts_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	for _, query := range []string{"page=-1", "pagesize=abc"} {
+		t.Run(query, func(t *testing.T) {
+			provider := &models.DefaultLocalProvider{}
+			h := &Handler{log: newTestLogger(t)}
+
+			req := httptest.NewRequest(http.MethodGet, "/api/system/kubernetes/contexts?"+query, nil)
+			req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+			rec := httptest.NewRecorder()
+
+			h.GetAllContexts(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected status %d, got %d. body: %s", http.StatusBadRequest, rec.Code, rec.Body.String())
+			}
+		})
+	}
+}
+
 func TestDeleteContext_SendEventError(t *testing.T) {
 	systemID := uuid.Must(uuid.NewV4())
 	userID := uuid.Must(uuid.NewV4())
