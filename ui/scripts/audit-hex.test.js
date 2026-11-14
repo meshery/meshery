@@ -142,6 +142,29 @@ test('detects case-insensitive RGB functions without matching identifier suffixe
   assert.equal(result.rgb, 6);
 });
 
+test('ignores RGB functions in comments but counts actual functions', (t) => {
+  const fixture = createFixture(t);
+
+  writeFile(
+    fixture,
+    'ui/components/rgb-comments.tsx',
+    [
+      '// rgb(255, 0, 0)',
+      '/* rgba(0, 0, 0, .5) */',
+      'const color = rgb(12, 34, 56);',
+      'const alpha = rgba(12, 34, 56, .5);',
+      '',
+    ].join('\n'),
+  );
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.files, 1);
+  assert.equal(result.rgb, 2);
+  assert.equal(result.matches, 2);
+  assert.equal(result.offenders[0].rgb, 2);
+});
+
 test('scans nested production directories with root-scoped names', (t) => {
   const fixture = createFixture(t);
 

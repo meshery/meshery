@@ -162,8 +162,9 @@ function maskComments(src) {
 }
 function scanFile(file) {
   const src = fs.readFileSync(file, 'utf8');
-  const hex = countMatches(maskComments(src), HEX_PATTERN);
-  const rgb = countMatches(src, RGB_PATTERN);
+  const maskedSrc = maskComments(src);
+  const hex = countMatches(maskedSrc, HEX_PATTERN);
+  const rgb = countMatches(maskedSrc, RGB_PATTERN);
   return { hex, rgb };
 }
 
