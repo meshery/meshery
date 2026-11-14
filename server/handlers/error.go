@@ -239,6 +239,8 @@ const (
 	ErrGetUserCode               = "meshery-server-1460"
 	ErrGetUsersKeysCode          = "meshery-server-1461"
 	ErrFetchProfilesCode         = "meshery-server-1464"
+	ErrGetConnectionDefinitionsCode = "meshery-server-1493"
+	ErrGetConnectionDefinitionCode  = "meshery-server-1494"
 	ErrResetInProgressCode       = "meshery-server-1481"
 	ErrInvalidClientEventCode    = "meshery-server-1489"
 	ErrNilProviderCode           = "meshery-server-1492"
@@ -1287,5 +1289,27 @@ func ErrNilProvider() error {
 		[]string{"Provider instance passed to the handler is nil"},
 		[]string{"The handler was invoked without an initialized provider instance"},
 		[]string{"Ensure the provider is properly initialized before handling the request"},
+	)
+}
+
+func ErrGetConnectionDefinitions(err error) error {
+	return errors.New(
+		ErrGetConnectionDefinitionsCode,
+		errors.Alert,
+		[]string{"Unable to get connection definitions"},
+		[]string{err.Error()},
+		[]string{"Database or registry was unreachable or returned an error", "Data in the registry was inconsistent"},
+		[]string{"Make sure the registry is available and try again", "Check server logs for database connectivity issues"},
+	)
+}
+
+func ErrGetConnectionDefinition(err error) error {
+	return errors.New(
+		ErrGetConnectionDefinitionCode,
+		errors.Alert,
+		[]string{"Unable to get connection definition"},
+		[]string{err.Error()},
+		[]string{"Database or registry was unreachable or returned an error", "Connection definition with given ID does not exist or failed during retrieval"},
+		[]string{"Check if the connection definition ID is valid", "Make sure the registry is available and try again"},
 	)
 }
