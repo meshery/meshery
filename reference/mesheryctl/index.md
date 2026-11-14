@@ -51,7 +51,7 @@ Meshery CLI commands are categorized by function, which are:
       <tr>
         <td></td>
         <td>--config</td>
-        <td>configures Meshery with the meshconfig, generated with the help of user details to provide cluster access for public clouds(GKE/EKS).</td>
+        <td>configures Meshery with the meshconfig, generated with the help of user details to provide cluster access for public clouds (GKE/EKS).</td>
       </tr>
       <tr>
         <td></td>
@@ -480,7 +480,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       </tr>
       <tr><td><a href="/reference/mesheryctl/design/delete/">delete</a></td>
         <td></td>
-        <td>Deprovision cloud native infrastructure using a design /design file</td>
+        <td>Deprovision cloud native infrastructure using a design file</td>
       </tr>
       <tr>
         <td></td>
