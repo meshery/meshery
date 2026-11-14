@@ -5117,8 +5117,23 @@ func (l *RemoteProvider) LogoutMesheryServer() error {
 	return nil
 }
 
+// providerPackageDownloadTimeout bounds the whole download of a provider UI
+// package. The download runs inside the login handler, so without a bound a
+// package host that accepts the connection and then stalls would hold the
+// user's login open indefinitely. It is a variable so tests can shorten it.
+var providerPackageDownloadTimeout = 2 * time.Minute
+
+// maxProviderPackageExtractedBytes caps how much a provider UI package may
+// expand to on disk, so a hostile or corrupt archive cannot fill the disk. It
+// is a variable so tests can lower it.
+var maxProviderPackageExtractedBytes int64 = 512 << 20
+
 // TarXZF takes in a source url downloads the tar.gz file
 // uncompresses and then save the file to the destination
+//
+// The download is bounded by providerPackageDownloadTimeout. It runs inside the
+// login handler, so a host that accepts the connection and then stalls must not
+// be able to hold a user's login open.
 func TarXZF(srcURL, destination string, log logger.Handler) error {
 	filename := filepath.Base(srcURL)
 
@@ -5127,16 +5142,19 @@ func TarXZF(srcURL, destination string, log logger.Handler) error {
 		return fmt.Errorf("file is not of type tar.gz or tgz")
 	}
 
-	resp, err := http.Get(srcURL)
+	ctx, cancel := context.WithTimeout(context.Background(), providerPackageDownloadTimeout)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, srcURL, nil)
 	if err != nil {
-		if resp == nil {
-			return fmt.Errorf("could not reach %v: %w", srcURL, err)
-		}
-		return err
+		return fmt.Errorf("invalid package url %v: %w", srcURL, err)
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("could not reach %v: %w", srcURL, err)
 	}
 	defer func() {
-		err := resp.Body.Close()
-		if err != nil {
+		if err := resp.Body.Close(); err != nil && log != nil {
 			log.Error(ErrCloseIoReader(err))
 		}
 	}()
@@ -5151,8 +5169,50 @@ func TarXZF(srcURL, destination string, log logger.Handler) error {
 // TarXZ takes in a gzip stream and untars and uncompresses it to
 // the destination directory
 //
-// If the destination doesn't exists, it will create it
+// When the destination does not exist the archive is extracted into a staging
+// directory beside it and moved into place only once every entry has been
+// written. The callers skip the download whenever the destination exists, so
+// extracting in place would turn one truncated download into a permanently
+// broken install. When the destination already exists the archive is extracted
+// into it directly, as before.
 func TarXZ(gzipStream io.Reader, destination string) error {
+	if _, err := os.Stat(destination); err == nil {
+		return extractTarGz(gzipStream, destination)
+	}
+
+	parent := filepath.Dir(destination)
+	if err := os.MkdirAll(parent, 0755); err != nil {
+		return err
+	}
+	staging, err := os.MkdirTemp(parent, "."+filepath.Base(destination)+".partial-*")
+	if err != nil {
+		return err
+	}
+	// MkdirTemp creates the directory 0700; the destination has always been 0755.
+	if err := os.Chmod(staging, 0755); err != nil {
+		_ = os.RemoveAll(staging)
+		return err
+	}
+
+	if err := extractTarGz(gzipStream, staging); err != nil {
+		_ = os.RemoveAll(staging)
+		return err
+	}
+
+	if err := os.Rename(staging, destination); err != nil {
+		_ = os.RemoveAll(staging)
+		// Two logins can race to install the same package. If the other one won,
+		// the package is in place and this call has nothing left to do.
+		if _, statErr := os.Stat(destination); statErr == nil {
+			return nil
+		}
+		return err
+	}
+	return nil
+}
+
+// extractTarGz untars a gzip stream into destination, creating it if needed.
+func extractTarGz(gzipStream io.Reader, destination string) error {
 	if err := os.MkdirAll(destination, 0755); err != nil {
 		return err
 	}
@@ -5169,6 +5229,7 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 	}()
 
 	tarReader := tar.NewReader(uncompressedStream)
+	var extracted int64
 
 	for {
 		header, err := tarReader.Next()
@@ -5181,31 +5242,52 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 			return err
 		}
 
+		// A PAX global header describes the archive as a whole (GitHub's
+		// /archive tarballs and `git archive` begin with one, carrying the
+		// commit id) and holds no file.
+		if header.Typeflag == tar.TypeXGlobalHeader {
+			continue
+		}
+
+		// Clean the name first so "./", "./a" and "a/./b" are understood as the
+		// paths they mean. An archive made with `tar -C dir .` starts with "./",
+		// which is the destination itself and has nothing to extract.
+		name := path.Clean(header.Name)
+		if name == "." {
+			continue
+		}
+
 		// Prevent Arbitrary file write during zip extraction ("zip slip")
 		// This checks that the zip doesn't contain filenames like
 		// `../../../tmp/some.sh`
 		// see https://snyk.io/research/zip-slip-vulnerability for more
-		err = validateExtractPath(header.Name, destination)
+		err = validateExtractPath(name, destination)
 		if err != nil {
 			return err
 		}
+		target := filepath.Join(destination, filepath.FromSlash(name))
 
 		switch header.Typeflag {
 		case tar.TypeDir:
-			if err := os.MkdirAll(path.Join(destination, header.Name), 0755); err != nil {
+			if err := os.MkdirAll(target, 0755); err != nil {
 				return err
 			}
 		case tar.TypeReg:
-			// When we encounter files that are in nested dirs this takes care of
-			// creating parent dirs.
-			// #nosec
-			if _, err := os.Stat(path.Join(destination, path.Dir(header.Name))); err != nil {
-				if err := os.MkdirAll(path.Join(destination, path.Dir(header.Name)), 0750); err != nil {
-					return err
-				}
+			if header.Size < 0 {
+				return fmt.Errorf("%s: invalid file size", header.Name)
+			}
+			extracted += header.Size
+			if extracted > maxProviderPackageExtractedBytes {
+				return fmt.Errorf("provider package exceeds the maximum extracted size of %d bytes", maxProviderPackageExtractedBytes)
 			}
 
-			outFile, err := os.Create(path.Join(destination, header.Name))
+			// When we encounter files that are in nested dirs this takes care of
+			// creating parent dirs.
+			if err := os.MkdirAll(filepath.Dir(target), 0750); err != nil {
+				return err
+			}
+
+			outFile, err := os.Create(target)
 			if err != nil {
 				return err
 			}
