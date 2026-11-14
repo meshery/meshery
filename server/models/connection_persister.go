@@ -52,7 +52,7 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 	}
 
 	if len(connType) != 0 {
-		query = query.Where("type IN (?)", connType)
+		query = query.Where("connection_type IN (?)", connType)
 	}
 
 	dynamicKeys := []string{"type", "sub_type"}
