@@ -267,7 +267,14 @@ func deduplicateActions(actions []pattern.Action) []pattern.Action {
 		path := ""
 		if a.Value != nil {
 			if v, ok := a.Value["path"]; ok {
-				path = fmt.Sprintf("%v", v)
+				// JSON rather than %v: fmt renders both ["spec", "a b"] and
+				// ["spec a", "b"] as "[spec a b]", which would collapse two
+				// distinct updates into one.
+				if encoded, err := json.Marshal(v); err == nil {
+					path = string(encoded)
+				} else {
+					path = fmt.Sprintf("%v", v)
+				}
 			}
 		}
 		k := key{op: a.Op, id: id, path: path}

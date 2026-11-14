@@ -1193,6 +1193,18 @@ func TestDeduplicateActionsKeepsPathAndLatestValue(t *testing.T) {
 			"the reported value must match the design the response ships with")
 	})
 
+	t.Run("segment boundaries do not collide", func(t *testing.T) {
+		// Rendering the path with %v makes both of these "[spec a b]", which
+		// would drop one of the two updates.
+		got := deduplicateActions([]pattern.Action{
+			update([]string{"spec", "a b"}, "first"),
+			update([]string{"spec a", "b"}, "second"),
+		})
+		require.Len(t, got, 2, "distinct segment arrays must not share a dedup key")
+		assert.Equal(t, "first", got[0].Value["value"])
+		assert.Equal(t, "second", got[1].Value["value"])
+	})
+
 	t.Run("pathless ops still dedup on op and id", func(t *testing.T) {
 		del := pattern.Action{Op: gopolicies.DeleteComponentOp, Value: map[string]interface{}{"id": id}}
 		got := deduplicateActions([]pattern.Action{del, del})
