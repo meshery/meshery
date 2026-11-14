@@ -2243,11 +2243,22 @@ func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.Even
 		return nil, err
 	}
 
+	// readCount backs the Notification Center's "Read" chip, so it counts
+	// every read event the user can see, independent of the page's filters.
+	var readCount int64
+	err = e.DB.Model(&events.Event{}).
+		Where("status = ? AND (owner = ? OR owner = ?)", events.Read, userID, sysID).
+		Count(&readCount).Error
+	if err != nil {
+		return nil, err
+	}
+
 	return &EventsResponse{
 		Events:               eventsDB,
 		PageSize:             eventsFilter.Limit,
 		TotalCount:           count,
 		CountBySeverityLevel: countBySeverity,
+		ReadCount:            readCount,
 	}, nil
 }
 
