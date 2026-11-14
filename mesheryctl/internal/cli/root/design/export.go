@@ -224,7 +224,9 @@ func makeRequest(method, url string) (*http.Response, error) {
 // and a Meshery design YAML for "current".
 func generateFilename(patternName, design, designType, sourceType string) string {
 	lastPartOfID := strings.Split(design, "-")[len(strings.Split(design, "-"))-1]
-	filename := fmt.Sprintf("%s_%s", patternName, lastPartOfID)
+	// The design name comes from the server and may contain path separators
+	// or "..", so sanitize it to keep the file inside the output directory.
+	filename := fmt.Sprintf("%s_%s", utils.SanitizeFileName(patternName), lastPartOfID)
 	switch designType {
 	case "oci":
 		filename += ".tar"
