@@ -26,9 +26,9 @@
  */
 
 'use strict';
-
 const fs = require('fs');
 const path = require('path');
+const ts = require('typescript');
 
 const UI_ROOT = path.resolve(__dirname, '..');
 
