@@ -43,6 +43,16 @@ func TestResultCmd(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
+			Name: "standard results output with pagesize",
+			Args: []string{"result", "abhishek", "--pagesize", "10"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: "result.profile.response.golden", ResponseCode: 200},
+				{Method: "GET", URL: resultURL + "?pagesize=10&page=0", Response: "result.list.response.golden", ResponseCode: 200},
+			},
+			ExpectedResponse: "result.list.output.golden",
+			ExpectError:      false,
+		},
+		{
 			Name: "standard results in json output",
 			Args: []string{"result", "abhishek", "-o", "json"},
 			URLs: []utils.MockURL{
@@ -83,6 +93,33 @@ func TestResultCmd(t *testing.T) {
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --page '-1'")),
+		},
+		{
+			Name:             "pagesize 0",
+			Args:             []string{"result", "abhishek", "--pagesize", "0"},
+			URLs:             []utils.MockURL{},
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --pagesize '0'")),
+		},
+		{
+			Name:             "negative pagesize",
+			Args:             []string{"result", "abhishek", "--pagesize", "-1"},
+			URLs:             []utils.MockURL{},
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --pagesize '-1'")),
+		},
+		{
+			Name:             "pagesize 0 with shorthand flag",
+			Args:             []string{"result", "abhishek", "-s", "0"},
+			URLs:             []utils.MockURL{},
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --pagesize '0'")),
 		},
 		{
 			Name:             "invalid output format",

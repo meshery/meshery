@@ -178,6 +178,8 @@ func resetVariables() {
 	viewSingleResult = false
 	additionalOptions = ""
 	certPath = ""
+	pageSize = 25
+	pageNumber = 1
 }
 
 func TestCreatePerformanceProfile_ServerErrors(t *testing.T) {
