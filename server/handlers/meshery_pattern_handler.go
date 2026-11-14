@@ -1172,24 +1172,40 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	}
 
 	if ahpkg {
-		rw.Header().Set("Content-Type", "application/zip")
-		rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.zip", pattern.Name))
-
 		tarWriter := utils.NewTarWriter()
-		data, _ := createArtifactHubPkg(pattern, strings.Trim(fmt.Sprintf("%s %s", user.FirstName, user.LastName), " "))
-		err = tarWriter.Compress("artifacthub-pkg.yml", data)
+		data, err := createArtifactHubPkg(pattern, strings.Trim(fmt.Sprintf("%s %s", user.FirstName, user.LastName), " "))
 		if err != nil {
 			h.log.Error(err)
 			event := newDownloadEvent().WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to create artifacthub pkg for the design \"%s\"", pattern.Name)).WithMetadata(map[string]interface{}{"error": err}).Build()
 			h.persistAndPublish(provider, token, userID, event)
+
+			writeMeshkitError(rw, err, http.StatusInternalServerError)
+			return
 		}
-		ymlDesign, err := yaml.Marshal(pattern.PatternFile)
+		err = tarWriter.Compress("artifacthub-pkg.yml", data)
+		if err != nil {
+			wrappedErr := ErrCompressArtifact(err)
+			h.log.Error(wrappedErr)
+			event := newDownloadEvent().WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to compress artifacthub pkg for design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": wrappedErr}).Build()
+			h.persistAndPublish(provider, token, userID, event)
+			tarWriter.Close()
+			writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
+			return
+		}
+		var ymlDesign []byte
+		var designObj interface{}
+		if unmarshalErr := yaml.Unmarshal([]byte(pattern.PatternFile), &designObj); unmarshalErr == nil {
+			ymlDesign, err = yaml.Marshal(designObj)
+		} else {
+			err = nil
+			ymlDesign = []byte(pattern.PatternFile)
+		}
 		if err != nil {
 			err = ErrEncodePattern(err)
 			h.log.Error(err)
 			event := newDownloadEvent().WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 				"error": err,
-			}).WithDescription(fmt.Sprintf("Failed to export design \"%s\" as OCI image.", pattern.Name)).Build()
+			}).WithDescription(fmt.Sprintf("Failed to export design \"%s\" as package.", pattern.Name)).Build()
 			h.persistAndPublish(provider, token, userID, event)
 
 			writeMeshkitError(rw, err, http.StatusInternalServerError)
@@ -1208,13 +1224,17 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 		tarWriter.Close()
 
+		rw.Header().Set("Content-Type", "application/x-tar")
+		rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.tar", pattern.Name))
+
 		_, err = io.Copy(rw, tarWriter.Buffer)
 		if err != nil {
-			// Headers were committed above (Content-Type: application/zip),
+			// Headers were committed above (Content-Type: application/x-tar),
 			// so a fresh JSON error response cannot be sent. Log only.
 			h.log.Error(ErrIOReader(err))
 			return
 		}
+		return
 	}
 
 	yamlBytes, err := encoding.ToYaml([]byte(pattern.PatternFile))

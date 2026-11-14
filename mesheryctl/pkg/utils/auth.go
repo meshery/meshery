@@ -149,23 +149,40 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 	return resp, nil
 }
 
-// GetTokenLocation checks the location of token and returns appropriate location of the token
+// GetTokenLocation returns the path of the file a meshconfig token entry names.
+// Absolute and "~/" locations resolve through config.Token.GetLocation, so
+// requests read the same file system login and logout write. A bare file name
+// is joined to MesheryFolder, which is ~/.meshery at runtime, as GetLocation
+// does, and which tests point at their fixtures.
 func GetTokenLocation(token config.Token) (string, error) {
-	// Find home directory.
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", errors.Wrap(err, "failed to get users home directory")
+	if filepath.IsAbs(token.Location) || strings.HasPrefix(token.Location, "~/") {
+		return token.GetLocation(), nil
+	}
+	return filepath.Join(MesheryFolder, token.Location), nil
+}
+
+// EnsureContextToken returns the token entry the named context refers to. When
+// the meshconfig does not define that token yet, an entry pointing at
+// AuthConfigFile is added to the meshconfig this command is using (the --config
+// file when one is given). Writing it to any other file would also leave viper
+// reading that file, so later requests would go to its server.
+func EnsureContextToken(mctlCfg *config.MesheryCtlConfig, contextName string) (config.Token, error) {
+	token, err := mctlCfg.GetTokenForContext(contextName)
+	if err == nil {
+		return token, nil
+	}
+	// GetTokenForContext also errors when the context itself does not exist,
+	// and then token is empty. Only auto-create the entry when the context
+	// names a token; otherwise surface the original error.
+	if token.Name == "" {
+		return config.Token{}, err
 	}
 
-	location := token.Location
-	// if location contains /home/nectar in path we return exact location
-	ok := strings.Contains(location, home)
-	if ok {
-		return location, nil
+	token.Location = AuthConfigFile
+	if err := config.AddTokenToConfig(token, GetActiveConfigPath()); err != nil {
+		return config.Token{}, err
 	}
-
-	// else we add the home directory with the path
-	return filepath.Join(MesheryFolder, location), nil
+	return token, nil
 }
 
 // GetCurrentAuthToken returns location of current context token
@@ -176,15 +193,9 @@ func GetCurrentAuthToken() (string, error) {
 		log.Fatal(err)
 	}
 	// Get token of current-context
-	token, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
+	token, err := EnsureContextToken(mctlCfg, mctlCfg.CurrentContext)
 	if err != nil {
-		// Attempt to create token if it doesn't already exists
-		token.Location = AuthConfigFile
-
-		// Write new entry in the config
-		if err := config.AddTokenToConfig(token, DefaultConfigPath); err != nil {
-			return "", err
-		}
+		return "", err
 	}
 	// grab actual token location with home directory
 	TokenLocation, err := GetTokenLocation(token)
@@ -601,17 +612,19 @@ const tokenFileMode os.FileMode = 0o600
 
 // WriteTokenFile writes an auth token file and restricts it to its owner.
 // The open mode only applies when the file is created, so an existing token
-// file written by an older mesheryctl (0644 or 0666) is chmod-ed to 0600
-// before the new token is written into it. The file is opened without
-// O_TRUNC and truncated only after the chmod succeeds, so a chmod failure
-// (for example a token file owned by another user) leaves the previous
-// credentials intact instead of emptying the file and then erroring.
+// file written by an older mesheryctl (0644 or 0666) is restricted with
+// restrictTokenFile before the new token is written into it: chmod to 0600 on
+// Unix and, on Windows where chmod does not touch ACLs, a protected DACL that
+// grants only the current user access. The file is opened without O_TRUNC and
+// truncated only after the restriction succeeds, so a failure (for example a
+// token file owned by another user) leaves the previous credentials intact
+// instead of emptying the file and then erroring.
 func WriteTokenFile(path string, data []byte) error {
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, tokenFileMode)
 	if err != nil {
 		return err
 	}
-	if err := f.Chmod(tokenFileMode); err != nil {
+	if err := restrictTokenFile(f); err != nil {
 		_ = f.Close()
 		return err
 	}

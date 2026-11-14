@@ -6,6 +6,8 @@ import eventsReducer, {
   setLoadError,
   toggleNotificationCenter,
   closeNotificationCenter,
+  openNotificationCenter,
+  isSerializable,
   loadEvents,
   loadNextPage,
   retryCurrentPage,
@@ -362,5 +364,154 @@ describe('events thunks – failed page handling', () => {
 
     // The late failure from the superseded request must be ignored.
     expect(dispatched.some((a) => a.type === 'events/setLoadError')).toBe(false);
+  });
+});
+
+describe('isSerializable', () => {
+  it('accepts primitives, plain objects and arrays', () => {
+    expect(isSerializable('text')).toBe(true);
+    expect(isSerializable(42)).toBe(true);
+    expect(isSerializable(true)).toBe(true);
+    expect(isSerializable(null)).toBe(true);
+    expect(isSerializable(undefined)).toBe(true);
+    expect(isSerializable({ title: 'X', nested: { page: 0, flags: [true, 'a'] } })).toBe(true);
+    expect(isSerializable([1, 'a', { ok: true }])).toBe(true);
+    expect(isSerializable(Object.create(null))).toBe(true);
+  });
+
+  it('rejects functions, symbols and bigints', () => {
+    expect(isSerializable(() => null)).toBe(false);
+    expect(isSerializable(Symbol('s'))).toBe(false);
+    expect(isSerializable(10n)).toBe(false);
+  });
+
+  it('rejects Date, Map, Set and class instances', () => {
+    class Custom {}
+    expect(isSerializable(new Date())).toBe(false);
+    expect(isSerializable(new Map())).toBe(false);
+    expect(isSerializable(new Set())).toBe(false);
+    expect(isSerializable(new Custom())).toBe(false);
+    expect(isSerializable({ at: new Date() })).toBe(false);
+    expect(isSerializable([new Map()])).toBe(false);
+  });
+
+  it('rejects circular objects', () => {
+    const value = { title: 'X' };
+    value.self = value;
+    expect(isSerializable(value)).toBe(false);
+    const list = [];
+    list.push(list);
+    expect(isSerializable(list)).toBe(false);
+  });
+
+  it('rejects an array carrying a non-serializable named property', () => {
+    const list = ['a'];
+    list.onSelect = () => {};
+    expect(isSerializable(list)).toBe(false);
+  });
+
+  it('accepts an array carrying only serializable named properties', () => {
+    const list = ['a'];
+    list.label = 'first';
+    expect(isSerializable(list)).toBe(true);
+  });
+
+  it('accepts a shared reference that is not circular', () => {
+    const shared = { page: 0 };
+    expect(isSerializable({ a: shared, b: shared })).toBe(true);
+  });
+});
+
+describe('openNotificationCenter', () => {
+  const open = (ui) => {
+    const initial = eventsReducer(undefined, { type: 'unknown' });
+    return eventsReducer(initial, openNotificationCenter({ ui }));
+  };
+
+  it('drops an icon passed as a component and keeps serializable siblings', () => {
+    const state = open({ icon: () => null, title: 'Kanvas' });
+    expect(state.ui.icon).toBeUndefined();
+    expect(state.ui.title).toBe('Kanvas');
+    expect(state.isNotificationCenterOpen).toBe(true);
+  });
+
+  it('keeps an icon passed as a name', () => {
+    const state = open({ icon: 'alert', title: 'Alerts' });
+    expect(state.ui.icon).toBe('alert');
+    expect(state.ui.title).toBe('Alerts');
+  });
+
+  it('drops values holding a Date, Map, Set, class instance, circular object or function', () => {
+    class Custom {}
+    const circular = { title: 'loop' };
+    circular.self = circular;
+    const state = open({
+      at: new Date(),
+      lookup: new Map(),
+      tags: new Set(),
+      custom: new Custom(),
+      circular,
+      onClose: () => {},
+      title: 'Kept',
+    });
+    expect(state.ui.at).toBeUndefined();
+    expect(state.ui.lookup).toBeUndefined();
+    expect(state.ui.tags).toBeUndefined();
+    expect(state.ui.custom).toBeUndefined();
+    expect(state.ui.circular).toBeUndefined();
+    expect(state.ui.onClose).toBeUndefined();
+    expect(state.ui.title).toBe('Kept');
+    expect(() => JSON.stringify(state.ui)).not.toThrow();
+  });
+
+  it('screens a raw action object, which is how extensions dispatch it', () => {
+    const initial = eventsReducer(undefined, { type: 'unknown' });
+    const state = eventsReducer(initial, {
+      type: 'events/openNotificationCenter',
+      payload: { ui: { icon: () => null, title: 'Extension' } },
+    });
+    expect(state.ui.icon).toBeUndefined();
+    expect(state.ui.title).toBe('Extension');
+  });
+
+  it('preserves the defaults the payload does not override', () => {
+    const state = open({ icon: 'bell' });
+    expect(state.ui.title).toBe('Notifications');
+    expect(state.ui.empty_message).toBe('No notifications found');
+  });
+
+  it('drops a view_to_open that is not serializable', () => {
+    const initial = eventsReducer(undefined, { type: 'unknown' });
+    const state = eventsReducer(
+      initial,
+      openNotificationCenter({
+        view_to_open: { page: 1, at: new Date(), onSelect: () => {} },
+      }),
+    );
+    expect(state.isNotificationCenterOpen).toBe(true);
+    expect(state.view_to_fetch_on_open).toEqual(initial.view_to_fetch_on_open);
+    expect(state.current_view).toEqual(initial.current_view);
+  });
+
+  it('applies a serializable view_to_open', () => {
+    const initial = eventsReducer(undefined, { type: 'unknown' });
+    const view = { page: 2, filters: { status: 'read' } };
+    const state = eventsReducer(initial, openNotificationCenter({ view_to_open: view }));
+    expect(state.view_to_fetch_on_open).toEqual(view);
+    expect(state.current_view).toEqual(view);
+  });
+
+  it('applies a view_to_open given as a name', () => {
+    const initial = eventsReducer(undefined, { type: 'unknown' });
+    const state = eventsReducer(initial, openNotificationCenter({ view_to_open: 'history' }));
+    expect(state.view_to_fetch_on_open).toBe('history');
+    expect(state.current_view).toBe('history');
+  });
+
+  it('closeNotificationCenter resets ui to the defaults', () => {
+    const opened = open({ icon: 'error', title: 'Errors' });
+    const closed = eventsReducer(opened, closeNotificationCenter());
+    expect(closed.ui.icon).toBeUndefined();
+    expect(closed.ui.title).toBe('Notifications');
   });
 });
