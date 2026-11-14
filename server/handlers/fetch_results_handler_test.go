@@ -414,6 +414,31 @@ func TestGetResultHandler_ResultNotFound_GormRecordNotFound(t *testing.T) {
 	}
 }
 
+func TestGetResultHandler_ResultNotFound_ErrResultNotFoundCode(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := &mockFetchResultsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		getResultFn: func(tokenVal string, resultID core.Uuid) (*models.MesheryResult, error) {
+			return nil, models.ErrResultNotFound(gorm.ErrRecordNotFound)
+		},
+	}
+	validUUID := uuid.Must(uuid.NewV4()).String()
+	req := httptest.NewRequest(http.MethodGet, "/api/perf/profile/result/"+validUUID, nil)
+	req = mux.SetURLVars(req, map[string]string{"id": validUUID})
+	ctx := context.WithValue(req.Context(), models.TokenCtxKey, "valid-token")
+	req = req.WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	h.GetResultHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("expected 404 Not Found, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrGetResultCode) {
+		t.Errorf("expected error body to contain %s, got: %s", ErrGetResultCode, rec.Body.String())
+	}
+}
+
 func TestGetResultHandler_Success(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 	validUUID := uuid.Must(uuid.NewV4())
@@ -525,6 +550,29 @@ func TestFetchSingleSmiResultHandler_NotFound(t *testing.T) {
 		DefaultLocalProvider: &models.DefaultLocalProvider{},
 		fetchSmiResultFn: func(req *http.Request, page, pageSize, search, order string, resultID core.Uuid) ([]byte, error) {
 			return []byte{}, nil
+		},
+	}
+	validUUID := uuid.Must(uuid.NewV4()).String()
+	req := httptest.NewRequest(http.MethodGet, "/api/perf/smi/results/"+validUUID, nil)
+	req = mux.SetURLVars(req, map[string]string{"id": validUUID})
+	rec := httptest.NewRecorder()
+
+	h.FetchSingleSmiResultHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("expected 404 Not Found, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrFetchSMIResultsCode) {
+		t.Errorf("expected error body to contain %s, got: %s", ErrFetchSMIResultsCode, rec.Body.String())
+	}
+}
+
+func TestFetchSingleSmiResultHandler_ResultNotFound_ErrResultNotFoundCode(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := &mockFetchResultsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		fetchSmiResultFn: func(req *http.Request, page, pageSize, search, order string, resultID core.Uuid) ([]byte, error) {
+			return nil, models.ErrResultNotFound(gorm.ErrRecordNotFound)
 		},
 	}
 	validUUID := uuid.Must(uuid.NewV4()).String()
