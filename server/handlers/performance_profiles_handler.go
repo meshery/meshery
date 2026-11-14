@@ -147,7 +147,10 @@ func (h *Handler) DeletePerformanceProfileHandler(
 
 		//fail to delete performance profile
 		h.log.Error(ErrFailToDelete(err, obj))
-		writeMeshkitError(rw, ErrFailToDelete(err, obj), http.StatusInternalServerError)
+		// Keep the status a remote provider returned (403, 409, ...) and fall
+		// back to 500 only when the failure carries none, as the other delete
+		// handlers do.
+		writeMeshkitError(rw, ErrFailToDelete(err, obj), providerStatusOrInternal(err))
 		return
 	}
 
