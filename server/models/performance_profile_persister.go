@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/meshery/meshkit/database"
@@ -79,11 +80,17 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 	return json.Marshal(performanceProfilePage)
 }
 
-// DeletePerformanceProfile takes in a profile id and delete it if it already exists
+// DeletePerformanceProfile takes in a profile id and deletes it. When no profile
+// with that id is stored it returns ErrResultNotFound, so a delete of a profile
+// that never existed is distinguishable from a successful delete.
 func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id core.Uuid) ([]byte, error) {
 	profile := PerformanceProfile{ID: id}
-	if err := ppp.DB.Delete(&profile).Error; err != nil {
-		return nil, err
+	result := ppp.DB.Delete(&profile)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return nil, ErrResultNotFound(fmt.Errorf("performance profile %s not found", id.String()))
 	}
 
 	return json.Marshal(&profile)

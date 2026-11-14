@@ -776,7 +776,7 @@
       "severity": "alert",
       "shortDescription": "Failed to unmarshal configuration file",
       "probableCause": [
-        "Unable to covert JSON format from yml file"
+        "Unable to convert JSON format from yml file"
       ],
       "suggestedRemediation": [
         "Ensure a valid data is provided in your yml file"
@@ -1207,7 +1207,7 @@
       "shortDescription": "Failed to get a free port",
       "longDescription": "Failed to start port-forwarding",
       "probableCause": [
-        "Unable to provide a free port to connect to a kuberentes cluster"
+        "Unable to provide a free port to connect to a kubernetes cluster"
       ],
       "suggestedRemediation": [
         "Ensure your Meshery Server is running,",
@@ -1290,7 +1290,7 @@
       },
       "numericCode": "1082",
       "severity": "alert",
-      "shortDescription": "Unable to exectute command",
+      "shortDescription": "Unable to execute command",
       "longDescription": "Channel switch aborted",
       "probableCause": [
         "No user response provided"

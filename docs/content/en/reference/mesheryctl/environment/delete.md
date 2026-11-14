@@ -19,7 +19,7 @@ Delete an environment by providing the environment ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl environment delete [flags]
+mesheryctl environment delete [environmentId] [flags]
 
 </div>
 </div>
@@ -27,7 +27,7 @@ mesheryctl environment delete [flags]
 
 ## Examples
 
-delete a new environment
+Delete an environment by ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
