@@ -190,8 +190,19 @@ func mergeTraceUnique(dst, src *pattern.Trace) {
 			dst.ComponentsRemoved = append(dst.ComponentsRemoved, c)
 		}
 	}
+	// A component mutated again by a later pass must report its newer snapshot,
+	// otherwise the trace describes an older state than the design it ships
+	// with. The cross-list compSeen guard still applies to the first sighting.
 	for _, c := range src.ComponentsUpdated {
-		if !compSeen[c.ID] {
+		replaced := false
+		for i := range dst.ComponentsUpdated {
+			if dst.ComponentsUpdated[i].ID == c.ID {
+				dst.ComponentsUpdated[i] = c
+				replaced = true
+				break
+			}
+		}
+		if !replaced && !compSeen[c.ID] {
 			compSeen[c.ID] = true
 			dst.ComponentsUpdated = append(dst.ComponentsUpdated, c)
 		}
@@ -216,13 +227,23 @@ func mergeTraceUnique(dst, src *pattern.Trace) {
 	}
 }
 
-// deduplicateActions removes duplicate actions by (op, id) key.
+// deduplicateActions removes duplicate actions by (op, id, path) key.
+//
+// The path is part of the key because one component can legitimately be
+// mutated at several paths in a single evaluation, and keying on (op, id)
+// alone collapsed those into the first one. For a key that does repeat - the
+// same component and path mutated again by a later pass - the later action
+// wins and keeps the earlier one's position, so the reported value matches the
+// design that ships with it rather than the first pass's intermediate value.
+// Ops that carry no path, such as add and delete, serialize to an empty path
+// and so keep their original (op, id) behaviour.
 func deduplicateActions(actions []pattern.Action) []pattern.Action {
 	type key struct {
-		op string
-		id string
+		op   string
+		id   string
+		path string
 	}
-	seen := make(map[key]bool)
+	seen := make(map[key]int)
 	var result []pattern.Action
 	for _, a := range actions {
 		id := ""
@@ -243,19 +264,37 @@ func deduplicateActions(actions []pattern.Action) []pattern.Action {
 				}
 			}
 		}
-		k := key{op: a.Op, id: id}
-		if !seen[k] {
-			seen[k] = true
-			result = append(result, a)
+		path := ""
+		if a.Value != nil {
+			if v, ok := a.Value["path"]; ok {
+				path = fmt.Sprintf("%v", v)
+			}
 		}
+		k := key{op: a.Op, id: id, path: path}
+		if idx, ok := seen[k]; ok {
+			result[idx] = a
+			continue
+		}
+		seen[k] = len(result)
+		result = append(result, a)
 	}
 	return result
 }
 
+// doesntNeedReeval reports whether an evaluation produced no action whose effect
+// a later pass could still depend on. Component mutations qualify: side effects
+// for every relationship are generated against the pre-patch design and applied
+// afterwards, so a relationship reading a field another relationship mutates
+// sees the stale value until the next pass. update_component is listed for the
+// same reason as update_component_configuration - the two differ only in
+// whether the mutated path addresses the component envelope or its
+// configuration, so leaving it out left envelope mutations unconverged where
+// configuration mutations converge.
 func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 
 	for _, action := range response.Actions {
-		if action.Op == "delete_component" || action.Op == "add_component" || action.Op == "update_component_configuration" {
+		switch action.Op {
+		case "delete_component", "add_component", "update_component", "update_component_configuration":
 			return false
 		}
 	}

@@ -95,7 +95,8 @@ func (e *GoEngine) evaluate(design *pattern.PatternFile, relsInScope []*relation
 		allActions = append(allActions, validationActions...)
 	}
 
-	designWithValidatedRels := applyActionsToDesign(design, allActions)
+	designWithValidatedRels, errs := applyActionsToDesign(design, allActions)
+	e.logPatchErrors(errs)
 
 	// Phase 2: Identify new relationships.
 	var identifyActions []PolicyAction
@@ -105,7 +106,8 @@ func (e *GoEngine) evaluate(design *pattern.PatternFile, relsInScope []*relation
 	}
 
 	combinedActions := append(allActions, identifyActions...)
-	designWithIdentified := applyActionsToDesign(design, combinedActions)
+	designWithIdentified, errs := applyActionsToDesign(design, combinedActions)
+	e.logPatchErrors(errs)
 
 	// Phase 2.5: Identify inventory parents the design is missing. Mirrors
 	// identify_additions.rego — without this the Go engine silently skips
@@ -114,7 +116,8 @@ func (e *GoEngine) evaluate(design *pattern.PatternFile, relsInScope []*relation
 	inventoryActions := identifyInventoryAdditions(designWithIdentified, relsInScope)
 	if len(inventoryActions) > 0 {
 		combinedActions = append(combinedActions, inventoryActions...)
-		designWithIdentified = applyActionsToDesign(design, combinedActions)
+		designWithIdentified, errs = applyActionsToDesign(design, combinedActions)
+		e.logPatchErrors(errs)
 	}
 
 	// Phase 3: Generate and apply actions.
@@ -128,11 +131,22 @@ func (e *GoEngine) evaluate(design *pattern.PatternFile, relsInScope []*relation
 	allActions = append(allActions, inventoryActions...)
 	allActions = append(allActions, phaseActions...)
 
-	finalDesign := applyActionsToDesign(designWithIdentified, phaseActions)
+	finalDesign, errs := applyActionsToDesign(designWithIdentified, phaseActions)
+	e.logPatchErrors(errs)
 
 	e.log.Info("evaluation complete: ", len(finalDesign.Relationships), " relationships, ", len(allActions), " actions")
 
 	return finalDesign, allActions
+}
+
+// logPatchErrors reports patches that could not be applied. A failed patch
+// leaves the mutated field at its previous value, so the next evaluation
+// re-emits the same action; without this the only symptom is an evaluation that
+// never converges, with the underlying cause lost.
+func (e *GoEngine) logPatchErrors(errs []error) {
+	for _, err := range errs {
+		e.log.Warnf("relationship mutation not applied: %v", err)
+	}
 }
 
 // buildTrace constructs a Trace from the actions produced during evaluation.

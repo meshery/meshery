@@ -25,6 +25,7 @@ import (
 	modelv1beta2 "github.com/meshery/schemas/models/v1beta2/model"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	v1beta3comp "github.com/meshery/schemas/models/v1beta3/component"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -1123,4 +1124,209 @@ func TestGetAllMeshmodelPoliciesPagination(t *testing.T) {
 			)
 		})
 	}
+}
+
+// TestDoesntNeedReeval covers the predicate that ends the re-evaluation loop.
+// Side effects for every relationship are generated against the pre-patch
+// design and applied afterwards, so any action a later pass could depend on has
+// to keep the loop running. update_component is included for the same reason as
+// update_component_configuration: the two differ only in whether the mutated
+// path addresses the component envelope or its configuration.
+func TestDoesntNeedReeval(t *testing.T) {
+	tests := []struct {
+		name     string
+		ops      []string
+		expected bool
+	}{
+		{"no actions", nil, true},
+		{"only relationship ops", []string{"add_relationship", "update_relationship", "delete_relationship"}, true},
+		{"envelope mutation", []string{"update_component"}, false},
+		{"configuration mutation", []string{"update_component_configuration"}, false},
+		{"component added", []string{"add_component"}, false},
+		{"component deleted", []string{"delete_component"}, false},
+		{"envelope mutation among relationship ops", []string{"add_relationship", "update_component"}, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var resp pattern.EvaluationResponse
+			for _, op := range tt.ops {
+				resp.Actions = append(resp.Actions, pattern.Action{Op: op})
+			}
+			assert.Equal(t, tt.expected, doesntNeedReeval(resp))
+		})
+	}
+}
+
+// TestDeduplicateActionsKeepsPathAndLatestValue covers the two ways the old
+// (op, id) key misreported a multi-pass evaluation: it collapsed distinct paths
+// on one component into the first, and it reported the first pass's
+// intermediate value for a path a later pass mutated again.
+func TestDeduplicateActionsKeepsPathAndLatestValue(t *testing.T) {
+	const id = "00000000-0000-0000-0000-0000000000c1"
+	update := func(path []string, value string) pattern.Action {
+		return pattern.Action{
+			Op:    gopolicies.UpdateComponentOp,
+			Value: map[string]interface{}{"id": id, "path": path, "value": value},
+		}
+	}
+
+	t.Run("distinct paths on one component are kept", func(t *testing.T) {
+		got := deduplicateActions([]pattern.Action{
+			update([]string{"displayName"}, "bus-alpha"),
+			update([]string{"metadata", "labels"}, "team-a"),
+		})
+		require.Len(t, got, 2)
+		assert.Equal(t, "bus-alpha", got[0].Value["value"])
+		assert.Equal(t, "team-a", got[1].Value["value"])
+	})
+
+	t.Run("later pass wins and keeps the earlier position", func(t *testing.T) {
+		got := deduplicateActions([]pattern.Action{
+			update([]string{"displayName"}, "stale"),
+			{Op: gopolicies.AddRelationshipOp, Value: map[string]interface{}{}},
+			update([]string{"displayName"}, "settled"),
+		})
+		require.Len(t, got, 2)
+		assert.Equal(t, gopolicies.UpdateComponentOp, got[0].Op)
+		assert.Equal(t, "settled", got[0].Value["value"],
+			"the reported value must match the design the response ships with")
+	})
+
+	t.Run("pathless ops still dedup on op and id", func(t *testing.T) {
+		del := pattern.Action{Op: gopolicies.DeleteComponentOp, Value: map[string]interface{}{"id": id}}
+		got := deduplicateActions([]pattern.Action{del, del})
+		assert.Len(t, got, 1)
+	})
+}
+
+// TestMergeTraceUniqueKeepsLatestComponentSnapshot verifies that a component
+// mutated again by a later pass reports its newer state, so the trace does not
+// describe an older design than the one it ships with.
+func TestMergeTraceUniqueKeepsLatestComponentSnapshot(t *testing.T) {
+	compID, err := uuid.FromString("00000000-0000-0000-0000-0000000000c2")
+	require.NoError(t, err)
+
+	snapshot := func(displayName string) pattern.Trace {
+		c := component.ComponentDefinition{DisplayName: core.InputString(displayName)}
+		c.ID = compID
+		return pattern.Trace{ComponentsUpdated: []component.ComponentDefinition{c}}
+	}
+
+	var dst pattern.Trace
+	first := snapshot("stale")
+	second := snapshot("settled")
+	mergeTraceUnique(&dst, &first)
+	mergeTraceUnique(&dst, &second)
+
+	require.Len(t, dst.ComponentsUpdated, 1, "the component must not be reported twice")
+	assert.Equal(t, "settled", string(dst.ComponentsUpdated[0].DisplayName))
+}
+
+// TestEvaluateDesignConvergesEnvelopeChain drives a two-relationship envelope
+// chain through the handler's re-evaluation loop, which is what
+// doesntNeedReeval governs. Rule sets EventBus B's displayName from its
+// configuration, and B sets EventBus C's displayName from its own. Side effects
+// for both relationships are generated against the pre-patch design, so C can
+// only settle on a later pass - the loop has to keep going for the response to
+// carry the settled value.
+func TestEvaluateDesignConvergesEnvelopeChain(t *testing.T) {
+	ruleID, err := uuid.FromString("00000000-0000-0000-0000-0000000000e1")
+	require.NoError(t, err)
+	busBID, err := uuid.FromString("00000000-0000-0000-0000-0000000000e2")
+	require.NoError(t, err)
+	busCID, err := uuid.FromString("00000000-0000-0000-0000-0000000000e3")
+	require.NoError(t, err)
+
+	comp := func(id uuid.UUID, kind, displayName string, config map[string]interface{}) *component.ComponentDefinition {
+		c := &component.ComponentDefinition{
+			Component:      component.Component{Kind: kind},
+			ModelReference: model.ModelReference{Name: "kubernetes"},
+			DisplayName:    core.InputString(displayName),
+			Configuration:  config,
+		}
+		c.ID = id
+		return c
+	}
+
+	// envelopeRel copies mutator on from into displayName on to.
+	envelopeRel := func(relID, fromID, toID uuid.UUID, fromKind string, mutator []string) *relationship.RelationshipDefinition {
+		mRef := relationship.MutatorRef{mutator}
+		tRef := relationship.MutatedRef{[]string{"displayName"}}
+		status := relationship.RelationshipDefinitionStatus("approved")
+		from, to := fromID, toID
+		fromKindCopy, toKind := fromKind, "EventBus"
+		selectors := relationship.SelectorSet{
+			relationship.SelectorSetItem{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{{
+						ID:   &from,
+						Kind: &fromKindCopy,
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mRef,
+						},
+					}},
+					To: []relationship.SelectorItem{{
+						ID:   &to,
+						Kind: &toKind,
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &tRef,
+						},
+					}},
+				},
+			},
+		}
+		rel := &relationship.RelationshipDefinition{
+			Kind:             relationship.Edge,
+			RelationshipType: "non-binding",
+			SubType:          "network",
+			Status:           &status,
+			Model:            model.ModelReference{Name: "kubernetes"},
+			Selectors:        &selectors,
+		}
+		rel.ID = relID
+		return rel
+	}
+
+	rel1ID, err := uuid.FromString("00000000-0000-0000-0000-0000000000e8")
+	require.NoError(t, err)
+	rel2ID, err := uuid.FromString("00000000-0000-0000-0000-0000000000e9")
+	require.NoError(t, err)
+
+	design := pattern.PatternFile{
+		Version: "0.0.1",
+		Components: []*component.ComponentDefinition{
+			comp(ruleID, "Rule", "rule-1", map[string]interface{}{
+				"spec": map[string]interface{}{"eventBusName": "bus-alpha"},
+			}),
+			comp(busBID, "EventBus", "b-original", map[string]interface{}{}),
+			comp(busCID, "EventBus", "c-original", map[string]interface{}{}),
+		},
+		Relationships: []*relationship.RelationshipDefinition{
+			envelopeRel(rel1ID, ruleID, busBID, "Rule", []string{"configuration", "spec", "eventBusName"}),
+			envelopeRel(rel2ID, busBID, busCID, "EventBus", []string{"displayName"}),
+		},
+	}
+
+	rm, _ := newTestRegistryManager(t)
+	log := newTestLogger(t)
+	h := &Handler{
+		log:             log,
+		registryManager: rm,
+		GoEngine:        gopolicies.NewGoEngine(log),
+	}
+
+	viper.Set("USE_GO_POLICY_ENGINE", true)
+	t.Cleanup(func() { viper.Set("USE_GO_POLICY_ENGINE", false) })
+
+	resp, err := h.EvaluateDesign(pattern.EvaluationRequest{Design: design}, MAX_RE_EVALUATION_DEPTH)
+	require.NoError(t, err)
+
+	byID := map[uuid.UUID]string{}
+	for _, c := range resp.Design.Components {
+		byID[c.ID] = string(c.DisplayName)
+	}
+	assert.Equal(t, "bus-alpha", byID[busBID], "B takes its displayName from the Rule's configuration")
+	assert.Equal(t, "bus-alpha", byID[busCID],
+		"C depends on B's mutated displayName, so the loop must run again for the response to carry the settled value")
 }
