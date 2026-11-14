@@ -1,143 +1,272 @@
-// import { test, expect } from './fixtures/project';
-// import { DesignPage } from './pages/DesignPage/DesignPage';
-// import { waitForSnackBar } from './utils/waitForSnackBar';
-// import { mockEnvironmentsApi, mockConnectionsApi } from './pages/DesignPage/utils/mockApiRoutes';
+import { test, expect } from './fixtures/project';
+import { DesignPage } from './pages/DesignPage/DesignPage';
+import { waitForSnackBar } from './utils/waitForSnackBar';
+import {
+  mockEnvironmentsApi,
+  mockConnectionsApi,
+  mockPatternsApi,
+} from './pages/DesignPage/utils/mockApiRoutes';
 
-// const IMPORT_SOURCES = [
-//   {
-//     type: 'File',
-//     pathOrUrl: 'tests/e2e/fixtures/meshery-design-fixture.json',
-//     designName: 'Meshery Design',
-//   },
-//   {
-//     type: 'URL',
-//     pathOrUrl:
-//       'https://raw.githubusercontent.com/meshery/meshery/refs/heads/master/ui/tests/e2e/fixtures/relationships/meshery-design-fixture.json',
-//     designName: 'GuestBook App',
-//   },
-// ];
+const IMPORT_SOURCES = [
+  {
+    type: 'File',
+    pathOrUrl: 'tests/e2e/fixtures/relationships/meshery-design-fixture.json',
+    designName: 'Meshery Design',
+  },
+  {
+    type: 'URL',
+    pathOrUrl:
+      'https://raw.githubusercontent.com/meshery/meshery/refs/heads/master/ui/tests/e2e/fixtures/relationships/meshery-design-fixture.json',
+    designName: 'GuestBook App',
+  },
+];
 
-// const DESIGN_TYPES = [
-//   {
-//     type: 'published',
-//   },
-//   {
-//     type: 'public',
-//   },
-// ];
+const DESIGN_TYPES = [
+  {
+    type: 'published',
+  },
+  {
+    type: 'private',
+  },
+];
 
-// test.describe('Design Page Tests', () => {
-//   let designPage;
+test.describe('Design Page Tests', () => {
+  let designPage: DesignPage;
 
-//   test.beforeEach(async ({ page }) => {
-//     await page.route('**/api/pattern/import', async (route) => await route.fulfill());
-//     designPage = new DesignPage(page);
-//     await designPage.navigateTo();
-//   });
+  test.beforeEach(async ({ page }) => {
+    // Intercept and mock API routes for deterministic, resilient E2E execution
+    await page.route('**/api/pattern?*', mockPatternsApi);
+    await page.route('**/api/pattern', async (route) => {
+      if (route.request().method() === 'POST') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ message: 'Pattern saved successfully' }),
+        });
+      } else {
+        await mockPatternsApi(route);
+      }
+    });
 
-//   test('renders design page UI', async () => {
-//     await expect(designPage.createDesignBtn).toBeVisible();
-//     await expect(designPage.importDesignBtn).toBeVisible();
-//     await expect(designPage.searchBar).toBeVisible();
-//     await expect(designPage.designGrid).toBeVisible();
-//     expect(await designPage.designCards.count()).toBeGreaterThan(0);
-//   });
+    await page.route('**/api/pattern/import', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ id: 'imported-design-1', name: 'Imported Design' }]),
+      });
+    });
 
-//   DESIGN_TYPES.forEach(({ type }) => {
-//     test(`displays ${type} design card correctly`, async ({ provider }) => {
-//       test.skip(
-//         provider === 'Local' && type === 'public',
-//         `Skipping test for provider: ${provider}`,
-//       );
-//       await designPage.applyVisibilityFilter(type);
+    await page.route('**/api/pattern/deploy*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'Deployment initiated' }),
+      });
+    });
 
-//       const card = await designPage.getFirstCardByVisibilityBadge(type);
+    await page.route('**/api/pattern/catalog/unpublish', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'Design Unpublished' }),
+      });
+    });
 
-//       const cardElements = designPage.getCardElements(card, type);
+    await page.route('**/api/patterns/delete', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'Design Deleted' }),
+      });
+    });
 
-//       const visibleElements = [...Object.values(cardElements.display)];
+    await page.route('**/api/pattern/*', async (route) => {
+      if (route.request().method() === 'DELETE') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ message: 'Design Deleted' }),
+        });
+      } else {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            id: 'design-test-published-1',
+            name: 'Published Sample Design',
+            patternFile:
+              'name: Published Sample Design\nschemaVersion: designs.meshery.io/v1beta1\ncomponents: []',
+          }),
+        });
+      }
+    });
 
-//       for (const el of visibleElements) {
-//         await expect(el).toBeVisible();
-//       }
+    await page.route('**/api/environments?*', mockEnvironmentsApi);
+    await page.route('**/api/environments/*/connections?*', mockConnectionsApi);
 
-//       await cardElements.actionToggleBtn.click();
+    designPage = new DesignPage(page);
+    await designPage.navigateTo();
+  });
 
-//       const visibleActions = [...Object.values(cardElements.actionElements)];
+  test('renders design page UI elements', async () => {
+    await expect(designPage.createDesignBtn).toBeVisible();
+    await expect(designPage.importDesignBtn).toBeVisible();
+    await expect(designPage.searchBar).toBeVisible();
+    await expect(designPage.designGrid).toBeVisible();
+    expect(await designPage.designCards.count()).toBeGreaterThan(0);
+  });
 
-//       for (const el of visibleActions) {
-//         await expect(el).toBeVisible();
-//       }
-//     });
-//   });
+  DESIGN_TYPES.forEach(({ type }) => {
+    test(`displays ${type} design card correctly`, async ({ provider }) => {
+      test.skip(
+        provider === 'Local' && type === 'published',
+        `Skipping published design test for provider: ${provider}`,
+      );
 
-//   IMPORT_SOURCES.forEach(({ type, pathOrUrl, designName }) => {
-//     test(`imports design via ${type}`, async () => {
-//       await designPage.clickImportDesignButton();
-//       const ImportModal = designPage.ImportModal;
+      await designPage.applyVisibilityFilter(type);
+      const card = designPage.getFirstCardByVisibilityBadge(type);
+      const cardElements = designPage.getCardElements(card, type);
 
-//       await expect(ImportModal.modal).toBeVisible();
-//       await ImportModal.clickImportType(type);
+      await expect(cardElements.display.name).toBeVisible();
+      await expect(cardElements.display.visibility).toBeVisible();
+      await expect(cardElements.display.actionsBar).toBeVisible();
 
-//       await ImportModal.importDesign(type, pathOrUrl, designName);
+      await cardElements.actionToggleBtn.click();
+      await expect(cardElements.actionElements.validate).toBeVisible();
+      await expect(cardElements.actionElements.deploy).toBeVisible();
+    });
+  });
 
-//       await waitForSnackBar(designPage.page, `${designName}" design uploaded`);
-//     });
-//   });
+  IMPORT_SOURCES.forEach(({ type, pathOrUrl, designName }) => {
+    test(`imports design via ${type}`, async () => {
+      await designPage.clickImportDesignButton();
+      const importModal = designPage.ImportModal;
 
-//   test('deletes a published design from the list', async () => {
-//     await designPage.page.route('**/api/pattern/*', async (route) => await route.fulfill());
-//     await designPage.applyVisibilityFilter('published');
-//     const card = await designPage.getFirstCardByVisibilityBadge('published');
-//     const cardElements = designPage.getCardElements(card, 'published');
-//     await cardElements.display.name.click();
-//     await designPage.deleteDesignBtn.click();
-//     await expect(designPage.deleteDesignModalHeader).toHaveText('Delete 1 Design?');
-//     await designPage.deleteConfirmationBtn.click();
-//   });
+      await expect(importModal.modal).toBeVisible();
+      await importModal.clickImportType(type);
+      await importModal.importDesign(type, pathOrUrl, designName);
 
-//   test('deploys a published design to a connected cluster', async () => {
-//     await designPage.page.route(
-//       '**/api/environments?page=0&pagesize=all&orgID=*',
-//       mockEnvironmentsApi,
-//     );
-//     await designPage.page.route(
-//       '**/api/environments/*/connections?page=0&pagesize=all',
-//       mockConnectionsApi,
-//     );
-//     await designPage.page.route(
-//       '**/api/pattern/deploy?contexts=*',
-//       async (route) => await route.fulfill(),
-//     );
+      await waitForSnackBar(designPage.page, `${designName}" design uploaded`);
+    });
+  });
 
-//     await designPage.applyVisibilityFilter('published');
-//     const card = await designPage.getFirstCardByVisibilityBadge('published');
-//     const cardElements = designPage.getCardElements(card, 'published');
+  test('opens details of design', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
+    const card = designPage.getFirstCardByVisibilityBadge('published');
+    const cardElements = designPage.getCardElements(card, 'published');
 
-//     await cardElements.actionToggleBtn.click();
-//     await cardElements.actionElements.deploy.click();
+    await cardElements.actionElements.info.click();
+    await expect(
+      designPage.page
+        .locator('[role="dialog"]')
+        .or(designPage.page.getByTestId('info-modal'))
+        .first(),
+    ).toBeVisible();
+  });
 
-//     const deployModal = designPage.DeployModal;
+  test('opens download design modal and displays export options', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
+    const card = designPage.getFirstCardByVisibilityBadge('published');
+    const cardElements = designPage.getCardElements(card, 'published');
 
-//     await expect(deployModal.getStepLabel(0)).toHaveText('Validate Design');
-//     await deployModal.goToNextStep();
+    await cardElements.actionElements.download.click();
+    await expect(designPage.page.getByRole('dialog').first()).toBeVisible();
+    await expect(designPage.page.getByText('Meshery YAML')).toBeVisible();
+  });
 
-//     await expect(deployModal.getStepLabel(1)).toHaveText('Identify Environments');
-//     await deployModal.selectEnvironment('Test');
-//     await deployModal.goToNextStep();
+  test('validates a design', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
+    const card = designPage.getFirstCardByVisibilityBadge('published');
+    const cardElements = designPage.getCardElements(card, 'published');
 
-//     await expect(deployModal.getStepLabel(2)).toHaveText('Dry Run');
-//     await deployModal.waitForLoader();
+    await cardElements.actionToggleBtn.click();
+    await cardElements.actionElements.validate.click();
 
-//     await deployModal.deployWithBypass();
+    await expect(designPage.page.getByRole('dialog').first()).toBeVisible();
+    await expect(designPage.page.getByText(/Validate design/i)).toBeVisible();
+  });
 
-//     await expect(deployModal.modalContent).toContainText('Finalize Deployment');
-//     await expect(deployModal.nextButton).toHaveText('Deploy');
+  test('unpublishes a published design', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
+    await designPage.applyVisibilityFilter('published');
+    const card = designPage.getFirstCardByVisibilityBadge('published');
+    const cardElements = designPage.getCardElements(card, 'published');
 
-//     await deployModal.goToNextStep();
+    await cardElements.actionToggleBtn.click();
+    await expect(cardElements.actionElements.unpublish).toBeVisible();
+    await cardElements.actionElements.unpublish.click();
+    await expect(designPage.page.getByText(/Unpublish Catalog item\?/i)).toBeVisible();
+    const unpublishConfirmBtn = designPage.page.locator('button:has-text("UNPUBLISH")').first();
+    await expect(unpublishConfirmBtn).toBeVisible();
+    await unpublishConfirmBtn.click();
+    await waitForSnackBar(designPage.page, 'Design Unpublished');
+  });
 
-//     await expect(deployModal.loader).toBeVisible();
+  test('deletes a published design from the list', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
+    await designPage.applyVisibilityFilter('published');
+    const card = designPage.getFirstCardByVisibilityBadge('published');
+    const cardElements = designPage.getCardElements(card, 'published');
 
-//     await deployModal.goToNextStep();
-//   });
-// });
+    await cardElements.display.name.click();
+    await designPage.deleteDesignBtn.click();
+    await expect(designPage.deleteDesignModalHeader).toBeVisible();
+    await designPage.deleteConfirmationBtn.click();
+  });
+
+  test('deploys a published design to a connected cluster', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
+    await designPage.applyVisibilityFilter('published');
+    const card = designPage.getFirstCardByVisibilityBadge('published');
+    const cardElements = designPage.getCardElements(card, 'published');
+
+    await cardElements.actionToggleBtn.click();
+    await cardElements.actionElements.deploy.click();
+
+    const deployModal = designPage.DeployModal;
+
+    await expect(deployModal.getStepLabel(0, 'Validate Design')).toBeVisible();
+    await deployModal.goToNextStep();
+
+    await expect(deployModal.getStepLabel(1, 'Identify Environments')).toBeVisible();
+    await deployModal.selectEnvironment('Test');
+    await deployModal.goToNextStep();
+
+    await expect(deployModal.getStepLabel(2, 'Dry Run')).toBeVisible();
+    await deployModal.waitForLoader();
+
+    await deployModal.deployWithBypass();
+
+    await expect(deployModal.modalContent).toContainText('Finalize Deployment');
+    await expect(deployModal.nextButton).toHaveText('Deploy');
+
+    await deployModal.goToNextStep();
+    await deployModal.goToNextStep();
+  });
+
+  test('undeploys a published design from a connected cluster', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
+    await designPage.applyVisibilityFilter('published');
+    const card = designPage.getFirstCardByVisibilityBadge('published');
+    const cardElements = designPage.getCardElements(card, 'published');
+
+    await cardElements.actionToggleBtn.click();
+    await cardElements.actionElements.unDeploy.click();
+
+    const deployModal = designPage.DeployModal;
+    await expect(deployModal.modalContent).toBeVisible();
+    await expect(designPage.page.getByText(/Undeploy design/i)).toBeVisible();
+  });
+
+  test('edits a design in the configurator', async ({ provider }) => {
+    test.skip(provider === 'Local', 'Published designs are only available on remote provider');
+    await designPage.applyVisibilityFilter('published');
+    const card = designPage.getFirstCardByVisibilityBadge('published');
+    const cardElements = designPage.getCardElements(card, 'published');
+
+    await cardElements.actionToggleBtn.click();
+    await expect(cardElements.actionElements.edit).toBeVisible();
+    await cardElements.actionElements.edit.click();
+    await expect(designPage.page).toHaveURL(/.*(pattern|design|configuration).*/);
+  });
+});

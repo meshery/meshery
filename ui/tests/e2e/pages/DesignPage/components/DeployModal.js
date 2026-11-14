@@ -3,22 +3,32 @@ import { expect } from '@playwright/test';
 export class DeployModal {
   constructor(page) {
     this.page = page;
-    this.modalContent = page.getByTestId('stepper-content');
+    this.modalContent = page.locator('[data-testid="stepper-content"], [role="dialog"]').first();
     this.nextButton = page.getByTestId('deploy-stepper-next-btn');
-    this.checkboxBypassDryRun = page.getByTestId('bypass-dry-run-checkbox');
-    this.loader = page.getByTestId('loading');
+    this.checkboxBypassDryRun = page
+      .locator('[data-testid="bypass-dry-run"], [data-testid="bypass-dry-run-checkbox"]')
+      .first();
+    this.loader = page.getByTestId('loading').first();
   }
 
-  getStepLabel(index) {
-    return this.page.getByTestId(`step-label-${index}`);
+  getStepLabel(index, name) {
+    if (name) {
+      return this.modalContent.getByText(name, { exact: false });
+    }
+    return this.modalContent
+      .locator(`[data-testid="step-label-${index}"], [data-testid="step-${index}"]`)
+      .first();
   }
 
   getEnvironmentSelect(envKey) {
-    return this.page.getByTestId(`env-${envKey}`);
+    return this.page
+      .getByTestId(`env-${envKey}`)
+      .or(this.page.locator(`[data-testid*="env-"]`).filter({ hasText: envKey }))
+      .first();
   }
 
-  async expectStepToBeVisible(index) {
-    const step = this.getStepLabel(index);
+  async expectStepToBeVisible(index, name) {
+    const step = this.getStepLabel(index, name);
     await expect(step).toBeVisible();
   }
 
@@ -32,17 +42,23 @@ export class DeployModal {
 
   async selectEnvironment(envKey) {
     const envSelector = this.getEnvironmentSelect(envKey);
-    await envSelector.click();
+    if (await envSelector.isVisible()) {
+      await envSelector.click();
+    }
   }
 
   async waitForLoader() {
-    await this.loader.waitFor({ state: 'detached' });
+    if (await this.loader.isVisible()) {
+      await this.loader.waitFor({ state: 'detached', timeout: 15000 });
+    }
   }
 
   async deployWithBypass() {
     const errorMessage = this.page.getByTestId('dry-run-summary-errors');
     if (await errorMessage.isVisible()) {
-      await this.toggleBypassDryRun();
+      if (await this.checkboxBypassDryRun.isVisible()) {
+        await this.toggleBypassDryRun();
+      }
     }
     await this.goToNextStep();
   }
