@@ -251,7 +251,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			})
 		}
 		if !del {
-			endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn, connectionTrackerSingleton)
+			endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.BrokerConn, connectionTrackerSingleton)
 			if r.Log != nil {
 				r.Log.Debug("Endpoint: ", endpoint)
 			}
