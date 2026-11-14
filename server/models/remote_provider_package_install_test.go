@@ -197,9 +197,9 @@ func TestTarXZ_RejectsPackagesOverTheSizeCap(t *testing.T) {
 // A package host that accepts the connection and never answers held the login
 // request open indefinitely, because the download used http.Get.
 func TestTarXZF_StalledServerTimesOut(t *testing.T) {
-	old := providerPackageDownloadTimeout
-	providerPackageDownloadTimeout = 300 * time.Millisecond
-	t.Cleanup(func() { providerPackageDownloadTimeout = old })
+	old := providerPackageStallTimeout
+	providerPackageStallTimeout = 300 * time.Millisecond
+	t.Cleanup(func() { providerPackageStallTimeout = old })
 
 	release := make(chan struct{})
 	server := httptest.NewServer(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
@@ -219,6 +219,9 @@ func TestTarXZF_StalledServerTimesOut(t *testing.T) {
 	case err := <-done:
 		if err == nil {
 			t.Fatal("a stalled download must fail")
+		}
+		if !strings.Contains(err.Error(), "stalled") {
+			t.Errorf("error = %q, want it to say the download stalled", err)
 		}
 	case <-time.After(5 * time.Second):
 		t.Fatal("TarXZF did not give up on a stalled server; login would hang")
@@ -243,7 +246,7 @@ func TestTarXZF_DownloadsAndInstalls(t *testing.T) {
 
 func TestTarXZF_ServerErrorLeavesNoInstall(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		http.Error(w, "boom", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
 	}))
 	t.Cleanup(server.Close)
 
@@ -253,5 +256,161 @@ func TestTarXZF_ServerErrorLeavesNoInstall(t *testing.T) {
 	}
 	if _, err := os.Stat(destination); !os.IsNotExist(err) {
 		t.Error("an HTTP error left an install directory behind")
+	}
+}
+
+// trickle writes body to w in small pieces with a pause between them, flushing
+// each, so a test can model a host that is slow but steady.
+func trickle(w http.ResponseWriter, r *http.Request, body []byte, pieces int, pause time.Duration) {
+	flusher, _ := w.(http.Flusher)
+	size := (len(body) + pieces - 1) / pieces
+	for start := 0; start < len(body); start += size {
+		end := start + size
+		if end > len(body) {
+			end = len(body)
+		}
+		_, _ = w.Write(body[start:end])
+		if flusher != nil {
+			flusher.Flush()
+		}
+		select {
+		case <-time.After(pause):
+		case <-r.Context().Done():
+			return
+		}
+	}
+}
+
+// A slow host that keeps sending must not be cut off just because the whole
+// transfer takes longer than the stall timeout: the timeout measures silence,
+// not total time, so it does not need to scale with the package size.
+func TestTarXZF_SlowButSteadyDownloadSucceeds(t *testing.T) {
+	oldStall := providerPackageStallTimeout
+	providerPackageStallTimeout = 400 * time.Millisecond
+	t.Cleanup(func() { providerPackageStallTimeout = oldStall })
+
+	archive := githubArchiveTarGz(t)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// 12 pieces, 100ms apart: about 1.2s in total, three times the stall timeout.
+		trickle(w, r, archive, 12, 100*time.Millisecond)
+	}))
+	t.Cleanup(server.Close)
+
+	start := time.Now()
+	destination := filepath.Join(t.TempDir(), "pkg")
+	if err := TarXZF(server.URL+"/ext.tar.gz", destination, nil); err != nil {
+		t.Fatalf("a slow but steady download was cut off after %s: %v", time.Since(start), err)
+	}
+	if time.Since(start) <= providerPackageStallTimeout {
+		t.Fatalf("the transfer finished in %s, so this test did not exercise a transfer longer than the stall timeout", time.Since(start))
+	}
+	if _, err := os.Stat(filepath.Join(destination, "ext-v1.0.0", "index.js")); err != nil {
+		t.Errorf("package was not installed: %v", err)
+	}
+}
+
+// The overall bound still holds for a host that keeps trickling data forever,
+// which the stall timeout alone would never catch.
+func TestTarXZF_OverallTimeoutBoundsAnEndlessTrickle(t *testing.T) {
+	oldStall, oldTotal := providerPackageStallTimeout, providerPackageDownloadTimeout
+	providerPackageStallTimeout = 300 * time.Millisecond
+	providerPackageDownloadTimeout = 800 * time.Millisecond
+	t.Cleanup(func() {
+		providerPackageStallTimeout, providerPackageDownloadTimeout = oldStall, oldTotal
+	})
+
+	// A valid gzip and tar prefix for a file far larger than will ever arrive
+	// (but under the extraction cap), then one byte every 50ms. The extractor
+	// keeps reading, so only the overall bound can stop it. Raw bytes that are
+	// not gzip would be rejected at once and prove nothing about the timeout.
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		flusher, _ := w.(http.Flusher)
+		gz := gzip.NewWriter(w)
+		tw := tar.NewWriter(gz)
+		if err := tw.WriteHeader(&tar.Header{Typeflag: tar.TypeReg, Name: "huge.bin", Mode: 0644, Size: 100 << 20}); err != nil {
+			return
+		}
+		for {
+			if _, err := tw.Write([]byte("x")); err != nil {
+				return
+			}
+			if err := gz.Flush(); err != nil {
+				return
+			}
+			if flusher != nil {
+				flusher.Flush()
+			}
+			select {
+			case <-time.After(50 * time.Millisecond):
+			case <-r.Context().Done():
+				return
+			}
+		}
+	}))
+	t.Cleanup(server.Close)
+
+	done := make(chan error, 1)
+	go func() {
+		done <- TarXZF(server.URL+"/pkg.tar.gz", filepath.Join(t.TempDir(), "pkg"), nil)
+	}()
+
+	select {
+	case err := <-done:
+		if err == nil {
+			t.Fatal("an endless download must fail")
+		}
+		if !strings.Contains(err.Error(), "exceeded") {
+			t.Errorf("error = %q, want it to say the download exceeded the overall bound", err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("the overall timeout did not stop a download that never finishes")
+	}
+}
+
+// A process killed mid-extraction leaves its staging directory behind. The next
+// install of the same package sweeps the stale ones, and only those.
+func TestTarXZ_SweepsStaleStagingDirectories(t *testing.T) {
+	parent := t.TempDir()
+	mk := func(name string, age time.Duration) string {
+		dir := filepath.Join(parent, name)
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			t.Fatalf("mkdir %s: %v", name, err)
+		}
+		if err := os.WriteFile(filepath.Join(dir, "half.bin"), []byte("partial"), 0644); err != nil {
+			t.Fatalf("write in %s: %v", name, err)
+		}
+		when := time.Now().Add(-age)
+		if err := os.Chtimes(dir, when, when); err != nil {
+			t.Fatalf("chtimes %s: %v", name, err)
+		}
+		return dir
+	}
+
+	staleOfThisPackage := mk(".pkg.partial-crashed", 3*time.Hour)
+	freshOfThisPackage := mk(".pkg.partial-running", time.Minute) // another login mid-install
+	staleOfAnotherPackage := mk(".other.partial-crashed", 3*time.Hour)
+	if err := os.WriteFile(filepath.Join(parent, "keep.txt"), []byte("unrelated"), 0644); err != nil {
+		t.Fatalf("write keep.txt: %v", err)
+	}
+
+	destination := filepath.Join(parent, "pkg")
+	if err := TarXZ(bytes.NewReader(githubArchiveTarGz(t)), destination); err != nil {
+		t.Fatalf("TarXZ failed: %v", err)
+	}
+
+	if _, err := os.Stat(staleOfThisPackage); !os.IsNotExist(err) {
+		t.Error("a stale staging directory of this package was not swept")
+	}
+	if _, err := os.Stat(freshOfThisPackage); err != nil {
+		t.Error("a fresh staging directory was removed; it may belong to an install still running")
+	}
+	if _, err := os.Stat(staleOfAnotherPackage); err != nil {
+		t.Error("the sweep removed another package's staging directory")
+	}
+	if _, err := os.Stat(filepath.Join(parent, "keep.txt")); err != nil {
+		t.Error("the sweep removed an unrelated file")
+	}
+	if _, err := os.Stat(filepath.Join(destination, "ext-v1.0.0", "index.js")); err != nil {
+		t.Errorf("package was not installed: %v", err)
 	}
 }

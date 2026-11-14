@@ -5117,11 +5117,23 @@ func (l *RemoteProvider) LogoutMesheryServer() error {
 	return nil
 }
 
-// providerPackageDownloadTimeout bounds the whole download of a provider UI
-// package. The download runs inside the login handler, so without a bound a
-// package host that accepts the connection and then stalls would hold the
-// user's login open indefinitely. It is a variable so tests can shorten it.
-var providerPackageDownloadTimeout = 2 * time.Minute
+// providerPackageStallTimeout aborts a provider UI package download that has
+// received no data for this long. The download runs inside the login handler,
+// so a package host that accepts the connection and then stalls must not be
+// able to hold a user's login open. Measuring silence, not total time, keeps a
+// slow but steady host working however large the package is.
+var providerPackageStallTimeout = 30 * time.Second
+
+// providerPackageDownloadTimeout is the hard upper bound on the whole download,
+// however steadily it progresses. Both timeouts are variables so tests can
+// shorten them.
+var providerPackageDownloadTimeout = 10 * time.Minute
+
+// stalePartialInstallAge is how old a leftover staging directory must be before
+// the next install sweeps it. A process killed mid-extraction leaves its
+// ".<name>.partial-*" directory behind; the age keeps the sweep away from the
+// staging directory of an install that is still running.
+var stalePartialInstallAge = time.Hour
 
 // maxProviderPackageExtractedBytes caps how much a provider UI package may
 // expand to on disk, so a hostile or corrupt archive cannot fill the disk. It
@@ -5145,13 +5157,34 @@ func TarXZF(srcURL, destination string, log logger.Handler) error {
 	ctx, cancel := context.WithTimeout(context.Background(), providerPackageDownloadTimeout)
 	defer cancel()
 
+	// The stall timer starts with the request, so it also covers connecting and
+	// waiting for response headers, and is pushed back each time data arrives.
+	var stalled atomic.Bool
+	stallTimer := time.AfterFunc(providerPackageStallTimeout, func() {
+		stalled.Store(true)
+		cancel()
+	})
+	defer stallTimer.Stop()
+
+	// downloadError says why a download was cut short, which a bare
+	// "context canceled" does not.
+	downloadError := func(err error) error {
+		switch {
+		case stalled.Load():
+			return fmt.Errorf("provider package download stalled: no data received for %s: %w", providerPackageStallTimeout, err)
+		case errors.Is(ctx.Err(), context.DeadlineExceeded):
+			return fmt.Errorf("provider package download exceeded %s: %w", providerPackageDownloadTimeout, err)
+		}
+		return err
+	}
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, srcURL, nil)
 	if err != nil {
 		return fmt.Errorf("invalid package url %v: %w", srcURL, err)
 	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("could not reach %v: %w", srcURL, err)
+		return downloadError(fmt.Errorf("could not reach %v: %w", srcURL, err))
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil && log != nil {
@@ -5163,7 +5196,25 @@ func TarXZF(srcURL, destination string, log logger.Handler) error {
 		return ErrFetch(fmt.Errorf("failed GET request"), "TarTZF file :"+srcURL, resp.StatusCode)
 	}
 
-	return TarXZ(resp.Body, destination)
+	if err := TarXZ(&stallGuardReader{r: resp.Body, timer: stallTimer, timeout: providerPackageStallTimeout}, destination); err != nil {
+		return downloadError(err)
+	}
+	return nil
+}
+
+// stallGuardReader pushes the stall timer back whenever data arrives.
+type stallGuardReader struct {
+	r       io.Reader
+	timer   *time.Timer
+	timeout time.Duration
+}
+
+func (s *stallGuardReader) Read(p []byte) (int, error) {
+	n, err := s.r.Read(p)
+	if n > 0 {
+		s.timer.Reset(s.timeout)
+	}
+	return n, err
 }
 
 // TarXZ takes in a gzip stream and untars and uncompresses it to
@@ -5184,6 +5235,7 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 	if err := os.MkdirAll(parent, 0755); err != nil {
 		return err
 	}
+	sweepStalePartialInstalls(parent, filepath.Base(destination))
 	staging, err := os.MkdirTemp(parent, "."+filepath.Base(destination)+".partial-*")
 	if err != nil {
 		return err
@@ -5209,6 +5261,29 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 		return err
 	}
 	return nil
+}
+
+// sweepStalePartialInstalls removes the staging directories that an install of
+// <base> left behind when the process died before it could clean up. Only
+// directories older than stalePartialInstallAge are removed, so the staging
+// directory of an install that is still running is left alone. It is best
+// effort: a leftover is harmless, so errors are ignored.
+func sweepStalePartialInstalls(parent, base string) {
+	entries, err := os.ReadDir(parent)
+	if err != nil {
+		return
+	}
+	prefix := "." + base + ".partial-"
+	for _, entry := range entries {
+		if !entry.IsDir() || !strings.HasPrefix(entry.Name(), prefix) {
+			continue
+		}
+		info, err := entry.Info()
+		if err != nil || time.Since(info.ModTime()) < stalePartialInstallAge {
+			continue
+		}
+		_ = os.RemoveAll(filepath.Join(parent, entry.Name()))
+	}
 }
 
 // extractTarGz untars a gzip stream into destination, creating it if needed.
