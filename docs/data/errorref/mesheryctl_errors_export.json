@@ -2189,6 +2189,15 @@
         "short_description": "Redirect would change the request method",
         "probable_cause": "The current context's endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)",
         "suggested_remediation": "Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"
+      },
+      "1264": {
+        "name": "ErrUninstallMesheryCode",
+        "code": "1264",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error uninstalling Meshery",
+        "probable_cause": "Meshery may be partially removed from the cluster: some Meshery resources are still present",
+        "suggested_remediation": ""
       }
     }
   }
