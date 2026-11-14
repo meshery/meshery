@@ -15,12 +15,25 @@
 package utils
 
 import (
+	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
+
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	k8sruntime "k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	k8sfake "k8s.io/client-go/kubernetes/fake"
+	k8stesting "k8s.io/client-go/testing"
 )
 
 func TestGetManifestTreeURL(t *testing.T) {
@@ -240,4 +253,269 @@ func TestInstallprereqDocker_BodyClosed(t *testing.T) {
 	if transport.body == nil || !transport.body.closed {
 		t.Fatal("expected response body to be closed in InstallprereqDocker")
 	}
+}
+
+func newDeploymentClientset(names ...string) *k8sfake.Clientset {
+	objects := make([]k8sruntime.Object, 0, len(names))
+	for _, name := range names {
+		objects = append(objects, &appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: MesheryNamespace},
+		})
+	}
+	return k8sfake.NewSimpleClientset(objects...)
+}
+
+func forbiddenDeleteReactor(group, resource string) k8stesting.ReactionFunc {
+	return func(action k8stesting.Action) (bool, k8sruntime.Object, error) {
+		return true, nil, apierrors.NewForbidden(
+			schema.GroupResource{Group: group, Resource: resource},
+			action.(k8stesting.DeleteAction).GetName(),
+			errors.New(resource+" is forbidden"),
+		)
+	}
+}
+
+func listErrorReactor(resource string) k8stesting.ReactionFunc {
+	return func(action k8stesting.Action) (bool, k8sruntime.Object, error) {
+		return true, nil, errors.New(resource + " list failed")
+	}
+}
+
+func TestCleanupCluster(t *testing.T) {
+	t.Run("continues after multiple deletion failures and aggregates them", func(t *testing.T) {
+		client := k8sfake.NewSimpleClientset(
+			&corev1.Service{ObjectMeta: metav1.ObjectMeta{Name: "meshery-svc", Namespace: MesheryNamespace}},
+			&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: "meshery-secret", Namespace: MesheryNamespace}},
+			&corev1.ConfigMap{ObjectMeta: metav1.ObjectMeta{Name: "meshery-config", Namespace: MesheryNamespace}},
+			&rbacv1.ClusterRole{ObjectMeta: metav1.ObjectMeta{Name: "meshery-role"}},
+			&rbacv1.ClusterRole{ObjectMeta: metav1.ObjectMeta{Name: "other-role"}},
+		)
+		client.PrependReactor("delete", "services", forbiddenDeleteReactor("", "services"))
+		client.PrependReactor("delete", "secrets", forbiddenDeleteReactor("", "secrets"))
+
+		err := cleanupCluster(client)
+		if err == nil {
+			t.Fatal("expected the deletion failures to be reported, got nil")
+		}
+		for _, want := range []string{"service meshery-svc", "secret meshery-secret"} {
+			if !strings.Contains(err.Error(), want) {
+				t.Errorf("expected the aggregated error to contain %q, got %q", want, err.Error())
+			}
+		}
+
+		// Resource kinds after the failures must still have been cleaned up.
+		configMaps, listErr := client.CoreV1().ConfigMaps(MesheryNamespace).List(context.TODO(), metav1.ListOptions{})
+		if listErr != nil {
+			t.Fatalf("failed to list configmaps: %v", listErr)
+		}
+		if len(configMaps.Items) != 0 {
+			t.Errorf("expected the configmap to be deleted after earlier failures, got %d remaining", len(configMaps.Items))
+		}
+
+		// Only Meshery cluster-scoped resources are removed.
+		clusterRoles, listErr := client.RbacV1().ClusterRoles().List(context.TODO(), metav1.ListOptions{})
+		if listErr != nil {
+			t.Fatalf("failed to list clusterroles: %v", listErr)
+		}
+		if len(clusterRoles.Items) != 1 || clusterRoles.Items[0].GetName() != "other-role" {
+			t.Errorf("expected only non-Meshery clusterroles to remain, got %+v", clusterRoles.Items)
+		}
+	})
+
+	t.Run("a list failure does not prevent later kinds from being cleaned up", func(t *testing.T) {
+		client := k8sfake.NewSimpleClientset(
+			&corev1.Service{ObjectMeta: metav1.ObjectMeta{Name: "meshery-svc", Namespace: MesheryNamespace}},
+			&corev1.ConfigMap{ObjectMeta: metav1.ObjectMeta{Name: "meshery-config", Namespace: MesheryNamespace}},
+		)
+		// Fail only the list performed by cleanupCluster so the assertions below
+		// can still inspect the cluster state.
+		listAttempts := 0
+		client.PrependReactor("list", "services", func(action k8stesting.Action) (bool, k8sruntime.Object, error) {
+			listAttempts++
+			if listAttempts == 1 {
+				return true, nil, errors.New("services list failed")
+			}
+			return false, nil, nil
+		})
+
+		err := cleanupCluster(client)
+		if err == nil || !strings.Contains(err.Error(), "cannot list services") {
+			t.Fatalf("expected the list failure to be reported with its resource kind, got %v", err)
+		}
+
+		// A kind that could still be listed must still be cleaned up.
+		configMaps, listErr := client.CoreV1().ConfigMaps(MesheryNamespace).List(context.TODO(), metav1.ListOptions{})
+		if listErr != nil {
+			t.Fatalf("failed to list configmaps: %v", listErr)
+		}
+		if len(configMaps.Items) != 0 {
+			t.Errorf("expected the configmap to be deleted after the service list failure, got %d remaining", len(configMaps.Items))
+		}
+
+		services, listErr := client.CoreV1().Services(MesheryNamespace).List(context.TODO(), metav1.ListOptions{})
+		if listErr != nil {
+			t.Fatalf("failed to list services: %v", listErr)
+		}
+		if len(services.Items) != 1 {
+			t.Errorf("expected the unlistable service to be left untouched, got %d remaining", len(services.Items))
+		}
+	})
+
+	t.Run("aggregates multiple list and deletion failures", func(t *testing.T) {
+		client := k8sfake.NewSimpleClientset(
+			&corev1.Service{ObjectMeta: metav1.ObjectMeta{Name: "meshery-svc", Namespace: MesheryNamespace}},
+			&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: "meshery-secret", Namespace: MesheryNamespace}},
+			&rbacv1.Role{ObjectMeta: metav1.ObjectMeta{Name: "meshery-role", Namespace: MesheryNamespace}},
+			&corev1.ConfigMap{ObjectMeta: metav1.ObjectMeta{Name: "meshery-config", Namespace: MesheryNamespace}},
+		)
+		client.PrependReactor("list", "services", listErrorReactor("services"))
+		client.PrependReactor("delete", "secrets", forbiddenDeleteReactor("", "secrets"))
+		client.PrependReactor("list", "roles", listErrorReactor("roles"))
+
+		err := cleanupCluster(client)
+		if err == nil {
+			t.Fatal("expected the list and deletion failures to be reported, got nil")
+		}
+		for _, want := range []string{"cannot list services", "secret meshery-secret", "cannot list roles"} {
+			if !strings.Contains(err.Error(), want) {
+				t.Errorf("expected the aggregated error to contain %q, got %q", want, err.Error())
+			}
+		}
+
+		aggregate, ok := err.(interface{ Errors() []error })
+		if !ok {
+			t.Fatalf("expected an aggregated error, got %T: %v", err, err)
+		}
+		if len(aggregate.Errors()) != 3 {
+			t.Errorf("expected 3 aggregated failures, got %d: %v", len(aggregate.Errors()), err)
+		}
+
+		// Kinds whose List and Delete succeed are still cleaned up.
+		configMaps, listErr := client.CoreV1().ConfigMaps(MesheryNamespace).List(context.TODO(), metav1.ListOptions{})
+		if listErr != nil {
+			t.Fatalf("failed to list configmaps: %v", listErr)
+		}
+		if len(configMaps.Items) != 0 {
+			t.Errorf("expected the configmap to be deleted, got %d remaining", len(configMaps.Items))
+		}
+
+		secrets, listErr := client.CoreV1().Secrets(MesheryNamespace).List(context.TODO(), metav1.ListOptions{})
+		if listErr != nil {
+			t.Fatalf("failed to list secrets: %v", listErr)
+		}
+		if len(secrets.Items) != 1 {
+			t.Errorf("expected the forbidden secret to remain, got %d remaining", len(secrets.Items))
+		}
+	})
+
+	t.Run("ignores resources that are already gone", func(t *testing.T) {
+		client := k8sfake.NewSimpleClientset(
+			&corev1.ConfigMap{ObjectMeta: metav1.ObjectMeta{Name: "meshery-config", Namespace: MesheryNamespace}},
+		)
+		client.PrependReactor("delete", "configmaps", func(action k8stesting.Action) (bool, k8sruntime.Object, error) {
+			return true, nil, apierrors.NewNotFound(
+				schema.GroupResource{Resource: "configmaps"},
+				action.(k8stesting.DeleteAction).GetName())
+		})
+
+		if err := cleanupCluster(client); err != nil {
+			t.Fatalf("expected NotFound to be ignored, got %v", err)
+		}
+	})
+}
+
+func TestDeleteDeployments(t *testing.T) {
+	t.Run("wraps list failures with the resource kind", func(t *testing.T) {
+		client := newDeploymentClientset("meshery")
+		client.PrependReactor("list", "deployments", listErrorReactor("deployments"))
+
+		err := deleteDeployments(context.TODO(), client.AppsV1().Deployments(MesheryNamespace))
+		if err == nil {
+			t.Fatal("expected a list failure to be reported, got nil")
+		}
+		if !strings.Contains(err.Error(), "cannot list deployments") {
+			t.Errorf("expected the list failure to name the resource kind, got %v", err)
+		}
+		if !strings.Contains(err.Error(), "deployments list failed") {
+			t.Errorf("expected the underlying list error to be preserved, got %v", err)
+		}
+	})
+
+	t.Run("returns error when a deletion is forbidden", func(t *testing.T) {
+		client := newDeploymentClientset("meshery")
+		client.PrependReactor("delete", "deployments", forbiddenDeleteReactor("apps", "deployments"))
+
+		err := deleteDeployments(context.TODO(), client.AppsV1().Deployments(MesheryNamespace))
+		if err == nil {
+			t.Fatal("expected a forbidden deletion to be reported, got nil")
+		}
+		if !strings.Contains(err.Error(), "forbidden") || !strings.Contains(err.Error(), "meshery") {
+			t.Fatalf("expected the forbidden failure to name the deployment, got %v", err)
+		}
+	})
+
+	t.Run("aggregates multiple deletion failures and tries every deployment", func(t *testing.T) {
+		client := newDeploymentClientset("meshery-a", "meshery-b", "meshery-c")
+		attempted := 0
+		client.PrependReactor("delete", "deployments", func(action k8stesting.Action) (bool, k8sruntime.Object, error) {
+			attempted++
+			name := action.(k8stesting.DeleteAction).GetName()
+			if name == "meshery-c" {
+				return true, nil, nil
+			}
+			return true, nil, apierrors.NewForbidden(
+				schema.GroupResource{Group: "apps", Resource: "deployments"}, name, errors.New("forbidden"))
+		})
+
+		err := deleteDeployments(context.TODO(), client.AppsV1().Deployments(MesheryNamespace))
+		if err == nil {
+			t.Fatal("expected aggregated deletion failures, got nil")
+		}
+		if attempted != 3 {
+			t.Fatalf("expected all 3 deployments to be attempted, got %d", attempted)
+		}
+
+		aggregate, ok := err.(interface{ Errors() []error })
+		if !ok {
+			t.Fatalf("expected an aggregated error, got %T: %v", err, err)
+		}
+		if len(aggregate.Errors()) != 2 {
+			t.Fatalf("expected 2 aggregated failures, got %d: %v", len(aggregate.Errors()), err)
+		}
+		for _, want := range []string{"meshery-a", "meshery-b"} {
+			if !strings.Contains(err.Error(), want) {
+				t.Errorf("expected aggregated error to name %q, got %q", want, err.Error())
+			}
+		}
+	})
+
+	t.Run("ignores deployments that are already gone", func(t *testing.T) {
+		client := newDeploymentClientset("meshery")
+		client.PrependReactor("delete", "deployments", func(action k8stesting.Action) (bool, k8sruntime.Object, error) {
+			return true, nil, apierrors.NewNotFound(
+				schema.GroupResource{Group: "apps", Resource: "deployments"},
+				action.(k8stesting.DeleteAction).GetName())
+		})
+
+		if err := deleteDeployments(context.TODO(), client.AppsV1().Deployments(MesheryNamespace)); err != nil {
+			t.Fatalf("expected NotFound to be ignored, got %v", err)
+		}
+	})
+
+	t.Run("deletes every deployment on success", func(t *testing.T) {
+		client := newDeploymentClientset("meshery-a", "meshery-b")
+		deployments := client.AppsV1().Deployments(MesheryNamespace)
+
+		if err := deleteDeployments(context.TODO(), deployments); err != nil {
+			t.Fatalf("expected cleanup to succeed, got %v", err)
+		}
+
+		remaining, err := deployments.List(context.TODO(), metav1.ListOptions{})
+		if err != nil {
+			t.Fatalf("failed to list deployments: %v", err)
+		}
+		if len(remaining.Items) != 0 {
+			t.Fatalf("expected no deployments to remain, got %d", len(remaining.Items))
+		}
+	})
 }
