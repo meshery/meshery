@@ -293,7 +293,7 @@ describe('getStatus', () => {
     expect(getStatus(JSON.stringify({ phase: 'Running' }))).toBe('Running');
   });
 
-  it('returns Ready when the most recent condition is a True Ready', () => {
+  it('returns Ready when the Ready condition is True', () => {
     const status = JSON.stringify({
       conditions: [
         { type: 'Available', status: 'True' },
@@ -303,19 +303,34 @@ describe('getStatus', () => {
     expect(getStatus(status)).toBe('Ready');
   });
 
-  it('returns false when most recent condition is not Ready', () => {
+  it('returns Ready when a different condition follows a True Ready condition', () => {
     const status = JSON.stringify({
       conditions: [
         { type: 'Ready', status: 'True' },
         { type: 'Available', status: 'False' },
       ],
     });
-    expect(getStatus(status)).toBe(false);
+    expect(getStatus(status)).toBe('Ready');
   });
 
   it('returns false when Ready condition status is False', () => {
     const status = JSON.stringify({
       conditions: [{ type: 'Ready', status: 'False' }],
+    });
+    expect(getStatus(status)).toBe(false);
+  });
+
+  it('returns false when there is no Ready condition', () => {
+    const status = JSON.stringify({ conditions: [{ type: 'Available', status: 'True' }] });
+    expect(getStatus(status)).toBe(false);
+  });
+
+  it('returns false when Ready is not True even if another condition is True', () => {
+    const status = JSON.stringify({
+      conditions: [
+        { type: 'Ready', status: 'Unknown' },
+        { type: 'DiskPressure', status: 'True' },
+      ],
     });
     expect(getStatus(status)).toBe(false);
   });
