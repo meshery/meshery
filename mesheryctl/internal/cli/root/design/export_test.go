@@ -84,7 +84,7 @@ func TestFetchPatternIDByNameNonOKStatus(t *testing.T) {
 
 	t.Run("500 Internal Server Error", func(t *testing.T) {
 		patternName := "test-pattern-500"
-		searchURL := fmt.Sprintf("%s/api/pattern?search=%s", testContext.BaseURL, url.QueryEscape(patternName))
+		searchURL := fmt.Sprintf("%s/api/pattern?search=%s&pagesize=%d", testContext.BaseURL, url.QueryEscape(patternName), designNameSearchPageSize)
 		httpmock.RegisterResponder("GET", searchURL, func(req *http.Request) (*http.Response, error) {
 			return httpmock.NewStringResponse(http.StatusInternalServerError, "internal server error"), nil
 		})
@@ -103,7 +103,7 @@ func TestFetchPatternIDByNameNonOKStatus(t *testing.T) {
 
 	t.Run("201 Non-OK Status without MakeRequest error", func(t *testing.T) {
 		patternName := "test-pattern-201"
-		searchURL := fmt.Sprintf("%s/api/pattern?search=%s", testContext.BaseURL, url.QueryEscape(patternName))
+		searchURL := fmt.Sprintf("%s/api/pattern?search=%s&pagesize=%d", testContext.BaseURL, url.QueryEscape(patternName), designNameSearchPageSize)
 		httpmock.RegisterResponder("GET", searchURL, func(req *http.Request) (*http.Response, error) {
 			return httpmock.NewStringResponse(http.StatusCreated, "created"), nil
 		})
@@ -235,28 +235,47 @@ func TestFetchPatternIDByName(t *testing.T) {
 	utils.TokenFlag = utils.GetToken(t)
 
 	patternID := uuid.Must(uuid.NewV4())
+	otherID := uuid.Must(uuid.NewV4())
 
 	tests := []struct {
-		name     string
-		patterns []models.MesheryPattern
-		wantID   string
+		name        string
+		patterns    []models.MesheryPattern
+		totalCount  uint
+		wantID      string
+		wantErrCode string
 	}{
 		{name: "one match returns its ID", patterns: []models.MesheryPattern{{ID: &patternID, Name: "my-design"}}, wantID: patternID.String()},
+		// The server's search matches substrings, so "my-design" also returns
+		// "my-design-v2"; that design must not be exported instead.
+		{name: "a substring match is not the design", patterns: []models.MesheryPattern{{ID: &otherID, Name: "my-design-v2"}}},
+		{name: "an exact match wins over a substring match", patterns: []models.MesheryPattern{{ID: &otherID, Name: "my-design-v2"}, {ID: &patternID, Name: "my-design"}}, wantID: patternID.String()},
+		{name: "a name that differs only in case matches", patterns: []models.MesheryPattern{{ID: &patternID, Name: "My-Design"}}, wantID: patternID.String()},
+		// When the server has more matches than the response carries, the exact
+		// match may be on a later page, so a case-insensitive match is not used.
+		{name: "a case-insensitive match is not used when the results are truncated", patterns: []models.MesheryPattern{{ID: &otherID, Name: "My-Design"}}, totalCount: 2, wantErrCode: meshkiterrors.GetCode(utils.ErrInvalidArgument(fmt.Errorf("truncated")))},
+		{name: "an exact match is used even when the results are truncated", patterns: []models.MesheryPattern{{ID: &otherID, Name: "my-design-v2"}, {ID: &patternID, Name: "my-design"}}, totalCount: 5, wantID: patternID.String()},
 		{name: "no match returns an error", patterns: []models.MesheryPattern{}},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			body, err := json.Marshal(models.PatternsAPIResponse{TotalCount: uint(len(tt.patterns)), Patterns: tt.patterns})
+			totalCount := tt.totalCount
+			if totalCount == 0 {
+				totalCount = uint(len(tt.patterns))
+			}
+			body, err := json.Marshal(models.PatternsAPIResponse{TotalCount: totalCount, Patterns: tt.patterns})
 			if err != nil {
 				t.Fatal(err)
 			}
-			searchURL := fmt.Sprintf("%s/api/pattern?search=%s", testContext.BaseURL, url.QueryEscape("my-design"))
+			searchURL := fmt.Sprintf("%s/api/pattern?search=%s&pagesize=%d", testContext.BaseURL, url.QueryEscape("my-design"), designNameSearchPageSize)
 			httpmock.RegisterResponder("GET", searchURL, httpmock.NewStringResponder(http.StatusOK, string(body)))
 
 			id, err := fetchPatternIDByName(testContext.BaseURL, "my-design")
 			if tt.wantID == "" {
-				wantCode := meshkiterrors.GetCode(ErrDesignNotFound("my-design"))
+				wantCode := tt.wantErrCode
+				if wantCode == "" {
+					wantCode = meshkiterrors.GetCode(ErrDesignNotFound("my-design"))
+				}
 				if meshkiterrors.GetCode(err) != wantCode {
 					t.Fatalf("expected error code %s, got %v", wantCode, err)
 				}
