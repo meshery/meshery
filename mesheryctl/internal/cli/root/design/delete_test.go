@@ -255,6 +255,32 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectedError:  ErrDesignNotFound("test-des"),
 		},
 		{
+			Name:             "given design name in different case when design delete then the design matching it ignoring case is deleted",
+			Args:             []string{"delete", "Test-Design"},
+			ExpectedResponse: "delete.byNameCase.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=Test-Design&pagesize=10000",
+					Response:     "delete.nameSearch.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/a12b3c4d-5e6f-4890-abcd-ef1234567890",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
+		{
 			Name:             "given name shared by two designs when design delete then ambiguity error is thrown and nothing is deleted",
 			Args:             []string{"delete", "test-design"},
 			ExpectedResponse: "",
