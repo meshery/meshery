@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
 
 const BREAKPOINTS = ['lg', 'md', 'sm', 'xs', 'xxs'] as const;
+const COLS = { lg: 12, md: 12, sm: 6, xs: 4, xxs: 2 } as const;
 
 describe('defaultLayout', () => {
   describe('DEFAULT_LAYOUT', () => {
@@ -9,6 +10,18 @@ describe('defaultLayout', () => {
       for (const bp of BREAKPOINTS) {
         expect(Array.isArray(DEFAULT_LAYOUT[bp])).toBe(true);
         expect(DEFAULT_LAYOUT[bp].length).toBeGreaterThan(0);
+      }
+    });
+
+    it('keeps items within breakpoint column bounds', () => {
+      for (const bp of BREAKPOINTS) {
+        const maxCols = COLS[bp];
+        for (const item of DEFAULT_LAYOUT[bp]) {
+          expect(item.w).toBeGreaterThanOrEqual(1);
+          expect(item.w).toBeLessThanOrEqual(maxCols);
+          expect(item.x).toBeGreaterThanOrEqual(0);
+          expect(item.x + item.w).toBeLessThanOrEqual(maxCols);
+        }
       }
     });
 
@@ -55,6 +68,18 @@ describe('defaultLayout', () => {
         expect(keys).toEqual(expect.arrayContaining(['OVERVIEW', 'LATEST_BLOGS']));
       }
     });
+
+    it('keeps items within breakpoint column bounds', () => {
+      for (const bp of BREAKPOINTS) {
+        const maxCols = COLS[bp];
+        for (const item of LOCAL_PROVIDER_LAYOUT[bp]) {
+          expect(item.w).toBeGreaterThanOrEqual(1);
+          expect(item.w).toBeLessThanOrEqual(maxCols);
+          expect(item.x).toBeGreaterThanOrEqual(0);
+          expect(item.x + item.w).toBeLessThanOrEqual(maxCols);
+        }
+      }
+    });
   });
 
   describe('OVERVIEW_LAYOUT', () => {
@@ -62,6 +87,7 @@ describe('defaultLayout', () => {
       for (const bp of BREAKPOINTS) {
         expect(OVERVIEW_LAYOUT[bp]).toHaveLength(1);
         expect(OVERVIEW_LAYOUT[bp][0].i).toBe('OVERVIEW');
+        expect(OVERVIEW_LAYOUT[bp][0].w).toBeLessThanOrEqual(COLS[bp]);
       }
     });
   });
