@@ -350,6 +350,15 @@ func copyMatchSelector(m *relationship.MatchSelector) *relationship.MatchSelecto
 		}
 		cp.To = &toSlice
 	}
+	if m.Refs != nil {
+		refsSlice := make([][]string, len(*m.Refs))
+		for i, inner := range *m.Refs {
+			innerCopy := make([]string, len(inner))
+			copy(innerCopy, inner)
+			refsSlice[i] = innerCopy
+		}
+		cp.Refs = &refsSlice
+	}
 	return cp
 }
 

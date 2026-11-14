@@ -685,7 +685,7 @@ func TestIdentifyBindingRelationships_MatchSelectorIDIsolation(t *testing.T) {
 				Allow: relationship.Selector{
 					From: []relationship.SelectorItem{
 						{
-							Kind: fromKind,
+							Kind: &fromKind,
 							Match: &relationship.MatchSelector{
 								From: &[]relationship.MatchSelectorItem{
 									{Kind: "self", MutatorRef: &mutatorRef},
@@ -698,7 +698,7 @@ func TestIdentifyBindingRelationships_MatchSelectorIDIsolation(t *testing.T) {
 					},
 					To: []relationship.SelectorItem{
 						{
-							Kind: toKind,
+							Kind: &toKind,
 							Match: &relationship.MatchSelector{
 								From: &[]relationship.MatchSelectorItem{
 									{Kind: bindingKind, MutatorRef: &mutatorRef},
@@ -803,5 +803,39 @@ func TestIdentifyBindingRelationships_MatchSelectorIDIsolation(t *testing.T) {
 	}
 	if *(*rel2FromMatch.To)[0].ID != crb2.ID {
 		t.Errorf("rel2 Match.To[0].ID invalid: want %s (crb2), got %s", crb2.ID, *(*rel2FromMatch.To)[0].ID)
+	}
+}
+
+func TestCopyMatchSelector_PreservesRefs(t *testing.T) {
+	refs := [][]string{
+		{"configuration", "spec", "port"},
+		{"configuration", "spec", "targetPort"},
+	}
+	fromID := uuid.Must(uuid.NewV4())
+	toID := uuid.Must(uuid.NewV4())
+	orig := &relationship.MatchSelector{
+		From: &[]relationship.MatchSelectorItem{
+			{Kind: "Service", ID: &fromID},
+		},
+		To: &[]relationship.MatchSelectorItem{
+			{Kind: "Pod", ID: &toID},
+		},
+		Refs: &refs,
+	}
+
+	copied := copyMatchSelector(orig)
+	if copied == nil {
+		t.Fatal("expected non-nil copy")
+	}
+	if copied.Refs == nil {
+		t.Fatal("expected copied Refs to be non-nil")
+	}
+	if len(*copied.Refs) != len(refs) {
+		t.Fatalf("expected %d refs, got %d", len(refs), len(*copied.Refs))
+	}
+	// Verify deep copy isolation
+	(*copied.Refs)[0][0] = "mutated"
+	if refs[0][0] == "mutated" {
+		t.Error("modifying copied Refs affected original refs slice")
 	}
 }
