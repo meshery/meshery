@@ -264,6 +264,8 @@ func loadContextsForDeletion(provider interface {
 }, token string) ([]*models.K8sContext, error) {
 	const pageSize = 100
 	var contexts []*models.K8sContext
+	var expectedTotal int
+	seen := make(map[string]struct{})
 	for page := 0; ; page++ {
 		data, err := provider.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", "", true)
 		if err != nil {
@@ -273,8 +275,27 @@ func loadContextsForDeletion(provider interface {
 		if err := json.Unmarshal(data, &result); err != nil {
 			return nil, err
 		}
+		// Changing totals or repeated IDs show that offset pagination shifted.
+		// A stable count still cannot guarantee a transactional snapshot.
+		if page == 0 {
+			expectedTotal = result.TotalCount
+		} else if result.TotalCount != expectedTotal {
+			return nil, fmt.Errorf("Kubernetes context count changed during pagination")
+		}
+		for _, item := range result.Contexts {
+			if item == nil || item.ID == "" {
+				return nil, fmt.Errorf("invalid Kubernetes context in snapshot")
+			}
+			if _, exists := seen[item.ID]; exists {
+				return nil, fmt.Errorf("duplicate Kubernetes context in snapshot")
+			}
+			seen[item.ID] = struct{}{}
+		}
 		contexts = append(contexts, result.Contexts...)
-		if len(contexts) >= result.TotalCount {
+		if len(contexts) > expectedTotal {
+			return nil, fmt.Errorf("inconsistent Kubernetes context count")
+		}
+		if len(contexts) == expectedTotal {
 			return contexts, nil
 		}
 		if len(result.Contexts) == 0 {
