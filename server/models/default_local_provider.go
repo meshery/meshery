@@ -1831,6 +1831,9 @@ func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order
 
 // GetUsersKeys returns the list of keys
 func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, search, order, updatedAfter string, _ string) ([]byte, error) {
+	if l == nil || l.KeyPersister == nil {
+		return nil, ErrDBConnection
+	}
 	keys, err := l.KeyPersister.GetUsersKeys(search, order, updatedAfter)
 	if err != nil {
 		return nil, err
@@ -1840,12 +1843,18 @@ func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, search, order, updatedAfter
 
 // GetUsersKey returns the key for the given keyID
 func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byte, error) {
+	if l == nil || l.KeyPersister == nil {
+		return nil, ErrDBConnection
+	}
 	id := uuid.FromStringOrNil(keyID)
 	return l.KeyPersister.GetUsersKey(id)
 }
 
 // SaveUsersKey saves the given keys with the provider
 func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []Key) ([]Key, error) {
+	if l == nil || l.KeyPersister == nil {
+		return nil, ErrDBConnection
+	}
 	return l.KeyPersister.SaveUsersKeys(keys)
 }
 
