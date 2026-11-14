@@ -117,7 +117,7 @@ compose file is present, uninstall reports that Meshery is not installed and
 leaves Docker untouched: it does not create a compose file to look for, and no
 container, volume or image is removed.
 
-{{< mesheryctl/system-uninstall-failure >}}
+{{% mesheryctl/system-uninstall-failure %}}
 
 ## See Also
 
