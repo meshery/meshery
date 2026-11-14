@@ -23,7 +23,9 @@ function createFixture(t) {
   fs.mkdirSync(path.join(fixture, 'ui', 'scripts'), { recursive: true });
   fs.copyFileSync(productionScript, path.join(fixture, 'ui', 'scripts', 'audit-hex.js'));
 
-  fs.mkdirSync(path.join(fixture, 'ui', 'components'), { recursive: true });
+  for (const dir of ['components', 'pages', 'utils', 'store', 'rtk-query', 'machines', 'hooks', 'api', 'css']) {
+    fs.mkdirSync(path.join(fixture, 'ui', dir), { recursive: true });
+  }
 
   return fixture;
 }
@@ -209,4 +211,36 @@ test('excludes nested node_modules directories at every depth', (t) => {
     result.offenders.map((offender) => offender.file),
     ['components/feature/source.tsx'],
   );
+});
+
+
+test('reports unreadable directories and files while scanning the rest', (t) => {
+  const fixture = createFixture(t);
+  writeFile(fixture, 'ui/components/ok.tsx', "const c = '#fff';\n");
+  writeFile(fixture, 'ui/components/blocked.tsx', "const c = '#000';\n");
+  writeFile(fixture, 'ui/components/blocked-dir/source.tsx', "const c = '#123';\n");
+  const preload = path.join(fixture, 'preload.js');
+  fs.writeFileSync(preload, `
+    const fs = require('fs');
+    for (const [method, name] of [['readdirSync', 'blocked-dir'], ['readFileSync', 'blocked.tsx']]) {
+      const original = fs[method];
+      fs[method] = function (file, ...args) {
+        if (String(file).endsWith(name)) throw Object.assign(new Error('permission denied'), { code: 'EACCES' });
+        return original.call(this, file, ...args);
+      };
+    }
+  `);
+  const script = path.join(fixture, 'ui/scripts/audit-hex.js');
+  const run = (...args) => spawnSync(process.execPath, ['--require', preload, script, ...args], { encoding: 'utf8' });
+  const json = run('--json');
+  assert.equal(json.status, 0, json.stderr);
+  const result = JSON.parse(json.stdout);
+  assert.equal(result.scanComplete, false);
+  assert.equal(result.scanErrors.length, 2);
+  assert.match(result.scanErrors.join('\n'), /blocked-dir/);
+  assert.match(result.scanErrors.join('\n'), /blocked\.tsx/);
+  assert.equal(result.matches, 1);
+  const terminal = run();
+  assert.equal(terminal.status, 0, terminal.stderr);
+  assert.match(terminal.stdout, /Scan incomplete: 2 filesystem error/);
 });
