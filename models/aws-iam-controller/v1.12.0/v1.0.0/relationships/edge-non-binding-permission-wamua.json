@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "iam-controller",
+              "name": "aws-iam-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
@@ -75,7 +75,7 @@
               "model": {
                 "version": ""
               },
-              "name": "ec2-controller",
+              "name": "aws-ec2-controller",
               "registrant": {
                 "kind": "artifacthub"
               },

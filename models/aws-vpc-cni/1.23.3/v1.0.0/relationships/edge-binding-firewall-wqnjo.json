@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-vpccni-controller",
+              "name": "aws-vpc-cni",
               "registrant": {
                 "kind": "github"
               },

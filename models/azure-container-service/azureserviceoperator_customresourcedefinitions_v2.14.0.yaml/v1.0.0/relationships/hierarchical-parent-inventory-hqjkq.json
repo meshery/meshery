@@ -38,7 +38,7 @@
               "model": {
                 "version": ""
               },
-              "name": "azure-conatiner-service",
+              "name": "azure-container-service",
               "registrant": {
                 "kind": "github"
               },
@@ -68,7 +68,7 @@
               "model": {
                 "version": ""
               },
-              "name": "azure-conatiner-service",
+              "name": "azure-container-service",
               "registrant": {
                 "kind": "github"
               },
