@@ -71,8 +71,9 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	// testName - should be loaded from the file and updated with a random string appended to the end of the name
 	testName := perfTest.Config.Name
 	if testName == "" {
-		h.log.Error(ErrBlankName(err))
-		writeMeshkitError(w, ErrBlankName(err), http.StatusForbidden)
+		blankNameErr := ErrBlankName(nil)
+		h.log.Error(blankNameErr)
+		writeMeshkitError(w, blankNameErr, http.StatusBadRequest)
 		return
 	}
 
@@ -265,8 +266,9 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	testName := q.Get("name")
 	if testName == "" {
-		h.log.Error(ErrBlankName(err))
-		writeMeshkitError(w, ErrBlankName(err), http.StatusForbidden)
+		blankNameErr := ErrBlankName(nil)
+		h.log.Error(blankNameErr)
+		writeMeshkitError(w, blankNameErr, http.StatusBadRequest)
 		return
 	}
 	meshName := q.Get("mesh")

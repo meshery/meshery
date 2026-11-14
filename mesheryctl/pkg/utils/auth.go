@@ -149,23 +149,16 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 	return resp, nil
 }
 
-// GetTokenLocation checks the location of token and returns appropriate location of the token
+// GetTokenLocation returns the path of the file a meshconfig token entry names.
+// Absolute and "~/" locations resolve through config.Token.GetLocation, so
+// requests read the same file system login and logout write. A bare file name
+// is joined to MesheryFolder, which is ~/.meshery at runtime, as GetLocation
+// does, and which tests point at their fixtures.
 func GetTokenLocation(token config.Token) (string, error) {
-	// Find home directory.
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", errors.Wrap(err, "failed to get users home directory")
+	if filepath.IsAbs(token.Location) || strings.HasPrefix(token.Location, "~/") {
+		return token.GetLocation(), nil
 	}
-
-	location := token.Location
-	// if location contains /home/nectar in path we return exact location
-	ok := strings.Contains(location, home)
-	if ok {
-		return location, nil
-	}
-
-	// else we add the home directory with the path
-	return filepath.Join(MesheryFolder, location), nil
+	return filepath.Join(MesheryFolder, token.Location), nil
 }
 
 // EnsureContextToken returns the token entry the named context refers to. When
@@ -619,17 +612,19 @@ const tokenFileMode os.FileMode = 0o600
 
 // WriteTokenFile writes an auth token file and restricts it to its owner.
 // The open mode only applies when the file is created, so an existing token
-// file written by an older mesheryctl (0644 or 0666) is chmod-ed to 0600
-// before the new token is written into it. The file is opened without
-// O_TRUNC and truncated only after the chmod succeeds, so a chmod failure
-// (for example a token file owned by another user) leaves the previous
-// credentials intact instead of emptying the file and then erroring.
+// file written by an older mesheryctl (0644 or 0666) is restricted with
+// restrictTokenFile before the new token is written into it: chmod to 0600 on
+// Unix and, on Windows where chmod does not touch ACLs, a protected DACL that
+// grants only the current user access. The file is opened without O_TRUNC and
+// truncated only after the restriction succeeds, so a failure (for example a
+// token file owned by another user) leaves the previous credentials intact
+// instead of emptying the file and then erroring.
 func WriteTokenFile(path string, data []byte) error {
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, tokenFileMode)
 	if err != nil {
 		return err
 	}
-	if err := f.Chmod(tokenFileMode); err != nil {
+	if err := restrictTokenFile(f); err != nil {
 		_ = f.Close()
 		return err
 	}
