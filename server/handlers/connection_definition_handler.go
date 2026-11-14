@@ -59,8 +59,8 @@ func (h *Handler) GetConnectionDefinitions(rw http.ResponseWriter, r *http.Reque
 		Offset:    offset,
 	})
 	if err != nil {
-		h.log.Error(ErrQueryGet("connection definitions"))
-		writeMeshkitError(rw, ErrQueryGet("connection definitions"), http.StatusInternalServerError)
+		h.log.Error(ErrGetConnectionDefinitions(err))
+		writeMeshkitError(rw, ErrGetConnectionDefinitions(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -102,8 +102,8 @@ func (h *Handler) GetConnectionDefinitionByID(rw http.ResponseWriter, r *http.Re
 		Limit: 1,
 	})
 	if err != nil {
-		h.log.Error(ErrQueryGet("connection definition"))
-		writeMeshkitError(rw, ErrQueryGet("connection definition"), http.StatusInternalServerError)
+		h.log.Error(ErrGetConnectionDefinition(err))
+		writeMeshkitError(rw, ErrGetConnectionDefinition(err), http.StatusInternalServerError)
 		return
 	}
 	defs := connectionDefinitionsFromEntities(entities)
@@ -187,7 +187,7 @@ func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Req
 			writeJSONError(rw, fmt.Sprintf("connection definition with id %s not found", id), http.StatusNotFound)
 			return
 		}
-		_err := ErrQueryGet(obj)
+		_err := ErrGetConnectionDefinition(err)
 		h.log.Error(_err)
 		writeMeshkitError(rw, _err, http.StatusInternalServerError)
 		return

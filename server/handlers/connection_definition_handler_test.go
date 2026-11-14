@@ -170,3 +170,27 @@ func TestDeleteConnectionDefinition_Success(t *testing.T) {
 	dbHandler.Model(&registry.Registry{}).Where("entity = ?", connDefID).Count(&regCount)
 	assert.Equal(t, int64(0), regCount, "registry entry must be deleted")
 }
+
+// TestGetConnectionDefinitionByID_InvalidUUID verifies that GetConnectionDefinitionByID returns
+// HTTP 400 Bad Request when an invalid UUID string is provided in the route parameters.
+func TestGetConnectionDefinitionByID_InvalidUUID(t *testing.T) {
+	h := &Handler{
+		config: &models.HandlerConfig{},
+		log:    newTestLogger(t),
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/registry/connections/invalid-uuid", nil)
+	req = mux.SetURLVars(req, map[string]string{
+		"connectionDefinitionId": "invalid-uuid",
+	})
+	rw := httptest.NewRecorder()
+
+	h.GetConnectionDefinitionByID(rw, req)
+	resp := rw.Result()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+	assert.Contains(t, rw.Body.String(), models.ErrInvalidUUIDValueCode)
+}
