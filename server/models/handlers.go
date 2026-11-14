@@ -2,7 +2,7 @@ package models
 
 import (
 	"net/http"
-
+	"sync/atomic"
 	"time"
 
 	"github.com/meshery/meshkit/utils/events"
@@ -316,6 +316,13 @@ type HandlerConfig struct {
 	K8scontextChannel *K8scontextChan
 	EventsBuffer      *events.EventStreamer
 	OperatorTracker   *OperatorTracker
+	StartupStatus     StartupTracker
+}
+
+// StartupTracker tracks thread-safe status of asynchronous startup tasks.
+type StartupTracker struct {
+	SeedingComplete         atomic.Bool
+	ProviderTrackerComplete atomic.Bool
 }
 
 type AuthenticationMechanism int
