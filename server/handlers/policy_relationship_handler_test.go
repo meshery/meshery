@@ -1156,3 +1156,68 @@ func TestDoesntNeedReeval(t *testing.T) {
 		})
 	}
 }
+
+// TestDeduplicateActionsKeepsPathAndLatestValue covers the two ways the old
+// (op, id) key misreported a multi-pass evaluation: it collapsed distinct paths
+// on one component into the first, and it reported the first pass's
+// intermediate value for a path a later pass mutated again.
+func TestDeduplicateActionsKeepsPathAndLatestValue(t *testing.T) {
+	const id = "00000000-0000-0000-0000-0000000000c1"
+	update := func(path []string, value string) pattern.Action {
+		return pattern.Action{
+			Op:    gopolicies.UpdateComponentOp,
+			Value: map[string]interface{}{"id": id, "path": path, "value": value},
+		}
+	}
+
+	t.Run("distinct paths on one component are kept", func(t *testing.T) {
+		got := deduplicateActions([]pattern.Action{
+			update([]string{"displayName"}, "bus-alpha"),
+			update([]string{"metadata", "labels"}, "team-a"),
+		})
+		require.Len(t, got, 2)
+		assert.Equal(t, "bus-alpha", got[0].Value["value"])
+		assert.Equal(t, "team-a", got[1].Value["value"])
+	})
+
+	t.Run("later pass wins and keeps the earlier position", func(t *testing.T) {
+		got := deduplicateActions([]pattern.Action{
+			update([]string{"displayName"}, "stale"),
+			{Op: gopolicies.AddRelationshipOp, Value: map[string]interface{}{}},
+			update([]string{"displayName"}, "settled"),
+		})
+		require.Len(t, got, 2)
+		assert.Equal(t, gopolicies.UpdateComponentOp, got[0].Op)
+		assert.Equal(t, "settled", got[0].Value["value"],
+			"the reported value must match the design the response ships with")
+	})
+
+	t.Run("pathless ops still dedup on op and id", func(t *testing.T) {
+		del := pattern.Action{Op: gopolicies.DeleteComponentOp, Value: map[string]interface{}{"id": id}}
+		got := deduplicateActions([]pattern.Action{del, del})
+		assert.Len(t, got, 1)
+	})
+}
+
+// TestMergeTraceUniqueKeepsLatestComponentSnapshot verifies that a component
+// mutated again by a later pass reports its newer state, so the trace does not
+// describe an older design than the one it ships with.
+func TestMergeTraceUniqueKeepsLatestComponentSnapshot(t *testing.T) {
+	compID, err := uuid.FromString("00000000-0000-0000-0000-0000000000c2")
+	require.NoError(t, err)
+
+	snapshot := func(displayName string) pattern.Trace {
+		c := component.ComponentDefinition{DisplayName: core.InputString(displayName)}
+		c.ID = compID
+		return pattern.Trace{ComponentsUpdated: []component.ComponentDefinition{c}}
+	}
+
+	var dst pattern.Trace
+	first := snapshot("stale")
+	second := snapshot("settled")
+	mergeTraceUnique(&dst, &first)
+	mergeTraceUnique(&dst, &second)
+
+	require.Len(t, dst.ComponentsUpdated, 1, "the component must not be reported twice")
+	assert.Equal(t, "settled", string(dst.ComponentsUpdated[0].DisplayName))
+}
