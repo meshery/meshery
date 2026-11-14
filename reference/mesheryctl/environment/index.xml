@@ -62,7 +62,7 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl environment delete [flags]
+mesheryctl environment delete [environmentId] [flags]
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -70,7 +70,7 @@ mesheryctl environment delete [flags]
 &lt;h2 id="examples"&gt;
 	Examples
 &lt;/h2&gt;
-&lt;p&gt;delete a new environment&lt;/p&gt;
+&lt;p&gt;Delete an environment by ID&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
