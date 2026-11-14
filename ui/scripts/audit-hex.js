@@ -19,7 +19,8 @@
  *   node scripts/audit-hex.js --all     # print every offending file
  *   node scripts/audit-hex.js --json    # structured JSON to stdout
  *
- * Exit code is always 0.
+ * Exit code is always 0. Consumers of --json should check scanComplete
+ * before relying on the results; scanErrors lists any filesystem failures.
  *
  * Final line of stdout is always:
  *   AUDIT hex files=<N> matches=<M>
