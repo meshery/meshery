@@ -37,6 +37,7 @@ var (
 	sheetGID                 int64
 	totalAggregateComponents int
 	logDirPath               = filepath.Join(mutils.GetHome(), ".meshery", "logs", "registry")
+	updateUsageMsg           = "Usage: mesheryctl registry update [flags]\nRun 'mesheryctl registry update --help' to see detailed help message"
 )
 
 // This command is used for retreving the information of components based on the sheet. It updates the components with the actual values of the fetched for sheet.
@@ -56,6 +57,12 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 // Updating models in the meshery/meshery repository based on flag
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED" --model "[model-name]"
 	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", updateUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
 		err := os.MkdirAll(logDirPath, 0755)

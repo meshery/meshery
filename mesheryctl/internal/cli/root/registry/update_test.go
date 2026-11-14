@@ -65,3 +65,9 @@ func TestErrUpdateRegistry_WithNon200Status(t *testing.T) {
 	assert.NotNil(t, registryErr)
 	assert.Contains(t, registryErr.Error(), "404")
 }
+
+func TestUpdateCmdArgs(t *testing.T) {
+	err := updateCmd.Args(updateCmd, []string{"extra-arg"})
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "too many arguments specified")
+}
