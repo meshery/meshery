@@ -262,7 +262,7 @@ func ErrFailedGetEphemeralPort(err error) error {
 		errors.Fatal,
 		[]string{"Failed to get a free port"},
 		[]string{err.Error(), "Failed to start port-forwarding"},
-		[]string{"Unable to provide a free port to connect to a kuberentes cluster"},
+		[]string{"Unable to provide a free port to connect to a kubernetes cluster"},
 		[]string{"Ensure your Meshery Server is running,", "Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system check`"},
 	)
 }
@@ -311,7 +311,7 @@ func ErrSwitchChannelResponse() error {
 	return errors.New(
 		ErrSwitchChannelResponseCode,
 		errors.Alert,
-		[]string{"Unable to exectute command"},
+		[]string{"Unable to execute command"},
 		[]string{"Channel switch aborted"},
 		[]string{"No user response provided"},
 		[]string{"Provide a response or use the -y flag for confirmation. " + FormatErrorReference()})
@@ -573,8 +573,8 @@ func ErrAssignToken(err error, tokenName, targetContext string) error {
 			errors.Fatal,
 			[]string{"Unable to assign token to context"},
 			[]string{fmt.Sprintf("Could not set token %q on context %s: %v", tokenName, targetContext, err)},
-			[]string{"The target context may not exist in meshconfig, or meshconfig could not be read or written."},
-			[]string{"Verify the target context exists with `mesheryctl system context view` and ensure your meshconfig file is accessible."}),
+			[]string{"The token or the target context may not exist in meshconfig, or meshconfig could not be read or written."},
+			[]string{"Verify the token exists with `mesheryctl system token list` (create it with `mesheryctl system token create <token-name>`), verify the target context exists with `mesheryctl system context view`, and ensure your meshconfig file is accessible."}),
 		err,
 	)
 }

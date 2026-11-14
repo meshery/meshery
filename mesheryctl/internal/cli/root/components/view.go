@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"net/url"
 	"path/filepath"
-	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -97,9 +96,13 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 		savePath := ""
 
 		if cmdComponentViewFlags.Save {
-			componentString := strings.NewReplacer(" ", "_", "/", "_", "\\", "_").Replace(
-				fmt.Sprintf("%v", selectedComponent.DisplayName),
-			)
+			componentString := utils.SanitizeFileName(fmt.Sprintf("%v", selectedComponent.DisplayName))
+			if componentString == "" {
+				componentString = utils.SanitizeFileName(selectedComponent.ID.String())
+				if componentString == "" {
+					componentString = "unknown"
+				}
+			}
 
 			savePath = filepath.Join(
 				utils.MesheryFolder,

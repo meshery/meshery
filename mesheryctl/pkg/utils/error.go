@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"net/http"
 	"strconv"
 	"strings"
 
@@ -86,6 +87,9 @@ var (
 	ErrAmbiguousIDCode                = "mesheryctl-1256"
 	ErrProviderNotFoundCode           = "mesheryctl-1259"
 	ErrProviderAmbiguousCode          = "mesheryctl-1260"
+	ErrIDLookupIncompleteCode         = "mesheryctl-1261"
+	ErrIDLookupPageLimitCode          = "mesheryctl-1262"
+	ErrRedirectChangesMethodCode      = "mesheryctl-1263"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -488,6 +492,27 @@ func ErrAmbiguousID(prefix string, matches []string) error {
 		[]string{fmt.Sprintf("%q matches %d IDs, including: %s", prefix, len(matches), strings.Join(matches[:min(10, len(matches))], ", "))},
 		[]string{"The provided ID prefix is shared by more than one item."},
 		[]string{"Provide more characters of the ID, or the full ID."})
+}
+
+// ErrIDLookupIncomplete reports that a paginated ID lookup stopped before
+// fetching every item the server reported, so the returned list may be incomplete.
+func ErrIDLookupIncomplete(total, fetched int64) error {
+	return errors.New(ErrIDLookupIncompleteCode, errors.Alert,
+		[]string{"ID lookup incomplete"},
+		[]string{fmt.Sprintf("fetched %d of %d IDs; the ID list may be incomplete", fetched, total)},
+		[]string{"The server reported more items than mesheryctl could fetch within the page limit."},
+		[]string{"Provide the full ID instead of a short prefix, or retry the command."})
+}
+
+// ErrIDLookupPageLimit reports that a paginated ID lookup hit the page limit
+// without the server reporting a total count, so mesheryctl could not confirm
+// the returned list is complete.
+func ErrIDLookupPageLimit(fetched int64) error {
+	return errors.New(ErrIDLookupPageLimitCode, errors.Alert,
+		[]string{"ID lookup hit page limit"},
+		[]string{fmt.Sprintf("fetched %d IDs across the page limit without a reported total; the ID list may be incomplete", fetched)},
+		[]string{"The server did not report a total count and every page was full, so mesheryctl stopped at the page limit without confirming the list is complete."},
+		[]string{"Provide the full ID instead of a short prefix, or retry the command."})
 }
 
 func ErrAttachAuthToken(err error) error {
@@ -1012,4 +1037,17 @@ func ErrProviderAmbiguous(requested string, keys []string) error {
 		[]string{fmt.Sprintf("Provider name %q matches %d providers. Specify a registration key: %s", requested, len(keys), strings.Join(keys, ", "))},
 		[]string{"Two or more providers share the same display name"},
 		[]string{"Run `mesheryctl system provider list` to see the registration keys", "Pass a registration key to --provider instead of the display name"})
+}
+
+// ErrRedirectChangesMethod is returned when the server, or a proxy in front of
+// it, answers a request with a redirect that net/http would follow by
+// re-sending the request as a GET without its body. Following it could run a
+// different handler and report success for work that never happened, so the
+// redirect is not followed.
+func ErrRedirectChangesMethod(method, from string, statusCode int, to string) error {
+	return errors.New(ErrRedirectChangesMethodCode, errors.Alert,
+		[]string{"Redirect would change the request method"},
+		[]string{fmt.Sprintf("The server answered %s %s with %d %s, redirecting to %s. Following it would re-send the request as a GET without its body, so it was not followed.", method, from, statusCode, http.StatusText(statusCode), to)},
+		[]string{"The current context's endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)"},
+		[]string{"Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"})
 }
