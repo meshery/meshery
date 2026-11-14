@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	mkerrors "github.com/meshery/meshkit/errors"
 )
 
 func TestSavePerformanceProfileHandler_NilProvider_ReturnsInternalServerError(t *testing.T) {
@@ -115,6 +117,27 @@ func TestDeletePerformanceProfileHandler_NotFoundIs404(t *testing.T) {
 
 			if rec.Code != tc.wantCode {
 				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, tc.wantCode, rec.Body.String())
+			}
+
+			// The body must be a MeshKit error, not just carry the right status.
+			// A not-found error is written as is; anything else is wrapped in
+			// ErrFailToDelete.
+			wantErrCode := mkerrors.GetCode(tc.err)
+			if tc.wantCode == http.StatusInternalServerError {
+				wantErrCode = mkerrors.GetCode(ErrFailToDelete(tc.err, "performance profile"))
+			}
+			var body struct {
+				Error string `json:"error"`
+				Code  string `json:"code"`
+			}
+			if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+				t.Fatalf("response body is not a JSON error: %v (body=%q)", err, rec.Body.String())
+			}
+			if body.Code != wantErrCode {
+				t.Errorf("error code = %q, want %q", body.Code, wantErrCode)
+			}
+			if body.Error == "" {
+				t.Errorf("error message is empty (body=%q)", rec.Body.String())
 			}
 		})
 	}
