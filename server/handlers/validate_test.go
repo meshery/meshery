@@ -1,7 +1,14 @@
 package handlers
 
 import (
+	"bytes"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
+
+	"github.com/meshery/meshery/server/models"
 )
 
 var testSchema2 = `{
@@ -151,5 +158,206 @@ func TestValidate(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestValidationHandler_ValidPayload(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	reqBody := payload{
+		ValidationItems: map[string]validationItem{
+			"item1": {
+				Schema:    testSchema2,
+				Value:     value1,
+				ValueType: cuetype,
+			},
+		},
+	}
+	bodyBytes, err := json.Marshal(reqBody)
+	if err != nil {
+		t.Fatalf("failed to marshal payload: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/registry/validate", bytes.NewReader(bodyBytes))
+	rec := httptest.NewRecorder()
+
+	h.ValidationHandler(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status 200 OK, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+
+	var resp struct {
+		Result map[string]validationResponse `json:"result"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("failed to unmarshal response: %v", err)
+	}
+	item1, exists := resp.Result["item1"]
+	if !exists {
+		t.Fatalf("expected item1 in result, got: %v", resp.Result)
+	}
+	if !item1.IsValid {
+		t.Errorf("expected item1 to be valid, got errors: %v", item1.Errors)
+	}
+}
+
+func TestValidationHandler_EmptyBody(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	req := httptest.NewRequest(http.MethodPost, "/api/registry/validate", bytes.NewReader([]byte("   ")))
+	rec := httptest.NewRecorder()
+
+	h.ValidationHandler(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrRequestBodyCode) {
+		t.Errorf("expected response to contain %s, got: %s", ErrRequestBodyCode, rec.Body.String())
+	}
+}
+
+func TestValidationHandler_NullBody(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	req := httptest.NewRequest(http.MethodPost, "/api/registry/validate", bytes.NewReader([]byte("null")))
+	rec := httptest.NewRecorder()
+
+	h.ValidationHandler(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrRequestBodyCode) {
+		t.Errorf("expected response to contain %s, got: %s", ErrRequestBodyCode, rec.Body.String())
+	}
+}
+
+func TestValidationHandler_MalformedJSON(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	req := httptest.NewRequest(http.MethodPost, "/api/registry/validate", bytes.NewReader([]byte("{invalid-json")))
+	rec := httptest.NewRecorder()
+
+	h.ValidationHandler(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrRequestBodyCode) {
+		t.Errorf("expected response to contain %s, got: %s", ErrRequestBodyCode, rec.Body.String())
+	}
+}
+
+func TestValidationHandler_PayloadTooLarge(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	oversizedBody := bytes.Repeat([]byte("a"), maxValidationPayloadSize+10)
+	req := httptest.NewRequest(http.MethodPost, "/api/registry/validate", bytes.NewReader(oversizedBody))
+	rec := httptest.NewRecorder()
+
+	h.ValidationHandler(rec, req)
+
+	if rec.Code != http.StatusRequestEntityTooLarge {
+		t.Fatalf("expected status 413 Request Entity Too Large, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrRequestBodyCode) {
+		t.Errorf("expected response to contain %s, got: %s", ErrRequestBodyCode, rec.Body.String())
+	}
+}
+
+func TestValidationHandler_ExactBoundaryPayload(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	// Construct a valid payload and pad with trailing whitespace to exactly maxValidationPayloadSize bytes.
+	raw := `{"validationItems":{"item1":{"schema":"name: string","value":"name: \"meshery\"","valueType":"CUE"}}}`
+	if len(raw) > maxValidationPayloadSize {
+		t.Fatalf("raw payload exceeds limit")
+	}
+	padding := bytes.Repeat([]byte(" "), maxValidationPayloadSize-len(raw))
+	exactBoundaryBody := append([]byte(raw), padding...)
+
+	if len(exactBoundaryBody) != maxValidationPayloadSize {
+		t.Fatalf("expected exact boundary size %d, got %d", maxValidationPayloadSize, len(exactBoundaryBody))
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/registry/validate", bytes.NewReader(exactBoundaryBody))
+	rec := httptest.NewRecorder()
+
+	h.ValidationHandler(rec, req)
+
+	// MaxBytesReader allows exactly maxValidationPayloadSize bytes, so it must NOT return 413
+	if rec.Code == http.StatusRequestEntityTooLarge {
+		t.Fatalf("expected payload at exactly maxValidationPayloadSize to be accepted, but got 413")
+	}
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status 200 OK for exact boundary payload, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+}
+
+func TestValidationHandler_ExceedBoundaryByOneByte(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	// Body of exactly maxValidationPayloadSize + 1 byte must be rejected with 413
+	oversizedBody := bytes.Repeat([]byte("a"), maxValidationPayloadSize+1)
+	req := httptest.NewRequest(http.MethodPost, "/api/registry/validate", bytes.NewReader(oversizedBody))
+	rec := httptest.NewRecorder()
+
+	h.ValidationHandler(rec, req)
+
+	if rec.Code != http.StatusRequestEntityTooLarge {
+		t.Fatalf("expected status 413 Request Entity Too Large at limit+1, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrRequestBodyCode) {
+		t.Errorf("expected response to contain %s, got: %s", ErrRequestBodyCode, rec.Body.String())
+	}
+}
+
+func TestValidationHandler_EmptyValidationItems(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	// Empty object {}
+	req := httptest.NewRequest(http.MethodPost, "/api/registry/validate", bytes.NewReader([]byte("{}")))
+	rec := httptest.NewRecorder()
+
+	h.ValidationHandler(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400 Bad Request for empty object, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrRequestBodyCode) {
+		t.Errorf("expected response to contain %s, got: %s", ErrRequestBodyCode, rec.Body.String())
+	}
+
+	// Explicit empty validationItems: {}
+	reqEmptyItems := httptest.NewRequest(http.MethodPost, "/api/registry/validate", bytes.NewReader([]byte(`{"validationItems":{}}`)))
+	recEmptyItems := httptest.NewRecorder()
+
+	h.ValidationHandler(recEmptyItems, reqEmptyItems)
+
+	if recEmptyItems.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400 Bad Request for empty validationItems, got %d (body: %s)", recEmptyItems.Code, recEmptyItems.Body.String())
+	}
+	if !strings.Contains(recEmptyItems.Body.String(), ErrRequestBodyCode) {
+		t.Errorf("expected response to contain %s, got: %s", ErrRequestBodyCode, recEmptyItems.Body.String())
+	}
+}
+
+func TestValidationHandler_NonJSONWhitespaceRejected(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	// 0x0B (vertical tab) is not RFC 8259 JSON whitespace, so it must not be trimmed into valid JSON
+	body := []byte("\x0b" + `{"validationItems":{"item1":{"schema":"name: string","value":"name: \"meshery\"","valueType":"CUE"}}}`)
+	req := httptest.NewRequest(http.MethodPost, "/api/registry/validate", bytes.NewReader(body))
+	rec := httptest.NewRecorder()
+
+	h.ValidationHandler(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400 Bad Request for non-JSON whitespace prefix (0x0B), got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrRequestBodyCode) {
+		t.Errorf("expected response to contain %s, got: %s", ErrRequestBodyCode, rec.Body.String())
 	}
 }
