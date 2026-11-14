@@ -440,6 +440,8 @@ func GetProviderInfo(mctCfg *config.MesheryCtlConfig) (map[string]Provider, erro
 	}
 	defer SafeClose(resp.Body)
 
+	defer func() { _ = resp.Body.Close() }()
+
 	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return nil, err
 	}
