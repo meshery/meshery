@@ -28,10 +28,14 @@ export interface EventSubscription {
 
 export type EventCallback = (event: unknown) => void;
 export type ErrorCallback = (error: Event) => void;
+export type OpenCallback = () => void;
 
 export function subscribeToEvents(
   onNext: EventCallback,
   onError?: ErrorCallback,
+  // Called each time the stream (re)connects, i.e. once the server is
+  // listening, including after the browser's own transient reconnects.
+  onOpen?: OpenCallback,
 ): EventSubscription {
   let disposed = false;
   let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
@@ -42,6 +46,12 @@ export function subscribeToEvents(
       onNext(JSON.parse(message.data));
     } catch (error) {
       console.error('[EventsSubscription] Failed to parse event', error, message.data);
+    }
+  };
+
+  source.onopen = () => {
+    if (!disposed) {
+      onOpen?.();
     }
   };
 
