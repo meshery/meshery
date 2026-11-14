@@ -121,7 +121,7 @@ func ErrNewKubeClientGenerator(err error) error {
 }
 
 func ErrRestConfigFromKubeConfig(err error) error {
-	return errors.New(ErrRestConfigFromKubeConfigCode, errors.Alert, []string{"Unable to create rest config from kube congif"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrRestConfigFromKubeConfigCode, errors.Alert, []string{"Unable to create rest config from kube config"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrClientSet(err error) error {
