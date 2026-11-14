@@ -20,12 +20,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	encoding "github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -68,6 +70,9 @@ mesheryctl design delete [file | URL]
 // delete a design by ID
 mesheryctl design delete [ID]
 
+// delete a design by name
+mesheryctl design delete [design-name]
+
 // delete a design using --file
 mesheryctl design delete -f [file | URL]
 	`,
@@ -101,7 +106,12 @@ mesheryctl design delete -f [file | URL]
 					// file-read error is surfaced instead of an obscure ID error.
 					targetFile = target
 				} else if !isID {
-					targetFile = target
+					// Not a file, URL or ID: look the target up as a design name.
+					pattern, err = findDesignIDByExactName(mctlCfg.GetBaseMesheryURL(), target)
+					if err != nil {
+						return err
+					}
+					isID = true
 				}
 			}
 		}
@@ -167,6 +177,60 @@ mesheryctl design delete -f [file | URL]
 
 		return nil
 	},
+}
+
+// findDesignIDByExactName returns the ID of the one design named exactly name.
+// The server's search is a case-insensitive substring match, so results are
+// filtered down to whole-name matches before anything is deleted: an exact
+// match wins, and only without one does a match that differs in case count.
+// Two designs that match equally well are reported as ambiguous instead of
+// picking one.
+func findDesignIDByExactName(baseURL, name string) (string, error) {
+	searchURL := fmt.Sprintf("%s/api/pattern?search=%s&pagesize=10000", baseURL, url.QueryEscape(name))
+	req, err := utils.NewRequest(http.MethodGet, searchURL, nil)
+	if err != nil {
+		return "", err
+	}
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		return "", err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("failed to look up design %q by name: %w", name, utils.ErrResponseStatus(resp.StatusCode))
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", utils.ErrReadFromBody(err)
+	}
+	var response models.PatternsAPIResponse
+	if err := encoding.Unmarshal(body, &response); err != nil {
+		return "", utils.ErrUnmarshal(err)
+	}
+
+	// The server's search ignores case, so fall back to a case-insensitive
+	// match when no name matches exactly.
+	var ids, foldIDs []string
+	for _, p := range response.Patterns {
+		switch {
+		case p.Name == name:
+			ids = append(ids, utils.FormatUUID(p.ID, ""))
+		case strings.EqualFold(p.Name, name):
+			foldIDs = append(foldIDs, utils.FormatUUID(p.ID, ""))
+		}
+	}
+	if len(ids) == 0 {
+		ids = foldIDs
+	}
+	switch len(ids) {
+	case 0:
+		return "", ErrDesignNotFound(name)
+	case 1:
+		return ids[0], nil
+	default:
+		return "", ErrAmbiguousDesignName(name, ids)
+	}
 }
 
 func init() {

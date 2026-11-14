@@ -49,6 +49,16 @@ mesheryctl design delete [ID]
 
 </div>
 </div>
+</pre>
+
+delete a design by name
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design delete [design-name]
+
+</div>
+</div>
 </pre> 
 
 delete a design using --file

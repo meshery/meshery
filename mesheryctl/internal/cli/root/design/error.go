@@ -40,6 +40,7 @@ const (
 	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
 	ErrEvaluateDesignCode             = "mesheryctl-1247"
 	ErrEvaluateDesignResponseCode     = "mesheryctl-1248"
+	ErrAmbiguousDesignNameCode        = "mesheryctl-1263"
 )
 
 const (
@@ -48,6 +49,14 @@ Example: mesheryctl design undeploy -f ./pattern.yml
 Description: Undeploy design`
 	errInvalidPathMsg = "file path %s is invalid. Enter a valid path"
 )
+
+func ErrAmbiguousDesignName(name string, ids []string) error {
+	return errors.New(ErrAmbiguousDesignNameCode, errors.Alert,
+		[]string{"More than one design has this name"},
+		[]string{fmt.Sprintf("%d designs are named %q: %s", len(ids), name, strings.Join(ids, ", "))},
+		[]string{"Design names are not unique, so the name alone does not say which design to use."},
+		[]string{"Pass the design ID instead. Run 'mesheryctl design list' to see the IDs."})
+}
 
 func ErrDesignNotFound(design string) error {
 	return errors.New(ErrDesignsNotFoundCode, errors.Fatal,
