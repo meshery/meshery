@@ -1448,6 +1448,7 @@ Bookinfo The sample BookInfo …
 - [ErrReconcileServerIDCode-1445](/reference/error-codes/component-meshery-server/errreconcileserveridcode-1445/index.md)
 - [ErrRecordPreferencesCode-1016](/reference/error-codes/component-meshery-server/errrecordpreferencescode-1016/index.md)
 - [ErrRecreateResourceCode-1354](/reference/error-codes/component-meshery-server/errrecreateresourcecode-1354/index.md)
+- [ErrRedirectChangesMethodCode-1263](/reference/error-codes/client-mesheryctl/errredirectchangesmethodcode-1263/index.md)
 - [ErrRegisterEntityCode-11269](/reference/error-codes/library-meshkit/errregisterentitycode-11269/index.md)
 - [ErrRegisterEntityCode-1319](/reference/error-codes/component-meshery-server/errregisterentitycode-1319/index.md)
 - [ErrRegisteringEntityCode-11259](/reference/error-codes/library-meshkit/errregisteringentitycode-11259/index.md)

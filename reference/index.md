@@ -922,6 +922,7 @@ Section pages:
 - [ErrReconcileServerIDCode-1445](/reference/error-codes/component-meshery-server/errreconcileserveridcode-1445/)
 - [ErrRecordPreferencesCode-1016](/reference/error-codes/component-meshery-server/errrecordpreferencescode-1016/)
 - [ErrRecreateResourceCode-1354](/reference/error-codes/component-meshery-server/errrecreateresourcecode-1354/)
+- [ErrRedirectChangesMethodCode-1263](/reference/error-codes/client-mesheryctl/errredirectchangesmethodcode-1263/)
 - [ErrRegisterEntityCode-11269](/reference/error-codes/library-meshkit/errregisterentitycode-11269/)
 - [ErrRegisterEntityCode-1319](/reference/error-codes/component-meshery-server/errregisterentitycode-1319/)
 - [ErrRegisteringEntityCode-11259](/reference/error-codes/library-meshkit/errregisteringentitycode-11259/)

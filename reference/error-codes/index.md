@@ -22345,6 +22345,31 @@ Pass a registration key to --provider instead of the display name</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrRedirectChangesMethodCode-1263" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrRedirectChangesMethodCode-more-info" onclick="toggle_visibility('mesheryctl-ErrRedirectChangesMethodCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1263" class="error-name-code">
+              <a href="/reference/error-codes/client-mesheryctl/errredirectchangesmethodcode-1263/"><code>ErrRedirectChangesMethodCode-1263</code></a>
+            </td>
+            <td>Redirect would change the request method</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrRedirectChangesMethodCode-1263" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="mesheryctl-ErrRedirectChangesMethodCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The current context&#39;s endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Set the current context&#39;s endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
