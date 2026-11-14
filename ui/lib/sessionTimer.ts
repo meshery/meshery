@@ -7,6 +7,7 @@
  *
  * Call startSessionTimer() once during app bootstrap.
  */
+import { submitLogout } from './logout';
 
 const SESSION_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour (matches server default)
 const WARNING_BEFORE_MS = 5 * 60 * 1000; // Warn 5 minutes before expiry
@@ -75,7 +76,7 @@ function showTimeoutWarning() {
     'background:transparent;color:#666;border:1px solid #ccc;border-radius:4px;' +
     'padding:10px 24px;font-size:14px;cursor:pointer';
   logoutBtn.onclick = () => {
-    window.location.href = '/user/logout';
+    submitLogout();
   };
 
   btnRow.appendChild(stayBtn);

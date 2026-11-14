@@ -124,10 +124,14 @@ setup_cluster() {
   echo ""
 
   echo "Deploying meshery server..."
+  # The kubeconfig upload job uses the browser-facing localhost origin while
+  # connecting to the in-cluster service hostname. Explicitly allow that test
+  # origin because named Host values are not trusted implicitly by Local.
   helm install meshery $PATH_TO_MESHERY_CHART \
     --namespace $MESHERY_K8S_NAMESPACE \
     --set image.tag=$DOCKER_IMAGE_TAG \
-    --set image.pullPolicy=Never
+    --set image.pullPolicy=Never \
+    --set-string env.MESHERY_UI_ORIGINS=http://localhost:9081
   if ! kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery --timeout="$MESHERY_DEPLOYMENT_WAIT_TIMEOUT"; then
     dump_meshery_namespace_debug
     return 1

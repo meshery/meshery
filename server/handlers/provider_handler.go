@@ -12,6 +12,14 @@ import (
 // ProviderHandler - handles the choice of provider
 func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 	requested := r.URL.Query().Get("provider")
+	selectedProvider := requested
+	if models.NormalizeProviderName(h.Provider) != "" {
+		selectedProvider = h.Provider
+	}
+	if models.NormalizeProviderName(selectedProvider) == models.LocalProviderName && !localProviderRequestAllowed(r, h.config.AllowedUIOrigins) {
+		writeJSONError(w, "cross-origin request is not allowed for the Local provider", http.StatusForbidden)
+		return
+	}
 	if models.NormalizeProviderName(h.Provider) != "" {
 		providerKey, ok := models.ResolveProviderKey(h.Provider, h.config.Providers)
 		if !ok {
