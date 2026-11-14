@@ -153,7 +153,10 @@ function main() {
   process.stdout.write('==============================\n');
   process.stdout.write('Patterns: #RGB/#RGBA/#RRGGBB/#RRGGBBAA, rgb(), rgba()\n');
   process.stdout.write(`Scope:    ${SCAN_DIRS.join(', ')}\n`);
-  process.stdout.write('Ignored:  theme, assets, lib, public, tests, __tests__, __generated__\n\n');
+  process.stdout.write(`Ignored at any depth: ${[...IGNORED_DIRS].join(', ')}\n`);
+  process.stdout.write(
+    'UI-root directories outside scan scope: theme, assets, lib, public, tests\n\n',
+  );
 
   const limit = showAll ? offenders.length : Math.min(20, offenders.length);
   if (offenders.length === 0) {

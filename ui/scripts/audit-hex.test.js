@@ -131,3 +131,23 @@ test('scans nested production directories with root-scoped names', (t) => {
     directoryNames.map((directory) => `components/feature/${directory}/source.tsx`).sort(),
   );
 });
+
+test('excludes nested node_modules directories at every depth', (t) => {
+  const fixture = createFixture(t);
+
+  writeFile(fixture, 'ui/components/feature/source.tsx', 'const color = "#252E31";\n');
+  writeFile(
+    fixture,
+    'ui/components/feature/node_modules/package/source.tsx',
+    'const color = "#000000";\n',
+  );
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.files, 1);
+  assert.equal(result.matches, 1);
+  assert.deepEqual(
+    result.offenders.map((offender) => offender.file),
+    ['components/feature/source.tsx'],
+  );
+});
