@@ -26,7 +26,11 @@ import (
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/meshkit/utils/walker"
 	v1core "k8s.io/api/core/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	utilerrors "k8s.io/apimachinery/pkg/util/errors"
+	"k8s.io/client-go/kubernetes"
+	typedappsv1 "k8s.io/client-go/kubernetes/typed/apps/v1"
 )
 
 var (
@@ -816,9 +820,14 @@ func ForceCleanupCluster() error {
 		return errors.Wrap(err, "failed to create new client")
 	}
 
-	// deletePolicy to delete related resources
-	deletePolicy := metav1.DeletePropagationForeground
+	return cleanupCluster(client.KubeClient)
+}
 
+// cleanupCluster deletes the Meshery resources visible through kube. A list or
+// deletion failure does not abort the cleanup: every resource kind is attempted
+// and all genuine failures are aggregated, while resources that are already
+// gone (NotFound) count as deleted so cleanup can be repeated.
+func cleanupCluster(kube kubernetes.Interface) error {
 	// Deleting resources via kube-client
 	// Deployments
 	// Services
@@ -831,155 +840,143 @@ func ForceCleanupCluster() error {
 	// Roles
 	// RoleBindings
 
-	deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
-	deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
+	var cleanupErrs []error
 
-	for _, deployment := range deploymentList.Items {
-		if err := deploymentInterface.Delete(context.TODO(), deployment.GetName(), metav1.DeleteOptions{
-			PropagationPolicy: &deletePolicy,
-		}); err != nil {
-			log.Debug(err)
-		}
-	}
+	deploymentInterface := kube.AppsV1().Deployments(MesheryNamespace)
+	cleanupErrs = append(cleanupErrs, deleteDeployments(context.TODO(), deploymentInterface))
 
-	serviceInterface := client.KubeClient.CoreV1().Services(MesheryNamespace)
+	serviceInterface := kube.CoreV1().Services(MesheryNamespace)
 	serviceList, err := serviceInterface.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return err
-	}
-
-	for _, service := range serviceList.Items {
-		if err := serviceInterface.Delete(context.TODO(), service.GetName(), metav1.DeleteOptions{
-			PropagationPolicy: &deletePolicy,
-		}); err != nil {
-			log.Debug(err)
+		cleanupErrs = append(cleanupErrs, errors.Wrap(err, "cannot list services"))
+	} else {
+		for i := range serviceList.Items {
+			cleanupErrs = append(cleanupErrs, deleteResource(context.TODO(), "service", serviceList.Items[i].GetName(), serviceInterface.Delete))
 		}
 	}
 
-	statefulSetInterface := client.KubeClient.AppsV1().StatefulSets(MesheryNamespace)
+	statefulSetInterface := kube.AppsV1().StatefulSets(MesheryNamespace)
 	statefulSetList, err := statefulSetInterface.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return err
-	}
-
-	for _, statefulSet := range statefulSetList.Items {
-		if err := statefulSetInterface.Delete(context.TODO(), statefulSet.GetName(), metav1.DeleteOptions{
-			PropagationPolicy: &deletePolicy,
-		}); err != nil {
-			log.Debug(err)
+		cleanupErrs = append(cleanupErrs, errors.Wrap(err, "cannot list statefulsets"))
+	} else {
+		for i := range statefulSetList.Items {
+			cleanupErrs = append(cleanupErrs, deleteResource(context.TODO(), "statefulset", statefulSetList.Items[i].GetName(), statefulSetInterface.Delete))
 		}
 	}
 
-	clusterRoleBindingInterface := client.KubeClient.RbacV1().ClusterRoleBindings()
+	// clusterrolebindings aren't namespaced, so only the Meshery ones are deleted
+	clusterRoleBindingInterface := kube.RbacV1().ClusterRoleBindings()
 	clusterRoleBindingList, err := clusterRoleBindingInterface.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return err
-	}
-
-	for _, clusterRoleBinding := range clusterRoleBindingList.Items {
-		// clusterrolebindings aren't namespaced so gotta
-		// check if "meshery" is present in the name or not
-		if strings.Contains(string(clusterRoleBinding.GetName()), "meshery") {
-			if err := clusterRoleBindingInterface.Delete(context.TODO(), clusterRoleBinding.GetName(), metav1.DeleteOptions{
-				PropagationPolicy: &deletePolicy,
-			}); err != nil {
-				log.Debug(err)
+		cleanupErrs = append(cleanupErrs, errors.Wrap(err, "cannot list clusterrolebindings"))
+	} else {
+		for i := range clusterRoleBindingList.Items {
+			name := clusterRoleBindingList.Items[i].GetName()
+			if !strings.Contains(name, "meshery") {
+				continue
 			}
+			cleanupErrs = append(cleanupErrs, deleteResource(context.TODO(), "clusterrolebinding", name, clusterRoleBindingInterface.Delete))
 		}
 	}
 
-	clusterRoleInterface := client.KubeClient.RbacV1().ClusterRoles()
+	// clusterroles aren't namespaced, so only the Meshery ones are deleted
+	clusterRoleInterface := kube.RbacV1().ClusterRoles()
 	clusterRoleList, err := clusterRoleInterface.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return err
-	}
-
-	for _, clusterRole := range clusterRoleList.Items {
-		// clusterroles aren't namespaced so gotta
-		// check if "meshery" is present in the name or not
-		if strings.Contains(string(clusterRole.GetName()), "meshery") {
-			if err := clusterRoleInterface.Delete(context.TODO(), clusterRole.GetName(), metav1.DeleteOptions{
-				PropagationPolicy: &deletePolicy,
-			}); err != nil {
-				log.Debug(err)
+		cleanupErrs = append(cleanupErrs, errors.Wrap(err, "cannot list clusterroles"))
+	} else {
+		for i := range clusterRoleList.Items {
+			name := clusterRoleList.Items[i].GetName()
+			if !strings.Contains(name, "meshery") {
+				continue
 			}
+			cleanupErrs = append(cleanupErrs, deleteResource(context.TODO(), "clusterrole", name, clusterRoleInterface.Delete))
 		}
 	}
 
-	serviceAccountInterface := client.KubeClient.CoreV1().ServiceAccounts(MesheryNamespace)
+	serviceAccountInterface := kube.CoreV1().ServiceAccounts(MesheryNamespace)
 	serviceAccountList, err := serviceAccountInterface.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return err
-	}
-
-	for _, serviceAccount := range serviceAccountList.Items {
-		if err := serviceAccountInterface.Delete(context.TODO(), serviceAccount.GetName(), metav1.DeleteOptions{
-			PropagationPolicy: &deletePolicy,
-		}); err != nil {
-			log.Debug(err)
+		cleanupErrs = append(cleanupErrs, errors.Wrap(err, "cannot list serviceaccounts"))
+	} else {
+		for i := range serviceAccountList.Items {
+			cleanupErrs = append(cleanupErrs, deleteResource(context.TODO(), "serviceaccount", serviceAccountList.Items[i].GetName(), serviceAccountInterface.Delete))
 		}
 	}
 
-	secretsInterface := client.KubeClient.CoreV1().Secrets(MesheryNamespace)
+	secretsInterface := kube.CoreV1().Secrets(MesheryNamespace)
 	secretsList, err := secretsInterface.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return err
-	}
-
-	for _, secrets := range secretsList.Items {
-		if err := secretsInterface.Delete(context.TODO(), secrets.GetName(), metav1.DeleteOptions{
-			PropagationPolicy: &deletePolicy,
-		}); err != nil {
-			log.Debug(err)
+		cleanupErrs = append(cleanupErrs, errors.Wrap(err, "cannot list secrets"))
+	} else {
+		for i := range secretsList.Items {
+			cleanupErrs = append(cleanupErrs, deleteResource(context.TODO(), "secret", secretsList.Items[i].GetName(), secretsInterface.Delete))
 		}
 	}
 
-	configMapsInterface := client.KubeClient.CoreV1().ConfigMaps(MesheryNamespace)
+	configMapsInterface := kube.CoreV1().ConfigMaps(MesheryNamespace)
 	configMapsList, err := configMapsInterface.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return err
-	}
-
-	for _, configMap := range configMapsList.Items {
-		if err := configMapsInterface.Delete(context.TODO(), configMap.GetName(), metav1.DeleteOptions{
-			PropagationPolicy: &deletePolicy,
-		}); err != nil {
-			log.Debug(err)
+		cleanupErrs = append(cleanupErrs, errors.Wrap(err, "cannot list configmaps"))
+	} else {
+		for i := range configMapsList.Items {
+			cleanupErrs = append(cleanupErrs, deleteResource(context.TODO(), "configmap", configMapsList.Items[i].GetName(), configMapsInterface.Delete))
 		}
 	}
 
-	rolesInterface := client.KubeClient.RbacV1().Roles(MesheryNamespace)
+	rolesInterface := kube.RbacV1().Roles(MesheryNamespace)
 	rolesList, err := rolesInterface.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return err
-	}
-
-	for _, role := range rolesList.Items {
-		if err := rolesInterface.Delete(context.TODO(), role.GetName(), metav1.DeleteOptions{
-			PropagationPolicy: &deletePolicy,
-		}); err != nil {
-			log.Debug(err)
+		cleanupErrs = append(cleanupErrs, errors.Wrap(err, "cannot list roles"))
+	} else {
+		for i := range rolesList.Items {
+			cleanupErrs = append(cleanupErrs, deleteResource(context.TODO(), "role", rolesList.Items[i].GetName(), rolesInterface.Delete))
 		}
 	}
 
-	roleBindingsInterface := client.KubeClient.RbacV1().RoleBindings(MesheryNamespace)
+	roleBindingsInterface := kube.RbacV1().RoleBindings(MesheryNamespace)
 	roleBindingsList, err := roleBindingsInterface.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return err
-	}
-
-	for _, roleBinding := range roleBindingsList.Items {
-		if err := roleBindingsInterface.Delete(context.TODO(), roleBinding.GetName(), metav1.DeleteOptions{
-			PropagationPolicy: &deletePolicy,
-		}); err != nil {
-			log.Debug(err)
+		cleanupErrs = append(cleanupErrs, errors.Wrap(err, "cannot list rolebindings"))
+	} else {
+		for i := range roleBindingsList.Items {
+			cleanupErrs = append(cleanupErrs, deleteResource(context.TODO(), "rolebinding", roleBindingsList.Items[i].GetName(), roleBindingsInterface.Delete))
 		}
 	}
 
-	return nil
+	return utilerrors.NewAggregate(cleanupErrs)
+}
+
+// deleteDeployments deletes every deployment visible through deployments,
+// ignoring ones that are already gone and aggregating genuine deletion
+// failures (Forbidden, Unauthorized, API errors) per deployment.
+func deleteDeployments(ctx context.Context, deployments typedappsv1.DeploymentInterface) error {
+	deploymentList, err := deployments.List(ctx, metav1.ListOptions{})
+	if err != nil {
+		return errors.Wrap(err, "cannot list deployments")
+	}
+
+	var errs []error
+	for i := range deploymentList.Items {
+		errs = append(errs, deleteResource(ctx, "deployment", deploymentList.Items[i].GetName(), deployments.Delete))
+	}
+
+	return utilerrors.NewAggregate(errs)
+}
+
+// deleteResource deletes a single resource. A resource that is already gone is
+// not a failure; every other deletion failure is returned so the caller can
+// collect it and keep cleaning up the rest.
+func deleteResource(ctx context.Context, kind, name string, deleteFn func(context.Context, string, metav1.DeleteOptions) error) error {
+	deletePolicy := metav1.DeletePropagationForeground
+
+	err := deleteFn(ctx, name, metav1.DeleteOptions{PropagationPolicy: &deletePolicy})
+	if err == nil || apierrors.IsNotFound(err) {
+		return nil
+	}
+
+	return errors.Wrapf(err, "cannot delete %s %s", kind, name)
 }
 
 // GetMesheryEndpoint discovers the Meshery service endpoint from Kubernetes.
