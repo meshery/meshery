@@ -21,7 +21,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/server/models"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
@@ -42,11 +41,6 @@ type filterViewFlags struct {
 
 var filterViewFlagsProvided filterViewFlags
 
-// filterNameSearchPageSize is the page size used when a filter name is looked
-// up. The server's search matches substrings, so the lookup needs enough
-// results to see the filter that carries the whole name.
-const filterNameSearchPageSize = 10000
-
 var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View filter(s)",
@@ -54,7 +48,7 @@ var viewCmd = &cobra.Command{
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/filter/view`,
 	Example: `
 // View the specified WASM filter
-// A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
+// Provide a full filter name or a unique ID prefix.
 mesheryctl filter view "[filter-name | ID]"
 
 // View all filter files
@@ -110,31 +104,35 @@ mesheryctl filter view "filter name"
 			urlString = "api/filter/" + filter
 		} else {
 			// else search filter by name
-			urlString = fmt.Sprintf("api/filter?search=%s&pagesize=%d", url.QueryEscape(filter), filterNameSearchPageSize)
+			urlString = "api/filter?pagesize=10000&search=" + url.QueryEscape(filter)
 		}
 
 		var selectedFilter *models.MesheryFilter
 		var filterPage *models.MesheryFilterPage
 		if isID {
 			// Fetch single filter
-			fetchedFilter, err := api.Fetch[models.MesheryFilter](urlString)
+			filter, err := api.Fetch[models.MesheryFilter](urlString)
 			if err != nil {
 				return err
 			}
-			selectedFilter = fetchedFilter
+			selectedFilter = filter
 		} else {
-			page, err := api.Fetch[models.MesheryFilterPage](urlString)
+			var page *models.MesheryFilterPage
+			if filterViewFlagsProvided.ViewAllFlag {
+				page, err = api.Fetch[models.MesheryFilterPage](urlString)
+			} else {
+				page, err = fetchFilterSearch(filter, api.Fetch[models.MesheryFilterPage])
+			}
 			if err != nil {
 				return err
 			}
 			filterPage = page
 
 			if !filterViewFlagsProvided.ViewAllFlag {
-				resolved, err := resolveFilterByName(filterPage, filter)
+				selectedFilter, err = selectFilterByName(page.Filters, filter)
 				if err != nil {
 					return err
 				}
-				selectedFilter = resolved
 			}
 		}
 
@@ -185,122 +183,78 @@ mesheryctl filter view "filter name"
 	},
 }
 
+// fetchFilterSearch collects every page so that selection can consider exact
+// matches and duplicates even when the provider caps the requested page size.
+func fetchFilterSearch(name string, fetch func(string) (*models.MesheryFilterPage, error)) (*models.MesheryFilterPage, error) {
+	const requestedPageSize = 10000
+	result := &models.MesheryFilterPage{}
+	var pageSize uint64
+	for pageNum := uint64(0); ; pageNum++ {
+		query := fmt.Sprintf("api/filter?pagesize=%d&search=%s&page=%d", requestedPageSize, url.QueryEscape(name), pageNum)
+		page, err := fetch(query)
+		if err != nil {
+			return nil, err
+		}
+		if page == nil {
+			return nil, fmt.Errorf("empty filter search response")
+		}
+		if pageNum == 0 {
+			pageSize = page.PageSize
+		} else if page.PageSize != pageSize {
+			return nil, fmt.Errorf("filter search page size changed")
+		}
+		result.Filters = append(result.Filters, page.Filters...)
+		if len(result.Filters) >= page.TotalCount {
+			return result, nil
+		}
+		if pageSize == 0 || len(page.Filters) == 0 {
+			return nil, fmt.Errorf("incomplete filter search results")
+		}
+	}
+}
+
+var runFilterSelectPrompt = utils.RunSelectPrompt
+
+// selectFilterByName prefers case-sensitive whole-name matches, then falls
+// back to case-insensitive whole-name matches. Substring results are ignored.
+func selectFilterByName(filters []*models.MesheryFilter, name string) (*models.MesheryFilter, error) {
+	var exact, folded []*models.MesheryFilter
+	for _, filter := range filters {
+		if filter == nil {
+			continue
+		}
+		if filter.Name == name {
+			exact = append(exact, filter)
+		} else if strings.EqualFold(filter.Name, name) {
+			folded = append(folded, filter)
+		}
+	}
+	matches := exact
+	if len(matches) == 0 {
+		matches = folded
+	}
+	if len(matches) == 0 {
+		return nil, ErrFilterNotFound(name, "view")
+	}
+	if len(matches) == 1 {
+		return matches[0], nil
+	}
+	items := make([]string, len(matches))
+	for i, filter := range matches {
+		items[i] = fmt.Sprintf("Name: %s, ID: %s", filter.Name, utils.FormatUUID(filter.ID, "unknown"))
+	}
+	i, err := runFilterSelectPrompt("Select filter", items)
+	if err != nil {
+		return nil, err
+	}
+	if i < 0 || i >= len(matches) {
+		return nil, fmt.Errorf("invalid filter selection: %d", i)
+	}
+	return matches[i], nil
+}
+
 func init() {
 	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.ViewAllFlag, "all", "a", false, "(optional) view all filters available")
 	viewCmd.Flags().StringVarP(&filterViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
-}
-
-// resolveFilterByName resolves a filter from filterPage by its whole name,
-// prioritizing exact matches and falling back to case-insensitive matches.
-// When multiple filters share the name, it prompts the user to select one.
-func resolveFilterByName(filterPage *models.MesheryFilterPage, name string) (*models.MesheryFilter, error) {
-	exact, folded := filtersNamed(filterPage.Filters, name)
-	truncated := filterPage.TotalCount > len(filterPage.Filters)
-	matches := exact
-	if len(matches) == 0 {
-		// A case-insensitive match is only safe when the result set is
-		// complete; otherwise the exact match may be on a later page.
-		if truncated {
-			return nil, errFilterNameLookupTruncated(name)
-		}
-		matches = folded
-	}
-
-	switch len(matches) {
-	case 0:
-		return nil, ErrFilterNotFound(name, "view")
-	case 1:
-		return matches[0], nil
-	default:
-		return selectFilterPrompt(matches)
-	}
-}
-
-// errFilterNameLookupTruncated reports a name lookup whose result set was too
-// large to read in full, so the name cannot be resolved without guessing.
-func errFilterNameLookupTruncated(filterName string) error {
-	return utils.ErrInvalidArgument(fmt.Errorf("too many filters match %q to resolve the name; pass the filter ID instead", filterName))
-}
-
-// filtersNamed splits the filters into those named exactly name and those that
-// differ only in case. The server's search is a case-insensitive substring
-// match, so a filter whose name merely contains name is not a match: viewing
-// it would display a different filter.
-func filtersNamed(filters []*models.MesheryFilter, name string) (exact, folded []*models.MesheryFilter) {
-	for _, f := range filters {
-		if f == nil {
-			continue
-		}
-		switch {
-		case f.Name == name:
-			exact = append(exact, f)
-		case strings.EqualFold(f.Name, name):
-			folded = append(folded, f)
-		}
-	}
-	return exact, folded
-}
-
-func selectFilterPrompt(filters []*models.MesheryFilter) (*models.MesheryFilter, error) {
-	columns := []string{"Filter Name", "Created At", "Updated At", "Filter ID"}
-	widths := []int{24, 20, 20, 10}
-
-	headingParts := make([]string, len(columns))
-	for i, col := range columns {
-		headingParts[i] = centerAlign(col, widths[i])
-	}
-	heading := strings.Join(headingParts, " ")
-
-	filterInfos := make([]string, len(filters)+1)
-	filterInfos[0] = heading
-	for i, f := range filters {
-		createdAt := utils.FormatTime(f.CreatedAt, "2006-01-02 15:04:05", "N/A")
-		updatedAt := utils.FormatTime(f.UpdatedAt, "2006-01-02 15:04:05", "N/A")
-		id := utils.FormatUUID(f.ID, "N/A")
-		lastFourID := id
-		if len(id) > 4 {
-			lastFourID = id[len(id)-4:]
-		}
-
-		rowParts := []string{
-			centerAlign(f.Name, widths[0]),
-			centerAlign(createdAt, widths[1]),
-			centerAlign(updatedAt, widths[2]),
-			centerAlign(lastFourID, widths[3]),
-		}
-		filterInfos[i+1] = strings.Join(rowParts, " ")
-	}
-
-	prompt := promptui.Select{
-		Label: "Select a filter",
-		Items: filterInfos,
-		Templates: &promptui.SelectTemplates{
-			Label:    "{{ . }}",
-			Active:   "{{ if eq . \"" + heading + "\" }}{{ . | bold }}{{ else }}{{ . | cyan }}{{ end }}",
-			Inactive: "{{ if eq . \"" + heading + "\" }}{{ . | bold }}{{ else }}{{ . }}{{ end }}",
-			Selected: "{{ if eq . \"" + heading + "\" }}{{ . | bold }}{{ else }}{{ . | green }}{{ end }}",
-		},
-		StartInSearchMode: false,
-	}
-
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			return nil, utils.ErrPromptCancelled()
-		}
-		if i == 0 {
-			continue // skip header row, re-prompt
-		}
-		return filters[i-1], nil
-	}
-}
-
-func centerAlign(text string, width int) string {
-	if len(text) >= width {
-		return text
-	}
-	leftPadding := (width - len(text)) / 2
-	rightPadding := width - len(text) - leftPadding
-	return strings.Repeat(" ", leftPadding) + text + strings.Repeat(" ", rightPadding)
 }

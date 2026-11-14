@@ -1,16 +1,18 @@
 package filter
 
 import (
+	"fmt"
+	"net/url"
 	"path/filepath"
+
+	mkerrors "github.com/meshery/meshkit/errors"
 	"runtime"
 	"testing"
 
-	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models"
+
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
-	meshkiterrors "github.com/meshery/meshkit/errors"
-	"github.com/meshery/schemas/models/core"
 )
 
 func TestViewCmd(t *testing.T) {
@@ -41,117 +43,7 @@ func TestViewCmd(t *testing.T) {
 		},
 	}
 
-	loggerTests := []utils.MesheryCommandTest{
-		{
-			Name:           "Fetch Filter View for non existing filter",
-			Args:           []string{"view", "xyz"},
-			Fixture:        "view.nonexisting.filter.api.response.golden",
-			URL:            "/api/filter",
-			HttpMethod:     "GET",
-			HttpStatusCode: 200,
-			ExpectError:    true,
-			ExpectedError:  ErrFilterNotFound("xyz", "view"),
-		},
-	}
-
 	utils.InvokeMesheryctlTestListCommand(t, update, FilterCmd, ListTests, currDir, "filter")
-	utils.InvokeMesheryctlTestCommand(t, update, FilterCmd, loggerTests, currDir, "filter")
-}
-
-func TestResolveFilterByName(t *testing.T) {
-	u1 := core.Uuid(uuid.Must(uuid.NewV4()))
-	u2 := core.Uuid(uuid.Must(uuid.NewV4()))
-
-	tests := []struct {
-		name        string
-		filters     []*models.MesheryFilter
-		searchName  string
-		totalCount  int
-		wantID      *core.Uuid
-		wantErrCode string
-	}{
-		{
-			name:       "one exact match returns that filter",
-			filters:    []*models.MesheryFilter{{ID: &u1, Name: "my-filter"}},
-			searchName: "my-filter",
-			wantID:     &u1,
-		},
-		{
-			name:        "substring match is not the filter",
-			filters:    []*models.MesheryFilter{{ID: &u1, Name: "my-filter-v2"}},
-			searchName: "my-filter",
-			wantErrCode: ErrFilterNotFoundCode,
-		},
-		{
-			name: "exact match wins over substring match",
-			filters: []*models.MesheryFilter{
-				{ID: &u1, Name: "my-filter-v2"},
-				{ID: &u2, Name: "my-filter"},
-			},
-			searchName: "my-filter",
-			wantID:     &u2,
-		},
-		{
-			name:       "case-insensitive match matches when only case differs",
-			filters:    []*models.MesheryFilter{{ID: &u1, Name: "My-Filter"}},
-			searchName: "my-filter",
-			wantID:     &u1,
-		},
-		{
-			name:        "case-insensitive match is not used when results are truncated",
-			filters:    []*models.MesheryFilter{{ID: &u1, Name: "My-Filter"}},
-			searchName:  "my-filter",
-			totalCount:  5,
-			wantErrCode: utils.ErrInvalidArgumentCode,
-		},
-		{
-			name: "exact match is used even when results are truncated",
-			filters: []*models.MesheryFilter{
-				{ID: &u1, Name: "my-filter-v2"},
-				{ID: &u2, Name: "my-filter"},
-			},
-			searchName: "my-filter",
-			totalCount: 5,
-			wantID:     &u2,
-		},
-		{
-			name:        "no match returns ErrFilterNotFound",
-			filters:    []*models.MesheryFilter{},
-			searchName: "nonexistent",
-			wantErrCode: ErrFilterNotFoundCode,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			totalCount := tt.totalCount
-			if totalCount == 0 {
-				totalCount = len(tt.filters)
-			}
-			page := &models.MesheryFilterPage{
-				TotalCount: totalCount,
-				Filters:    tt.filters,
-			}
-
-			resolved, err := resolveFilterByName(page, tt.searchName)
-			if tt.wantErrCode != "" {
-				if err == nil {
-					t.Fatalf("expected error code %s, got nil", tt.wantErrCode)
-				}
-				if code := meshkiterrors.GetCode(err); code != tt.wantErrCode {
-					t.Fatalf("expected error code %s, got %s (%v)", tt.wantErrCode, code, err)
-				}
-				return
-			}
-
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
-			}
-			if resolved == nil || resolved.ID != tt.wantID {
-				t.Fatalf("expected filter ID %v, got %v", tt.wantID, resolved)
-			}
-		})
-	}
 }
 
 func TestFilterViewSaveCreatesFileWithExtension(t *testing.T) {
@@ -181,4 +73,67 @@ func TestFilterViewSaveCreatesFileWithExtension(t *testing.T) {
 	}
 
 	utils.AssertFileExists(t, filepath.Join(mesheryDir, "filter_KumaTest_957fbc9b.json"))
+}
+
+func TestSelectFilterByName(t *testing.T) {
+	original := runFilterSelectPrompt
+	t.Cleanup(func() { runFilterSelectPrompt = original })
+	first := &models.MesheryFilter{Name: "auth"}
+	second := &models.MesheryFilter{Name: "auth"}
+	upper := &models.MesheryFilter{Name: "AUTH"}
+	partial := &models.MesheryFilter{Name: "oauth2-proxy"}
+	tests := []struct {
+		name      string
+		filters   []*models.MesheryFilter
+		query     string
+		want      *models.MesheryFilter
+		wantError bool
+		prompt    bool
+	}{
+		{"exact before substring", []*models.MesheryFilter{partial, first}, "auth", first, false, false},
+		{"exact before case-insensitive", []*models.MesheryFilter{upper, first}, "auth", first, false, false},
+		{"case-insensitive", []*models.MesheryFilter{upper}, "auth", upper, false, false},
+		{"substring rejected", []*models.MesheryFilter{partial}, "auth", nil, true, false},
+		{"duplicate exact prompts", []*models.MesheryFilter{first, second}, "auth", second, false, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			called := false
+			runFilterSelectPrompt = func(_ string, _ []string) (int, error) { called = true; return 1, nil }
+			got, err := selectFilterByName(tt.filters, tt.query)
+			if (err != nil) != tt.wantError || got != tt.want || called != tt.prompt {
+				t.Fatalf("got %v, err %v, prompted %v", got, err, called)
+			}
+		})
+	}
+}
+
+func TestFetchFilterSearchPages(t *testing.T) {
+	calls := 0
+	got, err := fetchFilterSearch("auth & token", func(raw string) (*models.MesheryFilterPage, error) {
+		u, parseErr := url.Parse(raw)
+		if parseErr != nil {
+			t.Fatal(parseErr)
+		}
+		if u.Query().Get("search") != "auth & token" || u.Query().Get("page") != fmt.Sprint(calls) {
+			t.Fatalf("unexpected query %s", raw)
+		}
+		calls++
+		if calls == 1 {
+			return &models.MesheryFilterPage{PageSize: 1, TotalCount: 2, Filters: []*models.MesheryFilter{{Name: "partial"}}}, nil
+		}
+		return &models.MesheryFilterPage{PageSize: 1, TotalCount: 2, Filters: []*models.MesheryFilter{{Name: "auth & token"}}}, nil
+	})
+	if err != nil || calls != 2 || len(got.Filters) != 2 || got.Filters[1].Name != "auth & token" {
+		t.Fatalf("pages=%d result=%v error=%v", calls, got, err)
+	}
+}
+
+func TestFilterViewNotFoundReturnsTypedError(t *testing.T) {
+	mesheryctlflags.InitValidators(FilterCmd)
+	run := utils.MesheryCommandRun{Cmd: FilterCmd, Args: []string{"view", "xyz"}, CommandDir: utils.CallerDir(t), Mocks: []utils.MockURL{{URL: "/api/filter", Response: "view.nonexisting.filter.api.response.golden"}}}
+	_, err := utils.RunMesheryctlCommand(t, run)
+	if err == nil || mkerrors.GetCode(err) != ErrFilterNotFoundCode {
+		t.Fatalf("got %v, want %s", err, ErrFilterNotFoundCode)
+	}
 }
