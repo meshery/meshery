@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -608,6 +609,18 @@ func TestDeleteMeshSyncResource(t *testing.T) {
 
 				if !response.Deleted {
 					t.Fatal("expected 'deleted' field to be true")
+				}
+
+				var scoped model.KubernetesResource
+				if err := db.First(&scoped, "id = ?", tt.resourceID).Error; !errors.Is(err, gorm.ErrRecordNotFound) {
+					t.Fatalf("normal query after delete returned %v, want gorm.ErrRecordNotFound", err)
+				}
+				var tombstoned model.KubernetesResource
+				if err := db.Unscoped().First(&tombstoned, "id = ?", tt.resourceID).Error; err != nil {
+					t.Fatalf("find tombstoned resource: %v", err)
+				}
+				if !tombstoned.DeletedAt.Valid {
+					t.Fatal("DeleteMeshSyncResource did not set DeletedAt")
 				}
 			} else {
 				if body := rw.Body.String(); !strings.Contains(body, tt.expectedBody) {
