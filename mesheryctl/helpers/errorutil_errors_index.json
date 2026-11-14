@@ -4058,12 +4058,46 @@
     },
     {
       "code": "mesheryctl-1261",
-      "moniker": "ErrRedirectChangesMethodCode",
+      "moniker": "ErrIDLookupIncompleteCode",
       "component": {
         "name": "mesheryctl",
         "type": "client"
       },
       "numericCode": "1261",
+      "severity": "alert",
+      "shortDescription": "ID lookup incomplete",
+      "probableCause": [
+        "The server reported more items than mesheryctl could fetch within the page limit."
+      ],
+      "suggestedRemediation": [
+        "Provide the full ID instead of a short prefix, or retry the command."
+      ]
+    },
+    {
+      "code": "mesheryctl-1262",
+      "moniker": "ErrIDLookupPageLimitCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1262",
+      "severity": "alert",
+      "shortDescription": "ID lookup hit page limit",
+      "probableCause": [
+        "The server did not report a total count and every page was full, so mesheryctl stopped at the page limit without confirming the list is complete."
+      ],
+      "suggestedRemediation": [
+        "Provide the full ID instead of a short prefix, or retry the command."
+      ]
+    },
+    {
+      "code": "mesheryctl-1263",
+      "moniker": "ErrRedirectChangesMethodCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1263",
       "severity": "alert",
       "shortDescription": "Redirect would change the request method",
       "probableCause": [
