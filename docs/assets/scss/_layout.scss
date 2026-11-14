@@ -148,9 +148,12 @@ ol {
       margin: 0;
 
       & + .breadcrumb-item::before {
-        content: "/";
-        margin-right: 0.35rem;
-        color: var(--color-grey-dark);
+        content: "";
+        display: inline-block;
+        margin: 0 0.35rem;
+        transform: rotate(15deg);
+        border-right: 1.5px solid var(--color-grey-dark);
+        height: 0.75rem;
       }
 
       & a {
