@@ -125,7 +125,7 @@ Name: **"Meshery"** (default), URL: `https://cloud.meshery.io`
 
 Name: **"Digital Ocean"**, URL: `https://meshery.digitalocean.com`
 
-- Alternate remote provider, also shipped in the default `PROVIDER_BASE_URLS` list.
+- Alternate remote provider. Digital Ocean is not enabled in the default `PROVIDER_BASE_URLS` list; add its URL when setting that variable to use it.
 - Same capability surface as the Meshery remote provider; choose based on your organization's account.
 
 #### Example remote provider
@@ -348,7 +348,7 @@ Interwoven into Meshery’s web-based user interface are a variety of extension 
 |user_prefs   |Single Component   |This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.   |
 |account   |Full Page   |Remote Reactjs components (or other) are placed in a pre-existing page and will have dedicated endpoint: `/extension/account`.   |
 |collaborator |Single Component|This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Mehery UI. Its work is to show active Meshery users under the same remote provider.|
-  |/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `/app/provider-pkg/<package-name>`.|
+  |/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `~/.meshery/provider/<provider-name>/<package-version>`.|
 
 Remote Providers must fulfill the following endpoints:
 
@@ -362,7 +362,7 @@ All UI extensions will be hosted under the endpoint `<mesheryserver:port/provide
 
 ### UserPrefs
 
-The UserPrefs extension point expects and loads a component to be displayed into `/userpreferences` page.
+The UserPrefs extension point expects and loads a component to be displayed into `/user/preferences` page.
 
 ### Navigator
 
@@ -589,17 +589,26 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
 Every Meshery server is capable of registering itself with the remote provider, considering that remote provider supports this feature as a capability.
 On successful authentication with the remote provider, Meshery server registers itself by sending a POST request to the remote provider through the `persist-connection` capability. The body of the request should include information so as to uniquely indentify Meshery server and its status.
 
-Example of the request body:
+Example of the request body. The `id` is the zero UUID serialized for the unset connection ID; the Meshery server ID is in `metadata.serverId`:
 
 
 
 <pre class="codeblock-pre">
 	<span class="codeblock">
 		<code class="clipboardjs">{
-  &#34;server_id&#34;: &#34;xxxx-xxxxx-xxxx-xxxx&#34;,
-  &#34;server_version&#34;: &#34;vx.x.x&#34;,
-  &#34;server_build-sha&#34;: &#34;xxxx-xxxxx&#34;,
-  &#34;server_location&#34;: &#34;&lt;protocol&gt;://&lt;hostname&gt;:&lt;port&gt;&#34;
+  &#34;id&#34;: &#34;00000000-0000-0000-0000-000000000000&#34;,
+  &#34;kind&#34;: &#34;meshery&#34;,
+  &#34;subType&#34;: &#34;management&#34;,
+  &#34;type&#34;: &#34;platform&#34;,
+  &#34;metadata&#34;: {
+    &#34;serverId&#34;: &#34;xxxx-xxxxx-xxxx-xxxx&#34;,
+    &#34;serverVersion&#34;: &#34;vx.x.x&#34;,
+    &#34;serverBuildSha&#34;: &#34;xxxx-xxxxx&#34;,
+    &#34;serverLocation&#34;: &#34;&lt;protocol&gt;://&lt;hostname&gt;:&lt;port&gt;&#34;
+  },
+  &#34;status&#34;: &#34;connected&#34;,
+  &#34;credentialSecret&#34;: {&#34;token&#34;: null},
+  &#34;skipCredentialVerification&#34;: false
 }</code>
 	</span>
 </pre>
