@@ -253,7 +253,7 @@ export const calculateGrid = (element) => {
   const grid = {
     xs: 12,
     md: 12,
-    lg: 6,
+    lg: 12,
   };
 
   if (type === 'object' || type === 'array' || __additional_property) {

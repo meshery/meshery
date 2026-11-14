@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { configureStore } from '@reduxjs/toolkit';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { SistentThemeProvider } from '@sistent/sistent';
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -62,8 +62,8 @@ const seedCredentials = () =>
       id: `00000000-0000-0000-0000-0000000000${n}`,
       name: `cred-${n}`,
       type: 'prometheus',
-      created_at: '2026-11-11T10:00:00Z',
-      updated_at: '2026-11-11T10:00:00Z',
+      createdAt: '2026-11-11T10:00:00Z',
+      updatedAt: '2026-11-11T10:00:00Z',
     };
   });
 
@@ -195,5 +195,47 @@ describe('MesheryCredentialComponent pagination', () => {
     expect(screen.getByTestId('credentials-access-denied')).toBeInTheDocument();
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
     expect(credentialRequests(fetchMock)).toHaveLength(0);
+  });
+});
+
+describe('MesheryCredentialComponent dates', () => {
+  const NOW = new Date('2026-11-13T12:00:00Z');
+  let previousWidth: number;
+
+  beforeEach(() => {
+    canViewSpy.mockReturnValue(true);
+    // Freeze only Date, so a cell showing "now" is unambiguous while RTK Query
+    // and testing-library keep their real timers.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(NOW);
+    // The date columns are only shown from the xl breakpoint (1140px).
+    previousWidth = window.innerWidth;
+    window.innerWidth = 1280;
+    storedCredentials = [
+      {
+        id: '00000000-0000-0000-0000-000000000099',
+        name: 'cred-dated',
+        type: 'prometheus',
+        createdAt: '2025-11-13T12:00:00Z',
+        updatedAt: '2026-11-10T12:00:00Z',
+      },
+    ];
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async (req) =>
+      credentialsResponse(new URL((req as Request).url)),
+    );
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    window.innerWidth = previousWidth;
+    vi.restoreAllMocks();
+  });
+
+  it("shows the credential's own creation and update dates, not the current time", async () => {
+    renderPage();
+
+    const row = (await screen.findByText('cred-dated')).closest('tr') as HTMLElement;
+    expect(within(row).getByText('a year ago')).toBeInTheDocument();
+    expect(within(row).getByText('3 days ago')).toBeInTheDocument();
   });
 });

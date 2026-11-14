@@ -26,6 +26,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshkit/errors"
+	"github.com/spf13/viper"
 )
 
 // testcases for auth.go
@@ -453,7 +454,8 @@ func TestWriteTokenFile(t *testing.T) {
 		t.Fatal(err)
 	}
 	// Windows only tracks the read-only attribute, so a mode check is
-	// meaningless there; the content check below still applies.
+	// meaningless there; its ACL is checked in tokenfile_windows_test.go. The
+	// content check below applies everywhere.
 	if runtime.GOOS != "windows" {
 		if mode := info.Mode().Perm(); mode != 0o600 {
 			t.Fatalf("token file mode = %o, want 600", mode)
@@ -465,5 +467,252 @@ func TestWriteTokenFile(t *testing.T) {
 	}
 	if string(data) != `{"token":"t"}` {
 		t.Fatalf("token file content = %q", data)
+	}
+}
+
+// Requests must read a token from the file system login and logout write it
+// to, which they find with config.Token.GetLocation.
+func TestGetTokenLocationMatchesTokenGetLocation(t *testing.T) {
+	mesheryDir := IsolateMesheryHome(t)
+	home := filepath.Dir(mesheryDir)
+	outside := filepath.Join(t.TempDir(), "meshery.json")
+	inside := filepath.Join(home, "tok", "auth.json")
+
+	tests := []struct {
+		name     string
+		location string
+		want     string
+	}{
+		{"relative name", "auth.json", filepath.Join(mesheryDir, "auth.json")},
+		{"absolute path outside home", outside, outside},
+		{"home-relative path", "~/tok/auth.json", inside},
+		{"absolute path inside home", inside, inside},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			token := config.Token{Name: "default", Location: tc.location}
+			got, err := GetTokenLocation(token)
+			if err != nil {
+				t.Fatalf("GetTokenLocation(%q): %v", tc.location, err)
+			}
+			if got != tc.want {
+				t.Errorf("GetTokenLocation(%q) = %q, want %q", tc.location, got, tc.want)
+			}
+			if login := token.GetLocation(); got != login {
+				t.Errorf("requests read %q, but system login writes %q", got, login)
+			}
+		})
+	}
+}
+
+// A token kept outside HOME, such as a secret mounted into a CI job or a
+// container, must be the file a request attaches.
+func TestNewRequestReadsTokenOutsideHome(t *testing.T) {
+	mesheryDir := IsolateMesheryHome(t)
+
+	tokenFile := filepath.Join(t.TempDir(), "meshery.json")
+	if err := os.WriteFile(tokenFile, []byte(`{"token":"secret","meshery-provider":"Meshery"}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	cfgFile := filepath.Join(mesheryDir, "config.yaml")
+	contents := fmt.Sprintf(`contexts:
+  local:
+    endpoint: http://127.0.0.1:19999
+    token: default
+    platform: docker
+current-context: local
+tokens:
+- name: default
+  location: %q
+`, tokenFile)
+	if err := os.WriteFile(cfgFile, []byte(contents), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	origDefaultConfigPath, origCfgFile, origTokenFlag := DefaultConfigPath, CfgFile, TokenFlag
+	t.Cleanup(func() {
+		DefaultConfigPath, CfgFile, TokenFlag = origDefaultConfigPath, origCfgFile, origTokenFlag
+		viper.Reset()
+	})
+	DefaultConfigPath, CfgFile, TokenFlag = cfgFile, cfgFile, ""
+
+	viper.Reset()
+	viper.SetConfigFile(cfgFile)
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatal(err)
+	}
+	token, err := mctlCfg.GetTokenForContext("local")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := token.GetLocation(); got != tokenFile {
+		t.Fatalf("system login would write %q, want %q", got, tokenFile)
+	}
+
+	req, err := NewRequest(http.MethodGet, "http://127.0.0.1:19999/api/system/version", nil)
+	if err != nil {
+		t.Fatalf("NewRequest: %v", err)
+	}
+	cookie, err := req.Cookie(tokenName)
+	if err != nil || cookie.Value != "secret" {
+		t.Errorf("request token cookie = %v, %v; want the one in %s", cookie, err, tokenFile)
+	}
+}
+
+// A context passed with --config that names a token its file does not define
+// must get that token added to the same file, and later requests must keep
+// using that file's server rather than the default meshconfig's.
+func TestGetCurrentAuthTokenAddsMissingTokenToActiveConfig(t *testing.T) {
+	mesheryDir := IsolateMesheryHome(t)
+
+	defaultConfig := filepath.Join(mesheryDir, "config.yaml")
+	defaultContents := []byte(`contexts:
+  local:
+    endpoint: http://127.0.0.1:19999
+    token: default
+    platform: docker
+current-context: local
+tokens:
+- name: default
+  location: auth.json
+`)
+	if err := os.WriteFile(defaultConfig, defaultContents, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	activeConfig := filepath.Join(t.TempDir(), "custom.yaml")
+	if err := os.WriteFile(activeConfig, []byte(`contexts:
+  staging:
+    endpoint: http://127.0.0.1:19181
+    token: missingtok
+    platform: docker
+current-context: staging
+tokens:
+- name: default
+  location: auth.json
+`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	origDefaultConfigPath, origCfgFile, origAuthConfigFile := DefaultConfigPath, CfgFile, AuthConfigFile
+	t.Cleanup(func() {
+		DefaultConfigPath, CfgFile, AuthConfigFile = origDefaultConfigPath, origCfgFile, origAuthConfigFile
+		viper.Reset()
+	})
+	DefaultConfigPath = defaultConfig
+	CfgFile = activeConfig
+	AuthConfigFile = filepath.Join(mesheryDir, "auth.json")
+
+	viper.Reset()
+	viper.SetConfigFile(activeConfig)
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+
+	location, err := GetCurrentAuthToken()
+	if err != nil {
+		t.Fatalf("GetCurrentAuthToken: %v", err)
+	}
+	if location != AuthConfigFile {
+		t.Errorf("token location = %q, want %q", location, AuthConfigFile)
+	}
+
+	if got := viper.ConfigFileUsed(); got != activeConfig {
+		t.Errorf("viper now reads %q, want the --config file %q: later requests would go to another server", got, activeConfig)
+	}
+
+	gotDefault, err := os.ReadFile(defaultConfig)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(gotDefault) != string(defaultContents) {
+		t.Errorf("default meshconfig was rewritten:\n%s", gotDefault)
+	}
+
+	v := viper.New()
+	v.SetConfigFile(activeConfig)
+	if err := v.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	active, err := config.GetMesheryCtl(v)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if token, err := active.GetTokenForContext("staging"); err != nil || token.Location != AuthConfigFile {
+		t.Errorf("--config file token for context staging = %+v, %v; want location %q", token, err, AuthConfigFile)
+	}
+
+	// The entry now exists, so a second command, which starts by reading the
+	// --config file afresh, must reuse it rather than fail on adding a duplicate.
+	viper.Reset()
+	viper.SetConfigFile(activeConfig)
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := GetCurrentAuthToken(); err != nil {
+		t.Errorf("second GetCurrentAuthToken: %v", err)
+	}
+}
+
+// A context that does not exist names no token, so there is nothing to add:
+// EnsureContextToken must return GetTokenForContext's error and leave the
+// meshconfig untouched instead of appending a token with an empty name.
+func TestEnsureContextTokenRejectsUnknownContext(t *testing.T) {
+	mesheryDir := IsolateMesheryHome(t)
+
+	activeConfig := filepath.Join(mesheryDir, "config.yaml")
+	contents := []byte(`contexts:
+  local:
+    endpoint: http://127.0.0.1:19999
+    token: default
+    platform: docker
+current-context: local
+tokens:
+- name: default
+  location: auth.json
+`)
+	if err := os.WriteFile(activeConfig, contents, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	origDefaultConfigPath, origCfgFile, origAuthConfigFile := DefaultConfigPath, CfgFile, AuthConfigFile
+	t.Cleanup(func() {
+		DefaultConfigPath, CfgFile, AuthConfigFile = origDefaultConfigPath, origCfgFile, origAuthConfigFile
+		viper.Reset()
+	})
+	DefaultConfigPath = activeConfig
+	CfgFile = activeConfig
+	AuthConfigFile = filepath.Join(mesheryDir, "auth.json")
+
+	viper.Reset()
+	viper.SetConfigFile(activeConfig)
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token, err := EnsureContextToken(mctlCfg, "no-such-context")
+	if err == nil {
+		t.Errorf("EnsureContextToken(no-such-context) = %+v, nil; want an error", token)
+	} else if want := "no token is associated with context: no-such-context"; err.Error() != want {
+		t.Errorf("error = %q, want %q", err, want)
+	}
+	if token != (config.Token{}) {
+		t.Errorf("token = %+v, want the zero Token", token)
+	}
+
+	got, err := os.ReadFile(activeConfig)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got) != string(contents) {
+		t.Errorf("meshconfig was rewritten:\n%s", got)
 	}
 }

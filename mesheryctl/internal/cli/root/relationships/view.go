@@ -119,8 +119,7 @@ func formatSaveFileName(modelName string, id string, outputFormat string) string
 	if shortID == "" {
 		shortID = "unknown"
 	}
-	sanitizer := strings.NewReplacer("/", "_", "\\", "_", " ", "_")
-	sanitizedName := sanitizer.Replace(strings.TrimSpace(modelName))
+	sanitizedName := utils.SanitizeFileName(modelName)
 	if sanitizedName == "" {
 		return fmt.Sprintf("relationship_%s.%s", shortID, strings.ToLower(outputFormat))
 	}

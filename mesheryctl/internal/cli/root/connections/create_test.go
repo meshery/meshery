@@ -119,3 +119,69 @@ func TestSaveK8sContextResponseWireContract(t *testing.T) {
 		t.Fatalf("connectionIDForContext(prod-cluster) = %q, want %q", got, want)
 	}
 }
+
+// TestCreateConnectionArgs verifies that connection create rejects positional
+// arguments while accepting each supported connection type without arguments.
+// It also checks that missing and unsupported connection types remain invalid.
+func TestCreateConnectionArgs(t *testing.T) {
+	previousType := connectionType
+	t.Cleanup(func() {
+		connectionType = previousType
+	})
+
+	tests := []struct {
+		name           string
+		connectionType string
+		args           []string
+		wantErr        bool
+	}{
+		{
+			name:           "accepts minikube without positional arguments",
+			connectionType: "minikube",
+		},
+		{
+			name:           "accepts aks without positional arguments",
+			connectionType: "aks",
+		},
+		{
+			name:           "accepts eks without positional arguments",
+			connectionType: "eks",
+		},
+		{
+			name:           "accepts gke without positional arguments",
+			connectionType: "gke",
+		},
+		{
+			name:           "rejects one positional argument",
+			connectionType: "minikube",
+			args:           []string{"hello"},
+			wantErr:        true,
+		},
+		{
+			name:           "rejects multiple positional arguments",
+			connectionType: "minikube",
+			args:           []string{"hello", "world"},
+			wantErr:        true,
+		},
+		{
+			name:    "rejects missing connection type",
+			wantErr: true,
+		},
+		{
+			name:           "rejects unsupported connection type",
+			connectionType: "invalid",
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			connectionType = tt.connectionType
+
+			err := createConnectionCmd.Args(createConnectionCmd, tt.args)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("Args() error = %v, wantErr = %v", err, tt.wantErr)
+			}
+		})
+	}
+}

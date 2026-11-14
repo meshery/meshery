@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDeleteCmd(t *testing.T) {
@@ -36,6 +37,15 @@ func TestDeleteCmd(t *testing.T) {
 					Response:     "filter.list.api.response.golden",
 					ResponseCode: 200,
 				},
+				{
+					// GetID paginates: the page-0 fixture reports
+					// totalCount 5 with 2 items, so a second page is
+					// requested. The empty page lets the lookup conclude.
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/filter?pagesize=10000&page=1",
+					Response:     "filter.list.empty.api.response.golden",
+					ResponseCode: 200,
+				},
 			},
 			ExpectedResponse: "delete.kuma.output.golden",
 			ExpectError:      false,
@@ -55,6 +65,15 @@ func TestDeleteCmd(t *testing.T) {
 					Response:     "filter.list.api.response.golden",
 					ResponseCode: 200,
 				},
+				{
+					// GetID paginates: the page-0 fixture reports
+					// totalCount 5 with 2 items, so a second page is
+					// requested. The empty page lets the lookup conclude.
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/filter?pagesize=10000&page=1",
+					Response:     "filter.list.empty.api.response.golden",
+					ResponseCode: 200,
+				},
 				// GetName, used for name lookup, still requests page_size.
 				{
 					Method:       "GET",
@@ -70,4 +89,45 @@ func TestDeleteCmd(t *testing.T) {
 
 	// Run tests
 	utils.RunMesheryctlMultiURLTests(t, update, FilterCmd, testcase, currDir, "filter", func() {})
+}
+
+func TestDeleteCmdArgs(t *testing.T) {
+	tests := []struct {
+		name        string
+		args        []string
+		expectError bool
+		errorMsg    string
+	}{
+		{
+			name:        "Zero arguments fails",
+			args:        []string{},
+			expectError: true,
+			errorMsg:    "accepts 1 arg(s), received 0",
+		},
+		{
+			name:        "One argument succeeds",
+			args:        []string{"filter-name"},
+			expectError: false,
+		},
+		{
+			name:        "Multiple arguments fails",
+			args:        []string{"filterA", "filterB"},
+			expectError: true,
+			errorMsg:    "accepts 1 arg(s), received 2",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := deleteCmd.Args(deleteCmd, tt.args)
+			if tt.expectError {
+				assert.Error(t, err)
+				if tt.errorMsg != "" {
+					assert.Contains(t, err.Error(), tt.errorMsg)
+				}
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
 }
