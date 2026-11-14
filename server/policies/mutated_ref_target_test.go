@@ -185,6 +185,35 @@ func TestMutatedRefLifecycle(t *testing.T) {
 			},
 			want: true,
 		},
+		{
+			// metadata.labels is not a modelled member of
+			// ComponentDefinition_Metadata, but its MarshalJSON/UnmarshalJSON
+			// inline AdditionalProperties as ordinary keys, so the envelope
+			// does carry it and the reference resolves end to end.
+			name:       "unprefixed_envelope_metadata_additional_property",
+			mutatorRef: []string{"configuration", "spec", "labels"},
+			mutatedRef: []string{"metadata", "labels"},
+			readBack: func(c *component.ComponentDefinition) interface{} {
+				return c.Metadata.AdditionalProperties["labels"]
+			},
+			want: map[string]interface{}{"app": "bus-alpha"},
+		},
+		{
+			// A Kubernetes label key contains dots. Each path segment is one
+			// literal key, so the cleanup on deletion has to remove this exact
+			// key rather than splitting it into nested objects.
+			name:       "unprefixed_envelope_dotted_label_key",
+			mutatorRef: []string{"configuration", "spec", "eventBusName"},
+			mutatedRef: []string{"metadata", "labels", "kubernetes.io/service-name"},
+			readBack: func(c *component.ComponentDefinition) interface{} {
+				labels, ok := c.Metadata.AdditionalProperties["labels"].(map[string]interface{})
+				if !ok {
+					return nil
+				}
+				return labels["kubernetes.io/service-name"]
+			},
+			want: "bus-alpha",
+		},
 	}
 
 	for _, tc := range cases {
@@ -321,14 +350,13 @@ func TestConfigurationMutatedRefStaysInConfiguration(t *testing.T) {
 	}
 }
 
-// TestEnvelopeMutatedRefDoesNotLeakIntoConfiguration pins the behaviour for an
-// unprefixed reference naming a field the component envelope cannot hold -
-// ComponentDefinition_Metadata is a closed struct with no "labels" member, so
-// "metadata.labels" has no sink. The engine must not silently divert it into
-// Configuration, which is what made such a reference appear to work while being
-// unreadable on the next evaluation. Relationship definitions using this shape
-// are themselves defective and belong to the definition-repair class tracked by
-// #21490.
+// TestEnvelopeMutatedRefDoesNotLeakIntoConfiguration pins where an unprefixed
+// "metadata.labels" reference lands. ComponentDefinition_Metadata does not
+// model a "labels" member, but its MarshalJSON/UnmarshalJSON inline
+// AdditionalProperties as ordinary keys, so the envelope carries it there. The
+// engine must put it there and must not also write it into Configuration, which
+// is what previously made the reference look effective while being unreadable
+// on the next evaluation.
 func TestEnvelopeMutatedRefDoesNotLeakIntoConfiguration(t *testing.T) {
 	design, _, busID, _ := buildMutationDesign(
 		[]string{"configuration", "spec", "labels"},
@@ -344,7 +372,132 @@ func TestEnvelopeMutatedRefDoesNotLeakIntoConfiguration(t *testing.T) {
 	applied := applyActionsToDesign(design, actions)
 	bus := componentByID(applied, busID)
 
+	want := map[string]interface{}{"app": "bus-alpha"}
+	if got := bus.Metadata.AdditionalProperties["labels"]; !deepEqual(got, want) {
+		t.Errorf("envelope metadata.labels = %#v, want %#v", got, want)
+	}
 	if stray := objectGetNested(bus.Configuration, []string{"metadata"}, nil); stray != nil {
-		t.Errorf("configuration.metadata = %#v, want nil - an envelope reference must never be written into configuration", stray)
+		t.Errorf("configuration.metadata = %#v, want nil - an envelope reference must not also be written into configuration", stray)
+	}
+}
+
+// TestChainedEnvelopeMutationsConvergeAcrossPasses covers the case that makes
+// update_component a re-evaluation trigger. Side effects for every relationship
+// are generated against the pre-patch design and applied afterwards, so when
+// one relationship mutates a field a second relationship reads, the second sees
+// the stale value for that pass. The engine must report an action so the
+// handler loop runs again, and the next pass must settle the chain.
+func TestChainedEnvelopeMutationsConvergeAcrossPasses(t *testing.T) {
+	ruleID, _ := uuid.FromString("00000000-0000-0000-0000-0000000000b1")
+	busBID, _ := uuid.FromString("00000000-0000-0000-0000-0000000000b2")
+	busCID, _ := uuid.FromString("00000000-0000-0000-0000-0000000000b3")
+
+	rule := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Rule"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		DisplayName:    "rule-1",
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{"eventBusName": "bus-alpha"},
+		},
+	}
+	rule.ID = ruleID
+
+	busB := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "EventBus"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		DisplayName:    "b-original",
+		Configuration:  map[string]interface{}{},
+	}
+	busB.ID = busBID
+
+	busC := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "EventBus"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		DisplayName:    "c-original",
+		Configuration:  map[string]interface{}{},
+	}
+	busC.ID = busCID
+
+	// envelopeRel builds an approved edge/non-binding/network relationship that
+	// copies the mutator path on from into displayName on to.
+	envelopeRel := func(relID, fromID, busToID uuid.UUID, fromKind string, mutator []string) *relationship.RelationshipDefinition {
+		mRef := relationship.MutatorRef{mutator}
+		tRef := relationship.MutatedRef{[]string{"displayName"}}
+		status := relationship.RelationshipDefinitionStatus(StatusApproved)
+		from, to := fromID, busToID
+		selectors := relationship.SelectorSet{
+			relationship.SelectorSetItem{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{{
+						ID:   &from,
+						Kind: strPtr(fromKind),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mRef,
+						},
+					}},
+					To: []relationship.SelectorItem{{
+						ID:   &to,
+						Kind: strPtr("EventBus"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &tRef,
+						},
+					}},
+				},
+			},
+		}
+		rel := &relationship.RelationshipDefinition{
+			Kind:             relationship.Edge,
+			RelationshipType: "non-binding",
+			SubType:          "network",
+			Status:           &status,
+			Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+			Selectors:        &selectors,
+		}
+		rel.ID = relID
+		return rel
+	}
+
+	rel1ID, _ := uuid.FromString("00000000-0000-0000-0000-0000000000b8")
+	rel2ID, _ := uuid.FromString("00000000-0000-0000-0000-0000000000b9")
+
+	design := makePatternFile(
+		[]*component.ComponentDefinition{rule, busB, busC},
+		[]*relationship.RelationshipDefinition{
+			envelopeRel(rel1ID, ruleID, busBID, "Rule", []string{"configuration", "spec", "eventBusName"}),
+			envelopeRel(rel2ID, busBID, busCID, "EventBus", []string{"displayName"}),
+		},
+	)
+
+	log, _ := logger.New("mutated-ref-chain", logger.Options{Format: logger.SyslogLogFormat})
+	engine := NewGoEngine(log)
+
+	first, err := engine.EvaluateDesign(*design, nil)
+	if err != nil {
+		t.Fatalf("first evaluation failed: %v", err)
+	}
+	if got := string(componentByID(&first.Design, busBID).DisplayName); got != "bus-alpha" {
+		t.Fatalf("after first pass: B displayName = %q, want %q", got, "bus-alpha")
+	}
+	// C read B's pre-patch value during this pass, so it is not settled yet.
+	if got := countMutationActions(first.Actions, busCID.String()); got == 0 {
+		t.Fatal("first pass produced no action for the dependent component, so the handler loop would stop with a stale value")
+	}
+
+	second, err := engine.EvaluateDesign(first.Design, nil)
+	if err != nil {
+		t.Fatalf("second evaluation failed: %v", err)
+	}
+	if got := string(componentByID(&second.Design, busCID).DisplayName); got != "bus-alpha" {
+		t.Errorf("after second pass: C displayName = %q, want %q", got, "bus-alpha")
+	}
+
+	third, err := engine.EvaluateDesign(second.Design, nil)
+	if err != nil {
+		t.Fatalf("third evaluation failed: %v", err)
+	}
+	for _, id := range []uuid.UUID{busBID, busCID} {
+		if got := countMutationActions(third.Actions, id.String()); got != 0 {
+			t.Errorf("chain did not reach a fixed point: %d action(s) still emitted for %s", got, id)
+		}
 	}
 }

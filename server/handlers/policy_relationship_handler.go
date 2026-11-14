@@ -252,10 +252,20 @@ func deduplicateActions(actions []pattern.Action) []pattern.Action {
 	return result
 }
 
+// doesntNeedReeval reports whether an evaluation produced no action whose effect
+// a later pass could still depend on. Component mutations qualify: side effects
+// for every relationship are generated against the pre-patch design and applied
+// afterwards, so a relationship reading a field another relationship mutates
+// sees the stale value until the next pass. update_component is listed for the
+// same reason as update_component_configuration - the two differ only in
+// whether the mutated path addresses the component envelope or its
+// configuration, so leaving it out left envelope mutations unconverged where
+// configuration mutations converge.
 func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 
 	for _, action := range response.Actions {
-		if action.Op == "delete_component" || action.Op == "add_component" || action.Op == "update_component_configuration" {
+		switch action.Op {
+		case "delete_component", "add_component", "update_component", "update_component_configuration":
 			return false
 		}
 	}

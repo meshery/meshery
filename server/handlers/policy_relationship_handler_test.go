@@ -1124,3 +1124,35 @@ func TestGetAllMeshmodelPoliciesPagination(t *testing.T) {
 		})
 	}
 }
+
+// TestDoesntNeedReeval covers the predicate that ends the re-evaluation loop.
+// Side effects for every relationship are generated against the pre-patch
+// design and applied afterwards, so any action a later pass could depend on has
+// to keep the loop running. update_component is included for the same reason as
+// update_component_configuration: the two differ only in whether the mutated
+// path addresses the component envelope or its configuration.
+func TestDoesntNeedReeval(t *testing.T) {
+	tests := []struct {
+		name     string
+		ops      []string
+		expected bool
+	}{
+		{"no actions", nil, true},
+		{"only relationship ops", []string{"add_relationship", "update_relationship", "delete_relationship"}, true},
+		{"envelope mutation", []string{"update_component"}, false},
+		{"configuration mutation", []string{"update_component_configuration"}, false},
+		{"component added", []string{"add_component"}, false},
+		{"component deleted", []string{"delete_component"}, false},
+		{"envelope mutation among relationship ops", []string{"add_relationship", "update_component"}, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var resp pattern.EvaluationResponse
+			for _, op := range tt.ops {
+				resp.Actions = append(resp.Actions, pattern.Action{Op: op})
+			}
+			assert.Equal(t, tt.expected, doesntNeedReeval(resp))
+		})
+	}
+}

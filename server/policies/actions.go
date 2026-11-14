@@ -2,13 +2,12 @@ package policies
 
 import (
 	"encoding/json"
-	"strings"
+	"strconv"
 
 	patching "github.com/meshery/meshkit/utils/patching"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
-	"github.com/tidwall/sjson"
 )
 
 // Action operation constants.
@@ -352,41 +351,58 @@ func patchComponentEnvelope(comp *component.ComponentDefinition, patches []patch
 		return
 	}
 	// Decode into a fresh value so a removed field is reset rather than left at
-	// its pre-mutation value, then restore the fields the JSON projection cannot
-	// carry: ModelId and Metadata.AdditionalProperties are the only `json:"-"`
-	// members of ComponentDefinition, so a new one has to be restored here too.
+	// its pre-mutation value. ModelId is the one member the projection drops:
+	// it is `json:"-"` and ComponentDefinition has no custom marshaller, unlike
+	// ComponentDefinition_Metadata, whose MarshalJSON/UnmarshalJSON inline
+	// AdditionalProperties as ordinary keys - so a mutation of an unmodelled
+	// metadata key round-trips into the decoded map and must be kept.
 	modelID := comp.ModelId
-	additional := comp.Metadata.AdditionalProperties
 	var folded component.ComponentDefinition
 	if err := json.Unmarshal(raw, &folded); err != nil {
 		return
 	}
 	folded.ModelId = modelID
-	folded.Metadata.AdditionalProperties = additional
 	*comp = folded
 }
 
-// applyRemovesToMap removes each path from a generic object via sjson.Delete.
+// applyRemovesToMap removes each path from a generic object decoded from JSON.
 // Paths are relative to the object passed in, so callers strip any leading
 // "configuration" segment before calling.
 func applyRemovesToMap(obj map[string]interface{}, removes [][]string) map[string]interface{} {
-	data, err := json.Marshal(obj)
-	if err != nil {
-		return obj
-	}
-	jsonStr := string(data)
 	for _, path := range removes {
-		if len(path) == 0 {
-			continue
-		}
-		jsonStr, err = sjson.Delete(jsonStr, strings.Join(path, "."))
-		if err != nil {
-			return obj
+		deleteAtPath(obj, path)
+	}
+	return obj
+}
+
+// deleteAtPath removes the value at a literal key path. Each segment addresses
+// one map key or one array index, so a key that itself contains dots - a
+// Kubernetes label such as "kubernetes.io/service-name", or any metadata
+// additional property - is treated as a single segment. Joining the path into
+// an sjson expression instead would split such a key into nested objects and
+// delete nothing, leaving the field a mutation created behind on cleanup.
+func deleteAtPath(root map[string]interface{}, path []string) {
+	if len(path) == 0 {
+		return
+	}
+	var parent interface{} = root
+	for _, segment := range path[:len(path)-1] {
+		switch node := parent.(type) {
+		case map[string]interface{}:
+			parent = node[segment]
+		case []interface{}:
+			index, err := strconv.Atoi(segment)
+			if err != nil || index < 0 || index >= len(node) {
+				return
+			}
+			parent = node[index]
+		default:
+			return
 		}
 	}
-	var result map[string]interface{}
-	if err := json.Unmarshal([]byte(jsonStr), &result); err != nil {
-		return obj
+	// No mutatedRef in the shipped corpus ends in an array index, so only a
+	// map key is removable at the final segment.
+	if node, ok := parent.(map[string]interface{}); ok {
+		delete(node, path[len(path)-1])
 	}
-	return result
 }
