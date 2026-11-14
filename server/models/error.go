@@ -256,11 +256,11 @@ func ErrPageSize(err error) error {
 }
 
 func ErrPageNumber(err error) error {
-	return errors.New(ErrPageNumberCode, errors.Alert, []string{"Unable to prase the Page Numer"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrPageNumberCode, errors.Alert, []string{"Unable to parse the Page Number"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrPerfID(err error) error {
-	return errors.New(ErrPerfIDCode, errors.Alert, []string{"Invalid peformance profile ID"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrPerfIDCode, errors.Alert, []string{"Invalid performance profile ID"}, []string{err.Error()}, []string{}, []string{})
 }
 func ErrPublish(err error, obj string) error {
 	return errors.New(ErrPublishCode, errors.Alert, []string{fmt.Sprintf("Error while publishing %s to catlog", obj)}, []string{err.Error()}, []string{}, []string{})
@@ -542,7 +542,7 @@ func ErrJWKsKeys(err error) error {
 }
 
 func ErrInvalidCapability(capability string, provider string) error {
-	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capability is not supported by your Provider", capability}, []string{"You dont have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the vaild remote Provider"}, []string{"Connect to the vaild remote Provider", "Ask the Provider Adim for access"})
+	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capability is not supported by your Provider", capability}, []string{"You don't have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the valid remote Provider"}, []string{"Connect to the valid remote Provider", "Ask the Provider Admin for access"})
 }
 
 func ErrFetchData(err error) error {
@@ -844,7 +844,7 @@ func ErrMarshallingDesignIntoYAML(err error) error {
 }
 
 func ErrMeshsyncDataHandler(err error) error {
-	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
+	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data handler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
 }
 
 // ErrReconcileServerID wraps a failure to back-fill an already-persisted
