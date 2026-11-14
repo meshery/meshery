@@ -517,9 +517,27 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	}
 
 	var connID core.Uuid
-	id, err := K8sContextGenerateID(k8sContext)
-	if err == nil {
-		connID = uuid.FromStringOrNil(id)
+	if k8sContext.ConnectionID != "" {
+		connID = uuid.FromStringOrNil(k8sContext.ConnectionID)
+	}
+	if connID == uuid.Nil && k8sContext.ID != "" {
+		connID = uuid.FromStringOrNil(k8sContext.ID)
+	}
+	if connID == uuid.Nil {
+		if id, err := K8sContextGenerateID(k8sContext); err == nil {
+			connID = uuid.FromStringOrNil(id)
+		}
+	}
+
+	if connID != uuid.Nil {
+		conn, status, _ := l.GetConnectionByID("", connID)
+		if status >= http.StatusOK && status < http.StatusMultipleChoices && conn != nil && conn.Kind == "kubernetes" {
+			k8sContext.ConnectionID = connID.String()
+			if l.MesheryK8sContextPersister != nil {
+				_, _ = l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+			}
+			return *conn, ErrContextAlreadyPersisted
+		}
 	}
 
 	var mesheryInstanceID string
