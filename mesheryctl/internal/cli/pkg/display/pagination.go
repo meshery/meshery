@@ -42,25 +42,42 @@ func HandlePaginationAsync[T any](
 			utils.ClearLine()
 		}
 
-		urlPath := ""
-
-		pagesQuerySearch := url.Values{}
-		if !strings.Contains(displayData.UrlPath, "page=") {
-			pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
+		parsedURL, err := url.Parse(displayData.UrlPath)
+		if err != nil {
+			return ErrPagination(err, currentPage)
 		}
 
-		if !strings.Contains(displayData.UrlPath, "pagesize=") {
+		existingQuery := parsedURL.Query()
+		pagesQuerySearch := url.Values{}
+
+		if !existingQuery.Has("page") {
+			pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
+		} else if currentPage > 0 {
+			existingQuery.Set("page", fmt.Sprintf("%d", currentPage))
+		}
+
+		if !existingQuery.Has("pagesize") {
 			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
 		}
 
+		urlPath := displayData.UrlPath
 		if displayData.SearchTerm != "" {
+			existingQuery.Set("search", displayData.SearchTerm)
+		}
+
+		if (existingQuery.Has("search") && displayData.SearchTerm != "") || (existingQuery.Has("page") && currentPage > 0) {
+			parsedURL.RawQuery = existingQuery.Encode()
+			urlPath = parsedURL.String()
+		} else if displayData.SearchTerm != "" && !existingQuery.Has("search") {
 			pagesQuerySearch.Set("search", displayData.SearchTerm)
 		}
 
-		if strings.Contains(displayData.UrlPath, "?") {
-			urlPath = fmt.Sprintf("%s&%s", displayData.UrlPath, pagesQuerySearch.Encode())
-		} else {
-			urlPath = fmt.Sprintf("%s?%s", displayData.UrlPath, pagesQuerySearch.Encode())
+		if queryStr := pagesQuerySearch.Encode(); queryStr != "" {
+			if strings.Contains(urlPath, "?") {
+				urlPath = fmt.Sprintf("%s&%s", urlPath, queryStr)
+			} else {
+				urlPath = fmt.Sprintf("%s?%s", urlPath, queryStr)
+			}
 		}
 
 		data, err := api.Fetch[T](urlPath)
