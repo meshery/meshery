@@ -47,6 +47,25 @@ func TestMesheryResultsPersister_GetResult_NotFound(t *testing.T) {
 	db := newMigratedDB(t)
 	mrp := &MesheryResultsPersister{DB: db}
 
+	// 1. Populate DB with an existing result A to ensure lookup doesn't return
+	// the wrong row (guarding the original Find(...).Where(...) bug in #22110).
+	existingID := mustUUID(t)
+	existingResult := &MesheryResult{
+		ID:     existingID,
+		Name:   "existing-result",
+		Result: map[string]interface{}{"status": "ok"},
+	}
+	existingBytes, err := json.Marshal(existingResult)
+	require.NoError(t, err)
+	require.NoError(t, mrp.WriteResult(existingID, existingBytes))
+
+	// Verify existingID lookup succeeds
+	found, err := mrp.GetResult(existingID, nil)
+	require.NoError(t, err)
+	require.NotNil(t, found)
+	assert.Equal(t, existingID, found.ID)
+
+	// 2. Querying a non-existent ID B in a populated table must return ErrResultNotFound
 	nonExistentID := mustUUID(t)
 	result, err := mrp.GetResult(nonExistentID, nil)
 
