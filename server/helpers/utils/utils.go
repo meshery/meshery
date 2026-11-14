@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/utils"
@@ -149,20 +150,32 @@ func ToMapStringInterface(mp interface{}) map[string]interface{} {
 }
 
 const UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
-var UISVGPaths = make([]string, 1)
+var (
+	UISVGPaths = make([]string, 0)
+	uiSVGMutex sync.Mutex
+)
 
 func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename string) (svgColorPath, svgWhitePath, svgCompletePath string) {
 
 	filename = strings.ToLower(filename)
+	cleanedUI := filepath.Clean(UI)
+	targetDir := filepath.Clean(filepath.Join(UI, dirname))
+	rel, err := filepath.Rel(cleanedUI, targetDir)
+	if err != nil || strings.HasPrefix(rel, "..") || rel == "." {
+		return
+	}
+
 	successCreatingDirectory := false
 	defer func() {
 		if successCreatingDirectory {
-			UISVGPaths = append(UISVGPaths, filepath.Join(UI, dirname))
+			uiSVGMutex.Lock()
+			UISVGPaths = append(UISVGPaths, targetDir)
+			uiSVGMutex.Unlock()
 		}
 	}()
 	if svgColor != "" {
-		path := filepath.Join(UI, dirname, "color")
-		err := os.MkdirAll(path, 0777)
+		path := filepath.Join(targetDir, "color")
+		err := os.MkdirAll(path, 0755)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -179,8 +192,8 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 	}
 
 	if svgWhite != "" {
-		path := filepath.Join(UI, dirname, "white")
-		err := os.MkdirAll(path, 0777)
+		path := filepath.Join(targetDir, "white")
+		err := os.MkdirAll(path, 0755)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -196,8 +209,8 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 
 	}
 	if svgComplete != "" {
-		path := filepath.Join(UI, dirname, "complete")
-		err := os.MkdirAll(path, 0777)
+		path := filepath.Join(targetDir, "complete")
+		err := os.MkdirAll(path, 0755)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -215,6 +228,9 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 	return
 }
 func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) {
+	if comp == nil || comp.Model == nil {
+		return
+	}
 
 	if comp.Styles != nil {
 		writeSVGHelper(
@@ -240,8 +256,19 @@ func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) {
 }
 
 func DeleteSVGsFromFileSystem() {
+	uiSVGMutex.Lock()
+	defer uiSVGMutex.Unlock()
+	cleanedUI := filepath.Clean(UI)
 	for _, path := range UISVGPaths {
-		if err := os.RemoveAll(path); err != nil && !errors.Is(err, os.ErrNotExist) {
+		if path == "" {
+			continue
+		}
+		cleanPath := filepath.Clean(path)
+		rel, err := filepath.Rel(cleanedUI, cleanPath)
+		if err != nil || strings.HasPrefix(rel, "..") || rel == "." {
+			continue // Never delete anything outside UI directory
+		}
+		if err := os.RemoveAll(cleanPath); err != nil && !errors.Is(err, os.ErrNotExist) {
 			fmt.Println(err)
 		}
 	}

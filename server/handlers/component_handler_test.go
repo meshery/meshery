@@ -159,17 +159,23 @@ func TestExportModel_VersionTraversal(t *testing.T) {
 }
 
 // TestRegisterMeshmodelComponents_VersionTraversal verifies that registration
-// rejects a component whose model version carries a traversal string, in
-// either the outer version or the embedded model version, so a hostile
-// version cannot be planted through the registration endpoint.
+// rejects a component whose model version, model name, or component kind carries
+// a traversal string, or whose model is nil, so hostile paths cannot be planted
+// through the registration endpoint.
 func TestRegisterMeshmodelComponents_VersionTraversal(t *testing.T) {
 	tests := []struct {
 		name         string
+		modelName    string
+		kind         string
 		version      string
 		innerVersion string
+		nilModel     bool
 	}{
-		{"outer version traverses", "../../../escaped", "v1"},
-		{"embedded version traverses", "v1", "../../../escaped"},
+		{"outer version traverses", "traversal-model", "test-kind", "../../../escaped", "v1", false},
+		{"embedded version traverses", "traversal-model", "test-kind", "v1", "../../../escaped", false},
+		{"model name traverses", "../../../escaped-model", "test-kind", "v1", "v1", false},
+		{"component kind traverses", "traversal-model", "../../../escaped-kind", "v1", "v1", false},
+		{"nil model rejected", "", "test-kind", "", "", true},
 	}
 
 	for _, tt := range tests {
@@ -185,11 +191,16 @@ func TestRegisterMeshmodelComponents_VersionTraversal(t *testing.T) {
 			}
 
 			comp := compv1beta3.ComponentDefinition{
-				Model: &model.ModelDefinition{
-					Name:    "traversal-model",
+				Component: compv1beta3.Component{
+					Kind: tt.kind,
+				},
+			}
+			if !tt.nilModel {
+				comp.Model = &model.ModelDefinition{
+					Name:    tt.modelName,
 					Version: tt.version,
 					Model:   model.Model{Version: tt.innerVersion},
-				},
+				}
 			}
 			entityBytes, err := json.Marshal(comp)
 			require.NoError(t, err)
