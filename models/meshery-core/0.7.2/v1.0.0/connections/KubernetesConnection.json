@@ -30,7 +30,7 @@
     "connected": [
       {
         "nextState": "disconnected",
-        "description": "Stops managing the cluster and tears down communication with the cluster's controllers. MeshSync data already collected is kept. You can connect the cluster again later without re-registering."
+        "description": "Stops managing the cluster and tears down communication with the cluster's controllers. Meshery Operator stays installed, because it is shared by every connection to the cluster. MeshSync data already collected is kept. You can connect the cluster again later without re-registering."
       },
       {
         "nextState": "ignored",
@@ -38,7 +38,7 @@
       },
       {
         "nextState": "deleted",
-        "description": "Removes the connection and its associated credential from Meshery, undeploys Meshery Operator, MeshSync, and Meshery Broker from the cluster (when present), and purges cluster data collected through MeshSync from Meshery's database. The Kubernetes cluster itself is not deleted. Presenting the same kubeconfig context again may auto-reconnect; prefer Disconnect to keep the record and avoid reconnection."
+        "description": "Removes the connection and its associated credential from Meshery and purges cluster data collected through MeshSync from Meshery's database. Meshery Operator, MeshSync, and Meshery Broker stay installed in the cluster, because they are shared by every connection to it. To remove them once nothing else uses them, uninstall the meshery-operator Helm release from the meshery namespace. The Kubernetes cluster itself is not deleted. Presenting the same kubeconfig context again may auto-reconnect; prefer Disconnect to keep the record and avoid reconnection."
       }
     ],
     "disconnected": [
@@ -58,7 +58,7 @@
       },
       {
         "nextState": "deleted",
-        "description": "Removes the ignored cluster's connection record and associated credential from Meshery's database, undeploying in-cluster components when present. The Kubernetes cluster itself is not deleted."
+        "description": "Removes the ignored cluster's connection record and associated credential from Meshery's database. In-cluster components are left in place. The Kubernetes cluster itself is not deleted."
       }
     ],
     "not found": [

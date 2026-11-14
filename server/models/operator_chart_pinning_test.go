@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"errors"
 	"strings"
 	"testing"
@@ -451,7 +452,7 @@ func TestDeployIsRefusedWhileNoChartVersionResolves(t *testing.T) {
 	chartErr := ErrNoOperatorChartPublished(OperatorChartName, testChartRepo)
 	mch.setOperatorChartError(chartErr)
 
-	mch.DeployUndeployedOperators(NewOperatorTracker(false), testContextID)
+	mch.DeployUndeployedOperators(NewOperatorTracker(false), K8sContext{ID: testContextID})
 
 	if stub.deploys != 0 {
 		t.Fatalf("Deploy was called %d times with no installable chart version", stub.deploys)
@@ -462,7 +463,7 @@ func TestDeployIsRefusedWhileNoChartVersionResolves(t *testing.T) {
 
 	// Cleared, the same handler installs.
 	mch.setOperatorChartError(nil)
-	mch.DeployUndeployedOperators(NewOperatorTracker(false), testContextID)
+	mch.DeployUndeployedOperators(NewOperatorTracker(false), K8sContext{ID: testContextID})
 	if stub.deploys != 1 {
 		t.Fatalf("Deploy was called %d times once a chart version resolved, want 1", stub.deploys)
 	}
@@ -485,7 +486,7 @@ func TestUserInitiatedDeployIsRefusedWhileNoChartVersionResolves(t *testing.T) {
 	mch.chartVersions = func(string, string) ([]string, error) { return nil, indexErr }
 	mch.setOperatorChartError(ErrNoOperatorChartPublished(OperatorChartName, testChartRepo))
 
-	err := mch.SetOperatorDeployment(reachableK8sContext(), true)
+	err := mch.SetOperatorDeployment(NewOperatorTracker(false), reachableK8sContext(), true)
 	if !errors.Is(err, indexErr) {
 		t.Fatalf("err = %v, want the re-resolution's own failure returned to the caller", err)
 	}
@@ -500,7 +501,7 @@ func TestUserInitiatedDeployIsRefusedWhileNoChartVersionResolves(t *testing.T) {
 	mch = newTestControllersHelper(t)
 	stub = &stubController{status: controllers.NotDeployed}
 	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{MesheryOperator: stub}
-	if err := mch.SetOperatorDeployment(K8sContext{ID: testContextID}, true); err != nil {
+	if err := mch.SetOperatorDeployment(NewOperatorTracker(false), K8sContext{ID: testContextID}, true); err != nil {
 		t.Fatalf("unexpected error with a resolvable chart version: %v", err)
 	}
 	if stub.deploys != 1 {
@@ -561,7 +562,7 @@ func TestUserInitiatedUndeployIsNeverSilent(t *testing.T) {
 	mch := newTestControllersHelper(t)
 	mch.ctxControllerHandlers = nil
 
-	err := mch.SetOperatorDeployment(K8sContext{ID: testContextID}, false)
+	err := mch.SetOperatorDeployment(NewOperatorTracker(false), K8sContext{ID: testContextID}, false)
 	if err == nil {
 		t.Fatal("a user-initiated undeploy with no handler must not report success")
 	}
@@ -579,135 +580,88 @@ func TestUserInitiatedUndeployIsNeverSilent(t *testing.T) {
 // attempt itself may still fail in meshkit, which downloads the chart archive
 // for UNINSTALL from the very repository that could not be read.
 func TestUndeployIsNotBlockedByAnUnresolvableChartVersion(t *testing.T) {
-	for _, tt := range []struct {
-		name string
-		act  func(*MesheryControllersHelper)
-	}{
-		{
-			name: "reconcile",
-			act: func(mch *MesheryControllersHelper) {
-				mch.UndeployDeployedOperators(NewOperatorTracker(false), testContextID)
-			},
-		},
-		{
-			name: "user initiated",
-			act: func(mch *MesheryControllersHelper) {
-				if err := mch.SetOperatorDeployment(K8sContext{ID: testContextID}, false); err != nil {
-					t.Fatalf("unexpected error: %v", err)
-				}
-			},
-		},
-	} {
-		t.Run(tt.name, func(t *testing.T) {
-			mch := newTestControllersHelper(t)
-			stub := &stubController{status: controllers.Deployed}
-			mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{MesheryOperator: stub}
-			mch.ctxOperatorStatus = controllers.Deployed
-			mch.setOperatorChartError(ErrNoOperatorChartPublished(OperatorChartName, testChartRepo))
+	mch := newTestControllersHelper(t)
+	stub := &stubController{status: controllers.Deployed}
+	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{MesheryOperator: stub}
+	mch.ctxOperatorStatus = controllers.Deployed
+	mch.setOperatorChartError(ErrNoOperatorChartPublished(OperatorChartName, testChartRepo))
 
-			tt.act(mch)
+	if err := mch.SetOperatorDeployment(NewOperatorTracker(false), K8sContext{ID: testContextID}, false); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
-			if stub.undeploys != 1 {
-				t.Fatalf("Undeploy was called %d times, want 1: an unresolvable chart version must not strand the operator", stub.undeploys)
-			}
-		})
+	if stub.undeploys != 1 {
+		t.Fatalf("Undeploy was called %d times, want 1: an unresolvable chart version must not strand the operator", stub.undeploys)
 	}
 }
 
 // TestMissingOperatorHandlerIsNeverASilentNoOp pins the condition that used to
 // be unreachable and is now routine: with no operator handler attached, deploy
-// and undeploy did nothing and said nothing, so a user who switched the
-// operator off saw success while it kept running on the cluster.
+// did nothing and said nothing, so a connection that needed the operator saw
+// success while none was installed. The user-initiated undeploy counterpart is
+// TestUserInitiatedUndeployIsNeverSilent; teardown no longer acts on the
+// operator at all (see operator_cluster_lifecycle_test.go).
 func TestMissingOperatorHandlerIsNeverASilentNoOp(t *testing.T) {
-	tests := []struct {
-		name   string
-		status controllers.MesheryControllerStatus
-		act    func(*MesheryControllersHelper)
-	}{
-		{
-			name:   "deploy",
-			status: controllers.NotDeployed,
-			act: func(mch *MesheryControllersHelper) {
-				mch.DeployUndeployedOperators(NewOperatorTracker(false), testContextID)
-			},
-		},
-		{
-			name:   "undeploy",
-			status: controllers.Deployed,
-			act: func(mch *MesheryControllersHelper) {
-				mch.UndeployDeployedOperators(NewOperatorTracker(false), testContextID)
-			},
-		},
-	}
+	for _, handlers := range []map[MesheryController]controllers.IMesheryController{
+		nil,
+		{MesheryBroker: &stubController{}},
+	} {
+		mch := newTestControllersHelper(t)
+		mch.SetMeshsyncDeploymentMode(connections.MeshsyncDeploymentModeOperator)
+		mch.ctxControllerHandlers = handlers
+		mch.ctxOperatorStatus = controllers.NotDeployed
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			for _, handlers := range []map[MesheryController]controllers.IMesheryController{
-				nil,
-				{MesheryBroker: &stubController{}},
-			} {
-				mch := newTestControllersHelper(t)
-				mch.SetMeshsyncDeploymentMode(connections.MeshsyncDeploymentModeOperator)
-				mch.ctxControllerHandlers = handlers
-				mch.ctxOperatorStatus = tt.status
+		mch.DeployUndeployedOperators(NewOperatorTracker(false), K8sContext{ID: testContextID})
 
-				tt.act(mch)
-
-				err := mch.GetOperatorError()
-				if err == nil {
-					t.Fatalf("%s with no operator handler reported nothing; it must not read as success", tt.name)
-				}
-				if code := meshkiterrors.GetCode(err); code != ErrOperatorHandlerNotAttachedCode {
-					t.Fatalf("error code = %q, want %q (from %v)", code, ErrOperatorHandlerNotAttachedCode, err)
-				}
-				if !strings.Contains(err.Error(), testContextID) {
-					t.Fatalf("%s: the error must name the context it is about, got %v", tt.name, err)
-				}
-			}
-		})
+		err := mch.GetOperatorError()
+		if err == nil {
+			t.Fatal("deploy with no operator handler reported nothing; it must not read as success")
+		}
+		if code := meshkiterrors.GetCode(err); code != ErrOperatorHandlerNotAttachedCode {
+			t.Fatalf("error code = %q, want %q (from %v)", code, ErrOperatorHandlerNotAttachedCode, err)
+		}
+		if !strings.Contains(err.Error(), testContextID) {
+			t.Fatalf("the error must name the context it is about, got %v", err)
+		}
 	}
 }
 
-// TestTeardownOfANeverConnectedConnectionIsQuiet: disconnect and delete run
-// UndeployDeployedOperators unconditionally, and a connection whose cluster was
-// never reachable has no handler *and never had an operator*. Alerting that its
-// removal failed would be a second alert for a non-event, on top of the
-// Kubernetes-client failure the connect attempt already reported.
-//
-// The discriminator is whether the operator status was ever genuinely observed,
-// which is exactly what distinguishes "we saw one and can no longer act on it"
-// from "we never reached this cluster".
-func TestTeardownOfANeverConnectedConnectionIsQuiet(t *testing.T) {
-	mch := newTestControllersHelper(t)
-	mch.ctxControllerHandlers = nil
-	if mch.ctxOperatorStatus != controllers.Unknown {
-		t.Fatalf("seeded operator status = %v, want the unobserved Unknown this test is about", mch.ctxOperatorStatus)
-	}
+// TestTeardownNeverReportsAnOperatorFailure: disconnect, delete and a switch
+// to embedded mode run DetachFromCluster, which never acts on the operator, so
+// it has nothing to fail at - with or without a handler, observed or not. A
+// teardown that alerted here would be a second alert for a non-event, on top of
+// whatever the connect attempt already reported.
+func TestTeardownNeverReportsAnOperatorFailure(t *testing.T) {
+	for _, status := range []controllers.MesheryControllerStatus{controllers.Unknown, controllers.Deployed} {
+		mch := newTestControllersHelper(t)
+		mch.ctxControllerHandlers = nil
+		mch.ctxOperatorStatus = status
 
-	mch.UndeployDeployedOperators(NewOperatorTracker(false), testContextID)
+		mch.DetachFromCluster(context.Background(), NewOperatorTracker(false), K8sContext{ID: testContextID})
 
-	if err := mch.GetOperatorError(); err != nil {
-		t.Fatalf("tearing down a never-connected connection reported %v; it has no operator to fail to remove", err)
+		if err := mch.GetOperatorError(); err != nil {
+			t.Fatalf("teardown with operator status %v reported %v; it does not act on the operator", status, err)
+		}
 	}
 }
 
 // TestMissingHandlerNeverClobbersTheSpecificDiagnostic: "no operator handler is
 // attached" is the *consequence* of the kubeconfig or Kubernetes-client failure
 // that AddCtxControllerHandlers already recorded by name. Letting the
-// consequence overwrite the cause meant tearing a connection down degraded the
-// very diagnostic this work exists to provide.
+// consequence overwrite the cause degraded the very diagnostic this work exists
+// to provide.
 func TestMissingHandlerNeverClobbersTheSpecificDiagnostic(t *testing.T) {
 	mch := newTestControllersHelper(t)
+	mch.SetMeshsyncDeploymentMode(connections.MeshsyncDeploymentModeOperator)
 	clientErr := errors.New("failed to create Kubernetes client: no such host")
 	mch.setOperatorError(clientErr)
 	mch.ctxControllerHandlers = nil
-	// Observed, so the teardown gate above does not apply and the report runs.
-	mch.ctxOperatorStatus = controllers.Deployed
+	mch.ctxOperatorStatus = controllers.NotDeployed
 
-	mch.UndeployDeployedOperators(NewOperatorTracker(false), testContextID)
+	mch.DeployUndeployedOperators(NewOperatorTracker(false), K8sContext{ID: testContextID})
 
 	if !errors.Is(mch.GetOperatorError(), clientErr) {
-		t.Fatalf("operator error = %v, want the actionable client failure to survive the teardown", mch.GetOperatorError())
+		t.Fatalf("operator error = %v, want the actionable client failure to survive", mch.GetOperatorError())
 	}
 }
 
@@ -888,7 +842,7 @@ func TestChartErrorLatchSurvivesAReattachThatNeverResolves(t *testing.T) {
 	mch.ctxControllerHandlers[MesheryOperator] = stub
 	mch.ctxOperatorStatus = controllers.NotDeployed
 
-	mch.DeployUndeployedOperators(NewOperatorTracker(false), testContextID)
+	mch.DeployUndeployedOperators(NewOperatorTracker(false), K8sContext{ID: testContextID})
 
 	if stub.deploys != 0 {
 		t.Fatalf("Deploy was called %d times with an unresolved chart version still attached", stub.deploys)
