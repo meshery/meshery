@@ -582,15 +582,16 @@ func (h *Handler) DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request
 		return
 	}
 
-	db := provider.GetGenericPersister()
-	tx := db.Model(&model.KubernetesResource{}).Delete(&model.KubernetesResource{ID: resourceID})
-	if tx.Error != nil {
-		deleteErr := ErrFailToDelete(tx.Error, "meshsync resource")
+	// Delete the resource together with the rows that share its id (object
+	// meta, spec, status, labels and annotations), so none are orphaned.
+	deleted, err := models.DeleteMeshSyncResourceByID(provider.GetGenericPersister(), resourceID)
+	if err != nil {
+		deleteErr := ErrFailToDelete(err, "meshsync resource")
 		h.log.Error(deleteErr)
 		writeMeshkitError(rw, deleteErr, http.StatusInternalServerError)
 		return
 	}
-	if tx.RowsAffected == 0 {
+	if !deleted {
 		notFoundErr := models.ErrResultNotFound(gorm.ErrRecordNotFound)
 		h.log.Error(notFoundErr)
 		writeMeshkitError(rw, notFoundErr, http.StatusNotFound)
