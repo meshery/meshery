@@ -55,7 +55,7 @@ func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, t
 	}
 
 	if r.Log != nil {
-		r.Log.Debug(fmt.Sprintf("changing adapter status for %s on port %s to %s \n", adapterName, targetPort, targetStatus))
+		r.Log.Debugf("changing adapter status for %s on port %s to %s", adapterName, targetPort, targetStatus)
 	}
 
 	if r.Config == nil || r.Config.AdapterTracker == nil {

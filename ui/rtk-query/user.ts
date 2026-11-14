@@ -325,7 +325,7 @@ export const useGetUsersForOrgQuery = (queryArg, options) =>
     {
       orgId: queryArg?.orgId,
       page: queryArg?.page?.toString(),
-      pagesize: queryArg?.pagesize?.toString(),
+      pageSize: queryArg?.pagesize?.toString(),
       search: queryArg?.search,
       order: queryArg?.order,
       filter: queryArg?.filter,
