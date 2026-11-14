@@ -5,9 +5,9 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // TestWalletPatching verifies that wallet relationships patch the child component's
@@ -526,7 +526,7 @@ func TestBindingIdentification(t *testing.T) {
 			Allow: relationship.Selector{
 				From: []relationship.SelectorItem{
 					{
-						Kind:  strPtr("Role"),
+						Kind: strPtr("Role"),
 						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
 						Match: &relationship.MatchSelector{
 							From: &fromMatchFrom,
@@ -536,7 +536,7 @@ func TestBindingIdentification(t *testing.T) {
 				},
 				To: []relationship.SelectorItem{
 					{
-						Kind:  strPtr("ServiceAccount"),
+						Kind: strPtr("ServiceAccount"),
 						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
 						Match: &relationship.MatchSelector{
 							From: &toMatchFrom,
@@ -803,15 +803,15 @@ func TestInventoryNamespaceIdentification(t *testing.T) {
 			Allow: relationship.Selector{
 				From: []relationship.SelectorItem{
 					{
-						Kind:                                 strPtr("*"),
-						Model:                                &modelv1beta1.ModelReference{Name: "*"},
+						Kind:  strPtr("*"),
+						Model: &modelv1beta1.ModelReference{Name: "*"},
 						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{MutatedRef: &mutatedRef},
 					},
 				},
 				To: []relationship.SelectorItem{
 					{
-						Kind:                                 strPtr("Namespace"),
-						Model:                                &modelv1beta1.ModelReference{Name: "kubernetes"},
+						Kind:  strPtr("Namespace"),
+						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
 						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{MutatorRef: &mutatorRef},
 					},
 				},
