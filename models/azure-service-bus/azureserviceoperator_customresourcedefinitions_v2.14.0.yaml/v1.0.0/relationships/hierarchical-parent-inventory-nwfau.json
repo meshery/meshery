@@ -60,7 +60,7 @@
         "to": [
           {
             "id": null,
-            "kind": "NamespaceTopicsSubscription",
+            "kind": "NamespacesTopicsSubscription",
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
