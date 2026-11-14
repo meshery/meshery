@@ -160,10 +160,12 @@ func TestMeshOpsHandlerFailsGracefullyOnInvalidKubeConfig(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/api/system/adapter/operation", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	// Inject a context with an invalid K8sContext whose GenerateKubeConfig fails
+	// Inject an unmarshalable K8sContext so GenerateKubeConfig returns ErrMarshal
 	invalidCluster := models.K8sContext{
 		Name: "broken-cluster",
-		// Empty / invalid config so GenerateKubeConfig fails
+		Cluster: map[string]interface{}{
+			"unmarshalable": make(chan int),
+		},
 	}
 	ctx := context.WithValue(req.Context(), models.KubeClustersKey, []models.K8sContext{invalidCluster})
 	req = req.WithContext(ctx)
@@ -175,7 +177,8 @@ func TestMeshOpsHandlerFailsGracefullyOnInvalidKubeConfig(t *testing.T) {
 	if rec.Code != http.StatusBadRequest {
 		t.Errorf("expected HTTP %d on invalid kubeconfig, got %d", http.StatusBadRequest, rec.Code)
 	}
-	if rec.Body.Len() == 0 {
-		t.Error("expected non-empty error response body on invalid kubeconfig")
+	body := rec.Body.String()
+	if !strings.Contains(body, "broken-cluster") && !strings.Contains(body, "kube config") {
+		t.Errorf("expected error body to reference context or kube config error, got %q", body)
 	}
 }
