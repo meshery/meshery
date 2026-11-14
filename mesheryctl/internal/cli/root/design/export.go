@@ -104,10 +104,15 @@ mesheryctl design export [design-name | ID] --type [design-type] --output ./expo
 	},
 }
 
-// fetchPatternIDByName returns the ID of the design matching patternName, and
-// asks the user to choose when several designs match.
+// designNameSearchPageSize is the page size used when a design name is looked
+// up. The server's search matches substrings, so the lookup needs enough
+// results to see the design that carries the whole name.
+const designNameSearchPageSize = 10000
+
+// fetchPatternIDByName returns the ID of the design named patternName, and asks
+// the user to choose when several designs share the name.
 func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
-	patternUrl := fmt.Sprintf("%s/api/pattern?search=%s", baseUrl, url.QueryEscape(patternName))
+	patternUrl := fmt.Sprintf("%s/api/pattern?search=%s&pagesize=%d", baseUrl, url.QueryEscape(patternName), designNameSearchPageSize)
 	req, err := utils.NewRequest(http.MethodGet, patternUrl, nil)
 	if err != nil {
 		return "", err
@@ -131,18 +136,52 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 		return "", err
 	}
 
-	switch len(response.Patterns) {
+	exact, folded := patternsNamed(response.Patterns, patternName)
+	truncated := response.TotalCount > uint(len(response.Patterns))
+	matches := exact
+	if len(matches) == 0 {
+		// A case-insensitive match is only safe when the result set is
+		// complete; otherwise the exact match may be on a later page.
+		if truncated {
+			return "", errDesignNameLookupTruncated(patternName)
+		}
+		matches = folded
+	}
+
+	switch len(matches) {
 	case 0:
 		return "", ErrDesignNotFound(patternName)
 	case 1:
-		return utils.FormatUUID(response.Patterns[0].ID, ""), nil
+		return utils.FormatUUID(matches[0].ID, ""), nil
+	default:
+		selectedPattern, err := selectPatternPrompt(matches, baseUrl)
+		if err != nil {
+			return "", err
+		}
+		return utils.FormatUUID(selectedPattern.ID, ""), nil
 	}
+}
 
-	selectedPattern, err := selectPatternPrompt(response.Patterns, baseUrl)
-	if err != nil {
-		return "", err
+// errDesignNameLookupTruncated reports a name lookup whose result set was too
+// large to read in full, so the name cannot be resolved without guessing.
+func errDesignNameLookupTruncated(patternName string) error {
+	return utils.ErrInvalidArgument(fmt.Errorf("too many designs match %q to resolve the name; pass the design ID instead", patternName))
+}
+
+// patternsNamed splits the designs into those named exactly name and those that
+// differ only in case. The server's search is a case-insensitive substring
+// match, so a design whose name merely contains name is not a match: exporting
+// it would export a different design.
+func patternsNamed(patterns []models.MesheryPattern, name string) (exact, folded []models.MesheryPattern) {
+	for _, pattern := range patterns {
+		switch {
+		case pattern.Name == name:
+			exact = append(exact, pattern)
+		case strings.EqualFold(pattern.Name, name):
+			folded = append(folded, pattern)
+		}
 	}
-	return utils.FormatUUID(selectedPattern.ID, ""), nil
+	return exact, folded
 }
 
 func exportDesign(baseUrl, design, designType string) error {
