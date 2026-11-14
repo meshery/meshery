@@ -8,11 +8,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const productionScript = path.join(__dirname, 'audit-hex.js');
-const typescriptModuleRoot = path.resolve(
-  path.dirname(require.resolve('typescript')),
-  '..',
-  '..',
-);
+const typescriptModuleRoot = path.resolve(path.dirname(require.resolve('typescript')), '..', '..');
 
 function writeFile(root, relativePath, contents) {
   const file = path.join(root, relativePath);
@@ -38,9 +34,7 @@ function runAudit(fixture) {
     encoding: 'utf8',
     env: {
       ...process.env,
-      NODE_PATH: [typescriptModuleRoot, process.env.NODE_PATH]
-        .filter(Boolean)
-        .join(path.delimiter),
+      NODE_PATH: [typescriptModuleRoot, process.env.NODE_PATH].filter(Boolean).join(path.delimiter),
     },
   });
 
@@ -64,6 +58,8 @@ test('ignores hex-like text in comments but preserves actual literals', (t) => {
       'const templateInterpolation = `${ /* #112233 */ "#445566" }`;',
       'const slashLikeString = "https://example.com/path//segment#778899";',
       'const jsxComment = <div>{/* #987654 */}</div>;',
+      'const jsxTextWithSlashes = <div>// label <span style={{ color: "#abcdef" }} /></div>;',
+      'const regexWithSlashes = /[//]/; const regexColor = "#fedcba";',
       '',
     ].join('\n'),
   );
@@ -71,10 +67,10 @@ test('ignores hex-like text in comments but preserves actual literals', (t) => {
   const result = runAudit(fixture);
 
   assert.equal(result.files, 1);
-  assert.equal(result.hex, 6);
+  assert.equal(result.hex, 8);
   assert.equal(result.rgb, 0);
-  assert.equal(result.matches, 6);
-  assert.equal(result.offenders[0].hex, 6);
+  assert.equal(result.matches, 8);
+  assert.equal(result.offenders[0].hex, 8);
 });
 
 test('excludes test files and nested __tests__ directories', (t) => {

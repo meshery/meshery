@@ -101,56 +101,59 @@ function countMatches(src, pattern) {
 }
 
 function maskComments(src) {
-  const chars = src.split('');
-  const scanner = ts.createScanner(
-    ts.ScriptTarget.Latest,
-    false,
-    ts.LanguageVariant.JSX,
+  const sourceFile = ts.createSourceFile(
+    'audit-source.tsx',
     src,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
   );
-  const templateExpressionBraceDepths = [];
+  const chars = src.split('');
+  const jsxTextRanges = [];
+  const commentRanges = new Map();
 
-  while (true) {
-    let kind = scanner.scan();
-    if (kind === ts.SyntaxKind.EndOfFileToken) break;
+  function addCommentRanges(ranges) {
+    for (const range of ranges || []) {
+      commentRanges.set(`${range.pos}:${range.end}`, range);
+    }
+  }
 
-    if (kind === ts.SyntaxKind.TemplateHead) {
-      templateExpressionBraceDepths.push(0);
-    } else if (
-      templateExpressionBraceDepths.length > 0 &&
-      kind === ts.SyntaxKind.OpenBraceToken
-    ) {
-      templateExpressionBraceDepths[
-        templateExpressionBraceDepths.length - 1
-      ]++;
-    } else if (
-      templateExpressionBraceDepths.length > 0 &&
-      kind === ts.SyntaxKind.CloseBraceToken
-    ) {
-      const last = templateExpressionBraceDepths.length - 1;
+  function visit(node) {
+    if (ts.isJsxText(node)) {
+      jsxTextRanges.push({
+        start: node.getStart(sourceFile),
+        end: node.end,
+      });
+    }
 
-      if (templateExpressionBraceDepths[last] > 0) {
-        templateExpressionBraceDepths[last]--;
-      } else {
-        kind = scanner.reScanTemplateToken();
+    addCommentRanges(ts.getLeadingCommentRanges(src, node.pos));
+    addCommentRanges(ts.getTrailingCommentRanges(src, node.end));
 
-        if (kind === ts.SyntaxKind.TemplateTail) {
-          templateExpressionBraceDepths.pop();
-        }
+    if (ts.isJsxExpression(node)) {
+      const openBrace = node
+        .getChildren(sourceFile)
+        .find((child) => child.kind === ts.SyntaxKind.OpenBraceToken);
+
+      if (openBrace) {
+        addCommentRanges(ts.getTrailingCommentRanges(src, openBrace.end));
       }
     }
 
-    if (
-      kind === ts.SyntaxKind.SingleLineCommentTrivia ||
-      kind === ts.SyntaxKind.MultiLineCommentTrivia
-    ) {
-      const start = scanner.getTokenPos();
-      const end = scanner.getTextPos();
+    ts.forEachChild(node, visit);
+  }
 
-      for (let i = start; i < end; i++) {
-        if (chars[i] !== '\n' && chars[i] !== '\r') {
-          chars[i] = ' ';
-        }
+  visit(sourceFile);
+
+  for (const range of commentRanges.values()) {
+    const overlapsJsxText = jsxTextRanges.some(
+      ({ start, end }) => range.pos < end && range.end > start,
+    );
+
+    if (overlapsJsxText) continue;
+
+    for (let i = range.pos; i < range.end; i++) {
+      if (chars[i] !== '\n' && chars[i] !== '\r') {
+        chars[i] = ' ';
       }
     }
   }
