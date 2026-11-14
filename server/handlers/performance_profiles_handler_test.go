@@ -143,6 +143,55 @@ func TestDeletePerformanceProfileHandler_NotFoundIs404(t *testing.T) {
 	}
 }
 
+// A failure the remote provider answered with an HTTP status must reach the
+// client with that status, not a flattened 500. Only a failure that carries no
+// status (unreachable provider, local error) falls back to 500.
+func TestDeletePerformanceProfileHandler_PreservesProviderStatus(t *testing.T) {
+	cases := []struct {
+		name     string
+		err      error
+		wantCode int
+	}{
+		{"remote provider 403", models.ErrDelete(fmt.Errorf("forbidden"), "Perf Profile :id", http.StatusForbidden), http.StatusForbidden},
+		{"remote provider 409", models.ErrDelete(fmt.Errorf("conflict"), "Perf Profile :id", http.StatusConflict), http.StatusConflict},
+		{"remote provider 500", models.ErrDelete(fmt.Errorf("boom"), "Perf Profile :id", http.StatusInternalServerError), http.StatusInternalServerError},
+		{"provider unreachable, no status", models.ErrUnreachableRemoteProvider(fmt.Errorf("dial tcp: connection refused")), http.StatusInternalServerError},
+		{"plain error, no status", fmt.Errorf("database is locked"), http.StatusInternalServerError},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			base := &models.DefaultLocalProvider{}
+			base.Initialize()
+			provider := &deletePerfProfileErrProvider{DefaultLocalProvider: base, err: tc.err}
+
+			id := "abcdefab-abcd-abcd-abcd-abcdefabcdef"
+			req := httptest.NewRequest(http.MethodDelete, "/api/user/performance/profiles/"+id, nil)
+			req = mux.SetURLVars(req, map[string]string{"performanceProfileId": id})
+			rec := httptest.NewRecorder()
+
+			h.DeletePerformanceProfileHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != tc.wantCode {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, tc.wantCode, rec.Body.String())
+			}
+
+			// Whatever the status, the body is the ErrFailToDelete MeshKit error.
+			var body struct {
+				Error string `json:"error"`
+				Code  string `json:"code"`
+			}
+			if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+				t.Fatalf("response body is not a JSON error: %v (body=%q)", err, rec.Body.String())
+			}
+			if want := mkerrors.GetCode(ErrFailToDelete(tc.err, "performance profile")); body.Code != want {
+				t.Errorf("error code = %q, want %q", body.Code, want)
+			}
+		})
+	}
+}
+
 func TestGetPerformanceProfileHandler_MissingID_ReturnsBadRequest(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 
