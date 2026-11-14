@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -181,29 +182,64 @@ func TestUserHandlers_NilGuards(t *testing.T) {
 		if rec.Code != http.StatusInternalServerError {
 			t.Errorf("GetUserByIDHandler status = %d, want 500; body: %s", rec.Code, rec.Body.String())
 		}
+		if !strings.Contains(rec.Body.String(), ErrNilProviderCode) {
+			t.Errorf("expected error body to contain %s, got: %s", ErrNilProviderCode, rec.Body.String())
+		}
 	}
 
-	// GetUsers nil provider
+	// GetUsers nil provider (with token in context to isolate nil-provider guard from ErrFetchToken)
 	{
 		req := httptest.NewRequest(http.MethodGet, "/api/user", nil)
+		ctx := context.WithValue(req.Context(), models.TokenCtxKey, "test-token")
+		req = req.WithContext(ctx)
 		rec := httptest.NewRecorder()
 		h.GetUsers(rec, req, nil, nil, nil)
 		if rec.Code != http.StatusInternalServerError {
 			t.Errorf("GetUsers status = %d, want 500; body: %s", rec.Code, rec.Body.String())
 		}
-	}
-
-	// UserPrefsHandler nil provider
-	{
-		req := httptest.NewRequest(http.MethodGet, "/api/user/prefs", nil)
-		rec := httptest.NewRecorder()
-		h.UserPrefsHandler(rec, req, nil, nil, nil)
-		if rec.Code != http.StatusInternalServerError {
-			t.Errorf("UserPrefsHandler status = %d, want 500; body: %s", rec.Code, rec.Body.String())
+		if !strings.Contains(rec.Body.String(), ErrNilProviderCode) {
+			t.Errorf("expected error body to contain %s, got: %s", ErrNilProviderCode, rec.Body.String())
 		}
 	}
 
-	// UserPrefsHandler POST with nil user
+	// UserPrefsHandler GET with nil provider succeeds (GET only encodes prefObj and does not require provider)
+	{
+		req := httptest.NewRequest(http.MethodGet, "/api/user/prefs", nil)
+		rec := httptest.NewRecorder()
+		h.UserPrefsHandler(rec, req, &models.Preference{}, nil, nil)
+		if rec.Code != http.StatusOK {
+			t.Errorf("UserPrefsHandler GET with nil provider status = %d, want 200; body: %s", rec.Code, rec.Body.String())
+		}
+	}
+
+	// UserPrefsHandler POST with nil provider returns 500
+	{
+		req := httptest.NewRequest(http.MethodPost, "/api/user/prefs", strings.NewReader(`{}`))
+		rec := httptest.NewRecorder()
+		h.UserPrefsHandler(rec, req, nil, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("UserPrefsHandler POST nil provider status = %d, want 500; body: %s", rec.Code, rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), ErrNilProviderCode) {
+			t.Errorf("expected error body to contain %s, got: %s", ErrNilProviderCode, rec.Body.String())
+		}
+	}
+
+	// UserPrefsHandler POST with null JSON body returns 400
+	{
+		mockProv := &models.DefaultLocalProvider{}
+		req := httptest.NewRequest(http.MethodPost, "/api/user/prefs", strings.NewReader("null"))
+		rec := httptest.NewRecorder()
+		h.UserPrefsHandler(rec, req, nil, nil, mockProv)
+		if rec.Code != http.StatusBadRequest {
+			t.Errorf("UserPrefsHandler POST null body status = %d, want 400; body: %s", rec.Code, rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), ErrRequestBodyCode) {
+			t.Errorf("expected error body to contain %s, got: %s", ErrRequestBodyCode, rec.Body.String())
+		}
+	}
+
+	// UserPrefsHandler POST with nil user returns 400
 	{
 		mockProv := &models.DefaultLocalProvider{}
 		req := httptest.NewRequest(http.MethodPost, "/api/user/prefs", strings.NewReader(`{}`))
@@ -222,6 +258,9 @@ func TestUserHandlers_NilGuards(t *testing.T) {
 		if rec.Code != http.StatusInternalServerError {
 			t.Errorf("ShareDesignHandler status = %d, want 500; body: %s", rec.Code, rec.Body.String())
 		}
+		if !strings.Contains(rec.Body.String(), ErrNilProviderCode) {
+			t.Errorf("expected error body to contain %s, got: %s", ErrNilProviderCode, rec.Body.String())
+		}
 	}
 
 	// ShareFilterHandler nil provider
@@ -231,6 +270,9 @@ func TestUserHandlers_NilGuards(t *testing.T) {
 		h.ShareFilterHandler(rec, req, nil, nil, nil)
 		if rec.Code != http.StatusInternalServerError {
 			t.Errorf("ShareFilterHandler status = %d, want 500; body: %s", rec.Code, rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), ErrNilProviderCode) {
+			t.Errorf("expected error body to contain %s, got: %s", ErrNilProviderCode, rec.Body.String())
 		}
 	}
 }

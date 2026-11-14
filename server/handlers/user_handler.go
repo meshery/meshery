@@ -96,12 +96,6 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 
 // UserPrefsHandler updates anonymous stats for user or for persisting load test preferences
 func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if provider == nil {
-		h.log.Error(ErrNilProvider())
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
-		return
-	}
-
 	if req.Method == http.MethodGet {
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
@@ -109,6 +103,12 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 			h.log.Error(models.ErrEncoding(err, obj))
 			writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		}
+		return
+	}
+
+	if provider == nil {
+		h.log.Error(ErrNilProvider())
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
 		return
 	}
 
@@ -120,6 +120,13 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 	if err := json.NewDecoder(req.Body).Decode(&prefObj); err != nil {
 		h.log.Error(ErrDecoding(err, "user preferences"))
 		writeMeshkitError(w, ErrDecoding(err, "user preferences"), http.StatusInternalServerError)
+		return
+	}
+
+	if prefObj == nil {
+		err := fmt.Errorf("request body cannot be empty")
+		h.log.Error(ErrRequestBody(err))
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
