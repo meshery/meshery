@@ -78,7 +78,13 @@
       </div>
 
       <main class="main-container{{ block "main_class" . }}{{ end }}" role="main">
-        {{ partial "breadcrumbs.html" . }}
+        {{ if not .IsHome }}
+        <nav aria-label="breadcrumb">
+          <ol id="breadcrumbs" class="breadcrumb spb-1">
+            {{ partial "breadcrumbs.html" . }}
+          </ol>
+        </nav>
+        {{ end }}
         <div class="td-content{{ block "td_content_class" . }}{{ end }}">
           {{ if ne (.Params.display_title | default true) false }}
             <h1>{{ .Title }}</h1>

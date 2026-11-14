@@ -134,12 +134,15 @@ ol {
     align-items: center;
     padding: 0;
     margin: 0;
-    gap: 0.25rem;
   }
 
   & #breadcrumbs {
     font-size: .9rem;
     line-height: 1.15rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
 
     & .breadcrumb-item {
       display: inline-flex;
@@ -150,10 +153,10 @@ ol {
       & + .breadcrumb-item::before {
         content: "";
         display: inline-block;
-        margin: 0 0.35rem;
+        margin: 0 .35rem;
         transform: rotate(15deg);
         border-right: 1.5px solid var(--color-grey-dark);
-        height: 0.75rem;
+        height: .75rem;
       }
 
       & a {
@@ -171,8 +174,7 @@ ol {
         }
       }
 
-      &.active,
-      & .breadcrumb-current {
+      &.active {
         color: var(--color-secondary-dark);
         font-weight: 500;
       }
