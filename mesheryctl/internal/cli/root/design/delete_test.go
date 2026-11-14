@@ -1,12 +1,17 @@
 package design
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 const nonExistentID = "a12b3c4d-5e6f-4890-abcd-ef1234567890"
@@ -197,8 +202,110 @@ func TestDeleteCmd(t *testing.T) {
 			IsOutputGolden: false,
 			ExpectedError:  utils.ErrAmbiguousID("a12", []string{"a12b3c4d-5e6f-4890-abcd-ef1234567890", "a12f9e8d-7c6b-4a59-8d4c-3b2a19087654"}),
 		},
+		{
+			Name:             "given generic remote URL with -f flag when design delete then design is deleted",
+			Args:             []string{"delete", "-f", "https://example.com/designs/sample.yaml"},
+			ExpectedResponse: "delete.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          "https://example.com/designs/sample.yaml",
+					Response:     "sampleDesign.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
+		{
+			Name:             "given generic remote URL as positional argument when design delete then design is deleted",
+			Args:             []string{"delete", "https://example.com/designs/sample.yaml"},
+			ExpectedResponse: "delete.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          "https://example.com/designs/sample.yaml",
+					Response:     "sampleDesign.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
 	}
 
 	// Run tests
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
+
+// TestDeleteWithGenericURL verifies that mesheryctl design delete -f <generic-url>
+// downloads the design via fetchDesignFile and sends the undeploy payload to Meshery server.
+func TestDeleteWithGenericURL(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	utils.TokenFlag = utils.GetToken(t)
+
+	const genericURL = "https://example.com/designs/sample.yaml"
+	const expectedContent = "name: sampleDesign\nservices:\n  app:\n    type: Application\n"
+
+	tests := []struct {
+		name string
+		args []string
+	}{
+		{
+			name: "delete with -f flag",
+			args: []string{"delete", "-f", genericURL},
+		},
+		{
+			name: "delete with positional URL",
+			args: []string{"delete", genericURL},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			defer resetVariables()
+			defer utils.ResetCommandFlags(DesignCmd, t)
+
+			var getCalled, deleteCalled bool
+			var undeployPayload struct {
+				PatternFile string `json:"patternFile"`
+			}
+
+			httpmock.Reset()
+			httpmock.RegisterResponder("GET", genericURL, func(req *http.Request) (*http.Response, error) {
+				getCalled = true
+				return httpmock.NewStringResponse(http.StatusOK, expectedContent), nil
+			})
+			httpmock.RegisterResponder("DELETE", testContext.BaseURL+"/api/pattern/deploy",
+				func(req *http.Request) (*http.Response, error) {
+					deleteCalled = true
+					if req.Body != nil {
+						defer req.Body.Close()
+						bodyBytes, _ := io.ReadAll(req.Body)
+						_ = json.Unmarshal(bodyBytes, &undeployPayload)
+					}
+					return httpmock.NewStringResponse(http.StatusOK, `{}`), nil
+				},
+			)
+
+			DesignCmd.SetArgs(tt.args)
+			err := DesignCmd.Execute()
+			assert.NoError(t, err)
+			assert.True(t, getCalled, "expected GET request to download generic URL via fetchDesignFile")
+			assert.True(t, deleteCalled, "expected DELETE request to /api/pattern/deploy")
+			assert.Equal(t, expectedContent, undeployPayload.PatternFile)
+		})
+	}
 }
