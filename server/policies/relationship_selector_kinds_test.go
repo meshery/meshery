@@ -78,13 +78,9 @@ func seededComponentKinds(t *testing.T, seeded []seededModelDefDir) map[string]m
 	return kinds
 }
 
-// resolveSelectorModels returns the seeded models a selector's model.name
-// refers to: the model of that exact name when one exists, otherwise every
-// model matchName accepts, as isRelationshipFeasible would.
+// resolveSelectorModels returns every seeded model whose name matchName
+// accepts for a selector's model.name, as isRelationshipFeasible does.
 func resolveSelectorModels(name string, kinds map[string]map[string]bool) []string {
-	if _, exact := kinds[name]; exact {
-		return []string{name}
-	}
 	resolved := []string{}
 	for model := range kinds {
 		if matchName(model, name) {
@@ -131,6 +127,9 @@ func TestRelationshipSelectorKindsExistInTheirModel(t *testing.T) {
 				if len(models) == 0 {
 					continue
 				}
+				// matchName is an unanchored regex here, as at runtime, so this
+				// proves the kind matches some component kind of the model
+				// (Api would also match ApiMapping), not the intended one.
 				matched := false
 				for _, model := range models {
 					for componentKind := range kinds[model] {
@@ -146,7 +145,13 @@ func TestRelationshipSelectorKindsExistInTheirModel(t *testing.T) {
 				if matched {
 					continue
 				}
-				key := models[0] + "/" + kind
+				// Pins are keyed by the model the selector names when it is
+				// registered, otherwise by the first model it matches.
+				keyModel := models[0]
+				if _, exact := kinds[name]; exact {
+					keyModel = name
+				}
+				key := keyModel + "/" + kind
 				if knownUnmodelledSelectorKinds[key] {
 					continue
 				}
