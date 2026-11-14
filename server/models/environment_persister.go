@@ -180,7 +180,13 @@ func (ep *EnvironmentPersister) GetEnvironment(id core.Uuid) (*environment.Envir
 	environment := environment.Environment{}
 	query := ep.DB.Where("id = ?", id)
 	err := query.First(&environment).Error
-	return &environment, err
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
+		return nil, ErrDBRead(err)
+	}
+	return &environment, nil
 }
 
 // GetEnvironmentByID returns a single environment by ID

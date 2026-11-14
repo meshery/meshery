@@ -424,6 +424,7 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 		Name:           environmentPayload.Name,
 		OrganizationID: orgId,
 		Owner:          &uuid.Nil, // "Meshery"
+		Purpose:        environment.EnvironmentPurposeUser,
 		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.SaveEnvironment(environment)
@@ -434,17 +435,22 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 	if err != nil {
 		return nil, ErrInvalidUUID(err)
 	}
+	existingEnv, err := l.EnvironmentPersister.GetEnvironment(core.Uuid(id))
+	if err != nil {
+		return nil, err
+	}
 	orgId := core.Uuid(environmentPayload.OrgID)
-	environment := &environment.Environment{
+	env := &environment.Environment{
 		ID:             id,
-		CreatedAt:      time.Now(),
+		CreatedAt:      existingEnv.CreatedAt,
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
 		OrganizationID: orgId,
-		Owner:          &uuid.Nil, // "Meshery"
+		Owner:          existingEnv.Owner,
+		Purpose:        existingEnv.Purpose,
 		UpdatedAt:      time.Now(),
 	}
-	return l.EnvironmentPersister.UpdateEnvironmentByID(environment)
+	return l.EnvironmentPersister.UpdateEnvironmentByID(env)
 }
 
 func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
