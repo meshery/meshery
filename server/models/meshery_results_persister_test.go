@@ -165,3 +165,30 @@ func TestMesheryResultsPersister_WriteResult_InvalidJSON(t *testing.T) {
 	err := mrp.WriteResult(mustUUID(t), []byte("invalid-json"))
 	assert.Error(t, err)
 }
+
+func TestMesheryResultsPersister_StringFieldPreservesType(t *testing.T) {
+	db := newMigratedDB(t)
+	mrp := &MesheryResultsPersister{DB: db}
+
+	id := mustUUID(t)
+	result := &MesheryResult{
+		ID:                id,
+		Name:              "string-type-test",
+		Result:            map[string]interface{}{"ok": true},
+		ServerBoardConfig: "null", // string "null", must not become nil or map
+		ServerMetrics:     `{"json":"string"}`,
+	}
+
+	data, err := json.Marshal(result)
+	require.NoError(t, err)
+
+	err = mrp.WriteResult(id, data)
+	require.NoError(t, err)
+
+	retrieved, err := mrp.GetResult(id, nil)
+	require.NoError(t, err)
+	require.NotNil(t, retrieved)
+
+	assert.Equal(t, "null", retrieved.ServerBoardConfig)
+	assert.Equal(t, `{"json":"string"}`, retrieved.ServerMetrics)
+}

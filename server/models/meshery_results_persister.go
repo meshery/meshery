@@ -125,7 +125,13 @@ func (mrp *MesheryResultsPersister) WriteResult(key core.Uuid, result []byte) er
 
 	t := time.Now()
 	data.TestStartTime = &t
-	return mrp.DB.Table("meshery_results").Save(convertMesheryResultToLocalRepresentation(&data)).Error
+
+	localRep, err := convertMesheryResultToLocalRepresentation(&data)
+	if err != nil {
+		return err
+	}
+
+	return mrp.DB.Table("meshery_results").Save(localRep).Error
 }
 
 func marshalMesheryResultsPage(mrp *MesheryResultPage) []byte {
@@ -145,18 +151,18 @@ func convertLocalRepresentationSliceToMesheryResultSlice(local []*localMesheryRe
 	return
 }
 
-func marshalJSONField(v interface{}) []byte {
+func marshalJSONField(v interface{}) ([]byte, error) {
 	if v == nil {
-		return nil
+		return nil, nil
 	}
 	if b, ok := v.([]byte); ok {
-		return b
+		return b, nil
 	}
-	if s, ok := v.(string); ok && json.Valid([]byte(s)) {
-		return []byte(s)
+	b, err := json.Marshal(v)
+	if err != nil {
+		return nil, err
 	}
-	b, _ := json.Marshal(v)
-	return b
+	return b, nil
 }
 
 func unmarshalJSONField(b []byte) interface{} {
@@ -194,8 +200,21 @@ func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepres
 	return res, nil
 }
 
-func convertMesheryResultToLocalRepresentation(mr *MesheryResult) *localMesheryResultDBRepresentation {
-	byt, _ := json.Marshal(mr.Result)
+func convertMesheryResultToLocalRepresentation(mr *MesheryResult) (*localMesheryResultDBRepresentation, error) {
+	byt, err := json.Marshal(mr.Result)
+	if err != nil {
+		return nil, err
+	}
+
+	serverMetricsBytes, err := marshalJSONField(mr.ServerMetrics)
+	if err != nil {
+		return nil, err
+	}
+
+	serverBoardConfigBytes, err := marshalJSONField(mr.ServerBoardConfig)
+	if err != nil {
+		return nil, err
+	}
 
 	res := &localMesheryResultDBRepresentation{
 		ID:                 mr.ID,
@@ -203,10 +222,10 @@ func convertMesheryResultToLocalRepresentation(mr *MesheryResult) *localMesheryR
 		Mesh:               mr.Mesh,
 		PerformanceProfile: mr.PerformanceProfile,
 		Result:             byt,
-		ServerMetrics:      marshalJSONField(mr.ServerMetrics),
-		ServerBoardConfig:  marshalJSONField(mr.ServerBoardConfig),
+		ServerMetrics:      serverMetricsBytes,
+		ServerBoardConfig:  serverBoardConfigBytes,
 		TestStartTime:      mr.TestStartTime,
 	}
 
-	return res
+	return res, nil
 }

@@ -35,7 +35,7 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 		return nil, err
 	}
 	if bdr == nil {
-		return nil, fmt.Errorf("result not found for id: %s", resultID)
+		return nil, models.ErrResultNotFound(fmt.Errorf("result not found for id: %s", resultID))
 	}
 
 	startTime := fmt.Sprintf("%v", bdr.TestStartTime)
