@@ -78,13 +78,7 @@
       </div>
 
       <main class="main-container{{ block "main_class" . }}{{ end }}" role="main">
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb spb-1">
-            <li class="breadcrumb-item active" aria-current="page">
-              {{ partial "breadcrumbs.html" . }}
-            </li>
-          </ol>
-        </nav>
+        {{ partial "breadcrumbs.html" . }}
         <div class="td-content{{ block "td_content_class" . }}{{ end }}">
           {{ if ne (.Params.display_title | default true) false }}
             <h1>{{ .Title }}</h1>

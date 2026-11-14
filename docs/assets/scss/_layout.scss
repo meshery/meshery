@@ -128,16 +128,50 @@ ol {
   }
   & .breadcrumb {
     list-style: none;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    gap: 0.25rem;
   }
 
   & #breadcrumbs {
     font-size: .9rem;
     line-height: 1.15rem;
-    & a {
+
+    & .breadcrumb-item {
+      display: inline-flex;
+      align-items: center;
       color: var(--color-grey-dark);
-      transition: all 0.3s;
-      &:hover {
+      margin: 0;
+
+      & + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 0.35rem;
+        color: var(--color-grey-dark);
+      }
+
+      & a {
+        color: var(--color-grey-dark);
+        transition: all 0.3s;
+
+        &:hover {
+          color: var(--color-secondary-dark);
+        }
+
+        &:focus-visible {
+          outline: 2px solid var(--color-secondary-dark);
+          outline-offset: 2px;
+          border-radius: 2px;
+        }
+      }
+
+      &.active,
+      & .breadcrumb-current {
         color: var(--color-secondary-dark);
+        font-weight: 500;
       }
     }
   }
