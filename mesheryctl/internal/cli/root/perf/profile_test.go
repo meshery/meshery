@@ -11,6 +11,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
+	"github.com/stretchr/testify/assert"
 )
 
 var update = flag.Bool("update", false, "update golden files")
@@ -126,7 +127,7 @@ func TestProfileCmd(t *testing.T) {
 				var response *perfprofile.PerformanceProfilePage
 				innerErr := json.Unmarshal([]byte(`{"pageSize": "25"}`), &response)
 
-				return utils.ErrLoadConfig(ErrFailUnmarshal(innerErr))
+				return ErrFailUnmarshal(innerErr)
 			}(),
 		},
 		{
@@ -142,7 +143,7 @@ func TestProfileCmd(t *testing.T) {
 				cmdUsed = "profile"
 
 				body := ""
-				return utils.ErrLoadConfig(utils.ErrFailReqStatus(400, body))
+				return utils.ErrFailReqStatus(400, body)
 			}(),
 		},
 		{
@@ -155,7 +156,7 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedError: func() error {
 				tokenPath := testToken + "invalid-path"
 				innerErr := fmt.Errorf("%s does not exist", tokenPath)
-				return utils.ErrLoadConfig(utils.ErrAttachAuthToken(innerErr))
+				return utils.ErrAttachAuthToken(innerErr)
 			}(),
 		},
 	}
@@ -165,4 +166,64 @@ func TestProfileCmd(t *testing.T) {
 
 	// Run tests in logger format
 	utils.RunMesheryctlMultiURLTests(t, update, PerfCmd, loggerTests, currDir, "perf", resetVariables)
+}
+
+// TestFormatAdditionalOptions verifies that formatAdditionalOptions handles JSON strings,
+// non-string maps, plain text, and nil values safely without panicking.
+func TestFormatAdditionalOptions(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    interface{}
+		expected string
+		hasErr   bool
+	}{
+		{
+			name:     "valid JSON string",
+			input:    `{"duration":"30s"}`,
+			expected: "{\n  \"duration\": \"30s\"\n}",
+			hasErr:   false,
+		},
+		{
+			name:     "map object prevents panic",
+			input:    map[string]interface{}{"duration": "30s"},
+			expected: "{\n  \"duration\": \"30s\"\n}",
+			hasErr:   false,
+		},
+		{
+			name:     "plain string",
+			input:    "threads=2",
+			expected: "threads=2",
+			hasErr:   false,
+		},
+		{
+			name:     "nil input",
+			input:    nil,
+			expected: "",
+			hasErr:   false,
+		},
+		{
+			name:     "empty string",
+			input:    "",
+			expected: "",
+			hasErr:   false,
+		},
+		{
+			name:     "unmarshalable value returns error",
+			input:    make(chan int),
+			expected: "",
+			hasErr:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := formatAdditionalOptions(tt.input)
+			if tt.hasErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.expected, result)
+			}
+		})
+	}
 }
