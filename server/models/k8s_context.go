@@ -652,9 +652,10 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	}
 }
 
-// FlushMeshSyncResourcesForCluster removes every MeshSync-discovered Kubernetes
-// resource that belongs to the given cluster (Kubernetes server) ID, together with
-// its child spec, status, object-meta, and key-value rows.
+// FlushMeshSyncResourcesForCluster permanently removes every MeshSync-discovered
+// Kubernetes resource that belongs to the given cluster (Kubernetes server) ID,
+// including tombstoned resources, together with its child spec, status,
+// object-meta, and key-value rows.
 //
 // Every child row shares its `id` primary key with the parent KubernetesResource.
 // The spec, status, and key-value children carry no cluster_id column of their own
@@ -680,7 +681,8 @@ func FlushMeshSyncResourcesForCluster(db *database.Handler, clusterID string) er
 	return db.Transaction(func(tx *gorm.DB) error {
 		// The IDs of the resources being removed; reused as the scoping subquery for
 		// every child delete since each child row shares the parent resource's id.
-		resourceIDs := tx.Model(&meshsyncmodel.KubernetesResource{}).
+		// Include tombstones so a hard flush cannot leave their children orphaned.
+		resourceIDs := tx.Unscoped().Model(&meshsyncmodel.KubernetesResource{}).
 			Select("id").
 			Where("cluster_id = ?", clusterID)
 
@@ -699,7 +701,7 @@ func FlushMeshSyncResourcesForCluster(db *database.Handler, clusterID string) er
 		}
 
 		// Finally remove the parent resources for the cluster.
-		return tx.Where("cluster_id = ?", clusterID).Delete(&meshsyncmodel.KubernetesResource{}).Error
+		return tx.Unscoped().Where("cluster_id = ?", clusterID).Delete(&meshsyncmodel.KubernetesResource{}).Error
 	})
 }
 

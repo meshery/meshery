@@ -166,10 +166,15 @@ func TestFlushMeshSyncResourcesForCluster(t *testing.T) {
 		flushedCluster = "cluster-to-flush"
 		keptCluster    = "cluster-to-keep"
 		flushedID      = "res-flushed"
+		tombstonedID   = "res-already-tombstoned"
 		keptID         = "res-kept"
 	)
 	seedMeshSyncResource(t, db, flushedID, flushedCluster)
+	seedMeshSyncResource(t, db, tombstonedID, flushedCluster)
 	seedMeshSyncResource(t, db, keptID, keptCluster)
+	if err := db.Delete(&meshsyncmodel.KubernetesResource{ID: tombstonedID}).Error; err != nil {
+		t.Fatalf("failed to tombstone resource before flush: %v", err)
+	}
 
 	if err := FlushMeshSyncResourcesForCluster(db, flushedCluster); err != nil {
 		t.Fatalf("FlushMeshSyncResourcesForCluster returned error: %v", err)
@@ -192,6 +197,20 @@ func TestFlushMeshSyncResourcesForCluster(t *testing.T) {
 	assertCount(&meshsyncmodel.KubernetesResourceSpec{}, "id = ?", flushedID, 0, "spec (flushed cluster)")
 	assertCount(&meshsyncmodel.KubernetesResourceStatus{}, "id = ?", flushedID, 0, "status (flushed cluster)")
 	assertCount(&meshsyncmodel.KubernetesKeyValue{}, "id = ?", flushedID, 0, "key value (flushed cluster)")
+	assertCount(&meshsyncmodel.KubernetesResourceObjectMeta{}, "id = ?", tombstonedID, 0, "object meta (previously tombstoned resource)")
+	assertCount(&meshsyncmodel.KubernetesResourceSpec{}, "id = ?", tombstonedID, 0, "spec (previously tombstoned resource)")
+	assertCount(&meshsyncmodel.KubernetesResourceStatus{}, "id = ?", tombstonedID, 0, "status (previously tombstoned resource)")
+	assertCount(&meshsyncmodel.KubernetesKeyValue{}, "id = ?", tombstonedID, 0, "key value (previously tombstoned resource)")
+
+	var unscopedParentCount int64
+	if err := db.Unscoped().Model(&meshsyncmodel.KubernetesResource{}).
+		Where("cluster_id = ?", flushedCluster).
+		Count(&unscopedParentCount).Error; err != nil {
+		t.Fatalf("counting unscoped resources for flushed cluster: %v", err)
+	}
+	if unscopedParentCount != 0 {
+		t.Errorf("resources (flushed cluster, unscoped): got %d rows, want 0", unscopedParentCount)
+	}
 
 	// The other cluster's parent and child rows must be untouched.
 	assertCount(&meshsyncmodel.KubernetesResource{}, "cluster_id = ?", keptCluster, 1, "resources (kept cluster)")

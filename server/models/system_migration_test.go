@@ -8,6 +8,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/v1beta3/environment"
 )
 
@@ -87,6 +88,26 @@ func TestAutoMigrateSystemTablesSurvivesConnectionsQuery(t *testing.T) {
 	}
 	if page.TotalCount != 1 {
 		t.Fatalf("expected the seeded connection on the page, got TotalCount=%d", page.TotalCount)
+	}
+}
+
+// TestAutoMigrateSystemTablesAddsMeshsyncSoftDelete verifies that the shared
+// system migration path creates both pieces required by GORM soft deletion.
+func TestAutoMigrateSystemTablesAddsMeshsyncSoftDelete(t *testing.T) {
+	db, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
+	if err != nil {
+		t.Fatalf("open database: %v", err)
+	}
+
+	if err := AutoMigrateSystemTables(&db); err != nil {
+		t.Fatalf("AutoMigrateSystemTables: %v", err)
+	}
+
+	if !db.Migrator().HasColumn(&meshsyncmodel.KubernetesResource{}, "DeletedAt") {
+		t.Fatal("AutoMigrateSystemTables did not create kubernetes_resources.deleted_at")
+	}
+	if !db.Migrator().HasIndex(&meshsyncmodel.KubernetesResource{}, "DeletedAt") {
+		t.Fatal("AutoMigrateSystemTables did not index kubernetes_resources.deleted_at")
 	}
 }
 
