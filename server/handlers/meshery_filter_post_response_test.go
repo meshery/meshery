@@ -40,6 +40,8 @@ func postFilter(t *testing.T, h *Handler, provider models.Provider, body models.
 	payload, err := json.Marshal(body)
 	require.NoError(t, err)
 	req := httptest.NewRequest(http.MethodPost, "/api/filter", bytes.NewReader(payload))
+	// The remote provider reads its token from this cookie; the built-in one ignores it.
+	req.AddCookie(&http.Cookie{Name: models.TokenCookieName, Value: "test-token"})
 	rec := httptest.NewRecorder()
 
 	h.FilterFileRequestHandler(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
@@ -106,4 +108,69 @@ func TestFormatFilterOutputKeepsEmptyListForNull(t *testing.T) {
 	h.formatFilterOutput(rec, []byte("null"), "", &meshes.EventsResponse{}, events.NewEvent())
 
 	assert.JSONEq(t, "[]", rec.Body.String())
+}
+
+// TestFilterPOSTResponseCarriesURLImportedFilter pins the body of an import
+// from a URL: it must carry the imported filter as stored.
+func TestFilterPOSTResponseCarriesURLImportedFilter(t *testing.T) {
+	h, provider, db := newFilterPOSTFixture(t)
+	provider.Log = h.log
+	source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("name: from-url\n"))
+	}))
+	t.Cleanup(source.Close)
+
+	rec := postFilter(t, h, provider, models.MesheryFilterRequestBody{Save: true, URL: source.URL + "/filter.yaml"})
+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+
+	var imported []models.MesheryFilter
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &imported))
+	require.Len(t, imported, 1, "the response must carry the imported filter, got %s", rec.Body.String())
+	assert.Equal(t, "from-url", imported[0].Name)
+	require.NotNil(t, imported[0].ID)
+
+	var stored models.MesheryFilter
+	require.NoError(t, db.Where("id = ?", *imported[0].ID).First(&stored).Error,
+		"the returned id must be the stored row's id")
+}
+
+// TestFilterPOSTResponseCarriesRemoteProviderFilters pins the save path with
+// the remote provider: the body carries the filters Cloud answered with,
+// re-encoded through MesheryFilter, so fields outside that model are dropped.
+func TestFilterPOSTResponseCarriesRemoteProviderFilters(t *testing.T) {
+	h, _, _ := newFilterPOSTFixture(t)
+	savedID := uuid.Must(uuid.NewV4()).String()
+	var gotMethod, gotPath, gotAuth string
+	cloud := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotMethod, gotPath, gotAuth = r.Method, r.URL.Path, r.Header.Get("Authorization")
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`[{"id":"` + savedID + `","name":"rate-limit","visibility":"private","internalNote":"cloud-only"}]`))
+	}))
+	t.Cleanup(cloud.Close)
+
+	remote := &models.RemoteProvider{
+		ProviderProperties: models.ProviderProperties{
+			ProviderType: models.RemoteProviderType,
+			Capabilities: models.Capabilities{{Feature: models.PersistMesheryFilters, Endpoint: "/api/content/filters"}},
+		},
+		RemoteProviderURL: cloud.URL,
+		Log:               h.log,
+	}
+
+	rec := postFilter(t, h, remote, models.MesheryFilterRequestBody{
+		Save:       true,
+		FilterData: &models.MesheryFilterPayload{Name: "rate-limit", FilterFile: []byte("wasm-bytes")},
+	})
+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+	assert.Equal(t, http.MethodPost, gotMethod)
+	assert.Equal(t, "/api/content/filters", gotPath)
+	assert.Equal(t, "bearer test-token", gotAuth)
+
+	var saved []models.MesheryFilter
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &saved))
+	require.Len(t, saved, 1, "the response must carry the filter Cloud saved, got %s", rec.Body.String())
+	require.NotNil(t, saved[0].ID)
+	assert.Equal(t, savedID, saved[0].ID.String())
+	assert.Equal(t, "rate-limit", saved[0].Name)
+	assert.NotContains(t, rec.Body.String(), "internalNote", "fields outside MesheryFilter must not be echoed")
 }
