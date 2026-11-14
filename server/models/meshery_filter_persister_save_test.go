@@ -265,6 +265,40 @@ func TestSaveMesheryFilterDeletedDuringSaveIsError(t *testing.T) {
 	}
 }
 
+// A clone is a new private filter: it takes the source's file and location,
+// but not its creation time or catalog data.
+func TestCloneMesheryFilterCreatesFreshFilter(t *testing.T) {
+	db, mfp := newFilterPersisterTestDB(t)
+	id := seedPublishedFilter(t, db)
+
+	if _, err := mfp.CloneMesheryFilter(id.String(), &MesheryCloneFilterRequestBody{Name: "copy"}); err != nil {
+		t.Fatalf("clone: %v", err)
+	}
+
+	if n := countFilters(t, db); n != 2 {
+		t.Fatalf("rows = %d, want 2", n)
+	}
+	var clone MesheryFilter
+	if err := db.First(&clone, "name = ?", "copy").Error; err != nil {
+		t.Fatalf("load clone: %v", err)
+	}
+	if clone.Visibility != Private {
+		t.Errorf("clone visibility = %q, want %q", clone.Visibility, Private)
+	}
+	if !bytes.Equal(clone.FilterFile, filterTestFile) || clone.Location["type"] != "local" {
+		t.Errorf("clone filter_file/location = %q/%v, want the source's", clone.FilterFile, clone.Location)
+	}
+	if clone.CreatedAt == nil || clone.CreatedAt.Equal(filterTestCreatedAt) {
+		t.Errorf("clone created_at = %v, want the clone's own creation time", clone.CreatedAt)
+	}
+	if len(clone.CatalogData) != 0 {
+		t.Errorf("clone catalog_data = %v, want empty", clone.CatalogData)
+	}
+	if original := loadFilter(t, db, id); original.Name != "stored" || original.Visibility != Published {
+		t.Errorf("original changed by the clone: name %q, visibility %q", original.Name, original.Visibility)
+	}
+}
+
 func TestDeleteMesheryFilterNotFound(t *testing.T) {
 	_, mfp := newFilterPersisterTestDB(t)
 	id := uuid.Must(uuid.NewV4())

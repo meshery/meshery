@@ -163,7 +163,10 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, se
 	return marshalledResponse, nil
 }
 
-// CloneMesheryPattern clones meshery pattern to private
+// CloneMesheryPattern saves a private copy of a design under a new ID. The copy
+// is a new design: it keeps the source's content and import source, but gets
+// its own creation time, zero usage counters and no catalog data, and its
+// design file carries the copy's id and name at the first version.
 func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
 	var mesheryPattern MesheryPattern
 	patternUUID, err := uuid.FromString(patternID)
@@ -180,11 +183,37 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 		return nil, err
 	}
 
-	mesheryPattern.Visibility = Private
-	mesheryPattern.ID = &id
-	mesheryPattern.Name = clonePatternRequest.Name
+	pf, err := patterns.GetPatternFormat(mesheryPattern.PatternFile)
+	if err != nil {
+		return nil, err
+	}
+	pf.ID = id
+	pf.Name = clonePatternRequest.Name
+	patterns.AssignVersion(pf)
+	patternFile, err := yaml.Marshal(pf)
+	if err != nil {
+		return nil, err
+	}
 
-	return mpp.SaveMesheryPattern(&mesheryPattern)
+	// Build the row from scratch so nothing that belongs to the source row,
+	// such as created_at or the usage counters, carries over. Timestamps are
+	// left nil for gorm to set on insert. It is inserted directly because
+	// SaveMesheryPattern would bump the version of a file already at 0.0.1.
+	clone := MesheryPattern{
+		ID:            &id,
+		Name:          clonePatternRequest.Name,
+		PatternFile:   string(patternFile),
+		Location:      mesheryPattern.Location,
+		Visibility:    Private,
+		Type:          mesheryPattern.Type,
+		SourceContent: mesheryPattern.SourceContent,
+	}
+	if err := mpp.DB.Create(&clone).Error; err != nil {
+		return nil, ErrDBCreate(err)
+	}
+
+	stampLocalProviderOwner(&clone)
+	return marshalMesheryPatterns([]MesheryPattern{clone}), nil
 }
 
 // DeleteMesheryPattern deletes a pattern by ID and removes any associated
